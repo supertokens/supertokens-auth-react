@@ -216,12 +216,12 @@ describe("SuperTokens Third Party Email Password", function () {
                 "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
-            assert.deepStrictEqual(search, "?rid=thirdpartyemailpassword&error=signin");
+            assert.deepStrictEqual(search, "?error=signin");
         });
     });
 });

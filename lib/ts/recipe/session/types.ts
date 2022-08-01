@@ -16,13 +16,6 @@
 import { UserInput as WebJSInputType, RecipeEvent } from "supertokens-web-js/recipe/session/types";
 import { ClaimValidationError } from "supertokens-website";
 
-export type GetRedirectionURLContext = {
-    action: "SUCCESS";
-    isNewUser: boolean;
-    rid?: string;
-    redirectToPath?: string;
-};
-
 export type RecipeEventWithSessionContext = RecipeEvent & { sessionContext: SessionContextUpdate };
 
 export type InputType = WebJSInputType & {

@@ -34,26 +34,6 @@ export default class Wrapper {
         });
     }
 
-    // have backwards compatibility to allow input as "signin" | "signup"
-    static async redirectToAuth(
-        input?:
-            | ("signin" | "signup")
-            | {
-                  show?: "signin" | "signup";
-                  redirectBack?: boolean;
-              }
-    ): Promise<void> {
-        if (input === undefined || typeof input === "string") {
-            return EmailPassword.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input);
-        } else {
-            if (input.redirectBack === false || input.redirectBack === undefined) {
-                return EmailPassword.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input.show);
-            } else {
-                return EmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(input.show);
-            }
-        }
-    }
-
     static async submitNewPassword(input: {
         formFields: {
             id: string;
@@ -195,7 +175,6 @@ export default class Wrapper {
 
 const init = Wrapper.init;
 const signOut = Wrapper.signOut;
-const redirectToAuth = Wrapper.redirectToAuth;
 const submitNewPassword = Wrapper.submitNewPassword;
 const sendPasswordResetEmail = Wrapper.sendPasswordResetEmail;
 const signUp = Wrapper.signUp;
@@ -210,7 +189,6 @@ export {
     SignInAndUp,
     SignInAndUpTheme,
     signOut,
-    redirectToAuth,
     submitNewPassword,
     sendPasswordResetEmail,
     signUp,

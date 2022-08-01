@@ -14,14 +14,6 @@ export default class Wrapper {
         import("./types").NormalisedConfig
     >;
     static signOut(input?: { userContext?: any }): Promise<void>;
-    static redirectToAuth(
-        input?:
-            | ("signin" | "signup")
-            | {
-                  show?: "signin" | "signup";
-                  redirectBack?: boolean;
-              }
-    ): Promise<void>;
     static createCode(
         input:
             | {
@@ -59,7 +51,7 @@ export default class Wrapper {
     ): Promise<
         | {
               status: "OK";
-              createdUser: boolean;
+              createdNewUser: boolean;
               user: PasswordlessUser;
               fetchResponse: Response;
           }
@@ -123,7 +115,6 @@ declare const getLoginAttemptInfo: typeof Wrapper.getLoginAttemptInfo;
 declare const setLoginAttemptInfo: typeof Wrapper.setLoginAttemptInfo;
 declare const clearLoginAttemptInfo: typeof Wrapper.clearLoginAttemptInfo;
 declare const signOut: typeof Wrapper.signOut;
-declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInUp: (prop?: any) => JSX.Element;
 declare const SignInUpTheme: typeof SignInUpThemeWrapper;
 declare const LinkClicked: (prop?: any) => JSX.Element;
@@ -143,7 +134,6 @@ export {
     setLoginAttemptInfo,
     clearLoginAttemptInfo,
     signOut,
-    redirectToAuth,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

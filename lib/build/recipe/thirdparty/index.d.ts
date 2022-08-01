@@ -19,14 +19,6 @@ export default class Wrapper {
         import("./types").NormalisedConfig
     >;
     static signOut(input?: { userContext?: any }): Promise<void>;
-    static redirectToAuth(
-        input?:
-            | ("signin" | "signup")
-            | {
-                  show?: "signin" | "signup";
-                  redirectBack?: boolean;
-              }
-    ): Promise<void>;
     static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: any }): Promise<{
         status: "OK" | "ERROR";
     }>;
@@ -98,7 +90,6 @@ declare const getAuthCodeFromURL: typeof Wrapper.getAuthCodeFromURL;
 declare const getAuthErrorFromURL: typeof Wrapper.getAuthErrorFromURL;
 declare const getAuthStateFromURL: typeof Wrapper.getAuthStateFromURL;
 declare const signInAndUp: typeof Wrapper.signInAndUp;
-declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
 declare const SignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const EmailVerification: (prop?: any) => JSX.Element;
@@ -124,7 +115,6 @@ export {
     SignInAndUpCallback,
     SignInAndUpCallbackTheme,
     signOut,
-    redirectToAuth,
     EmailVerification,
     EmailVerificationTheme,
     User,

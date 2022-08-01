@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-import ThirdPartyEmailPassword, {
-    ThirdPartyEmailPasswordAuth,
-} from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import { redirectToAuth } from "supertokens-auth-react";
+import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import dynamic from "next/dynamic";
-import { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { useSessionContext, SessionAuth } from "supertokens-auth-react/recipe/session";
 import { getSupabase } from "../utils/supabase";
 
 export default function Home() {
     return (
-        <ThirdPartyEmailPasswordAuth>
+        <SessionAuth>
             <ProtectedPage />
-        </ThirdPartyEmailPasswordAuth>
+        </SessionAuth>
     );
 }
 
@@ -48,7 +47,7 @@ function ProtectedPage() {
 
     async function logoutClicked() {
         await ThirdPartyEmailPassword.signOut();
-        ThirdPartyEmailPassword.redirectToAuth();
+        redirectToAuth();
     }
 
     async function fetchUserData() {

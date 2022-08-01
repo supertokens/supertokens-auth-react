@@ -34,26 +34,6 @@ export default class Wrapper {
         });
     }
 
-    // have backwards compatibility to allow input as "signin" | "signup"
-    static async redirectToAuth(
-        input?:
-            | ("signin" | "signup")
-            | {
-                  show?: "signin" | "signup";
-                  redirectBack?: boolean;
-              }
-    ): Promise<void> {
-        if (input === undefined || typeof input === "string") {
-            return Passwordless.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input);
-        } else {
-            if (input.redirectBack === false || input.redirectBack === undefined) {
-                return Passwordless.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input.show);
-            } else {
-                return Passwordless.getInstanceOrThrow().redirectToAuthWithRedirectToPath(input.show);
-            }
-        }
-    }
-
     static async createCode(
         input:
             | { email: string; userContext?: any; options?: RecipeFunctionOptions }
@@ -95,7 +75,7 @@ export default class Wrapper {
     ): Promise<
         | {
               status: "OK";
-              createdUser: boolean;
+              createdNewUser: boolean;
               user: PasswordlessUser;
               fetchResponse: Response;
           }
@@ -207,7 +187,6 @@ const getLoginAttemptInfo = Wrapper.getLoginAttemptInfo;
 const setLoginAttemptInfo = Wrapper.setLoginAttemptInfo;
 const clearLoginAttemptInfo = Wrapper.clearLoginAttemptInfo;
 const signOut = Wrapper.signOut;
-const redirectToAuth = Wrapper.redirectToAuth;
 const SignInUp = Wrapper.SignInUp;
 const SignInUpTheme = Wrapper.SignInUpTheme;
 const LinkClicked = Wrapper.LinkClicked;
@@ -228,7 +207,6 @@ export {
     setLoginAttemptInfo,
     clearLoginAttemptInfo,
     signOut,
-    redirectToAuth,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

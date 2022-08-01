@@ -23,6 +23,7 @@ import { RecipeEventWithSessionContext, SessionContextType } from "./types";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { popInvalidClaimRedirectPathFromContext, useOnMountAPICall } from "../../utils";
+import SuperTokens from "../../superTokens";
 import { SessionClaimValidator } from "supertokens-website";
 
 export type SessionAuthProps = {
@@ -45,28 +46,33 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         );
     }
 
-    // TODO: check if using the parent context here reduces flickering
-    // It was removed because reusing it (including invalidclaim) caused a redirect loop in an edge case
+    // Reusing the parent context was removed because it caused a redirect loop in an edge case
+    // because it'd also reuse the invalid claims part until it loaded.
     const [context, setContext] = useState<SessionContextType>({ loading: true });
 
     const session = useRef<Session>();
+
+    let history: any | undefined;
+    try {
+        history = SuperTokens.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
+    } catch {
+        // We catch and ignore errors here, because if this is may throw if
+        // the app is using react-router-dom but added a session auth outside of the router.
+    }
+
     const userContext = useUserContext();
 
     const redirectToLogin = useCallback(() => {
         if (props.redirectToLogin !== undefined) {
             props.redirectToLogin();
         } else {
-            void session.current!.redirectToAuthWithRedirectToPath();
+            void SuperTokens.getInstanceOrThrow().redirectToAuth({ history, redirectBack: true });
         }
     }, [props.redirectToLogin]);
 
     const buildContext = useCallback(async (): Promise<SessionContextType> => {
         if (session.current === undefined) {
             session.current = Session.getInstanceOrThrow();
-        }
-
-        if (context.loading === false) {
-            return context;
         }
 
         const sessionExists = await session.current.doesSessionExist({
@@ -116,7 +122,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 setContext(toSetContext);
                 const redirectPath = popInvalidClaimRedirectPathFromContext(userContext);
                 if (redirectPath) {
-                    await Session.getInstanceOrThrow().redirectToUrl(redirectPath);
+                    await SuperTokens.getInstanceOrThrow().redirectToUrl(redirectPath, history);
                 }
             }
         },
@@ -145,7 +151,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
                     const redirectPath = popInvalidClaimRedirectPathFromContext(userContext);
                     if (redirectPath) {
-                        await Session.getInstanceOrThrow().redirectToUrl(redirectPath);
+                        await SuperTokens.getInstanceOrThrow().redirectToUrl(redirectPath, history);
                     }
 
                     return;

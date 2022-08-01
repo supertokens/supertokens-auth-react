@@ -14,7 +14,6 @@ export default abstract class RecipeModule<
         history?: any,
         queryParams?: Record<string, string>
     ) => Promise<void>;
-    redirectToUrl: (redirectUrl: string, history?: any) => Promise<void>;
     getRedirectUrl: (context: GetRedirectionURLContextType) => Promise<string>;
     getDefaultRedirectionURL(_: GetRedirectionURLContextType): Promise<string>;
     abstract getFeatures(): RecipeFeatureComponentMap;

@@ -27,6 +27,7 @@ import { CSSObject } from "@emotion/react";
 import Passwordless from "../../../recipe/passwordless";
 import { PasswordlessFlowType } from "supertokens-web-js/recipe/passwordless/types";
 import ThirdPartyPasswordless from "../../../recipe/thirdpartypasswordless";
+import { PermissionClaim, UserRoleClaim } from "../../../recipe/userroles";
 
 /*
  * This application is used with the purpose of illustrating Supertokens with typescript.
@@ -74,6 +75,12 @@ SuperTokens.init({
         apiDomain: getApiDomain(),
         websiteDomain: window.location.origin,
     },
+    async getRedirectionURL(context) {
+        if (context.action === "TO_AUTH") {
+            return "/auth";
+        }
+        return undefined;
+    },
     recipeList,
 });
 
@@ -88,7 +95,13 @@ function App() {
                             <Route
                                 path="/"
                                 element={
-                                    <SessionAuth requireAuth={true}>
+                                    <SessionAuth
+                                        requireAuth={true}
+                                        overrideGlobalClaimValidators={(o) => [
+                                            ...o,
+                                            UserRoleClaim.validators.includes("admin"),
+                                            PermissionClaim.validators.excludesAll(["delete_user", "delete_post"]),
+                                        ]}>
                                         <Home />
                                     </SessionAuth>
                                 }
@@ -466,9 +479,6 @@ Passwordless.init({
         }
     },
     getRedirectionURL: async (context) => {
-        if (context.action === "SIGN_IN_AND_UP") {
-            // called when the user is navigating to sign in / up page
-        }
         // return undefined to let the default behaviour play out
         return undefined;
     },

@@ -46,26 +46,6 @@ export default class Wrapper {
         });
     }
 
-    // have backwards compatibility to allow input as "signin" | "signup"
-    static async redirectToAuth(
-        input?:
-            | ("signin" | "signup")
-            | {
-                  show?: "signin" | "signup";
-                  redirectBack?: boolean;
-              }
-    ): Promise<void> {
-        if (input === undefined || typeof input === "string") {
-            return ThirdParty.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input);
-        } else {
-            if (input.redirectBack === false || input.redirectBack === undefined) {
-                return ThirdParty.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input.show);
-            } else {
-                return ThirdParty.getInstanceOrThrow().redirectToAuthWithRedirectToPath(input.show);
-            }
-        }
-    }
-
     static async redirectToThirdPartyLogin(input: {
         thirdPartyId: string;
         userContext?: any;
@@ -214,7 +194,6 @@ const getAuthCodeFromURL = Wrapper.getAuthCodeFromURL;
 const getAuthErrorFromURL = Wrapper.getAuthErrorFromURL;
 const getAuthStateFromURL = Wrapper.getAuthStateFromURL;
 const signInAndUp = Wrapper.signInAndUp;
-const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
 const SignInAndUpCallback = Wrapper.SignInAndUpCallback;
 const EmailVerification = Wrapper.EmailVerification;
@@ -241,7 +220,6 @@ export {
     SignInAndUpCallback,
     SignInAndUpCallbackTheme,
     signOut,
-    redirectToAuth,
     EmailVerification,
     EmailVerificationTheme,
     User,

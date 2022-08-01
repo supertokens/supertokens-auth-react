@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import "./App.css";
-import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, {
+    SuperTokensWrapper,
+    getSuperTokensRoutesForReactRouterDom,
+    redirectToAuth,
+} from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
-import Session from "supertokens-auth-react/recipe/session";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import * as reactRouterDom from "react-router-dom";
 import Home from "./Home";
@@ -84,9 +88,7 @@ SuperTokens.init({
                                     // it can come here if a session doesn't exist.
                                     // in this case, the screen we will should redirect to the
                                     // first login challenge
-                                    EmailPassword.redirectToAuth({
-                                        redirectBack: false,
-                                    });
+                                    redirectToAuth();
                                 });
                         }, []);
                         return null;
@@ -177,13 +179,13 @@ function App() {
                                     /* This protects the "/" route so that it shows
                                         <Home /> only if the user is logged in.
                                         Else it redirects the user to "/auth" */
-                                    <EmailPassword.EmailPasswordAuth
+                                    <SessionAuth
                                         onSessionExpired={() => {
                                             updateShowSessionExpiredPopup(true);
                                         }}>
                                         <Home />
                                         {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </EmailPassword.EmailPasswordAuth>
+                                    </SessionAuth>
                                 }
                             />
                         </Routes>

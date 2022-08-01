@@ -19,23 +19,22 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import {
-    appendQueryParamsToURL,
-    getCurrentNormalisedUrlPath,
     popInvalidClaimRedirectPathFromContext,
     getLocalStorage,
     isTest,
     removeFromLocalStorage,
     setLocalStorage,
 } from "../../utils";
-import { RecipeEventWithSessionContext, InputType, SessionContextUpdate, GetRedirectionURLContext } from "./types";
+import { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
+import SuperTokens from "../../superTokens";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
 
-export default class Session extends RecipeModule<GetRedirectionURLContext, unknown, unknown, any> {
+export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
     static instance?: Session;
     static RECIPE_ID = "session";
 
@@ -106,26 +105,6 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
         return this.webJsRecipe.attemptRefreshingSession();
     };
 
-    redirectToAuthWithRedirectToPath = (history?: any, queryParams?: Record<string, string>) => {
-        const redirectToPath = getCurrentNormalisedUrlPath().getAsStringDangerous();
-        if (queryParams === undefined) {
-            queryParams = {};
-        }
-        queryParams = {
-            ...queryParams,
-            redirectToPath,
-        };
-        return this.redirectToAuthWithoutRedirectToPath(history, queryParams);
-    };
-
-    redirectToAuthWithoutRedirectToPath = (history?: any, queryParams?: Record<string, string>) => {
-        const redirectUrl = appendQueryParamsToURL(
-            this.config.appInfo.websiteBasePath.getAsStringDangerous(),
-            queryParams
-        );
-        return this.redirectToUrl(redirectUrl, history);
-    };
-
     validateClaims = (input: {
         overrideGlobalClaimValidators?: (
             globalClaimValidators: SessionClaimValidator[],
@@ -141,14 +120,6 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
         userContext: any;
     }): Promise<ClaimValidationError[]> => {
         return this.webJsRecipe.getInvalidClaimsFromResponse(input);
-    };
-
-    getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
-        if (context.action === "SUCCESS") {
-            return context.redirectToPath === undefined ? "/" : context.redirectToPath;
-        } else {
-            throw new Error("Should never come here");
-        }
     };
 
     /**
@@ -176,7 +147,10 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
         if (!(await this.doesSessionExist({ userContext }))) {
             // If there is none, we have no way of checking claims, so we redirect to the auth page
             // This can happen e.g.: if the user clicked on the email verification link in a browser without an active session
-            return this.redirectToAuthWithoutRedirectToPath(history);
+            return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                history,
+                redirectBack: false,
+            });
         }
 
         // We validate all the global claims
@@ -193,7 +167,7 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
                 await setLocalStorage("supertokens-success-redirection-context", jsonContext);
             }
             // then we do the redirection.
-            return this.redirectToUrl(invalidClaimRedirectPath, history);
+            return SuperTokens.getInstanceOrThrow().redirectToUrl(invalidClaimRedirectPath, history);
         }
 
         // If we don't need to redirect because of a claim, we try and execute the original redirection
@@ -228,8 +202,17 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
         }
 
         // This should only happen if the configuration changed between saving the context and finishing the sign in process
-        // This should be a really rare edgecase
+        // or if the user navigated to a page where they were expected to have a stored redirectInfo but didn't
+        // (e.g.: pressed back after email verification)
         return this.redirect(redirectInfo!.successRedirectContext!, history);
+    };
+
+    /**
+     * This should only get called if validateGlobalClaimsAndHandleSuccessRedirection couldn't get a redirectInfo
+     * @returns "/"
+     */
+    getDefaultRedirectionURL = async (): Promise<string> => {
+        return "/";
     };
 
     private notifyListeners = async (event: RecipeEvent) => {
@@ -282,11 +265,8 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
         return WebJSSessionRecipe.addAxiosInterceptors(axiosInstance, userContext);
     }
 
-    static init(config?: InputType): CreateRecipeFunction<GetRedirectionURLContext, unknown, unknown, any> {
-        return (
-            appInfo: NormalisedAppInfo,
-            enableDebugLogs: boolean
-        ): RecipeModule<GetRedirectionURLContext, unknown, unknown, any> => {
+    static init(config?: InputType): CreateRecipeFunction<unknown, unknown, unknown, any> {
+        return (appInfo: NormalisedAppInfo, enableDebugLogs: boolean): RecipeModule<unknown, unknown, unknown, any> => {
             Session.instance = new Session({
                 ...config,
                 appInfo,

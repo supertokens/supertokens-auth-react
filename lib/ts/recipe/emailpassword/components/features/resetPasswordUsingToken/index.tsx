@@ -26,6 +26,7 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
+import SuperTokens from "../../../../../superTokens";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
@@ -72,14 +73,22 @@ class ResetPasswordUsingToken extends PureComponent<
                       recipeImplementation: this.props.recipe.recipeImpl,
                       config: this.props.recipe.config,
                       onSignInClicked: () => {
-                          void this.props.recipe.redirectToAuthWithoutRedirectToPath("signin", this.props.history);
+                          void SuperTokens.getInstanceOrThrow().redirectToAuth({
+                              show: "signin",
+                              history: this.props.history,
+                              redirectBack: false,
+                          });
                       },
                       token: this.state.token,
                   };
 
         const enterEmailForm = {
             onBackButtonClicked: () =>
-                this.props.recipe.redirectToAuthWithoutRedirectToPath("signin", this.props.history),
+                SuperTokens.getInstanceOrThrow().redirectToAuth({
+                    show: "signin",
+                    history: this.props.history,
+                    redirectBack: false,
+                }),
             error: this.state.error,
             onError: (error: string) => this.setState((os) => ({ ...os, error })),
             clearError: () => this.setState((os) => ({ ...os, error: undefined })),

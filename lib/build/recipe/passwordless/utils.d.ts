@@ -65,7 +65,7 @@ export declare function consumeCode(
 ): Promise<
     | {
           status: "OK";
-          createdUser: boolean;
+          createdNewUser: boolean;
           user: PasswordlessUser;
           fetchResponse: Response;
       }

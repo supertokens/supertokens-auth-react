@@ -54,6 +54,18 @@ export default class SuperTokensAPIWrapper {
         return SuperTokens.getSuperTokensRoutesForReactRouterDom(reactRouterDom);
     }
 
+    static redirectToAuth = async (options?: {
+        show?: "signin" | "signup";
+        history?: any;
+        queryParams?: any;
+        redirectBack?: boolean;
+    }) => {
+        return SuperTokens.getInstanceOrThrow().redirectToAuth({
+            ...options,
+            redirectBack: options?.redirectBack ?? true,
+        });
+    };
+
     static useTranslation = useTranslation;
 
     static useUserContext = useUserContext;
@@ -64,7 +76,8 @@ export const init = SuperTokensAPIWrapper.init;
 export const changeLanguage = SuperTokensAPIWrapper.changeLanguage;
 export const loadTranslation = SuperTokensAPIWrapper.loadTranslation;
 export const getRoutingComponent = SuperTokensAPIWrapper.getRoutingComponent;
-export const getSuperTokensRoutesForReactRouterDom = SuperTokens.getSuperTokensRoutesForReactRouterDom;
+export const getSuperTokensRoutesForReactRouterDom = SuperTokensAPIWrapper.getSuperTokensRoutesForReactRouterDom;
+export const redirectToAuth = SuperTokensAPIWrapper.redirectToAuth;
 
 export { SuperTokensWrapper } from "./components/supertokensWrapper";
 export { useTranslation } from "./translation/translationContext";

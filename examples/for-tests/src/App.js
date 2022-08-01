@@ -6,11 +6,13 @@ import AppWithReactDomRouter from "./AppWithReactDomRouter";
 import Footer from "./Footer";
 /* SuperTokens imports */
 import SuperTokens from "supertokens-auth-react";
+import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
+import UserRoles from "supertokens-auth-react/recipe/userroles";
 
 import axios from "axios";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
@@ -247,6 +249,9 @@ if (authRecipe === "thirdparty") {
     recipeList = [getThirdPartyPasswordlessConfigs(testContext), ...recipeList];
 }
 
+if (emailVerificationMode !== "OFF") {
+    recipeList.push(getEmailVerificationConfigs(testContext));
+}
 SuperTokens.init({
     appInfo: {
         appName: "SuperTokens",
@@ -263,6 +268,9 @@ SuperTokens.init({
                 PWLESS_SIGN_IN_UP_FOOTER_TOS: "ÁSZF",
             },
         },
+    },
+    getRedirectionURL: (context) => {
+        console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
     },
     recipeList,
 });
@@ -327,19 +335,7 @@ function goToAuth(show) {
     if (fromLocalstorage !== undefined && fromLocalstorage !== null) {
         recipe = fromLocalstorage;
     }
-    if (recipe === "emailpassword") {
-        EmailPassword.redirectToAuth(show);
-    } else if (recipe === "passwordless") {
-        Passwordless.redirectToAuth(show);
-    } else if (recipe === "thirdpartypasswordless") {
-        ThirdPartyPasswordless.redirectToAuth(show);
-    } else if (recipe === "thirdparty") {
-        ThirdParty.redirectToAuth(show);
-    } else if (recipe === "thirdpartyemailpassword") {
-        ThirdPartyEmailPassword.redirectToAuth(show);
-    } else {
-        window.location.href = websiteBasePath || "/auth";
-    }
+    SuperTokens.redirectToAuth({ show, queryParams: { rid: recipe }, redirectBack: false });
 }
 
 export function About() {
@@ -451,6 +447,7 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
                 <SessionInfoTable sessionInfo={sessionInfoUsingFetch} />
             </div>
             <div className="session-context-userId">session context userID: {sessionContext.userId}</div>
+            <pre className="invalidClaims">{JSON.stringify(sessionContext.invalidClaims, undefined, 2)}</pre>
         </div>
     );
 }
@@ -465,6 +462,61 @@ function SessionInfoTable({ sessionInfo }) {
             <li className="sessionInfo-session-handle">{sessionInfo["sessionHandle"]}</li>
         </ul>
     );
+}
+
+function getEmailVerificationConfigs({ disableDefaultUI }) {
+    return EmailVerification.init({
+        disableDefaultUI,
+        sendVerifyEmailScreen: {
+            style: theme.style,
+        },
+        verifyEmailLinkClickedScreen: {
+            style: theme.style,
+        },
+        mode: emailVerificationMode,
+        getRedirectionURL: async (context) => {
+            console.log(`ST_LOGS EMAIL_VERIFICATION GET_REDIRECTION_URL ${context.action}`);
+        },
+        override: {
+            functions: (implementation) => {
+                const log = logWithPrefix(`ST_LOGS EMAIL_VERIFICATION OVERRIDE`);
+
+                return {
+                    ...implementation,
+                    sendVerificationEmail(...args) {
+                        log(`SEND_VERIFICATION_EMAIL`);
+                        return implementation.sendVerificationEmail(...args);
+                    },
+                    isEmailVerified(...args) {
+                        log(`IS_EMAIL_VERIFIED`);
+                        return implementation.isEmailVerified(...args);
+                    },
+                    verifyEmail(...args) {
+                        log(`VERIFY_EMAIL`);
+                        return implementation.verifyEmail(...args);
+                    },
+                };
+            },
+        },
+        preAPIHook: async (context) => {
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `EMAIL_VERIFICATION ${context.action}`) {
+                let errorFromStorage = localStorage.getItem("TRANSLATED_GENERAL_ERROR");
+
+                let jsonBody = JSON.parse(context.requestInit.body);
+                jsonBody = {
+                    ...jsonBody,
+                    generalError: true,
+                    generalErrorMessage: errorFromStorage === null ? undefined : errorFromStorage,
+                };
+                context.requestInit.body = JSON.stringify(jsonBody);
+            }
+            console.log(`ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS ${context.action}`);
+            return context;
+        },
+        onHandleEvent: async (context) => {
+            console.log(`ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT ${context.action}`);
+        },
+    });
 }
 
 function getEmailPasswordConfigs({ disableDefaultUI }) {
@@ -555,16 +607,6 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
             console.log(`ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
         },
         useShadowDom,
-        emailVerificationFeature: {
-            disableDefaultUI,
-            sendVerifyEmailScreen: {
-                style: theme.style,
-            },
-            verifyEmailLinkClickedScreen: {
-                style: theme.style,
-            },
-            mode: emailVerificationMode,
-        },
         resetPasswordUsingTokenFeature: {
             disableDefaultUI,
             enterEmailForm: {
@@ -596,16 +638,6 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultUI }) {
             container: {
                 // fontFamily: "cursive",
             },
-        },
-        emailVerificationFeature: {
-            disableDefaultUI,
-            sendVerifyEmailScreen: {
-                style: theme.style,
-            },
-            verifyEmailLinkClickedScreen: {
-                style: theme.style,
-            },
-            mode: emailVerificationMode,
         },
         override: {
             emailVerification: {
@@ -935,10 +967,6 @@ function getThirdPartyConfigs({ disableDefaultUI }) {
         },
         useShadowDom,
         palette: theme.colors,
-        emailVerificationFeature: {
-            disableDefaultUI,
-            mode: emailVerificationMode,
-        },
         signInAndUpFeature: {
             disableDefaultUI,
             style: theme.style,
@@ -1137,10 +1165,6 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultUI }) {
         },
         useShadowDom,
         palette: theme.colors,
-        emailVerificationFeature: {
-            disableDefaultUI,
-            mode: emailVerificationMode,
-        },
         resetPasswordUsingTokenFeature: {
             disableDefaultUI,
         },
@@ -1181,3 +1205,6 @@ function setIsNewUserToStorage(recipeName, isNewUser) {
 }
 
 window.SuperTokens = SuperTokens;
+window.Session = Session;
+window.UserRoleClaim = UserRoles.UserRoleClaim;
+window.PermissionClaim = UserRoles.PermissionClaim;

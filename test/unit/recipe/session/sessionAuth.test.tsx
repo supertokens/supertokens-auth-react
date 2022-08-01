@@ -5,6 +5,7 @@ import Session from "../../../../lib/ts/recipe/session/recipe";
 import SessionAuth from "../../../../lib/ts/recipe/session/sessionAuth";
 import SessionContext from "../../../../lib/ts/recipe/session/sessionContext";
 import { SessionContextType } from "../../../../lib/ts/recipe/session";
+import { SuperTokensWrapper } from "../../../../lib/ts";
 
 const MockSession = {
     addEventListener: jest.fn(),
@@ -28,6 +29,7 @@ const MockSessionConsumer = () => {
         <>
             <span>userId: {session.userId}</span>
             <span>accessTokenPayload: {JSON.stringify(session.accessTokenPayload)}</span>
+            <span>invalidClaims: {session.invalidClaims.map((a) => a.validatorId).join(", ")}</span>
         </>
     );
 };
@@ -38,16 +40,18 @@ const setMockResolves = (ctx: SessionContextType) => {
         MockSession.getUserId.mockReturnValue(new Promise<any>(() => {}));
         MockSession.getAccessTokenPayloadSecurely.mockReturnValue(new Promise<any>(() => {}));
         MockSession.doesSessionExist.mockReturnValue(new Promise<any>(() => {}));
+        MockSession.validateClaims.mockReturnValue(new Promise<any>(() => {}));
     } else {
         MockSession.getUserId.mockResolvedValue(ctx.userId);
         MockSession.getAccessTokenPayloadSecurely.mockResolvedValue(ctx.accessTokenPayload);
         MockSession.doesSessionExist.mockResolvedValue(ctx.doesSessionExist);
+        MockSession.validateClaims.mockReturnValue(ctx.invalidClaims);
     }
 };
 
 jest.spyOn(Session, "getInstanceOrThrow").mockImplementation(() => MockSession as any);
 
-describe("SessionAuth", () => {
+describe("SessionAuth2", () => {
     beforeEach(() => {
         jest.clearAllMocks();
 

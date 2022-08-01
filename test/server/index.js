@@ -15,6 +15,7 @@
 require("dotenv").config();
 let SuperTokens = require("supertokens-node");
 let { default: SuperTokensRaw } = require("supertokens-node/lib/build/supertokens");
+const { default: EmailVerificationRaw } = require("supertokens-node/lib/build/recipe/emailverification/recipe");
 const { default: EmailPasswordRaw } = require("supertokens-node/lib/build/recipe/emailpassword/recipe");
 const { default: ThirdPartyRaw } = require("supertokens-node/lib/build/recipe/thirdparty/recipe");
 const {
@@ -24,6 +25,7 @@ const { default: SessionRaw } = require("supertokens-node/lib/build/recipe/sessi
 let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
 let ThirdParty = require("supertokens-node/recipe/thirdparty");
+let EmailVerification = require("supertokens-node/recipe/emailverification");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
@@ -60,6 +62,13 @@ try {
     thirdPartyPasswordlessSupported = false;
 }
 
+try {
+    UserRolesRaw = require("supertokens-node/lib/build/recipe/userroles/recipe").default;
+    UserRoles = require("supertokens-node/recipe/userroles");
+    userRolesSupported = true;
+} catch (ex) {
+    userRolesSupported = false;
+}
 let generalErrorSupported;
 
 if (maxVersion(nodeSDKVersion, "9.9.9") === "9.9.9") {
@@ -184,6 +193,45 @@ app.get("/sessioninfo", verifySession(), async (req, res) => {
     }
 });
 
+app.get("/unverifyEmail", verifySession(), async (req, res) => {
+    let session = req.session;
+    await EmailVerification.unverifyEmail(session.getUserId());
+    await session.fetchAndSetClaim(EmailVerification.EmailVerificationClaim);
+    res.send({ status: "OK" });
+});
+
+app.post("/setRole", verifySession(), async (req, res) => {
+    let session = req.session;
+    await UserRoles.createNewRoleOrAddPermissions(req.body.role, req.body.permissions);
+    await UserRoles.addRoleToUser(session.getUserId(), req.body.role);
+    await session.fetchAndSetClaim(UserRoles.UserRoleClaim);
+    await session.fetchAndSetClaim(UserRoles.PermissionClaim);
+    res.send({ status: "OK" });
+});
+
+app.post(
+    "/checkRole",
+    verifySession({
+        overrideGlobalClaimValidators: async (gv, _session, userContext) => {
+            const res = [...gv];
+            const body = await userContext._default.request.getJSONBody();
+            if (body.role !== undefined) {
+                const info = body.role;
+                res.push(UserRoles.UserRoleClaim.validators[info.validator](...info.args));
+            }
+
+            if (body.permission !== undefined) {
+                const info = body.permission;
+                res.push(UserRoles.PermissionClaim.validators[info.validator](...info.args));
+            }
+            return res;
+        },
+    }),
+    async (req, res) => {
+        res.send({ status: "OK" });
+    }
+);
+
 app.get("/token", async (_, res) => {
     res.send({
         latestURLWithToken,
@@ -219,6 +267,10 @@ app.get("/test/featureFlags", (req, res) => {
 
     if (generalErrorSupported) {
         available.push("generalerror");
+    }
+
+    if (userRolesSupported) {
+        available.push("userroles");
     }
 
     res.send({
@@ -261,6 +313,10 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
 
 function initST({ passwordlessConfig } = {}) {
     if (process.env.TEST_MODE) {
+        if (userRolesSupported) {
+            UserRolesRaw.reset();
+        }
+
         if (thirdPartyPasswordlessSupported) {
             ThirdPartyPasswordlessRaw.reset();
         }
@@ -269,6 +325,7 @@ function initST({ passwordlessConfig } = {}) {
             PasswordlessRaw.reset();
         }
 
+        EmailVerificationRaw.reset();
         EmailPasswordRaw.reset();
         ThirdPartyRaw.reset();
         ThirdPartyEmailPasswordRaw.reset();
@@ -278,35 +335,42 @@ function initST({ passwordlessConfig } = {}) {
     }
 
     const recipeList = [
+        EmailVerification.init({
+            mode: "OPTIONAL",
+            createAndSendCustomEmail: (_, emailVerificationURLWithToken) => {
+                console.log(emailVerificationURLWithToken);
+                latestURLWithToken = emailVerificationURLWithToken;
+            },
+            override: {
+                apis: (oI) => {
+                    return {
+                        ...oI,
+                        generateEmailVerifyTokenPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API email verification code",
+                                };
+                            }
+                            return oI.generateEmailVerifyTokenPOST(input);
+                        },
+                        verifyEmailPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API email verify",
+                                };
+                            }
+                            return oI.verifyEmailPOST(input);
+                        },
+                    };
+                },
+            },
+        }),
         EmailPassword.init({
             override: {
-                emailVerificationFeature: {
-                    apis: (oI) => {
-                        return {
-                            ...oI,
-                            generateEmailVerifyTokenPOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API email verification code",
-                                    };
-                                }
-                                return oI.generateEmailVerifyTokenPOST(input);
-                            },
-                            verifyEmailPOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API email verify",
-                                    };
-                                }
-                                return oI.verifyEmailPOST(input);
-                            },
-                        };
-                    },
-                },
                 apis: (oI) => {
                     return {
                         ...oI,
@@ -376,12 +440,6 @@ function initST({ passwordlessConfig } = {}) {
                 createAndSendCustomEmail: (_, passwordResetURLWithToken) => {
                     console.log(passwordResetURLWithToken);
                     latestURLWithToken = passwordResetURLWithToken;
-                },
-            },
-            emailVerificationFeature: {
-                createAndSendCustomEmail: (_, emailVerificationURLWithToken) => {
-                    console.log(emailVerificationURLWithToken);
-                    latestURLWithToken = emailVerificationURLWithToken;
                 },
             },
         }),
@@ -692,6 +750,10 @@ function initST({ passwordlessConfig } = {}) {
                 },
             })
         );
+    }
+
+    if (userRolesSupported) {
+        recipeList.push(UserRoles.init());
     }
 
     SuperTokens.init({

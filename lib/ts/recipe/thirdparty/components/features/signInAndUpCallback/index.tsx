@@ -31,6 +31,7 @@ import { defaultTranslationsThirdParty } from "../../themes/translations";
 import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
 import Session from "../../../../session/recipe";
+import SuperTokens from "../../../../../superTokens";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -46,8 +47,12 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
     const handleVerifyResponse = useCallback(
         async (response: Awaited<ReturnType<typeof verifyCode>>): Promise<void> => {
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
-                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                    error: "no_email_present",
+                return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                    history: props.history,
+                    queryParams: {
+                        error: "no_email_present",
+                    },
+                    redirectBack: false,
                 });
             }
 
@@ -77,14 +82,22 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
     const handleError = useCallback(
         (err) => {
             if (STGeneralError.isThisError(err)) {
-                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                    error: "custom",
-                    message: err.message,
+                return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                    history: props.history,
+                    queryParams: {
+                        error: "custom",
+                        message: err.message,
+                    },
+                    redirectBack: false,
                 });
             }
 
-            return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                error: "signin",
+            return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                history: props.history,
+                queryParams: {
+                    error: "signin",
+                },
+                redirectBack: false,
             });
         },
         [props.recipe, props.history]

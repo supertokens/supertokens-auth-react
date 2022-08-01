@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword";
@@ -17,7 +17,10 @@ function AppWithReactDomRouter(props) {
      */
     const urlParams = new URLSearchParams(window.location.search);
     const isForUserContext = urlParams.get("forUserContext") === "true";
-
+    const [claimValidators, setClaimValidators] = useState(undefined);
+    window.setClaimValidators = setClaimValidators;
+    const keyWithClaimValidators =
+        claimValidators !== undefined ? claimValidators.map((a) => a.id).join("_") : undefined;
     return (
         <div className="App">
             <Router>
@@ -37,7 +40,13 @@ function AppWithReactDomRouter(props) {
                         <Route
                             path="/dashboard-no-auth"
                             element={
-                                <SessionAuth requireAuth={false} {...props}>
+                                <SessionAuth
+                                    requireAuth={false}
+                                    key={keyWithClaimValidators}
+                                    {...props}
+                                    overrideGlobalClaimValidators={
+                                        claimValidators !== undefined ? () => claimValidators : undefined
+                                    }>
                                     <DashboardNoAuthRequired />
                                 </SessionAuth>
                             }
@@ -47,7 +56,12 @@ function AppWithReactDomRouter(props) {
                         <Route
                             path="/dashboard"
                             element={
-                                <SessionAuth {...props}>
+                                <SessionAuth
+                                    {...props}
+                                    key={keyWithClaimValidators}
+                                    overrideGlobalClaimValidators={
+                                        claimValidators !== undefined ? () => claimValidators : undefined
+                                    }>
                                     <Dashboard />
                                 </SessionAuth>
                             }

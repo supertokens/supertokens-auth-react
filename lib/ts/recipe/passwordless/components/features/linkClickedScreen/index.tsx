@@ -32,6 +32,7 @@ import { useUserContext } from "../../../../../usercontext";
 import { getLoginAttemptInfo } from "../../../utils";
 import STGeneralError from "supertokens-web-js/utils/error";
 import Session from "../../../../session/recipe";
+import SuperTokens from "../../../../../superTokens";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -44,8 +45,12 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
         const linkCode = getURLHash();
 
         if (preAuthSessionId === null || preAuthSessionId.length === 0 || linkCode.length === 0) {
-            await props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                error: "signin",
+            await SuperTokens.getInstanceOrThrow().redirectToAuth({
+                history: props.history,
+                queryParams: {
+                    error: "signin",
+                },
+                redirectBack: false,
             });
             return "REDIRECTING";
         }
@@ -75,8 +80,12 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
             }
 
             if (response.status === "RESTART_FLOW_ERROR") {
-                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                    error: "restart_link",
+                return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                    history: props.history,
+                    queryParams: {
+                        error: "restart_link",
+                    },
+                    redirectBack: false,
                 });
             }
 
@@ -93,7 +102,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                         rid: props.recipe.config.recipeId,
                         successRedirectContext: {
                             action: "SUCCESS",
-                            isNewUser: response.createdUser,
+                            isNewUser: response.createdNewUser,
                             redirectToPath: loginAttemptInfo?.redirectToPath,
                         },
                     },
@@ -108,13 +117,21 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     const handleConsumeError = useCallback(
         (err) => {
             if (STGeneralError.isThisError(err)) {
-                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                    error: "custom",
-                    message: err.message,
+                return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                    history: props.history,
+                    queryParams: {
+                        error: "custom",
+                        message: err.message,
+                    },
+                    redirectBack: false,
                 });
             } else {
-                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                    error: "restart_link",
+                return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                    history: props.history,
+                    queryParams: {
+                        error: "restart_link",
+                    },
+                    redirectBack: false,
                 });
             }
         },

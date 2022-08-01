@@ -169,13 +169,11 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
                 `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
-                `ST_LOGS ${logId} OVERRIDE EMAIL_VERIFICATION IS_EMAIL_VERIFIED`,
-                `ST_LOGS ${logId} PRE_API_HOOKS IS_EMAIL_VERIFIED`,
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                `ST_LOGS ${logId} OVERRIDE EMAIL_VERIFICATION IS_EMAIL_VERIFIED`,
-                `ST_LOGS ${logId} PRE_API_HOOKS IS_EMAIL_VERIFIED`,
             ]);
         });
 
@@ -337,13 +335,13 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
                 `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
                 `ST_LOGS ${logId} OVERRIDE ${thirdPartySignInUpLog}`,
                 `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
-                `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH`,
                 ...signInUpPageLoadLogs,
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
-            assert(search.endsWith("&error=signin"));
+            assert(search.endsWith("error=signin"));
         });
 
         it("Invalid nonce", async function () {
@@ -368,13 +366,13 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
                 `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
                 `ST_LOGS ${logId} OVERRIDE ${thirdPartySignInUpLog}`,
                 `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
-                `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH`,
                 ...signInUpPageLoadLogs,
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
-            assert(search.endsWith("&error=signin"));
+            assert(search.endsWith("error=signin"));
         });
 
         it("Wrong provider", async function () {
@@ -399,13 +397,13 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
                 `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
                 `ST_LOGS ${logId} OVERRIDE ${thirdPartySignInUpLog}`,
                 `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
-                `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH`,
                 ...signInUpPageLoadLogs,
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
-            assert(search.endsWith("&error=signin"));
+            assert(search.endsWith("error=signin"));
         });
 
         it("Unknown provider", async function () {
@@ -454,13 +452,13 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
                 `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
                 `ST_LOGS ${logId} OVERRIDE ${thirdPartySignInUpLog}`,
                 `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
-                `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH`,
                 ...signInUpPageLoadLogs,
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
-            assert(search.endsWith("&error=signin"));
+            assert(search.endsWith("error=signin"));
         });
 
         it("No code params", async function () {
@@ -485,13 +483,13 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
                 `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
                 `ST_LOGS ${logId} OVERRIDE ${thirdPartySignInUpLog}`,
                 `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
-                `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH`,
                 ...signInUpPageLoadLogs,
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
-            assert(search.endsWith("&error=signin"));
+            assert(search.endsWith("error=signin"));
         });
     });
 }

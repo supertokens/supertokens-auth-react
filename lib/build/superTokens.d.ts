@@ -1,6 +1,11 @@
 /// <reference types="react" />
 import RecipeModule from "./recipe/recipeModule";
-import { ComponentWithRecipeAndMatchingMethod, NormalisedAppInfo, SuperTokensConfig } from "./types";
+import {
+    ComponentWithRecipeAndMatchingMethod,
+    GetRedirectionURLContext,
+    NormalisedAppInfo,
+    SuperTokensConfig,
+} from "./types";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { BaseFeatureComponentMap } from "./types";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
@@ -19,6 +24,7 @@ export default class SuperTokens {
     };
     recipeList: RecipeModule<any, any, any, any>[];
     private pathsToFeatureComponentWithRecipeIdMap?;
+    private userGetRedirectionURL;
     constructor(config: SuperTokensConfig);
     static init(config: SuperTokensConfig): void;
     static getInstanceOrThrow(): SuperTokens;
@@ -52,5 +58,13 @@ export default class SuperTokens {
         | undefined;
     changeLanguage: (lang: string) => Promise<void>;
     loadTranslation(store: TranslationStore): void;
+    getRedirectUrl(context: GetRedirectionURLContext): Promise<string>;
+    redirectToAuth: (options: {
+        show?: "signin" | "signup" | undefined;
+        history?: any;
+        queryParams?: any;
+        redirectBack: boolean;
+    }) => Promise<void>;
+    redirectToUrl: (redirectUrl: string, history?: any) => Promise<void>;
     static reset(): void;
 }
