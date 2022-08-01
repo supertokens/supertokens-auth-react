@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changed
+
+-   Updated `react-scripts` in all examples
+
 ## [0.24.2] - 2022-07-28
 
 -   Fixes prop passing when custom theme is used with the feature components
