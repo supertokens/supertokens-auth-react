@@ -37,6 +37,8 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - id: set-matrix
+              run: bash test/findExamplesWithTests.sh
+              run: echo ":{\"include\":$(bash test/findExamplesWithTests.sh)}"
               run: echo "::set-output name=matrix::{\"include\":$(bash test/findExamplesWithTests.sh)}"
     job2:
         needs: job1
