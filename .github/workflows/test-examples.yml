@@ -46,8 +46,11 @@ jobs:
             matrix: ${{fromJson(needs.job1.outputs.matrix)}}
         steps:
             - uses: actions/checkout@v2
-            - run: cd ${{ matrix.examplePath }}
             - run: npm install
+              working-directory: ${{ matrix.examplePath }}
             - run: npm install mocha@6.1.4
+              working-directory: ${{ matrix.examplePath }}
             - run: npm install puppeteer@^11.0.0
+              working-directory: ${{ matrix.examplePath }}
             - run: npx mocha --no-config --timeout 40000 test/**/*.test.js
+              working-directory: ${{ matrix.examplePath }}
