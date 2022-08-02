@@ -7,17 +7,17 @@ Ref: https://developer.okta.com/blog/2019/08/22/okta-authjs-pkce
 
 This demo app demonstrates the following:
 
-- How to add custom thirdparty provider to support Okta
-  - Passing state from frontend to the backend APIs
-  - Code Challenge and verifier implementation
-- How to handle multi-tenancy
-  - Accepting tenant id in the frontend
-  - Passing tenant id to the backend APIs
-  - Simulate multiple User Pool using the tenant id
-
+-   How to add custom thirdparty provider to support Okta
+    -   Passing state from frontend to the backend APIs
+    -   Code Challenge and verifier implementation
+-   How to handle multi-tenancy
+    -   Accepting tenant id in the frontend
+    -   Passing tenant id to the backend APIs
+    -   Simulate multiple User Pool using the tenant id
 
 ## Required changes
-- Update the config.go to update the tenantIDs and corresponding okta configs.
+
+-   Update the config.go to update the tenantIDs and corresponding okta configs.
 
 ## Run the demo app
 
@@ -41,12 +41,12 @@ Frontend will start on `http://localhost:3000`
 
 ## How to use the demo app
 
-- Once the frontend and backend are running, navigate to http://localhost:3000
-- Enter the tenant id and click on Login (as configured in the config.go file)
-- You should now be provided with a login link to Okta, click that
-- Login to the Okta as prompted by the provider
-- You should now be redirected to the Dashboard page with JWT token displayed
-- Verify that the JWT contains tenantID using the utility - https://jwt.io
+-   Once the frontend and backend are running, navigate to http://localhost:3000
+-   Enter the tenant id and click on Login (as configured in the config.go file)
+-   You should now be provided with a login link to Okta, click that
+-   Login to the Okta as prompted by the provider
+-   You should now be redirected to the Dashboard page with JWT token displayed
+-   Verify that the JWT contains tenantID using the utility - https://jwt.io
 
 ## Author
 
