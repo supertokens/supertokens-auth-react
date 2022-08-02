@@ -17,16 +17,8 @@
  * Imports
  */
 
-import assert from "assert";
-import puppeteer from "puppeteer";
-import {
-    assertProviders,
-    clickOnProviderButton,
-    defaultSignUp,
-    toggleSignInSignUp,
-    loginWithAuth0,
-} from "../../../test/helpers";
-import { SIGN_IN_UP_API } from "../constants";
+const assert = require("assert");
+const puppeteer = require("puppeteer");
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -34,7 +26,7 @@ require("jsdom-global")();
 /*
  * Tests.
  */
-describe("SuperTokens Third Party Email Password", function () {
+describe("SuperTokens Email Password", function () {
     let browser;
     let page;
 
@@ -50,21 +42,8 @@ describe("SuperTokens Third Party Email Password", function () {
         await browser.close();
     });
 
-    describe("Third Party Email Password test", function () {
+    describe("Email Password test", function () {
         it("Successful signup with credentials", async function () {
-            await toggleSignInSignUp(page);
-            await defaultSignUp(page, "thirdpartyemailpassword");
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
-        });
-
-        it("Successful signin/up with auth0", async function () {
-            await assertProviders(page);
-            await clickOnProviderButton(page, "Auth0");
-            await Promise.all([
-                loginWithAuth0(page),
-                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
-            ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/dashboard");
         });

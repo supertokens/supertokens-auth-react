@@ -45,4 +45,8 @@ jobs:
         strategy:
             matrix: ${{fromJson(needs.job1.outputs.matrix)}}
         steps:
-            - run: echo ${{ matrix.examplePath }}
+            - run: cd ${{ matrix.examplePath }}
+            - run: npm install
+            - run: npm install mocha@6.1.4
+            - run: npm install puppeteer@^11.0.0
+            - run: npx mocha --no-config --timeout 40000 test/**/*.test.js
