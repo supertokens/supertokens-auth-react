@@ -36,9 +36,11 @@ jobs:
             matrix: ${{ steps.set-matrix.outputs.matrix }}
         steps:
             - uses: actions/checkout@v2
+            - id: set-matrix test
+            - run: bash test/findExamplesWithTests.sh
+            - id: set-matrix echo
+            - run: echo ":{\"include\":$(bash test/findExamplesWithTests.sh)}"
             - id: set-matrix
-              run: bash test/findExamplesWithTests.sh
-              run: echo ":{\"include\":$(bash test/findExamplesWithTests.sh)}"
               run: echo "::set-output name=matrix::{\"include\":$(bash test/findExamplesWithTests.sh)}"
     job2:
         needs: job1
