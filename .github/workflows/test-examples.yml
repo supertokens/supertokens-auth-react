@@ -1,0 +1,43 @@
+name: "Test examples"
+on:
+    workflow_dispatch:
+        inputs:
+            pluginInterfaceRepoOwnerName:
+                description: "supertokens-plugin-interface repo owner name"
+                default: supertokens
+                required: true
+            pluginInterfaceBranchName:
+                description: "supertokens-plugin-interface repos branch name"
+                default: master
+                required: true
+            coreRepoOwnerName:
+                description: "supertokens-core repo owner name"
+                default: supertokens
+                required: true
+            coreBranchName:
+                description: "supertokens-core repo branch name"
+                default: master
+                required: true
+            nodeRepoOwnerName:
+                description: "supertokens-node repo owner name"
+                default: supertokens
+                required: true
+            nodeBranchName:
+                description: "supertokens-node repo branch name"
+                default: master
+                required: true
+jobs:
+    job1:
+        runs-on: ubuntu-latest
+        outputs:
+            matrix: ${{ steps.set-matrix.outputs.matrix }}
+        steps:
+            - id: set-matrix
+              run: echo "::set-output name=matrix::{\"examplePath\":$(bash test/findExamplesWithTests.sh)}"
+    job2:
+        needs: job1
+        runs-on: ubuntu-latest
+        strategy:
+            matrix: ${{fromJson(needs.job1.outputs.matrix)}}
+        steps:
+            - run: echo ${{ matrix.examplePath }}
