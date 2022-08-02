@@ -155,7 +155,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
                     {props.children &&
                         React.Children.map(props.children, (child) => {
                             if (React.isValidElement(child)) {
-                                return React.cloneElement(child, props);
+                                return React.cloneElement(child, childProps);
                             }
 
                             return child;

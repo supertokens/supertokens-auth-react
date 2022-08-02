@@ -15,6 +15,7 @@
 /*
  * Imports.
  */
+import React from "react";
 import { Fragment, useCallback, useState } from "react";
 
 import { FeatureBaseProps } from "../../../../../types";
@@ -185,7 +186,14 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                         {props.children === undefined && <LinkClickedScreenTheme {...childProps} />}
 
                         {/* Otherwise, custom theme is provided, propagate props. */}
-                        {props.children}
+                        {props.children &&
+                            React.Children.map(props.children, (child) => {
+                                if (React.isValidElement(child)) {
+                                    return React.cloneElement(child, childProps);
+                                }
+
+                                return child;
+                            })}
                     </Fragment>
                 </StyleProvider>
             </FeatureWrapper>

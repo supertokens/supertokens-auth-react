@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changed
+
+-   Updated `react-scripts` in all examples
+
 ### Added
 
 -   Adds Session claims support and `UserRoleClaim`, `PermissionClaim` and `EmailVerificationClaim`
@@ -19,11 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Fixed typing of `onSuccess` prop on passwordless `SignInUpProps`
 -   Fixed some full-page redirect that happened even when using react-router-dom
-
-### Changes
-
--   Updates supabase example app to use supertokens-auth-react version 0.24
--   Updates grammar for "Something went wrong" error text.
 
 ### Breaking changes
 
@@ -140,6 +139,12 @@ function ProtectedHomeComponent() {
     );
 }
 ```
+
+## [0.24.2] - 2022-07-28
+
+-   Fixes prop passing when custom theme is used with the feature components
+-   Updates supabase example app to use supertokens-auth-react version 0.24
+-   Updates grammar for "Something went wrong" error text.
 
 ## [0.24.1] - 2022-07-12
 

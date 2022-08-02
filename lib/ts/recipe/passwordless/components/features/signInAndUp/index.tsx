@@ -257,9 +257,12 @@ export const SignInUpFeature: React.FC<
                     {props.children &&
                         React.Children.map(props.children, (child) => {
                             if (React.isValidElement(child)) {
-                                return React.cloneElement(child, childProps);
+                                return React.cloneElement(child, {
+                                    ...childProps,
+                                    featureState: state,
+                                    dispatch: dispatch,
+                                });
                             }
-
                             return child;
                         })}
                 </Fragment>
