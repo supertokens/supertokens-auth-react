@@ -4,7 +4,7 @@ import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom 
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import Session from "supertokens-auth-react/recipe/session";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import * as reactRouterDom from "react-router-dom";
 import Home from "./Home";
 import Footer from "./Footer";
@@ -135,7 +135,6 @@ SuperTokens.init({
                             if (input.userContext.forceOriginalCheck === true) {
                                 return true;
                             }
-
                             if (window.location.pathname.startsWith("/auth")) {
                                 if (window.location.pathname === "/auth/verify-phone") {
                                     // this is a special case route where even if a session exists,
@@ -160,39 +159,53 @@ SuperTokens.init({
 
 function App() {
     let [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
+    let location = useLocation();
+
+    /**
+     * We give a key to SuperTokensWrapper such that it causes a recalculation of
+     * the session context whenever the pathname changes in the way described below.
+     *
+     * This is needed because we have provided an override for doesSessionExist in which
+     * the logic depends on location.pathname.
+     */
+    let key = location.pathname;
 
     return (
-        <SuperTokensWrapper>
+        <SuperTokensWrapper key={key}>
             <div className="App">
-                <Router>
-                    <div className="fill">
-                        <Routes>
-                            <Route path="/auth/verify-phone" element={<PhoneVerification />} />
-                            {/* This shows the login UI on "/auth" route */}
-                            {getSuperTokensRoutesForReactRouterDom(reactRouterDom)}
+                <div className="fill">
+                    <Routes>
+                        <Route path="/auth/verify-phone" element={<PhoneVerification />} />
+                        {/* This shows the login UI on "/auth" route */}
+                        {getSuperTokensRoutesForReactRouterDom(reactRouterDom)}
 
-                            <Route
-                                path="/"
-                                element={
-                                    /* This protects the "/" route so that it shows
-                                        <Home /> only if the user is logged in.
-                                        Else it redirects the user to "/auth" */
-                                    <EmailPassword.EmailPasswordAuth
-                                        onSessionExpired={() => {
-                                            updateShowSessionExpiredPopup(true);
-                                        }}>
-                                        <Home />
-                                        {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </EmailPassword.EmailPasswordAuth>
-                                }
-                            />
-                        </Routes>
-                    </div>
-                    <Footer />
-                </Router>
+                        <Route
+                            path="/"
+                            element={
+                                /* This protects the "/" route so that it shows
+                                    <Home /> only if the user is logged in.
+                                    Else it redirects the user to "/auth" */
+                                <EmailPassword.EmailPasswordAuth
+                                    onSessionExpired={() => {
+                                        updateShowSessionExpiredPopup(true);
+                                    }}>
+                                    <Home />
+                                    {showSessionExpiredPopup && <SessionExpiredPopup />}
+                                </EmailPassword.EmailPasswordAuth>
+                            }
+                        />
+                    </Routes>
+                </div>
+                <Footer />
             </div>
         </SuperTokensWrapper>
     );
 }
 
-export default App;
+export default function AppWithRouter() {
+    return (
+        <Router>
+            <App />
+        </Router>
+    );
+}
