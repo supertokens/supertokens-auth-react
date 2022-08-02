@@ -1,5 +1,8 @@
 name: "Test examples"
 on:
+    push:
+      branches:
+        - example_testing
     workflow_dispatch:
         inputs:
             pluginInterfaceRepoOwnerName:
