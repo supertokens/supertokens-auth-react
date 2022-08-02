@@ -1,8 +1,8 @@
 name: "Test examples"
 on:
     push:
-      branches:
-        - example_testing
+        branches:
+            - example_testing
     workflow_dispatch:
         inputs:
             pluginInterfaceRepoOwnerName:
@@ -36,7 +36,7 @@ jobs:
             matrix: ${{ steps.set-matrix.outputs.matrix }}
         steps:
             - id: set-matrix
-              run: echo "::set-output name=matrix::{\"examplePath\":$(bash test/findExamplesWithTests.sh)}"
+              run: echo "::set-output name=matrix::{\"include\":$(bash test/findExamplesWithTests.sh)}"
     job2:
         needs: job1
         runs-on: ubuntu-latest
