@@ -28,7 +28,7 @@ Clone the repo, enter the directory, and use `npm` to install the project depend
 
 ```bash
 git clone https://github.com/supertokens/supertokens-auth-react
-cd examples/with-jwt-localstorage
+cd supertokens-auth-react/examples/with-jwt-localstorage
 npm install
 ```
 

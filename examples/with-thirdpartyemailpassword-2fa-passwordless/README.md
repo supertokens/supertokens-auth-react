@@ -10,7 +10,7 @@ Clone the repo, enter the directory, and use `npm` to install the project depend
 
 ```bash
 git clone https://github.com/supertokens/supertokens-auth-react
-cd examples/with-thirdpartyemailpassword-2fa-passwordless
+cd supertokens-auth-react/examples/with-thirdpartyemailpassword-2fa-passwordless
 npm install
 ```
 
