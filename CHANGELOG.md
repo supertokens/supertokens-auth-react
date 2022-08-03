@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 -   Updated `react-scripts` in all examples
+-   Updated READMEs for example apps, removed information that is no longer relevant.
 
 ## [0.24.2] - 2022-07-28
 
