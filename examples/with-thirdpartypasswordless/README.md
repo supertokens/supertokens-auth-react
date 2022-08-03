@@ -43,12 +43,6 @@ If you would like to modify the website (http://localhost:3000) or the API serve
 -   The frontend code is located in the `src` folder.
 -   The backend API is in the `api-server/index.js` file.
 
-## Production build
-
-```bash
-npm run build && npm run start
-```
-
 ## Author
 
 Created with :heart: by the folks at supertokens.com.
