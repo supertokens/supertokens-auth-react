@@ -13,9 +13,11 @@ In this demo, when our root component loads we will initialize the `supertokens-
 
 ## Project setup
 
-Use `npm` to install the project dependencies:
+Clone the repo, enter the directory, and use `npm` to install the project dependencies:
 
 ```bash
+git clone https://github.com/supertokens/supertokens-auth-react
+cd examples/with-vue-thirdpartyemailpassword
 npm install
 ```
 
