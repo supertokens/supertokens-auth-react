@@ -6,6 +6,7 @@ let supertokens = require("supertokens-node");
 let Session = require("supertokens-node/recipe/session");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
+let EmailVerification = require("supertokens-node/recipe/emailverification");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -29,6 +30,7 @@ supertokens.init({
         websiteDomain,
     },
     recipeList: [
+        EmailVerification.init({ mode: "REQUIRED" }),
         ThirdPartyEmailPassword.init({
             override: {
                 apis: (oI) => {
@@ -81,7 +83,7 @@ supertokens.init({
                                     if (signInResponse.status === "WRONG_CREDENTIALS_ERROR") {
                                         return response;
                                     } else {
-                                        await ThirdPartyEmailPassword.unverifyEmail(signInResponse.user.id);
+                                        await EmailVerification.unverifyEmail(signInResponse.user.id, email);
                                         response = {
                                             status: "OK",
                                             user: signInResponse.user,
@@ -119,7 +121,7 @@ supertokens.init({
                                     password,
                                 });
 
-                                await session.updateAccessTokenPayload({
+                                await session.mergeIntoAccessTokenPayload({
                                     isUsingFakePassword: false,
                                 });
 

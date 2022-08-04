@@ -1,13 +1,9 @@
 import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
-import ThirdPartyEmailPassword, {
-    ThirdPartyEmailPasswordAuth,
-    Google,
-    Github,
-    Apple,
-} from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import Session from "supertokens-auth-react/recipe/session";
+import EmailVerification from "supertokens-auth-react/recipe/emailverification";
+import ThirdPartyEmailPassword, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
@@ -40,6 +36,9 @@ SuperTokens.init({
         websiteDomain: getWebsiteDomain(),
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+        }),
         ThirdPartyEmailPassword.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init(), Apple.init()],
@@ -65,9 +64,6 @@ SuperTokens.init({
                     EmailPasswordSignUpForm_Override: CustomSignUp,
                 },
             },
-            emailVerificationFeature: {
-                mode: "REQUIRED",
-            },
         }),
         Session.init({
             override: {
@@ -87,7 +83,8 @@ SuperTokens.init({
                             let accessTokenPayload = await this.getAccessTokenPayloadSecurely();
                             if (accessTokenPayload.isUsingFakePassword) {
                                 // we are showing an application specific UI here
-                                let emailVerified = await ThirdPartyEmailPassword.isEmailVerified();
+                                const emailVerified =
+                                    EmailVerification.EmailVerificationClaim.getValueFromPayload(accessTokenPayload);
 
                                 if (emailVerified) {
                                     // in this case, the user has verified their email, but not set
@@ -127,13 +124,13 @@ function App() {
                                     /* This protects the "/" route so that it shows 
                                        <Home /> only if the user is logged in.
                                        Else it redirects the user to "/auth" */
-                                    <ThirdPartyEmailPasswordAuth
+                                    <SessionAuth
                                         onSessionExpired={() => {
                                             updateShowSessionExpiredPopup(true);
                                         }}>
                                         <Home />
                                         {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </ThirdPartyEmailPasswordAuth>
+                                    </SessionAuth>
                                 }
                             />
                             <Route path="/set-password" element={<SetPassword />} />

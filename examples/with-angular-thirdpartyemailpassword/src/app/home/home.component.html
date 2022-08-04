@@ -4,11 +4,11 @@
     <div *ngIf="session; else elseBlock">
         <span>UserId:</span>
         <h3>{{ userId }}</h3>
-
+        <h4>{{ emailVerificationStatus }}</h4>
         <button (click)="onLogout()">Sign Out</button>
     </div>
     <p>Visit the <a href="https://supertokens.com">SuperTokens tutorial</a> to learn how to build Auth under a day.</p>
     <ng-template #elseBlock>
-        <button (click)="redirectToLogin()">Sign in</button>
+        <button (click)="redirectToLogin()" id="sign-in-btn">Sign in</button>
     </ng-template>
 </div>
