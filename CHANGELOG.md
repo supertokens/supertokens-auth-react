@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Updated `react-scripts` in all examples
 -   Updated READMEs for example apps, removed information that is no longer relevant.
 
+### Fixed
+
+-   Fixed capitalization of GitHub on the UI (fixes https://github.com/supertokens/supertokens-auth-react/issues/539)
+
 ## [0.24.2] - 2022-07-28
 
 -   Fixes prop passing when custom theme is used with the feature components
