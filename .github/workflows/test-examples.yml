@@ -51,8 +51,5 @@ jobs:
               working-directory: ${{ matrix.examplePath }}
             - run: npm install mocha@6.1.4 jsdom-global@3.0.2 puppeteer@^11.0.0
               working-directory: ${{ matrix.examplePath }}
-            - run: npm start
-              working-directory: ${{ matrix.examplePath }}
-            - run: bash test/waitForServerStartup.sh
-            - run: npx mocha --no-config --timeout 40000 test/**/*.test.js
+            - run: npm start & bash test/waitForServerStartup.sh && npx mocha --no-config --timeout 40000 test/**/*.test.js
               working-directory: ${{ matrix.examplePath }}
