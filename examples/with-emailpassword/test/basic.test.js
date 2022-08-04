@@ -83,7 +83,7 @@ describe("SuperTokens Example Basic tests", function () {
 
             // Redirected to email verification screen
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
-            const user = await EmailPassword.getUsersByEmail(email);
+            const user = await EmailPassword.getUserByEmail(email);
 
             // Attempt reloading Home
             await page.goto(websiteDomain);
