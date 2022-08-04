@@ -53,6 +53,6 @@ jobs:
               working-directory: ${{ matrix.examplePath }}
             - run: npm start
               working-directory: ${{ matrix.examplePath }}
-            - run: while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:3000)" != "200" ]] && [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:4200)" != "200" ]]; do sleep 5; done
+            - run: bash test/waitForServerStartup.sh
             - run: npx mocha --no-config --timeout 40000 test/**/*.test.js
               working-directory: ${{ matrix.examplePath }}

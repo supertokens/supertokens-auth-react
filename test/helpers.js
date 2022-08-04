@@ -784,3 +784,7 @@ export async function setGeneralErrorToLocalStorage(recipeName, action, page) {
         action,
     });
 }
+
+export async function getTestEmail() {
+    return `john.doe+${Date.now()}@supertokens.io`;
+}
