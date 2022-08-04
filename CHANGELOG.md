@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Updated `react-scripts` in all examples
 -   Updated READMEs for example apps, removed information that is no longer relevant.
 
+### Breaking changes
+
+-   SuperTokens components can now throw in case the server goes down. We advise adding an ErrorBoundary to provide a meaningful error screen. Please check here: https://reactjs.org/docs/error-boundaries.html
+
 ## [0.24.2] - 2022-07-28
 
 -   Fixes prop passing when custom theme is used with the feature components
