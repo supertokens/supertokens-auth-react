@@ -7,14 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.25.0]
+
+### Breaking changes
+
+-   SuperTokens components can now throw in case the server goes down. We advise adding an ErrorBoundary to provide a meaningful error screen. Please check here: https://reactjs.org/docs/error-boundaries.html
+
+## [0.24.3] - 2022-08-05
+
 ### Changed
 
 -   Updated `react-scripts` in all examples
 -   Updated READMEs for example apps, removed information that is no longer relevant.
 
-### Breaking changes
+### Fixed
 
--   SuperTokens components can now throw in case the server goes down. We advise adding an ErrorBoundary to provide a meaningful error screen. Please check here: https://reactjs.org/docs/error-boundaries.html
+-   Fixed capitalization of GitHub on the UI (fixes https://github.com/supertokens/supertokens-auth-react/issues/539)
 
 ## [0.24.2] - 2022-07-28
 
