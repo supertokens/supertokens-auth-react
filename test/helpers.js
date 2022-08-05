@@ -488,7 +488,7 @@ export async function getLatestURLWithToken() {
 export async function assertProviders(page) {
     const providers = await getProvidersLabels(page);
     assert.deepStrictEqual(providers, [
-        "Continue with Github",
+        "Continue with GitHub",
         "Continue with Google",
         "Continue with Facebook",
         "Continue with Apple",
