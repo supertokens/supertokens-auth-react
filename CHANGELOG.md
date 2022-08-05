@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.24.3] - 2022-08-05
+
 ### Changed
 
 -   Updated `react-scripts` in all examples
