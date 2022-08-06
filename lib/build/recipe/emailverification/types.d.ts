@@ -1,4 +1,5 @@
 import { FeatureBaseConfig, ThemeBaseProps } from "../../types";
+import { UserInput as RecipeModuleUserInput } from "../recipeModule/types";
 import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
@@ -21,7 +22,7 @@ export declare type UserInput = {
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
     };
-};
+} & RecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type Config = UserInput &
     RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {

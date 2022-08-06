@@ -13,6 +13,7 @@
  * under the License.
  */
 import { FeatureBaseConfig, ThemeBaseProps } from "../../types";
+import { UserInput as RecipeModuleUserInput } from "../recipeModule/types";
 import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
 
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
@@ -39,7 +40,7 @@ export type UserInput = {
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
     };
-};
+} & RecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 // Config is what does in the constructor of the recipe.
 export type Config = UserInput &
