@@ -2,6 +2,7 @@ import express from "express";
 import supertokens from "supertokens-node";
 import Session from "supertokens-node/recipe/session";
 import ThirdPartyEmailPassword, { Google, Github } from "supertokens-node/recipe/thirdpartyemailpassword";
+import EmailVerification from "supertokens-node/recipe/emailverification";
 import { middleware, errorHandler } from "supertokens-node/framework/express";
 import cors from "cors";
 import { generateOtpAndMapToToken, mailTransporter, getMessageBody } from "./utils";
@@ -30,6 +31,60 @@ supertokens.init({
         websiteDomain, // TODO: Change to your app's website domain
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+            createAndSendCustomEmail: async (user, url) => {
+                // retrieve the token from the url
+                const token = new URL(url).searchParams.get("token");
+
+                if (token !== null) {
+                    // generate a 6 digit otp
+                    let otp = generateOtpAndMapToToken(token, otpToTokenMapping);
+                    console.log(otp, user.email);
+                    // send a mail to the user with the otp
+                    await mailTransporter.sendMail({
+                        from: process.env.NODEMAILER_USER,
+                        to: user.email,
+                        subject: "SuperTokens Demo OTP",
+                        html: getMessageBody(otp, user.email),
+                    });
+                }
+            },
+            override: {
+                apis: (oI) => {
+                    return {
+                        ...oI,
+                        verifyEmailPOST: async (input) => {
+                            if (oI.verifyEmailPOST === undefined) {
+                                throw Error("should not come here");
+                            }
+
+                            // retrieve the otp from input
+                            let otp = input.token;
+
+                            // retrieve the token mapped to the otp if it exists
+                            let superTokensToken = otpToTokenMapping.get(otp);
+
+                            if (superTokensToken !== undefined) {
+                                // if the mapping exists set the token value in the input object to the retrieved token.
+                                input.token = superTokensToken;
+
+                                // remove the otp and token from the mapping
+                                otpToTokenMapping.delete(otp);
+                            } else {
+                                // If the mapping does not exist return an invalid token error
+                                return {
+                                    status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR",
+                                };
+                            }
+
+                            let response = await oI.verifyEmailPOST(input);
+                            return response;
+                        },
+                    };
+                },
+            },
+        }),
         ThirdPartyEmailPassword.init({
             providers: [
                 // We have provided you with development keys which you can use for testing.
@@ -43,61 +98,6 @@ supertokens.init({
                     clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
                 }),
             ],
-            emailVerificationFeature: {
-                createAndSendCustomEmail: async (user, url) => {
-                    // retrieve the token from the url
-                    const token = new URL(url).searchParams.get("token");
-
-                    if (token !== null) {
-                        // generate a 6 digit otp
-                        let otp = generateOtpAndMapToToken(token, otpToTokenMapping);
-
-                        // send a mail to the user with the otp
-                        await mailTransporter.sendMail({
-                            from: process.env.NODEMAILER_USER,
-                            to: user.email,
-                            subject: "SuperTokens Demo OTP",
-                            html: getMessageBody(otp, user.email),
-                        });
-                    }
-                },
-            },
-            override: {
-                emailVerificationFeature: {
-                    apis: (oI) => {
-                        return {
-                            ...oI,
-                            verifyEmailPOST: async (input) => {
-                                if (oI.verifyEmailPOST === undefined) {
-                                    throw Error("should not come here");
-                                }
-
-                                // retrieve the otp from input
-                                let otp = input.token;
-
-                                // retrieve the token mapped to the otp if it exists
-                                let superTokensToken = otpToTokenMapping.get(otp);
-
-                                if (superTokensToken !== undefined) {
-                                    // if the mapping exists set the token value in the input object to the retrieved token.
-                                    input.token = superTokensToken;
-
-                                    // remove the otp and token from the mapping
-                                    otpToTokenMapping.delete(otp);
-                                } else {
-                                    // If the mapping does not exist return an invalid token error
-                                    return {
-                                        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR",
-                                    };
-                                }
-
-                                let response = await oI.verifyEmailPOST(input);
-                                return response;
-                            },
-                        };
-                    },
-                },
-            },
         }),
         Session.init(), // initializes session features
     ],
@@ -112,6 +112,10 @@ app.use(
         credentials: true,
     })
 );
+
+app.get("/test/otps", (req, res) => {
+    res.json({ otps: Array.from(otpToTokenMapping.keys()) });
+});
 
 app.use(middleware());
 

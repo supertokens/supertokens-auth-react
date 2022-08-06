@@ -4,6 +4,7 @@ const helmet = require("helmet");
 require("dotenv").config();
 let supertokens = require("supertokens-node");
 let Session = require("supertokens-node/recipe/session");
+let EmailVerification = require("supertokens-node/recipe/emailverification");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
@@ -26,6 +27,9 @@ supertokens.init({
         websiteDomain, // TODO: Change to your app's website domain
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+        }),
         ThirdPartyEmailPassword.init({
             providers: [
                 // We have provided you with development keys which you can use for testing.

@@ -121,6 +121,7 @@ export default function OtpScreen() {
             />
             <div>
                 <button
+                    id="submitOtp"
                     onClick={sendCode}
                     style={{
                         backgroundColor: "#007aff",

@@ -6,7 +6,8 @@
         "build": "rollup -c",
         "client": "rollup -c -w",
         "check": "svelte-check --tsconfig ./tsconfig.json",
-        "start": "sirv public -s",
+        "prod": "sirv public -s",
+        "start": "npm-run-all --parallel start:server prod",
         "server": "nodemon server.js",
         "start:server": "node server.js",
         "dev": "npm-run-all --parallel server client"

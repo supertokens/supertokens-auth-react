@@ -1,10 +1,7 @@
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
-import ThirdPartyEmailpassword, {
-    Github,
-    Google,
-    ThirdPartyEmailPasswordAuth,
-} from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import Session from "supertokens-auth-react/recipe/session";
+import ThirdPartyEmailpassword, { Github, Google } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
+import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import "./App.css";
 import Home from "./Home";
 import OtpScreen from "./OtpScreen";
@@ -32,22 +29,20 @@ SuperTokens.init({
         websiteDomain: getWebsiteDomain(),
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+
+            override: {
+                components: {
+                    EmailVerificationSendVerifyEmail_Override: () => {
+                        return <OtpScreen />;
+                    },
+                },
+            },
+        }),
         ThirdPartyEmailpassword.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init()],
-            },
-
-            emailVerificationFeature: {
-                mode: "REQUIRED",
-            },
-            override: {
-                emailVerification: {
-                    components: {
-                        EmailVerificationSendVerifyEmail_Override: () => {
-                            return <OtpScreen />;
-                        },
-                    },
-                },
             },
         }),
         Session.init(),
@@ -67,9 +62,9 @@ function App() {
                                 /* This protects the "/" route so that it shows 
                                 <Home /> only if the user is logged in.
                                 Else it redirects the user to "/auth" */
-                                <ThirdPartyEmailPasswordAuth>
+                                <SessionAuth>
                                     <Home />
-                                </ThirdPartyEmailPasswordAuth>
+                                </SessionAuth>
                             }
                         />
                     </Routes>
