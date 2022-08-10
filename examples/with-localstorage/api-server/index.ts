@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import supertokens from "supertokens-node";
 import Session from "supertokens-node/recipe/session";
+import EmailVerification from "supertokens-node/recipe/emailverification";
 import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
 import { verifySession } from "supertokens-node/recipe/session/framework/express";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
@@ -44,6 +45,9 @@ supertokens.init({
         websiteDomain,
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+        }),
         EmailPassword.init(),
         Session.init({
             override: {
@@ -55,6 +59,15 @@ supertokens.init({
                             const session = await origImpl.createNewSession(input);
                             // We need to copy the Set-Cookies header into the custom header in the response.
                             updateHeadersForResponse(input.res);
+
+                            if (session) {
+                                const origUpdate = session.updateAccessTokenPayload.bind(session);
+                                session.updateAccessTokenPayload = async (newAccessTokenPayload, userContext) => {
+                                    await origUpdate(newAccessTokenPayload, userContext);
+                                    updateHeadersForResponse(input.res);
+                                };
+                            }
+
                             return session;
                         },
                         refreshSession: async function (input) {
@@ -62,15 +75,29 @@ supertokens.init({
                             updateHeadersInRequest(input.req);
                             const session = await origImpl.refreshSession(input);
                             updateHeadersForResponse(input.res);
+                            if (session) {
+                                const origUpdate = session.updateAccessTokenPayload.bind(session);
+                                session.updateAccessTokenPayload = async (newAccessTokenPayload, userContext) => {
+                                    await origUpdate(newAccessTokenPayload, userContext);
+                                    updateHeadersForResponse(input.res);
+                                };
+                            }
                             return session;
                         },
                         getSession: async function (input) {
                             // Before calling the original implementation, we need to check the custom header.
                             updateHeadersInRequest(input.req);
                             // Calling the original implementation
-                            const res = origImpl.getSession(input);
+                            const res = await origImpl.getSession(input);
                             // This method may change cookie values, so we need to copy the Set-Cookies header into the custom header in the response.
                             updateHeadersForResponse(input.res);
+                            if (res) {
+                                const origUpdate = res.updateAccessTokenPayload.bind(res);
+                                res.updateAccessTokenPayload = async (newAccessTokenPayload, userContext) => {
+                                    await origUpdate(newAccessTokenPayload, userContext);
+                                    updateHeadersForResponse(input.res);
+                                };
+                            }
                             return res;
                         },
                     };

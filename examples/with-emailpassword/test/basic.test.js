@@ -71,7 +71,7 @@ describe("SuperTokens Example Basic tests", function () {
 
     describe("Email Password test", function () {
         it("Successful signup with credentials", async function () {
-            await page.goto(websiteDomain);
+            await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             // redirected to /auth
             await toggleSignInSignUp(page);
@@ -86,7 +86,7 @@ describe("SuperTokens Example Basic tests", function () {
             const user = await EmailPassword.getUserByEmail(email);
 
             // Attempt reloading Home
-            await page.goto(websiteDomain);
+            await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
 
             // Create a new token and use it (we don't have access to the originally sent one)

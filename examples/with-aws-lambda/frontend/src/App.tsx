@@ -1,7 +1,7 @@
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
-import EmailPassword, { EmailPasswordAuth } from "supertokens-auth-react/recipe/emailpassword";
-import Session from "supertokens-auth-react/recipe/session";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
@@ -40,9 +40,9 @@ function App() {
                             <Route
                                 path="/"
                                 element={
-                                    <EmailPasswordAuth>
+                                    <SessionAuth>
                                         <Home />
-                                    </EmailPasswordAuth>
+                                    </SessionAuth>
                                 }
                             />
                         </Routes>

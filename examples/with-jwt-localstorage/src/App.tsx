@@ -3,7 +3,8 @@ import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
-import Session from "supertokens-auth-react/recipe/session";
+import EmailVerification from "supertokens-auth-react/recipe/emailverification";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
@@ -29,10 +30,27 @@ SuperTokens.init({
         websiteDomain: getWebsiteDomain(),
     },
     recipeList: [
-        EmailPassword.init({
-            emailVerificationFeature: {
-                mode: "REQUIRED",
+        EmailVerification.init({
+            preAPIHook: async (context) => {
+                let jwt = localStorage.getItem("jwt");
+                if (jwt !== null) {
+                    (context.requestInit.headers as any)["Authorization"] = "Bearer " + jwt;
+                }
+                return context;
             },
+            mode: "REQUIRED",
+            postAPIHook: async (context) => {
+                if (context.action === "IS_EMAIL_VERIFIED" || context.action === "VERIFY_EMAIL") {
+                    let responseBody = await context.fetchResponse.json();
+                    let jwt = responseBody.jwt;
+                    console.log("postAPIHook", JSON.stringify({ action: context.action, jwt }));
+                    if (jwt) {
+                        localStorage.setItem("jwt", jwt);
+                    }
+                }
+            },
+        }),
+        EmailPassword.init({
             preAPIHook: async (context) => {
                 let jwt = localStorage.getItem("jwt");
                 if (jwt !== null) {
@@ -60,6 +78,12 @@ SuperTokens.init({
                 functions: (oI) => {
                     return {
                         ...oI,
+                        validateClaims: async function (input) {
+                            console.log("validating", JSON.stringify(input.claimValidators.map((a) => a.id)));
+                            const res = await oI.validateClaims(input);
+                            console.log("validateClaims res", JSON.stringify(res));
+                            return res;
+                        },
                         addAxiosInterceptors: function () {
                             throw new Error("Unsupported exception");
                         },
@@ -105,13 +129,13 @@ function App() {
                                     /* This protects the "/" route so that it shows 
                                         <Home /> only if the user is logged in.
                                         Else it redirects the user to "/auth" */
-                                    <EmailPassword.EmailPasswordAuth
+                                    <SessionAuth
                                         onSessionExpired={() => {
                                             updateShowSessionExpiredPopup(true);
                                         }}>
                                         <Home />
                                         {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </EmailPassword.EmailPasswordAuth>
+                                    </SessionAuth>
                                 }
                             />
                         </Routes>

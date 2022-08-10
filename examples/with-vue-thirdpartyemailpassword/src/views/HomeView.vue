@@ -10,6 +10,7 @@ export default {
     },
     mounted() {
         this.getUserInfo();
+        this.validateClaims();
     },
     methods: {
         redirectToLogin() {
@@ -19,6 +20,14 @@ export default {
             this.session = await Session.doesSessionExist();
             if (this.session) {
                 this.userId = await Session.getUserId();
+            }
+        },
+        async validateClaims() {
+            const res = await Session.validateClaims({});
+            // If we have any validation errors coming from global claims, we redirect to /auth
+            // That handles redirecting to the appropriate location for email verification
+            if (res.length > 0) {
+                window.location.href = "/auth";
             }
         },
         async onLogout() {
@@ -36,7 +45,7 @@ export default {
 
             <div v-if="session">
                 <span>UserId:</span>
-                <h3>{{ userId }}</h3>
+                <h3 id="userId">{{ userId }}</h3>
 
                 <button @click="onLogout">Sign Out</button>
             </div>
@@ -45,7 +54,7 @@ export default {
                     Visit the <a href="https://supertokens.com">SuperTokens tutorial</a> to learn how to build Auth
                     under a day.
                 </p>
-                <button @click="redirectToLogin">Sign in</button>
+                <button id="signInBtn" @click="redirectToLogin">Sign in</button>
             </div>
         </div>
     </main>

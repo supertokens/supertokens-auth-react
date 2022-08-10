@@ -14,8 +14,6 @@ const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
 
-export const emailVerificationOn = true;
-
 supertokens.init({
     framework: "express",
     supertokens: {
@@ -64,6 +62,43 @@ supertokens.init({
                     },
                 ],
             },
+            override: {
+                apis: (oI) => ({
+                    ...oI,
+                    signUpPOST(input, ...rest) {
+                        if (oI.signUpPOST === undefined) {
+                            throw new Error("Should never come here");
+                        }
+
+                        // We format the phone number here to get it to a standard format
+                        const emailField = input.formFields.find((field) => field.id === "email");
+                        if (emailField) {
+                            const phoneNumber = parsePhoneNumber(emailField.value);
+                            if (phoneNumber !== undefined && phoneNumber.isValid()) {
+                                emailField.value = phoneNumber.number;
+                            }
+                        }
+
+                        return oI.signUpPOST(input, ...rest);
+                    },
+                    signInPOST(input, ...rest) {
+                        if (oI.signInPOST === undefined) {
+                            throw new Error("Should never come here");
+                        }
+
+                        // We format the phone number here to get it to a standard format
+                        const emailField = input.formFields.find((field) => field.id === "email");
+                        if (emailField) {
+                            const phoneNumber = parsePhoneNumber(emailField.value);
+                            if (phoneNumber !== undefined && phoneNumber.isValid()) {
+                                emailField.value = phoneNumber.number;
+                            }
+                        }
+
+                        return oI.signInPOST(input, ...rest);
+                    },
+                }),
+            },
         }),
         Passwordless.init({
             contactMethod: "PHONE",
@@ -91,6 +126,7 @@ supertokens.init({
 
                             let phoneNumber: string = session.getAccessTokenPayload().phoneNumber;
 
+                            console.log(phoneNumber, (input as any).phoneNumber);
                             if (!("phoneNumber" in input) || input.phoneNumber !== phoneNumber) {
                                 throw new Error("Should never come here");
                             }
@@ -117,8 +153,7 @@ supertokens.init({
                                 // OTP verification was successful. We can now mark the
                                 // session's payload as phoneNumberVerified: true so that
                                 // the user has access to API routes and the frontend UI
-                                await resp.session.updateAccessTokenPayload({
-                                    ...resp.session.getAccessTokenPayload(),
+                                await resp.session.mergeIntoAccessTokenPayload({
                                     phoneNumberVerified: true,
                                 });
                             }

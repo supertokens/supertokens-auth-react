@@ -71,7 +71,7 @@ describe("SuperTokens Example Basic tests", function () {
 
     describe("Email Password test", function () {
         it("Successful signup with credentials", async function () {
-            await page.goto(websiteDomain);
+            await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             // No session state
             const signInBtn = await page.waitForSelector("#sign-in-btn");
@@ -90,7 +90,7 @@ describe("SuperTokens Example Basic tests", function () {
             const user = await EmailPassword.getUserByEmail(email);
 
             // Attempt reloading Home
-            await page.goto(websiteDomain);
+            await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             // It should display that we are signed in but not verified
             {

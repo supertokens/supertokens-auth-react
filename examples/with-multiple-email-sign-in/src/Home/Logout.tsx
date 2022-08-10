@@ -13,6 +13,7 @@ export default function Logout(props: { logoutClicked: () => void }) {
                 paddingRight: "75px",
             }}>
             <div
+                id="logoutBtn"
                 onClick={logoutClicked}
                 style={{
                     display: "flex",

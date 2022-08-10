@@ -5,6 +5,7 @@
     "main": "server.js",
     "scripts": {
         "start": "npm-run-all --parallel api-server spa",
+        "postinstall": "cd frontend && npm i",
         "spa": "cd frontend && npm run start",
         "api-server": "node api-server.js",
         "api-server:dev": "nodemon api-server.js",

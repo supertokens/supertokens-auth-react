@@ -24,8 +24,7 @@
         "web-vitals": "^0.2.4"
     },
     "scripts": {
-        "start": "npm-run-all --parallel front",
-        "front": "BROWSER=none react-scripts start",
+        "start": "netlify dev -c 'react-scripts start'",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",

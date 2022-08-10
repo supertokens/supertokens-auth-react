@@ -1,4 +1,5 @@
 import EmailPassword from "supertokens-node/recipe/emailpassword";
+import EmailVerification from "supertokens-node/recipe/emailverification";
 import Session from "supertokens-node/recipe/session";
 
 import { appInfo } from "./appInfo";
@@ -11,6 +12,9 @@ export const backendConfig = () => {
         },
         appInfo,
         recipeList: [
+            EmailVerification.init({
+                mode: "REQUIRED",
+            }),
             EmailPassword.init(),
             Session.init({
                 cookieSameSite: "none",

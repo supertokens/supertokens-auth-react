@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-domv5";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword";
 import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from "./App";
-import Auth from "./Auth";
 
 function AppWithReactDomRouter(props) {
     return (
@@ -17,27 +16,27 @@ function AppWithReactDomRouter(props) {
                         </Route>
 
                         <Route exact path="/CasE/Case-SensItive1-PAth" sensitive>
-                            <Auth {...props}>
+                            <SessionAuth {...props}>
                                 <Dashboard />
-                            </Auth>
+                            </SessionAuth>
                         </Route>
 
                         <Route path="/dashboard-no-auth">
-                            <Auth requireAuth={false} {...props}>
+                            <SessionAuth requireAuth={false} {...props}>
                                 <DashboardNoAuthRequired />
-                            </Auth>
+                            </SessionAuth>
                         </Route>
 
                         {/* Logged In Components */}
                         <Route path="/dashboard">
-                            <Auth {...props}>
+                            <SessionAuth {...props}>
                                 <Dashboard />
-                            </Auth>
+                            </SessionAuth>
                         </Route>
                         <Route path="/redirect-to-this-custom-path">
-                            <Auth {...props}>
+                            <SessionAuth {...props}>
                                 <Dashboard />
-                            </Auth>
+                            </SessionAuth>
                         </Route>
 
                         <Route path="/contact">

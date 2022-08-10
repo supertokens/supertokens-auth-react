@@ -7,7 +7,6 @@ import SuperTokens, {
 } from "supertokens-auth-react";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
-import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route, useLocation } from "react-router-dom";
 import Footer from "./Footer";
@@ -32,6 +31,11 @@ SuperTokens.init({
         appName: "SuperTokens Demo App", // TODO: Your app name
         apiDomain: getApiDomain(), // TODO: Change to your app's API domain
         websiteDomain: getWebsiteDomain(), // TODO: Change to your app's website domain
+    },
+    getRedirectionURL: async (ctx) => {
+        if (ctx.action === "TO_AUTH") {
+            return "/auth?rid=thirdpartyemailpassword";
+        }
     },
     recipeList: [
         ThirdPartyEmailPassword.init({
@@ -59,11 +63,6 @@ SuperTokens.init({
             signInUpFeature: {
                 disableDefaultUI: true,
             },
-            getRedirectionURL: async function (context) {
-                if (context.action === "SIGN_IN_AND_UP") {
-                    return "/second-factor";
-                }
-            },
             contactMethod: "PHONE",
             override: {
                 components: {
@@ -81,7 +80,7 @@ SuperTokens.init({
                                     // it can come here if a session doesn't exist.
                                     // in this case, the screen we should redirect to the
                                     // first login challenge
-                                    ThirdPartyEmailPassword.redirectToAuth({
+                                    redirectToAuth({
                                         redirectBack: false,
                                     });
                                 });

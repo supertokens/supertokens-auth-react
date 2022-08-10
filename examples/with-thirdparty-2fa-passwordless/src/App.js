@@ -1,8 +1,8 @@
 import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
-import ThirdParty, { ThirdPartyAuth } from "supertokens-auth-react/recipe/thirdparty";
-import Session from "supertokens-auth-react/recipe/session";
+import ThirdParty, { Github, Apple, Google } from "supertokens-auth-react/recipe/thirdparty";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
@@ -44,13 +44,7 @@ SuperTokens.init({
             },
             signInAndUpFeature: {
                 disableDefaultUI: true,
-                providers: [
-                    {
-                        id: "google-workspaces",
-                        name: "Google Workspaces",
-                        // buttonComponent: <div></div> - TODO: You can provide your own JSX here
-                    },
-                ],
+                providers: [Github.init(), Google.init(), Apple.init()],
             },
         }),
         Passwordless.init({
@@ -101,7 +95,7 @@ SuperTokens.init({
                             let accessTokenPayload = await this.getAccessTokenPayloadSecurely(input);
                             if (accessTokenPayload["auth"].length !== 2) {
                                 // if both the factors have not been completed, we return false.
-                                // this is so that the frontend's <ThirdPartyAuth> component
+                                // this is so that the frontend's <SessionAuth> component
                                 // allows showing protected pages only if both the factors
                                 // are completed.
                                 return false;
@@ -133,13 +127,13 @@ function App() {
                                     /* This protects the "/" route so that it shows 
                                         <Home /> only if the user is logged in.
                                         Else it redirects the user to "/auth" */
-                                    <ThirdPartyAuth
+                                    <SessionAuth
                                         onSessionExpired={() => {
                                             updateShowSessionExpiredPopup(true);
                                         }}>
                                         <Home />
                                         {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </ThirdPartyAuth>
+                                    </SessionAuth>
                                 }
                             />
                             <Route

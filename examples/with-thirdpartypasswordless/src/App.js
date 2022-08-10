@@ -1,12 +1,11 @@
-import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
-import Session from "supertokens-auth-react/recipe/session";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
-import SessionExpiredPopup from "./SessionExpiredPopup";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -27,10 +26,10 @@ SuperTokens.init({
         websiteDomain: getWebsiteDomain(), // TODO: Change to your app's website domain
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+        }),
         ThirdPartyPasswordless.init({
-            emailVerificationFeature: {
-                mode: "REQUIRED",
-            },
             signInUpFeature: {
                 providers: [
                     ThirdPartyPasswordless.Github.init(),
@@ -45,8 +44,6 @@ SuperTokens.init({
 });
 
 function App() {
-    let [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
-
     return (
         <SuperTokensWrapper>
             <div className="App">
@@ -62,13 +59,9 @@ function App() {
                                     /* This protects the "/" route so that it shows 
                                         <Home /> only if the user is logged in.
                                         Else it redirects the user to "/auth" */
-                                    <ThirdPartyPasswordless.ThirdPartyPasswordlessAuth
-                                        onSessionExpired={() => {
-                                            updateShowSessionExpiredPopup(true);
-                                        }}>
+                                    <SessionAuth>
                                         <Home />
-                                        {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </ThirdPartyPasswordless.ThirdPartyPasswordlessAuth>
+                                    </SessionAuth>
                                 }
                             />
                         </Routes>

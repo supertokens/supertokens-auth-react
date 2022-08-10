@@ -5,9 +5,11 @@ import Session from "supertokens-node/recipe/session";
 import { verifySession } from "supertokens-node/recipe/session/framework/express";
 import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
+import EmailVerification, { EmailVerificationClaim } from "supertokens-node/recipe/emailverification";
 import { makeSessionContainerFromJWT } from "./sessionContainer";
 import JsonWebToken, { JwtHeader, SigningKeyCallback } from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
+import SuperTokensError from "supertokens-node/lib/build/error";
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -38,6 +40,74 @@ supertokens.init({
         websiteDomain,
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+            override: {
+                apis: (originalImplementation) => ({
+                    ...originalImplementation,
+                    isEmailVerifiedGET: async (input) => {
+                        const isVerified = await EmailVerification.isEmailVerified(
+                            input.session.getUserId(input.userContext)
+                        );
+
+                        let accessTokenResp = await Session.createJWT(
+                            {
+                                ...input.session.getAccessTokenPayload(input.userContext),
+                                sub: input.session.getUserId(input.userContext),
+                                ...(await EmailVerificationClaim.build(
+                                    input.session.getUserId(input.userContext),
+                                    input.userContext
+                                )),
+                            },
+                            2630000
+                        ); // alive for 1 month
+
+                        if (accessTokenResp.status === "UNSUPPORTED_ALGORITHM_ERROR") {
+                            throw new Error("Should never come here");
+                        }
+
+                        // we send a custom response with the JWT
+                        input.options.res.sendJSONResponse({
+                            status: "OK",
+                            isVerified,
+                            jwt: accessTokenResp.jwt,
+                        });
+
+                        return {
+                            status: "OK",
+                            isVerified,
+                        };
+                    },
+                    verifyEmailPOST: async (input) => {
+                        const res = await EmailVerification.verifyEmailUsingToken(input.token, input.userContext);
+
+                        if (input.session && res.status === "OK") {
+                            const updatedTokenPayload = {
+                                ...input.session.getAccessTokenPayload(input.userContext),
+                                sub: input.session.getUserId(input.userContext),
+                                ...(await EmailVerificationClaim.build(
+                                    input.session.getUserId(input.userContext),
+                                    input.userContext
+                                )),
+                            };
+                            let accessTokenResp = await Session.createJWT(updatedTokenPayload, 2630000); // alive for 1 month
+
+                            if (accessTokenResp.status === "UNSUPPORTED_ALGORITHM_ERROR") {
+                                throw new Error("Should never come here");
+                            }
+
+                            // we send a custom response with the JWT
+                            input.options.res.sendJSONResponse({
+                                ...res,
+                                jwt: accessTokenResp.jwt,
+                            });
+                        }
+
+                        return res;
+                    },
+                }),
+            },
+        }),
         EmailPassword.init({
             override: {
                 apis: (oI) => {
@@ -90,7 +160,7 @@ supertokens.init({
                         getSession: async function (input) {
                             // we get the JWT from the request header
                             let jwt = input.req.getHeaderValue("authorization");
-                            jwt = jwt.split(" ")[1]; // the input is "Bearer JWT". So we get the JWT part
+                            jwt = jwt!.split(" ")[1]; // the input is "Bearer JWT". So we get the JWT part
                             if (jwt === undefined || jwt === null) {
                                 if (input.options?.sessionRequired === false) {
                                     return undefined;
@@ -103,7 +173,7 @@ supertokens.init({
 
                             // we verify the JWT
                             let success = await new Promise((resolve) =>
-                                JsonWebToken.verify(jwt, getJWTKey, {}, function (err) {
+                                JsonWebToken.verify(jwt!, getJWTKey, {}, function (err) {
                                     if (err) {
                                         resolve(false);
                                     } else {
@@ -170,6 +240,39 @@ supertokens.init({
                             throw new Error("Unsupported operation");
                         },
                         updateSessionData: async function (input) {
+                            throw new Error("Unsupported operation");
+                        },
+                        getGlobalClaimValidators: async function (input) {
+                            return oI.getGlobalClaimValidators(input);
+                        },
+                        mergeIntoAccessTokenPayload: async function (input) {
+                            throw new Error("Unsupported operation");
+                        },
+                        assertClaims: async function (input) {
+                            const { invalidClaims } = await Session.validateClaimsInJWTPayload(
+                                input.session.getUserId(input.userContext),
+                                input.session.getAccessTokenPayload(input.userContext),
+                                () => input.claimValidators,
+                                input.userContext
+                            );
+                            if (invalidClaims.length > 0) {
+                                throw new SuperTokensError({
+                                    type: "INVALID_CLAIMS",
+                                    message: "INVALID_CLAIMS",
+                                    payload: invalidClaims,
+                                });
+                            }
+                        },
+                        validateClaimsForSessionHandle: oI.validateClaimsForSessionHandle,
+                        validateClaimsInJWTPayload: oI.validateClaimsInJWTPayload,
+                        fetchAndSetClaim: async function (input) {
+                            throw new Error("Unsupported operation");
+                        },
+                        setClaimValue: async function (input) {
+                            throw new Error("Unsupported operation");
+                        },
+                        getClaimValue: oI.getClaimValue,
+                        removeClaim: async function (input) {
                             throw new Error("Unsupported operation");
                         },
                     };

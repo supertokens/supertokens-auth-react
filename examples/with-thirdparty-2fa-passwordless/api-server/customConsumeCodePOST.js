@@ -31,8 +31,7 @@ async function consumeCodePOST(input) {
 
     const session = await Session.getSession(input.options.req, input.options.res);
     let currPayload = session.getAccessTokenPayload();
-    await session.updateAccessTokenPayload({
-        ...currPayload,
+    await session.mergeIntoAccessTokenPayload({
         auth: [...currPayload["auth"], "pswdless"], // we add the second factor to the access token payload.
     });
 

@@ -1,18 +1,22 @@
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
-import EmailPassword, { EmailPasswordAuth } from "supertokens-auth-react/recipe/emailpassword";
-import Session from "supertokens-auth-react/recipe/session";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Footer from "./Footer";
 
 export function getDomain() {
     let host = window.location.hostname;
+    if (host === "localhost") {
+        return "http://localhost:8888";
+    }
+
     let port = window.location.port;
     if (port !== "0" && port !== "80" && port !== "443" && port !== "") {
-        return host + ":" + port;
+        return "https://" + host + ":" + port;
     }
-    return host;
+    return "https://" + host;
 }
 
 SuperTokens.init({
@@ -41,9 +45,9 @@ function App() {
                                     /* This protects the "/" route so that it shows 
                                         <Home /> only if the user is logged in.
                                         Else it redirects the user to "/auth" */
-                                    <EmailPasswordAuth>
+                                    <SessionAuth>
                                         <Home />
-                                    </EmailPasswordAuth>
+                                    </SessionAuth>
                                 }
                             />
                         </Routes>

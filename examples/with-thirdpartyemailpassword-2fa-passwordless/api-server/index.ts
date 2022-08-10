@@ -14,8 +14,6 @@ const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
 
-export const emailVerificationOn = true;
-
 supertokens.init({
     framework: "express",
     supertokens: {
@@ -115,8 +113,7 @@ supertokens.init({
                                 // OTP verification was successful. We can now mark the
                                 // session's payload as is2faComplete: true so that
                                 // the user has access to API routes and the frontend UI
-                                await resp.session.updateAccessTokenPayload({
-                                    ...resp.session.getAccessTokenPayload(),
+                                await resp.session.mergeIntoAccessTokenPayload({
                                     is2faComplete: true,
                                 });
 

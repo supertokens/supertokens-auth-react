@@ -40,16 +40,6 @@ supertokens.init({
                     return `http://${userDomain}.example.com:${websitePort}/auth/reset-password`;
                 },
             },
-            emailVerificationFeature: {
-                getEmailVerificationURL: async (user) => {
-                    let { id, email } = user;
-
-                    // getUserDomain is your implementation
-                    let userDomain = await getUserDomain(email);
-
-                    return `http://${userDomain}.example.com:${websitePort}/auth/verify-email`;
-                },
-            },
         }),
         Session.init(),
     ],
