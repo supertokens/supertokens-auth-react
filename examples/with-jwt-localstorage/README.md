@@ -24,9 +24,11 @@ On the frontend, since we are using our supertokens-auth-react SDK, we save the 
 
 ## Project setup
 
-Use `npm` to install the project dependencies:
+Clone the repo, enter the directory, and use `npm` to install the project dependencies:
 
 ```bash
+git clone https://github.com/supertokens/supertokens-auth-react
+cd supertokens-auth-react/examples/with-jwt-localstorage
 npm install
 ```
 

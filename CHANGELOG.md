@@ -7,9 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.24.4] - 2022-08-07
+
+-   Fixes styling issue for login with github
+
+## [0.24.3] - 2022-08-05
+
 ### Changed
 
 -   Updated `react-scripts` in all examples
+-   Updated READMEs for example apps, removed information that is no longer relevant.
+
+### Fixed
+
+-   Fixed capitalization of GitHub on the UI (fixes https://github.com/supertokens/supertokens-auth-react/issues/539)
 
 ### Added
 
