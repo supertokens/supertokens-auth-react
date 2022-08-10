@@ -20,11 +20,10 @@
 import RecipeModule from "../recipeModule";
 import { RecipeFeatureComponentMap } from "../../types";
 import {
-    Config,
+    UserInput,
     NormalisedConfig,
     GetRedirectionURLContext,
     OnHandleEventContext,
-    UserInput,
     PreAndPostAPIHookAction,
 } from "./types";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
@@ -66,7 +65,7 @@ export default class EmailVerification extends RecipeModule<
 
     recipeImpl: RecipeInterface;
 
-    constructor(config: Config) {
+    constructor(config: UserInput) {
         super(normaliseEmailVerificationFeature(config));
 
         {

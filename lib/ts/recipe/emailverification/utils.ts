@@ -14,11 +14,11 @@
  */
 
 import { NormalisedBaseConfig } from "../../types";
-import { Config, NormalisedConfig } from "./types";
+import { UserInput, NormalisedConfig } from "./types";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
-export function normaliseEmailVerificationFeature(config: Config): NormalisedConfig {
+export function normaliseEmailVerificationFeature(config: UserInput): NormalisedConfig {
     const disableDefaultUI = config.disableDefaultUI === true;
     const mode = config.mode === undefined ? "REQUIRED" : config.mode;
 

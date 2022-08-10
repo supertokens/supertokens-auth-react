@@ -26,6 +26,7 @@ export type ComponentOverrideMap = {
     EmailVerificationVerifyEmailLinkClicked_Override?: ComponentOverride<typeof VerifyEmailLinkClicked>;
 };
 
+// Config is what does in the constructor of the recipe.
 export type UserInput = {
     mode?: "OPTIONAL" | "REQUIRED";
     disableDefaultUI?: boolean;
@@ -39,11 +40,7 @@ export type UserInput = {
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
     };
-};
-
-// Config is what does in the constructor of the recipe.
-export type Config = UserInput &
-    RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+} & RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type NormalisedConfig = {
     mode: "OPTIONAL" | "REQUIRED";
