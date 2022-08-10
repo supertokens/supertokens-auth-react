@@ -12,9 +12,11 @@ This demo app demonstrates the following use cases:
 
 ## Project setup
 
-Use `npm` to install the project dependencies:
+Clone the repo, enter the directory, and use `npm` to install the project dependencies:
 
 ```bash
+git clone https://github.com/supertokens/supertokens-auth-react
+cd supertokens-auth-react/examples/with-thirdpartyemailpassword
 npm install
 ```
 
@@ -39,12 +41,6 @@ If you would like to modify the website (http://localhost:3000) or the API serve
 
 -   The frontend code is located in the `src` folder.
 -   The backend API is in the `api-server.js` file.
-
-## Production build
-
-```bash
-npm run build && npm run start
-```
 
 ## Author
 

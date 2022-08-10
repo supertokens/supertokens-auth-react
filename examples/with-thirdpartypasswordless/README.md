@@ -11,29 +11,17 @@ This demo app demonstrates the following use cases:
 
 ## Project setup
 
-Use `npm` to install the project dependencies:
+Clone the repo, enter the directory, and use `npm` to install the project dependencies:
 
 ```bash
+git clone https://github.com/supertokens/supertokens-auth-react
+cd supertokens-auth-react/examples/with-thirdpartypasswordless
 npm install
 ```
 
 ## Sending emails and SMS
 
 The demo app, by default sends email and SMS by contacting https://api.supertokens.com servers. The SMS sending via this service is rate limited. You can configure the demo app to use your own SMTP server and use your own Twilio account credentials. You can also override how the emails and SMS are sent to take full control of their design and how they are sent.
-
-## Set environment variables
-
-The demo app contains code for seding emails to the user for passwordless auth. You need to set the following environment variables for the email user before running the demo app:
-
-```bash
-NODEMAILER_USER
-NODEMAILER_PASSWORD
-```
-
-You can do this by:
-
--   Editing the `api-server/.env.example` file
--   Rename the `api-server/.env.example` file to `.env`
 
 ## Run the demo app
 
@@ -56,12 +44,6 @@ If you would like to modify the website (http://localhost:3000) or the API serve
 
 -   The frontend code is located in the `src` folder.
 -   The backend API is in the `api-server/index.js` file.
-
-## Production build
-
-```bash
-npm run build && npm run start
-```
 
 ## Author
 

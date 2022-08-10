@@ -73,7 +73,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         },
 
         providerGoogle: getButtonStyle(providerColors.google, "white"),
-        providerGithub: getButtonStyle(providerColors.github, "white", true),
+        providerGitHub: getButtonStyle(providerColors.github, "white", true),
         providerTwitter: getButtonStyle(providerColors.twitter, "white"),
         providerFacebook: getButtonStyle(providerColors.facebook, "white"),
         providerApple: getButtonStyle(providerColors.apple, "white", true),
