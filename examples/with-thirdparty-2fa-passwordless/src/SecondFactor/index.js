@@ -19,5 +19,5 @@ export default function SecondFactor() {
         }
         doCheck();
     }, []);
-    return <Passwordless.SignInUp />;
+    return <Passwordless.SignInUp redirectOnSessionExists={false} />;
 }
