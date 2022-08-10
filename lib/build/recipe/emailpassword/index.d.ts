@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import { UserInput } from "./types";
 import EmailPasswordAuth from "./emailPasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
@@ -7,6 +6,7 @@ import EmailVerificationTheme from "../emailverification/components/themes/email
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { User } from "../authRecipeWithEmailVerification/types";
 import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import { PropsWithChildren } from "react";
 export default class Wrapper {
     static init(
         config?: UserInput
@@ -136,13 +136,17 @@ export default class Wrapper {
     }>;
     static getResetPasswordTokenFromURL(input?: { userContext?: any }): string;
     static EmailPasswordAuth: import("react").FC<
-        import("react").PropsWithChildren<{
+        PropsWithChildren<{
             requireAuth?: boolean | undefined;
             onSessionExpired?: (() => void) | undefined;
             userContext?: any;
         }>
     >;
-    static SignInAndUp: (prop?: any) => JSX.Element;
+    static SignInAndUp: (
+        prop?: PropsWithChildren<{
+            redirectOnSessionExists?: boolean;
+        }>
+    ) => JSX.Element;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
     static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
@@ -161,7 +165,11 @@ declare const sendPasswordResetEmail: typeof Wrapper.sendPasswordResetEmail;
 declare const signUp: typeof Wrapper.signUp;
 declare const signIn: typeof Wrapper.signIn;
 declare const doesEmailExist: typeof Wrapper.doesEmailExist;
-declare const SignInAndUp: (prop?: any) => JSX.Element;
+declare const SignInAndUp: (
+    prop?: PropsWithChildren<{
+        redirectOnSessionExists?: boolean;
+    }>
+) => JSX.Element;
 declare const getResetPasswordTokenFromURL: typeof Wrapper.getResetPasswordTokenFromURL;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
 declare const EmailVerification: (prop?: any) => JSX.Element;

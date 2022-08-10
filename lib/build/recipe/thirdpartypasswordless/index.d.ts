@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyPasswordlessAuth from "./thirdpartyPasswordlessAuth";
@@ -11,6 +10,7 @@ import {
     RecipeInterface,
 } from "supertokens-web-js/recipe/thirdpartypasswordless";
 import { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
+import { PropsWithChildren } from "react";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -184,13 +184,17 @@ export default class Wrapper {
     static Facebook: typeof Facebook;
     static Github: typeof Github;
     static ThirdPartyPasswordlessAuth: import("react").FC<
-        import("react").PropsWithChildren<{
+        PropsWithChildren<{
             requireAuth?: boolean | undefined;
             onSessionExpired?: (() => void) | undefined;
             userContext?: any;
         }>
     >;
-    static SignInAndUp: (prop?: any) => JSX.Element;
+    static SignInAndUp: (
+        prop?: PropsWithChildren<{
+            redirectOnSessionExists?: boolean;
+        }>
+    ) => JSX.Element;
     static SignInAndUpTheme: typeof SignInUpTheme;
     static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
     static EmailVerification: (prop?: any) => JSX.Element;
@@ -230,7 +234,11 @@ declare const getPasswordlessLoginAttemptInfo: typeof Wrapper.getPasswordlessLog
 declare const setPasswordlessLoginAttemptInfo: typeof Wrapper.setPasswordlessLoginAttemptInfo;
 declare const clearPasswordlessLoginAttemptInfo: typeof Wrapper.clearPasswordlessLoginAttemptInfo;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
-declare const SignInAndUp: (prop?: any) => JSX.Element;
+declare const SignInAndUp: (
+    prop?: PropsWithChildren<{
+        redirectOnSessionExists?: boolean;
+    }>
+) => JSX.Element;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const EmailVerification: (prop?: any) => JSX.Element;
 declare const PasswordlessLinkClicked: (prop?: any) => JSX.Element;
