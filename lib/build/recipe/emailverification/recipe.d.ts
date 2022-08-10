@@ -3,6 +3,7 @@ import RecipeModule from "../recipeModule";
 import { RecipeFeatureComponentMap } from "../../types";
 import {
     UserInput,
+    Config,
     NormalisedConfig,
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -20,7 +21,7 @@ export default class EmailVerification extends RecipeModule<
     static RECIPE_ID: string;
     static EmailVerificationClaim: EmailVerificationClaimClass;
     recipeImpl: RecipeInterface;
-    constructor(config: UserInput);
+    constructor(config: Config);
     static init(
         config: UserInput
     ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;

@@ -1,5 +1,9 @@
 import { FeatureBaseConfig, ThemeBaseProps } from "../../types";
-import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
+import {
+    Config as RecipeModuleConfig,
+    NormalisedConfig as NormalisedRecipeModuleConfig,
+    UserInput as RecipeModuleUserInput,
+} from "../recipeModule/types";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
@@ -21,7 +25,9 @@ export declare type UserInput = {
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
     };
-} & RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+} & RecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+export declare type Config = UserInput &
+    RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     mode: "OPTIONAL" | "REQUIRED";
     disableDefaultUI: boolean;

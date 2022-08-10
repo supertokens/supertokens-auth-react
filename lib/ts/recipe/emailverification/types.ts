@@ -13,7 +13,11 @@
  * under the License.
  */
 import { FeatureBaseConfig, ThemeBaseProps } from "../../types";
-import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
+import {
+    Config as RecipeModuleConfig,
+    NormalisedConfig as NormalisedRecipeModuleConfig,
+    UserInput as RecipeModuleUserInput,
+} from "../recipeModule/types";
 
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
@@ -40,7 +44,11 @@ export type UserInput = {
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
     };
-} & RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+} & RecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+
+// Config is what does in the constructor of the recipe.
+export type Config = UserInput &
+    RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type NormalisedConfig = {
     mode: "OPTIONAL" | "REQUIRED";
