@@ -20,11 +20,11 @@
 import RecipeModule from "../recipeModule";
 import { RecipeFeatureComponentMap } from "../../types";
 import {
+    UserInput,
     Config,
     NormalisedConfig,
     GetRedirectionURLContext,
     OnHandleEventContext,
-    UserInput,
     PreAndPostAPIHookAction,
 } from "./types";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
