@@ -11,6 +11,7 @@ import SessionExpiredPopup from "./SessionExpiredPopup";
 import React from "react";
 import SetPassword from "./SetPassword";
 import CustomSignUp from "./CustomSignUp";
+import { RealPasswordClaim } from "./realPasswordClaim";
 
 /* unique password which will act as a place holder password 
 for this user until they have actually set a password. This will also indicate to the 
@@ -47,7 +48,7 @@ SuperTokens.init({
                 if (context.action === "SUCCESS") {
                     // this is called after sign up / in and after email is verified
                     let accessTokenPayload = await Session.getAccessTokenPayloadSecurely();
-                    if (accessTokenPayload.isUsingFakePassword) {
+                    if (RealPasswordClaim.getValueFromPayload(accessTokenPayload) !== true) {
                         return "/set-password?show=signup"; // we ask the user to set their password now
                     }
                 }
@@ -70,35 +71,10 @@ SuperTokens.init({
                 functions: (oI) => {
                     return {
                         ...oI,
-                        doesSessionExist: async function (input) {
-                            if (!(await oI.doesSessionExist(input))) {
-                                return false;
-                            }
-
-                            if (window.location.pathname.startsWith("/auth")) {
-                                // we are showing one of the auth related UIs..
-                                return true;
-                            }
-
-                            let accessTokenPayload = await this.getAccessTokenPayloadSecurely();
-                            if (accessTokenPayload.isUsingFakePassword) {
-                                // we are showing an application specific UI here
-                                const emailVerified =
-                                    EmailVerification.EmailVerificationClaim.getValueFromPayload(accessTokenPayload);
-
-                                if (emailVerified) {
-                                    // in this case, the user has verified their email, but not set
-                                    // their password. So this will redirect them to the /auth route
-                                    // which will redirect them to the set password route.
-                                    return false;
-                                } else {
-                                    // in this case, the user has NOT verified their email, so the auth
-                                    // protector route will take them to the email verification UI
-                                    return true;
-                                }
-                            }
-                            return true;
-                        },
+                        getGlobalClaimValidators: (input) => [
+                            ...input.claimValidatorsAddedByOtherRecipes,
+                            RealPasswordClaim.validators.isTrue(),
+                        ],
                     };
                 },
             },

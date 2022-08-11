@@ -43,7 +43,7 @@ SuperTokens.init({
                 if (context.action === "IS_EMAIL_VERIFIED" || context.action === "VERIFY_EMAIL") {
                     let responseBody = await context.fetchResponse.json();
                     let jwt = responseBody.jwt;
-                    console.log("postAPIHook", JSON.stringify({ action: context.action, jwt }));
+
                     if (jwt) {
                         localStorage.setItem("jwt", jwt);
                     }
@@ -78,12 +78,6 @@ SuperTokens.init({
                 functions: (oI) => {
                     return {
                         ...oI,
-                        validateClaims: async function (input) {
-                            console.log("validating", JSON.stringify(input.claimValidators.map((a) => a.id)));
-                            const res = await oI.validateClaims(input);
-                            console.log("validateClaims res", JSON.stringify(res));
-                            return res;
-                        },
                         addAxiosInterceptors: function () {
                             throw new Error("Unsupported exception");
                         },

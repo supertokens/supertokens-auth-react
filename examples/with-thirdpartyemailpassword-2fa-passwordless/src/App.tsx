@@ -13,6 +13,7 @@ import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import SecondFactor from "./SecondFactor";
+import { SecondFactorClaim } from "./secondFactorClaim";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -66,88 +67,15 @@ SuperTokens.init({
             contactMethod: "PHONE",
             override: {
                 components: {
-                    PasswordlessUserInputCodeFormFooter_Override: ({ DefaultComponent, ...props }) => {
-                        let [showDefaultUI, setShowDefaultUI] = useState(false);
-                        useEffect(() => {
-                            Session.getAccessTokenPayloadSecurely()
-                                .then(async (accessTokenPayload) => {
-                                    let phoneNumber = accessTokenPayload.phoneNumber;
-                                    if (phoneNumber === undefined) {
-                                        setShowDefaultUI(true);
-                                    }
-                                })
-                                .catch((err) => {
-                                    // it can come here if a session doesn't exist.
-                                    // in this case, the screen we should redirect to the
-                                    // first login challenge
-                                    redirectToAuth({
-                                        redirectBack: false,
-                                    });
-                                });
-                        }, []);
-                        if (showDefaultUI) {
-                            return <DefaultComponent {...props} />;
-                        }
-                        return null;
-                    },
-                    PasswordlessPhoneForm_Override: ({ DefaultComponent, ...props }) => {
-                        let [showDefaultUI, setShowDefaultUI] = useState(false);
-                        useEffect(() => {
-                            Session.getAccessTokenPayloadSecurely()
-                                .then(async (accessTokenPayload) => {
-                                    let phoneNumber = accessTokenPayload.phoneNumber;
-                                    if (phoneNumber !== undefined) {
-                                        // This will send the user an OTP and also display the enter OTP screen.
-                                        await props.recipeImplementation.createCode({
-                                            phoneNumber: phoneNumber,
-                                            userContext: {},
-                                        });
-                                    } else {
-                                        setShowDefaultUI(true);
-                                    }
-                                })
-                                .catch((err) => {
-                                    // it can come here if a session doesn't exist.
-                                    // in this case, the screen we should redirect to the
-                                    // first login challenge
-                                    redirectToAuth();
-                                });
-                        }, [props.recipeImplementation]);
-                        if (showDefaultUI) {
-                            return <DefaultComponent {...props} />;
-                        }
-                        return null;
-                    },
-                    PasswordlessSignInUpHeader_Override: ({ DefaultComponent, ...props }) => {
-                        let [showHeader, setShowHeader] = useState(false);
-                        useEffect(() => {
-                            Session.getAccessTokenPayloadSecurely()
-                                .then(async (accessTokenPayload) => {
-                                    let phoneNumber = accessTokenPayload.phoneNumber;
-                                    if (phoneNumber === undefined) {
-                                        setShowHeader(true);
-                                    }
-                                })
-                                .catch((err) => {
-                                    // it can come here if a session doesn't exist.
-                                    // in this case, the screen we will should redirect to the
-                                    // first login challenge
-                                    redirectToAuth();
-                                });
-                        }, []);
-                        if (!showHeader) {
-                            return null;
-                        }
+                    PasswordlessSignInUpHeader_Override: () => {
                         return (
-                            <>
-                                <div
-                                    style={{
-                                        fontSize: "30px",
-                                        marginBottom: "10px",
-                                    }}>
-                                    Second factor auth
-                                </div>
-                            </>
+                            <div
+                                style={{
+                                    fontSize: "30px",
+                                    marginBottom: "10px",
+                                }}>
+                                Second factor auth
+                            </div>
                         );
                     },
                 },
@@ -155,28 +83,12 @@ SuperTokens.init({
         }),
         Session.init({
             override: {
-                functions: (oI) => {
-                    return {
-                        ...oI,
-                        doesSessionExist: async function (input) {
-                            if (!(await oI.doesSessionExist(input))) {
-                                return false;
-                            }
-                            if (
-                                window.location.pathname.startsWith("/auth") ||
-                                input.userContext.forceOriginalCheck === true
-                            ) {
-                                return true;
-                            }
-                            let accessTokenPayload = await this.getAccessTokenPayloadSecurely(input);
-                            if (accessTokenPayload.is2faComplete !== true) {
-                                // if both the factors have not been completed, we return false.
-                                return false;
-                            }
-                            return true;
-                        },
-                    };
-                },
+                functions: (oI) => ({
+                    ...oI,
+                    getGlobalClaimValidators: ({ claimValidatorsAddedByOtherRecipes }) => {
+                        return [...claimValidatorsAddedByOtherRecipes, SecondFactorClaim.validators.isTrue()];
+                    },
+                }),
             },
         }),
     ],
@@ -227,7 +139,14 @@ function App() {
                                 />
                             }
                         />
-                        <Route path="/second-factor" element={<SecondFactor />} />
+                        <Route
+                            path="/second-factor"
+                            element={
+                                <SessionAuth>
+                                    <SecondFactor />
+                                </SessionAuth>
+                            }
+                        />
                     </Routes>
                 </div>
                 <Footer />
