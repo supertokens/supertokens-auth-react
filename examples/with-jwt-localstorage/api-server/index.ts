@@ -248,22 +248,8 @@ supertokens.init({
                         mergeIntoAccessTokenPayload: async function (input) {
                             throw new Error("Unsupported operation");
                         },
-                        assertClaims: async function (input) {
-                            const { invalidClaims } = await Session.validateClaimsInJWTPayload(
-                                input.session.getUserId(input.userContext),
-                                input.session.getAccessTokenPayload(input.userContext),
-                                () => input.claimValidators,
-                                input.userContext
-                            );
-                            if (invalidClaims.length > 0) {
-                                throw new SuperTokensError({
-                                    type: "INVALID_CLAIMS",
-                                    message: "INVALID_CLAIMS",
-                                    payload: invalidClaims,
-                                });
-                            }
-                        },
                         validateClaims: oI.validateClaims,
+                        validateClaimsInJWTPayload: oI.validateClaimsInJWTPayload,
                         fetchAndSetClaim: async function (input) {
                             throw new Error("Unsupported operation");
                         },
