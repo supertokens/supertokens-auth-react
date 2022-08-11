@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
@@ -12,6 +11,7 @@ import {
 } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
 import { StateObject } from "supertokens-web-js/recipe/thirdparty";
+import { PropsWithChildren } from "react";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -169,7 +169,11 @@ export default class Wrapper {
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
     static Github: typeof Github;
-    static SignInAndUp: (prop?: any) => JSX.Element;
+    static SignInAndUp: (
+        prop?: PropsWithChildren<{
+            redirectOnSessionExists?: boolean;
+        }>
+    ) => JSX.Element;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
     static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
     static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
@@ -180,7 +184,11 @@ export default class Wrapper {
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
-declare const SignInAndUp: (prop?: any) => JSX.Element;
+declare const SignInAndUp: (
+    prop?: PropsWithChildren<{
+        redirectOnSessionExists?: boolean;
+    }>
+) => JSX.Element;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const EmailVerification: (prop?: any) => JSX.Element;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;

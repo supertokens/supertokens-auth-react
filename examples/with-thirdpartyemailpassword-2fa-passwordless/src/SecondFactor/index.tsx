@@ -28,7 +28,7 @@ export default function SecondFactor() {
                 alignItems: "center",
                 justifyContent: "center",
             }}>
-            <Passwordless.SignInUp />
+            <Passwordless.SignInUp redirectOnSessionExists={false} />
             <div
                 onClick={async () => {
                     await Passwordless.clearLoginAttemptInfo();
