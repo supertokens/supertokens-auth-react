@@ -163,6 +163,7 @@ export default class Wrapper {
     static SignInAndUp: (
         prop?: PropsWithChildren<{
             redirectOnSessionExists?: boolean;
+            userContext?: any;
         }>
     ) => JSX.Element;
     static SignInAndUpTheme: typeof SignInUpTheme;
@@ -202,6 +203,7 @@ declare const clearPasswordlessLoginAttemptInfo: typeof Wrapper.clearPasswordles
 declare const SignInAndUp: (
     prop?: PropsWithChildren<{
         redirectOnSessionExists?: boolean;
+        userContext?: any;
     }>
 ) => JSX.Element;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;

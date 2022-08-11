@@ -169,7 +169,7 @@ export default class Wrapper {
         });
     }
 
-    static SignInUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean }> = {}) =>
+    static SignInUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         Passwordless.getInstanceOrThrow().getFeatureComponent("signInUp", prop);
     static SignInUpTheme = SignInUpThemeWrapper;
 

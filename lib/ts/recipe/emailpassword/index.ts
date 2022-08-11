@@ -167,7 +167,7 @@ export default class Wrapper {
         });
     }
 
-    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean }> = {}) =>
+    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         EmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
     static ResetPasswordUsingToken = (prop?: any) =>
