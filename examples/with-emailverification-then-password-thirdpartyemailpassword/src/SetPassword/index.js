@@ -38,6 +38,6 @@ export default function SetPassword() {
     if (!showUI) {
         return null;
     } else {
-        return <SignInAndUp redirectOnSessionExists={false} />;
+        return <SignInAndUp />;
     }
 }

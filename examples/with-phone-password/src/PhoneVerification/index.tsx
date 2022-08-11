@@ -21,5 +21,5 @@ export default function PhoneVerification() {
         doCheck();
     }, []);
 
-    return <SignInUp redirectOnSessionExists={false} />;
+    return <SignInUp />;
 }
