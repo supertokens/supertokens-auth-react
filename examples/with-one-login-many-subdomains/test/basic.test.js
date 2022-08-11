@@ -62,7 +62,7 @@ describe("SuperTokens Example Basic tests", function () {
             args: [
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
-                "--host-resolver-rules=MAP example.com 127.0.0.1, MAP auth.example.com 127.0.0.1, MAP supertokens.example.com 127.0.0.1",
+                "--host-resolver-rules=MAP example.com 127.0.0.1, MAP *.example.com 127.0.0.1",
             ],
             headless: true,
         });
