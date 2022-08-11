@@ -263,8 +263,7 @@ supertokens.init({
                                 });
                             }
                         },
-                        validateClaimsForSessionHandle: oI.validateClaimsForSessionHandle,
-                        validateClaimsInJWTPayload: oI.validateClaimsInJWTPayload,
+                        validateClaims: oI.validateClaims,
                         fetchAndSetClaim: async function (input) {
                             throw new Error("Unsupported operation");
                         },

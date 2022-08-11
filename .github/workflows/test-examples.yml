@@ -49,13 +49,12 @@ jobs:
             NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.example_testing_supabase_public_url }}
             NEXT_PUBLIC_SUPABASE_KEY: ${{ secrets.example_testing_supabase_public_key }}
             SUPABASE_SIGNING_SECRET: ${{ secrets.example_testing_supabase_signing_secret }}
+        defaults:
+            run:
+                working-directory: ${{ matrix.examplePath }}
         steps:
             - uses: actions/checkout@v2
             - run: npm install
-              working-directory: ${{ matrix.examplePath }}
             - run: npm install mocha@6.1.4 jsdom-global@3.0.2 puppeteer@^11.0.0 isomorphic-fetch@^3.0.0
-              working-directory: ${{ matrix.examplePath }}
             - run: npm run build || true
-              working-directory: ${{ matrix.examplePath }}
             - run: HOST= npm start & bash ../../test/waitForServerStartup.sh && npx mocha --no-config --timeout 40000 test/**/*.test.js
-              working-directory: ${{ matrix.examplePath }}
