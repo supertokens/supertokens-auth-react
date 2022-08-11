@@ -232,7 +232,7 @@ export default class Wrapper {
     static Facebook = Facebook;
     static Github = Github;
     static ThirdPartyAuth = ThirdPartyAuth;
-    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean }> = {}) =>
+    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         ThirdParty.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
     static SignInAndUpCallback = (prop?: any) =>

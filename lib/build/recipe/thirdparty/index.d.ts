@@ -103,6 +103,7 @@ export default class Wrapper {
     static SignInAndUp: (
         prop?: PropsWithChildren<{
             redirectOnSessionExists?: boolean;
+            userContext?: any;
         }>
     ) => JSX.Element;
     static SignInAndUpTheme: import("react").FC<import("./types").SignInAndUpThemeProps>;
@@ -132,6 +133,7 @@ declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (
     prop?: PropsWithChildren<{
         redirectOnSessionExists?: boolean;
+        userContext?: any;
     }>
 ) => JSX.Element;
 declare const SignInAndUpCallback: (prop?: any) => JSX.Element;

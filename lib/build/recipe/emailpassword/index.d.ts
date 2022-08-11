@@ -145,6 +145,7 @@ export default class Wrapper {
     static SignInAndUp: (
         prop?: PropsWithChildren<{
             redirectOnSessionExists?: boolean;
+            userContext?: any;
         }>
     ) => JSX.Element;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
@@ -168,6 +169,7 @@ declare const doesEmailExist: typeof Wrapper.doesEmailExist;
 declare const SignInAndUp: (
     prop?: PropsWithChildren<{
         redirectOnSessionExists?: boolean;
+        userContext?: any;
     }>
 ) => JSX.Element;
 declare const getResetPasswordTokenFromURL: typeof Wrapper.getResetPasswordTokenFromURL;
