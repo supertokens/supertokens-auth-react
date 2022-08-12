@@ -19,7 +19,7 @@
 import React, { useEffect, useState, useRef, PropsWithChildren, useCallback } from "react";
 import SessionContext from "./sessionContext";
 import Session from "./recipe";
-import { RecipeEventWithSessionContext, SessionContextType } from "./types";
+import { LoadedSessionContext, RecipeEventWithSessionContext, SessionContextType } from "./types";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { popInvalidClaimRedirectPathFromContext, useOnMountAPICall } from "../../utils";
@@ -28,7 +28,6 @@ import { SessionClaimValidator } from "supertokens-website";
 
 export type SessionAuthProps = {
     requireAuth?: boolean;
-    redirectToLogin?: () => void;
     onSessionExpired?: () => void;
     overrideGlobalClaimValidators?: (
         globalClaimValidators: SessionClaimValidator[],
@@ -63,14 +62,10 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
     const userContext = useUserContext();
 
     const redirectToLogin = useCallback(() => {
-        if (props.redirectToLogin !== undefined) {
-            props.redirectToLogin();
-        } else {
-            void SuperTokens.getInstanceOrThrow().redirectToAuth({ history, redirectBack: true });
-        }
-    }, [props.redirectToLogin]);
+        void SuperTokens.getInstanceOrThrow().redirectToAuth({ history, redirectBack: true });
+    }, []);
 
-    const buildContext = useCallback(async (): Promise<SessionContextType> => {
+    const buildContext = useCallback(async (): Promise<LoadedSessionContext> => {
         if (session.current === undefined) {
             session.current = Session.getInstanceOrThrow();
         }

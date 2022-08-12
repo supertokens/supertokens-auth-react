@@ -57,6 +57,12 @@ const setMockResolves = (ctx: SessionContextType) => {
     }
 };
 
+jest.spyOn(SuperTokens, "getInstanceOrThrow").mockImplementation(
+    () =>
+        ({
+            redirectToAuth: jest.fn(),
+        } as any)
+);
 jest.spyOn(Session, "getInstanceOrThrow").mockImplementation(() => MockSession as any);
 
 describe("SessionAuth2", () => {
@@ -162,8 +168,7 @@ describe("SessionAuth2", () => {
 
                 // when
                 const result = render(
-                    // We're passing redirectToLogin just to make sure it doesn't throw when requireAuth=true
-                    <SessionAuth requireAuth={requireAuth as any} redirectToLogin={noop}>
+                    <SessionAuth requireAuth={requireAuth as any}>
                         <MockSessionConsumer />
                     </SessionAuth>
                 );
@@ -194,8 +199,7 @@ describe("SessionAuth2", () => {
 
             // when
             const result = render(
-                // We're passing redirectToLogin just to make sure it doesn't throw when requireAuth=true
-                <SessionAuth requireAuth={true} redirectToLogin={noop}>
+                <SessionAuth requireAuth={true}>
                     <h1>Children</h1>
                 </SessionAuth>
             );
@@ -214,7 +218,6 @@ describe("SessionAuth2", () => {
 
             // when
             const result = render(
-                // We're passing redirectToLogin just to make sure it doesn't throw when requireAuth=true
                 <SessionAuth requireAuth={false}>
                     <h1>Children</h1>
                 </SessionAuth>
