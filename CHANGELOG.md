@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changed
+
+-   Adds unit tests to make sure that recipe functions are exported correctly
+
 ## [0.24.4] - 2022-08-07
 
 -   Fixes styling issue for login with github
