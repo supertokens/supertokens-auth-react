@@ -1,11 +1,17 @@
 import React, { useContext } from "react";
 import "@testing-library/jest-dom";
 import { act, render, waitFor, waitForElementToBeRemoved } from "@testing-library/react";
+import SuperTokens from "../../../../lib/ts/superTokens";
 import Session from "../../../../lib/ts/recipe/session/recipe";
 import SessionAuth from "../../../../lib/ts/recipe/session/sessionAuth";
 import SessionContext from "../../../../lib/ts/recipe/session/sessionContext";
 import { SessionContextType } from "../../../../lib/ts/recipe/session";
-import { SuperTokensWrapper } from "../../../../lib/ts";
+import { PrimitiveClaim, SessionClaim, useClaimValue } from "../../../../lib/ts/recipe/session";
+
+const TestClaim: SessionClaim<string> = new PrimitiveClaim({
+    id: "st-test-claim",
+    refresh: async () => {},
+});
 
 const MockSession = {
     addEventListener: jest.fn(),
@@ -17,6 +23,7 @@ const MockSession = {
 
 const MockSessionConsumer = () => {
     const session = useContext(SessionContext);
+    const { value: claimValue } = useClaimValue(TestClaim);
     if (session.loading === true) {
         return <h1>Loading</h1>;
     }
@@ -30,6 +37,7 @@ const MockSessionConsumer = () => {
             <span>userId: {session.userId}</span>
             <span>accessTokenPayload: {JSON.stringify(session.accessTokenPayload)}</span>
             <span>invalidClaims: {session.invalidClaims.map((a) => a.validatorId).join(", ")}</span>
+            <span>testClaimValue: {claimValue === undefined ? "undefined" : claimValue}</span>
         </>
     );
 };
@@ -382,8 +390,14 @@ describe("SessionAuth2", () => {
             `accessTokenPayload: ${JSON.stringify({})}`
         );
 
+        expect(await result.findByText(/^testClaimValue:/)).toHaveTextContent(`testClaimValue: undefined`);
+
         const mockAccessTokenPayload = {
             afterRefreshKey: "afterRefreshValue",
+            "st-test-claim": {
+                v: "test!",
+                t: Date.now(),
+            },
         };
 
         // when
@@ -401,5 +415,6 @@ describe("SessionAuth2", () => {
         expect(await result.findByText(/^accessTokenPayload:/)).toHaveTextContent(
             `accessTokenPayload: ${JSON.stringify(mockAccessTokenPayload)}`
         );
+        expect(await result.findByText(/^testClaimValue:/)).toHaveTextContent(`testClaimValue: test!`);
     });
 });

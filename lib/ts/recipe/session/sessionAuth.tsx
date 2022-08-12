@@ -184,9 +184,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         return null;
     }
 
-    return (
-        <SessionContext.Provider value={{ ...context, isDefault: false } as any}>{children}</SessionContext.Provider>
-    );
+    return <SessionContext.Provider value={context}>{children}</SessionContext.Provider>;
 };
 
 const SessionAuthWrapper: React.FC<
