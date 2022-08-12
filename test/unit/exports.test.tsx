@@ -17,8 +17,6 @@ describe("Exports", function () {
                 signOut,
                 signUp,
                 submitNewPassword,
-                redirectToAuth,
-                EmailPasswordAuth,
                 ResetPasswordUsingToken,
                 ResetPasswordUsingTokenTheme,
                 SignInAndUp,
@@ -33,8 +31,6 @@ describe("Exports", function () {
             assert(signUp !== undefined && _default.signUp !== undefined);
             assert(submitNewPassword !== undefined && _default.submitNewPassword !== undefined);
 
-            assert(redirectToAuth !== undefined && _default.redirectToAuth !== undefined);
-            assert(EmailPasswordAuth !== undefined && _default.EmailPasswordAuth !== undefined);
             assert(ResetPasswordUsingToken !== undefined && _default.ResetPasswordUsingToken !== undefined);
             assert(ResetPasswordUsingTokenTheme !== undefined && _default.ResetPasswordUsingTokenTheme !== undefined);
             assert(SignInAndUp !== undefined && _default.SignInAndUp !== undefined);
@@ -58,7 +54,6 @@ describe("Exports", function () {
                 signInAndUp,
                 signOut,
                 verifyAndGetStateOrThrowError,
-                redirectToAuth,
                 redirectToThirdPartyLogin,
                 Facebook,
                 Apple,
@@ -68,7 +63,6 @@ describe("Exports", function () {
                 SignInAndUpCallback,
                 SignInAndUpCallbackTheme,
                 SignInAndUpTheme,
-                ThirdPartyAuth,
             } = require("../../recipe/thirdparty");
 
             assert(init !== undefined && _default.init !== undefined);
@@ -94,7 +88,6 @@ describe("Exports", function () {
             assert(signOut !== undefined && _default.signOut !== undefined);
             assert(verifyAndGetStateOrThrowError !== undefined && _default.verifyAndGetStateOrThrowError !== undefined);
 
-            assert(redirectToAuth !== undefined && _default.redirectToAuth !== undefined);
             assert(redirectToThirdPartyLogin !== undefined && _default.redirectToThirdPartyLogin !== undefined);
             assert(Facebook !== undefined && _default.Facebook !== undefined);
             assert(Apple !== undefined && _default.Apple !== undefined);
@@ -104,7 +97,6 @@ describe("Exports", function () {
             assert(SignInAndUpCallback !== undefined && _default.SignInAndUpCallback !== undefined);
             assert(SignInAndUpCallbackTheme !== undefined && _default.SignInAndUpCallbackTheme !== undefined);
             assert(SignInAndUpTheme !== undefined && _default.SignInAndUpTheme !== undefined);
-            assert(ThirdPartyAuth !== undefined && _default.ThirdPartyAuth !== undefined);
         });
     });
 
@@ -130,7 +122,6 @@ describe("Exports", function () {
                 submitNewPassword,
                 thirdPartySignInAndUp,
                 verifyAndGetStateOrThrowError,
-                redirectToAuth,
                 redirectToThirdPartyLogin,
                 Apple,
                 Facebook,
@@ -140,7 +131,6 @@ describe("Exports", function () {
                 ResetPasswordUsingTokenTheme,
                 SignInAndUp,
                 SignInAndUpTheme,
-                ThirdPartyEmailPasswordAuth,
                 ThirdPartySignInAndUpCallback,
                 ThirdPartySignInAndUpCallbackTheme,
             } = require("../../recipe/thirdpartyemailpassword");
@@ -174,7 +164,6 @@ describe("Exports", function () {
             assert(thirdPartySignInAndUp !== undefined && _default.thirdPartySignInAndUp !== undefined);
             assert(verifyAndGetStateOrThrowError !== undefined && _default.verifyAndGetStateOrThrowError !== undefined);
 
-            assert(redirectToAuth !== undefined && _default.redirectToAuth !== undefined);
             assert(redirectToThirdPartyLogin !== undefined && _default.redirectToThirdPartyLogin !== undefined);
             assert(Apple !== undefined && _default.Apple !== undefined);
             assert(Facebook !== undefined && _default.Facebook !== undefined);
@@ -184,7 +173,6 @@ describe("Exports", function () {
             assert(ResetPasswordUsingTokenTheme !== undefined && _default.ResetPasswordUsingTokenTheme !== undefined);
             assert(SignInAndUp !== undefined && _default.SignInAndUp !== undefined);
             assert(SignInAndUpTheme !== undefined && _default.SignInAndUpTheme !== undefined);
-            assert(ThirdPartyEmailPasswordAuth !== undefined && _default.ThirdPartyEmailPasswordAuth !== undefined);
             assert(ThirdPartySignInAndUpCallback !== undefined && _default.ThirdPartySignInAndUpCallback !== undefined);
             assert(
                 ThirdPartySignInAndUpCallbackTheme !== undefined &&
@@ -209,9 +197,7 @@ describe("Exports", function () {
                 init,
                 setLoginAttemptInfo,
                 signOut,
-                redirectToAuth,
                 LinkClicked,
-                PasswordlessAuth,
                 SignInUp,
                 SignInUpTheme,
             } = require("../../recipe/passwordless");
@@ -229,9 +215,7 @@ describe("Exports", function () {
             assert(setLoginAttemptInfo !== undefined && _default.setLoginAttemptInfo !== undefined);
             assert(signOut !== undefined && _default.signOut !== undefined);
 
-            assert(redirectToAuth !== undefined && _default.redirectToAuth !== undefined);
             assert(LinkClicked !== undefined && _default.LinkClicked !== undefined);
-            assert(PasswordlessAuth !== undefined && _default.PasswordlessAuth !== undefined);
             assert(SignInUp !== undefined && _default.SignInUp !== undefined);
             assert(SignInUpTheme !== undefined && _default.SignInUpTheme !== undefined);
         });
@@ -263,7 +247,6 @@ describe("Exports", function () {
                 signOut,
                 thirdPartySignInAndUp,
                 verifyAndGetThirdPartyStateOrThrowError,
-                redirectToAuth,
                 redirectToThirdPartyLogin,
                 Apple,
                 Facebook,
@@ -272,7 +255,6 @@ describe("Exports", function () {
                 PasswordlessLinkClicked,
                 SignInAndUp,
                 SignInUpTheme,
-                ThirdPartyPasswordlessAuth,
                 ThirdPartySignInAndUpCallback,
             } = require("../../recipe/thirdpartypasswordless");
 
@@ -333,7 +315,6 @@ describe("Exports", function () {
                     _default.verifyAndGetThirdPartyStateOrThrowError !== undefined
             );
 
-            assert(redirectToAuth !== undefined && _default.redirectToAuth !== undefined);
             assert(redirectToThirdPartyLogin !== undefined && _default.redirectToThirdPartyLogin !== undefined);
             assert(Apple !== undefined && _default.Apple !== undefined);
             assert(Facebook !== undefined && _default.Facebook !== undefined);
@@ -342,7 +323,6 @@ describe("Exports", function () {
             assert(PasswordlessLinkClicked !== undefined && _default.PasswordlessLinkClicked !== undefined);
             assert(SignInAndUp !== undefined && _default.SignInAndUp !== undefined);
             assert(SignInUpTheme !== undefined && _default.SignInUpTheme !== undefined);
-            assert(ThirdPartyPasswordlessAuth !== undefined && _default.ThirdPartyPasswordlessAuth !== undefined);
             assert(ThirdPartySignInAndUpCallback !== undefined && _default.ThirdPartySignInAndUpCallback !== undefined);
         });
     });
