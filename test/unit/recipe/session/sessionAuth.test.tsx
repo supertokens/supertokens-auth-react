@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import "@testing-library/jest-dom";
 import { act, render, waitFor, waitForElementToBeRemoved } from "@testing-library/react";
 import Session from "../../../../lib/ts/recipe/session/recipe";
 import SessionAuth from "../../../../lib/ts/recipe/session/sessionAuth";
 import SessionContext from "../../../../lib/ts/recipe/session/sessionContext";
 import { SessionContextType } from "../../../../lib/ts/recipe/session";
-import { SuperTokensWrapper } from "../../../../lib/ts";
+import SuperTokens from "../../../../lib/ts/superTokens";
 
 const MockSession = {
     addEventListener: jest.fn(),
@@ -54,6 +54,7 @@ jest.spyOn(Session, "getInstanceOrThrow").mockImplementation(() => MockSession a
 describe("SessionAuth2", () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        SuperTokens.reset();
 
         setMockResolves({
             userId: "mock-user-id",
@@ -89,6 +90,44 @@ describe("SessionAuth2", () => {
         expect(mockUnsubscribe).toHaveBeenCalledTimes(1);
     });
 
+    test("adding in a component outside of router", async () => {
+        let reactRouterDom: any = undefined;
+        const MockSuperTokens = {
+            getReactRouterDomWithCustomHistory: () => {
+                return reactRouterDom;
+            },
+        };
+
+        (SuperTokens as any).instance = MockSuperTokens;
+
+        // given
+        function SubComponentWithRoutes() {
+            reactRouterDom = {
+                useHistoryCustom: () => {
+                    const [val, set] = useState("");
+                    return set;
+                },
+            };
+            return <>mockRenderedText</>;
+        }
+
+        // when
+        const result = render(
+            <SessionAuth>
+                <SubComponentWithRoutes />
+            </SessionAuth>
+        );
+        expect(await result.findByText(`mockRenderedText`)).toBeInTheDocument();
+        result.rerender(
+            <SessionAuth>
+                <SubComponentWithRoutes />
+            </SessionAuth>
+        );
+
+        expect(await result.findByText(`mockRenderedText`)).toBeInTheDocument();
+
+        result.unmount();
+    });
     test("set initial context", async () => {
         // when
         const result = render(
