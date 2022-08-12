@@ -13,7 +13,6 @@
  * under the License.
  */
 import ThirdPartyEmailPassword from "./recipe";
-import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
@@ -309,9 +308,6 @@ export default class Wrapper {
     static ResetPasswordUsingToken = (prop?: any) =>
         ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword", prop);
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
-    static EmailVerification = (prop?: any) =>
-        ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
-    static EmailVerificationTheme = EmailVerificationTheme;
     static ThirdPartySignInAndUpCallbackTheme = ThirdPartySignInAndUpCallbackTheme;
 }
 
@@ -319,7 +315,6 @@ const init = Wrapper.init;
 const signOut = Wrapper.signOut;
 const SignInAndUp = Wrapper.SignInAndUp;
 const ThirdPartySignInAndUpCallback = Wrapper.ThirdPartySignInAndUpCallback;
-const EmailVerification = Wrapper.EmailVerification;
 const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
 const submitNewPassword = Wrapper.submitNewPassword;
 const sendPasswordResetEmail = Wrapper.sendPasswordResetEmail;
@@ -367,8 +362,6 @@ export {
     getAuthCodeFromURL,
     getAuthErrorFromURL,
     getAuthStateFromURL,
-    EmailVerification,
-    EmailVerificationTheme,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
     GetRedirectionURLContext,

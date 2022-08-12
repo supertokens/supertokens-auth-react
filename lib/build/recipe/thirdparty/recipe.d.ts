@@ -21,10 +21,7 @@ export default class ThirdParty extends AuthRecipe<
     recipeImpl: WebJSRecipeInterface;
     constructor(config: Config);
     getFeatures: () => RecipeFeatureComponentMap;
-    getFeatureComponent: (
-        componentName: "signinup" | "signinupcallback" | "emailverification",
-        props: any
-    ) => JSX.Element;
+    getFeatureComponent: (componentName: "signinup" | "signinupcallback", props: any) => JSX.Element;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     static init(
         config: UserInput

@@ -97,10 +97,7 @@ export default class ThirdParty extends AuthRecipe<
         return features;
     };
 
-    getFeatureComponent = (
-        componentName: "signinup" | "signinupcallback" | "emailverification",
-        props: any
-    ): JSX.Element => {
+    getFeatureComponent = (componentName: "signinup" | "signinupcallback", props: any): JSX.Element => {
         if (componentName === "signinup") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
