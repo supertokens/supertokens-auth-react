@@ -1,6 +1,9 @@
 import { FeatureBaseConfig, ThemeBaseProps } from "../../types";
-import { UserInput as RecipeModuleUserInput } from "../recipeModule/types";
-import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
+import {
+    Config as RecipeModuleConfig,
+    NormalisedConfig as NormalisedRecipeModuleConfig,
+    UserInput as RecipeModuleUserInput,
+} from "../recipeModule/types";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
