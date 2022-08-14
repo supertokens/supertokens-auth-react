@@ -19,7 +19,6 @@
 
 // /!\ ThirdParty must be imported before any of the providers to prevent circular dependencies.
 import ThirdParty from "./recipe";
-import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
@@ -176,9 +175,6 @@ export default class Wrapper {
     static SignInAndUpCallback = (prop?: any) =>
         ThirdParty.getInstanceOrThrow().getFeatureComponent("signinupcallback", prop);
     static SignInAndUpCallbackTheme = SignInAndUpCallbackTheme;
-    static EmailVerification = (prop?: any) =>
-        ThirdParty.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
-    static EmailVerificationTheme = EmailVerificationTheme;
 }
 
 const init = Wrapper.init;
@@ -196,7 +192,6 @@ const getAuthStateFromURL = Wrapper.getAuthStateFromURL;
 const signInAndUp = Wrapper.signInAndUp;
 const SignInAndUp = Wrapper.SignInAndUp;
 const SignInAndUpCallback = Wrapper.SignInAndUpCallback;
-const EmailVerification = Wrapper.EmailVerification;
 
 export {
     init,
@@ -220,8 +215,6 @@ export {
     SignInAndUpCallback,
     SignInAndUpCallbackTheme,
     signOut,
-    EmailVerification,
-    EmailVerificationTheme,
     User,
     GetRedirectionURLContext,
     PreAPIHookContext,

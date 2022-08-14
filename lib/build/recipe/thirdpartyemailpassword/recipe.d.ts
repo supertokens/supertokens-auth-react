@@ -11,7 +11,6 @@ import {
 } from "./types";
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
-import EmailVerification from "../emailverification/recipe";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
@@ -27,17 +26,13 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     constructor(
         config: Config,
         recipes: {
-            emailVerificationInstance: EmailVerification | undefined;
             thirdPartyInstance: ThirdParty | undefined;
             emailPasswordInstance: EmailPassword | undefined;
         }
     );
     getFeatures: () => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
-    getFeatureComponent: (
-        componentName: "signinup" | "signinupcallback" | "resetpassword" | "emailverification",
-        props: any
-    ) => JSX.Element;
+    getFeatureComponent: (componentName: "signinup" | "signinupcallback" | "resetpassword", props: any) => JSX.Element;
     static init(
         config: UserInput
     ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;

@@ -1,5 +1,4 @@
 /// <reference types="react" />
-import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
@@ -74,8 +73,6 @@ export default class Wrapper {
     static SignInAndUpTheme: import("react").FC<import("./types").SignInAndUpThemeProps>;
     static SignInAndUpCallback: (prop?: any) => JSX.Element;
     static SignInAndUpCallbackTheme: import("react").ComponentType<{}>;
-    static EmailVerification: (prop?: any) => JSX.Element;
-    static EmailVerificationTheme: typeof EmailVerificationTheme;
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
@@ -92,7 +89,6 @@ declare const getAuthStateFromURL: typeof Wrapper.getAuthStateFromURL;
 declare const signInAndUp: typeof Wrapper.signInAndUp;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
 declare const SignInAndUpCallback: (prop?: any) => JSX.Element;
-declare const EmailVerification: (prop?: any) => JSX.Element;
 export {
     init,
     Apple,
@@ -115,8 +111,6 @@ export {
     SignInAndUpCallback,
     SignInAndUpCallbackTheme,
     signOut,
-    EmailVerification,
-    EmailVerificationTheme,
     User,
     GetRedirectionURLContext,
     PreAPIHookContext,

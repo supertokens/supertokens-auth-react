@@ -13,7 +13,6 @@
  * under the License.
  */
 import ThirdPartyPasswordless from "./recipe";
-import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import SignInUpTheme from "./components/themes/signInUp";
@@ -340,9 +339,6 @@ export default class Wrapper {
     static SignInAndUpTheme = SignInUpTheme;
     static ThirdPartySignInAndUpCallback = (prop?: any) =>
         ThirdPartyPasswordless.getInstanceOrThrow().getFeatureComponent("signinupcallback", prop);
-    static EmailVerification = (prop?: any) =>
-        ThirdPartyPasswordless.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
-    static EmailVerificationTheme = EmailVerificationTheme;
 
     static PasswordlessLinkClickedTheme = LinkClickedScreen;
     static PasswordlessLinkClicked = (prop?: any) =>
@@ -375,7 +371,6 @@ const setPasswordlessLoginAttemptInfo = Wrapper.setPasswordlessLoginAttemptInfo;
 const clearPasswordlessLoginAttemptInfo = Wrapper.clearPasswordlessLoginAttemptInfo;
 const SignInAndUp = Wrapper.SignInAndUp;
 const ThirdPartySignInAndUpCallback = Wrapper.ThirdPartySignInAndUpCallback;
-const EmailVerification = Wrapper.EmailVerification;
 const PasswordlessLinkClicked = Wrapper.PasswordlessLinkClicked;
 
 export {
@@ -409,8 +404,6 @@ export {
     SignInUpTheme,
     ThirdPartySignInAndUpCallback,
     signOut,
-    EmailVerification,
-    EmailVerificationTheme,
     PasswordlessLinkClicked,
     GetRedirectionURLContext,
     PreAPIHookContext,
