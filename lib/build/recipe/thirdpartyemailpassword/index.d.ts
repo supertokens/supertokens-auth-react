@@ -1,5 +1,4 @@
 /// <reference types="react" />
-import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
@@ -174,15 +173,12 @@ export default class Wrapper {
     static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
     static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
-    static EmailVerification: (prop?: any) => JSX.Element;
-    static EmailVerificationTheme: typeof EmailVerificationTheme;
     static ThirdPartySignInAndUpCallbackTheme: import("react").ComponentType<{}>;
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
-declare const EmailVerification: (prop?: any) => JSX.Element;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
 declare const submitNewPassword: typeof Wrapper.submitNewPassword;
 declare const sendPasswordResetEmail: typeof Wrapper.sendPasswordResetEmail;
@@ -229,8 +225,6 @@ export {
     getAuthCodeFromURL,
     getAuthErrorFromURL,
     getAuthStateFromURL,
-    EmailVerification,
-    EmailVerificationTheme,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
     GetRedirectionURLContext,
