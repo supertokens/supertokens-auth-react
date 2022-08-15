@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Adds Session claims support and `UserRoleClaim`, `PermissionClaim` and `EmailVerificationClaim`
 -   Added `overrideGlobalClaimValidators` callback to `SessionAuth`
--   Added `validateClaims` and `getInvalidClaimsFromResponse` to the `Session` recipe
+-   Added `validateClaims`, `useClaimValue` and `getInvalidClaimsFromResponse` to the `Session` recipe
 -   Added `API_INVALID_CLAIM` event to the `Session` recipe
 -   Export for `EmailVerification` recipe
 
