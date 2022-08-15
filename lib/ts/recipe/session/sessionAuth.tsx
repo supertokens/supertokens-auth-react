@@ -51,9 +51,14 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
     const session = useRef<Session>();
 
+    // We store this here, to prevent the list of called hooks changing even if a history hook is added later to SuperTokens.
+    const historyHookRef = useRef(SuperTokens.getReactRouterDomWithCustomHistory()?.useHistoryCustom);
+
     let history: any | undefined;
     try {
-        history = SuperTokens.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
+        if (historyHookRef.current) {
+            history = historyHookRef.current();
+        }
     } catch {
         // We catch and ignore errors here, because if this is may throw if
         // the app is using react-router-dom but added a session auth outside of the router.

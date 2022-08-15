@@ -11,21 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Adds unit tests to make sure that recipe functions are exported correctly
 
-## [0.24.4] - 2022-08-07
-
--   Fixes styling issue for login with github
-
-## [0.24.3] - 2022-08-05
-
-### Changed
-
--   Updated `react-scripts` in all examples
--   Updated READMEs for example apps, removed information that is no longer relevant.
-
-### Fixed
-
--   Fixed capitalization of GitHub on the UI (fixes https://github.com/supertokens/supertokens-auth-react/issues/539)
-
 ### Added
 
 -   Adds Session claims support and `UserRoleClaim`, `PermissionClaim` and `EmailVerificationClaim`
@@ -38,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Fixed typing of `onSuccess` prop on passwordless `SignInUpProps`
 -   Fixed some full-page redirect that happened even when using react-router-dom
+-   Fixed rare error in an edge case where `getSuperTokensRoutesForReactRouterDom` was used by a sub-component of `SessionAuth`
 
 ### Breaking changes
 
@@ -154,6 +140,21 @@ function ProtectedHomeComponent() {
     );
 }
 ```
+
+## [0.24.4] - 2022-08-07
+
+-   Fixes styling issue for login with github
+
+## [0.24.3] - 2022-08-05
+
+### Changed
+
+-   Updated `react-scripts` in all examples
+-   Updated READMEs for example apps, removed information that is no longer relevant.
+
+### Fixed
+
+-   Fixed capitalization of GitHub on the UI (fixes https://github.com/supertokens/supertokens-auth-react/issues/539)
 
 ## [0.24.2] - 2022-07-28
 
