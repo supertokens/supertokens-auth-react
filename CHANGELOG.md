@@ -7,10 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-### Bug fixes
-
--   Fixed rare error in an edge case where `getSuperTokensRoutesForReactRouterDom` was used by a sub-component of `SessionAuth`
-
 ### Changed
 
 -   Adds unit tests to make sure that recipe functions are exported correctly
@@ -27,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Fixed typing of `onSuccess` prop on passwordless `SignInUpProps`
 -   Fixed some full-page redirect that happened even when using react-router-dom
+-   Fixed rare error in an edge case where `getSuperTokensRoutesForReactRouterDom` was used by a sub-component of `SessionAuth`
 
 ### Breaking changes
 
