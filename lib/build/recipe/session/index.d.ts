@@ -15,10 +15,10 @@ export default class SessionAPIWrapper {
     static useClaimValue: <T>(claim: SessionClaim<T>) =>
         | {
               loading: true;
-              value: undefined;
           }
         | {
               loading: false;
+              doesSessionExist: boolean;
               value: T | undefined;
           };
     static SessionAuth: import("react").FC<
@@ -55,10 +55,10 @@ declare const useSessionContext: () => SessionContextType;
 declare const useClaimValue: <T>(claim: SessionClaim<T>) =>
     | {
           loading: true;
-          value: undefined;
       }
     | {
           loading: false;
+          doesSessionExist: boolean;
           value: T | undefined;
       };
 declare const SessionAuth: import("react").FC<

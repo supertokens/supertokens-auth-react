@@ -23,10 +23,15 @@ const MockSession = {
 
 const MockSessionConsumer = () => {
     const session = useContext(SessionContext);
-    const { value: claimValue } = useClaimValue(TestClaim);
-    if (session.loading === true) {
+    const claimValueCtx = useClaimValue(TestClaim);
+
+    expect(session.loading).toEqual(claimValueCtx.loading);
+
+    if (session.loading === true || claimValueCtx.loading === true) {
         return <h1>Loading</h1>;
     }
+
+    expect(session.doesSessionExist).toEqual(claimValueCtx.doesSessionExist);
 
     if (!session.doesSessionExist) {
         return <h1>Session doesn't exist</h1>;
@@ -37,7 +42,7 @@ const MockSessionConsumer = () => {
             <span>userId: {session.userId}</span>
             <span>accessTokenPayload: {JSON.stringify(session.accessTokenPayload)}</span>
             <span>invalidClaims: {session.invalidClaims.map((a) => a.validatorId).join(", ")}</span>
-            <span>testClaimValue: {claimValue === undefined ? "undefined" : claimValue}</span>
+            <span>testClaimValue: {claimValueCtx.value === undefined ? "undefined" : claimValueCtx.value}</span>
         </>
     );
 };
