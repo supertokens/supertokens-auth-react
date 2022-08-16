@@ -17,8 +17,8 @@
  * Imports.
  */
 
+import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
 import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
     Config,
     GetRedirectionURLContext,
@@ -163,23 +163,31 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
 
     getFeatureComponent = (
         componentName: "emailverification" | "signInUp" | "linkClickedScreen" | "signinupcallback",
-        props: any
+        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
     ): JSX.Element => {
         if (componentName === "signInUp") {
-            return (
-                <UserContextWrapper userContext={props.userContext}>
-                    <AuthWidgetWrapper<
-                        GetRedirectionURLContext,
-                        PreAndPostAPIHookAction,
-                        OnHandleEventContext,
-                        NormalisedConfig
-                    >
-                        authRecipe={this}
-                        history={props.history}>
+            if (props.redirectOnSessionExists !== false) {
+                return (
+                    <UserContextWrapper userContext={props.userContext}>
+                        <AuthWidgetWrapper<
+                            GetRedirectionURLContext,
+                            PreAndPostAPIHookAction,
+                            OnHandleEventContext,
+                            NormalisedConfig
+                        >
+                            authRecipe={this}
+                            history={props.history}>
+                            <SignInAndUp recipe={this} {...props} />
+                        </AuthWidgetWrapper>
+                    </UserContextWrapper>
+                );
+            } else {
+                return (
+                    <UserContextWrapper userContext={props.userContext}>
                         <SignInAndUp recipe={this} {...props} />
-                    </AuthWidgetWrapper>
-                </UserContextWrapper>
-            );
+                    </UserContextWrapper>
+                );
+            }
         } else if (componentName === "linkClickedScreen") {
             if (this.passwordlessRecipe === undefined) {
                 throw new Error(

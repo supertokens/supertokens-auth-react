@@ -11,8 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Fixed clearing errors when switching between sign in & up in thirdpartyemailpassword
 
+## [0.24.5] - 2022-08-16
+
 ### Changed
 
+-   Sign in/up components now take a `redirectOnSessionExists` prop that controls if it redirects away if a session exists on mount. Defaults to true.
 -   Adds unit tests to make sure that recipe functions are exported correctly
 
 ## [0.24.4] - 2022-08-07

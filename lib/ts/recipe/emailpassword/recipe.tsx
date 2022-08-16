@@ -18,7 +18,7 @@
  */
 
 import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
+import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -116,23 +116,31 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
 
     getFeatureComponent = (
         componentName: "signinup" | "resetpassword" | "emailverification",
-        props: any | undefined
+        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
     ): JSX.Element => {
         if (componentName === "signinup") {
-            return (
-                <UserContextWrapper userContext={props.userContext}>
-                    <AuthWidgetWrapper<
-                        GetRedirectionURLContext,
-                        PreAndPostAPIHookAction,
-                        OnHandleEventContext,
-                        NormalisedConfig
-                    >
-                        authRecipe={this}
-                        history={props.history}>
+            if (props.redirectOnSessionExists !== false) {
+                return (
+                    <UserContextWrapper userContext={props.userContext}>
+                        <AuthWidgetWrapper<
+                            GetRedirectionURLContext,
+                            PreAndPostAPIHookAction,
+                            OnHandleEventContext,
+                            NormalisedConfig
+                        >
+                            authRecipe={this}
+                            history={props.history}>
+                            <SignInAndUp recipe={this} {...props} />
+                        </AuthWidgetWrapper>
+                    </UserContextWrapper>
+                );
+            } else {
+                return (
+                    <UserContextWrapper userContext={props.userContext}>
                         <SignInAndUp recipe={this} {...props} />
-                    </AuthWidgetWrapper>
-                </UserContextWrapper>
-            );
+                    </UserContextWrapper>
+                );
+            }
         } else if (componentName === "resetpassword") {
             return (
                 <UserContextWrapper userContext={props.userContext}>

@@ -24,6 +24,7 @@ import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } fro
 import { getNormalisedUserContext } from "../../utils";
 import { User } from "../authRecipeWithEmailVerification/types";
 import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import { PropsWithChildren } from "react";
 
 export default class Wrapper {
     static init(config?: UserInput) {
@@ -227,7 +228,8 @@ export default class Wrapper {
     }
 
     static EmailPasswordAuth = EmailPasswordAuth;
-    static SignInAndUp = (prop?: any) => EmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
+    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
+        EmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
     static ResetPasswordUsingToken = (prop?: any) =>
         EmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword", prop);
