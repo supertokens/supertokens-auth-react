@@ -101,6 +101,18 @@ function App() {
                                     </Auth>
                                 }
                             />
+                            <Route
+                                path="/no-redirection-sign-in"
+                                element={<EmailPassword.SignInAndUp redirectOnSessionExists={false} />}
+                            />
+                            <Route
+                                path="/no-redirection-sign-in-with-children"
+                                element={
+                                    <EmailPassword.SignInAndUp redirectOnSessionExists={false}>
+                                        <Home />
+                                    </EmailPassword.SignInAndUp>
+                                }
+                            />
                         </Routes>
                     </div>
                     <div className="footer">

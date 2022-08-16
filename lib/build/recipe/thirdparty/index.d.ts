@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
@@ -10,6 +9,7 @@ import Facebook from "./providers/facebook";
 import Github from "./providers/github";
 import { RecipeInterface, StateObject, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
 import { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import { PropsWithChildren } from "react";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -94,13 +94,18 @@ export default class Wrapper {
     static Facebook: typeof Facebook;
     static Github: typeof Github;
     static ThirdPartyAuth: import("react").FC<
-        import("react").PropsWithChildren<{
+        PropsWithChildren<{
             requireAuth?: boolean | undefined;
             onSessionExpired?: (() => void) | undefined;
             userContext?: any;
         }>
     >;
-    static SignInAndUp: (prop?: any) => JSX.Element;
+    static SignInAndUp: (
+        prop?: PropsWithChildren<{
+            redirectOnSessionExists?: boolean;
+            userContext?: any;
+        }>
+    ) => JSX.Element;
     static SignInAndUpTheme: import("react").FC<import("./types").SignInAndUpThemeProps>;
     static SignInAndUpCallback: (prop?: any) => JSX.Element;
     static SignInAndUpCallbackTheme: import("react").ComponentType<{}>;
@@ -125,7 +130,12 @@ declare const getAuthErrorFromURL: typeof Wrapper.getAuthErrorFromURL;
 declare const getAuthStateFromURL: typeof Wrapper.getAuthStateFromURL;
 declare const signInAndUp: typeof Wrapper.signInAndUp;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
-declare const SignInAndUp: (prop?: any) => JSX.Element;
+declare const SignInAndUp: (
+    prop?: PropsWithChildren<{
+        redirectOnSessionExists?: boolean;
+        userContext?: any;
+    }>
+) => JSX.Element;
 declare const SignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const EmailVerification: (prop?: any) => JSX.Element;
 export {

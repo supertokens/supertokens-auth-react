@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
-import { CreateRecipeFunction, RecipeFeatureComponentMap } from "../../types";
+import { CreateRecipeFunction, RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -29,7 +29,10 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (
         componentName: "signinup" | "resetpassword" | "emailverification",
-        props: any | undefined
+        props: FeatureBaseProps & {
+            redirectOnSessionExists?: boolean;
+            userContext?: any;
+        }
     ) => JSX.Element;
     static init(
         config?: UserInput
