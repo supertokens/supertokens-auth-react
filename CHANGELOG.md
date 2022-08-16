@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Bug fixes
+
+-   Fixed clearing errors when switching between sign in & up in thirdpartyemailpassword
+
 ### Changed
 
 -   Adds unit tests to make sure that recipe functions are exported correctly
