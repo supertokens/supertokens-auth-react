@@ -1,5 +1,5 @@
 import assert from "assert";
-import SuperTokens from "../../lib/build/supertokens";
+import SuperTokens from "../../lib/build/superTokens";
 
 describe("Exports", function () {
     beforeEach(function () {
