@@ -42,6 +42,11 @@ supertokens.init({
                 apis: (oI) => {
                     return {
                         ...oI,
+                        thirdPartySignInUpPOST: async (input) => {
+                            const res = await oI.thirdPartySignInUpPOST(input);
+                            await res.session.setClaimValue(RealPasswordClaim, true, input.userContext);
+                            return res;
+                        },
                         emailPasswordEmailExistsGET: async function (input) {
                             let email = input.email;
                             let signInResponse = await ThirdPartyEmailPassword.emailPasswordSignIn(

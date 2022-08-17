@@ -109,7 +109,14 @@ function App() {
                                     </SessionAuth>
                                 }
                             />
-                            <Route path="/set-password" element={<SetPassword />} />
+                            <Route
+                                path="/set-password"
+                                element={
+                                    <SessionAuth>
+                                        <SetPassword />
+                                    </SessionAuth>
+                                }
+                            />
                         </Routes>
                     </div>
                     <Footer />
