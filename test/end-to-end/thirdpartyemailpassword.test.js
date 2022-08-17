@@ -36,8 +36,18 @@ import {
     getLoginWithRedirectToSignUp,
     getAuthPageHeaderText,
     screenshotOnFailure,
+    setInputValues,
+    submitForm,
+    getGeneralError,
+    waitForSTElement,
 } from "../helpers";
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../constants";
+import {
+    TEST_CLIENT_BASE_URL,
+    TEST_SERVER_BASE_URL,
+    SIGN_IN_UP_API,
+    SIGN_UP_API,
+    SOMETHING_WENT_WRONG_ERROR,
+} from "../constants";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -128,6 +138,64 @@ describe("SuperTokens Third Party Email Password", function () {
             await defaultSignUp(page, "thirdpartyemailpassword");
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/dashboard");
+        });
+
+        it("should clear errors when switching to signup", async function () {
+            await setInputValues(page, [
+                { name: "email", value: `john.doe+${Date.now()}@supertokens.io` },
+                { name: "password", value: "********" },
+            ]);
+
+            await submitForm(page);
+
+            const generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, "Incorrect email and password combination");
+            await toggleSignInSignUp(page);
+            await waitForSTElement(page, "[data-supertokens~=generalError]", true);
+        });
+
+        it("should clear errors when switching to sign in", async function () {
+            await toggleSignInSignUp(page);
+            await setInputValues(page, [
+                { name: "email", value: `john.doe+${Date.now()}@supertokens.io` },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "name", value: "John Doe" },
+                { name: "age", value: "20" },
+            ]);
+
+            const requestHandler = (request) => {
+                if (request.url() === SIGN_UP_API && request.method() === "POST") {
+                    return request.respond({
+                        status: 500,
+                        headers: {
+                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                            "access-control-allow-credentials": "true",
+                        },
+                        body: JSON.stringify({
+                            status: "BAD_INPUT",
+                        }),
+                    });
+                }
+
+                return request.continue();
+            };
+
+            try {
+                await page.setRequestInterception(true);
+                page.on("request", requestHandler);
+                await submitForm(page);
+
+                await page.waitForResponse((response) => response.url() === SIGN_UP_API && response.status() === 500);
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            }
+
+            // Assert server Error
+            const generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, SOMETHING_WENT_WRONG_ERROR);
+            await toggleSignInSignUp(page);
+            await waitForSTElement(page, "[data-supertokens~=generalError]", true);
         });
 
         it("Successful signin/up with auth0", async function () {

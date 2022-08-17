@@ -22,6 +22,7 @@ import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recip
 import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
 import { getNormalisedUserContext } from "../../utils";
 import * as UtilFunctions from "./utils";
+import { PropsWithChildren } from "react";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -168,7 +169,8 @@ export default class Wrapper {
         });
     }
 
-    static SignInUp = (prop?: any) => Passwordless.getInstanceOrThrow().getFeatureComponent("signInUp", prop);
+    static SignInUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
+        Passwordless.getInstanceOrThrow().getFeatureComponent("signInUp", prop);
     static SignInUpTheme = SignInUpThemeWrapper;
 
     static LinkClicked = (prop?: any) =>

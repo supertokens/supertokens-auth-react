@@ -18,7 +18,7 @@
  */
 
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
+import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
 import {
     GetRedirectionURLContext,
     Config,
@@ -97,22 +97,33 @@ export default class ThirdParty extends AuthRecipe<
         return features;
     };
 
-    getFeatureComponent = (componentName: "signinup" | "signinupcallback", props: any): JSX.Element => {
+    getFeatureComponent = (
+        componentName: "signinup" | "signinupcallback",
+        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
+    ): JSX.Element => {
         if (componentName === "signinup") {
-            return (
-                <UserContextWrapper userContext={props.userContext}>
-                    <AuthWidgetWrapper<
-                        GetRedirectionURLContext,
-                        PreAndPostAPIHookAction,
-                        OnHandleEventContext,
-                        NormalisedConfig
-                    >
-                        authRecipe={this}
-                        history={props.history}>
+            if (props.redirectOnSessionExists !== false) {
+                return (
+                    <UserContextWrapper userContext={props.userContext}>
+                        <AuthWidgetWrapper<
+                            GetRedirectionURLContext,
+                            PreAndPostAPIHookAction,
+                            OnHandleEventContext,
+                            NormalisedConfig
+                        >
+                            authRecipe={this}
+                            history={props.history}>
+                            <SignInAndUp recipe={this} {...props} />
+                        </AuthWidgetWrapper>
+                    </UserContextWrapper>
+                );
+            } else {
+                return (
+                    <UserContextWrapper userContext={props.userContext}>
                         <SignInAndUp recipe={this} {...props} />
-                    </AuthWidgetWrapper>
-                </UserContextWrapper>
-            );
+                    </UserContextWrapper>
+                );
+            }
         } else if (componentName === "signinupcallback") {
             return (
                 <UserContextWrapper userContext={props.userContext}>

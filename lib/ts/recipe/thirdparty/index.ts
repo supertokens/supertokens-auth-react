@@ -30,6 +30,7 @@ import { getNormalisedUserContext } from "../../utils";
 import { RecipeInterface, StateObject, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./utils";
 import { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import { PropsWithChildren } from "react";
 export default class Wrapper {
     /*
      * Static attributes.
@@ -170,7 +171,8 @@ export default class Wrapper {
     static Apple = Apple;
     static Facebook = Facebook;
     static Github = Github;
-    static SignInAndUp = (prop?: any) => ThirdParty.getInstanceOrThrow().getFeatureComponent("signinup", prop);
+    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
+        ThirdParty.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
     static SignInAndUpCallback = (prop?: any) =>
         ThirdParty.getInstanceOrThrow().getFeatureComponent("signinupcallback", prop);

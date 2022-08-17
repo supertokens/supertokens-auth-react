@@ -28,6 +28,7 @@ import {
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
 import { StateObject } from "supertokens-web-js/recipe/thirdparty";
+import { PropsWithChildren } from "react";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -300,7 +301,7 @@ export default class Wrapper {
     static Apple = Apple;
     static Facebook = Facebook;
     static Github = Github;
-    static SignInAndUp = (prop?: any) =>
+    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
     static ThirdPartySignInAndUpCallback = (prop?: any) =>

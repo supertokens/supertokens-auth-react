@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import SignInUpTheme from "./components/themes/signInUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
@@ -9,6 +8,7 @@ import {
     RecipeInterface,
 } from "supertokens-web-js/recipe/thirdpartypasswordless";
 import { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
+import { PropsWithChildren } from "react";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -159,7 +159,12 @@ export default class Wrapper {
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
     static Github: typeof Github;
-    static SignInAndUp: (prop?: any) => JSX.Element;
+    static SignInAndUp: (
+        prop?: PropsWithChildren<{
+            redirectOnSessionExists?: boolean;
+            userContext?: any;
+        }>
+    ) => JSX.Element;
     static SignInAndUpTheme: typeof SignInUpTheme;
     static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
     static PasswordlessLinkClickedTheme: import("react").ComponentType<
@@ -192,7 +197,12 @@ declare const doesPasswordlessUserPhoneNumberExist: typeof Wrapper.doesPasswordl
 declare const getPasswordlessLoginAttemptInfo: typeof Wrapper.getPasswordlessLoginAttemptInfo;
 declare const setPasswordlessLoginAttemptInfo: typeof Wrapper.setPasswordlessLoginAttemptInfo;
 declare const clearPasswordlessLoginAttemptInfo: typeof Wrapper.clearPasswordlessLoginAttemptInfo;
-declare const SignInAndUp: (prop?: any) => JSX.Element;
+declare const SignInAndUp: (
+    prop?: PropsWithChildren<{
+        redirectOnSessionExists?: boolean;
+        userContext?: any;
+    }>
+) => JSX.Element;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const PasswordlessLinkClicked: (prop?: any) => JSX.Element;
 export {
