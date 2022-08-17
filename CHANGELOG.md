@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Bug fixes
+
+-   Fixed clearing errors when switching between sign in & up in thirdpartyemailpassword
+
 ## [0.24.5] - 2022-08-16
 
 ### Changed
