@@ -127,8 +127,9 @@ export default class Passwordless extends AuthRecipe<
                     <LinkClickedScreen recipe={this} {...props} />
                 </UserContextWrapper>
             );
+        } else {
+            throw new Error("Should never come here.");
         }
-        return <div>Not implemented</div>;
     };
 
     static init(

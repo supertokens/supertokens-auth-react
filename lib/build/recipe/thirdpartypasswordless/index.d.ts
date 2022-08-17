@@ -1,4 +1,3 @@
-import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import SignInUpTheme from "./components/themes/signInUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
@@ -168,8 +167,6 @@ export default class Wrapper {
     ) => JSX.Element;
     static SignInAndUpTheme: typeof SignInUpTheme;
     static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
-    static EmailVerification: (prop?: any) => JSX.Element;
-    static EmailVerificationTheme: typeof EmailVerificationTheme;
     static PasswordlessLinkClickedTheme: import("react").ComponentType<
         import("../passwordless/types").LinkClickedScreenProps & {
             children?: import("react").ReactNode;
@@ -207,7 +204,6 @@ declare const SignInAndUp: (
     }>
 ) => JSX.Element;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
-declare const EmailVerification: (prop?: any) => JSX.Element;
 declare const PasswordlessLinkClicked: (prop?: any) => JSX.Element;
 export {
     init,
@@ -240,8 +236,6 @@ export {
     SignInUpTheme,
     ThirdPartySignInAndUpCallback,
     signOut,
-    EmailVerification,
-    EmailVerificationTheme,
     PasswordlessLinkClicked,
     GetRedirectionURLContext,
     PreAPIHookContext,

@@ -2,7 +2,6 @@ import React, { PropsWithChildren } from "react";
 import { SessionClaimValidator } from "supertokens-website";
 export declare type SessionAuthProps = {
     requireAuth?: boolean;
-    redirectToLogin?: () => void;
     onSessionExpired?: () => void;
     overrideGlobalClaimValidators?: (
         globalClaimValidators: SessionClaimValidator[],

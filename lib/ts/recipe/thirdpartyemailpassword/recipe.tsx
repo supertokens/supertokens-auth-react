@@ -35,7 +35,6 @@ import SignInAndUp from "./components/features/signInAndUp";
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import RecipeImplementation from "./recipeImplementation";
-import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import OverrideableBuilder from "supertokens-js-override";
@@ -61,7 +60,6 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     constructor(
         config: Config,
         recipes: {
-            emailVerificationInstance: EmailVerification | undefined;
             thirdPartyInstance: ThirdParty | undefined;
             emailPasswordInstance: EmailPassword | undefined;
         }
@@ -173,7 +171,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     };
 
     getFeatureComponent = (
-        componentName: "signinup" | "signinupcallback" | "resetpassword" | "emailverification",
+        componentName: "signinup" | "signinupcallback" | "resetpassword",
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
     ): JSX.Element => {
         if (componentName === "signinup") {
@@ -234,7 +232,6 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                 },
                 {
                     emailPasswordInstance: undefined,
-                    emailVerificationInstance: undefined,
                     thirdPartyInstance: undefined,
                 }
             );

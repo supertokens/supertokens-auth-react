@@ -1,11 +1,17 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import "@testing-library/jest-dom";
 import { act, render, waitFor, waitForElementToBeRemoved } from "@testing-library/react";
+import SuperTokens from "../../../../lib/ts/superTokens";
 import Session from "../../../../lib/ts/recipe/session/recipe";
 import SessionAuth from "../../../../lib/ts/recipe/session/sessionAuth";
 import SessionContext from "../../../../lib/ts/recipe/session/sessionContext";
 import { SessionContextType } from "../../../../lib/ts/recipe/session";
-import { SuperTokensWrapper } from "../../../../lib/ts";
+import { PrimitiveClaim, SessionClaim, useClaimValue } from "../../../../lib/ts/recipe/session";
+
+const TestClaim: SessionClaim<string> = new PrimitiveClaim({
+    id: "st-test-claim",
+    refresh: async () => {},
+});
 
 const MockSession = {
     addEventListener: jest.fn(),
@@ -17,9 +23,15 @@ const MockSession = {
 
 const MockSessionConsumer = () => {
     const session = useContext(SessionContext);
-    if (session.loading === true) {
+    const claimValueCtx = useClaimValue(TestClaim);
+
+    expect(session.loading).toEqual(claimValueCtx.loading);
+
+    if (session.loading === true || claimValueCtx.loading === true) {
         return <h1>Loading</h1>;
     }
+
+    expect(session.doesSessionExist).toEqual(claimValueCtx.doesSessionExist);
 
     if (!session.doesSessionExist) {
         return <h1>Session doesn't exist</h1>;
@@ -30,6 +42,7 @@ const MockSessionConsumer = () => {
             <span>userId: {session.userId}</span>
             <span>accessTokenPayload: {JSON.stringify(session.accessTokenPayload)}</span>
             <span>invalidClaims: {session.invalidClaims.map((a) => a.validatorId).join(", ")}</span>
+            <span>testClaimValue: {claimValueCtx.value === undefined ? "undefined" : claimValueCtx.value}</span>
         </>
     );
 };
@@ -49,11 +62,18 @@ const setMockResolves = (ctx: SessionContextType) => {
     }
 };
 
+jest.spyOn(SuperTokens, "getInstanceOrThrow").mockImplementation(
+    () =>
+        ({
+            redirectToAuth: jest.fn(),
+        } as any)
+);
 jest.spyOn(Session, "getInstanceOrThrow").mockImplementation(() => MockSession as any);
 
 describe("SessionAuth2", () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        SuperTokens.reset();
 
         setMockResolves({
             userId: "mock-user-id",
@@ -89,6 +109,44 @@ describe("SessionAuth2", () => {
         expect(mockUnsubscribe).toHaveBeenCalledTimes(1);
     });
 
+    test("adding in a component outside of router", async () => {
+        let reactRouterDom: any = undefined;
+        const MockSuperTokens = {
+            getReactRouterDomWithCustomHistory: () => {
+                return reactRouterDom;
+            },
+        };
+
+        (SuperTokens as any).instance = MockSuperTokens;
+
+        // given
+        function SubComponentWithRoutes() {
+            reactRouterDom = {
+                useHistoryCustom: () => {
+                    const [val, set] = useState("");
+                    return set;
+                },
+            };
+            return <>mockRenderedText</>;
+        }
+
+        // when
+        const result = render(
+            <SessionAuth>
+                <SubComponentWithRoutes />
+            </SessionAuth>
+        );
+        expect(await result.findByText(`mockRenderedText`)).toBeInTheDocument();
+        result.rerender(
+            <SessionAuth>
+                <SubComponentWithRoutes />
+            </SessionAuth>
+        );
+
+        expect(await result.findByText(`mockRenderedText`)).toBeInTheDocument();
+
+        result.unmount();
+    });
     test("set initial context", async () => {
         // when
         const result = render(
@@ -154,8 +212,7 @@ describe("SessionAuth2", () => {
 
                 // when
                 const result = render(
-                    // We're passing redirectToLogin just to make sure it doesn't throw when requireAuth=true
-                    <SessionAuth requireAuth={requireAuth as any} redirectToLogin={noop}>
+                    <SessionAuth requireAuth={requireAuth as any}>
                         <MockSessionConsumer />
                     </SessionAuth>
                 );
@@ -186,8 +243,7 @@ describe("SessionAuth2", () => {
 
             // when
             const result = render(
-                // We're passing redirectToLogin just to make sure it doesn't throw when requireAuth=true
-                <SessionAuth requireAuth={true} redirectToLogin={noop}>
+                <SessionAuth requireAuth={true}>
                     <h1>Children</h1>
                 </SessionAuth>
             );
@@ -206,7 +262,6 @@ describe("SessionAuth2", () => {
 
             // when
             const result = render(
-                // We're passing redirectToLogin just to make sure it doesn't throw when requireAuth=true
                 <SessionAuth requireAuth={false}>
                     <h1>Children</h1>
                 </SessionAuth>
@@ -382,8 +437,14 @@ describe("SessionAuth2", () => {
             `accessTokenPayload: ${JSON.stringify({})}`
         );
 
+        expect(await result.findByText(/^testClaimValue:/)).toHaveTextContent(`testClaimValue: undefined`);
+
         const mockAccessTokenPayload = {
             afterRefreshKey: "afterRefreshValue",
+            "st-test-claim": {
+                v: "test!",
+                t: Date.now(),
+            },
         };
 
         // when
@@ -401,5 +462,6 @@ describe("SessionAuth2", () => {
         expect(await result.findByText(/^accessTokenPayload:/)).toHaveTextContent(
             `accessTokenPayload: ${JSON.stringify(mockAccessTokenPayload)}`
         );
+        expect(await result.findByText(/^testClaimValue:/)).toHaveTextContent(`testClaimValue: test!`);
     });
 });

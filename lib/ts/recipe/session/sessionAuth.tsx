@@ -19,7 +19,7 @@
 import React, { useEffect, useState, useRef, PropsWithChildren, useCallback } from "react";
 import SessionContext from "./sessionContext";
 import Session from "./recipe";
-import { RecipeEventWithSessionContext, SessionContextType } from "./types";
+import { LoadedSessionContext, RecipeEventWithSessionContext, SessionContextType } from "./types";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { popInvalidClaimRedirectPathFromContext, useOnMountAPICall } from "../../utils";
@@ -28,7 +28,6 @@ import { SessionClaimValidator } from "supertokens-website";
 
 export type SessionAuthProps = {
     requireAuth?: boolean;
-    redirectToLogin?: () => void;
     onSessionExpired?: () => void;
     overrideGlobalClaimValidators?: (
         globalClaimValidators: SessionClaimValidator[],
@@ -52,9 +51,14 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
     const session = useRef<Session>();
 
+    // We store this here, to prevent the list of called hooks changing even if a history hook is added later to SuperTokens.
+    const historyHookRef = useRef(SuperTokens.getReactRouterDomWithCustomHistory()?.useHistoryCustom);
+
     let history: any | undefined;
     try {
-        history = SuperTokens.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
+        if (historyHookRef.current) {
+            history = historyHookRef.current();
+        }
     } catch {
         // We catch and ignore errors here, because if this is may throw if
         // the app is using react-router-dom but added a session auth outside of the router.
@@ -63,14 +67,10 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
     const userContext = useUserContext();
 
     const redirectToLogin = useCallback(() => {
-        if (props.redirectToLogin !== undefined) {
-            props.redirectToLogin();
-        } else {
-            void SuperTokens.getInstanceOrThrow().redirectToAuth({ history, redirectBack: true });
-        }
-    }, [props.redirectToLogin]);
+        void SuperTokens.getInstanceOrThrow().redirectToAuth({ history, redirectBack: true });
+    }, []);
 
-    const buildContext = useCallback(async (): Promise<SessionContextType> => {
+    const buildContext = useCallback(async (): Promise<LoadedSessionContext> => {
         if (session.current === undefined) {
             session.current = Session.getInstanceOrThrow();
         }
@@ -184,9 +184,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         return null;
     }
 
-    return (
-        <SessionContext.Provider value={{ ...context, isDefault: false } as any}>{children}</SessionContext.Provider>
-    );
+    return <SessionContext.Provider value={context}>{children}</SessionContext.Provider>;
 };
 
 const SessionAuthWrapper: React.FC<

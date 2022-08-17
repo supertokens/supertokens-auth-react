@@ -1,10 +1,26 @@
 /// <reference types="react" />
-import { RecipeInterface } from "supertokens-web-js/recipe/session";
+import {
+    BooleanClaim,
+    ClaimValidationResult,
+    PrimitiveArrayClaim,
+    PrimitiveClaim,
+    RecipeInterface,
+    SessionClaim,
+} from "supertokens-web-js/recipe/session";
 import { InputType, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
 export default class SessionAPIWrapper {
     static useSessionContext: () => SessionContextType;
+    static useClaimValue: <T>(claim: SessionClaim<T>) =>
+        | {
+              loading: true;
+          }
+        | {
+              loading: false;
+              doesSessionExist: boolean;
+              value: T | undefined;
+          };
     static SessionAuth: import("react").FC<
         import("react").PropsWithChildren<
             import("./sessionAuth").SessionAuthProps & {
@@ -36,6 +52,15 @@ export default class SessionAPIWrapper {
     }): Promise<ClaimValidationError[]>;
 }
 declare const useSessionContext: () => SessionContextType;
+declare const useClaimValue: <T>(claim: SessionClaim<T>) =>
+    | {
+          loading: true;
+      }
+    | {
+          loading: false;
+          doesSessionExist: boolean;
+          value: T | undefined;
+      };
 declare const SessionAuth: import("react").FC<
     import("react").PropsWithChildren<
         import("./sessionAuth").SessionAuthProps & {
@@ -54,6 +79,7 @@ declare const validateClaims: typeof SessionAPIWrapper.validateClaims;
 declare const getInvalidClaimsFromResponse: typeof SessionAPIWrapper.getInvalidClaimsFromResponse;
 export {
     useSessionContext,
+    useClaimValue,
     SessionAuth,
     init,
     getUserId,
@@ -68,4 +94,11 @@ export {
     InputType,
     SessionContext,
     SessionContextType,
+    BooleanClaim,
+    ClaimValidationError,
+    ClaimValidationResult,
+    PrimitiveArrayClaim,
+    PrimitiveClaim,
+    SessionClaimValidator,
+    SessionClaim,
 };

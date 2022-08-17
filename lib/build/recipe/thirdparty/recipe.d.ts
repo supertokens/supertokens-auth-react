@@ -22,7 +22,7 @@ export default class ThirdParty extends AuthRecipe<
     constructor(config: Config);
     getFeatures: () => RecipeFeatureComponentMap;
     getFeatureComponent: (
-        componentName: "signinup" | "signinupcallback" | "emailverification",
+        componentName: "signinup" | "signinupcallback",
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;

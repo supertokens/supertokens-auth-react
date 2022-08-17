@@ -14,9 +14,17 @@
  */
 
 import Session from "./recipe";
-import { RecipeInterface } from "supertokens-web-js/recipe/session";
+import {
+    BooleanClaim,
+    ClaimValidationResult,
+    PrimitiveArrayClaim,
+    PrimitiveClaim,
+    RecipeInterface,
+    SessionClaim,
+} from "supertokens-web-js/recipe/session";
 import SessionAuthWrapper from "./sessionAuth";
 import useSessionContextFunc from "./useSessionContext";
+import { useClaimValue as useClaimValueFunc } from "./useClaimValue";
 import { InputType, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
 import { getNormalisedUserContext } from "../../utils";
@@ -24,6 +32,7 @@ import { ClaimValidationError, SessionClaimValidator } from "supertokens-website
 
 export default class SessionAPIWrapper {
     static useSessionContext = useSessionContextFunc;
+    static useClaimValue = useClaimValueFunc;
 
     static SessionAuth = SessionAuthWrapper;
 
@@ -82,6 +91,7 @@ export default class SessionAPIWrapper {
 }
 
 const useSessionContext = SessionAPIWrapper.useSessionContext;
+const useClaimValue = SessionAPIWrapper.useClaimValue;
 const SessionAuth = SessionAPIWrapper.SessionAuth;
 const init = SessionAPIWrapper.init;
 const getUserId = SessionAPIWrapper.getUserId;
@@ -95,6 +105,7 @@ const getInvalidClaimsFromResponse = SessionAPIWrapper.getInvalidClaimsFromRespo
 
 export {
     useSessionContext,
+    useClaimValue,
     SessionAuth,
     init,
     getUserId,
@@ -109,4 +120,11 @@ export {
     InputType,
     SessionContext,
     SessionContextType,
+    BooleanClaim,
+    ClaimValidationError,
+    ClaimValidationResult,
+    PrimitiveArrayClaim,
+    PrimitiveClaim,
+    SessionClaimValidator,
+    SessionClaim,
 };

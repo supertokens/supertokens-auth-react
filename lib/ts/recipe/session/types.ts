@@ -22,15 +22,16 @@ export type InputType = WebJSInputType & {
     onHandleEvent?: (event: RecipeEventWithSessionContext) => void;
 };
 
-export type SessionContextUpdate = Omit<LoadedSessionContext, "invalidClaims" | "loading">;
-
-type LoadedSessionContext = {
-    loading: false;
+export type SessionContextUpdate = {
     doesSessionExist: boolean;
     userId: string;
     accessTokenPayload: any;
-    invalidClaims: ClaimValidationError[];
 };
+
+export type LoadedSessionContext = {
+    loading: false;
+    invalidClaims: ClaimValidationError[];
+} & SessionContextUpdate;
 
 export type SessionContextType =
     | LoadedSessionContext

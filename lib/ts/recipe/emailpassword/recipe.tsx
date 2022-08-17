@@ -131,12 +131,14 @@ export default class EmailPassword extends AuthRecipe<
                     </UserContextWrapper>
                 );
             }
-        } else {
+        } else if (componentName === "resetpassword") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
                     <ResetPasswordUsingToken recipe={this} {...props} />
                 </UserContextWrapper>
             );
+        } else {
+            throw new Error("Should never come here.");
         }
     };
 
