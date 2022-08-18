@@ -78,10 +78,6 @@ SuperTokens.init({
         }),
         Passwordless.init({
             contactMethod: "EMAIL_OR_PHONE",
-            getRedirectionURL: async () => {
-                debugger;
-                return undefined;
-            },
         }),
         Session.init(),
     ],

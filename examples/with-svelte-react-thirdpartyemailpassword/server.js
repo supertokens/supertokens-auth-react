@@ -27,9 +27,6 @@ supertokens.init({
         websiteDomain, // TODO: Change to your app's website domain
     },
     recipeList: [
-        EmailVerification.init({
-            mode: "REQUIRED",
-        }),
         ThirdPartyEmailPassword.init({
             providers: [
                 // We have provided you with development keys which you can use for testsing.
