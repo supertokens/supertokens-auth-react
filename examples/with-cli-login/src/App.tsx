@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import ThirdPartyEmailPassword, {
@@ -9,7 +9,7 @@ import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route, useLocation } from "react-router-dom";
 import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
-import Passwordless from "supertokens-auth-react/recipe/passwordless";
+import { MagicLinkScreen } from "./MagicLinkScreen";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -43,17 +43,8 @@ SuperTokens.init({
             },
             getRedirectionURL: async function (context) {
                 if (context.action === "SUCCESS") {
-                    return undefined;
+                    return "/auth/verify";
                 }
-            },
-        }),
-        Passwordless.init({
-            contactMethod: "EMAIL",
-            signInUpFeature: {
-                disableDefaultUI: true,
-            },
-            linkClickedScreenFeature: {
-                disableDefaultUI: true,
             },
         }),
         Session.init(),
@@ -95,7 +86,7 @@ function App() {
                                 </ThirdPartyEmailPasswordAuth>
                             }
                         />
-                        <Route path="/auth/verify" element={<div />} />
+                        <Route path="/auth/verify" element={<MagicLinkScreen />} />
                     </Routes>
                 </div>
                 <Footer />

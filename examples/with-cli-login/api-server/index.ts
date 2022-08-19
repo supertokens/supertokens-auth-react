@@ -7,6 +7,8 @@ import { middleware, errorHandler, SessionRequest } from "supertokens-node/frame
 import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
 import Passwordless from "supertokens-node/recipe/passwordless";
 import UserMetadata from "supertokens-node/recipe/usermetadata";
+import { v4 as uuidv4 } from "uuid";
+import JWT from "supertokens-node/recipe/jwt";
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -53,16 +55,30 @@ supertokens.init({
             ],
         }),
         UserMetadata.init(),
+        JWT.init({
+            jwtValiditySeconds: 3153600000, // 100 years..
+        }),
         Passwordless.init({
             contactMethod: "EMAIL",
             flowType: "MAGIC_LINK",
+            override: {
+                apis: (oI) => {
+                    // we disable all of the default APIs for this recipe.
+                    return {
+                        ...oI,
+                        consumeCodePOST: undefined,
+                        createCodePOST: undefined,
+                        resendCodePOST: undefined,
+                    };
+                },
+            },
         }),
         Session.init(),
     ],
 });
 
 const app = express();
-
+app.use(express.json());
 app.use(
     cors({
         origin: websiteDomain,
@@ -75,13 +91,57 @@ app.use(
 app.use(middleware());
 
 // An example API that requires session verification
-app.get("/sessioninfo", verifySession(), async (req: SessionRequest, res) => {
-    let session = req.session!;
-    res.send({
-        sessionHandle: session.getHandle(),
-        userId: session.getUserId(),
-        accessTokenPayload: session.getAccessTokenPayload(),
+app.post("/consumetoken", verifySession(), async (req: SessionRequest, res) => {
+    let token = req.body.token;
+    let preAuthSessionId = req.body.preAuthSessionId;
+
+    let response = await Passwordless.consumeCode({
+        preAuthSessionId,
+        linkCode: token,
     });
+    if (response.status === "OK") {
+        // token has been consumed.
+        let userId = req.session!.getUserId();
+
+        // we save this so that the CLI can know that we have successfully logged in the user
+        await UserMetadata.updateUserMetadata(preAuthSessionId, {
+            userId,
+        });
+
+        // cleanup of passwordless user.
+        await supertokens.deleteUser(response.user.id);
+        return res.send({});
+    }
+    res.status(400).send("Could not consume code");
+});
+
+app.get("/getmagiclink", async (req, res) => {
+    let link = await Passwordless.createMagicLink({
+        email: uuidv4(),
+    });
+    res.status(200).send(link);
+});
+
+// this should be called by the CLI periodically to wait for the
+// user to finish logging in
+app.get("/waitforlogin", async (req, res) => {
+    let preAuthSessionId: any = req.query.preAuthSessionId;
+    let metadata = (await UserMetadata.getUserMetadata(preAuthSessionId)).metadata;
+    if (metadata.userId === undefined) {
+        // not consumed yet
+        return res.send("Not consumed. Try again in sometime");
+    } else {
+        // we want to return a JWT to the CLI
+        let jwt = await JWT.createJWT({
+            sub: metadata.userId,
+        });
+        if (jwt.status === "OK") {
+            res.send(jwt.jwt);
+            await UserMetadata.clearUserMetadata(preAuthSessionId);
+        } else {
+            throw new Error("Should never come here");
+        }
+    }
 });
 
 app.use(errorHandler());
