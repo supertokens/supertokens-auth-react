@@ -24,7 +24,7 @@ npm run start
 
 The app will start on `http://localhost:3000`
 
-Then you can start the cli took by running `./startCLI` command which will prompt you to login.
+Then you can start the cli took by running `npm run cli` command which will prompt you to login.
 
 ## Author
 

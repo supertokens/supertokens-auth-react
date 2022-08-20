@@ -103,6 +103,9 @@ app.post("/consumetoken", verifySession(), async (req: SessionRequest, res) => {
         // token has been consumed.
         let userId = req.session!.getUserId();
 
+        // Ideally we want to save this mapping somewhere else with a TTL.
+        // But if you do not want to save this in your own db, we can use
+        // the user metadata recipe for it as well.
         // we save this so that the CLI can know that we have successfully logged in the user
         await UserMetadata.updateUserMetadata(preAuthSessionId, {
             userId,
@@ -124,8 +127,8 @@ app.get("/getmagiclink", async (req, res) => {
 
 // this should be called by the CLI periodically to wait for the
 // user to finish logging in
-app.get("/waitforlogin", async (req, res) => {
-    let preAuthSessionId: any = req.query.preAuthSessionId;
+app.post("/waitforlogin", async (req, res) => {
+    let preAuthSessionId: any = req.body.preAuthSessionId;
     let metadata = (await UserMetadata.getUserMetadata(preAuthSessionId)).metadata;
     if (metadata.userId === undefined) {
         // not consumed yet
@@ -142,6 +145,16 @@ app.get("/waitforlogin", async (req, res) => {
             throw new Error("Should never come here");
         }
     }
+});
+
+// An example API that requires session verification
+app.get("/sessioninfo", verifySession(), async (req: SessionRequest, res) => {
+    let session = req.session!;
+    res.send({
+        sessionHandle: session.getHandle(),
+        userId: session.getUserId(),
+        accessTokenPayload: session.getAccessTokenPayload(),
+    });
 });
 
 app.use(errorHandler());

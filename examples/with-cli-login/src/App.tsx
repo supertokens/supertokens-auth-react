@@ -31,9 +31,6 @@ SuperTokens.init({
     },
     recipeList: [
         ThirdPartyEmailPassword.init({
-            emailVerificationFeature: {
-                mode: "REQUIRED",
-            },
             signInAndUpFeature: {
                 providers: [
                     ThirdPartyEmailPassword.Github.init(),
