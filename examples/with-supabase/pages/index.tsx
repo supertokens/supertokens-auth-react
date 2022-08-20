@@ -74,9 +74,9 @@ function ProtectedPage() {
                     Welcome to <a href="https://nextjs.org">Next.js!</a>
                 </h1>
                 <p className={styles.description}>
-                    You are authenticated with SuperTokens! (UserId: {sessionContext.userId})
+                    You are authenticated with SuperTokens! (UserId: <span id="userId">{sessionContext.userId}</span>)
                     <br />
-                    Your email retrieved from Supabase: {userEmail}
+                    Your email retrieved from Supabase: <span id="userEmail">{userEmail}</span>
                 </p>
 
                 <div
@@ -116,6 +116,7 @@ function ProtectedPage() {
                     }}>
                     <div
                         onClick={fetchUserData}
+                        id="fetchUserDataBtn"
                         style={{
                             display: "flex",
                             width: "150px",

@@ -1,6 +1,7 @@
 const express = require("express");
 const supertokens = require("supertokens-node");
 const Session = require("supertokens-node/recipe/session");
+const EmailVerification = require("supertokens-node/recipe/emailverification");
 const ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 const { middleware, errorHandler } = require("supertokens-node/framework/express");
 const cors = require("cors");

@@ -33,7 +33,7 @@ export default function Home() {
             <div style={{ height: "10px" }} />
             Your user ID is
             <div />
-            {sessionContext.userId}
+            <span id="userId">{sessionContext.userId}</span>
             <div style={{ height: "10px" }} />
             <div style={{ height: "10px" }} />
             <div style={{ height: "10px" }} />

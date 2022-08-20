@@ -4,7 +4,7 @@ import styles from "../styles/Home.module.css";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import supertokensNode from "supertokens-node";
 import SessionNode from "supertokens-node/recipe/session";
-import SessionReact from "supertokens-auth-react/recipe/session";
+import SessionReact, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { redirectToAuth } from "supertokens-auth-react";
 import { backendConfig } from "../config/backendConfig";
 
@@ -31,9 +31,9 @@ export async function getServerSideProps(context) {
 
 export default function Home(props) {
     return (
-        <EmailPassword.EmailPasswordAuth>
+        <SessionAuth>
             <ProtectedPage />
-        </EmailPassword.EmailPasswordAuth>
+        </SessionAuth>
     );
 }
 

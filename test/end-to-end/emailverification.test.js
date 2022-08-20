@@ -432,7 +432,7 @@ describe("SuperTokens Email Verification", function () {
 
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             await page.waitForSelector(".sessionInfo-user-id");
-            await page.screenshot({ path: "screenshot2.jpeg" });
+
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/dashboard");
         });

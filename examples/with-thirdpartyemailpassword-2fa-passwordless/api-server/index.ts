@@ -7,14 +7,14 @@ import { middleware, errorHandler, SessionRequest } from "supertokens-node/frame
 import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
 import Passwordless from "supertokens-node/recipe/passwordless";
 import UserMetadata from "supertokens-node/recipe/usermetadata";
+import { SecondFactorClaim } from "./secondFactorClaim";
+
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
-
-export const emailVerificationOn = true;
 
 supertokens.init({
     framework: "express",
@@ -80,7 +80,10 @@ supertokens.init({
                              * same number that belongs to this user.
                              */
 
-                            let session = await Session.getSession(input.options.req, input.options.res);
+                            // We remove claim checking here, since this needs to be callable without the second factor completed
+                            let session = await Session.getSession(input.options.req, input.options.res, {
+                                overrideGlobalClaimValidators: () => [],
+                            });
                             if (session === undefined) {
                                 throw new Error("Should never come here");
                             }
@@ -95,13 +98,17 @@ supertokens.init({
 
                             return oI.createCodePOST(input);
                         },
+
                         consumeCodePOST: async function (input) {
                             if (oI.consumeCodePOST === undefined) {
                                 throw new Error("Should never come here");
                             }
                             // we should already have a session here since this is called
                             // after phone password login
-                            let session = await Session.getSession(input.options.req, input.options.res);
+                            // We remove claim checking here, since this needs to be callable without the second factor completed
+                            let session = await Session.getSession(input.options.req, input.options.res, {
+                                overrideGlobalClaimValidators: () => [],
+                            });
                             if (session === undefined) {
                                 throw new Error("Should never come here");
                             }
@@ -115,10 +122,7 @@ supertokens.init({
                                 // OTP verification was successful. We can now mark the
                                 // session's payload as is2faComplete: true so that
                                 // the user has access to API routes and the frontend UI
-                                await resp.session.updateAccessTokenPayload({
-                                    ...resp.session.getAccessTokenPayload(),
-                                    is2faComplete: true,
-                                });
+                                await resp.session.setClaimValue(SecondFactorClaim, true);
 
                                 // we associate the passwordless user ID with the thirdpartyemailpassword
                                 // user ID, so that later on, we can fetch the phone number.
@@ -138,6 +142,10 @@ supertokens.init({
                 functions: (originalImplementation) => {
                     return {
                         ...originalImplementation,
+                        getGlobalClaimValidators: (input) => [
+                            ...input.claimValidatorsAddedByOtherRecipes,
+                            SecondFactorClaim.validators.hasValue(true),
+                        ],
                         createNewSession: async function (input) {
                             if (input.userContext.session !== undefined) {
                                 /**
@@ -157,11 +165,12 @@ supertokens.init({
                                 });
                                 phoneNumber = passwordlessUserInfo?.phoneNumber;
                             }
+
                             return originalImplementation.createNewSession({
                                 ...input,
                                 accessTokenPayload: {
                                     ...input.accessTokenPayload,
-                                    is2faComplete: false,
+                                    ...SecondFactorClaim.build(input.userId, input.userContext),
                                     phoneNumber,
                                 },
                             });
@@ -187,31 +196,14 @@ app.use(
 app.use(middleware());
 
 // An example API that requires session verification
-app.get(
-    "/sessioninfo",
-    verifySession(),
-    (req: SessionRequest, res, next) => {
-        // this is a custom middleware which will make sure that the user
-        // has access to the APIs only when they have finished both the login
-        // challenges
-        let accessTokenPayload = req.session?.getAccessTokenPayload();
-        if (accessTokenPayload.is2faComplete !== true) {
-            // we do not use 401 cause that is a reserved status code for supertokens in case
-            // the session doesn't exist
-            res.status(403).send("You need to verify your phone number via an OTP");
-        } else {
-            next();
-        }
-    },
-    async (req: SessionRequest, res) => {
-        let session = req.session!;
-        res.send({
-            sessionHandle: session.getHandle(),
-            userId: session.getUserId(),
-            accessTokenPayload: session.getAccessTokenPayload(),
-        });
-    }
-);
+app.get("/sessioninfo", verifySession(), async (req: SessionRequest, res) => {
+    let session = req.session!;
+    res.send({
+        sessionHandle: session.getHandle(),
+        userId: session.getUserId(),
+        accessTokenPayload: session.getAccessTokenPayload(),
+    });
+});
 
 app.use(errorHandler());
 

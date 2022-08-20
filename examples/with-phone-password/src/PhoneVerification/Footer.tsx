@@ -1,17 +1,14 @@
 import Session from "supertokens-auth-react/recipe/session";
 import axios from "axios";
 import { RecipeInterface } from "supertokens-auth-react/recipe/passwordless";
+import { redirectToAuth } from "supertokens-auth-react";
 Session.addAxiosInterceptors(axios);
 
 export default function Footer(props: { recipeImplementation: RecipeInterface }) {
     return (
         <div
             onClick={async () => {
-                await Session.signOut({
-                    userContext: {
-                        forceOriginalCheck: true,
-                    },
-                });
+                await Session.signOut();
 
                 /**
                  * This removes the saved phone number from localstorage so that
@@ -20,6 +17,8 @@ export default function Footer(props: { recipeImplementation: RecipeInterface })
                 await props.recipeImplementation.clearLoginAttemptInfo({
                     userContext: {},
                 });
+
+                await redirectToAuth({ redirectBack: false });
             }}
             style={{
                 marginTop: "10px",

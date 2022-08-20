@@ -18,14 +18,13 @@
         "react-dom": "^18.0.0",
         "react-router-dom": "^6.2.1",
         "react-scripts": "^5.0.1",
-        "supertokens-auth-react": "^0.24.0",
-        "supertokens-node": "^11.0.0",
+        "supertokens-auth-react": "github:supertokens/supertokens-auth-react#example_testing",
+        "supertokens-node": "github:supertokens/supertokens-node#session_grants",
         "typescript": "^4.0.3",
         "web-vitals": "^0.2.4"
     },
     "scripts": {
-        "start": "npm-run-all --parallel front",
-        "front": "BROWSER=none PORT=8888 react-scripts start",
+        "start": "netlify dev -c 'react-scripts start'",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
