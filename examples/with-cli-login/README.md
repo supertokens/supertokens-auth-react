@@ -45,7 +45,7 @@ For that mapping, we use the UserMetadata recipe from SuperTokens. Ideally you w
 
 Whilst the above happens, the CLI is periodically calling the `/waitforlogin` API on the backend with the `preAuthSessionId`. Once the mapping of `preAuthSessionId` -> `userId` exists, we generate a JWT (using SuperTokens JWT recipe) and return that to the CLI.
 
-The CLI is not logged in.
+The CLI is now logged in.
 
 ## Author
 
