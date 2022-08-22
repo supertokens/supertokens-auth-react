@@ -6,13 +6,14 @@ import Session from "../../../../lib/ts/recipe/session/recipe";
 import Recipe from "../../../../lib/ts/recipe/thirdpartyemailpassword/recipe";
 import { SignInAndUp } from "../../../../lib/ts/recipe/thirdpartyemailpassword";
 import { SessionContextType } from "../../../../lib/ts/recipe/session";
-import { WindowHandlerInterface } from "supertokens-website/utils/windowHandler/types";
 
 const MockSession = {
     addEventListener: jest.fn(),
     getUserId: jest.fn(),
     getAccessTokenPayloadSecurely: jest.fn(),
     doesSessionExist: jest.fn(),
+    validateClaims: jest.fn(),
+    validateGlobalClaimsAndHandleSuccessRedirection: jest.fn(),
 };
 
 const setMockResolvesSession = (ctx: SessionContextType) => {
@@ -21,10 +22,12 @@ const setMockResolvesSession = (ctx: SessionContextType) => {
         MockSession.getUserId.mockReturnValue(new Promise<any>(() => {}));
         MockSession.getAccessTokenPayloadSecurely.mockReturnValue(new Promise<any>(() => {}));
         MockSession.doesSessionExist.mockReturnValue(new Promise<any>(() => {}));
+        MockSession.validateClaims.mockReturnValue(new Promise<any>(() => {}));
     } else {
         MockSession.getUserId.mockResolvedValue(ctx.userId);
         MockSession.getAccessTokenPayloadSecurely.mockResolvedValue(ctx.accessTokenPayload);
         MockSession.doesSessionExist.mockResolvedValue(ctx.doesSessionExist);
+        MockSession.validateClaims.mockReturnValue(ctx.invalidClaims);
     }
 };
 
@@ -32,7 +35,6 @@ jest.spyOn(Session, "getInstanceOrThrow").mockImplementation(() => MockSession a
 
 describe("ThirdPartyEmailPassword.SignInAndUp", () => {
     const websiteDomain = "http://localhost:3000";
-    let myWindow: WindowHandlerInterface;
     beforeEach(() => {
         jest.clearAllMocks();
         Recipe.reset();
@@ -51,58 +53,42 @@ describe("ThirdPartyEmailPassword.SignInAndUp", () => {
                     useShadowDom: false,
                 }),
             ],
-            windowHandler: (orig) => {
-                let url = new URL(websiteDomain + "/start");
-
-                myWindow = {
-                    ...orig,
-                    location: {
-                        assign: (val) => {
-                            url = new URL(typeof val === "string" && val.startsWith("/") ? websiteDomain + val : val);
-                        },
-                        setHref: (val) => {
-                            myWindow.location.assign(val);
-                        },
-                        getHash: () => url.hash,
-                        getHostName: () => url.hostname,
-                        getHref: () => url.href,
-                        getOrigin: () => url.origin,
-                        getPathName: () => url.pathname,
-                        getSearch: () => url.search,
-                    },
-                };
-                return myWindow;
-            },
         });
 
         setMockResolvesSession({
             userId: "mock-user-id",
             accessTokenPayload: {},
+            invalidClaims: [],
             doesSessionExist: true,
             loading: false,
         });
     });
 
     test("redirect if session exists", async () => {
-        const spy = jest.spyOn(myWindow.location, "setHref");
         // when
         render(<SignInAndUp />);
         // then
         await waitFor(() => {
-            expect(spy).toHaveBeenCalledTimes(1);
-            expect(spy).toHaveBeenCalledWith("/");
+            expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledTimes(1);
+            expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledWith(
+                {
+                    rid: "thirdpartyemailpassword",
+                    successRedirectContext: { action: "SUCCESS", isNewUser: false, redirectToPath: undefined },
+                },
+                {},
+                undefined
+            );
         });
     });
 
     test("not redirect if session exists but redirectOnSessionExists=false", async () => {
-        const spy = jest.spyOn(myWindow.location, "setHref");
         // when
         const result = render(<SignInAndUp redirectOnSessionExists={false}> mockRenderedText </SignInAndUp>);
 
         expect(await result.findByText(`mockRenderedText`)).toBeInTheDocument();
         // then
         await waitFor(() => {
-            expect(spy).toHaveBeenCalledTimes(0);
+            expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledTimes(0);
         });
     });
 });
