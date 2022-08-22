@@ -78,6 +78,37 @@ SuperTokens.init({
                             </div>
                         );
                     },
+                    // we override the component which shows the change phone number button
+                    PasswordlessUserInputCodeFormFooter_Override: ({ DefaultComponent, ...props }) => {
+                        // the logic here is very similar to the previous step's logic
+                        let [showDefaultUI, setShowDefaultUI] = useState(false);
+                        useEffect(() => {
+                            Session.getAccessTokenPayloadSecurely()
+                                .then(async (accessTokenPayload) => {
+                                    let phoneNumber = accessTokenPayload.phoneNumber;
+                                    if (phoneNumber === undefined) {
+                                        // since the phone number does not exist in the access token's
+                                        // payload, we want to show the button
+                                        setShowDefaultUI(true);
+                                    }
+                                })
+                                .catch((err) => {
+                                    // it can come here if a session doesn't exist.
+                                    // in this case, the screen we should redirect to the
+                                    // first login challenge
+                                    SuperTokens.redirectToAuth({
+                                        redirectBack: false,
+                                    });
+                                });
+                        }, []);
+                        if (showDefaultUI) {
+                            // this will show the change phone number button
+                            return <DefaultComponent {...props} />;
+                        }
+
+                        // this will hide the change phone number button
+                        return null;
+                    },
                 },
             },
         }),
