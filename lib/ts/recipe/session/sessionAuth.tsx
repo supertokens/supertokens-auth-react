@@ -28,6 +28,7 @@ import { SessionClaimValidator } from "supertokens-website";
 
 export type SessionAuthProps = {
     requireAuth?: boolean;
+    doRedirection?: boolean;
     onSessionExpired?: () => void;
     overrideGlobalClaimValidators?: (
         globalClaimValidators: SessionClaimValidator[],
@@ -116,17 +117,22 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 return;
             }
 
-            if (!toSetContext.doesSessionExist && props.requireAuth !== false) {
-                redirectToLogin();
-            } else {
-                setContext(toSetContext);
-                const redirectPath = popInvalidClaimRedirectPathFromContext(userContext);
-                if (redirectPath) {
-                    await SuperTokens.getInstanceOrThrow().redirectToUrl(redirectPath, history);
+            if (props.doRedirection !== false) {
+                if (!toSetContext.doesSessionExist && props.requireAuth !== false) {
+                    redirectToLogin();
+                    return;
+                } else {
+                    const redirectPath = popInvalidClaimRedirectPathFromContext(userContext);
+                    if (redirectPath) {
+                        await SuperTokens.getInstanceOrThrow().redirectToUrl(redirectPath, history);
+                        return;
+                    }
                 }
             }
+
+            setContext(toSetContext);
         },
-        [props.requireAuth, redirectToLogin, context]
+        [props.doRedirection, props.requireAuth, redirectToLogin, context]
     );
 
     useOnMountAPICall(buildContext, setInitialContextAndMaybeRedirect);
@@ -150,7 +156,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     setContext({ ...event.sessionContext, loading: false, invalidClaims });
 
                     const redirectPath = popInvalidClaimRedirectPathFromContext(userContext);
-                    if (redirectPath) {
+                    if (props.doRedirection !== false && redirectPath) {
                         await SuperTokens.getInstanceOrThrow().redirectToUrl(redirectPath, history);
                     }
 
@@ -163,7 +169,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     setContext({ ...event.sessionContext, loading: false, invalidClaims: [] });
                     if (props.onSessionExpired !== undefined) {
                         props.onSessionExpired();
-                    } else if (props.requireAuth !== false) {
+                    } else if (props.requireAuth !== false && props.doRedirection !== false) {
                         redirectToLogin();
                     }
                     return;

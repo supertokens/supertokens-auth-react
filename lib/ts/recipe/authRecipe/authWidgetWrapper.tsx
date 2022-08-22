@@ -43,7 +43,7 @@ const AuthWidgetWrapper = <
     props: PropsWithChildren<Props<T, Action, R, N>>
 ): React.ReactElement | null => {
     return (
-        <SessionAuth requireAuth={false} overrideGlobalClaimValidators={() => []}>
+        <SessionAuth requireAuth={false} doRedirection={false}>
             <Redirector {...props} />
         </SessionAuth>
     );

@@ -7,6 +7,7 @@ import SessionAuth from "../../../../lib/ts/recipe/session/sessionAuth";
 import SessionContext from "../../../../lib/ts/recipe/session/sessionContext";
 import { SessionContextType } from "../../../../lib/ts/recipe/session";
 import { PrimitiveClaim, SessionClaim, useClaimValue } from "../../../../lib/ts/recipe/session";
+import { saveInvalidClaimRedirectPathInContext } from "../../../../lib/ts/utils";
 
 const TestClaim: SessionClaim<string> = new PrimitiveClaim({
     id: "st-test-claim",
@@ -62,15 +63,19 @@ const setMockResolves = (ctx: SessionContextType) => {
     }
 };
 
+let mockRedirectToAuth: jest.Mock<Promise<void>, Parameters<SuperTokens["redirectToAuth"]>>;
+let mockRedirectToUrl: jest.Mock<Promise<void>, Parameters<SuperTokens["redirectToUrl"]>>;
+
 jest.spyOn(SuperTokens, "getInstanceOrThrow").mockImplementation(
     () =>
         ({
-            redirectToAuth: jest.fn(),
+            redirectToAuth: (mockRedirectToAuth = jest.fn()),
+            redirectToUrl: (mockRedirectToUrl = jest.fn()),
         } as any)
 );
 jest.spyOn(Session, "getInstanceOrThrow").mockImplementation(() => MockSession as any);
 
-describe("SessionAuth2", () => {
+describe("SessionAuth", () => {
     beforeEach(() => {
         jest.clearAllMocks();
         SuperTokens.reset();
@@ -463,5 +468,249 @@ describe("SessionAuth2", () => {
             `accessTokenPayload: ${JSON.stringify(mockAccessTokenPayload)}`
         );
         expect(await result.findByText(/^testClaimValue:/)).toHaveTextContent(`testClaimValue: test!`);
+    });
+
+    describe("redirections", () => {
+        test("redirect on ACCESS_TOKEN_PAYLOAD_UPDATED for invalid claim", async () => {
+            // given
+            let listenerFn: (event: any) => void;
+            MockSession.addEventListener.mockImplementationOnce((fn) => {
+                listenerFn = fn;
+
+                return () => {};
+            });
+
+            const result = render(
+                <SessionAuth>
+                    <MockSessionConsumer />
+                </SessionAuth>
+            );
+
+            const accessTokenPayloadElement = await result.findByText(/^accessTokenPayload:/);
+            expect(accessTokenPayloadElement).toHaveTextContent(`accessTokenPayload: ${JSON.stringify({})}`);
+
+            expect(await result.findByText(/^testClaimValue:/)).toHaveTextContent(`testClaimValue: undefined`);
+
+            const mockAccessTokenPayload = {
+                afterRefreshKey: "afterRefreshValue",
+                "st-test-claim": {
+                    v: "test!",
+                    t: Date.now(),
+                },
+            };
+
+            // when
+            MockSession.validateClaims.mockImplementationOnce(({ userContext }) => {
+                saveInvalidClaimRedirectPathInContext(userContext, "/test-redirect");
+                return [{ id: "st-test-claim" }];
+            });
+
+            await act(() =>
+                listenerFn({
+                    action: "ACCESS_TOKEN_PAYLOAD_UPDATED",
+                    sessionContext: {
+                        doesSessionExist: true,
+                        accessTokenPayload: mockAccessTokenPayload,
+                        userId: "",
+                    },
+                })
+            );
+
+            // then
+            expect(await result.findByText(/^accessTokenPayload:/)).toHaveTextContent(
+                `accessTokenPayload: ${JSON.stringify(mockAccessTokenPayload)}`
+            );
+
+            expect(mockRedirectToUrl).toHaveBeenLastCalledWith("/test-redirect", undefined);
+        });
+
+        test("not redirect on ACCESS_TOKEN_PAYLOAD_UPDATED for invalid claim if doRedirection=false", async () => {
+            // given
+            let listenerFn: (event: any) => void;
+            MockSession.addEventListener.mockImplementationOnce((fn) => {
+                listenerFn = fn;
+
+                return () => {};
+            });
+
+            const result = render(
+                <SessionAuth doRedirection={false}>
+                    <MockSessionConsumer />
+                </SessionAuth>
+            );
+
+            const accessTokenPayloadElement = await result.findByText(/^accessTokenPayload:/);
+            expect(accessTokenPayloadElement).toHaveTextContent(`accessTokenPayload: ${JSON.stringify({})}`);
+
+            expect(await result.findByText(/^testClaimValue:/)).toHaveTextContent(`testClaimValue: undefined`);
+
+            const mockAccessTokenPayload = {
+                afterRefreshKey: "afterRefreshValue",
+                "st-test-claim": {
+                    v: "test!",
+                    t: Date.now(),
+                },
+            };
+
+            // when
+            MockSession.validateClaims.mockImplementationOnce(({ userContext }) => {
+                saveInvalidClaimRedirectPathInContext(userContext, "/test-redirect");
+                return [{ id: "st-test-claim" }];
+            });
+
+            await act(() =>
+                listenerFn({
+                    action: "ACCESS_TOKEN_PAYLOAD_UPDATED",
+                    sessionContext: {
+                        doesSessionExist: true,
+                        accessTokenPayload: mockAccessTokenPayload,
+                        userId: "",
+                    },
+                })
+            );
+
+            // then
+            expect(await result.findByText(/^accessTokenPayload:/)).toHaveTextContent(
+                `accessTokenPayload: ${JSON.stringify(mockAccessTokenPayload)}`
+            );
+
+            expect(mockRedirectToUrl).toHaveBeenCalledTimes(0);
+        });
+
+        test("redirect on UNAUTHORISED", async () => {
+            // given
+            let listenerFn: (event: any) => void;
+            MockSession.addEventListener.mockImplementationOnce((fn) => {
+                listenerFn = fn;
+
+                return () => {};
+            });
+
+            const result = render(
+                <SessionAuth>
+                    <MockSessionConsumer />
+                </SessionAuth>
+            );
+
+            const accessTokenPayloadElement = await result.findByText(/^accessTokenPayload:/);
+            expect(accessTokenPayloadElement).toHaveTextContent(`accessTokenPayload: ${JSON.stringify({})}`);
+
+            expect(await result.findByText(/^testClaimValue:/)).toHaveTextContent(`testClaimValue: undefined`);
+
+            // when
+            MockSession.validateClaims.mockImplementationOnce(({ userContext }) => {
+                saveInvalidClaimRedirectPathInContext(userContext, "/test-redirect");
+                return [{ id: "st-test-claim" }];
+            });
+
+            await Promise.all([
+                act(() =>
+                    listenerFn({
+                        action: "UNAUTHORISED",
+                        sessionContext: {
+                            doesSessionExist: false,
+                            accessTokenPayload: {},
+                            userId: "",
+                        },
+                    })
+                ),
+                waitForElementToBeRemoved(accessTokenPayloadElement),
+            ]);
+
+            // then
+            expect(mockRedirectToAuth).toHaveBeenLastCalledWith({ redirectBack: true, history: undefined });
+        });
+
+        test("not redirect on UNAUTHORISED if doRedirection=false", async () => {
+            // given
+            let listenerFn: (event: any) => void;
+            MockSession.addEventListener.mockImplementationOnce((fn) => {
+                listenerFn = fn;
+
+                return () => {};
+            });
+
+            const result = render(
+                <SessionAuth doRedirection={false}>
+                    <MockSessionConsumer />
+                </SessionAuth>
+            );
+
+            const accessTokenPayloadElement = await result.findByText(/^accessTokenPayload:/);
+            expect(accessTokenPayloadElement).toHaveTextContent(`accessTokenPayload: ${JSON.stringify({})}`);
+
+            expect(await result.findByText(/^testClaimValue:/)).toHaveTextContent(`testClaimValue: undefined`);
+
+            // when
+            MockSession.validateClaims.mockImplementationOnce(({ userContext }) => {
+                saveInvalidClaimRedirectPathInContext(userContext, "/test-redirect");
+                return [{ id: "st-test-claim" }];
+            });
+
+            await Promise.all([
+                act(() =>
+                    listenerFn({
+                        action: "UNAUTHORISED",
+                        sessionContext: {
+                            doesSessionExist: false,
+                            accessTokenPayload: {},
+                            userId: "",
+                        },
+                    })
+                ),
+                waitForElementToBeRemoved(accessTokenPayloadElement),
+            ]);
+
+            // then
+            expect(mockRedirectToUrl).toHaveBeenCalledTimes(0);
+        });
+
+        test("not redirect on session load if doRedirection=false", async () => {
+            // given
+            setMockResolves({
+                doesSessionExist: false,
+                accessTokenPayload: {},
+                userId: "",
+                invalidClaims: [],
+                loading: false,
+            });
+
+            // when
+            const result = render(
+                <SessionAuth requireAuth={true}>
+                    <h1>Children</h1>
+                </SessionAuth>
+            );
+
+            const child = await result.findByText(/Children/i).catch(() => null);
+
+            // then
+            expect(child).not.toBeInTheDocument();
+            expect(mockRedirectToAuth).toHaveBeenLastCalledWith({ redirectBack: true, history: undefined });
+        });
+
+        test("not redirect on session load if doRedirection=false", async () => {
+            // given
+            setMockResolves({
+                doesSessionExist: false,
+                accessTokenPayload: {},
+                userId: "",
+                invalidClaims: [],
+                loading: false,
+            });
+
+            // when
+            const result = render(
+                <SessionAuth requireAuth={true} doRedirection={false}>
+                    <h1>Children</h1>
+                </SessionAuth>
+            );
+
+            const child = await result.findByText(/Children/i).catch(() => null);
+
+            // then
+            expect(child).not.toBeInTheDocument();
+            expect(mockRedirectToUrl).toHaveBeenCalledTimes(0);
+        });
     });
 });
