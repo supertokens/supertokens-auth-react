@@ -1,21 +1,18 @@
 import { useState, useEffect } from "react";
-import { redirectToAuth } from "supertokens-auth-react";
-import Session from "supertokens-auth-react/recipe/session";
+import Session, { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { SignInUp, SignInUpTheme } from "supertokens-auth-react/recipe/passwordless";
 
 const CustomSignInUpTheme: typeof SignInUpTheme = (props) => {
     let [showDefaultUI, setShowDefaultUI] = useState(false);
+    const session = useSessionContext();
     useEffect(() => {
         let aborting = false;
         async function effect() {
-            // We only show this inside a SessionAuth, so this should never throw
-            const payload = await Session.getAccessTokenPayloadSecurely();
-
-            if (aborting) {
+            if (session.loading === true) {
                 return;
             }
 
-            let phoneNumber = payload.phoneNumber;
+            let phoneNumber = session.accessTokenPayload.phoneNumber;
             // If don't have a phone number we show the default UI (which should be the phone form)
             if (phoneNumber === undefined) {
                 setShowDefaultUI(true);
