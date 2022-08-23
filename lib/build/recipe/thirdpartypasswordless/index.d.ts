@@ -106,7 +106,7 @@ export default class Wrapper {
         fetchResponse: Response;
     }>;
     static consumePasswordlessCode(
-        input:
+        input?:
             | {
                   userInputCode: string;
                   userContext?: any;
