@@ -6,7 +6,7 @@ import SuperTokens, {
     redirectToAuth,
 } from "supertokens-auth-react";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
+import Session, { SessionAuth, useSessionContext } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route, useLocation } from "react-router-dom";
 import Footer from "./Footer";
@@ -77,6 +77,18 @@ SuperTokens.init({
                                 Second factor auth
                             </div>
                         );
+                    },
+                    // we override the component which shows the change phone number button
+                    PasswordlessUserInputCodeFormFooter_Override: ({ DefaultComponent, ...props }) => {
+                        const session = useSessionContext();
+
+                        if (session.loading !== true && session.accessTokenPayload.phoneNumber === undefined) {
+                            // this will show the change phone number button
+                            return <DefaultComponent {...props} />;
+                        }
+
+                        // this will hide the change phone number button
+                        return null;
                     },
                 },
             },
