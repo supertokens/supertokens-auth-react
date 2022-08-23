@@ -1,1 +1,1 @@
-export declare const package_version = "0.24.6";
+export declare const package_version = "0.24.7";
