@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changes
+
+-   Makes the input argument for `consumePasswordlessCode` in ThirdPartyPasswordless optional.
+
 ## [0.24.6] - 2022-08-17
 
 ### Bug fixes
