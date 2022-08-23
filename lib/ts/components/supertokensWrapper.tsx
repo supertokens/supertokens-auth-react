@@ -6,5 +6,5 @@ export const SuperTokensWrapper: React.FC<
         userContext?: any;
     }>
 > = (props) => {
-    return <SessionAuthWrapper {...props} requireAuth={false} overrideGlobalClaimValidators={() => []} />;
+    return <SessionAuthWrapper {...props} requireAuth={false} doRedirection={false} />;
 };

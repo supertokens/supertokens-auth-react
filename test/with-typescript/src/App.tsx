@@ -96,6 +96,7 @@ function App() {
                                 path="/"
                                 element={
                                     <SessionAuth
+                                        doRedirection={true}
                                         requireAuth={true}
                                         overrideGlobalClaimValidators={(o) => [
                                             ...o,
