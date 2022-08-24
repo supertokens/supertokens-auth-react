@@ -176,6 +176,7 @@ function App() {
                                         Else it redirects the user to "/auth" */
                                     <SessionAuth
                                         onSessionExpired={() => {
+                                            console.log(new Error().stack);
                                             updateShowSessionExpiredPopup(true);
                                         }}>
                                         <Home />

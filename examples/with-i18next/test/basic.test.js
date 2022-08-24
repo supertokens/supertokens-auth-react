@@ -63,6 +63,7 @@ describe("SuperTokens Example Basic tests", function () {
             headless: true,
         });
         page = await browser.newPage();
+        page.on("console", (c) => console.log(c.text()));
     });
 
     after(async function () {
