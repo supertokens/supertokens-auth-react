@@ -1,34 +1,5 @@
 name: "Test examples"
-on:
-    push:
-        branches:
-            - example_testing
-    workflow_dispatch:
-        inputs:
-            pluginInterfaceRepoOwnerName:
-                description: "supertokens-plugin-interface repo owner name"
-                default: supertokens
-                required: true
-            pluginInterfaceBranchName:
-                description: "supertokens-plugin-interface repos branch name"
-                default: master
-                required: true
-            coreRepoOwnerName:
-                description: "supertokens-core repo owner name"
-                default: supertokens
-                required: true
-            coreBranchName:
-                description: "supertokens-core repo branch name"
-                default: master
-                required: true
-            nodeRepoOwnerName:
-                description: "supertokens-node repo owner name"
-                default: supertokens
-                required: true
-            nodeBranchName:
-                description: "supertokens-node repo branch name"
-                default: master
-                required: true
+on: push
 jobs:
     job1:
         runs-on: ubuntu-latest
@@ -54,6 +25,7 @@ jobs:
                 working-directory: ${{ matrix.examplePath }}
         steps:
             - uses: actions/checkout@v2
+            - run: npm install git+https://github.com:supertokens/supertokens-auth-react.git#GITHUB_SHA
             - run: npm install
             - run: npm install mocha@6.1.4 jsdom-global@3.0.2 puppeteer@^11.0.0 isomorphic-fetch@^3.0.0
             - run: npm run build || true
