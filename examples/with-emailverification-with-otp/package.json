@@ -20,7 +20,7 @@
         "react-dom": "^18.1.0",
         "react-router-dom": "^6.3.0",
         "react-scripts": "^5.0.1",
-        "supertokens-auth-react": "github:supertokens/supertokens-auth-react#example_testing",
+        "supertokens-auth-react": "github:supertokens/supertokens-auth-react#session_grants",
         "supertokens-node": "github:supertokens/supertokens-node#session_grants",
         "ts-node": "^10.8.0",
         "typescript": "^4.7.2",
