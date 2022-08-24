@@ -84,7 +84,7 @@ describe("SuperTokens Example Basic tests", function () {
 
     afterEach(async function () {
         if (this.currentTest?.isFailed()) {
-            page.screenshot({ path: "screenshot.jpeg" });
+            await page.screenshot({ path: "screenshot.jpeg" });
         }
         if (page) {
             await page.close();
@@ -127,6 +127,7 @@ describe("SuperTokens Example Basic tests", function () {
             console.log("4.1", `${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
             await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
             console.log("4.2");
+
             await submitForm(page);
             console.log("5");
 
