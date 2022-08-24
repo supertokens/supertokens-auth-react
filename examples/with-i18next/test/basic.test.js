@@ -64,6 +64,12 @@ describe("SuperTokens Example Basic tests", function () {
         });
         page = await browser.newPage();
         page.on("console", (c) => console.log(c.text()));
+        page.on("request", (ev) => {
+            console.log("request", ev.method(), ev.url());
+        });
+        page.on("requestfailed", (ev) => {
+            console.log("requestfailed", ev.method(), ev.url());
+        });
         page.on("requestfinished", (ev) => {
             console.log(ev.method(), ev.url(), ev.response().status());
         });
