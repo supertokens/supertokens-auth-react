@@ -187,11 +187,14 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             session.current = Session.getInstanceOrThrow();
         }
 
-        // we return here cause addEventListener returns a function that removes
-        // the listener, and this function will be called by useEffect when
-        // onHandleEvent changes or if the component is unmounting.
-        return session.current.addEventListener(onHandleEvent);
-    }, [props, setContext]);
+        if (context.loading === false) {
+            // we return here cause addEventListener returns a function that removes
+            // the listener, and this function will be called by useEffect when
+            // onHandleEvent changes or if the component is unmounting.
+            return session.current.addEventListener(onHandleEvent);
+        }
+        return undefined;
+    }, [props, setContext, context.loading]);
 
     if (props.requireAuth !== false && (context.loading || !context.doesSessionExist)) {
         return null;
