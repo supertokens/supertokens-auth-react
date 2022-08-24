@@ -24,9 +24,11 @@ const ST_ROOT_SELECTOR = `#${ST_ROOT_ID}`;
 
 async function waitForSTElement(page, selector, inverted = false) {
     await page.waitForSelector(ST_ROOT_SELECTOR);
+    console.log("waiting for element", selector, inverted);
     const res = await page.waitForFunction(
         (elementSelector, rootSelector, inverted) => {
             const root = document.querySelector(rootSelector);
+            console.log("shadowroot", !!root);
             if (!root || !root.shadowRoot) {
                 return false;
             }
@@ -41,6 +43,7 @@ async function waitForSTElement(page, selector, inverted = false) {
         ST_ROOT_SELECTOR,
         inverted
     );
+    console.log("finished", selector, inverted);
     if (res) {
         return res.asElement();
     }
