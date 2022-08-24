@@ -31,7 +31,7 @@ jobs:
             - run: npm run build || true
             - run: |
                   (HOST= npm start & bash ../../test/waitForServerStartup.sh) && ( \
-                    (echo "=========== Test attempt 1 ===========" && npx mocha --no-config --timeout 40000 test/**/*.test.js) || \
-                    (echo "=========== Test attempt 2 ===========" && npx mocha --no-config --timeout 40000 test/**/*.test.js) || \
-                    (echo "=========== Test attempt 3 ===========" && npx mocha --no-config --timeout 40000 test/**/*.test.js) \
+                    (echo "=========== Test attempt 1 ===========" && npx mocha --no-config --timeout 80000 test/**/*.test.js) || \
+                    (echo "=========== Test attempt 2 ===========" && npx mocha --no-config --timeout 80000 test/**/*.test.js) || \
+                    (echo "=========== Test attempt 3 ===========" && npx mocha --no-config --timeout 80000 test/**/*.test.js) \
                   )

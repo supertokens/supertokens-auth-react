@@ -23,6 +23,7 @@ const assert = require("assert");
 const ST_ROOT_SELECTOR = `#${ST_ROOT_ID}`;
 
 async function waitForSTElement(page, selector, inverted = false) {
+    console.log("waiting for root");
     await page.waitForSelector(ST_ROOT_SELECTOR);
     console.log("waiting for element", selector, inverted);
     const res = await page.waitForFunction(

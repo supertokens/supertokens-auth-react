@@ -65,7 +65,7 @@ describe("SuperTokens Example Basic tests", function () {
         page = await browser.newPage();
         page.on("console", (c) => console.log(c.text()));
         page.on("requestfinished", (ev) => {
-            console.log(ev.method(), ev.url(), ev.response().status);
+            console.log(ev.method(), ev.url(), ev.response().status());
         });
         page.on("dialog", async (dialog) => {
             console.log("dialog", dialog.message());
@@ -106,10 +106,12 @@ describe("SuperTokens Example Basic tests", function () {
             await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
 
-            console.log("4");
+            console.log("4", user.id, user.email);
             // Create a new token and use it (we don't have access to the originally sent one)
             const tokenInfo = await EmailVerification.createEmailVerificationToken(user.id, user.email);
+            console.log("4.1", `${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
             await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
+            console.log("4.2");
             await submitForm(page);
             console.log("5");
 
