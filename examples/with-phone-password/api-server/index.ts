@@ -155,7 +155,7 @@ supertokens.init({
 
                             if (resp.status === "OK") {
                                 // OTP verification was successful. We can now mark the
-                                // session's payload as phoneNumberVerified: true so that
+                                // session's payload as PhoneVerifiedClaim: true so that
                                 // the user has access to API routes and the frontend UI
                                 await session.setClaimValue(PhoneVerifiedClaim, true, input.userContext);
                             }

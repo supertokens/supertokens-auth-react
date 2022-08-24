@@ -120,7 +120,7 @@ supertokens.init({
 
                             if (resp.status === "OK") {
                                 // OTP verification was successful. We can now mark the
-                                // session's payload as is2faComplete: true so that
+                                // session's payload as SecondFactorClaim: true so that
                                 // the user has access to API routes and the frontend UI
                                 await resp.session.setClaimValue(SecondFactorClaim, true);
 

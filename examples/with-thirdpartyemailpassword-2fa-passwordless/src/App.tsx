@@ -49,12 +49,7 @@ SuperTokens.init({
             },
             getRedirectionURL: async function (context) {
                 if (context.action === "SUCCESS") {
-                    let accessTokenPayload = await Session.getAccessTokenPayloadSecurely();
-                    if (accessTokenPayload.is2faComplete === true) {
-                        // we have completed both the factors and the user is going back to /auth manually for some reason.
-                        return "/";
-                    }
-                    // we successfully logged in via google workspaces,
+                    // we successfully logged in,
                     // we must now show the user sign in with passwordless
                     return "/second-factor";
                 }
