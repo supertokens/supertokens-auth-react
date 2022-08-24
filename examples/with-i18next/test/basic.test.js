@@ -82,6 +82,15 @@ describe("SuperTokens Example Basic tests", function () {
         await browser.close();
     });
 
+    afterEach(async function () {
+        if (this.currentTest?.isFailed()) {
+            page.screenshot({ path: "screenshot.jpeg" });
+        }
+        if (page) {
+            await page.close();
+        }
+    });
+
     describe("Email Password test", function () {
         it("Successful signup with credentials", async function () {
             await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
