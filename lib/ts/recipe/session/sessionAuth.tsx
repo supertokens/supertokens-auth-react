@@ -197,7 +197,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
     }, [props, setContext, context.loading]);
 
     // eslint-disable-next-line no-console
-    console.log("SessionAuth", props, context);
+    console.log("SessionAuth", JSON.stringify(props), JSON.stringify(context));
 
     if (props.requireAuth !== false && (context.loading || !context.doesSessionExist)) {
         return null;
