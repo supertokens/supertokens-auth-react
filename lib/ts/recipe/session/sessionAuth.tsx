@@ -78,7 +78,9 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         void SuperTokens.getInstanceOrThrow().redirectToAuth({ history, redirectBack: true });
     }, []);
 
-    const buildContext = useCallback(async (): Promise<LoadedSessionContext> => {
+    const buildContext = useCallback(async (): Promise<
+        LoadedSessionContext & { invalidClaimRedirectToPath?: string }
+    > => {
         if (session.current === undefined) {
             session.current = Session.getInstanceOrThrow();
         }
@@ -100,14 +102,17 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
             userContext,
         });
+        // TODO: basing redirection on userContext is a bit flimsy here :/
+        const invalidClaimRedirectToPath = popInvalidClaimRedirectPathFromContext(userContext);
 
         return {
             loading: false,
             doesSessionExist: true,
+            invalidClaims,
+            invalidClaimRedirectToPath,
             accessTokenPayload: await session.current.getAccessTokenPayloadSecurely({
                 userContext,
             }),
-            invalidClaims,
             userId: await session.current.getUserId({
                 userContext,
             }),
@@ -115,11 +120,10 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
     }, []);
 
     const setInitialContextAndMaybeRedirect = useCallback(
-        async (toSetContext: SessionContextType) => {
-            if (toSetContext.loading === true) {
-                // We should not be updating the context to loading
-                throw new Error("Should never come here");
-            }
+        async (toSetContext: LoadedSessionContext & { invalidClaimRedirectToPath?: string }) => {
+            // eslint-disable-next-line no-console
+            console.log("setInitialContextAndMaybeRedirect", JSON.stringify(toSetContext));
+
             if (context.loading === false) {
                 return;
             }
@@ -128,14 +132,16 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 if (!toSetContext.doesSessionExist && props.requireAuth !== false) {
                     redirectToLogin();
                     return;
-                } else {
-                    const redirectPath = popInvalidClaimRedirectPathFromContext(userContext);
-                    if (redirectPath) {
-                        await SuperTokens.getInstanceOrThrow().redirectToUrl(redirectPath, history);
-                        return;
-                    }
+                } else if (toSetContext.invalidClaimRedirectToPath !== undefined) {
+                    await SuperTokens.getInstanceOrThrow().redirectToUrl(
+                        toSetContext.invalidClaimRedirectToPath,
+                        history
+                    );
+                    return;
                 }
             }
+
+            delete toSetContext.invalidClaimRedirectToPath;
 
             setContext(toSetContext);
         },
