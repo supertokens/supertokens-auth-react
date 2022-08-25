@@ -146,23 +146,18 @@ SuperTokens.init({
     recipeList: [
         EmailVerification.init({
             mode: "REQUIRED",
-            onHandleEvent: (ev) => console.log("EmailVerification.onHandleEvent", ev),
         }),
         ThirdPartyEmailPassword.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init(), Apple.init()],
             },
-            onHandleEvent: (ev) => console.log("ThirdPartyEmailPassword.onHandleEvent", ev),
         }),
-        Session.init({
-            onHandleEvent: (ev) => console.log("Session.onHandleEvent", ev),
-        }),
+        Session.init(),
     ],
 });
 
 function App() {
     let [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
-    console.log("app", window.location.href);
     return (
         <SuperTokensWrapper>
             <div className="App">
@@ -180,7 +175,6 @@ function App() {
                                         Else it redirects the user to "/auth" */
                                     <SessionAuth
                                         onSessionExpired={() => {
-                                            console.log(new Error().stack);
                                             updateShowSessionExpiredPopup(true);
                                         }}>
                                         <Home />

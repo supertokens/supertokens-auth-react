@@ -144,8 +144,6 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         verifyEmailLinkClickedScreen,
         hasToken: token !== undefined,
     };
-    // eslint-disable-next-line no-console
-    console.log("emailverification featureComponent");
     return (
         <ComponentOverrideContext.Provider value={componentOverrides}>
             <FeatureWrapper

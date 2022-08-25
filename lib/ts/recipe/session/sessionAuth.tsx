@@ -102,7 +102,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
             userContext,
         });
-        // TODO: basing redirection on userContext is a bit flimsy here :/
+        // TODO: basing redirection on userContext could break in certain edge-cases involving async validators
         const invalidClaimRedirectToPath = popInvalidClaimRedirectPathFromContext(userContext);
 
         return {
@@ -121,9 +121,6 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
     const setInitialContextAndMaybeRedirect = useCallback(
         async (toSetContext: LoadedSessionContext & { invalidClaimRedirectToPath?: string }) => {
-            // eslint-disable-next-line no-console
-            console.log("setInitialContextAndMaybeRedirect", JSON.stringify(toSetContext));
-
             if (context.loading === false) {
                 return;
             }
@@ -201,9 +198,6 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         }
         return undefined;
     }, [props, setContext, context.loading]);
-
-    // eslint-disable-next-line no-console
-    console.log("SessionAuth", JSON.stringify(props), JSON.stringify(context));
 
     if (props.requireAuth !== false && (context.loading || !context.doesSessionExist)) {
         return null;

@@ -1,7 +1,7 @@
 name: "Test examples"
 on: push
 jobs:
-    job1:
+    setup:
         runs-on: ubuntu-latest
         outputs:
             matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -10,8 +10,8 @@ jobs:
             - run: bash test/findExamplesWithTests.sh
             - id: set-matrix
               run: echo "::set-output name=matrix::{\"include\":$(bash test/findExamplesWithTests.sh)}"
-    job2:
-        needs: job1
+    test:
+        needs: setup
         runs-on: ubuntu-latest
         strategy:
             matrix: ${{fromJson(needs.job1.outputs.matrix)}}
@@ -39,5 +39,5 @@ jobs:
               if: ${{ failure() }}
               uses: actions/upload-artifact@v3
               with:
-                  name: screenshot.jpeg
-                  path: ./**/screenshot.jpeg
+                  name: screenshots
+                  path: ./**/*screenshot.jpeg

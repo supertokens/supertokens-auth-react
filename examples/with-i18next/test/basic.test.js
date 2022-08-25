@@ -63,32 +63,10 @@ describe("SuperTokens Example Basic tests", function () {
             headless: true,
         });
         page = await browser.newPage();
-        page.on("console", (c) => console.log(c.text()));
-        page.on("request", (ev) => {
-            console.log("request", ev.method(), ev.url());
-        });
-        page.on("requestfailed", (ev) => {
-            console.log("requestfailed", ev.method(), ev.url());
-        });
-        page.on("requestfinished", (ev) => {
-            console.log(ev.method(), ev.url(), ev.response().status());
-        });
-        page.on("dialog", async (dialog) => {
-            console.log("dialog", dialog.message());
-        });
     });
 
     after(async function () {
         await browser.close();
-    });
-
-    afterEach(async function () {
-        if (this.currentTest?.isFailed()) {
-            await page.screenshot({ path: "screenshot.jpeg" });
-        }
-        if (page) {
-            await page.close();
-        }
     });
 
     describe("Email Password test", function () {
@@ -99,7 +77,6 @@ describe("SuperTokens Example Basic tests", function () {
                 page,
                 "[data-supertokens~='thirdPartyEmailPasswordDividerOr']"
             );
-            console.log("1");
             const dividerText = await page.evaluate((e) => e.innerText, dividerTextEle);
             assert.strictEqual(dividerText, "or translation");
 
@@ -111,25 +88,19 @@ describe("SuperTokens Example Basic tests", function () {
             ]);
             await submitForm(page);
 
-            console.log("2");
             // Redirected to email verification screen
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
             const user = await EmailPassword.getUserByEmail(email);
 
-            console.log("3");
             // Attempt reloading Home
             await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
 
-            console.log("4", user.id, user.email);
             // Create a new token and use it (we don't have access to the originally sent one)
             const tokenInfo = await EmailVerification.createEmailVerificationToken(user.id, user.email);
-            console.log("4.1", `${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
             await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
-            console.log("4.2");
 
             await submitForm(page);
-            console.log("5");
 
             const callApiBtn = await page.waitForSelector(".sessionButton");
             let setAlertContent;
@@ -139,7 +110,6 @@ describe("SuperTokens Example Basic tests", function () {
                 await dialog.dismiss();
             });
             await callApiBtn.click();
-            console.log("6");
 
             const alertText = await alertContent;
             assert(alertText.startsWith("Session Information:"));
