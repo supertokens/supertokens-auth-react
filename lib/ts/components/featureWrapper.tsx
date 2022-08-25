@@ -50,6 +50,8 @@ export default function FeatureWrapper({
     useShadowDom,
     defaultStore,
 }: PropsWithChildren<FeatureWrapperProps>): JSX.Element {
+    // eslint-disable-next-line no-console
+    console.log("FeatureWrapper", useShadowDom);
     const st = SuperTokens.getInstanceOrThrow();
     return (
         <ErrorBoundary>
@@ -72,6 +74,8 @@ function WithOrWithoutShadowDom({
     children,
     useShadowDom,
 }: PropsWithChildren<WithOrWithoutShadowDomProps>): JSX.Element {
+    // eslint-disable-next-line no-console
+    console.log("WithOrWithoutShadowDom", useShadowDom);
     // If explicitely specified to not use shadow dom.
     if (useShadowDom === false) {
         return (
