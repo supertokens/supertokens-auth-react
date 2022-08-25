@@ -94,8 +94,7 @@ describe("SessionAuth", () => {
         const result = render(<SessionAuth />);
 
         // then
-        // This should be called twice with react 18 strict mode
-        await waitFor(() => expect(MockSession.addEventListener).toHaveBeenCalledTimes(2));
+        await waitFor(() => expect(MockSession.addEventListener).toHaveBeenCalledTimes(1));
     });
 
     test("unsubscribe event listener on unmount", async () => {

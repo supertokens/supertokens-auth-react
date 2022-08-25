@@ -685,7 +685,8 @@ export async function screenshotOnFailure(ctx, browser) {
                 .fullTitle()
                 .split(/\W/)
                 .filter((a) => a.length !== 0)
-                .join("_");
+                .join("_")
+                .substring(0, 20);
             await pages[i].screenshot({
                 path: path.join(screenshotRoot, testFileName, `${title}-tab_${i}-${Date.now()}.png`),
             });
