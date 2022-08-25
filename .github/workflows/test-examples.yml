@@ -40,4 +40,4 @@ jobs:
               uses: actions/upload-artifact@v3
               with:
                   name: screenshot.jpeg
-                  path: screenshot.jpeg
+                  path: ./**/screenshot.jpeg
