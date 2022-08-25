@@ -14,7 +14,7 @@ jobs:
         needs: setup
         runs-on: ubuntu-latest
         strategy:
-            matrix: ${{fromJson(needs.job1.outputs.matrix)}}
+            matrix: ${{fromJson(needs.setup.outputs.matrix)}}
             fail-fast: false
         env:
             NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.example_testing_supabase_public_url }}
