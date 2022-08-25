@@ -146,19 +146,23 @@ SuperTokens.init({
     recipeList: [
         EmailVerification.init({
             mode: "REQUIRED",
+            onHandleEvent: (ev) => console.log("EmailVerification.onHandleEvent", ev),
         }),
         ThirdPartyEmailPassword.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init(), Apple.init()],
             },
+            onHandleEvent: (ev) => console.log("ThirdPartyEmailPassword.onHandleEvent", ev),
         }),
-        Session.init(),
+        Session.init({
+            onHandleEvent: (ev) => console.log("Session.onHandleEvent", ev),
+        }),
     ],
 });
 
 function App() {
     let [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
-    console.log("app", window.location.pathname);
+    console.log("app", window.location.href);
     return (
         <SuperTokensWrapper>
             <div className="App">
