@@ -158,7 +158,6 @@ SuperTokens.init({
 
 function App() {
     let [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
-
     return (
         <SuperTokensWrapper>
             <div className="App">

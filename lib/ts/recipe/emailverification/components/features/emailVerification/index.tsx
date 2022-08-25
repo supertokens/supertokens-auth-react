@@ -144,7 +144,6 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         verifyEmailLinkClickedScreen,
         hasToken: token !== undefined,
     };
-
     return (
         <ComponentOverrideContext.Provider value={componentOverrides}>
             <FeatureWrapper
