@@ -7,6 +7,7 @@ let Session = require("supertokens-node/recipe/session");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let Passwordless = require("supertokens-node/recipe/passwordless");
+let Dashboard = require("supertokens-node/recipe/dashboard");
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -33,6 +34,9 @@ supertokens.init({
             flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
         }),
         Session.init(),
+        Dashboard.init({
+            apiKey: "supertokensisawesome",
+        }),
     ],
 });
 
