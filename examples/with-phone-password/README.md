@@ -54,7 +54,7 @@ This demo app uses the EmailPassword and Passwordless recipes to achieve the aut
 -   We disable the default UI of passwordless recipe and render a modified version on the `/verify-phone` route
 -   We create a route for the second challenge (to verify phone number via OTP) on `/auth/verify-phone`. On this route, we send the OTP and ask the user to enter the OTP.
 -   Provide `getRedirectionURL` to the `EmailPassword.init` function to redirect the user to the second login challenge in case the first challenge is complete.
--   We override the enter phone number component for the passwordless recipe to send the OTP to the phone number directly - as opposed to it asking the user to enter it again.
+-   We override the enter phone number component for the passwordless recipe to send the OTP to the phone number directly - as opposed to it asking the user to enter it again (during sign in).
 -   We override the "Change phone number button" in the enter OTP screen with a custom button that will log the user out and take them back to the first login challenge.
 
 ### Backend
