@@ -56,7 +56,7 @@ supertokens.init({
         }),
         Session.init(),
         Dashboard.init({
-            apiKey: "supertokensisawesome",
+            apiKey: "supertokens_is_awesome",
         }),
     ],
 });
