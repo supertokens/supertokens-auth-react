@@ -3,8 +3,10 @@
     "version": "0.0.0",
     "scripts": {
         "ng": "ng",
-        "start": "npm-run-all --parallel server spa",
+        "dev": "npm-run-all --parallel server spa",
+        "start": "npm-run-all --parallel server spa-prod",
         "spa": "ng serve",
+        "spa-prod": "ng serve --prod",
         "server": "ts-node server.ts",
         "build": "ng build",
         "watch": "ng build --watch --configuration development",
