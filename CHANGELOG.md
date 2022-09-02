@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.24.8] - 2022-09-02
+
 ### Bug fixes
 
 -   Input colors now follow `inputBackground` and `textInput` even while being pre-filled
