@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Bug fixes
+
+-   Input colors now follow `inputBackground` and `textInput` even while being pre-filled
+
 ### Changes
 
 -   Updates `supertokens-node` version in example apps
