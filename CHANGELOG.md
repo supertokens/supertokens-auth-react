@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changes
+
+-   Added `getRedirectURL` configuration option to third-party providers. This can be used to set where the user is redirected back during the callback.
+
 ## [0.24.8] - 2022-09-02
 
 ### Bug fixes
