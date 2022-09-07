@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Removed email verification methods from auth recipes. You should now call them on the `EmailVerification` recipe directly.
 -   `requireAuth` now defaults to true in `SessionAuth` to match the behavior of the removed recipe specific wrappers.
 -   Removed `redirectToLogin` from `SessionAuth`.
--   Moved `redirectToAuth` to SuperTokens out of auth recipes. You should now call `SuperTokens.redirectToAuth()` instead.
+-   Moved `redirectToAuth` to SuperTokens out of auth recipes. You should now call `SuperTokens.redirectToAuth()` instead. In this function `redirectBack` defaults to `true`.
 -   Removed `SIGN_IN_AND_UP` action from `GetRedirectionURLContext` of auth recipes. This should now be handled by passing a `getRedirectionURL` to `SuperTokens.init` that handles a context with the `TO_AUTH` action.
 
 ### Migration
