@@ -45,6 +45,16 @@ const SignInAndUp: React.FC<PropType> = (props) => {
     const [combinedState, dispatch] = React.useReducer(
         (state: { error: string | undefined }, action: ThirdPartySignInUpActions | EmailPasswordSignInAndUpAction) => {
             switch (action.type) {
+                case "setSignIn":
+                    return {
+                        ...state,
+                        error: undefined,
+                    };
+                case "setSignUp":
+                    return {
+                        ...state,
+                        error: undefined,
+                    };
                 case "setError":
                     return {
                         ...state,

@@ -13,6 +13,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   SuperTokens components can now throw in case the server goes down. We advise adding an ErrorBoundary to provide a meaningful error screen. Please check here: https://reactjs.org/docs/error-boundaries.html
 
+## [0.24.8] - 2022-09-02
+
+### Bug fixes
+
+-   Input colors now follow `inputBackground` and `textInput` even while being pre-filled
+
+### Changes
+
+-   Updates `supertokens-node` version in example apps
+
+## [0.24.7] - 2022-08-23
+
+### Changes
+
+-   Makes the input argument for `consumePasswordlessCode` in ThirdPartyPasswordless optional.
+
+## [0.24.6] - 2022-08-17
+
+### Bug fixes
+
+-   Fixed clearing errors when switching between sign in & up in thirdpartyemailpassword
+
+## [0.24.5] - 2022-08-16
+
+### Changed
+
+-   Sign in/up components now take a `redirectOnSessionExists` prop that controls if it redirects away if a session exists on mount. Defaults to true.
+-   Adds unit tests to make sure that recipe functions are exported correctly
+
+## [0.24.4] - 2022-08-07
+
+-   Fixes styling issue for login with github
+
 ## [0.24.3] - 2022-08-05
 
 ### Changed

@@ -30,6 +30,7 @@ import {
 import { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 import * as PasswordlessUtilFunctions from "../passwordless/utils";
+import { PropsWithChildren } from "react";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -252,7 +253,7 @@ export default class Wrapper {
     }
 
     static async consumePasswordlessCode(
-        input:
+        input?:
             | {
                   userInputCode: string;
                   userContext?: any;
@@ -397,7 +398,7 @@ export default class Wrapper {
     static Facebook = Facebook;
     static Github = Github;
     static ThirdPartyPasswordlessAuth = ThirdPartyPasswordlessAuth;
-    static SignInAndUp = (prop?: any) =>
+    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         ThirdPartyPasswordless.getInstanceOrThrow().getFeatureComponent("signInUp", prop);
     static SignInAndUpTheme = SignInUpTheme;
     static ThirdPartySignInAndUpCallback = (prop?: any) =>

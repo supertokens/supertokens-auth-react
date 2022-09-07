@@ -17,7 +17,7 @@
  * Imports.
  */
 
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
+import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -93,22 +93,33 @@ export default class Passwordless extends AuthRecipe<
         return this.getAuthRecipeDefaultRedirectionURL(context);
     };
 
-    getFeatureComponent = (componentName: "signInUp" | "linkClickedScreen", props: any | undefined): JSX.Element => {
+    getFeatureComponent = (
+        componentName: "signInUp" | "linkClickedScreen",
+        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
+    ): JSX.Element => {
         if (componentName === "signInUp") {
-            return (
-                <UserContextWrapper userContext={props.userContext}>
-                    <AuthWidgetWrapper<
-                        GetRedirectionURLContext,
-                        PreAndPostAPIHookAction,
-                        OnHandleEventContext,
-                        NormalisedConfig
-                    >
-                        authRecipe={this}
-                        history={props.history}>
+            if (props.redirectOnSessionExists !== false) {
+                return (
+                    <UserContextWrapper userContext={props.userContext}>
+                        <AuthWidgetWrapper<
+                            GetRedirectionURLContext,
+                            PreAndPostAPIHookAction,
+                            OnHandleEventContext,
+                            NormalisedConfig
+                        >
+                            authRecipe={this}
+                            history={props.history}>
+                            <SignInUp recipe={this} {...props} />
+                        </AuthWidgetWrapper>
+                    </UserContextWrapper>
+                );
+            } else {
+                return (
+                    <UserContextWrapper userContext={props.userContext}>
                         <SignInUp recipe={this} {...props} />
-                    </AuthWidgetWrapper>
-                </UserContextWrapper>
-            );
+                    </UserContextWrapper>
+                );
+            }
         }
         if (componentName === "linkClickedScreen") {
             return (
