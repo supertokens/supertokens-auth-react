@@ -1,6 +1,7 @@
-import React, { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
+import { ErrorBoundary } from "./ErrorBoundary";
 import AppWithoutRouter from "./AppWithoutRouter";
 import AppWithReactDomRouter from "./AppWithReactDomRouter";
 import Footer from "./Footer";
@@ -270,10 +271,18 @@ SuperTokens.init({
 /* App */
 function App() {
     if (doNotUseReactRouterDom) {
-        return <AppWithoutRouter />;
+        return (
+            <ErrorBoundary>
+                <AppWithoutRouter />
+            </ErrorBoundary>
+        );
     }
 
-    return <AppWithReactDomRouter authRecipe={authRecipe} />;
+    return (
+        <ErrorBoundary>
+            <AppWithReactDomRouter authRecipe={authRecipe} />
+        </ErrorBoundary>
+    );
 }
 
 function getQueryParams(param) {
