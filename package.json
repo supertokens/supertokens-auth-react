@@ -121,7 +121,7 @@
         },
         {
             "path": "recipe/emailpassword/index.js",
-            "limit": "115kb"
+            "limit": "115.02kb"
         },
         {
             "path": "recipe/passwordless/index.js",
