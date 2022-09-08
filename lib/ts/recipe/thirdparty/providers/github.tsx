@@ -38,6 +38,7 @@ export default class Github extends Provider {
             id: "github",
             name: "GitHub",
             clientId: config?.clientId,
+            getRedirectURL: config?.getRedirectURL,
         });
 
         if (config === undefined) {
