@@ -33,7 +33,7 @@ describe("Rethrowing errors", function () {
         before(async function () {
             browser = await puppeteer.launch({
                 args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: false,
+                headless: true,
             });
         });
 
