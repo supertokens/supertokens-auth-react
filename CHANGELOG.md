@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-### Changes
+## [0.25.0]
+### Additions
 
 -   Added `getRedirectURL` configuration option to third-party providers. This can be used to set where the user is redirected back during the callback.
+
+### Breaking changes
+
+-   SuperTokens components can now throw in case the server goes down. We advise adding an ErrorBoundary to provide a meaningful error screen. Please check here: https://reactjs.org/docs/error-boundaries.html
 
 ## [0.24.8] - 2022-09-02
 

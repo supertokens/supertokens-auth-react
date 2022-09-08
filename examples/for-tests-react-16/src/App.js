@@ -22,6 +22,7 @@ import DarkTheme from "./Themes/Dark";
 import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
 import { logWithPrefix } from "./logWithPrefix";
+import { ErrorBoundary } from "./ErrorBoundary";
 let { useNavigate } = require("react-router-dom");
 let withRouter = undefined;
 const loadv5RRD = window.localStorage.getItem("react-router-dom-is-v5") === "true";
@@ -261,13 +262,25 @@ SuperTokens.init({
 /* App */
 function App() {
     if (doNotUseReactRouterDom) {
-        return <AppWithoutRouter />;
+        return (
+            <ErrorBoundary>
+                <AppWithoutRouter />
+            </ErrorBoundary>
+        );
     }
 
     if (loadv5RRD) {
-        return <AppWithReactDomRouterV5 authRecipe={authRecipe} />;
+        return (
+            <ErrorBoundary>
+                <AppWithReactDomRouterV5 authRecipe={authRecipe} />{" "}
+            </ErrorBoundary>
+        );
     } else {
-        return <AppWithReactDomRouter authRecipe={authRecipe} />;
+        return (
+            <ErrorBoundary>
+                <AppWithReactDomRouter authRecipe={authRecipe} />{" "}
+            </ErrorBoundary>
+        );
     }
 }
 
