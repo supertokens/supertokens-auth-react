@@ -231,6 +231,7 @@ let recipeList = [
 
 const testContext = {
     disableDefaultUI: getQueryParams("disableDefaultUI") === "true",
+    thirdPartyRedirectURL: localStorage.getItem("thirdPartyRedirectURL"),
 };
 
 if (authRecipe === "thirdparty") {
@@ -590,7 +591,7 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
     });
 }
 
-function getThirdPartyPasswordlessConfigs({ disableDefaultUI }) {
+function getThirdPartyPasswordlessConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
     return ThirdPartyPasswordless.init({
         style: {
             container: {
@@ -741,6 +742,7 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultUI }) {
                 {
                     id: "auth0",
                     name: "Auth0",
+                    getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
                 },
             ],
             defaultCountry: passwordlessDefaultCountry,
@@ -849,7 +851,7 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
     });
 }
 
-function getThirdPartyConfigs({ disableDefaultUI }) {
+function getThirdPartyConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
     return ThirdParty.init({
         style: {
             container: {
@@ -956,6 +958,7 @@ function getThirdPartyConfigs({ disableDefaultUI }) {
                 {
                     id: "auth0",
                     name: "Auth0",
+                    getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
                 },
             ],
         },
@@ -966,7 +969,7 @@ function getThirdPartyConfigs({ disableDefaultUI }) {
     });
 }
 
-function getThirdPartyEmailPasswordConfigs({ disableDefaultUI }) {
+function getThirdPartyEmailPasswordConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
     return ThirdPartyEmailPassword.init({
         preAPIHook: async (context) => {
             if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `THIRD_PARTY_EMAIL_PASSWORD ${context.action}`) {
@@ -1165,6 +1168,7 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultUI }) {
                 {
                     id: "auth0",
                     name: "Auth0",
+                    getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
                 },
             ],
         },
