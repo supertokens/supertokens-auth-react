@@ -87,7 +87,10 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
         }).catch(console.error);
     });
 
-    afterEach(function () {
+    afterEach(async function () {
+        await page.evaluate(() => {
+            localStorage.removeItem("thirdPartyRedirectURL");
+        });
         return screenshotOnFailure(this, browser);
     });
 
