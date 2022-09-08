@@ -222,7 +222,7 @@ let recipeList = [
 
 const testContext = {
     disableDefaultUI: getQueryParams("disableDefaultUI") === "true",
-    thirdPartyRedirectURL: localStorage.getItem("tp-redirectURL"),
+    thirdPartyRedirectURL: localStorage.getItem("thirdPartyRedirectURL"),
 };
 
 if (authRecipe === "thirdparty") {
