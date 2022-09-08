@@ -1,0 +1,79 @@
+/* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
+ *
+ * This software is licensed under the Apache License, Version 2.0 (the
+ * "License") as published by the Apache Software Foundation.
+ *
+ * You may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
+/*
+ * Imports
+ */
+import assert from "assert";
+import puppeteer from "puppeteer";
+
+import { clearBrowserCookiesWithoutAffectingConsole, screenshotOnFailure } from "../helpers";
+
+// Run the tests in a DOM environment.
+require("jsdom-global")();
+import { TEST_CLIENT_BASE_URL } from "../constants";
+
+describe("Rethrowing errors", function () {
+    describe("500 on refresh", function () {
+        let browser;
+        let page;
+
+        before(async function () {
+            browser = await puppeteer.launch({
+                args: ["--no-sandbox", "--disable-setuid-sandbox"],
+                headless: false,
+            });
+        });
+
+        after(async function () {
+            await browser.close();
+        });
+
+        afterEach(function () {
+            return screenshotOnFailure(this, browser);
+        });
+
+        beforeEach(async function () {
+            page = await browser.newPage();
+            await clearBrowserCookiesWithoutAffectingConsole(page, []);
+        });
+
+        it("rethrow error on refresh", async function () {
+            await page.evaluate(() => {
+                document.cookie = "sAccessToken=asdfasdf;expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax";
+                document.cookie = "sIdRefreshToken=asdfasdf;expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax";
+                document.cookie = "sRefreshToken=asdfasdf;expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax";
+                document.cookie =
+                    "sFrontToken=eyJ1aWQiOiIzMjU1Y2U0Zi1jMmM2LTQ4MWUtOTEzMC1jNmZiOGM3YjU4OGYiLCJhdGUiOjE2NjI1NTgyMTEzOTAsInVwIjp7InN0LWV2Ijp7InYiOnRydWUsInQiOjE2NjI1NDc4NDM2MDR9fX0=;expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax";
+                document.cookie = "sIRTFrontend=asdfasdf;expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax";
+            });
+            const consoleLogs = [];
+            await page.on("console", (log) => {
+                const text = log.text();
+                if (text.startsWith("ST_")) {
+                    consoleLogs.push(text);
+                }
+            });
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await new Promise((res) => setTimeout(res, 1500));
+
+            // The last thing logged should be the error from the error boundary
+            assert.strictEqual(consoleLogs.pop(), "ST_THROWN_ERROR");
+        });
+    });
+});

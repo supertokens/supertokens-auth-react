@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.25.0]
+
+### Breaking changes
+
+-   SuperTokens components can now throw in case the server goes down. We advise adding an ErrorBoundary to provide a meaningful error screen. Please check here: https://reactjs.org/docs/error-boundaries.html
+
 ## [0.24.8] - 2022-09-02
 
 ### Bug fixes
