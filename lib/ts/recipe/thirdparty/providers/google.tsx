@@ -38,6 +38,7 @@ export default class Google extends Provider {
             id: "google",
             name: "Google",
             clientId: config?.clientId,
+            getRedirectURL: config?.getRedirectURL,
         });
 
         if (config === undefined) {

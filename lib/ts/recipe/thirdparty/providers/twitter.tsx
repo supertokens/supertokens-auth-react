@@ -38,6 +38,7 @@ export default class Twitter extends Provider {
             id: "twitter",
             name: "Twitter",
             clientId: config?.clientId,
+            getRedirectURL: config?.getRedirectURL,
         });
 
         if (config === undefined) {

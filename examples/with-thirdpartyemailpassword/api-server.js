@@ -8,6 +8,7 @@ let { verifySession } = require("supertokens-node/recipe/session/framework/expre
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 let EmailVerification = require("supertokens-node/recipe/emailverification");
+let Dashboard = require("supertokens-node/recipe/dashboard");
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
@@ -54,6 +55,9 @@ supertokens.init({
             ],
         }),
         Session.init(),
+        Dashboard.init({
+            apiKey: "supertokens_is_awesome",
+        }),
     ],
 });
 

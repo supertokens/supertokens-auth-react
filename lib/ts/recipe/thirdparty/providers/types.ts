@@ -23,7 +23,8 @@ export type ProviderConfig = {
      */
     name: string;
 
-    clientId?: string; // optional clientId to be sent during signinup API
+    clientId?: string; // optional clientId to be sent during signinup
+    getRedirectURL?: () => string;
 };
 
 export type BuiltInProviderConfig = {
@@ -33,6 +34,12 @@ export type BuiltInProviderConfig = {
     buttonComponent?: JSX.Element;
 
     clientId?: string; // optional clientId to be sent during signinup API
+
+    /*
+     * Where to redirect the user during the callback.
+     * Defaults to `${websiteDomain}/${websiteBasePath}/callback/${id}`
+     */
+    getRedirectURL?: () => string;
 };
 
 export type CustomProviderConfig = {
@@ -52,4 +59,10 @@ export type CustomProviderConfig = {
      * Button Component
      */
     buttonComponent?: JSX.Element;
+
+    /*
+     * Where to redirect the user during the callback.
+     * Defaults to `${websiteDomain}/${websiteBasePath}/callback/${id}`
+     */
+    getRedirectURL?: () => string;
 };

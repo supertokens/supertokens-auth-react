@@ -211,7 +211,7 @@ export default class Wrapper {
     }
 
     static async consumePasswordlessCode(
-        input:
+        input?:
             | {
                   userInputCode: string;
                   userContext?: any;

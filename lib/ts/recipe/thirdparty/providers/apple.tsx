@@ -38,6 +38,7 @@ export default class Apple extends Provider {
             id: "apple",
             name: "Apple",
             clientId: config?.clientId,
+            getRedirectURL: config?.getRedirectURL,
         });
 
         if (config === undefined) {

@@ -4,6 +4,7 @@
 npm pack
 cd $1
 
+rm -rf node_modules/.cache
 rm -rf node_modules/supertokens-auth-react/lib || true
 rm -rf node_modules/supertokens-auth-react/recipe || true
 mkdir -p node_modules/supertokens-auth-react

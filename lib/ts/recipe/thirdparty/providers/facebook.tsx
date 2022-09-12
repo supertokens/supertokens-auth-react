@@ -38,6 +38,7 @@ export default class Facebook extends Provider {
             id: "facebook",
             name: "Facebook",
             clientId: config?.clientId,
+            getRedirectURL: config?.getRedirectURL,
         });
 
         if (config === undefined) {

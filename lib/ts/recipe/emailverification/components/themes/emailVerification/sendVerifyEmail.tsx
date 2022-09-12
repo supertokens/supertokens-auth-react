@@ -86,7 +86,11 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
         [props.config, props.recipeImplementation, props.onEmailAlreadyVerified]
     );
 
-    useOnMountAPICall(sendVerificationEmail, checkSendResponse);
+    const handleSendError = useCallback(() => {
+        // We intentionally ignore the error here, because we don't want to show an error without the user taking action
+    }, []);
+
+    useOnMountAPICall(sendVerificationEmail, checkSendResponse, handleSendError);
 
     return (
         <div data-supertokens="container" css={styles.container}>

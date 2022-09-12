@@ -27,6 +27,14 @@ npm install
 
 This compiles and serves the Angular App on port `4200` and starts up a server on port `3001`
 
+### Dev build
+
+```bash
+npm run dev
+```
+
+### Production build
+
 ```bash
 npm run start
 ```

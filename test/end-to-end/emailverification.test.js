@@ -647,7 +647,7 @@ describe("SuperTokens Email Verification general errors", function () {
             await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
         });
 
-        it('Should show "General Error" when API returns "GENERAL_ERROR"', async function () {
+        it('Should show "General Error" when API returns "GENERAL_ERROR" on resend', async function () {
             await setGeneralErrorToLocalStorage("EMAIL_VERIFICATION", "SEND_VERIFY_EMAIL", page);
 
             await Promise.all([
@@ -658,10 +658,12 @@ describe("SuperTokens Email Verification general errors", function () {
             await defaultSignUp(page);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
-            await sendVerifyEmail(page);
-            await page.waitForResponse(
-                (response) => response.url() === SEND_VERIFY_EMAIL_API && response.status() === 200
-            );
+            await Promise.all([
+                sendVerifyEmail(page),
+                page.waitForResponse(
+                    (response) => response.url() === SEND_VERIFY_EMAIL_API && response.status() === 200
+                ),
+            ]);
             await new Promise((r) => setTimeout(r, 50)); // Make sure to wait for status to update.
             const generalError = await getGeneralError(page);
             assert.deepStrictEqual(generalError, "general error from API email verification code");

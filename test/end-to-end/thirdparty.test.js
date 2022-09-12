@@ -87,7 +87,10 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
         }).catch(console.error);
     });
 
-    afterEach(function () {
+    afterEach(async function () {
+        await page.evaluate(() => {
+            localStorage.removeItem("thirdPartyRedirectURL");
+        });
         return screenshotOnFailure(this, browser);
     });
 
@@ -205,6 +208,23 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/CasE/Case-SensItive1-PAth");
+        });
+
+        it("should work with custom getRedirectUrl", async function () {
+            await page.evaluate((TEST_CLIENT_BASE_URL) => {
+                localStorage.setItem("thirdPartyRedirectURL", `${TEST_CLIENT_BASE_URL}/auth/auth0-custom-redirect`);
+            }, TEST_CLIENT_BASE_URL);
+
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=/hello`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await assertProviders(page);
+            await clickOnProviderButton(page, "Auth0");
+            await loginWithAuth0(page);
+
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth/auth0-custom-redirect");
         });
 
         // it("Successful signin with facebook", async function () {

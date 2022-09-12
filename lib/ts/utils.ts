@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "./constants";
 import { CookieHandlerReference } from "supertokens-website/utils/cookieHandler";
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
@@ -409,6 +409,7 @@ export const useOnMountAPICall = <T>(
 ) => {
     const consumeReq = useRef<Promise<T>>();
 
+    const [error, setError] = useState<any>(undefined);
     useEffect(() => {
         const effect = async (signal: AbortSignal) => {
             let resp;
@@ -423,8 +424,12 @@ export const useOnMountAPICall = <T>(
                     void handleResponse(resp);
                 }
             } catch (err) {
-                if (!signal.aborted && handleError) {
-                    handleError(err, resp);
+                if (!signal.aborted) {
+                    if (handleError !== undefined) {
+                        handleError(err, resp);
+                    } else {
+                        setError(err);
+                    }
                 }
             }
         };
@@ -437,7 +442,11 @@ export const useOnMountAPICall = <T>(
             };
         }
         return;
-    }, [consumeReq, fetch, handleResponse, handleError, startLoading]);
+    }, [setError, consumeReq, fetch, handleResponse, handleError, startLoading]);
+
+    if (error) {
+        throw error;
+    }
 };
 
 export function saveInvalidClaimRedirectPathInContext(userContext: any, invalidClaimRedirectPath: string) {

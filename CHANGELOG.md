@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Added `validateClaims`, `useClaimValue` and `getInvalidClaimsFromResponse` to the `Session` recipe
 -   Added `API_INVALID_CLAIM` event to the `Session` recipe
 -   Export for `EmailVerification` recipe
+-   Added "OPTIONAL" mode for the `EmailVerification` recipe
 
 ### Fixes
 
@@ -29,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   supertokens-python: >= 0.11
 -   EmailVerification recipe is now not initialized as part of auth recipes. You can add it to the recipe list as `EmailVerification.init` like other recipes.
 -   Removed `OFF` from possible `EmailVerification` recipe modes, default is updated to `REQUIRED`.
--   Moved email verification related events, overrides, pre-api hooks and redirection contexts into the `EmailVerification` recipe. You should configure them while initializing the `EmailVerification` recipe.
+-   Moved email verification related styling options, events, overrides, pre-api hooks and redirection contexts into the `EmailVerification` recipe. You should configure them while initializing the `EmailVerification` recipe.
 -   Removed recipe specific auth wrapper components. You should use `SessionAuth` instead.
 -   Removed email verification methods from auth recipes. You should now call them on the `EmailVerification` recipe directly.
 -   `requireAuth` now defaults to true in `SessionAuth` to match the behavior of the removed recipe specific wrappers.
@@ -136,6 +137,36 @@ function ProtectedHomeComponent() {
     );
 }
 ```
+
+### Bug fixes
+
+-   We now ignore errors thrown while sending verification emails on mount as intended
+
+## [0.25.0]
+
+### Additions
+
+-   Added `getRedirectURL` configuration option to third-party providers. This can be used to set where the user is redirected back during the callback.
+
+### Breaking changes
+
+-   SuperTokens components can now throw in case the server goes down. We advise adding an ErrorBoundary to provide a meaningful error screen. Please check here: https://reactjs.org/docs/error-boundaries.html
+
+## [0.24.8] - 2022-09-02
+
+### Bug fixes
+
+-   Input colors now follow `inputBackground` and `textInput` even while being pre-filled
+
+### Changes
+
+-   Updates `supertokens-node` version in example apps
+
+## [0.24.7] - 2022-08-23
+
+### Changes
+
+-   Makes the input argument for `consumePasswordlessCode` in ThirdPartyPasswordless optional.
 
 ## [0.24.6] - 2022-08-17
 
