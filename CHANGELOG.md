@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking changes
 
+-   Only supporting FDI 1.15
 -   Backend SDKs have to be updated first to a version that supports session claims before enabling EmailVerification!
     -   supertokens-node: >= 12.0
     -   supertokens-golang: >= 0.9
