@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-import { ErrorBoundary } from "./ErrorBoundary";
 import AppWithoutRouter from "./AppWithoutRouter";
 import AppWithReactDomRouter from "./AppWithReactDomRouter";
 import Footer from "./Footer";
@@ -24,6 +23,7 @@ import DarkTheme from "./Themes/Dark";
 import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
 import { logWithPrefix } from "./logWithPrefix";
+import { ErrorBoundary } from "./ErrorBoundary";
 import { useNavigate } from "react-router-dom";
 
 const loadv5RRD = window.localStorage.getItem("react-router-dom-is-v5") === "true";
@@ -537,27 +537,6 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
             },
         },
         override: {
-            emailVerification: {
-                functions: (implementation) => {
-                    const log = logWithPrefix(`ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION`);
-
-                    return {
-                        ...implementation,
-                        sendVerificationEmail(...args) {
-                            log(`SEND_VERIFICATION_EMAIL`);
-                            return implementation.sendVerificationEmail(...args);
-                        },
-                        isEmailVerified(...args) {
-                            log(`IS_EMAIL_VERIFIED`);
-                            return implementation.isEmailVerified(...args);
-                        },
-                        verifyEmail(...args) {
-                            log(`VERIFY_EMAIL`);
-                            return implementation.verifyEmail(...args);
-                        },
-                    };
-                },
-            },
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS EMAIL_PASSWORD OVERRIDE`);
 
@@ -650,26 +629,6 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultUI, thirdPartyRedirect
             },
         },
         override: {
-            emailVerification: {
-                functions: (implementation) => {
-                    const log = logWithPrefix(`ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE EMAIL_VERIFICATION`);
-
-                    return {
-                        sendVerificationEmail(...args) {
-                            log(`SEND_VERIFICATION_EMAIL`);
-                            return implementation.sendVerificationEmail(...args);
-                        },
-                        isEmailVerified(...args) {
-                            log(`IS_EMAIL_VERIFIED`);
-                            return implementation.isEmailVerified(...args);
-                        },
-                        verifyEmail(...args) {
-                            log(`VERIFY_EMAIL`);
-                            return implementation.verifyEmail(...args);
-                        },
-                    };
-                },
-            },
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE`);
 
@@ -927,27 +886,6 @@ function getThirdPartyConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
             console.log(`ST_LOGS THIRD_PARTY ON_HANDLE_EVENT ${context.action}`);
         },
         override: {
-            emailVerification: {
-                functions: (implementation) => {
-                    const log = logWithPrefix(`ST_LOGS THIRD_PARTY OVERRIDE EMAIL_VERIFICATION`);
-
-                    return {
-                        ...implementation,
-                        sendVerificationEmail(...args) {
-                            log(`SEND_VERIFICATION_EMAIL`);
-                            return implementation.sendVerificationEmail(...args);
-                        },
-                        isEmailVerified(...args) {
-                            log(`IS_EMAIL_VERIFIED`);
-                            return implementation.isEmailVerified(...args);
-                        },
-                        verifyEmail(...args) {
-                            log(`VERIFY_EMAIL`);
-                            return implementation.verifyEmail(...args);
-                        },
-                    };
-                },
-            },
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS THIRD_PARTY OVERRIDE`);
 
@@ -1036,27 +974,6 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultUI, thirdPartyRedirec
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
         },
         override: {
-            emailVerification: {
-                functions: (implementation) => {
-                    const log = logWithPrefix(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION`);
-
-                    return {
-                        ...implementation,
-                        sendVerificationEmail(...args) {
-                            log(`SEND_VERIFICATION_EMAIL`);
-                            return implementation.sendVerificationEmail(...args);
-                        },
-                        isEmailVerified(...args) {
-                            log(`IS_EMAIL_VERIFIED`);
-                            return implementation.isEmailVerified(...args);
-                        },
-                        verifyEmail(...args) {
-                            log(`VERIFY_EMAIL`);
-                            return implementation.verifyEmail(...args);
-                        },
-                    };
-                },
-            },
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE`);
 
