@@ -164,7 +164,7 @@ describe("User Roles in the frontend", function () {
             await page.waitForSelector(".invalidClaims");
             assert.deepStrictEqual(await getInvalidClaims(page), [
                 {
-                    validatorId: "st-role-includes",
+                    validatorId: "st-role",
                     reason: {
                         message: "wrong value",
                         expectedToInclude: "admin",
@@ -172,7 +172,7 @@ describe("User Roles in the frontend", function () {
                     },
                 },
                 {
-                    validatorId: "st-perm-excludes",
+                    validatorId: "st-perm",
                     reason: {
                         message: "wrong value",
                         expectedToNotInclude: "testPerm",
