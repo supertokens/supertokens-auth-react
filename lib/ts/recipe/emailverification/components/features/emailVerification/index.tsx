@@ -28,6 +28,7 @@ import { SessionContext } from "../../../../session";
 import { defaultTranslationsEmailVerification } from "../../themes/translations";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import { useUserContext } from "../../../../../usercontext";
+import Session from "../../../../session";
 
 type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any };
 
@@ -74,7 +75,15 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         },
         [props.recipe, setStatus]
     );
-    useOnMountAPICall(fetchIsEmailVerified, checkIsEmailVerified, undefined, sessionContext.loading === false);
+
+    const handleError = useCallback(async (err) => {
+        // If the error cleared the session the user will be redirected away anyway, no reason to propagate the error
+        if (await Session.doesSessionExist({ userContext })) {
+            throw err;
+        }
+    }, []);
+
+    useOnMountAPICall(fetchIsEmailVerified, checkIsEmailVerified, handleError, sessionContext.loading === false);
 
     const signOut = useCallback(async (): Promise<void> => {
         await props.recipe.config.signOut();

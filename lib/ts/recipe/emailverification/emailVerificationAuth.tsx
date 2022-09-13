@@ -21,6 +21,7 @@ import { SessionContext } from "../session";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { useOnMountAPICall } from "../../utils";
+import Session from "../session";
 
 type Props = FeatureBaseProps & { getRecipe: () => Recipe };
 
@@ -75,7 +76,14 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
         [sessionContext.loading]
     );
 
-    useOnMountAPICall(checkIsEmailVerified, useIsEmailVerified, undefined, sessionContext.loading === false);
+    const handleError = useCallback(async (err) => {
+        // If the error cleared the session the user will be redirected away anyway, no reason to propagate the error
+        if (await Session.doesSessionExist({ userContext })) {
+            throw err;
+        }
+    }, []);
+
+    useOnMountAPICall(checkIsEmailVerified, useIsEmailVerified, handleError, sessionContext.loading === false);
 
     // We only render after loading has finished to eliminate flicker
     // recipe.current should only be undefined during SSR but this makes the type system happy

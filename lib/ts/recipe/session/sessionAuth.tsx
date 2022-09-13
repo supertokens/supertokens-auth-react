@@ -82,16 +82,28 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             };
         }
 
-        return {
-            doesSessionExist: true,
-            accessTokenPayload: await session.current.getAccessTokenPayloadSecurely({
-                userContext,
-            }),
-            userId: await session.current.getUserId({
-                userContext,
-            }),
-            loading: false,
-        };
+        try {
+            return {
+                doesSessionExist: true,
+                accessTokenPayload: await session.current.getAccessTokenPayloadSecurely({
+                    userContext,
+                }),
+                userId: await session.current.getUserId({
+                    userContext,
+                }),
+                loading: false,
+            };
+        } catch {
+            // This branch means that either getAccessTokenPayloadSecurely or getUserId
+            // Which should mean that the front token was missing and refreshing failed
+            // In which case handling this as the session not existing is the right thing to do
+            return {
+                doesSessionExist: false,
+                accessTokenPayload: {},
+                userId: "",
+                loading: false,
+            };
+        }
     }, []);
 
     const setInitialContextAndMaybeRedirect = useCallback(
