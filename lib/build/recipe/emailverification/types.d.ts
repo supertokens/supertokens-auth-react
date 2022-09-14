@@ -1,24 +1,23 @@
 import { FeatureBaseConfig, ThemeBaseProps } from "../../types";
-import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
+import {
+    Config as RecipeModuleConfig,
+    NormalisedConfig as NormalisedRecipeModuleConfig,
+    UserInput as RecipeModuleUserInput,
+} from "../recipeModule/types";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
 import OverrideableBuilder from "supertokens-js-override";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
-export declare type UserInputForAuthRecipeModule = {
-    mode?: "OFF" | "REQUIRED";
-    disableDefaultUI?: boolean;
-    sendVerifyEmailScreen?: FeatureBaseConfig;
-    verifyEmailLinkClickedScreen?: FeatureBaseConfig;
-};
 export declare type ComponentOverrideMap = {
     EmailVerificationSendVerifyEmail_Override?: ComponentOverride<typeof SendVerifyEmail>;
     EmailVerificationVerifyEmailLinkClicked_Override?: ComponentOverride<typeof VerifyEmailLinkClicked>;
 };
-export declare type UserInput = UserInputForAuthRecipeModule & {
-    signOut(): Promise<void>;
-    redirectToSignIn(history?: any): Promise<void>;
-    postVerificationRedirect(history?: any): Promise<void>;
+export declare type UserInput = {
+    mode?: "OPTIONAL" | "REQUIRED";
+    disableDefaultUI?: boolean;
+    sendVerifyEmailScreen?: FeatureBaseConfig;
+    verifyEmailLinkClickedScreen?: FeatureBaseConfig;
     override?: {
         functions?: (
             originalImplementation: RecipeInterface,
@@ -26,17 +25,14 @@ export declare type UserInput = UserInputForAuthRecipeModule & {
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
     };
-};
+} & RecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type Config = UserInput &
     RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
-    mode: "OFF" | "REQUIRED";
+    mode: "OPTIONAL" | "REQUIRED";
     disableDefaultUI: boolean;
     sendVerifyEmailScreen: FeatureBaseConfig;
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
-    signOut(): Promise<void>;
-    redirectToSignIn(history?: any): Promise<void>;
-    postVerificationRedirect(history?: any): Promise<void>;
     override: {
         functions: (
             originalImplementation: RecipeInterface,

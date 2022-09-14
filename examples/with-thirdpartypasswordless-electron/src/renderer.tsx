@@ -30,7 +30,7 @@ import "./index.css";
 import React, { useState } from "react";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
-import Session from "supertokens-auth-react/recipe/session";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import SessionExpiredPopup from "./SessionExpiredPopup";
 import Footer from "./Footer";
@@ -101,13 +101,13 @@ function App() {
                                     /* This protects the "/" route so that it shows 
                                         <Home /> only if the user is logged in.
                                         Else it redirects the user to "/auth" */
-                                    <ThirdPartyPasswordless.ThirdPartyPasswordlessAuth
+                                    <SessionAuth
                                         onSessionExpired={() => {
                                             updateShowSessionExpiredPopup(true);
                                         }}>
                                         <Home />
                                         {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </ThirdPartyPasswordless.ThirdPartyPasswordlessAuth>
+                                    </SessionAuth>
                                 }
                             />
                         </Routes>

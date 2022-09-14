@@ -6,7 +6,7 @@ import * as reactRouterDom from "react-router-dom";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
 
-import Session from "supertokens-auth-react/recipe/session";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 
 import Index from "./routes/index";
 import Dashboard from "./routes/dashboard";
@@ -114,9 +114,9 @@ root.render(
                 <Route
                     path="dashboard"
                     element={
-                        <ThirdParty.ThirdPartyAuth>
+                        <SessionAuth>
                             <Dashboard />
-                        </ThirdParty.ThirdPartyAuth>
+                        </SessionAuth>
                     }
                 />
             </Routes>

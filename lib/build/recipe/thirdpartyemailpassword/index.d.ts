@@ -1,7 +1,5 @@
-import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import {
@@ -23,28 +21,6 @@ export default class Wrapper {
         import("./types").NormalisedConfig
     >;
     static signOut(input?: { userContext?: any }): Promise<void>;
-    static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK";
-        isVerified: boolean;
-        fetchResponse: Response;
-    }>;
-    static verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
-        fetchResponse: Response;
-    }>;
-    static sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
-        fetchResponse: Response;
-    }>;
-    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string;
-    static redirectToAuth(
-        input?:
-            | ("signin" | "signup")
-            | {
-                  show?: "signin" | "signup";
-                  redirectBack?: boolean;
-              }
-    ): Promise<void>;
     static submitNewPassword(input: {
         formFields: {
             id: string;
@@ -192,13 +168,6 @@ export default class Wrapper {
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
     static Github: typeof Github;
-    static ThirdPartyEmailPasswordAuth: import("react").FC<
-        PropsWithChildren<{
-            requireAuth?: boolean | undefined;
-            onSessionExpired?: (() => void) | undefined;
-            userContext?: any;
-        }>
-    >;
     static SignInAndUp: (
         prop?: PropsWithChildren<{
             redirectOnSessionExists?: boolean;
@@ -209,17 +178,10 @@ export default class Wrapper {
     static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
     static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
-    static EmailVerification: (prop?: any) => JSX.Element;
-    static EmailVerificationTheme: typeof EmailVerificationTheme;
     static ThirdPartySignInAndUpCallbackTheme: import("react").ComponentType<{}>;
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
-declare const isEmailVerified: typeof Wrapper.isEmailVerified;
-declare const verifyEmail: typeof Wrapper.verifyEmail;
-declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
-declare const getEmailVerificationTokenFromURL: typeof Wrapper.getEmailVerificationTokenFromURL;
-declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (
     prop?: PropsWithChildren<{
         redirectOnSessionExists?: boolean;
@@ -227,7 +189,6 @@ declare const SignInAndUp: (
     }>
 ) => JSX.Element;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
-declare const EmailVerification: (prop?: any) => JSX.Element;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
 declare const submitNewPassword: typeof Wrapper.submitNewPassword;
 declare const sendPasswordResetEmail: typeof Wrapper.sendPasswordResetEmail;
@@ -247,22 +208,16 @@ declare const getAuthCodeFromURL: typeof Wrapper.getAuthCodeFromURL;
 declare const getAuthErrorFromURL: typeof Wrapper.getAuthErrorFromURL;
 declare const getAuthStateFromURL: typeof Wrapper.getAuthStateFromURL;
 export {
-    ThirdPartyEmailPasswordAuth,
     init,
     Apple,
     Google,
     Facebook,
     Github,
-    isEmailVerified,
-    verifyEmail,
-    sendVerificationEmail,
-    getEmailVerificationTokenFromURL,
     SignInAndUp,
     SignInAndUpTheme,
     ThirdPartySignInAndUpCallback,
     ThirdPartySignInAndUpCallbackTheme,
     signOut,
-    redirectToAuth,
     submitNewPassword,
     sendPasswordResetEmail,
     emailPasswordSignIn,
@@ -280,8 +235,6 @@ export {
     getAuthCodeFromURL,
     getAuthErrorFromURL,
     getAuthStateFromURL,
-    EmailVerification,
-    EmailVerificationTheme,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
     GetRedirectionURLContext,

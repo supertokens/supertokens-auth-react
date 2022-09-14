@@ -27,7 +27,7 @@ export default function SuccessView(props) {
             <div style={{ height: "10px" }} />
             Your user ID is
             <div />
-            {userId}
+            <span id="userId">{userId}</span>
             <div style={{ height: "10px" }} />
             <div style={{ height: "10px" }} />
             <div style={{ height: "10px" }} />

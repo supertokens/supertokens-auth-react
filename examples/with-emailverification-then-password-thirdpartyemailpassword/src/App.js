@@ -1,13 +1,9 @@
 import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
-import ThirdPartyEmailPassword, {
-    ThirdPartyEmailPasswordAuth,
-    Google,
-    Github,
-    Apple,
-} from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import Session from "supertokens-auth-react/recipe/session";
+import EmailVerification from "supertokens-auth-react/recipe/emailverification";
+import ThirdPartyEmailPassword, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
@@ -15,6 +11,7 @@ import SessionExpiredPopup from "./SessionExpiredPopup";
 import React from "react";
 import SetPassword from "./SetPassword";
 import CustomSignUp from "./CustomSignUp";
+import { RealPasswordClaim } from "./realPasswordClaim";
 
 /* unique password which will act as a place holder password 
 for this user until they have actually set a password. This will also indicate to the 
@@ -40,6 +37,9 @@ SuperTokens.init({
         websiteDomain: getWebsiteDomain(),
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+        }),
         ThirdPartyEmailPassword.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init(), Apple.init()],
@@ -48,7 +48,7 @@ SuperTokens.init({
                 if (context.action === "SUCCESS") {
                     // this is called after sign up / in and after email is verified
                     let accessTokenPayload = await Session.getAccessTokenPayloadSecurely();
-                    if (accessTokenPayload.isUsingFakePassword) {
+                    if (RealPasswordClaim.getValueFromPayload(accessTokenPayload) !== true) {
                         return "/set-password?show=signup"; // we ask the user to set their password now
                     }
                 }
@@ -65,43 +65,16 @@ SuperTokens.init({
                     EmailPasswordSignUpForm_Override: CustomSignUp,
                 },
             },
-            emailVerificationFeature: {
-                mode: "REQUIRED",
-            },
         }),
         Session.init({
             override: {
                 functions: (oI) => {
                     return {
                         ...oI,
-                        doesSessionExist: async function (input) {
-                            if (!(await oI.doesSessionExist(input))) {
-                                return false;
-                            }
-
-                            if (window.location.pathname.startsWith("/auth")) {
-                                // we are showing one of the auth related UIs..
-                                return true;
-                            }
-
-                            let accessTokenPayload = await this.getAccessTokenPayloadSecurely();
-                            if (accessTokenPayload.isUsingFakePassword) {
-                                // we are showing an application specific UI here
-                                let emailVerified = await ThirdPartyEmailPassword.isEmailVerified();
-
-                                if (emailVerified) {
-                                    // in this case, the user has verified their email, but not set
-                                    // their password. So this will redirect them to the /auth route
-                                    // which will redirect them to the set password route.
-                                    return false;
-                                } else {
-                                    // in this case, the user has NOT verified their email, so the auth
-                                    // protector route will take them to the email verification UI
-                                    return true;
-                                }
-                            }
-                            return true;
-                        },
+                        getGlobalClaimValidators: (input) => [
+                            ...input.claimValidatorsAddedByOtherRecipes,
+                            RealPasswordClaim.validators.isTrue(),
+                        ],
                     };
                 },
             },
@@ -127,16 +100,23 @@ function App() {
                                     /* This protects the "/" route so that it shows 
                                        <Home /> only if the user is logged in.
                                        Else it redirects the user to "/auth" */
-                                    <ThirdPartyEmailPasswordAuth
+                                    <SessionAuth
                                         onSessionExpired={() => {
                                             updateShowSessionExpiredPopup(true);
                                         }}>
                                         <Home />
                                         {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </ThirdPartyEmailPasswordAuth>
+                                    </SessionAuth>
                                 }
                             />
-                            <Route path="/set-password" element={<SetPassword />} />
+                            <Route
+                                path="/set-password"
+                                element={
+                                    <SessionAuth>
+                                        <SetPassword />
+                                    </SessionAuth>
+                                }
+                            />
                         </Routes>
                     </div>
                     <Footer />

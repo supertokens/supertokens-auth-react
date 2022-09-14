@@ -26,7 +26,7 @@ import {
     CustomStateProperties,
 } from "./types";
 import Recipe from "./recipe";
-import { normaliseAuthRecipeWithEmailVerificationConfig } from "../authRecipeWithEmailVerification/utils";
+import { normaliseAuthRecipe } from "../authRecipe/utils";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import { redirectWithFullPageReload } from "../../utils";
 
@@ -47,7 +47,7 @@ export function normaliseThirdPartyConfig(config: Config): NormalisedConfig {
         ...config.override,
     };
     return {
-        ...normaliseAuthRecipeWithEmailVerificationConfig(config),
+        ...normaliseAuthRecipe(config),
         signInAndUpFeature,
         oAuthCallbackScreen,
         override,

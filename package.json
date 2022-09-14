@@ -42,6 +42,7 @@
         "mkdirp": "^1.0.4",
         "mocha": "6.1.4",
         "mocha-junit-reporter": "^2.0.2",
+        "mocha-multi": "1.1.6",
         "npm-run-all": "^4.1.5",
         "prettier": "^2.3.2",
         "pretty-quick": "^3.1.1",
@@ -57,8 +58,7 @@
         "tslib": "^2.4.0",
         "tslint": "6.1.3",
         "typedoc": "^0.22.5",
-        "typescript": "4.7.3",
-        "mocha-multi": "1.1.6"
+        "typescript": "4.7.3"
     },
     "dependencies": {
         "@emotion/react": "^11.4.1",
@@ -69,7 +69,7 @@
         "react-select": "5.2.1",
         "react-shadow": "19.0.3",
         "supertokens-js-override": "^0.0.4",
-        "supertokens-web-js": "^0.1.2"
+        "supertokens-web-js": "github:supertokens/supertokens-web-js#session_claims_base"
     },
     "peerDependencies": {
         "react": ">=16.8.0"
@@ -95,7 +95,7 @@
         "pretty": "npx pretty-quick .",
         "build-pretty": "npm run build && npm run pretty && npm run pretty",
         "lint": "node other/checkTranslationKeys.js && cd lib && eslint ./ts --ext .ts,.tsx",
-        "prune": "cd lib && ts-prune | grep -vE 'used in module| - default$| - package_version$|getSuperTokensRoutesForReactRouterDom$' && exit 1 || exit 0",
+        "prune": "cd lib && ts-prune | grep -vE 'used in module| - default$| - package_version$|getSuperTokensRoutesForReactRouterDom$|supertokens-web-js|supertokens-website' && exit 1 || exit 0",
         "pretty-check": "npx pretty-quick --staged --check .",
         "set-up-hooks": "cp hooks/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit",
         "build-docs": "rm -rf ./docs && npx typedoc --out ./docs --tsconfig ./lib/tsconfig.json ./lib/ts/index.ts ./lib/ts/**/index.ts ./lib/ts/**/*/index.ts",
@@ -105,11 +105,11 @@
     "size-limit": [
         {
             "path": "lib/build/index.js",
-            "limit": "30kb"
+            "limit": "35kb"
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "30kb"
+            "limit": "35kb"
         },
         {
             "path": "recipe/thirdpartyemailpassword/index.js",
@@ -125,11 +125,11 @@
         },
         {
             "path": "recipe/passwordless/index.js",
-            "limit": "207kb"
+            "limit": "215kb"
         },
         {
             "path": "recipe/thirdpartypasswordless/index.js",
-            "limit": "227.05kb"
+            "limit": "230kb"
         }
     ],
     "repository": {

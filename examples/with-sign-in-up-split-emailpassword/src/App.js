@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
-import Session from "supertokens-auth-react/recipe/session";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
@@ -107,7 +107,11 @@ SuperTokens.init({
                         return (
                             <div>
                                 <DefaultComponent {...props} />
-                                Click <a href="/signup?show=signup">here</a> to sign up
+                                Click{" "}
+                                <a id="signupLink" href="/signup?show=signup">
+                                    here
+                                </a>{" "}
+                                to sign up
                             </div>
                         );
                     },
@@ -136,13 +140,13 @@ function App() {
                                     /* This protects the "/" route so that it shows
                                         <Home /> only if the user is logged in.
                                         Else it redirects the user to "/auth" */
-                                    <EmailPassword.EmailPasswordAuth
+                                    <SessionAuth
                                         onSessionExpired={() => {
                                             updateShowSessionExpiredPopup(true);
                                         }}>
                                         <Home />
                                         {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </EmailPassword.EmailPasswordAuth>
+                                    </SessionAuth>
                                 }
                             />
                             {/* we want to render the sign in component in /signin.

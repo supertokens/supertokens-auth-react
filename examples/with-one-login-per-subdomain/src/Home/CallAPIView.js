@@ -1,6 +1,5 @@
 import axios from "axios";
 import Session from "supertokens-auth-react/recipe/session";
-import { redirectToAuth } from "supertokens-auth-react/recipe/emailpassword";
 import { getApiDomain } from "../utils";
 Session.addAxiosInterceptors(axios);
 

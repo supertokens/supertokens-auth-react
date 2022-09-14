@@ -1,3 +1,5 @@
 [build]
   publish = "./build/"
   command = "npm install && npm run build"
+[dev]
+  functionsPort = 3001

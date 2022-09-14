@@ -6,7 +6,14 @@ let supertokens = require("supertokens-node");
 let Session = require("supertokens-node/recipe/session");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
+let EmailVerification = require("supertokens-node/recipe/emailverification");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
+const { BooleanClaim } = require("supertokens-node/recipe/session/claims");
+
+const RealPasswordClaim = new BooleanClaim({
+    fetchValue: () => false,
+    key: "uses-real-password",
+});
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
@@ -29,11 +36,17 @@ supertokens.init({
         websiteDomain,
     },
     recipeList: [
+        EmailVerification.init({ mode: "REQUIRED" }),
         ThirdPartyEmailPassword.init({
             override: {
                 apis: (oI) => {
                     return {
                         ...oI,
+                        thirdPartySignInUpPOST: async (input) => {
+                            const res = await oI.thirdPartySignInUpPOST(input);
+                            await res.session.setClaimValue(RealPasswordClaim, true, input.userContext);
+                            return res;
+                        },
                         emailPasswordEmailExistsGET: async function (input) {
                             let email = input.email;
                             let signInResponse = await ThirdPartyEmailPassword.emailPasswordSignIn(
@@ -61,8 +74,10 @@ supertokens.init({
                             return oI.emailPasswordSignInPOST(input);
                         },
                         emailPasswordSignUpPOST: async function (input) {
+                            // We remove claim checking here, since this needs to be callable without the second factor completed
                             let session = await Session.getSession(input.options.req, input.options.res, {
                                 sessionRequired: false,
+                                overrideGlobalClaimValidators: () => [],
                             });
                             if (session === undefined) {
                                 // copied from https://github.com/supertokens/supertokens-node/blob/master/lib/ts/recipe/emailpassword/api/implementation.ts#L137
@@ -81,7 +96,7 @@ supertokens.init({
                                     if (signInResponse.status === "WRONG_CREDENTIALS_ERROR") {
                                         return response;
                                     } else {
-                                        await ThirdPartyEmailPassword.unverifyEmail(signInResponse.user.id);
+                                        await EmailVerification.unverifyEmail(signInResponse.user.id, email);
                                         response = {
                                             status: "OK",
                                             user: signInResponse.user,
@@ -96,7 +111,7 @@ supertokens.init({
                                     input.options.res,
                                     user.id,
                                     {
-                                        isUsingFakePassword: true,
+                                        ...RealPasswordClaim.build(user.id, input.userContext),
                                     },
                                     {}
                                 );
@@ -113,15 +128,13 @@ supertokens.init({
                                     throw new Error("User should not use this password");
                                 }
 
-                                // now we modify the user's password to the new password + change the session to set isUsingFakePassword to false
+                                // now we modify the user's password to the new password + change the session to set RealPasswordClaim to true
                                 await ThirdPartyEmailPassword.updateEmailOrPassword({
                                     userId,
                                     password,
                                 });
 
-                                await session.updateAccessTokenPayload({
-                                    isUsingFakePassword: false,
-                                });
+                                await session.setClaimValue(RealPasswordClaim, true);
 
                                 let user = await ThirdPartyEmailPassword.getUserById(userId);
                                 return {
@@ -155,7 +168,17 @@ supertokens.init({
                 }),
             ],
         }),
-        Session.init(),
+        Session.init({
+            override: {
+                functions: (oI) => ({
+                    ...oI,
+                    getGlobalClaimValidators: (input) => [
+                        ...input.claimValidatorsAddedByOtherRecipes,
+                        RealPasswordClaim.validators.isTrue(),
+                    ],
+                }),
+            },
+        }),
     ],
 });
 
@@ -178,32 +201,19 @@ app.use(
 app.use(middleware());
 
 // An example API that requires session verification
-app.get(
-    "/sessioninfo",
-    verifySession(),
-    async (req, res, next) => {
-        let accessTokenPayload = req.session.getAccessTokenPayload();
-        if (accessTokenPayload.isUsingFakePassword) {
-            // this means that the user has not changed their password after signing up yet.
-            // so we don't allow them access to the API
-            return res.send(401);
-        } else {
-            next();
-        }
-    },
-    async (req, res) => {
-        let session = req.session;
-        res.send({
-            sessionHandle: session.getHandle(),
-            userId: session.getUserId(),
-            accessTokenPayload: session.getAccessTokenPayload(),
-        });
-    }
-);
+app.get("/sessioninfo", verifySession(), async (req, res) => {
+    let session = req.session;
+    res.send({
+        sessionHandle: session.getHandle(),
+        userId: session.getUserId(),
+        accessTokenPayload: session.getAccessTokenPayload(),
+    });
+});
 
 app.use(errorHandler());
 
 app.use((err, req, res, next) => {
+    console.log(err);
     res.status(500).send("Internal error: " + err.message);
 });
 

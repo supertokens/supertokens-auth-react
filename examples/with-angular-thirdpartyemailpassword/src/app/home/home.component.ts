@@ -1,6 +1,7 @@
 import { AfterViewInit, Component } from "@angular/core";
 
 import * as Session from "supertokens-web-js/recipe/session";
+import * as EmailVerification from "supertokens-web-js/recipe/emailverification";
 
 @Component({
     selector: "app-home",
@@ -13,6 +14,7 @@ export class HomeComponent implements AfterViewInit {
     public rootId = "rootId";
     public userId = "";
     public session = false;
+    public emailVerificationStatus = "";
 
     ngAfterViewInit() {
         this.getUserInfo();
@@ -22,6 +24,16 @@ export class HomeComponent implements AfterViewInit {
         this.session = await Session.doesSessionExist();
         if (this.session) {
             this.userId = await Session.getUserId();
+            const accessTokenPayload = await Session.getAccessTokenPayloadSecurely();
+            const emailVerificationValue =
+                EmailVerification.EmailVerificationClaim.getValueFromPayload(accessTokenPayload);
+            if (emailVerificationValue === true) {
+                this.emailVerificationStatus = "Email verified";
+            } else if (emailVerificationValue === false) {
+                this.emailVerificationStatus = "Email not verified";
+            } else {
+                this.emailVerificationStatus = "Email verification status is unknown";
+            }
         }
     }
 

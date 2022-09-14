@@ -1,8 +1,9 @@
 import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
-import Session from "supertokens-auth-react/recipe/session";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
@@ -28,6 +29,9 @@ SuperTokens.init({
         websiteBasePath: "/auth",
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+        }),
         EmailPassword.init({
             emailVerificationFeature: {
                 mode: "REQUIRED",
@@ -55,13 +59,13 @@ function App() {
                                     /* This protects the "/" route so that it shows
                                     <Home /> only if the user is logged in.
                                     Else it redirects the user to "/auth" */
-                                    <EmailPassword.EmailPasswordAuth
+                                    <SessionAuth
                                         onSessionExpired={() => {
                                             updateShowSessionExpiredPopup(true);
                                         }}>
                                         <Home />
                                         {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </EmailPassword.EmailPasswordAuth>
+                                    </SessionAuth>
                                 }
                             />
                         </Routes>

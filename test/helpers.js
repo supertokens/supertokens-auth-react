@@ -637,6 +637,12 @@ export async function getSessionHandleWithFetch(page) {
     );
 }
 
+export async function getInvalidClaimsJSON(page) {
+    return JSON.parse(
+        await page.evaluate(() => document.querySelector("#root > div > div.fill > div > pre.invalidClaims").innerText)
+    );
+}
+
 export async function getUserIdFromSessionContext(page) {
     return await page.evaluate(
         () => document.querySelector("#root > div > div.fill > div > div.session-context-userId").innerText
@@ -679,7 +685,8 @@ export async function screenshotOnFailure(ctx, browser) {
                 .fullTitle()
                 .split(/\W/)
                 .filter((a) => a.length !== 0)
-                .join("_");
+                .join("_")
+                .substring(0, 20);
             await pages[i].screenshot({
                 path: path.join(screenshotRoot, testFileName, `${title}-tab_${i}-${Date.now()}.png`),
             });
@@ -759,6 +766,15 @@ export async function isThirdPartyPasswordlessSupported() {
     return false;
 }
 
+export async function isUserRolesSupported() {
+    const features = await getFeatureFlags();
+    if (!features.includes("userroles")) {
+        return false;
+    }
+
+    return true;
+}
+
 /**
  * For example setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "EMAIL_PASSWORD_SIGN_UP", page) to
  * set for signUp in email password
@@ -768,4 +784,8 @@ export async function setGeneralErrorToLocalStorage(recipeName, action, page) {
         recipeName,
         action,
     });
+}
+
+export async function getTestEmail() {
+    return `john.doe+${Date.now()}@supertokens.io`;
 }

@@ -3,7 +3,7 @@ import "./App.css";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
-import Session from "supertokens-auth-react/recipe/session";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import * as reactRouterDom from "react-router-dom";
 import Home from "./Home";
@@ -11,6 +11,7 @@ import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
 import PhoneVerification from "./PhoneVerification";
 import PhoneNumberVerificationFooter from "./PhoneVerification/Footer";
+import { PhoneVerifiedClaim } from "./phoneVerifiedClaim";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -56,40 +57,8 @@ SuperTokens.init({
             },
             override: {
                 components: {
-                    PasswordlessUserInputCodeFormFooter_Override: ({ DefaultComponent, ...props }) => {
+                    PasswordlessUserInputCodeFormFooter_Override: ({ ...props }) => {
                         return <PhoneNumberVerificationFooter recipeImplementation={props.recipeImplementation} />;
-                    },
-                    PasswordlessSignInUpHeader_Override: () => {
-                        return null;
-                    },
-                    PasswordlessPhoneForm_Override: ({ DefaultComponent, ...props }) => {
-                        React.useEffect(() => {
-                            /**
-                             * When the backend creates a session after the first login challenge,
-                             * it also adds the user's phone number in the access token payload.
-                             *
-                             * We can use that to send it an OTP.
-                             */
-                            Session.getAccessTokenPayloadSecurely()
-                                .then(async (accessTokenPayload) => {
-                                    let phoneNumber = accessTokenPayload.phoneNumber;
-
-                                    // This will send the user an OTP and also display the enter OTP screen.
-                                    await props.recipeImplementation.createCode({
-                                        phoneNumber: phoneNumber,
-                                        userContext: {},
-                                    });
-                                })
-                                .catch((err) => {
-                                    // it can come here if a session doesn't exist.
-                                    // in this case, the screen we will should redirect to the
-                                    // first login challenge
-                                    EmailPassword.redirectToAuth({
-                                        redirectBack: false,
-                                    });
-                                });
-                        }, []);
-                        return null;
                     },
                 },
             },
@@ -122,36 +91,12 @@ SuperTokens.init({
         }),
         Session.init({
             override: {
-                functions: (oI) => {
-                    return {
-                        ...oI,
-                        doesSessionExist: async function (input) {
-                            let sessionExists = await oI.doesSessionExist(input);
-                            if (!sessionExists) {
-                                // none of the login challenges are complete. So we do not give access
-                                return false;
-                            }
-
-                            if (input.userContext.forceOriginalCheck === true) {
-                                return true;
-                            }
-                            if (window.location.pathname.startsWith("/auth")) {
-                                if (window.location.pathname === "/auth/verify-phone") {
-                                    // this is a special case route where even if a session exists,
-                                    // we say it doesn't exist unless the second login challenge is solved
-                                    let accessTokenPayload = await Session.getAccessTokenPayloadSecurely();
-                                    return accessTokenPayload.phoneNumberVerified === true;
-                                }
-                                return true;
-                            } else {
-                                // these are routes on which the user's app pages exist. So we must allow
-                                // access to them only when they also have their phone number verified
-                                let accessTokenPayload = await Session.getAccessTokenPayloadSecurely();
-                                return accessTokenPayload.phoneNumberVerified === true;
-                            }
-                        },
-                    };
-                },
+                functions: (oI) => ({
+                    ...oI,
+                    getGlobalClaimValidators: ({ claimValidatorsAddedByOtherRecipes }) => {
+                        return [...claimValidatorsAddedByOtherRecipes, PhoneVerifiedClaim.validators.isTrue()];
+                    },
+                }),
             },
         }),
     ],
@@ -175,7 +120,14 @@ function App() {
             <div className="App">
                 <div className="fill">
                     <Routes>
-                        <Route path="/auth/verify-phone" element={<PhoneVerification />} />
+                        <Route
+                            path="/auth/verify-phone"
+                            element={
+                                <SessionAuth>
+                                    <PhoneVerification />
+                                </SessionAuth>
+                            }
+                        />
                         {/* This shows the login UI on "/auth" route */}
                         {getSuperTokensRoutesForReactRouterDom(reactRouterDom)}
 
@@ -183,15 +135,15 @@ function App() {
                             path="/"
                             element={
                                 /* This protects the "/" route so that it shows
-                                    <Home /> only if the user is logged in.
-                                    Else it redirects the user to "/auth" */
-                                <EmailPassword.EmailPasswordAuth
+                                        <Home /> only if the user is logged in.
+                                        Else it redirects the user to "/auth" */
+                                <SessionAuth
                                     onSessionExpired={() => {
                                         updateShowSessionExpiredPopup(true);
                                     }}>
                                     <Home />
                                     {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                </EmailPassword.EmailPasswordAuth>
+                                </SessionAuth>
                             }
                         />
                     </Routes>

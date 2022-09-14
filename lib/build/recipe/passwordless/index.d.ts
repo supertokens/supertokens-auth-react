@@ -1,5 +1,4 @@
 import { UserInput } from "./types";
-import PasswordlessAuth from "./passwordlessAuth";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import SignInUpThemeWrapper from "./components/themes/signInUp";
 import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
@@ -15,14 +14,6 @@ export default class Wrapper {
         import("./types").NormalisedConfig
     >;
     static signOut(input?: { userContext?: any }): Promise<void>;
-    static redirectToAuth(
-        input?:
-            | ("signin" | "signup")
-            | {
-                  show?: "signin" | "signup";
-                  redirectBack?: boolean;
-              }
-    ): Promise<void>;
     static createCode(
         input:
             | {
@@ -60,7 +51,7 @@ export default class Wrapper {
     ): Promise<
         | {
               status: "OK";
-              createdUser: boolean;
+              createdNewUser: boolean;
               user: PasswordlessUser;
               fetchResponse: Response;
           }
@@ -108,7 +99,6 @@ export default class Wrapper {
         userContext?: any;
     }): Promise<void>;
     static clearLoginAttemptInfo(input?: { userContext?: any }): Promise<void>;
-    static PasswordlessAuth: typeof PasswordlessAuth;
     static SignInUp: (
         prop?: PropsWithChildren<{
             redirectOnSessionExists?: boolean;
@@ -130,7 +120,6 @@ declare const getLoginAttemptInfo: typeof Wrapper.getLoginAttemptInfo;
 declare const setLoginAttemptInfo: typeof Wrapper.setLoginAttemptInfo;
 declare const clearLoginAttemptInfo: typeof Wrapper.clearLoginAttemptInfo;
 declare const signOut: typeof Wrapper.signOut;
-declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInUp: (
     prop?: PropsWithChildren<{
         redirectOnSessionExists?: boolean;
@@ -140,7 +129,6 @@ declare const SignInUp: (
 declare const SignInUpTheme: typeof SignInUpThemeWrapper;
 declare const LinkClicked: (prop?: any) => JSX.Element;
 export {
-    PasswordlessAuth,
     SignInUp,
     SignInUpTheme,
     LinkClicked,
@@ -156,7 +144,6 @@ export {
     setLoginAttemptInfo,
     clearLoginAttemptInfo,
     signOut,
-    redirectToAuth,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

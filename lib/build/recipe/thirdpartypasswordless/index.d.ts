@@ -1,6 +1,4 @@
-import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import ThirdPartyPasswordlessAuth from "./thirdpartyPasswordlessAuth";
 import SignInUpTheme from "./components/themes/signInUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import {
@@ -15,26 +13,12 @@ export default class Wrapper {
     static init(
         config: UserInput
     ): import("../../types").CreateRecipeFunction<
-        GetRedirectionURLContext,
+        import("../authRecipe/types").GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
     static signOut(input?: { userContext?: any }): Promise<void>;
-    static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK";
-        isVerified: boolean;
-        fetchResponse: Response;
-    }>;
-    static verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
-        fetchResponse: Response;
-    }>;
-    static sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
-        fetchResponse: Response;
-    }>;
-    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string;
     static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: any }): Promise<{
         status: "OK" | "ERROR";
     }>;
@@ -119,7 +103,7 @@ export default class Wrapper {
     ): Promise<
         | {
               status: "OK";
-              createdUser: boolean;
+              createdNewUser: boolean;
               user: PasswordlessUser;
               fetchResponse: Response;
           }
@@ -171,25 +155,10 @@ export default class Wrapper {
         userContext?: any;
     }): Promise<void>;
     static clearPasswordlessLoginAttemptInfo(input?: { userContext?: any }): Promise<void>;
-    static redirectToAuth(
-        input?:
-            | ("signin" | "signup")
-            | {
-                  show?: "signin" | "signup";
-                  redirectBack?: boolean;
-              }
-    ): Promise<void>;
     static Google: typeof Google;
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
     static Github: typeof Github;
-    static ThirdPartyPasswordlessAuth: import("react").FC<
-        PropsWithChildren<{
-            requireAuth?: boolean | undefined;
-            onSessionExpired?: (() => void) | undefined;
-            userContext?: any;
-        }>
-    >;
     static SignInAndUp: (
         prop?: PropsWithChildren<{
             redirectOnSessionExists?: boolean;
@@ -198,8 +167,6 @@ export default class Wrapper {
     ) => JSX.Element;
     static SignInAndUpTheme: typeof SignInUpTheme;
     static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
-    static EmailVerification: (prop?: any) => JSX.Element;
-    static EmailVerificationTheme: typeof EmailVerificationTheme;
     static PasswordlessLinkClickedTheme: import("react").ComponentType<
         import("../passwordless/types").LinkClickedScreenProps & {
             children?: import("react").ReactNode;
@@ -209,10 +176,6 @@ export default class Wrapper {
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
-declare const isEmailVerified: typeof Wrapper.isEmailVerified;
-declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
-declare const verifyEmail: typeof Wrapper.verifyEmail;
-declare const getEmailVerificationTokenFromURL: typeof Wrapper.getEmailVerificationTokenFromURL;
 declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogin;
 declare const getAuthorisationURLFromBackend: typeof Wrapper.getAuthorisationURLFromBackend;
 declare const thirdPartySignInAndUp: typeof Wrapper.thirdPartySignInAndUp;
@@ -234,7 +197,6 @@ declare const doesPasswordlessUserPhoneNumberExist: typeof Wrapper.doesPasswordl
 declare const getPasswordlessLoginAttemptInfo: typeof Wrapper.getPasswordlessLoginAttemptInfo;
 declare const setPasswordlessLoginAttemptInfo: typeof Wrapper.setPasswordlessLoginAttemptInfo;
 declare const clearPasswordlessLoginAttemptInfo: typeof Wrapper.clearPasswordlessLoginAttemptInfo;
-declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (
     prop?: PropsWithChildren<{
         redirectOnSessionExists?: boolean;
@@ -242,19 +204,13 @@ declare const SignInAndUp: (
     }>
 ) => JSX.Element;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
-declare const EmailVerification: (prop?: any) => JSX.Element;
 declare const PasswordlessLinkClicked: (prop?: any) => JSX.Element;
 export {
-    ThirdPartyPasswordlessAuth,
     init,
     Apple,
     Google,
     Facebook,
     Github,
-    isEmailVerified,
-    sendVerificationEmail,
-    verifyEmail,
-    getEmailVerificationTokenFromURL,
     redirectToThirdPartyLogin,
     getAuthorisationURLFromBackend,
     thirdPartySignInAndUp,
@@ -280,9 +236,6 @@ export {
     SignInUpTheme,
     ThirdPartySignInAndUpCallback,
     signOut,
-    redirectToAuth,
-    EmailVerification,
-    EmailVerificationTheme,
     PasswordlessLinkClicked,
     GetRedirectionURLContext,
     PreAPIHookContext,

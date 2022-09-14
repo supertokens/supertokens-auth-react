@@ -18,8 +18,7 @@
  */
 import { Config, NormalisedConfig, NormalisedSignInAndUpFeatureConfig, SignInAndUpFeatureUserInput } from "./types";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-
-import { normaliseAuthRecipeWithEmailVerificationConfig } from "../authRecipeWithEmailVerification/utils";
+import { normaliseAuthRecipe } from "../authRecipe/utils";
 
 /*
  * Methods.
@@ -47,7 +46,7 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
     );
 
     return {
-        ...normaliseAuthRecipeWithEmailVerificationConfig(config),
+        ...normaliseAuthRecipe(config),
         signInAndUpFeature,
         oAuthCallbackScreen: config.oAuthCallbackScreen,
         resetPasswordUsingTokenFeature: config.resetPasswordUsingTokenFeature,

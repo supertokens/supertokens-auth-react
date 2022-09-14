@@ -25,6 +25,7 @@ import { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps } from ".
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { formatPhoneNumberIntl } from "react-phone-number-input/min";
 import Session from "../../../../session";
+import SessionRecipe from "../../../../session/recipe";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 import { useMemo } from "react";
 import { useRef } from "react";
@@ -180,6 +181,7 @@ export function useChildProps(
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
     callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    userContext: any,
     history: any
 ): SignInUpChildProps;
 export function useChildProps(
@@ -187,6 +189,7 @@ export function useChildProps(
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
     callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    userContext: any,
     history: any
 ): SignInUpChildProps | undefined;
 
@@ -195,6 +198,7 @@ export function useChildProps(
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
     callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    userContext: any,
     history: any
 ): SignInUpChildProps | undefined {
     const recipeImplementation = React.useMemo(
@@ -207,16 +211,17 @@ export function useChildProps(
             return undefined;
         }
         return {
-            onSuccess: (result: { createdUser: boolean; user: PasswordlessUser }) => {
-                const pathFromUrl = getRedirectToPathFromURL();
-
-                return recipe.redirect(
+            onSuccess: (result: { createdNewUser: boolean; user: PasswordlessUser }) => {
+                return SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
                     {
-                        action: "SUCCESS",
-                        isNewUser: result.createdUser,
-                        redirectToPath:
-                            pathFromUrl !== undefined ? pathFromUrl : state.loginAttemptInfo?.redirectToPath,
+                        rid: recipe.config.recipeId,
+                        successRedirectContext: {
+                            action: "SUCCESS",
+                            isNewUser: result.createdNewUser,
+                            redirectToPath: getRedirectToPathFromURL(),
+                        },
                     },
+                    userContext,
                     history
                 );
             },
@@ -235,7 +240,7 @@ export const SignInUpFeature: React.FC<
     const userContext = useUserContext();
     const [state, dispatch] = useFeatureReducer(props.recipe.recipeImpl, userContext);
     const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch, userContext);
-    const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, props.history)!;
+    const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, userContext, props.history)!;
 
     return (
         <ComponentOverrideContext.Provider value={componentOverrides}>

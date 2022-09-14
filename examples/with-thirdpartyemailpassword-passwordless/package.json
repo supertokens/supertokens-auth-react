@@ -14,8 +14,8 @@
         "react-dom": "^18.0.0",
         "react-router-dom": "^6.2.1",
         "react-scripts": "^5.0.1",
-        "supertokens-auth-react": "^0.24.0",
-        "supertokens-node": "^11.0.0",
+        "supertokens-auth-react": "github:supertokens/supertokens-auth-react#session_grants",
+        "supertokens-node": "github:supertokens/supertokens-node#session_grants",
         "ts-node-dev": "^2.0.0",
         "web-vitals": "^0.2.4"
     },
@@ -25,6 +25,8 @@
         "@testing-library/user-event": "^12.1.10",
         "@types/cors": "^2.8.12",
         "@types/express": "^4.17.13",
+        "@types/react": "^18.0.10",
+        "@types/react-dom": "^18.0.5",
         "nodemon": "^2.0.6"
     },
     "scripts": {

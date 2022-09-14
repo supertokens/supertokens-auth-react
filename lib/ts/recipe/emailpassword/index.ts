@@ -16,13 +16,11 @@
 import { UserInput } from "./types";
 
 import EmailPassword from "./recipe";
-import EmailPasswordAuth from "./emailPasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
-import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { getNormalisedUserContext } from "../../utils";
-import { User } from "../authRecipeWithEmailVerification/types";
+import { User } from "../authRecipe/types";
 import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import { PropsWithChildren } from "react";
 
@@ -35,64 +33,6 @@ export default class Wrapper {
         return EmailPassword.getInstanceOrThrow().signOut({
             userContext: getNormalisedUserContext(input?.userContext),
         });
-    }
-
-    static async isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK";
-        isVerified: boolean;
-        fetchResponse: Response;
-    }> {
-        return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.isEmailVerified({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static async verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
-        fetchResponse: Response;
-    }> {
-        return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static async sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
-        fetchResponse: Response;
-    }> {
-        return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string {
-        return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.getEmailVerificationTokenFromURL({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    // have backwards compatibility to allow input as "signin" | "signup"
-    static async redirectToAuth(
-        input?:
-            | ("signin" | "signup")
-            | {
-                  show?: "signin" | "signup";
-                  redirectBack?: boolean;
-              }
-    ): Promise<void> {
-        if (input === undefined || typeof input === "string") {
-            return EmailPassword.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input);
-        } else {
-            if (input.redirectBack === false || input.redirectBack === undefined) {
-                return EmailPassword.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input.show);
-            } else {
-                return EmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(input.show);
-            }
-        }
     }
 
     static async submitNewPassword(input: {
@@ -227,25 +167,16 @@ export default class Wrapper {
         });
     }
 
-    static EmailPasswordAuth = EmailPasswordAuth;
     static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         EmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
     static ResetPasswordUsingToken = (prop?: any) =>
         EmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword", prop);
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
-    static EmailVerification = (prop?: any) =>
-        EmailPassword.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
-    static EmailVerificationTheme = EmailVerificationTheme;
 }
 
 const init = Wrapper.init;
 const signOut = Wrapper.signOut;
-const isEmailVerified = Wrapper.isEmailVerified;
-const verifyEmail = Wrapper.verifyEmail;
-const sendVerificationEmail = Wrapper.sendVerificationEmail;
-const getEmailVerificationTokenFromURL = Wrapper.getEmailVerificationTokenFromURL;
-const redirectToAuth = Wrapper.redirectToAuth;
 const submitNewPassword = Wrapper.submitNewPassword;
 const sendPasswordResetEmail = Wrapper.sendPasswordResetEmail;
 const signUp = Wrapper.signUp;
@@ -254,19 +185,12 @@ const doesEmailExist = Wrapper.doesEmailExist;
 const SignInAndUp = Wrapper.SignInAndUp;
 const getResetPasswordTokenFromURL = Wrapper.getResetPasswordTokenFromURL;
 const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
-const EmailVerification = Wrapper.EmailVerification;
 
 export {
-    EmailPasswordAuth,
     init,
-    isEmailVerified,
-    verifyEmail,
-    sendVerificationEmail,
-    getEmailVerificationTokenFromURL,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,
-    redirectToAuth,
     submitNewPassword,
     sendPasswordResetEmail,
     signUp,
@@ -275,8 +199,6 @@ export {
     getResetPasswordTokenFromURL,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
-    EmailVerification,
-    EmailVerificationTheme,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

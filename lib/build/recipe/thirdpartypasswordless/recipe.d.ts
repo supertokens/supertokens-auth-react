@@ -1,6 +1,6 @@
 /// <reference types="react" />
+import AuthRecipe from "../authRecipe";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
-import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
 import {
     Config,
     GetRedirectionURLContext,
@@ -11,10 +11,10 @@ import {
 } from "./types";
 import Passwordless from "../passwordless/recipe";
 import ThirdParty from "../thirdparty/recipe";
-import EmailVerification from "../emailverification/recipe";
 import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
-export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerification<
+export default class ThirdPartyPasswordless extends AuthRecipe<
     GetRedirectionURLContext,
+    never,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -26,7 +26,6 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
     constructor(
         config: Config,
         recipes: {
-            emailVerificationInstance: EmailVerification | undefined;
             thirdPartyInstance: ThirdParty | undefined;
             passwordlessInstance: Passwordless | undefined;
         }
@@ -34,7 +33,7 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
     getFeatures: () => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (
-        componentName: "emailverification" | "signInUp" | "linkClickedScreen" | "signinupcallback",
+        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;

@@ -60,7 +60,7 @@ export default function getRecipeImplementation(recipeInput: {
             } else if (response.status === "OK") {
                 recipeInput.onHandleEvent({
                     action: "SUCCESS",
-                    isNewUser: response.createdUser,
+                    isNewUser: response.createdNewUser,
                     user: response.user,
                 });
             }
