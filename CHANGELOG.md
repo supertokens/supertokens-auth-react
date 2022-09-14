@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.26.0] - 2022-09-14
+
 ### Added
 
 -   Adds Session claims support and `UserRoleClaim`, `PermissionClaim` and `EmailVerificationClaim`
