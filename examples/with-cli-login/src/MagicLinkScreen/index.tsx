@@ -1,6 +1,6 @@
 import React from "react";
 import Session from "supertokens-auth-react/recipe/session";
-import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import { redirectToAuth } from "supertokens-auth-react";
 
 export function MagicLinkScreen() {
     let sessionContext = Session.useSessionContext();
@@ -36,8 +36,8 @@ export function MagicLinkScreen() {
                 localStorage.setItem("passwordless-token", token);
                 localStorage.setItem("passwordless-preAuthSessionId", preAuthSessionId);
             }
-            ThirdPartyEmailPassword.redirectToAuth({
-                redirectBack: true,
+            redirectToAuth({
+                redirectBack: false,
             });
         } else {
             if (token !== undefined && token !== null && token !== "" && preAuthSessionId !== null) {
