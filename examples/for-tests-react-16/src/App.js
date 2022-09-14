@@ -180,6 +180,7 @@ let recipeList = [
                 const log = logWithPrefix(`ST_LOGS SESSION OVERRIDE`);
 
                 return {
+                    ...implementation,
                     addAxiosInterceptors(...args) {
                         log(`ADD_AXIOS_INTERCEPTORS`);
                         return implementation.addAxiosInterceptors(...args);
@@ -280,13 +281,13 @@ function App() {
     if (loadv5RRD) {
         return (
             <ErrorBoundary>
-                <AppWithReactDomRouterV5 authRecipe={authRecipe} />{" "}
+                <AppWithReactDomRouterV5 authRecipe={authRecipe} />
             </ErrorBoundary>
         );
     } else {
         return (
             <ErrorBoundary>
-                <AppWithReactDomRouter authRecipe={authRecipe} />{" "}
+                <AppWithReactDomRouter authRecipe={authRecipe} />
             </ErrorBoundary>
         );
     }
