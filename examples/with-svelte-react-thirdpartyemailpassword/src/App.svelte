@@ -88,7 +88,7 @@
         </div>
     </Route>
     <Route path="/auth/*" primary={false}>
-        <div id="supertokens-root" use:onLoadSuperTokens />
+        <div id="supertokens-app-root" use:onLoadSuperTokens />
     </Route>
 </Router>
 

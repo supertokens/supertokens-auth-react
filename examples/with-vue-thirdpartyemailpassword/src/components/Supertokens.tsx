@@ -5,6 +5,7 @@ import * as ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpar
 
 import { Github, Google } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import Session from "supertokens-auth-react/recipe/session";
+import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 
 SuperTokens.init({
     appInfo: {
@@ -13,12 +14,12 @@ SuperTokens.init({
         websiteDomain: "http://localhost:4200", // TODO: Change to your app's website domain
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+        }),
         ThirdPartyEmailPassword.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init()],
-            },
-            emailVerificationFeature: {
-                mode: "REQUIRED",
             },
         }),
         Session.init(),

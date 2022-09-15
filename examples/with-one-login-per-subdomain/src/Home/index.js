@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import Logout from "./Logout";
 import SuccessView from "./SuccessView";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
-import { signOut, redirectToAuth } from "supertokens-auth-react/recipe/emailpassword";
+import { signOut } from "supertokens-auth-react/recipe/emailpassword";
+import { redirectToAuth } from "supertokens-auth-react";
 import { getRedirectToIfOnWrongSubdomain } from "../utils";
 
 export default function Home() {

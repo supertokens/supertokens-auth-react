@@ -7,6 +7,7 @@ let Session = require("supertokens-node/recipe/session");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
+let EmailVerification = require("supertokens-node/recipe/emailverification");
 let Dashboard = require("supertokens-node/recipe/dashboard");
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -27,6 +28,9 @@ supertokens.init({
         websiteDomain, // TODO: Change to your app's website domain
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+        }),
         ThirdPartyEmailPassword.init({
             providers: [
                 // We have provided you with development keys which you can use for testing.

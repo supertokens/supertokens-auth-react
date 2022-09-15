@@ -30,6 +30,8 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
+import Session from "../../../../session/recipe";
+import SuperTokens from "../../../../../superTokens";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -40,13 +42,17 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
         return props.recipe.recipeImpl.signInAndUp({
             userContext,
         });
-    }, [props.recipe, props.history]);
+    }, [props.recipe, props.history, userContext]);
 
     const handleVerifyResponse = useCallback(
         async (response: Awaited<ReturnType<typeof verifyCode>>): Promise<void> => {
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
-                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                    error: "no_email_present",
+                return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                    history: props.history,
+                    queryParams: {
+                        error: "no_email_present",
+                    },
+                    redirectBack: false,
                 });
             }
 
@@ -54,52 +60,44 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                 const stateResponse = props.recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
                     userContext,
                 });
-
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
 
-                if (props.recipe.emailVerification.config.mode === "REQUIRED") {
-                    let isEmailVerified = true;
-                    try {
-                        isEmailVerified = (
-                            await props.recipe.emailVerification.isEmailVerified({
-                                userContext,
-                            })
-                        ).isVerified;
-                    } catch (ignored) {}
-                    if (!isEmailVerified) {
-                        await props.recipe.savePostEmailVerificationSuccessRedirectState({
-                            redirectToPath: redirectToPath,
-                            isNewUser: true,
+                return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                    {
+                        rid: props.recipe.config.recipeId,
+                        successRedirectContext: {
                             action: "SUCCESS",
-                        });
-                        return props.recipe.emailVerification.redirect(
-                            {
-                                action: "VERIFY_EMAIL",
-                            },
-                            props.history
-                        );
-                    }
-                }
-                return props.recipe.redirect(
-                    { action: "SUCCESS", isNewUser: response.createdNewUser, redirectToPath },
+                            isNewUser: response.createdNewUser,
+                            redirectToPath,
+                        },
+                    },
+                    userContext,
                     props.history
                 );
             }
         },
-        [props.recipe, props.history]
+        [props.recipe, props.history, userContext]
     );
 
     const handleError = useCallback(
         (err) => {
             if (STGeneralError.isThisError(err)) {
-                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                    error: "custom",
-                    message: err.message,
+                return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                    history: props.history,
+                    queryParams: {
+                        error: "custom",
+                        message: err.message,
+                    },
+                    redirectBack: false,
                 });
             }
 
-            return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                error: "signin",
+            return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                history: props.history,
+                queryParams: {
+                    error: "signin",
+                },
+                redirectBack: false,
             });
         },
         [props.recipe, props.history]

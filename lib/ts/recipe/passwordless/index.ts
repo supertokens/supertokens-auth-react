@@ -16,7 +16,6 @@
 import { UserInput } from "./types";
 
 import Passwordless from "./recipe";
-import PasswordlessAuth from "./passwordlessAuth";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import SignInUpThemeWrapper from "./components/themes/signInUp";
 import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
@@ -34,26 +33,6 @@ export default class Wrapper {
         return Passwordless.getInstanceOrThrow().signOut({
             userContext: getNormalisedUserContext(input?.userContext),
         });
-    }
-
-    // have backwards compatibility to allow input as "signin" | "signup"
-    static async redirectToAuth(
-        input?:
-            | ("signin" | "signup")
-            | {
-                  show?: "signin" | "signup";
-                  redirectBack?: boolean;
-              }
-    ): Promise<void> {
-        if (input === undefined || typeof input === "string") {
-            return Passwordless.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input);
-        } else {
-            if (input.redirectBack === false || input.redirectBack === undefined) {
-                return Passwordless.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input.show);
-            } else {
-                return Passwordless.getInstanceOrThrow().redirectToAuthWithRedirectToPath(input.show);
-            }
-        }
     }
 
     static async createCode(
@@ -97,7 +76,7 @@ export default class Wrapper {
     ): Promise<
         | {
               status: "OK";
-              createdUser: boolean;
+              createdNewUser: boolean;
               user: PasswordlessUser;
               fetchResponse: Response;
           }
@@ -190,8 +169,6 @@ export default class Wrapper {
         });
     }
 
-    static PasswordlessAuth = PasswordlessAuth;
-
     static SignInUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         Passwordless.getInstanceOrThrow().getFeatureComponent("signInUp", prop);
     static SignInUpTheme = SignInUpThemeWrapper;
@@ -212,13 +189,11 @@ const getLoginAttemptInfo = Wrapper.getLoginAttemptInfo;
 const setLoginAttemptInfo = Wrapper.setLoginAttemptInfo;
 const clearLoginAttemptInfo = Wrapper.clearLoginAttemptInfo;
 const signOut = Wrapper.signOut;
-const redirectToAuth = Wrapper.redirectToAuth;
 const SignInUp = Wrapper.SignInUp;
 const SignInUpTheme = Wrapper.SignInUpTheme;
 const LinkClicked = Wrapper.LinkClicked;
 
 export {
-    PasswordlessAuth,
     SignInUp,
     SignInUpTheme,
     LinkClicked,
@@ -234,7 +209,6 @@ export {
     setLoginAttemptInfo,
     clearLoginAttemptInfo,
     signOut,
-    redirectToAuth,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

@@ -5,6 +5,7 @@ import Session from "supertokens-node/recipe/session";
 import { verifySession } from "supertokens-node/recipe/session/framework/express";
 import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
+import EmailVerification from "supertokens-node/recipe/emailverification";
 import { associateNewEmailWithPrimaryEmail } from "./emailLinkingMap";
 import { epOverride } from "./epOverride";
 import { evOverride } from "./evOverride";
@@ -30,31 +31,28 @@ supertokens.init({
         websiteDomain, // TODO: Change to your app's website domain
     },
     recipeList: [
-        EmailPassword.init({
-            emailDelivery: {
-                override: (oI) => {
-                    return {
-                        ...oI,
-                        sendEmail: async function (input) {
-                            if (input.userContext.unverifiedAssociatedEmail !== undefined) {
-                                input.user.email = input.userContext.unverifiedAssociatedEmail;
-                            }
-                            // console log for development purposes.
-                            console.log(input);
-                            return oI.sendEmail(input);
-                        },
-                    };
-                },
-            },
+        EmailVerification.init({
+            mode: "REQUIRED",
             override: {
-                emailVerificationFeature: {
-                    functions: (oI) => {
-                        return evOverride(oI);
+                functions: (oI) => evOverride(oI),
+            },
+            emailDelivery: {
+                override: (oI) => ({
+                    ...oI,
+                    sendEmail: async function (input) {
+                        if (input.userContext.unverifiedAssociatedEmail !== undefined) {
+                            input.user.email = input.userContext.unverifiedAssociatedEmail;
+                        }
+                        // console log for development purposes.
+                        console.log(input);
+                        return oI.sendEmail(input);
                     },
-                },
-                functions: (oI) => {
-                    return epOverride(oI);
-                },
+                }),
+            },
+        }),
+        EmailPassword.init({
+            override: {
+                functions: (oI) => epOverride(oI),
             },
         }),
         Session.init(),

@@ -10,10 +10,4 @@ export default abstract class AuthRecipe<
     getAuthRecipeDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     signOut: (input?: { userContext?: any }) => Promise<void>;
     doesSessionExist: (input?: { userContext?: any }) => Promise<boolean>;
-    redirectToAuthWithRedirectToPath: (show?: "signin" | "signup", history?: any, queryParams?: any) => Promise<void>;
-    redirectToAuthWithoutRedirectToPath: (
-        show?: "signin" | "signup",
-        history?: any,
-        queryParams?: any
-    ) => Promise<void>;
 }

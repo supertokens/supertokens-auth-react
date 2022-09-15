@@ -17,7 +17,7 @@
  * Imports.
  */
 
-import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
+import AuthRecipe from "../authRecipe";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -36,7 +36,6 @@ import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken";
 import RecipeImplementation from "./recipeImplementation";
-import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import OverrideableBuilder from "supertokens-js-override";
@@ -45,8 +44,9 @@ import UserContextWrapper from "../../usercontext/userContextWrapper";
 /*
  * Class.
  */
-export default class EmailPassword extends AuthRecipeWithEmailVerification<
+export default class EmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
+    never,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -55,15 +55,8 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
 
     recipeImpl: WebJsRecipeInterface;
 
-    constructor(
-        config: Config,
-        recipes: {
-            emailVerificationInstance: EmailVerification | undefined;
-        }
-    ) {
-        super(normaliseEmailPasswordConfig(config), {
-            emailVerificationInstance: recipes.emailVerificationInstance,
-        });
+    constructor(config: Config) {
+        super(normaliseEmailPasswordConfig(config));
 
         const builder = new OverrideableBuilder(
             RecipeImplementation({
@@ -97,10 +90,7 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
             };
         }
 
-        return {
-            ...features,
-            ...this.getAuthRecipeWithEmailVerificationFeatures(),
-        };
+        return features;
     };
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
@@ -111,11 +101,11 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
             }`;
         }
 
-        return this.getAuthRecipeWithEmailVerificationDefaultRedirectionURL(context);
+        return this.getAuthRecipeDefaultRedirectionURL(context);
     };
 
     getFeatureComponent = (
-        componentName: "signinup" | "resetpassword" | "emailverification",
+        componentName: "signinup" | "resetpassword",
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
     ): JSX.Element => {
         if (componentName === "signinup") {
@@ -148,7 +138,7 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
                 </UserContextWrapper>
             );
         } else {
-            return this.getAuthRecipeWithEmailVerificationFeatureComponent(componentName, props);
+            throw new Error("Should never come here.");
         }
     };
 
@@ -158,16 +148,11 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
         return (
             appInfo: NormalisedAppInfo
         ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
-            EmailPassword.instance = new EmailPassword(
-                {
-                    ...config,
-                    appInfo,
-                    recipeId: EmailPassword.RECIPE_ID,
-                },
-                {
-                    emailVerificationInstance: undefined,
-                }
-            );
+            EmailPassword.instance = new EmailPassword({
+                ...config,
+                appInfo,
+                recipeId: EmailPassword.RECIPE_ID,
+            });
             return EmailPassword.instance;
         };
     }

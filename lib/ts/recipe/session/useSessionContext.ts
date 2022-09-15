@@ -6,7 +6,7 @@ import { SessionContextType } from "./types";
 const useSessionContext = (): SessionContextType => {
     const ctx = React.useContext(SessionContext);
 
-    if (ctx.isDefault) {
+    if (ctx.isDefault === true) {
         throw new Error("Cannot use useSessionContext outside auth wrapper components.");
     }
     return ctx;

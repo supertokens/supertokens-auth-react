@@ -9,12 +9,11 @@ export function addCustomInterceptorsToGlobalFetch() {
             // Simply add the stored string into a header, it's already in the correct format.
             const stCookies = localStorage.getItem("st-cookie");
             if (stCookies) {
+                const headers = new Headers(init?.headers);
+                headers.append("st-cookie", stCookies);
                 init = {
                     ...init,
-                    headers: {
-                        ...init?.headers,
-                        "st-cookie": stCookies,
-                    },
+                    headers,
                 };
             }
         }

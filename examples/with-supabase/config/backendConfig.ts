@@ -1,5 +1,6 @@
 import ThirdPartyEmailPasswordNode from "supertokens-node/recipe/thirdpartyemailpassword";
 import SessionNode from "supertokens-node/recipe/session";
+import EmailVerificationNode from "supertokens-node/recipe/emailverification";
 import { appInfo } from "./appInfo";
 import jwt from "jsonwebtoken";
 import { getSupabase } from "../utils/supabase";
@@ -13,6 +14,9 @@ export let backendConfig = (): TypeInput => {
         },
         appInfo,
         recipeList: [
+            EmailVerificationNode.init({
+                mode: "REQUIRED",
+            }),
             ThirdPartyEmailPasswordNode.init({
                 providers: [
                     // We have provided you with development keys which you can use for testing.
@@ -109,6 +113,7 @@ export let backendConfig = (): TypeInput => {
                             // We store this token in the accessTokenPayload so it can be accessed on the frontend and on the backend.
                             createNewSession: async function (input) {
                                 const payload = {
+                                    sub: input.userId,
                                     userId: input.userId,
                                     exp: Math.floor(Date.now() / 1000) + 60 * 60,
                                 };

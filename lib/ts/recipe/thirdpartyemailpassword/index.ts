@@ -13,11 +13,9 @@
  * under the License.
  */
 import ThirdPartyEmailPassword from "./recipe";
-import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import { getNormalisedUserContext } from "../../utils";
@@ -41,66 +39,6 @@ export default class Wrapper {
         return ThirdPartyEmailPassword.getInstanceOrThrow().signOut({
             userContext: getNormalisedUserContext(input?.userContext),
         });
-    }
-
-    static async isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK";
-        isVerified: boolean;
-        fetchResponse: Response;
-    }> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.isEmailVerified({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static async verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
-        fetchResponse: Response;
-    }> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static async sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
-        fetchResponse: Response;
-    }> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.getEmailVerificationTokenFromURL(
-            {
-                ...input,
-                userContext: getNormalisedUserContext(input?.userContext),
-            }
-        );
-    }
-
-    // have backwards compatibility to allow input as "signin" | "signup"
-    static async redirectToAuth(
-        input?:
-            | ("signin" | "signup")
-            | {
-                  show?: "signin" | "signup";
-                  redirectBack?: boolean;
-              }
-    ): Promise<void> {
-        if (input === undefined || typeof input === "string") {
-            return ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input);
-        } else {
-            if (input.redirectBack === false || input.redirectBack === undefined) {
-                return ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input.show);
-            } else {
-                return ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(input.show);
-            }
-        }
     }
 
     static async submitNewPassword(input: {
@@ -363,7 +301,6 @@ export default class Wrapper {
     static Apple = Apple;
     static Facebook = Facebook;
     static Github = Github;
-    static ThirdPartyEmailPasswordAuth = ThirdPartyEmailPasswordAuth;
     static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
@@ -372,22 +309,13 @@ export default class Wrapper {
     static ResetPasswordUsingToken = (prop?: any) =>
         ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword", prop);
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
-    static EmailVerification = (prop?: any) =>
-        ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
-    static EmailVerificationTheme = EmailVerificationTheme;
     static ThirdPartySignInAndUpCallbackTheme = ThirdPartySignInAndUpCallbackTheme;
 }
 
 const init = Wrapper.init;
 const signOut = Wrapper.signOut;
-const isEmailVerified = Wrapper.isEmailVerified;
-const verifyEmail = Wrapper.verifyEmail;
-const sendVerificationEmail = Wrapper.sendVerificationEmail;
-const getEmailVerificationTokenFromURL = Wrapper.getEmailVerificationTokenFromURL;
-const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
 const ThirdPartySignInAndUpCallback = Wrapper.ThirdPartySignInAndUpCallback;
-const EmailVerification = Wrapper.EmailVerification;
 const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
 const submitNewPassword = Wrapper.submitNewPassword;
 const sendPasswordResetEmail = Wrapper.sendPasswordResetEmail;
@@ -408,22 +336,16 @@ const getAuthErrorFromURL = Wrapper.getAuthErrorFromURL;
 const getAuthStateFromURL = Wrapper.getAuthStateFromURL;
 
 export {
-    ThirdPartyEmailPasswordAuth,
     init,
     Apple,
     Google,
     Facebook,
     Github,
-    isEmailVerified,
-    verifyEmail,
-    sendVerificationEmail,
-    getEmailVerificationTokenFromURL,
     SignInAndUp,
     SignInAndUpTheme,
     ThirdPartySignInAndUpCallback,
     ThirdPartySignInAndUpCallbackTheme,
     signOut,
-    redirectToAuth,
     submitNewPassword,
     sendPasswordResetEmail,
     emailPasswordSignIn,
@@ -441,8 +363,6 @@ export {
     getAuthCodeFromURL,
     getAuthErrorFromURL,
     getAuthStateFromURL,
-    EmailVerification,
-    EmailVerificationTheme,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
     GetRedirectionURLContext,

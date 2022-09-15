@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import "./App.css";
-import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, {
+    SuperTokensWrapper,
+    getSuperTokensRoutesForReactRouterDom,
+    redirectToAuth,
+} from "supertokens-auth-react";
+import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import ThirdPartyEmailPassword, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
-import Session from "supertokens-auth-react/recipe/session";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
-import ProtectRoute from "./ProtectRoute";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -29,12 +33,12 @@ SuperTokens.init({
         websiteDomain: getWebsiteDomain(), // TODO: Change to your app's website domain
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+        }),
         ThirdPartyEmailPassword.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init(), Apple.init()],
-            },
-            emailVerificationFeature: {
-                mode: "REQUIRED",
             },
             override: {
                 components: {
@@ -43,6 +47,7 @@ SuperTokens.init({
                             <div>
                                 <DefaultComponent {...props} />
                                 <div
+                                    id="passwordlessLoginBtn"
                                     style={{
                                         display: "flex",
                                         alignContent: "center",
@@ -56,7 +61,12 @@ SuperTokens.init({
                                         cursor: "pointer",
                                     }}
                                     onClick={() => {
-                                        Passwordless.redirectToAuth();
+                                        redirectToAuth({
+                                            queryParams: {
+                                                rid: "passwordless",
+                                            },
+                                            redirectBack: false,
+                                        });
                                     }}>
                                     Passwordless login
                                 </div>
@@ -91,13 +101,13 @@ function App() {
                                     /* This protects the "/" route so that it shows 
                                         <Home /> only if the user is logged in.
                                         Else it redirects the user to "/auth" */
-                                    <ProtectRoute
+                                    <SessionAuth
                                         onSessionExpired={() => {
                                             updateShowSessionExpiredPopup(true);
                                         }}>
                                         <Home />
                                         {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </ProtectRoute>
+                                    </SessionAuth>
                                 }
                             />
                         </Routes>

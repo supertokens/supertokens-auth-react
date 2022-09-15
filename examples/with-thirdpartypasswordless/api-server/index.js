@@ -7,6 +7,7 @@ let Session = require("supertokens-node/recipe/session");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let ThirdPartyPasswordless = require("supertokens-node/recipe/thirdpartypasswordless");
+let EmailVerification = require("supertokens-node/recipe/emailverification");
 let Dashboard = require("supertokens-node/recipe/dashboard");
 require("dotenv").config();
 
@@ -29,6 +30,9 @@ supertokens.init({
         websiteDomain, // TODO: Change to your app's website domain
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+        }),
         ThirdPartyPasswordless.init({
             providers: [
                 // We have provided you with development keys which you can use for testing.

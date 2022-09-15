@@ -49,8 +49,7 @@ import {
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
-    UserInputOverride as AuthRecipeUserInputOverride,
-} from "../authRecipeWithEmailVerification/types";
+} from "../authRecipe/types";
 import PWlessRecipe from "../passwordless/recipe";
 import TPRecipe from "../thirdparty/recipe";
 import OverrideableBuilder from "supertokens-js-override";
@@ -124,7 +123,7 @@ export type UserInput = (
             builder?: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
-    } & AuthRecipeUserInputOverride;
+    };
     linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
     oAuthCallbackScreen?: FeatureBaseConfig;
     disablePasswordless?: boolean;

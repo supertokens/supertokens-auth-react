@@ -111,7 +111,9 @@ describe("General error rendering", function () {
         });
 
         it("Sending email verification error", async function () {
-            await page.evaluate(() => localStorage.setItem("SHOW_GENERAL_ERROR", "EMAIL_PASSWORD SEND_VERIFY_EMAIL"));
+            await page.evaluate(() =>
+                localStorage.setItem("SHOW_GENERAL_ERROR", "EMAIL_VERIFICATION SEND_VERIFY_EMAIL")
+            );
 
             // first we sign up so that we have a session are on the email verification page
             await Promise.all([

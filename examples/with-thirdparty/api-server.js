@@ -5,6 +5,7 @@ const helmet = require("helmet");
 require("dotenv").config();
 let supertokens = require("supertokens-node");
 let Session = require("supertokens-node/recipe/session");
+let EmailVerification = require("supertokens-node/recipe/emailverification");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let ThirdParty = require("supertokens-node/recipe/thirdparty");
@@ -28,6 +29,9 @@ supertokens.init({
         websiteDomain, // TODO: Change to your app's website domain
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+        }),
         ThirdParty.init({
             signInAndUpFeature: {
                 providers: [

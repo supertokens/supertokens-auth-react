@@ -1,17 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
-import ThirdPartyEmailPassword, {
-    ThirdPartyEmailPasswordAuth,
-    Google,
-    Github,
-    Apple,
-} from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import Session from "supertokens-auth-react/recipe/session";
+import ThirdPartyEmailPassword, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
-import SessionExpiredPopup from "./SessionExpiredPopup";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -67,8 +61,6 @@ SuperTokens.init({
 });
 
 function App() {
-    let [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
-
     return (
         <SuperTokensWrapper>
             <div className="App">
@@ -84,15 +76,9 @@ function App() {
                                     /* This protects the "/" route so that it shows 
                                         <Home /> only if the user is logged in.
                                         Else it redirects the user to "/auth" */
-                                    <ThirdPartyEmailPasswordAuth
-                                        onSessionExpired={() => {
-                                            updateShowSessionExpiredPopup(true);
-                                        }}>
-                                        <>
-                                            <Home />
-                                            {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                        </>
-                                    </ThirdPartyEmailPasswordAuth>
+                                    <SessionAuth>
+                                        <Home />
+                                    </SessionAuth>
                                 }
                             />
                         </Routes>
@@ -108,6 +94,7 @@ export default App;
 
 function SignInMessage() {
     const [showMessage, setShowMessage] = React.useState(false);
+
     React.useEffect(() => {
         if (localStorage.getItem("showSignInMessage") === "true") {
             setShowMessage(true);
@@ -122,7 +109,8 @@ function SignInMessage() {
             <div
                 style={{
                     color: "#ff9b33",
-                }}>
+                }}
+                id="signInMessage">
                 Sign up successful. Please login to continue.
             </div>
         );

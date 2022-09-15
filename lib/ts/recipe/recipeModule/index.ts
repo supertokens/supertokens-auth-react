@@ -13,9 +13,10 @@
  * under the License.
  */
 
+import SuperTokens from "../../superTokens";
 import { RecipeFeatureComponentMap } from "../../types";
 
-import { appendQueryParamsToURL, redirectWithFullPageReload, getOriginOfPage, redirectWithHistory } from "../../utils";
+import { appendQueryParamsToURL } from "../../utils";
 import { NormalisedConfig } from "./types";
 
 /*
@@ -43,26 +44,7 @@ export default abstract class RecipeModule<
     ): Promise<void> => {
         let redirectUrl = await this.getRedirectUrl(context);
         redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
-
-        try {
-            new URL(redirectUrl); // If full URL, no error thrown, skip in app redirection.
-        } catch (e) {
-            // For multi tenancy, If mismatch between websiteDomain and current location, prepand URL relative path with websiteDomain.
-            const origin = getOriginOfPage().getAsStringDangerous();
-            if (origin !== this.config.appInfo.websiteDomain.getAsStringDangerous()) {
-                redirectUrl = `${this.config.appInfo.websiteDomain.getAsStringDangerous()}${redirectUrl}`;
-                redirectWithFullPageReload(redirectUrl);
-                return;
-            }
-
-            // If history was provided, use to redirect without reloading.
-            if (history !== undefined) {
-                redirectWithHistory(redirectUrl, history);
-                return;
-            }
-        }
-        // Otherwise, redirect in app.
-        redirectWithFullPageReload(redirectUrl);
+        return SuperTokens.getInstanceOrThrow().redirectToUrl(redirectUrl, history);
     };
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

@@ -6,6 +6,7 @@ let supertokens = require("supertokens-node");
 let Session = require("supertokens-node/recipe/session");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
+let EmailVerification = require("supertokens-node/recipe/emailverification");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
 let Dashboard = require("supertokens-node/recipe/dashboard");
 
@@ -27,6 +28,7 @@ supertokens.init({
         websiteDomain, // TODO: Change to your app's website domain
     },
     recipeList: [
+        EmailVerification.init({ mode: "REQUIRED" }),
         EmailPassword.init(),
         Session.init(),
         Dashboard.init({

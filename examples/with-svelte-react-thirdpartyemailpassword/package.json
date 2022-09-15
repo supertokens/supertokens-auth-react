@@ -6,7 +6,8 @@
         "build": "rollup -c",
         "client": "rollup -c -w",
         "check": "svelte-check --tsconfig ./tsconfig.json",
-        "start": "sirv public -s",
+        "prod": "sirv public -s",
+        "start": "npm-run-all --parallel start:server prod",
         "server": "nodemon server.js",
         "start:server": "node server.js",
         "dev": "npm-run-all --parallel server client"
@@ -30,7 +31,7 @@
         "svelte-check": "^2.0.0",
         "svelte-preprocess": "^4.0.0",
         "tslib": "^2.0.0",
-        "typescript": "^4.0.0"
+        "typescript": "^4.7.3"
     },
     "dependencies": {
         "cors": "^2.8.5",
@@ -40,8 +41,8 @@
         "react-dom": "^18.1.0",
         "react-router-dom": "^6.3.0",
         "sirv-cli": "^2.0.0",
-        "supertokens-auth-react": "^0.24.0",
-        "supertokens-node": "^11.0.0",
+        "supertokens-auth-react": "github:supertokens/supertokens-auth-react#session_grants",
+        "supertokens-node": "github:supertokens/supertokens-node#session_grants",
         "svelte-navigator": "^3.1.5"
     }
 }

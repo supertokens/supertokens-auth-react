@@ -21,6 +21,8 @@ import { SessionAuth, SessionContext } from "../session";
 import AuthRecipe from ".";
 import { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
 import { getRedirectToPathFromURL } from "../../utils";
+import Session from "../session/recipe";
+import { useUserContext } from "../../usercontext";
 
 type Props<T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, R | OnHandleEventContext>> = {
     onSessionAlreadyExists?: () => void;
@@ -41,7 +43,7 @@ const AuthWidgetWrapper = <
     props: PropsWithChildren<Props<T, Action, R, N>>
 ): React.ReactElement | null => {
     return (
-        <SessionAuth requireAuth={false}>
+        <SessionAuth requireAuth={false} doRedirection={false}>
             <Redirector {...props} />
         </SessionAuth>
     );
@@ -51,6 +53,7 @@ const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLCon
     props: PropsWithChildren<Props<T, S, R, N>>
 ): React.ReactElement | null => {
     const sessionContext = useContext(SessionContext);
+    const userContext = useUserContext();
 
     const [alwaysShow, updateAlwaysShow] = useState(false);
 
@@ -66,12 +69,16 @@ const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLCon
                     props.authRecipe.config.onHandleEvent({
                         action: "SESSION_ALREADY_EXISTS",
                     });
-                    void props.authRecipe.redirect(
+                    void Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
                         {
-                            action: "SUCCESS",
-                            isNewUser: false,
-                            redirectToPath: getRedirectToPathFromURL(),
+                            rid: props.authRecipe.config.recipeId,
+                            successRedirectContext: {
+                                action: "SUCCESS",
+                                isNewUser: false,
+                                redirectToPath: getRedirectToPathFromURL(),
+                            },
                         },
+                        userContext,
                         props.history
                     );
                 }

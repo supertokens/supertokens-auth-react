@@ -7,6 +7,10 @@ import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recip
 import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 import { CookieHandlerInput } from "supertokens-website/utils/cookieHandler/types";
 import { WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
+export declare type GetRedirectionURLContext = {
+    action: "TO_AUTH";
+    showSignIn: boolean | undefined;
+};
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction<any, any, any, any>[];
@@ -19,6 +23,7 @@ export declare type SuperTokensConfig = {
         translationFunc?: TranslationFunc;
     };
     enableDebugLogs?: boolean;
+    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
 };
 export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
     appInfo: NormalisedAppInfo,

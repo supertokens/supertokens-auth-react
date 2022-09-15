@@ -103,14 +103,7 @@ export default function getCookieHandler(original: CookieHandlerInterface): Cook
             const cookies = getCookiesFromStorage();
             return cookies;
         },
-        getCookieSync: function () {
-            const cookies = getCookiesFromStorage();
-            return cookies;
-        },
         setCookie: async function (cookieString: string) {
-            setCookieToStorage(cookieString);
-        },
-        setCookieSync: function (cookieString: string) {
             setCookieToStorage(cookieString);
         },
     };
