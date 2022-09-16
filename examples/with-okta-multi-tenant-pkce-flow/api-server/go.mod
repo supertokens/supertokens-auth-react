@@ -6,7 +6,7 @@ require (
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/nirasan/go-oauth-pkce-code-verifier v0.0.0-20220510032225-4f9f17eaec4c
-	github.com/supertokens/supertokens-golang v0.8.2
+	github.com/supertokens/supertokens-golang v0.9.0
 )
 
 require (
