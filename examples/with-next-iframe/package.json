@@ -13,8 +13,8 @@
         "nextjs-cors": "^2.1.1",
         "react": "^18.0.0",
         "react-dom": "^18.0.0",
-        "supertokens-auth-react": "github:supertokens/supertokens-auth-react#session_grants",
-        "supertokens-node": "github:supertokens/supertokens-node#session_grants"
+        "supertokens-auth-react": "^0.26.0",
+        "supertokens-node": "^12.0.0"
     },
     "license": "MIT"
 }

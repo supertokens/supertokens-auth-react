@@ -41,8 +41,8 @@
         "react-dom": "^18.1.0",
         "react-router-dom": "^6.3.0",
         "sirv-cli": "^2.0.0",
-        "supertokens-auth-react": "github:supertokens/supertokens-auth-react#session_grants",
-        "supertokens-node": "github:supertokens/supertokens-node#session_grants",
+        "supertokens-auth-react": "^0.26.0",
+        "supertokens-node": "^12.0.0",
         "svelte-navigator": "^3.1.5"
     }
 }
