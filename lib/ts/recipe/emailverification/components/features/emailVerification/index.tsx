@@ -29,7 +29,6 @@ import { defaultTranslationsEmailVerification } from "../../themes/translations"
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import { useUserContext } from "../../../../../usercontext";
 import Session from "../../../../session/recipe";
-import SuperTokens from "../../../../../superTokens";
 import { redirectToAuth } from "../../../../..";
 
 type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any };
@@ -38,6 +37,10 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     const sessionContext = useContext(SessionContext);
     const [status, setStatus] = useState("LOADING");
     const userContext = useUserContext();
+
+    const redirectToAuthWithHistory = useCallback(async () => {
+        await redirectToAuth({ redirectBack: false, history: props.history });
+    }, [props.history]);
 
     const modifiedRecipeImplementation = useMemo<RecipeInterface>(
         () => ({
@@ -67,17 +70,14 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         const token = getQueryParams("token") ?? undefined;
         if (token === undefined) {
             if (!sessionContext.doesSessionExist) {
-                await SuperTokens.getInstanceOrThrow().redirectToAuth({
-                    history: props.history,
-                    redirectBack: false,
-                });
+                await redirectToAuthWithHistory();
             } else {
                 // we check if the email is already verified, and if it is, then we redirect the user
                 return (await props.recipe.recipeImpl.isEmailVerified({ userContext })).isVerified;
             }
         }
         return false;
-    }, [props.recipe, sessionContext]);
+    }, [props.recipe, sessionContext, redirectToAuthWithHistory]);
 
     const checkIsEmailVerified = useCallback(
         async (isVerified: boolean): Promise<void> => {
@@ -88,10 +88,6 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         },
         [props.recipe, setStatus, onSuccess]
     );
-
-    const redirectToAuthWithHistory = useCallback(async () => {
-        await redirectToAuth({ redirectBack: false, history: props.history });
-    }, [props.history]);
 
     const handleError = useCallback(
         async (err) => {
@@ -110,20 +106,8 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     const signOut = useCallback(async (): Promise<void> => {
         const session = Session.getInstanceOrThrow();
         await session.signOut(props.userContext);
-        return SuperTokens.getInstanceOrThrow().redirectToAuth({
-            history: props.history,
-            redirectBack: false,
-        });
-    }, [props.recipe]);
-
-    const onTokenInvalidRedirect = useCallback(
-        () =>
-            SuperTokens.getInstanceOrThrow().redirectToAuth({
-                history: props.history,
-                redirectBack: false,
-            }),
-        [props.recipe, props.history]
-    );
+        return redirectToAuthWithHistory();
+    }, [props.recipe, redirectToAuthWithHistory]);
 
     if (status === "LOADING") {
         return <Fragment />;
@@ -150,7 +134,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
             ? undefined
             : {
                   styleFromInit: verifyEmailLinkClickedScreenFeature.style,
-                  onTokenInvalidRedirect: onTokenInvalidRedirect,
+                  onTokenInvalidRedirect: redirectToAuthWithHistory,
                   onSuccess,
                   recipeImplementation: modifiedRecipeImplementation,
                   config: props.recipe.config,
