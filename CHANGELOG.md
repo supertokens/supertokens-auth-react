@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changes
+
+-   Adds `redirectToAuth` to props of the overrideable `SendVerifyEmail` component
+
+### Fixes
+
+-   Redirecting to auth when opening the default UI on `/auth/verify-email` with an unknown/deleted user instead of showing an empty screen
+-   In case an error is thrown during loading session information/claim validation, `sessionContext` will now contain `doesSessionExist: false` instead of throwing an error
+
 ## [0.26.0] - 2022-09-14
 
 ### Added

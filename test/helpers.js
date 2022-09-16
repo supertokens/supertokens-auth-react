@@ -576,9 +576,13 @@ export async function defaultSignUp(page, rid = "emailpassword") {
         rid
     );
 }
-export async function signUp(page, values, postValues, rid = "emailpassword") {
+export async function signUp(page, fields, postValues, rid = "emailpassword") {
+    if (postValues === undefined) {
+        postValues = JSON.stringify({ formFields: fields.map((v) => ({ id: v.name, value: v.value })) });
+    }
+
     // Set values.
-    await setInputValues(page, values);
+    await setInputValues(page, fields);
     const successAdornments = await getInputAdornmentsSuccess(page);
     assert.strictEqual(successAdornments.length, 4);
 

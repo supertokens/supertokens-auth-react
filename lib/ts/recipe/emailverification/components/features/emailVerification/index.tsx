@@ -30,6 +30,7 @@ import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import { useUserContext } from "../../../../../usercontext";
 import Session from "../../../../session/recipe";
 import SuperTokens from "../../../../../superTokens";
+import { redirectToAuth } from "../../../../..";
 
 type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any };
 
@@ -88,12 +89,21 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         [props.recipe, setStatus, onSuccess]
     );
 
-    const handleError = useCallback(async (err) => {
-        // If the error cleared the session the user will be redirected away anyway, no reason to propagate the error
-        if (await Session.getInstanceOrThrow().doesSessionExist({ userContext })) {
-            throw err;
-        }
-    }, []);
+    const redirectToAuthWithHistory = useCallback(async () => {
+        await redirectToAuth({ redirectBack: false, history: props.history });
+    }, [props.history]);
+
+    const handleError = useCallback(
+        async (err) => {
+            // If the error cleared the session we redirect away, otherwise we have no way of handling it.
+            if (await Session.getInstanceOrThrow().doesSessionExist({ userContext })) {
+                throw err;
+            } else {
+                await redirectToAuthWithHistory();
+            }
+        },
+        [redirectToAuthWithHistory]
+    );
 
     useOnMountAPICall(fetchIsEmailVerified, checkIsEmailVerified, handleError, sessionContext.loading === false);
 
@@ -129,6 +139,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         config: props.recipe.config,
         signOut: signOut,
         onEmailAlreadyVerified: onSuccess,
+        redirectToAuth: redirectToAuthWithHistory,
     };
 
     const verifyEmailLinkClickedScreenFeature = props.recipe.config.verifyEmailLinkClickedScreen;
