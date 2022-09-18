@@ -20,6 +20,8 @@ export function defaultEmailValidator(value: any): string | undefined {
         return "GENERAL_ERROR_EMAIL_NON_STRING";
     }
 
+    value = value.trim();
+
     const defaultEmailValidatorRegexp =
         // eslint-disable-next-line no-useless-escape
         /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -38,6 +40,9 @@ export function defaultPhoneNumberValidator(value: string) {
     if (typeof value !== "string") {
         return "GENERAL_ERROR_PHONE_NON_STRING";
     }
+
+    value = value.trim();
+
     if (!isValidPhoneNumber(value)) {
         return "GENERAL_ERROR_PHONE_INVALID";
     }
@@ -48,6 +53,7 @@ export function defaultEmailValidatorForCombinedInput(value: any): string | unde
     if (typeof value !== "string") {
         return "GENERAL_ERROR_EMAIL_OR_PHONE_NON_STRING";
     }
+    value = value.trim();
 
     const defaultEmailValidatorRegexp =
         // eslint-disable-next-line no-useless-escape
@@ -67,6 +73,9 @@ export function defaultPhoneNumberValidatorForCombinedInput(value: string) {
     if (typeof value !== "string") {
         return "GENERAL_ERROR_EMAIL_OR_PHONE_NON_STRING";
     }
+
+    value = value.trim();
+
     if (!isValidPhoneNumber(value)) {
         return "GENERAL_ERROR_EMAIL_OR_PHONE_INVALID";
     }
@@ -82,5 +91,13 @@ export async function userInputCodeValidate(value: any): Promise<string | undefi
         return "GENERAL_ERROR_OTP_EMPTY";
     }
 
+    return undefined;
+}
+
+/*
+ * defaultValidate
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function defaultValidate(_: any): Promise<string | undefined> {
     return undefined;
 }
