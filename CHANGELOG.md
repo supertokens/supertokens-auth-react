@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.25.1] - 2022-09-18
+
 ### Bug fixes
 
 -   We now ignore errors thrown while sending verification emails on mount as intended
+-   Calls the trim function for email and phone number validation in passwordless and emailpassword based recipes.
 
 ## [0.25.0]
 
