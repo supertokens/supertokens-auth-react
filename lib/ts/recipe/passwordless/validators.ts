@@ -73,6 +73,9 @@ export function defaultPhoneNumberValidatorForCombinedInput(value: string) {
     if (typeof value !== "string") {
         return "GENERAL_ERROR_EMAIL_OR_PHONE_NON_STRING";
     }
+
+    value = value.trim();
+
     if (!isValidPhoneNumber(value)) {
         return "GENERAL_ERROR_EMAIL_OR_PHONE_INVALID";
     }
