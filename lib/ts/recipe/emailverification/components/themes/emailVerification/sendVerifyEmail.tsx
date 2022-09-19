@@ -89,6 +89,7 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
     );
 
     const handleSendError = useCallback(async () => {
+        // TODO: we will not need this after restructuring the emailverification components, since it should be handled by SessionAuth
         // If the error cleared the session we should redirect to auth
         if ((await Session.getInstanceOrThrow().doesSessionExist({ userContext })) !== true) {
             await props.redirectToAuth();
