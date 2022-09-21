@@ -17,7 +17,7 @@ import { SignInUpEmailOrPhoneFormProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
-import { defaultEmailValidator, defaultValidate } from "../../../../emailpassword/validators";
+import { defaultEmailValidator, defaultValidate } from "../../../validators";
 import { useMemo, useState } from "react";
 import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
