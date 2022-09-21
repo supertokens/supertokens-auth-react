@@ -100,7 +100,9 @@ export async function waitForText(page, selector, text, timeout = 10000, pollDel
             break;
         } else {
             if (timeout < new Date().getTime() - start) {
-                assert.fail(`Timeout while waiting for "${selector}" to have text "${text}"`);
+                assert.fail(
+                    `Timeout while waiting for "${selector}" to have text "${text}. It currently has: ${headerText}"`
+                );
             }
             await waitFor(pollDelay);
         }
