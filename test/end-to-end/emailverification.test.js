@@ -141,6 +141,15 @@ describe("SuperTokens Email Verification", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
 
+            // In strict mode useEffects may be called twice in development mode,
+            // but sometimes the second call is aborted by the navigation in the first
+            if (
+                (consoleLogs[consoleLogs.length - 1] === consoleLogs[consoleLogs.length - 2]) ===
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH"
+            ) {
+                consoleLogs.pop();
+            }
+
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
             assert.deepStrictEqual(consoleLogs, [
@@ -150,7 +159,6 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
                 "ST_LOGS SESSION ON_HANDLE_EVENT UNAUTHORISED",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
             ]);
         });
