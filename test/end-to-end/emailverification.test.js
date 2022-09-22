@@ -144,8 +144,8 @@ describe("SuperTokens Email Verification", function () {
             // In strict mode useEffects may be called twice in development mode,
             // but sometimes the second call is aborted by the navigation in the first
             if (
-                (consoleLogs[consoleLogs.length - 1] === consoleLogs[consoleLogs.length - 2]) ===
-                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH"
+                consoleLogs[consoleLogs.length - 1] === "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH" &&
+                consoleLogs[consoleLogs.length - 2] === "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH"
             ) {
                 consoleLogs.pop();
             }
@@ -200,8 +200,8 @@ describe("SuperTokens Email Verification", function () {
             // In strict mode useEffects may be called twice in development mode,
             // but sometimes the second call is aborted by the navigation in the first
             if (
-                (consoleLogs[consoleLogs.length - 1] === consoleLogs[consoleLogs.length - 2]) ===
-                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH"
+                consoleLogs[consoleLogs.length - 1] === "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH" &&
+                consoleLogs[consoleLogs.length - 2] === "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH"
             ) {
                 consoleLogs.pop();
             }
