@@ -98,25 +98,67 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 userId: "",
             };
         }
-        const invalidClaims = await session.current.validateClaims({
-            overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
-            userContext,
-        });
+
+        let invalidClaims;
+        try {
+            invalidClaims = await session.current.validateClaims({
+                overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
+                userContext,
+            });
+        } catch (err) {
+            // These errors should only come from getAccessTokenPayloadSecurely inside validateClaims if refreshing a claim cleared the session
+            // Which means that the session was most likely cleared, meaning returning false is right.
+            // This might also happen if the user provides an override or a custom claim validator that throws (or if we have a bug)
+            // In which case the session will not be cleared so we rethrow the error
+            if (
+                await session.current.doesSessionExist({
+                    userContext,
+                })
+            ) {
+                throw err;
+            }
+            return {
+                loading: false,
+                doesSessionExist: false,
+                accessTokenPayload: {},
+                invalidClaims: [],
+                userId: "",
+            };
+        }
         // TODO: basing redirection on userContext could break in certain edge-cases involving async validators
         const invalidClaimRedirectToPath = popInvalidClaimRedirectPathFromContext(userContext);
 
-        return {
-            loading: false,
-            doesSessionExist: true,
-            invalidClaims,
-            invalidClaimRedirectToPath,
-            accessTokenPayload: await session.current.getAccessTokenPayloadSecurely({
-                userContext,
-            }),
-            userId: await session.current.getUserId({
-                userContext,
-            }),
-        };
+        try {
+            return {
+                loading: false,
+                doesSessionExist: true,
+                invalidClaims,
+                invalidClaimRedirectToPath,
+                accessTokenPayload: await session.current.getAccessTokenPayloadSecurely({
+                    userContext,
+                }),
+                userId: await session.current.getUserId({
+                    userContext,
+                }),
+            };
+        } catch (err) {
+            if (
+                await session.current.doesSessionExist({
+                    userContext,
+                })
+            ) {
+                throw err;
+            }
+            // This means that loading the access token or the userId failed
+            // This may happen if the server cleared the error since the validation was done which should be extremely rare
+            return {
+                loading: false,
+                doesSessionExist: false,
+                accessTokenPayload: {},
+                invalidClaims: [],
+                userId: "",
+            };
+        }
     }, []);
 
     const setInitialContextAndMaybeRedirect = useCallback(

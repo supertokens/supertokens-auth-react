@@ -94,6 +94,7 @@ export type SendVerifyEmailThemeProps = ThemeBaseProps & {
     config: NormalisedConfig;
     signOut: () => Promise<void>;
     onEmailAlreadyVerified: () => Promise<void>;
+    redirectToAuth: () => Promise<void>;
 };
 
 export type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {

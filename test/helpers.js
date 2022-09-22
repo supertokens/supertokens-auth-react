@@ -100,7 +100,9 @@ export async function waitForText(page, selector, text, timeout = 10000, pollDel
             break;
         } else {
             if (timeout < new Date().getTime() - start) {
-                assert.fail(`Timeout while waiting for "${selector}" to have text "${text}"`);
+                assert.fail(
+                    `Timeout while waiting for "${selector}" to have text "${text}. It currently has: ${headerText}"`
+                );
             }
             await waitFor(pollDelay);
         }
@@ -576,9 +578,13 @@ export async function defaultSignUp(page, rid = "emailpassword") {
         rid
     );
 }
-export async function signUp(page, values, postValues, rid = "emailpassword") {
+export async function signUp(page, fields, postValues, rid = "emailpassword") {
+    if (postValues === undefined) {
+        postValues = JSON.stringify({ formFields: fields.map((v) => ({ id: v.name, value: v.value })) });
+    }
+
     // Set values.
-    await setInputValues(page, values);
+    await setInputValues(page, fields);
     const successAdornments = await getInputAdornmentsSuccess(page);
     assert.strictEqual(successAdornments.length, 4);
 

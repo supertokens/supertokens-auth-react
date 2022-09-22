@@ -29,6 +29,7 @@ import { useUserContext } from "../../../../../usercontext";
 import STGeneralError from "supertokens-web-js/utils/error";
 import { useOnMountAPICall } from "../../../../../utils";
 import { Awaited } from "../../../../../types";
+import Session from "../../../../session/recipe";
 
 export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProps> = (props) => {
     const styles = useContext(StyleContext);
@@ -54,6 +55,7 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
             }
 
             setStatus("ERROR");
+            return handleSendError();
         }
     };
 
@@ -86,7 +88,12 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
         [props.config, props.recipeImplementation, props.onEmailAlreadyVerified]
     );
 
-    const handleSendError = useCallback(() => {
+    const handleSendError = useCallback(async () => {
+        // TODO: we will not need this after restructuring the emailverification components, since it should be handled by SessionAuth
+        // If the error cleared the session we should redirect to auth
+        if ((await Session.getInstanceOrThrow().doesSessionExist({ userContext })) !== true) {
+            await props.redirectToAuth();
+        }
         // We intentionally ignore the error here, because we don't want to show an error without the user taking action
     }, []);
 

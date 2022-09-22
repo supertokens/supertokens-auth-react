@@ -110,6 +110,114 @@ describe("SuperTokens Email Verification", function () {
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         });
 
+        it("Should redirect to auth from email verification protected page if the user is deleted", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await toggleSignInSignUp(page);
+            const email = `john.doe${Date.now()}@supertokens.io`;
+            await signUp(page, [
+                { name: "email", value: email },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "name", value: "John Doe" },
+                { name: "age", value: "20" },
+                { name: "country", value: "" },
+            ]);
+            await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+
+            await fetch(`${TEST_SERVER_BASE_URL}/deleteUser`, {
+                method: "POST",
+                headers: [["content-type", "application/json"]],
+                body: JSON.stringify({
+                    email,
+                    rid: "emailpassword",
+                }),
+            });
+            await new Promise((r) => setTimeout(r, 11000));
+            consoleLogs = [];
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/dashboard`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            // In strict mode useEffects may be called twice in development mode,
+            // but sometimes the second call is aborted by the navigation in the first
+            if (
+                (consoleLogs[consoleLogs.length - 1] === consoleLogs[consoleLogs.length - 2]) ===
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH"
+            ) {
+                consoleLogs.pop();
+            }
+
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth");
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
+                "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
+                "ST_LOGS SESSION ON_HANDLE_EVENT UNAUTHORISED",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
+            ]);
+        });
+
+        it("Should redirect to auth if the user has been deleted", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await toggleSignInSignUp(page);
+            const email = `john.doe${Date.now()}@supertokens.io`;
+            await signUp(page, [
+                { name: "email", value: email },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "name", value: "John Doe" },
+                { name: "age", value: "20" },
+                { name: "country", value: "" },
+            ]);
+            await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+            let pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth/verify-email");
+
+            await fetch(`${TEST_SERVER_BASE_URL}/deleteUser`, {
+                method: "POST",
+                headers: [["content-type", "application/json"]],
+                body: JSON.stringify({
+                    email,
+                    rid: "emailpassword",
+                }),
+            });
+            await new Promise((r) => setTimeout(r, 11000));
+
+            consoleLogs = [];
+            await page.reload({ waitUntil: ["networkidle0"] });
+            // Click on Logout should remove session and redirect to login page
+            pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth");
+
+            // In strict mode useEffects may be called twice in development mode,
+            // but sometimes the second call is aborted by the navigation in the first
+            if (
+                (consoleLogs[consoleLogs.length - 1] === consoleLogs[consoleLogs.length - 2]) ===
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH"
+            ) {
+                consoleLogs.pop();
+            }
+
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
+                "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
+                "ST_LOGS SESSION ON_HANDLE_EVENT UNAUTHORISED",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
+            ]);
+        });
+
         it("Should redirect to login page when email verification screen is accessed without a valid session", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email`),
