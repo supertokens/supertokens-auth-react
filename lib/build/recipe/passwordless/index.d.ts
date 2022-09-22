@@ -38,7 +38,7 @@ export default class Wrapper {
         fetchResponse: Response;
     }>;
     static consumeCode(
-        input:
+        input?:
             | {
                   userInputCode: string;
                   userContext?: any;

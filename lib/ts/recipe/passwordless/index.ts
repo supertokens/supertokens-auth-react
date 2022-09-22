@@ -63,7 +63,7 @@ export default class Wrapper {
     }
 
     static async consumeCode(
-        input:
+        input?:
             | {
                   userInputCode: string;
                   userContext?: any;

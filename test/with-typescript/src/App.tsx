@@ -623,9 +623,7 @@ Passwordless.consumeCode({
         preAPIHook: undefined,
     },
 });
-// @ts-expect-error
 Passwordless.consumeCode(undefined);
-// @ts-expect-error
 Passwordless.consumeCode();
 
 Passwordless.createCode({
