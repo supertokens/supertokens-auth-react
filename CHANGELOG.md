@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.26.3] - 2022-09-22
+
 ### Build/Test changes
 
 -   Fixes how our CI testing procedure (alway using latest)
