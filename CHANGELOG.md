@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.26.1] - 2022-09-22
+
 ### Changes
 
 -   Adds `redirectToAuth` to props of the overrideable `SendVerifyEmail` component
