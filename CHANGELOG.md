@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Build/Test changes
+
+-   Fixes how our CI testing procedure (alway using latest)
+
 ## [0.26.2] - 2022-09-22
 
 -   Fixes parameter type for Passwordless `consumeCode`

@@ -6,6 +6,9 @@
 # export PUPPETEER_EXECUTABLE_PATH=`which chromium`
 # And run brew install chromium --no-quarantine
 
+echo "Updating supertokens-web-js supertokens-website patch versions"
+npm up --legacy-peer-deps supertokens-web-js supertokens-website
+
 echo "Install in root"
 npm i -d --force || exit $?
 
