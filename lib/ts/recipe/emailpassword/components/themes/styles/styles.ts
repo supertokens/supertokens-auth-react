@@ -74,8 +74,8 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             &:-webkit-autofill:hover, 
             &:-webkit-autofill:focus, 
             &:-webkit-autofill:active`]: {
-                "-webkit-text-fill-color": palette.colors.textInput,
-                "-webkit-box-shadow": `0 0 0 30px ${palette.colors.inputBackground} inset`,
+                WebkitTextFillColor: palette.colors.textInput,
+                WebkitBoxShadow: `0 0 0 30px ${palette.colors.inputBackground} inset`,
             },
         },
 
