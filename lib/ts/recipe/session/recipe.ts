@@ -218,7 +218,9 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     private notifyListeners = async (event: RecipeEvent) => {
         const sessionContext = await this.getSessionContext(event);
 
-        this.eventListeners.forEach((listener) =>
+        // We copy this.eventListeners into a new array to "freeze" it for the loop
+        // We do this to avoid an infinite loop in case one of the listeners causes a new listener to be added (e.g.: through re-rendering)
+        Array.from(this.eventListeners).forEach((listener) =>
             listener({
                 sessionContext,
                 ...event,
