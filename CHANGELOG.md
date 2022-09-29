@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.26.4] - 2022-09-29
+
 ### Fixes
 
 -   Fixed a case where SessionAuth could get stuck in an infinite loop
