@@ -36,6 +36,7 @@ import {
     clickOnPasswordlessResendButton,
     isGeneralErrorSupported,
     setGeneralErrorToLocalStorage,
+    getInputField,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -813,6 +814,9 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     } else {
                         const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
                         assert.deepStrictEqual(await error.evaluate((e) => e.textContent), `Invalid OTP`);
+                        const otpField = await getInputField(page, "userInputCode");
+                        const fieldValue = await otpField.evaluate((f) => f.value);
+                        assert.strictEqual(fieldValue, "");
                     }
                 }
 

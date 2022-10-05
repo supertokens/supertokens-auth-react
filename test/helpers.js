@@ -385,6 +385,8 @@ export async function setInputValues(page, fields) {
 
         // Type new value.
         const passwordInput = await getInputField(page, field.name);
+        // This selects all texts inside the input, so typing will clear it.
+        await passwordInput.click({ clickCount: 3 });
         await passwordInput.type(field.value);
 
         // Blur.
