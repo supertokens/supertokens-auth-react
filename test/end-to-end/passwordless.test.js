@@ -40,7 +40,12 @@ import {
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, TEST_APPLICATION_SERVER_BASE_URL } from "../constants";
+import {
+    TEST_CLIENT_BASE_URL,
+    TEST_SERVER_BASE_URL,
+    TEST_APPLICATION_SERVER_BASE_URL,
+    SOMETHING_WENT_WRONG_ERROR,
+} from "../constants";
 
 /*
  * Tests.
@@ -1310,6 +1315,45 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
                 assert.strictEqual(await error.evaluate((e) => e.textContent), "general error from API consume code");
+            });
+
+            it("consume code network error", async function () {
+                await page.setRequestInterception(true);
+                const requestHandler = (request) => {
+                    if (request.url().endsWith("signinup/code/consume")) {
+                        request.abort();
+                    } else {
+                        request.continue();
+                    }
+                };
+                page.on("request", requestHandler);
+
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getPasswordlessDevice(loginAttemptInfo);
+                await page.goto(device.codes[0].urlWithLinkCode);
+
+                // We have been redirected to linkSent
+                await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
+                const pathname = await page.evaluate(() => window.location.pathname);
+                assert.deepStrictEqual(pathname, "/auth");
+
+                const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
+                assert.strictEqual(await error.evaluate((e) => e.textContent), SOMETHING_WENT_WRONG_ERROR);
+
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
             });
 
             it("No linkCode", async function () {
