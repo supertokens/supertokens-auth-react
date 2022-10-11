@@ -130,7 +130,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
                     history: props.history,
                     queryParams: {
-                        error: "restart_link",
+                        error: "signin",
                     },
                     redirectBack: false,
                 });

@@ -111,6 +111,7 @@ const Input: React.FC<InputProps> = ({
                     name={name}
                     placeholder={t(placeholder)}
                     onChange={handleChange}
+                    value={value}
                 />
                 {hasError === true && (
                     <div

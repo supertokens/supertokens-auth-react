@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Fixes
+
+-   Fixed the error message shown if a network error occured while consuming a link in passwordless
+-   Now clearing the OTP input field in passwordless after submit (as it was intended)
+
 ## [0.26.4] - 2022-09-29
 
 ### Fixes
