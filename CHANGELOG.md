@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.26.5] - 2022-10-11
+
 ### Fixes
 
 -   Fixed the error message shown if a network error occured while consuming a link in passwordless
