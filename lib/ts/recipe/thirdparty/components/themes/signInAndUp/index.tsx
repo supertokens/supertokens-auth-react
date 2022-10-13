@@ -25,20 +25,17 @@ import { SignInAndUpThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
 import { ProvidersForm } from "./providersForm";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
-import { useTranslation } from "../../../../..";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
+import { SignInAndUpHeader } from "./signInAndUpHeader";
 
 const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
-    const t = useTranslation();
     const styles = useContext(StyleContext);
 
     return (
         <div data-supertokens="container" css={styles.container}>
             <div data-supertokens="row" css={styles.row}>
-                <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                    {t("THIRD_PARTY_SIGN_IN_AND_UP_HEADER_TITLE")}
-                </div>
+                <SignInAndUpHeader />
 
                 <div data-supertokens="divider" css={styles.divider}></div>
 
