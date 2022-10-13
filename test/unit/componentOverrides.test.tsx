@@ -21,6 +21,7 @@ import { SignUpFooter as EmailPasswordSignUpFooter } from "../../lib/ts/recipe/e
 import { SignUpForm } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signUpForm";
 import { SubmitNewPassword } from "../../lib/ts/recipe/emailpassword/components/themes/resetPasswordUsingToken/submitNewPassword";
 import { SignUpFooter as ThirdPartySignUpFooter } from "../../lib/ts/recipe/thirdparty/components/themes/signInAndUp/signUpFooter";
+import { SignInAndUpHeader as ThirdPartySignInAndUpHeader } from "../../lib/ts/recipe/thirdparty/components/themes/signInAndUp/signInUpHeader";
 import { ProvidersForm } from "../../lib/ts/recipe/thirdparty/components/themes/signInAndUp/providersForm";
 import { SignInAndUpCallbackTheme } from "../../lib/ts/recipe/thirdparty/components/themes/signInAndUpCallback";
 import { SendVerifyEmail } from "../../lib/ts/recipe/emailverification/components/themes/emailVerification/sendVerifyEmail";
@@ -68,6 +69,7 @@ describe("Theme component overrides", () => {
         EmailPasswordSignUpForm_Override: SignUpForm,
         EmailPasswordSubmitNewPassword_Override: SubmitNewPassword,
         ThirdPartySignUpFooter_Override: ThirdPartySignUpFooter,
+        ThirdPartySignInAndUpHeader_Override: ThirdPartySignInAndUpHeader,
         ThirdPartySignInAndUpProvidersForm_Override: ProvidersForm,
         ThirdPartySignInAndUpCallbackTheme_Override: SignInAndUpCallbackTheme,
         EmailVerificationSendVerifyEmail_Override: SendVerifyEmail,

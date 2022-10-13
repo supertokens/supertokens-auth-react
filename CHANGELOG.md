@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Added
+
+-   Made the header of the third party sign in/up form overrideable
+
 ## [0.26.5] - 2022-10-11
 
 ### Fixes

@@ -70,7 +70,7 @@ type WithRenamedOptionalProp<T, K extends keyof T, L extends string> = Omit<T, K
 };
 
 export type ComponentOverrideMap = Omit<PasswordlessOverrideMap, "PasswordlessSignInUpHeader_Override"> &
-    Omit<ThirdPartyOverrideMap, "ThirdPartySignUpFooter_Override" | "ThirdPartySignUpHeader_Override"> & {
+    Omit<ThirdPartyOverrideMap, "ThirdPartySignUpFooter_Override" | "ThirdPartySignInAndUpHeader_Override"> & {
         ThirdPartyPasswordlessHeader_Override?: ComponentOverride<typeof Header>;
     };
 
