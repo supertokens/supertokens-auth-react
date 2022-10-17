@@ -33,6 +33,9 @@ export default class SessionAPIWrapper {
     static getAccessTokenPayloadSecurely(input?: { userContext?: any }): Promise<any>;
     static attemptRefreshingSession(): Promise<boolean>;
     static doesSessionExist(input?: { userContext?: any }): Promise<boolean>;
+    /**
+     * @deprecated
+     */
     static addAxiosInterceptors(axiosInstance: any, userContext?: any): void;
     static signOut(input?: { userContext?: any }): Promise<void>;
     static validateClaims(input: {
@@ -73,6 +76,9 @@ declare const getUserId: typeof SessionAPIWrapper.getUserId;
 declare const getAccessTokenPayloadSecurely: typeof SessionAPIWrapper.getAccessTokenPayloadSecurely;
 declare const attemptRefreshingSession: typeof SessionAPIWrapper.attemptRefreshingSession;
 declare const doesSessionExist: typeof SessionAPIWrapper.doesSessionExist;
+/**
+ * @deprecated
+ */
 declare const addAxiosInterceptors: typeof SessionAPIWrapper.addAxiosInterceptors;
 declare const signOut: typeof SessionAPIWrapper.signOut;
 declare const validateClaims: typeof SessionAPIWrapper.validateClaims;

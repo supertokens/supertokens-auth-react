@@ -62,6 +62,9 @@ export default class SessionAPIWrapper {
         });
     }
 
+    /**
+     * @deprecated
+     */
     static addAxiosInterceptors(axiosInstance: any, userContext?: any): void {
         return Session.addAxiosInterceptors(axiosInstance, getNormalisedUserContext(userContext));
     }
@@ -98,6 +101,9 @@ const getUserId = SessionAPIWrapper.getUserId;
 const getAccessTokenPayloadSecurely = SessionAPIWrapper.getAccessTokenPayloadSecurely;
 const attemptRefreshingSession = SessionAPIWrapper.attemptRefreshingSession;
 const doesSessionExist = SessionAPIWrapper.doesSessionExist;
+/**
+ * @deprecated
+ */
 const addAxiosInterceptors = SessionAPIWrapper.addAxiosInterceptors;
 const signOut = SessionAPIWrapper.signOut;
 const validateClaims = SessionAPIWrapper.validateClaims;

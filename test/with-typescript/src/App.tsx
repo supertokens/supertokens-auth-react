@@ -210,6 +210,9 @@ function getRecipeList() {
                         addAxiosInterceptors: (instance) => {
                             return oI.addAxiosInterceptors(instance);
                         },
+                        addXMLHttpRequestInterceptor: (input) => {
+                            return oI.addXMLHttpRequestInterceptor(input);
+                        },
                         addFetchInterceptorsAndReturnModifiedFetch: (f) => {
                             return oI.addFetchInterceptorsAndReturnModifiedFetch(f);
                         },
@@ -1707,3 +1710,5 @@ ThirdPartyPasswordless.verifyAndGetThirdPartyStateOrThrowError<{
         customData: "",
     },
 });
+
+Session.addAxiosInterceptors({});

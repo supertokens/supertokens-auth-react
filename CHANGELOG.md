@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.27.0] - 2022-10-18
+
+### Added
+
+-   Adding an interceptor for XMLHttpRequest by default upon initializing SuperTokens
+-   Marked `addAxiosInterceptors` as deprecated
+-   Request interception can now be disabled by adding `superTokensDoNotDoInterception` to the hash of the request (works as a queryparam as well)
+
 ## [0.26.6] - 2022-10-13
 
 ### Added
