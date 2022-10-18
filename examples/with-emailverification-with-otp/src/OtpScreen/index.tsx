@@ -1,8 +1,6 @@
 import { useState, ChangeEvent, useEffect } from "react";
 import { getApiDomain } from "../App";
 import axios from "axios";
-import Session from "supertokens-auth-react/recipe/session";
-Session.addAxiosInterceptors(axios);
 
 export default function OtpScreen() {
     const [state, setState] = useState({

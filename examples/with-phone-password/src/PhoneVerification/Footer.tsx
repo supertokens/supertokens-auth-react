@@ -1,8 +1,6 @@
 import Session from "supertokens-auth-react/recipe/session";
-import axios from "axios";
 import { RecipeInterface } from "supertokens-auth-react/recipe/passwordless";
 import { redirectToAuth } from "supertokens-auth-react";
-Session.addAxiosInterceptors(axios);
 
 export default function Footer(props: { recipeImplementation: RecipeInterface }) {
     return (

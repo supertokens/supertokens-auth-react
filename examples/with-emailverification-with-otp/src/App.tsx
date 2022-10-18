@@ -6,9 +6,6 @@ import "./App.css";
 import Home from "./Home";
 import OtpScreen from "./OtpScreen";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
-import axios from "axios";
-
-Session.addAxiosInterceptors(axios);
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
