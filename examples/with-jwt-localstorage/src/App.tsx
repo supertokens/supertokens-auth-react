@@ -78,8 +78,8 @@ SuperTokens.init({
                 functions: (oI) => {
                     return {
                         ...oI,
-                        addAxiosInterceptors: function () {
-                            throw new Error("Unsupported exception");
+                        addXMLHttpRequestInterceptor: function (input) {
+                            // do nothing..
                         },
                         addFetchInterceptorsAndReturnModifiedFetch: function (input) {
                             return input.originalFetch;

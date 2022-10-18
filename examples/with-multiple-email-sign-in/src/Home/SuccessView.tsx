@@ -1,9 +1,8 @@
 import React from "react";
 import axios from "axios";
 import { redirectToAuth } from "supertokens-auth-react";
-import Session, { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { getApiDomain } from "../App";
-Session.addAxiosInterceptors(axios);
 
 export default function SuccessView() {
     let sessionCtx = useSessionContext();

@@ -5,10 +5,7 @@ import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
-import axios from "axios";
 import { getApiDomain, getAuthDomain, getRedirectionUrlForUser } from "./utils";
-
-Session.addAxiosInterceptors(axios);
 
 SuperTokens.init({
     appInfo: {
