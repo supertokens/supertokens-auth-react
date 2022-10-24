@@ -96,9 +96,22 @@ export const EmailOrPhoneForm = withOverride(
                             );
 
                         if (intPhoneNumber && isPhoneNumber !== true) {
-                            setValue("emailOrPhone", intPhoneNumber);
-                            setIsPhoneNumber(true);
-                            throw new STGeneralError("PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR");
+                            const phoneValidationResAfterGuess = await props.config.validatePhoneNumber(intPhoneNumber);
+                            try {
+                                if (phoneValidationResAfterGuess === undefined) {
+                                    const response = await props.recipeImplementation.createCode({
+                                        phoneNumber: intPhoneNumber,
+                                        userContext,
+                                    });
+                                    return response;
+                                } else {
+                                    throw new STGeneralError("PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR");
+                                }
+                            } finally {
+                                // We set these in finally since general errors from the API can make createCode throw
+                                setValue("emailOrPhone", intPhoneNumber);
+                                setIsPhoneNumber(true);
+                            }
                         } else {
                             throw new STGeneralError(phoneValidationRes);
                         }
