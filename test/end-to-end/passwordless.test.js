@@ -273,6 +273,11 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 });
 
                 it("should guess correctly for a local number with general error", async function () {
+                    const _isGeneralErrorSupported = await isGeneralErrorSupported();
+                    if (!_isGeneralErrorSupported) {
+                        this.skip();
+                    }
+
                     await Promise.all([
                         page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                         page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -2097,7 +2102,7 @@ async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCoun
     const page = await browser.newPage();
     page.on("console", (consoleObj) => {
         const log = consoleObj.text();
-        console.log(log);
+
         if (log.startsWith("ST_LOGS")) {
             consoleLogs.push(log);
         }
