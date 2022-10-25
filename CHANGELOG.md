@@ -11,8 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Updated passwordless login to first try calling the API if it could guess a valid international phone number
 
-### Fixed
+### Fixes
 
+-   Cleaned up some warnings shown in the console
 -   Fixes an issue where pre api hooks would not work correctly when calling recipe functions directly
 
 ## [0.27.0] - 2022-10-18

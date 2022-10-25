@@ -155,6 +155,10 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                         }
                     }
 
+                    if (unmounting.current.signal.aborted) {
+                        return;
+                    }
+
                     // If field error.
                     if (result.status === "FIELD_ERROR") {
                         const errorFields = result.formFields;
