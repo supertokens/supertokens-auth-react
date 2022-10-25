@@ -254,6 +254,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
                 beforeEach(async function () {
                     await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+                    await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
                     await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
                     consoleLogs.length = 0;
@@ -264,6 +265,19 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                         page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                         page.waitForNavigation({ waitUntil: "networkidle0" }),
                     ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "06701234324" }]);
+                    await submitForm(page);
+                    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+                    await checkPhoneNumberInTitle(page, "+36701234324");
+                });
+
+                it("should guess correctly for a local number with general error", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+                    await setGeneralErrorToLocalStorage(generalErrorRecipeName, "PASSWORDLESS_CREATE_CODE", page);
 
                     await setInputValues(page, [{ name: inputName, value: "06701234324" }]);
                     await submitForm(page);
@@ -279,8 +293,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
                     await setInputValues(page, [{ name: inputName, value: "701234325" }]);
                     await submitForm(page);
-                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
-                    await checkInputValue(page, input, "+36701234325");
+                    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+                    await checkPhoneNumberInTitle(page, "+36701234325");
                 });
 
                 it("should guess correctly for missed + sign", async function () {
@@ -291,8 +305,9 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
                     await setInputValues(page, [{ name: inputName, value: "36701234326" }]);
                     await submitForm(page);
-                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
-                    await checkInputValue(page, input, "+36701234326");
+
+                    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+                    await checkPhoneNumberInTitle(page, "+36701234326");
                 });
 
                 it("should not change for too long input", async function () {
@@ -371,7 +386,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     await checkInputValue(page, input, "+701234325");
                 });
 
-                it("should show phone UI for missed + sign", async function () {
+                it("should guess correctly for missed + sign", async function () {
                     await Promise.all([
                         page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                         page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -379,8 +394,9 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
                     await setInputValues(page, [{ name: inputName, value: "36701234326" }]);
                     await submitForm(page);
-                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
-                    await checkInputValue(page, input, "+36701234326");
+
+                    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+                    await checkPhoneNumberInTitle(page, "+36701234326");
                 });
 
                 it("should show phone UI for too long input", async function () {
@@ -2024,6 +2040,12 @@ async function checkInputValue(page, input, expected) {
     assert.equal(actual.replace(/\s/g, ""), expected);
 }
 
+async function checkPhoneNumberInTitle(page, expected) {
+    const ele = await waitForSTElement(page, `[data-supertokens~=headerSubtitle] strong`);
+    const actual = await page.evaluate((ele) => ele.innerText, ele);
+    assert.equal(actual.replace(/\s/g, ""), expected);
+}
+
 async function setupDevice(page, inputName, contactInfo, forLinkOnly = true, cleanLoginAttemptInfo = true) {
     await Promise.all([
         page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
@@ -2075,6 +2097,7 @@ async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCoun
     const page = await browser.newPage();
     page.on("console", (consoleObj) => {
         const log = consoleObj.text();
+        console.log(log);
         if (log.startsWith("ST_LOGS")) {
             consoleLogs.push(log);
         }

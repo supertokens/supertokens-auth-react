@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changed
+
+-   Updated passwordless login to first try calling the API if it could guess a valid international phone number
+
 ## [0.27.0] - 2022-10-18
 
 ### Added
