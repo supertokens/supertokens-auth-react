@@ -30,8 +30,7 @@ export default function getRecipeImplementation(recipeInput: {
             fetchResponse: Response;
         }> {
             const response = await webJsImplementation.getAuthorisationURLFromBackend.bind(this)({
-                providerId: input.providerId,
-                userContext: input.userContext,
+                ...input,
             });
 
             return response;
@@ -50,7 +49,7 @@ export default function getRecipeImplementation(recipeInput: {
               }
         > {
             const response = await webJsImplementation.signInAndUp.bind(this)({
-                userContext: input.userContext,
+                ...input,
             });
 
             if (response.status === "OK") {

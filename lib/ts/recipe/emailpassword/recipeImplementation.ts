@@ -38,8 +38,8 @@ export default function getRecipeImplementation(recipeInput: {
               }
         > {
             const response = await webJsImplementation.submitNewPassword.bind(this)({
+                ...input,
                 formFields: [input.formFields[0]],
-                userContext: input.userContext,
             });
 
             if (response.status === "OK") {
@@ -67,8 +67,7 @@ export default function getRecipeImplementation(recipeInput: {
               }
         > {
             const response = await webJsImplementation.sendPasswordResetEmail.bind(this)({
-                formFields: input.formFields,
-                userContext: input.userContext,
+                ...input,
             });
 
             if (response.status === "OK") {
@@ -96,8 +95,7 @@ export default function getRecipeImplementation(recipeInput: {
               }
         > {
             const response = await webJsImplementation.signUp.bind(this)({
-                formFields: input.formFields,
-                userContext: input.userContext,
+                ...input,
             });
 
             if (response.status === "OK") {
@@ -131,8 +129,7 @@ export default function getRecipeImplementation(recipeInput: {
               }
         > {
             const response = await webJsImplementation.signIn.bind(this)({
-                formFields: input.formFields,
-                userContext: input.userContext,
+                ...input,
             });
 
             if (response.status === "OK") {
@@ -151,8 +148,7 @@ export default function getRecipeImplementation(recipeInput: {
             fetchResponse: Response;
         }> {
             return await webJsImplementation.doesEmailExist.bind(this)({
-                email: input.email,
-                userContext: input.userContext,
+                ...input,
             });
         },
 

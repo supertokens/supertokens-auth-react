@@ -279,6 +279,18 @@ SuperTokens.init({
 
 /* App */
 function App() {
+    useEffect(() => {
+        window.addEventListener("TPEP.getAuthorisationURLWithQueryParamsAndSetState", async () => {
+            ThirdPartyEmailPassword.getAuthorisationURLWithQueryParamsAndSetState({
+                providerId: "google",
+                authorisationURL: "",
+                userContext: {
+                    isPreAPITest: true,
+                },
+            });
+        });
+    }, []);
+
     if (doNotUseReactRouterDom) {
         return (
             <ErrorBoundary>
@@ -1032,6 +1044,22 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultUI, thirdPartyRedirec
                         }
 
                         log(`GET_OAUTH_AUTHORISATION_URL`);
+
+                        if (input.userContext["isPreAPITest"] !== undefined) {
+                            return implementation.getAuthorisationURLFromBackend({
+                                ...input,
+                                options: {
+                                    preAPIHook: async (input) => {
+                                        window.localStorage.setItem(
+                                            "getAuthorisationURLFromBackend-pre-api-hook",
+                                            "true"
+                                        );
+                                        return input;
+                                    },
+                                },
+                            });
+                        }
+
                         return implementation.getAuthorisationURLFromBackend(input);
                     },
                     submitNewPassword(input) {

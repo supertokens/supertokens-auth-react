@@ -40,6 +40,7 @@ import {
     submitForm,
     getGeneralError,
     waitForSTElement,
+    waitFor,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -290,6 +291,37 @@ describe("SuperTokens Third Party Email Password", function () {
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
             assert.deepStrictEqual(search, "?error=signin");
+        });
+    });
+
+    describe("Test pre api hooks", function () {
+        beforeEach(async function () {
+            await page.evaluate(() => window.localStorage.removeItem("getAuthorisationURLFromBackend-pre-api-hook"));
+            await page.evaluate(() =>
+                window.localStorage.removeItem("getAuthorisationURLWithQueryParamsAndSetState-pre-api-hook")
+            );
+        });
+
+        afterEach(async function () {
+            await page.evaluate(() => window.localStorage.removeItem("getAuthorisationURLFromBackend-pre-api-hook"));
+            await page.evaluate(() =>
+                window.localStorage.removeItem("getAuthorisationURLWithQueryParamsAndSetState-pre-api-hook")
+            );
+        });
+
+        it("Test that pre api hook is called when using it in overrides", async function () {
+            // This will trigger a function call to getAuthorisationURLWithQueryParamsAndSetState
+            await page.evaluate(() =>
+                window.dispatchEvent(new Event("TPEP.getAuthorisationURLWithQueryParamsAndSetState"))
+            );
+            await waitFor(2000); // Adding delay to let network call finish
+
+            // getAuthorisationURLWithQueryParamsAndSetState calls getAuthorisationURLFromBackend internally
+            const getAuthFromBackendInStorage = await page.evaluate(() =>
+                window.localStorage.getItem("getAuthorisationURLFromBackend-pre-api-hook")
+            );
+
+            assert.strictEqual(getAuthFromBackendInStorage, "true");
         });
     });
 });
