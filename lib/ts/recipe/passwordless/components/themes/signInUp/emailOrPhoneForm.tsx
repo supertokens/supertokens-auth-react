@@ -97,20 +97,25 @@ export const EmailOrPhoneForm = withOverride(
 
                         if (intPhoneNumber && isPhoneNumber !== true) {
                             const phoneValidationResAfterGuess = await props.config.validatePhoneNumber(intPhoneNumber);
-                            try {
-                                if (phoneValidationResAfterGuess === undefined) {
-                                    const response = await props.recipeImplementation.createCode({
+                            if (phoneValidationResAfterGuess === undefined) {
+                                try {
+                                    return await props.recipeImplementation.createCode({
                                         phoneNumber: intPhoneNumber,
                                         userContext,
                                     });
-                                    return response;
-                                } else {
-                                    throw new STGeneralError("PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR");
+                                } catch (ex) {
+                                    // General errors from the API can make createCode throw but we want to switch to the phone UI anyway
+                                    setValue("emailOrPhone", intPhoneNumber);
+                                    setIsPhoneNumber(true);
+                                    throw ex;
                                 }
-                            } finally {
-                                // We set these in finally since general errors from the API can make createCode throw
+                            } else {
+                                // In this case we could get a phonenumber but not a completely valid one
+                                // We want to switch to the phone UI and pre-fill the number
+
                                 setValue("emailOrPhone", intPhoneNumber);
                                 setIsPhoneNumber(true);
+                                throw new STGeneralError("PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR");
                             }
                         } else {
                             throw new STGeneralError(phoneValidationRes);
