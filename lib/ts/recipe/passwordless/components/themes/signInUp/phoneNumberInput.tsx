@@ -20,11 +20,10 @@
 import { CSSObject } from "@emotion/react";
 import Select, { components as ReactSelectComps } from "react-select";
 
-import React, { useCallback, useContext, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 
 import PhoneInputWithCountrySelect, { getCountryCallingCode, getCountries } from "react-phone-number-input/min";
 
-import StyleContext from "../../../../../styles/styleContext";
 import { InputProps } from "../../../../emailpassword/components/library/input";
 import ErrorIcon from "../../../../../components/assets/errorIcon";
 import { CountryCode } from "libphonenumber-js";
@@ -48,8 +47,6 @@ function PhoneNumberInput({
     placeholder,
     value,
 }: InputProps & PhoneNumberInputProps): JSX.Element {
-    const styles = useContext(StyleContext);
-
     function handleFocus() {
         if (onInputFocus !== undefined) {
             onInputFocus({
@@ -84,17 +81,15 @@ function PhoneNumberInput({
         }
     }, []);
 
-    const errorStyle: CSSObject | undefined = hasError === true ? styles.inputError : undefined;
     /*
      * Render.
      */
     return (
-        <div data-supertokens="inputContainer" css={styles.inputContainer}>
-            <div data-supertokens="inputWrapper inputError" css={[styles.inputWrapper, errorStyle]}>
+        <div data-supertokens="inputContainer">
+            <div data-supertokens={`inputWrapper ${hasError ? "inputError" : ""}`}>
                 <PhoneInputWithCountrySelect
                     data-supertokens="input phoneInputLibRoot"
                     countrySelectComponent={CountrySelectWithIcon}
-                    css={[styles.input, styles.phoneInputLibRoot]}
                     name={name + "_text"}
                     autoFocus={autofocus}
                     autoComplete={autoComplete}
@@ -115,10 +110,8 @@ function PhoneNumberInput({
                     }
                 />
                 {hasError === true && (
-                    <div
-                        data-supertokens="inputAdornment inputAdornmentError"
-                        css={[styles.inputAdornment, styles.inputAdornmentError]}>
-                        <ErrorIcon color={styles.palette.colors.error} />
+                    <div data-supertokens="inputAdornment inputAdornmentError">
+                        <ErrorIcon />
                     </div>
                 )}
             </div>
@@ -137,7 +130,7 @@ function CountrySelectWithIcon({
     iconComponent: React.ComponentClass<any>;
     onChange: (newValue: string | undefined) => void;
 }) {
-    const style = useContext(StyleContext);
+    const style: any = {};
 
     const selectedOption = options.find((o) => o.value === value);
 
@@ -202,10 +195,7 @@ function CountrySelectWithIcon({
         };
         const Control = ({ children, ...rest }: any) => {
             return (
-                <ReactSelectComps.SingleValue
-                    data-supertokens="phoneInputCountrySelect"
-                    css={style.phoneInputCountrySelect}
-                    {...rest}>
+                <ReactSelectComps.SingleValue data-supertokens="phoneInputCountrySelect" {...rest}>
                     <Icon country={rest.getValue()[0]?.value} label={children} />
                 </ReactSelectComps.SingleValue>
             );

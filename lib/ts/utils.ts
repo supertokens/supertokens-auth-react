@@ -15,12 +15,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "./constants";
-import { CookieHandlerReference } from "supertokens-website/utils/cookieHandler";
+import { CookieHandlerReference } from "supertokens-website/lib/build/utils/cookieHandler";
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
 import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
-import { WindowHandlerReference } from "supertokens-website/utils/windowHandler";
+import { WindowHandlerReference } from "supertokens-website/lib/build/utils/windowHandler";
 
 /*
  * getRecipeIdFromPath

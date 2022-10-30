@@ -17,27 +17,22 @@
  */
 import { PureComponent } from "react";
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
-import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
 /*
  * Component.
  */
 class ThirdPartySignInAndUpCallbackTheme extends PureComponent {
-    static contextType = StyleContext;
-
     /*
      * Methods.
      */
 
     render = (): JSX.Element => {
-        const styles = this.context;
-
         return (
-            <div data-supertokens="container" css={styles.container}>
-                <div data-supertokens="row" css={styles.row}>
-                    <div data-supertokens="spinner" css={styles.spinner}>
-                        <SpinnerIcon color={styles.palette.colors.primary} />
+            <div data-supertokens="container">
+                <div data-supertokens="row">
+                    <div data-supertokens="spinner">
+                        <SpinnerIcon />
                     </div>
                 </div>
             </div>

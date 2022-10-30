@@ -38,7 +38,7 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
 
     const thirdPartyProviderAndEmailOrPhoneFormStyle =
         config?.signInUpFeature?.thirdPartyProviderAndEmailOrPhoneFormStyle === undefined
-            ? {}
+            ? ""
             : config?.signInUpFeature.thirdPartyProviderAndEmailOrPhoneFormStyle;
     return {
         ...normaliseAuthRecipe(config),

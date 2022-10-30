@@ -15,12 +15,11 @@
 import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
-import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass, PropsWithChildren } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import { CookieHandlerInput } from "supertokens-website/utils/cookieHandler/types";
-import { WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
+import { CookieHandlerInput } from "supertokens-website/lib/build/utils/cookieHandler/types";
+import { WindowHandlerInput } from "supertokens-website/lib/build/utils/windowHandler/types";
 
 export type GetRedirectionURLContext = {
     action: "TO_AUTH";
@@ -247,7 +246,7 @@ export type NormalisedFormField = {
 
 export type ReactComponentClass = ComponentClass<any, any> | (<T>(props: T) => JSX.Element);
 
-export type Styles = Record<string, CSSObject>;
+export type Styles = string;
 
 /*
  * Features Config Types.
@@ -266,15 +265,6 @@ export type NormalisedBaseConfig = {
      */
     style: Styles;
 };
-
-export type NormalisedPalette = {
-    colors: Record<string, string>;
-    fonts: {
-        size: string[];
-    };
-};
-
-export type NormalisedDefaultStyles = Record<string, CSSObject>;
 
 export type ThemeBaseProps = {
     styleFromInit?: Styles;

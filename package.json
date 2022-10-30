@@ -13,8 +13,6 @@
         "@babel/preset-env": "7.12.1",
         "@babel/preset-react": "7.12.1",
         "@babel/register": "7.12.1",
-        "@emotion/babel-plugin": "^11.1.0",
-        "@emotion/eslint-plugin": "^11.1.0",
         "@peakon/mocha-split-tests": "^1.4.0",
         "@size-limit/preset-small-lib": "^6.0.3",
         "@testing-library/dom": "^8.11.1",
@@ -52,6 +50,18 @@
         "react-dom": "^18.0.0",
         "react-router-dom": "^6.2.1",
         "regenerator-runtime": "0.13.7",
+        "rollup": "^3.1.0",
+        "rollup-plugin-commonjs": "^10.1.0",
+        "rollup-plugin-dts": "^4.2.3",
+        "rollup-plugin-import-css": "^3.0.3",
+        "rollup-plugin-json": "^4.0.0",
+        "rollup-plugin-node-resolve": "^5.2.0",
+        "rollup-plugin-peer-deps-external": "^2.2.4",
+        "rollup-plugin-styles": "^4.0.0",
+        "rollup-plugin-terser": "^7.0.2",
+        "rollup-plugin-typescript": "^1.0.1",
+        "rollup-plugin-typescript2": "^0.34.1",
+        "rollup-plugin-visualizer": "^5.8.2",
         "size-limit": "^6.0.3",
         "ts-jest": "^27.0.5",
         "ts-prune": "^0.10.3",
@@ -61,7 +71,6 @@
         "typescript": "4.7.3"
     },
     "dependencies": {
-        "@emotion/react": "^11.4.1",
         "chroma-js": "2.1.2",
         "libphonenumber-js": "1.9.43",
         "prop-types": "*",
@@ -72,7 +81,8 @@
         "supertokens-web-js": "^0.3.0"
     },
     "peerDependencies": {
-        "react": ">=16.8.0"
+        "react": ">=16.8.0",
+        "react-dom": ">=16.8.0"
     },
     "scripts": {
         "init": "bash ./init.sh",
@@ -90,8 +100,8 @@
         "prep-test-app": "./test/prepTestApp.sh $SRC",
         "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit && cd ../test/with-typescript && npx tsc -p tsconfig.json",
         "tsc": "cd lib && npx tsc -p tsconfig.json",
-        "build": "cd lib && rm -rf build && npx tsc -p tsconfig.json",
-        "watch": "cd lib && npx tsc -w -p tsconfig_dev.json",
+        "build": "rm -rf lib/build && npx rollup -c",
+        "watch": "npx rollup -cw",
         "pretty": "npx pretty-quick .",
         "build-pretty": "npm run build && npm run pretty && npm run pretty",
         "lint": "node other/checkTranslationKeys.js && cd lib && eslint ./ts --ext .ts,.tsx",

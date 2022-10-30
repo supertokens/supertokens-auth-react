@@ -110,11 +110,11 @@ function normalizeSignInUpFeatureConfig(
             signInUpInput?.resendEmailOrSMSGapInSeconds === undefined ? 15 : signInUpInput.resendEmailOrSMSGapInSeconds,
 
         emailOrPhoneFormStyle:
-            signInUpInput?.emailOrPhoneFormStyle !== undefined ? signInUpInput.emailOrPhoneFormStyle : {},
-        linkSentScreenStyle: signInUpInput?.linkSentScreenStyle !== undefined ? signInUpInput.linkSentScreenStyle : {},
+            signInUpInput?.emailOrPhoneFormStyle !== undefined ? signInUpInput.emailOrPhoneFormStyle : "",
+        linkSentScreenStyle: signInUpInput?.linkSentScreenStyle !== undefined ? signInUpInput.linkSentScreenStyle : "",
         userInputCodeFormStyle:
-            signInUpInput?.userInputCodeFormStyle !== undefined ? signInUpInput.userInputCodeFormStyle : {},
-        closeTabScreenStyle: signInUpInput?.closeTabScreenStyle !== undefined ? signInUpInput.closeTabScreenStyle : {},
+            signInUpInput?.userInputCodeFormStyle !== undefined ? signInUpInput.userInputCodeFormStyle : "",
+        closeTabScreenStyle: signInUpInput?.closeTabScreenStyle !== undefined ? signInUpInput.closeTabScreenStyle : "",
         defaultCountry:
             ["PHONE", "EMAIL_OR_PHONE"].includes(config.contactMethod) &&
             signInUpInput !== undefined &&
@@ -135,7 +135,7 @@ function normalizeSignInUpFeatureConfig(
 }
 
 function normalisePasswordlessBaseConfig<T>(config?: T & FeatureBaseConfig): T & NormalisedBaseConfig {
-    const style = config && config.style !== undefined ? config.style : {};
+    const style = config && config.style !== undefined ? config.style : "";
     return {
         ...(config as T),
         style,

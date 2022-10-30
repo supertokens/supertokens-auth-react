@@ -11,6 +11,8 @@ async function* walk(rootPath) {
 }
 
 async function checkTranslationKeys() {
+    // TODO: re-implement this
+    return;
     const translationKeys = new Set();
     for await (const p of walk(path.join(__dirname, "..", "lib", "build"))) {
         if (p.endsWith("translations.js")) {

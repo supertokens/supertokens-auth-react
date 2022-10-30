@@ -17,33 +17,19 @@
  * Imports.
  */
 
-import root from "react-shadow/emotion";
+import root from "react-shadow";
 import { ST_ROOT_ID } from "../constants";
 import ErrorBoundary from "./errorBoundary";
-import { CacheProvider } from "@emotion/react";
-import createCache from "@emotion/cache";
 import SuperTokens from "../superTokens";
 import { TranslationContextProvider } from "../translation/translationContext";
 import { TranslationStore } from "../translation/translationHelpers";
 import { mergeObjects } from "../utils";
 import { PropsWithChildren } from "react";
 
-const superTokensEmotionCache = createCache({
-    key: "supertokens",
-});
-
-/*
- * Props.
- */
-
 type FeatureWrapperProps = {
     useShadowDom?: boolean;
     defaultStore: TranslationStore;
 };
-
-/*
- * Component.
- */
 
 export default function FeatureWrapper({
     children,
@@ -76,7 +62,6 @@ function WithOrWithoutShadowDom({
     if (useShadowDom === false) {
         return (
             <div id={ST_ROOT_ID}>
-                <CacheProvider value={superTokensEmotionCache}>{children}</CacheProvider>
                 <DisableAutoFillInput />
             </div>
         );

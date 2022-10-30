@@ -27,7 +27,7 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
     useShadowDom = getShouldUseShadowDomBasedOnBrowser(useShadowDom);
 
     const palette = config.palette === undefined ? {} : config.palette;
-    const rootStyle = config.style === undefined ? {} : config.style;
+    const rootStyle = config.style === undefined ? "" : config.style;
 
     return {
         ...config,

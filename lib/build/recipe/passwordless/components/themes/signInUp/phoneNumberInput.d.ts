@@ -19,4 +19,4 @@ declare function PhoneNumberInput({
 export default PhoneNumberInput;
 export declare const phoneNumberInputWithInjectedProps: (
     injectedProps: Partial<PhoneNumberInputProps>
-) => (props: any) => import("@emotion/react/jsx-runtime").JSX.Element;
+) => (props: any) => JSX.Element;

@@ -398,6 +398,13 @@ function getThirdPartyConfigs() {
                         </div>
                     );
                 },
+                ThirdPartySignInAndUpHeader_Override: ({ DefaultComponent, ...props }) => {
+                    return (
+                        <div>
+                            <DefaultComponent {...props} />
+                        </div>
+                    );
+                },
             },
         },
     });

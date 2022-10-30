@@ -21,11 +21,16 @@
  * Component.
  */
 
-export default function CheckedIcon({ color }: { color: string }): JSX.Element {
+export default function CheckedIcon(): JSX.Element {
+    // TODO: fill color
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="14.862" height="12.033" viewBox="0 0 14.862 12.033">
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14.862"
+            height="12.033"
+            viewBox="0 0 14.862 12.033"
+            data-supertokens="checkedIcon">
             <path
-                fill={color}
                 d="M12.629 49L5.06 56.572l-2.829-2.829L0 55.977l5.057 5.057.654-.651 9.152-9.152z"
                 transform="translate(0 -49)"
             />

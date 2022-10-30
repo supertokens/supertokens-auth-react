@@ -16,9 +16,8 @@
  * Imports.
  */
 
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useState } from "react";
 
-import StyleContext from "../../../../../styles/styleContext";
 import ArrowRightIcon from "../../../../../components/assets/arrowRightIcon";
 import EmailLargeIcon from "../../../../../components/assets/emailLargeIcon";
 import { SendVerifyEmailThemeProps } from "../../../types";
@@ -32,7 +31,6 @@ import { Awaited } from "../../../../../types";
 import Session from "../../../../session/recipe";
 
 export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProps> = (props) => {
-    const styles = useContext(StyleContext);
     const t = useTranslation();
     const userContext = useUserContext();
     const [status, setStatus] = useState("READY");
@@ -100,44 +98,32 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
     useOnMountAPICall(sendVerificationEmail, checkSendResponse, handleSendError);
 
     return (
-        <div data-supertokens="container" css={styles.container}>
-            <div data-supertokens="row" css={styles.row}>
+        <div data-supertokens="container">
+            <div data-supertokens="row">
                 {status === "ERROR" && (
                     <GeneralError error={errorMessage === undefined ? "SOMETHING_WENT_WRONG_ERROR" : errorMessage} />
                 )}
                 {status === "EMAIL_RESENT" && (
-                    <div data-supertokens="generalSuccess" css={styles.generalSuccess}>
-                        {t("EMAIL_VERIFICATION_RESEND_SUCCESS")}
-                    </div>
+                    <div data-supertokens="generalSuccess">{t("EMAIL_VERIFICATION_RESEND_SUCCESS")}</div>
                 )}
-                <div data-supertokens="sendVerifyEmailIcon" css={styles.sendVerifyEmailIcon}>
+                <div data-supertokens="sendVerifyEmailIcon">
                     <EmailLargeIcon />
                 </div>
-                <div data-supertokens="headerTitle headerTinyTitle" css={[styles.headerTitle, styles.headerTinyTitle]}>
-                    {t("EMAIL_VERIFICATION_SEND_TITLE")}
-                </div>
-                <div
-                    data-supertokens="primaryText sendVerifyEmailText"
-                    css={[styles.primaryText, styles.sendVerifyEmailText]}>
+                <div data-supertokens="headerTitle headerTinyTitle">{t("EMAIL_VERIFICATION_SEND_TITLE")}</div>
+                <div data-supertokens="primaryText sendVerifyEmailText">
                     {t("EMAIL_VERIFICATION_SEND_DESC_START")}
                     <strong>{t("EMAIL_VERIFICATION_SEND_DESC_STRONG")}</strong>
                     {t("EMAIL_VERIFICATION_SEND_DESC_END")}
                 </div>
                 {status !== "EMAIL_RESENT" && (
-                    <div
-                        data-supertokens="link sendVerifyEmailResend"
-                        css={[styles.link, styles.sendVerifyEmailResend]}
-                        onClick={resendEmail}>
+                    <div data-supertokens="link sendVerifyEmailResend" onClick={resendEmail}>
                         {t("EMAIL_VERIFICATION_RESEND_BTN")}
                     </div>
                 )}
                 {
-                    <div
-                        data-supertokens="secondaryText secondaryLinkWithArrow"
-                        css={[styles.secondaryText, styles.secondaryLinkWithArrow]}
-                        onClick={logout}>
+                    <div data-supertokens="secondaryText secondaryLinkWithArrow" onClick={logout}>
                         {t("EMAIL_VERIFICATION_LOGOUT")}
-                        <ArrowRightIcon color={styles.palette.colors.textPrimary} />
+                        <ArrowRightIcon />
                     </div>
                 }
             </div>
