@@ -1,6 +1,10 @@
 ![SuperTokens banner](https://raw.githubusercontent.com/supertokens/supertokens-logo/master/images/Artboard%20%E2%80%93%2027%402x.png)
 
-## Run `npx create-supertokens-app --frontend=vue --backend=node --recipe=thirdpartyemailpassword` to get started.
+## Run the following command to get started.
+
+```bash
+npx create-supertokens-app --frontend=vue --backend=node --recipe=thirdpartyemailpassword
+```
 
 ## Author
 
