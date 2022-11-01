@@ -1,8 +1,6 @@
 ![SuperTokens banner](https://raw.githubusercontent.com/supertokens/supertokens-logo/master/images/Artboard%20%E2%80%93%2027%402x.png)
 
-# SuperTokens ThirdpartyEmailPassword demo app with Vue and React
-
-Run `npx create-supertokens-app` to get started.
+## Run `npx create-supertokens-app --frontend=vue --backend=node --recipe=thirdpartyemailpassword` to get started.
 
 ## Author
 
