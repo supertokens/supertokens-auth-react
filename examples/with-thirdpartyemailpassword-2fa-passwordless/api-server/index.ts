@@ -169,12 +169,11 @@ supertokens.init({
                                 });
                                 phoneNumber = passwordlessUserInfo?.phoneNumber;
                             }
-                            console.log("adding 2fa claim on the backend!");
                             return originalImplementation.createNewSession({
                                 ...input,
                                 accessTokenPayload: {
                                     ...input.accessTokenPayload,
-                                    ...SecondFactorClaim.build(input.userId, input.userContext),
+                                    ...(await SecondFactorClaim.build(input.userId, input.userContext)),
                                     phoneNumber,
                                 },
                             });
