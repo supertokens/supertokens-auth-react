@@ -6,6 +6,7 @@ import SuperTokens, {
     redirectToAuth,
 } from "supertokens-auth-react";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import Session, { SessionAuth, useSessionContext } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route, useLocation } from "react-router-dom";
@@ -39,6 +40,22 @@ SuperTokens.init({
         }
     },
     recipeList: [
+        EmailVerification.init({
+            getRedirectionURL: async function (context) {
+                let validationErrors = await Session.validateClaims({
+                    overrideGlobalClaimValidators: () => {
+                        return [SecondFactorClaim.validators.isTrue()];
+                    },
+                    userContext: undefined,
+                });
+                if (validationErrors.length > 0) {
+                    // 2 fa has not been completed
+                    return "/second-factor";
+                }
+                return undefined;
+            },
+            mode: "REQUIRED",
+        }),
         ThirdPartyEmailPassword.init({
             signInAndUpFeature: {
                 providers: [
