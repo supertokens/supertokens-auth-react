@@ -8,6 +8,7 @@ import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpass
 import Passwordless from "supertokens-node/recipe/passwordless";
 import UserMetadata from "supertokens-node/recipe/usermetadata";
 import { SecondFactorClaim } from "./secondFactorClaim";
+import EmailVerification from "supertokens-node/recipe/emailverification";
 
 require("dotenv").config();
 
@@ -29,6 +30,9 @@ supertokens.init({
         websiteDomain,
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+        }),
         ThirdPartyEmailPassword.init({
             providers: [
                 // We have provided you with development keys which you can use for testing.
@@ -165,12 +169,11 @@ supertokens.init({
                                 });
                                 phoneNumber = passwordlessUserInfo?.phoneNumber;
                             }
-
                             return originalImplementation.createNewSession({
                                 ...input,
                                 accessTokenPayload: {
                                     ...input.accessTokenPayload,
-                                    ...SecondFactorClaim.build(input.userId, input.userContext),
+                                    ...(await SecondFactorClaim.build(input.userId, input.userContext)),
                                     phoneNumber,
                                 },
                             });

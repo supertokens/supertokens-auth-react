@@ -1,19 +1,17 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { EmailVerificationClaim } from "supertokens-auth-react/recipe/emailverification";
 import "./App.css";
-import SuperTokens, {
-    SuperTokensWrapper,
-    getSuperTokensRoutesForReactRouterDom,
-    redirectToAuth,
-} from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import Session, { SessionAuth, useSessionContext } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route, useLocation } from "react-router-dom";
 import Footer from "./Footer";
-import SessionExpiredPopup from "./SessionExpiredPopup";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import SecondFactor from "./SecondFactor";
 import { SecondFactorClaim } from "./secondFactorClaim";
+import { useNavigate } from "react-router-dom";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -39,6 +37,9 @@ SuperTokens.init({
         }
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "OPTIONAL",
+        }),
         ThirdPartyEmailPassword.init({
             signInAndUpFeature: {
                 providers: [
@@ -46,13 +47,6 @@ SuperTokens.init({
                     ThirdPartyEmailPassword.Google.init(),
                     ThirdPartyEmailPassword.Apple.init(),
                 ],
-            },
-            getRedirectionURL: async function (context) {
-                if (context.action === "SUCCESS") {
-                    // we successfully logged in,
-                    // we must now show the user sign in with passwordless
-                    return "/second-factor";
-                }
             },
         }),
         Passwordless.init({
@@ -93,7 +87,7 @@ SuperTokens.init({
                 functions: (oI) => ({
                     ...oI,
                     getGlobalClaimValidators: ({ claimValidatorsAddedByOtherRecipes }) => {
-                        return [...claimValidatorsAddedByOtherRecipes, SecondFactorClaim.validators.isTrue()];
+                        return [SecondFactorClaim.validators.isTrue(), ...claimValidatorsAddedByOtherRecipes];
                     },
                 }),
             },
@@ -102,7 +96,6 @@ SuperTokens.init({
 });
 
 function App() {
-    let [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
     let location = useLocation();
 
     /**
@@ -124,26 +117,9 @@ function App() {
                         <Route
                             path="/"
                             element={
-                                /* This protects the "/" route so that it shows
-                                      <Home /> only if the user is logged in.
-                                      Else it redirects the user to "/auth" */
-                                <SessionAuth
-                                    onSessionExpired={() => {
-                                        updateShowSessionExpiredPopup(true);
-                                    }}>
+                                <ProtectedRoute>
                                     <Home />
-                                    {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                </SessionAuth>
-                            }
-                        />
-                        <Route
-                            path="/auth"
-                            element={
-                                <ThirdPartyEmailPassword.SignInAndUp
-                                    userContext={{
-                                        forceOriginalCheck: true,
-                                    }}
-                                />
+                                </ProtectedRoute>
                             }
                         />
                         <Route
@@ -160,6 +136,31 @@ function App() {
             </div>
         </SuperTokensWrapper>
     );
+}
+
+function ProtectedRoute(props: any) {
+    return (
+        <SessionAuth>
+            <ProtectedRouteHelper>{props.children}</ProtectedRouteHelper>
+        </SessionAuth>
+    );
+}
+
+function ProtectedRouteHelper(props: any) {
+    const session = useSessionContext();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!session.loading) {
+            if (session.invalidClaims.find((a) => a.validatorId === SecondFactorClaim.id)) {
+                navigate("/second-factor");
+            } else if (session.invalidClaims.find((a) => a.validatorId === EmailVerificationClaim.id)) {
+                navigate("/auth/verify-email");
+            }
+        }
+    }, [session, navigate]);
+
+    return props.children;
 }
 
 export default function AppWithRouter() {
