@@ -80,9 +80,12 @@ export default class SessionAPIWrapper {
             globalClaimValidators: SessionClaimValidator[],
             userContext: any
         ) => SessionClaimValidator[];
-        userContext: any;
+        userContext?: any;
     }): Promise<ClaimValidationError[]> | ClaimValidationError[] {
-        return Session.getInstanceOrThrow().validateClaims(input);
+        return Session.getInstanceOrThrow().validateClaims({
+            overrideGlobalClaimValidators: input?.overrideGlobalClaimValidators,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
     static getInvalidClaimsFromResponse(input: {

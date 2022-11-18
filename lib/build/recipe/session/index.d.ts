@@ -43,7 +43,7 @@ export default class SessionAPIWrapper {
             globalClaimValidators: SessionClaimValidator[],
             userContext: any
         ) => SessionClaimValidator[];
-        userContext: any;
+        userContext?: any;
     }): Promise<ClaimValidationError[]> | ClaimValidationError[];
     static getInvalidClaimsFromResponse(input: {
         response:

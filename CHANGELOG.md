@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.27.2] - 2022-11-18
+
+### Fixes
+
+-   Makes input userContext optional in `validateClaims` function in Session recipe
+
+## [0.27.1] - 2022-10-25
+
 ### Changed
 
 -   Updated passwordless login to first try calling the API if it could guess a valid international phone number
