@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { EmailVerificationClaim } from "supertokens-auth-react/recipe/emailverification";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
@@ -6,7 +6,7 @@ import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyema
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import Session, { SessionAuth, useSessionContext } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
-import { Routes, BrowserRouter as Router, Route, useLocation } from "react-router-dom";
+import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import SecondFactor from "./SecondFactor";
@@ -96,18 +96,8 @@ SuperTokens.init({
 });
 
 function App() {
-    let location = useLocation();
-
-    /**
-     * We give a key to SuperTokensWrapper such that it causes a recalculation of
-     * the session context whenever the pathname changes in the way described below.
-     *
-     * This is needed because we have provided an override for doesSessionExist in which
-     * the logic depends on if location.pathname.startsWith("/auth") is true or not.
-     */
-    let key = location.pathname.startsWith("/auth") + "";
     return (
-        <SuperTokensWrapper key={key}>
+        <SuperTokensWrapper>
             <div className="App">
                 <div className="fill">
                     <Routes>
