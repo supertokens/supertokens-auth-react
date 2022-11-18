@@ -1712,3 +1712,9 @@ ThirdPartyPasswordless.verifyAndGetThirdPartyStateOrThrowError<{
 });
 
 Session.addAxiosInterceptors({});
+
+Session.validateClaims({
+    overrideGlobalClaimValidators: () => {
+        return [];
+    },
+});
