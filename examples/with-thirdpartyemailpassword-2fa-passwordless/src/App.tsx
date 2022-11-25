@@ -139,6 +139,7 @@ function ProtectedRoute(props: any) {
 function ProtectedRouteHelper(props: any) {
     const session = useSessionContext();
     const navigate = useNavigate();
+    const [showUI, setShowUI] = React.useState(false);
 
     useEffect(() => {
         if (!session.loading) {
@@ -146,11 +147,14 @@ function ProtectedRouteHelper(props: any) {
                 navigate("/second-factor");
             } else if (session.invalidClaims.find((a) => a.validatorId === EmailVerificationClaim.id)) {
                 navigate("/auth/verify-email");
+            } else {
+                // all claims passed, so we now show the UI to the user.
+                setShowUI(true);
             }
         }
     }, [session, navigate]);
 
-    return props.children;
+    return showUI ? props.children : null;
 }
 
 export default function AppWithRouter() {
