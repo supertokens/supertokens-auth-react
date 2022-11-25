@@ -53,6 +53,7 @@ export default class SessionAPIWrapper {
             | Response;
         userContext: any;
     }): Promise<ClaimValidationError[]>;
+    static getClaimValue(input: { claim: SessionClaim<unknown>; userContext?: any }): Promise<unknown>;
 }
 declare const useSessionContext: () => SessionContextType;
 declare const useClaimValue: <T>(claim: SessionClaim<T>) =>
@@ -83,6 +84,7 @@ declare const addAxiosInterceptors: typeof SessionAPIWrapper.addAxiosInterceptor
 declare const signOut: typeof SessionAPIWrapper.signOut;
 declare const validateClaims: typeof SessionAPIWrapper.validateClaims;
 declare const getInvalidClaimsFromResponse: typeof SessionAPIWrapper.getInvalidClaimsFromResponse;
+declare const getClaimValue: typeof SessionAPIWrapper.getClaimValue;
 export {
     useSessionContext,
     useClaimValue,
@@ -107,4 +109,5 @@ export {
     PrimitiveClaim,
     SessionClaimValidator,
     SessionClaim,
+    getClaimValue,
 };

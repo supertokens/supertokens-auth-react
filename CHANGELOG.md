@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.27.3] - 2022-11-25
+
+### Adds
+
+-   `getClaimValue` function inside Session recipe - exposed because web-js exposes it too.
+
 ## [0.27.2] - 2022-11-18
 
 ### Fixes

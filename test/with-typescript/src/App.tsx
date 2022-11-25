@@ -1718,3 +1718,5 @@ Session.validateClaims({
         return [];
     },
 });
+
+Session.getClaimValue({ claim: UserRoleClaim }).then((v) => {});

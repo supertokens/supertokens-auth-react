@@ -94,6 +94,13 @@ export default class SessionAPIWrapper {
     }): Promise<ClaimValidationError[]> {
         return Session.getInstanceOrThrow().getInvalidClaimsFromResponse(input);
     }
+
+    static getClaimValue(input: { claim: SessionClaim<unknown>; userContext?: any }): Promise<unknown> {
+        return Session.getInstanceOrThrow().getClaimValue({
+            claim: input.claim,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
 }
 
 const useSessionContext = SessionAPIWrapper.useSessionContext;
@@ -111,6 +118,7 @@ const addAxiosInterceptors = SessionAPIWrapper.addAxiosInterceptors;
 const signOut = SessionAPIWrapper.signOut;
 const validateClaims = SessionAPIWrapper.validateClaims;
 const getInvalidClaimsFromResponse = SessionAPIWrapper.getInvalidClaimsFromResponse;
+const getClaimValue = SessionAPIWrapper.getClaimValue;
 
 export {
     useSessionContext,
@@ -136,4 +144,5 @@ export {
     PrimitiveClaim,
     SessionClaimValidator,
     SessionClaim,
+    getClaimValue,
 };
