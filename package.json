@@ -16,7 +16,7 @@
         "@emotion/babel-plugin": "^11.1.0",
         "@emotion/eslint-plugin": "^11.1.0",
         "@peakon/mocha-split-tests": "^1.4.0",
-        "@size-limit/preset-small-lib": "^6.0.3",
+        "@size-limit/preset-small-lib": "^8.1.0",
         "@testing-library/dom": "^8.11.1",
         "@testing-library/jest-dom": "^5.14.1",
         "@testing-library/react": "^13.2.0",
