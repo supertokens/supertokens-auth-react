@@ -52,7 +52,7 @@
         "react-dom": "^18.0.0",
         "react-router-dom": "^6.2.1",
         "regenerator-runtime": "0.13.7",
-        "size-limit": "^6.0.3",
+        "size-limit": "^8.1.0",
         "ts-jest": "^27.0.5",
         "ts-prune": "^0.10.3",
         "tslib": "^2.4.0",
@@ -105,31 +105,31 @@
     "size-limit": [
         {
             "path": "lib/build/index.js",
-            "limit": "36kb"
+            "limit": "42kb"
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "36kb"
+            "limit": "42kb"
         },
         {
             "path": "recipe/thirdpartyemailpassword/index.js",
-            "limit": "130kb"
+            "limit": "145kb"
         },
         {
             "path": "recipe/thirdparty/index.js",
-            "limit": "115kb"
+            "limit": "125kb"
         },
         {
             "path": "recipe/emailpassword/index.js",
-            "limit": "115.04kb"
+            "limit": "130kb"
         },
         {
             "path": "recipe/passwordless/index.js",
-            "limit": "215kb"
+            "limit": "220kb"
         },
         {
             "path": "recipe/thirdpartypasswordless/index.js",
-            "limit": "230kb"
+            "limit": "235kb"
         }
     ],
     "repository": {
