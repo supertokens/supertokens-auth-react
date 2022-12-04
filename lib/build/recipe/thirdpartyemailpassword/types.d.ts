@@ -33,14 +33,17 @@ import {
 } from "../authRecipe/types";
 import EPRecipe from "../emailpassword/recipe";
 import TPRecipe from "../thirdparty/recipe";
-import OverrideableBuilder from "supertokens-js-override";
+import { OverrideableBuilder } from "supertokens-js-override";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { ComponentOverrideMap as EmailPasswordOverrideMap } from "../emailpassword/types";
 import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../thirdparty/types";
 import { Header } from "./components/themes/signInAndUp/header";
 import { Dispatch } from "react";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-export declare type ComponentOverrideMap = EmailPasswordOverrideMap &
+export declare type ComponentOverrideMap = Omit<
+    EmailPasswordOverrideMap,
+    "EmailPasswordSignUp_Override" | "EmailPasswordSignIn_Override"
+> &
     ThirdPartyOverrideMap & {
         ThirdPartyEmailPasswordHeader_Override?: ComponentOverride<typeof Header>;
     };

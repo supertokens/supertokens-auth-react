@@ -80,9 +80,12 @@ export default class SessionAPIWrapper {
             globalClaimValidators: SessionClaimValidator[],
             userContext: any
         ) => SessionClaimValidator[];
-        userContext: any;
+        userContext?: any;
     }): Promise<ClaimValidationError[]> | ClaimValidationError[] {
-        return Session.getInstanceOrThrow().validateClaims(input);
+        return Session.getInstanceOrThrow().validateClaims({
+            overrideGlobalClaimValidators: input?.overrideGlobalClaimValidators,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
     static getInvalidClaimsFromResponse(input: {
@@ -90,6 +93,13 @@ export default class SessionAPIWrapper {
         userContext: any;
     }): Promise<ClaimValidationError[]> {
         return Session.getInstanceOrThrow().getInvalidClaimsFromResponse(input);
+    }
+
+    static getClaimValue(input: { claim: SessionClaim<unknown>; userContext?: any }): Promise<unknown> {
+        return Session.getInstanceOrThrow().getClaimValue({
+            claim: input.claim,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 }
 
@@ -108,6 +118,7 @@ const addAxiosInterceptors = SessionAPIWrapper.addAxiosInterceptors;
 const signOut = SessionAPIWrapper.signOut;
 const validateClaims = SessionAPIWrapper.validateClaims;
 const getInvalidClaimsFromResponse = SessionAPIWrapper.getInvalidClaimsFromResponse;
+const getClaimValue = SessionAPIWrapper.getClaimValue;
 
 export {
     useSessionContext,
@@ -133,4 +144,5 @@ export {
     PrimitiveClaim,
     SessionClaimValidator,
     SessionClaim,
+    getClaimValue,
 };

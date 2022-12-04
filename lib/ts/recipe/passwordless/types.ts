@@ -24,7 +24,6 @@ import {
 } from "../authRecipe/types";
 
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { CountryCode } from "libphonenumber-js";
 import { SignInUpHeader } from "./components/themes/signInUp/signInUpHeader";
 import { SignInUpFooter } from "./components/themes/signInUp/signInUpFooter";
 import { EmailForm } from "./components/themes/signInUp/emailForm";
@@ -89,10 +88,10 @@ export type NormalisedConfig = {
 
     signInUpFeature: {
         resendEmailOrSMSGapInSeconds: number;
-        defaultCountry?: CountryCode;
+        defaultCountry?: string;
         guessInternationPhoneNumberFromInputPhoneNumber: (
             inputPhoneNumber: string,
-            defaultCountryFromConfig?: CountryCode
+            defaultCountryFromConfig?: string
         ) => Promise<string | undefined> | string | undefined;
 
         privacyPolicyLink?: string;
@@ -158,7 +157,7 @@ export type UserInput = (
               /*
                * Must be a two-letter ISO country code (e.g.: "US")
                */
-              defaultCountry?: CountryCode;
+              defaultCountry?: string;
           };
       }
     | {
@@ -171,11 +170,11 @@ export type UserInput = (
               /*
                * Must be a two-letter ISO country code (e.g.: "US")
                */
-              defaultCountry?: CountryCode;
+              defaultCountry?: string;
 
               guessInternationPhoneNumberFromInputPhoneNumber?: (
                   inputPhoneNumber: string,
-                  defaultCountryFromConfig?: CountryCode
+                  defaultCountryFromConfig?: string
               ) => Promise<string | undefined> | string | undefined;
           };
       }

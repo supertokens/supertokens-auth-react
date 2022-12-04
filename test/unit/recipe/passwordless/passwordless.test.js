@@ -21,7 +21,7 @@
 import regeneratorRuntime from "regenerator-runtime";
 import Passwordless from "../../../../lib/build/recipe/passwordless/recipe";
 import assert from "assert";
-import SuperTokens from "../../../../lib/build/superTokens";
+import SuperTokens from "../../../../lib/build/index";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();

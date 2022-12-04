@@ -31,6 +31,7 @@ import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 import SuperTokens from "../../superTokens";
+import { SessionClaim } from "supertokens-web-js/recipe/session";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
 
@@ -87,6 +88,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
 
     getUserId = (input: { userContext: any }): Promise<string> => {
         return this.webJsRecipe.getUserId(input);
+    };
+
+    getClaimValue = (input: { claim: SessionClaim<unknown>; userContext: any }): Promise<unknown> => {
+        return this.webJsRecipe.getClaimValue(input);
     };
 
     getAccessTokenPayloadSecurely = async (input: { userContext: any }): Promise<any> => {

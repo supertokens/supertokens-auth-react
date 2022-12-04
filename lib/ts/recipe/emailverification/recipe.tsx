@@ -38,7 +38,7 @@ import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
 import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/lib/build/recipe/emailverification";
 import { SessionClaimValidatorStore } from "supertokens-website/lib/build/utils/sessionClaimValidatorStore";
-import OverrideableBuilder from "supertokens-js-override";
+import { OverrideableBuilder } from "supertokens-js-override";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { UserContextContext } from "../../usercontext";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/lib/build/postSuperTokensInitCallbacks";

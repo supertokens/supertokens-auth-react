@@ -23,7 +23,6 @@ import Footer from "./Footer";
 import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
 import DarkTheme from "./Themes/Dark";
-import { CSSObject } from "@emotion/react";
 import Passwordless from "../../../recipe/passwordless";
 import { PasswordlessFlowType } from "supertokens-web-js/recipe/passwordless/types";
 import ThirdPartyPasswordless from "../../../recipe/thirdpartypasswordless";
@@ -147,15 +146,15 @@ function getQueryParams(param: string): string | null {
 
 export type Theme = {
     colors: Record<string, string>;
-    style: Record<string, CSSObject>;
+    style: Record<string, any>;
 };
 function getTheme(): {
     colors: Record<string, string>;
-    style?: Record<string, CSSObject>;
+    style?: string;
 } {
     let theme = {
         colors: {},
-        style: {},
+        style: "",
     };
 
     const themeParams = window.localStorage.getItem("useTheme");
@@ -166,11 +165,11 @@ function getTheme(): {
     }
 
     if (themeParams === "helium") {
-        return HeliumTheme;
+        // return HeliumTheme;
     }
 
     if (themeParams === "hydrogen") {
-        return HydrogenTheme;
+        // return HydrogenTheme;
     }
 
     return theme;
@@ -1719,3 +1718,11 @@ ThirdPartyPasswordless.verifyAndGetThirdPartyStateOrThrowError<{
 });
 
 Session.addAxiosInterceptors({});
+
+Session.validateClaims({
+    overrideGlobalClaimValidators: () => {
+        return [];
+    },
+});
+
+Session.getClaimValue({ claim: UserRoleClaim }).then((v) => {});

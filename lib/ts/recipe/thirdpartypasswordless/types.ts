@@ -52,13 +52,12 @@ import {
 } from "../authRecipe/types";
 import PWlessRecipe from "../passwordless/recipe";
 import TPRecipe from "../thirdparty/recipe";
-import OverrideableBuilder from "supertokens-js-override";
+import { OverrideableBuilder } from "supertokens-js-override";
 
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { ComponentOverrideMap as PasswordlessOverrideMap } from "../passwordless/types";
 import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../thirdparty/types";
 import { Header } from "./components/themes/signInUp/header";
-import { CountryCode } from "libphonenumber-js";
 import { Dispatch } from "react";
 import { SignInUpScreens } from "../passwordless/components/themes/signInUp";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
@@ -99,7 +98,7 @@ export type UserInput = (
               /*
                * Must be a two-letter ISO country code (e.g.: "US")
                */
-              defaultCountry?: CountryCode;
+              defaultCountry?: string;
           };
       }
     | {
@@ -109,10 +108,10 @@ export type UserInput = (
           validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 
           signInUpFeature?: SignInUpFeatureConfigInput & {
-              defaultCountry?: CountryCode;
+              defaultCountry?: string;
               guessInternationPhoneNumberFromInputPhoneNumber?: (
                   inputPhoneNumber: string,
-                  defaultCountryFromConfig?: CountryCode
+                  defaultCountryFromConfig?: string
               ) => Promise<string | undefined> | string | undefined;
           };
       }

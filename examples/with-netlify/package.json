@@ -24,10 +24,10 @@
         "web-vitals": "^0.2.4"
     },
     "scripts": {
-        "start": "netlify dev -c 'react-scripts start'",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject",
+        "start": "netlify dev -c 'npx react-scripts start'",
+        "build": "npx react-scripts build",
+        "test": "npx react-scripts test",
+        "eject": "npx react-scripts eject",
         "netlify": "npm run build && netlify deploy --prod"
     },
     "eslintConfig": {

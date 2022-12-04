@@ -1,13 +1,11 @@
-import resolve from "rollup-plugin-node-resolve";
-import json from "rollup-plugin-json";
-import commonjs from "rollup-plugin-commonjs";
+import resolve from "@rollup/plugin-node-resolve";
+import json from "@rollup/plugin-json";
+import commonjs from "@rollup/plugin-commonjs";
 import typescript from "rollup-plugin-typescript2";
-import { terser } from "rollup-plugin-terser";
+// import { terser } from "rollup-plugin-terser";
 import external from "rollup-plugin-peer-deps-external";
-import styles from "rollup-plugin-styles";
-import css from "rollup-plugin-import-css";
 import { visualizer } from "rollup-plugin-visualizer";
-
+import importCssString from "./other/rollup-plugin-css-string-import.mjs";
 const m = new Map();
 
 export default [
@@ -32,13 +30,14 @@ export default [
         plugins: [
             external(),
             resolve(),
-            commonjs(),
             json(),
-            typescript({ tsconfig: "./lib/tsconfig.json",  }), // so Rollup can convert TypeScript to JavaScript
-            styles({
-                mode: "emit",
+            commonjs({
+                defaultIsModuleExports: "auto",
             }),
-            css(),
+            typescript({ tsconfig: "./lib/tsconfig.json" }), // so Rollup can convert TypeScript to JavaScript
+            // styles({ mode: "emit" }),
+            importCssString(),
+            // css(),
             // terser(),
             visualizer(),
         ],
@@ -55,17 +54,17 @@ export default [
                     }
                     return chunkInfo.name + ".js";
                 },
-                manualChunks(id) {
-                    if (id.includes("lib/ts/components/assets")) {
-                        return "assets";
-                    }
-                    if (id.includes("lib/ts/recipe/authRecipe")) {
-                        return "authRecipe";
-                    }
-                    // if (id.includes("lib/ts/translation")) {
-                    //     return "translation";
-                    // }
-                },
+                // manualChunks(id) {
+                //     if (id.includes("lib/ts/components/assets")) {
+                //         return "assets";
+                //     }
+                //     if (id.includes("lib/ts/recipe/authRecipe")) {
+                //         return "authRecipe";
+                //     }
+                // if (id.includes("lib/ts/translation")) {
+                //     return "translation";
+                // }
+                // },
             },
         ],
     },

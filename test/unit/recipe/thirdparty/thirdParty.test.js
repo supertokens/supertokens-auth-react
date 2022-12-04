@@ -20,10 +20,10 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import ThirdParty from "../../../../lib/build/recipe/thirdparty/recipe";
-import { Google, Github, Facebook } from "../../../../lib/build/recipe/thirdparty";
+import { Google, Github, Facebook } from "../../../../lib/build/thirdparty";
 import assert from "assert";
-import SuperTokens from "../../../../lib/build/superTokens";
-import ThirdPartyIndex from "../../../../lib/build/recipe/thirdparty";
+import SuperTokens from "../../../../lib/build/index";
+import ThirdPartyIndex from "../../../../lib/build/thirdparty";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();

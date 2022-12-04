@@ -13,7 +13,7 @@ import { ComponentOverride } from "../../components/componentOverride/componentO
 import { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
 import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
-import OverrideableBuilder from "supertokens-js-override";
+import { OverrideableBuilder } from "supertokens-js-override";
 import { StateObject as WebJsStateObject, RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import { SignInAndUpHeader } from "./components/themes/signInAndUp/signInAndUpHeader";
 export declare type ComponentOverrideMap = {

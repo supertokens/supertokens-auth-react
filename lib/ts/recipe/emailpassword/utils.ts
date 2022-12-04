@@ -15,7 +15,7 @@
 
 import { FormField, FormFieldBaseConfig, NormalisedFormField } from "../../types";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
-import OverrideableBuilder from "supertokens-js-override";
+import { OverrideableBuilder } from "supertokens-js-override";
 import { ComponentOverrideMap } from "./types";
 
 import {

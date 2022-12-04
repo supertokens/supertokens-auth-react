@@ -34,12 +34,11 @@ import {
 } from "../authRecipe/types";
 import PWlessRecipe from "../passwordless/recipe";
 import TPRecipe from "../thirdparty/recipe";
-import OverrideableBuilder from "supertokens-js-override";
+import { OverrideableBuilder } from "supertokens-js-override";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { ComponentOverrideMap as PasswordlessOverrideMap } from "../passwordless/types";
 import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../thirdparty/types";
 import { Header } from "./components/themes/signInUp/header";
-import { CountryCode } from "libphonenumber-js";
 import { Dispatch } from "react";
 import { SignInUpScreens } from "../passwordless/components/themes/signInUp";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
@@ -67,7 +66,7 @@ export declare type UserInput = (
           contactMethod: "PHONE";
           validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
           signInUpFeature?: SignInUpFeatureConfigInput & {
-              defaultCountry?: CountryCode;
+              defaultCountry?: string;
           };
       }
     | {
@@ -75,10 +74,10 @@ export declare type UserInput = (
           validateEmailAddress?: (email: string) => Promise<string | undefined> | string | undefined;
           validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
           signInUpFeature?: SignInUpFeatureConfigInput & {
-              defaultCountry?: CountryCode;
+              defaultCountry?: string;
               guessInternationPhoneNumberFromInputPhoneNumber?: (
                   inputPhoneNumber: string,
-                  defaultCountryFromConfig?: CountryCode
+                  defaultCountryFromConfig?: string
               ) => Promise<string | undefined> | string | undefined;
           };
       }

@@ -39,7 +39,7 @@ import RecipeImplementation from "./recipeImplementation";
 import getPasswordlessImpl from "./recipeImplementation/passwordlessImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import OverrideableBuilder from "supertokens-js-override";
+import { OverrideableBuilder } from "supertokens-js-override";
 import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 

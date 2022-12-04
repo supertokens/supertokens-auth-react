@@ -69,12 +69,12 @@
     align-items: center;
 }
 
-[data-supertokens~="phoneInputLibRoot"] .PhoneInput {
+[data-supertokens~="phoneInputWrapper"] {
     display: flex;
     align-items: center;
 }
 
-[data-supertokens~="phoneInputLibRoot"] .PhoneInputInput {
+[data-supertokens~="phoneInputWrapper"] .iti {
     flex: 1 1;
     min-width: 0;
     width: 100%;
@@ -84,83 +84,6 @@
     outline: none;
 }
 
-[data-supertokens~="phoneInputLibRoot"] .PhoneInputCountryIcon {
-    color: var(--palette-textInput);
-    width: calc(1em * 1.5);
-    height: 1em;
-}
-
-[data-supertokens~="phoneInputLibRoot"] .PhoneInputCountryIconImg {
-    display: block;
-    width: 100%;
-    height: 100%;
-}
-
-[data-supertokens~="phoneInputLibRoot"] .PhoneInputInternationalIconPhone {
-    opacity: 0.8;
-}
-
-[data-supertokens~="phoneInputLibRoot"] .PhoneInputInternationalIconGlobe {
-    opacity: 0.65;
-}
-[data-supertokens~="phoneInputCountryControl"] {
-    background-color: inherit;
-    border: none;
-    box-shadow: none;
-}
-[data-supertokens~="phoneInputCountryControl"]:hover {
-    border: none;
-    box-shadow: none;
-}
-[data-supertokens~="phoneInputCountryDropdown"] {
-    width: min(72.2vw, 320px);
-    border-radius: 6;
-    margin-left: "-15px"; /* This is to counteract the padding of the inputWrapper class */
-    box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.16);
-}
-[data-supertokens~="phoneInputCountryDropdown"] > div {
-    padding-top: 0;
-}
-[data-supertokens~="phoneInputCountryOption"] {
-    display: flex;
-    align-items: center;
-    height: 34px;
-    cursor: pointer;
-
-    padding: 0 8px;
-}
-
-[data-supertokens~="phoneInputCountryOption"][aria-selected="true"] {
-    background: var(--palette-selectedBackground);
-}
-[data-supertokens~="phoneInputCountryOptionLabel"] {
-    color: var(--palette-textLabel);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin: 0 16px;
-}
-[aria-selected="true"] [data-supertokens~="phoneInputCountryOptionLabel"] {
-    color: var(--palette-textLink);
-}
-[data-supertokens~="phoneInputCountryOptionCallingCode"] {
-    color: var(--palette-textLabel);
-    opacity: 0.5;
-}
-
-[aria-selected="true"] [data-supertokens~="phoneInputCountryOptionCallingCode"] {
-    opacity: 1;
-}
-[data-supertokens~="phoneInputCountrySelect"] {
-    display: flex;
-    align-items: center;
-}
-[data-supertokens~="phoneInputCountryValueContainer"] {
-    padding: 0;
-}
-[data-supertokens~="phoneInputCountryDropdownIndicator"] {
-    padding: 0 12px 0 6px;
-}
 [data-supertokens~="continueButtonWrapper"] {
     margin-top: 10px;
     margin-bottom: 30px;

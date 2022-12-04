@@ -8,7 +8,6 @@ import {
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipe/types";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { CountryCode } from "libphonenumber-js";
 import { SignInUpHeader } from "./components/themes/signInUp/signInUpHeader";
 import { SignInUpFooter } from "./components/themes/signInUp/signInUpFooter";
 import { EmailForm } from "./components/themes/signInUp/emailForm";
@@ -55,10 +54,10 @@ export declare type NormalisedConfig = {
     validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
     signInUpFeature: {
         resendEmailOrSMSGapInSeconds: number;
-        defaultCountry?: CountryCode;
+        defaultCountry?: string;
         guessInternationPhoneNumberFromInputPhoneNumber: (
             inputPhoneNumber: string,
-            defaultCountryFromConfig?: CountryCode
+            defaultCountryFromConfig?: string
         ) => Promise<string | undefined> | string | undefined;
         privacyPolicyLink?: string;
         termsOfServiceLink?: string;
@@ -100,7 +99,7 @@ export declare type UserInput = (
           contactMethod: "PHONE";
           validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
           signInUpFeature?: SignInUpFeatureConfigInput & {
-              defaultCountry?: CountryCode;
+              defaultCountry?: string;
           };
       }
     | {
@@ -108,10 +107,10 @@ export declare type UserInput = (
           validateEmailAddress?: (email: string) => Promise<string | undefined> | string | undefined;
           validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
           signInUpFeature?: SignInUpFeatureConfigInput & {
-              defaultCountry?: CountryCode;
+              defaultCountry?: string;
               guessInternationPhoneNumberFromInputPhoneNumber?: (
                   inputPhoneNumber: string,
-                  defaultCountryFromConfig?: CountryCode
+                  defaultCountryFromConfig?: string
               ) => Promise<string | undefined> | string | undefined;
           };
       }

@@ -37,7 +37,7 @@ import ThirdParty from "../thirdparty/recipe";
 import RecipeImplementation from "./recipeImplementation";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import OverrideableBuilder from "supertokens-js-override";
+import { OverrideableBuilder } from "supertokens-js-override";
 import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import UserContextWrapper from "../../usercontext/userContextWrapper";

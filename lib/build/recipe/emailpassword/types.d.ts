@@ -16,7 +16,7 @@ import {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipe/types";
-import OverrideableBuilder from "supertokens-js-override";
+import { OverrideableBuilder } from "supertokens-js-override";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { SignInHeader } from "./components/themes/signInAndUp/signInHeader";
 import { SignIn } from "./components/themes/signInAndUp/signIn";

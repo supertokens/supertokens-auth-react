@@ -1,4 +1,4 @@
-import { BooleanClaim } from "supertokens-web-js/recipe/session";
+import { BooleanClaim } from "supertokens-auth-react/recipe/session";
 
 export const SecondFactorClaim = new BooleanClaim({
     id: "2fa-completed",

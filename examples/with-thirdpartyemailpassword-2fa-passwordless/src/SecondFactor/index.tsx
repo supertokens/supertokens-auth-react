@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { redirectToAuth } from "supertokens-auth-react";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import Session, { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { SecondFactorClaim } from "../secondFactorClaim";
 
 const CustomSignInUpTheme: typeof Passwordless.SignInUpTheme = (props) => {
     let [showDefaultUI, setShowDefaultUI] = useState(false);
@@ -53,7 +54,7 @@ export default function SecondFactor() {
 
     useEffect(() => {
         if (!session.loading) {
-            if (session.invalidClaims.length === 0) {
+            if (!session.invalidClaims.find((a) => a.validatorId === SecondFactorClaim.id)) {
                 navigate("/");
             }
         }
@@ -79,11 +80,7 @@ export default function SecondFactor() {
             <div
                 onClick={async () => {
                     await Passwordless.clearLoginAttemptInfo();
-                    await Session.signOut({
-                        userContext: {
-                            forceOriginalCheck: true,
-                        },
-                    });
+                    await Session.signOut();
                     redirectToAuth({ redirectBack: false });
                 }}
                 style={{
