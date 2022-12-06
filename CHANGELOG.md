@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.27.4] - 2022-12-06
+
+### Testing
+
+-   Updated test to match new behaviour of the website SDK - not rethrowing refresh errors during `doesSessionExist`
+
 ## [0.27.3] - 2022-11-25
 
 ### Adds
