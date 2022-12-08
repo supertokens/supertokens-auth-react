@@ -18,12 +18,12 @@ import { getButtonStyle, getDefaultStyles, getMergedStyles } from "../../../../s
 import { NormalisedPalette, NormalisedDefaultStyles } from "../../../../types";
 
 const providerColors = {
-    google: "#ea3721",
-    github: "#000",
-    facebook: "#274483",
-    twitter: "#008dd1",
-    apple: "#07093c",
-    custom: "#FFF",
+    google: "#ffffff",
+    github: "#ffffff",
+    facebook: "#ffffff",
+    twitter: "#ffffff",
+    apple: "#ffffff",
+    custom: "#ffffff",
 };
 
 export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
@@ -40,46 +40,53 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
 
         providerButton: {
             // Default button height in 34
-            minHeight: "34px",
+            minHeight: "32px",
             // this will allow the button to scale with different font sizes and text lengths
-            height: "auto !important",
+            height: "auto",
             display: "flex",
             flexDirection: "row",
+            alignItems: "center",
             paddingLeft: "0px",
             paddingRight: "0px",
             // This makes the button look somewhat cleaner if the text wraps
             paddingTop: "2px",
             paddingBottom: "2px",
+            "&:hover": {
+                filter: "none !important",
+                backgroundColor: "rgb(250,250,250)",
+            },
         },
 
         providerButtonLeft: {
-            width: "40px",
+            marginRight: "8px",
+            marginLeft: "78px",
         },
 
         providerButtonLogo: {
             height: "30px",
             display: "flex",
-            borderRight: "1px solid rgba(255, 255, 255, 0.6)",
         },
 
         providerButtonLogoCenter: {
+            display: "flex",
             margin: "auto",
         },
 
         providerButtonText: {
-            margin: "auto",
+            fontFamily: "Rubik",
+            fontWeight: 400,
             textAlign: "center",
             justifyContent: "center",
         },
 
-        providerGoogle: getButtonStyle(providerColors.google, "white"),
-        providerGitHub: getButtonStyle(providerColors.github, "white", true),
-        providerTwitter: getButtonStyle(providerColors.twitter, "white"),
-        providerFacebook: getButtonStyle(providerColors.facebook, "white"),
-        providerApple: getButtonStyle(providerColors.apple, "white", true),
+        providerGoogle: getButtonStyle(providerColors.google, "black"),
+        providerGitHub: getButtonStyle(providerColors.github, "black"),
+        providerTwitter: getButtonStyle(providerColors.twitter, "black"),
+        providerFacebook: getButtonStyle(providerColors.facebook, "black"),
+        providerApple: getButtonStyle(providerColors.apple, "black"),
 
         providerCustom: {
-            ...getButtonStyle(providerColors.custom, "white"),
+            ...getButtonStyle(providerColors.custom, "black"),
             color: "#000",
             border: "1px solid #000",
             "&:active": {

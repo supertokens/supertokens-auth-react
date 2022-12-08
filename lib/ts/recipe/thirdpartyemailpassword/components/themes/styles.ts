@@ -40,6 +40,13 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         divider: {
             flex: "3 3",
         },
+        providerButton: {
+            margin: "auto",
+            maxWidth: "240px",
+        },
+        providerButtonLeft: {
+            marginLeft: "39px",
+        },
     };
     const recipeStyles = getMergedStyles(baseRecipeStyles, thirdPartyEmailPasswordStyle);
     return getMergedStyles(baseStyles, recipeStyles);
