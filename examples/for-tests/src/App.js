@@ -488,6 +488,7 @@ function SessionInfoTable({ sessionInfo }) {
 
 function getEmailVerificationConfigs({ disableDefaultUI }) {
     return EmailVerification.init({
+        useShadowDom,
         disableDefaultUI,
         sendVerifyEmailScreen: {
             style: theme.style,
