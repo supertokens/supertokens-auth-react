@@ -105,16 +105,14 @@ function PhoneNumberInput({
         }
     }, []);
 
+    /* eslint-disable react/jsx-no-literals */
     /*
      * Render.
      */
     return (
         <div data-supertokens="inputContainer">
             <style type="text/css">
-                {
-                    // There should be a better way around this... :/
-                    phoneNumberInputLibStyles.replace(":root", '[data-supertokens~="container"]')
-                }
+                {phoneNumberInputLibStyles}
                 {`
                     .iti__flag {background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/img/flags.png");}
 
@@ -145,6 +143,7 @@ function PhoneNumberInput({
             </div>
         </div>
     );
+    /* eslint-enable react/jsx-no-literals */
 }
 
 export default PhoneNumberInput;

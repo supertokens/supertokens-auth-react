@@ -14,8 +14,8 @@
  */
 
 import { CountryData } from "intl-tel-input";
-import { WindowHandlerReference } from "supertokens-website/lib/build/utils/windowHandler";
-const phoneNumberUtilsImport = import("intl-tel-input/build/js/utils");
+import WindowHandlerReference from "supertokens-website/lib/build/utils/windowHandler";
+import { getPhoneNumberUtils } from "./phoneNumberUtils";
 
 export function defaultEmailValidator(value: any): string | undefined {
     if (typeof value !== "string") {
@@ -45,7 +45,7 @@ export async function defaultPhoneNumberValidator(value: string) {
 
     value = value.trim();
 
-    await phoneNumberUtilsImport;
+    const intlTelInputUtils = await getPhoneNumberUtils();
 
     if (!intlTelInputUtils.isValidNumber(value, undefined as any)) {
         return "GENERAL_ERROR_PHONE_INVALID";
@@ -80,7 +80,8 @@ export async function defaultPhoneNumberValidatorForCombinedInput(value: string)
 
     value = value.trim();
 
-    await phoneNumberUtilsImport;
+    const intlTelInputUtils = await getPhoneNumberUtils();
+
     if (!intlTelInputUtils.isValidNumber(value, undefined as any)) {
         return "GENERAL_ERROR_EMAIL_OR_PHONE_INVALID";
     }
@@ -114,7 +115,9 @@ export async function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
     if (value === undefined || value.length === 0) {
         return value;
     }
-    await phoneNumberUtilsImport;
+
+    const intlTelInputUtils = await getPhoneNumberUtils();
+
     const libGuess = intlTelInputUtils.formatNumber(
         value,
         defaultCountryFromConfig!,
@@ -144,7 +147,9 @@ export async function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
         );
     }
 
-    const countryData = window.intlTelInputGlobals.getCountryData();
+    const countryData = WindowHandlerReference.getReferenceOrThrow()
+        .windowHandler.getWindowUnsafe()
+        .intlTelInputGlobals.getCountryData();
     const matchingCountryCodes = countryData
         .filter((c: CountryData) => onlyNumbers.startsWith(c.dialCode))
         .map((c) => c.iso2);
