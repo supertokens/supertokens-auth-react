@@ -8,6 +8,8 @@ jobs:
         container:
             image: rishabhpoddar/supertokens_website_sdk_testing_node_16
             options: "-u 1001"
+        env:
+            PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
         steps:
             - uses: actions/checkout@v2
               with:
