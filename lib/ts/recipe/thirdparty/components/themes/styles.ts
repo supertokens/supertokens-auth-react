@@ -32,18 +32,20 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         },
 
         providerButton: {
-            // Default button height in 34
+            // Default button height in 32
             minHeight: "32px",
             // this will allow the button to scale with different font sizes and text lengths
             height: "auto",
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            paddingLeft: "0px",
+            paddingLeft: "100px",
             paddingRight: "0px",
             // This makes the button look somewhat cleaner if the text wraps
             paddingTop: "2px",
             paddingBottom: "2px",
+            borderColor: "#dddddd !important",
+
             "&:hover": {
                 filter: "none !important",
                 backgroundColor: "#fafafa",
@@ -51,8 +53,8 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         },
 
         providerButtonLeft: {
-            marginRight: "8px",
-            marginLeft: "78px",
+            width: "34px",
+            marginLeft: "-34px",
         },
 
         providerButtonLogo: {
@@ -80,17 +82,17 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         providerCustom: {
             ...defaultProviderButtonStyle,
             color: "#000",
-            border: "1px solid #000",
+            border: "1px solid #dddddd",
             "&:active": {
                 outline: "none",
-                border: "1px solid #000",
+                border: "1px solid #dddddd",
                 backgroundColor: chroma("white").darken(0.1).hex(),
                 transition: "background 0s",
                 backgroundSize: "100%",
             },
             "&:focus": {
                 outline: "none",
-                border: "1px solid #000",
+                border: "1px solid #dddddd",
             },
         },
     } as NormalisedDefaultStyles;
