@@ -94,7 +94,7 @@ describe("Visual testing", function () {
         }).catch(console.error);
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: false,
+            headless: true,
         });
         page = await browser.newPage();
 
