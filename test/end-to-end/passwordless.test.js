@@ -82,7 +82,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
         getTestCases("PHONE", "phoneNumber_text", examplePhoneNumber);
     });
 
-    describe("with PHONE_OR_EMAIL", () => {
+    describe("with EMAIL_OR_PHONE", () => {
         describe("using an email", () => {
             getTestCases("EMAIL_OR_PHONE", "emailOrPhone", exampleEmail);
         });
