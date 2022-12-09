@@ -17,14 +17,7 @@ import chroma from "chroma-js";
 import { getButtonStyle, getDefaultStyles, getMergedStyles } from "../../../../styles/styles";
 import { NormalisedPalette, NormalisedDefaultStyles } from "../../../../types";
 
-const providerColors = {
-    google: "#ffffff",
-    github: "#ffffff",
-    facebook: "#ffffff",
-    twitter: "#ffffff",
-    apple: "#ffffff",
-    custom: "#ffffff",
-};
+const defaultProviderButtonStyle = getButtonStyle("white", "black");
 
 export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
     const baseStyles = getDefaultStyles(palette);
@@ -53,7 +46,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             paddingBottom: "2px",
             "&:hover": {
                 filter: "none !important",
-                backgroundColor: "rgb(250,250,250)",
+                backgroundColor: "#fafafa",
             },
         },
 
@@ -73,26 +66,25 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         },
 
         providerButtonText: {
-            fontFamily: "Rubik",
             fontWeight: 400,
             textAlign: "center",
             justifyContent: "center",
         },
 
-        providerGoogle: getButtonStyle(providerColors.google, "black"),
-        providerGitHub: getButtonStyle(providerColors.github, "black"),
-        providerTwitter: getButtonStyle(providerColors.twitter, "black"),
-        providerFacebook: getButtonStyle(providerColors.facebook, "black"),
-        providerApple: getButtonStyle(providerColors.apple, "black"),
+        providerGoogle: defaultProviderButtonStyle,
+        providerGitHub: defaultProviderButtonStyle,
+        providerTwitter: defaultProviderButtonStyle,
+        providerFacebook: defaultProviderButtonStyle,
+        providerApple: defaultProviderButtonStyle,
 
         providerCustom: {
-            ...getButtonStyle(providerColors.custom, "black"),
+            ...defaultProviderButtonStyle,
             color: "#000",
             border: "1px solid #000",
             "&:active": {
                 outline: "none",
                 border: "1px solid #000",
-                backgroundColor: chroma(providerColors.custom).darken(0.1).hex(),
+                backgroundColor: chroma("white").darken(0.1).hex(),
                 transition: "background 0s",
                 backgroundSize: "100%",
             },
