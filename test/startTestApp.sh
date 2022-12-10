@@ -27,7 +27,6 @@ function startEndToEnd () {
     echo "Start mocha testing"
 
     if [[ -z "${MOCHA_FILE}" ]]; then
-        echo "ASDFASDF"
         APP_SERVER=$apiPort TEST_MODE=testing mocha --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config test/end-to-end/**/*.test.js
     else
         if ! [[ -z "${CIRCLE_NODE_TOTAL}" ]]; then

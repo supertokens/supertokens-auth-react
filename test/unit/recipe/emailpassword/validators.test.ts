@@ -13,7 +13,7 @@
  * under the License.
  */
 import assert from "assert";
-import { defaultEmailValidator, defaultPasswordValidator } from "../../../../lib/build/recipe/emailpassword/validators";
+import { defaultEmailValidator, defaultPasswordValidator } from "../../../../lib/ts/recipe/emailpassword/validators";
 
 describe("Email password validators tests", function () {
     it("checking email validator", async function () {

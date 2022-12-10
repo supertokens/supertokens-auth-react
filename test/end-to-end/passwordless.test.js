@@ -2032,7 +2032,6 @@ async function setupDevice(page, inputName, contactInfo, forLinkOnly = true, cle
         page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
-    page.on("console", (c) => console.log(c.text()));
     await waitForSTElement(page, `[data-supertokens~=input][name=${inputName}]`);
     await setInputValues(page, [{ name: inputName, value: contactInfo }]);
     await submitForm(page);
@@ -2079,7 +2078,6 @@ async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCoun
     const page = await browser.newPage();
     page.on("console", (consoleObj) => {
         const log = consoleObj.text();
-        console.log(log);
 
         if (log.startsWith("ST_LOGS")) {
             consoleLogs.push(log);

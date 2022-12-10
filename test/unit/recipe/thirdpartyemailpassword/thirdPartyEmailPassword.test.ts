@@ -19,22 +19,17 @@
 
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
-import ThirdPartyEmailPassword from "../../../../recipe/thirdpartyemailpassword";
-import ThirdPartyEmailPasswordRaw from "../../../../lib/build/recipe/thirdpartyemailpassword/recipe";
-import { Google, Github, Facebook } from "../../../../recipe/thirdpartyemailpassword";
+import ThirdPartyEmailPassword from "../../../../lib/ts/recipe/thirdpartyemailpassword";
+import ThirdPartyEmailPasswordRaw from "../../../../lib/ts/recipe/thirdpartyemailpassword/recipe";
+import { Google, Github, Facebook } from "../../../../lib/ts/recipe/thirdpartyemailpassword";
 import assert from "assert";
-import SuperTokens from "../../../../";
-import SuperTokensRaw from "../../../../lib/build/superTokens";
-
-// Run the tests in a DOM environment.
-require("jsdom-global")();
+import SuperTokens from "../../../../lib/ts/index";
+import SuperTokensRaw from "../../../../lib/ts/superTokens";
 
 /*
  * Tests.
  */
 describe("ThirdPartyEmailPassword", function () {
-    before(async function () {});
-
     beforeEach(function () {
         SuperTokensRaw.reset();
     });
@@ -111,7 +106,7 @@ describe("ThirdPartyEmailPassword", function () {
             });
             fail();
         } catch (err) {
-            assert(err.message === "You need to enable either email password or third party providers login.");
+            assert((err as any).message === "You need to enable either email password or third party providers login.");
         }
     });
 });

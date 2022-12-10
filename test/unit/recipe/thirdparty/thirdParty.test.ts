@@ -19,14 +19,11 @@
 
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
-import ThirdParty from "../../../../lib/build/recipe/thirdparty/recipe";
-import { Google, Github, Facebook } from "../../../../lib/build/thirdparty";
+import ThirdParty from "../../../../lib/ts/recipe/thirdparty/recipe";
+import { Google, Github, Facebook } from "../../../../lib/ts/recipe/thirdparty";
 import assert from "assert";
-import SuperTokens from "../../../../lib/build/index";
-import ThirdPartyIndex from "../../../../lib/build/thirdparty";
-
-// Run the tests in a DOM environment.
-require("jsdom-global")();
+import SuperTokens from "../../../../lib/ts/superTokens";
+import ThirdPartyIndex from "../../../../lib/ts/recipe/thirdparty";
 
 /*
  * Tests.
@@ -35,7 +32,7 @@ describe("ThirdParty", function () {
     const privacyPolicyLink = "https://example.com/privacy";
     const termsOfServiceLink = "https://example.com/terms";
 
-    before(async function () {
+    beforeAll(async function () {
         SuperTokens.init({
             appInfo: {
                 appName: "SuperTokens",
@@ -60,23 +57,26 @@ describe("ThirdParty", function () {
     });
 
     it("Initializing ThirdParty with empty configs throws", async function () {
-        await assert.throws(
-            () => ThirdParty.init()(SuperTokens.getInstanceOrThrow().appInfo),
-            new Error("ThirdParty signInAndUpFeature providers array cannot be empty.")
-        );
+        assert.throws(() => ThirdParty.init({})(SuperTokens.getInstanceOrThrow().appInfo, false), {
+            message: "ThirdParty signInAndUpFeature providers array cannot be empty.",
+        });
     });
 
     it("Initializing ThirdParty with empty signInAndUp attr throws", async function () {
-        await assert.throws(
-            () => ThirdParty.init({ signInAndUpFeature: {} })(SuperTokens.getInstanceOrThrow().appInfo),
-            new Error("ThirdParty signInAndUpFeature providers array cannot be empty.")
+        assert.throws(
+            () => ThirdParty.init({ signInAndUpFeature: {} })(SuperTokens.getInstanceOrThrow().appInfo, false),
+            { message: "ThirdParty signInAndUpFeature providers array cannot be empty." }
         );
     });
 
     it("Initializing ThirdParty with empty providers config throws", async function () {
-        await assert.throws(
-            () => ThirdParty.init({ signInAndUpFeature: { providers: [] } })(SuperTokens.getInstanceOrThrow().appInfo),
-            new Error("ThirdParty signInAndUpFeature providers array cannot be empty.")
+        assert.throws(
+            () =>
+                ThirdParty.init({ signInAndUpFeature: { providers: [] } })(
+                    SuperTokens.getInstanceOrThrow().appInfo,
+                    false
+                ),
+            { message: "ThirdParty signInAndUpFeature providers array cannot be empty." }
         );
     });
 
@@ -85,7 +85,7 @@ describe("ThirdParty", function () {
             signInAndUpFeature: {
                 providers: [Google.init()],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
         assert.deepStrictEqual(
@@ -102,7 +102,7 @@ describe("ThirdParty", function () {
                 privacyPolicyLink,
                 providers: [Google.init()],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
         assert.deepStrictEqual(
@@ -124,7 +124,7 @@ describe("ThirdParty", function () {
             signInAndUpFeature: {
                 providers: [Google.init(), Github.init()],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
         assert.deepStrictEqual(
@@ -139,10 +139,10 @@ describe("ThirdParty", function () {
             () =>
                 ThirdParty.init({
                     signInAndUpFeature: {
-                        providers: [{}],
+                        providers: [{} as any],
                     },
-                })(SuperTokens.getInstanceOrThrow().appInfo),
-            new Error("Custom provider config should contain id and name attributes")
+                })(SuperTokens.getInstanceOrThrow().appInfo, false),
+            { message: "Custom provider config should contain id and name attributes" }
         );
     });
 
@@ -154,11 +154,11 @@ describe("ThirdParty", function () {
                         providers: [
                             {
                                 name: "Twitch",
-                            },
+                            } as any,
                         ],
                     },
-                })(SuperTokens.getInstanceOrThrow().appInfo),
-            new Error("Custom provider config should contain id and name attributes")
+                })(SuperTokens.getInstanceOrThrow().appInfo, false),
+            { message: "Custom provider config should contain id and name attributes" }
         );
     });
 
@@ -170,11 +170,11 @@ describe("ThirdParty", function () {
                         providers: [
                             {
                                 id: "twitch",
-                            },
+                            } as any,
                         ],
                     },
-                })(SuperTokens.getInstanceOrThrow().appInfo),
-            new Error("Custom provider config should contain id and name attributes")
+                })(SuperTokens.getInstanceOrThrow().appInfo, false),
+            { message: "Custom provider config should contain id and name attributes" }
         );
     });
 
@@ -188,7 +188,7 @@ describe("ThirdParty", function () {
                     },
                 ],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
         assert.deepStrictEqual(
@@ -216,7 +216,7 @@ describe("ThirdParty", function () {
                     },
                 ],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
         assert.deepStrictEqual(
@@ -237,11 +237,11 @@ describe("ThirdParty", function () {
                     {
                         id: "slack",
                         name: "Slack",
-                        buttonComponent: "LOGIN WITH SLACK",
+                        buttonComponent: "LOGIN WITH SLACK" as any, // TODO: check the type error
                     },
                 ],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
         assert.deepStrictEqual(
@@ -260,7 +260,7 @@ describe("ThirdParty", function () {
             signInAndUpFeature: {
                 providers: [Google.init(), Github.init(), Google.init()],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
         assert.deepStrictEqual(
@@ -279,15 +279,15 @@ describe("ThirdParty", function () {
             () =>
                 ThirdParty.init({
                     signInAndUpFeature: {
-                        providers: [Google.init(), Github.init(), "facebook"],
+                        providers: [Google.init(), Github.init(), "facebook" as any],
                     },
-                })(SuperTokens.getInstanceOrThrow().appInfo),
-            new Error("Custom provider config should contain id and name attributes")
+                })(SuperTokens.getInstanceOrThrow().appInfo, false),
+            { message: "Custom provider config should contain id and name attributes" }
         );
     });
 
     it("Initializing Google with custom button", async function () {
-        const CustomGoogle = "LOGIN WITH GMAIL"; // Should be a component, JSX not supported in unit tests.
+        const CustomGoogle = "LOGIN WITH GMAIL" as any; // Should be a component, JSX not supported in unit tests.
         ThirdParty.init({
             signInAndUpFeature: {
                 providers: [
@@ -296,9 +296,9 @@ describe("ThirdParty", function () {
                     }),
                 ],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.deepStrictEqual(
-            ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0].buttonComponent,
+            (ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0] as any).buttonComponent,
             CustomGoogle
         );
         assert.deepStrictEqual(
@@ -325,7 +325,7 @@ describe("ThirdParty", function () {
             signInAndUpFeature: {
                 providers: [Google.init(), Github.init(), Facebook.init()],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
         assert.deepStrictEqual(
@@ -335,15 +335,15 @@ describe("ThirdParty", function () {
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.length, 3);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.palette.primary, "blue");
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.useShadowDom, false);
-        assert.throws(() => ThirdParty.getInstanceOrThrow().config.preAPIHook(), new Error("PRE API HOOK THROWS"));
-        assert.throws(
-            () => ThirdParty.getInstanceOrThrow().config.onHandleEvent(),
-            new Error("ON HANDLE EVENTS HOOK THROWS")
-        );
-        assert.throws(
-            () => ThirdParty.getInstanceOrThrow().config.getRedirectionURL(),
-            new Error("GET REDIRECTION HOOK THROWS")
-        );
+        assert.throws(() => ThirdParty.getInstanceOrThrow().config.preAPIHook({} as any), {
+            message: "PRE API HOOK THROWS",
+        });
+        assert.throws(() => ThirdParty.getInstanceOrThrow().config.onHandleEvent({} as any), {
+            message: "ON HANDLE EVENTS HOOK THROWS",
+        });
+        assert.throws(() => ThirdParty.getInstanceOrThrow().config.getRedirectionURL({} as any), {
+            message: "GET REDIRECTION HOOK THROWS",
+        });
     });
 
     it("Test that when calling redirectToThirdPartyLogin, userContext is passed to other functions", async function () {
@@ -357,7 +357,7 @@ describe("ThirdParty", function () {
                         ...oI,
                         getAuthorizationURLWithQueryParamsAndSetState: async function (input) {
                             assert(input.userContext["key"] !== undefined);
-                            return oI.getAuthorizationURLWithQueryParamsAndSetState(input);
+                            return oI.getAuthorisationURLWithQueryParamsAndSetState(input);
                         },
                         generateStateToSendToOAuthProvider: function (input) {
                             assert(input.userContext["key"] !== undefined);
@@ -370,7 +370,7 @@ describe("ThirdParty", function () {
                              */
                             return "";
                         },
-                        setStateAndOtherInfoToStorage: function (input) {
+                        setStateAndOtherInfoToStorage: async function (input) {
                             /**
                              * Similar to generateStateToSendToOAuthProvider, this is
                              * easier than defining sessionStorage for tests
@@ -385,7 +385,7 @@ describe("ThirdParty", function () {
                     };
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
 
         try {
             await ThirdPartyIndex.redirectToThirdPartyLogin({
@@ -396,7 +396,7 @@ describe("ThirdParty", function () {
             });
             throw new Error("redirectToThirdPartyLogin should have failed but didnt");
         } catch (e) {
-            if (e.message !== "Expected Test Error") {
+            if ((e as any).message !== "Expected Test Error") {
                 throw e;
             }
         }
@@ -413,15 +413,15 @@ describe("ThirdParty", function () {
                         ...oI,
                         getStateAndOtherInfoFromStorage: function (input) {
                             assert(input.userContext["key"] !== undefined);
-                            return {};
+                            return {} as any;
                         },
                         getAuthStateFromURL: function (input) {
                             assert(input.userContext["key"] !== undefined);
                             return "";
                         },
-                        verifyAndGetStateOrThrowError: async function (input) {
+                        verifyAndGetStateOrThrowError: function (input) {
                             assert(input.userContext["key"] !== undefined);
-                            return true;
+                            return {} as any;
                         },
                         getAuthCodeFromURL: function (input) {
                             assert(input.userContext["key"] !== undefined);
@@ -434,7 +434,7 @@ describe("ThirdParty", function () {
                     };
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
 
         try {
             await ThirdPartyIndex.signInAndUp({
@@ -444,7 +444,7 @@ describe("ThirdParty", function () {
             });
             throw new Error("signInAndUp should have failed but didnt");
         } catch (e) {
-            if (e.message !== "Expected Test Error") {
+            if ((e as any).message !== "Expected Test Error") {
                 throw e;
             }
         }

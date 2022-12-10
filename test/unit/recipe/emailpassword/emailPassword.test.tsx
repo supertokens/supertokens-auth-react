@@ -19,16 +19,14 @@
 
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
-import EmailPassword from "../../../../lib/build/recipe/emailpassword/recipe";
-import { getDefaultFormFields, getFormattedFormField } from "../../../../lib/build/recipe/emailpassword/utils";
-import { defaultLoginPasswordValidator, defaultValidate } from "../../../../lib/build/recipe/emailpassword/validators";
+import EmailPassword from "../../../../lib/ts/recipe/emailpassword/recipe";
+import { getDefaultFormFields, getFormattedFormField } from "../../../../lib/ts/recipe/emailpassword/utils";
+import { defaultLoginPasswordValidator, defaultValidate } from "../../../../lib/ts/recipe/emailpassword/validators";
 import assert from "assert";
-import SuperTokens from "../../../../lib/build/index";
+import SuperTokens from "../../../../lib/ts/superTokens";
 import { assertFormFieldsEqual } from "../../../helpers";
-import EmailPasswordIndex from "../../../../lib/build/emailpassword";
-
-// Run the tests in a DOM environment.
-require("jsdom-global")();
+import EmailPasswordIndex from "../../../../lib/ts/recipe/emailpassword";
+import { validateForm } from "../../../../lib/ts/utils";
 
 /*
  * Tests.
@@ -37,7 +35,7 @@ describe("EmailPassword", function () {
     const privacyPolicyLink = "https://example.com/privacy";
     const termsOfServiceLink = "https://example.com/terms";
 
-    before(async function () {
+    beforeAll(async function () {
         SuperTokens.init({
             appInfo: {
                 appName: "SuperTokens",
@@ -53,7 +51,7 @@ describe("EmailPassword", function () {
     });
 
     it("Initializing EmailPassword with empty configs", async function () {
-        EmailPassword.init()(SuperTokens.getInstanceOrThrow().appInfo);
+        EmailPassword.init()(SuperTokens.getInstanceOrThrow().appInfo, false);
 
         await assertFormFieldsEqual(
             EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields,
@@ -98,7 +96,7 @@ describe("EmailPassword", function () {
             resetPasswordUsingTokenFeature: {
                 disableDefaultUI: true,
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] === undefined);
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] === undefined);
     });
@@ -116,7 +114,7 @@ describe("EmailPassword", function () {
                     formFields: [companyCustomField],
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         // Default Sign Up fields + Custom fields.
         await assertFormFieldsEqual(
             EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields,
@@ -168,7 +166,7 @@ describe("EmailPassword", function () {
                     formFields: [customEmailField],
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         // Default Sign Up fields + Custom fields.
         await assertFormFieldsEqual(
             EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields,
@@ -237,7 +235,7 @@ describe("EmailPassword", function () {
                     formFields: [customEmailField, randomFieldForSignInShouldBeIgnored],
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         // Sign Up fields unchanged.
         await assertFormFieldsEqual(
             EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields,
@@ -286,7 +284,7 @@ describe("EmailPassword", function () {
                     formFields: [companyCustomField],
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         // Default Sign Up fields + Custom fields.
         await assertFormFieldsEqual(
             EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields,
@@ -337,7 +335,7 @@ describe("EmailPassword", function () {
                     formFields: [customEmailField],
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         // Default Sign Up fields + Custom fields.
         await assertFormFieldsEqual(
             EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields,
@@ -405,7 +403,7 @@ describe("EmailPassword", function () {
                     formFields: [customPasswordField],
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
 
         // Sign Up fields changed
         await assertFormFieldsEqual(
@@ -448,8 +446,8 @@ describe("EmailPassword", function () {
         // );
     });
 
-    it.skip("Validate SignIn EmailPassword fields validation", async function () {
-        EmailPassword.init()(SuperTokens.getInstanceOrThrow().appInfo);
+    it("Validate SignIn EmailPassword fields validation", async function () {
+        EmailPassword.init()(SuperTokens.getInstanceOrThrow().appInfo, false);
         const formFields = [
             {
                 id: "email",
@@ -469,7 +467,7 @@ describe("EmailPassword", function () {
     });
 
     it("Validate SignIn EmailPassword fields validation with spaces in email should trim and return no errors", async function () {
-        EmailPassword.init()(SuperTokens.getInstanceOrThrow().appInfo);
+        EmailPassword.init()(SuperTokens.getInstanceOrThrow().appInfo, false);
         const formFields = [
             {
                 id: "email",
@@ -488,7 +486,7 @@ describe("EmailPassword", function () {
     });
 
     it("Validate SignIn EmailPassword fields validation with invalid email should return error", async function () {
-        EmailPassword.init()(SuperTokens.getInstanceOrThrow().appInfo);
+        EmailPassword.init()(SuperTokens.getInstanceOrThrow().appInfo, false);
         const formFields = [
             {
                 id: "email",
@@ -525,7 +523,7 @@ describe("EmailPassword", function () {
                     formFields: [companyCustomField],
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
 
         const input = [
             {
@@ -568,7 +566,7 @@ describe("EmailPassword", function () {
                     formFields: [companyCustomField],
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
 
         const input = [
             {
@@ -581,10 +579,18 @@ describe("EmailPassword", function () {
             },
         ];
 
-        assert.rejects(
-            validateForm(input, EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields),
-            Error("Are you sending too many / too few formFields?")
-        );
+        let caught;
+        try {
+            await validateForm(
+                input,
+                EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields
+            );
+        } catch (err) {
+            caught = err;
+        }
+
+        assert.ok(caught);
+        assert.deepStrictEqual(caught, Error("Are you sending too many / too few formFields?"));
     });
 
     it("Test that when calling submitNewPassword, userContext gets passed to getResetPasswordTokenFromURL", async function () {
@@ -600,7 +606,7 @@ describe("EmailPassword", function () {
                     };
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
 
         try {
             await EmailPasswordIndex.submitNewPassword({
@@ -611,7 +617,7 @@ describe("EmailPassword", function () {
             });
             throw new Error("submitNewPassword should have failed but didnt");
         } catch (e) {
-            if (e.message !== "Expected Test Error") {
+            if ((e as any).message !== "Expected Test Error") {
                 throw e;
             }
         }

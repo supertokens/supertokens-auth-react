@@ -19,13 +19,11 @@
 
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
-import Passwordless from "../../../../lib/build/recipe/passwordless/recipe";
+import Passwordless from "../../../../lib/ts/recipe/passwordless/recipe";
 import assert from "assert";
-import SuperTokens from "../../../../lib/build/index";
+import SuperTokens from "../../../../lib/ts/superTokens";
 
 // Run the tests in a DOM environment.
-require("jsdom-global")();
-
 /*
  * Tests.
  */
@@ -33,7 +31,7 @@ describe("Passwordless", function () {
     const privacyPolicyLink = "https://example.com/privacy";
     const termsOfServiceLink = "https://example.com/terms";
 
-    before(async function () {
+    beforeAll(async function () {
         SuperTokens.init({
             appInfo: {
                 appName: "SuperTokens",
@@ -53,16 +51,15 @@ describe("Passwordless", function () {
     });
 
     it("Initializing Passwordless with empty configs throws", async function () {
-        await assert.throws(
-            () => Passwordless.init()(SuperTokens.getInstanceOrThrow().appInfo),
-            new Error("Please pass one of 'PHONE', 'EMAIL' or 'EMAIL_OR_PHONE' as the contactMethod")
-        );
+        await assert.throws(() => Passwordless.init({} as any)(SuperTokens.getInstanceOrThrow().appInfo, false), {
+            message: "Please pass one of 'PHONE', 'EMAIL' or 'EMAIL_OR_PHONE' as the contactMethod",
+        });
     });
 
     it("Initializing Passwordless with wrong contactMethod throws", async function () {
         await assert.throws(
-            () => Passwordless.init({ contactMethod: "NOPE" })(SuperTokens.getInstanceOrThrow().appInfo),
-            new Error("Please pass one of 'PHONE', 'EMAIL' or 'EMAIL_OR_PHONE' as the contactMethod")
+            () => Passwordless.init({ contactMethod: "NOPE" as any })(SuperTokens.getInstanceOrThrow().appInfo, false),
+            { message: "Please pass one of 'PHONE', 'EMAIL' or 'EMAIL_OR_PHONE' as the contactMethod" }
         );
     });
 
@@ -70,15 +67,17 @@ describe("Passwordless", function () {
         await assert.throws(
             () =>
                 Passwordless.init({ contactMethod: "PHONE", signInUpFeature: { resendEmailOrSMSGapInSeconds: 0 } })(
-                    SuperTokens.getInstanceOrThrow().appInfo
+                    SuperTokens.getInstanceOrThrow().appInfo,
+                    false
                 ),
-            new Error(`Please pass a positive number as resendEmailOrSMSGapInSeconds`)
+            { message: `Please pass a positive number as resendEmailOrSMSGapInSeconds` }
         );
     });
 
     it("Initializing Passwordless with resendCodeTimeGap", async function () {
         Passwordless.init({ contactMethod: "PHONE", signInUpFeature: { resendEmailOrSMSGapInSeconds: 5 } })(
-            SuperTokens.getInstanceOrThrow().appInfo
+            SuperTokens.getInstanceOrThrow().appInfo,
+            false
         );
         assert.strictEqual(Passwordless.getInstanceOrThrow().config.signInUpFeature.resendEmailOrSMSGapInSeconds, 5);
     });
@@ -90,7 +89,7 @@ describe("Passwordless", function () {
                 termsOfServiceLink,
                 privacyPolicyLink,
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(Passwordless.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(Passwordless.getInstanceOrThrow().config.recipeId, "passwordless");
         assert.deepStrictEqual(
@@ -123,7 +122,7 @@ describe("Passwordless", function () {
                 throw new Error("GET REDIRECTION HOOK THROWS");
             },
             useShadowDom: false,
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        })(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(Passwordless.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(Passwordless.getInstanceOrThrow().config.recipeId, "passwordless");
         assert.deepStrictEqual(
@@ -132,14 +131,14 @@ describe("Passwordless", function () {
         );
         assert.deepStrictEqual(Passwordless.getInstanceOrThrow().config.palette.primary, "blue");
         assert.deepStrictEqual(Passwordless.getInstanceOrThrow().config.useShadowDom, false);
-        assert.throws(() => Passwordless.getInstanceOrThrow().config.preAPIHook({}), new Error("PRE API HOOK THROWS"));
-        assert.throws(
-            () => Passwordless.getInstanceOrThrow().config.onHandleEvent({}),
-            new Error("ON HANDLE EVENTS HOOK THROWS")
-        );
-        assert.throws(
-            () => Passwordless.getInstanceOrThrow().config.getRedirectionURL({}),
-            new Error("GET REDIRECTION HOOK THROWS")
-        );
+        assert.throws(() => Passwordless.getInstanceOrThrow().config.preAPIHook({} as any), {
+            message: "PRE API HOOK THROWS",
+        });
+        assert.throws(() => Passwordless.getInstanceOrThrow().config.onHandleEvent({} as any), {
+            message: "ON HANDLE EVENTS HOOK THROWS",
+        });
+        assert.throws(() => Passwordless.getInstanceOrThrow().config.getRedirectionURL({} as any), {
+            message: "GET REDIRECTION HOOK THROWS",
+        });
     });
 });

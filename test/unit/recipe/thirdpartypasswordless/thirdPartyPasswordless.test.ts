@@ -19,22 +19,17 @@
 
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
-import ThirdPartyPasswordless from "../../../../recipe/thirdpartypasswordless";
-import ThirdPartyPasswordlessRaw from "../../../../lib/build/recipe/thirdpartypasswordless/recipe";
-import { Google } from "../../../../recipe/thirdpartypasswordless";
+import ThirdPartyPasswordless from "../../../../lib/ts/recipe/thirdpartypasswordless";
+import ThirdPartyPasswordlessRaw from "../../../../lib/ts/recipe/thirdpartypasswordless/recipe";
+import { Google } from "../../../../lib/ts/recipe/thirdpartypasswordless";
 import assert from "assert";
-import SuperTokens from "../../../..";
-import SuperTokensRaw from "../../../../lib/build/superTokens";
-
-// Run the tests in a DOM environment.
-require("jsdom-global")();
+import SuperTokens from "../../../../lib/ts/index";
+import SuperTokensRaw from "../../../../lib/ts/superTokens";
 
 /*
  * Tests.
  */
 describe("ThirdPartyEmailPassword", function () {
-    before(async function () {});
-
     beforeEach(function () {
         SuperTokensRaw.reset();
     });
@@ -118,7 +113,10 @@ describe("ThirdPartyEmailPassword", function () {
             });
             fail();
         } catch (err) {
-            assert.strictEqual(err.message, "You need to enable either passwordless or third party providers login.");
+            assert.strictEqual(
+                (err as any).message,
+                "You need to enable either passwordless or third party providers login."
+            );
         }
     });
 });

@@ -13,7 +13,7 @@
  * under the License.
  */
 import assert from "assert";
-import { mergeFormFields, getFormattedFormField } from "../../../../lib/build/recipe/emailpassword/utils";
+import { mergeFormFields, getFormattedFormField } from "../../../../lib/ts/recipe/emailpassword/utils";
 import { assertFormFieldsEqual } from "../../../helpers";
 
 describe("Email password utils tests", function () {
