@@ -16,6 +16,7 @@ export declare function validateForm(
 ): Promise<FormFieldError[]>;
 export declare function getCurrentNormalisedUrlPath(): NormalisedURLPath;
 export declare function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<string, string>): string;
+export declare function appendTrailingSlashToURL(stringUrl: string): string;
 export declare function matchRecipeIdUsingQueryParams(recipeId: string): () => boolean;
 export declare function redirectWithFullPageReload(to: string): void;
 export declare function redirectWithHistory(to: string, history: any): void;

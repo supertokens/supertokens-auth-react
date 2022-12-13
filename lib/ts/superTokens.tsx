@@ -26,6 +26,7 @@ import {
 } from "./types";
 import {
     appendQueryParamsToURL,
+    appendTrailingSlashToURL,
     getCurrentNormalisedUrlPath,
     getDefaultCookieScope,
     getOriginOfPage,
@@ -315,6 +316,7 @@ export default class SuperTokens {
             action: "TO_AUTH",
             showSignIn: options.show === "signin",
         });
+        redirectUrl = appendTrailingSlashToURL(redirectUrl);
         redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
         return this.redirectToUrl(redirectUrl, options.history);
     };
@@ -323,7 +325,7 @@ export default class SuperTokens {
         try {
             new URL(redirectUrl); // If full URL, no error thrown, skip in app redirection.
         } catch (e) {
-            // For multi tenancy, If mismatch between websiteDomain and current location, prepand URL relative path with websiteDomain.
+            // For multi tenancy, If mismatch between websiteDomain and current location, prepend URL relative path with websiteDomain.
             const origin = getOriginOfPage().getAsStringDangerous();
             if (origin !== this.appInfo.websiteDomain.getAsStringDangerous()) {
                 redirectUrl = `${this.appInfo.websiteDomain.getAsStringDangerous()}${redirectUrl}`;
