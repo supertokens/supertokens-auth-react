@@ -39,11 +39,8 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            paddingLeft: "100px",
-            paddingRight: "0px",
             // This makes the button look somewhat cleaner if the text wraps
-            paddingTop: "2px",
-            paddingBottom: "2px",
+            padding: "2px 8px",
             borderColor: "#dddddd !important",
 
             "&:hover": {
@@ -54,7 +51,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
 
         providerButtonLeft: {
             width: "34px",
-            marginLeft: "-34px",
+            marginLeft: "66px",
         },
 
         providerButtonLogo: {
@@ -71,6 +68,13 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             fontWeight: 400,
             textAlign: "center",
             justifyContent: "center",
+            overflow: "hidden",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+            display: "inline-block",
+            "&:only-child": {
+                margin: "0 auto",
+            },
         },
 
         providerGoogle: defaultProviderButtonStyle,

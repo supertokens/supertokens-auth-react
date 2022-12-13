@@ -42,11 +42,10 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         },
         providerButton: {
             margin: "auto",
-            paddingLeft: "72px",
             maxWidth: "240px",
         },
         providerButtonLeft: {
-            marginLeft: "-34px",
+            marginLeft: "30px",
         },
     };
     const recipeStyles = getMergedStyles(baseRecipeStyles, thirdPartyEmailPasswordStyle);
