@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Testing
+
+-   Created test for the sign up attempt using duplicate email
+
 ## [0.28.0] - 2022-12-13
 
 ### Breaking change
