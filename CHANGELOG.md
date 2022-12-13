@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changed
+
+-   Trailing slash is added to URL when going back to "Sign In" from "Forgot Password" for consistency
+
 ## [0.27.4] - 2022-12-06
 
 ### Testing
