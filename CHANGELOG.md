@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-### Changed
+### Breaking change
 
 -   Changed styles for social login buttons
 
