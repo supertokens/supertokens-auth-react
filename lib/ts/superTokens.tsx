@@ -293,7 +293,8 @@ export default class SuperTokens {
             }
         }
         if (context.action === "TO_AUTH") {
-            return this.appInfo.websiteBasePath.getAsStringDangerous();
+            const redirectUrl = this.appInfo.websiteBasePath.getAsStringDangerous();
+            return appendTrailingSlashToURL(redirectUrl);
         }
         throw new Error("Should never come here: unexpected redirection context");
     }
@@ -316,7 +317,6 @@ export default class SuperTokens {
             action: "TO_AUTH",
             showSignIn: options.show === "signin",
         });
-        redirectUrl = appendTrailingSlashToURL(redirectUrl);
         redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
         return this.redirectToUrl(redirectUrl, options.history);
     };
