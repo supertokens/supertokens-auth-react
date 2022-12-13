@@ -58,7 +58,7 @@ export default class Apple extends Provider {
 
     getLogo = (): JSX.Element => {
         return (
-            <svg xmlns="http://www.w3.org/2000/svg" width="15.614" height="18.737" viewBox="0 0 15.614 18.737">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15.614" height="18" viewBox="0 0 15.614 18.737">
                 <g id="iconfinder_logo_brand_brands_logos_apple_ios_2993701" transform="translate(-2)">
                     <path
                         id="Path_91415"
