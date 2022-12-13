@@ -41,6 +41,8 @@ import {
     getGeneralError,
     waitForSTElement,
     waitFor,
+    hasMethodBeenCalled,
+    getFieldErrors,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -48,6 +50,7 @@ import {
     SIGN_IN_UP_API,
     SIGN_UP_API,
     SOMETHING_WENT_WRONG_ERROR,
+    EMAIL_EXISTS_API,
 } from "../constants";
 
 // Run the tests in a DOM environment.
@@ -139,6 +142,28 @@ describe("SuperTokens Third Party Email Password", function () {
             await defaultSignUp(page, "thirdpartyemailpassword");
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/dashboard");
+        });
+
+        it("should show error message on sign up with duplicate email", async function () {
+            await toggleSignInSignUp(page);
+
+            // Clear cookies, try to signup with same address.
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, {
+                waitUntil: "networkidle0",
+            });
+            await toggleSignInSignUp(page);
+
+            // Set values.
+            const [, hasEmailExistMethodBeenCalled] = await Promise.all([
+                setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]),
+                hasMethodBeenCalled(page, EMAIL_EXISTS_API),
+            ]);
+
+            // Assert.
+            assert.strictEqual(hasEmailExistMethodBeenCalled, false);
+            let formFieldErrors = await getFieldErrors(page);
+            assert.deepStrictEqual(formFieldErrors, ["This email already exists. Please sign in instead"]);
         });
 
         it("should clear errors when switching to signup", async function () {
