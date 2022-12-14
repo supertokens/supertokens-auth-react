@@ -17,14 +17,7 @@ import chroma from "chroma-js";
 import { getButtonStyle, getDefaultStyles, getMergedStyles } from "../../../../styles/styles";
 import { NormalisedPalette, NormalisedDefaultStyles } from "../../../../types";
 
-const providerColors = {
-    google: "#ea3721",
-    github: "#000",
-    facebook: "#274483",
-    twitter: "#008dd1",
-    apple: "#07093c",
-    custom: "#FFF",
-};
+const defaultProviderButtonStyle = getButtonStyle("white", "black");
 
 export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
     const baseStyles = getDefaultStyles(palette);
@@ -39,59 +32,71 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         },
 
         providerButton: {
-            // Default button height in 34
-            minHeight: "34px",
+            // Default button height in 32
+            minHeight: "32px",
             // this will allow the button to scale with different font sizes and text lengths
-            height: "auto !important",
+            height: "auto",
             display: "flex",
             flexDirection: "row",
-            paddingLeft: "0px",
-            paddingRight: "0px",
+            alignItems: "center",
             // This makes the button look somewhat cleaner if the text wraps
-            paddingTop: "2px",
-            paddingBottom: "2px",
+            padding: "2px 8px",
+            borderColor: "#dddddd !important",
+
+            "&:hover": {
+                filter: "none !important",
+                backgroundColor: "#fafafa",
+            },
         },
 
         providerButtonLeft: {
-            width: "40px",
+            width: "34px",
+            marginLeft: "66px",
         },
 
         providerButtonLogo: {
             height: "30px",
             display: "flex",
-            borderRight: "1px solid rgba(255, 255, 255, 0.6)",
         },
 
         providerButtonLogoCenter: {
+            display: "flex",
             margin: "auto",
         },
 
         providerButtonText: {
-            margin: "auto",
+            fontWeight: 400,
             textAlign: "center",
             justifyContent: "center",
+            overflow: "hidden",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+            display: "inline-block",
+            "&:only-child": {
+                margin: "0 auto",
+            },
         },
 
-        providerGoogle: getButtonStyle(providerColors.google, "white"),
-        providerGitHub: getButtonStyle(providerColors.github, "white", true),
-        providerTwitter: getButtonStyle(providerColors.twitter, "white"),
-        providerFacebook: getButtonStyle(providerColors.facebook, "white"),
-        providerApple: getButtonStyle(providerColors.apple, "white", true),
+        providerGoogle: defaultProviderButtonStyle,
+        providerGitHub: defaultProviderButtonStyle,
+        providerTwitter: defaultProviderButtonStyle,
+        providerFacebook: defaultProviderButtonStyle,
+        providerApple: defaultProviderButtonStyle,
 
         providerCustom: {
-            ...getButtonStyle(providerColors.custom, "white"),
+            ...defaultProviderButtonStyle,
             color: "#000",
-            border: "1px solid #000",
+            border: "1px solid #dddddd",
             "&:active": {
                 outline: "none",
-                border: "1px solid #000",
-                backgroundColor: chroma(providerColors.custom).darken(0.1).hex(),
+                border: "1px solid #dddddd",
+                backgroundColor: chroma("white").darken(0.1).hex(),
                 transition: "background 0s",
                 backgroundSize: "100%",
             },
             "&:focus": {
                 outline: "none",
-                border: "1px solid #000",
+                border: "1px solid #dddddd",
             },
         },
     } as NormalisedDefaultStyles;

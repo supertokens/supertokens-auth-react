@@ -36,6 +36,13 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             flex: "1 1",
             marginTop: "0.75em",
         },
+        providerButton: {
+            margin: "auto",
+            maxWidth: "240px",
+        },
+        providerButtonLeft: {
+            marginLeft: "30px",
+        },
         divider: {
             flex: "3 3",
         },
