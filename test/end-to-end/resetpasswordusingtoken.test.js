@@ -359,7 +359,7 @@ describe("SuperTokens Reset password", function () {
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth");
+            assert.deepStrictEqual(pathname, "/auth/");
         });
     });
 });
