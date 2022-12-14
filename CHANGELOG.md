@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.28.1] - 2022-12-13
+
+### Fixes
+
+-   Trailing slash is added to URL when going back to "Sign In" from "Forgot Password" for consistency (fixes https://github.com/supertokens/supertokens-auth-react/issues/625)
+
 ## [0.28.0] - 2022-12-13
 
 ### Breaking change
