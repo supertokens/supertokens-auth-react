@@ -147,16 +147,35 @@ describe("SuperTokens Third Party Email Password", function () {
         it("should show error message on sign up with duplicate email", async function () {
             await toggleSignInSignUp(page);
 
-            // Set values.
-            const [, hasEmailExistMethodBeenCalled] = await Promise.all([
-                setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]),
-                hasMethodBeenCalled(page, EMAIL_EXISTS_API),
-            ]);
+            const requestHandler = (request) => {
+                if (request.url().includes(EMAIL_EXISTS_API) && request.method() === "GET") {
+                    return request.respond({
+                        status: 200,
+                        headers: {
+                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                            "access-control-allow-credentials": "true",
+                        },
+                        body: JSON.stringify({
+                            status: "OK",
+                            exists: true,
+                        }),
+                    });
+                }
 
-            // Assert.
-            assert.strictEqual(hasEmailExistMethodBeenCalled, false);
-            let formFieldErrors = await getFieldErrors(page);
-            assert.deepStrictEqual(formFieldErrors, ["This email already exists. Please sign in instead"]);
+                return request.continue();
+            };
+
+            try {
+                await page.setRequestInterception(true);
+                page.on("request", requestHandler);
+                await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            }
+
+            let [emailError] = await getFieldErrors(page);
+            assert.deepStrictEqual(emailError, "This email already exists. Please sign in instead");
         });
 
         it("should clear errors when switching to signup", async function () {
