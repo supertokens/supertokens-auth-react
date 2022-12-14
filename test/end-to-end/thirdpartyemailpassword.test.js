@@ -147,13 +147,6 @@ describe("SuperTokens Third Party Email Password", function () {
         it("should show error message on sign up with duplicate email", async function () {
             await toggleSignInSignUp(page);
 
-            // Clear cookies, try to signup with same address.
-            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, {
-                waitUntil: "networkidle0",
-            });
-            await toggleSignInSignUp(page);
-
             // Set values.
             const [, hasEmailExistMethodBeenCalled] = await Promise.all([
                 setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]),
