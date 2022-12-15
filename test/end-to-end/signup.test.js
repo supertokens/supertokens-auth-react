@@ -136,6 +136,8 @@ describe("SuperTokens SignUp", function () {
             await page.evaluate(() => window.SuperTokens.redirectToAuth());
             await page.waitForNavigation({ waitUntil: "networkidle0" });
             let text = await getAuthPageHeaderText(page);
+            let { pathname: pathAfterRedirectToAuth } = await page.evaluate(() => window.location);
+            assert.equal(pathAfterRedirectToAuth, "/auth/");
             // Only the EmailPassword recipe has this header on the sign in page
             assert.deepStrictEqual(text, "Sign In");
         });
