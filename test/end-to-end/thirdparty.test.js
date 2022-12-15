@@ -360,7 +360,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
-            assert.deepStrictEqual(pathname, "/auth");
+            assert.deepStrictEqual(pathname, "/auth/");
             assert(search.endsWith("error=signin"));
         });
 
@@ -391,7 +391,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
-            assert.deepStrictEqual(pathname, "/auth");
+            assert.deepStrictEqual(pathname, "/auth/");
             assert(search.endsWith("error=signin"));
         });
 
@@ -422,7 +422,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
-            assert.deepStrictEqual(pathname, "/auth");
+            assert.deepStrictEqual(pathname, "/auth/");
             assert(search.endsWith("error=signin"));
         });
 
@@ -477,7 +477,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
-            assert.deepStrictEqual(pathname, "/auth");
+            assert.deepStrictEqual(pathname, "/auth/");
             assert(search.endsWith("error=signin"));
         });
 
@@ -508,7 +508,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
-            assert.deepStrictEqual(pathname, "/auth");
+            assert.deepStrictEqual(pathname, "/auth/");
             assert(search.endsWith("error=signin"));
         });
     });

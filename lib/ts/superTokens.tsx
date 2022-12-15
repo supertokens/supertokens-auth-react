@@ -26,6 +26,7 @@ import {
 } from "./types";
 import {
     appendQueryParamsToURL,
+    appendTrailingSlashToURL,
     getCurrentNormalisedUrlPath,
     getDefaultCookieScope,
     getOriginOfPage,
@@ -292,7 +293,8 @@ export default class SuperTokens {
             }
         }
         if (context.action === "TO_AUTH") {
-            return this.appInfo.websiteBasePath.getAsStringDangerous();
+            const redirectUrl = this.appInfo.websiteBasePath.getAsStringDangerous();
+            return appendTrailingSlashToURL(redirectUrl);
         }
         throw new Error("Should never come here: unexpected redirection context");
     }
@@ -323,7 +325,7 @@ export default class SuperTokens {
         try {
             new URL(redirectUrl); // If full URL, no error thrown, skip in app redirection.
         } catch (e) {
-            // For multi tenancy, If mismatch between websiteDomain and current location, prepand URL relative path with websiteDomain.
+            // For multi tenancy, If mismatch between websiteDomain and current location, prepend URL relative path with websiteDomain.
             const origin = getOriginOfPage().getAsStringDangerous();
             if (origin !== this.appInfo.websiteDomain.getAsStringDangerous()) {
                 redirectUrl = `${this.appInfo.websiteDomain.getAsStringDangerous()}${redirectUrl}`;
