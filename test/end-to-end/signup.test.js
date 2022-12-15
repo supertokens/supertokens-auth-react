@@ -286,6 +286,46 @@ describe("SuperTokens SignUp", function () {
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
             ]);
         });
+
+        it("should show error message on sign up with duplicate email", async function () {
+            const requestHandler = (request) => {
+                if (request.url().includes(EMAIL_EXISTS_API) && request.method() === "GET") {
+                    return request.respond({
+                        status: 200,
+                        headers: {
+                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                            "access-control-allow-credentials": "true",
+                        },
+                        body: JSON.stringify({
+                            status: "OK",
+                            exists: false,
+                        }),
+                    });
+                }
+
+                return request.continue();
+            };
+
+            try {
+                await page.setRequestInterception(true);
+                page.on("request", requestHandler);
+                await setInputValues(page, [
+                    { name: "email", value: "john.doe@supertokens.io" },
+                    { name: "password", value: "Str0ngP@assw0rd" },
+                    { name: "name", value: "Supertokens" },
+                    { name: "age", value: "20" },
+                ]);
+                const btn = await waitForSTElement(page, "[data-supertokens='button']");
+                await btn.click();
+                await waitForSTElement(page, "[data-supertokens='inputErrorMessage']");
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            }
+
+            let [emailError] = await getFieldErrors(page);
+            assert.deepStrictEqual(emailError, "This email already exists. Please sign in instead.");
+        });
     });
 });
 
