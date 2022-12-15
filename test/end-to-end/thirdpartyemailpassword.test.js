@@ -41,6 +41,7 @@ import {
     getGeneralError,
     waitForSTElement,
     waitFor,
+    getFieldErrors,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -48,6 +49,7 @@ import {
     SIGN_IN_UP_API,
     SIGN_UP_API,
     SOMETHING_WENT_WRONG_ERROR,
+    EMAIL_EXISTS_API,
 } from "../constants";
 
 // Run the tests in a DOM environment.
@@ -139,6 +141,82 @@ describe("SuperTokens Third Party Email Password", function () {
             await defaultSignUp(page, "thirdpartyemailpassword");
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/dashboard");
+        });
+
+        it("should show error message on sign up with duplicate email on sign up click", async function () {
+            await toggleSignInSignUp(page);
+
+            const requestHandler = (request) => {
+                if (request.url().includes(EMAIL_EXISTS_API) && request.method() === "GET") {
+                    return request.respond({
+                        status: 200,
+                        headers: {
+                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                            "access-control-allow-credentials": "true",
+                        },
+                        body: JSON.stringify({
+                            status: "OK",
+                            exists: false,
+                        }),
+                    });
+                }
+
+                return request.continue();
+            };
+
+            try {
+                await page.setRequestInterception(true);
+                page.on("request", requestHandler);
+                await setInputValues(page, [
+                    { name: "email", value: "john.doe@supertokens.io" },
+                    { name: "password", value: "Str0ngP@assw0rd" },
+                    { name: "name", value: "Supertokens" },
+                    { name: "age", value: "20" },
+                ]);
+                const btn = await waitForSTElement(page, "[data-supertokens='button']");
+                await btn.click();
+                await waitForSTElement(page, "[data-supertokens='inputErrorMessage']");
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            }
+
+            let [emailError] = await getFieldErrors(page);
+            assert.deepStrictEqual(emailError, "This email already exists. Please sign in instead.");
+        });
+
+        it("should show error message when duplicate email is typed", async function () {
+            await toggleSignInSignUp(page);
+
+            const requestHandler = (request) => {
+                if (request.url().includes(EMAIL_EXISTS_API) && request.method() === "GET") {
+                    return request.respond({
+                        status: 200,
+                        headers: {
+                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                            "access-control-allow-credentials": "true",
+                        },
+                        body: JSON.stringify({
+                            status: "OK",
+                            exists: true,
+                        }),
+                    });
+                }
+
+                return request.continue();
+            };
+
+            try {
+                await page.setRequestInterception(true);
+                page.on("request", requestHandler);
+                await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            }
+
+            let [emailError] = await getFieldErrors(page);
+            assert.deepStrictEqual(emailError, "This email already exists. Please sign in instead");
         });
 
         it("should clear errors when switching to signup", async function () {
