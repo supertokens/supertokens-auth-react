@@ -41,7 +41,6 @@ import {
     getGeneralError,
     waitForSTElement,
     waitFor,
-    hasMethodBeenCalled,
     getFieldErrors,
 } from "../helpers";
 import {
@@ -157,7 +156,7 @@ describe("SuperTokens Third Party Email Password", function () {
                         },
                         body: JSON.stringify({
                             status: "OK",
-                            exists: true,
+                            exists: false,
                         }),
                     });
                 }
@@ -168,14 +167,22 @@ describe("SuperTokens Third Party Email Password", function () {
             try {
                 await page.setRequestInterception(true);
                 page.on("request", requestHandler);
-                await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
+                await setInputValues(page, [
+                    { name: "email", value: "john.doe@supertokens.io" },
+                    { name: "password", value: "Str0ngP@assw0rd" },
+                    { name: "name", value: "Supertokens" },
+                    { name: "age", value: "20" },
+                ]);
+                const btn = await waitForSTElement(page, "[data-supertokens='button']");
+                await btn.click();
+                await waitForSTElement(page, "[data-supertokens='inputErrorMessage']");
             } finally {
                 page.off("request", requestHandler);
                 await page.setRequestInterception(false);
             }
 
             let [emailError] = await getFieldErrors(page);
-            assert.deepStrictEqual(emailError, "This email already exists. Please sign in instead");
+            assert.deepStrictEqual(emailError, "This email already exists. Please sign in instead.");
         });
 
         it("should clear errors when switching to signup", async function () {
