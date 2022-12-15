@@ -7,12 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-## [0.28.2] - 2022-12-14
-
-### Testing
-
--   Fix broken tests by (https://github.com/supertokens/supertokens-auth-react/pull/627)
-
 ## [0.28.1] - 2022-12-13
 
 ### Fixes
