@@ -151,7 +151,7 @@ describe("SuperTokens Email Verification", function () {
             }
 
             const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth");
+            assert.deepStrictEqual(pathname, "/auth/");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -197,7 +197,7 @@ describe("SuperTokens Email Verification", function () {
             await page.reload({ waitUntil: ["networkidle0"] });
             // Click on Logout should remove session and redirect to login page
             pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth");
+            assert.deepStrictEqual(pathname, "/auth/");
 
             // In strict mode useEffects may be called twice in development mode,
             // but sometimes the second call is aborted by the navigation in the first
@@ -227,7 +227,7 @@ describe("SuperTokens Email Verification", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth");
+            assert.deepStrictEqual(pathname, "/auth/");
         });
 
         it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified", async function () {
@@ -327,7 +327,7 @@ describe("SuperTokens Email Verification", function () {
             // Click on Logout should remove session and redirect to login page
             await Promise.all([clickLinkWithRightArrow(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth");
+            assert.deepStrictEqual(pathname, "/auth/");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -422,7 +422,7 @@ describe("SuperTokens Email Verification", function () {
             await Promise.all([clickLinkWithRightArrow(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth");
+            assert.deepStrictEqual(pathname, "/auth/");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -442,7 +442,7 @@ describe("SuperTokens Email Verification", function () {
 
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth");
+            assert.deepStrictEqual(pathname, "/auth/");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
