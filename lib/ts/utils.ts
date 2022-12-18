@@ -199,6 +199,10 @@ export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<s
     }
 }
 
+export function appendTrailingSlashToURL(stringUrl: string): string {
+    return stringUrl.endsWith("/") ? stringUrl : stringUrl + "/";
+}
+
 /*
  * Default method for matching recipe route based on query params.
  */

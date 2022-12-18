@@ -26,7 +26,9 @@ function startEndToEnd () {
     sleep 2 # Because the server is responding does not mean the app is ready. Let's wait another 5secs to make sure the app is up.
     echo "Start mocha testing"
 
-    if [[ -z "${MOCHA_FILE}" ]]; then
+    if ! [[ -z "${SPEC_FILES}" ]]; then
+        APP_SERVER=$apiPort TEST_MODE=testing mocha --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config $SPEC_FILES
+    elif [[ -z "${MOCHA_FILE}" ]]; then
         APP_SERVER=$apiPort TEST_MODE=testing mocha --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config test/end-to-end/**/*.test.js
     else
         if ! [[ -z "${CIRCLE_NODE_TOTAL}" ]]; then
@@ -35,6 +37,7 @@ function startEndToEnd () {
         else
             export SPEC_FILES="test/end-to-end/**/*.test.js"
         fi
+
         APP_SERVER=$apiPort TEST_MODE=testing multi="spec=- mocha-junit-reporter=/dev/null" mocha --reporter mocha-multi --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config $SPEC_FILES
     fi
     testPassed=$?;

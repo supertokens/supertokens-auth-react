@@ -22,10 +22,21 @@
     justify-content: space-between;
     color: var(--palette-textPrimary);
 }
+
 [data-supertokens~="thirdPartyPasswordlessDividerText"] {
     flex: 1 1;
     margin-top: 0.75em;
 }
+
 [data-supertokens~="divider"] {
     flex: 3 3;
+}
+
+[data-supertokens~="providerButton"] {
+    margin: "auto";
+    max-width: "240px";
+}
+
+[data-supertokens~="providerButtonLeft"] {
+    margin-left: "30px";
 }

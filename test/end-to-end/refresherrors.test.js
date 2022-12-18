@@ -19,14 +19,14 @@
 import assert from "assert";
 import puppeteer from "puppeteer";
 
-import { clearBrowserCookiesWithoutAffectingConsole, screenshotOnFailure } from "../helpers";
+import { clearBrowserCookiesWithoutAffectingConsole, getTextInDashboardNoAuth, screenshotOnFailure } from "../helpers";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
 import { TEST_CLIENT_BASE_URL } from "../constants";
 
-describe("Rethrowing errors", function () {
-    describe("500 on refresh", function () {
+describe("Refresh errors", function () {
+    describe("500", function () {
         let browser;
         let page;
 
@@ -50,7 +50,7 @@ describe("Rethrowing errors", function () {
             await clearBrowserCookiesWithoutAffectingConsole(page, []);
         });
 
-        it("rethrow error on refresh", async function () {
+        it("should be handled as logged out", async function () {
             await page.evaluate(() => {
                 document.cookie = "sAccessToken=asdfasdf;expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax";
                 document.cookie = "sIdRefreshToken=asdfasdf;expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax";
@@ -67,13 +67,13 @@ describe("Rethrowing errors", function () {
                 }
             });
             await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.goto(`${TEST_CLIENT_BASE_URL}/dashboard-no-auth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            await new Promise((res) => setTimeout(res, 1500));
 
-            // The last thing logged should be the error from the error boundary
-            assert.strictEqual(consoleLogs.pop(), "ST_THROWN_ERROR");
+            // We don't rethrow from doesSessionExist
+            let text = await getTextInDashboardNoAuth(page);
+            assert.strictEqual(text, "Not logged in");
         });
     });
 });

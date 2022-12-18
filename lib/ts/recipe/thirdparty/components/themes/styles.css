@@ -10,64 +10,56 @@
 }
 
 [data-supertokens~="providerButton"] {
-    min-height: 34px;
-    height: auto !important;
+    min-height: 32px;
+    height: auto;
     display: flex;
     flex-direction: row;
-    padding: 2px 0;
+    align-items: center;
+    padding: 2px 8px;
+
+    background-color: white;
+    border-color: rgb(221, 221, 221) !important;
+    color: black;
+}
+
+[data-supertokens~="providerButton"]:hover {
+    filter: none !important;
+    background-color: #fafafa;
 }
 
 [data-supertokens~="providerButtonLeft"] {
-    width: 40px;
+    width: 34px;
+    margin-left: 66px;
 }
 
 [data-supertokens~="providerButtonLogo"] {
     height: 30px;
     display: flex;
-    border-right: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 [data-supertokens~="providerButtonLogoCenter"] {
+    display: flex;
     margin: auto;
 }
 
 [data-supertokens~="providerButtonText"] {
-    margin: auto;
+    font-weight: 400;
     text-align: center;
     justify-content: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
 }
 
-[data-supertokens~="providerGoogle"] {
-    background-color: #ea3721;
-    border-color: #d82313;
-    color: white;
-}
-
-[data-supertokens~="providerGitHub"] {
-    background-color: #000;
-    border-color: #000;
-    color: white;
-}
-[data-supertokens~="providerTwitter"] {
-    background-color: #274483;
-    border-color: #143875;
-    color: white;
-}
-[data-supertokens~="providerFacebook"] {
-    background-color: #008dd1;
-    border-color: #007fc2;
-    color: white;
-}
-[data-supertokens~="providerApple"] {
-    background-color: #07093c;
-    border-color: #010030;
-    color: white;
+[data-supertokens~="providerButtonText"]:only-child {
+    margin: 0 auto;
 }
 
 [data-supertokens~="providerCustom"] {
     background-color: #000;
     border-color: #000;
-    color: white;
+    color: black;
 }
 
 [data-supertokens~="providerCustom"]:active {
@@ -79,6 +71,6 @@
 }
 
 [data-supertokens~="providerCustom"]:focus {
-    border-color: #000;
+    border-color: #dddddd;
     outline: none;
 }
