@@ -24,7 +24,6 @@ import { FeatureBaseProps } from "../../../../../types";
 import { getQueryParams } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
-import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
 import SuperTokens from "../../../../../superTokens";
 
@@ -55,8 +54,6 @@ class ResetPasswordUsingToken extends PureComponent<
 
     render = (): JSX.Element => {
         const enterEmailFormFeature = this.props.recipe.config.resetPasswordUsingTokenFeature.enterEmailForm;
-
-        const componentOverrides = this.props.recipe.config.override.components;
 
         const submitNewPasswordFormFeature =
             this.props.recipe.config.resetPasswordUsingTokenFeature.submitNewPasswordForm;
@@ -105,25 +102,23 @@ class ResetPasswordUsingToken extends PureComponent<
         };
 
         return (
-            <ComponentOverrideContext.Provider value={componentOverrides}>
-                <FeatureWrapper
-                    useShadowDom={this.props.recipe.config.useShadowDom}
-                    defaultStore={defaultTranslationsEmailPassword}>
-                    <Fragment>
-                        {/* No custom theme, use default. */}
-                        {this.props.children === undefined && <ResetPasswordUsingTokenTheme {...props} />}
-                        {/* Otherwise, custom theme is provided, propagate props. */}
-                        {this.props.children &&
-                            React.Children.map(this.props.children, (child) => {
-                                if (React.isValidElement(child)) {
-                                    return React.cloneElement(child, props);
-                                }
+            <FeatureWrapper
+                useShadowDom={this.props.recipe.config.useShadowDom}
+                defaultStore={defaultTranslationsEmailPassword}>
+                <Fragment>
+                    {/* No custom theme, use default. */}
+                    {this.props.children === undefined && <ResetPasswordUsingTokenTheme {...props} />}
+                    {/* Otherwise, custom theme is provided, propagate props. */}
+                    {this.props.children &&
+                        React.Children.map(this.props.children, (child) => {
+                            if (React.isValidElement(child)) {
+                                return React.cloneElement(child, props);
+                            }
 
-                                return child;
-                            })}
-                    </Fragment>
-                </FeatureWrapper>
-            </ComponentOverrideContext.Provider>
+                            return child;
+                        })}
+                </Fragment>
+            </FeatureWrapper>
         );
     };
 }

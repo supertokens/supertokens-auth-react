@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { UserInput } from "./types";
+import { ComponentOverrideMap, UserInput } from "./types";
 
 import EmailPassword from "./recipe";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
@@ -23,6 +23,7 @@ import { getNormalisedUserContext } from "../../utils";
 import { User } from "../authRecipe/types";
 import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import { PropsWithChildren } from "react";
+import { ComponentsOverrideContextProvider } from "../../components/componentOverride/componentOverrideContext";
 
 export default class Wrapper {
     static init(config?: UserInput) {
@@ -173,6 +174,7 @@ export default class Wrapper {
     static ResetPasswordUsingToken = (prop?: any) =>
         EmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword", prop);
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
+    static ComponentsOverrideProvider = ComponentsOverrideContextProvider<ComponentOverrideMap>;
 }
 
 const init = Wrapper.init;
@@ -185,6 +187,7 @@ const doesEmailExist = Wrapper.doesEmailExist;
 const SignInAndUp = Wrapper.SignInAndUp;
 const getResetPasswordTokenFromURL = Wrapper.getResetPasswordTokenFromURL;
 const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
+const ComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 
 export {
     init,
@@ -199,6 +202,7 @@ export {
     getResetPasswordTokenFromURL,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
+    ComponentsOverrideProvider,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

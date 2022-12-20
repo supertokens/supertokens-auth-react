@@ -16,7 +16,6 @@
 import { FormField, FormFieldBaseConfig, NormalisedFormField } from "../../types";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
 import OverrideableBuilder from "supertokens-js-override";
-import { ComponentOverrideMap } from "./types";
 
 import {
     Config,
@@ -70,10 +69,8 @@ export function normaliseEmailPasswordConfig(config: Config): NormalisedConfig {
             originalImplementation: RecipeInterface,
             builder?: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
-        components: ComponentOverrideMap;
     } = {
         functions: (originalImplementation: RecipeInterface) => originalImplementation,
-        components: {},
         ...config.override,
     };
 

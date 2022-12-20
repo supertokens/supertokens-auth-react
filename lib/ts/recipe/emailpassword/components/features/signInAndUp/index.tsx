@@ -30,7 +30,6 @@ import { getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { SignInAndUpState } from "../../../types";
 import Recipe from "../../../recipe";
-import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import { useMemo } from "react";
@@ -187,31 +186,27 @@ export const SignInAndUpFeature: React.FC<
     const childProps = useChildProps(props.recipe, state, dispatch, props.history);
 
     return (
-        <ComponentOverrideContext.Provider value={props.recipe.config.override.components}>
-            <FeatureWrapper
-                useShadowDom={props.recipe.config.useShadowDom}
-                defaultStore={defaultTranslationsEmailPassword}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {props.children === undefined && (
-                        <SignInAndUpTheme {...childProps} featureState={state} dispatch={dispatch} />
-                    )}
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {props.children &&
-                        React.Children.map(props.children, (child) => {
-                            if (React.isValidElement(child)) {
-                                return React.cloneElement(child, {
-                                    ...childProps,
-                                    featureState: state,
-                                    dispatch: dispatch,
-                                });
-                            }
+        <FeatureWrapper useShadowDom={props.recipe.config.useShadowDom} defaultStore={defaultTranslationsEmailPassword}>
+            <Fragment>
+                {/* No custom theme, use default. */}
+                {props.children === undefined && (
+                    <SignInAndUpTheme {...childProps} featureState={state} dispatch={dispatch} />
+                )}
+                {/* Otherwise, custom theme is provided, propagate props. */}
+                {props.children &&
+                    React.Children.map(props.children, (child) => {
+                        if (React.isValidElement(child)) {
+                            return React.cloneElement(child, {
+                                ...childProps,
+                                featureState: state,
+                                dispatch: dispatch,
+                            });
+                        }
 
-                            return child;
-                        })}
-                </Fragment>
-            </FeatureWrapper>
-        </ComponentOverrideContext.Provider>
+                        return child;
+                    })}
+            </Fragment>
+        </FeatureWrapper>
     );
 };
 

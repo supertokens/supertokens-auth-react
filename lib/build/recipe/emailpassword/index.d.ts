@@ -1,4 +1,4 @@
-import { UserInput } from "./types";
+import { ComponentOverrideMap, UserInput } from "./types";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
@@ -120,6 +120,13 @@ export default class Wrapper {
     static SignInAndUpTheme: typeof SignInAndUpTheme;
     static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
+    static ComponentsOverrideProvider: ({
+        children,
+        components,
+    }: {
+        children: import("react").ReactNode;
+        components: ComponentOverrideMap;
+    }) => import("@emotion/react/jsx-runtime").JSX.Element;
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
@@ -136,6 +143,13 @@ declare const SignInAndUp: (
 ) => JSX.Element;
 declare const getResetPasswordTokenFromURL: typeof Wrapper.getResetPasswordTokenFromURL;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
+declare const ComponentsOverrideProvider: ({
+    children,
+    components,
+}: {
+    children: import("react").ReactNode;
+    components: ComponentOverrideMap;
+}) => import("@emotion/react/jsx-runtime").JSX.Element;
 export {
     init,
     SignInAndUp,
@@ -149,6 +163,7 @@ export {
     getResetPasswordTokenFromURL,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
+    ComponentsOverrideProvider,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,
