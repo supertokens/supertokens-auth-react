@@ -1,7 +1,9 @@
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import ThirdPartyEmailpassword, { Github, Google } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
-import EmailVerification from "supertokens-auth-react/recipe/emailverification";
+import EmailVerification, {
+    EmailVerificationComponentsOverrideProvider,
+} from "supertokens-auth-react/recipe/emailverification";
 import "./App.css";
 import Home from "./Home";
 import OtpScreen from "./OtpScreen";
@@ -28,14 +30,6 @@ SuperTokens.init({
     recipeList: [
         EmailVerification.init({
             mode: "REQUIRED",
-
-            override: {
-                components: {
-                    EmailVerificationSendVerifyEmail_Override: () => {
-                        return <OtpScreen />;
-                    },
-                },
-            },
         }),
         ThirdPartyEmailpassword.init({
             signInAndUpFeature: {
@@ -49,24 +43,29 @@ SuperTokens.init({
 function App() {
     return (
         <SuperTokensWrapper>
-            <div className="App">
-                <Router>
-                    <Routes>
-                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
-                        <Route
-                            path="/"
-                            element={
-                                /* This protects the "/" route so that it shows 
+            <EmailVerificationComponentsOverrideProvider
+                components={{
+                    EmailVerificationSendVerifyEmail_Override: () => <OtpScreen />,
+                }}>
+                <div className="App">
+                    <Router>
+                        <Routes>
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                            <Route
+                                path="/"
+                                element={
+                                    /* This protects the "/" route so that it shows 
                                 <Home /> only if the user is logged in.
                                 Else it redirects the user to "/auth" */
-                                <SessionAuth>
-                                    <Home />
-                                </SessionAuth>
-                            }
-                        />
-                    </Routes>
-                </Router>
-            </div>
+                                    <SessionAuth>
+                                        <Home />
+                                    </SessionAuth>
+                                }
+                            />
+                        </Routes>
+                    </Router>
+                </div>
+            </EmailVerificationComponentsOverrideProvider>
         </SuperTokensWrapper>
     );
 }
