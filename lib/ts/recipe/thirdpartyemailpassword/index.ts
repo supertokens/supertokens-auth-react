@@ -29,6 +29,7 @@ import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../
 import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
 import { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import { PropsWithChildren } from "react";
+import { RecipeComponentsOverrideContextProvider } from "./components/componentOverride/componentOverrideContext";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -310,6 +311,7 @@ export default class Wrapper {
         ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword", prop);
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
     static ThirdPartySignInAndUpCallbackTheme = ThirdPartySignInAndUpCallbackTheme;
+    static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
 const init = Wrapper.init;
@@ -317,6 +319,7 @@ const signOut = Wrapper.signOut;
 const SignInAndUp = Wrapper.SignInAndUp;
 const ThirdPartySignInAndUpCallback = Wrapper.ThirdPartySignInAndUpCallback;
 const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
+const ThirdpartyEmailPasswordComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 const submitNewPassword = Wrapper.submitNewPassword;
 const sendPasswordResetEmail = Wrapper.sendPasswordResetEmail;
 const emailPasswordSignIn = Wrapper.emailPasswordSignIn;
@@ -343,6 +346,7 @@ export {
     Github,
     SignInAndUp,
     SignInAndUpTheme,
+    ThirdpartyEmailPasswordComponentsOverrideProvider,
     ThirdPartySignInAndUpCallback,
     ThirdPartySignInAndUpCallbackTheme,
     signOut,

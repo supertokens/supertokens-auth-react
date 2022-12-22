@@ -27,6 +27,7 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 import { useMemo } from "react";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import { useOverrideContext } from "../../componentOverride/componentOverrideContext";
 
 export const useFeatureReducer = () => {
     return React.useReducer(
@@ -96,7 +97,8 @@ export const SignInAndUpFeature: React.FC<PropType> = (props) => {
     const [state, dispatch] = useFeatureReducer();
     const childProps = useChildProps(props.recipe);
 
-    const componentOverrides = props.recipe.config.override.components;
+    const componentOverrides = useOverrideContext();
+
     return (
         <ComponentOverrideContext.Provider value={componentOverrides}>
             <FeatureWrapper

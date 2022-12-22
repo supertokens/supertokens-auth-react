@@ -34,6 +34,7 @@ import {
 
 import { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
 import { EmailPasswordSignInAndUpAction } from "../../../../emailpassword/types";
+import { useOverrideContext } from "../../componentOverride/componentOverrideContext";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
@@ -67,6 +68,8 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         { error: tpState.error || epState.error }
     );
 
+    const componentOverrides = useOverrideContext();
+
     const combinedTPDispatch = React.useCallback<typeof tpDispatch>(
         (action) => {
             dispatch(action);
@@ -90,7 +93,6 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         props.history
     )!;
 
-    const componentOverrides = props.recipe.config.override.components;
     const childProps = {
         emailPasswordRecipe: props.recipe.emailPasswordRecipe,
         thirdPartyRecipe: props.recipe.thirdPartyRecipe,

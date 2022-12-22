@@ -50,7 +50,6 @@ export declare type UserInput = {
             originalImplementation: RecipeInterface,
             builder?: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
-        components?: ComponentOverrideMap;
     };
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type Config = UserInput &

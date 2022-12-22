@@ -31,6 +31,7 @@ import { RecipeInterface, StateObject, ThirdPartyUserType as User } from "supert
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./utils";
 import { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import { PropsWithChildren } from "react";
+import { RecipeComponentsOverrideContextProvider } from "./components/componentOverride/componentOverrideContext";
 export default class Wrapper {
     /*
      * Static attributes.
@@ -177,6 +178,7 @@ export default class Wrapper {
     static SignInAndUpCallback = (prop?: any) =>
         ThirdParty.getInstanceOrThrow().getFeatureComponent("signinupcallback", prop);
     static SignInAndUpCallbackTheme = SignInAndUpCallbackTheme;
+    static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
 const init = Wrapper.init;
@@ -194,6 +196,7 @@ const getAuthStateFromURL = Wrapper.getAuthStateFromURL;
 const signInAndUp = Wrapper.signInAndUp;
 const SignInAndUp = Wrapper.SignInAndUp;
 const SignInAndUpCallback = Wrapper.SignInAndUpCallback;
+const ThirdpartyComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 
 export {
     init,
@@ -216,6 +219,7 @@ export {
     SignInAndUpTheme,
     SignInAndUpCallback,
     SignInAndUpCallbackTheme,
+    ThirdpartyComponentsOverrideProvider,
     signOut,
     User,
     GetRedirectionURLContext,

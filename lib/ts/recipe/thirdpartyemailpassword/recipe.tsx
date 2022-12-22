@@ -98,7 +98,6 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                           functions: (_: any) => {
                               return getEmailPasswordImpl(this.recipeImpl);
                           },
-                          components: this.config.override.components,
                       },
                   });
 
@@ -126,7 +125,6 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                           functions: (_: any) => {
                               return getThirdPartyImpl(this.recipeImpl);
                           },
-                          components: this.config.override.components,
                       },
                   });
     }

@@ -29,6 +29,7 @@ import { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 import * as PasswordlessUtilFunctions from "../passwordless/utils";
 import { PropsWithChildren } from "react";
+import { RecipeComponentsOverrideContextProvider } from "./components/componentOverride/componentOverrideContext";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -344,6 +345,7 @@ export default class Wrapper {
     static PasswordlessLinkClickedTheme = LinkClickedScreen;
     static PasswordlessLinkClicked = (prop?: any) =>
         ThirdPartyPasswordless.getInstanceOrThrow().getFeatureComponent("linkClickedScreen", prop);
+    static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
 const init = Wrapper.init;
@@ -373,6 +375,7 @@ const clearPasswordlessLoginAttemptInfo = Wrapper.clearPasswordlessLoginAttemptI
 const SignInAndUp = Wrapper.SignInAndUp;
 const ThirdPartySignInAndUpCallback = Wrapper.ThirdPartySignInAndUpCallback;
 const PasswordlessLinkClicked = Wrapper.PasswordlessLinkClicked;
+const ThirdpartyPasswordlessComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 
 export {
     init,
@@ -404,6 +407,7 @@ export {
     SignInAndUp,
     SignInUpTheme,
     ThirdPartySignInAndUpCallback,
+    ThirdpartyPasswordlessComponentsOverrideProvider,
     signOut,
     PasswordlessLinkClicked,
     GetRedirectionURLContext,

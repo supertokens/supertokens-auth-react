@@ -8,13 +8,3 @@ type ContextType<T> =
     | "IS_DEFAULT";
 
 export const ComponentOverrideContext = React.createContext<ContextType<any>>("IS_DEFAULT");
-
-export const ComponentsOverrideContextProvider = <T extends Record<string, ComponentOverride<any>>>({
-    children,
-    components,
-}: {
-    children: React.ReactNode;
-    components: T;
-}) => {
-    return <ComponentOverrideContext.Provider value={{ ...components }}>{children}</ComponentOverrideContext.Provider>;
-};

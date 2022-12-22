@@ -26,6 +26,8 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
 import SuperTokens from "../../../../../superTokens";
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import { RecipeComponentsOverrideContextConsumer } from "../../componentOverride/componentOverrideContext";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
@@ -102,23 +104,29 @@ class ResetPasswordUsingToken extends PureComponent<
         };
 
         return (
-            <FeatureWrapper
-                useShadowDom={this.props.recipe.config.useShadowDom}
-                defaultStore={defaultTranslationsEmailPassword}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {this.props.children === undefined && <ResetPasswordUsingTokenTheme {...props} />}
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {this.props.children &&
-                        React.Children.map(this.props.children, (child) => {
-                            if (React.isValidElement(child)) {
-                                return React.cloneElement(child, props);
-                            }
+            <RecipeComponentsOverrideContextConsumer>
+                {(value) => (
+                    <ComponentOverrideContext.Provider value={value}>
+                        <FeatureWrapper
+                            useShadowDom={this.props.recipe.config.useShadowDom}
+                            defaultStore={defaultTranslationsEmailPassword}>
+                            <Fragment>
+                                {/* No custom theme, use default. */}
+                                {this.props.children === undefined && <ResetPasswordUsingTokenTheme {...props} />}
+                                {/* Otherwise, custom theme is provided, propagate props. */}
+                                {this.props.children &&
+                                    React.Children.map(this.props.children, (child) => {
+                                        if (React.isValidElement(child)) {
+                                            return React.cloneElement(child, props);
+                                        }
 
-                            return child;
-                        })}
-                </Fragment>
-            </FeatureWrapper>
+                                        return child;
+                                    })}
+                            </Fragment>
+                        </FeatureWrapper>
+                    </ComponentOverrideContext.Provider>
+                )}
+            </RecipeComponentsOverrideContextConsumer>
         );
     };
 }

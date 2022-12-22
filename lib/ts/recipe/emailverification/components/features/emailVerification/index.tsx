@@ -23,13 +23,14 @@ import { EmailVerificationTheme } from "../../themes/emailVerification";
 import { FeatureBaseProps } from "../../../../../types";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
-import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { SessionContext } from "../../../../session";
 import { defaultTranslationsEmailVerification } from "../../themes/translations";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import { useUserContext } from "../../../../../usercontext";
 import Session from "../../../../session/recipe";
 import { redirectToAuth } from "../../../../..";
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import { useOverrideContext } from "../../componentOverride/componentOverrideContext";
 
 type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any };
 
@@ -37,6 +38,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     const sessionContext = useContext(SessionContext);
     const [status, setStatus] = useState("LOADING");
     const userContext = useUserContext();
+    const componentOverrides = useOverrideContext();
 
     const redirectToAuthWithHistory = useCallback(async () => {
         await redirectToAuth({ redirectBack: false, history: props.history });
@@ -113,8 +115,6 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     if (status === "LOADING") {
         return <Fragment />;
     }
-
-    const componentOverrides = props.recipe.config.override.components;
 
     const sendVerifyEmailScreenFeature = props.recipe.config.sendVerifyEmailScreen;
 

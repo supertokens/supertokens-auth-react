@@ -34,6 +34,7 @@ import { getLoginAttemptInfo } from "../../../utils";
 import STGeneralError from "supertokens-web-js/utils/error";
 import Session from "../../../../session/recipe";
 import SuperTokens from "../../../../../superTokens";
+import { useOverrideContext } from "../../componentOverride/componentOverrideContext";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -140,7 +141,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     );
     useOnMountAPICall(consumeCodeAtMount, handleConsumeResp, handleConsumeError);
 
-    const componentOverrides = props.recipe.config.override.components;
+    const componentOverrides = useOverrideContext();
 
     const linkClickedScreen = props.recipe.config.linkClickedScreenFeature;
 

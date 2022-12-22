@@ -43,7 +43,6 @@ export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
 
     const override: any = {
         functions: (originalImplementation: RecipeInterface) => originalImplementation,
-        components: {},
         ...config.override,
     };
 

@@ -78,6 +78,11 @@ export default class Wrapper {
     static SignInAndUpTheme: import("react").FC<import("./types").SignInAndUpThemeProps>;
     static SignInAndUpCallback: (prop?: any) => JSX.Element;
     static SignInAndUpCallbackTheme: import("react").ComponentType<{}>;
+    static ComponentsOverrideProvider: import("react").FC<
+        PropsWithChildren<{
+            components: import("./types").ComponentOverrideMap;
+        }>
+    >;
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
@@ -99,6 +104,11 @@ declare const SignInAndUp: (
     }>
 ) => JSX.Element;
 declare const SignInAndUpCallback: (prop?: any) => JSX.Element;
+declare const ThirdpartyComponentsOverrideProvider: import("react").FC<
+    PropsWithChildren<{
+        components: import("./types").ComponentOverrideMap;
+    }>
+>;
 export {
     init,
     Apple,
@@ -120,6 +130,7 @@ export {
     SignInAndUpTheme,
     SignInAndUpCallback,
     SignInAndUpCallbackTheme,
+    ThirdpartyComponentsOverrideProvider,
     signOut,
     User,
     GetRedirectionURLContext,
