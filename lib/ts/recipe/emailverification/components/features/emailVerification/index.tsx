@@ -30,7 +30,7 @@ import { useUserContext } from "../../../../../usercontext";
 import Session from "../../../../session/recipe";
 import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { useOverrideContext } from "../../componentOverride/componentOverrideContext";
+import { useOverrideContext } from "../../../componentOverrideContext";
 
 type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any };
 

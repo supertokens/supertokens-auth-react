@@ -34,7 +34,7 @@ import {
 
 import { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
 import { EmailPasswordSignInAndUpAction } from "../../../../emailpassword/types";
-import { useOverrideContext } from "../../componentOverride/componentOverrideContext";
+import { useOverrideContext } from "../../../componentOverrideContext";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;

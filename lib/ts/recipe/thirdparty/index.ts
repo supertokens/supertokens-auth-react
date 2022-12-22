@@ -31,7 +31,7 @@ import { RecipeInterface, StateObject, ThirdPartyUserType as User } from "supert
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./utils";
 import { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import { PropsWithChildren } from "react";
-import { RecipeComponentsOverrideContextProvider } from "./components/componentOverride/componentOverrideContext";
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 export default class Wrapper {
     /*
      * Static attributes.

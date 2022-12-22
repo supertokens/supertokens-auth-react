@@ -29,7 +29,7 @@ import { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 import * as PasswordlessUtilFunctions from "../passwordless/utils";
 import { PropsWithChildren } from "react";
-import { RecipeComponentsOverrideContextProvider } from "./components/componentOverride/componentOverrideContext";
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 
 export default class Wrapper {
     static init(config: UserInput) {

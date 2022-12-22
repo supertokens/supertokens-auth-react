@@ -32,7 +32,7 @@ import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
 import Session from "../../../../session/recipe";
 import SuperTokens from "../../../../../superTokens";
-import { useOverrideContext } from "../../componentOverride/componentOverrideContext";
+import { useOverrideContext } from "../../../componentOverrideContext";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 

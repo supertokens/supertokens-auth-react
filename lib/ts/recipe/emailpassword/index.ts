@@ -23,7 +23,7 @@ import { getNormalisedUserContext } from "../../utils";
 import { User } from "../authRecipe/types";
 import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import { PropsWithChildren } from "react";
-import { RecipeComponentsOverrideContextProvider } from "./components/componentOverride/componentOverrideContext";
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 
 export default class Wrapper {
     static init(config?: UserInput) {

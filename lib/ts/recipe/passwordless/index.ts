@@ -23,7 +23,7 @@ import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recip
 import { getNormalisedUserContext } from "../../utils";
 import * as UtilFunctions from "./utils";
 import { PropsWithChildren } from "react";
-import { RecipeComponentsOverrideContextProvider } from "./components/componentOverride/componentOverrideContext";
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 
 export default class Wrapper {
     static init(config: UserInput) {

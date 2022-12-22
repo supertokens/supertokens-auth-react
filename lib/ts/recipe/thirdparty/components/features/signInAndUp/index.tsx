@@ -27,7 +27,7 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 import { useMemo } from "react";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
-import { useOverrideContext } from "../../componentOverride/componentOverrideContext";
+import { useOverrideContext } from "../../../componentOverrideContext";
 
 export const useFeatureReducer = () => {
     return React.useReducer(

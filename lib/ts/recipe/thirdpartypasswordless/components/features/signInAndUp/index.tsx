@@ -36,7 +36,7 @@ import { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
 import { PasswordlessSignInUpAction } from "../../../../passwordless/types";
 import { useUserContext } from "../../../../../usercontext";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { useOverrideContext } from "../../componentOverride/componentOverrideContext";
+import { useOverrideContext } from "../../../componentOverrideContext";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;

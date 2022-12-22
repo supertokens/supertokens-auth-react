@@ -22,7 +22,7 @@ import EmailVerificationTheme from "./components/themes/emailVerification";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { getNormalisedUserContext } from "../../utils";
 import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/emailverification";
-import { RecipeComponentsOverrideContextProvider } from "./components/componentOverride/componentOverrideContext";
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 
 export default class Wrapper {
     static EmailVerification = (prop?: any) =>

@@ -29,7 +29,7 @@ import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../
 import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
 import { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import { PropsWithChildren } from "react";
-import { RecipeComponentsOverrideContextProvider } from "./components/componentOverride/componentOverrideContext";
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 
 export default class Wrapper {
     static init(config: UserInput) {

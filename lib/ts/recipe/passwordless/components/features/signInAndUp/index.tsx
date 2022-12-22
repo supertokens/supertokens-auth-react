@@ -34,7 +34,7 @@ import { FeatureBaseProps } from "../../../../../types";
 import { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
 import { useUserContext } from "../../../../../usercontext";
 import { getLoginAttemptInfo, setLoginAttemptInfo } from "../../../utils";
-import { useOverrideContext } from "../../componentOverride/componentOverrideContext";
+import { useOverrideContext } from "../../../componentOverrideContext";
 
 export const useSuccessInAnotherTabChecker = (
     state: SignInUpState,

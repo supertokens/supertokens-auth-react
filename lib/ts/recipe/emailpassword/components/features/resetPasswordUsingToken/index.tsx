@@ -27,7 +27,7 @@ import Recipe from "../../../recipe";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
 import SuperTokens from "../../../../../superTokens";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { RecipeComponentsOverrideContextConsumer } from "../../componentOverride/componentOverrideContext";
+import { RecipeComponentsOverrideContextConsumer } from "../../../componentOverrideContext";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
