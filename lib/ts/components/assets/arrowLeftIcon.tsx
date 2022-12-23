@@ -21,9 +21,7 @@
  * Component.
  */
 
-export default function ArrowLeftIcon(): JSX.Element {
-    // TODO: fill color
-
+export default function ArrowLeftIcon({ color }: { color: string }): JSX.Element {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -32,6 +30,7 @@ export default function ArrowLeftIcon(): JSX.Element {
             viewBox="0 0 11.272 9.49"
             data-supertokens="arrowLeftIcon">
             <path
+                fill={color}
                 stroke="#fff"
                 strokeWidth="0.75px"
                 d="M9.931 5.2h.016-7.041L5.12 7.41a.581.581 0 0 1 0 .817l-.344.345a.576.576 0 0 1-.813 0L.168 4.778a.58.58 0 0 1 0-.816L3.962.168a.577.577 0 0 1 .813 0l.345.344a.57.57 0 0 1 .168.407.553.553 0 0 1-.168.4l-2.239 2.23h7.058a.6.6 0 0 1 .584.59v.487a.585.585 0 0 1-.592.574z"

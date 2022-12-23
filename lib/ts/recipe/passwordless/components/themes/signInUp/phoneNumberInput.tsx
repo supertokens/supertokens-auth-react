@@ -20,8 +20,7 @@
 import phoneNumberInputLibStyles from "intl-tel-input/build/css/intlTelInput.css";
 import intlTelInput from "intl-tel-input";
 
-// eslint-disable no-unused-vars
-import React, { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import { InputProps } from "../../../../emailpassword/components/library/input";
 import ErrorIcon from "../../../../../components/assets/errorIcon";

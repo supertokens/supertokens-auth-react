@@ -1,5 +1,5 @@
 import { Dispatch } from "react";
-import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
+import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -61,10 +61,10 @@ export declare type NormalisedConfig = {
         ) => Promise<string | undefined> | string | undefined;
         privacyPolicyLink?: string;
         termsOfServiceLink?: string;
-        emailOrPhoneFormStyle: Styles;
-        userInputCodeFormStyle: Styles;
-        linkSentScreenStyle: Styles;
-        closeTabScreenStyle: Styles;
+        emailOrPhoneFormStyle: string;
+        userInputCodeFormStyle: string;
+        linkSentScreenStyle: string;
+        closeTabScreenStyle: string;
         disableDefaultUI?: boolean;
     };
     linkClickedScreenFeature: PasswordlessNormalisedBaseConfig;
@@ -84,10 +84,10 @@ export declare type SignInUpFeatureConfigInput = {
     resendEmailOrSMSGapInSeconds?: number;
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
-    emailOrPhoneFormStyle?: Styles;
-    userInputCodeFormStyle?: Styles;
-    linkSentScreenStyle?: Styles;
-    closeTabScreenStyle?: Styles;
+    emailOrPhoneFormStyle?: string;
+    userInputCodeFormStyle?: string;
+    linkSentScreenStyle?: string;
+    closeTabScreenStyle?: string;
 };
 export declare type UserInput = (
     | {

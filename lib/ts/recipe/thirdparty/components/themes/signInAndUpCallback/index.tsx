@@ -18,6 +18,9 @@
 import { PureComponent } from "react";
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { hasFontDefined } from "../../../../../styles/styles";
+import { NormalisedConfig } from "../../../types";
+import { ThemeBase } from "../themeBase";
 
 /*
  * Component.
@@ -40,7 +43,18 @@ class ThirdPartySignInAndUpCallbackTheme extends PureComponent {
     };
 }
 
-export const SignInAndUpCallbackTheme = withOverride(
+const SignInAndUpCallbackThemeWithOverride = withOverride(
     "ThirdPartySignInAndUpCallbackTheme",
     ThirdPartySignInAndUpCallbackTheme
 );
+
+export const SignInAndUpCallbackTheme = (props: { config: NormalisedConfig }) => {
+    const hasFont = hasFontDefined(props.config.rootStyle);
+    return (
+        <ThemeBase
+            loadDefaultFont={!hasFont}
+            userStyles={[props.config.rootStyle, props.config.signInAndUpFeature.style]}>
+            <SignInAndUpCallbackThemeWithOverride />
+        </ThemeBase>
+    );
+};

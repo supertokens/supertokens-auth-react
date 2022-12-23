@@ -30,7 +30,7 @@ type ButtonProps = {
 export default function BackButton({ onClick }: ButtonProps): JSX.Element {
     return (
         <button onClick={onClick} data-supertokens="backButton backButtonCommon">
-            <HeavyArrowLeftIcon />
+            <HeavyArrowLeftIcon color="rgb(var(--palette-textTitle))" />
         </button>
     );
 }

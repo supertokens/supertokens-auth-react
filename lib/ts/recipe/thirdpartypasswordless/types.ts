@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import { FeatureBaseConfig, Styles } from "../../types";
+import { FeatureBaseConfig } from "../../types";
 import {
     GetRedirectionURLContext as PasswordlessGetRedirectionURLContext,
     OnHandleEventContext as PasswordlessOnHandleEventContext,
@@ -135,7 +135,7 @@ export type NormalisedConfig = {
     passwordlessUserInput: PwlessUserInput | undefined;
     thirdpartyUserInput: TPUserInput | undefined;
 
-    thirdPartyProviderAndEmailOrPhoneFormStyle: Styles | undefined;
+    thirdPartyProviderAndEmailOrPhoneFormStyle: string | undefined;
 
     override: {
         functions: (

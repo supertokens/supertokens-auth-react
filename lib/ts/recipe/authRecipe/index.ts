@@ -17,7 +17,7 @@
  * Imports.
  */
 
-import { PostSuperTokensInitCallbacks } from "supertokens-web-js/lib/build/postSuperTokensInitCallbacks";
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import Session from "../session/recipe";
 import RecipeModule from "../recipeModule";
 import { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";

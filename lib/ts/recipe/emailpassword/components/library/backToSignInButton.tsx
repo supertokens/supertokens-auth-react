@@ -36,7 +36,7 @@ export default function BackToSignInButton({ onClick }: ButtonProps): JSX.Elemen
 
     return (
         <div data-supertokens="secondaryText secondaryLinkWithLeftArrow" onClick={onClick}>
-            <ArrowLeftIcon />
+            <ArrowLeftIcon color="rgb(var(--palette-secondaryText))" />
             {t("EMAIL_PASSWORD_RESET_SIGN_IN_LINK")}
         </div>
     );

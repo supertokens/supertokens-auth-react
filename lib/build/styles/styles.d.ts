@@ -1,2 +1,1 @@
-import { Styles } from "../types";
-export declare function hasFontDefined(_style: Styles | undefined): boolean;
+export declare function hasFontDefined(style: string | undefined): boolean;

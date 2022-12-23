@@ -4,8 +4,8 @@ import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import { ComponentClass, PropsWithChildren } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import { CookieHandlerInput } from "supertokens-website/lib/build/utils/cookieHandler/types";
-import { WindowHandlerInput } from "supertokens-website/lib/build/utils/windowHandler/types";
+import { CookieHandlerInput } from "supertokens-website/utils/cookieHandler/types";
+import { WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
 export declare type GetRedirectionURLContext = {
     action: "TO_AUTH";
     showSignIn: boolean | undefined;
@@ -76,15 +76,14 @@ export declare type NormalisedFormField = {
     autofocus?: boolean;
 };
 export declare type ReactComponentClass = ComponentClass<any, any> | (<T>(props: T) => JSX.Element);
-export declare type Styles = string;
 export declare type FeatureBaseConfig = {
-    style?: Styles;
+    style?: string;
 };
 export declare type NormalisedBaseConfig = {
-    style: Styles;
+    style: string;
 };
 export declare type ThemeBaseProps = {
-    styleFromInit?: Styles;
+    styleFromInit?: string;
 };
 export declare type FeatureBaseProps = PropsWithChildren<{
     history?: any;

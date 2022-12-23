@@ -1,7 +1,7 @@
 import { OnHandleEventContext, PreAndPostAPIHookAction, StateObject } from "./types";
 import { getRedirectToPathFromURL } from "../../utils";
 import { RecipeInterface, ThirdPartyUserType } from "supertokens-web-js/recipe/thirdparty";
-import { getRecipeImplementation as WebJSRecipeImplementation } from "supertokens-web-js/lib/build/recipe/thirdparty/recipeImplementation";
+import { getRecipeImplementation as WebJSRecipeImplementation } from "supertokens-web-js/recipe/thirdparty/recipeImplementation";
 import { NormalisedAppInfo } from "../../types";
 import {
     RecipeOnHandleEventFunction,

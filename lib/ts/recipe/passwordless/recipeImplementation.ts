@@ -6,7 +6,7 @@ import {
     RecipePostAPIHookFunction,
     RecipePreAPIHookFunction,
 } from "../recipeModule/types";
-import { getRecipeImplementation as WebJSRecipeImplementation } from "supertokens-web-js/lib/build/recipe/passwordless/recipeImplementation";
+import { getRecipeImplementation as WebJSRecipeImplementation } from "supertokens-web-js/recipe/passwordless/recipeImplementation";
 
 export default function getRecipeImplementation(recipeInput: {
     recipeId: string;

@@ -2,11 +2,9 @@ import resolve from "@rollup/plugin-node-resolve";
 import json from "@rollup/plugin-json";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "rollup-plugin-typescript2";
-// import { terser } from "rollup-plugin-terser";
 import external from "rollup-plugin-peer-deps-external";
 import { visualizer } from "rollup-plugin-visualizer";
 import importCssString from "./other/rollup-plugin-css-string-import.mjs";
-const m = new Map();
 
 export default [
     // CommonJS (for Node) and ES module (for bundlers) build.
@@ -35,10 +33,7 @@ export default [
                 defaultIsModuleExports: "auto",
             }),
             typescript({ tsconfig: "./lib/tsconfig.json" }), // so Rollup can convert TypeScript to JavaScript
-            // styles({ mode: "emit" }),
             importCssString(),
-            // css(),
-            // terser(),
             visualizer(),
         ],
         output: [
@@ -54,17 +49,6 @@ export default [
                     }
                     return chunkInfo.name + ".js";
                 },
-                // manualChunks(id) {
-                //     if (id.includes("lib/ts/components/assets")) {
-                //         return "assets";
-                //     }
-                //     if (id.includes("lib/ts/recipe/authRecipe")) {
-                //         return "authRecipe";
-                //     }
-                // if (id.includes("lib/ts/translation")) {
-                //     return "translation";
-                // }
-                // },
             },
         ],
     },

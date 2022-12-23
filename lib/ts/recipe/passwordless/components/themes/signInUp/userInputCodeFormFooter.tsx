@@ -37,7 +37,7 @@ export const UserInputCodeFormFooter = withOverride(
                             userContext,
                         })
                     }>
-                    <ArrowLeftIcon />
+                    <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
                     {loginAttemptInfo.contactMethod === "EMAIL"
                         ? t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL")
                         : t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE")}

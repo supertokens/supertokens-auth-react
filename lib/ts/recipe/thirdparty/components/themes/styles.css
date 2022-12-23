@@ -9,9 +9,8 @@
     padding-bottom: 9px;
 }
 
-[data-supertokens~="providerButton"] {
+[data-supertokens~="button"][data-supertokens~="providerButton"] {
     min-height: 32px;
-    height: auto;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -54,23 +53,4 @@
 
 [data-supertokens~="providerButtonText"]:only-child {
     margin: 0 auto;
-}
-
-[data-supertokens~="providerCustom"] {
-    background-color: #000;
-    border-color: #000;
-    color: black;
-}
-
-[data-supertokens~="providerCustom"]:active {
-    outline: none;
-    background-color: #fafafa;
-    border-color: #eaeaea;
-    transition: background 0s;
-    background-size: 100%;
-}
-
-[data-supertokens~="providerCustom"]:focus {
-    border-color: #dddddd;
-    outline: none;
 }

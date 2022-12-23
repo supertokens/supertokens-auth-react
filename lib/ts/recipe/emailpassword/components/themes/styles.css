@@ -24,26 +24,26 @@
     width: 100%;
     display: flex;
     align-items: center;
-    background-color: var(--palette-inputBackground);
+    background-color: rgb(var(--palette-inputBackground));
     height: 34px;
     border-radius: 6px;
-    border: 1px solid var(--palette-inputBorder);
+    border: 1px solid rgb(var(--palette-inputBorder));
 }
 [data-supertokens~="inputWrapper"]:focus-within {
     background-color: rgba(var(--palette-inputBackground), 0.25);
-    border: 1px solid var(--palette-primary);
+    border: 1px solid rgb(var(--palette-primary));
     box-shadow: 0 0 0 0.2rem rgba(var(--palette-primary), 0.25);
     outline: none;
 }
 
 [data-supertokens~="inputError"] {
-    border: 1px solid var(--palette-error);
+    border: 1px solid rgb(var(--palette-error));
     box-shadow: 0 0 0 0.2rem rgba(var(--palette-error), 0.25);
     outline: none;
 }
 
 [data-supertokens~="inputError"]:focus-within {
-    border: 1px solid var(--palette-error);
+    border: 1px solid rgb(var(--palette-error));
     box-shadow: 0 0 0 0.2rem rgba(var(--palette-error), 0.25);
     outline: none;
 }
@@ -52,7 +52,7 @@
     box-sizing: border-box;
     padding-left: 15px;
     filter: none;
-    color: var(--palette-textInput);
+    color: rgb(var(--palette-textInput));
     background-color: transparent;
     border-radius: 6px;
     font-size: var(--font-size-1);
@@ -71,9 +71,9 @@
 [data-supertokens~="input"]:-webkit-autofill:hover,
 [data-supertokens~="input"]:-webkit-autofill:focus,
 [data-supertokens~="input"]:-webkit-autofill:active {
-    -webkit-text-fill-color: var(--palette-textInput);
-    -webkit-box-shadow: 0 0 0 30px var(--palette-inputBackground) inset;
-    box-shadow: 0 0 0 30px var(--palette-inputBackground) inset;
+    -webkit-text-fill-color: rgb(var(--palette-textInput));
+    -webkit-box-shadow: 0 0 0 30px rgb(var(--palette-inputBackground)) inset;
+    box-shadow: 0 0 0 30px rgb(var(--palette-inputBackground)) inset;
 }
 
 [data-supertokens~="inputAdornment"] {
@@ -103,7 +103,7 @@
 [data-supertokens~="inputErrorMessage"] {
     padding-top: 5px;
     padding-bottom: 5px;
-    color: var(--palette-error);
+    color: rgb(var(--palette-error));
     line-height: 24px;
     font-weight: 400;
     font-size: var(--font-size-1);
@@ -130,7 +130,7 @@
     font-weight: 600;
     font-size: var(--font-size-1);
     line-height: 24px;
-    color: var(--palette-textLabel);
+    color: rgb(var(--palette-textLabel));
 }
 
 [data-supertokens~="formRow"] {

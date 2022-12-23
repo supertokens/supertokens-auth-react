@@ -20,7 +20,6 @@ import { Fragment, useCallback } from "react";
 import { Awaited, FeatureBaseProps } from "../../../../../types";
 import { useOnMountAPICall } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-// import { defaultPalette } from "../../../../../styles/styles";
 import { CustomStateProperties } from "../../../types";
 import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
 import Recipe from "../../../recipe";
@@ -112,7 +111,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                 defaultStore={defaultTranslationsThirdParty}>
                 <Fragment>
                     {/* No custom theme, use default. */}
-                    {props.children === undefined && <SignInAndUpCallbackTheme />}
+                    {props.children === undefined && <SignInAndUpCallbackTheme config={props.recipe.config} />}
 
                     {/* Otherwise, custom theme is provided, propagate props. */}
                     {props.children}

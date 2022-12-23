@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { WindowHandlerReference } from "supertokens-website/lib/build/utils/windowHandler";
+import { WindowHandlerReference } from "supertokens-website/utils/windowHandler";
 
 let phoneNumberUtilsImport: Promise<void> | undefined;
 

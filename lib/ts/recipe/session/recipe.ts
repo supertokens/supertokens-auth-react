@@ -26,7 +26,7 @@ import {
     setLocalStorage,
 } from "../../utils";
 import { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
-import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/lib/build/recipe/session/recipe";
+import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";

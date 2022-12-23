@@ -14,7 +14,7 @@
  */
 
 import { Dispatch } from "react";
-import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
+import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -97,10 +97,10 @@ export type NormalisedConfig = {
         privacyPolicyLink?: string;
         termsOfServiceLink?: string;
 
-        emailOrPhoneFormStyle: Styles;
-        userInputCodeFormStyle: Styles;
-        linkSentScreenStyle: Styles;
-        closeTabScreenStyle: Styles;
+        emailOrPhoneFormStyle: string;
+        userInputCodeFormStyle: string;
+        linkSentScreenStyle: string;
+        closeTabScreenStyle: string;
 
         disableDefaultUI?: boolean;
     };
@@ -134,10 +134,10 @@ export type SignInUpFeatureConfigInput = {
      */
     termsOfServiceLink?: string;
 
-    emailOrPhoneFormStyle?: Styles;
-    userInputCodeFormStyle?: Styles;
-    linkSentScreenStyle?: Styles;
-    closeTabScreenStyle?: Styles;
+    emailOrPhoneFormStyle?: string;
+    userInputCodeFormStyle?: string;
+    linkSentScreenStyle?: string;
+    closeTabScreenStyle?: string;
 };
 
 export type UserInput = (

@@ -21,6 +21,8 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import { LinkClickedScreenProps } from "../../../types";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { Button } from "../../../../emailpassword/components/library";
+import { ThemeBase } from "../themeBase";
+import { hasFontDefined } from "../../../../../styles/styles";
 
 const PasswordlessLinkClickedScreen: React.FC<LinkClickedScreenProps> = (props) => {
     const t = useTranslation();
@@ -57,4 +59,15 @@ const PasswordlessLinkClickedScreen: React.FC<LinkClickedScreenProps> = (props) 
     );
 };
 
-export const LinkClickedScreen = withOverride("PasswordlessLinkClickedScreen", PasswordlessLinkClickedScreen);
+const LinkClickedScreenWithOverride = withOverride("PasswordlessLinkClickedScreen", PasswordlessLinkClickedScreen);
+
+export const LinkClickedScreen = (props: LinkClickedScreenProps) => {
+    const hasFont = hasFontDefined(props.config.rootStyle);
+    return (
+        <ThemeBase
+            loadDefaultFont={!hasFont}
+            userStyles={[props.config.rootStyle, props.config.linkClickedScreenFeature.style]}>
+            <LinkClickedScreenWithOverride {...props} />
+        </ThemeBase>
+    );
+};

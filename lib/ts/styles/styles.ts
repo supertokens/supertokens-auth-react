@@ -13,11 +13,11 @@
  * under the License.
  */
 
-import { Styles } from "../types";
+export function hasFontDefined(style: string | undefined) {
+    if (style === undefined) {
+        return false;
+    }
+    const lowerStyle = style.toLowerCase();
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function hasFontDefined(_style: Styles | undefined) {
-    // TODO: proper implementation or explicit setting
-    return false;
-    // return (style && style.container && (style.container.fontFamily || style.container.font)) !== undefined;
+    return lowerStyle.includes("font-family:") || lowerStyle.includes("font:");
 }

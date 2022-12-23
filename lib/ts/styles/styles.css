@@ -1,20 +1,22 @@
 [data-supertokens~="container"] {
-    --palette-background: white;
-    --palette-inputBackground: #fafafa;
-    --palette-inputBorder: #fafafa;
-    --palette-selectedBackground: #eeeeee;
-    --palette-primary: #ff9b33;
-    --palette-primaryBorder: #ee8d23;
-    --palette-success: #41a700;
-    --palette-error: #ff1717;
-    --palette-textTitle: #222222;
-    --palette-textLabel: #222222;
-    --palette-textInput: #222222;
-    --palette-textPrimary: #656565;
-    --palette-textLink: #0076ff;
-    --palette-buttonText: white;
-    --palette-superTokensBrandingBackground: #f2f5f6;
-    --palette-superTokensBrandingText: #adbdc4;
+    --palette-background: 255, 255, 255;
+    --palette-inputBackground: 250, 250, 250;
+    --palette-inputBorder: 250, 250, 250;
+    --palette-selectedBackground: 238, 238, 238;
+    --palette-primary: 255, 155, 51;
+    --palette-primaryBorder: 238, 141, 35;
+    --palette-success: 65, 167, 0;
+    --palette-success-bg: 217, 255, 191;
+    --palette-error: 255, 23, 23;
+    --palette-error-bg: 255, 241, 235;
+    --palette-textTitle: 34, 34, 34;
+    --palette-textLabel: 33, 33, 33;
+    --palette-textInput: 34, 34, 34;
+    --palette-textPrimary: 101, 101, 101;
+    --palette-textLink: 0, 118, 255;
+    --palette-buttonText: 255, 255, 255;
+    --palette-superTokensBrandingBackground: 242, 245, 246;
+    --palette-superTokensBrandingText: 173, 189, 196;
 
     --font-size-0: 12px;
     --font-size-1: 14px;
@@ -52,7 +54,7 @@
 }
 
 [data-supertokens~="container"] {
-    font-family: Rubik, sans-serif;
+    font-family: "Rubik", sans-serif;
     margin: 12px auto;
     margin-top: 26px;
     margin-bottom: 26px;
@@ -60,7 +62,7 @@
     text-align: center;
     border-radius: 8px;
     box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.16);
-    background-color: var(--palette-background);
+    background-color: rgb(var(--palette-background));
 }
 
 @media (max-width: 440px) {
@@ -78,8 +80,8 @@
 [data-supertokens~="superTokensBranding"] {
     display: block;
     margin: 0 auto;
-    background: var(--palette-superTokensBrandingBackground);
-    color: var(--palette-superTokensBrandingText);
+    background: rgb(var(--palette-superTokensBrandingBackground));
+    color: rgb(var(--palette-superTokensBrandingText));
     text-decoration: none;
     width: fit-content;
     border-radius: 6px 6px 0 0;
@@ -90,7 +92,7 @@
 }
 
 [data-supertokens~="generalError"] {
-    background: var(--palette-error-bg);
+    background: rgb(var(--palette-error-bg));
     padding-top: 10px;
     padding-bottom: 10px;
     margin-bottom: 15px;
@@ -99,7 +101,7 @@
     letter-spacing: 0.2px;
     font-size: var(--font-size-1);
     border-radius: 8px;
-    color: var(--palette-error);
+    color: rgb(var(--palette-error));
     animation: swing-in-top-fwd 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
     overflow-wrap: break-word;
 }
@@ -110,7 +112,7 @@
     letter-spacing: 0.58px;
     font-weight: 800;
     margin-bottom: 2px;
-    color: var(--palette-textTitle);
+    color: rgb(var(--palette-textTitle));
 }
 
 [data-supertokens~="headerSubtitle"] {
@@ -131,7 +133,7 @@
 [data-supertokens~="link"] {
     padding-left: 3px;
     padding-right: 3px;
-    color: var(--palette-textLink);
+    color: rgb(var(--palette-textLink));
     font-size: var(--font-size-1);
     cursor: pointer;
     letter-spacing: 0.16px;
@@ -143,14 +145,14 @@
     font-weight: 500;
     letter-spacing: 0.4px;
     line-height: 21px;
-    color: var(--palette-textLabel);
+    color: rgb(var(--palette-textLabel));
 }
 
 [data-supertokens~="secondaryText"] {
     font-size: var(--font-size-1);
     font-weight: 300;
     letter-spacing: 0.4px;
-    color: var(--palette-textPrimary);
+    color: rgb(var(--palette-textPrimary));
 }
 
 [data-supertokens~="divider"] {
@@ -181,9 +183,9 @@
 }
 
 [data-supertokens~="generalSuccess"] {
-    color: var(--palette-success);
+    color: rgb(var(--palette-success));
     font-size: var(--font-size-1);
-    background: var(--palette-success-bg);
+    background: rgb(var(--palette-success-bg));
     animation: swing-in-top-fwd 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
     padding: 9px 15px 9px 15px;
     border-radius: 6px;
@@ -199,7 +201,7 @@
 }
 
 [data-supertokens~="error"] {
-    color: var(--palette-error);
+    color: rgb(var(--palette-error));
 }
 
 [data-supertokens~="linkButton"] {
@@ -221,15 +223,15 @@
 }
 
 [data-supertokens~="button"] {
-    background-color: var(--palette-primary);
-    color: var(--palette-buttonText);
+    background-color: rgb(var(--palette-primary));
+    color: rgb(var(--palette-buttonText));
     width: 100%;
     height: 34px;
     font-weight: 700;
     border-width: 1px;
     border-style: solid;
     border-radius: 6px;
-    border-color: var(--palette-primaryBorder);
+    border-color: rgb(var(--palette-primaryBorder));
     background-position: center;
     transition: all 0.4s;
     background-size: 12000%;

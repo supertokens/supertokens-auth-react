@@ -123,7 +123,7 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
                 {
                     <div data-supertokens="secondaryText secondaryLinkWithArrow" onClick={logout}>
                         {t("EMAIL_VERIFICATION_LOGOUT")}
-                        <ArrowRightIcon />
+                        <ArrowRightIcon color="rgb(var(--palette-textPrimary))" />
                     </div>
                 }
             </div>

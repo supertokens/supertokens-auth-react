@@ -14,7 +14,7 @@
  */
 
 import { CountryData } from "intl-tel-input";
-import WindowHandlerReference from "supertokens-website/lib/build/utils/windowHandler";
+import { WindowHandlerReference } from "supertokens-website/utils/windowHandler";
 import { getPhoneNumberUtils } from "./phoneNumberUtils";
 
 export function defaultEmailValidator(value: any): string | undefined {
@@ -152,7 +152,7 @@ export async function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
         .intlTelInputGlobals.getCountryData();
     const matchingCountryCodes = countryData
         .filter((c: CountryData) => onlyNumbers.startsWith(c.dialCode))
-        .map((c) => c.iso2);
+        .map((c: CountryData) => c.iso2);
 
     for (const code of matchingCountryCodes) {
         if (intlTelInputUtils.isValidNumber(onlyNumbers, code)) {
@@ -160,7 +160,7 @@ export async function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
         }
     }
     if (defaultCountryFromConfig) {
-        const defaultCountry = countryData.find((c) => c.iso2 === defaultCountryFromConfig.toLowerCase());
+        const defaultCountry = countryData.find((c: CountryData) => c.iso2 === defaultCountryFromConfig.toLowerCase());
 
         if (defaultCountry) {
             return "+" + defaultCountry.dialCode + onlyNumbers;

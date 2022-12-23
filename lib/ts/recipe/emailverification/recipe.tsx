@@ -36,12 +36,12 @@ import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
 import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
-import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/lib/build/recipe/emailverification";
-import { SessionClaimValidatorStore } from "supertokens-website/lib/build/utils/sessionClaimValidatorStore";
+import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
+import { SessionClaimValidatorStore } from "supertokens-website/utils/sessionClaimValidatorStore";
 import { OverrideableBuilder } from "supertokens-js-override";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { UserContextContext } from "../../usercontext";
-import { PostSuperTokensInitCallbacks } from "supertokens-web-js/lib/build/postSuperTokensInitCallbacks";
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,

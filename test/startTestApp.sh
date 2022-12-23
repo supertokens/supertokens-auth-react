@@ -12,8 +12,8 @@ apiPort=$1
 
 function killServers () {
     echo "Kill servers."
-    lsof -i tcp:8082 | grep node | awk '{printf $2}' | cut -c 1- | xargs -I {} kill -9 {} > /dev/null 2>&1
-    lsof -i tcp:3031 | grep node | awk '{printf $2}' | cut -c 1- | xargs -I {} kill -9 {} > /dev/null 2>&1
+    lsof -i tcp:8082 | grep -m 1 node | awk '{printf $2}' | cut -c 1- | xargs -I {} kill -9 {} > /dev/null 2>&1
+    lsof -i tcp:3031 | grep -m 1 node | awk '{printf $2}' | cut -c 1- | xargs -I {} kill -9 {} > /dev/null 2>&1
 }
 
 function startEndToEnd () {

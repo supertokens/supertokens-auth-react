@@ -18,8 +18,8 @@ import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import { ComponentClass, PropsWithChildren } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import { CookieHandlerInput } from "supertokens-website/lib/build/utils/cookieHandler/types";
-import { WindowHandlerInput } from "supertokens-website/lib/build/utils/windowHandler/types";
+import { CookieHandlerInput } from "supertokens-website/utils/cookieHandler/types";
+import { WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
 
 export type GetRedirectionURLContext = {
     action: "TO_AUTH";
@@ -246,8 +246,6 @@ export type NormalisedFormField = {
 
 export type ReactComponentClass = ComponentClass<any, any> | (<T>(props: T) => JSX.Element);
 
-export type Styles = string;
-
 /*
  * Features Config Types.
  */
@@ -256,18 +254,18 @@ export type FeatureBaseConfig = {
     /*
      * Additional styles to override themes.
      */
-    style?: Styles;
+    style?: string;
 };
 
 export type NormalisedBaseConfig = {
     /*
      * Additional styles to override themes.
      */
-    style: Styles;
+    style: string;
 };
 
 export type ThemeBaseProps = {
-    styleFromInit?: Styles;
+    styleFromInit?: string;
 };
 
 export type FeatureBaseProps = PropsWithChildren<{

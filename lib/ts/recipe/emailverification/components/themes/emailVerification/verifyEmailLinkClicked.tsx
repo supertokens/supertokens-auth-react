@@ -154,7 +154,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
                     <div data-supertokens="headerTitle headerTinyTitle">{t("EMAIL_VERIFICATION_EXPIRED")}</div>
                     <div onClick={onTokenInvalidRedirect} data-supertokens="secondaryText secondaryLinkWithArrow">
                         {t("EMAIL_VERIFICATION_CONTINUE_LINK")}
-                        <ArrowRightIcon />
+                        <ArrowRightIcon color="rgb(var(--palette-textPrimary))" />
                     </div>
                 </div>
             </div>
