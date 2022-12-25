@@ -1,6 +1,6 @@
 import React from "react";
 import "@testing-library/jest-dom";
-import { render } from "@testing-library/react";
+import { render, within } from "@testing-library/react";
 
 import { ComponentOverrideContext } from "../../lib/ts/components/componentOverride/componentOverrideContext";
 import { ComponentOverrideMap as EmailPasswordOverrideMap } from "../../lib/ts/recipe/emailpassword/types";
@@ -11,17 +11,20 @@ import { ComponentOverrideMap as PasswordlessOverrideMap } from "../../lib/ts/re
 import { ComponentOverrideMap as ThirdPartyPasswordlessOverrideMap } from "../../lib/ts/recipe/thirdpartypasswordless/types";
 
 import "@testing-library/jest-dom";
-import { EmailPasswordComponentsOverrideProvider } from "../../lib/ts/recipe/emailpassword";
 import EmailPassword from "../../lib/ts/recipe/emailpassword/recipe";
 import { SessionContextType } from "../../lib/ts/recipe/session";
 import Session from "../../lib/ts/recipe/session/recipe";
 import SuperTokens from "../../lib/ts/superTokens";
 import ThirdPartyEmailPassword from "../../lib/ts/recipe/thirdpartyemailpassword/recipe";
 import {
-    SignInAndUp,
+    SignInAndUp as SignInAndUpThirdpartyEmailPassword,
     Github,
     ThirdpartyEmailPasswordComponentsOverrideProvider,
 } from "../../lib/ts/recipe/thirdpartyemailpassword";
+import {
+    SignInAndUp as SignInAndUpEmailPassword,
+    EmailPasswordComponentsOverrideProvider,
+} from "../../lib/ts/recipe/emailpassword";
 
 import { SignUp } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signUp";
 import { SignUpHeader } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signUpHeader";
@@ -173,7 +176,9 @@ describe("Components override per recipe provider", () => {
                     },
                     useShadowDom: false,
                 }),
-                EmailPassword.init(),
+                EmailPassword.init({
+                    useShadowDom: false,
+                }),
             ],
         });
         setMockResolvesSession({
@@ -185,7 +190,7 @@ describe("Components override per recipe provider", () => {
         });
     });
 
-    it("Should not affect other recipes components when the same component is overridden", async () => {
+    it.skip("Should not affect other recipes components when the same component is overridden", async () => {
         const result = render(
             <ThirdpartyEmailPasswordComponentsOverrideProvider
                 components={{
@@ -195,12 +200,53 @@ describe("Components override per recipe provider", () => {
                     components={{
                         EmailPasswordSignInHeader_Override: () => <div>Override emailpassword</div>,
                     }}>
-                    <SignInAndUp redirectOnSessionExists={false} />
+                    <SignInAndUpThirdpartyEmailPassword redirectOnSessionExists={false} />
                 </EmailPasswordComponentsOverrideProvider>
             </ThirdpartyEmailPasswordComponentsOverrideProvider>
         );
 
         expect(await result.findByText("Override thirdpartyemailpassword")).toBeInTheDocument();
         expect(await result.queryByText("Override emailpassword")).not.toBeInTheDocument();
+    });
+
+    it("Should not affect each others components when two recipes override the same component", async () => {
+        const emailPasswordKey = "EmailPassword_Override";
+        const thirdpartyEmailPasswordKey = "ThirdpartyEmailPassword_Override";
+
+        const result = render(
+            <EmailPasswordComponentsOverrideProvider
+                components={{
+                    EmailPasswordSignInHeader_Override: () => (
+                        <div data-testid="emailpassword-override">{emailPasswordKey}</div>
+                    ),
+                }}>
+                <ThirdpartyEmailPasswordComponentsOverrideProvider
+                    components={{
+                        EmailPasswordSignInHeader_Override: () => (
+                            <div data-testid="thirdpartyemailpassword-override">{thirdpartyEmailPasswordKey}</div>
+                        ),
+                    }}>
+                    <div data-testid="emailpassword-wrapper">
+                        <SignInAndUpEmailPassword redirectOnSessionExists={false} />
+                    </div>
+                    <div data-testid="thirdpartyemailpassword-wrapper">
+                        <SignInAndUpThirdpartyEmailPassword redirectOnSessionExists={false} />
+                    </div>
+                </ThirdpartyEmailPasswordComponentsOverrideProvider>
+            </EmailPasswordComponentsOverrideProvider>
+        );
+
+        expect(await result.findAllByText(emailPasswordKey)).toHaveLength(1);
+        expect(await result.findAllByText(thirdpartyEmailPasswordKey)).toHaveLength(1);
+
+        expect(
+            await within(await result.getByTestId("emailpassword-wrapper")).getByText(emailPasswordKey)
+        ).toBeInTheDocument();
+
+        expect(
+            await within(await result.getByTestId("thirdpartyemailpassword-wrapper")).getByText(
+                thirdpartyEmailPasswordKey
+            )
+        ).toBeInTheDocument();
     });
 });
