@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changed
+
+-   Moved components override config into separate, unique for recipe provider
+
 ### Testing
 
 -   Created test for the sign up attempt using duplicate email
