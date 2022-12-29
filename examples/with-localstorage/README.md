@@ -20,28 +20,6 @@ Storing tokens in localstorage comes with a few drawbacks:
 
 For a detailed comparison please see [our blog](https://supertokens.com/blog/cookies-vs-localstorage-for-sessions-everything-you-need-to-know)
 
-## How the modification works
-
-The basic idea behind it is that we can use a custom header to transfer tokens. This way, the frontend can access and store them in localstorage.
-
-### Backend
-
-On the backend, we need to do two things:
-
--   Load tokens from a custom header instead of the `Cookie` header
--   Use a custom header to communicate changes to the tokens instead of setting them as cookies
-
-### Frontend
-
-On the frontend we need to do two things:
-
--   When making a request to the API, we need to add a custom header that contains the tokens we would normally send as cookies
--   After getting a response from the API, we need to inspect the headers and store the contents of a custom header
-
-We can achieve these by replacing the global fetch function with a "patched" version. This must be done before initializing SuperTokens (calling `SuperTokens.init`) as the SDK uses the fetch function internally.
-
-If you use `axios` (or a similar library) to make requests, you also need to add an interceptor that will do the same.
-
 ## Project setup
 
 Use `npm` to install the project dependencies:
