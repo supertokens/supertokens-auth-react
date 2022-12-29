@@ -30,7 +30,7 @@ import { useUserContext } from "../../../../../usercontext";
 import Session from "../../../../session/recipe";
 import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { useOverrideContext } from "../../../componentOverrideContext";
+import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 
 type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any };
 
@@ -38,7 +38,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     const sessionContext = useContext(SessionContext);
     const [status, setStatus] = useState("LOADING");
     const userContext = useUserContext();
-    const componentOverrides = useOverrideContext();
+    const recipeComponentOverrides = useRecipeComponentOverrideContext();
 
     const redirectToAuthWithHistory = useCallback(async () => {
         await redirectToAuth({ redirectBack: false, history: props.history });
@@ -149,7 +149,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         hasToken: token !== undefined,
     };
     return (
-        <ComponentOverrideContext.Provider value={componentOverrides}>
+        <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsEmailVerification}>

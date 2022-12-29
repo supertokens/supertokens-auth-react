@@ -190,7 +190,7 @@ describe("Components override per recipe provider", () => {
         });
     });
 
-    it.skip("Should not affect other recipes components when the same component is overridden", async () => {
+    it("Should not affect other recipes components when the same component is overridden", async () => {
         const result = render(
             <ThirdpartyEmailPasswordComponentsOverrideProvider
                 components={{

@@ -36,7 +36,7 @@ import { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
 import { PasswordlessSignInUpAction } from "../../../../passwordless/types";
 import { useUserContext } from "../../../../../usercontext";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { useOverrideContext } from "../../../componentOverrideContext";
+import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
@@ -50,7 +50,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         userContext
     );
 
-    const componentOverrides = useOverrideContext();
+    const recipeComponentOverrides = useRecipeComponentOverrideContext();
 
     const [combinedState, dispatch] = React.useReducer(
         (state: { error: string | undefined }, action: ThirdPartySignInUpActions | PasswordlessSignInUpAction) => {
@@ -146,7 +146,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
     };
 
     return (
-        <ComponentOverrideContext.Provider value={componentOverrides}>
+        <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsThirdPartyPasswordless}>

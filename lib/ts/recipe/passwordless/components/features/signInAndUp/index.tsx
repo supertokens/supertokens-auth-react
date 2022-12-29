@@ -34,7 +34,7 @@ import { FeatureBaseProps } from "../../../../../types";
 import { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
 import { useUserContext } from "../../../../../usercontext";
 import { getLoginAttemptInfo, setLoginAttemptInfo } from "../../../utils";
-import { useOverrideContext } from "../../../componentOverrideContext";
+import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 
 export const useSuccessInAnotherTabChecker = (
     state: SignInUpState,
@@ -237,14 +237,14 @@ export const SignInUpFeature: React.FC<
         recipe: Recipe;
     }
 > = (props) => {
-    const componentOverrides = useOverrideContext();
+    const recipeComponentOverrides = useRecipeComponentOverrideContext();
     const userContext = useUserContext();
     const [state, dispatch] = useFeatureReducer(props.recipe.recipeImpl, userContext);
     const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch, userContext);
     const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, userContext, props.history)!;
 
     return (
-        <ComponentOverrideContext.Provider value={componentOverrides}>
+        <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsPasswordless}>

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
--   Moved components override config into separate, unique for recipe provider
+-   Moved component override config into a recipe specific provider component
 
 ### Testing
 

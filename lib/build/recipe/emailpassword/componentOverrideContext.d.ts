@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import { ComponentOverrideMap } from "./types";
-declare const useOverrideContext: () => ComponentOverrideMap,
+declare const useContext: () => ComponentOverrideMap,
     Provider: import("react").FC<
         import("react").PropsWithChildren<{
             components: ComponentOverrideMap;
@@ -8,7 +8,7 @@ declare const useOverrideContext: () => ComponentOverrideMap,
     >,
     Consumer: import("react").Consumer<ComponentOverrideMap>;
 export {
-    useOverrideContext,
+    useContext as useRecipeComponentOverrideContext,
     Provider as RecipeComponentsOverrideContextProvider,
     Consumer as RecipeComponentsOverrideContextConsumer,
 };

@@ -32,7 +32,7 @@ import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
 import Session from "../../../../session/recipe";
 import SuperTokens from "../../../../../superTokens";
-import { useOverrideContext } from "../../../componentOverrideContext";
+import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -106,12 +106,12 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
 
     useOnMountAPICall(verifyCode, handleVerifyResponse, handleError);
 
-    const componentOverrides = useOverrideContext();
+    const recipeComponentOverrides = useRecipeComponentOverrideContext();
 
     const oAuthCallbackScreen = props.recipe.config.oAuthCallbackScreen;
 
     return (
-        <ComponentOverrideContext.Provider value={componentOverrides}>
+        <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsThirdParty}>

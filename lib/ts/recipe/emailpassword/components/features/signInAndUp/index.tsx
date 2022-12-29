@@ -39,7 +39,7 @@ import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
 import Session from "../../../../session/recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { useOverrideContext } from "../../../componentOverrideContext";
+import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 
 export const useFeatureReducer = (recipe: Recipe | undefined) => {
     return React.useReducer(
@@ -186,10 +186,10 @@ export const SignInAndUpFeature: React.FC<
 > = (props) => {
     const [state, dispatch] = useFeatureReducer(props.recipe);
     const childProps = useChildProps(props.recipe, state, dispatch, props.history);
-    const componentOverrides = useOverrideContext();
+    const recipeComponentOverrides = useRecipeComponentOverrideContext();
 
     return (
-        <ComponentOverrideContext.Provider value={componentOverrides}>
+        <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsEmailPassword}>
