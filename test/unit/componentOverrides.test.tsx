@@ -192,20 +192,15 @@ describe("Components override per recipe provider", () => {
 
     it("Should not affect other recipes components when the same component is overridden", async () => {
         const result = render(
-            <ThirdpartyEmailPasswordComponentsOverrideProvider
+            <EmailPasswordComponentsOverrideProvider
                 components={{
-                    EmailPasswordSignInHeader_Override: () => <div>Override thirdpartyemailpassword</div>,
+                    EmailPasswordSignInHeader_Override: () => <div>Override emailpassword</div>,
                 }}>
-                <EmailPasswordComponentsOverrideProvider
-                    components={{
-                        EmailPasswordSignInHeader_Override: () => <div>Override emailpassword</div>,
-                    }}>
-                    <SignInAndUpThirdpartyEmailPassword redirectOnSessionExists={false} />
-                </EmailPasswordComponentsOverrideProvider>
-            </ThirdpartyEmailPasswordComponentsOverrideProvider>
+                <SignInAndUpThirdpartyEmailPassword redirectOnSessionExists={false} />
+            </EmailPasswordComponentsOverrideProvider>
         );
 
-        expect(await result.findByText("Override thirdpartyemailpassword")).toBeInTheDocument();
+        expect(await result.findByText("Sign In")).toBeInTheDocument();
         expect(await result.queryByText("Override emailpassword")).not.toBeInTheDocument();
     });
 
