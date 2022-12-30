@@ -7,14 +7,17 @@ export default class Wrapper {
     static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
     static EmailVerificationClaim: import("supertokens-web-js/recipe/emailverification").EmailVerificationClaimClass;
-    static init(
-        config: UserInput
-    ): import("../../types").CreateRecipeFunction<
-        GetRedirectionURLContext,
-        import("./types").PreAndPostAPIHookAction,
-        OnHandleEventContext,
-        import("./types").NormalisedConfig
-    >;
+    static init(config: UserInput): {
+        authReact: import("../../types").CreateRecipeFunction<
+            GetRedirectionURLContext,
+            import("./types").PreAndPostAPIHookAction,
+            OnHandleEventContext,
+            import("./types").NormalisedConfig
+        >;
+        webJS: import("supertokens-web-js/lib/build/types").CreateRecipeFunction<
+            import("supertokens-web-js/lib/build/recipe/emailverification/types").PreAndPostAPIHookAction
+        >;
+    };
     static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         isVerified: boolean;

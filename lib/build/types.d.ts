@@ -7,13 +7,17 @@ import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recip
 import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 import { CookieHandlerInput } from "supertokens-website/utils/cookieHandler/types";
 import { WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
+import { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
 export declare type GetRedirectionURLContext = {
     action: "TO_AUTH";
     showSignIn: boolean | undefined;
 };
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
-    recipeList: CreateRecipeFunction<any, any, any, any>[];
+    recipeList: {
+        authReact: CreateRecipeFunction<any, any, any, any>;
+        webJS: CreateRecipeFunctionWebJS<any>;
+    }[];
     cookieHandler?: CookieHandlerInput;
     windowHandler?: WindowHandlerInput;
     languageTranslations?: {

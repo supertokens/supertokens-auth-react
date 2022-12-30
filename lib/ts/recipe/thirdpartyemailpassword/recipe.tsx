@@ -17,7 +17,12 @@
  * Imports.
  */
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
+import {
+    CreateRecipeFunction as CreateRecipeFunctionAuthReact,
+    RecipeFeatureComponentMap,
+    NormalisedAppInfo,
+    FeatureBaseProps,
+} from "../../types";
 import {
     Config,
     GetRedirectionURLContext,
@@ -41,6 +46,9 @@ import OverrideableBuilder from "supertokens-js-override";
 import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
+import ThirdpartyEmailPasswordWebJS from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import type { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
+import type { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/thirdpartyemailpassword/types";
 
 export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
@@ -218,24 +226,38 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
      * Static methods.
      */
 
-    static init(
-        config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
-        return (
-            appInfo: NormalisedAppInfo
-        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
-            ThirdPartyEmailPassword.instance = new ThirdPartyEmailPassword(
-                {
-                    ...config,
-                    appInfo,
-                    recipeId: ThirdPartyEmailPassword.RECIPE_ID,
-                },
-                {
-                    emailPasswordInstance: undefined,
-                    thirdPartyInstance: undefined,
-                }
-            );
-            return ThirdPartyEmailPassword.instance;
+    static init(config: UserInput): {
+        authReact: CreateRecipeFunctionAuthReact<
+            GetRedirectionURLContext,
+            PreAndPostAPIHookAction,
+            OnHandleEventContext,
+            NormalisedConfig
+        >;
+        webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
+    } {
+        return {
+            authReact: (
+                appInfo: NormalisedAppInfo
+            ): RecipeModule<
+                GetRedirectionURLContext,
+                PreAndPostAPIHookAction,
+                OnHandleEventContext,
+                NormalisedConfig
+            > => {
+                ThirdPartyEmailPassword.instance = new ThirdPartyEmailPassword(
+                    {
+                        ...config,
+                        appInfo,
+                        recipeId: ThirdPartyEmailPassword.RECIPE_ID,
+                    },
+                    {
+                        emailPasswordInstance: undefined,
+                        thirdPartyInstance: undefined,
+                    }
+                );
+                return ThirdPartyEmailPassword.instance;
+            },
+            webJS: ThirdpartyEmailPasswordWebJS.init(config),
         };
     }
 

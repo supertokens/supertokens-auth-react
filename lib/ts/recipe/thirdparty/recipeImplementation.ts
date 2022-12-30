@@ -1,13 +1,13 @@
 import { OnHandleEventContext, PreAndPostAPIHookAction, StateObject } from "./types";
 import { getRedirectToPathFromURL } from "../../utils";
 import { RecipeInterface, ThirdPartyUserType } from "supertokens-web-js/recipe/thirdparty";
-import { getRecipeImplementation as WebJSRecipeImplementation } from "supertokens-web-js/recipe/thirdparty/recipeImplementation";
 import { NormalisedAppInfo } from "../../types";
 import {
     RecipeOnHandleEventFunction,
     RecipePostAPIHookFunction,
     RecipePreAPIHookFunction,
 } from "../recipeModule/types";
+import WebJSRecipe from "supertokens-web-js/recipe/thirdparty";
 
 export default function getRecipeImplementation(recipeInput: {
     recipeId: string;
@@ -16,20 +16,13 @@ export default function getRecipeImplementation(recipeInput: {
     postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
 }): RecipeInterface {
-    const webJsImplementation = WebJSRecipeImplementation({
-        recipeId: recipeInput.recipeId,
-        appInfo: recipeInput.appInfo,
-        preAPIHook: recipeInput.preAPIHook,
-        postAPIHook: recipeInput.postAPIHook,
-    });
-
     return {
         getAuthorisationURLFromBackend: async function (input): Promise<{
             status: "OK";
             url: string;
             fetchResponse: Response;
         }> {
-            const response = await webJsImplementation.getAuthorisationURLFromBackend.bind(this)({
+            const response = await WebJSRecipe.getAuthorisationURLFromBackend.bind(this)({
                 ...input,
             });
 
@@ -48,7 +41,7 @@ export default function getRecipeImplementation(recipeInput: {
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsImplementation.signInAndUp.bind(this)({
+            const response = await WebJSRecipe.signInAndUp.bind(this)({
                 ...input,
             });
 
@@ -66,13 +59,13 @@ export default function getRecipeImplementation(recipeInput: {
         getStateAndOtherInfoFromStorage: function <CustomStateProperties>(input: {
             userContext: any;
         }): (StateObject & CustomStateProperties) | undefined {
-            return webJsImplementation.getStateAndOtherInfoFromStorage.bind(this)<CustomStateProperties>({
+            return WebJSRecipe.getStateAndOtherInfoFromStorage.bind(this)<CustomStateProperties>({
                 userContext: input.userContext,
             });
         },
 
         setStateAndOtherInfoToStorage: function (input): Promise<void> {
-            return webJsImplementation.setStateAndOtherInfoToStorage.bind(this)<{
+            return WebJSRecipe.setStateAndOtherInfoToStorage.bind(this)<{
                 rid?: string;
                 redirectToPath?: string;
             }>({
@@ -86,22 +79,22 @@ export default function getRecipeImplementation(recipeInput: {
         },
 
         getAuthorisationURLWithQueryParamsAndSetState: async function (input) {
-            return webJsImplementation.getAuthorisationURLWithQueryParamsAndSetState.bind(this)({
+            return WebJSRecipe.getAuthorisationURLWithQueryParamsAndSetState.bind(this)({
                 ...input,
             });
         },
 
         getAuthStateFromURL: function (input): string {
-            return webJsImplementation.getAuthStateFromURL.bind(this)(input);
+            return WebJSRecipe.getAuthStateFromURL.bind(this)(input);
         },
 
         generateStateToSendToOAuthProvider: function (input) {
-            return webJsImplementation.generateStateToSendToOAuthProvider.bind(this)({
+            return WebJSRecipe.generateStateToSendToOAuthProvider.bind(this)({
                 ...input,
             });
         },
         verifyAndGetStateOrThrowError: function (input) {
-            return webJsImplementation.verifyAndGetStateOrThrowError.bind(this)({
+            return WebJSRecipe.verifyAndGetStateOrThrowError.bind(this)({
                 stateFromAuthProvider: input.stateFromAuthProvider,
                 stateObjectFromStorage: input.stateObjectFromStorage,
                 userContext: input.userContext,
@@ -109,13 +102,13 @@ export default function getRecipeImplementation(recipeInput: {
         },
 
         getAuthCodeFromURL: function (input): string {
-            return webJsImplementation.getAuthCodeFromURL.bind(this)({
+            return WebJSRecipe.getAuthCodeFromURL.bind(this)({
                 userContext: input.userContext,
             });
         },
 
         getAuthErrorFromURL: function (input): string | undefined {
-            return webJsImplementation.getAuthErrorFromURL.bind(this)({
+            return WebJSRecipe.getAuthErrorFromURL.bind(this)({
                 userContext: input.userContext,
             });
         },

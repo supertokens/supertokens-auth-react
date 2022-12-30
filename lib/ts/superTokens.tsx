@@ -52,6 +52,7 @@ import {
 import { CookieHandlerReference } from "supertokens-website/utils/cookieHandler";
 import { WindowHandlerReference } from "supertokens-website/utils/windowHandler";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
+import SuperTokensWebJS from "supertokens-web-js";
 
 /*
  * Class.
@@ -111,8 +112,8 @@ export default class SuperTokens {
 
         this.userGetRedirectionURL = config.getRedirectionURL;
 
-        this.recipeList = config.recipeList.map((recipe) => {
-            return recipe(this.appInfo, enableDebugLogs);
+        this.recipeList = config.recipeList.map(({ authReact }) => {
+            return authReact(this.appInfo, enableDebugLogs);
         });
     }
 
@@ -130,6 +131,10 @@ export default class SuperTokens {
 
         SuperTokens.instance = new SuperTokens(config);
 
+        SuperTokensWebJS.init({
+            ...config,
+            recipeList: config.recipeList.map(({ webJS }) => webJS),
+        });
         PostSuperTokensInitCallbacks.runPostInitCallbacks();
     }
 

@@ -1,12 +1,12 @@
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import { OnHandleEventContext, PreAndPostAPIHookAction } from "./types";
-import { getRecipeImplementation as WebJSRecipeImplementation } from "supertokens-web-js/recipe/emailverification/recipeImplementation";
 import { NormalisedAppInfo } from "../../types";
 import {
     RecipeOnHandleEventFunction,
     RecipePostAPIHookFunction,
     RecipePreAPIHookFunction,
 } from "../recipeModule/types";
+import WebJSRecipe from "supertokens-web-js/recipe/emailverification";
 
 export default function getRecipeImplementation(recipeInput: {
     recipeId: string;
@@ -15,14 +15,12 @@ export default function getRecipeImplementation(recipeInput: {
     postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
 }): RecipeInterface {
-    const webJsImplementation = WebJSRecipeImplementation(recipeInput);
-
     return {
         verifyEmail: async function (input): Promise<{
             status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
             fetchResponse: Response;
         }> {
-            const response = await webJsImplementation.verifyEmail.bind(this)({
+            const response = await WebJSRecipe.verifyEmail.bind(this)({
                 ...input,
             });
 
@@ -40,7 +38,7 @@ export default function getRecipeImplementation(recipeInput: {
             status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
             fetchResponse: Response;
         }> {
-            const response = await webJsImplementation.sendVerificationEmail.bind(this)({
+            const response = await WebJSRecipe.sendVerificationEmail.bind(this)({
                 ...input,
             });
 
@@ -59,7 +57,7 @@ export default function getRecipeImplementation(recipeInput: {
             isVerified: boolean;
             fetchResponse: Response;
         }> {
-            const response = await webJsImplementation.isEmailVerified.bind(this)({
+            const response = await WebJSRecipe.isEmailVerified.bind(this)({
                 ...input,
             });
 
@@ -67,7 +65,7 @@ export default function getRecipeImplementation(recipeInput: {
         },
 
         getEmailVerificationTokenFromURL: function (input) {
-            return webJsImplementation.getEmailVerificationTokenFromURL.bind(this)({
+            return WebJSRecipe.getEmailVerificationTokenFromURL.bind(this)({
                 userContext: input.userContext,
             });
         },

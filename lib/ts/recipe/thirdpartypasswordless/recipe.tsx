@@ -18,7 +18,12 @@
  */
 
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
+import {
+    CreateRecipeFunction as CreateRecipeFunctionAuthReact,
+    RecipeFeatureComponentMap,
+    NormalisedAppInfo,
+    FeatureBaseProps,
+} from "../../types";
 import {
     Config,
     GetRedirectionURLContext,
@@ -42,6 +47,9 @@ import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import OverrideableBuilder from "supertokens-js-override";
 import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
+import ThirdpartyPasswordlessWebJS from "supertokens-web-js/recipe/thirdpartypasswordless";
+import type { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
+import type { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/thirdpartypasswordless/types";
 
 export default class ThirdPartyPasswordless extends AuthRecipe<
     GetRedirectionURLContext,
@@ -202,24 +210,38 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
      * Static methods.
      */
 
-    static init(
-        config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
-        return (
-            appInfo: NormalisedAppInfo
-        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
-            ThirdPartyPasswordless.instance = new ThirdPartyPasswordless(
-                {
-                    ...config,
-                    appInfo,
-                    recipeId: ThirdPartyPasswordless.RECIPE_ID,
-                },
-                {
-                    passwordlessInstance: undefined,
-                    thirdPartyInstance: undefined,
-                }
-            );
-            return ThirdPartyPasswordless.instance;
+    static init(config: UserInput): {
+        authReact: CreateRecipeFunctionAuthReact<
+            GetRedirectionURLContext,
+            PreAndPostAPIHookAction,
+            OnHandleEventContext,
+            NormalisedConfig
+        >;
+        webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
+    } {
+        return {
+            authReact: (
+                appInfo: NormalisedAppInfo
+            ): RecipeModule<
+                GetRedirectionURLContext,
+                PreAndPostAPIHookAction,
+                OnHandleEventContext,
+                NormalisedConfig
+            > => {
+                ThirdPartyPasswordless.instance = new ThirdPartyPasswordless(
+                    {
+                        ...config,
+                        appInfo,
+                        recipeId: ThirdPartyPasswordless.RECIPE_ID,
+                    },
+                    {
+                        passwordlessInstance: undefined,
+                        thirdPartyInstance: undefined,
+                    }
+                );
+                return ThirdPartyPasswordless.instance;
+            },
+            webJS: ThirdpartyPasswordlessWebJS.init(config),
         };
     }
 

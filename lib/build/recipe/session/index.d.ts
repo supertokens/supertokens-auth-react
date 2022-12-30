@@ -28,7 +28,10 @@ export default class SessionAPIWrapper {
             }
         >
     >;
-    static init(config?: InputType): import("../../types").CreateRecipeFunction<unknown, unknown, unknown, any>;
+    static init(config?: InputType): {
+        authReact: import("../../types").CreateRecipeFunction<unknown, unknown, unknown, any>;
+        webJS: import("supertokens-web-js/lib/build/types").CreateRecipeFunction<any>;
+    };
     static getUserId(input?: { userContext?: any }): Promise<string>;
     static getAccessTokenPayloadSecurely(input?: { userContext?: any }): Promise<any>;
     static attemptRefreshingSession(): Promise<boolean>;

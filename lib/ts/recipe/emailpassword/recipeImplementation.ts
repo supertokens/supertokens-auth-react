@@ -1,13 +1,13 @@
 import { OnHandleEventContext, PreAndPostAPIHookAction } from "./types";
 import { User } from "../authRecipe/types";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
-import { getRecipeImplementation as WebJSRecipeImplementation } from "supertokens-web-js/recipe/emailpassword/recipeImplementation";
 import { NormalisedAppInfo } from "../../types";
 import {
     RecipeOnHandleEventFunction,
     RecipePostAPIHookFunction,
     RecipePreAPIHookFunction,
 } from "../recipeModule/types";
+import WebJSRecipe from "supertokens-web-js/recipe/emailpassword";
 
 export default function getRecipeImplementation(recipeInput: {
     recipeId: string;
@@ -16,12 +16,6 @@ export default function getRecipeImplementation(recipeInput: {
     postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
 }): RecipeInterface {
-    const webJsImplementation = WebJSRecipeImplementation({
-        recipeId: recipeInput.recipeId,
-        appInfo: recipeInput.appInfo,
-        preAPIHook: recipeInput.preAPIHook,
-        postAPIHook: recipeInput.postAPIHook,
-    });
     return {
         submitNewPassword: async function (input): Promise<
             | {
@@ -37,7 +31,7 @@ export default function getRecipeImplementation(recipeInput: {
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsImplementation.submitNewPassword.bind(this)({
+            const response = await WebJSRecipe.submitNewPassword.bind(this)({
                 ...input,
                 formFields: [input.formFields[0]],
             });
@@ -66,7 +60,7 @@ export default function getRecipeImplementation(recipeInput: {
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsImplementation.sendPasswordResetEmail.bind(this)({
+            const response = await WebJSRecipe.sendPasswordResetEmail.bind(this)({
                 ...input,
             });
 
@@ -94,7 +88,7 @@ export default function getRecipeImplementation(recipeInput: {
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsImplementation.signUp.bind(this)({
+            const response = await WebJSRecipe.signUp.bind(this)({
                 ...input,
             });
 
@@ -128,7 +122,7 @@ export default function getRecipeImplementation(recipeInput: {
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsImplementation.signIn.bind(this)({
+            const response = await WebJSRecipe.signIn.bind(this)({
                 ...input,
             });
 
@@ -147,13 +141,13 @@ export default function getRecipeImplementation(recipeInput: {
             doesExist: boolean;
             fetchResponse: Response;
         }> {
-            return await webJsImplementation.doesEmailExist.bind(this)({
+            return await WebJSRecipe.doesEmailExist.bind(this)({
                 ...input,
             });
         },
 
         getResetPasswordTokenFromURL: function (input): string {
-            return webJsImplementation.getResetPasswordTokenFromURL.bind(this)({
+            return WebJSRecipe.getResetPasswordTokenFromURL.bind(this)({
                 userContext: input.userContext,
             });
         },

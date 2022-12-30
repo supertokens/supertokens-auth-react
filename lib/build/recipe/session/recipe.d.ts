@@ -1,10 +1,15 @@
 /// <reference types="react" />
 import RecipeModule from "../recipeModule";
-import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
+import {
+    CreateRecipeFunction as CreateRecipeFunctionAuthReact,
+    NormalisedAppInfo,
+    RecipeFeatureComponentMap,
+} from "../../types";
 import { RecipeEventWithSessionContext, InputType } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
 import { SessionClaim } from "supertokens-web-js/recipe/session";
+import type { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
 declare type ConfigType = InputType & {
     recipeId: string;
     appInfo: NormalisedAppInfo;
@@ -60,7 +65,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     private notifyListeners;
     private getSessionContext;
     static addAxiosInterceptors(axiosInstance: any, userContext: any): void;
-    static init(config?: InputType): CreateRecipeFunction<unknown, unknown, unknown, any>;
+    static init(config?: InputType): {
+        authReact: CreateRecipeFunctionAuthReact<unknown, unknown, unknown, any>;
+        webJS: CreateRecipeFunctionWebJS<any>;
+    };
     static getInstanceOrThrow(): Session;
     static getInstance(): Session | undefined;
     static reset(): void;

@@ -12,14 +12,17 @@ import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "
 import { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import { PropsWithChildren } from "react";
 export default class Wrapper {
-    static init(
-        config: UserInput
-    ): import("../../types").CreateRecipeFunction<
-        GetRedirectionURLContext,
-        import("./types").PreAndPostAPIHookAction,
-        OnHandleEventContext,
-        import("./types").NormalisedConfig
-    >;
+    static init(config: UserInput): {
+        authReact: import("../../types").CreateRecipeFunction<
+            GetRedirectionURLContext,
+            import("./types").PreAndPostAPIHookAction,
+            OnHandleEventContext,
+            import("./types").NormalisedConfig
+        >;
+        webJS: import("supertokens-web-js/lib/build/types").CreateRecipeFunction<
+            import("supertokens-web-js/recipe/thirdpartyemailpassword/types").PreAndPostAPIHookAction
+        >;
+    };
     static signOut(input?: { userContext?: any }): Promise<void>;
     static submitNewPassword(input: {
         formFields: {
