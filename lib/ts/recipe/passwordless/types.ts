@@ -14,7 +14,7 @@
  */
 
 import { Dispatch } from "react";
-import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
+import { CreateRecipeFunction, FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -37,6 +37,8 @@ import { LinkSent } from "./components/themes/signInUp/linkSent";
 import { CloseTabScreen } from "./components/themes/signInUp/closeTabScreen";
 import { EmailOrPhoneForm } from "./components/themes/signInUp/emailOrPhoneForm";
 import { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
+import { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/types";
+import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/passwordless/types";
 
 export type PreAndPostAPIHookAction =
     | "PASSWORDLESS_CREATE_CODE"
@@ -186,6 +188,16 @@ export type UserInput = (
     };
     linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+
+export type InitOutput = {
+    authReact: CreateRecipeFunction<
+        GetRedirectionURLContext,
+        PreAndPostAPIHookAction,
+        OnHandleEventContext,
+        NormalisedConfig
+    >;
+    webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
+};
 
 export type SignInUpProps = {
     recipeImplementation: RecipeInterface;

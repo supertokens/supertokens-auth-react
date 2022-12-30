@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { FeatureBaseConfig, ThemeBaseProps } from "../../types";
+import { CreateRecipeFunction, FeatureBaseConfig, ThemeBaseProps } from "../../types";
 import {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -24,6 +24,8 @@ import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerif
 import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
 import OverrideableBuilder from "supertokens-js-override";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
+import { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/types";
+import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/emailverification/types";
 
 export type ComponentOverrideMap = {
     EmailVerificationSendVerifyEmail_Override?: ComponentOverride<typeof SendVerifyEmail>;
@@ -45,6 +47,16 @@ export type UserInput = {
         components?: ComponentOverrideMap;
     };
 } & RecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+
+export type InitOutput = {
+    authReact: CreateRecipeFunction<
+        GetRedirectionURLContext,
+        PreAndPostAPIHookAction,
+        OnHandleEventContext,
+        NormalisedConfig
+    >;
+    webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
+};
 
 // Config is what does in the constructor of the recipe.
 export type Config = UserInput &

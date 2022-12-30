@@ -18,12 +18,7 @@
  */
 
 import AuthRecipe from "../authRecipe";
-import {
-    CreateRecipeFunction as CreateRecipeFunctionAuthReact,
-    RecipeFeatureComponentMap,
-    NormalisedAppInfo,
-    FeatureBaseProps,
-} from "../../types";
+import { RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
 import {
     Config,
     GetRedirectionURLContext,
@@ -31,6 +26,7 @@ import {
     OnHandleEventContext,
     UserInput,
     PreAndPostAPIHookAction,
+    InitOutput,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyPasswordlessConfig } from "./utils";
@@ -48,8 +44,6 @@ import OverrideableBuilder from "supertokens-js-override";
 import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import ThirdpartyPasswordlessWebJS from "supertokens-web-js/recipe/thirdpartypasswordless";
-import type { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
-import type { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/thirdpartypasswordless/types";
 
 export default class ThirdPartyPasswordless extends AuthRecipe<
     GetRedirectionURLContext,
@@ -210,15 +204,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
      * Static methods.
      */
 
-    static init(config: UserInput): {
-        authReact: CreateRecipeFunctionAuthReact<
-            GetRedirectionURLContext,
-            PreAndPostAPIHookAction,
-            OnHandleEventContext,
-            NormalisedConfig
-        >;
-        webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
-    } {
+    static init(config: UserInput): InitOutput {
         return {
             authReact: (
                 appInfo: NormalisedAppInfo

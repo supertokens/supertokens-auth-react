@@ -1,4 +1,4 @@
-import { FeatureBaseConfig, ThemeBaseProps } from "../../types";
+import { CreateRecipeFunction, FeatureBaseConfig, ThemeBaseProps } from "../../types";
 import {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -9,6 +9,8 @@ import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerif
 import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
 import OverrideableBuilder from "supertokens-js-override";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
+import { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/types";
+import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/emailverification/types";
 export declare type ComponentOverrideMap = {
     EmailVerificationSendVerifyEmail_Override?: ComponentOverride<typeof SendVerifyEmail>;
     EmailVerificationVerifyEmailLinkClicked_Override?: ComponentOverride<typeof VerifyEmailLinkClicked>;
@@ -26,6 +28,15 @@ export declare type UserInput = {
         components?: ComponentOverrideMap;
     };
 } & RecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+export declare type InitOutput = {
+    authReact: CreateRecipeFunction<
+        GetRedirectionURLContext,
+        PreAndPostAPIHookAction,
+        OnHandleEventContext,
+        NormalisedConfig
+    >;
+    webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
+};
 export declare type Config = UserInput &
     RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {

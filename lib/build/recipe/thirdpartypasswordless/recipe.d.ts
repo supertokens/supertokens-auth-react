@@ -1,23 +1,17 @@
 /// <reference types="react" />
 import AuthRecipe from "../authRecipe";
-import {
-    CreateRecipeFunction as CreateRecipeFunctionAuthReact,
-    RecipeFeatureComponentMap,
-    FeatureBaseProps,
-} from "../../types";
+import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import {
     Config,
     GetRedirectionURLContext,
     NormalisedConfig,
     OnHandleEventContext,
     UserInput,
-    PreAndPostAPIHookAction,
+    InitOutput,
 } from "./types";
 import Passwordless from "../passwordless/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
-import type { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
-import type { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/thirdpartypasswordless/types";
 export default class ThirdPartyPasswordless extends AuthRecipe<
     GetRedirectionURLContext,
     never,
@@ -45,15 +39,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
             userContext?: any;
         }
     ) => JSX.Element;
-    static init(config: UserInput): {
-        authReact: CreateRecipeFunctionAuthReact<
-            GetRedirectionURLContext,
-            PreAndPostAPIHookAction,
-            OnHandleEventContext,
-            NormalisedConfig
-        >;
-        webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
-    };
+    static init(config: UserInput): InitOutput;
     static getInstanceOrThrow(): ThirdPartyPasswordless;
     static reset(): void;
 }

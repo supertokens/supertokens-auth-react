@@ -25,14 +25,15 @@ import {
     NormalisedConfig,
     GetRedirectionURLContext,
     OnHandleEventContext,
-    PreAndPostAPIHookAction as PreAndPostAPIHookActionAuthReact,
+    PreAndPostAPIHookAction,
+    InitOutput,
 } from "./types";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
 import { matchRecipeIdUsingQueryParams, saveInvalidClaimRedirectPathInContext } from "../../utils";
 import { normaliseEmailVerificationFeature } from "./utils";
-import { CreateRecipeFunction as CreateRecipeFunctionAuthReact, NormalisedAppInfo } from "../../types";
+import { NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
 import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
@@ -43,12 +44,10 @@ import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { UserContextContext } from "../../usercontext";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import EmailVerificationWebJS from "supertokens-web-js/recipe/emailverification";
-import type { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
-import type { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/lib/build/recipe/emailverification/types";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
-    PreAndPostAPIHookActionAuthReact,
+    PreAndPostAPIHookAction,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -92,21 +91,13 @@ export default class EmailVerification extends RecipeModule<
         });
     }
 
-    static init(config: UserInput): {
-        authReact: CreateRecipeFunctionAuthReact<
-            GetRedirectionURLContext,
-            PreAndPostAPIHookActionAuthReact,
-            OnHandleEventContext,
-            NormalisedConfig
-        >;
-        webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
-    } {
+    static init(config: UserInput): InitOutput {
         return {
             authReact: (
                 appInfo: NormalisedAppInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
-                PreAndPostAPIHookActionAuthReact,
+                PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {

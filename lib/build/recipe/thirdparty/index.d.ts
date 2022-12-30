@@ -9,17 +9,7 @@ import { RecipeInterface, StateObject, ThirdPartyUserType as User } from "supert
 import { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import { PropsWithChildren } from "react";
 export default class Wrapper {
-    static init(config: UserInput): {
-        authReact: import("../../types").CreateRecipeFunction<
-            import("../authRecipe/types").GetRedirectionURLContext,
-            import("./types").PreAndPostAPIHookAction,
-            OnHandleEventContext,
-            import("./types").NormalisedConfig
-        >;
-        webJS: import("supertokens-web-js/lib/build/types").CreateRecipeFunction<
-            import("supertokens-web-js/recipe/thirdparty").PreAndPostAPIHookAction
-        >;
-    };
+    static init(config: UserInput): import("./types").InitOutput;
     static signOut(input?: { userContext?: any }): Promise<void>;
     static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: any }): Promise<{
         status: "OK" | "ERROR";

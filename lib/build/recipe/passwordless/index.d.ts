@@ -5,17 +5,7 @@ import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recip
 import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
 import { PropsWithChildren } from "react";
 export default class Wrapper {
-    static init(config: UserInput): {
-        authReact: import("../../types").CreateRecipeFunction<
-            import("../authRecipe/types").GetRedirectionURLContext,
-            import("./types").PreAndPostAPIHookAction,
-            OnHandleEventContext,
-            import("./types").NormalisedConfig
-        >;
-        webJS: import("supertokens-web-js/lib/build/types").CreateRecipeFunction<
-            import("supertokens-web-js/recipe/passwordless").PreAndPostAPIHookAction
-        >;
-    };
+    static init(config: UserInput): import("./types").InitOutput;
     static signOut(input?: { userContext?: any }): Promise<void>;
     static createCode(
         input:

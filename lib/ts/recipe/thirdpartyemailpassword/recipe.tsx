@@ -17,12 +17,7 @@
  * Imports.
  */
 import AuthRecipe from "../authRecipe";
-import {
-    CreateRecipeFunction as CreateRecipeFunctionAuthReact,
-    RecipeFeatureComponentMap,
-    NormalisedAppInfo,
-    FeatureBaseProps,
-} from "../../types";
+import { RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
 import {
     Config,
     GetRedirectionURLContext,
@@ -30,6 +25,7 @@ import {
     OnHandleEventContext,
     UserInput,
     PreAndPostAPIHookAction,
+    InitOutput,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
@@ -47,8 +43,6 @@ import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementa
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import ThirdpartyEmailPasswordWebJS from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import type { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
-import type { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/thirdpartyemailpassword/types";
 
 export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
@@ -226,15 +220,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
      * Static methods.
      */
 
-    static init(config: UserInput): {
-        authReact: CreateRecipeFunctionAuthReact<
-            GetRedirectionURLContext,
-            PreAndPostAPIHookAction,
-            OnHandleEventContext,
-            NormalisedConfig
-        >;
-        webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
-    } {
+    static init(config: UserInput): InitOutput {
         return {
             authReact: (
                 appInfo: NormalisedAppInfo

@@ -1,23 +1,15 @@
 /// <reference types="react" />
 import AuthRecipe from "../authRecipe";
-import {
-    CreateRecipeFunction as CreateRecipeFunctionAuthReact,
-    RecipeFeatureComponentMap,
-    FeatureBaseProps,
-} from "../../types";
+import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import {
     GetRedirectionURLContext,
     Config,
     NormalisedConfig,
-    PreAndPostAPIHookAction as PreAndPostAPIHookActionAuthReact,
     OnHandleEventContext,
     UserInput,
+    InitOutput,
 } from "./types";
-import {
-    PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS,
-    RecipeInterface as WebJSRecipeInterface,
-} from "supertokens-web-js/recipe/thirdparty";
-import type { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
+import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 export default class ThirdParty extends AuthRecipe<
     GetRedirectionURLContext,
     never,
@@ -37,15 +29,7 @@ export default class ThirdParty extends AuthRecipe<
         }
     ) => JSX.Element;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
-    static init(config: UserInput): {
-        authReact: CreateRecipeFunctionAuthReact<
-            GetRedirectionURLContext,
-            PreAndPostAPIHookActionAuthReact,
-            OnHandleEventContext,
-            NormalisedConfig
-        >;
-        webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
-    };
+    static init(config: UserInput): InitOutput;
     static getInstanceOrThrow(): ThirdParty;
     static reset(): void;
 }

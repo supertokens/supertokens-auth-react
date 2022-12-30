@@ -18,19 +18,15 @@
  */
 
 import AuthRecipe from "../authRecipe";
-import {
-    CreateRecipeFunction as CreateRecipeFunctionAuthReact,
-    RecipeFeatureComponentMap,
-    NormalisedAppInfo,
-    FeatureBaseProps,
-} from "../../types";
+import { RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
 import {
     GetRedirectionURLContext,
     Config,
     NormalisedConfig,
-    PreAndPostAPIHookAction as PreAndPostAPIHookActionAuthReact,
+    PreAndPostAPIHookAction,
     OnHandleEventContext,
     UserInput,
+    InitOutput,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyConfig, matchRecipeIdUsingState } from "./utils";
@@ -41,14 +37,10 @@ import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 import RecipeImplementation from "./recipeImplementation";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import {
-    PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS,
-    RecipeInterface as WebJSRecipeInterface,
-} from "supertokens-web-js/recipe/thirdparty";
+import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import OverrideableBuilder from "supertokens-js-override";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import ThirdpartyWebJS from "supertokens-web-js/recipe/thirdparty";
-import type { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
 
 /*
  * Class.
@@ -117,7 +109,7 @@ export default class ThirdParty extends AuthRecipe<
                     <UserContextWrapper userContext={props.userContext}>
                         <AuthWidgetWrapper<
                             GetRedirectionURLContext,
-                            PreAndPostAPIHookActionAuthReact,
+                            PreAndPostAPIHookAction,
                             OnHandleEventContext,
                             NormalisedConfig
                         >
@@ -149,21 +141,13 @@ export default class ThirdParty extends AuthRecipe<
         return this.getAuthRecipeDefaultRedirectionURL(context);
     };
 
-    static init(config: UserInput): {
-        authReact: CreateRecipeFunctionAuthReact<
-            GetRedirectionURLContext,
-            PreAndPostAPIHookActionAuthReact,
-            OnHandleEventContext,
-            NormalisedConfig
-        >;
-        webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
-    } {
+    static init(config: UserInput): InitOutput {
         return {
             authReact: (
                 appInfo: NormalisedAppInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
-                PreAndPostAPIHookActionAuthReact,
+                PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {

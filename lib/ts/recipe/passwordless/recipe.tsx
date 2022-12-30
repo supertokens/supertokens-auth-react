@@ -17,19 +17,15 @@
  * Imports.
  */
 
-import {
-    CreateRecipeFunction as CreateRecipeFunctionAuthReact,
-    RecipeFeatureComponentMap,
-    NormalisedAppInfo,
-    FeatureBaseProps,
-} from "../../types";
+import { RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
-    PreAndPostAPIHookAction as PreAndPostAPIHookActionAuthReact,
+    PreAndPostAPIHookAction,
     Config,
     NormalisedConfig,
     UserInput,
+    InitOutput,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normalisePasswordlessConfig } from "./utils";
@@ -42,20 +38,16 @@ import SignInUp from "./components/features/signInAndUp";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import LinkClickedScreen from "./components/features/linkClickedScreen";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import {
-    PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS,
-    RecipeInterface,
-} from "supertokens-web-js/recipe/passwordless";
+import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
-import type { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
 
 /*
  * Class.
  */
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
-    PreAndPostAPIHookActionAuthReact,
+    PreAndPostAPIHookAction,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -113,7 +105,7 @@ export default class Passwordless extends AuthRecipe<
                     <UserContextWrapper userContext={props.userContext}>
                         <AuthWidgetWrapper<
                             GetRedirectionURLContext,
-                            PreAndPostAPIHookActionAuthReact,
+                            PreAndPostAPIHookAction,
                             OnHandleEventContext,
                             NormalisedConfig
                         >
@@ -142,21 +134,13 @@ export default class Passwordless extends AuthRecipe<
         }
     };
 
-    static init(config: UserInput): {
-        authReact: CreateRecipeFunctionAuthReact<
-            GetRedirectionURLContext,
-            PreAndPostAPIHookActionAuthReact,
-            OnHandleEventContext,
-            NormalisedConfig
-        >;
-        webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
-    } {
+    static init(config: UserInput): InitOutput {
         return {
             authReact: (
                 appInfo: NormalisedAppInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
-                PreAndPostAPIHookActionAuthReact,
+                PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {

@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import { FeatureBaseConfig, Styles } from "../../types";
+import { CreateRecipeFunction, FeatureBaseConfig, Styles } from "../../types";
 import {
     GetRedirectionURLContext as PasswordlessGetRedirectionURLContext,
     OnHandleEventContext as PasswordlessOnHandleEventContext,
@@ -62,6 +62,8 @@ import { CountryCode } from "libphonenumber-js";
 import { Dispatch } from "react";
 import { SignInUpScreens } from "../passwordless/components/themes/signInUp";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
+import { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/types";
+import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/thirdpartypasswordless";
 
 // This defines a new type by renaming a single K property to L and as optional
 // If we upgrade to typescript 4.1> this could just keep the optionality of the original (with the as keyword)
@@ -128,6 +130,16 @@ export type UserInput = (
     oAuthCallbackScreen?: FeatureBaseConfig;
     disablePasswordless?: boolean;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+
+export type InitOutput = {
+    authReact: CreateRecipeFunction<
+        GetRedirectionURLContext,
+        PreAndPostAPIHookAction,
+        OnHandleEventContext,
+        NormalisedConfig
+    >;
+    webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
+};
 
 export type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
