@@ -158,8 +158,10 @@ jest.spyOn(Session, "getInstanceOrThrow").mockImplementation(() => MockSession a
 describe("Components override per recipe provider", () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        EmailPassword.reset();
         SuperTokens.reset();
+        EmailPassword.reset();
+        ThirdPartyEmailPassword.reset();
+        Github.reset();
 
         SuperTokens.init({
             appInfo: {
