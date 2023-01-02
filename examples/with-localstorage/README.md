@@ -2,7 +2,7 @@
 
 # SuperTokens Demo app
 
-This demo app is now deprecated. We recommend using the [Authorization header](https://supertokens.com/docs/thirdpartyemailpassword/advanced-customizations/react-component-override/usage). You can switch it entirely to use `localstorage` by adding a custom CookieHandler.
+This demo app is now deprecated. We recommend using the [Authorization header](https://supertokens.com/docs/thirdpartyemailpassword/advanced-customizations/react-component-override/usage). You can switch to only using `localstorage` by adding a custom CookieHandler.
 
 ## Author
 
