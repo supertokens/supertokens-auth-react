@@ -7,9 +7,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-### Changed
+### Breaking changes
 
 -   Moved component override config into a recipe specific provider component
+
+### Migration
+
+#### EmailVerification recipe init
+
+```tsx
+SuperTokens.init({
+    recipeList: [
+        EmailPassword.init({
+            override: {
+                components: {
+                    EmailPasswordSignIn_Override: ({ DefaultComponent, ...props }) => {
+                        return (
+                            <div>
+                                <img src="octocat.jpg" />
+                                <DefaultComponent {...props} />
+                            </div>
+                        );
+                    },
+                },
+            },
+        }),
+    ],
+});
+```
+
+Components override would move to override provider component's prop:
+
+```tsx
+import EmailPassword, { EmailPasswordComponentsOverrideProvider } from "supertokens-auth-react/recipe/emailpassword";
+
+SuperTokens.init({
+    recipeList: [EmailPassword.init()],
+});
+
+function App() {
+    return (
+        <SuperTokensWrapper>
+            <EmailPasswordComponentsOverrideProvider
+                components={{
+                    EmailPasswordSignIn_Override: ({ DefaultComponent, ...props }) => {
+                        return (
+                            <div>
+                                <img src="octocat.jpg" />
+                                <DefaultComponent {...props} />
+                            </div>
+                        );
+                    },
+                }}>
+                {/* The rest of JSX */}
+            </EmailPasswordComponentsOverrideProvider>
+        </SuperTokensWrapper>
+    );
+}
+
+export default App;
+```
 
 ### Testing
 
