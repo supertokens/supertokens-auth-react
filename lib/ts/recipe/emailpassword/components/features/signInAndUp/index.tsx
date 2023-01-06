@@ -30,7 +30,6 @@ import { getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { SignInAndUpState } from "../../../types";
 import Recipe from "../../../recipe";
-import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import { useMemo } from "react";
@@ -39,6 +38,8 @@ import { Dispatch } from "react";
 import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
 import Session from "../../../../session/recipe";
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 
 export const useFeatureReducer = (recipe: Recipe | undefined) => {
     return React.useReducer(
@@ -185,9 +186,10 @@ export const SignInAndUpFeature: React.FC<
 > = (props) => {
     const [state, dispatch] = useFeatureReducer(props.recipe);
     const childProps = useChildProps(props.recipe, state, dispatch, props.history);
+    const recipeComponentOverrides = useRecipeComponentOverrideContext();
 
     return (
-        <ComponentOverrideContext.Provider value={props.recipe.config.override.components}>
+        <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsEmailPassword}>

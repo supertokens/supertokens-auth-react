@@ -7,6 +7,67 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.29.0] - 2023-01-06
+
+### Breaking changes
+
+-   Moved component override config into a recipe specific provider component
+
+### Migration
+
+```tsx
+SuperTokens.init({
+    recipeList: [
+        EmailPassword.init({
+            override: {
+                components: {
+                    EmailPasswordSignIn_Override: ({ DefaultComponent, ...props }) => {
+                        return (
+                            <div>
+                                <img src="octocat.jpg" />
+                                <DefaultComponent {...props} />
+                            </div>
+                        );
+                    },
+                },
+            },
+        }),
+    ],
+});
+```
+
+Components override would move to override provider component's prop:
+
+```tsx
+import EmailPassword, { EmailPasswordComponentsOverrideProvider } from "supertokens-auth-react/recipe/emailpassword";
+
+SuperTokens.init({
+    recipeList: [EmailPassword.init()],
+});
+
+function App() {
+    return (
+        <SuperTokensWrapper>
+            <EmailPasswordComponentsOverrideProvider
+                components={{
+                    EmailPasswordSignIn_Override: ({ DefaultComponent, ...props }) => {
+                        return (
+                            <div>
+                                <img src="octocat.jpg" />
+                                <DefaultComponent {...props} />
+                            </div>
+                        );
+                    },
+                }}>
+                {/* The rest of JSX */}
+            </EmailPasswordComponentsOverrideProvider>
+        </SuperTokensWrapper>
+    );
+}
+
+export default App;
+```
+
 ### Testing
 
 -   Created test for the sign up attempt using duplicate email

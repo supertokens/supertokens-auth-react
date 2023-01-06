@@ -2,7 +2,12 @@ import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
-import ThirdPartyEmailPassword, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import ThirdPartyEmailPassword, {
+    Google,
+    Github,
+    Apple,
+    ThirdpartyEmailPasswordComponentsOverrideProvider,
+} from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
@@ -53,18 +58,6 @@ SuperTokens.init({
                     }
                 }
             },
-            override: {
-                components: {
-                    ThirdPartySignInAndUpProvidersForm_Override: ({ DefaultComponent, ...props }) => {
-                        if (window.location.pathname === "/set-password") {
-                            return null;
-                        } else {
-                            return <DefaultComponent {...props} />;
-                        }
-                    },
-                    EmailPasswordSignUpForm_Override: CustomSignUp,
-                },
-            },
         }),
         Session.init({
             override: {
@@ -87,41 +80,53 @@ function App() {
 
     return (
         <SuperTokensWrapper>
-            <div className="App">
-                <Router>
-                    <div className="fill">
-                        <Routes>
-                            {/* This shows the login UI on "/auth" route */}
-                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+            <ThirdpartyEmailPasswordComponentsOverrideProvider
+                components={{
+                    ThirdPartySignInAndUpProvidersForm_Override: ({ DefaultComponent, ...props }) => {
+                        if (window.location.pathname === "/set-password") {
+                            return null;
+                        } else {
+                            return <DefaultComponent {...props} />;
+                        }
+                    },
+                    EmailPasswordSignUpForm_Override: CustomSignUp,
+                }}>
+                <div className="App">
+                    <Router>
+                        <div className="fill">
+                            <Routes>
+                                {/* This shows the login UI on "/auth" route */}
+                                {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
 
-                            <Route
-                                path="/"
-                                element={
-                                    /* This protects the "/" route so that it shows 
-                                       <Home /> only if the user is logged in.
-                                       Else it redirects the user to "/auth" */
-                                    <SessionAuth
-                                        onSessionExpired={() => {
-                                            updateShowSessionExpiredPopup(true);
-                                        }}>
-                                        <Home />
-                                        {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </SessionAuth>
-                                }
-                            />
-                            <Route
-                                path="/set-password"
-                                element={
-                                    <SessionAuth>
-                                        <SetPassword />
-                                    </SessionAuth>
-                                }
-                            />
-                        </Routes>
-                    </div>
-                    <Footer />
-                </Router>
-            </div>
+                                <Route
+                                    path="/"
+                                    element={
+                                        /* This protects the "/" route so that it shows 
+                                    <Home /> only if the user is logged in.
+                                    Else it redirects the user to "/auth" */
+                                        <SessionAuth
+                                            onSessionExpired={() => {
+                                                updateShowSessionExpiredPopup(true);
+                                            }}>
+                                            <Home />
+                                            {showSessionExpiredPopup && <SessionExpiredPopup />}
+                                        </SessionAuth>
+                                    }
+                                />
+                                <Route
+                                    path="/set-password"
+                                    element={
+                                        <SessionAuth>
+                                            <SetPassword />
+                                        </SessionAuth>
+                                    }
+                                />
+                            </Routes>
+                        </div>
+                        <Footer />
+                    </Router>
+                </div>
+            </ThirdpartyEmailPasswordComponentsOverrideProvider>
         </SuperTokensWrapper>
     );
 }
