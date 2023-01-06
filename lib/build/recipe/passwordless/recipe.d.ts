@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import {
     GetRedirectionURLContext,

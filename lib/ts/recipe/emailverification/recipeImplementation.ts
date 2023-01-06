@@ -6,7 +6,6 @@ import {
     RecipePostAPIHookFunction,
     RecipePreAPIHookFunction,
 } from "../recipeModule/types";
-import WebJSRecipe from "supertokens-web-js/recipe/emailverification";
 
 export default function getRecipeImplementation(recipeInput: {
     recipeId: string;
@@ -14,13 +13,15 @@ export default function getRecipeImplementation(recipeInput: {
     preAPIHook: RecipePreAPIHookFunction<PreAndPostAPIHookAction>;
     postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
+    webJSRecipe: RecipeInterface;
 }): RecipeInterface {
+    const { webJSRecipe } = recipeInput;
     return {
         verifyEmail: async function (input): Promise<{
             status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
             fetchResponse: Response;
         }> {
-            const response = await WebJSRecipe.verifyEmail.bind(this)({
+            const response = await webJSRecipe.verifyEmail.bind(this)({
                 ...input,
             });
 
@@ -38,7 +39,7 @@ export default function getRecipeImplementation(recipeInput: {
             status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
             fetchResponse: Response;
         }> {
-            const response = await WebJSRecipe.sendVerificationEmail.bind(this)({
+            const response = await webJSRecipe.sendVerificationEmail.bind(this)({
                 ...input,
             });
 
@@ -57,7 +58,7 @@ export default function getRecipeImplementation(recipeInput: {
             isVerified: boolean;
             fetchResponse: Response;
         }> {
-            const response = await WebJSRecipe.isEmailVerified.bind(this)({
+            const response = await webJSRecipe.isEmailVerified.bind(this)({
                 ...input,
             });
 
@@ -65,7 +66,7 @@ export default function getRecipeImplementation(recipeInput: {
         },
 
         getEmailVerificationTokenFromURL: function (input) {
-            return WebJSRecipe.getEmailVerificationTokenFromURL.bind(this)({
+            return webJSRecipe.getEmailVerificationTokenFromURL.bind(this)({
                 userContext: input.userContext,
             });
         },

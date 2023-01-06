@@ -10,6 +10,7 @@ import EmailPasswordRecipeImplementation from "../../emailpassword/recipeImpleme
 import ThirdPartyRecipeImplementation from "../../thirdparty/recipeImplementation";
 import DerivedEP from "./emailPasswordImplementation";
 import DerivedTP from "./thirdPartyImplementation";
+import { Recipe as ThirdPartyEmailPasswordWebJS } from "supertokens-web-js/recipe/thirdpartyemailpassword/recipe";
 
 export default function getRecipeImplementation(recipeInput: {
     recipeId: string;
@@ -20,9 +21,11 @@ export default function getRecipeImplementation(recipeInput: {
 }): RecipeInterface {
     const emailpasswordImpl = EmailPasswordRecipeImplementation({
         ...recipeInput,
+        webJSRecipe: ThirdPartyEmailPasswordWebJS.getInstanceOrThrow().emailPasswordRecipe.recipeImplementation,
     });
     const thirdPartyImpl = ThirdPartyRecipeImplementation({
         ...recipeInput,
+        webJSRecipe: ThirdPartyEmailPasswordWebJS.getInstanceOrThrow().thirdPartyRecipe.recipeImplementation,
     });
 
     return {

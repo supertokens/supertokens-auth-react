@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import RecipeModule from "../recipeModule";
 import { RecipeFeatureComponentMap } from "../../types";
 import {

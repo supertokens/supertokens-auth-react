@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import AuthRecipe from "../authRecipe";
 import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import {

@@ -10,6 +10,7 @@ import {
     RecipePreAPIHookFunction,
 } from "../../recipeModule/types";
 import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
+import { Recipe as ThirdPartyPasswordless } from "supertokens-web-js/recipe/thirdpartypasswordless/recipe";
 
 export default function getRecipeImplementation(recipeInput: {
     recipeId: string;
@@ -20,9 +21,11 @@ export default function getRecipeImplementation(recipeInput: {
 }): TPPWlessRecipeInterface {
     const passwordlessImpl = PasswordlessRecipeImplementation({
         ...recipeInput,
+        webJSRecipe: ThirdPartyPasswordless.getInstanceOrThrow().passwordlessRecipe.recipeImplementation,
     });
     const thirdPartyImpl = ThirdPartyRecipeImplementation({
         ...recipeInput,
+        webJSRecipe: ThirdPartyPasswordless.getInstanceOrThrow().thirdPartyRecipe.recipeImplementation,
     });
 
     return {

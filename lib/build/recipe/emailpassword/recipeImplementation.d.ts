@@ -12,4 +12,5 @@ export default function getRecipeImplementation(recipeInput: {
     preAPIHook: RecipePreAPIHookFunction<PreAndPostAPIHookAction>;
     postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
+    webJSRecipe: RecipeInterface;
 }): RecipeInterface;

@@ -7,7 +7,6 @@ import {
     RecipePostAPIHookFunction,
     RecipePreAPIHookFunction,
 } from "../recipeModule/types";
-import WebJSRecipe from "supertokens-web-js/recipe/emailpassword";
 
 export default function getRecipeImplementation(recipeInput: {
     recipeId: string;
@@ -15,7 +14,9 @@ export default function getRecipeImplementation(recipeInput: {
     preAPIHook: RecipePreAPIHookFunction<PreAndPostAPIHookAction>;
     postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
+    webJSRecipe: RecipeInterface;
 }): RecipeInterface {
+    const { webJSRecipe } = recipeInput;
     return {
         submitNewPassword: async function (input): Promise<
             | {
@@ -31,7 +32,7 @@ export default function getRecipeImplementation(recipeInput: {
                   fetchResponse: Response;
               }
         > {
-            const response = await WebJSRecipe.submitNewPassword.bind(this)({
+            const response = await webJSRecipe.submitNewPassword.bind(this)({
                 ...input,
                 formFields: [input.formFields[0]],
             });
@@ -60,7 +61,7 @@ export default function getRecipeImplementation(recipeInput: {
                   fetchResponse: Response;
               }
         > {
-            const response = await WebJSRecipe.sendPasswordResetEmail.bind(this)({
+            const response = await webJSRecipe.sendPasswordResetEmail.bind(this)({
                 ...input,
             });
 
@@ -88,7 +89,7 @@ export default function getRecipeImplementation(recipeInput: {
                   fetchResponse: Response;
               }
         > {
-            const response = await WebJSRecipe.signUp.bind(this)({
+            const response = await webJSRecipe.signUp.bind(this)({
                 ...input,
             });
 
@@ -122,7 +123,7 @@ export default function getRecipeImplementation(recipeInput: {
                   fetchResponse: Response;
               }
         > {
-            const response = await WebJSRecipe.signIn.bind(this)({
+            const response = await webJSRecipe.signIn.bind(this)({
                 ...input,
             });
 
@@ -141,13 +142,13 @@ export default function getRecipeImplementation(recipeInput: {
             doesExist: boolean;
             fetchResponse: Response;
         }> {
-            return await WebJSRecipe.doesEmailExist.bind(this)({
+            return await webJSRecipe.doesEmailExist.bind(this)({
                 ...input,
             });
         },
 
         getResetPasswordTokenFromURL: function (input): string {
-            return WebJSRecipe.getResetPasswordTokenFromURL.bind(this)({
+            return webJSRecipe.getResetPasswordTokenFromURL.bind(this)({
                 userContext: input.userContext,
             });
         },

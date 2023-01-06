@@ -66,6 +66,7 @@ export default class Passwordless extends AuthRecipe<
                 onHandleEvent: this.config.onHandleEvent,
                 preAPIHook: this.config.preAPIHook,
                 postAPIHook: this.config.postAPIHook,
+                webJSRecipe: PasswordlessWebJS,
             })
         );
         this.recipeImpl = builder.override(this.config.override.functions).build();

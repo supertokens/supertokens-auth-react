@@ -6,7 +6,6 @@ import {
     RecipePostAPIHookFunction,
     RecipePreAPIHookFunction,
 } from "../recipeModule/types";
-import WebJSRecipe from "supertokens-web-js/recipe/passwordless";
 
 export default function getRecipeImplementation(recipeInput: {
     recipeId: string;
@@ -14,10 +13,12 @@ export default function getRecipeImplementation(recipeInput: {
     preAPIHook: RecipePreAPIHookFunction<PreAndPostAPIHookAction>;
     postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
+    webJSRecipe: RecipeInterface;
 }): RecipeInterface {
+    const { webJSRecipe } = recipeInput;
     return {
         createCode: async function (input) {
-            const response = await WebJSRecipe.createCode.bind(this)(input);
+            const response = await webJSRecipe.createCode.bind(this)(input);
 
             if (response.status === "OK") {
                 recipeInput.onHandleEvent({
@@ -29,7 +30,7 @@ export default function getRecipeImplementation(recipeInput: {
             return response;
         },
         resendCode: async function (input) {
-            const response = await WebJSRecipe.resendCode.bind(this)(input);
+            const response = await webJSRecipe.resendCode.bind(this)(input);
 
             if (response.status === "RESTART_FLOW_ERROR") {
                 recipeInput.onHandleEvent({
@@ -44,7 +45,7 @@ export default function getRecipeImplementation(recipeInput: {
             return response;
         },
         consumeCode: async function (input) {
-            const response = await WebJSRecipe.consumeCode.bind(this)(input);
+            const response = await webJSRecipe.consumeCode.bind(this)(input);
 
             if (response.status === "RESTART_FLOW_ERROR") {
                 recipeInput.onHandleEvent({
@@ -60,26 +61,26 @@ export default function getRecipeImplementation(recipeInput: {
             return response;
         },
         getLinkCodeFromURL: function (input) {
-            return WebJSRecipe.getLinkCodeFromURL.bind(this)(input);
+            return webJSRecipe.getLinkCodeFromURL.bind(this)(input);
         },
         getPreAuthSessionIdFromURL: function (input) {
-            return WebJSRecipe.getPreAuthSessionIdFromURL.bind(this)(input);
+            return webJSRecipe.getPreAuthSessionIdFromURL.bind(this)(input);
         },
         doesEmailExist: async function (input) {
-            return await WebJSRecipe.doesEmailExist.bind(this)(input);
+            return await webJSRecipe.doesEmailExist.bind(this)(input);
         },
 
         doesPhoneNumberExist: async function (input) {
-            return await WebJSRecipe.doesPhoneNumberExist.bind(this)(input);
+            return await webJSRecipe.doesPhoneNumberExist.bind(this)(input);
         },
         getLoginAttemptInfo: function <CustomAttemptInfoProperties>(input: { userContext: any }) {
-            return WebJSRecipe.getLoginAttemptInfo.bind(this)<CustomAttemptInfoProperties>(input);
+            return webJSRecipe.getLoginAttemptInfo.bind(this)<CustomAttemptInfoProperties>(input);
         },
         setLoginAttemptInfo: async function (input) {
-            return WebJSRecipe.setLoginAttemptInfo.bind(this)(input);
+            return webJSRecipe.setLoginAttemptInfo.bind(this)(input);
         },
         clearLoginAttemptInfo: function (input) {
-            return WebJSRecipe.clearLoginAttemptInfo.bind(this)(input);
+            return webJSRecipe.clearLoginAttemptInfo.bind(this)(input);
         },
     };
 }

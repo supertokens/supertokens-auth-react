@@ -129,12 +129,13 @@ export default class SuperTokens {
             return;
         }
 
-        SuperTokens.instance = new SuperTokens(config);
-
         SuperTokensWebJS.init({
             ...config,
             recipeList: config.recipeList.map(({ webJS }) => webJS),
         });
+
+        SuperTokens.instance = new SuperTokens(config);
+
         PostSuperTokensInitCallbacks.runPostInitCallbacks();
     }
 
