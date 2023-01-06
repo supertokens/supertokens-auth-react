@@ -120,6 +120,11 @@ export default class Wrapper {
     static SignInAndUpTheme: typeof SignInAndUpTheme;
     static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
+    static ComponentsOverrideProvider: import("react").FC<
+        PropsWithChildren<{
+            components: import("./types").ComponentOverrideMap;
+        }>
+    >;
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
@@ -136,6 +141,11 @@ declare const SignInAndUp: (
 ) => JSX.Element;
 declare const getResetPasswordTokenFromURL: typeof Wrapper.getResetPasswordTokenFromURL;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
+declare const EmailPasswordComponentsOverrideProvider: import("react").FC<
+    PropsWithChildren<{
+        components: import("./types").ComponentOverrideMap;
+    }>
+>;
 export {
     init,
     SignInAndUp,
@@ -149,6 +159,7 @@ export {
     getResetPasswordTokenFromURL,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
+    EmailPasswordComponentsOverrideProvider,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

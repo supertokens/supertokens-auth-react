@@ -42,7 +42,6 @@ export type UserInput = {
             originalImplementation: RecipeInterface,
             builder?: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
-        components?: ComponentOverrideMap;
     };
 } & RecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
@@ -60,7 +59,6 @@ export type NormalisedConfig = {
             originalImplementation: RecipeInterface,
             builder?: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
-        components: ComponentOverrideMap;
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 

@@ -32,7 +32,6 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
 
     const override: any = {
         functions: (originalImplementation: TPPWlessRecipeInterface) => originalImplementation,
-        components: {},
         ...config.override,
     };
 
@@ -58,9 +57,7 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
                   },
                   oAuthCallbackScreen: config.oAuthCallbackScreen,
                   useShadowDom: config.useShadowDom,
-                  override: {
-                      components: override.components,
-                  },
+                  override: {},
               },
         passwordlessUserInput: disablePasswordless
             ? undefined
@@ -79,9 +76,7 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
                       emailOrPhoneFormStyle: thirdPartyProviderAndEmailOrPhoneFormStyle,
                   },
                   linkClickedScreenFeature: config.linkClickedScreenFeature,
-                  override: {
-                      components: override.components,
-                  },
+                  override: {},
               },
         override,
     };

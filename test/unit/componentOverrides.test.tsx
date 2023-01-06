@@ -1,6 +1,6 @@
 import React from "react";
 import "@testing-library/jest-dom";
-import { render } from "@testing-library/react";
+import { render, within } from "@testing-library/react";
 
 import { ComponentOverrideContext } from "../../lib/ts/components/componentOverride/componentOverrideContext";
 import { ComponentOverrideMap as EmailPasswordOverrideMap } from "../../lib/ts/recipe/emailpassword/types";
@@ -9,6 +9,22 @@ import { ComponentOverrideMap as EmailVerificationOverrideMap } from "../../lib/
 import { ComponentOverrideMap as ThirdPartyEmailPasswordOverrideMap } from "../../lib/ts/recipe/thirdpartyemailpassword/types";
 import { ComponentOverrideMap as PasswordlessOverrideMap } from "../../lib/ts/recipe/passwordless/types";
 import { ComponentOverrideMap as ThirdPartyPasswordlessOverrideMap } from "../../lib/ts/recipe/thirdpartypasswordless/types";
+
+import "@testing-library/jest-dom";
+import EmailPassword from "../../lib/ts/recipe/emailpassword/recipe";
+import { SessionContextType } from "../../lib/ts/recipe/session";
+import Session from "../../lib/ts/recipe/session/recipe";
+import SuperTokens from "../../lib/ts/superTokens";
+import ThirdPartyEmailPassword from "../../lib/ts/recipe/thirdpartyemailpassword/recipe";
+import {
+    SignInAndUp as SignInAndUpThirdpartyEmailPassword,
+    Github,
+    ThirdpartyEmailPasswordComponentsOverrideProvider,
+} from "../../lib/ts/recipe/thirdpartyemailpassword";
+import {
+    SignInAndUp as SignInAndUpEmailPassword,
+    EmailPasswordComponentsOverrideProvider,
+} from "../../lib/ts/recipe/emailpassword";
 
 import { SignUp } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signUp";
 import { SignUpHeader } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signUpHeader";
@@ -110,5 +126,124 @@ describe("Theme component overrides", () => {
             // then
             expect(await result.findByTestId("override")).toHaveTextContent("Override");
         });
+    });
+});
+
+const MockSession = {
+    addEventListener: jest.fn(),
+    getUserId: jest.fn(),
+    getAccessTokenPayloadSecurely: jest.fn(),
+    doesSessionExist: jest.fn(),
+    validateClaims: jest.fn(),
+    validateGlobalClaimsAndHandleSuccessRedirection: jest.fn(),
+};
+
+const setMockResolvesSession = (ctx: SessionContextType) => {
+    if (ctx.loading === true) {
+        // We "simulate" loading by returning these promises that won't ever resolve
+        MockSession.getUserId.mockReturnValue(new Promise<any>(() => {}));
+        MockSession.getAccessTokenPayloadSecurely.mockReturnValue(new Promise<any>(() => {}));
+        MockSession.doesSessionExist.mockReturnValue(new Promise<any>(() => {}));
+        MockSession.validateClaims.mockReturnValue(new Promise<any>(() => {}));
+    } else {
+        MockSession.getUserId.mockResolvedValue(ctx.userId);
+        MockSession.getAccessTokenPayloadSecurely.mockResolvedValue(ctx.accessTokenPayload);
+        MockSession.doesSessionExist.mockResolvedValue(ctx.doesSessionExist);
+        MockSession.validateClaims.mockReturnValue(ctx.invalidClaims);
+    }
+};
+
+jest.spyOn(Session, "getInstanceOrThrow").mockImplementation(() => MockSession as any);
+
+describe("Components override per recipe provider", () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        SuperTokens.reset();
+        EmailPassword.reset();
+        ThirdPartyEmailPassword.reset();
+        Github.reset();
+
+        SuperTokens.init({
+            appInfo: {
+                apiBasePath: "/auth",
+                apiDomain: "http://localhost:3001",
+                appName: "JestTest",
+                websiteBasePath: "/auth",
+                websiteDomain: "http://localhost:3000",
+            },
+            recipeList: [
+                ThirdPartyEmailPassword.init({
+                    signInAndUpFeature: {
+                        providers: [Github.init()],
+                    },
+                    useShadowDom: false,
+                }),
+                EmailPassword.init({
+                    useShadowDom: false,
+                }),
+            ],
+        });
+        setMockResolvesSession({
+            userId: "mock-user-id",
+            accessTokenPayload: {},
+            invalidClaims: [],
+            doesSessionExist: false,
+            loading: false,
+        });
+    });
+
+    it("Should not affect other recipes components when the same component is overridden", async () => {
+        const result = render(
+            <EmailPasswordComponentsOverrideProvider
+                components={{
+                    EmailPasswordSignInHeader_Override: () => <div>Override emailpassword</div>,
+                }}>
+                <SignInAndUpThirdpartyEmailPassword redirectOnSessionExists={false} />
+            </EmailPasswordComponentsOverrideProvider>
+        );
+
+        expect(await result.findByText("Sign In")).toBeInTheDocument();
+        expect(await result.queryByText("Override emailpassword")).not.toBeInTheDocument();
+    });
+
+    it("Should not affect each others components when two recipes override the same component", async () => {
+        const emailPasswordKey = "EmailPassword_Override";
+        const thirdpartyEmailPasswordKey = "ThirdpartyEmailPassword_Override";
+
+        const result = render(
+            <EmailPasswordComponentsOverrideProvider
+                components={{
+                    EmailPasswordSignInHeader_Override: () => (
+                        <div data-testid="emailpassword-override">{emailPasswordKey}</div>
+                    ),
+                }}>
+                <ThirdpartyEmailPasswordComponentsOverrideProvider
+                    components={{
+                        EmailPasswordSignInHeader_Override: () => (
+                            <div data-testid="thirdpartyemailpassword-override">{thirdpartyEmailPasswordKey}</div>
+                        ),
+                    }}>
+                    <div data-testid="emailpassword-wrapper">
+                        <SignInAndUpEmailPassword redirectOnSessionExists={false} />
+                    </div>
+                    <div data-testid="thirdpartyemailpassword-wrapper">
+                        <SignInAndUpThirdpartyEmailPassword redirectOnSessionExists={false} />
+                    </div>
+                </ThirdpartyEmailPasswordComponentsOverrideProvider>
+            </EmailPasswordComponentsOverrideProvider>
+        );
+
+        expect(await result.findAllByText(emailPasswordKey)).toHaveLength(1);
+        expect(await result.findAllByText(thirdpartyEmailPasswordKey)).toHaveLength(1);
+
+        expect(
+            await within(await result.getByTestId("emailpassword-wrapper")).getByText(emailPasswordKey)
+        ).toBeInTheDocument();
+
+        expect(
+            await within(await result.getByTestId("thirdpartyemailpassword-wrapper")).getByText(
+                thirdpartyEmailPasswordKey
+            )
+        ).toBeInTheDocument();
     });
 });

@@ -173,6 +173,11 @@ export default class Wrapper {
         }
     >;
     static PasswordlessLinkClicked: (prop?: any) => JSX.Element;
+    static ComponentsOverrideProvider: import("react").FC<
+        PropsWithChildren<{
+            components: import("./types").ComponentOverrideMap;
+        }>
+    >;
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
@@ -205,6 +210,11 @@ declare const SignInAndUp: (
 ) => JSX.Element;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const PasswordlessLinkClicked: (prop?: any) => JSX.Element;
+declare const ThirdpartyPasswordlessComponentsOverrideProvider: import("react").FC<
+    PropsWithChildren<{
+        components: import("./types").ComponentOverrideMap;
+    }>
+>;
 export {
     init,
     Apple,
@@ -235,6 +245,7 @@ export {
     SignInAndUp,
     SignInUpTheme,
     ThirdPartySignInAndUpCallback,
+    ThirdpartyPasswordlessComponentsOverrideProvider,
     signOut,
     PasswordlessLinkClicked,
     GetRedirectionURLContext,

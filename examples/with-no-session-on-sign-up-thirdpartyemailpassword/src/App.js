@@ -1,7 +1,12 @@
 import React from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
-import ThirdPartyEmailPassword, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import ThirdPartyEmailPassword, {
+    Google,
+    Github,
+    Apple,
+    ThirdpartyEmailPasswordComponentsOverrideProvider,
+} from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
@@ -39,8 +44,16 @@ SuperTokens.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init(), Apple.init()],
             },
-            override: {
-                components: {
+        }),
+        Session.init(),
+    ],
+});
+
+function App() {
+    return (
+        <SuperTokensWrapper>
+            <ThirdpartyEmailPasswordComponentsOverrideProvider
+                components={{
                     ThirdPartyEmailPasswordHeader_Override: ({ DefaultComponent, ...props }) => {
                         if (props.isSignUp) {
                             return <DefaultComponent {...props} />;
@@ -53,39 +66,31 @@ SuperTokens.init({
                             );
                         }
                     },
-                },
-            },
-        }),
-        Session.init(),
-    ],
-});
+                }}>
+                <div className="App">
+                    <Router>
+                        <div className="fill">
+                            <Routes>
+                                {/* This shows the login UI on "/auth" route */}
+                                {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
 
-function App() {
-    return (
-        <SuperTokensWrapper>
-            <div className="App">
-                <Router>
-                    <div className="fill">
-                        <Routes>
-                            {/* This shows the login UI on "/auth" route */}
-                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
-
-                            <Route
-                                path="/"
-                                element={
-                                    /* This protects the "/" route so that it shows 
-                                        <Home /> only if the user is logged in.
-                                        Else it redirects the user to "/auth" */
-                                    <SessionAuth>
-                                        <Home />
-                                    </SessionAuth>
-                                }
-                            />
-                        </Routes>
-                    </div>
-                    <Footer />
-                </Router>
-            </div>
+                                <Route
+                                    path="/"
+                                    element={
+                                        /* This protects the "/" route so that it shows 
+                                    <Home /> only if the user is logged in.
+                                    Else it redirects the user to "/auth" */
+                                        <SessionAuth>
+                                            <Home />
+                                        </SessionAuth>
+                                    }
+                                />
+                            </Routes>
+                        </div>
+                        <Footer />
+                    </Router>
+                </div>
+            </ThirdpartyEmailPasswordComponentsOverrideProvider>
         </SuperTokensWrapper>
     );
 }

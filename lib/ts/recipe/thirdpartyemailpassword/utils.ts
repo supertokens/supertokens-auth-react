@@ -37,7 +37,6 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
 
     const override: any = {
         functions: (originalImplementation: RecipeInterface) => originalImplementation,
-        components: {},
         ...config.override,
     };
 

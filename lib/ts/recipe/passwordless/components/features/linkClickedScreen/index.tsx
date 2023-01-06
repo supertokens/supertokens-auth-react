@@ -34,6 +34,7 @@ import { getLoginAttemptInfo } from "../../../utils";
 import STGeneralError from "supertokens-web-js/utils/error";
 import Session from "../../../../session/recipe";
 import SuperTokens from "../../../../../superTokens";
+import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -140,7 +141,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     );
     useOnMountAPICall(consumeCodeAtMount, handleConsumeResp, handleConsumeError);
 
-    const componentOverrides = props.recipe.config.override.components;
+    const recipeComponentOverrides = useRecipeComponentOverrideContext();
 
     const linkClickedScreen = props.recipe.config.linkClickedScreenFeature;
 
@@ -171,7 +172,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     };
 
     return (
-        <ComponentOverrideContext.Provider value={componentOverrides}>
+        <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsPasswordless}>
