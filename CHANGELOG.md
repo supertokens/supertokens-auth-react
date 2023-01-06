@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.29.0] - 2023-01-06
+
 ### Breaking changes
 
 -   Moved component override config into a recipe specific provider component
