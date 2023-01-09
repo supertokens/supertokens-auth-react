@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -9,17 +10,17 @@ import {
     InitOutput,
 } from "./types";
 import AuthRecipe from "../authRecipe";
-import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/passwordless";
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
     OnHandleEventContext,
     NormalisedConfig
 > {
+    readonly recipeImpl: WebJSRecipeInterface;
     static instance?: Passwordless;
     static RECIPE_ID: string;
-    recipeImpl: RecipeInterface;
-    constructor(config: Config);
+    constructor(config: Config, recipeImpl?: WebJSRecipeInterface);
     getFeatures: () => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (

@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import AuthRecipe from "../authRecipe";
 import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import {
@@ -15,10 +16,10 @@ export default class ThirdParty extends AuthRecipe<
     OnHandleEventContext,
     NormalisedConfig
 > {
+    readonly recipeImpl: WebJSRecipeInterface;
     static instance?: ThirdParty;
     static RECIPE_ID: string;
-    recipeImpl: WebJSRecipeInterface;
-    constructor(config: Config);
+    constructor(config: Config, recipeImpl?: WebJSRecipeInterface);
     getFeatures: () => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "signinup" | "signinupcallback",

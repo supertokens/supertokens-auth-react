@@ -35,12 +35,11 @@ import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpCallback from "./components/features/signInAndUpCallback";
-import RecipeImplementation from "./recipeImplementation";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
-import OverrideableBuilder from "supertokens-js-override";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import ThirdpartyWebJS from "supertokens-web-js/recipe/thirdparty";
+import { getFunctionOverrides } from "./functionOverrides";
 
 /*
  * Class.
@@ -54,22 +53,8 @@ export default class ThirdParty extends AuthRecipe<
     static instance?: ThirdParty;
     static RECIPE_ID = "thirdparty";
 
-    recipeImpl: WebJSRecipeInterface;
-
-    constructor(config: Config) {
+    constructor(config: Config, public readonly recipeImpl: WebJSRecipeInterface = ThirdpartyWebJS) {
         super(normaliseThirdPartyConfig(config));
-
-        const builder = new OverrideableBuilder(
-            RecipeImplementation({
-                appInfo: this.config.appInfo,
-                recipeId: this.config.recipeId,
-                onHandleEvent: this.config.onHandleEvent,
-                preAPIHook: this.config.preAPIHook,
-                postAPIHook: this.config.postAPIHook,
-                webJSRecipe: ThirdpartyWebJS,
-            })
-        );
-        this.recipeImpl = builder.override(this.config.override.functions).build();
     }
 
     /*
@@ -159,7 +144,19 @@ export default class ThirdParty extends AuthRecipe<
                 });
                 return ThirdParty.instance;
             },
-            webJS: ThirdpartyWebJS.init(config),
+            webJS: ThirdpartyWebJS.init({
+                ...config,
+                override: {
+                    functions: (originalImpl, builder) => {
+                        const functions = getFunctionOverrides(ThirdParty.RECIPE_ID, config?.onHandleEvent);
+                        builder.override(functions);
+                        if (config?.override?.functions) {
+                            builder.override(config.override.functions);
+                        }
+                        return originalImpl;
+                    },
+                },
+            }),
         };
     }
 

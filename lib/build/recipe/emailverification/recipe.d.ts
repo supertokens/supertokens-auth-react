@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import RecipeModule from "../recipeModule";
 import { RecipeFeatureComponentMap } from "../../types";
 import {
@@ -16,11 +17,11 @@ export default class EmailVerification extends RecipeModule<
     OnHandleEventContext,
     NormalisedConfig
 > {
+    readonly recipeImpl: RecipeInterface;
     static instance?: EmailVerification;
     static RECIPE_ID: string;
     static EmailVerificationClaim: EmailVerificationClaimClass;
-    recipeImpl: RecipeInterface;
-    constructor(config: Config);
+    constructor(config: Config, recipeImpl?: RecipeInterface);
     static init(config: UserInput): InitOutput;
     static getInstanceOrThrow(): EmailVerification;
     getFeatures: () => RecipeFeatureComponentMap;

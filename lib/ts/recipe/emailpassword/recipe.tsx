@@ -36,12 +36,11 @@ import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken";
-import RecipeImplementation from "./recipeImplementation";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
-import OverrideableBuilder from "supertokens-js-override";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import EmailPasswordWebJS from "supertokens-web-js/recipe/emailpassword";
+import { getFunctionOverrides } from "./functionOverrides";
 
 /*
  * Class.
@@ -55,22 +54,8 @@ export default class EmailPassword extends AuthRecipe<
     static instance?: EmailPassword;
     static RECIPE_ID = "emailpassword";
 
-    recipeImpl: WebJsRecipeInterface;
-
-    constructor(config: Config) {
+    constructor(config: Config, public readonly recipeImpl: WebJsRecipeInterface = EmailPasswordWebJS) {
         super(normaliseEmailPasswordConfig(config));
-
-        const builder = new OverrideableBuilder(
-            RecipeImplementation({
-                appInfo: this.config.appInfo,
-                recipeId: this.config.recipeId,
-                onHandleEvent: this.config.onHandleEvent,
-                preAPIHook: this.config.preAPIHook,
-                postAPIHook: this.config.postAPIHook,
-                webJSRecipe: EmailPasswordWebJS,
-            })
-        );
-        this.recipeImpl = builder.override(this.config.override.functions).build();
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {
@@ -162,7 +147,19 @@ export default class EmailPassword extends AuthRecipe<
                 });
                 return EmailPassword.instance;
             },
-            webJS: EmailPasswordWebJS.init(config),
+            webJS: EmailPasswordWebJS.init({
+                ...config,
+                override: {
+                    functions: (originalImpl, builder) => {
+                        const functions = getFunctionOverrides(config?.onHandleEvent);
+                        builder.override(functions);
+                        if (config?.override?.functions) {
+                            builder.override(config.override.functions);
+                        }
+                        return originalImpl;
+                    },
+                },
+            }),
         };
     }
 

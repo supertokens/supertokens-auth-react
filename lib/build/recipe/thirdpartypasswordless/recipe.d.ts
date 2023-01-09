@@ -11,7 +11,7 @@ import {
 } from "./types";
 import Passwordless from "../passwordless/recipe";
 import ThirdParty from "../thirdparty/recipe";
-import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
+import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 export default class ThirdPartyPasswordless extends AuthRecipe<
     GetRedirectionURLContext,
     never,
@@ -22,7 +22,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
     static RECIPE_ID: string;
     passwordlessRecipe: Passwordless | undefined;
     thirdPartyRecipe: ThirdParty | undefined;
-    recipeImpl: TPPWlessRecipeInterface;
+    recipeImpl: WebJSRecipeInterface;
     constructor(
         config: Config,
         recipes: {

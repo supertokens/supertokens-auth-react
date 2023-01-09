@@ -60,7 +60,7 @@ export default class SuperTokens {
     loadTranslation(store: TranslationStore): void;
     getRedirectUrl(context: GetRedirectionURLContext): Promise<string>;
     redirectToAuth: (options: {
-        show?: "signin" | "signup";
+        show?: "signin" | "signup" | undefined;
         history?: any;
         queryParams?: any;
         redirectBack: boolean;

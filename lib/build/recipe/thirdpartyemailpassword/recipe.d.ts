@@ -11,7 +11,7 @@ import {
 } from "./types";
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
     never,
@@ -22,7 +22,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     static RECIPE_ID: string;
     emailPasswordRecipe: EmailPassword | undefined;
     thirdPartyRecipe: ThirdParty | undefined;
-    recipeImpl: RecipeInterface;
+    recipeImpl: WebJSRecipeInterface;
     constructor(
         config: Config,
         recipes: {

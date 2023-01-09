@@ -35,10 +35,8 @@ import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
-import RecipeImplementation from "./recipeImplementation";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import OverrideableBuilder from "supertokens-js-override";
+import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
@@ -57,7 +55,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
 
     thirdPartyRecipe: ThirdParty | undefined;
 
-    recipeImpl: RecipeInterface;
+    recipeImpl: WebJSRecipeInterface = ThirdpartyEmailPasswordWebJS;
 
     constructor(
         config: Config,
@@ -68,40 +66,26 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     ) {
         super(normaliseThirdPartyEmailPasswordConfig(config));
 
-        const builder = new OverrideableBuilder(
-            RecipeImplementation({
-                appInfo: this.config.appInfo,
-                recipeId: this.config.recipeId,
-                onHandleEvent: this.config.onHandleEvent,
-                preAPIHook: this.config.preAPIHook,
-                postAPIHook: this.config.postAPIHook,
-            })
-        );
-        this.recipeImpl = builder.override(this.config.override.functions).build();
-
         this.emailPasswordRecipe =
             recipes.emailPasswordInstance !== undefined
                 ? recipes.emailPasswordInstance
                 : this.config.disableEmailPassword
                 ? undefined
-                : new EmailPassword({
-                      appInfo: this.config.appInfo,
-                      recipeId: this.config.recipeId,
-                      getRedirectionURL: this.config.getRedirectionURL,
-                      onHandleEvent: this.config.onHandleEvent,
-                      palette: this.config.palette,
-                      style: this.config.rootStyle,
-                      preAPIHook: this.config.preAPIHook,
-                      resetPasswordUsingTokenFeature: this.config.resetPasswordUsingTokenFeature,
-                      signInAndUpFeature: this.config.signInAndUpFeature,
-                      useShadowDom: this.config.useShadowDom,
-                      override: {
-                          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                          functions: (_: any) => {
-                              return getEmailPasswordImpl(this.recipeImpl);
-                          },
+                : new EmailPassword(
+                      {
+                          appInfo: this.config.appInfo,
+                          recipeId: this.config.recipeId,
+                          getRedirectionURL: this.config.getRedirectionURL,
+                          onHandleEvent: this.config.onHandleEvent,
+                          palette: this.config.palette,
+                          style: this.config.rootStyle,
+                          preAPIHook: this.config.preAPIHook,
+                          resetPasswordUsingTokenFeature: this.config.resetPasswordUsingTokenFeature,
+                          signInAndUpFeature: this.config.signInAndUpFeature,
+                          useShadowDom: this.config.useShadowDom,
                       },
-                  });
+                      getEmailPasswordImpl(this.recipeImpl)
+                  );
 
         // we initialise this recipe only if the user has provided thirdparty
         // providers.
@@ -111,24 +95,21 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                 : this.config.signInAndUpFeature.providers === undefined ||
                   this.config.signInAndUpFeature.providers.length === 0
                 ? undefined
-                : new ThirdParty({
-                      appInfo: this.config.appInfo,
-                      recipeId: this.config.recipeId,
-                      getRedirectionURL: this.config.getRedirectionURL,
-                      style: this.config.rootStyle,
-                      onHandleEvent: this.config.onHandleEvent,
-                      palette: this.config.palette,
-                      preAPIHook: this.config.preAPIHook,
-                      signInAndUpFeature: this.config.signInAndUpFeature,
-                      oAuthCallbackScreen: this.config.oAuthCallbackScreen,
-                      useShadowDom: this.config.useShadowDom,
-                      override: {
-                          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                          functions: (_: any) => {
-                              return getThirdPartyImpl(this.recipeImpl);
-                          },
+                : new ThirdParty(
+                      {
+                          appInfo: this.config.appInfo,
+                          recipeId: this.config.recipeId,
+                          getRedirectionURL: this.config.getRedirectionURL,
+                          style: this.config.rootStyle,
+                          onHandleEvent: this.config.onHandleEvent,
+                          palette: this.config.palette,
+                          preAPIHook: this.config.preAPIHook,
+                          signInAndUpFeature: this.config.signInAndUpFeature,
+                          oAuthCallbackScreen: this.config.oAuthCallbackScreen,
+                          useShadowDom: this.config.useShadowDom,
                       },
-                  });
+                      getThirdPartyImpl(this.recipeImpl)
+                  );
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {

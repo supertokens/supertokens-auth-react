@@ -36,12 +36,10 @@ import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
 import Passwordless from "../passwordless/recipe";
 import ThirdParty from "../thirdparty/recipe";
-import RecipeImplementation from "./recipeImplementation";
 import getPasswordlessImpl from "./recipeImplementation/passwordlessImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import OverrideableBuilder from "supertokens-js-override";
-import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
+import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import ThirdpartyPasswordlessWebJS from "supertokens-web-js/recipe/thirdpartypasswordless";
 
@@ -58,7 +56,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
 
     thirdPartyRecipe: ThirdParty | undefined;
 
-    recipeImpl: TPPWlessRecipeInterface;
+    recipeImpl: WebJSRecipeInterface = ThirdpartyPasswordlessWebJS;
 
     constructor(
         config: Config,
@@ -69,33 +67,19 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
     ) {
         super(normaliseThirdPartyPasswordlessConfig(config));
 
-        {
-            const builder = new OverrideableBuilder(
-                RecipeImplementation({
-                    appInfo: this.config.appInfo,
-                    recipeId: this.config.recipeId,
-                    onHandleEvent: this.config.onHandleEvent,
-                    preAPIHook: this.config.preAPIHook,
-                    postAPIHook: this.config.postAPIHook,
-                })
-            );
-            this.recipeImpl = builder.override(this.config.override.functions).build();
-        }
-
         this.passwordlessRecipe =
             recipes.passwordlessInstance !== undefined
                 ? recipes.passwordlessInstance
                 : this.config.passwordlessUserInput === undefined
                 ? undefined
-                : new Passwordless({
-                      ...this.config.passwordlessUserInput,
-                      appInfo: this.config.appInfo,
-                      recipeId: this.config.recipeId,
-                      override: {
-                          ...this.config.passwordlessUserInput.override,
-                          functions: () => getPasswordlessImpl(this.recipeImpl),
+                : new Passwordless(
+                      {
+                          ...this.config.passwordlessUserInput,
+                          appInfo: this.config.appInfo,
+                          recipeId: this.config.recipeId,
                       },
-                  });
+                      getPasswordlessImpl(this.recipeImpl)
+                  );
 
         // we initialise this recipe only if the user has provided thirdparty
         // providers.
@@ -104,15 +88,14 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
                 ? recipes.thirdPartyInstance
                 : this.config.thirdpartyUserInput === undefined
                 ? undefined
-                : new ThirdParty({
-                      ...this.config.thirdpartyUserInput,
-                      appInfo: this.config.appInfo,
-                      recipeId: this.config.recipeId,
-                      override: {
-                          ...this.config.thirdpartyUserInput.override,
-                          functions: () => getThirdPartyImpl(this.recipeImpl),
+                : new ThirdParty(
+                      {
+                          ...this.config.thirdpartyUserInput,
+                          appInfo: this.config.appInfo,
+                          recipeId: this.config.recipeId,
                       },
-                  });
+                      getThirdPartyImpl(this.recipeImpl)
+                  );
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {

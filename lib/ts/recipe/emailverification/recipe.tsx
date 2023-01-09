@@ -35,15 +35,14 @@ import { matchRecipeIdUsingQueryParams, saveInvalidClaimRedirectPathInContext } 
 import { normaliseEmailVerificationFeature } from "./utils";
 import { NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
-import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
 import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
 import { SessionClaimValidatorStore } from "supertokens-website/utils/sessionClaimValidatorStore";
-import OverrideableBuilder from "supertokens-js-override";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { UserContextContext } from "../../usercontext";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import EmailVerificationWebJS from "supertokens-web-js/recipe/emailverification";
+import { getFunctionOverrides } from "./functionOverrides";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -66,24 +65,8 @@ export default class EmailVerification extends RecipeModule<
         }
     );
 
-    recipeImpl: RecipeInterface;
-
-    constructor(config: Config) {
+    constructor(config: Config, public readonly recipeImpl: RecipeInterface = EmailVerificationWebJS) {
         super(normaliseEmailVerificationFeature(config));
-
-        {
-            const builder = new OverrideableBuilder(
-                RecipeImplementation({
-                    appInfo: this.config.appInfo,
-                    recipeId: this.config.recipeId,
-                    onHandleEvent: this.config.onHandleEvent,
-                    preAPIHook: this.config.preAPIHook,
-                    postAPIHook: this.config.postAPIHook,
-                    webJSRecipe: EmailVerificationWebJS,
-                })
-            );
-            this.recipeImpl = builder.override(this.config.override.functions).build();
-        }
 
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
             SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
@@ -109,7 +92,19 @@ export default class EmailVerification extends RecipeModule<
                 });
                 return EmailVerification.instance;
             },
-            webJS: EmailVerificationWebJS.init(config),
+            webJS: EmailVerificationWebJS.init({
+                ...config,
+                override: {
+                    functions: (originalImpl, builder) => {
+                        const functions = getFunctionOverrides(config?.onHandleEvent);
+                        builder.override(functions);
+                        if (config?.override?.functions) {
+                            builder.override(config.override.functions);
+                        }
+                        return originalImpl;
+                    },
+                },
+            }),
         };
     }
 

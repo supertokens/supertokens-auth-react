@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import AuthRecipe from "../authRecipe";
 import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import {
@@ -15,10 +16,10 @@ export default class EmailPassword extends AuthRecipe<
     OnHandleEventContext,
     NormalisedConfig
 > {
+    readonly recipeImpl: WebJsRecipeInterface;
     static instance?: EmailPassword;
     static RECIPE_ID: string;
-    recipeImpl: WebJsRecipeInterface;
-    constructor(config: Config);
+    constructor(config: Config, recipeImpl?: WebJsRecipeInterface);
     getFeatures: () => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (
