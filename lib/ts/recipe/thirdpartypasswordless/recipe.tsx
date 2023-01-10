@@ -42,6 +42,7 @@ import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import ThirdpartyPasswordlessWebJS from "supertokens-web-js/recipe/thirdpartypasswordless";
+import { getFunctionOverrides } from "./functionOverrides";
 
 export default class ThirdPartyPasswordless extends AuthRecipe<
     GetRedirectionURLContext,
@@ -210,7 +211,19 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
                 );
                 return ThirdPartyPasswordless.instance;
             },
-            webJS: ThirdpartyPasswordlessWebJS.init(config),
+            webJS: ThirdpartyPasswordlessWebJS.init({
+                ...config,
+                override: {
+                    functions: (originalImpl, builder) => {
+                        const functions = getFunctionOverrides(ThirdPartyPasswordless.RECIPE_ID, config?.onHandleEvent);
+                        builder.override(functions);
+                        if (config?.override?.functions) {
+                            builder.override(config.override.functions);
+                        }
+                        return originalImpl;
+                    },
+                },
+            }),
         };
     }
 
