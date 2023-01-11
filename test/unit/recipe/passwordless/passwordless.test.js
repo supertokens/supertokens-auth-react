@@ -54,14 +54,14 @@ describe("Passwordless", function () {
 
     it("Initializing Passwordless with empty configs throws", async function () {
         await assert.throws(
-            () => Passwordless.init()(SuperTokens.getInstanceOrThrow().appInfo),
+            () => Passwordless.init().authReact(SuperTokens.getInstanceOrThrow().appInfo),
             new Error("Please pass one of 'PHONE', 'EMAIL' or 'EMAIL_OR_PHONE' as the contactMethod")
         );
     });
 
     it("Initializing Passwordless with wrong contactMethod throws", async function () {
         await assert.throws(
-            () => Passwordless.init({ contactMethod: "NOPE" })(SuperTokens.getInstanceOrThrow().appInfo),
+            () => Passwordless.init({ contactMethod: "NOPE" }).authReact(SuperTokens.getInstanceOrThrow().appInfo),
             new Error("Please pass one of 'PHONE', 'EMAIL' or 'EMAIL_OR_PHONE' as the contactMethod")
         );
     });
@@ -69,15 +69,16 @@ describe("Passwordless", function () {
     it("Initializing Passwordless with wrong resendEmailOrSMSGapInSecondsthrows", async function () {
         await assert.throws(
             () =>
-                Passwordless.init({ contactMethod: "PHONE", signInUpFeature: { resendEmailOrSMSGapInSeconds: 0 } })(
-                    SuperTokens.getInstanceOrThrow().appInfo
-                ),
+                Passwordless.init({
+                    contactMethod: "PHONE",
+                    signInUpFeature: { resendEmailOrSMSGapInSeconds: 0 },
+                }).authReact(SuperTokens.getInstanceOrThrow().appInfo),
             new Error(`Please pass a positive number as resendEmailOrSMSGapInSeconds`)
         );
     });
 
     it("Initializing Passwordless with resendCodeTimeGap", async function () {
-        Passwordless.init({ contactMethod: "PHONE", signInUpFeature: { resendEmailOrSMSGapInSeconds: 5 } })(
+        Passwordless.init({ contactMethod: "PHONE", signInUpFeature: { resendEmailOrSMSGapInSeconds: 5 } }).authReact(
             SuperTokens.getInstanceOrThrow().appInfo
         );
         assert.strictEqual(Passwordless.getInstanceOrThrow().config.signInUpFeature.resendEmailOrSMSGapInSeconds, 5);
@@ -90,7 +91,7 @@ describe("Passwordless", function () {
                 termsOfServiceLink,
                 privacyPolicyLink,
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo);
         assert.notDeepStrictEqual(Passwordless.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(Passwordless.getInstanceOrThrow().config.recipeId, "passwordless");
         assert.deepStrictEqual(
@@ -123,7 +124,7 @@ describe("Passwordless", function () {
                 throw new Error("GET REDIRECTION HOOK THROWS");
             },
             useShadowDom: false,
-        })(SuperTokens.getInstanceOrThrow().appInfo);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo);
         assert.notDeepStrictEqual(Passwordless.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(Passwordless.getInstanceOrThrow().config.recipeId, "passwordless");
         assert.deepStrictEqual(
