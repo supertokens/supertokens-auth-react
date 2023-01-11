@@ -41,6 +41,7 @@ import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementa
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import ThirdpartyEmailPasswordWebJS from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import { getFunctionOverrides } from "./functionOverrides";
 
 export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
@@ -222,7 +223,22 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                 );
                 return ThirdPartyEmailPassword.instance;
             },
-            webJS: ThirdpartyEmailPasswordWebJS.init(config),
+            webJS: ThirdpartyEmailPasswordWebJS.init({
+                ...config,
+                override: {
+                    functions: (originalImpl, builder) => {
+                        const functions = getFunctionOverrides(
+                            ThirdPartyEmailPassword.RECIPE_ID,
+                            config?.onHandleEvent
+                        );
+                        builder.override(functions);
+                        if (config?.override?.functions) {
+                            builder.override(config.override.functions);
+                        }
+                        return originalImpl;
+                    },
+                },
+            }),
         };
     }
 
