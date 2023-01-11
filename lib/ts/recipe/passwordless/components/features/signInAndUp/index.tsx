@@ -282,33 +282,27 @@ function getModifiedRecipeImplementation(
     return {
         ...originalImpl,
         createCode: async (input) => {
-            let contactInfo;
-            if ("email" in input) {
-                contactInfo = input.email;
-            } else {
-                contactInfo = formatPhoneNumberIntl(input.phoneNumber);
-            }
+            // This contactMethod refers to the one that was used to deliver the login info
+            // This can be an important distinction in case both email and phone are allowed
+            const contactInfo = "email" in input ? input.email : formatPhoneNumberIntl(input.phoneNumber);
 
-            const res = await originalImpl.createCode(input);
+            const contactMethod: "EMAIL" | "PHONE" = "email" in input ? "EMAIL" : "PHONE";
+            const additionalAttemptInfo = {
+                lastResend: Date.now(),
+                contactMethod,
+                contactInfo,
+                redirectToPath: getRedirectToPathFromURL(),
+            };
+
+            const res = await originalImpl.createCode({
+                ...input,
+                userContext: { ...input.userContext, additionalAttemptInfo },
+            });
             if (res.status === "OK") {
-                // This contactMethod refers to the one that was used to deliver the login info
-                // This can be an important distinction in case both email and phone are allowed
-                const contactMethod: "EMAIL" | "PHONE" = "email" in input ? "EMAIL" : "PHONE";
-                const loginAttemptInfo = {
-                    deviceId: res.deviceId,
-                    preAuthSessionId: res.preAuthSessionId,
-                    flowType: res.flowType,
-                    lastResend: Date.now(),
-                    contactMethod,
-                    contactInfo,
-                    redirectToPath: getRedirectToPathFromURL(),
-                };
-
-                await setLoginAttemptInfo({
+                const loginAttemptInfo = (await getLoginAttemptInfo({
                     recipeImplementation: originalImpl,
                     userContext: input.userContext,
-                    attemptInfo: loginAttemptInfo,
-                });
+                }))!;
                 dispatch({ type: "startLogin", loginAttemptInfo });
             }
             return res;

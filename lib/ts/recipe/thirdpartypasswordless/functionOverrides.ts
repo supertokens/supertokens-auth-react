@@ -66,7 +66,13 @@ export const getFunctionOverrides =
                 return originalImp.getPasswordlessLoginAttemptInfo<CustomAttemptInfoProperties>(input);
             },
             setPasswordlessLoginAttemptInfo: async function (input) {
-                return originalImp.setPasswordlessLoginAttemptInfo(input);
+                return originalImp.setPasswordlessLoginAttemptInfo({
+                    ...input,
+                    attemptInfo: {
+                        ...input.attemptInfo,
+                        ...input.userContext.additionalAttemptInfo,
+                    },
+                });
             },
             clearPasswordlessLoginAttemptInfo: function (input) {
                 return originalImp.clearPasswordlessLoginAttemptInfo(input);
