@@ -19,6 +19,8 @@
 import { Config, NormalisedConfig } from "./types";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
 import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
+import { normalisePasswordlessConfig } from "../passwordless/utils";
+import { normaliseThirdPartyConfig } from "../thirdparty/utils";
 
 export function normaliseThirdPartyPasswordlessConfig(config: Config): NormalisedConfig {
     const disablePasswordless = config.disablePasswordless === true;
@@ -43,9 +45,9 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
         ...normaliseAuthRecipe(config),
 
         thirdPartyProviderAndEmailOrPhoneFormStyle,
-        thirdpartyUserInput: disableThirdParty
+        thirdpartyConfig: disableThirdParty
             ? undefined
-            : {
+            : normaliseThirdPartyConfig({
                   getRedirectionURL: config.getRedirectionURL,
                   style: config.style,
                   onHandleEvent: config.onHandleEvent,
@@ -58,10 +60,10 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
                   oAuthCallbackScreen: config.oAuthCallbackScreen,
                   useShadowDom: config.useShadowDom,
                   override: {},
-              },
-        passwordlessUserInput: disablePasswordless
+              }),
+        passwordlessConfig: disablePasswordless
             ? undefined
-            : {
+            : normalisePasswordlessConfig({
                   contactMethod: config.contactMethod,
                   style: config.style,
                   validateEmailAddress: "validateEmailAddress" in config ? config.validateEmailAddress : undefined,
@@ -77,7 +79,7 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
                   },
                   linkClickedScreenFeature: config.linkClickedScreenFeature,
                   override: {},
-              },
+              }),
         override,
     };
 }

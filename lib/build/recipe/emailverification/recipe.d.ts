@@ -1,9 +1,8 @@
 /// <reference types="react" />
 import RecipeModule from "../recipeModule";
-import { RecipeFeatureComponentMap, RecipeInitResult } from "../../types";
+import { NormalisedConfigWithAppInfoAndRecipeID, RecipeFeatureComponentMap, RecipeInitResult } from "../../types";
 import {
     UserInput,
-    Config,
     NormalisedConfig,
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -21,7 +20,7 @@ export default class EmailVerification extends RecipeModule<
     static instance?: EmailVerification;
     static RECIPE_ID: string;
     static EmailVerificationClaim: EmailVerificationClaimClass;
-    constructor(config: Config, recipeImpl?: RecipeInterface);
+    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, recipeImpl?: RecipeInterface);
     static init(
         config: UserInput
     ): RecipeInitResult<

@@ -7,7 +7,7 @@ import getThirdpartyRecipeImplementation from "./recipeImplementation/thirdParty
 import getEmailPasswordRecipeImplementation from "./recipeImplementation/emailPasswordImplementation";
 
 export const getFunctionOverrides =
-    (recipeId: string, onHandleEvent?: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
+    (recipeId: string, onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
     (originalImp: RecipeInterface): RecipeInterface => {
         const thirdpartyOverrides = getThirdpartyFunctionOverrides(
             recipeId,

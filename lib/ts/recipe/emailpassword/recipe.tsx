@@ -18,12 +18,17 @@
  */
 
 import AuthRecipe from "../authRecipe";
-import { RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps, RecipeInitResult } from "../../types";
+import {
+    RecipeFeatureComponentMap,
+    NormalisedAppInfo,
+    FeatureBaseProps,
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+} from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
-    Config,
     NormalisedConfig,
     UserInput,
 } from "./types";
@@ -54,8 +59,11 @@ export default class EmailPassword extends AuthRecipe<
     static instance?: EmailPassword;
     static RECIPE_ID = "emailpassword";
 
-    constructor(config: Config, public readonly recipeImpl: WebJsRecipeInterface = EmailPasswordWebJS) {
-        super(normaliseEmailPasswordConfig(config));
+    constructor(
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
+        public readonly recipeImpl: WebJsRecipeInterface = EmailPasswordWebJS
+    ) {
+        super(config);
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {
@@ -131,7 +139,7 @@ export default class EmailPassword extends AuthRecipe<
     };
 
     static init(
-        config?: UserInput
+        config: UserInput
     ): RecipeInitResult<
         GetRedirectionURLContext,
         PreAndPostAPIHookAction,
@@ -139,6 +147,8 @@ export default class EmailPassword extends AuthRecipe<
         NormalisedConfig,
         PreAndPostAPIHookActionWebJS
     > {
+        const normalizedConfig = normaliseEmailPasswordConfig(config);
+
         return {
             authReact: (
                 appInfo: NormalisedAppInfo
@@ -149,21 +159,19 @@ export default class EmailPassword extends AuthRecipe<
                 NormalisedConfig
             > => {
                 EmailPassword.instance = new EmailPassword({
-                    ...config,
+                    ...normalizedConfig,
                     appInfo,
                     recipeId: EmailPassword.RECIPE_ID,
                 });
                 return EmailPassword.instance;
             },
             webJS: EmailPasswordWebJS.init({
-                ...config,
+                ...normalizedConfig,
                 override: {
                     functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(config?.onHandleEvent);
+                        const functions = getFunctionOverrides(normalizedConfig.onHandleEvent);
                         builder.override(functions);
-                        if (config?.override?.functions) {
-                            builder.override(config.override.functions);
-                        }
+                        builder.override(normalizedConfig.override.functions);
                         return originalImpl;
                     },
                 },

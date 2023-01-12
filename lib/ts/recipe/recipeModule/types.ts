@@ -1,4 +1,4 @@
-import { NormalisedAppInfo, Styles } from "../../types";
+import { Styles } from "../../types";
 
 export type RecipePreAPIHookContext<Action> = {
     requestInit: RequestInit;
@@ -33,21 +33,18 @@ export type UserInput<GetRedirectionURLContextType, Action, OnHandleEventContext
     style?: Styles;
 };
 
-export type Config<GetRedirectionURLContextType, Action, OnHandleEventContextType> = {
-    recipeId: string;
-    appInfo: NormalisedAppInfo;
-} & UserInput<GetRedirectionURLContextType, Action, OnHandleEventContextType>;
+export type Config<GetRedirectionURLContextType, Action, OnHandleEventContextType> = UserInput<
+    GetRedirectionURLContextType,
+    Action,
+    OnHandleEventContextType
+>;
 
-import { RecipeConfig as WebJSRecipeConfig } from "supertokens-web-js/recipe/recipeModule/types";
-
-export type NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType> =
-    WebJSRecipeConfig<Action> & {
-        appInfo: NormalisedAppInfo;
-        getRedirectionURL: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
-        onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContextType>;
-        useShadowDom: boolean;
-        palette: Record<string, string>;
-        rootStyle: Styles;
-        preAPIHook: (context: RecipePreAPIHookContext<Action>) => Promise<{ url: string; requestInit: RequestInit }>;
-        postAPIHook: (context: RecipePostAPIHookContext<Action>) => Promise<void>;
-    };
+export type NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType> = {
+    getRedirectionURL: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
+    onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContextType>;
+    useShadowDom: boolean;
+    palette: Record<string, string>;
+    rootStyle: Styles;
+    preAPIHook: (context: RecipePreAPIHookContext<Action>) => Promise<{ url: string; requestInit: RequestInit }>;
+    postAPIHook: (context: RecipePostAPIHookContext<Action>) => Promise<void>;
+};

@@ -12,6 +12,7 @@ import {
     SignInAndUpState as EmailPasswordSignInAndUpState,
     EmailPasswordSignInAndUpAction,
     EmailPasswordSignInAndUpChildProps,
+    NormalisedConfig as NormalisedEmailPasswordConfig,
 } from "../emailpassword/types";
 import {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
@@ -23,6 +24,7 @@ import {
     ThirdPartySignInAndUpState,
     ThirdPartySignInUpActions,
     ThirdPartySignInUpChildProps,
+    NormalisedConfig as NormalisedThirdPartyConfig,
 } from "../thirdparty/types";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
@@ -60,9 +62,9 @@ export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
-    resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
-    oAuthCallbackScreen?: FeatureBaseConfig;
     disableEmailPassword: boolean;
+    emailPasswordConfig: NormalisedEmailPasswordConfig;
+    thirdPartyConfig: NormalisedThirdPartyConfig;
     override: {
         functions: (
             originalImplementation: RecipeInterface,

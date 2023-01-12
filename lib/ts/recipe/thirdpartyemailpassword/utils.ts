@@ -19,6 +19,8 @@
 import { Config, NormalisedConfig, NormalisedSignInAndUpFeatureConfig, SignInAndUpFeatureUserInput } from "./types";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
+import { normaliseThirdPartyConfig } from "../thirdparty/utils";
+import { normaliseEmailPasswordConfig } from "../emailpassword/utils";
 
 /*
  * Methods.
@@ -43,13 +45,34 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInUpFeatureConfig(
         config.signInAndUpFeature
     );
+    const thirdpartyNormalisedConfig = normaliseThirdPartyConfig({
+        getRedirectionURL: config.getRedirectionURL,
+        style: config.style,
+        onHandleEvent: config.onHandleEvent,
+        palette: config.palette,
+        preAPIHook: config.preAPIHook,
+        signInAndUpFeature: config.signInAndUpFeature,
+        oAuthCallbackScreen: config.oAuthCallbackScreen,
+        useShadowDom: config.useShadowDom,
+    });
+
+    const emailPasswordNormalisedConfig = normaliseEmailPasswordConfig({
+        getRedirectionURL: config.getRedirectionURL,
+        onHandleEvent: config.onHandleEvent,
+        palette: config.palette,
+        style: config.style,
+        preAPIHook: config.preAPIHook,
+        resetPasswordUsingTokenFeature: config.resetPasswordUsingTokenFeature,
+        signInAndUpFeature: config.signInAndUpFeature,
+        useShadowDom: config.useShadowDom,
+    });
 
     return {
         ...normaliseAuthRecipe(config),
-        signInAndUpFeature,
-        oAuthCallbackScreen: config.oAuthCallbackScreen,
-        resetPasswordUsingTokenFeature: config.resetPasswordUsingTokenFeature,
+        emailPasswordConfig: emailPasswordNormalisedConfig,
+        thirdPartyConfig: thirdpartyNormalisedConfig,
         disableEmailPassword,
+        signInAndUpFeature,
         override,
     };
 }

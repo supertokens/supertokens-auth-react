@@ -4,7 +4,7 @@ import { RecipeOnHandleEventFunction } from "../recipeModule/types";
 import { OnHandleEventContext, StateObject } from "./types";
 
 export const getFunctionOverrides =
-    (recipeId: string, onHandleEvent?: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
+    (recipeId: string, onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
     (originalImp: RecipeInterface): RecipeInterface => ({
         ...originalImp,
         getAuthorisationURLFromBackend: async function (input): Promise<{
@@ -32,7 +32,7 @@ export const getFunctionOverrides =
             const response = await originalImp.signInAndUp(input);
 
             if (response.status === "OK") {
-                onHandleEvent?.({
+                onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: response.createdNewUser,
                     user: response.user,

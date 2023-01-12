@@ -17,9 +17,14 @@
  * Imports.
  */
 import AuthRecipe from "../authRecipe";
-import { RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps, RecipeInitResult } from "../../types";
 import {
-    Config,
+    RecipeFeatureComponentMap,
+    NormalisedAppInfo,
+    FeatureBaseProps,
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+} from "../../types";
+import {
     GetRedirectionURLContext,
     NormalisedConfig,
     OnHandleEventContext,
@@ -59,13 +64,13 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     recipeImpl: WebJSRecipeInterface;
 
     constructor(
-        config: Config,
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         recipes: {
             thirdPartyInstance: ThirdParty | undefined;
             emailPasswordInstance: EmailPassword | undefined;
         }
     ) {
-        super(normaliseThirdPartyEmailPasswordConfig(config));
+        super(config);
 
         this.recipeImpl = ThirdpartyEmailPasswordWebJS;
 
@@ -76,16 +81,9 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                 ? undefined
                 : new EmailPassword(
                       {
+                          ...this.config.emailPasswordConfig,
                           appInfo: this.config.appInfo,
                           recipeId: this.config.recipeId,
-                          getRedirectionURL: this.config.getRedirectionURL,
-                          onHandleEvent: this.config.onHandleEvent,
-                          palette: this.config.palette,
-                          style: this.config.rootStyle,
-                          preAPIHook: this.config.preAPIHook,
-                          resetPasswordUsingTokenFeature: this.config.resetPasswordUsingTokenFeature,
-                          signInAndUpFeature: this.config.signInAndUpFeature,
-                          useShadowDom: this.config.useShadowDom,
                       },
                       getEmailPasswordImpl(this.recipeImpl)
                   );
@@ -95,21 +93,14 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
         this.thirdPartyRecipe =
             recipes.thirdPartyInstance !== undefined
                 ? recipes.thirdPartyInstance
-                : this.config.signInAndUpFeature.providers === undefined ||
-                  this.config.signInAndUpFeature.providers.length === 0
+                : this.config.thirdPartyConfig.signInAndUpFeature.providers === undefined ||
+                  this.config.thirdPartyConfig.signInAndUpFeature.providers.length === 0
                 ? undefined
                 : new ThirdParty(
                       {
+                          ...this.config.thirdPartyConfig,
                           appInfo: this.config.appInfo,
                           recipeId: this.config.recipeId,
-                          getRedirectionURL: this.config.getRedirectionURL,
-                          style: this.config.rootStyle,
-                          onHandleEvent: this.config.onHandleEvent,
-                          palette: this.config.palette,
-                          preAPIHook: this.config.preAPIHook,
-                          signInAndUpFeature: this.config.signInAndUpFeature,
-                          oAuthCallbackScreen: this.config.oAuthCallbackScreen,
-                          useShadowDom: this.config.useShadowDom,
                       },
                       getThirdPartyImpl(this.recipeImpl)
                   );
@@ -211,6 +202,8 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
         NormalisedConfig,
         PreAndPostAPIHookActionWebJS
     > {
+        const normalizedConfig = normaliseThirdPartyEmailPasswordConfig(config);
+
         return {
             authReact: (
                 appInfo: NormalisedAppInfo
@@ -222,7 +215,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             > => {
                 ThirdPartyEmailPassword.instance = new ThirdPartyEmailPassword(
                     {
-                        ...config,
+                        ...normalizedConfig,
                         appInfo,
                         recipeId: ThirdPartyEmailPassword.RECIPE_ID,
                     },
@@ -239,12 +232,10 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                     functions: (originalImpl, builder) => {
                         const functions = getFunctionOverrides(
                             ThirdPartyEmailPassword.RECIPE_ID,
-                            config?.onHandleEvent
+                            normalizedConfig.onHandleEvent
                         );
                         builder.override(functions);
-                        if (config?.override?.functions) {
-                            builder.override(config.override.functions);
-                        }
+                        builder.override(normalizedConfig.override.functions);
                         return originalImpl;
                     },
                 },

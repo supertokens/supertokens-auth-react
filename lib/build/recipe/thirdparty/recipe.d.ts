@@ -1,9 +1,13 @@
 /// <reference types="react" />
 import AuthRecipe from "../authRecipe";
-import { RecipeFeatureComponentMap, FeatureBaseProps, RecipeInitResult } from "../../types";
+import {
+    RecipeFeatureComponentMap,
+    FeatureBaseProps,
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+} from "../../types";
 import {
     GetRedirectionURLContext,
-    Config,
     NormalisedConfig,
     PreAndPostAPIHookAction,
     OnHandleEventContext,
@@ -20,7 +24,7 @@ export default class ThirdParty extends AuthRecipe<
     readonly recipeImpl: WebJSRecipeInterface;
     static instance?: ThirdParty;
     static RECIPE_ID: string;
-    constructor(config: Config, recipeImpl?: WebJSRecipeInterface);
+    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, recipeImpl?: WebJSRecipeInterface);
     getFeatures: () => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "signinup" | "signinupcallback",

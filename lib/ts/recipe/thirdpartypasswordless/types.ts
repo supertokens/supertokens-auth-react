@@ -23,13 +23,13 @@ import {
     PreAPIHookContext as PasswordlessPreAPIHookContext,
 } from "../passwordless";
 import {
-    UserInput as PwlessUserInput,
     PasswordlessFeatureBaseConfig,
     PasswordlessSignInUpAction,
     SignInUpFeatureConfigInput as PwlessSignInUpFeatureConfigInput,
     SignInUpChildProps as PwlessChildProps,
     SignInUpState as PWlessSignInUpState,
     PreAndPostAPIHookAction as PasswordlessPreAndPostAPIHookAction,
+    NormalisedConfig as NormalisedPasswordlessConfig,
 } from "../passwordless/types";
 import {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
@@ -40,8 +40,8 @@ import {
     ThirdPartySignInAndUpState,
     ThirdPartySignInUpActions,
     ThirdPartySignInUpChildProps,
-    UserInput as TPUserInput,
     PreAndPostAPIHookAction as ThirdPartyPreAndPostAPIHookAction,
+    NormalisedConfig as NormalisedThirdPartyConfig,
 } from "../thirdparty/types";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
@@ -132,8 +132,8 @@ export type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type NormalisedConfig = {
-    passwordlessUserInput: PwlessUserInput | undefined;
-    thirdpartyUserInput: TPUserInput | undefined;
+    passwordlessConfig: NormalisedPasswordlessConfig | undefined;
+    thirdpartyConfig: NormalisedThirdPartyConfig | undefined;
 
     thirdPartyProviderAndEmailOrPhoneFormStyle: Styles | undefined;
 

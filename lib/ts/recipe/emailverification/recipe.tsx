@@ -18,10 +18,9 @@
  */
 
 import RecipeModule from "../recipeModule";
-import { RecipeFeatureComponentMap, RecipeInitResult } from "../../types";
+import { NormalisedConfigWithAppInfoAndRecipeID, RecipeFeatureComponentMap, RecipeInitResult } from "../../types";
 import {
     UserInput,
-    Config,
     NormalisedConfig,
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -65,8 +64,11 @@ export default class EmailVerification extends RecipeModule<
         }
     );
 
-    constructor(config: Config, public readonly recipeImpl: RecipeInterface = EmailVerificationWebJS) {
-        super(normaliseEmailVerificationFeature(config));
+    constructor(
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
+        public readonly recipeImpl: RecipeInterface = EmailVerificationWebJS
+    ) {
+        super(config);
 
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
             SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
@@ -84,6 +86,8 @@ export default class EmailVerification extends RecipeModule<
         NormalisedConfig,
         PreAndPostAPIHookActionWebJS
     > {
+        const normalizedConfig = normaliseEmailVerificationFeature(config);
+
         return {
             authReact: (
                 appInfo: NormalisedAppInfo
@@ -94,21 +98,19 @@ export default class EmailVerification extends RecipeModule<
                 NormalisedConfig
             > => {
                 EmailVerification.instance = new EmailVerification({
-                    ...config,
+                    ...normalizedConfig,
                     appInfo,
                     recipeId: EmailVerification.RECIPE_ID,
                 });
                 return EmailVerification.instance;
             },
             webJS: EmailVerificationWebJS.init({
-                ...config,
+                ...normalizedConfig,
                 override: {
                     functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(config?.onHandleEvent);
+                        const functions = getFunctionOverrides(normalizedConfig.onHandleEvent);
                         builder.override(functions);
-                        if (config?.override?.functions) {
-                            builder.override(config.override.functions);
-                        }
+                        builder.override(normalizedConfig.override.functions);
                         return originalImpl;
                     },
                 },

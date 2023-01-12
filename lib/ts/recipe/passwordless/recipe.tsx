@@ -17,12 +17,17 @@
  * Imports.
  */
 
-import { RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps, RecipeInitResult } from "../../types";
+import {
+    RecipeFeatureComponentMap,
+    NormalisedAppInfo,
+    FeatureBaseProps,
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+} from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
-    Config,
     NormalisedConfig,
     UserInput,
 } from "./types";
@@ -53,8 +58,11 @@ export default class Passwordless extends AuthRecipe<
     static instance?: Passwordless;
     static RECIPE_ID = "passwordless";
 
-    constructor(config: Config, public readonly recipeImpl: WebJSRecipeInterface = PasswordlessWebJS) {
-        super(normalisePasswordlessConfig(config));
+    constructor(
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
+        public readonly recipeImpl: WebJSRecipeInterface = PasswordlessWebJS
+    ) {
+        super(config);
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {
@@ -129,6 +137,8 @@ export default class Passwordless extends AuthRecipe<
         NormalisedConfig,
         PreAndPostAPIHookActionWebJS
     > {
+        const normalizedConfig = normalisePasswordlessConfig(config);
+
         return {
             authReact: (
                 appInfo: NormalisedAppInfo
@@ -139,21 +149,19 @@ export default class Passwordless extends AuthRecipe<
                 NormalisedConfig
             > => {
                 Passwordless.instance = new Passwordless({
-                    ...config,
+                    ...normalizedConfig,
                     appInfo,
                     recipeId: Passwordless.RECIPE_ID,
                 });
                 return Passwordless.instance;
             },
             webJS: PasswordlessWebJS.init({
-                ...config,
+                ...normalizedConfig,
                 override: {
                     functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(config?.onHandleEvent);
+                        const functions = getFunctionOverrides(normalizedConfig.onHandleEvent);
                         builder.override(functions);
-                        if (config?.override?.functions) {
-                            builder.override(config.override.functions);
-                        }
+                        builder.override(normalizedConfig.override.functions);
                         return originalImpl;
                     },
                 },

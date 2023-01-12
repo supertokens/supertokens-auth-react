@@ -18,9 +18,14 @@
  */
 
 import AuthRecipe from "../authRecipe";
-import { RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps, RecipeInitResult } from "../../types";
 import {
-    Config,
+    RecipeFeatureComponentMap,
+    NormalisedAppInfo,
+    FeatureBaseProps,
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+} from "../../types";
+import {
     GetRedirectionURLContext,
     NormalisedConfig,
     OnHandleEventContext,
@@ -60,24 +65,24 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
     recipeImpl: WebJSRecipeInterface;
 
     constructor(
-        config: Config,
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         recipes: {
             thirdPartyInstance: ThirdParty | undefined;
             passwordlessInstance: Passwordless | undefined;
         }
     ) {
-        super(normaliseThirdPartyPasswordlessConfig(config));
+        super(config);
 
         this.recipeImpl = ThirdpartyPasswordlessWebJS;
 
         this.passwordlessRecipe =
             recipes.passwordlessInstance !== undefined
                 ? recipes.passwordlessInstance
-                : this.config.passwordlessUserInput === undefined
+                : this.config.passwordlessConfig === undefined
                 ? undefined
                 : new Passwordless(
                       {
-                          ...this.config.passwordlessUserInput,
+                          ...this.config.passwordlessConfig,
                           appInfo: this.config.appInfo,
                           recipeId: this.config.recipeId,
                       },
@@ -89,11 +94,11 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
         this.thirdPartyRecipe =
             recipes.thirdPartyInstance !== undefined
                 ? recipes.thirdPartyInstance
-                : this.config.thirdpartyUserInput === undefined
+                : this.config.thirdpartyConfig === undefined
                 ? undefined
                 : new ThirdParty(
                       {
-                          ...this.config.thirdpartyUserInput,
+                          ...this.config.thirdpartyConfig,
                           appInfo: this.config.appInfo,
                           recipeId: this.config.recipeId,
                       },
@@ -119,10 +124,10 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
         }
 
         if (
-            (this.config.passwordlessUserInput !== undefined &&
-                this.config.passwordlessUserInput.signInUpFeature?.disableDefaultUI !== true) ||
-            (this.config.thirdpartyUserInput !== undefined &&
-                this.config.thirdpartyUserInput.signInAndUpFeature?.disableDefaultUI !== true)
+            (this.config.passwordlessConfig !== undefined &&
+                this.config.passwordlessConfig.signInUpFeature?.disableDefaultUI !== true) ||
+            (this.config.thirdpartyConfig !== undefined &&
+                this.config.thirdpartyConfig.signInAndUpFeature?.disableDefaultUI !== true)
         ) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
@@ -199,6 +204,8 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
         NormalisedConfig,
         PreAndPostAPIHookActionWebJS
     > {
+        const normalizedConfig = normaliseThirdPartyPasswordlessConfig(config);
+
         return {
             authReact: (
                 appInfo: NormalisedAppInfo
@@ -210,7 +217,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
             > => {
                 ThirdPartyPasswordless.instance = new ThirdPartyPasswordless(
                     {
-                        ...config,
+                        ...normalizedConfig,
                         appInfo,
                         recipeId: ThirdPartyPasswordless.RECIPE_ID,
                     },
@@ -225,11 +232,12 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
                 ...config,
                 override: {
                     functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(ThirdPartyPasswordless.RECIPE_ID, config?.onHandleEvent);
+                        const functions = getFunctionOverrides(
+                            ThirdPartyPasswordless.RECIPE_ID,
+                            normalizedConfig.onHandleEvent
+                        );
                         builder.override(functions);
-                        if (config?.override?.functions) {
-                            builder.override(config.override.functions);
-                        }
+                        builder.override(normalizedConfig.override.functions);
                         return originalImpl;
                     },
                 },

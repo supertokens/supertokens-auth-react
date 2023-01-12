@@ -49,6 +49,10 @@ export declare type RecipeInitResult<T, C, R, P extends NormalisedRecipeModuleCo
     authReact: CreateRecipeFunction<T, C, R, P>;
     webJS: CreateRecipeFunctionWebJS<I>;
 };
+export declare type NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig> = NormalisedConfig & {
+    appInfo: NormalisedAppInfo;
+    recipeId: string;
+};
 export declare type NormalisedAppInfo = {
     appName: string;
     apiDomain: NormalisedURLDomain;

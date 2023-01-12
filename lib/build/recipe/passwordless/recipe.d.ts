@@ -1,10 +1,14 @@
 /// <reference types="react" />
-import { RecipeFeatureComponentMap, FeatureBaseProps, RecipeInitResult } from "../../types";
+import {
+    RecipeFeatureComponentMap,
+    FeatureBaseProps,
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+} from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
-    Config,
     NormalisedConfig,
     UserInput,
 } from "./types";
@@ -20,7 +24,7 @@ export default class Passwordless extends AuthRecipe<
     readonly recipeImpl: WebJSRecipeInterface;
     static instance?: Passwordless;
     static RECIPE_ID: string;
-    constructor(config: Config, recipeImpl?: WebJSRecipeInterface);
+    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, recipeImpl?: WebJSRecipeInterface);
     getFeatures: () => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (

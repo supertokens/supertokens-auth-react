@@ -125,6 +125,11 @@ export type RecipeInitResult<T, C, R, P extends NormalisedRecipeModuleConfig<T, 
     webJS: CreateRecipeFunctionWebJS<I>;
 };
 
+export type NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig> = NormalisedConfig & {
+    appInfo: NormalisedAppInfo;
+    recipeId: string;
+};
+
 export type NormalisedAppInfo = {
     /*
      * The name of the application.

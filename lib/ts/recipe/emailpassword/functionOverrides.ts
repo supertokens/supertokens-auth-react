@@ -3,7 +3,7 @@ import { RecipeOnHandleEventFunction } from "../recipeModule/types";
 import { OnHandleEventContext } from "./types";
 
 export const getFunctionOverrides =
-    (onHandleEvent?: RecipeOnHandleEventFunction<OnHandleEventContext>) => (originalImp: RecipeInterface) => ({
+    (onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) => (originalImp: RecipeInterface) => ({
         ...originalImp,
         submitNewPassword: async function (input: any) {
             const response = await originalImp.submitNewPassword({
@@ -12,7 +12,7 @@ export const getFunctionOverrides =
             });
 
             if (response.status === "OK") {
-                onHandleEvent?.({
+                onHandleEvent({
                     action: "PASSWORD_RESET_SUCCESSFUL",
                     userContext: input.userContext,
                 });
@@ -25,7 +25,7 @@ export const getFunctionOverrides =
             const response = await originalImp.sendPasswordResetEmail(input);
 
             if (response.status === "OK") {
-                onHandleEvent?.({
+                onHandleEvent({
                     action: "RESET_PASSWORD_EMAIL_SENT",
                     userContext: input.userContext,
                 });
@@ -37,7 +37,7 @@ export const getFunctionOverrides =
             const response = await originalImp.signUp(input);
 
             if (response.status === "OK") {
-                onHandleEvent?.({
+                onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: true,
                     user: response.user,
@@ -51,7 +51,7 @@ export const getFunctionOverrides =
             const response = await originalImp.signIn(input);
 
             if (response.status === "OK") {
-                onHandleEvent?.({
+                onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: false,
                     user: response.user,

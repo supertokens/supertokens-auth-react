@@ -1,8 +1,12 @@
 /// <reference types="react" />
 import AuthRecipe from "../authRecipe";
-import { RecipeFeatureComponentMap, FeatureBaseProps, RecipeInitResult } from "../../types";
 import {
-    Config,
+    RecipeFeatureComponentMap,
+    FeatureBaseProps,
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+} from "../../types";
+import {
     GetRedirectionURLContext,
     NormalisedConfig,
     OnHandleEventContext,
@@ -25,7 +29,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
     thirdPartyRecipe: ThirdParty | undefined;
     recipeImpl: WebJSRecipeInterface;
     constructor(
-        config: Config,
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         recipes: {
             thirdPartyInstance: ThirdParty | undefined;
             passwordlessInstance: Passwordless | undefined;

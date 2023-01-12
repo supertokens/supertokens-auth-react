@@ -3,7 +3,7 @@ import { RecipeOnHandleEventFunction } from "../recipeModule/types";
 import { OnHandleEventContext } from "./types";
 
 export const getFunctionOverrides =
-    (onHandleEvent?: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
+    (onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
     (originalImp: RecipeInterface): RecipeInterface => ({
         ...originalImp,
         verifyEmail: async function (input): Promise<{
@@ -13,7 +13,7 @@ export const getFunctionOverrides =
             const response = await originalImp.verifyEmail(input);
 
             if (response.status === "OK") {
-                onHandleEvent?.({
+                onHandleEvent({
                     action: "EMAIL_VERIFIED_SUCCESSFUL",
                     userContext: input.userContext,
                 });
@@ -29,7 +29,7 @@ export const getFunctionOverrides =
             const response = await originalImp.sendVerificationEmail(input);
 
             if (response.status === "OK") {
-                onHandleEvent?.({
+                onHandleEvent({
                     action: "VERIFY_EMAIL_SENT",
                     userContext: input.userContext,
                 });

@@ -1,11 +1,15 @@
 /// <reference types="react" />
 import AuthRecipe from "../authRecipe";
-import { RecipeFeatureComponentMap, FeatureBaseProps, RecipeInitResult } from "../../types";
+import {
+    RecipeFeatureComponentMap,
+    FeatureBaseProps,
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+} from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
-    Config,
     NormalisedConfig,
     UserInput,
 } from "./types";
@@ -20,7 +24,7 @@ export default class EmailPassword extends AuthRecipe<
     readonly recipeImpl: WebJsRecipeInterface;
     static instance?: EmailPassword;
     static RECIPE_ID: string;
-    constructor(config: Config, recipeImpl?: WebJsRecipeInterface);
+    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, recipeImpl?: WebJsRecipeInterface);
     getFeatures: () => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (
@@ -31,7 +35,7 @@ export default class EmailPassword extends AuthRecipe<
         }
     ) => JSX.Element;
     static init(
-        config?: UserInput
+        config: UserInput
     ): RecipeInitResult<
         GetRedirectionURLContext,
         PreAndPostAPIHookAction,

@@ -14,7 +14,7 @@
  */
 
 import SuperTokens from "../../superTokens";
-import { RecipeFeatureComponentMap } from "../../types";
+import { NormalisedConfigWithAppInfoAndRecipeID, RecipeFeatureComponentMap } from "../../types";
 
 import { appendQueryParamsToURL } from "../../utils";
 import { NormalisedConfig } from "./types";
@@ -28,12 +28,12 @@ export default abstract class RecipeModule<
     OnHandleEventContextType,
     N extends NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType>
 > {
-    config: N;
+    config: NormalisedConfigWithAppInfoAndRecipeID<N>;
 
     /*
      * Constructor.
      */
-    constructor(config: N) {
+    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<N>) {
         this.config = config;
     }
 

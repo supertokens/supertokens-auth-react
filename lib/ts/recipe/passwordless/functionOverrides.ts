@@ -3,14 +3,14 @@ import { RecipeOnHandleEventFunction } from "../recipeModule/types";
 import { OnHandleEventContext } from "./types";
 
 export const getFunctionOverrides =
-    (onHandleEvent?: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
+    (onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
     (originalImp: RecipeInterface): RecipeInterface => ({
         ...originalImp,
         createCode: async function (input) {
             const response = await originalImp.createCode(input);
 
             if (response.status === "OK") {
-                onHandleEvent?.({
+                onHandleEvent({
                     action: "PASSWORDLESS_CODE_SENT",
                     isResend: false,
                 });
@@ -22,11 +22,11 @@ export const getFunctionOverrides =
             const response = await originalImp.resendCode(input);
 
             if (response.status === "RESTART_FLOW_ERROR") {
-                onHandleEvent?.({
+                onHandleEvent({
                     action: "PASSWORDLESS_RESTART_FLOW",
                 });
             } else if (response.status === "OK") {
-                onHandleEvent?.({
+                onHandleEvent({
                     action: "PASSWORDLESS_CODE_SENT",
                     isResend: true,
                 });
@@ -37,11 +37,11 @@ export const getFunctionOverrides =
             const response = await originalImp.consumeCode(input);
 
             if (response.status === "RESTART_FLOW_ERROR") {
-                onHandleEvent?.({
+                onHandleEvent({
                     action: "PASSWORDLESS_RESTART_FLOW",
                 });
             } else if (response.status === "OK") {
-                onHandleEvent?.({
+                onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: response.createdNewUser,
                     user: response.user,

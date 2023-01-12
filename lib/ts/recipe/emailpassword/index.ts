@@ -26,7 +26,7 @@ import { PropsWithChildren } from "react";
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 
 export default class Wrapper {
-    static init(config?: UserInput) {
+    static init(config: UserInput) {
         return EmailPassword.init(config);
     }
 
