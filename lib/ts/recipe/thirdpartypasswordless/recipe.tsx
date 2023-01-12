@@ -229,7 +229,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
                 return ThirdPartyPasswordless.instance;
             },
             webJS: ThirdpartyPasswordlessWebJS.init({
-                ...config,
+                ...normalisedConfig,
                 override: {
                     functions: (originalImpl, builder) => {
                         const functions = getFunctionOverrides(

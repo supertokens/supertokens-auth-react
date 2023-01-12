@@ -227,7 +227,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                 return ThirdPartyEmailPassword.instance;
             },
             webJS: ThirdpartyEmailPasswordWebJS.init({
-                ...config,
+                ...normalisedConfig,
                 override: {
                     functions: (originalImpl, builder) => {
                         const functions = getFunctionOverrides(
