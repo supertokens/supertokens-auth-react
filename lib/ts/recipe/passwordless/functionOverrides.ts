@@ -49,4 +49,13 @@ export const getFunctionOverrides =
             }
             return response;
         },
+        setLoginAttemptInfo: async function (input) {
+            return originalImp.setLoginAttemptInfo({
+                ...input,
+                attemptInfo: {
+                    ...input.attemptInfo,
+                    ...input.userContext.additionalAttemptInfo,
+                },
+            });
+        },
     });
