@@ -20,7 +20,6 @@ export declare function appendTrailingSlashToURL(stringUrl: string): string;
 export declare function matchRecipeIdUsingQueryParams(recipeId: string): () => boolean;
 export declare function redirectWithFullPageReload(to: string): void;
 export declare function redirectWithHistory(to: string, history: any): void;
-export declare function isIE(): boolean;
 export declare function getOriginOfPage(): NormalisedURLDomain;
 export declare function getLocalStorage(key: string): Promise<string | null>;
 export declare function setLocalStorage(key: string, value: string): Promise<void>;
