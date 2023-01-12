@@ -38,8 +38,6 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
         useShadowDom,
         palette,
         rootStyle,
-        // recipeId: config.recipeId,
-        // appInfo: config.appInfo,
     };
 }
 
