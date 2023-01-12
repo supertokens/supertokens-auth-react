@@ -144,7 +144,7 @@ export default class ThirdParty extends AuthRecipe<
         NormalisedConfig,
         PreAndPostAPIHookActionWebJS
     > {
-        const normalizedConfig = normaliseThirdPartyConfig(config);
+        const normalisedConfig = normaliseThirdPartyConfig(config);
         return {
             authReact: (
                 appInfo: NormalisedAppInfo
@@ -155,19 +155,19 @@ export default class ThirdParty extends AuthRecipe<
                 NormalisedConfig
             > => {
                 ThirdParty.instance = new ThirdParty({
-                    ...normalizedConfig,
+                    ...normalisedConfig,
                     appInfo,
                     recipeId: ThirdParty.RECIPE_ID,
                 });
                 return ThirdParty.instance;
             },
             webJS: ThirdpartyWebJS.init({
-                ...normalizedConfig,
+                ...normalisedConfig,
                 override: {
                     functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(ThirdParty.RECIPE_ID, normalizedConfig.onHandleEvent);
+                        const functions = getFunctionOverrides(ThirdParty.RECIPE_ID, normalisedConfig.onHandleEvent);
                         builder.override(functions);
-                        builder.override(normalizedConfig.override.functions);
+                        builder.override(normalisedConfig.override.functions);
                         return originalImpl;
                     },
                 },

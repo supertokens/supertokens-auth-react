@@ -147,7 +147,7 @@ export default class EmailPassword extends AuthRecipe<
         NormalisedConfig,
         PreAndPostAPIHookActionWebJS
     > {
-        const normalizedConfig = normaliseEmailPasswordConfig(config);
+        const normalisedConfig = normaliseEmailPasswordConfig(config);
 
         return {
             authReact: (
@@ -159,19 +159,19 @@ export default class EmailPassword extends AuthRecipe<
                 NormalisedConfig
             > => {
                 EmailPassword.instance = new EmailPassword({
-                    ...normalizedConfig,
+                    ...normalisedConfig,
                     appInfo,
                     recipeId: EmailPassword.RECIPE_ID,
                 });
                 return EmailPassword.instance;
             },
             webJS: EmailPasswordWebJS.init({
-                ...normalizedConfig,
+                ...normalisedConfig,
                 override: {
                     functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(normalizedConfig.onHandleEvent);
+                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
                         builder.override(functions);
-                        builder.override(normalizedConfig.override.functions);
+                        builder.override(normalisedConfig.override.functions);
                         return originalImpl;
                     },
                 },

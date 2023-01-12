@@ -137,7 +137,7 @@ export default class Passwordless extends AuthRecipe<
         NormalisedConfig,
         PreAndPostAPIHookActionWebJS
     > {
-        const normalizedConfig = normalisePasswordlessConfig(config);
+        const normalisedConfig = normalisePasswordlessConfig(config);
 
         return {
             authReact: (
@@ -149,19 +149,19 @@ export default class Passwordless extends AuthRecipe<
                 NormalisedConfig
             > => {
                 Passwordless.instance = new Passwordless({
-                    ...normalizedConfig,
+                    ...normalisedConfig,
                     appInfo,
                     recipeId: Passwordless.RECIPE_ID,
                 });
                 return Passwordless.instance;
             },
             webJS: PasswordlessWebJS.init({
-                ...normalizedConfig,
+                ...normalisedConfig,
                 override: {
                     functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(normalizedConfig.onHandleEvent);
+                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
                         builder.override(functions);
-                        builder.override(normalizedConfig.override.functions);
+                        builder.override(normalisedConfig.override.functions);
                         return originalImpl;
                     },
                 },

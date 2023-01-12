@@ -204,7 +204,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
         NormalisedConfig,
         PreAndPostAPIHookActionWebJS
     > {
-        const normalizedConfig = normaliseThirdPartyPasswordlessConfig(config);
+        const normalisedConfig = normaliseThirdPartyPasswordlessConfig(config);
 
         return {
             authReact: (
@@ -217,7 +217,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
             > => {
                 ThirdPartyPasswordless.instance = new ThirdPartyPasswordless(
                     {
-                        ...normalizedConfig,
+                        ...normalisedConfig,
                         appInfo,
                         recipeId: ThirdPartyPasswordless.RECIPE_ID,
                     },
@@ -234,10 +234,10 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
                     functions: (originalImpl, builder) => {
                         const functions = getFunctionOverrides(
                             ThirdPartyPasswordless.RECIPE_ID,
-                            normalizedConfig.onHandleEvent
+                            normalisedConfig.onHandleEvent
                         );
                         builder.override(functions);
-                        builder.override(normalizedConfig.override.functions);
+                        builder.override(normalisedConfig.override.functions);
                         return originalImpl;
                     },
                 },

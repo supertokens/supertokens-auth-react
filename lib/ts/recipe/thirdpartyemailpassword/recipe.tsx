@@ -202,7 +202,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
         NormalisedConfig,
         PreAndPostAPIHookActionWebJS
     > {
-        const normalizedConfig = normaliseThirdPartyEmailPasswordConfig(config);
+        const normalisedConfig = normaliseThirdPartyEmailPasswordConfig(config);
 
         return {
             authReact: (
@@ -215,7 +215,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             > => {
                 ThirdPartyEmailPassword.instance = new ThirdPartyEmailPassword(
                     {
-                        ...normalizedConfig,
+                        ...normalisedConfig,
                         appInfo,
                         recipeId: ThirdPartyEmailPassword.RECIPE_ID,
                     },
@@ -232,10 +232,10 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                     functions: (originalImpl, builder) => {
                         const functions = getFunctionOverrides(
                             ThirdPartyEmailPassword.RECIPE_ID,
-                            normalizedConfig.onHandleEvent
+                            normalisedConfig.onHandleEvent
                         );
                         builder.override(functions);
-                        builder.override(normalizedConfig.override.functions);
+                        builder.override(normalisedConfig.override.functions);
                         return originalImpl;
                     },
                 },

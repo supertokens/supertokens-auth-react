@@ -86,7 +86,7 @@ export default class EmailVerification extends RecipeModule<
         NormalisedConfig,
         PreAndPostAPIHookActionWebJS
     > {
-        const normalizedConfig = normaliseEmailVerificationFeature(config);
+        const normalisedConfig = normaliseEmailVerificationFeature(config);
 
         return {
             authReact: (
@@ -98,19 +98,19 @@ export default class EmailVerification extends RecipeModule<
                 NormalisedConfig
             > => {
                 EmailVerification.instance = new EmailVerification({
-                    ...normalizedConfig,
+                    ...normalisedConfig,
                     appInfo,
                     recipeId: EmailVerification.RECIPE_ID,
                 });
                 return EmailVerification.instance;
             },
             webJS: EmailVerificationWebJS.init({
-                ...normalizedConfig,
+                ...normalisedConfig,
                 override: {
                     functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(normalizedConfig.onHandleEvent);
+                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
                         builder.override(functions);
-                        builder.override(normalizedConfig.override.functions);
+                        builder.override(normalisedConfig.override.functions);
                         return originalImpl;
                     },
                 },
