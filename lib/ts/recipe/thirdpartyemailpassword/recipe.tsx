@@ -56,7 +56,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
 
     thirdPartyRecipe: ThirdParty | undefined;
 
-    recipeImpl: WebJSRecipeInterface = ThirdpartyEmailPasswordWebJS;
+    recipeImpl: WebJSRecipeInterface;
 
     constructor(
         config: Config,
@@ -66,6 +66,8 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
         }
     ) {
         super(normaliseThirdPartyEmailPasswordConfig(config));
+
+        this.recipeImpl = ThirdpartyEmailPasswordWebJS;
 
         this.emailPasswordRecipe =
             recipes.emailPasswordInstance !== undefined

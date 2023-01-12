@@ -5,6 +5,7 @@ import { OnHandleEventContext } from "./types";
 export const getFunctionOverrides =
     (onHandleEvent?: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
     (originalImp: RecipeInterface): RecipeInterface => ({
+        ...originalImp,
         createCode: async function (input) {
             const response = await originalImp.createCode(input);
 
@@ -47,26 +48,5 @@ export const getFunctionOverrides =
                 });
             }
             return response;
-        },
-        getLinkCodeFromURL: function (input) {
-            return originalImp.getLinkCodeFromURL(input);
-        },
-        getPreAuthSessionIdFromURL: function (input) {
-            return originalImp.getPreAuthSessionIdFromURL(input);
-        },
-        doesEmailExist: async function (input) {
-            return await originalImp.doesEmailExist(input);
-        },
-        doesPhoneNumberExist: async function (input) {
-            return await originalImp.doesPhoneNumberExist(input);
-        },
-        getLoginAttemptInfo: function <CustomAttemptInfoProperties>(input: { userContext: any }) {
-            return originalImp.getLoginAttemptInfo<CustomAttemptInfoProperties>(input);
-        },
-        setLoginAttemptInfo: async function (input) {
-            return originalImp.setLoginAttemptInfo(input);
-        },
-        clearLoginAttemptInfo: function (input) {
-            return originalImp.clearLoginAttemptInfo(input);
         },
     });

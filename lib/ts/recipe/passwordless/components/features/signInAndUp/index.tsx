@@ -282,10 +282,10 @@ function getModifiedRecipeImplementation(
     return {
         ...originalImpl,
         createCode: async (input) => {
-            // This contactMethod refers to the one that was used to deliver the login info
-            // This can be an important distinction in case both email and phone are allowed
             const contactInfo = "email" in input ? input.email : formatPhoneNumberIntl(input.phoneNumber);
 
+            // This contactMethod refers to the one that was used to deliver the login info
+            // This can be an important distinction in case both email and phone are allowed
             const contactMethod: "EMAIL" | "PHONE" = "email" in input ? "EMAIL" : "PHONE";
             const additionalAttemptInfo = {
                 lastResend: Date.now(),

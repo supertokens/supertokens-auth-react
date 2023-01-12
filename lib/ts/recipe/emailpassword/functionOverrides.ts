@@ -4,6 +4,7 @@ import { OnHandleEventContext } from "./types";
 
 export const getFunctionOverrides =
     (onHandleEvent?: RecipeOnHandleEventFunction<OnHandleEventContext>) => (originalImp: RecipeInterface) => ({
+        ...originalImp,
         submitNewPassword: async function (input: any) {
             const response = await originalImp.submitNewPassword({
                 ...input,
@@ -58,14 +59,5 @@ export const getFunctionOverrides =
                 });
             }
             return response;
-        },
-        doesEmailExist: async function (input: any) {
-            return await originalImp.doesEmailExist(input);
-        },
-
-        getResetPasswordTokenFromURL: function (input: any): string {
-            return originalImp.getResetPasswordTokenFromURL({
-                userContext: input.userContext,
-            });
         },
     });

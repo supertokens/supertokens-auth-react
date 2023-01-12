@@ -66,10 +66,14 @@ export declare const getFunctionOverrides: (onHandleEvent?: RecipeOnHandleEventF
               fetchResponse: Response;
           }
     >;
-    doesEmailExist: (input: any) => Promise<{
+    doesEmailExist: (input: {
+        email: string;
+        options?: import("supertokens-web-js/recipe/emailpassword").RecipeFunctionOptions | undefined;
+        userContext: any;
+    }) => Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;
     }>;
-    getResetPasswordTokenFromURL: (input: any) => string;
+    getResetPasswordTokenFromURL: (input: { userContext: any }) => string;
 };

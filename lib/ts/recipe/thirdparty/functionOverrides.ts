@@ -6,6 +6,7 @@ import { OnHandleEventContext, StateObject } from "./types";
 export const getFunctionOverrides =
     (recipeId: string, onHandleEvent?: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
     (originalImp: RecipeInterface): RecipeInterface => ({
+        ...originalImp,
         getAuthorisationURLFromBackend: async function (input): Promise<{
             status: "OK";
             url: string;
@@ -59,39 +60,6 @@ export const getFunctionOverrides =
                     rid: recipeId,
                     redirectToPath: getRedirectToPathFromURL(),
                 },
-                userContext: input.userContext,
-            });
-        },
-
-        getAuthorisationURLWithQueryParamsAndSetState: async function (input) {
-            return originalImp.getAuthorisationURLWithQueryParamsAndSetState(input);
-        },
-
-        getAuthStateFromURL: function (input): string {
-            return originalImp.getAuthStateFromURL(input);
-        },
-
-        generateStateToSendToOAuthProvider: function (input) {
-            return originalImp.generateStateToSendToOAuthProvider({
-                ...input,
-            });
-        },
-        verifyAndGetStateOrThrowError: function (input) {
-            return originalImp.verifyAndGetStateOrThrowError({
-                stateFromAuthProvider: input.stateFromAuthProvider,
-                stateObjectFromStorage: input.stateObjectFromStorage,
-                userContext: input.userContext,
-            });
-        },
-
-        getAuthCodeFromURL: function (input): string {
-            return originalImp.getAuthCodeFromURL({
-                userContext: input.userContext,
-            });
-        },
-
-        getAuthErrorFromURL: function (input): string | undefined {
-            return originalImp.getAuthErrorFromURL({
                 userContext: input.userContext,
             });
         },
