@@ -10,7 +10,15 @@ import {
 import { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
 import { PropsWithChildren } from "react";
 export default class Wrapper {
-    static init(config: UserInput): import("./types").InitOutput;
+    static init(
+        config: UserInput
+    ): import("../../types").RecipeInitResult<
+        import("../authRecipe/types").GetRedirectionURLContext,
+        import("./types").PreAndPostAPIHookAction,
+        OnHandleEventContext,
+        import("./types").NormalisedConfig,
+        import("supertokens-web-js/recipe/thirdpartypasswordless").PreAndPostAPIHookAction
+    >;
     static signOut(input?: { userContext?: any }): Promise<void>;
     static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: any }): Promise<{
         status: "OK" | "ERROR";

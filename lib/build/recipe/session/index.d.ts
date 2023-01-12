@@ -28,7 +28,7 @@ export default class SessionAPIWrapper {
             }
         >
     >;
-    static init(config?: InputType): import("./types").InitOutput;
+    static init(config?: InputType): import("../../types").RecipeInitResult<unknown, unknown, unknown, any, unknown>;
     static getUserId(input?: { userContext?: any }): Promise<string>;
     static getAccessTokenPayloadSecurely(input?: { userContext?: any }): Promise<any>;
     static attemptRefreshingSession(): Promise<boolean>;

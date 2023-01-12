@@ -17,7 +17,7 @@
  * Imports.
  */
 
-import { RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
+import { RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps, RecipeInitResult } from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -25,7 +25,6 @@ import {
     Config,
     NormalisedConfig,
     UserInput,
-    InitOutput,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normalisePasswordlessConfig } from "./utils";
@@ -40,6 +39,7 @@ import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/reci
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
 import { getFunctionOverrides } from "./functionOverrides";
+import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/passwordless/types";
 
 /*
  * Class.
@@ -120,7 +120,15 @@ export default class Passwordless extends AuthRecipe<
         }
     };
 
-    static init(config: UserInput): InitOutput {
+    static init(
+        config: UserInput
+    ): RecipeInitResult<
+        GetRedirectionURLContext,
+        PreAndPostAPIHookAction,
+        OnHandleEventContext,
+        NormalisedConfig,
+        PreAndPostAPIHookActionWebJS
+    > {
         return {
             authReact: (
                 appInfo: NormalisedAppInfo

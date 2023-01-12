@@ -15,18 +15,11 @@
 
 import { UserInput as WebJSInputType, RecipeEvent } from "supertokens-web-js/recipe/session/types";
 import { ClaimValidationError } from "supertokens-website";
-import { CreateRecipeFunction } from "../../types";
-import { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/types";
 
 export type RecipeEventWithSessionContext = RecipeEvent & { sessionContext: SessionContextUpdate };
 
 export type InputType = WebJSInputType & {
     onHandleEvent?: (event: RecipeEventWithSessionContext) => void;
-};
-
-export type InitOutput = {
-    authReact: CreateRecipeFunction<unknown, unknown, unknown, any>;
-    webJS: CreateRecipeFunctionWebJS<any>;
 };
 
 export type SessionContextUpdate = {

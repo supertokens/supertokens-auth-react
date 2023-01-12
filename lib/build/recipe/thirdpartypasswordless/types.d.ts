@@ -1,4 +1,4 @@
-import { CreateRecipeFunction, FeatureBaseConfig, Styles } from "../../types";
+import { FeatureBaseConfig, Styles } from "../../types";
 import {
     GetRedirectionURLContext as PasswordlessGetRedirectionURLContext,
     OnHandleEventContext as PasswordlessOnHandleEventContext,
@@ -43,8 +43,6 @@ import { CountryCode } from "libphonenumber-js";
 import { Dispatch } from "react";
 import { SignInUpScreens } from "../passwordless/components/themes/signInUp";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
-import { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/types";
-import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/thirdpartypasswordless";
 declare type WithRenamedOptionalProp<T, K extends keyof T, L extends string> = Omit<T, K> & {
     [P in L]?: T[K];
 };
@@ -95,15 +93,6 @@ export declare type UserInput = (
     oAuthCallbackScreen?: FeatureBaseConfig;
     disablePasswordless?: boolean;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-export declare type InitOutput = {
-    authReact: CreateRecipeFunction<
-        GetRedirectionURLContext,
-        PreAndPostAPIHookAction,
-        OnHandleEventContext,
-        NormalisedConfig
-    >;
-    webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
-};
 export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {

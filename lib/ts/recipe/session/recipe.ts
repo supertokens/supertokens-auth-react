@@ -17,7 +17,7 @@
  * Imports.
  */
 import RecipeModule from "../recipeModule";
-import { NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
+import { NormalisedAppInfo, RecipeFeatureComponentMap, RecipeInitResult } from "../../types";
 import {
     popInvalidClaimRedirectPathFromContext,
     getLocalStorage,
@@ -25,7 +25,7 @@ import {
     removeFromLocalStorage,
     setLocalStorage,
 } from "../../utils";
-import { RecipeEventWithSessionContext, InputType, SessionContextUpdate, InitOutput } from "./types";
+import { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
@@ -273,7 +273,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         return WebJSSessionRecipe.addAxiosInterceptors(axiosInstance, userContext);
     }
 
-    static init(config?: InputType): InitOutput {
+    static init(config?: InputType): RecipeInitResult<unknown, unknown, unknown, any, unknown> {
         return {
             authReact: (
                 appInfo: NormalisedAppInfo,

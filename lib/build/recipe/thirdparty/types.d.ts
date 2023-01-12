@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { CreateRecipeFunction, FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -16,8 +16,6 @@ import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallbac
 import OverrideableBuilder from "supertokens-js-override";
 import { StateObject as WebJsStateObject, RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import { SignInAndUpHeader } from "./components/themes/signInAndUp/signInAndUpHeader";
-import { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/types";
-import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/thirdparty";
 export declare type ComponentOverrideMap = {
     ThirdPartySignUpFooter_Override?: ComponentOverride<typeof SignUpFooter>;
     ThirdPartySignInAndUpHeader_Override?: ComponentOverride<typeof SignInAndUpHeader>;
@@ -34,15 +32,6 @@ export declare type UserInput = {
         ) => RecipeInterface;
     };
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-export declare type InitOutput = {
-    authReact: CreateRecipeFunction<
-        GetRedirectionURLContext,
-        PreAndPostAPIHookAction,
-        OnHandleEventContext,
-        NormalisedConfig
-    >;
-    webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
-};
 export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {

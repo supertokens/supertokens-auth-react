@@ -1,6 +1,5 @@
 import {
     APIFormField,
-    CreateRecipeFunction,
     FeatureBaseConfig,
     FormField,
     FormFieldBaseConfig,
@@ -31,8 +30,6 @@ import { ResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/
 import { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
 import { InputProps } from "./components/library/input";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
-import { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/types";
-import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/emailpassword/types";
 export declare type ComponentOverrideMap = {
     EmailPasswordSignIn_Override?: ComponentOverride<typeof SignIn>;
     EmailPasswordSignInFooter_Override?: ComponentOverride<typeof SignInFooter>;
@@ -55,15 +52,6 @@ export declare type UserInput = {
         ) => RecipeInterface;
     };
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-export declare type InitOutput = {
-    authReact: CreateRecipeFunction<
-        GetRedirectionURLContext,
-        PreAndPostAPIHookAction,
-        OnHandleEventContext,
-        NormalisedConfig
-    >;
-    webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
-};
 export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {

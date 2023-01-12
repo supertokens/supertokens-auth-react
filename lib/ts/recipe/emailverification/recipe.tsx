@@ -18,7 +18,7 @@
  */
 
 import RecipeModule from "../recipeModule";
-import { RecipeFeatureComponentMap } from "../../types";
+import { RecipeFeatureComponentMap, RecipeInitResult } from "../../types";
 import {
     UserInput,
     Config,
@@ -26,7 +26,6 @@ import {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
-    InitOutput,
 } from "./types";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
@@ -43,6 +42,7 @@ import { UserContextContext } from "../../usercontext";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import EmailVerificationWebJS from "supertokens-web-js/recipe/emailverification";
 import { getFunctionOverrides } from "./functionOverrides";
+import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/emailverification/types";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -75,7 +75,15 @@ export default class EmailVerification extends RecipeModule<
         });
     }
 
-    static init(config: UserInput): InitOutput {
+    static init(
+        config: UserInput
+    ): RecipeInitResult<
+        GetRedirectionURLContext,
+        PreAndPostAPIHookAction,
+        OnHandleEventContext,
+        NormalisedConfig,
+        PreAndPostAPIHookActionWebJS
+    > {
         return {
             authReact: (
                 appInfo: NormalisedAppInfo

@@ -120,6 +120,11 @@ export type AppInfoUserInput = {
     apiGatewayPath?: string;
 };
 
+export type RecipeInitResult<T, C, R, P extends NormalisedRecipeModuleConfig<T, C, R>, I> = {
+    authReact: CreateRecipeFunction<T, C, R, P>;
+    webJS: CreateRecipeFunctionWebJS<I>;
+};
+
 export type NormalisedAppInfo = {
     /*
      * The name of the application.

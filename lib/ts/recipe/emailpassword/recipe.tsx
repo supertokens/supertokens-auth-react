@@ -18,7 +18,7 @@
  */
 
 import AuthRecipe from "../authRecipe";
-import { RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
+import { RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps, RecipeInitResult } from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -26,7 +26,6 @@ import {
     Config,
     NormalisedConfig,
     UserInput,
-    InitOutput,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
@@ -41,6 +40,7 @@ import { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/reci
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import EmailPasswordWebJS from "supertokens-web-js/recipe/emailpassword";
 import { getFunctionOverrides } from "./functionOverrides";
+import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/emailpassword/types";
 
 /*
  * Class.
@@ -130,7 +130,15 @@ export default class EmailPassword extends AuthRecipe<
         }
     };
 
-    static init(config?: UserInput): InitOutput {
+    static init(
+        config?: UserInput
+    ): RecipeInitResult<
+        GetRedirectionURLContext,
+        PreAndPostAPIHookAction,
+        OnHandleEventContext,
+        NormalisedConfig,
+        PreAndPostAPIHookActionWebJS
+    > {
         return {
             authReact: (
                 appInfo: NormalisedAppInfo

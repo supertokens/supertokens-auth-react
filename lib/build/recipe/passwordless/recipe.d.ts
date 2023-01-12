@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import { RecipeFeatureComponentMap, FeatureBaseProps, RecipeInitResult } from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -7,10 +7,10 @@ import {
     Config,
     NormalisedConfig,
     UserInput,
-    InitOutput,
 } from "./types";
 import AuthRecipe from "../authRecipe";
 import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/passwordless/types";
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -30,7 +30,15 @@ export default class Passwordless extends AuthRecipe<
             userContext?: any;
         }
     ) => JSX.Element;
-    static init(config: UserInput): InitOutput;
+    static init(
+        config: UserInput
+    ): RecipeInitResult<
+        GetRedirectionURLContext,
+        PreAndPostAPIHookAction,
+        OnHandleEventContext,
+        NormalisedConfig,
+        PreAndPostAPIHookActionWebJS
+    >;
     static getInstanceOrThrow(): Passwordless;
     static reset(): void;
 }

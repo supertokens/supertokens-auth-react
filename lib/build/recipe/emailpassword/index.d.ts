@@ -6,7 +6,15 @@ import { User } from "../authRecipe/types";
 import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import { PropsWithChildren } from "react";
 export default class Wrapper {
-    static init(config?: UserInput): import("./types").InitOutput;
+    static init(
+        config?: UserInput
+    ): import("../../types").RecipeInitResult<
+        GetRedirectionURLContext,
+        import("./types").PreAndPostAPIHookAction,
+        OnHandleEventContext,
+        import("./types").NormalisedConfig,
+        import("supertokens-web-js/recipe/emailpassword/types").PreAndPostAPIHookAction
+    >;
     static signOut(input?: { userContext?: any }): Promise<void>;
     static submitNewPassword(input: {
         formFields: {

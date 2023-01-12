@@ -1,15 +1,16 @@
 /// <reference types="react" />
 import AuthRecipe from "../authRecipe";
-import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import { RecipeFeatureComponentMap, FeatureBaseProps, RecipeInitResult } from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
+    PreAndPostAPIHookAction,
     Config,
     NormalisedConfig,
     UserInput,
-    InitOutput,
 } from "./types";
 import { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/emailpassword/types";
 export default class EmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
     never,
@@ -29,7 +30,15 @@ export default class EmailPassword extends AuthRecipe<
             userContext?: any;
         }
     ) => JSX.Element;
-    static init(config?: UserInput): InitOutput;
+    static init(
+        config?: UserInput
+    ): RecipeInitResult<
+        GetRedirectionURLContext,
+        PreAndPostAPIHookAction,
+        OnHandleEventContext,
+        NormalisedConfig,
+        PreAndPostAPIHookActionWebJS
+    >;
     static getInstanceOrThrow(): EmailPassword;
     static reset(): void;
 }

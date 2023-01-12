@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import RecipeModule from "../recipeModule";
-import { RecipeFeatureComponentMap } from "../../types";
+import { RecipeFeatureComponentMap, RecipeInitResult } from "../../types";
 import {
     UserInput,
     Config,
@@ -8,9 +8,9 @@ import {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
-    InitOutput,
 } from "./types";
 import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
+import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/emailverification/types";
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -22,7 +22,15 @@ export default class EmailVerification extends RecipeModule<
     static RECIPE_ID: string;
     static EmailVerificationClaim: EmailVerificationClaimClass;
     constructor(config: Config, recipeImpl?: RecipeInterface);
-    static init(config: UserInput): InitOutput;
+    static init(
+        config: UserInput
+    ): RecipeInitResult<
+        GetRedirectionURLContext,
+        PreAndPostAPIHookAction,
+        OnHandleEventContext,
+        NormalisedConfig,
+        PreAndPostAPIHookActionWebJS
+    >;
     static getInstanceOrThrow(): EmailVerification;
     getFeatures: () => RecipeFeatureComponentMap;
     getFeatureComponent: (_: "emailverification", props: any) => JSX.Element;

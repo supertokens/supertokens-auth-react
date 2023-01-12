@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import { CreateRecipeFunction, FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import {
     GetRedirectionURLContext as EmailPasswordGetRedirectionURLContext,
     OnHandleEventContext as EmailPasswordOnHandleEventContext,
@@ -59,8 +59,6 @@ import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../thirdparty/typ
 import { Header } from "./components/themes/signInAndUp/header";
 import { Dispatch } from "react";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/types";
-import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/thirdpartyemailpassword/types";
 
 export type ComponentOverrideMap = EmailPasswordOverrideMap &
     ThirdPartyOverrideMap & {
@@ -79,16 +77,6 @@ export type UserInput = {
         ) => RecipeInterface;
     };
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-
-export type InitOutput = {
-    authReact: CreateRecipeFunction<
-        GetRedirectionURLContext,
-        PreAndPostAPIHookAction,
-        OnHandleEventContext,
-        NormalisedConfig
-    >;
-    webJS: CreateRecipeFunctionWebJS<PreAndPostAPIHookActionWebJS>;
-};
 
 export type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
