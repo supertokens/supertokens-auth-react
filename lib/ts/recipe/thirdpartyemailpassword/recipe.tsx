@@ -82,6 +82,9 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                           appInfo: this.config.appInfo,
                           recipeId: this.config.recipeId,
                       },
+                      // ThirdPartyEmailPassword has emailPassword and thirdparty instances initialized within it,
+                      // so we pass the ThirdPartyEmailPassword instance to getRecipeImpl functions to get each recipe instance
+                      // importing each recipe(thirdparty, emailpassword) directly from web-js would throw an error due to them not being initialized
                       getEmailPasswordImpl(this.webJSRecipe)
                   );
 

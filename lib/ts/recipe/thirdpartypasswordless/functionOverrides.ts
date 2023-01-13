@@ -9,6 +9,8 @@ import getPasswordlessRecipeImplementation from "./recipeImplementation/password
 export const getFunctionOverrides =
     (recipeId: string, onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
     (originalImp: RecipeInterface): RecipeInterface => {
+        // Get overrides for each recipe that already contains event handler setup.
+        // Return them merged into single combined recipe functionOverrides renaming the methods
         const thirdpartyOverrides = getThirdpartyFunctionOverrides(
             recipeId,
             onHandleEvent
