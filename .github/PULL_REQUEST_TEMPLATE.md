@@ -30,6 +30,7 @@
     -   If no such branch exists, then create one from the latest released branch.
 -   [ ] If added a new recipe interface, then make sure that the implementation of it uses NON arrow functions only (like `someFunc: function () {..}`).
 -   [ ] If I added a new recipe, I also added the recipe entry point into the `size-limit` section of `package.json` with the size limit set to the current size rounded up.
+-   [ ] If I added a new recipe, I also added the recipe entry point into the `rollup.config.mjs`
 
 ## Remaining TODOs for this PR
 
