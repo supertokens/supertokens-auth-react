@@ -40,7 +40,10 @@ import {
 import { normaliseAuthRecipe } from "../authRecipe/utils";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
-export function normaliseEmailPasswordConfig(config: Config = {}): NormalisedConfig {
+export function normaliseEmailPasswordConfig(config?: Config): NormalisedConfig {
+    if (config === undefined) {
+        config = {};
+    }
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
         config.signInAndUpFeature
     );

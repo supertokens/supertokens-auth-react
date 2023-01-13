@@ -22,7 +22,10 @@ import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/r
 import { normalisePasswordlessConfig } from "../passwordless/utils";
 import { normaliseThirdPartyConfig } from "../thirdparty/utils";
 
-export function normaliseThirdPartyPasswordlessConfig(config: Config = {} as Config): NormalisedConfig {
+export function normaliseThirdPartyPasswordlessConfig(config?: Config): NormalisedConfig {
+    if (config === undefined) {
+        config = {} as Config;
+    }
     const disablePasswordless = config.disablePasswordless === true;
     const disableThirdParty =
         config.signInUpFeature === undefined ||
