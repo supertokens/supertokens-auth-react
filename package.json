@@ -118,31 +118,31 @@
     "size-limit": [
         {
             "path": "lib/build/index.js",
-            "limit": "42kb"
+            "limit": "35kb"
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "42kb"
+            "limit": "35kb"
         },
         {
             "path": "recipe/thirdpartyemailpassword/index.js",
-            "limit": "145kb"
+            "limit": "70kb"
         },
         {
             "path": "recipe/thirdparty/index.js",
-            "limit": "125kb"
+            "limit": "50kb"
         },
         {
             "path": "recipe/emailpassword/index.js",
-            "limit": "130kb"
+            "limit": "55kb"
         },
         {
             "path": "recipe/passwordless/index.js",
-            "limit": "220kb"
+            "limit": "130kb"
         },
         {
             "path": "recipe/thirdpartypasswordless/index.js",
-            "limit": "235kb"
+            "limit": "145kb"
         }
     ],
     "browserslist": {
