@@ -109,9 +109,6 @@ describe("Passwordless", function () {
     it("Initializing Passwordless with custom authRecipeModule custom configs.", async function () {
         Passwordless.init({
             contactMethod: "PHONE",
-            palette: {
-                primary: "blue",
-            },
             preAPIHook: () => {
                 throw new Error("PRE API HOOK THROWS");
             },
@@ -129,7 +126,6 @@ describe("Passwordless", function () {
             Passwordless.getInstanceOrThrow().config.appInfo,
             SuperTokens.getInstanceOrThrow().appInfo
         );
-        assert.deepStrictEqual(Passwordless.getInstanceOrThrow().config.palette.primary, "blue");
         assert.deepStrictEqual(Passwordless.getInstanceOrThrow().config.useShadowDom, false);
         assert.throws(() => Passwordless.getInstanceOrThrow().config.preAPIHook({} as any), {
             message: "PRE API HOOK THROWS",

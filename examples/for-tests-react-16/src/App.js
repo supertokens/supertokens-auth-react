@@ -576,7 +576,6 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
                 };
             },
         },
-        palette: theme.colors,
         preAPIHook: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
             return context;
@@ -680,7 +679,6 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultUI, thirdPartyRedirect
                 };
             },
         },
-        palette: theme.colors,
         preAPIHook: async (context) => {
             console.log(`ST_LOGS THIRDPARTYPASSWORDLESS PRE_API_HOOKS ${context.action}`);
             return context;
@@ -779,7 +777,6 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
                 };
             },
         },
-        palette: theme.colors,
         preAPIHook: async (context) => {
             console.log(`ST_LOGS PASSWORDLESS PRE_API_HOOKS ${context.action}`);
             return context;
@@ -867,7 +864,6 @@ function getThirdPartyConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
             },
         },
         useShadowDom,
-        palette: theme.colors,
         signInAndUpFeature: {
             disableDefaultUI,
             style: theme.style,
@@ -1048,7 +1044,6 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultUI, thirdPartyRedirec
             },
         },
         useShadowDom,
-        palette: theme.colors,
         resetPasswordUsingTokenFeature: {
             disableDefaultUI,
         },

@@ -309,9 +309,6 @@ describe("ThirdParty", function () {
 
     it("Initializing ThirdParty with custom authRecipeModule custom configs.", async function () {
         ThirdParty.init({
-            palette: {
-                primary: "blue",
-            },
             preAPIHook: () => {
                 throw new Error("PRE API HOOK THROWS");
             },
@@ -333,7 +330,6 @@ describe("ThirdParty", function () {
             SuperTokens.getInstanceOrThrow().appInfo
         );
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.length, 3);
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.palette.primary, "blue");
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.useShadowDom, false);
         assert.throws(() => ThirdParty.getInstanceOrThrow().config.preAPIHook({} as any), {
             message: "PRE API HOOK THROWS",

@@ -245,7 +245,6 @@ function getRecipeList() {
 
 function getEmailPasswordConfigs() {
     return EmailPassword.init({
-        palette: theme.colors,
         resetPasswordUsingTokenFeature: {
             enterEmailForm: {
                 style: theme.style,
@@ -362,7 +361,6 @@ function getThirdPartyConfigs() {
         async getRedirectionURL(context: ThirdPartyGetRedirectionURLContext) {
             return undefined;
         },
-        palette: theme.colors,
         signInAndUpFeature: {
             style: theme.style,
             privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
@@ -420,7 +418,6 @@ function getThirdPartyEmailPasswordConfigs() {
         async getRedirectionURL(context: ThirdPartyEmailPasswordGetRedirectionURLContext) {
             return undefined;
         },
-        palette: theme.colors,
         signInAndUpFeature: {
             style: theme.style,
             signUpForm: {

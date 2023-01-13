@@ -24,7 +24,6 @@ export declare type UserInput<GetRedirectionURLContextType, Action, OnHandleEven
     postAPIHook?: RecipePostAPIHookFunction<Action>;
     onHandleEvent?: RecipeOnHandleEventFunction<OnHandleEventContextType>;
     useShadowDom?: boolean;
-    palette?: Record<string, string>;
     style?: string;
 };
 export declare type Config<GetRedirectionURLContextType, Action, OnHandleEventContextType> = {
@@ -38,7 +37,6 @@ export declare type NormalisedConfig<GetRedirectionURLContextType, Action, OnHan
         getRedirectionURL: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
         onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContextType>;
         useShadowDom: boolean;
-        palette: Record<string, string>;
         rootStyle: string;
         preAPIHook: (context: RecipePreAPIHookContext<Action>) => Promise<{
             url: string;

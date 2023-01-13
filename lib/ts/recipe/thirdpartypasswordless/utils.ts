@@ -50,7 +50,6 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
                   getRedirectionURL: config.getRedirectionURL,
                   style: config.style,
                   onHandleEvent: config.onHandleEvent,
-                  palette: config.palette,
                   preAPIHook: config.preAPIHook,
                   signInAndUpFeature: {
                       ...config.signInUpFeature,
@@ -71,7 +70,6 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
                   validatePhoneNumber: "validatePhoneNumber" in config ? config.validatePhoneNumber : undefined,
                   getRedirectionURL: config.getRedirectionURL,
                   onHandleEvent: config.onHandleEvent,
-                  palette: config.palette,
                   preAPIHook: config.preAPIHook,
                   useShadowDom: config.useShadowDom,
                   signInUpFeature: {

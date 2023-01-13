@@ -167,11 +167,7 @@ export default class Wrapper {
     ) => JSX.Element;
     static SignInAndUpTheme: typeof SignInUpTheme;
     static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
-    static PasswordlessLinkClickedTheme: import("react").ComponentType<
-        import("../passwordless/types").LinkClickedScreenProps & {
-            children?: import("react").ReactNode;
-        }
-    >;
+    static PasswordlessLinkClickedTheme: (props: import("../passwordless/types").LinkClickedScreenProps) => JSX.Element;
     static PasswordlessLinkClicked: (prop?: any) => JSX.Element;
 }
 declare const init: typeof Wrapper.init;
