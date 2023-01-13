@@ -44,7 +44,7 @@ import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/reci
 import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import ThirdpartyEmailPasswordWebJS from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import ThirdPartyEmailPasswordWebJS from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import { getFunctionOverrides } from "./functionOverrides";
 import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/thirdpartyemailpassword/types";
 
@@ -72,7 +72,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     ) {
         super(config);
 
-        this.recipeImpl = ThirdpartyEmailPasswordWebJS;
+        this.recipeImpl = ThirdPartyEmailPasswordWebJS;
 
         this.emailPasswordRecipe =
             recipes.emailPasswordInstance !== undefined
@@ -225,7 +225,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                 );
                 return ThirdPartyEmailPassword.instance;
             },
-            webJS: ThirdpartyEmailPasswordWebJS.init({
+            webJS: ThirdPartyEmailPasswordWebJS.init({
                 ...normalisedConfig,
                 override: {
                     functions: (originalImpl, builder) => {
