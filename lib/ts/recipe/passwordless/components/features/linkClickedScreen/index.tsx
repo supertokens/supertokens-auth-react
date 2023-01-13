@@ -56,13 +56,13 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
             });
             return "REDIRECTING";
         }
-        const loginAttemptInfo = await props.recipe.recipeImpl.getLoginAttemptInfo({ userContext });
+        const loginAttemptInfo = await props.recipe.webJSRecipe.getLoginAttemptInfo({ userContext });
 
         if (loginAttemptInfo?.preAuthSessionId !== preAuthSessionId) {
             return "REQUIRES_INTERACTION";
         }
 
-        return props.recipe.recipeImpl.consumeCode({
+        return props.recipe.webJSRecipe.consumeCode({
             preAuthSessionId,
             linkCode,
             userContext,
@@ -93,10 +93,10 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
 
             if (response.status === "OK") {
                 const loginAttemptInfo = await getLoginAttemptInfo({
-                    recipeImplementation: props.recipe.recipeImpl,
+                    recipeImplementation: props.recipe.webJSRecipe,
                     userContext,
                 });
-                await props.recipe.recipeImpl.clearLoginAttemptInfo({
+                await props.recipe.webJSRecipe.clearLoginAttemptInfo({
                     userContext,
                 });
                 return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
@@ -146,7 +146,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     const linkClickedScreen = props.recipe.config.linkClickedScreenFeature;
 
     const childProps = {
-        recipeImplementation: props.recipe.recipeImpl,
+        recipeImplementation: props.recipe.webJSRecipe,
         config: props.recipe.config,
         requireUserInteraction,
         consumeCode: async () => {
@@ -159,7 +159,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
             }
 
             try {
-                const consumeResp = await props.recipe.recipeImpl.consumeCode({
+                const consumeResp = await props.recipe.webJSRecipe.consumeCode({
                     preAuthSessionId,
                     linkCode,
                     userContext,

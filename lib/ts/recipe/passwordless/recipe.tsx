@@ -60,7 +60,7 @@ export default class Passwordless extends AuthRecipe<
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
-        public readonly recipeImpl: WebJSRecipeInterface = PasswordlessWebJS
+        public readonly webJSRecipe: WebJSRecipeInterface = PasswordlessWebJS
     ) {
         super(config);
     }

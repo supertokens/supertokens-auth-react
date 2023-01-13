@@ -60,7 +60,7 @@ export default class ThirdParty extends AuthRecipe<
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
-        public readonly recipeImpl: WebJSRecipeInterface = ThirdpartyWebJS
+        public readonly webJSRecipe: WebJSRecipeInterface = ThirdpartyWebJS
     ) {
         super(config);
     }

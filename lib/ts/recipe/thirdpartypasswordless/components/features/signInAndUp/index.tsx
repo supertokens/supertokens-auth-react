@@ -46,7 +46,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
     const [tpState, tpDispatch] = useThirdPartyFeatureReducer();
     const userContext = useUserContext();
     const [pwlessState, pwlessDispatch] = usePasswordlessFeatureReducer(
-        props.recipe.passwordlessRecipe?.recipeImpl,
+        props.recipe.passwordlessRecipe?.webJSRecipe,
         userContext
     );
 

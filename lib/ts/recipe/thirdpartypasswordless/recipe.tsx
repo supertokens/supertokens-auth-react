@@ -62,18 +62,15 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
 
     thirdPartyRecipe: ThirdParty | undefined;
 
-    recipeImpl: WebJSRecipeInterface;
-
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         recipes: {
             thirdPartyInstance: ThirdParty | undefined;
             passwordlessInstance: Passwordless | undefined;
-        }
+        },
+        public readonly webJSRecipe: WebJSRecipeInterface = ThirdpartyPasswordlessWebJS
     ) {
         super(config);
-
-        this.recipeImpl = ThirdpartyPasswordlessWebJS;
 
         this.passwordlessRecipe =
             recipes.passwordlessInstance !== undefined
@@ -86,7 +83,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
                           appInfo: this.config.appInfo,
                           recipeId: this.config.recipeId,
                       },
-                      getPasswordlessImpl(this.recipeImpl)
+                      getPasswordlessImpl(this.webJSRecipe)
                   );
 
         // we initialise this recipe only if the user has provided thirdparty
@@ -102,7 +99,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
                           appInfo: this.config.appInfo,
                           recipeId: this.config.recipeId,
                       },
-                      getThirdPartyImpl(this.recipeImpl)
+                      getThirdPartyImpl(this.webJSRecipe)
                   );
     }
 

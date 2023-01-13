@@ -105,7 +105,7 @@ export function normaliseSignInAndUpFeature(
 }
 
 export function matchRecipeIdUsingState(recipe: Recipe, userContext: any): boolean {
-    const stateResponse = recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
+    const stateResponse = recipe.webJSRecipe.getStateAndOtherInfoFromStorage<CustomStateProperties>({
         userContext,
     });
     if (stateResponse === undefined) {

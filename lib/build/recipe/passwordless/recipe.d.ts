@@ -21,10 +21,10 @@ export default class Passwordless extends AuthRecipe<
     OnHandleEventContext,
     NormalisedConfig
 > {
-    readonly recipeImpl: WebJSRecipeInterface;
+    readonly webJSRecipe: WebJSRecipeInterface;
     static instance?: Passwordless;
     static RECIPE_ID: string;
-    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, recipeImpl?: WebJSRecipeInterface);
+    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, webJSRecipe?: WebJSRecipeInterface);
     getFeatures: () => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (

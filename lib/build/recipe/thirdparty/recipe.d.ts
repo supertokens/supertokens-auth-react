@@ -21,10 +21,10 @@ export default class ThirdParty extends AuthRecipe<
     OnHandleEventContext,
     NormalisedConfig
 > {
-    readonly recipeImpl: WebJSRecipeInterface;
+    readonly webJSRecipe: WebJSRecipeInterface;
     static instance?: ThirdParty;
     static RECIPE_ID: string;
-    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, recipeImpl?: WebJSRecipeInterface);
+    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, webJSRecipe?: WebJSRecipeInterface);
     getFeatures: () => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "signinup" | "signinupcallback",

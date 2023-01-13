@@ -52,7 +52,7 @@ export default class EmailVerification extends RecipeModule<
     static instance?: EmailVerification;
     static RECIPE_ID = "emailverification";
     static EmailVerificationClaim = new EmailVerificationClaimClass(
-        () => EmailVerification.getInstanceOrThrow().recipeImpl,
+        () => EmailVerification.getInstanceOrThrow().webJSRecipe,
         async (userContext: any) => {
             const recipe = EmailVerification.getInstanceOrThrow();
             if (recipe.config.mode === "REQUIRED") {
@@ -66,7 +66,7 @@ export default class EmailVerification extends RecipeModule<
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
-        public readonly recipeImpl: RecipeInterface = EmailVerificationWebJS
+        public readonly webJSRecipe: RecipeInterface = EmailVerificationWebJS
     ) {
         super(config);
 
@@ -187,7 +187,7 @@ export default class EmailVerification extends RecipeModule<
         isVerified: boolean;
         fetchResponse: Response;
     }> {
-        return await this.recipeImpl.isEmailVerified({
+        return await this.webJSRecipe.isEmailVerified({
             userContext,
         });
     }

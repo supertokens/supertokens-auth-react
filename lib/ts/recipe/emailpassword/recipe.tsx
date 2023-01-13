@@ -61,7 +61,7 @@ export default class EmailPassword extends AuthRecipe<
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
-        public readonly recipeImpl: WebJsRecipeInterface = EmailPasswordWebJS
+        public readonly webJSRecipe: WebJsRecipeInterface = EmailPasswordWebJS
     ) {
         super(config);
     }
@@ -139,7 +139,7 @@ export default class EmailPassword extends AuthRecipe<
     };
 
     static init(
-        config: UserInput
+        config?: UserInput
     ): RecipeInitResult<
         GetRedirectionURLContext,
         PreAndPostAPIHookAction,

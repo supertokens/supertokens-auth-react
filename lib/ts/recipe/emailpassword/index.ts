@@ -26,7 +26,7 @@ import { PropsWithChildren } from "react";
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 
 export default class Wrapper {
-    static init(config: UserInput) {
+    static init(config?: UserInput) {
         return EmailPassword.init(config);
     }
 
@@ -57,7 +57,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        return EmailPassword.getInstanceOrThrow().recipeImpl.submitNewPassword({
+        return EmailPassword.getInstanceOrThrow().webJSRecipe.submitNewPassword({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -84,7 +84,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        return EmailPassword.getInstanceOrThrow().recipeImpl.sendPasswordResetEmail({
+        return EmailPassword.getInstanceOrThrow().webJSRecipe.sendPasswordResetEmail({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -112,7 +112,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        return EmailPassword.getInstanceOrThrow().recipeImpl.signUp({
+        return EmailPassword.getInstanceOrThrow().webJSRecipe.signUp({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -144,7 +144,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        return EmailPassword.getInstanceOrThrow().recipeImpl.signIn({
+        return EmailPassword.getInstanceOrThrow().webJSRecipe.signIn({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -155,14 +155,14 @@ export default class Wrapper {
         doesExist: boolean;
         fetchResponse: Response;
     }> {
-        return EmailPassword.getInstanceOrThrow().recipeImpl.doesEmailExist({
+        return EmailPassword.getInstanceOrThrow().webJSRecipe.doesEmailExist({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
 
     static getResetPasswordTokenFromURL(input?: { userContext?: any }): string {
-        return EmailPassword.getInstanceOrThrow().recipeImpl.getResetPasswordTokenFromURL({
+        return EmailPassword.getInstanceOrThrow().webJSRecipe.getResetPasswordTokenFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });

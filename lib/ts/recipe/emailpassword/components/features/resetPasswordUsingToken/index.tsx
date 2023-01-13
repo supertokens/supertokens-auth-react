@@ -69,7 +69,7 @@ class ResetPasswordUsingToken extends PureComponent<
                       clearError: () => this.setState((os) => ({ ...os, error: undefined })),
                       styleFromInit: submitNewPasswordFormFeature.style,
                       formFields: submitNewPasswordFormFeature.formFields,
-                      recipeImplementation: this.props.recipe.recipeImpl,
+                      recipeImplementation: this.props.recipe.webJSRecipe,
                       config: this.props.recipe.config,
                       onSignInClicked: () => {
                           void SuperTokens.getInstanceOrThrow().redirectToAuth({
@@ -93,7 +93,7 @@ class ResetPasswordUsingToken extends PureComponent<
             clearError: () => this.setState((os) => ({ ...os, error: undefined })),
             styleFromInit: enterEmailFormFeature.style,
             formFields: enterEmailFormFeature.formFields,
-            recipeImplementation: this.props.recipe.recipeImpl,
+            recipeImplementation: this.props.recipe.webJSRecipe,
             config: this.props.recipe.config,
         };
 

@@ -57,14 +57,14 @@ export default class Wrapper {
             thirdPartyId: input.thirdPartyId,
             config: recipeInstance.config,
             userContext: getNormalisedUserContext(input.userContext),
-            recipeImplementation: recipeInstance.recipeImpl,
+            recipeImplementation: recipeInstance.webJSRecipe,
         });
     }
 
     static getStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
         userContext?: any;
     }): (StateObject & CustomStateProperties) | undefined {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.getStateAndOtherInfoFromStorage({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.getStateAndOtherInfoFromStorage({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -74,7 +74,7 @@ export default class Wrapper {
         state: StateObject & CustomStateProperties;
         userContext?: any;
     }): Promise<void> {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.setStateAndOtherInfoToStorage({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.setStateAndOtherInfoToStorage({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -87,7 +87,7 @@ export default class Wrapper {
         userContext?: any;
         options?: RecipeFunctionOptions;
     }): Promise<string> {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthorisationURLWithQueryParamsAndSetState({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.getAuthorisationURLWithQueryParamsAndSetState({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -102,7 +102,7 @@ export default class Wrapper {
         url: string;
         fetchResponse: Response;
     }> {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthorisationURLFromBackend({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.getAuthorisationURLFromBackend({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -120,14 +120,14 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.signInAndUp({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.signInAndUp({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
     static generateStateToSendToOAuthProvider(input?: { userContext?: any }): string {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.generateStateToSendToOAuthProvider({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.generateStateToSendToOAuthProvider({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -138,28 +138,28 @@ export default class Wrapper {
         stateObjectFromStorage: (StateObject & CustomStateProperties) | undefined;
         userContext?: any;
     }): Promise<StateObject & CustomStateProperties> {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.verifyAndGetStateOrThrowError({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.verifyAndGetStateOrThrowError({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
 
     static getAuthCodeFromURL(input?: { userContext?: any }): string {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthCodeFromURL({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.getAuthCodeFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
     static getAuthErrorFromURL(input?: { userContext?: any }): string | undefined {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthErrorFromURL({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.getAuthErrorFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
     static getAuthStateFromURL(input?: { userContext?: any }): string {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthStateFromURL({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.getAuthStateFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });

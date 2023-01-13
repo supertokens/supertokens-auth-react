@@ -7,7 +7,7 @@ import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recip
 import { PropsWithChildren } from "react";
 export default class Wrapper {
     static init(
-        config: UserInput
+        config?: UserInput
     ): import("../../types").RecipeInitResult<
         GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,

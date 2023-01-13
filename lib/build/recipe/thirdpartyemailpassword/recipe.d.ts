@@ -23,17 +23,18 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     OnHandleEventContext,
     NormalisedConfig
 > {
+    readonly webJSRecipe: WebJSRecipeInterface;
     static instance?: ThirdPartyEmailPassword;
     static RECIPE_ID: string;
     emailPasswordRecipe: EmailPassword | undefined;
     thirdPartyRecipe: ThirdParty | undefined;
-    recipeImpl: WebJSRecipeInterface;
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         recipes: {
             thirdPartyInstance: ThirdParty | undefined;
             emailPasswordInstance: EmailPassword | undefined;
-        }
+        },
+        webJSRecipe?: WebJSRecipeInterface
     );
     getFeatures: () => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;

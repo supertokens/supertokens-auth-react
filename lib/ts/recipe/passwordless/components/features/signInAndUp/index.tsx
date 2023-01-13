@@ -203,7 +203,7 @@ export function useChildProps(
     history: any
 ): SignInUpChildProps | undefined {
     const recipeImplementation = React.useMemo(
-        () => recipe && getModifiedRecipeImplementation(recipe.recipeImpl, dispatch, callingConsumeCodeRef),
+        () => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe, dispatch, callingConsumeCodeRef),
         [recipe]
     );
 
@@ -239,7 +239,7 @@ export const SignInUpFeature: React.FC<
 > = (props) => {
     const recipeComponentOverrides = useRecipeComponentOverrideContext();
     const userContext = useUserContext();
-    const [state, dispatch] = useFeatureReducer(props.recipe.recipeImpl, userContext);
+    const [state, dispatch] = useFeatureReducer(props.recipe.webJSRecipe, userContext);
     const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch, userContext);
     const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, userContext, props.history)!;
 

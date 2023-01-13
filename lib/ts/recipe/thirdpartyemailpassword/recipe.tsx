@@ -61,18 +61,15 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
 
     thirdPartyRecipe: ThirdParty | undefined;
 
-    recipeImpl: WebJSRecipeInterface;
-
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         recipes: {
             thirdPartyInstance: ThirdParty | undefined;
             emailPasswordInstance: EmailPassword | undefined;
-        }
+        },
+        public readonly webJSRecipe: WebJSRecipeInterface = ThirdPartyEmailPasswordWebJS
     ) {
         super(config);
-
-        this.recipeImpl = ThirdPartyEmailPasswordWebJS;
 
         this.emailPasswordRecipe =
             recipes.emailPasswordInstance !== undefined
@@ -85,7 +82,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                           appInfo: this.config.appInfo,
                           recipeId: this.config.recipeId,
                       },
-                      getEmailPasswordImpl(this.recipeImpl)
+                      getEmailPasswordImpl(this.webJSRecipe)
                   );
 
         // we initialise this recipe only if the user has provided thirdparty
@@ -101,7 +98,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                           appInfo: this.config.appInfo,
                           recipeId: this.config.recipeId,
                       },
-                      getThirdPartyImpl(this.recipeImpl)
+                      getThirdPartyImpl(this.webJSRecipe)
                   );
     }
 

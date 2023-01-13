@@ -46,9 +46,9 @@ export const EmailVerification: React.FC<Prop> = (props) => {
 
     const modifiedRecipeImplementation = useMemo<RecipeInterface>(
         () => ({
-            ...props.recipe.recipeImpl,
+            ...props.recipe.webJSRecipe,
             sendVerificationEmail: async (input) => {
-                const response = await props.recipe.recipeImpl.sendVerificationEmail(input);
+                const response = await props.recipe.webJSRecipe.sendVerificationEmail(input);
                 clearQueryParams(["token"]);
                 return response;
             },
@@ -75,7 +75,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
                 await redirectToAuthWithHistory();
             } else {
                 // we check if the email is already verified, and if it is, then we redirect the user
-                return (await props.recipe.recipeImpl.isEmailVerified({ userContext })).isVerified;
+                return (await props.recipe.webJSRecipe.isEmailVerified({ userContext })).isVerified;
             }
         }
         return false;

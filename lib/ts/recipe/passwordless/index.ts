@@ -49,7 +49,7 @@ export default class Wrapper {
     }> {
         return UtilFunctions.createCode({
             ...input,
-            recipeImplementation: Passwordless.getInstanceOrThrow().recipeImpl,
+            recipeImplementation: Passwordless.getInstanceOrThrow().webJSRecipe,
         });
     }
 
@@ -59,7 +59,7 @@ export default class Wrapper {
     }> {
         return UtilFunctions.resendCode({
             ...input,
-            recipeImplementation: Passwordless.getInstanceOrThrow().recipeImpl,
+            recipeImplementation: Passwordless.getInstanceOrThrow().webJSRecipe,
         });
     }
 
@@ -91,19 +91,19 @@ export default class Wrapper {
     > {
         return UtilFunctions.consumeCode({
             ...input,
-            recipeImplementation: Passwordless.getInstanceOrThrow().recipeImpl,
+            recipeImplementation: Passwordless.getInstanceOrThrow().webJSRecipe,
         });
     }
 
     static getLinkCodeFromURL(input?: { userContext?: any }): string {
-        return Passwordless.getInstanceOrThrow().recipeImpl.getLinkCodeFromURL({
+        return Passwordless.getInstanceOrThrow().webJSRecipe.getLinkCodeFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
     static getPreAuthSessionIdFromURL(input?: { userContext?: any }): string {
-        return Passwordless.getInstanceOrThrow().recipeImpl.getPreAuthSessionIdFromURL({
+        return Passwordless.getInstanceOrThrow().webJSRecipe.getPreAuthSessionIdFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -114,7 +114,7 @@ export default class Wrapper {
         doesExist: boolean;
         fetchResponse: Response;
     }> {
-        return Passwordless.getInstanceOrThrow().recipeImpl.doesEmailExist({
+        return Passwordless.getInstanceOrThrow().webJSRecipe.doesEmailExist({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -129,7 +129,7 @@ export default class Wrapper {
         doesExist: boolean;
         fetchResponse: Response;
     }> {
-        return Passwordless.getInstanceOrThrow().recipeImpl.doesPhoneNumberExist({
+        return Passwordless.getInstanceOrThrow().webJSRecipe.doesPhoneNumberExist({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -143,7 +143,7 @@ export default class Wrapper {
               flowType: PasswordlessFlowType;
           } & CustomLoginAttemptInfoProperties)
     > {
-        return Passwordless.getInstanceOrThrow().recipeImpl.getLoginAttemptInfo({
+        return Passwordless.getInstanceOrThrow().webJSRecipe.getLoginAttemptInfo({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -157,14 +157,14 @@ export default class Wrapper {
         } & CustomStateProperties;
         userContext?: any;
     }): Promise<void> {
-        return Passwordless.getInstanceOrThrow().recipeImpl.setLoginAttemptInfo({
+        return Passwordless.getInstanceOrThrow().webJSRecipe.setLoginAttemptInfo({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
 
     static async clearLoginAttemptInfo(input?: { userContext?: any }): Promise<void> {
-        return Passwordless.getInstanceOrThrow().recipeImpl.clearLoginAttemptInfo({
+        return Passwordless.getInstanceOrThrow().webJSRecipe.clearLoginAttemptInfo({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });

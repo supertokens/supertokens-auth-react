@@ -107,7 +107,7 @@ export function useChildProps(
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
     history: any
 ): EmailPasswordSignInAndUpChildProps | undefined {
-    const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.recipeImpl), [recipe]);
+    const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe), [recipe]);
     const userContext = useUserContext();
 
     const onSignInSuccess = useCallback(async (): Promise<void> => {
@@ -259,7 +259,7 @@ function getThemeSignUpFeatureFormFields(
                 }
                 try {
                     const emailExists = (
-                        await recipe.recipeImpl.doesEmailExist({
+                        await recipe.webJSRecipe.doesEmailExist({
                             email: value,
                             userContext,
                         })

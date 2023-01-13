@@ -21,10 +21,10 @@ export default class EmailPassword extends AuthRecipe<
     OnHandleEventContext,
     NormalisedConfig
 > {
-    readonly recipeImpl: WebJsRecipeInterface;
+    readonly webJSRecipe: WebJsRecipeInterface;
     static instance?: EmailPassword;
     static RECIPE_ID: string;
-    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, recipeImpl?: WebJsRecipeInterface);
+    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, webJSRecipe?: WebJsRecipeInterface);
     getFeatures: () => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (
@@ -35,7 +35,7 @@ export default class EmailPassword extends AuthRecipe<
         }
     ) => JSX.Element;
     static init(
-        config: UserInput
+        config?: UserInput
     ): RecipeInitResult<
         GetRedirectionURLContext,
         PreAndPostAPIHookAction,

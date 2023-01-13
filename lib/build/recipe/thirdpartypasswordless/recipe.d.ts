@@ -23,17 +23,18 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
     OnHandleEventContext,
     NormalisedConfig
 > {
+    readonly webJSRecipe: WebJSRecipeInterface;
     static instance?: ThirdPartyPasswordless;
     static RECIPE_ID: string;
     passwordlessRecipe: Passwordless | undefined;
     thirdPartyRecipe: ThirdParty | undefined;
-    recipeImpl: WebJSRecipeInterface;
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         recipes: {
             thirdPartyInstance: ThirdParty | undefined;
             passwordlessInstance: Passwordless | undefined;
-        }
+        },
+        webJSRecipe?: WebJSRecipeInterface
     );
     getFeatures: () => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
