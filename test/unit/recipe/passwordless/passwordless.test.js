@@ -55,7 +55,7 @@ describe("Passwordless", function () {
     it("Initializing Passwordless with empty configs throws", async function () {
         await assert.throws(
             () => Passwordless.init().authReact(SuperTokens.getInstanceOrThrow().appInfo),
-            new Error("Please pass one of 'PHONE', 'EMAIL' or 'EMAIL_OR_PHONE' as the contactMethod")
+            new Error("Passwordless config should not be empty")
         );
     });
 

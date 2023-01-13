@@ -34,6 +34,9 @@ import { redirectWithFullPageReload } from "../../utils";
  * Methods.
  */
 export function normaliseThirdPartyConfig(config: Config): NormalisedConfig {
+    if (config === undefined) {
+        throw new Error("ThirdParty config should not be empty");
+    }
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
         config.signInAndUpFeature
     );

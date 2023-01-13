@@ -62,7 +62,7 @@ describe("ThirdParty", function () {
     it("Initializing ThirdParty with empty configs throws", async function () {
         await assert.throws(
             () => ThirdParty.init().authReact(SuperTokens.getInstanceOrThrow().appInfo),
-            new Error("ThirdParty signInAndUpFeature providers array cannot be empty.")
+            new Error("ThirdParty config should not be empty")
         );
     });
 

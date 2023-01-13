@@ -93,8 +93,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
         this.thirdPartyRecipe =
             recipes.thirdPartyInstance !== undefined
                 ? recipes.thirdPartyInstance
-                : this.config.thirdPartyConfig.signInAndUpFeature.providers === undefined ||
-                  this.config.thirdPartyConfig.signInAndUpFeature.providers.length === 0
+                : this.config.thirdPartyConfig === undefined
                 ? undefined
                 : new ThirdParty(
                       {

@@ -26,8 +26,11 @@ import { normaliseEmailPasswordConfig } from "../emailpassword/utils";
  * Methods.
  */
 export function normaliseThirdPartyEmailPasswordConfig(config: Config): NormalisedConfig {
+    if (config === undefined) {
+        throw new Error("ThirdpartyEmailPassword config should not be empty");
+    }
     const disableEmailPassword = config.disableEmailPassword === true;
-
+    const disableThirdParty = !config.signInAndUpFeature?.providers?.length;
     if (
         disableEmailPassword &&
         (config.signInAndUpFeature === undefined ||
@@ -45,16 +48,20 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInUpFeatureConfig(
         config.signInAndUpFeature
     );
-    const thirdpartyNormalisedConfig = normaliseThirdPartyConfig({
-        getRedirectionURL: config.getRedirectionURL,
-        style: config.style,
-        onHandleEvent: config.onHandleEvent,
-        palette: config.palette,
-        preAPIHook: config.preAPIHook,
-        signInAndUpFeature: config.signInAndUpFeature,
-        oAuthCallbackScreen: config.oAuthCallbackScreen,
-        useShadowDom: config.useShadowDom,
-    });
+
+    let thirdpartyNormalisedConfig;
+    if (!disableThirdParty) {
+        thirdpartyNormalisedConfig = normaliseThirdPartyConfig({
+            getRedirectionURL: config.getRedirectionURL,
+            style: config.style,
+            onHandleEvent: config.onHandleEvent,
+            palette: config.palette,
+            preAPIHook: config.preAPIHook,
+            signInAndUpFeature: config.signInAndUpFeature,
+            oAuthCallbackScreen: config.oAuthCallbackScreen,
+            useShadowDom: config.useShadowDom,
+        });
+    }
 
     const emailPasswordNormalisedConfig = normaliseEmailPasswordConfig({
         getRedirectionURL: config.getRedirectionURL,

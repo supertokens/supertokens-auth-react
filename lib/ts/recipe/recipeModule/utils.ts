@@ -41,12 +41,5 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
 }
 
 function getShouldUseShadowDomBasedOnBrowser(useShadowDom?: boolean): boolean {
-    /*
-     * Detect if browser is IE
-     * In order to disable unsupported shadowDom
-     * https://github.com/supertokens/supertokens-auth-react/issues/99
-     */
-
-    // Otherwise, use provided config or default to true.
     return useShadowDom !== undefined ? useShadowDom : true;
 }
