@@ -1,11 +1,14 @@
-import { RecipeInterface, ThirdPartyUserType } from "supertokens-web-js/recipe/thirdparty";
+import ThirdPartyWebJS, { ThirdPartyUserType } from "supertokens-web-js/recipe/thirdparty";
+import { WebJSRecipe } from "../../types";
 import { getRedirectToPathFromURL } from "../../utils";
 import { RecipeOnHandleEventFunction } from "../recipeModule/types";
 import { OnHandleEventContext, StateObject } from "./types";
 
+type Recipe = WebJSRecipe<typeof ThirdPartyWebJS>;
+
 export const getFunctionOverrides =
     (recipeId: string, onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
-    (originalImp: RecipeInterface): RecipeInterface => ({
+    (originalImp: Recipe): Recipe => ({
         ...originalImp,
         getAuthorisationURLFromBackend: async function (input): Promise<{
             status: "OK";
@@ -36,7 +39,7 @@ export const getFunctionOverrides =
                     action: "SUCCESS",
                     isNewUser: response.createdNewUser,
                     user: response.user,
-                    userContext: input.userContext,
+                    userContext: input?.userContext,
                 });
             }
 

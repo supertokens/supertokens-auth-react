@@ -18,7 +18,12 @@
  */
 
 import RecipeModule from "../recipeModule";
-import { NormalisedConfigWithAppInfoAndRecipeID, RecipeFeatureComponentMap, RecipeInitResult } from "../../types";
+import {
+    NormalisedConfigWithAppInfoAndRecipeID,
+    RecipeFeatureComponentMap,
+    RecipeInitResult,
+    WebJSRecipe,
+} from "../../types";
 import {
     UserInput,
     NormalisedConfig,
@@ -34,7 +39,7 @@ import { normaliseEmailVerificationFeature } from "./utils";
 import { NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
 import { SessionAuth } from "../session";
-import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
+import { EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
 import { SessionClaimValidatorStore } from "supertokens-website/utils/sessionClaimValidatorStore";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { UserContextContext } from "../../usercontext";
@@ -66,7 +71,7 @@ export default class EmailVerification extends RecipeModule<
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
-        public readonly webJSRecipe: RecipeInterface = EmailVerificationWebJS
+        public readonly webJSRecipe: WebJSRecipe<typeof EmailVerificationWebJS> = EmailVerificationWebJS
     ) {
         super(config);
 
@@ -109,7 +114,7 @@ export default class EmailVerification extends RecipeModule<
                 override: {
                     functions: (originalImpl, builder) => {
                         const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
-                        builder.override(functions);
+                        builder.override(functions as any);
                         builder.override(normalisedConfig.override.functions);
                         return originalImpl;
                     },

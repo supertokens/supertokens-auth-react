@@ -24,6 +24,7 @@ import {
     FeatureBaseProps,
     RecipeInitResult,
     NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipe,
 } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -41,7 +42,6 @@ import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import EmailPasswordWebJS from "supertokens-web-js/recipe/emailpassword";
 import { getFunctionOverrides } from "./functionOverrides";
@@ -61,7 +61,7 @@ export default class EmailPassword extends AuthRecipe<
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
-        public readonly webJSRecipe: WebJsRecipeInterface = EmailPasswordWebJS
+        public readonly webJSRecipe: WebJSRecipe<typeof EmailPasswordWebJS> = EmailPasswordWebJS
     ) {
         super(config);
     }

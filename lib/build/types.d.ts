@@ -29,6 +29,7 @@ export declare type SuperTokensConfig = {
     enableDebugLogs?: boolean;
     getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
 };
+export declare type WebJSRecipe<T> = Omit<T, "default" | "init" | "signOut">;
 export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
     appInfo: NormalisedAppInfo,
     enableDebugLogs: boolean

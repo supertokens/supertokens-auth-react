@@ -63,8 +63,6 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
         }
 
         return props.recipe.webJSRecipe.consumeCode({
-            preAuthSessionId,
-            linkCode,
             userContext,
         });
     }, [props.recipe, props.history]);
@@ -150,18 +148,8 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
         config: props.recipe.config,
         requireUserInteraction,
         consumeCode: async () => {
-            const preAuthSessionId = getQueryParams("preAuthSessionId");
-            const linkCode = getURLHash();
-
-            if (preAuthSessionId === null || preAuthSessionId.length === 0 || linkCode.length === 0) {
-                // This should never happen, and even if it does the we should be already redirecting
-                throw new Error("Called consumeCode withouth link info");
-            }
-
             try {
                 const consumeResp = await props.recipe.webJSRecipe.consumeCode({
-                    preAuthSessionId,
-                    linkCode,
                     userContext,
                 });
                 await handleConsumeResp(consumeResp);

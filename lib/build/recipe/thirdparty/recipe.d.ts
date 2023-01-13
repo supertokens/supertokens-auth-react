@@ -5,6 +5,7 @@ import {
     FeatureBaseProps,
     RecipeInitResult,
     NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipe,
 } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -13,7 +14,7 @@ import {
     OnHandleEventContext,
     UserInput,
 } from "./types";
-import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import ThirdpartyWebJS from "supertokens-web-js/recipe/thirdparty";
 import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/thirdparty/types";
 export default class ThirdParty extends AuthRecipe<
     GetRedirectionURLContext,
@@ -21,10 +22,13 @@ export default class ThirdParty extends AuthRecipe<
     OnHandleEventContext,
     NormalisedConfig
 > {
-    readonly webJSRecipe: WebJSRecipeInterface;
+    readonly webJSRecipe: WebJSRecipe<typeof ThirdpartyWebJS>;
     static instance?: ThirdParty;
     static RECIPE_ID: string;
-    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, webJSRecipe?: WebJSRecipeInterface);
+    constructor(
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
+        webJSRecipe?: WebJSRecipe<typeof ThirdpartyWebJS>
+    );
     getFeatures: () => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "signinup" | "signinupcallback",

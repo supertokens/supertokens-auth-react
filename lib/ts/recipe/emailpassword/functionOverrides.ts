@@ -1,9 +1,13 @@
-import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import EmailPasswordWebJS from "supertokens-web-js/recipe/emailpassword";
+import { WebJSRecipe } from "../../types";
 import { RecipeOnHandleEventFunction } from "../recipeModule/types";
 import { OnHandleEventContext } from "./types";
 
+type Recipe = WebJSRecipe<typeof EmailPasswordWebJS>;
+
 export const getFunctionOverrides =
-    (onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) => (originalImp: RecipeInterface) => ({
+    (onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
+    (originalImp: Recipe): Recipe => ({
         ...originalImp,
         submitNewPassword: async function (input: any) {
             const response = await originalImp.submitNewPassword({

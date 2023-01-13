@@ -24,6 +24,7 @@ import {
     FeatureBaseProps,
     RecipeInitResult,
     NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipe,
 } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -43,7 +44,6 @@ import ThirdParty from "../thirdparty/recipe";
 import getPasswordlessImpl from "./recipeImplementation/passwordlessImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import ThirdpartyPasswordlessWebJS from "supertokens-web-js/recipe/thirdpartypasswordless";
 import { getFunctionOverrides } from "./functionOverrides";
@@ -68,7 +68,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
             thirdPartyInstance: ThirdParty | undefined;
             passwordlessInstance: Passwordless | undefined;
         },
-        public readonly webJSRecipe: WebJSRecipeInterface = ThirdpartyPasswordlessWebJS
+        public readonly webJSRecipe: WebJSRecipe<typeof ThirdpartyPasswordlessWebJS> = ThirdpartyPasswordlessWebJS
     ) {
         super(config);
 

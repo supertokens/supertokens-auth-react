@@ -24,6 +24,7 @@ import {
     FeatureBaseProps,
     RecipeInitResult,
     NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipe,
 } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -40,7 +41,6 @@ import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import ThirdpartyWebJS from "supertokens-web-js/recipe/thirdparty";
 import { getFunctionOverrides } from "./functionOverrides";
@@ -60,7 +60,7 @@ export default class ThirdParty extends AuthRecipe<
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
-        public readonly webJSRecipe: WebJSRecipeInterface = ThirdpartyWebJS
+        public readonly webJSRecipe: WebJSRecipe<typeof ThirdpartyWebJS> = ThirdpartyWebJS
     ) {
         super(config);
     }

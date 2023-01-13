@@ -1,9 +1,10 @@
-import { RecipeInterface as WebJSThirdPartyRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
-import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
+import ThirdPartyWebJS from "supertokens-web-js/recipe/thirdparty";
+import ThirdPartyPasswordlessWebJS from "supertokens-web-js/recipe/thirdpartypasswordless";
+import { WebJSRecipe } from "../../../types";
 
 export default function getRecipeImplementation(
-    originalImplementation: TPPWlessRecipeInterface
-): WebJSThirdPartyRecipeInterface {
+    originalImplementation: WebJSRecipe<typeof ThirdPartyPasswordlessWebJS>
+): WebJSRecipe<typeof ThirdPartyWebJS> {
     return {
         generateStateToSendToOAuthProvider:
             originalImplementation.generateThirdPartyStateToSendToOAuthProvider.bind(originalImplementation),

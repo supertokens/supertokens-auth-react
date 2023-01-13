@@ -5,6 +5,7 @@ import {
     FeatureBaseProps,
     RecipeInitResult,
     NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipe,
 } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -15,7 +16,7 @@ import {
 } from "./types";
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
-import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import ThirdPartyEmailPasswordWebJS from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/thirdpartyemailpassword/types";
 export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
@@ -23,7 +24,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     OnHandleEventContext,
     NormalisedConfig
 > {
-    readonly webJSRecipe: WebJSRecipeInterface;
+    readonly webJSRecipe: WebJSRecipe<typeof ThirdPartyEmailPasswordWebJS>;
     static instance?: ThirdPartyEmailPassword;
     static RECIPE_ID: string;
     emailPasswordRecipe: EmailPassword | undefined;
@@ -34,7 +35,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             thirdPartyInstance: ThirdParty | undefined;
             emailPasswordInstance: EmailPassword | undefined;
         },
-        webJSRecipe?: WebJSRecipeInterface
+        webJSRecipe?: WebJSRecipe<typeof ThirdPartyEmailPasswordWebJS>
     );
     getFeatures: () => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;

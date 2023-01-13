@@ -80,6 +80,8 @@ export type SuperTokensConfig = {
     getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
 };
 
+export type WebJSRecipe<T> = Omit<T, "default" | "init" | "signOut">;
+
 export type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
     appInfo: NormalisedAppInfo,
     enableDebugLogs: boolean

@@ -1,6 +1,11 @@
 /// <reference types="react" />
 import RecipeModule from "../recipeModule";
-import { NormalisedConfigWithAppInfoAndRecipeID, RecipeFeatureComponentMap, RecipeInitResult } from "../../types";
+import {
+    NormalisedConfigWithAppInfoAndRecipeID,
+    RecipeFeatureComponentMap,
+    RecipeInitResult,
+    WebJSRecipe,
+} from "../../types";
 import {
     UserInput,
     NormalisedConfig,
@@ -8,7 +13,8 @@ import {
     OnHandleEventContext,
     PreAndPostAPIHookAction,
 } from "./types";
-import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
+import { EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
+import EmailVerificationWebJS from "supertokens-web-js/recipe/emailverification";
 import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/emailverification/types";
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -16,11 +22,14 @@ export default class EmailVerification extends RecipeModule<
     OnHandleEventContext,
     NormalisedConfig
 > {
-    readonly webJSRecipe: RecipeInterface;
+    readonly webJSRecipe: WebJSRecipe<typeof EmailVerificationWebJS>;
     static instance?: EmailVerification;
     static RECIPE_ID: string;
     static EmailVerificationClaim: EmailVerificationClaimClass;
-    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, webJSRecipe?: RecipeInterface);
+    constructor(
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
+        webJSRecipe?: WebJSRecipe<typeof EmailVerificationWebJS>
+    );
     static init(
         config: UserInput
     ): RecipeInitResult<

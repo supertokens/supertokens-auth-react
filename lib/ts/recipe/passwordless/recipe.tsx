@@ -23,6 +23,7 @@ import {
     FeatureBaseProps,
     RecipeInitResult,
     NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipe,
 } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -40,7 +41,6 @@ import SignInUp from "./components/features/signInAndUp";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import LinkClickedScreen from "./components/features/linkClickedScreen";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
 import { getFunctionOverrides } from "./functionOverrides";
@@ -60,7 +60,7 @@ export default class Passwordless extends AuthRecipe<
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
-        public readonly webJSRecipe: WebJSRecipeInterface = PasswordlessWebJS
+        public readonly webJSRecipe: WebJSRecipe<typeof PasswordlessWebJS> = PasswordlessWebJS
     ) {
         super(config);
     }

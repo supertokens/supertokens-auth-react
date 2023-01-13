@@ -23,6 +23,7 @@ import {
     FeatureBaseProps,
     RecipeInitResult,
     NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipe,
 } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -40,7 +41,6 @@ import SignInAndUp from "./components/features/signInAndUp";
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
@@ -67,7 +67,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             thirdPartyInstance: ThirdParty | undefined;
             emailPasswordInstance: EmailPassword | undefined;
         },
-        public readonly webJSRecipe: WebJSRecipeInterface = ThirdPartyEmailPasswordWebJS
+        public readonly webJSRecipe: WebJSRecipe<typeof ThirdPartyEmailPasswordWebJS> = ThirdPartyEmailPasswordWebJS
     ) {
         super(config);
 

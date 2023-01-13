@@ -1,14 +1,17 @@
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
+import ThirdPartyPasswordlessWebJS from "supertokens-web-js/recipe/thirdpartypasswordless";
 import { RecipeOnHandleEventFunction } from "../recipeModule/types";
 import { OnHandleEventContext } from "./types";
 import { getFunctionOverrides as getThirdpartyFunctionOverrides } from "../thirdparty/functionOverrides";
 import { getFunctionOverrides as getPasswordlessFunctionOverrides } from "../passwordless/functionOverrides";
 import getThirdpartyRecipeImplementation from "./recipeImplementation/thirdPartyImplementation";
 import getPasswordlessRecipeImplementation from "./recipeImplementation/passwordlessImplementation";
+import { WebJSRecipe } from "../../types";
+
+type Recipe = WebJSRecipe<typeof ThirdPartyPasswordlessWebJS>;
 
 export const getFunctionOverrides =
     (recipeId: string, onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
-    (originalImp: RecipeInterface): RecipeInterface => {
+    (originalImp: Recipe): Recipe => {
         // Get overrides for each recipe that already contains event handler setup.
         // Return them merged into single combined recipe functionOverrides renaming the methods
         const thirdpartyOverrides = getThirdpartyFunctionOverrides(

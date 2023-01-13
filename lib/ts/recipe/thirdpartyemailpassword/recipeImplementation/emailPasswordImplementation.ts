@@ -13,12 +13,13 @@
  * under the License.
  */
 
-import { RecipeInterface as WebJSEmailPasswordRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
-import { RecipeInterface as WebJSThirdPartyEmailPasswordRecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import EmailPasswordWebJS from "supertokens-web-js/recipe/emailpassword";
+import ThirdPartyEmailPasswordWebJS from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import { WebJSRecipe } from "../../../types";
 
 export default function getRecipeImplementation(
-    originalImplementation: WebJSThirdPartyEmailPasswordRecipeInterface
-): WebJSEmailPasswordRecipeInterface {
+    originalImplementation: WebJSRecipe<typeof ThirdPartyEmailPasswordWebJS>
+): WebJSRecipe<typeof EmailPasswordWebJS> {
     return {
         doesEmailExist: originalImplementation.doesEmailExist.bind(originalImplementation),
         sendPasswordResetEmail: originalImplementation.sendPasswordResetEmail.bind(originalImplementation),
