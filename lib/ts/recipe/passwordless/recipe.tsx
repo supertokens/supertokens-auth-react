@@ -23,7 +23,7 @@ import {
     FeatureBaseProps,
     RecipeInitResult,
     NormalisedConfigWithAppInfoAndRecipeID,
-    WebJSRecipe,
+    WebJSRecipeInterface,
 } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -60,7 +60,7 @@ export default class Passwordless extends AuthRecipe<
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
-        public readonly webJSRecipe: WebJSRecipe<typeof PasswordlessWebJS> = PasswordlessWebJS
+        public readonly webJSRecipe: WebJSRecipeInterface<typeof PasswordlessWebJS> = PasswordlessWebJS
     ) {
         super(config);
     }

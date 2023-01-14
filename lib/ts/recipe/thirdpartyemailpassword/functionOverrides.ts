@@ -5,9 +5,9 @@ import { getFunctionOverrides as getThirdpartyFunctionOverrides } from "../third
 import { getFunctionOverrides as getEmailPasswordFunctionOverrides } from "../emailpassword/functionOverrides";
 import getThirdpartyRecipeImplementation from "./recipeImplementation/thirdPartyImplementation";
 import getEmailPasswordRecipeImplementation from "./recipeImplementation/emailPasswordImplementation";
-import { WebJSRecipe } from "../../types";
+import { WebJSRecipeInterface } from "../../types";
 
-type Recipe = WebJSRecipe<typeof ThirdPartyEmailPasswordWebJS>;
+type Recipe = WebJSRecipeInterface<typeof ThirdPartyEmailPasswordWebJS>;
 
 export const getFunctionOverrides =
     (recipeId: string, onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>

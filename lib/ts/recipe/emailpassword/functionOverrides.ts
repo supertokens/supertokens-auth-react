@@ -1,15 +1,12 @@
-import EmailPasswordWebJS from "supertokens-web-js/recipe/emailpassword";
-import { WebJSRecipe } from "../../types";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import { RecipeOnHandleEventFunction } from "../recipeModule/types";
 import { OnHandleEventContext } from "./types";
 
-type Recipe = WebJSRecipe<typeof EmailPasswordWebJS>;
-
 export const getFunctionOverrides =
     (onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
-    (originalImp: Recipe): Recipe => ({
+    (originalImp: RecipeInterface): RecipeInterface => ({
         ...originalImp,
-        submitNewPassword: async function (input: any) {
+        submitNewPassword: async function (input) {
             const response = await originalImp.submitNewPassword({
                 ...input,
                 formFields: [input.formFields[0]],
@@ -25,7 +22,7 @@ export const getFunctionOverrides =
             return response;
         },
 
-        sendPasswordResetEmail: async function (input: any) {
+        sendPasswordResetEmail: async function (input) {
             const response = await originalImp.sendPasswordResetEmail(input);
 
             if (response.status === "OK") {
@@ -37,7 +34,7 @@ export const getFunctionOverrides =
             return response;
         },
 
-        signUp: async function (input: any) {
+        signUp: async function (input) {
             const response = await originalImp.signUp(input);
 
             if (response.status === "OK") {
@@ -51,7 +48,7 @@ export const getFunctionOverrides =
 
             return response;
         },
-        signIn: async function (input: any) {
+        signIn: async function (input) {
             const response = await originalImp.signIn(input);
 
             if (response.status === "OK") {

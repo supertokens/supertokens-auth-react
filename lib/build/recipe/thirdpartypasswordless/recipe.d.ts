@@ -5,7 +5,7 @@ import {
     FeatureBaseProps,
     RecipeInitResult,
     NormalisedConfigWithAppInfoAndRecipeID,
-    WebJSRecipe,
+    WebJSRecipeInterface,
 } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -24,7 +24,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
     OnHandleEventContext,
     NormalisedConfig
 > {
-    readonly webJSRecipe: WebJSRecipe<typeof ThirdpartyPasswordlessWebJS>;
+    readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdpartyPasswordlessWebJS>;
     static instance?: ThirdPartyPasswordless;
     static RECIPE_ID: string;
     passwordlessRecipe: Passwordless | undefined;
@@ -35,7 +35,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
             thirdPartyInstance: ThirdParty | undefined;
             passwordlessInstance: Passwordless | undefined;
         },
-        webJSRecipe?: WebJSRecipe<typeof ThirdpartyPasswordlessWebJS>
+        webJSRecipe?: WebJSRecipeInterface<typeof ThirdpartyPasswordlessWebJS>
     );
     getFeatures: () => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;

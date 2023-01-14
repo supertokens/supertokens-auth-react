@@ -5,7 +5,7 @@ import {
     FeatureBaseProps,
     RecipeInitResult,
     NormalisedConfigWithAppInfoAndRecipeID,
-    WebJSRecipe,
+    WebJSRecipeInterface,
 } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -22,12 +22,12 @@ export default class ThirdParty extends AuthRecipe<
     OnHandleEventContext,
     NormalisedConfig
 > {
-    readonly webJSRecipe: WebJSRecipe<typeof ThirdpartyWebJS>;
+    readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdpartyWebJS>;
     static instance?: ThirdParty;
     static RECIPE_ID: string;
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
-        webJSRecipe?: WebJSRecipe<typeof ThirdpartyWebJS>
+        webJSRecipe?: WebJSRecipeInterface<typeof ThirdpartyWebJS>
     );
     getFeatures: () => RecipeFeatureComponentMap;
     getFeatureComponent: (

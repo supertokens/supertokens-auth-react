@@ -23,7 +23,7 @@ import {
     FeatureBaseProps,
     RecipeInitResult,
     NormalisedConfigWithAppInfoAndRecipeID,
-    WebJSRecipe,
+    WebJSRecipeInterface,
 } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -67,7 +67,9 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             thirdPartyInstance: ThirdParty | undefined;
             emailPasswordInstance: EmailPassword | undefined;
         },
-        public readonly webJSRecipe: WebJSRecipe<typeof ThirdPartyEmailPasswordWebJS> = ThirdPartyEmailPasswordWebJS
+        public readonly webJSRecipe: WebJSRecipeInterface<
+            typeof ThirdPartyEmailPasswordWebJS
+        > = ThirdPartyEmailPasswordWebJS
     ) {
         super(config);
 

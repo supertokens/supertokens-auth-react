@@ -1,13 +1,10 @@
-import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
-import { WebJSRecipe } from "../../types";
+import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import { RecipeOnHandleEventFunction } from "../recipeModule/types";
 import { OnHandleEventContext } from "./types";
 
-type Recipe = WebJSRecipe<typeof PasswordlessWebJS>;
-
 export const getFunctionOverrides =
     (onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
-    (originalImp: Recipe): Recipe => ({
+    (originalImp: RecipeInterface): RecipeInterface => ({
         ...originalImp,
         createCode: async function (input) {
             const response = await originalImp.createCode(input);

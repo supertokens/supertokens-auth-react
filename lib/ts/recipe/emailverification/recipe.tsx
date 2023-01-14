@@ -22,7 +22,7 @@ import {
     NormalisedConfigWithAppInfoAndRecipeID,
     RecipeFeatureComponentMap,
     RecipeInitResult,
-    WebJSRecipe,
+    WebJSRecipeInterface,
 } from "../../types";
 import {
     UserInput,
@@ -71,7 +71,7 @@ export default class EmailVerification extends RecipeModule<
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
-        public readonly webJSRecipe: WebJSRecipe<typeof EmailVerificationWebJS> = EmailVerificationWebJS
+        public readonly webJSRecipe: WebJSRecipeInterface<typeof EmailVerificationWebJS> = EmailVerificationWebJS
     ) {
         super(config);
 

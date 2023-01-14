@@ -1,6 +1,6 @@
 import ThirdPartyWebJS from "supertokens-web-js/recipe/thirdparty";
 import ThirdPartyPasswordlessWebJS from "supertokens-web-js/recipe/thirdpartypasswordless";
-import { WebJSRecipe } from "../../../types";
+import { WebJSRecipeInterface } from "../../../types";
 export default function getRecipeImplementation(
-    originalImplementation: WebJSRecipe<typeof ThirdPartyPasswordlessWebJS>
-): WebJSRecipe<typeof ThirdPartyWebJS>;
+    originalImplementation: WebJSRecipeInterface<typeof ThirdPartyPasswordlessWebJS>
+): WebJSRecipeInterface<typeof ThirdPartyWebJS>;

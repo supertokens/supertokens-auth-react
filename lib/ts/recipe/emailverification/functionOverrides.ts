@@ -1,18 +1,12 @@
-import EmailVerificationWebJS from "supertokens-web-js/recipe/emailverification";
-import { WebJSRecipe } from "../../types";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import { RecipeOnHandleEventFunction } from "../recipeModule/types";
 import { OnHandleEventContext } from "./types";
 
-type Recipe = WebJSRecipe<typeof EmailVerificationWebJS>;
-
 export const getFunctionOverrides =
     (onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
-    (originalImp: Recipe): Recipe => ({
+    (originalImp: RecipeInterface): RecipeInterface => ({
         ...originalImp,
-        verifyEmail: async function (input): Promise<{
-            status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
-            fetchResponse: Response;
-        }> {
+        verifyEmail: async function (input) {
             const response = await originalImp.verifyEmail(input);
 
             if (response.status === "OK") {
@@ -25,10 +19,7 @@ export const getFunctionOverrides =
             return response;
         },
 
-        sendVerificationEmail: async function (input): Promise<{
-            status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
-            fetchResponse: Response;
-        }> {
+        sendVerificationEmail: async function (input) {
             const response = await originalImp.sendVerificationEmail(input);
 
             if (response.status === "OK") {

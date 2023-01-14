@@ -5,7 +5,7 @@ import {
     FeatureBaseProps,
     RecipeInitResult,
     NormalisedConfigWithAppInfoAndRecipeID,
-    WebJSRecipe,
+    WebJSRecipeInterface,
 } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -24,7 +24,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     OnHandleEventContext,
     NormalisedConfig
 > {
-    readonly webJSRecipe: WebJSRecipe<typeof ThirdPartyEmailPasswordWebJS>;
+    readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdPartyEmailPasswordWebJS>;
     static instance?: ThirdPartyEmailPassword;
     static RECIPE_ID: string;
     emailPasswordRecipe: EmailPassword | undefined;
@@ -35,7 +35,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             thirdPartyInstance: ThirdParty | undefined;
             emailPasswordInstance: EmailPassword | undefined;
         },
-        webJSRecipe?: WebJSRecipe<typeof ThirdPartyEmailPasswordWebJS>
+        webJSRecipe?: WebJSRecipeInterface<typeof ThirdPartyEmailPasswordWebJS>
     );
     getFeatures: () => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;

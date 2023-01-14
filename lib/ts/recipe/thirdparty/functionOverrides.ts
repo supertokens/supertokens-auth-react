@@ -1,37 +1,19 @@
-import ThirdPartyWebJS, { ThirdPartyUserType } from "supertokens-web-js/recipe/thirdparty";
-import { WebJSRecipe } from "../../types";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import { getRedirectToPathFromURL } from "../../utils";
 import { RecipeOnHandleEventFunction } from "../recipeModule/types";
-import { OnHandleEventContext, StateObject } from "./types";
-
-type Recipe = WebJSRecipe<typeof ThirdPartyWebJS>;
+import { OnHandleEventContext } from "./types";
 
 export const getFunctionOverrides =
     (recipeId: string, onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
-    (originalImp: Recipe): Recipe => ({
+    (originalImp: RecipeInterface): RecipeInterface => ({
         ...originalImp,
-        getAuthorisationURLFromBackend: async function (input): Promise<{
-            status: "OK";
-            url: string;
-            fetchResponse: Response;
-        }> {
+        getAuthorisationURLFromBackend: async function (input) {
             const response = await originalImp.getAuthorisationURLFromBackend(input);
 
             return response;
         },
 
-        signInAndUp: async function (input): Promise<
-            | {
-                  status: "OK";
-                  user: ThirdPartyUserType;
-                  createdNewUser: boolean;
-                  fetchResponse: Response;
-              }
-            | {
-                  status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-                  fetchResponse: Response;
-              }
-        > {
+        signInAndUp: async function (input) {
             const response = await originalImp.signInAndUp(input);
 
             if (response.status === "OK") {
@@ -45,15 +27,13 @@ export const getFunctionOverrides =
 
             return response;
         },
-        getStateAndOtherInfoFromStorage: function <CustomStateProperties>(input: {
-            userContext: any;
-        }): (StateObject & CustomStateProperties) | undefined {
+        getStateAndOtherInfoFromStorage: function <CustomStateProperties>(input: { userContext: any }) {
             return originalImp.getStateAndOtherInfoFromStorage<CustomStateProperties>({
                 userContext: input.userContext,
             });
         },
 
-        setStateAndOtherInfoToStorage: function (input): Promise<void> {
+        setStateAndOtherInfoToStorage: function (input) {
             return originalImp.setStateAndOtherInfoToStorage<{
                 rid?: string;
                 redirectToPath?: string;

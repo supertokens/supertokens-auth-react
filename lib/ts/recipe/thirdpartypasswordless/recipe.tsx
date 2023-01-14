@@ -24,7 +24,7 @@ import {
     FeatureBaseProps,
     RecipeInitResult,
     NormalisedConfigWithAppInfoAndRecipeID,
-    WebJSRecipe,
+    WebJSRecipeInterface,
 } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -68,7 +68,9 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
             thirdPartyInstance: ThirdParty | undefined;
             passwordlessInstance: Passwordless | undefined;
         },
-        public readonly webJSRecipe: WebJSRecipe<typeof ThirdpartyPasswordlessWebJS> = ThirdpartyPasswordlessWebJS
+        public readonly webJSRecipe: WebJSRecipeInterface<
+            typeof ThirdpartyPasswordlessWebJS
+        > = ThirdpartyPasswordlessWebJS
     ) {
         super(config);
 

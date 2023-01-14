@@ -5,9 +5,9 @@ import { getFunctionOverrides as getThirdpartyFunctionOverrides } from "../third
 import { getFunctionOverrides as getPasswordlessFunctionOverrides } from "../passwordless/functionOverrides";
 import getThirdpartyRecipeImplementation from "./recipeImplementation/thirdPartyImplementation";
 import getPasswordlessRecipeImplementation from "./recipeImplementation/passwordlessImplementation";
-import { WebJSRecipe } from "../../types";
+import { WebJSRecipeInterface } from "../../types";
 
-type Recipe = WebJSRecipe<typeof ThirdPartyPasswordlessWebJS>;
+type Recipe = WebJSRecipeInterface<typeof ThirdPartyPasswordlessWebJS>;
 
 export const getFunctionOverrides =
     (recipeId: string, onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>

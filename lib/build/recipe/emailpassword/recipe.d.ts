@@ -5,7 +5,7 @@ import {
     FeatureBaseProps,
     RecipeInitResult,
     NormalisedConfigWithAppInfoAndRecipeID,
-    WebJSRecipe,
+    WebJSRecipeInterface,
 } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -22,12 +22,12 @@ export default class EmailPassword extends AuthRecipe<
     OnHandleEventContext,
     NormalisedConfig
 > {
-    readonly webJSRecipe: WebJSRecipe<typeof EmailPasswordWebJS>;
+    readonly webJSRecipe: WebJSRecipeInterface<typeof EmailPasswordWebJS>;
     static instance?: EmailPassword;
     static RECIPE_ID: string;
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
-        webJSRecipe?: WebJSRecipe<typeof EmailPasswordWebJS>
+        webJSRecipe?: WebJSRecipeInterface<typeof EmailPasswordWebJS>
     );
     getFeatures: () => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;

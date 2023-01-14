@@ -23,7 +23,7 @@ import RecipeModule from "../recipeModule";
 import { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
 import { getNormalisedUserContext } from "../../utils";
 import SessionRecipe from "../session/recipe";
-import { NormalisedAppInfo } from "../../types";
+import { NormalisedConfigWithAppInfoAndRecipeID } from "../../types";
 
 export default abstract class AuthRecipe<
     T,
@@ -31,7 +31,7 @@ export default abstract class AuthRecipe<
     R,
     N extends NormalisedConfig<T | GetRedirectionURLContext, Action, R | OnHandleEventContext>
 > extends RecipeModule<T | GetRedirectionURLContext, Action, R | OnHandleEventContext, N> {
-    constructor(config: N & { appInfo: NormalisedAppInfo; recipeId: string }) {
+    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<N>) {
         super(config);
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
             const session = SessionRecipe.getInstance();
