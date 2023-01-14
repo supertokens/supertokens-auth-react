@@ -87,7 +87,9 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
                       },
                       // ThirdPartyPasswordless has passwordless and thirdparty instances initialized within it,
                       // so we pass the ThirdPartyPasswordless instance to getRecipeImpl functions to get each recipe instance
-                      // importing each recipe(thirdparty, passwordless) directly from web-js would throw an error due to them not being initialized
+                      // importing the sub-recipes (thirdparty, passwordless) directly from web-js would throw an error due to them not being initialized
+                      // getting the appropriate interfaces (the ones exposed by the recipe index files) through the web-js
+                      // instance of ThirdPartyPasswordless would require reworking web-js and is impractical
                       getPasswordlessImpl(this.webJSRecipe)
                   );
 
