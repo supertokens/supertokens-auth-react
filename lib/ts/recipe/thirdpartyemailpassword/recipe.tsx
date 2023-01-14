@@ -86,7 +86,9 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                       },
                       // ThirdPartyEmailPassword has emailPassword and thirdparty instances initialized within it,
                       // so we pass the ThirdPartyEmailPassword instance to getRecipeImpl functions to get each recipe instance
-                      // importing each recipe(thirdparty, emailpassword) directly from web-js would throw an error due to them not being initialized
+                      // importing the sub-recipes (thirdparty, emailpassword) directly from web-js would throw an error due to them not being initialized
+                      // getting the appropriate interfaces (the ones exposed by the recipe index files) through the web-js
+                      // instance of ThirdPartyEmailPassword would require reworking web-js and is impractical
                       getEmailPasswordImpl(this.webJSRecipe)
                   );
 
