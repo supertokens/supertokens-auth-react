@@ -1,6 +1,9 @@
 import { Config, NormalisedConfig } from "./types";
 
-export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): NormalisedConfig<T, S, R> {
+export function normaliseRecipeModuleConfig<T, S, R>(config?: Config<T, S, R>): NormalisedConfig<T, S, R> {
+    if (config === undefined) {
+        config = {};
+    }
     let { onHandleEvent, getRedirectionURL, preAPIHook, postAPIHook } = config;
     if (onHandleEvent === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function

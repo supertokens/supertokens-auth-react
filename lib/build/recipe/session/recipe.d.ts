@@ -1,6 +1,11 @@
 /// <reference types="react" />
 import RecipeModule from "../recipeModule";
-import { NormalisedAppInfo, RecipeFeatureComponentMap, RecipeInitResult } from "../../types";
+import {
+    NormalisedAppInfo,
+    NormalisedConfigWithAppInfoAndRecipeID,
+    RecipeFeatureComponentMap,
+    RecipeInitResult,
+} from "../../types";
 import { RecipeEventWithSessionContext, InputType } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
@@ -16,7 +21,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     webJsRecipe: WebJSSessionRecipe;
     private eventListeners;
     private redirectionHandlersFromAuthRecipes;
-    constructor(config: ConfigType);
+    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<ConfigType>);
     getFeatureComponent: (_: string) => JSX.Element;
     getFeatures: () => RecipeFeatureComponentMap;
     getUserId: (input: { userContext: any }) => Promise<string>;

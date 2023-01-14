@@ -17,7 +17,12 @@
  * Imports.
  */
 import RecipeModule from "../recipeModule";
-import { NormalisedAppInfo, RecipeFeatureComponentMap, RecipeInitResult } from "../../types";
+import {
+    NormalisedAppInfo,
+    NormalisedConfigWithAppInfoAndRecipeID,
+    RecipeFeatureComponentMap,
+    RecipeInitResult,
+} from "../../types";
 import {
     popInvalidClaimRedirectPathFromContext,
     getLocalStorage,
@@ -33,6 +38,7 @@ import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 import SuperTokens from "../../superTokens";
 import { SessionClaim } from "supertokens-web-js/recipe/session";
 import SessionWebJS from "supertokens-web-js/recipe/session";
+import { GetRedirectionURLContext } from "../authRecipe/types";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
 
@@ -45,7 +51,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
     private redirectionHandlersFromAuthRecipes = new Map<string, (ctx: any, history: any) => Promise<void>>();
 
-    constructor(config: ConfigType) {
+    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<ConfigType>) {
         const normalisedConfig = { ...config, ...normaliseRecipeModuleConfig(config) };
         super(normalisedConfig);
 
@@ -274,20 +280,21 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     }
 
     static init(config?: InputType): RecipeInitResult<unknown, unknown, unknown, any, unknown> {
+        const normalisedConfig = normaliseRecipeModuleConfig<GetRedirectionURLContext, any, any>(config);
         return {
             authReact: (
                 appInfo: NormalisedAppInfo,
                 enableDebugLogs: boolean
             ): RecipeModule<unknown, unknown, unknown, any> => {
                 Session.instance = new Session({
-                    ...config,
+                    ...normalisedConfig,
                     appInfo,
                     recipeId: Session.RECIPE_ID,
                     enableDebugLogs,
                 });
                 return Session.instance;
             },
-            webJS: SessionWebJS.init(config),
+            webJS: SessionWebJS.init(normalisedConfig),
         };
     }
 
