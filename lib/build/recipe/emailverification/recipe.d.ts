@@ -15,7 +15,6 @@ import {
 } from "./types";
 import { EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
 import EmailVerificationWebJS from "supertokens-web-js/recipe/emailverification";
-import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/emailverification/types";
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -32,13 +31,7 @@ export default class EmailVerification extends RecipeModule<
     );
     static init(
         config: UserInput
-    ): RecipeInitResult<
-        GetRedirectionURLContext,
-        PreAndPostAPIHookAction,
-        OnHandleEventContext,
-        NormalisedConfig,
-        PreAndPostAPIHookActionWebJS
-    >;
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): EmailVerification;
     getFeatures: () => RecipeFeatureComponentMap;
     getFeatureComponent: (_: "emailverification", props: any) => JSX.Element;

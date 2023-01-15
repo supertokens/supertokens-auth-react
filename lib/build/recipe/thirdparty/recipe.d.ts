@@ -15,7 +15,6 @@ import {
     UserInput,
 } from "./types";
 import ThirdpartyWebJS from "supertokens-web-js/recipe/thirdparty";
-import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/thirdparty/types";
 export default class ThirdParty extends AuthRecipe<
     GetRedirectionURLContext,
     never,
@@ -40,13 +39,7 @@ export default class ThirdParty extends AuthRecipe<
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     static init(
         config: UserInput
-    ): RecipeInitResult<
-        GetRedirectionURLContext,
-        PreAndPostAPIHookAction,
-        OnHandleEventContext,
-        NormalisedConfig,
-        PreAndPostAPIHookActionWebJS
-    >;
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): ThirdParty;
     static reset(): void;
 }

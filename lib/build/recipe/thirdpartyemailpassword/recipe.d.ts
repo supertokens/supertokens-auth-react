@@ -17,7 +17,6 @@ import {
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import ThirdPartyEmailPasswordWebJS from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/thirdpartyemailpassword/types";
 export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
     never,
@@ -48,13 +47,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     ) => JSX.Element;
     static init(
         config: UserInput
-    ): RecipeInitResult<
-        GetRedirectionURLContext,
-        PreAndPostAPIHookAction,
-        OnHandleEventContext,
-        NormalisedConfig,
-        PreAndPostAPIHookActionWebJS
-    >;
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): ThirdPartyEmailPassword;
     static reset(): void;
 }

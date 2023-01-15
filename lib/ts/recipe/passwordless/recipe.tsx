@@ -44,7 +44,6 @@ import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
 import { getFunctionOverrides } from "./functionOverrides";
-import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/passwordless/types";
 
 /*
  * Class.
@@ -130,13 +129,7 @@ export default class Passwordless extends AuthRecipe<
 
     static init(
         config: UserInput
-    ): RecipeInitResult<
-        GetRedirectionURLContext,
-        PreAndPostAPIHookAction,
-        OnHandleEventContext,
-        NormalisedConfig,
-        PreAndPostAPIHookActionWebJS
-    > {
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normalisePasswordlessConfig(config);
 
         return {

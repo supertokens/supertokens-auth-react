@@ -18,8 +18,7 @@ export default class Wrapper {
         GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
-        import("./types").NormalisedConfig,
-        import("supertokens-web-js/recipe/thirdpartyemailpassword/types").PreAndPostAPIHookAction
+        import("./types").NormalisedConfig
     >;
     static signOut(input?: { userContext?: any }): Promise<void>;
     static submitNewPassword(input: {

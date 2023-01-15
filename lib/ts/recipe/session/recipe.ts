@@ -278,7 +278,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         return WebJSSessionRecipe.addAxiosInterceptors(axiosInstance, userContext);
     }
 
-    static init(config?: InputType): RecipeInitResult<unknown, unknown, unknown, any, unknown> {
+    static init(config?: InputType): RecipeInitResult<unknown, unknown, unknown, any> {
         const normalisedConfig = normaliseRecipeModuleConfig<GetRedirectionURLContext, any, any>(config);
         return {
             authReact: (

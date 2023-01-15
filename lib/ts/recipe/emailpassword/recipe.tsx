@@ -45,7 +45,6 @@ import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import EmailPasswordWebJS from "supertokens-web-js/recipe/emailpassword";
 import { getFunctionOverrides } from "./functionOverrides";
-import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/emailpassword/types";
 
 /*
  * Class.
@@ -140,13 +139,7 @@ export default class EmailPassword extends AuthRecipe<
 
     static init(
         config?: UserInput
-    ): RecipeInitResult<
-        GetRedirectionURLContext,
-        PreAndPostAPIHookAction,
-        OnHandleEventContext,
-        NormalisedConfig,
-        PreAndPostAPIHookActionWebJS
-    > {
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normaliseEmailPasswordConfig(config);
 
         return {

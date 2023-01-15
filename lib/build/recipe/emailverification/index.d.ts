@@ -13,8 +13,7 @@ export default class Wrapper {
         GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
-        import("./types").NormalisedConfig,
-        import("supertokens-web-js/recipe/emailverification/types").PreAndPostAPIHookAction
+        import("./types").NormalisedConfig
     >;
     static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";

@@ -11,8 +11,7 @@ export default class Wrapper {
         import("../authRecipe/types").GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
-        import("./types").NormalisedConfig,
-        import("supertokens-web-js/recipe/passwordless").PreAndPostAPIHookAction
+        import("./types").NormalisedConfig
     >;
     static signOut(input?: { userContext?: any }): Promise<void>;
     static createCode(

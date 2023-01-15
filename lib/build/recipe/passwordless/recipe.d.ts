@@ -15,7 +15,6 @@ import {
 } from "./types";
 import AuthRecipe from "../authRecipe";
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
-import { PreAndPostAPIHookAction as PreAndPostAPIHookActionWebJS } from "supertokens-web-js/recipe/passwordless/types";
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -40,13 +39,7 @@ export default class Passwordless extends AuthRecipe<
     ) => JSX.Element;
     static init(
         config: UserInput
-    ): RecipeInitResult<
-        GetRedirectionURLContext,
-        PreAndPostAPIHookAction,
-        OnHandleEventContext,
-        NormalisedConfig,
-        PreAndPostAPIHookActionWebJS
-    >;
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): Passwordless;
     static reset(): void;
 }

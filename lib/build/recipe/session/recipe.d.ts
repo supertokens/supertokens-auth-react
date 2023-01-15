@@ -65,7 +65,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     private notifyListeners;
     private getSessionContext;
     static addAxiosInterceptors(axiosInstance: any, userContext: any): void;
-    static init(config?: InputType): RecipeInitResult<unknown, unknown, unknown, any, unknown>;
+    static init(config?: InputType): RecipeInitResult<unknown, unknown, unknown, any>;
     static getInstanceOrThrow(): Session;
     static getInstance(): Session | undefined;
     static reset(): void;

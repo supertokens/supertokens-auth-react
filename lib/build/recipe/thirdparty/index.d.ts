@@ -15,8 +15,7 @@ export default class Wrapper {
         import("../authRecipe/types").GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
-        import("./types").NormalisedConfig,
-        import("supertokens-web-js/recipe/thirdparty").PreAndPostAPIHookAction
+        import("./types").NormalisedConfig
     >;
     static signOut(input?: { userContext?: any }): Promise<void>;
     static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: any }): Promise<{

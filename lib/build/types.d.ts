@@ -46,9 +46,9 @@ export declare type AppInfoUserInput = {
      */
     apiGatewayPath?: string;
 };
-export declare type RecipeInitResult<T, C, R, P extends NormalisedRecipeModuleConfig<T, C, R>, I> = {
-    authReact: CreateRecipeFunction<T, C, R, P>;
-    webJS: CreateRecipeFunctionWebJS<I>;
+export declare type RecipeInitResult<T, Action, R, P extends NormalisedRecipeModuleConfig<T, Action, R>> = {
+    authReact: CreateRecipeFunction<T, Action, R, P>;
+    webJS: CreateRecipeFunctionWebJS<Action>;
 };
 export declare type NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig> = NormalisedConfig & {
     appInfo: NormalisedAppInfo;
