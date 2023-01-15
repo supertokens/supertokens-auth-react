@@ -7,13 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changes
+
+-   Updated many dependencies to fix warnings during install
+-   Updated our build process to use rollup as a bundler
+
 ### Breaking changes
 
 -   Removed dependency on emotion/chroma
--   Updated many dependencies to fix warnings during install
--   Updated to styling through plain CSS instead of objects/emotion
+-   Updated to styling through plain CSS instead of objects/emotion. Check https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/styling/changing-style for more info
+-   Removed palette option, colors are now customizable through setting CSS variables in styles. Check https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/styling/changing-colours for more info
 
 ### Migration
+
+#### Custom styles
 
 Before:
 
@@ -51,6 +58,65 @@ SuperTokens.init({
             style: `
                 [data-supertokens~=container] {
                     font-family: cursive;
+                }
+            `,
+        }),
+        Session.init(),
+    ],
+});
+```
+
+#### Custom palette
+
+Before:
+
+```tsx
+SuperTokens.init({
+    appInfo: {
+        apiDomain: "...",
+        appName: "...",
+        websiteDomain: "...",
+    },
+    recipeList: [
+        ThirdPartyEmailPassword.init({
+            palette: {
+                background: "#333",
+                inputBackground: "#292929",
+                textTitle: "white",
+                textLabel: "white",
+                textPrimary: "white",
+                error: "#ad2e2e",
+                textInput: "#a9a9a9",
+                textLink: "#a9a9a9",
+            },
+        }),
+        Session.init(),
+    ],
+});
+```
+
+After:
+
+```tsx
+SuperTokens.init({
+    appInfo: {
+        apiDomain: "...",
+        appName: "...",
+        websiteDomain: "...",
+    },
+    recipeList: [
+        ThirdPartyEmailPassword.init({
+            style: `
+                [data-supertokens~=container] {
+                    --palette-background: 51, 51, 51;
+                    --palette-inputBackground: 41, 41, 41;
+                    --palette-inputBorder: 41, 41, 41;
+                    --palette-textTitle: 255, 255, 255;
+                    --palette-textLabel: 255, 255, 255;
+                    --palette-textPrimary: 255, 255, 255;
+                    --palette-error: 173, 46, 46;
+                    --palette-textInput: 169, 169, 169;
+                    --palette-textLink: 169, 169, 169;
                 }
             `,
         }),
