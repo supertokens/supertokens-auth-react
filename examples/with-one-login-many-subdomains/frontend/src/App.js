@@ -25,7 +25,7 @@ SuperTokens.init({
             },
         }),
         Session.init({
-            sessionScope: ".example.com",
+            sessionTokenFrontendDomain: ".example.com",
         }),
     ],
 });

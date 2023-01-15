@@ -27,7 +27,7 @@ export async function getRedirectionUrlForUser() {
 
 export async function redirectIfOnWrongSubdomain() {
     try {
-        if (Session.doesSessionExist()) {
+        if (await Session.doesSessionExist()) {
             const currentSubdomain = window.location.hostname.split(".")[0];
             const currentUserSubdomain = await getSubdomainForCurrentUser();
             // location.origin check ensures that user gets the option to click

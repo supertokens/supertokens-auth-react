@@ -58,14 +58,13 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                 void this.notifyListeners(event);
             },
             preAPIHook: async (context) => {
+                const headers = new Headers(context.requestInit.headers);
+                headers.set("rid", config.recipeId);
                 const response = {
                     ...context,
                     requestInit: {
                         ...context.requestInit,
-                        headers: {
-                            ...context.requestInit.headers,
-                            rid: config.recipeId,
-                        },
+                        headers,
                     },
                 };
                 if (config.preAPIHook === undefined) {
@@ -88,6 +87,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
 
     getUserId = (input: { userContext: any }): Promise<string> => {
         return this.webJsRecipe.getUserId(input);
+    };
+
+    getAccessToken = (input: { userContext: any }): Promise<string | undefined> => {
+        return this.webJsRecipe.getAccessToken(input);
     };
 
     getClaimValue = (input: { claim: SessionClaim<unknown>; userContext: any }): Promise<unknown> => {

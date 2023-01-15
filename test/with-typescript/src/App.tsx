@@ -246,8 +246,8 @@ function getRecipeList() {
             autoAddCredentials: true,
             isInIframe: true,
             sessionExpiredStatusCode: 401,
-            sessionScope: "",
-            cookieDomain: "",
+            sessionTokenFrontendDomain: "",
+            sessionTokenBackendDomain: "",
             onHandleEvent: (context) => {
                 if (context.action === "REFRESH_SESSION") {
                 } else if (context.action === "SIGN_OUT") {

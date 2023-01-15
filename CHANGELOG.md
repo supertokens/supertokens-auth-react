@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.30.0] - 2023-01-XX
+
+## Breaking changes
+
+-   Updated `supertokens-web-js` dependency that requires a backend SDK update to:
+    -   supertokens-node: >= 13.0.0
+    -   supertokens-python: >= 0.12.0
+    -   supertokens-golang: >= 0.10.0
+    -   !!!TODO: re-check before release
+-   Renamed configuration options:
+    -   `sessionScope` renamed to `sessionTokenFrontendDomain`
+    -   `cookieDomain` renamed to `sessionTokenBackendDomain`
+
+### Added
+
+-   Added support for authorizing requests using the `Authorization` header instead of cookies
+    -   Added `tokenTransferMethod` config option
+    -   Check out https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/sessions/token-transfer-method for more information
+
 ## [0.29.0] - 2023-01-06
 
 ### Breaking changes

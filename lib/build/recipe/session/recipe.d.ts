@@ -20,6 +20,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     getFeatureComponent: (_: string) => JSX.Element;
     getFeatures: () => RecipeFeatureComponentMap;
     getUserId: (input: { userContext: any }) => Promise<string>;
+    getAccessToken: (input: { userContext: any }) => Promise<string | undefined>;
     getClaimValue: (input: { claim: SessionClaim<unknown>; userContext: any }) => Promise<unknown>;
     getAccessTokenPayloadSecurely: (input: { userContext: any }) => Promise<any>;
     doesSessionExist: (input: { userContext: any }) => Promise<boolean>;

@@ -277,28 +277,28 @@ export function mergeObjects<T>(obj1: T, obj2: T): T {
 }
 
 export function normaliseCookieScopeOrThrowError(cookieScope: string): string {
-    function helper(sessionScope: string): string {
-        sessionScope = sessionScope.trim().toLowerCase();
+    function helper(cookieScope: string): string {
+        cookieScope = cookieScope.trim().toLowerCase();
 
         // first we convert it to a URL so that we can use the URL class
-        if (sessionScope.startsWith(".")) {
-            sessionScope = sessionScope.substr(1);
+        if (cookieScope.startsWith(".")) {
+            cookieScope = cookieScope.substr(1);
         }
 
-        if (!sessionScope.startsWith("http://") && !sessionScope.startsWith("https://")) {
-            sessionScope = "http://" + sessionScope;
+        if (!cookieScope.startsWith("http://") && !cookieScope.startsWith("https://")) {
+            cookieScope = "http://" + cookieScope;
         }
 
         try {
-            const urlObj = new URL(sessionScope);
-            sessionScope = urlObj.hostname;
+            const urlObj = new URL(cookieScope);
+            cookieScope = urlObj.hostname;
 
             // remove leading dot
-            if (sessionScope.startsWith(".")) {
-                sessionScope = sessionScope.substr(1);
+            if (cookieScope.startsWith(".")) {
+                cookieScope = cookieScope.substr(1);
             }
 
-            return sessionScope;
+            return cookieScope;
         } catch (err) {
             throw new Error("Please provide a valid cookie scope");
         }
