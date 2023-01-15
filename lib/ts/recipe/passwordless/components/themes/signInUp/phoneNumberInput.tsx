@@ -95,11 +95,16 @@ function PhoneNumberInput({
     useEffect(() => {
         if (inputRef.current !== null && inputRef.current.dataset["intl-tel-input-id"] === undefined) {
             inputRef.current.value = value;
-            intlTelInput(inputRef.current, {
+            const iti = intlTelInput(inputRef.current, {
                 initialCountry: defaultCountry,
                 nationalMode: false,
                 preferredCountries: defaultCountry ? [defaultCountry] : [],
             });
+            if (defaultCountry === undefined) {
+                // We set the country to an empty string, because this will display the Unknown flag
+                // instead of the first one in the list
+                iti.setCountry("");
+            }
             inputRef.current.addEventListener("countrychange", handleCountryChange);
         }
     }, []);

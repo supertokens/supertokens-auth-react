@@ -75,6 +75,10 @@
     align-items: center;
 }
 
+[data-supertokens~="phoneInputWrapper"] .iti [data-supertokens~="input"] {
+    padding-left: 15px;
+}
+
 [data-supertokens~="phoneInputWrapper"] .iti {
     flex: 1 1;
     min-width: 0;
