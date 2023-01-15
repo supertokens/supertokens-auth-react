@@ -2,6 +2,7 @@ import * as React from "react";
 import "./App.css";
 import SuperTokens, { getSuperTokensRoutesForReactRouterDom, SuperTokensWrapper } from "../../../";
 import EmailPassword, {
+    EmailPasswordComponentsOverrideProvider,
     GetRedirectionURLContext as EmailPasswordGetRedirectionURLContext,
     OnHandleEventContext as EmailPasswordOnHandleEventContext,
     PreAPIHookContext as EmailPasswordPreAPIHookContext,
@@ -11,11 +12,13 @@ import ThirdParty, {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
     OnHandleEventContext as ThirdPartyOnHandleEventContext,
     PreAPIHookContext as ThirdPartyPreAPIHookContext,
+    ThirdpartyComponentsOverrideProvider,
 } from "../../../recipe/thirdparty";
 import ThirdPartyEmailPassword, {
     GetRedirectionURLContext as ThirdPartyEmailPasswordGetRedirectionURLContext,
     OnHandleEventContext as ThirdPartyEmailPasswordOnHandleEventContext,
     PreAPIHookContext as ThirdPartyEmailPasswordPreAPIHookContext,
+    ThirdpartyEmailPasswordComponentsOverrideProvider,
 } from "../../../recipe/thirdpartyemailpassword";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
@@ -86,53 +89,110 @@ SuperTokens.init({
 function App() {
     return (
         <SuperTokensWrapper>
-            <div className="App">
-                <Router>
-                    <div className="fill">
-                        <Routes>
-                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
-                            <Route
-                                path="/"
-                                element={
-                                    <SessionAuth
-                                        doRedirection={true}
-                                        requireAuth={true}
-                                        overrideGlobalClaimValidators={(o) => [
-                                            ...o,
-                                            UserRoleClaim.validators.includes("admin"),
-                                            PermissionClaim.validators.excludesAll(["delete_user", "delete_post"]),
-                                        ]}>
-                                        <Home />
-                                    </SessionAuth>
-                                }
-                            />
-                            <Route
-                                path="/redirect-to-this-custom-path"
-                                element={
-                                    <SessionAuth requireAuth={true}>
-                                        <Home />
-                                    </SessionAuth>
-                                }
-                            />
-                            <Route
-                                path="/no-redirection-sign-in"
-                                element={<EmailPassword.SignInAndUp redirectOnSessionExists={false} />}
-                            />
-                            <Route
-                                path="/no-redirection-sign-in-with-children"
-                                element={
-                                    <EmailPassword.SignInAndUp redirectOnSessionExists={false}>
-                                        <Home />
-                                    </EmailPassword.SignInAndUp>
-                                }
-                            />
-                        </Routes>
-                    </div>
-                    <div className="footer">
-                        <Footer />
-                    </div>
-                </Router>
-            </div>
+            <EmailPasswordComponentsOverrideProvider
+                components={{
+                    EmailPasswordSignIn_Override: ({ DefaultComponent, ...props }) => {
+                        return (
+                            <div>
+                                <DefaultComponent {...props} />
+                            </div>
+                        );
+                    },
+                    EmailPasswordSignInHeader_Override: ({ DefaultComponent, ...props }) => {
+                        return (
+                            <div>
+                                <DefaultComponent {...props} />
+                            </div>
+                        );
+                    },
+                    EmailPasswordSubmitNewPassword_Override: ({ DefaultComponent, ...props }) => {
+                        return (
+                            <div>
+                                <DefaultComponent {...props} />
+                            </div>
+                        );
+                    },
+                }}>
+                <ThirdpartyComponentsOverrideProvider
+                    components={{
+                        ThirdPartySignInAndUpCallbackTheme_Override: ({ DefaultComponent }) => {
+                            return (
+                                <div>
+                                    <DefaultComponent />
+                                </div>
+                            );
+                        },
+                    }}>
+                    <ThirdpartyEmailPasswordComponentsOverrideProvider
+                        components={{
+                            ThirdPartySignInAndUpProvidersForm_Override: ({ DefaultComponent, ...props }) => {
+                                return (
+                                    <div>
+                                        <DefaultComponent {...props} />
+                                    </div>
+                                );
+                            },
+                            EmailPasswordResetPasswordEmail_Override: ({ DefaultComponent, ...props }) => {
+                                return (
+                                    <div>
+                                        <DefaultComponent {...props} />
+                                    </div>
+                                );
+                            },
+                        }}>
+                        <div className="App">
+                            <Router>
+                                <div className="fill">
+                                    <Routes>
+                                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                                        <Route
+                                            path="/"
+                                            element={
+                                                <SessionAuth
+                                                    doRedirection={true}
+                                                    requireAuth={true}
+                                                    overrideGlobalClaimValidators={(o) => [
+                                                        ...o,
+                                                        UserRoleClaim.validators.includes("admin"),
+                                                        PermissionClaim.validators.excludesAll([
+                                                            "delete_user",
+                                                            "delete_post",
+                                                        ]),
+                                                    ]}>
+                                                    <Home />
+                                                </SessionAuth>
+                                            }
+                                        />
+                                        <Route
+                                            path="/redirect-to-this-custom-path"
+                                            element={
+                                                <SessionAuth requireAuth={true}>
+                                                    <Home />
+                                                </SessionAuth>
+                                            }
+                                        />
+                                        <Route
+                                            path="/no-redirection-sign-in"
+                                            element={<EmailPassword.SignInAndUp redirectOnSessionExists={false} />}
+                                        />
+                                        <Route
+                                            path="/no-redirection-sign-in-with-children"
+                                            element={
+                                                <EmailPassword.SignInAndUp redirectOnSessionExists={false}>
+                                                    <Home />
+                                                </EmailPassword.SignInAndUp>
+                                            }
+                                        />
+                                    </Routes>
+                                </div>
+                                <div className="footer">
+                                    <Footer />
+                                </div>
+                            </Router>
+                        </div>
+                    </ThirdpartyEmailPasswordComponentsOverrideProvider>
+                </ThirdpartyComponentsOverrideProvider>
+            </EmailPasswordComponentsOverrideProvider>
         </SuperTokensWrapper>
     );
 }
@@ -324,29 +384,6 @@ function getEmailPasswordConfigs() {
                     },
                 };
             },
-            components: {
-                EmailPasswordSignIn_Override: ({ DefaultComponent, ...props }) => {
-                    return (
-                        <div>
-                            <DefaultComponent {...props} />
-                        </div>
-                    );
-                },
-                EmailPasswordSignInHeader_Override: ({ DefaultComponent, ...props }) => {
-                    return (
-                        <div>
-                            <DefaultComponent {...props} />
-                        </div>
-                    );
-                },
-                EmailPasswordSubmitNewPassword_Override: ({ DefaultComponent, ...props }) => {
-                    return (
-                        <div>
-                            <DefaultComponent {...props} />
-                        </div>
-                    );
-                },
-            },
         },
     });
 }
@@ -387,22 +424,6 @@ function getThirdPartyConfigs() {
                     ...oI,
                 };
             },
-            components: {
-                ThirdPartySignInAndUpCallbackTheme_Override: ({ DefaultComponent }) => {
-                    return (
-                        <div>
-                            <DefaultComponent />
-                        </div>
-                    );
-                },
-                ThirdPartySignInAndUpHeader_Override: ({ DefaultComponent, ...props }) => {
-                    return (
-                        <div>
-                            <DefaultComponent {...props} />
-                        </div>
-                    );
-                },
-            },
         },
     });
 }
@@ -437,24 +458,6 @@ function getThirdPartyEmailPasswordConfigs() {
         },
         oAuthCallbackScreen: {
             style: theme.style,
-        },
-        override: {
-            components: {
-                ThirdPartySignInAndUpProvidersForm_Override: ({ DefaultComponent, ...props }) => {
-                    return (
-                        <div>
-                            <DefaultComponent {...props} />
-                        </div>
-                    );
-                },
-                EmailPasswordResetPasswordEmail_Override: ({ DefaultComponent, ...props }) => {
-                    return (
-                        <div>
-                            <DefaultComponent {...props} />
-                        </div>
-                    );
-                },
-            },
         },
     });
 }

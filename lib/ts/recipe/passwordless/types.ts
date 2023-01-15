@@ -110,7 +110,6 @@ export type NormalisedConfig = {
 
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
-        components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
@@ -181,7 +180,6 @@ export type UserInput = (
 ) & {
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
-        components?: ComponentOverrideMap;
     };
     linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;

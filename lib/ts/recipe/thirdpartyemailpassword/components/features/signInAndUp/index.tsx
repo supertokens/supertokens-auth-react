@@ -34,6 +34,7 @@ import {
 
 import { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
 import { EmailPasswordSignInAndUpAction } from "../../../../emailpassword/types";
+import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
@@ -67,6 +68,8 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         { error: tpState.error || epState.error }
     );
 
+    const recipeComponentOverrides = useRecipeComponentOverrideContext();
+
     const combinedTPDispatch = React.useCallback<typeof tpDispatch>(
         (action) => {
             dispatch(action);
@@ -90,7 +93,6 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         props.history
     )!;
 
-    const componentOverrides = props.recipe.config.override.components;
     const childProps = {
         emailPasswordRecipe: props.recipe.emailPasswordRecipe,
         thirdPartyRecipe: props.recipe.thirdPartyRecipe,
@@ -106,7 +108,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
     };
 
     return (
-        <ComponentOverrideContext.Provider value={componentOverrides}>
+        <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsThirdPartyEmailPassword}>

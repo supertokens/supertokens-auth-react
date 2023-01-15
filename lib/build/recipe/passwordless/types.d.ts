@@ -71,7 +71,6 @@ export declare type NormalisedConfig = {
     contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
-        components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type Config = UserInput &
@@ -117,7 +116,6 @@ export declare type UserInput = (
 ) & {
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
-        components?: ComponentOverrideMap;
     };
     linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
