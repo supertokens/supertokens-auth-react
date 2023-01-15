@@ -7,6 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Breaking changes
+
+-   Removed dependency on emotion/chroma
+-   Updated many dependencies to fix warnings during install
+-   Updated to styling through plain CSS instead of objects/emotion
+
+### Migration
+
+Before:
+
+```tsx
+SuperTokens.init({
+    appInfo: {
+        apiDomain: "...",
+        appName: "...",
+        websiteDomain: "...",
+    },
+    recipeList: [
+        ThirdPartyEmailPassword.init({
+            style: {
+                container: {
+                    fontFamily: "cursive",
+                },
+            },
+        }),
+        Session.init(),
+    ],
+});
+```
+
+After:
+
+```tsx
+SuperTokens.init({
+    appInfo: {
+        apiDomain: "...",
+        appName: "...",
+        websiteDomain: "...",
+    },
+    recipeList: [
+        ThirdPartyEmailPassword.init({
+            style: `
+                [data-supertokens~=container] {
+                    font-family: cursive;
+                }
+            `,
+        }),
+        Session.init(),
+    ],
+});
+```
+
 ## [0.29.0] - 2023-01-06
 
 ### Breaking changes
