@@ -88,8 +88,8 @@
     },
     "scripts": {
         "init": "bash ./init.sh",
-        "start": "npm-run-all --parallel front server watch",
-        "start-react-16": "npm-run-all --parallel front-react-16 server watch",
+        "start": "npm run build-pretty && npm-run-all --parallel front server",
+        "start-react-16": "npm run build-pretty && npm-run-all --parallel front-react-16 server watch",
         "front": "(cd ./examples/for-tests/ && BROWSER=none PORT=3031 npm run start)",
         "front-react-16": "(cd ./examples/for-tests-react-16/ && BROWSER=none PORT=3031 npm run start)",
         "server": "cd test/server/ && START=true INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
