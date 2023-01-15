@@ -52,11 +52,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     private redirectionHandlersFromAuthRecipes = new Map<string, (ctx: any, history: any) => Promise<void>>();
 
     constructor(config: NormalisedConfigWithAppInfoAndRecipeID<ConfigType>) {
-        const normalisedConfig = { ...config, ...normaliseRecipeModuleConfig(config) };
-        super(normalisedConfig);
+        super(config);
 
         this.webJsRecipe = new WebJSSessionRecipe({
-            ...normalisedConfig,
+            ...config,
             onHandleEvent: (event) => {
                 if (config.onHandleEvent !== undefined) {
                     config.onHandleEvent(event);

@@ -1,17 +1,14 @@
-import ThirdPartyEmailPasswordWebJS from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import { RecipeOnHandleEventFunction } from "../recipeModule/types";
 import { OnHandleEventContext } from "./types";
 import { getFunctionOverrides as getThirdpartyFunctionOverrides } from "../thirdparty/functionOverrides";
 import { getFunctionOverrides as getEmailPasswordFunctionOverrides } from "../emailpassword/functionOverrides";
 import getThirdpartyRecipeImplementation from "./recipeImplementation/thirdPartyImplementation";
 import getEmailPasswordRecipeImplementation from "./recipeImplementation/emailPasswordImplementation";
-import { WebJSRecipeInterface } from "../../types";
-
-type Recipe = WebJSRecipeInterface<typeof ThirdPartyEmailPasswordWebJS>;
 
 export const getFunctionOverrides =
     (recipeId: string, onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
-    (originalImp: Recipe): Recipe => {
+    (originalImp: RecipeInterface): RecipeInterface => {
         // Get overrides for each recipe that already contains event handler setup.
         // Return them merged into single combined recipe functionOverrides renaming the methods
         const thirdpartyOverrides = getThirdpartyFunctionOverrides(

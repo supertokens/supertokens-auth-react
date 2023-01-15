@@ -114,7 +114,7 @@ export default class EmailVerification extends RecipeModule<
                 override: {
                     functions: (originalImpl, builder) => {
                         const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
-                        builder.override(functions as any);
+                        builder.override(functions);
                         builder.override(normalisedConfig.override.functions);
                         return originalImpl;
                     },
