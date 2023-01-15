@@ -1,17 +1,17 @@
 const HydrogenTheme = `
     [data-supertokens~=container] {
-        --palette-background: #1a1925;
-        --palette-inputBackground: rgba(16, 80, 147, 1);
-        --palette-inputBorder: rgba(16, 80, 147, 1);
-        --palette-success: #41a700;
-        --palette-primary: #166cc6;
-        --palette-primaryBorder: #0468c1;
-        --palette-error: #9a0000;
-        --palette-textTitle: #fff;
-        --palette-textLabel: #fafafa;
-        --palette-textPrimary: #fafafa;
-        --palette-textInput: #fff;
-        --palette-textLink: #fefefe;
+        --palette-background: 26, 25, 37;
+        --palette-inputBackground: 16, 80, 147;
+        --palette-inputBorder: 16, 80, 147;
+        --palette-success: 65, 167, 0;
+        --palette-primary: 22, 108, 198;
+        --palette-primaryBorder: 4, 104, 193;
+        --palette-error: 154, 0, 0;
+        --palette-textTitle: 255, 255, 255;
+        --palette-textLabel: 250, 250, 250;
+        --palette-textPrimary: 250, 250, 250;
+        --palette-textInput: 255, 255, 255;
+        --palette-textLink: 254, 254, 254;
     };
 
     

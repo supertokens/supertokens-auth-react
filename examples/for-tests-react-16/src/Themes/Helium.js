@@ -1,17 +1,17 @@
 const HeliumTheme = `
     [data-supertokens~=container] {
-        --palette-background: #1a1925;
-        --palette-inputBackground: rgba(0, 0, 0, 0.10);
-        --palette-inputBorder: rgba(0, 0, 0, 0.10);
-        --palette-success: #41a700;
-        --palette-primary: #6333FF;
-        --palette-primaryBorder: #6333FF;
-        --palette-error: #ff1717;
-        --palette-textTitle: #fff;
-        --palette-textLabel: #010d47;
-        --palette-textPrimary: #aeaeae;
-        --palette-textInput: #fff;
-        --palette-textLink: #4949e4;
+        --palette-background: 26, 25, 37;
+        --palette-inputBackground: 230, 230, 230;
+        --palette-inputBorder: 230, 230, 230;
+        --palette-success: 65, 167, 0;
+        --palette-primary: 99, 51, 255;
+        --palette-primaryBorder: 99, 51, 255;
+        --palette-error: 255, 23, 23;
+        --palette-textTitle: 255, 255, 255;
+        --palette-textLabel: 1, 13, 71;
+        --palette-textPrimary: 174, 174, 174;
+        --palette-textInput: 255, 255, 255;
+        --palette-textLink: 73, 73, 228;
         
         margin-top: 0px;
         margin-bottom: 0px;
