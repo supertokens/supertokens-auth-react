@@ -107,7 +107,7 @@
         "watch": "npx rollup -cw",
         "pretty": "npx pretty-quick .",
         "build-pretty": "npm run build && npm run pretty && npm run pretty",
-        "lint": "cd lib && eslint ./ts --ext .ts,.tsx",
+        "lint": "node other/checkTranslationKeys.js && cd lib && eslint ./ts --ext .ts,.tsx",
         "prune": "cd lib && ts-prune | grep -vE 'used in module| - default$| - package_version$|getSuperTokensRoutesForReactRouterDom$|supertokens-web-js|supertokens-website' && exit 1 || exit 0",
         "pretty-check": "npx pretty-quick --staged --check .",
         "set-up-hooks": "cp hooks/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit",

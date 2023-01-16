@@ -31,8 +31,6 @@
 -   [ ] If added a new recipe interface, then make sure that the implementation of it uses NON arrow functions only (like `someFunc: function () {..}`).
 -   [ ] If I added a new recipe, I also added the recipe entry point into the `size-limit` section of `package.json` with the size limit set to the current size rounded up.
 -   [ ] If I added a new recipe, I also added the recipe entry point into the `rollup.config.mjs`
--   [ ] If I added text to the UI I made sure to use it from the appropriate translation file.
--   [ ] If I removed text from the UI I made sure to check if the translation string is still necesary, removing if possible.
 
 ## Remaining TODOs for this PR
 
