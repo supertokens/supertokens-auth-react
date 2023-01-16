@@ -5,7 +5,7 @@
         "allowSyntheticDefaultImports": true,
         "strictNullChecks": true,
         "noImplicitThis": true,
-        "module": "commonJS",
+        "module": "ESNext",
         "outDir": "build",
         "moduleResolution": "node",
         "declaration": true,
