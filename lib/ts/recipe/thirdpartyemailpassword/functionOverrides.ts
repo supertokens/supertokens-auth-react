@@ -1,28 +1,104 @@
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import { RecipeOnHandleEventFunction } from "../recipeModule/types";
 import { OnHandleEventContext } from "./types";
-import { getFunctionOverrides as getThirdpartyFunctionOverrides } from "../thirdparty/functionOverrides";
-import { getFunctionOverrides as getEmailPasswordFunctionOverrides } from "../emailpassword/functionOverrides";
-import getThirdpartyRecipeImplementation from "./recipeImplementation/thirdPartyImplementation";
-import getEmailPasswordRecipeImplementation from "./recipeImplementation/emailPasswordImplementation";
+import { getRedirectToPathFromURL } from "../../utils";
 
 export const getFunctionOverrides =
     (recipeId: string, onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
-    (originalImp: RecipeInterface): RecipeInterface => {
-        // Get overrides for each recipe that already contains event handler setup.
-        // Return them merged into single combined recipe functionOverrides renaming the methods
-        const thirdpartyOverrides = getThirdpartyFunctionOverrides(
-            recipeId,
-            onHandleEvent
-        )(getThirdpartyRecipeImplementation(originalImp));
-        const emailPasswordOverrides = getEmailPasswordFunctionOverrides(onHandleEvent)(
-            getEmailPasswordRecipeImplementation(originalImp)
-        );
-        return {
-            ...thirdpartyOverrides,
-            ...emailPasswordOverrides,
-            emailPasswordSignIn: emailPasswordOverrides.signIn,
-            emailPasswordSignUp: emailPasswordOverrides.signUp,
-            thirdPartySignInAndUp: thirdpartyOverrides.signInAndUp,
-        };
-    };
+    (originalImp: RecipeInterface): RecipeInterface => ({
+        ...originalImp,
+        getAuthorisationURLFromBackend: async function (input) {
+            const response = await originalImp.getAuthorisationURLFromBackend(input);
+
+            return response;
+        },
+
+        thirdPartySignInAndUp: async function (input) {
+            const response = await originalImp.thirdPartySignInAndUp(input);
+
+            if (response.status === "OK") {
+                onHandleEvent({
+                    action: "SUCCESS",
+                    isNewUser: response.createdNewUser,
+                    user: response.user,
+                    userContext: input?.userContext,
+                });
+            }
+
+            return response;
+        },
+        getStateAndOtherInfoFromStorage: function <CustomStateProperties>(input: { userContext: any }) {
+            return originalImp.getStateAndOtherInfoFromStorage<CustomStateProperties>({
+                userContext: input.userContext,
+            });
+        },
+
+        setStateAndOtherInfoToStorage: function (input) {
+            return originalImp.setStateAndOtherInfoToStorage<{
+                rid?: string;
+                redirectToPath?: string;
+            }>({
+                state: {
+                    ...input.state,
+                    rid: recipeId,
+                    redirectToPath: getRedirectToPathFromURL(),
+                },
+                userContext: input.userContext,
+            });
+        },
+        submitNewPassword: async function (input) {
+            const response = await originalImp.submitNewPassword({
+                ...input,
+                formFields: [input.formFields[0]],
+            });
+
+            if (response.status === "OK") {
+                onHandleEvent({
+                    action: "PASSWORD_RESET_SUCCESSFUL",
+                    userContext: input.userContext,
+                });
+            }
+
+            return response;
+        },
+
+        sendPasswordResetEmail: async function (input) {
+            const response = await originalImp.sendPasswordResetEmail(input);
+
+            if (response.status === "OK") {
+                onHandleEvent({
+                    action: "RESET_PASSWORD_EMAIL_SENT",
+                    userContext: input.userContext,
+                });
+            }
+            return response;
+        },
+
+        emailPasswordSignUp: async function (input) {
+            const response = await originalImp.emailPasswordSignUp(input);
+
+            if (response.status === "OK") {
+                onHandleEvent({
+                    action: "SUCCESS",
+                    isNewUser: true,
+                    user: response.user,
+                    userContext: input.userContext,
+                });
+            }
+
+            return response;
+        },
+        emailPasswordSignIn: async function (input) {
+            const response = await originalImp.emailPasswordSignIn(input);
+
+            if (response.status === "OK") {
+                onHandleEvent({
+                    action: "SUCCESS",
+                    isNewUser: false,
+                    user: response.user,
+                    userContext: input.userContext,
+                });
+            }
+            return response;
+        },
+    });

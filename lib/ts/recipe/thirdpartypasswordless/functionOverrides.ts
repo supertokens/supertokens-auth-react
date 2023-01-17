@@ -1,45 +1,102 @@
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 import { RecipeOnHandleEventFunction } from "../recipeModule/types";
 import { OnHandleEventContext } from "./types";
-import { getFunctionOverrides as getThirdpartyFunctionOverrides } from "../thirdparty/functionOverrides";
-import { getFunctionOverrides as getPasswordlessFunctionOverrides } from "../passwordless/functionOverrides";
-import getThirdpartyRecipeImplementation from "./recipeImplementation/thirdPartyImplementation";
-import getPasswordlessRecipeImplementation from "./recipeImplementation/passwordlessImplementation";
+import { getRedirectToPathFromURL } from "../../utils";
 
 export const getFunctionOverrides =
     (recipeId: string, onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
-    (originalImp: RecipeInterface): RecipeInterface => {
-        // Get overrides for each recipe that already contains event handler setup.
-        // Return them merged into single combined recipe functionOverrides renaming the methods
-        const thirdpartyOverrides = getThirdpartyFunctionOverrides(
-            recipeId,
-            onHandleEvent
-        )(getThirdpartyRecipeImplementation(originalImp));
-        const passwordlessOverrides = getPasswordlessFunctionOverrides(onHandleEvent)(
-            getPasswordlessRecipeImplementation(originalImp)
-        );
-        return {
-            ...thirdpartyOverrides,
-            ...passwordlessOverrides,
-            thirdPartySignInAndUp: thirdpartyOverrides.signInAndUp,
-            getThirdPartyStateAndOtherInfoFromStorage: thirdpartyOverrides.getStateAndOtherInfoFromStorage,
-            setThirdPartyStateAndOtherInfoToStorage: thirdpartyOverrides.setStateAndOtherInfoToStorage,
-            getThirdPartyAuthorisationURLWithQueryParamsAndSetState:
-                thirdpartyOverrides.getAuthorisationURLWithQueryParamsAndSetState,
-            generateThirdPartyStateToSendToOAuthProvider: thirdpartyOverrides.generateStateToSendToOAuthProvider,
-            verifyAndGetThirdPartyStateOrThrowError: thirdpartyOverrides.verifyAndGetStateOrThrowError,
-            getThirdPartyAuthCodeFromURL: thirdpartyOverrides.getAuthCodeFromURL,
-            getThirdPartyAuthErrorFromURL: thirdpartyOverrides.getAuthErrorFromURL,
-            getThirdPartyAuthStateFromURL: thirdpartyOverrides.getAuthStateFromURL,
-            createPasswordlessCode: passwordlessOverrides.createCode,
-            resendPasswordlessCode: passwordlessOverrides.resendCode,
-            consumePasswordlessCode: passwordlessOverrides.consumeCode,
-            getPasswordlessLinkCodeFromURL: passwordlessOverrides.getLinkCodeFromURL,
-            getPasswordlessPreAuthSessionIdFromURL: passwordlessOverrides.getPreAuthSessionIdFromURL,
-            doesPasswordlessUserEmailExist: passwordlessOverrides.doesEmailExist,
-            doesPasswordlessUserPhoneNumberExist: passwordlessOverrides.doesPhoneNumberExist,
-            getPasswordlessLoginAttemptInfo: passwordlessOverrides.getLoginAttemptInfo,
-            setPasswordlessLoginAttemptInfo: passwordlessOverrides.setLoginAttemptInfo,
-            clearPasswordlessLoginAttemptInfo: passwordlessOverrides.clearLoginAttemptInfo,
-        };
-    };
+    (originalImp: RecipeInterface): RecipeInterface => ({
+        ...originalImp,
+        getAuthorisationURLFromBackend: async function (input) {
+            const response = await originalImp.getAuthorisationURLFromBackend(input);
+
+            return response;
+        },
+
+        thirdPartySignInAndUp: async function (input) {
+            const response = await originalImp.thirdPartySignInAndUp(input);
+
+            if (response.status === "OK") {
+                onHandleEvent({
+                    action: "SUCCESS",
+                    isNewUser: response.createdNewUser,
+                    user: response.user,
+                    userContext: input?.userContext,
+                });
+            }
+
+            return response;
+        },
+
+        getThirdPartyStateAndOtherInfoFromStorage: function <CustomStateProperties>(input: { userContext: any }) {
+            return originalImp.getThirdPartyStateAndOtherInfoFromStorage<CustomStateProperties>({
+                userContext: input.userContext,
+            });
+        },
+
+        setThirdPartyStateAndOtherInfoToStorage: function (input) {
+            return originalImp.setThirdPartyStateAndOtherInfoToStorage<{
+                rid?: string;
+                redirectToPath?: string;
+            }>({
+                state: {
+                    ...input.state,
+                    rid: recipeId,
+                    redirectToPath: getRedirectToPathFromURL(),
+                },
+                userContext: input.userContext,
+            });
+        },
+        createPasswordlessCode: async function (input) {
+            const response = await originalImp.createPasswordlessCode(input);
+
+            if (response.status === "OK") {
+                onHandleEvent({
+                    action: "PASSWORDLESS_CODE_SENT",
+                    isResend: false,
+                });
+            }
+
+            return response;
+        },
+        resendPasswordlessCode: async function (input) {
+            const response = await originalImp.resendPasswordlessCode(input);
+
+            if (response.status === "RESTART_FLOW_ERROR") {
+                onHandleEvent({
+                    action: "PASSWORDLESS_RESTART_FLOW",
+                });
+            } else if (response.status === "OK") {
+                onHandleEvent({
+                    action: "PASSWORDLESS_CODE_SENT",
+                    isResend: true,
+                });
+            }
+            return response;
+        },
+        consumePasswordlessCode: async function (input) {
+            const response = await originalImp.consumePasswordlessCode(input);
+
+            if (response.status === "RESTART_FLOW_ERROR") {
+                onHandleEvent({
+                    action: "PASSWORDLESS_RESTART_FLOW",
+                });
+            } else if (response.status === "OK") {
+                onHandleEvent({
+                    action: "SUCCESS",
+                    isNewUser: response.createdNewUser,
+                    user: response.user,
+                });
+            }
+            return response;
+        },
+        setPasswordlessLoginAttemptInfo: async function (input) {
+            return originalImp.setPasswordlessLoginAttemptInfo({
+                ...input,
+                attemptInfo: {
+                    ...input.attemptInfo,
+                    ...input.userContext.additionalAttemptInfo,
+                },
+            });
+        },
+    });
