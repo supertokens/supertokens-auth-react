@@ -24,6 +24,7 @@ import { useCallback, useEffect, useRef } from "react";
 
 import { InputProps } from "../../../../emailpassword/components/library/input";
 import ErrorIcon from "../../../../../components/assets/errorIcon";
+import { ST_ROOT_ID } from "../../../../../constants";
 
 type PhoneNumberInputProps = {
     defaultCountry?: string;
@@ -104,6 +105,27 @@ function PhoneNumberInput({
                 // We set the country to an empty string, because this will display the Unknown flag
                 // instead of the first one in the list
                 iti.setCountry("");
+            }
+
+            // This is a workaround, since the lib adds the dropdown to the body directly,
+            // if it detects a mobile environment, but this doesn't work with our styling if we use shadow dom
+            const anyIti = iti as any;
+            if (anyIti.isMobile) {
+                const root = document.getElementById(ST_ROOT_ID);
+
+                // We only have to do this if we are using shadowDom and we need access to the dom element anyway
+                // so passing the shadowroot element here would be both impractical and not too useful
+                if (root?.shadowRoot) {
+                    // We can't set the shadowRoot directly as the dropdownContainer, because we need to add a style to it
+                    const container = root.shadowRoot.querySelector("[data-supertokens~=container]");
+
+                    if (!container) {
+                        throw new Error("Should never happen: container element not found");
+                    }
+
+                    container.classList.add("iti-mobile");
+                    anyIti.options.dropdownContainer = container;
+                }
             }
             inputRef.current.addEventListener("countrychange", handleCountryChange);
         }
