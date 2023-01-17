@@ -1,6 +1,6 @@
 const { rollup } = require("rollup");
 const typescript = require("rollup-plugin-typescript2");
-const multiEntry = require("rollup-plugin-multi-entry");
+const multiEntry = require("@rollup/plugin-multi-entry");
 
 const { promises: fs } = require("fs");
 const path = require("path");

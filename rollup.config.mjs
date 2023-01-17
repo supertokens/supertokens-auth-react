@@ -40,6 +40,7 @@ export default [
             {
                 dir: "lib/build",
                 format: "commonjs",
+                interop: "auto",
                 sourcemap: true,
                 chunkFileNames: (chunkInfo) => {
                     const root = chunkInfo.moduleIds[chunkInfo.moduleIds.length - 1];
