@@ -101,7 +101,7 @@ function PhoneNumberInput({
                 nationalMode: false,
                 preferredCountries: defaultCountry ? [defaultCountry] : [],
             });
-            if (defaultCountry === undefined) {
+            if (defaultCountry === undefined && value === "") {
                 // We set the country to an empty string, because this will display the Unknown flag
                 // instead of the first one in the list
                 iti.setCountry("");
