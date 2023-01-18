@@ -12,7 +12,7 @@ export const getFunctionOverrides =
             if (response.status === "OK") {
                 onHandleEvent({
                     action: "EMAIL_VERIFIED_SUCCESSFUL",
-                    userContext: input?.userContext,
+                    userContext: input.userContext,
                 });
             }
 
@@ -25,7 +25,7 @@ export const getFunctionOverrides =
             if (response.status === "OK") {
                 onHandleEvent({
                     action: "VERIFY_EMAIL_SENT",
-                    userContext: input?.userContext,
+                    userContext: input.userContext,
                 });
             }
 

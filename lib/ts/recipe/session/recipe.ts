@@ -31,7 +31,7 @@ import {
     setLocalStorage,
 } from "../../utils";
 import { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
-import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
+import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
 import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
@@ -46,41 +46,14 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     static instance?: Session;
     static RECIPE_ID = "session";
 
-    webJsRecipe: WebJSSessionRecipe;
-
     private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
     private redirectionHandlersFromAuthRecipes = new Map<string, (ctx: any, history: any) => Promise<void>>();
 
-    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<ConfigType>) {
+    constructor(
+        config: NormalisedConfigWithAppInfoAndRecipeID<ConfigType>,
+        public readonly webJSRecipe: Omit<typeof WebJSSessionRecipe, "init" | "default"> = WebJSSessionRecipe
+    ) {
         super(config);
-
-        this.webJsRecipe = new WebJSSessionRecipe({
-            ...config,
-            onHandleEvent: (event) => {
-                if (config.onHandleEvent !== undefined) {
-                    config.onHandleEvent(event);
-                }
-
-                void this.notifyListeners(event);
-            },
-            preAPIHook: async (context) => {
-                const response = {
-                    ...context,
-                    requestInit: {
-                        ...context.requestInit,
-                        headers: {
-                            ...context.requestInit.headers,
-                            rid: config.recipeId,
-                        },
-                    },
-                };
-                if (config.preAPIHook === undefined) {
-                    return response;
-                } else {
-                    return config.preAPIHook(context);
-                }
-            },
-        });
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -93,27 +66,27 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     };
 
     getUserId = (input: { userContext: any }): Promise<string> => {
-        return this.webJsRecipe.getUserId(input);
+        return this.webJSRecipe.getUserId(input);
     };
 
     getClaimValue = (input: { claim: SessionClaim<unknown>; userContext: any }): Promise<unknown> => {
-        return this.webJsRecipe.getClaimValue(input);
+        return this.webJSRecipe.getClaimValue(input);
     };
 
     getAccessTokenPayloadSecurely = async (input: { userContext: any }): Promise<any> => {
-        return this.webJsRecipe.getAccessTokenPayloadSecurely(input);
+        return this.webJSRecipe.getAccessTokenPayloadSecurely(input);
     };
 
     doesSessionExist = (input: { userContext: any }): Promise<boolean> => {
-        return this.webJsRecipe.doesSessionExist(input);
+        return this.webJSRecipe.doesSessionExist(input);
     };
 
     signOut = (input: { userContext: any }): Promise<void> => {
-        return this.webJsRecipe.signOut(input);
+        return this.webJSRecipe.signOut(input);
     };
 
     attemptRefreshingSession = async (): Promise<boolean> => {
-        return this.webJsRecipe.attemptRefreshingSession();
+        return this.webJSRecipe.attemptRefreshingSession();
     };
 
     validateClaims = (input: {
@@ -123,14 +96,14 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         ) => SessionClaimValidator[];
         userContext: any;
     }): Promise<ClaimValidationError[]> | ClaimValidationError[] => {
-        return this.webJsRecipe.validateClaims(input);
+        return this.webJSRecipe.validateClaims(input);
     };
 
     getInvalidClaimsFromResponse = (input: {
         response: { data: any } | Response;
         userContext: any;
     }): Promise<ClaimValidationError[]> => {
-        return this.webJsRecipe.getInvalidClaimsFromResponse(input);
+        return this.webJSRecipe.getInvalidClaimsFromResponse(input);
     };
 
     /**
@@ -293,7 +266,33 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                 });
                 return Session.instance;
             },
-            webJS: SessionWebJS.init(normalisedConfig),
+            webJS: SessionWebJS.init({
+                ...normalisedConfig,
+                onHandleEvent: (event) => {
+                    if (normalisedConfig.onHandleEvent !== undefined) {
+                        normalisedConfig.onHandleEvent(event);
+                    }
+
+                    void Session.getInstanceOrThrow().notifyListeners(event);
+                },
+                preAPIHook: async (context) => {
+                    const response = {
+                        ...context,
+                        requestInit: {
+                            ...context.requestInit,
+                            headers: {
+                                ...context.requestInit.headers,
+                                rid: Session.RECIPE_ID,
+                            },
+                        },
+                    };
+                    if (normalisedConfig.preAPIHook === undefined) {
+                        return response;
+                    } else {
+                        return normalisedConfig.preAPIHook(context);
+                    }
+                },
+            }),
         };
     }
 

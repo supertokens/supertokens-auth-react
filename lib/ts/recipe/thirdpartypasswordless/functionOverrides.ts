@@ -7,12 +7,6 @@ export const getFunctionOverrides =
     (recipeId: string, onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
     (originalImp: RecipeInterface): RecipeInterface => ({
         ...originalImp,
-        getAuthorisationURLFromBackend: async function (input) {
-            const response = await originalImp.getAuthorisationURLFromBackend(input);
-
-            return response;
-        },
-
         thirdPartySignInAndUp: async function (input) {
             const response = await originalImp.thirdPartySignInAndUp(input);
 
@@ -21,17 +15,11 @@ export const getFunctionOverrides =
                     action: "SUCCESS",
                     isNewUser: response.createdNewUser,
                     user: response.user,
-                    userContext: input?.userContext,
+                    userContext: input.userContext,
                 });
             }
 
             return response;
-        },
-
-        getThirdPartyStateAndOtherInfoFromStorage: function <CustomStateProperties>(input: { userContext: any }) {
-            return originalImp.getThirdPartyStateAndOtherInfoFromStorage<CustomStateProperties>({
-                userContext: input.userContext,
-            });
         },
 
         setThirdPartyStateAndOtherInfoToStorage: function (input) {

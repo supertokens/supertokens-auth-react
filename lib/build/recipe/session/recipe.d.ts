@@ -7,7 +7,7 @@ import {
     RecipeInitResult,
 } from "../../types";
 import { RecipeEventWithSessionContext, InputType } from "./types";
-import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
+import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
 import { SessionClaim } from "supertokens-web-js/recipe/session";
 declare type ConfigType = InputType & {
@@ -16,12 +16,15 @@ declare type ConfigType = InputType & {
     enableDebugLogs: boolean;
 };
 export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
+    readonly webJSRecipe: Omit<typeof WebJSSessionRecipe, "init" | "default">;
     static instance?: Session;
     static RECIPE_ID: string;
-    webJsRecipe: WebJSSessionRecipe;
     private eventListeners;
     private redirectionHandlersFromAuthRecipes;
-    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<ConfigType>);
+    constructor(
+        config: NormalisedConfigWithAppInfoAndRecipeID<ConfigType>,
+        webJSRecipe?: Omit<typeof WebJSSessionRecipe, "init" | "default">
+    );
     getFeatureComponent: (_: string) => JSX.Element;
     getFeatures: () => RecipeFeatureComponentMap;
     getUserId: (input: { userContext: any }) => Promise<string>;
