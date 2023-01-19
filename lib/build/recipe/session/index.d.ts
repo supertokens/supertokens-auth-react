@@ -9,7 +9,7 @@ import {
 } from "supertokens-web-js/recipe/session";
 import { InputType, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
-import { ClaimValidationError, SessionClaimValidator } from "supertokens-website/index";
+import { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 export default class SessionAPIWrapper {
     static useSessionContext: () => SessionContextType;
     static useClaimValue: <T>(claim: SessionClaim<T>) =>

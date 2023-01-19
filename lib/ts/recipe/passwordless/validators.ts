@@ -14,7 +14,7 @@
  */
 
 import { CountryData } from "intl-tel-input";
-import { WindowHandlerReference } from "supertokens-website/utils/windowHandler";
+import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 import { getPhoneNumberUtils } from "./phoneNumberUtils";
 
 export function defaultEmailValidator(value: any): string | undefined {

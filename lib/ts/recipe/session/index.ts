@@ -28,7 +28,7 @@ import { useClaimValue as useClaimValueFunc } from "./useClaimValue";
 import { InputType, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
 import { getNormalisedUserContext } from "../../utils";
-import { ClaimValidationError, SessionClaimValidator } from "supertokens-website/index";
+import { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 
 export default class SessionAPIWrapper {
     static useSessionContext = useSessionContextFunc;

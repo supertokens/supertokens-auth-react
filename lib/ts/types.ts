@@ -18,8 +18,8 @@ import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import { ComponentClass, PropsWithChildren } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import { CookieHandlerInput } from "supertokens-website/utils/cookieHandler/types";
-import { WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
+import { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/types";
+import { WindowHandlerInput } from "supertokens-web-js/utils/windowHandler/types";
 
 export type GetRedirectionURLContext = {
     action: "TO_AUTH";

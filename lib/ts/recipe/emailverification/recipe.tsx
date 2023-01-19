@@ -37,7 +37,7 @@ import { SSR_ERROR } from "../../constants";
 import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
 import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
-import { SessionClaimValidatorStore } from "supertokens-website/utils/sessionClaimValidatorStore";
+import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 import { OverrideableBuilder } from "supertokens-js-override";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { UserContextContext } from "../../usercontext";
