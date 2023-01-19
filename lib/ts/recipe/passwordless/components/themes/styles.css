@@ -93,3 +93,28 @@
     margin-top: 10px;
     margin-bottom: 30px;
 }
+
+.iti__country-list {
+    border: 0;
+    top: 40px;
+    width: min(72.2vw, 320px);
+    border-radius: 6;
+    box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.16);
+}
+
+.iti__country {
+    display: flex;
+    align-items: center;
+    height: 34px;
+    cursor: pointer;
+
+    padding: 0 8px;
+}
+
+.iti__country-name {
+    color: var(--palette-textLabel);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: "0 16px";
+}
