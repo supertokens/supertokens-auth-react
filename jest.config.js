@@ -3,7 +3,7 @@ module.exports = {
     testEnvironment: "jsdom",
     roots: ["<rootDir>/test/unit"],
     moduleNameMapper: {
-        "\\.(css|less)$": "identity-obj-proxy",
+        "\\.(css|less)$": "<rootDir>/test/unit/mockStyle.js",
     },
     transform: {
         "^.+\\.tsx?$": [
