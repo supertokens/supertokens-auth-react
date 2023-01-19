@@ -9,7 +9,7 @@
     padding-bottom: 9px;
 }
 
-[data-supertokens~="button"][data-supertokens~="providerButton"] {
+[data-supertokens~="providerButton"] {
     min-height: 32px;
     display: flex;
     flex-direction: row;

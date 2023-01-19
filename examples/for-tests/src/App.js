@@ -764,11 +764,6 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultUI, thirdPartyRedirect
 
 function getPasswordlessConfigs({ disableDefaultUI }) {
     return Passwordless.init({
-        style: `          
-            [data-supertokens~=container] {
-                font-family: cursive;
-            }
-        `,
         override: {
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS PASSWORDLESS OVERRIDE`);

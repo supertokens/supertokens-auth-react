@@ -249,8 +249,10 @@ describe("Visual testing", function () {
             await clearBrowserCookiesWithoutAffectingConsole(page, []);
             await page.goto(latestURLWithToken);
             await page.waitForSelector("[data-supertokens~=container]");
+            await page.waitForSelector("[data-supertokens='button']");
             await snapshot(page, "requires interaction");
             await page.click("[data-supertokens='button']");
+            await page.waitForSelector("[data-supertokens~=headerTinyTitle]");
             await snapshot(page, "link invalid link");
         });
 
@@ -342,6 +344,7 @@ describe("Visual testing", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await page.waitForSelector("[data-supertokens~=container]");
+            await page.waitForSelector("[data-supertokens~=generalError]");
             await snapshot(page, "general error");
 
             await Promise.all([
@@ -349,6 +352,7 @@ describe("Visual testing", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await page.waitForSelector("[data-supertokens~=container]");
+            await page.waitForSelector("[data-supertokens~=generalError]");
             await snapshot(page, "no_email_present error");
 
             await Promise.all([
@@ -356,6 +360,7 @@ describe("Visual testing", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await page.waitForSelector("[data-supertokens~=container]");
+            await page.waitForSelector("[data-supertokens~=generalError]");
             await snapshot(page, "custom error");
         });
 
@@ -528,6 +533,7 @@ describe("Visual testing", function () {
                 title: "during submit",
             });
 
+            await page.waitForSelector("[data-supertokens~=generalError]");
             await snapshot(page, "wrong OTP submitted");
         });
 

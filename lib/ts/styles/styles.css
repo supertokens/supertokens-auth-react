@@ -250,11 +250,3 @@
 [data-supertokens~="button"]:focus {
     outline: none;
 }
-[data-supertokens~="button"][data-supertokens~="brighten"]:hover {
-    filter: brightness(0.85);
-}
-
-[data-supertokens~="button"][data-supertokens~="brighten"]:active,
-[data-supertokens~="button"][data-supertokens~="brighten"]:hover {
-    filter: brightness(1.1);
-}
