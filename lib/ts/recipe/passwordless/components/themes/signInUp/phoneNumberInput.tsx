@@ -155,6 +155,12 @@ function PhoneNumberInput({
                     autoFocus={autofocus}
                     autoComplete={autoComplete}
                     onChange={(ev) => {
+                        // We do this to ensure that country detection starts working as soon as the user starts typing.
+                        // This also replicates how the old lib worked (automatically formatting to an international number)
+                        if (!ev.target.value.startsWith("+")) {
+                            ev.target.value = "+" + ev.target.value;
+                        }
+
                         handleChange(ev.target.value);
                     }}
                     onFocus={handleFocus}
