@@ -149,12 +149,12 @@ describe("Visual testing", function () {
             await page.click("[data-supertokens~=showPassword]");
             await snapshot(page, "filled with password shown");
 
-            await page.click("[data-supertokens~='button']");
+            await page.click("[data-supertokens~='button'][type=submit]");
             await snapshot(page, "missing required fields");
 
             await setInputValue(page, { name: "name", value: "John Doe" });
             await setInputValue(page, { name: "age", value: "asdf" });
-            await page.click("[data-supertokens~='button']");
+            await page.click("[data-supertokens~='button'][type=submit]");
             await snapshot(page, "custom field validation failure");
 
             await setInputValue(page, { name: "age", value: "20" });
@@ -248,8 +248,11 @@ describe("Visual testing", function () {
 
             await clearBrowserCookiesWithoutAffectingConsole(page, []);
             await page.goto(latestURLWithToken);
+            await page.waitForSelector("[data-supertokens~=container]");
+            await page.waitForSelector("[data-supertokens='button']");
             await snapshot(page, "requires interaction");
             await page.click("[data-supertokens='button']");
+            await page.waitForSelector("[data-supertokens~=headerTinyTitle]");
             await snapshot(page, "link invalid link");
         });
 
@@ -258,6 +261,7 @@ describe("Visual testing", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await page.click("[data-supertokens~='forgotPasswordLink']");
             await snapshot(page, "screen empty");
 
@@ -332,24 +336,31 @@ describe("Visual testing", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdparty`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "initial view");
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?error=signin`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
+            await page.waitForSelector("[data-supertokens~=generalError]");
             await snapshot(page, "general error");
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?error=no_email_present`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
+            await page.waitForSelector("[data-supertokens~=generalError]");
             await snapshot(page, "no_email_present error");
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?error=custom&message=test_error_message`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
+            await page.waitForSelector("[data-supertokens~=generalError]");
             await snapshot(page, "custom error");
         });
 
@@ -383,6 +394,7 @@ describe("Visual testing", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=passwordless&passwordlessContactMethodType=EMAIL`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "empty");
 
             await setInputValue(page, { name: "email", value: "asdf" });
@@ -406,6 +418,7 @@ describe("Visual testing", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=passwordless&passwordlessContactMethodType=PHONE`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "empty");
             // emailOrPhone_text
             await setInputValue(page, { name: "phoneNumber_text", value: "213456" });
@@ -413,7 +426,7 @@ describe("Visual testing", function () {
             await waitFor(500);
             await snapshot(page, "invalid phone number");
 
-            await page.click(".PhoneInput > div:nth-child(1)");
+            await page.click("[data-supertokens~=phoneInputWrapper] [role=combobox]");
             await snapshot(page, "country dropdown");
             const focusedElement = await page.evaluateHandle(() => document.activeElement);
             await focusedElement.type("hu");
@@ -436,6 +449,7 @@ describe("Visual testing", function () {
                 ),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "empty");
 
             await setInputValue(page, { name: "emailOrPhone", value: "asdf" });
@@ -463,7 +477,7 @@ describe("Visual testing", function () {
             await page.click("[data-supertokens='button']");
             await snapshot(page, "invalid phone number");
 
-            await page.click(".PhoneInput > div:nth-child(1)");
+            await page.click("[data-supertokens~=phoneInputWrapper] [role=combobox]");
             await snapshot(page, "country dropdown");
             const focusedElement = await page.evaluateHandle(() => document.activeElement);
             await focusedElement.type("hu");
@@ -506,7 +520,7 @@ describe("Visual testing", function () {
             });
             await snapshot(page, "resend success");
 
-            await page.click("[data-supertokens~='button']");
+            await page.click("[data-supertokens~='button'][type=submit]");
             await snapshot(page, "empty submit with success notif");
 
             await page.waitForSelector("[data-supertokens~=generalSuccess]", { hidden: true });
@@ -514,11 +528,12 @@ describe("Visual testing", function () {
 
             await setInputValue(page, { name: "userInputCode", value: "asdf" });
             await snapshotDuringRequest(page, {
-                clickSelector: "[data-supertokens~='button']",
+                clickSelector: "[data-supertokens~='button'][type=submit]",
                 apiPath: "/auth/signinup/code/consume",
                 title: "during submit",
             });
 
+            await page.waitForSelector("[data-supertokens~=generalError]");
             await snapshot(page, "wrong OTP submitted");
         });
 
@@ -588,6 +603,7 @@ describe("Visual testing", function () {
 
             await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
             await page.goto(device.codes[0].urlWithLinkCode);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "requiring interaction");
 
             await snapshotDuringRequest(page, {
@@ -622,12 +638,12 @@ describe("Visual testing", function () {
             await page.click("[data-supertokens~=showPassword]");
             await snapshot(page, "filled with password shown");
 
-            await page.click("[data-supertokens~='button']");
+            await page.click("[data-supertokens~='button'][type=submit]");
             await snapshot(page, "missing required fields");
 
             await setInputValue(page, { name: "name", value: "John Doe" });
             await setInputValue(page, { name: "age", value: "asdf" });
-            await page.click("[data-supertokens~='button']");
+            await page.click("[data-supertokens~='button'][type=submit]");
             await snapshot(page, "custom field validation failure");
 
             await setInputValue(page, { name: "age", value: "20" });
@@ -657,6 +673,7 @@ describe("Visual testing", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "empty");
 
             await page.click("[data-supertokens='button']");
@@ -696,24 +713,28 @@ describe("Visual testing", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartyemailpassword`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "initial view");
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?error=signin`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "general error");
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?error=no_email_present`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "no_email_present error");
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?error=custom&message=test_error_message`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "custom error");
         });
     });
@@ -726,24 +747,28 @@ describe("Visual testing", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartypasswordless`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "initial view");
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?error=signin`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "general error");
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?error=no_email_present`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "no_email_present error");
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?error=custom&message=test_error_message`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "custom error");
         });
         it("Email form", async () => {
@@ -754,6 +779,7 @@ describe("Visual testing", function () {
                 ),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "empty");
 
             await setInputValue(page, { name: "email", value: "asdf" });
@@ -780,6 +806,7 @@ describe("Visual testing", function () {
                 ),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "empty");
             // emailOrPhone_text
             await setInputValue(page, { name: "phoneNumber_text", value: "213456" });
@@ -787,7 +814,7 @@ describe("Visual testing", function () {
             await waitFor(500);
             await snapshot(page, "invalid phone number");
 
-            await page.click(".PhoneInput > div:nth-child(1)");
+            await page.click("[data-supertokens~=phoneInputWrapper] [role=combobox]");
             await snapshot(page, "country dropdown");
             const focusedElement = await page.evaluateHandle(() => document.activeElement);
             await focusedElement.type("hu");
@@ -810,6 +837,7 @@ describe("Visual testing", function () {
                 ),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.waitForSelector("[data-supertokens~=container]");
             await snapshot(page, "empty");
 
             await setInputValue(page, { name: "emailOrPhone", value: "asdf" });
@@ -837,7 +865,7 @@ describe("Visual testing", function () {
             await page.click("[data-supertokens='button']");
             await snapshot(page, "invalid phone number");
 
-            await page.click(".PhoneInput > div:nth-child(1)");
+            await page.click("[data-supertokens~=phoneInputWrapper] [role=combobox]");
             await snapshot(page, "country dropdown");
             const focusedElement = await page.evaluateHandle(() => document.activeElement);
             await focusedElement.type("hu");

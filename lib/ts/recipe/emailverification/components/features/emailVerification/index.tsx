@@ -19,7 +19,7 @@
 import * as React from "react";
 import { useContext, useState, useMemo, useCallback, Fragment } from "react";
 import { clearQueryParams, getQueryParams, useOnMountAPICall } from "../../../../../utils";
-import { EmailVerificationTheme } from "../../themes/emailVerification";
+import EmailVerificationTheme from "../../themes/emailVerification";
 import { FeatureBaseProps } from "../../../../../types";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";

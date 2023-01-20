@@ -13,16 +13,7 @@
  * under the License.
  */
 
-/*
- * Imports.
- */
-
-import { useContext } from "react";
 import { useTranslation } from "../../../../translation/translationContext";
-import StyleContext from "../../../../styles/styleContext";
-/*
- * Props.
- */
 
 export type ProviderButtonProps = {
     providerName: string;
@@ -30,32 +21,20 @@ export type ProviderButtonProps = {
     logo?: JSX.Element;
 };
 
-/*
- * Component.
- */
-
 export default function ProviderButton({ logo, providerName, displayName }: ProviderButtonProps) {
-    /*
-     * Render.
-     */
-    const styles = useContext(StyleContext);
     const t = useTranslation();
     const providerStyleName = `provider${providerName}`;
 
     return (
-        <button
-            css={[styles.providerButton, styles[providerStyleName]]}
-            data-supertokens={`providerButton ${providerStyleName}`}>
+        <button data-supertokens={`button providerButton ${providerStyleName}`}>
             {logo !== undefined && (
-                <div css={styles.providerButtonLeft} data-supertokens="providerButtonLeft">
-                    <div css={styles.providerButtonLogo} data-supertokens="providerButtonLogo">
-                        <div css={styles.providerButtonLogoCenter} data-supertokens="providerButtonLogoCenter">
-                            {logo}
-                        </div>
+                <div data-supertokens="providerButtonLeft">
+                    <div data-supertokens="providerButtonLogo">
+                        <div data-supertokens="providerButtonLogoCenter">{logo}</div>
                     </div>
                 </div>
             )}
-            <div css={styles.providerButtonText} data-supertokens="providerButtonText">
+            <div data-supertokens="providerButtonText">
                 {t("THIRD_PARTY_PROVIDER_DEFAULT_BTN_START")}
                 {displayName}
                 {t("THIRD_PARTY_PROVIDER_DEFAULT_BTN_END")}

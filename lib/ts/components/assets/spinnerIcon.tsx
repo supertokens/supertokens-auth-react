@@ -21,16 +21,16 @@
  * Component.
  */
 
-export default function SpinnerIcon({ color }: { color: string }): JSX.Element {
+export default function SpinnerIcon(): JSX.Element {
     return (
-        <svg version="1.1" viewBox="25 25 50 50">
+        <svg version="1.1" viewBox="25 25 50 50" data-supertokens="spinnerIcon">
             <circle
                 cx="50"
                 cy="50"
                 r="20"
                 fill="none"
+                stroke="rgb(var(--palette-primary))"
                 strokeWidth="5"
-                stroke={color}
                 strokeLinecap="round"
                 strokeDashoffset="0"
                 strokeDasharray="100, 200">

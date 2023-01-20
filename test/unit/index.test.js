@@ -19,10 +19,9 @@
 
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
-import SuperTokens from "../../lib/build/superTokens";
-import EmailPassword from "../../lib/build/recipe/emailpassword";
-import Session from "../../lib/build/recipe/session";
-import { DEFAULT_WEBSITE_BASE_PATH, DEFAULT_API_BASE_PATH } from "../../lib/build/constants";
+import SuperTokens from "../../lib/build/index";
+import EmailPassword from "../../lib/build/emailpassword";
+import { DEFAULT_WEBSITE_BASE_PATH, DEFAULT_API_BASE_PATH } from "../constants";
 import assert from "assert";
 import { mockWindowLocation } from "../helpers";
 import * as React from "react";

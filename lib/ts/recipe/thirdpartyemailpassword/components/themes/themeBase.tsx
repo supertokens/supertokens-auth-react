@@ -15,12 +15,11 @@
 
 import React, { PropsWithChildren } from "react";
 import { Fragment } from "react";
+import styles from "./styles.css";
 
-/*
- * Component
- */
-
-export const ThemeBase: React.FC<PropsWithChildren<{ loadDefaultFont: boolean }>> = ({ children, loadDefaultFont }) => {
+export const ThemeBase: React.FC<
+    PropsWithChildren<{ loadDefaultFont: boolean; userStyles: Array<string | undefined> }>
+> = ({ children, userStyles, loadDefaultFont }) => {
     return (
         <Fragment>
             {children}
@@ -30,6 +29,10 @@ export const ThemeBase: React.FC<PropsWithChildren<{ loadDefaultFont: boolean }>
                     rel="stylesheet"
                     type="text/css"></link>
             )}
+            <style>
+                {styles}
+                {userStyles.join("\n")}
+            </style>
         </Fragment>
     );
 };

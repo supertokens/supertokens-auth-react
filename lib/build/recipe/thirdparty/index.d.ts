@@ -77,7 +77,7 @@ export default class Wrapper {
     ) => JSX.Element;
     static SignInAndUpTheme: import("react").FC<import("./types").SignInAndUpThemeProps>;
     static SignInAndUpCallback: (prop?: any) => JSX.Element;
-    static SignInAndUpCallbackTheme: import("react").ComponentType<{}>;
+    static SignInAndUpCallbackTheme: (props: { config: import("./types").NormalisedConfig }) => JSX.Element;
     static ComponentsOverrideProvider: import("react").FC<
         PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;

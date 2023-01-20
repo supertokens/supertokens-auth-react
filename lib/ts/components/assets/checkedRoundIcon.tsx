@@ -21,10 +21,15 @@
  * Component.
  */
 
-export default function CheckedRoundIcon({ color }: { color: string }): JSX.Element {
+export default function CheckedRoundIcon(): JSX.Element {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33">
-            <g fill={color} stroke={color}>
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="33"
+            height="33"
+            viewBox="0 0 33 33"
+            data-supertokens="checkedRoundIcon">
+            <g fill="rgb(var(--palette-success))" stroke="rgb(var(--palette-success))">
                 <path
                     d="M6.715 15.334a1.135 1.135 0 0 1 1.605-1.605l4.558 4.558 9.573-9.573a1.135 1.135 0 0 1 1.605 1.605L13.748 20.627a1.231 1.231 0 0 1-1.741 0z"
                     transform="translate(-.5 -.5) translate(1.242 1.703)"

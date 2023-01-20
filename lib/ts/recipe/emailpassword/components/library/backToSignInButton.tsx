@@ -17,10 +17,8 @@
  * Imports.
  */
 
-import { useContext } from "react";
 import { useTranslation } from "../../../..";
 import ArrowLeftIcon from "../../../../components/assets/arrowLeftIcon";
-import StyleContext from "../../../../styles/styleContext";
 /*
  * Props.
  */
@@ -35,14 +33,10 @@ type ButtonProps = {
 
 export default function BackToSignInButton({ onClick }: ButtonProps): JSX.Element {
     const t = useTranslation();
-    const styles = useContext(StyleContext);
 
     return (
-        <div
-            data-supertokens="secondaryText secondaryLinkWithLeftArrow"
-            css={[styles.secondaryText, styles.secondaryLinkWithLeftArrow]}
-            onClick={onClick}>
-            <ArrowLeftIcon color={styles.palette.colors.secondaryText} />
+        <div data-supertokens="secondaryText secondaryLinkWithLeftArrow" onClick={onClick}>
+            <ArrowLeftIcon color="rgb(var(--palette-secondaryText))" />
             {t("EMAIL_PASSWORD_RESET_SIGN_IN_LINK")}
         </div>
     );

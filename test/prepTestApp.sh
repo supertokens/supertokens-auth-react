@@ -14,7 +14,7 @@ rm ../../supertokens-auth-react-*.tgz
 cd node_modules/supertokens-auth-react
 
 # install prod dependencies only
-npm i --production --legacy-peer-deps || exit $?
+npm i --production || exit $?
 
 rm -rf node_modules/.cache
 rm -rf node_modules/supertokens-web-js || true

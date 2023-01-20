@@ -21,12 +21,18 @@ import { defaultValidate } from "../../../../emailpassword/validators";
 import { SignInUpFooter } from "./signInUpFooter";
 import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
+import { preloadPhoneNumberUtils } from "../../../phoneNumberUtils";
 
 export const PhoneForm = withOverride(
     "PasswordlessPhoneForm",
     function PasswordlessPhoneForm(props: SignInUpPhoneFormProps): JSX.Element {
         const userContext = useUserContext();
+
+        useEffect(() => {
+            // We preload this here, since it will be used almost for sure, but loading it
+            void preloadPhoneNumberUtils();
+        }, []);
 
         const phoneInput = useMemo(
             () =>

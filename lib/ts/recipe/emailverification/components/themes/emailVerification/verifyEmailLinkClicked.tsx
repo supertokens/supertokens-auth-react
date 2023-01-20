@@ -17,12 +17,11 @@
  * Imports.
  */
 
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useState } from "react";
 import ArrowRightIcon from "../../../../../components/assets/arrowRightIcon";
 import CheckedRoundIcon from "../../../../../components/assets/checkedRoundIcon";
 import ErrorLargeIcon from "../../../../../components/assets/errorLargeIcon";
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
-import StyleContext from "../../../../../styles/styleContext";
 import { Button } from "../../../../emailpassword/components/library";
 
 import { VerifyEmailLinkClickedThemeProps } from "../../../types";
@@ -35,7 +34,6 @@ import STGeneralError from "supertokens-web-js/utils/error";
 import useSessionContext from "../../../../session/useSessionContext";
 
 export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkClickedThemeProps> = (props) => {
-    const styles = useContext(StyleContext);
     const t = useTranslation();
     const sessionContext = useSessionContext();
     const userContext = useUserContext();
@@ -90,10 +88,10 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
 
     if (status === "LOADING") {
         return (
-            <div data-supertokens="container" css={styles.container}>
-                <div data-supertokens="row" css={styles.row}>
-                    <div data-supertokens="spinner" css={styles.spinner}>
-                        <SpinnerIcon color={styles.palette.colors.primary} />
+            <div data-supertokens="container">
+                <div data-supertokens="row">
+                    <div data-supertokens="spinner">
+                        <SpinnerIcon />
                     </div>
                 </div>
             </div>
@@ -102,14 +100,10 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
 
     if (status === "INTERACTION_REQUIRED") {
         return (
-            <div data-supertokens="container" css={styles.container}>
-                <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
-                    <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                        {t("EMAIL_VERIFICATION_LINK_CLICKED_HEADER")}
-                    </div>
-                    <div
-                        data-supertokens="headerSubtitle secondaryText"
-                        css={[styles.headerSubtitle, styles.secondaryText]}>
+            <div data-supertokens="container">
+                <div data-supertokens="row noFormRow">
+                    <div data-supertokens="headerTitle">{t("EMAIL_VERIFICATION_LINK_CLICKED_HEADER")}</div>
+                    <div data-supertokens="headerSubtitle secondaryText">
                         {t("EMAIL_VERIFICATION_LINK_CLICKED_DESC")}
                     </div>
                     {/* We are not adding an emailVerificationButtonWrapper because headerSubtitle already has a margin */}
@@ -136,15 +130,11 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
 
     if (status === "SUCCESSFUL") {
         return (
-            <div data-supertokens="container" css={styles.container}>
-                <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
-                    <CheckedRoundIcon color={styles.palette.colors.success} />
-                    <div
-                        data-supertokens="headerTitle headerTinyTitle"
-                        css={[styles.headerTitle, styles.headerTinyTitle]}>
-                        {t("EMAIL_VERIFICATION_SUCCESS")}
-                    </div>
-                    <div data-supertokens="emailVerificationButtonWrapper" css={styles.emailVerificationButtonWrapper}>
+            <div data-supertokens="container">
+                <div data-supertokens="row noFormRow">
+                    <CheckedRoundIcon />
+                    <div data-supertokens="headerTitle headerTinyTitle">{t("EMAIL_VERIFICATION_SUCCESS")}</div>
+                    <div data-supertokens="emailVerificationButtonWrapper">
                         <Button
                             isLoading={false}
                             onClick={onSuccess}
@@ -159,19 +149,12 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
 
     if (status === "INVALID") {
         return (
-            <div data-supertokens="container" css={styles.container}>
-                <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
-                    <div
-                        data-supertokens="headerTitle headerTinyTitle"
-                        css={[styles.headerTitle, styles.headerTinyTitle]}>
-                        {t("EMAIL_VERIFICATION_EXPIRED")}
-                    </div>
-                    <div
-                        onClick={onTokenInvalidRedirect}
-                        data-supertokens="secondaryText secondaryLinkWithArrow"
-                        css={[styles.secondaryText, styles.secondaryLinkWithArrow]}>
+            <div data-supertokens="container">
+                <div data-supertokens="row noFormRow">
+                    <div data-supertokens="headerTitle headerTinyTitle">{t("EMAIL_VERIFICATION_EXPIRED")}</div>
+                    <div onClick={onTokenInvalidRedirect} data-supertokens="secondaryText secondaryLinkWithArrow">
                         {t("EMAIL_VERIFICATION_CONTINUE_LINK")}
-                        <ArrowRightIcon color={styles.palette.colors.textPrimary} />
+                        <ArrowRightIcon color="rgb(var(--palette-textPrimary))" />
                     </div>
                 </div>
             </div>
@@ -179,13 +162,13 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
     }
 
     return (
-        <div data-supertokens="container" css={styles.container}>
-            <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
-                <div data-supertokens="headerTitle error" css={[styles.headerTitle, styles.error]}>
-                    <ErrorLargeIcon color={styles.palette.colors.error} />
+        <div data-supertokens="container">
+            <div data-supertokens="row noFormRow">
+                <div data-supertokens="headerTitle error">
+                    <ErrorLargeIcon />
                     {t("EMAIL_VERIFICATION_ERROR_TITLE")}
                 </div>
-                <div data-supertokens="primaryText" css={styles.primaryText}>
+                <div data-supertokens="primaryText">
                     {t(errorMessage === undefined ? "EMAIL_VERIFICATION_ERROR_DESC" : errorMessage)}
                 </div>
             </div>

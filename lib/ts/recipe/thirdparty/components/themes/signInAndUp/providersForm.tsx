@@ -13,8 +13,7 @@
  * under the License.
  */
 
-import { Fragment, useContext } from "react";
-import StyleContext from "../../../../../styles/styleContext";
+import { Fragment } from "react";
 import { SignInAndUpThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { redirectToThirdPartyLogin } from "../../../utils";
@@ -22,7 +21,6 @@ import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
 
 export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps> = (props) => {
-    const styles = useContext(StyleContext);
     const userContext = useUserContext();
 
     const signInClick = async (providerId: string): Promise<void> => {
@@ -68,10 +66,7 @@ export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps>
         <Fragment>
             {props.providers.map((provider) => {
                 return (
-                    <div
-                        key={`provider-${provider.id}`}
-                        css={styles.providerContainer}
-                        data-supertokens="providerContainer">
+                    <div key={`provider-${provider.id}`} data-supertokens="providerContainer">
                         <span onClick={() => signInClick(provider.id)}>{provider.buttonComponent}</span>
                     </div>
                 );

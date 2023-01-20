@@ -21,9 +21,8 @@ import SignInUpThemeWrapper from "../../themes/signInUp";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import Recipe from "../../../recipe";
-import { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps } from "../../../types";
+import { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps, NormalisedConfig } from "../../../types";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { formatPhoneNumberIntl } from "react-phone-number-input/min";
 import Session from "../../../../session";
 import SessionRecipe from "../../../../session/recipe";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
@@ -34,6 +33,7 @@ import { FeatureBaseProps } from "../../../../../types";
 import { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
 import { useUserContext } from "../../../../../usercontext";
 import { getLoginAttemptInfo, setLoginAttemptInfo } from "../../../utils";
+import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 
 export const useSuccessInAnotherTabChecker = (
@@ -203,7 +203,9 @@ export function useChildProps(
     history: any
 ): SignInUpChildProps | undefined {
     const recipeImplementation = React.useMemo(
-        () => recipe && getModifiedRecipeImplementation(recipe.recipeImpl, dispatch, callingConsumeCodeRef),
+        () =>
+            recipe &&
+            getModifiedRecipeImplementation(recipe.recipeImpl, recipe.config, dispatch, callingConsumeCodeRef),
         [recipe]
     );
 
@@ -276,6 +278,7 @@ export default SignInUpFeature;
 
 function getModifiedRecipeImplementation(
     originalImpl: RecipeInterface,
+    config: NormalisedConfig,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     callingConsumeCodeRef: React.MutableRefObject<boolean>
 ): RecipeInterface {
@@ -283,10 +286,15 @@ function getModifiedRecipeImplementation(
         ...originalImpl,
         createCode: async (input) => {
             let contactInfo;
+            const phoneNumberUtils = await getPhoneNumberUtils();
             if ("email" in input) {
                 contactInfo = input.email;
             } else {
-                contactInfo = formatPhoneNumberIntl(input.phoneNumber);
+                contactInfo = phoneNumberUtils.formatNumber(
+                    input.phoneNumber,
+                    config.signInUpFeature.defaultCountry || "",
+                    phoneNumberUtils.numberFormat.E164
+                );
             }
 
             const res = await originalImpl.createCode(input);

@@ -1,0 +1,222 @@
+/* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
+ *
+ * This software is licensed under the Apache License, Version 2.0 (the
+ * "License") as published by the Apache Software Foundation.
+ *
+ * You may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
+@import "../../../../styles/styles.css";
+
+[data-supertokens~="inputContainer"] {
+    margin-top: 6px;
+}
+
+[data-supertokens~="inputWrapper"] {
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background-color: rgb(var(--palette-inputBackground));
+    height: 34px;
+    border-radius: 6px;
+    border: 1px solid rgb(var(--palette-inputBorder));
+}
+[data-supertokens~="inputWrapper"]:focus-within {
+    background-color: rgba(var(--palette-inputBackground), 0.25);
+    border: 1px solid rgb(var(--palette-primary));
+    box-shadow: 0 0 0 0.2rem rgba(var(--palette-primary), 0.25);
+    outline: none;
+}
+
+[data-supertokens~="inputError"] {
+    border: 1px solid rgb(var(--palette-error));
+    box-shadow: 0 0 0 0.2rem rgba(var(--palette-error), 0.25);
+    outline: none;
+}
+
+[data-supertokens~="inputError"]:focus-within {
+    border: 1px solid rgb(var(--palette-error));
+    box-shadow: 0 0 0 0.2rem rgba(var(--palette-error), 0.25);
+    outline: none;
+}
+
+[data-supertokens~="input"] {
+    box-sizing: border-box;
+    padding-left: 15px;
+    filter: none;
+    color: rgb(var(--palette-textInput));
+    background-color: transparent;
+    border-radius: 6px;
+    font-size: var(--font-size-1);
+    border: none;
+    padding-right: 25px;
+    letter-spacing: 1.2px;
+    flex: 9 1 75%;
+    width: 75%;
+    height: 32px;
+}
+[data-supertokens~="input"]:focus {
+    border: none;
+    outline: none;
+}
+[data-supertokens~="input"]:-webkit-autofill,
+[data-supertokens~="input"]:-webkit-autofill:hover,
+[data-supertokens~="input"]:-webkit-autofill:focus,
+[data-supertokens~="input"]:-webkit-autofill:active {
+    -webkit-text-fill-color: rgb(var(--palette-textInput));
+    -webkit-box-shadow: 0 0 0 30px rgb(var(--palette-inputBackground)) inset;
+    box-shadow: 0 0 0 30px rgb(var(--palette-inputBackground)) inset;
+}
+
+[data-supertokens~="inputAdornment"] {
+    justify-content: center;
+    margin-right: 5px;
+}
+
+[data-supertokens~="showPassword"] {
+    cursor: pointer;
+}
+
+[data-supertokens~="forgotPasswordLink"] {
+    margin-top: 10px;
+}
+
+[data-supertokens~="enterEmailSuccessMessage"] {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    word-break: break-word;
+}
+
+[data-supertokens~="submitNewPasswordSuccessMessage"] {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+[data-supertokens~="inputErrorMessage"] {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    color: rgb(var(--palette-error));
+    line-height: 24px;
+    font-weight: 400;
+    font-size: var(--font-size-1);
+    text-align: left;
+    animation: slideTop 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    max-width: 330px;
+}
+
+@media (max-width: 440px) {
+    [data-supertokens~="inputErrorMessage"] {
+        max-width: 250px;
+    }
+}
+
+[data-supertokens~="inputErrorSymbol"] {
+    margin-right: 5px;
+    top: 1px;
+    position: relative;
+    left: 2px;
+}
+
+[data-supertokens~="label"] {
+    text-align: left;
+    font-weight: 600;
+    font-size: var(--font-size-1);
+    line-height: 24px;
+    color: rgb(var(--palette-textLabel));
+}
+
+[data-supertokens~="formRow"] {
+    display: flex;
+    flex-direction: column;
+    padding-top: 0px;
+    padding-bottom: 34px;
+}
+
+[data-supertokens~="formRow"][data-supertokens~="hasError"] {
+    padding-bottom: 0;
+}
+
+[data-supertokens~="sendVerifyEmailIcon"] {
+    margin-top: 11px;
+}
+
+[data-supertokens~="headerTinyTitle"] {
+    margin-top: 13px;
+    font-size: var(--font-size-3);
+    letter-spacing: 1.1px;
+    font-weight: 500;
+    line-height: 28px;
+}
+
+[data-supertokens~="sendVerifyEmailText"] {
+    line-height: 21px;
+    font-size: var(--font-size-1);
+    text-align: center;
+    font-weight: 300;
+    letter-spacing: 0.8px;
+}
+
+[data-supertokens~="secondaryLinkWithArrow"] {
+    margin-top: 10px;
+    margin-bottom: 30px;
+    cursor: pointer;
+}
+[data-supertokens~="secondaryLinkWithArrow"]:hover {
+    position: relative;
+    left: 2px;
+    word-spacing: 4px;
+}
+
+[data-supertokens~="sendVerifyEmailResend"] {
+    margin-top: 13px;
+    font-weight: 300;
+}
+
+[data-supertokens~="sendVerifyEmailResend"]:hover {
+    text-decoration: underline;
+}
+
+[data-supertokens~="noFormRow"] {
+    padding-bottom: 25px;
+}
+
+[data-supertokens~="emailVerificationButtonWrapper"] {
+    padding-top: 25px;
+    max-width: 96px;
+    margin: 0 auto;
+}
+
+[data-supertokens~="resetPasswordHeaderTitle"] {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+[data-supertokens~="backButtonCommon"] {
+    width: 16px;
+    height: 13px;
+}
+
+[data-supertokens~="backButton"] {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+}
+
+[data-supertokens~="backButtonPlaceholder"] {
+    display: block;
+}
+
+[data-supertokens~="resendEmailLink"] {
+    display: inline-block;
+}

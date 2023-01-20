@@ -12,20 +12,13 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { useContext } from "react";
-import StyleContext from "../styles/styleContext";
 import { useTranslation } from "../translation/translationContext";
 
 export function SuperTokensBranding(): JSX.Element {
-    const styles = useContext(StyleContext);
     const t = useTranslation();
 
     return (
-        <a
-            data-supertokens="superTokensBranding"
-            css={styles.superTokensBranding}
-            href="https://supertokens.com?utm_campaign=poweredby"
-            target="_blank">
+        <a data-supertokens="superTokensBranding" href="https://supertokens.com?utm_campaign=poweredby" target="_blank">
             {t("BRANDING_POWERED_BY_START")}
             <strong>SuperTokens</strong>
             {t("BRANDING_POWERED_BY_END")}
