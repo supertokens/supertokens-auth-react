@@ -21,25 +21,22 @@
  * Component.
  */
 
-export default function ShowPasswordIcon({
-    primaryColor,
-    secondaryColor,
-    showPassword,
-}: {
-    primaryColor: string;
-    secondaryColor: string;
-    showPassword: boolean;
-}): JSX.Element {
+export default function ShowPasswordIcon({ showPassword }: { showPassword: boolean }): JSX.Element {
     if (showPassword === true) {
         return (
             <div>
-                <svg xmlns="http://www.w3.org/2000/svg" width="18.391" height="16.276" viewBox="0 0 18.391 16.276">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18.391"
+                    height="16.276"
+                    viewBox="0 0 18.391 16.276"
+                    data-supertokens="showPasswordIcon show">
                     <g>
                         <g>
                             <g>
                                 <g>
                                     <path
-                                        fill={primaryColor}
+                                        fill="rgb(var(--palette-textPrimary))"
                                         d="M29.289 100.33c-2.4-3.63-5.619-5.63-9.069-5.63s-6.67 2-9.069 5.63a.767.767 0 0 0 0 .845c2.4 3.63 5.619 5.63 9.069 5.63s6.67-2 9.069-5.63a.767.767 0 0 0 0-.845zm-9.069 4.944c-2.785 0-5.435-1.6-7.5-4.519 2.065-2.92 4.715-4.519 7.5-4.519s5.435 1.6 7.5 4.519c-2.064 2.92-4.711 4.519-7.5 4.519z"
                                         transform="translate(-822 -420.048) translate(822 422.035) translate(-11.025 -94.7)"
                                     />
@@ -47,8 +44,8 @@ export default function ShowPasswordIcon({
                             </g>
                         </g>
                         <g
-                            fill={primaryColor}
-                            stroke={secondaryColor}
+                            fill="rgb(var(--palette-textPrimary))"
+                            stroke="rgb(var(--palette-inputBackground))"
                             transform="translate(-822 -420.048) translate(827.164 424.055)">
                             <circle cx="4.036" cy="4.036" r="4.036" stroke="none" />
                             <circle cx="4.036" cy="4.036" r="3.536" fill="none" />
@@ -63,7 +60,7 @@ export default function ShowPasswordIcon({
                         />
                         <path
                             fill="none"
-                            stroke={secondaryColor}
+                            stroke="rgb(var(--palette-inputBackground))"
                             strokeLinecap="round"
                             d="M13.978 0L0 13.978"
                             transform="translate(-822 -420.048) translate(825.084 421.639)"
@@ -76,13 +73,18 @@ export default function ShowPasswordIcon({
 
     return (
         <div>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18.281" height="12.033" viewBox="0 0 18.281 12.033">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18.281"
+                height="12.033"
+                viewBox="0 0 18.281 12.033"
+                data-supertokens="showPasswordIcon hide">
                 <g>
                     <g>
                         <g>
                             <g>
                                 <path
-                                    fill={primaryColor}
+                                    fill="rgb(var(--palette-textPrimary))"
                                     d="M29.18 100.3c-2.384-3.608-5.586-5.6-9.015-5.6s-6.63 1.989-9.015 5.6a.763.763 0 0 0 0 .84c2.384 3.608 5.586 5.6 9.015 5.6s6.63-1.989 9.015-5.6a.763.763 0 0 0 0-.84zm-9.015 4.914c-2.769 0-5.4-1.589-7.459-4.492 2.052-2.9 4.686-4.492 7.459-4.492s5.4 1.589 7.459 4.492c-2.056 2.899-4.686 4.489-7.458 4.489z"
                                     transform="translate(-822 -422.088) translate(822 422.088) translate(-11.025 -94.7)"
                                 />
@@ -90,8 +92,8 @@ export default function ShowPasswordIcon({
                         </g>
                     </g>
                     <g
-                        fill={primaryColor}
-                        stroke={secondaryColor}
+                        fill="rgb(var(--palette-textPrimary))"
+                        stroke="rgb(var(--palette-inputBackground))"
                         transform="translate(-822 -422.088) translate(827.133 424.096)">
                         <circle cx="4.012" cy="4.012" r="4.012" stroke="none" />
                         <circle cx="4.012" cy="4.012" r="3.512" fill="none" />

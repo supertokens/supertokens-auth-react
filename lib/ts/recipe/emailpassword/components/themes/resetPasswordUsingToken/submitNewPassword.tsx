@@ -16,8 +16,7 @@
 /*
  * Imports.
  */
-import { Fragment, useContext, useState } from "react";
-import StyleContext from "../../../../../styles/styleContext";
+import { Fragment, useState } from "react";
 
 import { SubmitNewPasswordProps, SubmitNewPasswordStatus } from "../../../types";
 import { FormRow, Button } from "../../library";
@@ -30,7 +29,6 @@ import GeneralError from "../../library/generalError";
 import { useUserContext } from "../../../../../usercontext";
 
 const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props) => {
-    const styles = useContext(StyleContext);
     const t = useTranslation();
     const userContext = useUserContext();
     const [status, setStatus] = useState<SubmitNewPasswordStatus>("READY");
@@ -43,16 +41,12 @@ const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props)
 
     if (status === "SUCCESS") {
         return (
-            <div data-supertokens="container" css={styles.container}>
-                <div data-supertokens="row" css={styles.row}>
-                    <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                        {t("EMAIL_PASSWORD_RESET_SUBMIT_PW_SUCCESS_HEADER_TITLE")}
-                    </div>
+            <div data-supertokens="container">
+                <div data-supertokens="row">
+                    <div data-supertokens="headerTitle">{t("EMAIL_PASSWORD_RESET_SUBMIT_PW_SUCCESS_HEADER_TITLE")}</div>
                     <FormRow key="form-button">
                         <Fragment>
-                            <div
-                                data-supertokens="primaryText submitNewPasswordSuccessMessage"
-                                css={[styles.primaryText, styles.submitNewPasswordSuccessMessage]}>
+                            <div data-supertokens="primaryText submitNewPasswordSuccessMessage">
                                 {t("EMAIL_PASSWORD_RESET_SUBMIT_PW_SUCCESS_DESC")}
                             </div>
                             <Button
@@ -70,15 +64,11 @@ const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props)
     }
 
     return (
-        <div data-supertokens="container" css={styles.container}>
-            <div data-supertokens="row" css={styles.row}>
-                <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                    {t("EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_TITLE")}
-                </div>
-                <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
-                    <div data-supertokens="secondaryText" css={styles.secondaryText}>
-                        {t("EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_SUBTITLE")}
-                    </div>
+        <div data-supertokens="container">
+            <div data-supertokens="row">
+                <div data-supertokens="headerTitle">{t("EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_TITLE")}</div>
+                <div data-supertokens="headerSubtitle">
+                    <div data-supertokens="secondaryText">{t("EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_SUBTITLE")}</div>
                 </div>
                 {props.error !== undefined && <GeneralError error={props.error} />}
                 <FormBase

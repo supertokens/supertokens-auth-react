@@ -22,6 +22,8 @@ import { useMemo, useState } from "react";
 import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
 import { SignInUpFooter } from "./signInUpFooter";
+import { useEffect } from "react";
+import { preloadPhoneNumberUtils } from "../../../phoneNumberUtils";
 
 export const EmailOrPhoneForm = withOverride(
     "PasswordlessEmailOrPhoneForm",
@@ -29,6 +31,10 @@ export const EmailOrPhoneForm = withOverride(
         const [isPhoneNumber, setIsPhoneNumber] = useState<boolean>(false);
         const userContext = useUserContext();
 
+        useEffect(() => {
+            // We preload this here, since it will be used almost for sure, but loading it
+            void preloadPhoneNumberUtils();
+        }, []);
         const emailOrPhoneInput = useMemo(
             () =>
                 isPhoneNumber

@@ -21,11 +21,11 @@
  * Component.
  */
 
-export default function ErrorIcon({ color }: { color: string }): JSX.Element {
+export default function ErrorIcon(): JSX.Element {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="15" viewBox="0 0 17 15">
+        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="15" viewBox="0 0 17 15" data-supertokens="errorIcon">
             <g>
-                <g fill={color}>
+                <g className="Asdf" fill="rgb(var(--palette-error))">
                     <path
                         d="M13.568 14.75H3.432c-.63 0-1.195-.325-1.512-.869-.317-.544-.32-1.196-.01-1.744l5.067-8.943c.315-.556.884-.887 1.523-.887.639 0 1.208.331 1.523.887l5.067 8.943c.31.548.307 1.2-.01 1.744s-.882.869-1.512.869z"
                         transform="translate(-824.894 -352.829) translate(824.894 352.829)"

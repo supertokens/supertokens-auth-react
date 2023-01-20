@@ -1,10 +1,8 @@
 import { defaultTranslationsCommon } from "../../../../translation/translations";
-import { defaultTranslationsEmailVerification } from "../../../emailverification/components/themes/translations";
 
 export const defaultTranslationsThirdParty = {
     en: {
         ...defaultTranslationsCommon.en,
-        ...defaultTranslationsEmailVerification.en,
 
         THIRD_PARTY_SIGN_IN_AND_UP_HEADER_TITLE: "Sign Up / Sign In",
 

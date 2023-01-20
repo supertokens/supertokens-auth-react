@@ -69,7 +69,7 @@ export function normaliseSignInAndUpFeature(
     }
 
     const disableDefaultUI = config.disableDefaultUI === true;
-    const style = config.style !== undefined ? config.style : {};
+    const style = config.style !== undefined ? config.style : "";
     const privacyPolicyLink = config.privacyPolicyLink;
     const termsOfServiceLink = config.termsOfServiceLink;
 

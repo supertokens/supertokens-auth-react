@@ -13,21 +13,14 @@
  * under the License.
  */
 
-import { useContext } from "react";
-import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 
 export const SignInAndUpHeader = withOverride(
     "ThirdPartySignInAndUpHeader",
     function ThirdPartySignInAndUpHeader(): JSX.Element | null {
-        const styles = useContext(StyleContext);
         const t = useTranslation();
 
-        return (
-            <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                {t("THIRD_PARTY_SIGN_IN_AND_UP_HEADER_TITLE")}
-            </div>
-        );
+        return <div data-supertokens="headerTitle">{t("THIRD_PARTY_SIGN_IN_AND_UP_HEADER_TITLE")}</div>;
     }
 );

@@ -15,3 +15,4 @@ screenshot.jpeg
 /test_report/
 supertokens-auth-react-*.tgz
 **/node_modules
+stats.html

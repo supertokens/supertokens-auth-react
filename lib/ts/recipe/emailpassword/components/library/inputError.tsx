@@ -12,21 +12,14 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { useContext } from "react";
 import { useTranslation } from "../../../../translation/translationContext";
-import StyleContext from "../../../../styles/styleContext";
 
 type InputErrorProps = {
     error: string;
 };
 
 export default function InputError({ error }: InputErrorProps): JSX.Element {
-    const styles = useContext(StyleContext);
     const t = useTranslation();
 
-    return (
-        <div data-supertokens="inputErrorMessage" css={styles.inputErrorMessage}>
-            {t(error)}
-        </div>
-    );
+    return <div data-supertokens="inputErrorMessage">{t(error)}</div>;
 }

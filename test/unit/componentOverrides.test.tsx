@@ -107,7 +107,32 @@ describe("Theme component overrides", () => {
 
     Object.entries(overrides).forEach(([key, comp]) => {
         test(`${key} can be overrode`, async () => {
-            const [Component, props] = comp instanceof Array ? comp : [comp, {}];
+            const [Component, props] =
+                comp instanceof Array
+                    ? comp
+                    : [
+                          comp,
+                          {
+                              // We are adding these to avoid undefined errors while getting styles in ThemeBase
+                              config: {
+                                  rootStyle: ``,
+                                  linkClickedScreenFeature: { style: `` },
+                                  signInUpFeature: { style: `` },
+                                  signInAndUpFeature: {
+                                      style: ``,
+                                      signUpForm: { style: `` },
+                                      signInForm: { style: `` },
+                                  },
+                                  resetPasswordUsingTokenFeature: {
+                                      submitNewPasswordForm: { style: `` },
+                                      enterEmailForm: { style: `` },
+                                  },
+                                  verifyEmailLinkClickedScreen: { style: `` },
+                                  sendVerifyEmailScreen: { style: `` },
+                              },
+                          },
+                      ];
+
             // given
             const overrideMap: Record<string, ComponentOverride<any>> = {
                 [key]: makeOverride(),

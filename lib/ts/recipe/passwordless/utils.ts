@@ -13,8 +13,6 @@
  * under the License.
  */
 
-import { CountryCode, NumberType } from "libphonenumber-js";
-import parsePhoneNumber, { formatIncompletePhoneNumber, parseIncompletePhoneNumber } from "libphonenumber-js/min";
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
 import {
@@ -30,6 +28,7 @@ import {
     defaultPhoneNumberValidatorForCombinedInput,
     defaultEmailValidator,
     defaultEmailValidatorForCombinedInput,
+    defaultGuessInternationPhoneNumberFromInputPhoneNumber,
 } from "./validators";
 import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
 import WebJSUtils from "supertokens-web-js/recipe/passwordless/utils";
@@ -86,13 +85,13 @@ function normalizeSignInUpFeatureConfig(
     signInUpInput:
         | SignInUpFeatureConfigInput
         | (SignInUpFeatureConfigInput & {
-              defaultCountry?: CountryCode | undefined;
+              defaultCountry?: string | undefined;
           })
         | (SignInUpFeatureConfigInput & {
               guessInternationPhoneNumberFromInputPhoneNumber?:
                   | ((
                         inputPhoneNumber: string,
-                        defaultCountryFromConfig?: CountryCode | undefined
+                        defaultCountryFromConfig?: string | undefined
                     ) => string | Promise<string | undefined> | undefined)
                   | undefined;
           })
@@ -109,11 +108,11 @@ function normalizeSignInUpFeatureConfig(
             signInUpInput?.resendEmailOrSMSGapInSeconds === undefined ? 15 : signInUpInput.resendEmailOrSMSGapInSeconds,
 
         emailOrPhoneFormStyle:
-            signInUpInput?.emailOrPhoneFormStyle !== undefined ? signInUpInput.emailOrPhoneFormStyle : {},
-        linkSentScreenStyle: signInUpInput?.linkSentScreenStyle !== undefined ? signInUpInput.linkSentScreenStyle : {},
+            signInUpInput?.emailOrPhoneFormStyle !== undefined ? signInUpInput.emailOrPhoneFormStyle : "",
+        linkSentScreenStyle: signInUpInput?.linkSentScreenStyle !== undefined ? signInUpInput.linkSentScreenStyle : "",
         userInputCodeFormStyle:
-            signInUpInput?.userInputCodeFormStyle !== undefined ? signInUpInput.userInputCodeFormStyle : {},
-        closeTabScreenStyle: signInUpInput?.closeTabScreenStyle !== undefined ? signInUpInput.closeTabScreenStyle : {},
+            signInUpInput?.userInputCodeFormStyle !== undefined ? signInUpInput.userInputCodeFormStyle : "",
+        closeTabScreenStyle: signInUpInput?.closeTabScreenStyle !== undefined ? signInUpInput.closeTabScreenStyle : "",
         defaultCountry:
             ["PHONE", "EMAIL_OR_PHONE"].includes(config.contactMethod) &&
             signInUpInput !== undefined &&
@@ -134,45 +133,11 @@ function normalizeSignInUpFeatureConfig(
 }
 
 function normalisePasswordlessBaseConfig<T>(config?: T & FeatureBaseConfig): T & NormalisedBaseConfig {
-    const style = config && config.style !== undefined ? config.style : {};
+    const style = config && config.style !== undefined ? config.style : "";
     return {
         ...(config as T),
         style,
     };
-}
-
-export function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
-    value: string,
-    defaultCountryFromConfig?: CountryCode
-) {
-    if (value === undefined || value.length === 0) {
-        return value;
-    }
-    if (defaultCountryFromConfig !== undefined) {
-        try {
-            return parsePhoneNumber(value, {
-                defaultCountry: defaultCountryFromConfig,
-                extract: false,
-            })?.formatInternational();
-        } catch {
-            // The lib couldn't make sense of it, so we keep it unchanged
-        }
-    }
-    // This function "extracts" phone numbers from the string, e.g.: "asd2gmail.com" -> "2"
-    const incomplete = parseIncompletePhoneNumber(value);
-
-    // If the incomplete/extracted phonenumber is less than half the input we assume it's not a phone number.
-    // I.e.: if less than half of the input is numbers
-    if (value.includes("@") || incomplete.length < value.length / 2) {
-        return undefined;
-    }
-    const incompleteIntlNum = formatIncompletePhoneNumber(value, defaultCountryFromConfig);
-    if (incompleteIntlNum !== value) {
-        return incompleteIntlNum;
-    }
-
-    // We want to return the value as an international number because the phone number input lib expects it this way
-    return `+${value}`;
 }
 
 export async function getLoginAttemptInfo(input: {
@@ -186,7 +151,7 @@ export async function getLoginAttemptInfo(input: {
 
 export async function setLoginAttemptInfo(input: {
     recipeImplementation: RecipeInterface;
-    userContext: NumberType;
+    userContext: any;
     attemptInfo: LoginAttemptInfo;
 }): Promise<void> {
     return await input.recipeImplementation.setLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({

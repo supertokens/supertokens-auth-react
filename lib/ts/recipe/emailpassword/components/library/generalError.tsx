@@ -12,21 +12,14 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { useContext } from "react";
 import { useTranslation } from "../../../../translation/translationContext";
-import StyleContext from "../../../../styles/styleContext";
 
 type GeneralErrorProps = {
     error: string;
 };
 
 export default function GeneralError({ error }: GeneralErrorProps): JSX.Element {
-    const styles = useContext(StyleContext);
     const t = useTranslation();
 
-    return (
-        <div data-supertokens="generalError" css={styles.generalError}>
-            {t(error)}
-        </div>
-    );
+    return <div data-supertokens="generalError">{t(error)}</div>;
 }

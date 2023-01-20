@@ -178,7 +178,9 @@ export default class Wrapper {
     static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
     static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
-    static ThirdPartySignInAndUpCallbackTheme: import("react").ComponentType<{}>;
+    static ThirdPartySignInAndUpCallbackTheme: (props: {
+        config: import("../thirdparty/types").NormalisedConfig;
+    }) => JSX.Element;
     static ComponentsOverrideProvider: import("react").FC<
         PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;

@@ -12,23 +12,19 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { useContext } from "react";
 import { SignUpThemeProps } from "../../../types";
 
 import { SignUpFooter } from "./signUpFooter";
 import { SignUpHeader } from "./signUpHeader";
-import StyleContext from "../../../../../styles/styleContext";
 import { SignUpForm } from "./signUpForm";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import GeneralError from "../../library/generalError";
 
 export const SignUp = withOverride("EmailPasswordSignUp", function EmailPasswordSignUp(props: SignUpThemeProps) {
-    const styles = useContext(StyleContext);
-
     return (
-        <div data-supertokens="container" css={styles.container}>
-            <div data-supertokens="row" css={styles.row}>
+        <div data-supertokens="container">
+            <div data-supertokens="row">
                 <SignUpHeader onClick={props.signInClicked} />
                 {props.error !== undefined && <GeneralError error={props.error} />}
                 <SignUpForm

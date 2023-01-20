@@ -49,8 +49,8 @@ import {
     TranslationFunc,
     TranslationStore,
 } from "./translation/translationHelpers";
-import { CookieHandlerReference } from "supertokens-website/utils/cookieHandler";
-import { WindowHandlerReference } from "supertokens-website/utils/windowHandler";
+import { CookieHandlerReference } from "supertokens-web-js/utils/cookieHandler";
+import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
 /*

@@ -315,18 +315,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     await checkPhoneNumberInTitle(page, "+36701234326");
                 });
 
-                it("should not change for too long input", async function () {
-                    await Promise.all([
-                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                        page.waitForNavigation({ waitUntil: "networkidle0" }),
-                    ]);
-
-                    await setInputValues(page, [{ name: inputName, value: "654654654654654654654" }]);
-                    await submitForm(page);
-                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone]`);
-                    await checkInputValue(page, input, "654654654654654654654");
-                });
-
                 it("should prepend country code for too short input", async function () {
                     await Promise.all([
                         page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
@@ -492,18 +480,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     await submitForm(page);
                     const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone]`);
                     await checkInputValue(page, input, "36701234326");
-                });
-
-                it("should not change for too long input", async function () {
-                    await Promise.all([
-                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                        page.waitForNavigation({ waitUntil: "networkidle0" }),
-                    ]);
-
-                    await setInputValues(page, [{ name: inputName, value: "654654654654654654654" }]);
-                    await submitForm(page);
-                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone]`);
-                    await checkInputValue(page, input, "654654654654654654654");
                 });
 
                 it("should not change for too short input", async function () {

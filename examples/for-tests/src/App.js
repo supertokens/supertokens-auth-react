@@ -117,9 +117,7 @@ if (themeQueryParams !== null) {
 const theme = getTheme();
 
 function getTheme() {
-    let theme = {
-        colors: {},
-    };
+    let theme = "";
 
     const themeParams = window.localStorage.getItem("useTheme");
 
@@ -491,10 +489,10 @@ function getEmailVerificationConfigs({ disableDefaultUI }) {
         useShadowDom,
         disableDefaultUI,
         sendVerifyEmailScreen: {
-            style: theme.style,
+            style: theme,
         },
         verifyEmailLinkClickedScreen: {
-            style: theme.style,
+            style: theme,
         },
         mode: emailVerificationMode,
         getRedirectionURL: async (context) => {
@@ -544,11 +542,11 @@ function getEmailVerificationConfigs({ disableDefaultUI }) {
 
 function getEmailPasswordConfigs({ disableDefaultUI }) {
     return EmailPassword.init({
-        style: {
-            container: {
-                fontFamily: "cursive",
-            },
-        },
+        style: `          
+            [data-supertokens~=container] {
+                font-family: cursive;
+            }
+        `,
         override: {
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS EMAIL_PASSWORD OVERRIDE`);
@@ -578,7 +576,6 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
                 };
             },
         },
-        palette: theme.colors,
         preAPIHook: async (context) => {
             if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `EMAIL_PASSWORD ${context.action}`) {
                 let errorFromStorage = localStorage.getItem("TRANSLATED_GENERAL_ERROR");
@@ -612,20 +609,20 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
         resetPasswordUsingTokenFeature: {
             disableDefaultUI,
             enterEmailForm: {
-                style: theme.style,
+                style: theme,
             },
             submitNewPasswordForm: {
-                style: theme.style,
+                style: theme,
             },
         },
         signInAndUpFeature: {
             disableDefaultUI,
             defaultToSignUp,
             signInForm: {
-                style: theme.style,
+                style: theme,
             },
             signUpForm: {
-                style: theme.style,
+                style: theme,
                 privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
                 formFields,
@@ -636,11 +633,6 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
 
 function getThirdPartyPasswordlessConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
     return ThirdPartyPasswordless.init({
-        style: {
-            container: {
-                // fontFamily: "cursive",
-            },
-        },
         override: {
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE`);
@@ -702,7 +694,6 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultUI, thirdPartyRedirect
                 };
             },
         },
-        palette: theme.colors,
         preAPIHook: async (context) => {
             if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `THIRD_PARTY_PASSWORDLESS ${context.action}`) {
                 if (context.action === "GET_AUTHORISATION_URL") {
@@ -735,12 +726,12 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultUI, thirdPartyRedirect
         disablePasswordless: false,
         signInUpFeature: {
             disableDefaultUI,
-            style: theme.style,
-            thirdPartyProviderAndEmailOrPhoneFormStyle: {
-                providerCustom: {
-                    color: "red",
+            style: theme,
+            thirdPartyProviderAndEmailOrPhoneFormStyle: `
+                [data-supertokens~=providerCustom] {
+                    color: red;
                 },
-            },
+            `,
             privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
             termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
             providers: [
@@ -766,18 +757,13 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultUI, thirdPartyRedirect
         },
         linkClickedScreenFeature: {
             disableDefaultUI,
-            style: theme.style,
+            style: theme,
         },
     });
 }
 
 function getPasswordlessConfigs({ disableDefaultUI }) {
     return Passwordless.init({
-        style: {
-            container: {
-                // fontFamily: "cursive",
-            },
-        },
         override: {
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS PASSWORDLESS OVERRIDE`);
@@ -819,7 +805,6 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
                 };
             },
         },
-        palette: theme.colors,
         preAPIHook: async (context) => {
             if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `PASSWORDLESS ${context.action}`) {
                 let jsonBody = JSON.parse(context.requestInit.body);
@@ -852,25 +837,25 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
                 : undefined,
             resendEmailOrSMSGapInSeconds: 2,
             disableDefaultUI,
-            style: theme.style,
+            style: theme,
 
             privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
             termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
         },
         linkClickedScreenFeature: {
             disableDefaultUI,
-            style: theme.style,
+            style: theme,
         },
     });
 }
 
 function getThirdPartyConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
     return ThirdParty.init({
-        style: {
-            container: {
-                fontFamily: "cursive",
-            },
-        },
+        style: `          
+            [data-supertokens~=container] {
+                font-family: cursive;
+            }
+        `,
         preAPIHook: async (context) => {
             if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `THIRD_PARTY ${context.action}`) {
                 if (context.action === "GET_AUTHORISATION_URL") {
@@ -928,10 +913,9 @@ function getThirdPartyConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
             },
         },
         useShadowDom,
-        palette: theme.colors,
         signInAndUpFeature: {
             disableDefaultUI,
-            style: theme.style,
+            style: theme,
             privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
             termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
             providers: [
@@ -952,7 +936,7 @@ function getThirdPartyConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
         },
 
         oAuthCallbackScreen: {
-            style: theme.style,
+            style: theme,
         },
     });
 }
@@ -1122,7 +1106,6 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultUI, thirdPartyRedirec
             },
         },
         useShadowDom,
-        palette: theme.colors,
         resetPasswordUsingTokenFeature: {
             disableDefaultUI,
         },
@@ -1134,7 +1117,7 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultUI, thirdPartyRedirec
                 privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
             },
-            style: theme.style,
+            style: theme,
             providers: [
                 ThirdPartyEmailPassword.Github.init(),
                 ThirdPartyEmailPassword.Google.init(),
@@ -1154,7 +1137,7 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultUI, thirdPartyRedirec
         disableEmailPassword: false,
 
         oAuthCallbackScreen: {
-            style: theme.style,
+            style: theme,
         },
     });
 }

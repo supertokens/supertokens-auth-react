@@ -32,21 +32,23 @@ SuperTokens.init({
                 disableDefaultImplementation: true, // this disables showing the default sign in + sign up component
 
                 signInForm: {
-                    style: {
-                        headerSubtitle: {
-                            display: "none", // hides the element that shows switch to the sign up form
-                        },
-                        divider: {
-                            display: "none", // hides the divider in the sign in UI
-                        },
-                    },
+                    // hides the element that shows switch to the sign up form and the divider in the sign in UI
+                    style: `
+                        [data-supertokens~=headerSubtitle] {
+                            display: none;
+                        }
+                        [data-supertokens~=divider] {
+                            display: none; 
+                        }
+                    `,
                 },
                 signUpForm: {
-                    style: {
-                        headerSubtitle: {
-                            display: "none", // hides the element that shows switch to the sign in form
-                        },
-                    },
+                    // hides the element that shows switch to the sign in form
+                    style: `
+                        [data-supertokens~=headerSubtitle] {
+                            display: none;
+                        }
+                    `,
                 },
             },
             getRedirectionURL: function (context) {

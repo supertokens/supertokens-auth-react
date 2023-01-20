@@ -12,22 +12,16 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { useContext } from "react";
-import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 
 export const SignInFooter = withOverride(
     "EmailPasswordSignInFooter",
     function EmailPasswordSignInFooter({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
-        const styles = useContext(StyleContext);
         const t = useTranslation();
 
         return (
-            <div
-                data-supertokens="link secondaryText forgotPasswordLink"
-                css={[styles.link, styles.secondaryText, styles.forgotPasswordLink]}
-                onClick={onClick}>
+            <div data-supertokens="link secondaryText forgotPasswordLink" onClick={onClick}>
                 {t("EMAIL_PASSWORD_SIGN_IN_FOOTER_FORGOT_PW_LINK")}
             </div>
         );
