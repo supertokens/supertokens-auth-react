@@ -61,7 +61,7 @@ function PhoneNumberInput({
         }
     }
 
-    const [initializedPhoneInput, setInitializedPhoneInput] = useState(false);
+    const [phoneInputInstance, setPhoneInputInstance] = useState<intlTelInput.Plugin>();
 
     const onChangeRef = useRef<typeof onChange>();
     useEffect(() => {
@@ -82,7 +82,7 @@ function PhoneNumberInput({
 
     const handleCountryChange = useCallback(
         (ev) => {
-            if (onChangeRef.current !== undefined && initializedPhoneInput) {
+            if (onChangeRef.current !== undefined && phoneInputInstance !== undefined) {
                 onChangeRef.current({
                     id: name,
                     value: ev.target.value,
@@ -95,14 +95,22 @@ function PhoneNumberInput({
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
+        if (inputRef.current !== null && inputRef.current.value !== value && phoneInputInstance) {
+            phoneInputInstance.setNumber(value);
+        }
+    }, [phoneInputInstance, value]);
+
+    useEffect(() => {
         if (inputRef.current !== null && inputRef.current.dataset["intl-tel-input-id"] === undefined) {
-            inputRef.current.value = value;
             const iti = intlTelInput(inputRef.current, {
                 initialCountry: defaultCountry,
                 nationalMode: false,
                 preferredCountries: defaultCountry ? [defaultCountry] : [],
             });
-            if (defaultCountry === undefined && value === "") {
+
+            if (value.length > 0) {
+                iti.setNumber(value);
+            } else if (defaultCountry === undefined) {
                 // We set the country to an empty string, because this will display the Unknown flag
                 // instead of the first one in the list
                 iti.setCountry("");
@@ -129,7 +137,7 @@ function PhoneNumberInput({
                 }
             }
             inputRef.current.addEventListener("countrychange", handleCountryChange);
-            setInitializedPhoneInput(true);
+            setPhoneInputInstance(iti);
         }
     }, []);
 
@@ -159,11 +167,7 @@ function PhoneNumberInput({
                     onChange={(ev) => {
                         // We do this to ensure that country detection starts working as soon as the user starts typing.
                         // This also replicates how the old lib worked (automatically formatting to an international number)
-                        if (
-                            ev.target.value.length > 0 &&
-                            !ev.target.value.startsWith("+") &&
-                            !ev.target.value.startsWith(" ")
-                        ) {
+                        if (ev.target.value.trim().length > 0 && !ev.target.value.trim().startsWith("+")) {
                             ev.target.value = "+" + ev.target.value.trim();
                         }
 
