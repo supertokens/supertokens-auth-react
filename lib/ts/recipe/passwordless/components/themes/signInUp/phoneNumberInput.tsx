@@ -114,6 +114,11 @@ function PhoneNumberInput({
                 // We set the country to an empty string, because this will display the Unknown flag
                 // instead of the first one in the list
                 iti.setCountry("");
+            } else {
+                // if we get here that means that value is empty and defaultCountry is not undefined
+                const data = iti.getSelectedCountryData();
+                // In this case we want to also signal to the embedding form that we are prefilling this.
+                handleChange("+" + data.dialCode);
             }
 
             // This is a workaround, since the lib adds the dropdown to the body directly,
