@@ -39,9 +39,7 @@ SuperTokens.init({
             },
             contactMethod: "EMAIL_OR_PHONE",
         }),
-        Session.init({
-            tokenTransferMethod: "header",
-        }),
+        Session.init(),
     ],
 });
 
