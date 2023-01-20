@@ -165,7 +165,7 @@ while IFS='"' read -ra ADDR; do
     done
 done <<< "$version"
 
-codeversion=`cat lib/build/version.js | grep -e 'package_version'`
+codeversion=`cat lib/build/version.d.ts | grep -e 'package_version'`
 while IFS='"' read -ra ADDR; do
     counter=0
     for i in "${ADDR[@]}"; do
