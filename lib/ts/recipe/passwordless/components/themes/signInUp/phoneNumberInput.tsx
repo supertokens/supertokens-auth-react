@@ -19,7 +19,7 @@
 import phoneNumberInputLibStyles from "intl-tel-input/build/css/intlTelInput.css";
 import intlTelInput from "intl-tel-input";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { InputProps } from "../../../../emailpassword/components/library/input";
 import ErrorIcon from "../../../../../components/assets/errorIcon";
@@ -61,7 +61,9 @@ function PhoneNumberInput({
         }
     }
 
-    const onChangeRef = useRef(onChange);
+    const [initializedPhoneInput, setInitializedPhoneInput] = useState(false);
+
+    const onChangeRef = useRef<typeof onChange>();
     useEffect(() => {
         onChangeRef.current = onChange;
     }, [onChange]);
@@ -80,7 +82,7 @@ function PhoneNumberInput({
 
     const handleCountryChange = useCallback(
         (ev) => {
-            if (onChangeRef.current !== undefined) {
+            if (onChangeRef.current !== undefined && initializedPhoneInput) {
                 onChangeRef.current({
                     id: name,
                     value: ev.target.value,
@@ -127,6 +129,7 @@ function PhoneNumberInput({
                 }
             }
             inputRef.current.addEventListener("countrychange", handleCountryChange);
+            setInitializedPhoneInput(true);
         }
     }, []);
 
@@ -156,8 +159,12 @@ function PhoneNumberInput({
                     onChange={(ev) => {
                         // We do this to ensure that country detection starts working as soon as the user starts typing.
                         // This also replicates how the old lib worked (automatically formatting to an international number)
-                        if (!ev.target.value.startsWith("+")) {
-                            ev.target.value = "+" + ev.target.value;
+                        if (
+                            ev.target.value.length > 0 &&
+                            !ev.target.value.startsWith("+") &&
+                            !ev.target.value.startsWith(" ")
+                        ) {
+                            ev.target.value = "+" + ev.target.value.trim();
                         }
 
                         handleChange(ev.target.value);

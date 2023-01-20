@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { getRecipeIdFromSearch, validateForm, appendQueryParamsToURL } from "../../lib/build/utils";
+import { getRecipeIdFromSearch, validateForm, appendQueryParamsToURL } from "../../lib/ts/utils";
 
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
@@ -22,7 +22,6 @@ import { mockWindowLocation } from "../helpers";
 
 describe("Config tests", function () {
     beforeEach(async function () {
-        global.document = {};
         mockWindowLocation("http://localhost.org");
     });
 
@@ -139,14 +138,14 @@ describe("Config tests", function () {
         try {
             normaliseURLDomainOrThrowError("/one/two");
             assert(false);
-        } catch (err) {
+        } catch (err: any) {
             assert(err.message === "Please provide a valid domain name");
         }
 
         try {
             normaliseURLDomainOrThrowError("/.netlify/functions/api");
             assert(false);
-        } catch (err) {
+        } catch (err: any) {
             assert(err.message === "Please provide a valid domain name");
         }
     });
