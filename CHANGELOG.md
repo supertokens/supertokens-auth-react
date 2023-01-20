@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.30.1] - 2023-01-20
+
+### Bugfixes
+
+-   Fixed guessing internation phone number in passwordless with EMAIL_OR_PHONE contact method if the number starts with a valid country dial code
+
 ## [0.30.0] - 2023-01-20
 
 ### Changes

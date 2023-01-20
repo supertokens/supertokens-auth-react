@@ -137,11 +137,12 @@ export async function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
         return undefined;
     }
     // We try to make sense of it again by filtering for just numbers
-    const onlyNumbers = value.replace(/\D/g, "");
+    // We also remove the leading 00 as it's the same as a plus sign which we re-add anyway
+    const filteredInput = "+" + value.replace(/\D/g, "").replace(/^00/, "");
 
-    if (intlTelInputUtils.isValidNumber(onlyNumbers, defaultCountryFromConfig!)) {
+    if (intlTelInputUtils.isValidNumber(filteredInput, defaultCountryFromConfig!)) {
         return intlTelInputUtils.formatNumber(
-            onlyNumbers,
+            filteredInput,
             defaultCountryFromConfig!,
             intlTelInputUtils.numberFormat.E164
         );
@@ -151,21 +152,22 @@ export async function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
         .windowHandler.getWindowUnsafe()
         .intlTelInputGlobals.getCountryData();
     const matchingCountryCodes = countryData
-        .filter((c: CountryData) => onlyNumbers.startsWith(c.dialCode))
+        .filter((c: CountryData) => filteredInput.startsWith("+" + c.dialCode))
         .map((c: CountryData) => c.iso2);
 
     for (const code of matchingCountryCodes) {
-        if (intlTelInputUtils.isValidNumber(onlyNumbers, code)) {
-            return intlTelInputUtils.formatNumber(onlyNumbers, code, intlTelInputUtils.numberFormat.E164);
+        if (intlTelInputUtils.isValidNumber(filteredInput, code)) {
+            return intlTelInputUtils.formatNumber(filteredInput, code, intlTelInputUtils.numberFormat.E164);
         }
     }
     if (defaultCountryFromConfig) {
         const defaultCountry = countryData.find((c: CountryData) => c.iso2 === defaultCountryFromConfig.toLowerCase());
 
         if (defaultCountry) {
-            return "+" + defaultCountry.dialCode + onlyNumbers;
+            return "+" + defaultCountry.dialCode + filteredInput.substring(1);
         }
     }
+
     // We want to return the value as an international number because the phone number input lib expects it this way
-    return "+" + onlyNumbers;
+    return filteredInput;
 }
