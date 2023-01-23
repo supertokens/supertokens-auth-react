@@ -14,7 +14,7 @@
  */
 
 import { Dispatch } from "react";
-import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
+import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -24,7 +24,6 @@ import {
 } from "../authRecipe/types";
 
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { CountryCode } from "libphonenumber-js";
 import { SignInUpHeader } from "./components/themes/signInUp/signInUpHeader";
 import { SignInUpFooter } from "./components/themes/signInUp/signInUpFooter";
 import { EmailForm } from "./components/themes/signInUp/emailForm";
@@ -89,19 +88,19 @@ export type NormalisedConfig = {
 
     signInUpFeature: {
         resendEmailOrSMSGapInSeconds: number;
-        defaultCountry?: CountryCode;
+        defaultCountry?: string;
         guessInternationPhoneNumberFromInputPhoneNumber: (
             inputPhoneNumber: string,
-            defaultCountryFromConfig?: CountryCode
+            defaultCountryFromConfig?: string
         ) => Promise<string | undefined> | string | undefined;
 
         privacyPolicyLink?: string;
         termsOfServiceLink?: string;
 
-        emailOrPhoneFormStyle: Styles;
-        userInputCodeFormStyle: Styles;
-        linkSentScreenStyle: Styles;
-        closeTabScreenStyle: Styles;
+        emailOrPhoneFormStyle: string;
+        userInputCodeFormStyle: string;
+        linkSentScreenStyle: string;
+        closeTabScreenStyle: string;
 
         disableDefaultUI?: boolean;
     };
@@ -134,10 +133,10 @@ export type SignInUpFeatureConfigInput = {
      */
     termsOfServiceLink?: string;
 
-    emailOrPhoneFormStyle?: Styles;
-    userInputCodeFormStyle?: Styles;
-    linkSentScreenStyle?: Styles;
-    closeTabScreenStyle?: Styles;
+    emailOrPhoneFormStyle?: string;
+    userInputCodeFormStyle?: string;
+    linkSentScreenStyle?: string;
+    closeTabScreenStyle?: string;
 };
 
 export type UserInput = (
@@ -157,7 +156,7 @@ export type UserInput = (
               /*
                * Must be a two-letter ISO country code (e.g.: "US")
                */
-              defaultCountry?: CountryCode;
+              defaultCountry?: string;
           };
       }
     | {
@@ -170,11 +169,11 @@ export type UserInput = (
               /*
                * Must be a two-letter ISO country code (e.g.: "US")
                */
-              defaultCountry?: CountryCode;
+              defaultCountry?: string;
 
               guessInternationPhoneNumberFromInputPhoneNumber?: (
                   inputPhoneNumber: string,
-                  defaultCountryFromConfig?: CountryCode
+                  defaultCountryFromConfig?: string
               ) => Promise<string | undefined> | string | undefined;
           };
       }

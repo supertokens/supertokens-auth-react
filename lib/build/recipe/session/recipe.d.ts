@@ -8,7 +8,7 @@ import {
 } from "../../types";
 import { RecipeEventWithSessionContext, InputType } from "./types";
 import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
-import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
+import { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import { SessionClaim } from "supertokens-web-js/recipe/session";
 declare type ConfigType = InputType & {
     recipeId: string;

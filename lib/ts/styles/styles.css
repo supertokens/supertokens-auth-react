@@ -1,0 +1,252 @@
+[data-supertokens~="container"] {
+    --palette-background: 255, 255, 255;
+    --palette-inputBackground: 250, 250, 250;
+    --palette-inputBorder: 224, 224, 224;
+    --palette-primary: 255, 155, 51;
+    --palette-primaryBorder: 238, 141, 35;
+    --palette-success: 65, 167, 0;
+    --palette-successBackground: 217, 255, 191;
+    --palette-error: 255, 23, 23;
+    --palette-errorBackground: 255, 241, 235;
+    --palette-textTitle: 34, 34, 34;
+    --palette-textLabel: 34, 34, 34;
+    --palette-textInput: 34, 34, 34;
+    --palette-textPrimary: 101, 101, 101;
+    --palette-textLink: 0, 118, 255;
+    --palette-buttonText: 255, 255, 255;
+    --palette-superTokensBrandingBackground: 242, 245, 246;
+    --palette-superTokensBrandingText: 173, 189, 196;
+
+    --font-size-0: 12px;
+    --font-size-1: 14px;
+    --font-size-2: 16px;
+    --font-size-3: 19px;
+    --font-size-4: 24px;
+}
+/*
+ * Default styles.
+ */
+@keyframes slideTop {
+    0% {
+        transform: translateY(-5px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+@keyframes swing-in-top-fwd {
+    0% {
+        -webkit-transform: rotateX(-100deg);
+        transform: rotateX(-100deg);
+        -webkit-transform-origin: top;
+        transform-origin: top;
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: rotateX(0deg);
+        transform: rotateX(0deg);
+        -webkit-transform-origin: top;
+        transform-origin: top;
+        opacity: 1;
+    }
+}
+
+[data-supertokens~="container"] {
+    font-family: "Rubik", sans-serif;
+    margin: 12px auto;
+    margin-top: 26px;
+    margin-bottom: 26px;
+    width: 420px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.16);
+    background-color: rgb(var(--palette-background));
+}
+
+@media (max-width: 440px) {
+    [data-supertokens~="container"] {
+        width: 95vw;
+    }
+}
+[data-supertokens~="row"] {
+    margin: 0 auto;
+    width: 76%;
+    padding-top: 30px;
+    padding-bottom: 10px;
+}
+
+[data-supertokens~="superTokensBranding"] {
+    display: block;
+    margin: 0 auto;
+    background: rgb(var(--palette-superTokensBrandingBackground));
+    color: rgb(var(--palette-superTokensBrandingText));
+    text-decoration: none;
+    width: fit-content;
+    border-radius: 6px 6px 0 0;
+    padding: 4px 9px;
+    font-weight: 300;
+    font-size: var(--font-size-0);
+    letter-spacing: 0.4px;
+}
+
+[data-supertokens~="generalError"] {
+    background: rgb(var(--palette-errorBackground));
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    padding-left: 18px;
+    padding-right: 18px;
+    letter-spacing: 0.2px;
+    font-size: var(--font-size-1);
+    border-radius: 8px;
+    color: rgb(var(--palette-error));
+    animation: swing-in-top-fwd 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    overflow-wrap: break-word;
+}
+
+[data-supertokens~="headerTitle"] {
+    font-size: var(--font-size-4);
+    line-height: 40px;
+    letter-spacing: 0.58px;
+    font-weight: 800;
+    margin-bottom: 2px;
+    color: rgb(var(--palette-textTitle));
+}
+
+[data-supertokens~="headerSubtitle"] {
+    margin-bottom: 21px;
+}
+
+[data-supertokens~="privacyPolicyAndTermsAndConditions"] {
+    max-width: 300px;
+    margin-top: 10px;
+}
+
+[data-supertokens~="privacyPolicyAndTermsAndConditions"] a {
+    line-height: 21px;
+}
+
+/* TODO: split the link style into separate things*/
+/* We add this before primary and secondary text, because if they are applied to the same element the other ones take priority */
+[data-supertokens~="link"] {
+    padding-left: 3px;
+    padding-right: 3px;
+    color: rgb(var(--palette-textLink));
+    font-size: var(--font-size-1);
+    cursor: pointer;
+    letter-spacing: 0.16px;
+    line-height: 26px;
+}
+
+[data-supertokens~="primaryText"] {
+    font-size: var(--font-size-1);
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    line-height: 21px;
+    color: rgb(var(--palette-textLabel));
+}
+
+[data-supertokens~="secondaryText"] {
+    font-size: var(--font-size-1);
+    font-weight: 300;
+    letter-spacing: 0.4px;
+    color: rgb(var(--palette-textPrimary));
+}
+
+[data-supertokens~="divider"] {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    border-bottom: 0.3px solid #dddddd;
+    align-items: center;
+    padding-bottom: 5px;
+}
+
+[data-supertokens~="headerTinyTitle"] {
+    margin-top: 13px;
+    font-size: var(--font-size-3);
+    letter-spacing: 1.1px;
+    font-weight: 500;
+    line-height: 28px;
+}
+
+[data-supertokens~="secondaryLinkWithArrow"] {
+    margin-top: 10px;
+    margin-bottom: 30px;
+    cursor: pointer;
+}
+[data-supertokens~="secondaryLinkWithArrow"]:hover {
+    position: relative;
+    left: 2px;
+    word-spacing: 4px;
+}
+
+[data-supertokens~="generalSuccess"] {
+    color: rgb(var(--palette-success));
+    font-size: var(--font-size-1);
+    background: rgb(var(--palette-successBackground));
+    animation: swing-in-top-fwd 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    padding: 9px 15px 9px 15px;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+[data-supertokens~="spinner"] {
+    width: 80px;
+    height: auto;
+    padding-top: 20px;
+    padding-bottom: 40px;
+    margin: 0 auto;
+}
+
+[data-supertokens~="error"] {
+    color: rgb(var(--palette-error));
+}
+
+[data-supertokens~="linkButton"] {
+    background-color: transparent;
+    border: 0;
+}
+
+[data-supertokens~="secondaryLinkWithLeftArrow"] {
+    margin-top: 10px;
+    margin-bottom: 40px;
+    cursor: pointer;
+}
+[data-supertokens~="secondaryLinkWithLeftArrow"] svg {
+    margin-right: 0.3em;
+}
+[data-supertokens~="secondaryLinkWithLeftArrow"]:hover svg {
+    position: relative;
+    left: -4px;
+}
+
+[data-supertokens~="button"] {
+    background-color: rgb(var(--palette-primary));
+    color: rgb(var(--palette-buttonText));
+    width: 100%;
+    height: 34px;
+    font-weight: 700;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 6px;
+    border-color: rgb(var(--palette-primaryBorder));
+    background-position: center;
+    transition: all 0.4s;
+    background-size: 12000%;
+}
+[data-supertokens~="button"]:disabled {
+    border: none;
+    cursor: no-drop;
+}
+
+[data-supertokens~="button"]:active {
+    outline: none;
+    transition: all 0s;
+    background-size: 100%;
+    filter: brightness(0.85);
+}
+
+[data-supertokens~="button"]:focus {
+    outline: none;
+}

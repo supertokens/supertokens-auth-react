@@ -12,31 +12,21 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-/*
- * Imports.
- */
-import { useContext } from "react";
-import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { CloseTabScreenProps } from "../../../types";
 import CheckedRoundIcon from "../../../../../components/assets/checkedRoundIcon";
 import { useTranslation } from "../../../../../translation/translationContext";
 
 const PasswordlessCloseTabScreen: React.FC<CloseTabScreenProps> = () => {
-    const styles = useContext(StyleContext);
     const t = useTranslation();
 
     return (
-        <div data-supertokens="container" css={styles.container}>
-            <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
-                <CheckedRoundIcon color={styles.palette.colors.success} />
-                <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                    {t("PWLESS_CLOSE_TAB_TITLE")}
-                </div>
-                <div data-supertokens="divider" css={styles.divider} />
-                <div
-                    data-supertokens="headerSubtitle secondaryText"
-                    css={[styles.headerSubtitle, styles.secondaryText]}>
+        <div data-supertokens="container">
+            <div data-supertokens="row noFormRow">
+                <CheckedRoundIcon />
+                <div data-supertokens="headerTitle">{t("PWLESS_CLOSE_TAB_TITLE")}</div>
+                <div data-supertokens="divider" />
+                <div data-supertokens="headerSubtitle secondaryText">
                     {t("PWLESS_CLOSE_TAB_SUBTITLE_LINE1")}
                     <br />
                     {t("PWLESS_CLOSE_TAB_SUBTITLE_LINE2")}

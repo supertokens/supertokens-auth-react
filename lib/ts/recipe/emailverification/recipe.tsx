@@ -40,7 +40,7 @@ import { NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
 import { SessionAuth } from "../session";
 import { EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
-import { SessionClaimValidatorStore } from "supertokens-website/utils/sessionClaimValidatorStore";
+import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { UserContextContext } from "../../usercontext";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";

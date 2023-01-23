@@ -13,12 +13,6 @@
  * under the License.
  */
 
-/*
- * Imports.
- */
-
-import { useContext } from "react";
-import StyleContext from "../../../../styles/styleContext";
 import HeavyArrowLeftIcon from "../../../../components/assets/heavyArrowLeftIcon";
 
 /*
@@ -34,14 +28,9 @@ type ButtonProps = {
  */
 
 export default function BackButton({ onClick }: ButtonProps): JSX.Element {
-    const styles = useContext(StyleContext);
-
     return (
-        <button
-            onClick={onClick}
-            css={[styles.backButton, styles.backButtonCommon]}
-            data-supertokens="backButton backButtonCommon">
-            <HeavyArrowLeftIcon color={styles.palette.colors.textTitle} />
+        <button onClick={onClick} data-supertokens="backButton backButtonCommon">
+            <HeavyArrowLeftIcon color="rgb(var(--palette-textTitle))" />
         </button>
     );
 }

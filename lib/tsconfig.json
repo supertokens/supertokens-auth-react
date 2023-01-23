@@ -5,12 +5,11 @@
         "allowSyntheticDefaultImports": true,
         "strictNullChecks": true,
         "noImplicitThis": true,
-        "module": "commonJS",
+        "module": "ESNext",
         "outDir": "build",
         "moduleResolution": "node",
         "declaration": true,
         "jsx": "react-jsx",
-        "jsxImportSource": "@emotion/react",
         "esModuleInterop": true,
         "sourceMap": false,
         "skipLibCheck": true,
@@ -20,7 +19,7 @@
         "noImplicitReturns": true,
         "importHelpers": false,
         "noFallthroughCasesInSwitch": true,
-        "types": ["node", "react", "@emotion/react/types/css-prop"]
+        "types": ["node", "react"]
     },
     "compileOnSave": true
 }

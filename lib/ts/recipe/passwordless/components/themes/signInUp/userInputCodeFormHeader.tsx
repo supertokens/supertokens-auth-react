@@ -12,8 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { Fragment, useContext } from "react";
-import StyleContext from "../../../../../styles/styleContext";
+import { Fragment } from "react";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { UserInputCodeFormHeaderProps } from "../../../types";
 import { useTranslation } from "../../../../../translation/translationContext";
@@ -21,24 +20,19 @@ import { useTranslation } from "../../../../../translation/translationContext";
 export const UserInputCodeFormHeader = withOverride(
     "PasswordlessUserInputCodeFormHeader",
     function PasswordlessUserInputCodeFormHeader({ loginAttemptInfo }: UserInputCodeFormHeaderProps): JSX.Element {
-        const styles = useContext(StyleContext);
         const t = useTranslation();
 
         return (
             <Fragment>
-                <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                    {t("PWLESS_USER_INPUT_CODE_HEADER_TITLE")}
-                </div>
-                <div
-                    data-supertokens="headerSubtitle secondaryText"
-                    css={[styles.headerSubtitle, styles.secondaryText]}>
+                <div data-supertokens="headerTitle">{t("PWLESS_USER_INPUT_CODE_HEADER_TITLE")}</div>
+                <div data-supertokens="headerSubtitle secondaryText">
                     {loginAttemptInfo.flowType === "USER_INPUT_CODE"
                         ? t("PWLESS_USER_INPUT_CODE_HEADER_SUBTITLE")
                         : t("PWLESS_USER_INPUT_CODE_HEADER_SUBTITLE_LINK")}
                     <br />
                     <strong>{loginAttemptInfo.contactInfo}</strong>
                 </div>
-                <div data-supertokens="divider" css={styles.divider}></div>
+                <div data-supertokens="divider"></div>
             </Fragment>
         );
     }

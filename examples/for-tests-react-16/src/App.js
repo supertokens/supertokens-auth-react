@@ -489,10 +489,10 @@ function getEmailVerificationConfigs({ disableDefaultUI }) {
     return EmailVerification.init({
         disableDefaultUI,
         sendVerifyEmailScreen: {
-            style: theme.style,
+            style: theme,
         },
         verifyEmailLinkClickedScreen: {
-            style: theme.style,
+            style: theme,
         },
         mode: emailVerificationMode,
         getRedirectionURL: async (context) => {
@@ -542,11 +542,11 @@ function getEmailVerificationConfigs({ disableDefaultUI }) {
 
 function getEmailPasswordConfigs({ disableDefaultUI }) {
     return EmailPassword.init({
-        style: {
-            container: {
-                fontFamily: "cursive",
-            },
-        },
+        style: `
+            [data-supertokens~=container] {
+                font-family: cursive;
+            }
+        `,
         override: {
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS EMAIL_PASSWORD OVERRIDE`);
@@ -576,7 +576,6 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
                 };
             },
         },
-        palette: theme.colors,
         preAPIHook: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
             return context;
@@ -619,11 +618,6 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
 
 function getThirdPartyPasswordlessConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
     return ThirdPartyPasswordless.init({
-        style: {
-            container: {
-                // fontFamily: "cursive",
-            },
-        },
         override: {
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE`);
@@ -685,7 +679,6 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultUI, thirdPartyRedirect
                 };
             },
         },
-        palette: theme.colors,
         preAPIHook: async (context) => {
             console.log(`ST_LOGS THIRDPARTYPASSWORDLESS PRE_API_HOOKS ${context.action}`);
             return context;
@@ -706,11 +699,11 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultUI, thirdPartyRedirect
         signInUpFeature: {
             disableDefaultUI,
             style: theme.style,
-            thirdPartyProviderAndEmailOrPhoneFormStyle: {
-                providerCustom: {
-                    color: "red",
+            thirdPartyProviderAndEmailOrPhoneFormStyle: `
+                [data-supertokens~=providerCustom] {
+                    color: red;
                 },
-            },
+            `,
             privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
             termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
             providers: [
@@ -743,11 +736,6 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultUI, thirdPartyRedirect
 
 function getPasswordlessConfigs({ disableDefaultUI }) {
     return Passwordless.init({
-        style: {
-            container: {
-                // fontFamily: "cursive",
-            },
-        },
         override: {
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS PASSWORDLESS OVERRIDE`);
@@ -789,7 +777,6 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
                 };
             },
         },
-        palette: theme.colors,
         preAPIHook: async (context) => {
             console.log(`ST_LOGS PASSWORDLESS PRE_API_HOOKS ${context.action}`);
             return context;
@@ -827,11 +814,12 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
 
 function getThirdPartyConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
     return ThirdParty.init({
-        style: {
-            container: {
-                fontFamily: "cursive",
-            },
-        },
+        style: `
+            [data-supertokens~=container] {
+                font-family: cursive;
+            }
+        `,
+
         preAPIHook: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY PRE_API_HOOKS ${context.action}`);
             return context;
@@ -876,7 +864,6 @@ function getThirdPartyConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
             },
         },
         useShadowDom,
-        palette: theme.colors,
         signInAndUpFeature: {
             disableDefaultUI,
             style: theme.style,
@@ -1057,7 +1044,6 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultUI, thirdPartyRedirec
             },
         },
         useShadowDom,
-        palette: theme.colors,
         resetPasswordUsingTokenFeature: {
             disableDefaultUI,
         },

@@ -7,19 +7,21 @@ let { getBackendConfig } = require("../../config/supertokensConfig");
 
 supertokens.init(getBackendConfig());
 
-module.exports.handler = middy(middleware(async (event, context) => {
-    if (event.httpMethod === "OPTIONS") {
-        return {
-            statusCode: 200,
-            body: ""
+module.exports.handler = middy(
+    middleware(async (event, context) => {
+        if (event.httpMethod === "OPTIONS") {
+            return {
+                statusCode: 200,
+                body: "",
+            };
         }
-    }
-    
-    return {
-        statusCode: 404,
-        body: "",
-    }
-})).use(
+
+        return {
+            statusCode: 404,
+            body: "",
+        };
+    })
+).use(
     cors({
         origin: getBackendConfig().appInfo.websiteDomain,
         credentials: true,

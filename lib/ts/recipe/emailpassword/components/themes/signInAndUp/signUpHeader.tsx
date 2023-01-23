@@ -16,32 +16,28 @@
 /*
  * Imports
  */
-import { Fragment, useContext } from "react";
-import StyleContext from "../../../../../styles/styleContext";
+import { Fragment } from "react";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 
 export const SignUpHeader = withOverride(
     "EmailPasswordSignUpHeader",
     function EmailPasswordSignUpHeader({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
-        const styles = useContext(StyleContext);
         const t = useTranslation();
 
         return (
             <Fragment>
-                <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                    {t("EMAIL_PASSWORD_SIGN_UP_HEADER_TITLE")}
-                </div>
-                <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
-                    <div data-supertokens="secondaryText" css={styles.secondaryText}>
+                <div data-supertokens="headerTitle">{t("EMAIL_PASSWORD_SIGN_UP_HEADER_TITLE")}</div>
+                <div data-supertokens="headerSubtitle">
+                    <div data-supertokens="secondaryText">
                         {t("EMAIL_PASSWORD_SIGN_UP_HEADER_SUBTITLE_START")}
-                        <span data-supertokens="link" onClick={onClick} css={styles.link}>
+                        <span data-supertokens="link" onClick={onClick}>
                             {t("EMAIL_PASSWORD_SIGN_UP_HEADER_SUBTITLE_SIGN_IN_LINK")}
                         </span>
                         {t("EMAIL_PASSWORD_SIGN_UP_HEADER_SUBTITLE_END")}
                     </div>
                 </div>
-                <div data-supertokens="divider" css={styles.divider}></div>
+                <div data-supertokens="divider"></div>
             </Fragment>
         );
     }

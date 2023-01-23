@@ -22,7 +22,7 @@ import {
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
-import OverrideableBuilder from "supertokens-js-override";
+import { OverrideableBuilder } from "supertokens-js-override";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
 export type ComponentOverrideMap = {

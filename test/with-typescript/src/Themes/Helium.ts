@@ -1,5 +1,3 @@
-import { CSSObject } from "@emotion/react";
-
 const HeliumTheme = {
     colors: {
         background: "#1a1925",
@@ -106,7 +104,7 @@ const HeliumTheme = {
             maxWidth: "100%",
             marginTop: "25px",
         },
-    } as Record<string, CSSObject>,
+    },
 };
 
 export default HeliumTheme;

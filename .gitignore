@@ -14,3 +14,4 @@ screenshot.jpeg
 /eslint/node_modules
 /test_report/
 supertokens-auth-react-*.tgz
+stats.html

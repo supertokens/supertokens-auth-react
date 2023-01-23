@@ -84,11 +84,11 @@ describe("withOverride", () => {
         expect(await Counter()).toHaveTextContent("Counter: 0");
         expect(await Foo()).toHaveTextContent("Foo: bar");
 
-        userEvent.click(await Increment());
+        await userEvent.click(await Increment());
 
         expect(await Counter()).toHaveTextContent("Counter: 1");
 
-        userEvent.click(await SwitchButton());
+        await userEvent.click(await SwitchButton());
 
         expect(await DefaultContent()).toBeInTheDocument();
 

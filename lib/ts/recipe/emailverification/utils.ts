@@ -28,7 +28,7 @@ export function normaliseEmailVerificationFeature(config?: Config): NormalisedCo
     const sendVerifyEmailScreenStyle =
         config.sendVerifyEmailScreen !== undefined && config.sendVerifyEmailScreen.style !== undefined
             ? config.sendVerifyEmailScreen.style
-            : {};
+            : "";
 
     const sendVerifyEmailScreen: NormalisedBaseConfig = {
         style: sendVerifyEmailScreenStyle,
@@ -37,7 +37,7 @@ export function normaliseEmailVerificationFeature(config?: Config): NormalisedCo
     const verifyEmailLinkClickedScreenStyle =
         config.verifyEmailLinkClickedScreen !== undefined && config.verifyEmailLinkClickedScreen.style !== undefined
             ? config.verifyEmailLinkClickedScreen.style
-            : {};
+            : "";
 
     const verifyEmailLinkClickedScreen: NormalisedBaseConfig = {
         style: verifyEmailLinkClickedScreenStyle,

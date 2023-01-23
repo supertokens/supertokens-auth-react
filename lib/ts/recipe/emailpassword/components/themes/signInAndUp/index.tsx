@@ -22,55 +22,43 @@ import { SignInAndUpThemeProps } from "../../../types";
 import { SignUp } from "./signUp";
 import { SignIn } from "./signIn";
 import { ThemeBase } from "../themeBase";
-import { StyleProvider } from "../../../../../styles/styleContext";
-import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
-import { getStyles } from "../styles/styles";
+import { hasFontDefined } from "../../../../../styles/styles";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 
 export const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
     // If isSignUp, return signUp.
     if (props.featureState.isSignUp) {
         return (
-            <StyleProvider
-                rawPalette={props.config.palette}
-                defaultPalette={defaultPalette}
-                styleFromInit={props.signUpForm.styleFromInit}
-                rootStyleFromInit={props.config.rootStyle}
-                getDefaultStyles={getStyles}>
-                <SignUp
-                    {...props.signUpForm}
-                    signInClicked={() => {
-                        props.dispatch({ type: "setSignIn" });
-                    }}
-                />
-            </StyleProvider>
+            <SignUp
+                {...props.signUpForm}
+                signInClicked={() => {
+                    props.dispatch({ type: "setSignIn" });
+                }}
+            />
         );
     }
 
     // Otherwise, return SignIn.
     return (
-        <StyleProvider
-            rawPalette={props.config.palette}
-            defaultPalette={defaultPalette}
-            styleFromInit={props.signInForm.styleFromInit}
-            rootStyleFromInit={props.config.rootStyle}
-            getDefaultStyles={getStyles}>
-            <SignIn
-                {...props.signInForm}
-                signUpClicked={() => {
-                    props.dispatch({ type: "setSignUp" });
-                }}
-            />
-        </StyleProvider>
+        <SignIn
+            {...props.signInForm}
+            signUpClicked={() => {
+                props.dispatch({ type: "setSignUp" });
+            }}
+        />
     );
 };
 
 function SignInAndUpThemeWrapper(props: SignInAndUpThemeProps): JSX.Element {
     const hasFont = hasFontDefined(props.config.rootStyle);
 
+    const activeStyle = props.featureState.isSignUp
+        ? props.config.signInAndUpFeature.signUpForm.style
+        : props.config.signInAndUpFeature.signInForm.style;
+
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase loadDefaultFont={!hasFont}>
+            <ThemeBase loadDefaultFont={!hasFont} userStyles={[props.config.rootStyle, activeStyle]}>
                 <SignInAndUpTheme {...props} />
             </ThemeBase>
         </UserContextWrapper>

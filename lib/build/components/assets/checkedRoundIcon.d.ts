@@ -1,4 +1,2 @@
 /// <reference types="react" />
-export default function CheckedRoundIcon({ color }: {
-    color: string;
-}): JSX.Element;
+export default function CheckedRoundIcon(): JSX.Element;

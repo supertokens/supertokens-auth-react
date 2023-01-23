@@ -55,7 +55,6 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
             getRedirectionURL: config.getRedirectionURL,
             style: config.style,
             onHandleEvent: config.onHandleEvent,
-            palette: config.palette,
             preAPIHook: config.preAPIHook,
             signInAndUpFeature: config.signInAndUpFeature,
             oAuthCallbackScreen: config.oAuthCallbackScreen,
@@ -66,7 +65,6 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
     const emailPasswordNormalisedConfig = normaliseEmailPasswordConfig({
         getRedirectionURL: config.getRedirectionURL,
         onHandleEvent: config.onHandleEvent,
-        palette: config.palette,
         style: config.style,
         preAPIHook: config.preAPIHook,
         resetPasswordUsingTokenFeature: config.resetPasswordUsingTokenFeature,
@@ -95,6 +93,6 @@ function normaliseSignInUpFeatureConfig(config?: SignInAndUpFeatureUserInput): N
         ...config,
         disableDefaultUI,
         defaultToSignUp,
-        style: config === undefined || config.style === undefined ? {} : config.style,
+        style: config === undefined || config.style === undefined ? "" : config.style,
     };
 }

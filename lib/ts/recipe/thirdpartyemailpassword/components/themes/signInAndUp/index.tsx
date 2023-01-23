@@ -16,14 +16,12 @@
 /*
  * Imports.
  */
-import React, { useContext } from "react";
-import StyleContext, { StyleProvider } from "../../../../../styles/styleContext";
+import React from "react";
 import { ThirdPartyEmailPasswordSignInAndUpThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
 import { Header } from "./header";
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
-import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
-import { getStyles } from "../styles";
+import { hasFontDefined } from "../../../../../styles/styles";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { useTranslation } from "../../../../../translation/translationContext";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
@@ -35,11 +33,10 @@ import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 
 const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> = (props) => {
     const t = useTranslation();
-    const styles = useContext(StyleContext);
 
     return (
-        <div data-supertokens="container" css={styles.container}>
-            <div data-supertokens="row" css={styles.row}>
+        <div data-supertokens="container">
+            <div data-supertokens="row">
                 <Header
                     isSignUp={props.epState.isSignUp}
                     setIsSignUp={(isSignUp) => props.epDispatch({ type: isSignUp ? "setSignUp" : "setSignIn" })}
@@ -49,14 +46,12 @@ const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> =
                     <ProvidersForm {...props.tpChildProps} featureState={props.tpState} dispatch={props.tpDispatch} />
                 )}
                 {props.config.disableEmailPassword !== true && props.thirdPartyRecipe !== undefined && (
-                    <div data-supertokens="thirdPartyEmailPasswordDivider" css={styles.thirdPartyEmailPasswordDivider}>
-                        <div data-supertokens="divider" css={styles.divider}></div>
-                        <div
-                            data-supertokens="thirdPartyEmailPasswordDividerOr"
-                            css={styles.thirdPartyEmailPasswordDividerOr}>
+                    <div data-supertokens="thirdPartyEmailPasswordDivider">
+                        <div data-supertokens="divider"></div>
+                        <div data-supertokens="thirdPartyEmailPasswordDividerOr">
                             {t("THIRD_PARTY_EMAIL_PASSWORD_SIGN_IN_AND_UP_DIVIDER_OR")}
                         </div>
-                        <div data-supertokens="divider" css={styles.divider}></div>
+                        <div data-supertokens="divider"></div>
                     </div>
                 )}
                 {props.epChildProps !== undefined &&
@@ -95,15 +90,10 @@ export default function SignInAndUpThemeWrapper(
 
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase loadDefaultFont={!hasFont}>
-                <StyleProvider
-                    rawPalette={props.config.palette}
-                    defaultPalette={defaultPalette}
-                    styleFromInit={props.config.signInAndUpFeature.style}
-                    rootStyleFromInit={props.config.rootStyle}
-                    getDefaultStyles={getStyles}>
-                    <SignInAndUpTheme {...props} />
-                </StyleProvider>
+            <ThemeBase
+                loadDefaultFont={!hasFont}
+                userStyles={[props.config.rootStyle, props.config.signInAndUpFeature.style]}>
+                <SignInAndUpTheme {...props} />
             </ThemeBase>
         </UserContextWrapper>
     );

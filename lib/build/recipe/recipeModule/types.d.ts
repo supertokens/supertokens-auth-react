@@ -1,4 +1,3 @@
-import { Styles } from "../../types";
 export declare type RecipePreAPIHookContext<Action> = {
     requestInit: RequestInit;
     url: string;
@@ -24,8 +23,7 @@ export declare type UserInput<GetRedirectionURLContextType, Action, OnHandleEven
     postAPIHook?: RecipePostAPIHookFunction<Action>;
     onHandleEvent?: RecipeOnHandleEventFunction<OnHandleEventContextType>;
     useShadowDom?: boolean;
-    palette?: Record<string, string>;
-    style?: Styles;
+    style?: string;
 };
 export declare type Config<GetRedirectionURLContextType, Action, OnHandleEventContextType> = UserInput<
     GetRedirectionURLContextType,
@@ -36,8 +34,7 @@ export declare type NormalisedConfig<GetRedirectionURLContextType, Action, OnHan
     getRedirectionURL: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContextType>;
     useShadowDom: boolean;
-    palette: Record<string, string>;
-    rootStyle: Styles;
+    rootStyle: string;
     preAPIHook: (context: RecipePreAPIHookContext<Action>) => Promise<{
         url: string;
         requestInit: RequestInit;
