@@ -19,6 +19,8 @@ export default class EmailVerification extends RecipeModule<
 > {
     static instance?: EmailVerification;
     static RECIPE_ID: string;
+    static onSuccess(): Promise<string>;
+    static onFailure(): Promise<string>;
     static EmailVerificationClaim: EmailVerificationClaimClass;
     recipeImpl: RecipeInterface;
     constructor(config: Config);

@@ -17,21 +17,16 @@
  * Imports.
  */
 import RecipeModule from "../recipeModule";
-import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
-import {
-    popInvalidClaimRedirectPathFromContext,
-    getLocalStorage,
-    isTest,
-    removeFromLocalStorage,
-    setLocalStorage,
-} from "../../utils";
+import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap, SessionClaimValidator } from "../../types";
+import { getLocalStorage, isTest, removeFromLocalStorage, setLocalStorage } from "../../utils";
 import { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
-import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
+import { ClaimValidationError } from "supertokens-website";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 import SuperTokens from "../../superTokens";
 import { SessionClaim } from "supertokens-web-js/recipe/session";
+import { getGlobalClaimValidators } from "supertokens-website/utils/globalClaimValidators";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
 
@@ -158,12 +153,16 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
             });
         }
 
+        const globalValidators = getGlobalClaimValidators({});
+
+        const findClaimValidator = (claimID: string) => {
+            return globalValidators.find(({ id }) => id === claimID) as SessionClaimValidator;
+        };
+
         // We validate all the global claims
         const invalidClaims = await this.validateClaims({ userContext });
 
-        // Check if any of those claim errors requests a redirection
-        const invalidClaimRedirectPath = popInvalidClaimRedirectPathFromContext(userContext);
-        if (invalidClaims.length > 0 && invalidClaimRedirectPath !== undefined) {
+        if (invalidClaims.length > 0) {
             if (redirectInfo !== undefined) {
                 // if we have to redirect and we have success context we wanted to use we save it in localstorage
                 // this way after the other page did solved the validation error it can contine
@@ -171,8 +170,23 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                 const jsonContext = JSON.stringify(redirectInfo);
                 await setLocalStorage("supertokens-success-redirection-context", jsonContext);
             }
+            const failedClaim = findClaimValidator(invalidClaims[0].validatorId);
+
+            if (failedClaim.onFailure === undefined) {
+                return SuperTokens.getInstanceOrThrow().redirectToUrl(
+                    await Session.getInstanceOrThrow().getRedirectUrl({ userContext }),
+                    history
+                );
+            }
+            const invalidClaimRedirectPath = failedClaim.onFailure();
             // then we do the redirection.
             return SuperTokens.getInstanceOrThrow().redirectToUrl(invalidClaimRedirectPath, history);
+        }
+
+        const emailVerificationClaimValidator = findClaimValidator("st-ev");
+        const successRedirectURL = await emailVerificationClaimValidator.onSuccess!();
+        if (successRedirectURL) {
+            return SuperTokens.getInstanceOrThrow().redirectToUrl(successRedirectURL, history);
         }
 
         // If we don't need to redirect because of a claim, we try and execute the original redirection

@@ -30,7 +30,7 @@ import {
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
-import { matchRecipeIdUsingQueryParams, saveInvalidClaimRedirectPathInContext } from "../../utils";
+import { matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailVerificationFeature } from "./utils";
 import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
@@ -42,7 +42,6 @@ import OverrideableBuilder from "supertokens-js-override";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { UserContextContext } from "../../usercontext";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
-
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -51,21 +50,21 @@ export default class EmailVerification extends RecipeModule<
 > {
     static instance?: EmailVerification;
     static RECIPE_ID = "emailverification";
-    static EmailVerificationClaim = new EmailVerificationClaimClass(
-        () => EmailVerification.getInstanceOrThrow().recipeImpl,
-        async (userContext: any) => {
-            const recipe = EmailVerification.getInstanceOrThrow();
-            if (recipe.config.mode === "REQUIRED") {
-                saveInvalidClaimRedirectPathInContext(
-                    userContext,
-                    await recipe.getRedirectUrl({ action: "VERIFY_EMAIL" })
-                );
-            }
+    static async onSuccess(): Promise<string> {
+        return "/success";
+    }
+    static async onFailure(): Promise<string> {
+        const recipe = EmailVerification.getInstanceOrThrow();
+        if (recipe.config.mode === "REQUIRED") {
+            return recipe.getRedirectUrl({ action: "VERIFY_EMAIL" });
         }
+        return "/failure";
+    }
+    static EmailVerificationClaim = new EmailVerificationClaimClass(
+        () => EmailVerification.getInstanceOrThrow().recipeImpl
     );
 
     recipeImpl: RecipeInterface;
-
     constructor(config: Config) {
         super(normaliseEmailVerificationFeature(config));
 
@@ -83,8 +82,12 @@ export default class EmailVerification extends RecipeModule<
         }
 
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
+            const isVerifiedValidator = EmailVerification.EmailVerificationClaim.validators.isVerified(10);
             SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
-                EmailVerification.EmailVerificationClaim.validators.isVerified(10)
+                Object.assign(isVerifiedValidator, {
+                    onSuccess: EmailVerification.onSuccess,
+                    onFailure: EmailVerification.onFailure,
+                })
             );
         });
     }

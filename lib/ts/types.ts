@@ -21,10 +21,16 @@ import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recip
 import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 import { CookieHandlerInput } from "supertokens-website/utils/cookieHandler/types";
 import { WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
+import { SessionClaimValidator as SessionClaimValidatorWebJS } from "supertokens-web-js/recipe/session";
 
 export type GetRedirectionURLContext = {
     action: "TO_AUTH";
     showSignIn: boolean | undefined;
+};
+
+export type SessionClaimValidator = SessionClaimValidatorWebJS & {
+    onSuccess?: () => string;
+    onFailure?: () => string;
 };
 
 /*

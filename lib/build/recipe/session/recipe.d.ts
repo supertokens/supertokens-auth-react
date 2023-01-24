@@ -1,9 +1,9 @@
 /// <reference types="react" />
 import RecipeModule from "../recipeModule";
-import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
+import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap, SessionClaimValidator } from "../../types";
 import { RecipeEventWithSessionContext, InputType } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
-import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
+import { ClaimValidationError } from "supertokens-website";
 import { SessionClaim } from "supertokens-web-js/recipe/session";
 declare type ConfigType = InputType & {
     recipeId: string;
