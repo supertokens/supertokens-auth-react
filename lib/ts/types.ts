@@ -23,10 +23,14 @@ import { CookieHandlerInput } from "supertokens-website/utils/cookieHandler/type
 import { WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
 import { SessionClaimValidator as SessionClaimValidatorWebJS } from "supertokens-web-js/recipe/session";
 
-export type GetRedirectionURLContext = {
-    action: "TO_AUTH";
-    showSignIn: boolean | undefined;
-};
+export type GetRedirectionURLContext =
+    | {
+          action: "TO_AUTH" | "SESSION_VERIFICATION_FAILURE";
+          showSignIn?: boolean;
+      }
+    | {
+          action: "SESSION_VERIFICATION_FAILURE";
+      };
 
 export type SessionClaimValidator = SessionClaimValidatorWebJS & {
     onSuccess?: () => string;

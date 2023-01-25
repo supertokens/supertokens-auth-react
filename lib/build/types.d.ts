@@ -8,10 +8,14 @@ import { TranslationFunc, TranslationStore } from "./translation/translationHelp
 import { CookieHandlerInput } from "supertokens-website/utils/cookieHandler/types";
 import { WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
 import { SessionClaimValidator as SessionClaimValidatorWebJS } from "supertokens-web-js/recipe/session";
-export declare type GetRedirectionURLContext = {
-    action: "TO_AUTH";
-    showSignIn: boolean | undefined;
-};
+export declare type GetRedirectionURLContext =
+    | {
+          action: "TO_AUTH" | "SESSION_VERIFICATION_FAILURE";
+          showSignIn?: boolean;
+      }
+    | {
+          action: "SESSION_VERIFICATION_FAILURE";
+      };
 export declare type SessionClaimValidator = SessionClaimValidatorWebJS & {
     onSuccess?: () => string;
     onFailure?: () => string;

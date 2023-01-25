@@ -452,11 +452,3 @@ export const useOnMountAPICall = <T>(
         throw error;
     }
 };
-
-export function popInvalidClaimRedirectPathFromContext(userContext: any) {
-    const res = userContext["_default"]?.invalidClaimRedirectPath;
-    if (res !== undefined) {
-        delete userContext["_default"].invalidClaimRedirectPath;
-    }
-    return res;
-}

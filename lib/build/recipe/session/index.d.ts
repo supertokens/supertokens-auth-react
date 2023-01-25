@@ -1,6 +1,5 @@
 /// <reference types="react" />
 import {
-    BooleanClaim,
     ClaimValidationResult,
     PrimitiveArrayClaim,
     PrimitiveClaim,
@@ -10,6 +9,7 @@ import {
 import { InputType, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
+import { BooleanClaim } from "../../claims/booleanClaim";
 export default class SessionAPIWrapper {
     static useSessionContext: () => SessionContextType;
     static useClaimValue: <T>(claim: SessionClaim<T>) =>

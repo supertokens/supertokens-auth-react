@@ -50,16 +50,7 @@ export default class EmailVerification extends RecipeModule<
 > {
     static instance?: EmailVerification;
     static RECIPE_ID = "emailverification";
-    static async onSuccess(): Promise<string> {
-        return "/success";
-    }
-    static async onFailure(): Promise<string> {
-        const recipe = EmailVerification.getInstanceOrThrow();
-        if (recipe.config.mode === "REQUIRED") {
-            return recipe.getRedirectUrl({ action: "VERIFY_EMAIL" });
-        }
-        return "/failure";
-    }
+
     static EmailVerificationClaim = new EmailVerificationClaimClass(
         () => EmailVerification.getInstanceOrThrow().recipeImpl
     );
@@ -85,8 +76,16 @@ export default class EmailVerification extends RecipeModule<
             const isVerifiedValidator = EmailVerification.EmailVerificationClaim.validators.isVerified(10);
             SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
                 Object.assign(isVerifiedValidator, {
-                    onSuccess: EmailVerification.onSuccess,
-                    onFailure: EmailVerification.onFailure,
+                    onSuccess: async (): Promise<string | undefined> => {
+                        return undefined;
+                    },
+                    onFailure: async (): Promise<string | undefined> => {
+                        const recipe = EmailVerification.getInstanceOrThrow();
+                        if (recipe.config.mode === "REQUIRED") {
+                            return recipe.getRedirectUrl({ action: "VERIFY_EMAIL" });
+                        }
+                        return undefined;
+                    },
                 })
             );
         });
