@@ -1,15 +1,16 @@
 /// <reference types="react" />
-import RecipeModule from "./recipe/recipeModule";
-import {
+import { TranslationController } from "./translation/translationHelpers";
+import type RecipeModule from "./recipe/recipeModule";
+import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
+import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
+import type {
     ComponentWithRecipeAndMatchingMethod,
     GetRedirectionURLContext,
     NormalisedAppInfo,
     SuperTokensConfig,
 } from "./types";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { BaseFeatureComponentMap } from "./types";
-import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
-import { TranslationController, TranslationFunc, TranslationStore } from "./translation/translationHelpers";
+import type { BaseFeatureComponentMap } from "./types";
+import type NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 export default class SuperTokens {
     private static instance?;
     private static reactRouterDom?;

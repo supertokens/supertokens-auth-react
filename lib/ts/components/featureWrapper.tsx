@@ -17,14 +17,18 @@
  * Imports.
  */
 
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+
 import { ST_ROOT_ID } from "../constants";
-import ErrorBoundary from "./errorBoundary";
 import SuperTokens from "../superTokens";
 import { TranslationContextProvider } from "../translation/translationContext";
-import { TranslationStore } from "../translation/translationHelpers";
 import { mergeObjects } from "../utils";
-import { PropsWithChildren, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+
+import ErrorBoundary from "./errorBoundary";
+
+import type { TranslationStore } from "../translation/translationHelpers";
+import type { PropsWithChildren } from "react";
 
 type FeatureWrapperProps = {
     useShadowDom?: boolean;

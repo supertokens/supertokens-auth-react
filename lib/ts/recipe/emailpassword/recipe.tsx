@@ -17,9 +17,22 @@
  * Imports.
  */
 
+import { OverrideableBuilder } from "supertokens-js-override";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+
+import { SSR_ERROR } from "../../constants";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
-import {
+import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
+
+import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken";
+import SignInAndUp from "./components/features/signInAndUp";
+import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
+import RecipeImplementation from "./recipeImplementation";
+import { normaliseEmailPasswordConfig } from "./utils";
+
+import type {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
@@ -27,19 +40,9 @@ import {
     NormalisedConfig,
     UserInput,
 } from "./types";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
-import { normaliseEmailPasswordConfig } from "./utils";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
-import { SSR_ERROR } from "../../constants";
-import RecipeModule from "../recipeModule";
-import SignInAndUp from "./components/features/signInAndUp";
-import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken";
-import RecipeImplementation from "./recipeImplementation";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
-import { OverrideableBuilder } from "supertokens-js-override";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
+import type { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
+import type RecipeModule from "../recipeModule";
+import type { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
 /*
  * Class.

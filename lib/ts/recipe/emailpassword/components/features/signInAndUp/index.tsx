@@ -18,28 +18,29 @@
  */
 import * as React from "react";
 import { Fragment } from "react";
+import { useMemo } from "react";
+import { useCallback } from "react";
+import STGeneralError from "supertokens-web-js/utils/error";
 
-import {
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import FeatureWrapper from "../../../../../components/featureWrapper";
+import { useUserContext } from "../../../../../usercontext";
+import { getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
+import Session from "../../../../session/recipe";
+import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
+import SignInAndUpTheme from "../../themes/signInAndUp";
+import { defaultTranslationsEmailPassword } from "../../themes/translations";
+
+import type { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
+import type Recipe from "../../../recipe";
+import type { SignInAndUpState } from "../../../types";
+import type {
     EmailPasswordSignInAndUpAction,
     EmailPasswordSignInAndUpChildProps,
     FormFieldThemeProps,
 } from "../../../types";
-import SignInAndUpTheme from "../../themes/signInAndUp";
-import { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
-import { getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
-import FeatureWrapper from "../../../../../components/featureWrapper";
-import { SignInAndUpState } from "../../../types";
-import Recipe from "../../../recipe";
-import { defaultTranslationsEmailPassword } from "../../themes/translations";
-import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
-import { useMemo } from "react";
-import { useCallback } from "react";
-import { Dispatch } from "react";
-import STGeneralError from "supertokens-web-js/utils/error";
-import { useUserContext } from "../../../../../usercontext";
-import Session from "../../../../session/recipe";
-import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
+import type { Dispatch } from "react";
+import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
 export const useFeatureReducer = (recipe: Recipe | undefined) => {
     return React.useReducer(

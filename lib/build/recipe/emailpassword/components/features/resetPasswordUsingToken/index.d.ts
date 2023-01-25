@@ -1,6 +1,6 @@
 import { PureComponent } from "react";
-import { FeatureBaseProps } from "../../../../../types";
-import Recipe from "../../../recipe";
+import type { FeatureBaseProps } from "../../../../../types";
+import type Recipe from "../../../recipe";
 declare type PropType = FeatureBaseProps & {
     recipe: Recipe;
 };

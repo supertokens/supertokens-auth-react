@@ -1,6 +1,6 @@
 /// <reference types="react" />
+import type { CustomProviderConfig } from "./types";
 import Provider from ".";
-import { CustomProviderConfig } from "./types";
 export default class Custom extends Provider {
     buttonComponent?: JSX.Element | (() => JSX.Element);
     constructor(config: CustomProviderConfig);

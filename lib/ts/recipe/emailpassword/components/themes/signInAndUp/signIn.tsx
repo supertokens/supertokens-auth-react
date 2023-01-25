@@ -13,14 +13,15 @@
  * under the License.
  */
 
-import { SignInThemeProps } from "../../../types";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
+import GeneralError from "../../library/generalError";
 
 import { SignInFooter } from "./signInFooter";
 import { SignInForm } from "./signInForm";
 import { SignInHeader } from "./signInHeader";
-import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
-import GeneralError from "../../library/generalError";
+
+import type { SignInThemeProps } from "../../../types";
 
 export const SignIn = withOverride("EmailPasswordSignIn", function EmailPasswordSignIn(props: SignInThemeProps) {
     return (

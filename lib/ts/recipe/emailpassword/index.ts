@@ -13,17 +13,20 @@
  * under the License.
  */
 
-import { UserInput } from "./types";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
-import EmailPassword from "./recipe";
-import SignInAndUpTheme from "./components/themes/signInAndUp";
-import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { getNormalisedUserContext } from "../../utils";
-import { User } from "../authRecipe/types";
-import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
-import { PropsWithChildren } from "react";
+
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
+import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
+import SignInAndUpTheme from "./components/themes/signInAndUp";
+import EmailPassword from "./recipe";
+import { UserInput } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+
+import type { User } from "../authRecipe/types";
+import type { PropsWithChildren } from "react";
+import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/emailpassword";
 
 export default class Wrapper {
     static init(config?: UserInput) {

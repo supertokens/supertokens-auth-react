@@ -18,19 +18,21 @@
  */
 import * as React from "react";
 import { useContext, useState, useMemo, useCallback, Fragment } from "react";
-import { clearQueryParams, getQueryParams, useOnMountAPICall } from "../../../../../utils";
-import EmailVerificationTheme from "../../themes/emailVerification";
-import { FeatureBaseProps } from "../../../../../types";
-import FeatureWrapper from "../../../../../components/featureWrapper";
-import Recipe from "../../../recipe";
-import { SessionContext } from "../../../../session";
-import { defaultTranslationsEmailVerification } from "../../themes/translations";
-import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
-import { useUserContext } from "../../../../../usercontext";
-import Session from "../../../../session/recipe";
+
 import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import FeatureWrapper from "../../../../../components/featureWrapper";
+import { useUserContext } from "../../../../../usercontext";
+import { clearQueryParams, getQueryParams, useOnMountAPICall } from "../../../../../utils";
+import { SessionContext } from "../../../../session";
+import Session from "../../../../session/recipe";
 import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
+import EmailVerificationTheme from "../../themes/emailVerification";
+import { defaultTranslationsEmailVerification } from "../../themes/translations";
+
+import type { FeatureBaseProps } from "../../../../../types";
+import type Recipe from "../../../recipe";
+import type { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
 type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any };
 

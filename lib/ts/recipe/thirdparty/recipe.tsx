@@ -17,9 +17,21 @@
  * Imports.
  */
 
+import { OverrideableBuilder } from "supertokens-js-override";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+
+import { SSR_ERROR } from "../../constants";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
-import {
+import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
+
+import SignInAndUp from "./components/features/signInAndUp";
+import SignInAndUpCallback from "./components/features/signInAndUpCallback";
+import RecipeImplementation from "./recipeImplementation";
+import { normaliseThirdPartyConfig, matchRecipeIdUsingState } from "./utils";
+
+import type {
     GetRedirectionURLContext,
     Config,
     NormalisedConfig,
@@ -27,18 +39,9 @@ import {
     OnHandleEventContext,
     UserInput,
 } from "./types";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
-import { normaliseThirdPartyConfig, matchRecipeIdUsingState } from "./utils";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { SSR_ERROR } from "../../constants";
-import RecipeModule from "../recipeModule";
-import SignInAndUp from "./components/features/signInAndUp";
-import SignInAndUpCallback from "./components/features/signInAndUpCallback";
-import RecipeImplementation from "./recipeImplementation";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
-import { OverrideableBuilder } from "supertokens-js-override";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
+import type { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
+import type RecipeModule from "../recipeModule";
+import type { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 
 /*
  * Class.

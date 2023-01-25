@@ -1,7 +1,11 @@
 import * as React from "react";
-import { FeatureBaseProps } from "../../../../../types";
-import { ThirdPartySignInAndUpState, ThirdPartySignInUpActions, ThirdPartySignInUpChildProps } from "../../../types";
-import Recipe from "../../../recipe";
+import type { FeatureBaseProps } from "../../../../../types";
+import type Recipe from "../../../recipe";
+import type {
+    ThirdPartySignInAndUpState,
+    ThirdPartySignInUpActions,
+    ThirdPartySignInUpChildProps,
+} from "../../../types";
 export declare const useFeatureReducer: () => [ThirdPartySignInAndUpState, React.Dispatch<ThirdPartySignInUpActions>];
 export declare function useChildProps(recipe: Recipe): ThirdPartySignInUpChildProps;
 export declare function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChildProps | undefined;

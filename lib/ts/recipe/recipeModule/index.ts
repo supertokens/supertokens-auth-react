@@ -14,10 +14,10 @@
  */
 
 import SuperTokens from "../../superTokens";
-import { RecipeFeatureComponentMap } from "../../types";
-
 import { appendQueryParamsToURL } from "../../utils";
-import { NormalisedConfig } from "./types";
+
+import type { NormalisedConfig } from "./types";
+import type { RecipeFeatureComponentMap } from "../../types";
 
 /*
  * Class.

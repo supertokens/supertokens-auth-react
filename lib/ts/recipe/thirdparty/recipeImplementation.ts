@@ -1,13 +1,15 @@
-import { OnHandleEventContext, PreAndPostAPIHookAction, StateObject } from "./types";
-import { getRedirectToPathFromURL } from "../../utils";
-import { RecipeInterface, ThirdPartyUserType } from "supertokens-web-js/recipe/thirdparty";
 import { getRecipeImplementation as WebJSRecipeImplementation } from "supertokens-web-js/recipe/thirdparty/recipeImplementation";
-import { NormalisedAppInfo } from "../../types";
-import {
+
+import { getRedirectToPathFromURL } from "../../utils";
+
+import type { OnHandleEventContext, PreAndPostAPIHookAction, StateObject } from "./types";
+import type { NormalisedAppInfo } from "../../types";
+import type {
     RecipeOnHandleEventFunction,
     RecipePostAPIHookFunction,
     RecipePreAPIHookFunction,
 } from "../recipeModule/types";
+import type { RecipeInterface, ThirdPartyUserType } from "supertokens-web-js/recipe/thirdparty";
 
 export default function getRecipeImplementation(recipeInput: {
     recipeId: string;

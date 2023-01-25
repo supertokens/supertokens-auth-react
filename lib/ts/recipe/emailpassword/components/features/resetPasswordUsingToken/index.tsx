@@ -18,16 +18,17 @@
  */
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
-import ResetPasswordUsingTokenTheme from "../../themes/resetPasswordUsingToken";
-import { FeatureBaseProps } from "../../../../../types";
 
-import { getQueryParams } from "../../../../../utils";
-import FeatureWrapper from "../../../../../components/featureWrapper";
-import Recipe from "../../../recipe";
-import { defaultTranslationsEmailPassword } from "../../themes/translations";
-import SuperTokens from "../../../../../superTokens";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import FeatureWrapper from "../../../../../components/featureWrapper";
+import SuperTokens from "../../../../../superTokens";
+import { getQueryParams } from "../../../../../utils";
 import { RecipeComponentsOverrideContextConsumer } from "../../../componentOverrideContext";
+import ResetPasswordUsingTokenTheme from "../../themes/resetPasswordUsingToken";
+import { defaultTranslationsEmailPassword } from "../../themes/translations";
+
+import type { FeatureBaseProps } from "../../../../../types";
+import type Recipe from "../../../recipe";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;

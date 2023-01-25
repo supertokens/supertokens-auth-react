@@ -16,11 +16,13 @@
  * Imports.
  */
 import { PureComponent } from "react";
+
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { hasFontDefined } from "../../../../../styles/styles";
-import { NormalisedConfig } from "../../../types";
 import { ThemeBase } from "../themeBase";
+
+import type { NormalisedConfig } from "../../../types";
 
 /*
  * Component.

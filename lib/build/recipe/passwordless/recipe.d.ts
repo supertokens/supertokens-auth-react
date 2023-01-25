@@ -1,6 +1,6 @@
 /// <reference types="react" />
-import { CreateRecipeFunction, RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
-import {
+import AuthRecipe from "../authRecipe";
+import type {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
@@ -8,8 +8,8 @@ import {
     NormalisedConfig,
     UserInput,
 } from "./types";
-import AuthRecipe from "../authRecipe";
-import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import type { CreateRecipeFunction, RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,

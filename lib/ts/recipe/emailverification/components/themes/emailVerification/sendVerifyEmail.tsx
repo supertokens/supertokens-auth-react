@@ -17,18 +17,19 @@
  */
 
 import { useCallback, useState } from "react";
+import STGeneralError from "supertokens-web-js/utils/error";
 
 import ArrowRightIcon from "../../../../../components/assets/arrowRightIcon";
 import EmailLargeIcon from "../../../../../components/assets/emailLargeIcon";
-import { SendVerifyEmailThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
-import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { useUserContext } from "../../../../../usercontext";
-import STGeneralError from "supertokens-web-js/utils/error";
 import { useOnMountAPICall } from "../../../../../utils";
-import { Awaited } from "../../../../../types";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
 import Session from "../../../../session/recipe";
+
+import type { Awaited } from "../../../../../types";
+import type { SendVerifyEmailThemeProps } from "../../../types";
 
 export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProps> = (props) => {
     const t = useTranslation();

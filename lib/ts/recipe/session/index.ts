@@ -13,7 +13,6 @@
  * under the License.
  */
 
-import Session from "./recipe";
 import {
     BooleanClaim,
     ClaimValidationResult,
@@ -22,13 +21,16 @@ import {
     RecipeInterface,
     SessionClaim,
 } from "supertokens-web-js/recipe/session";
-import SessionAuthWrapper from "./sessionAuth";
-import useSessionContextFunc from "./useSessionContext";
-import { useClaimValue as useClaimValueFunc } from "./useClaimValue";
-import { InputType, SessionContextType } from "./types";
-import SessionContext from "./sessionContext";
-import { getNormalisedUserContext } from "../../utils";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
+
+import { getNormalisedUserContext } from "../../utils";
+
+import Session from "./recipe";
+import SessionAuthWrapper from "./sessionAuth";
+import SessionContext from "./sessionContext";
+import { InputType, SessionContextType } from "./types";
+import { useClaimValue as useClaimValueFunc } from "./useClaimValue";
+import useSessionContextFunc from "./useSessionContext";
 
 export default class SessionAPIWrapper {
     static useSessionContext = useSessionContextFunc;
