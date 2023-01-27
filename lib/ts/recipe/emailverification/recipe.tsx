@@ -36,12 +36,13 @@ import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
 import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
-import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
+import { EmailVerificationClaimClass, RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import { SessionClaimValidatorStore } from "supertokens-website/utils/sessionClaimValidatorStore";
 import OverrideableBuilder from "supertokens-js-override";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { UserContextContext } from "../../usercontext";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
+
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -76,9 +77,6 @@ export default class EmailVerification extends RecipeModule<
             const isVerifiedValidator = EmailVerification.EmailVerificationClaim.validators.isVerified(10);
             SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
                 Object.assign(isVerifiedValidator, {
-                    onSuccess: async (): Promise<string | undefined> => {
-                        return undefined;
-                    },
                     onFailure: async (): Promise<string | undefined> => {
                         const recipe = EmailVerification.getInstanceOrThrow();
                         if (recipe.config.mode === "REQUIRED") {

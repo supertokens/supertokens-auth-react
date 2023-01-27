@@ -164,7 +164,10 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         if (!claims.length) {
             return;
         }
-        const globalValidators: SessionClaimValidator[] = getGlobalClaimValidators({});
+        const globalValidators: SessionClaimValidator[] = getGlobalClaimValidators({
+            overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
+        });
+
         // we try to find claim validator among failed validators with onFailure cb that returns string
         const failedClaimValidatorID = claims.find((claim) => {
             const validator = globalValidators.find(({ id }) => id === claim.validatorId);

@@ -153,7 +153,8 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
             });
         }
 
-        const globalValidators: SessionClaimValidator[] = getGlobalClaimValidators({});
+        const globalValidators: SessionClaimValidator[] = await getGlobalClaimValidators({});
+
         // We validate all the global claims
         const invalidClaims = await this.validateClaims({ userContext });
 
