@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changes
+
+-   Add ordering for imports
+-   Force consistent type imports
+
 ## [0.30.2] - 2023-01-21
 
 ### Changes
