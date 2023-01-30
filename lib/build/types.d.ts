@@ -17,8 +17,8 @@ export declare type GetRedirectionURLContext =
           action: "SESSION_VERIFICATION_FAILURE";
       };
 export declare type SessionClaimValidator = SessionClaimValidatorWebJS & {
-    onSuccess?: () => string;
-    onFailure?: () => string;
+    onSuccessRedirection?: () => string;
+    onFailureRedirection?: () => string;
 };
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;

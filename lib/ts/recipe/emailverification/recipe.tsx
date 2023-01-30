@@ -77,7 +77,7 @@ export default class EmailVerification extends RecipeModule<
             const isVerifiedValidator = EmailVerification.EmailVerificationClaim.validators.isVerified(10);
             SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
                 Object.assign(isVerifiedValidator, {
-                    onFailure: async (): Promise<string | undefined> => {
+                    onFailureRedirection: async (): Promise<string | undefined> => {
                         const recipe = EmailVerification.getInstanceOrThrow();
                         if (recipe.config.mode === "REQUIRED") {
                             return recipe.getRedirectUrl({ action: "VERIFY_EMAIL" });

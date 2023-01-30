@@ -7,8 +7,8 @@ export declare class EmailVerificationClaimClass extends EmailVerificationClaimC
     constructor(
         getRecipeImpl: () => RecipeInterface,
         updateContextOnIsVerifiedFalse?: (userContext: any) => void | Promise<void>,
-        onSuccess?: ValidationCallback,
-        onFailure?: ValidationCallback
+        onSuccessRedirection?: ValidationCallback,
+        onFailureRedirection?: ValidationCallback
     );
 }
 export {};

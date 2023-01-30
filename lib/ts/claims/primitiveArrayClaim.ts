@@ -5,7 +5,10 @@ type ValidationCallback = (() => Promise<string | undefined>) | undefined;
 
 export class PrimitiveArrayClaim<T> extends PrimitiveArrayClaimWebJS<T> {
     constructor(
-        config: PrimitiveArrayClaimConfig & { onSuccess?: ValidationCallback; onFailure?: ValidationCallback }
+        config: PrimitiveArrayClaimConfig & {
+            onSuccessRedirection?: ValidationCallback;
+            onFailureRedirection?: ValidationCallback;
+        }
     ) {
         super(config);
 
@@ -16,7 +19,11 @@ export class PrimitiveArrayClaim<T> extends PrimitiveArrayClaimWebJS<T> {
             validatorsWithCallbacks[key as keyof PrimitiveArrayClaimWebJS<T>["validators"]] = (
                 ...args: Parameters<typeof validator>
             ) => {
-                return { ...validator(...args), onSuccess: config.onSuccess, onFailure: config.onFailure };
+                return {
+                    ...validator(...args),
+                    onSuccessRedirection: config.onSuccessRedirection,
+                    onFailureRedirection: config.onFailureRedirection,
+                };
             };
         }
 

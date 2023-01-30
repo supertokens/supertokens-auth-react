@@ -4,8 +4,8 @@ declare type ValidationCallback = (() => Promise<string | undefined>) | undefine
 export declare class BooleanClaim extends BooleanClaimWebJS {
     constructor(
         config: PrimitiveClaimConfig & {
-            onSuccess?: ValidationCallback;
-            onFailure?: ValidationCallback;
+            onSuccessRedirection?: ValidationCallback;
+            onFailureRedirection?: ValidationCallback;
         }
     );
 }

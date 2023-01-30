@@ -6,7 +6,7 @@ import EmailVerification from "../recipe/emailverification/recipe";
 
 type ValidationCallback = (() => Promise<string | undefined>) | undefined;
 
-const defaultOnFailure = async (): Promise<string | undefined> => {
+const defaultOnFailureRedirection = async (): Promise<string | undefined> => {
     const recipe = EmailVerification.getInstanceOrThrow();
     return recipe.getRedirectUrl({ action: "VERIFY_EMAIL" });
 };
@@ -15,8 +15,8 @@ export class EmailVerificationClaimClass extends EmailVerificationClaimClassWebJ
     constructor(
         getRecipeImpl: () => RecipeInterface,
         updateContextOnIsVerifiedFalse?: (userContext: any) => void | Promise<void>,
-        onSuccess?: ValidationCallback,
-        onFailure?: ValidationCallback
+        onSuccessRedirection?: ValidationCallback,
+        onFailureRedirection?: ValidationCallback
     ) {
         super(getRecipeImpl, updateContextOnIsVerifiedFalse);
 
@@ -29,14 +29,14 @@ export class EmailVerificationClaimClass extends EmailVerificationClaimClassWebJ
             ) => {
                 return {
                     ...validator(...args),
-                    onSuccess: onSuccess,
-                    onFailure: () => {
+                    onSuccessRedirection: onSuccessRedirection,
+                    onFailureRedirection: () => {
                         const recipe = EmailVerification.getInstanceOrThrow();
                         if (recipe.config.mode === "REQUIRED") {
-                            if (onFailure !== undefined) {
-                                return onFailure();
+                            if (onFailureRedirection !== undefined) {
+                                return onFailureRedirection();
                             }
-                            return defaultOnFailure();
+                            return defaultOnFailureRedirection();
                         }
                         return undefined;
                     },

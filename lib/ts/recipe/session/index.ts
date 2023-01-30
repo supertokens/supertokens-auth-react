@@ -21,10 +21,11 @@ import { useClaimValue as useClaimValueFunc } from "./useClaimValue";
 import { InputType, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
 import { getNormalisedUserContext } from "../../utils";
-import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
+import { ClaimValidationError } from "supertokens-website";
 import { BooleanClaim } from "../../claims/booleanClaim";
 import { PrimitiveClaim } from "../../claims/primitiveClaim";
 import { PrimitiveArrayClaim } from "../../claims/primitiveArrayClaim";
+import { SessionClaimValidator } from "../../types";
 
 export default class SessionAPIWrapper {
     static useSessionContext = useSessionContextFunc;

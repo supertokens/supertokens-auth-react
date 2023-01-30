@@ -4,8 +4,8 @@ declare type ValidationCallback = (() => Promise<string | undefined>) | undefine
 export declare class PrimitiveArrayClaim<T> extends PrimitiveArrayClaimWebJS<T> {
     constructor(
         config: PrimitiveArrayClaimConfig & {
-            onSuccess?: ValidationCallback;
-            onFailure?: ValidationCallback;
+            onSuccessRedirection?: ValidationCallback;
+            onFailureRedirection?: ValidationCallback;
         }
     );
 }

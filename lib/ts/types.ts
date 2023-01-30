@@ -33,8 +33,8 @@ export type GetRedirectionURLContext =
       };
 
 export type SessionClaimValidator = SessionClaimValidatorWebJS & {
-    onSuccess?: () => string;
-    onFailure?: () => string;
+    onSuccessRedirection?: () => string;
+    onFailureRedirection?: () => string;
 };
 
 /*

@@ -4,7 +4,12 @@ import { PrimitiveClaimConfig } from "supertokens-website/lib/build/claims/primi
 type ValidationCallback = (() => Promise<string | undefined>) | undefined;
 
 export class PrimitiveClaim<T> extends PrimitiveClaimWebJS<T> {
-    constructor(config: PrimitiveClaimConfig & { onSuccess?: ValidationCallback; onFailure?: ValidationCallback }) {
+    constructor(
+        config: PrimitiveClaimConfig & {
+            onSuccessRedirection?: ValidationCallback;
+            onFailureRedirection?: ValidationCallback;
+        }
+    ) {
         super(config);
 
         const validatorsWithCallbacks: { [key: string]: any } = { ...this.validators };
@@ -14,7 +19,11 @@ export class PrimitiveClaim<T> extends PrimitiveClaimWebJS<T> {
             validatorsWithCallbacks[key as keyof PrimitiveClaimWebJS<T>["validators"]] = (
                 ...args: Parameters<typeof validator>
             ) => {
-                return { ...validator(...args), onSuccess: config.onSuccess, onFailure: config.onFailure };
+                return {
+                    ...validator(...args),
+                    onSuccessRedirection: config.onSuccessRedirection,
+                    onFailureRedirection: config.onFailureRedirection,
+                };
             };
         }
 

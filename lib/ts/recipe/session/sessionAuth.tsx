@@ -164,18 +164,24 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         if (!claims.length) {
             return;
         }
-        const globalValidators: SessionClaimValidator[] = getGlobalClaimValidators({
-            overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
-        });
+        const globalValidators: SessionClaimValidator[] = getGlobalClaimValidators(props.overrideGlobalClaimValidators);
 
         // we try to find claim validator among failed validators with onFailure cb that returns string
-        const failedClaimValidatorID = claims.find((claim) => {
-            const validator = globalValidators.find(({ id }) => id === claim.validatorId);
-            return validator?.onFailure?.() !== undefined;
-        })?.validatorId;
+        const getRedirectionPath = async () => {
+            const callbacks = [];
+            for (const claim of claims) {
+                const validator = globalValidators.find(({ id }) => id === claim.validatorId);
+                if (validator?.onFailureRedirection) {
+                    callbacks.push(validator?.onFailureRedirection?.());
+                }
+            }
+            return (await Promise.all(callbacks)).filter(Boolean)[0];
+        };
+
+        const redirectPath = await getRedirectionPath();
 
         // if none has onFailure that returns string we fallback to default
-        if (failedClaimValidatorID === undefined) {
+        if (redirectPath === undefined) {
             await SuperTokens.getInstanceOrThrow().redirectToUrl(
                 await SuperTokens.getInstanceOrThrow().getRedirectUrl({
                     action: "SESSION_VERIFICATION_FAILURE",
@@ -185,8 +191,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             return;
         }
 
-        // since we have claimID that means we can safely get redirection string and then can we do the redirection.
-        return await globalValidators.find(({ id }) => id === failedClaimValidatorID)!.onFailure!();
+        return redirectPath;
     };
 
     const setInitialContextAndMaybeRedirect = useCallback(
