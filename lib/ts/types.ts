@@ -32,9 +32,17 @@ export type GetRedirectionURLContext =
           action: "SESSION_VERIFICATION_FAILURE";
       };
 
+export type ValidationSuccessCallback =
+    | (({ userContext }: { userContext: any }) => Promise<string | undefined> | string)
+    | undefined;
+
+export type ValidationFailureCallback =
+    | (({ userContext, reason }: { userContext: any; reason: any }) => Promise<string | undefined> | string)
+    | undefined;
+
 export type SessionClaimValidator = SessionClaimValidatorWebJS & {
-    onSuccessRedirection?: () => string;
-    onFailureRedirection?: () => string;
+    onSuccessRedirection?: ValidationSuccessCallback;
+    onFailureRedirection?: ValidationFailureCallback;
 };
 
 /*

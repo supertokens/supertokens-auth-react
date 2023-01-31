@@ -160,39 +160,31 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         }
     }, []);
 
-    const getRedirectPathFromInvalidClaimsOrRedirect = async (claims: ClaimValidationError[]) => {
-        if (!claims.length) {
-            return;
-        }
-        const globalValidators: SessionClaimValidator[] = getGlobalClaimValidators(props.overrideGlobalClaimValidators);
-
-        // we try to find claim validator among failed validators with onFailure cb that returns string
-        const getRedirectionPath = async () => {
-            const callbacks = [];
-            for (const claim of claims) {
-                const validator = globalValidators.find(({ id }) => id === claim.validatorId);
-                if (validator?.onFailureRedirection) {
-                    callbacks.push(validator?.onFailureRedirection?.());
-                }
+    const getRedirectPathFromInvalidClaimsOrRedirect = useCallback(
+        async (claims: ClaimValidationError[]) => {
+            if (!claims.length) {
+                return;
             }
-            return (await Promise.all(callbacks)).filter(Boolean)[0];
-        };
-
-        const redirectPath = await getRedirectionPath();
-
-        // if none has onFailure that returns string we fallback to default
-        if (redirectPath === undefined) {
-            await SuperTokens.getInstanceOrThrow().redirectToUrl(
-                await SuperTokens.getInstanceOrThrow().getRedirectUrl({
-                    action: "SESSION_VERIFICATION_FAILURE",
-                }),
-                history
+            const globalValidators: SessionClaimValidator[] = getGlobalClaimValidators(
+                props.overrideGlobalClaimValidators
             );
-            return;
-        }
 
-        return redirectPath;
-    };
+            // we try to find claim validator among failed validators with onFailure cb that returns string
+            const getRedirectionPath = async () => {
+                const callbacks = [];
+                for (const claim of claims) {
+                    const validator = globalValidators.find(({ id }) => id === claim.validatorId);
+                    if (validator?.onFailureRedirection) {
+                        callbacks.push(validator?.onFailureRedirection?.({ userContext, reason: claim.reason }));
+                    }
+                }
+                return (await Promise.all(callbacks)).filter(Boolean)[0];
+            };
+
+            return await getRedirectionPath();
+        },
+        [props.overrideGlobalClaimValidators, userContext]
+    );
 
     const setInitialContextAndMaybeRedirect = useCallback(
         async (toSetContext: LoadedSessionContext) => {
@@ -212,11 +204,22 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     await SuperTokens.getInstanceOrThrow().redirectToUrl(redirectPath, history);
                     return;
                 }
+                // if none has onFailure that returns string we fallback to default
+                if (redirectPath === undefined) {
+                    await SuperTokens.getInstanceOrThrow().redirectToUrl(
+                        await SuperTokens.getInstanceOrThrow().getRedirectUrl({
+                            action: "SESSION_VERIFICATION_FAILURE",
+                            showSignIn: false,
+                        }),
+                        history
+                    );
+                    return;
+                }
             }
 
             setContext(toSetContext);
         },
-        [props.doRedirection, props.requireAuth, redirectToLogin, context]
+        [props.doRedirection, props.requireAuth, redirectToLogin, context, getRedirectPathFromInvalidClaimsOrRedirect]
     );
 
     useOnMountAPICall(buildContext, setInitialContextAndMaybeRedirect);
@@ -271,7 +274,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             return session.current.addEventListener(onHandleEvent);
         }
         return undefined;
-    }, [props, setContext, context.loading]);
+    }, [props, setContext, context.loading, getRedirectPathFromInvalidClaimsOrRedirect]);
 
     if (props.requireAuth !== false && (context.loading || !context.doesSessionExist)) {
         return null;

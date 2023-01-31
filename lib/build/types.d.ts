@@ -16,9 +16,15 @@ export declare type GetRedirectionURLContext =
     | {
           action: "SESSION_VERIFICATION_FAILURE";
       };
+export declare type ValidationSuccessCallback =
+    | (({ userContext }: { userContext: any }) => Promise<string | undefined> | string)
+    | undefined;
+export declare type ValidationFailureCallback =
+    | (({ userContext, reason }: { userContext: any; reason: any }) => Promise<string | undefined> | string)
+    | undefined;
 export declare type SessionClaimValidator = SessionClaimValidatorWebJS & {
-    onSuccessRedirection?: () => string;
-    onFailureRedirection?: () => string;
+    onSuccessRedirection?: ValidationSuccessCallback;
+    onFailureRedirection?: ValidationFailureCallback;
 };
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;

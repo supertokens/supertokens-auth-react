@@ -157,7 +157,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
 
         // We validate all the global claims
         const invalidClaims = await this.validateClaims({ userContext });
-
+        const invalidClaimsIDs = invalidClaims.map(({ validatorId }) => validatorId);
         if (invalidClaims.length > 0) {
             if (redirectInfo !== undefined) {
                 // if we have to redirect and we have success context we wanted to use we save it in localstorage
@@ -168,35 +168,40 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
             }
 
             // we try to find claim validator among failed validators with onFailure cb that returns string
-            const getRedirectionPath = async () => {
-                const callbacks = [];
+            const getRedirectionPathOrRedirect = async () => {
+                let callback;
                 for (const claim of invalidClaims) {
                     const validator = globalValidators.find(({ id }) => id === claim.validatorId);
                     if (validator?.onFailureRedirection) {
-                        callbacks.push(validator?.onFailureRedirection?.());
+                        callback = validator.onFailureRedirection({ userContext, reason: claim.reason });
                     }
                 }
-                return (await Promise.all(callbacks)).filter(Boolean)[0];
+                if (!callback) {
+                    await SuperTokens.getInstanceOrThrow().redirectToUrl(
+                        await SuperTokens.getInstanceOrThrow().getRedirectUrl({
+                            action: "SESSION_VERIFICATION_FAILURE",
+                            showSignIn: false,
+                        }),
+                        history
+                    );
+                    return;
+                }
+                return (await Promise.all([callback])).filter(Boolean)[0];
             };
 
-            const redirectPath = await getRedirectionPath();
+            const redirectPath = await getRedirectionPathOrRedirect();
 
-            // if none has onFailure that returns string we fallback to default
-            if (redirectPath === undefined) {
-                return SuperTokens.getInstanceOrThrow().redirectToUrl(
-                    await SuperTokens.getInstanceOrThrow().getRedirectUrl({
-                        action: "SESSION_VERIFICATION_FAILURE",
-                    }),
-                    history
-                );
+            // if onFailure returns string we redirect there otherwise continue
+            if (redirectPath !== undefined) {
+                return SuperTokens.getInstanceOrThrow().redirectToUrl(redirectPath, history);
             }
-
-            return SuperTokens.getInstanceOrThrow().redirectToUrl(redirectPath, history);
         }
 
         const succeededClaimValidatorRedirectString = await globalValidators
-            .find(({ onSuccessRedirection }) => onSuccessRedirection?.() !== undefined)
-            ?.onSuccessRedirection?.();
+            .find(({ id, onSuccessRedirection }) => {
+                return !invalidClaimsIDs.includes(id) && onSuccessRedirection?.({ userContext }) !== undefined;
+            })
+            ?.onSuccessRedirection?.({ userContext });
 
         if (succeededClaimValidatorRedirectString) {
             return SuperTokens.getInstanceOrThrow().redirectToUrl(succeededClaimValidatorRedirectString, history);

@@ -3,22 +3,15 @@ import {
     RecipeInterface,
 } from "supertokens-web-js/recipe/emailverification";
 import EmailVerification from "../recipe/emailverification/recipe";
-
-type ValidationCallback = (() => Promise<string | undefined>) | undefined;
-
-const defaultOnFailureRedirection = async (): Promise<string | undefined> => {
-    const recipe = EmailVerification.getInstanceOrThrow();
-    return recipe.getRedirectUrl({ action: "VERIFY_EMAIL" });
-};
+import { ValidationFailureCallback, ValidationSuccessCallback } from "../types";
 
 export class EmailVerificationClaimClass extends EmailVerificationClaimClassWebJS {
     constructor(
         getRecipeImpl: () => RecipeInterface,
-        updateContextOnIsVerifiedFalse?: (userContext: any) => void | Promise<void>,
-        onSuccessRedirection?: ValidationCallback,
-        onFailureRedirection?: ValidationCallback
+        onSuccessRedirection?: ValidationSuccessCallback,
+        onFailureRedirection?: ValidationFailureCallback
     ) {
-        super(getRecipeImpl, updateContextOnIsVerifiedFalse);
+        super(getRecipeImpl);
 
         const validatorsWithCallbacks: { [key: string]: any } = { ...this.validators };
 
@@ -30,13 +23,13 @@ export class EmailVerificationClaimClass extends EmailVerificationClaimClassWebJ
                 return {
                     ...validator(...args),
                     onSuccessRedirection: onSuccessRedirection,
-                    onFailureRedirection: () => {
+                    onFailureRedirection: (args: { userContext: any; reason: any }) => {
+                        if (onFailureRedirection !== undefined) {
+                            return onFailureRedirection(args);
+                        }
                         const recipe = EmailVerification.getInstanceOrThrow();
                         if (recipe.config.mode === "REQUIRED") {
-                            if (onFailureRedirection !== undefined) {
-                                return onFailureRedirection();
-                            }
-                            return defaultOnFailureRedirection();
+                            return recipe.getRedirectUrl({ action: "VERIFY_EMAIL" });
                         }
                         return undefined;
                     },
