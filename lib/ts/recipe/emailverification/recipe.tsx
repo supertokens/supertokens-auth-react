@@ -36,12 +36,13 @@ import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
 import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
-import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 import { OverrideableBuilder } from "supertokens-js-override";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { UserContextContext } from "../../usercontext";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
+import { EmailVerificationClaimClass } from "../../claims/emailVerificationClaim";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -75,17 +76,7 @@ export default class EmailVerification extends RecipeModule<
 
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
             const isVerifiedValidator = EmailVerification.EmailVerificationClaim.validators.isVerified(10);
-            SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
-                Object.assign(isVerifiedValidator, {
-                    onFailureRedirection: async (): Promise<string | undefined> => {
-                        const recipe = EmailVerification.getInstanceOrThrow();
-                        if (recipe.config.mode === "REQUIRED") {
-                            return recipe.getRedirectUrl({ action: "VERIFY_EMAIL" });
-                        }
-                        return undefined;
-                    },
-                })
-            );
+            SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(isVerifiedValidator);
         });
     }
 

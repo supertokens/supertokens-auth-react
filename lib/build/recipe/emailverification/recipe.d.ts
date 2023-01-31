@@ -10,7 +10,8 @@ import {
     PreAndPostAPIHookAction,
 } from "./types";
 import { CreateRecipeFunction } from "../../types";
-import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
+import { EmailVerificationClaimClass } from "../../claims/emailVerificationClaim";
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
