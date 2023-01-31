@@ -125,8 +125,6 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 userId: "",
             };
         }
-        // // TODO: basing redirection on userContext could break in certain edge-cases involving async validators
-        // const invalidClaimRedirectToPath = popInvalidClaimRedirectPathFromContext(userContext);
 
         try {
             return {
@@ -160,14 +158,15 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         }
     }, []);
 
+    // we try to find claim validator among failed validators with onFailure cb that returns string
     const getRedirectPathFromInvalidClaimsOrRedirect = useCallback(
         async (claims: ClaimValidationError[]) => {
             if (!claims.length) {
                 return;
             }
-            const globalValidators: SessionClaimValidator[] = getGlobalClaimValidators(
-                props.overrideGlobalClaimValidators
-            );
+            const globalValidators: SessionClaimValidator[] = getGlobalClaimValidators({
+                overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
+            });
             let callback;
             for (const claim of claims) {
                 const validator = globalValidators.find(({ id }) => id === claim.validatorId);

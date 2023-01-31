@@ -22,14 +22,10 @@ import { SessionClaimValidator as SessionClaimValidatorWebJS } from "supertokens
 import { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/types";
 import { WindowHandlerInput } from "supertokens-web-js/utils/windowHandler/types";
 
-export type GetRedirectionURLContext =
-    | {
-          action: "TO_AUTH" | "SESSION_VERIFICATION_FAILURE";
-          showSignIn?: boolean;
-      }
-    | {
-          action: "SESSION_VERIFICATION_FAILURE";
-      };
+export type GetRedirectionURLContext = {
+    action: "TO_AUTH" | "SESSION_VERIFICATION_FAILURE";
+    showSignIn?: boolean;
+};
 
 export type ValidationSuccessCallback =
     | (({ userContext }: { userContext: any }) => Promise<string | undefined> | string)

@@ -7,14 +7,10 @@ import { TranslationFunc, TranslationStore } from "./translation/translationHelp
 import { SessionClaimValidator as SessionClaimValidatorWebJS } from "supertokens-web-js/recipe/session";
 import { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/types";
 import { WindowHandlerInput } from "supertokens-web-js/utils/windowHandler/types";
-export declare type GetRedirectionURLContext =
-    | {
-          action: "TO_AUTH" | "SESSION_VERIFICATION_FAILURE";
-          showSignIn?: boolean;
-      }
-    | {
-          action: "SESSION_VERIFICATION_FAILURE";
-      };
+export declare type GetRedirectionURLContext = {
+    action: "TO_AUTH" | "SESSION_VERIFICATION_FAILURE";
+    showSignIn?: boolean;
+};
 export declare type ValidationSuccessCallback =
     | (({ userContext }: { userContext: any }) => Promise<string | undefined> | string)
     | undefined;
