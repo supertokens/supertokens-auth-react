@@ -315,18 +315,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     await checkPhoneNumberInTitle(page, "+36701234326");
                 });
 
-                it("should not change for too long input", async function () {
-                    await Promise.all([
-                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                        page.waitForNavigation({ waitUntil: "networkidle0" }),
-                    ]);
-
-                    await setInputValues(page, [{ name: inputName, value: "654654654654654654654" }]);
-                    await submitForm(page);
-                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone]`);
-                    await checkInputValue(page, input, "654654654654654654654");
-                });
-
                 it("should prepend country code for too short input", async function () {
                     await Promise.all([
                         page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
@@ -337,6 +325,18 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     await submitForm(page);
                     const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
                     await checkInputValue(page, input, "+36654");
+                });
+
+                it("should prepend default country code for invalid phone numbers that start with a valid dial code", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "7021123145" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
+                    await checkInputValue(page, input, "+367021123145");
                 });
             });
 
@@ -427,6 +427,18 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
                     await checkInputValue(page, input, "+654");
                 });
+
+                it("should prepend + sign for invalid phone numbers that start with a valid dial code", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "7021123145" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
+                    await checkInputValue(page, input, "+7021123145");
+                });
             });
 
             describe("with guessing disabled", () => {
@@ -492,18 +504,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     await submitForm(page);
                     const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone]`);
                     await checkInputValue(page, input, "36701234326");
-                });
-
-                it("should not change for too long input", async function () {
-                    await Promise.all([
-                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                        page.waitForNavigation({ waitUntil: "networkidle0" }),
-                    ]);
-
-                    await setInputValues(page, [{ name: inputName, value: "654654654654654654654" }]);
-                    await submitForm(page);
-                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone]`);
-                    await checkInputValue(page, input, "654654654654654654654");
                 });
 
                 it("should not change for too short input", async function () {

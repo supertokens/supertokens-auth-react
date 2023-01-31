@@ -2,11 +2,11 @@
 import { ClaimValidationResult, RecipeInterface, SessionClaim } from "supertokens-web-js/recipe/session";
 import { InputType, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
-import { ClaimValidationError } from "supertokens-website";
 import { BooleanClaim } from "../../claims/booleanClaim";
 import { PrimitiveClaim } from "../../claims/primitiveClaim";
 import { PrimitiveArrayClaim } from "../../claims/primitiveArrayClaim";
 import { SessionClaimValidator } from "../../types";
+import { ClaimValidationError } from "supertokens-web-js/recipe/session";
 export default class SessionAPIWrapper {
     static useSessionContext: () => SessionContextType;
     static useClaimValue: <T>(claim: SessionClaim<T>) =>

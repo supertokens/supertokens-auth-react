@@ -30,7 +30,7 @@ import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normalisePasswordlessConfig } from "./utils";
 import RecipeModule from "../recipeModule";
 import RecipeImplementation from "./recipeImplementation";
-import OverrideableBuilder from "supertokens-js-override";
+import { OverrideableBuilder } from "supertokens-js-override";
 import AuthRecipe from "../authRecipe";
 import { SSR_ERROR } from "../../constants";
 import SignInUp from "./components/features/signInAndUp";

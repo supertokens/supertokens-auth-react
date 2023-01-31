@@ -20,9 +20,6 @@ import { Fragment, useCallback } from "react";
 import { Awaited, FeatureBaseProps } from "../../../../../types";
 import { useOnMountAPICall } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { StyleProvider } from "../../../../../styles/styleContext";
-import { defaultPalette } from "../../../../../styles/styles";
-import { getStyles } from "../../themes/styles";
 import { CustomStateProperties } from "../../../types";
 import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
 import Recipe from "../../../recipe";
@@ -32,6 +29,7 @@ import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
 import Session from "../../../../session/recipe";
 import SuperTokens from "../../../../../superTokens";
+import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -105,29 +103,20 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
 
     useOnMountAPICall(verifyCode, handleVerifyResponse, handleError);
 
-    const componentOverrides = props.recipe.config.override.components;
-
-    const oAuthCallbackScreen = props.recipe.config.oAuthCallbackScreen;
+    const recipeComponentOverrides = useRecipeComponentOverrideContext();
 
     return (
-        <ComponentOverrideContext.Provider value={componentOverrides}>
+        <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsThirdParty}>
-                <StyleProvider
-                    rawPalette={props.recipe.config.palette}
-                    defaultPalette={defaultPalette}
-                    styleFromInit={oAuthCallbackScreen.style}
-                    rootStyleFromInit={props.recipe.config.rootStyle}
-                    getDefaultStyles={getStyles}>
-                    <Fragment>
-                        {/* No custom theme, use default. */}
-                        {props.children === undefined && <SignInAndUpCallbackTheme />}
+                <Fragment>
+                    {/* No custom theme, use default. */}
+                    {props.children === undefined && <SignInAndUpCallbackTheme config={props.recipe.config} />}
 
-                        {/* Otherwise, custom theme is provided, propagate props. */}
-                        {props.children}
-                    </Fragment>
-                </StyleProvider>
+                    {/* Otherwise, custom theme is provided, propagate props. */}
+                    {props.children}
+                </Fragment>
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );

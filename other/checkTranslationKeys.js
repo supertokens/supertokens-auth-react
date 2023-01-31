@@ -1,5 +1,11 @@
+const { rollup } = require("rollup");
+const typescript = require("rollup-plugin-typescript2");
+const multiEntry = require("@rollup/plugin-multi-entry");
+
 const { promises: fs } = require("fs");
 const path = require("path");
+const { Module } = require("module");
+const { runInNewContext } = require("vm");
 
 // from https://gist.github.com/lovasoa/8691344
 async function* walk(rootPath) {
@@ -12,15 +18,50 @@ async function* walk(rootPath) {
 
 async function checkTranslationKeys() {
     const translationKeys = new Set();
-    for await (const p of walk(path.join(__dirname, "..", "lib", "build"))) {
-        if (p.endsWith("translations.js")) {
-            const mod = require(p);
-            for (const exportKey of Object.keys(mod)) {
-                for (const key of Object.keys(mod[exportKey].en)) {
-                    if (mod[exportKey].en[key] !== undefined) {
-                        translationKeys.add(key);
-                    }
-                }
+
+    const bundle = await rollup({
+        input: path.join(__dirname, "..", "lib", "ts", "**", "translations.ts"),
+        plugins: [
+            typescript({
+                tsconfig: "./lib/tsconfig_dev.json",
+                check: false,
+                tsconfigOverride: { compilerOptions: { declaration: false } },
+            }),
+            multiEntry(),
+        ],
+    });
+
+    const generatedBundle = await bundle.generate({
+        format: "cjs",
+    });
+
+    const p = "/inMemory.js";
+    const contextModule = new Module(p, require.main);
+
+    contextModule.require = Module.createRequire(p);
+    contextModule.filename = path.basename(p);
+    contextModule.path = path.dirname(p);
+
+    runInNewContext(
+        generatedBundle.output[0].code,
+        {
+            exports: contextModule.exports,
+            require: contextModule.require,
+            module: contextModule,
+            __filename: contextModule.filename,
+            __dirname: contextModule.path,
+        },
+        {
+            filename: contextModule.filename,
+        }
+    );
+
+    const mod = contextModule.exports;
+
+    for (const exportKey of Object.keys(mod)) {
+        for (const key of Object.keys(mod[exportKey].en)) {
+            if (mod[exportKey].en[key] !== undefined) {
+                translationKeys.add(key);
             }
         }
     }
@@ -28,8 +69,8 @@ async function checkTranslationKeys() {
     const unusedKeys = new Set(translationKeys);
     const missingKeys = [];
 
-    for await (const p of walk(path.join(__dirname, "..", "lib", "build"))) {
-        if (p.endsWith(".js") && !p.endsWith("translations.js")) {
+    for await (const p of walk(path.join(__dirname, "..", "lib", "ts"))) {
+        if (p.match(/\.tsx?$/) && !p.endsWith("translations.ts")) {
             const contents = await fs.readFile(p);
             for (const key of translationKeys) {
                 if (contents.includes(key)) {

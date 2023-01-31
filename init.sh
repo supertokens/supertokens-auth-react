@@ -7,7 +7,7 @@
 # And run brew install chromium --no-quarantine
 
 echo "Updating supertokens-web-js supertokens-website patch versions"
-npm up --legacy-peer-deps supertokens-web-js supertokens-website
+npm up supertokens-web-js supertokens-website
 
 echo "Install in root"
 npm i -d --force || exit $?
@@ -19,7 +19,7 @@ echo "Install in test frontend"
 (cd ./examples/for-tests && npm i -d --force && npm run prep) || exit $? 
 
 echo "Install in test frontend for react 16"
-(cd ./examples/for-tests-react-16 && npm i -d --force --legacy-peer-deps && npm run prep) || exit $?
+(cd ./examples/for-tests-react-16 && npm i -d --force && npm run prep) || exit $?
 
 echo "Install in type check test project"
 (cd ./test/with-typescript && npm i -d --force) || exit $?

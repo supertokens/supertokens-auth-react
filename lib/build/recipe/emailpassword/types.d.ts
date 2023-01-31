@@ -16,7 +16,7 @@ import {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipe/types";
-import OverrideableBuilder from "supertokens-js-override";
+import { OverrideableBuilder } from "supertokens-js-override";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { SignInHeader } from "./components/themes/signInAndUp/signInHeader";
 import { SignIn } from "./components/themes/signInAndUp/signIn";
@@ -50,7 +50,6 @@ export declare type UserInput = {
             originalImplementation: RecipeInterface,
             builder?: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
-        components?: ComponentOverrideMap;
     };
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type Config = UserInput &
@@ -63,7 +62,6 @@ export declare type NormalisedConfig = {
             originalImplementation: RecipeInterface,
             builder?: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
-        components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = {

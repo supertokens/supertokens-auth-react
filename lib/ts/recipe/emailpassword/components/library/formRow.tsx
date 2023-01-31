@@ -17,8 +17,7 @@
  * Imports.
  */
 
-import { PropsWithChildren, useContext } from "react";
-import StyleContext from "../../../../styles/styleContext";
+import { PropsWithChildren } from "react";
 
 /*
  * Props.
@@ -33,19 +32,5 @@ type FormRowProps = {
  */
 
 export default function FormRow({ children, hasError }: PropsWithChildren<FormRowProps>) {
-    /*
-     * Render.
-     */
-    const styles = useContext(StyleContext);
-    const errorStyle =
-        hasError === true
-            ? {
-                  paddingBottom: "0px",
-              }
-            : {};
-    return (
-        <div data-supertokens="formRow" css={[styles.formRow, errorStyle]}>
-            {children}
-        </div>
-    );
+    return <div data-supertokens={["formRow", hasError ? "hasError" : ""].join(" ")}>{children}</div>;
 }

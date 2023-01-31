@@ -1,14 +1,15 @@
-const DarkTheme = {
-    colors: {
-        background: "#333",
-        inputBackground: "#292929",
-        textTitle: "white",
-        textLabel: "white",
-        textPrimary: "white",
-        error: "#ad2e2e",
-        textInput: "#a9a9a9",
-        textLink: "#a9a9a9",
-    },
-};
+const DarkTheme = `
+    [data-supertokens~=container] {
+        --palette-background: 51, 51, 51;
+        --palette-inputBackground: 41, 41, 41;
+        --palette-inputBorder: 41, 41, 41;
+        --palette-textTitle: 255, 255, 255;
+        --palette-textLabel: 255, 255, 255;
+        --palette-textPrimary: 255, 255, 255;
+        --palette-error: 173, 46, 46;
+        --palette-textInput: 169, 169, 169;
+        --palette-textLink: 169, 169, 169;
+    }
+`;
 
 export default DarkTheme;

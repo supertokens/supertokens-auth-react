@@ -26,8 +26,7 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
     let useShadowDom = config.useShadowDom === undefined ? true : config.useShadowDom;
     useShadowDom = getShouldUseShadowDomBasedOnBrowser(useShadowDom);
 
-    const palette = config.palette === undefined ? {} : config.palette;
-    const rootStyle = config.style === undefined ? {} : config.style;
+    const rootStyle = config.style === undefined ? "" : config.style;
 
     return {
         ...config,
@@ -36,7 +35,6 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
         preAPIHook,
         postAPIHook,
         useShadowDom,
-        palette,
         rootStyle,
         recipeId: config.recipeId,
         appInfo: config.appInfo,

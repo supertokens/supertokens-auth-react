@@ -37,7 +37,7 @@ import ThirdParty from "../thirdparty/recipe";
 import RecipeImplementation from "./recipeImplementation";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import OverrideableBuilder from "supertokens-js-override";
+import { OverrideableBuilder } from "supertokens-js-override";
 import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
@@ -87,7 +87,6 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                       recipeId: this.config.recipeId,
                       getRedirectionURL: this.config.getRedirectionURL,
                       onHandleEvent: this.config.onHandleEvent,
-                      palette: this.config.palette,
                       style: this.config.rootStyle,
                       preAPIHook: this.config.preAPIHook,
                       resetPasswordUsingTokenFeature: this.config.resetPasswordUsingTokenFeature,
@@ -98,7 +97,6 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                           functions: (_: any) => {
                               return getEmailPasswordImpl(this.recipeImpl);
                           },
-                          components: this.config.override.components,
                       },
                   });
 
@@ -116,7 +114,6 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                       getRedirectionURL: this.config.getRedirectionURL,
                       style: this.config.rootStyle,
                       onHandleEvent: this.config.onHandleEvent,
-                      palette: this.config.palette,
                       preAPIHook: this.config.preAPIHook,
                       signInAndUpFeature: this.config.signInAndUpFeature,
                       oAuthCallbackScreen: this.config.oAuthCallbackScreen,
@@ -126,7 +123,6 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                           functions: (_: any) => {
                               return getThirdPartyImpl(this.recipeImpl);
                           },
-                          components: this.config.override.components,
                       },
                   });
     }

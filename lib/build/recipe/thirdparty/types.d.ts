@@ -13,7 +13,7 @@ import { ComponentOverride } from "../../components/componentOverride/componentO
 import { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
 import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
-import OverrideableBuilder from "supertokens-js-override";
+import { OverrideableBuilder } from "supertokens-js-override";
 import { StateObject as WebJsStateObject, RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import { SignInAndUpHeader } from "./components/themes/signInAndUp/signInAndUpHeader";
 export declare type ComponentOverrideMap = {
@@ -30,7 +30,6 @@ export declare type UserInput = {
             originalImplementation: RecipeInterface,
             builder?: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
-        components?: ComponentOverrideMap;
     };
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type Config = UserInput &
@@ -43,7 +42,6 @@ export declare type NormalisedConfig = {
             originalImplementation: RecipeInterface,
             builder?: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
-        components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {

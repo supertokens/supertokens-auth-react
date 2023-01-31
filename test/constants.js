@@ -16,12 +16,13 @@
 /*
  * Consts.
  */
-import { ST_ROOT_ID } from "../lib/build/constants";
-
+export const ST_ROOT_ID = "supertokens-root";
 export const TEST_CLIENT_BASE_URL = "http://localhost:3031";
 export const TEST_SERVER_BASE_URL = "http://localhost:8082";
 export const TEST_APPLICATION_SERVER_BASE_URL =
     "http://localhost:" + (process.env.APP_SERVER === undefined ? "8082" : process.env.APP_SERVER);
+export const DEFAULT_WEBSITE_BASE_PATH = "/auth";
+export const DEFAULT_API_BASE_PATH = "/auth";
 export const SIGN_IN_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/signin`;
 export const EMAIL_EXISTS_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/signup/email/exists`;
 export const SIGN_OUT_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/signout`;

@@ -1,13 +1,12 @@
 import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
-import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass, PropsWithChildren } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import { CookieHandlerInput } from "supertokens-website/utils/cookieHandler/types";
-import { WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
 import { SessionClaimValidator as SessionClaimValidatorWebJS } from "supertokens-web-js/recipe/session";
+import { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/types";
+import { WindowHandlerInput } from "supertokens-web-js/utils/windowHandler/types";
 export declare type GetRedirectionURLContext =
     | {
           action: "TO_AUTH" | "SESSION_VERIFICATION_FAILURE";
@@ -92,22 +91,14 @@ export declare type NormalisedFormField = {
     autofocus?: boolean;
 };
 export declare type ReactComponentClass = ComponentClass<any, any> | (<T>(props: T) => JSX.Element);
-export declare type Styles = Record<string, CSSObject>;
 export declare type FeatureBaseConfig = {
-    style?: Styles;
+    style?: string;
 };
 export declare type NormalisedBaseConfig = {
-    style: Styles;
+    style: string;
 };
-export declare type NormalisedPalette = {
-    colors: Record<string, string>;
-    fonts: {
-        size: string[];
-    };
-};
-export declare type NormalisedDefaultStyles = Record<string, CSSObject>;
 export declare type ThemeBaseProps = {
-    styleFromInit?: Styles;
+    styleFromInit?: string;
 };
 export declare type FeatureBaseProps = PropsWithChildren<{
     history?: any;

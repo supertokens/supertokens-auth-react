@@ -29,6 +29,11 @@ export default class Wrapper {
         fetchResponse: Response;
     }>;
     static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string;
+    static ComponentsOverrideProvider: import("react").FC<
+        import("react").PropsWithChildren<{
+            components: import("./types").ComponentOverrideMap;
+        }>
+    >;
 }
 declare const init: typeof Wrapper.init;
 declare const isEmailVerified: typeof Wrapper.isEmailVerified;
@@ -36,6 +41,11 @@ declare const verifyEmail: typeof Wrapper.verifyEmail;
 declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
 declare const EmailVerification: (prop?: any) => JSX.Element;
 declare const getEmailVerificationTokenFromURL: typeof Wrapper.getEmailVerificationTokenFromURL;
+declare const EmailVerificationComponentsOverrideProvider: import("react").FC<
+    import("react").PropsWithChildren<{
+        components: import("./types").ComponentOverrideMap;
+    }>
+>;
 declare const EmailVerificationClaim: import("supertokens-web-js/recipe/emailverification").EmailVerificationClaimClass;
 export {
     init,
@@ -45,6 +55,7 @@ export {
     getEmailVerificationTokenFromURL,
     EmailVerification,
     EmailVerificationTheme,
+    EmailVerificationComponentsOverrideProvider,
     GetRedirectionURLContext,
     PreAPIHookContext as PreAPIHookContext,
     OnHandleEventContext,

@@ -24,7 +24,7 @@ import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { useOnMountAPICall } from "../../utils";
 import SuperTokens from "../../superTokens";
-import { getGlobalClaimValidators } from "supertokens-website/utils/globalClaimValidators";
+import { getGlobalClaimValidators } from "supertokens-web-js/utils";
 import { SessionClaimValidator } from "../../types";
 import { ClaimValidationError } from "supertokens-web-js/recipe/session";
 

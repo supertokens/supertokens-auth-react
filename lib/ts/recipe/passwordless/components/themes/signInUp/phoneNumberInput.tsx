@@ -16,21 +16,17 @@
 /*
  * Imports.
  */
+import phoneNumberInputLibStyles from "intl-tel-input/build/css/intlTelInput.css";
+import intlTelInput from "intl-tel-input";
 
-import { CSSObject } from "@emotion/react";
-import Select, { components as ReactSelectComps } from "react-select";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import React, { useCallback, useContext, useEffect, useMemo } from "react";
-
-import PhoneInputWithCountrySelect, { getCountryCallingCode, getCountries } from "react-phone-number-input/min";
-
-import StyleContext from "../../../../../styles/styleContext";
 import { InputProps } from "../../../../emailpassword/components/library/input";
 import ErrorIcon from "../../../../../components/assets/errorIcon";
-import { CountryCode } from "libphonenumber-js";
+import { ST_ROOT_ID } from "../../../../../constants";
 
 type PhoneNumberInputProps = {
-    defaultCountry?: CountryCode;
+    defaultCountry?: string;
 };
 
 /*
@@ -45,11 +41,8 @@ function PhoneNumberInput({
     onInputFocus,
     onChange,
     hasError,
-    placeholder,
     value,
 }: InputProps & PhoneNumberInputProps): JSX.Element {
-    const styles = useContext(StyleContext);
-
     function handleFocus() {
         if (onInputFocus !== undefined) {
             onInputFocus({
@@ -68,160 +61,136 @@ function PhoneNumberInput({
         }
     }
 
-    function handleChange(newValue: string) {
-        if (onChange !== undefined) {
-            onChange({
-                id: name,
-                value: newValue,
-            });
-        }
-    }
+    const [phoneInputInstance, setPhoneInputInstance] = useState<intlTelInput.Plugin>();
+
+    const onChangeRef = useRef<typeof onChange>();
+    useEffect(() => {
+        onChangeRef.current = onChange;
+    }, [onChange]);
+
+    const handleChange = useCallback(
+        (newValue: string) => {
+            if (onChangeRef.current !== undefined) {
+                onChangeRef.current({
+                    id: name,
+                    value: newValue,
+                });
+            }
+        },
+        [onChangeRef]
+    );
+
+    const handleCountryChange = useCallback(
+        (ev) => {
+            if (onChangeRef.current !== undefined && phoneInputInstance !== undefined) {
+                onChangeRef.current({
+                    id: name,
+                    value: ev.target.value,
+                });
+            }
+        },
+        [onChangeRef]
+    );
+
+    const inputRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
-        const countries = getCountries();
-        for (const code of countries) {
-            new Image().src = `http://purecatamphetamine.github.io/country-flag-icons/3x2/${code}.svg`;
+        if (inputRef.current !== null && inputRef.current.value !== value && phoneInputInstance) {
+            phoneInputInstance.setNumber(value);
+        }
+    }, [phoneInputInstance, value]);
+
+    useEffect(() => {
+        if (inputRef.current !== null && inputRef.current.dataset["intl-tel-input-id"] === undefined) {
+            const iti = intlTelInput(inputRef.current, {
+                initialCountry: defaultCountry,
+                nationalMode: false,
+                preferredCountries: defaultCountry ? [defaultCountry] : [],
+            });
+
+            if (value.length > 0) {
+                iti.setNumber(value);
+            } else if (defaultCountry === undefined) {
+                // We set the country to an empty string, because this will display the Unknown flag
+                // instead of the first one in the list
+                iti.setCountry("");
+            } else {
+                // if we get here that means that value is empty and defaultCountry is not undefined
+                const data = iti.getSelectedCountryData();
+                // In this case we want to also signal to the embedding form that we are prefilling this.
+                handleChange("+" + data.dialCode);
+            }
+
+            // This is a workaround, since the lib adds the dropdown to the body directly,
+            // if it detects a mobile environment, but this doesn't work with our styling if we use shadow dom
+            const anyIti = iti as any;
+            if (anyIti.isMobile) {
+                const root = document.getElementById(ST_ROOT_ID);
+
+                // We only have to do this if we are using shadowDom and we need access to the dom element anyway
+                // so passing the shadowroot element here would be both impractical and not too useful
+                if (root?.shadowRoot) {
+                    // We can't set the shadowRoot directly as the dropdownContainer, because we need to add a style to it
+                    const container = root.shadowRoot.querySelector("[data-supertokens~=container]");
+
+                    if (!container) {
+                        throw new Error("Should never happen: container element not found");
+                    }
+
+                    container.classList.add("iti-mobile");
+                    anyIti.options.dropdownContainer = container;
+                }
+            }
+            inputRef.current.addEventListener("countrychange", handleCountryChange);
+            setPhoneInputInstance(iti);
         }
     }, []);
 
-    const errorStyle: CSSObject | undefined = hasError === true ? styles.inputError : undefined;
+    /* eslint-disable react/jsx-no-literals */
     /*
      * Render.
      */
     return (
-        <div data-supertokens="inputContainer" css={styles.inputContainer}>
-            <div data-supertokens="inputWrapper inputError" css={[styles.inputWrapper, errorStyle]}>
-                <PhoneInputWithCountrySelect
-                    data-supertokens="input phoneInputLibRoot"
-                    countrySelectComponent={CountrySelectWithIcon}
-                    css={[styles.input, styles.phoneInputLibRoot]}
+        <div data-supertokens="inputContainer">
+            <style type="text/css">
+                {phoneNumberInputLibStyles}
+                {`
+                    .iti__flag {background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/img/flags.png");}
+
+                    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+                        .iti__flag {background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/img/flags@2x.png");}
+                    }
+                `}
+            </style>
+            <div data-supertokens={`phoneInputWrapper inputWrapper ${hasError ? "inputError" : ""}`}>
+                <input
+                    type="tel"
+                    data-supertokens="input"
                     name={name + "_text"}
                     autoFocus={autofocus}
                     autoComplete={autoComplete}
-                    value={value}
-                    onChange={handleChange}
-                    countryCallingCodeEditable={true}
+                    onChange={(ev) => {
+                        // We do this to ensure that country detection starts working as soon as the user starts typing.
+                        // This also replicates how the old lib worked (automatically formatting to an international number)
+                        if (ev.target.value.trim().length > 0 && !ev.target.value.trim().startsWith("+")) {
+                            ev.target.value = "+" + ev.target.value.trim();
+                        }
+
+                        handleChange(ev.target.value);
+                    }}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
-                    international={true}
-                    placeholder={placeholder}
-                    defaultCountry={defaultCountry}
-                    smartCaret={
-                        false
-                        /*
-                            This is set to false to avoid this bug: https://gitlab.com/catamphetamine/react-phone-number-input/-/issues/128
-                            We should monitor this and update it to true whenever it's fixed
-                        */
-                    }
+                    ref={inputRef}
                 />
                 {hasError === true && (
-                    <div
-                        data-supertokens="inputAdornment inputAdornmentError"
-                        css={[styles.inputAdornment, styles.inputAdornmentError]}>
-                        <ErrorIcon color={styles.palette.colors.error} />
+                    <div data-supertokens="inputAdornment inputAdornmentError">
+                        <ErrorIcon />
                     </div>
                 )}
             </div>
         </div>
     );
-}
-
-function CountrySelectWithIcon({
-    value,
-    options,
-    iconComponent: Icon,
-    onChange,
-}: {
-    value: string;
-    options: { value: string; label: string; divider: boolean }[];
-    iconComponent: React.ComponentClass<any>;
-    onChange: (newValue: string | undefined) => void;
-}) {
-    const style = useContext(StyleContext);
-
-    const selectedOption = options.find((o) => o.value === value);
-
-    const selectStyles = useMemo(
-        () => ({
-            menu: (provided: CSSObject) => ({
-                ...provided,
-                ...style.phoneInputCountryDropdown,
-                // These elements are added inside CustomOption below
-                // We are styling them here, to avoid emotion processing on each element (200+ countries)
-                "& [data-supertokens=phoneInputCountryOptionLabel]": {
-                    ...style.phoneInputCountryOptionLabel,
-                },
-                "& [data-supertokens=phoneInputCountryOption]": {
-                    ...style.phoneInputCountryOption,
-                },
-                "& [data-supertokens=phoneInputCountryOptionCallingCode]": {
-                    ...style.phoneInputCountryOptionCallingCode,
-                },
-            }),
-            control: (provided: CSSObject) => ({
-                ...provided,
-                ...style.phoneInputCountryControl,
-            }),
-            valueContainer: (provided: CSSObject) => ({
-                ...provided,
-                ...style.phoneInputCountryValueContainer,
-            }),
-            dropdownIndicator: (provided: CSSObject) => ({
-                ...provided,
-                ...style.phoneInputCountryDropdownIndicator,
-            }),
-        }),
-        [style]
-    );
-    const selectOnChange = useCallback(
-        (selected) => {
-            onChange(selected === null ? undefined : selected.value);
-        },
-        [onChange]
-    );
-    const components = useMemo(() => {
-        const CustomOption = ({ innerProps, data, isSelected, isDisabled }: any) => {
-            return !isDisabled ? (
-                <div
-                    {...innerProps}
-                    data-supertokens="phoneInputCountryOption"
-                    onTouchEnd={(ev) => {
-                        // We need to stop propagation here, to prevent the menu closing before the click is fired
-                        ev.stopPropagation();
-                    }}
-                    aria-selected={isSelected}>
-                    <Icon country={data.value} label={data.label} />
-                    <span data-supertokens="phoneInputCountryOptionLabel">{data.label}</span>
-                    {data.value && (
-                        <span data-supertokens="phoneInputCountryOptionCallingCode">
-                            +{getCountryCallingCode(data.value)}
-                        </span>
-                    )}
-                </div>
-            ) : null;
-        };
-        const Control = ({ children, ...rest }: any) => {
-            return (
-                <ReactSelectComps.SingleValue
-                    data-supertokens="phoneInputCountrySelect"
-                    css={style.phoneInputCountrySelect}
-                    {...rest}>
-                    <Icon country={rest.getValue()[0]?.value} label={children} />
-                </ReactSelectComps.SingleValue>
-            );
-        };
-        return { Option: CustomOption, SingleValue: Control, IndicatorSeparator: undefined };
-    }, []);
-
-    return (
-        <Select
-            options={options}
-            styles={selectStyles}
-            value={selectedOption}
-            onChange={selectOnChange}
-            components={components}
-        />
-    );
+    /* eslint-enable react/jsx-no-literals */
 }
 
 export default PhoneNumberInput;

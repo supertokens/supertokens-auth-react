@@ -15,13 +15,12 @@
 import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
-import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass, PropsWithChildren } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import { CookieHandlerInput } from "supertokens-website/utils/cookieHandler/types";
-import { WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
 import { SessionClaimValidator as SessionClaimValidatorWebJS } from "supertokens-web-js/recipe/session";
+import { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/types";
+import { WindowHandlerInput } from "supertokens-web-js/utils/windowHandler/types";
 
 export type GetRedirectionURLContext =
     | {
@@ -265,8 +264,6 @@ export type NormalisedFormField = {
 
 export type ReactComponentClass = ComponentClass<any, any> | (<T>(props: T) => JSX.Element);
 
-export type Styles = Record<string, CSSObject>;
-
 /*
  * Features Config Types.
  */
@@ -275,27 +272,18 @@ export type FeatureBaseConfig = {
     /*
      * Additional styles to override themes.
      */
-    style?: Styles;
+    style?: string;
 };
 
 export type NormalisedBaseConfig = {
     /*
      * Additional styles to override themes.
      */
-    style: Styles;
+    style: string;
 };
-
-export type NormalisedPalette = {
-    colors: Record<string, string>;
-    fonts: {
-        size: string[];
-    };
-};
-
-export type NormalisedDefaultStyles = Record<string, CSSObject>;
 
 export type ThemeBaseProps = {
-    styleFromInit?: Styles;
+    styleFromInit?: string;
 };
 
 export type FeatureBaseProps = PropsWithChildren<{

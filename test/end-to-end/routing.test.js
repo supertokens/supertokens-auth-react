@@ -22,12 +22,11 @@ import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import { spawn } from "child_process";
 import puppeteer from "puppeteer";
-import { DEFAULT_WEBSITE_BASE_PATH } from "../../lib/build/constants";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
 
-import { TEST_CLIENT_BASE_URL } from "../constants";
+import { TEST_CLIENT_BASE_URL, DEFAULT_WEBSITE_BASE_PATH } from "../constants";
 import {
     getSubmitFormButtonLabel,
     getLabelsText,

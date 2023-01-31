@@ -17,8 +17,7 @@
  * Imports.
  */
 
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import StyleContext from "../../../../../styles/styleContext";
+import React, { useCallback, useEffect, useState } from "react";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { LoginAttemptInfo } from "../../../types";
 import { useTranslation } from "../../../../../translation/translationContext";
@@ -35,7 +34,6 @@ export const ResendButton = withOverride(
         onClick: () => void;
     }): JSX.Element | null {
         const t = useTranslation();
-        const styles = useContext(StyleContext);
 
         const getTimeLeft = useCallback(() => {
             const timeLeft = loginAttemptInfo.lastResend + resendEmailOrSMSGapInSeconds * 1000 - Date.now();
@@ -67,7 +65,6 @@ export const ResendButton = withOverride(
                 type="button"
                 disabled={secsUntilResend !== undefined}
                 onClick={onClick}
-                css={[styles.link, styles.linkButton, styles.resendCodeBtn]}
                 data-supertokens="link linkButton resendCodeBtn">
                 {secsUntilResend !== undefined ? (
                     <React.Fragment>

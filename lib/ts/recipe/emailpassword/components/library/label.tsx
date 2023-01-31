@@ -13,17 +13,7 @@
  * under the License.
  */
 
-/*
- * Imports.
- */
-
-import { useContext } from "react";
 import { useTranslation } from "../../../..";
-import StyleContext from "../../../../styles/styleContext";
-
-/*
- * Props.
- */
 
 type LabelProps = {
     value: string;
@@ -32,10 +22,9 @@ type LabelProps = {
 
 export default function Label({ value, showIsRequired }: LabelProps): JSX.Element {
     const t = useTranslation();
-    const styles = useContext(StyleContext);
 
     return (
-        <div data-supertokens="label" css={styles.label}>
+        <div data-supertokens="label">
             {t(value)}
             {showIsRequired && " *"}
         </div>

@@ -15,8 +15,7 @@
 
 import { FormField, FormFieldBaseConfig, NormalisedFormField } from "../../types";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
-import OverrideableBuilder from "supertokens-js-override";
-import { ComponentOverrideMap } from "./types";
+import { OverrideableBuilder } from "supertokens-js-override";
 
 import {
     Config,
@@ -70,10 +69,8 @@ export function normaliseEmailPasswordConfig(config: Config): NormalisedConfig {
             originalImplementation: RecipeInterface,
             builder?: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
-        components: ComponentOverrideMap;
     } = {
         functions: (originalImplementation: RecipeInterface) => originalImplementation,
-        components: {},
         ...config.override,
     };
 
@@ -149,7 +146,7 @@ export function normaliseSignUpFormFeatureConfig(
     const formFields = mergeFormFields(defaultFormFields, userFormFields);
     const privacyPolicyLink = config.privacyPolicyLink;
     const termsOfServiceLink = config.termsOfServiceLink;
-    const style = config.style !== undefined ? config.style : {};
+    const style = config.style !== undefined ? config.style : "";
 
     return {
         style,
@@ -180,7 +177,7 @@ export function normaliseSignInFormFeatureConfig(
     }
     const formFields = mergeFormFields(defaultFormFields, userFormFields);
 
-    const style = config.style !== undefined ? config.style : {};
+    const style = config.style !== undefined ? config.style : "";
 
     return {
         style,
@@ -228,7 +225,7 @@ export function normaliseResetPasswordUsingTokenFeature(
     const submitNewPasswordFormStyle =
         config.submitNewPasswordForm !== undefined && config.submitNewPasswordForm.style !== undefined
             ? config.submitNewPasswordForm.style
-            : {};
+            : "";
 
     const submitNewPasswordForm: NormalisedSubmitNewPasswordForm = {
         style: submitNewPasswordFormStyle,
@@ -255,7 +252,7 @@ export function normaliseResetPasswordUsingTokenFeature(
     const enterEmailFormStyle =
         config.enterEmailForm !== undefined && config.enterEmailForm.style !== undefined
             ? config.enterEmailForm.style
-            : {};
+            : "";
 
     const enterEmailForm: NormalisedEnterEmailForm = {
         style: enterEmailFormStyle,

@@ -12,13 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-/*
- * Imports.
- */
-import { useContext } from "react";
-import StyleContext, { StyleProvider } from "../../../../../styles/styleContext";
-import { defaultPalette } from "../../../../../styles/styles";
-import { getStyles } from "../../../components/themes/styles";
 import { hasFontDefined } from "../../../../../styles/styles";
 import { SignUpFooter } from "./signUpFooter";
 import { SignInAndUpThemeProps } from "../../../types";
@@ -30,14 +23,12 @@ import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { SignInAndUpHeader } from "./signInAndUpHeader";
 
 const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
-    const styles = useContext(StyleContext);
-
     return (
-        <div data-supertokens="container" css={styles.container}>
-            <div data-supertokens="row" css={styles.row}>
+        <div data-supertokens="container">
+            <div data-supertokens="row">
                 <SignInAndUpHeader />
 
-                <div data-supertokens="divider" css={styles.divider}></div>
+                <div data-supertokens="divider"></div>
 
                 {props.featureState.error && <GeneralError error={props.featureState.error} />}
 
@@ -62,15 +53,10 @@ const SignInAndUpThemeWrapper: React.FC<SignInAndUpThemeProps> = (
 
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase loadDefaultFont={!hasFont}>
-                <StyleProvider
-                    rawPalette={props.config.palette}
-                    defaultPalette={defaultPalette}
-                    styleFromInit={props.config.signInAndUpFeature.style}
-                    rootStyleFromInit={props.config.rootStyle}
-                    getDefaultStyles={getStyles}>
-                    <SignInAndUpTheme {...props} />
-                </StyleProvider>
+            <ThemeBase
+                loadDefaultFont={!hasFont}
+                userStyles={[props.config.rootStyle, props.config.signInAndUpFeature.style]}>
+                <SignInAndUpTheme {...props} />
             </ThemeBase>
         </UserContextWrapper>
     );

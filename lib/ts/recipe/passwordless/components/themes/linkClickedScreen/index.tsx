@@ -15,33 +15,29 @@
 /*
  * Imports.
  */
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
-import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { LinkClickedScreenProps } from "../../../types";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { Button } from "../../../../emailpassword/components/library";
+import { ThemeBase } from "../themeBase";
+import { hasFontDefined } from "../../../../../styles/styles";
 
 const PasswordlessLinkClickedScreen: React.FC<LinkClickedScreenProps> = (props) => {
-    const styles = useContext(StyleContext);
     const t = useTranslation();
     const [loading, setLoading] = useState(false);
 
     return (
-        <div data-supertokens="container" css={styles.container}>
-            <div data-supertokens="row" css={styles.row}>
+        <div data-supertokens="container">
+            <div data-supertokens="row">
                 {props.requireUserInteraction === true ? (
                     <React.Fragment>
-                        <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                            {t("PWLESS_LINK_CLICKED_CONTINUE_HEADER")}
-                        </div>
-                        <div
-                            data-supertokens="headerSubtitle secondaryText"
-                            css={[styles.headerSubtitle, styles.secondaryText]}>
+                        <div data-supertokens="headerTitle">{t("PWLESS_LINK_CLICKED_CONTINUE_HEADER")}</div>
+                        <div data-supertokens="headerSubtitle secondaryText">
                             {t("PWLESS_LINK_CLICKED_CONTINUE_DESC")}
                         </div>
-                        <div data-supertokens="continueButtonWrapper" css={styles.continueButtonWrapper}>
+                        <div data-supertokens="continueButtonWrapper">
                             <Button
                                 isLoading={loading}
                                 onClick={() => {
@@ -54,8 +50,8 @@ const PasswordlessLinkClickedScreen: React.FC<LinkClickedScreenProps> = (props) 
                         </div>
                     </React.Fragment>
                 ) : (
-                    <div data-supertokens="spinner" css={styles.spinner}>
-                        <SpinnerIcon color={styles.palette.colors.primary} />
+                    <div data-supertokens="spinner">
+                        <SpinnerIcon />
                     </div>
                 )}
             </div>
@@ -63,4 +59,15 @@ const PasswordlessLinkClickedScreen: React.FC<LinkClickedScreenProps> = (props) 
     );
 };
 
-export const LinkClickedScreen = withOverride("PasswordlessLinkClickedScreen", PasswordlessLinkClickedScreen);
+const LinkClickedScreenWithOverride = withOverride("PasswordlessLinkClickedScreen", PasswordlessLinkClickedScreen);
+
+export const LinkClickedScreen = (props: LinkClickedScreenProps) => {
+    const hasFont = hasFontDefined(props.config.rootStyle);
+    return (
+        <ThemeBase
+            loadDefaultFont={!hasFont}
+            userStyles={[props.config.rootStyle, props.config.linkClickedScreenFeature.style]}>
+            <LinkClickedScreenWithOverride {...props} />
+        </ThemeBase>
+    );
+};
