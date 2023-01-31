@@ -176,7 +176,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                         callback = validator.onFailureRedirection({ userContext, reason: claim.reason });
                     }
                 }
-                if (!callback) {
+                if (callback === undefined) {
                     await SuperTokens.getInstanceOrThrow().redirectToUrl(
                         await SuperTokens.getInstanceOrThrow().getRedirectUrl({
                             action: "SESSION_VERIFICATION_FAILURE",
