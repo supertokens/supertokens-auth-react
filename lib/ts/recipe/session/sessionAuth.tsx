@@ -249,7 +249,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             return session.current.addEventListener(onHandleEvent);
         }
         return undefined;
-    }, [props, setContext, context.loading, getFailureRedirectionInfo]);
+    }, [props, setContext, context.loading]);
 
     if (props.requireAuth !== false && (context.loading || !context.doesSessionExist)) {
         return null;

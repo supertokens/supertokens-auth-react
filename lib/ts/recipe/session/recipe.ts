@@ -187,7 +187,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                 );
             }
 
-            // if onFailure returns string we redirect there otherwise continue
+            // if redirectPath is string that means failed claim had callback that returns path, we redirect there otherwise continue
             if (failureRedirectInfo.redirectPath !== undefined) {
                 return SuperTokens.getInstanceOrThrow().redirectToUrl(failureRedirectInfo.redirectPath, history);
             }
