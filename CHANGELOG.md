@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Fixes
+
+-   Fixed all buttons to have pointer cursor on hover.
+
 ## [0.30.2] - 2023-01-21
 
 ### Changes
