@@ -12,10 +12,10 @@ export declare type GetRedirectionURLContext = {
     showSignIn?: boolean;
 };
 export declare type ValidationSuccessCallback =
-    | (({ userContext }: { userContext: any }) => Promise<string | undefined> | string)
+    | (({ userContext }: { userContext: any }) => Promise<string | undefined> | string | undefined)
     | undefined;
 export declare type ValidationFailureCallback =
-    | (({ userContext, reason }: { userContext: any; reason: any }) => Promise<string | undefined> | string)
+    | (({ userContext, reason }: { userContext: any; reason: any }) => Promise<string | undefined> | string | undefined)
     | undefined;
 export declare type SessionClaimValidator = SessionClaimValidatorWebJS & {
     onSuccessRedirection?: ValidationSuccessCallback;

@@ -479,31 +479,43 @@ export const getFailureRedirectionInfo = async ({
     for (const claim of invalidClaims) {
         const validator = globalValidatorsMap[claim.validatorId];
         if (validator.onFailureRedirection) {
-            redirects.push(await validator.onFailureRedirection({ reason: claim.reason, userContext }));
+            const redirectPath = await validator.onFailureRedirection({ reason: claim.reason, userContext });
+            redirects.push(redirectPath);
+            if (redirectPath !== undefined) {
+                break;
+            }
         }
-        globalValidatorsMap[claim.validatorId];
     }
     return {
-        accessForbidden: redirects.length === 0,
+        accessForbidden: invalidClaims.length > 0 && redirects.length === 0,
         redirectPath: redirects.filter(Boolean)[0],
     };
 };
 
 export const getSuccessRedirectionPath = async ({
     invalidClaims,
+    overrideGlobalClaimValidators,
     userContext,
 }: {
     invalidClaims: ClaimValidationError[];
+    overrideGlobalClaimValidators?:
+        | ((globalClaimValidators: SessionClaimValidator[], userContext: any) => SessionClaimValidator[])
+        | undefined;
     userContext: any;
 }): Promise<string | undefined> => {
-    const globalValidators: SessionClaimValidator[] = getGlobalClaimValidators({ userContext });
+    const globalValidators: SessionClaimValidator[] = getGlobalClaimValidators({
+        overrideGlobalClaimValidators,
+        userContext,
+    });
     const invalidClaimsIDs = invalidClaims.map(({ validatorId }) => validatorId);
     let succeededClaimValidatorRedirectString;
     for (const validator of globalValidators) {
-        const redirectPath = await validator.onSuccessRedirection?.({ userContext });
-        if (!invalidClaimsIDs.includes(validator.id) && redirectPath !== undefined) {
-            succeededClaimValidatorRedirectString = redirectPath;
-            break;
+        if (!invalidClaimsIDs.includes(validator.id)) {
+            const redirectPath = await validator.onSuccessRedirection?.({ userContext });
+            if (redirectPath !== undefined) {
+                succeededClaimValidatorRedirectString = redirectPath;
+                break;
+            }
         }
     }
     return succeededClaimValidatorRedirectString;

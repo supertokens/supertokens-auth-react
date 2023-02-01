@@ -69,8 +69,12 @@ export declare const getFailureRedirectionInfo: ({
 }>;
 export declare const getSuccessRedirectionPath: ({
     invalidClaims,
+    overrideGlobalClaimValidators,
     userContext,
 }: {
     invalidClaims: ClaimValidationError[];
+    overrideGlobalClaimValidators?:
+        | ((globalClaimValidators: SessionClaimValidator[], userContext: any) => SessionClaimValidator[])
+        | undefined;
     userContext: any;
 }) => Promise<string | undefined>;

@@ -28,11 +28,11 @@ export type GetRedirectionURLContext = {
 };
 
 export type ValidationSuccessCallback =
-    | (({ userContext }: { userContext: any }) => Promise<string | undefined> | string)
+    | (({ userContext }: { userContext: any }) => Promise<string | undefined> | string | undefined)
     | undefined;
 
 export type ValidationFailureCallback =
-    | (({ userContext, reason }: { userContext: any; reason: any }) => Promise<string | undefined> | string)
+    | (({ userContext, reason }: { userContext: any; reason: any }) => Promise<string | undefined> | string | undefined)
     | undefined;
 
 export type SessionClaimValidator = SessionClaimValidatorWebJS & {

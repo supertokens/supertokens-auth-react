@@ -177,7 +177,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                 userContext,
             });
 
-            if (invalidClaims.length > 0 && failureRedirectInfo.accessForbidden) {
+            if (failureRedirectInfo.accessForbidden) {
                 return await SuperTokens.getInstanceOrThrow().redirectToUrl(
                     await SuperTokens.getInstanceOrThrow().getRedirectUrl({
                         action: "SESSION_VERIFICATION_FAILURE",

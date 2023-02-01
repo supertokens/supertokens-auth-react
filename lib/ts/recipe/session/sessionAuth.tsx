@@ -22,7 +22,7 @@ import Session from "./recipe";
 import { LoadedSessionContext, RecipeEventWithSessionContext, SessionContextType } from "./types";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { getFailureRedirectionInfo, useOnMountAPICall } from "../../utils";
+import { getFailureRedirectionInfo, getSuccessRedirectionPath, useOnMountAPICall } from "../../utils";
 import SuperTokens from "../../superTokens";
 import { SessionClaimValidator } from "../../types";
 
@@ -177,7 +177,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     await SuperTokens.getInstanceOrThrow().redirectToUrl(failureRedirectInfo.redirectPath, history);
                     return;
                 }
-                if (toSetContext.invalidClaims.length > 0 && failureRedirectInfo.accessForbidden) {
+                if (failureRedirectInfo.accessForbidden) {
                     return await SuperTokens.getInstanceOrThrow().redirectToUrl(
                         await SuperTokens.getInstanceOrThrow().getRedirectUrl({
                             action: "SESSION_VERIFICATION_FAILURE",
@@ -185,6 +185,15 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                         }),
                         history
                     );
+                }
+                const successRedirectionPath = await getSuccessRedirectionPath({
+                    invalidClaims: toSetContext.invalidClaims,
+                    overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
+                    userContext,
+                });
+
+                if (successRedirectionPath !== undefined) {
+                    return SuperTokens.getInstanceOrThrow().redirectToUrl(successRedirectionPath, history);
                 }
             }
 
@@ -219,7 +228,20 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                         userContext,
                     });
                     if (props.doRedirection !== false && failureRedirectInfo.redirectPath) {
-                        await SuperTokens.getInstanceOrThrow().redirectToUrl(failureRedirectInfo.redirectPath, history);
+                        return await SuperTokens.getInstanceOrThrow().redirectToUrl(
+                            failureRedirectInfo.redirectPath,
+                            history
+                        );
+                    }
+
+                    const successRedirectionPath = await getSuccessRedirectionPath({
+                        invalidClaims,
+                        overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
+                        userContext,
+                    });
+
+                    if (props.doRedirection !== false && successRedirectionPath !== undefined) {
+                        return SuperTokens.getInstanceOrThrow().redirectToUrl(successRedirectionPath, history);
                     }
 
                     return;
