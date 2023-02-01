@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.30.2",
+    "version": "0.31.0",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -81,7 +81,7 @@
     "peerDependencies": {
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0",
-        "supertokens-web-js": "^0.4.0"
+        "supertokens-web-js": "supertokens/supertokens-web-js#feat/session_rework"
     },
     "scripts": {
         "init": "bash ./init.sh",
