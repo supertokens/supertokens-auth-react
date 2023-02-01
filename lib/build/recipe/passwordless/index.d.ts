@@ -107,6 +107,11 @@ export default class Wrapper {
     ) => JSX.Element;
     static SignInUpTheme: typeof SignInUpThemeWrapper;
     static LinkClicked: (prop?: any) => JSX.Element;
+    static ComponentsOverrideProvider: import("react").FC<
+        PropsWithChildren<{
+            components: import("./types").ComponentOverrideMap;
+        }>
+    >;
 }
 declare const init: typeof Wrapper.init;
 declare const createCode: typeof Wrapper.createCode;
@@ -128,9 +133,15 @@ declare const SignInUp: (
 ) => JSX.Element;
 declare const SignInUpTheme: typeof SignInUpThemeWrapper;
 declare const LinkClicked: (prop?: any) => JSX.Element;
+declare const PasswordlessComponentsOverrideProvider: import("react").FC<
+    PropsWithChildren<{
+        components: import("./types").ComponentOverrideMap;
+    }>
+>;
 export {
     SignInUp,
     SignInUpTheme,
+    PasswordlessComponentsOverrideProvider,
     LinkClicked,
     init,
     createCode,

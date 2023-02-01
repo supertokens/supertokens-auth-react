@@ -7,6 +7,219 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.31.0] - 2023-02-01
+
+## Breaking changes
+
+-   Updated `supertokens-web-js` dependency that requires a backend SDK update to:
+    -   supertokens-node: >= 13.0.0
+    -   supertokens-python: >= 0.12.0
+    -   supertokens-golang: >= 0.10.0
+-   Renamed configuration options:
+    -   `sessionScope` renamed to `sessionTokenFrontendDomain`
+    -   `cookieDomain` renamed to `sessionTokenBackendDomain`
+
+### Added
+
+-   Added support for authorizing requests using the `Authorization` header instead of cookies
+    -   Added `tokenTransferMethod` config option
+    -   Check out https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/sessions/token-transfer-method for more information
+
+## [0.30.2] - 2023-01-21
+
+### Changes
+
+-   Prefilling the phone number input with the dial code if default country is set.
+
+## [0.30.1] - 2023-01-20
+
+### Bugfixes
+
+-   Fixed guessing internation phone number in passwordless with EMAIL_OR_PHONE contact method if the number starts with a valid country dial code
+
+## [0.30.0] - 2023-01-20
+
+### Changes
+
+-   Updated many dependencies to fix warnings during install
+-   Updated our build process to use rollup as a bundler
+
+### Breaking changes
+
+-   Removed dependency on emotion/chroma
+-   Updated to styling through plain CSS instead of objects/emotion. Check https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/styling/changing-style for more info
+-   Removed palette option, colors are now customizable through setting CSS variables in styles. Check https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/styling/changing-colours for more info
+-   Moved `supertokens-web-js` into `devDependencies`. If using npm version 6, you also need to install it with `npm i --save supertokens-web-js`. Later versions install it automatically.
+-   The default phone number input changed in passwordless and thirdpartypasswordless recipe (switched to using `intl-tel-input`)
+
+### Migration
+
+#### Custom styles
+
+Before:
+
+```tsx
+SuperTokens.init({
+    appInfo: {
+        apiDomain: "...",
+        appName: "...",
+        websiteDomain: "...",
+    },
+    recipeList: [
+        ThirdPartyEmailPassword.init({
+            style: {
+                container: {
+                    fontFamily: "cursive",
+                },
+            },
+        }),
+        Session.init(),
+    ],
+});
+```
+
+After:
+
+```tsx
+SuperTokens.init({
+    appInfo: {
+        apiDomain: "...",
+        appName: "...",
+        websiteDomain: "...",
+    },
+    recipeList: [
+        ThirdPartyEmailPassword.init({
+            style: `
+                [data-supertokens~=container] {
+                    font-family: cursive;
+                }
+            `,
+        }),
+        Session.init(),
+    ],
+});
+```
+
+#### Custom palette
+
+Before:
+
+```tsx
+SuperTokens.init({
+    appInfo: {
+        apiDomain: "...",
+        appName: "...",
+        websiteDomain: "...",
+    },
+    recipeList: [
+        ThirdPartyEmailPassword.init({
+            palette: {
+                background: "#333",
+                inputBackground: "#292929",
+                textTitle: "white",
+                textLabel: "white",
+                textPrimary: "white",
+                error: "#ad2e2e",
+                textInput: "#a9a9a9",
+                textLink: "#a9a9a9",
+            },
+        }),
+        Session.init(),
+    ],
+});
+```
+
+After:
+
+```tsx
+SuperTokens.init({
+    appInfo: {
+        apiDomain: "...",
+        appName: "...",
+        websiteDomain: "...",
+    },
+    recipeList: [
+        ThirdPartyEmailPassword.init({
+            style: `
+                [data-supertokens~=container] {
+                    --palette-background: 51, 51, 51;
+                    --palette-inputBackground: 41, 41, 41;
+                    --palette-inputBorder: 41, 41, 41;
+                    --palette-textTitle: 255, 255, 255;
+                    --palette-textLabel: 255, 255, 255;
+                    --palette-textPrimary: 255, 255, 255;
+                    --palette-error: 173, 46, 46;
+                    --palette-textInput: 169, 169, 169;
+                    --palette-textLink: 169, 169, 169;
+                }
+            `,
+        }),
+        Session.init(),
+    ],
+});
+```
+
+## [0.29.0] - 2023-01-06
+
+### Breaking changes
+
+-   Moved component override config into a recipe specific provider component
+
+### Migration
+
+```tsx
+SuperTokens.init({
+    recipeList: [
+        EmailPassword.init({
+            override: {
+                components: {
+                    EmailPasswordSignIn_Override: ({ DefaultComponent, ...props }) => {
+                        return (
+                            <div>
+                                <img src="octocat.jpg" />
+                                <DefaultComponent {...props} />
+                            </div>
+                        );
+                    },
+                },
+            },
+        }),
+    ],
+});
+```
+
+Components override would move to override provider component's prop:
+
+```tsx
+import EmailPassword, { EmailPasswordComponentsOverrideProvider } from "supertokens-auth-react/recipe/emailpassword";
+
+SuperTokens.init({
+    recipeList: [EmailPassword.init()],
+});
+
+function App() {
+    return (
+        <SuperTokensWrapper>
+            <EmailPasswordComponentsOverrideProvider
+                components={{
+                    EmailPasswordSignIn_Override: ({ DefaultComponent, ...props }) => {
+                        return (
+                            <div>
+                                <img src="octocat.jpg" />
+                                <DefaultComponent {...props} />
+                            </div>
+                        );
+                    },
+                }}>
+                {/* The rest of JSX */}
+            </EmailPasswordComponentsOverrideProvider>
+        </SuperTokensWrapper>
+    );
+}
+
+export default App;
+```
+
 ### Testing
 
 -   Created test for the sign up attempt using duplicate email

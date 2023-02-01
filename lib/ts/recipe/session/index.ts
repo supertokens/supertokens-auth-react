@@ -28,7 +28,7 @@ import { useClaimValue as useClaimValueFunc } from "./useClaimValue";
 import { InputType, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
 import { getNormalisedUserContext } from "../../utils";
-import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
+import { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 
 export default class SessionAPIWrapper {
     static useSessionContext = useSessionContextFunc;
@@ -42,6 +42,12 @@ export default class SessionAPIWrapper {
 
     static async getUserId(input?: { userContext?: any }): Promise<string> {
         return Session.getInstanceOrThrow().getUserId({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async getAccessToken(input?: { userContext?: any }): Promise<string | undefined> {
+        return Session.getInstanceOrThrow().getAccessToken({
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
@@ -108,6 +114,7 @@ const useClaimValue = SessionAPIWrapper.useClaimValue;
 const SessionAuth = SessionAPIWrapper.SessionAuth;
 const init = SessionAPIWrapper.init;
 const getUserId = SessionAPIWrapper.getUserId;
+const getAccessToken = SessionAPIWrapper.getAccessToken;
 const getAccessTokenPayloadSecurely = SessionAPIWrapper.getAccessTokenPayloadSecurely;
 const attemptRefreshingSession = SessionAPIWrapper.attemptRefreshingSession;
 const doesSessionExist = SessionAPIWrapper.doesSessionExist;
@@ -126,6 +133,7 @@ export {
     SessionAuth,
     init,
     getUserId,
+    getAccessToken,
     getAccessTokenPayloadSecurely,
     attemptRefreshingSession,
     doesSessionExist,

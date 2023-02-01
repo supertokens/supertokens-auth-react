@@ -21,9 +21,7 @@ import { ThemeBase } from "../themeBase";
 
 import { ResetPasswordEmail } from "./resetPasswordEmail";
 import { SubmitNewPassword } from "./submitNewPassword";
-import { getStyles } from "../styles/styles";
-import { StyleProvider } from "../../../../../styles/styleContext";
-import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
+import { hasFontDefined } from "../../../../../styles/styles";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 
 /*
@@ -37,37 +35,21 @@ export function ResetPasswordUsingTokenTheme(props: ResetPasswordUsingTokenTheme
 
     // If no token, return SubmitNewPassword.
     if (props.submitNewPasswordForm !== undefined) {
-        return (
-            <StyleProvider
-                rawPalette={props.config.palette}
-                defaultPalette={defaultPalette}
-                styleFromInit={props.submitNewPasswordForm.styleFromInit}
-                rootStyleFromInit={props.config.rootStyle}
-                getDefaultStyles={getStyles}>
-                <SubmitNewPassword {...props.submitNewPasswordForm} />
-            </StyleProvider>
-        );
+        return <SubmitNewPassword {...props.submitNewPasswordForm} />;
     }
 
     // Otherwise, return EnterEmail.
-    return (
-        <StyleProvider
-            rawPalette={props.config.palette}
-            defaultPalette={defaultPalette}
-            styleFromInit={props.enterEmailForm.styleFromInit}
-            rootStyleFromInit={props.config.rootStyle}
-            getDefaultStyles={getStyles}>
-            <ResetPasswordEmail {...props.enterEmailForm} />
-        </StyleProvider>
-    );
+    return <ResetPasswordEmail {...props.enterEmailForm} />;
 }
 
 function ResetPasswordUsingTokenThemeWrapper(props: ResetPasswordUsingTokenThemeProps): JSX.Element {
     const hasFont = hasFontDefined(props.config.rootStyle);
-
+    const userStyles = props.submitNewPasswordForm
+        ? props.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.style
+        : props.config.resetPasswordUsingTokenFeature.enterEmailForm.style;
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase loadDefaultFont={!hasFont}>
+            <ThemeBase loadDefaultFont={!hasFont} userStyles={[props.config.rootStyle, userStyles]}>
                 <ResetPasswordUsingTokenTheme {...props} />
             </ThemeBase>
         </UserContextWrapper>

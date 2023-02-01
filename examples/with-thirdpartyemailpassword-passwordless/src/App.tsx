@@ -6,7 +6,12 @@ import SuperTokens, {
     redirectToAuth,
 } from "supertokens-auth-react";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
-import ThirdPartyEmailPassword, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import ThirdPartyEmailPassword, {
+    Google,
+    Github,
+    Apple,
+    ThirdpartyEmailPasswordComponentsOverrideProvider,
+} from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
@@ -40,41 +45,6 @@ SuperTokens.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init(), Apple.init()],
             },
-            override: {
-                components: {
-                    ThirdPartySignInAndUpProvidersForm_Override: ({ DefaultComponent, ...props }) => {
-                        return (
-                            <div>
-                                <DefaultComponent {...props} />
-                                <div
-                                    id="passwordlessLoginBtn"
-                                    style={{
-                                        display: "flex",
-                                        alignContent: "center",
-                                        justifyContent: "center",
-                                        paddingTop: "5px",
-                                        paddingBottom: "5px",
-                                        border: "2px",
-                                        borderStyle: "solid",
-                                        borderRadius: "8px",
-                                        marginTop: "10px",
-                                        cursor: "pointer",
-                                    }}
-                                    onClick={() => {
-                                        redirectToAuth({
-                                            queryParams: {
-                                                rid: "passwordless",
-                                            },
-                                            redirectBack: false,
-                                        });
-                                    }}>
-                                    Passwordless login
-                                </div>
-                            </div>
-                        );
-                    },
-                },
-            },
         }),
         Passwordless.init({
             contactMethod: "EMAIL_OR_PHONE",
@@ -88,33 +58,66 @@ function App() {
 
     return (
         <SuperTokensWrapper>
-            <div className="App">
-                <Router>
-                    <div className="fill">
-                        <Routes>
-                            {/* This shows the login UI on "/auth" route */}
-                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+            <ThirdpartyEmailPasswordComponentsOverrideProvider
+                components={{
+                    ThirdPartySignInAndUpProvidersForm_Override: ({ DefaultComponent, ...props }) => (
+                        <div>
+                            <DefaultComponent {...props} />
+                            <div
+                                id="passwordlessLoginBtn"
+                                style={{
+                                    display: "flex",
+                                    alignContent: "center",
+                                    justifyContent: "center",
+                                    paddingTop: "5px",
+                                    paddingBottom: "5px",
+                                    border: "2px",
+                                    borderStyle: "solid",
+                                    borderRadius: "8px",
+                                    marginTop: "10px",
+                                    cursor: "pointer",
+                                }}
+                                onClick={() => {
+                                    redirectToAuth({
+                                        queryParams: {
+                                            rid: "passwordless",
+                                        },
+                                        redirectBack: false,
+                                    });
+                                }}>
+                                Passwordless login
+                            </div>
+                        </div>
+                    ),
+                }}>
+                <div className="App">
+                    <Router>
+                        <div className="fill">
+                            <Routes>
+                                {/* This shows the login UI on "/auth" route */}
+                                {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
 
-                            <Route
-                                path="/"
-                                element={
-                                    /* This protects the "/" route so that it shows 
-                                        <Home /> only if the user is logged in.
-                                        Else it redirects the user to "/auth" */
-                                    <SessionAuth
-                                        onSessionExpired={() => {
-                                            updateShowSessionExpiredPopup(true);
-                                        }}>
-                                        <Home />
-                                        {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </SessionAuth>
-                                }
-                            />
-                        </Routes>
-                    </div>
-                    <Footer />
-                </Router>
-            </div>
+                                <Route
+                                    path="/"
+                                    element={
+                                        /* This protects the "/" route so that it shows 
+                                    <Home /> only if the user is logged in.
+                                    Else it redirects the user to "/auth" */
+                                        <SessionAuth
+                                            onSessionExpired={() => {
+                                                updateShowSessionExpiredPopup(true);
+                                            }}>
+                                            <Home />
+                                            {showSessionExpiredPopup && <SessionExpiredPopup />}
+                                        </SessionAuth>
+                                    }
+                                />
+                            </Routes>
+                        </div>
+                        <Footer />
+                    </Router>
+                </div>
+            </ThirdpartyEmailPasswordComponentsOverrideProvider>
         </SuperTokensWrapper>
     );
 }

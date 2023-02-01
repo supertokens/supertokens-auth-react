@@ -51,7 +51,7 @@ import {
 } from "../authRecipe/types";
 import EPRecipe from "../emailpassword/recipe";
 import TPRecipe from "../thirdparty/recipe";
-import OverrideableBuilder from "supertokens-js-override";
+import { OverrideableBuilder } from "supertokens-js-override";
 
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { ComponentOverrideMap as EmailPasswordOverrideMap } from "../emailpassword/types";
@@ -60,7 +60,10 @@ import { Header } from "./components/themes/signInAndUp/header";
 import { Dispatch } from "react";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
-export type ComponentOverrideMap = EmailPasswordOverrideMap &
+export type ComponentOverrideMap = Omit<
+    EmailPasswordOverrideMap,
+    "EmailPasswordSignUp_Override" | "EmailPasswordSignIn_Override"
+> &
     ThirdPartyOverrideMap & {
         ThirdPartyEmailPasswordHeader_Override?: ComponentOverride<typeof Header>;
     };
@@ -75,7 +78,6 @@ export type UserInput = {
             originalImplementation: RecipeInterface,
             builder?: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
-        components?: ComponentOverrideMap;
     };
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
@@ -92,7 +94,6 @@ export type NormalisedConfig = {
             originalImplementation: RecipeInterface,
             builder?: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
-        components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 

@@ -18,8 +18,7 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { userInputCodeValidate } from "../../../validators";
 import { Label } from "../../../../emailpassword/components/library";
-import React, { useContext, useEffect, useState } from "react";
-import StyleContext from "../../../../../styles/styleContext";
+import React, { useEffect, useState } from "react";
 import { ResendButton } from "./resendButton";
 import { useTranslation } from "../../../../../translation/translationContext";
 import STGeneralError from "supertokens-web-js/utils/error";
@@ -34,7 +33,6 @@ export const UserInputCodeForm = withOverride(
             footer?: JSX.Element;
         }
     ): JSX.Element {
-        const styles = useContext(StyleContext);
         const t = useTranslation();
         const userContext = useUserContext();
 
@@ -90,7 +88,7 @@ export const UserInputCodeForm = withOverride(
         return (
             <React.Fragment>
                 {clearResendNotifTimeout !== undefined && (
-                    <div data-supertokens="generalSuccess" css={[styles.generalSuccess]}>
+                    <div data-supertokens="generalSuccess">
                         {props.loginAttemptInfo.contactMethod === "EMAIL"
                             ? t("PWLESS_RESEND_SUCCESS_EMAIL")
                             : t("PWLESS_RESEND_SUCCESS_PHONE")}
@@ -105,7 +103,7 @@ export const UserInputCodeForm = withOverride(
                             id: "userInputCode",
                             label: "",
                             labelComponent: (
-                                <div css={styles.codeInputLabelWrapper} data-supertokens="codeInputLabelWrapper">
+                                <div data-supertokens="codeInputLabelWrapper">
                                     <Label
                                         value={"PWLESS_USER_INPUT_CODE_INPUT_LABEL"}
                                         data-supertokens="codeInputLabel"

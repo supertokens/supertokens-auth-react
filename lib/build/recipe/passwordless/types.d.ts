@@ -1,5 +1,5 @@
 import { Dispatch } from "react";
-import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
+import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -8,7 +8,6 @@ import {
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipe/types";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { CountryCode } from "libphonenumber-js";
 import { SignInUpHeader } from "./components/themes/signInUp/signInUpHeader";
 import { SignInUpFooter } from "./components/themes/signInUp/signInUpFooter";
 import { EmailForm } from "./components/themes/signInUp/emailForm";
@@ -55,24 +54,23 @@ export declare type NormalisedConfig = {
     validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
     signInUpFeature: {
         resendEmailOrSMSGapInSeconds: number;
-        defaultCountry?: CountryCode;
+        defaultCountry?: string;
         guessInternationPhoneNumberFromInputPhoneNumber: (
             inputPhoneNumber: string,
-            defaultCountryFromConfig?: CountryCode
+            defaultCountryFromConfig?: string
         ) => Promise<string | undefined> | string | undefined;
         privacyPolicyLink?: string;
         termsOfServiceLink?: string;
-        emailOrPhoneFormStyle: Styles;
-        userInputCodeFormStyle: Styles;
-        linkSentScreenStyle: Styles;
-        closeTabScreenStyle: Styles;
+        emailOrPhoneFormStyle: string;
+        userInputCodeFormStyle: string;
+        linkSentScreenStyle: string;
+        closeTabScreenStyle: string;
         disableDefaultUI?: boolean;
     };
     linkClickedScreenFeature: PasswordlessNormalisedBaseConfig;
     contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
-        components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type Config = UserInput &
@@ -85,10 +83,10 @@ export declare type SignInUpFeatureConfigInput = {
     resendEmailOrSMSGapInSeconds?: number;
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
-    emailOrPhoneFormStyle?: Styles;
-    userInputCodeFormStyle?: Styles;
-    linkSentScreenStyle?: Styles;
-    closeTabScreenStyle?: Styles;
+    emailOrPhoneFormStyle?: string;
+    userInputCodeFormStyle?: string;
+    linkSentScreenStyle?: string;
+    closeTabScreenStyle?: string;
 };
 export declare type UserInput = (
     | {
@@ -100,7 +98,7 @@ export declare type UserInput = (
           contactMethod: "PHONE";
           validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
           signInUpFeature?: SignInUpFeatureConfigInput & {
-              defaultCountry?: CountryCode;
+              defaultCountry?: string;
           };
       }
     | {
@@ -108,17 +106,16 @@ export declare type UserInput = (
           validateEmailAddress?: (email: string) => Promise<string | undefined> | string | undefined;
           validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
           signInUpFeature?: SignInUpFeatureConfigInput & {
-              defaultCountry?: CountryCode;
+              defaultCountry?: string;
               guessInternationPhoneNumberFromInputPhoneNumber?: (
                   inputPhoneNumber: string,
-                  defaultCountryFromConfig?: CountryCode
+                  defaultCountryFromConfig?: string
               ) => Promise<string | undefined> | string | undefined;
           };
       }
 ) & {
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
-        components?: ComponentOverrideMap;
     };
     linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;

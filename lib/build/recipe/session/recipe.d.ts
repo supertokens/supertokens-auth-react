@@ -3,7 +3,7 @@ import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import { RecipeEventWithSessionContext, InputType } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
-import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
+import { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import { SessionClaim } from "supertokens-web-js/recipe/session";
 declare type ConfigType = InputType & {
     recipeId: string;
@@ -20,6 +20,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     getFeatureComponent: (_: string) => JSX.Element;
     getFeatures: () => RecipeFeatureComponentMap;
     getUserId: (input: { userContext: any }) => Promise<string>;
+    getAccessToken: (input: { userContext: any }) => Promise<string | undefined>;
     getClaimValue: (input: { claim: SessionClaim<unknown>; userContext: any }) => Promise<unknown>;
     getAccessTokenPayloadSecurely: (input: { userContext: any }) => Promise<any>;
     doesSessionExist: (input: { userContext: any }) => Promise<boolean>;

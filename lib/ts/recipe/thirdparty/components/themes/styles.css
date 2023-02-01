@@ -1,0 +1,56 @@
+@import "../../../../styles/styles.css";
+
+[data-supertokens~="row"] {
+    padding-bottom: 30px;
+}
+
+[data-supertokens~="providerContainer"] {
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+
+[data-supertokens~="providerButton"] {
+    min-height: 32px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 2px 8px;
+
+    background-color: white;
+    border-color: rgb(221, 221, 221) !important;
+    color: black;
+}
+
+[data-supertokens~="providerButton"]:hover {
+    filter: none !important;
+    background-color: #fafafa;
+}
+
+[data-supertokens~="providerButtonLeft"] {
+    width: 34px;
+    margin-left: 66px;
+}
+
+[data-supertokens~="providerButtonLogo"] {
+    height: 30px;
+    display: flex;
+}
+
+[data-supertokens~="providerButtonLogoCenter"] {
+    display: flex;
+    margin: auto;
+}
+
+[data-supertokens~="providerButtonText"] {
+    font-weight: 400;
+    text-align: center;
+    justify-content: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+}
+
+[data-supertokens~="providerButtonText"]:only-child {
+    margin: 0 auto;
+}

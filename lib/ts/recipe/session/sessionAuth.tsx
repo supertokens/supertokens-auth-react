@@ -24,7 +24,7 @@ import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { popInvalidClaimRedirectPathFromContext, useOnMountAPICall } from "../../utils";
 import SuperTokens from "../../superTokens";
-import { SessionClaimValidator } from "supertokens-website";
+import { SessionClaimValidator } from "supertokens-web-js/recipe/session";
 
 export type SessionAuthProps = {
     /**

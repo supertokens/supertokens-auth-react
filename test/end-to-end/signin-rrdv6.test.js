@@ -209,9 +209,7 @@ describe("SuperTokens SignIn with react router dom v6", function () {
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             let cookies = await page.cookies();
             assert.deepStrictEqual(cookies.length, 1);
-            assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
-            assert.deepStrictEqual(cookies[0].value, "remove");
-
+            assert.deepStrictEqual(cookies[0].name, "st-last-access-token-update");
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/dashboard-no-auth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -270,11 +268,10 @@ describe("SuperTokens SignIn with react router dom v6", function () {
             cookies = await page.cookies();
             {
                 let cookieNames = cookies.map((c) => c.name);
-                assert(cookieNames.filter((i) => i === "sIRTFrontend").length === 1);
+                assert(cookieNames.filter((i) => i === "st-last-access-token-update").length === 1);
                 assert(cookieNames.filter((i) => i === "sFrontToken").length === 1);
-                assert(cookieNames.filter((i) => i === "sIdRefreshToken").length === 1);
                 assert(cookieNames.filter((i) => i === "sAccessToken").length === 1);
-                assert(cookieNames.length === 4);
+                assert(cookieNames.length === 3);
             }
 
             // Redirected to onSuccessFulRedirectUrl
@@ -323,8 +320,7 @@ describe("SuperTokens SignIn with react router dom v6", function () {
             assert.deepStrictEqual(pathname, "/auth");
             cookies = await page.cookies();
             assert.deepStrictEqual(cookies.length, 1);
-            assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
-            assert.deepStrictEqual(cookies[0].value, "remove");
+            assert.deepStrictEqual(cookies[0].name, "st-last-access-token-update");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
@@ -367,8 +363,7 @@ describe("SuperTokens SignIn with react router dom v6", function () {
 
             let cookies = await page.cookies();
             assert.deepStrictEqual(cookies.length, 1);
-            assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
-            assert.deepStrictEqual(cookies[0].value, "remove");
+            assert.deepStrictEqual(cookies[0].name, "st-last-access-token-update");
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
@@ -418,11 +413,10 @@ describe("SuperTokens SignIn with react router dom v6", function () {
             cookies = await page.cookies();
             {
                 let cookieNames = cookies.map((c) => c.name);
-                assert(cookieNames.filter((i) => i === "sIRTFrontend").length === 1);
+                assert(cookieNames.filter((i) => i === "st-last-access-token-update").length === 1);
                 assert(cookieNames.filter((i) => i === "sFrontToken").length === 1);
-                assert(cookieNames.filter((i) => i === "sIdRefreshToken").length === 1);
                 assert(cookieNames.filter((i) => i === "sAccessToken").length === 1);
-                assert(cookieNames.length === 4);
+                assert(cookieNames.length === 3);
             }
 
             // Redirected to onSuccessFulRedirectUrl
@@ -455,8 +449,7 @@ describe("SuperTokens SignIn with react router dom v6", function () {
             assert.deepStrictEqual(pathname, "/auth");
             cookies = await page.cookies();
             assert.deepStrictEqual(cookies.length, 1);
-            assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
-            assert.deepStrictEqual(cookies[0].value, "remove");
+            assert.deepStrictEqual(cookies[0].name, "st-last-access-token-update");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -522,8 +515,7 @@ describe("SuperTokens SignIn with react router dom v6", function () {
                 consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 let cookies = await page.cookies();
                 assert.deepStrictEqual(cookies.length, 1);
-                assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
-                assert.deepStrictEqual(cookies[0].value, "remove");
+                assert.deepStrictEqual(cookies[0].name, "st-last-access-token-update");
 
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/redirect-to-this-custom-path`),
@@ -562,8 +554,7 @@ describe("SuperTokens SignIn with react router dom v6", function () {
                 consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 let cookies = await page.cookies();
                 assert.deepStrictEqual(cookies.length, 1);
-                assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
-                assert.deepStrictEqual(cookies[0].value, "remove");
+                assert.deepStrictEqual(cookies[0].name, "st-last-access-token-update");
 
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/CasE/Case-SensItive1-PAth`),

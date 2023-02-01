@@ -8,7 +8,7 @@ import Session, { SessionAuth, useSessionContext } from "supertokens-auth-react/
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
-import Passwordless from "supertokens-auth-react/recipe/passwordless";
+import Passwordless, { PasswordlessComponentsOverrideProvider } from "supertokens-auth-react/recipe/passwordless";
 import SecondFactor from "./SecondFactor";
 import { SecondFactorClaim } from "./secondFactorClaim";
 import { useNavigate } from "react-router-dom";
@@ -54,8 +54,25 @@ SuperTokens.init({
                 disableDefaultUI: true,
             },
             contactMethod: "PHONE",
+        }),
+        Session.init({
             override: {
-                components: {
+                functions: (oI) => ({
+                    ...oI,
+                    getGlobalClaimValidators: ({ claimValidatorsAddedByOtherRecipes }) => {
+                        return [SecondFactorClaim.validators.isTrue(), ...claimValidatorsAddedByOtherRecipes];
+                    },
+                }),
+            },
+        }),
+    ],
+});
+
+function App() {
+    return (
+        <SuperTokensWrapper>
+            <PasswordlessComponentsOverrideProvider
+                components={{
                     PasswordlessSignInUpHeader_Override: () => {
                         return (
                             <div
@@ -79,51 +96,34 @@ SuperTokens.init({
                         // this will hide the change phone number button
                         return null;
                     },
-                },
-            },
-        }),
-        Session.init({
-            override: {
-                functions: (oI) => ({
-                    ...oI,
-                    getGlobalClaimValidators: ({ claimValidatorsAddedByOtherRecipes }) => {
-                        return [SecondFactorClaim.validators.isTrue(), ...claimValidatorsAddedByOtherRecipes];
-                    },
-                }),
-            },
-        }),
-    ],
-});
+                }}>
+                <div className="App">
+                    <div className="fill">
+                        <Routes>
+                            {/* This shows the login UI on "/auth" route */}
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
 
-function App() {
-    return (
-        <SuperTokensWrapper>
-            <div className="App">
-                <div className="fill">
-                    <Routes>
-                        {/* This shows the login UI on "/auth" route */}
-                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
-
-                        <Route
-                            path="/"
-                            element={
-                                <ProtectedRoute>
-                                    <Home />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="/second-factor"
-                            element={
-                                <SessionAuth>
-                                    <SecondFactor />
-                                </SessionAuth>
-                            }
-                        />
-                    </Routes>
+                            <Route
+                                path="/"
+                                element={
+                                    <ProtectedRoute>
+                                        <Home />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/second-factor"
+                                element={
+                                    <SessionAuth>
+                                        <SecondFactor />
+                                    </SessionAuth>
+                                }
+                            />
+                        </Routes>
+                    </div>
+                    <Footer />
                 </div>
-                <Footer />
-            </div>
+            </PasswordlessComponentsOverrideProvider>
         </SuperTokensWrapper>
     );
 }

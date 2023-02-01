@@ -37,7 +37,6 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
 
     const override: any = {
         functions: (originalImplementation: RecipeInterface) => originalImplementation,
-        components: {},
         ...config.override,
     };
 
@@ -66,6 +65,6 @@ function normaliseSignInUpFeatureConfig(config?: SignInAndUpFeatureUserInput): N
         ...config,
         disableDefaultUI,
         defaultToSignUp,
-        style: config === undefined || config.style === undefined ? {} : config.style,
+        style: config === undefined || config.style === undefined ? "" : config.style,
     };
 }

@@ -19,17 +19,18 @@
 import * as React from "react";
 import { useContext, useState, useMemo, useCallback, Fragment } from "react";
 import { clearQueryParams, getQueryParams, useOnMountAPICall } from "../../../../../utils";
-import { EmailVerificationTheme } from "../../themes/emailVerification";
+import EmailVerificationTheme from "../../themes/emailVerification";
 import { FeatureBaseProps } from "../../../../../types";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
-import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { SessionContext } from "../../../../session";
 import { defaultTranslationsEmailVerification } from "../../themes/translations";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import { useUserContext } from "../../../../../usercontext";
 import Session from "../../../../session/recipe";
 import { redirectToAuth } from "../../../../..";
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 
 type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any };
 
@@ -37,6 +38,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     const sessionContext = useContext(SessionContext);
     const [status, setStatus] = useState("LOADING");
     const userContext = useUserContext();
+    const recipeComponentOverrides = useRecipeComponentOverrideContext();
 
     const redirectToAuthWithHistory = useCallback(async () => {
         await redirectToAuth({ redirectBack: false, history: props.history });
@@ -114,8 +116,6 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         return <Fragment />;
     }
 
-    const componentOverrides = props.recipe.config.override.components;
-
     const sendVerifyEmailScreenFeature = props.recipe.config.sendVerifyEmailScreen;
 
     const sendVerifyEmailScreen = {
@@ -149,7 +149,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         hasToken: token !== undefined,
     };
     return (
-        <ComponentOverrideContext.Provider value={componentOverrides}>
+        <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsEmailVerification}>

@@ -32,13 +32,12 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
 
     const override: any = {
         functions: (originalImplementation: TPPWlessRecipeInterface) => originalImplementation,
-        components: {},
         ...config.override,
     };
 
     const thirdPartyProviderAndEmailOrPhoneFormStyle =
         config?.signInUpFeature?.thirdPartyProviderAndEmailOrPhoneFormStyle === undefined
-            ? {}
+            ? ""
             : config?.signInUpFeature.thirdPartyProviderAndEmailOrPhoneFormStyle;
     return {
         ...normaliseAuthRecipe(config),
@@ -50,7 +49,6 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
                   getRedirectionURL: config.getRedirectionURL,
                   style: config.style,
                   onHandleEvent: config.onHandleEvent,
-                  palette: config.palette,
                   preAPIHook: config.preAPIHook,
                   signInAndUpFeature: {
                       ...config.signInUpFeature,
@@ -58,9 +56,7 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
                   },
                   oAuthCallbackScreen: config.oAuthCallbackScreen,
                   useShadowDom: config.useShadowDom,
-                  override: {
-                      components: override.components,
-                  },
+                  override: {},
               },
         passwordlessUserInput: disablePasswordless
             ? undefined
@@ -71,7 +67,6 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
                   validatePhoneNumber: "validatePhoneNumber" in config ? config.validatePhoneNumber : undefined,
                   getRedirectionURL: config.getRedirectionURL,
                   onHandleEvent: config.onHandleEvent,
-                  palette: config.palette,
                   preAPIHook: config.preAPIHook,
                   useShadowDom: config.useShadowDom,
                   signInUpFeature: {
@@ -79,9 +74,7 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
                       emailOrPhoneFormStyle: thirdPartyProviderAndEmailOrPhoneFormStyle,
                   },
                   linkClickedScreenFeature: config.linkClickedScreenFeature,
-                  override: {
-                      components: override.components,
-                  },
+                  override: {},
               },
         override,
     };

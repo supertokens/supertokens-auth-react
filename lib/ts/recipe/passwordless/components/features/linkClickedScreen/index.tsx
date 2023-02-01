@@ -21,9 +21,6 @@ import { Fragment, useCallback, useState } from "react";
 import { FeatureBaseProps } from "../../../../../types";
 import { getQueryParams, getURLHash, useOnMountAPICall } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { StyleProvider } from "../../../../../styles/styleContext";
-import { defaultPalette } from "../../../../../styles/styles";
-import { getStyles } from "../../themes/styles";
 import { Awaited } from "../../../../../types";
 import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import Recipe from "../../../recipe";
@@ -34,6 +31,7 @@ import { getLoginAttemptInfo } from "../../../utils";
 import STGeneralError from "supertokens-web-js/utils/error";
 import Session from "../../../../session/recipe";
 import SuperTokens from "../../../../../superTokens";
+import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -140,9 +138,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     );
     useOnMountAPICall(consumeCodeAtMount, handleConsumeResp, handleConsumeError);
 
-    const componentOverrides = props.recipe.config.override.components;
-
-    const linkClickedScreen = props.recipe.config.linkClickedScreenFeature;
+    const recipeComponentOverrides = useRecipeComponentOverrideContext();
 
     const childProps = {
         recipeImplementation: props.recipe.recipeImpl,
@@ -171,31 +167,24 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     };
 
     return (
-        <ComponentOverrideContext.Provider value={componentOverrides}>
+        <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsPasswordless}>
-                <StyleProvider
-                    rawPalette={props.recipe.config.palette}
-                    defaultPalette={defaultPalette}
-                    styleFromInit={linkClickedScreen.style}
-                    rootStyleFromInit={props.recipe.config.rootStyle}
-                    getDefaultStyles={getStyles}>
-                    <Fragment>
-                        {/* No custom theme, use default. */}
-                        {props.children === undefined && <LinkClickedScreenTheme {...childProps} />}
+                <Fragment>
+                    {/* No custom theme, use default. */}
+                    {props.children === undefined && <LinkClickedScreenTheme {...childProps} />}
 
-                        {/* Otherwise, custom theme is provided, propagate props. */}
-                        {props.children &&
-                            React.Children.map(props.children, (child) => {
-                                if (React.isValidElement(child)) {
-                                    return React.cloneElement(child, childProps);
-                                }
+                    {/* Otherwise, custom theme is provided, propagate props. */}
+                    {props.children &&
+                        React.Children.map(props.children, (child) => {
+                            if (React.isValidElement(child)) {
+                                return React.cloneElement(child, childProps);
+                            }
 
-                                return child;
-                            })}
-                    </Fragment>
-                </StyleProvider>
+                            return child;
+                        })}
+                </Fragment>
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );

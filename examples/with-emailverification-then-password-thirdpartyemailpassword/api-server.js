@@ -108,6 +108,7 @@ supertokens.init({
                                 // we have just created a user with the fake password.
                                 // so we mark their session as unusable by the APIs
                                 await Session.createNewSession(
+                                    input.options.req,
                                     input.options.res,
                                     user.id,
                                     {

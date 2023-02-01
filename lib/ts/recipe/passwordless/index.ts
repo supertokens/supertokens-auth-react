@@ -23,6 +23,7 @@ import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recip
 import { getNormalisedUserContext } from "../../utils";
 import * as UtilFunctions from "./utils";
 import { PropsWithChildren } from "react";
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -175,6 +176,7 @@ export default class Wrapper {
 
     static LinkClicked = (prop?: any) =>
         Passwordless.getInstanceOrThrow().getFeatureComponent("linkClickedScreen", prop);
+    static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
 const init = Wrapper.init;
@@ -192,10 +194,12 @@ const signOut = Wrapper.signOut;
 const SignInUp = Wrapper.SignInUp;
 const SignInUpTheme = Wrapper.SignInUpTheme;
 const LinkClicked = Wrapper.LinkClicked;
+const PasswordlessComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 
 export {
     SignInUp,
     SignInUpTheme,
+    PasswordlessComponentsOverrideProvider,
     LinkClicked,
     init,
     createCode,

@@ -28,7 +28,7 @@ import {
 import { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
-import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
+import { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 import SuperTokens from "../../superTokens";
 import { SessionClaim } from "supertokens-web-js/recipe/session";
@@ -58,14 +58,13 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                 void this.notifyListeners(event);
             },
             preAPIHook: async (context) => {
+                const headers = new Headers(context.requestInit.headers);
+                headers.set("rid", config.recipeId);
                 const response = {
                     ...context,
                     requestInit: {
                         ...context.requestInit,
-                        headers: {
-                            ...context.requestInit.headers,
-                            rid: config.recipeId,
-                        },
+                        headers,
                     },
                 };
                 if (config.preAPIHook === undefined) {
@@ -88,6 +87,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
 
     getUserId = (input: { userContext: any }): Promise<string> => {
         return this.webJsRecipe.getUserId(input);
+    };
+
+    getAccessToken = (input: { userContext: any }): Promise<string | undefined> => {
+        return this.webJsRecipe.getAccessToken(input);
     };
 
     getClaimValue = (input: { claim: SessionClaim<unknown>; userContext: any }): Promise<unknown> => {
