@@ -9,6 +9,10 @@
     padding-bottom: 9px;
 }
 
+[data-supertokens~="providerContainer"] button {
+    cursor: pointer;
+}
+
 [data-supertokens~="providerButton"] {
     min-height: 32px;
     display: flex;
