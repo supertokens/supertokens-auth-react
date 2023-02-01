@@ -22,11 +22,9 @@ import Session from "./recipe";
 import { LoadedSessionContext, RecipeEventWithSessionContext, SessionContextType } from "./types";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { useOnMountAPICall } from "../../utils";
+import { getFailureRedirectionInfo, useOnMountAPICall } from "../../utils";
 import SuperTokens from "../../superTokens";
-import { getGlobalClaimValidators } from "supertokens-web-js/utils";
 import { SessionClaimValidator } from "../../types";
-import { ClaimValidationError } from "supertokens-web-js/recipe/session";
 
 export type SessionAuthProps = {
     /**
@@ -158,37 +156,6 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         }
     }, []);
 
-    // we try to find claim validator among failed validators with onFailure cb that returns string
-    const getRedirectPathFromInvalidClaimsOrRedirect = useCallback(
-        async (claims: ClaimValidationError[]) => {
-            if (!claims.length) {
-                return;
-            }
-            const globalValidators: SessionClaimValidator[] = getGlobalClaimValidators({
-                overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
-            });
-            let callback;
-            for (const claim of claims) {
-                const validator = globalValidators.find(({ id }) => id === claim.validatorId);
-                if (validator?.onFailureRedirection) {
-                    callback = validator.onFailureRedirection({ userContext, reason: claim.reason });
-                }
-            }
-            if (callback === undefined) {
-                await SuperTokens.getInstanceOrThrow().redirectToUrl(
-                    await SuperTokens.getInstanceOrThrow().getRedirectUrl({
-                        action: "SESSION_VERIFICATION_FAILURE",
-                        showSignIn: false,
-                    }),
-                    history
-                );
-                return;
-            }
-            return (await Promise.all([callback])).filter(Boolean)[0];
-        },
-        [props.overrideGlobalClaimValidators, userContext]
-    );
-
     const setInitialContextAndMaybeRedirect = useCallback(
         async (toSetContext: LoadedSessionContext) => {
             if (context.loading === false) {
@@ -201,11 +168,23 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     return;
                 }
 
-                // since we have claimID that means we can safely get redirection string and then can we do the redirection.
-                const redirectPath = await getRedirectPathFromInvalidClaimsOrRedirect(toSetContext.invalidClaims);
-                if (redirectPath !== undefined) {
-                    await SuperTokens.getInstanceOrThrow().redirectToUrl(redirectPath, history);
+                const failureRedirectInfo = await getFailureRedirectionInfo({
+                    invalidClaims: toSetContext.invalidClaims,
+                    overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
+                    userContext,
+                });
+                if (failureRedirectInfo.redirectPath !== undefined) {
+                    await SuperTokens.getInstanceOrThrow().redirectToUrl(failureRedirectInfo.redirectPath, history);
                     return;
+                }
+                if (toSetContext.invalidClaims.length > 0 && failureRedirectInfo.accessForbidden) {
+                    return await SuperTokens.getInstanceOrThrow().redirectToUrl(
+                        await SuperTokens.getInstanceOrThrow().getRedirectUrl({
+                            action: "SESSION_VERIFICATION_FAILURE",
+                            showSignIn: false,
+                        }),
+                        history
+                    );
                 }
             }
 
@@ -234,9 +213,13 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     });
                     setContext({ ...event.sessionContext, loading: false, invalidClaims });
 
-                    const redirectPath = await getRedirectPathFromInvalidClaimsOrRedirect(invalidClaims);
-                    if (props.doRedirection !== false && redirectPath) {
-                        await SuperTokens.getInstanceOrThrow().redirectToUrl(redirectPath, history);
+                    const failureRedirectInfo = await getFailureRedirectionInfo({
+                        invalidClaims,
+                        overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
+                        userContext,
+                    });
+                    if (props.doRedirection !== false && failureRedirectInfo.redirectPath) {
+                        await SuperTokens.getInstanceOrThrow().redirectToUrl(failureRedirectInfo.redirectPath, history);
                     }
 
                     return;
@@ -266,7 +249,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             return session.current.addEventListener(onHandleEvent);
         }
         return undefined;
-    }, [props, setContext, context.loading, getRedirectPathFromInvalidClaimsOrRedirect]);
+    }, [props, setContext, context.loading, getFailureRedirectionInfo]);
 
     if (props.requireAuth !== false && (context.loading || !context.doesSessionExist)) {
         return null;

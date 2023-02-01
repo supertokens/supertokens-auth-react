@@ -19,8 +19,10 @@ import { CookieHandlerReference } from "supertokens-web-js/utils/cookieHandler";
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
-import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
+import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField, SessionClaimValidator } from "./types";
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
+import { getGlobalClaimValidators } from "supertokens-web-js/utils";
+import { ClaimValidationError } from "supertokens-web-js/recipe/session";
 
 /*
  * getRecipeIdFromPath
@@ -451,4 +453,58 @@ export const useOnMountAPICall = <T>(
     if (error) {
         throw error;
     }
+};
+
+export const getFailureRedirectionInfo = async ({
+    invalidClaims,
+    overrideGlobalClaimValidators,
+    userContext,
+}: {
+    invalidClaims: ClaimValidationError[];
+    overrideGlobalClaimValidators?:
+        | ((globalClaimValidators: SessionClaimValidator[], userContext: any) => SessionClaimValidator[])
+        | undefined;
+    userContext: any;
+}): Promise<{ accessForbidden: boolean; redirectPath: string | undefined }> => {
+    const globalValidatorsMap = getGlobalClaimValidators({
+        overrideGlobalClaimValidators,
+        userContext,
+    }).reduce((map, validator) => {
+        map[validator.id] = validator;
+        return map;
+    }, {} as Record<string, SessionClaimValidator>);
+
+    const redirects = [];
+
+    for (const claim of invalidClaims) {
+        const validator = globalValidatorsMap[claim.validatorId];
+        if (validator.onFailureRedirection) {
+            redirects.push(await validator.onFailureRedirection({ reason: claim.reason, userContext }));
+        }
+        globalValidatorsMap[claim.validatorId];
+    }
+    return {
+        accessForbidden: redirects.length === 0,
+        redirectPath: redirects.filter(Boolean)[0],
+    };
+};
+
+export const getSuccessRedirectionPath = async ({
+    invalidClaims,
+    userContext,
+}: {
+    invalidClaims: ClaimValidationError[];
+    userContext: any;
+}): Promise<string | undefined> => {
+    const globalValidators: SessionClaimValidator[] = getGlobalClaimValidators({ userContext });
+    const invalidClaimsIDs = invalidClaims.map(({ validatorId }) => validatorId);
+    let succeededClaimValidatorRedirectString;
+    for (const validator of globalValidators) {
+        const redirectPath = await validator.onSuccessRedirection?.({ userContext });
+        if (!invalidClaimsIDs.includes(validator.id) && redirectPath !== undefined) {
+            succeededClaimValidatorRedirectString = redirectPath;
+            break;
+        }
+    }
+    return succeededClaimValidatorRedirectString;
 };
