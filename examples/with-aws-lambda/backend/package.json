@@ -11,6 +11,6 @@
     "dependencies": {
         "@middy/core": "^2.5.1",
         "@middy/http-cors": "^2.5.1",
-        "supertokens-node": "^12.0.0"
+        "supertokens-node": "^13.0.0"
     }
 }
