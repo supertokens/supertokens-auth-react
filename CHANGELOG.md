@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-## [0.31.0] - 2023-01-XX
+## [0.31.0] - 2023-02-01
 
 ## Breaking changes
 
@@ -15,7 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   supertokens-node: >= 13.0.0
     -   supertokens-python: >= 0.12.0
     -   supertokens-golang: >= 0.10.0
-    -   !!!TODO: re-check before release
 -   Renamed configuration options:
     -   `sessionScope` renamed to `sessionTokenFrontendDomain`
     -   `cookieDomain` renamed to `sessionTokenBackendDomain`
@@ -25,6 +24,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Added support for authorizing requests using the `Authorization` header instead of cookies
     -   Added `tokenTransferMethod` config option
     -   Check out https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/sessions/token-transfer-method for more information
+
+## [0.30.2] - 2023-01-21
+
+### Changes
+
+-   Prefilling the phone number input with the dial code if default country is set.
+
+## [0.30.1] - 2023-01-20
+
+### Bugfixes
+
+-   Fixed guessing internation phone number in passwordless with EMAIL_OR_PHONE contact method if the number starts with a valid country dial code
 
 ## [0.30.0] - 2023-01-20
 
@@ -39,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Updated to styling through plain CSS instead of objects/emotion. Check https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/styling/changing-style for more info
 -   Removed palette option, colors are now customizable through setting CSS variables in styles. Check https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/styling/changing-colours for more info
 -   Moved `supertokens-web-js` into `devDependencies`. If using npm version 6, you also need to install it with `npm i --save supertokens-web-js`. Later versions install it automatically.
+-   The default phone number input changed in passwordless and thirdpartypasswordless recipe (switched to using `intl-tel-input`)
 
 ### Migration
 

@@ -326,6 +326,18 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
                     await checkInputValue(page, input, "+36654");
                 });
+
+                it("should prepend default country code for invalid phone numbers that start with a valid dial code", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "7021123145" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
+                    await checkInputValue(page, input, "+367021123145");
+                });
             });
 
             describe("without default country defined", () => {
@@ -414,6 +426,18 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     await submitForm(page);
                     const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
                     await checkInputValue(page, input, "+654");
+                });
+
+                it("should prepend + sign for invalid phone numbers that start with a valid dial code", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "7021123145" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
+                    await checkInputValue(page, input, "+7021123145");
                 });
             });
 
