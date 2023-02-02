@@ -16,7 +16,7 @@ SuperTokens.init({
     recipeList: [
         EmailPassword.init(),
         Session.init({
-            sessionScope: ".example.com:3000",
+            sessionFrontendDomain: ".example.com:3000",
         }),
     ],
 });

@@ -20,7 +20,7 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import SuperTokens from "../../lib/ts/superTokens";
-import EmailPassword from "../../lib/ts//recipe/emailpassword";
+import EmailPassword from "../../lib/ts/recipe/emailpassword";
 import { DEFAULT_WEBSITE_BASE_PATH, DEFAULT_API_BASE_PATH } from "../constants";
 import assert from "assert";
 
