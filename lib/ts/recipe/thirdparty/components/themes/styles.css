@@ -9,7 +9,7 @@
     padding-bottom: 9px;
 }
 
-[data-supertokens~="providerContainer"] button {
+[data-supertokens~="providerContainer"] * {
     cursor: pointer;
 }
 
