@@ -75,14 +75,14 @@ export default class Passwordless extends AuthRecipe<
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) => this.getFeatureComponent("signInUp", props),
+                component: (props) => this.getFeatureComponent("signInUp", props as any),
             };
         }
         if (this.config.linkClickedScreenFeature.disableDefaultUI !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/verify"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) => this.getFeatureComponent("linkClickedScreen", props),
+                component: (props) => this.getFeatureComponent("linkClickedScreen", props as any),
             };
         }
 

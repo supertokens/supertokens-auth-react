@@ -17,12 +17,19 @@
  * Imports.
  */
 import RecipeModule from "../recipeModule";
-import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap, SessionClaimValidator } from "../../types";
+import {
+    CreateRecipeFunction,
+    FeatureBaseProps,
+    NormalisedAppInfo,
+    RecipeFeatureComponentMap,
+    SessionClaimValidator,
+} from "../../types";
 import {
     getFailureRedirectionInfo,
     getLocalStorage,
     getSuccessRedirectionPath,
     isTest,
+    matchRecipeIdUsingQueryParams,
     removeFromLocalStorage,
     setLocalStorage,
 } from "../../utils";
@@ -33,6 +40,9 @@ import { ClaimValidationError } from "supertokens-web-js/recipe/session";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 import SuperTokens from "../../superTokens";
 import { SessionClaim } from "supertokens-web-js/recipe/session";
+import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
+import AccessDeniedScreen from "./components/features/accessDeniedScreen";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
 
@@ -77,15 +87,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
             },
         });
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getFeatureComponent = (_: string): JSX.Element => {
-        throw new Error("should never come here");
-    };
-
-    getFeatures = (): RecipeFeatureComponentMap => {
-        return {};
-    };
 
     getUserId = (input: { userContext: any }): Promise<string> => {
         return this.webJsRecipe.getUserId(input);
@@ -255,6 +256,37 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                 ...event,
             })
         );
+    };
+
+    getFeatures = (): RecipeFeatureComponentMap => {
+        const features: RecipeFeatureComponentMap = {};
+        const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
+            new NormalisedURLPath("/access-denied")
+        );
+        features[normalisedFullPath.getAsStringDangerous()] = {
+            matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
+            component: (props) => this.getFeatureComponent("accessDenied", props as any),
+        };
+        return features;
+    };
+
+    getFeatureComponent = (
+        componentName: "accessDenied",
+        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
+    ): JSX.Element => {
+        const featureComponents = {
+            accessDenied: (
+                <UserContextWrapper userContext={props.userContext}>
+                    <AccessDeniedScreen recipe={this} {...props} />
+                </UserContextWrapper>
+            ),
+        };
+        const featureComponent = featureComponents[componentName];
+        if (featureComponent) {
+            return featureComponent;
+        } else {
+            throw new Error("Should never come here.");
+        }
     };
 
     private async getSessionContext({ action, userContext }: RecipeEvent): Promise<SessionContextUpdate> {

@@ -1,6 +1,12 @@
 /// <reference types="react" />
 import RecipeModule from "../recipeModule";
-import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap, SessionClaimValidator } from "../../types";
+import {
+    CreateRecipeFunction,
+    FeatureBaseProps,
+    NormalisedAppInfo,
+    RecipeFeatureComponentMap,
+    SessionClaimValidator,
+} from "../../types";
 import { RecipeEventWithSessionContext, InputType } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 import { ClaimValidationError } from "supertokens-web-js/recipe/session";
@@ -17,8 +23,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     private eventListeners;
     private redirectionHandlersFromAuthRecipes;
     constructor(config: ConfigType);
-    getFeatureComponent: (_: string) => JSX.Element;
-    getFeatures: () => RecipeFeatureComponentMap;
     getUserId: (input: { userContext: any }) => Promise<string>;
     getClaimValue: (input: { claim: SessionClaim<unknown>; userContext: any }) => Promise<unknown>;
     getAccessTokenPayloadSecurely: (input: { userContext: any }) => Promise<any>;
@@ -58,6 +62,14 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
      */
     getDefaultRedirectionURL: () => Promise<string>;
     private notifyListeners;
+    getFeatures: () => RecipeFeatureComponentMap;
+    getFeatureComponent: (
+        componentName: "accessDenied",
+        props: FeatureBaseProps & {
+            redirectOnSessionExists?: boolean;
+            userContext?: any;
+        }
+    ) => JSX.Element;
     private getSessionContext;
     static addAxiosInterceptors(axiosInstance: any, userContext: any): void;
     static init(config?: InputType): CreateRecipeFunction<unknown, unknown, unknown, any>;

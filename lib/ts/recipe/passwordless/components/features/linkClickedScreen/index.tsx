@@ -150,7 +150,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
 
             if (preAuthSessionId === null || preAuthSessionId.length === 0 || linkCode.length === 0) {
                 // This should never happen, and even if it does the we should be already redirecting
-                throw new Error("Called consumeCode withouth link info");
+                throw new Error("Called consumeCode without link info");
             }
 
             try {
