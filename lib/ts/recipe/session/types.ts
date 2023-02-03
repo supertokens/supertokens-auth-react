@@ -60,6 +60,7 @@ export type SessionContextType =
 
 export type AccessDeniedThemeProps = {
     config: NormalisedSessionConfig;
+    denialInfo?: ClaimValidationError;
 };
 
 export type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };

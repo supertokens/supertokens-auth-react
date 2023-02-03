@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-literals */
 import React, { Fragment } from "react";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { hasFontDefined } from "../../../../../styles/styles";
@@ -17,6 +18,10 @@ export const AccessDeniedTheme = withOverride<React.FC<AccessDeniedThemeProps>>(
                 userStyles={[props.config.rootStyle, props.config.accessDeniedScreen.style]}>
                 <Fragment>
                     <div data-supertokens="accessDeniedTitle">{t("ACCESS_DENIED")}</div>
+                    <div data-supertokens="accessDeniedTitle">
+                        <div>Claim ID: {props.denialInfo?.validatorId}</div>
+                        <div>Reason: {props.denialInfo?.reason}</div>
+                    </div>
                 </Fragment>
             </ThemeBase>
         );
