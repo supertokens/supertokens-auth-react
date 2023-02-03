@@ -11,6 +11,7 @@ import {
 } from "./types";
 import { CreateRecipeFunction } from "../../types";
 import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
+import { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -26,8 +27,12 @@ export default class EmailVerification extends RecipeModule<
         config: UserInput
     ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): EmailVerification;
-    getFeatures: () => RecipeFeatureComponentMap;
-    getFeatureComponent: (_: "emailverification", props: any) => JSX.Element;
+    getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
+    getFeatureComponent: (
+        _: "emailverification",
+        props: any,
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
+    ) => JSX.Element;
     isEmailVerified(userContext: any): Promise<{
         status: "OK";
         isVerified: boolean;

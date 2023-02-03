@@ -42,6 +42,8 @@ import { OverrideableBuilder } from "supertokens-js-override";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { UserContextContext } from "../../usercontext";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
+import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -118,7 +120,9 @@ export default class EmailVerification extends RecipeModule<
         return EmailVerification.instance;
     }
 
-    getFeatures = (): RecipeFeatureComponentMap => {
+    getFeatures = (
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
         if (this.config.disableDefaultUI !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
@@ -126,14 +130,18 @@ export default class EmailVerification extends RecipeModule<
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props: any) => this.getFeatureComponent("emailverification", props),
+                component: (props: any) => this.getFeatureComponent("emailverification", props, useComponentOverrides),
             };
         }
         return features;
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getFeatureComponent = (_: "emailverification", props: any): JSX.Element => {
+    getFeatureComponent = (
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        _: "emailverification",
+        props: any,
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): JSX.Element => {
         return (
             <UserContextWrapper userContext={props.userContext}>
                 <SessionAuth requireAuth={false} overrideGlobalClaimValidators={() => []}>
@@ -154,6 +162,7 @@ export default class EmailVerification extends RecipeModule<
                             return (
                                 <EmailVerificationFeature
                                     recipe={this}
+                                    useComponentOverrides={useComponentOverrides}
                                     {...{
                                         ...props,
                                         // We do this to make sure it does not add another provider

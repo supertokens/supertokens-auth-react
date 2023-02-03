@@ -5,10 +5,5 @@ declare const useContext: () => ComponentOverrideMap,
         import("react").PropsWithChildren<{
             components: ComponentOverrideMap;
         }>
-    >,
-    Consumer: import("react").Consumer<ComponentOverrideMap>;
-export {
-    useContext as useRecipeComponentOverrideContext,
-    Provider as RecipeComponentsOverrideContextProvider,
-    Consumer as RecipeComponentsOverrideContextConsumer,
-};
+    >;
+export { useContext as useRecipeComponentOverrideContext, Provider as RecipeComponentsOverrideContextProvider };

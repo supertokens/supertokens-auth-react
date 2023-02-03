@@ -12,6 +12,7 @@ import {
 import Passwordless from "../passwordless/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
+import { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 export default class ThirdPartyPasswordless extends AuthRecipe<
     GetRedirectionURLContext,
     never,
@@ -30,14 +31,15 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
             passwordlessInstance: Passwordless | undefined;
         }
     );
-    getFeatures: () => RecipeFeatureComponentMap;
+    getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (
         componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
-        }
+        },
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static init(
         config: UserInput

@@ -10,6 +10,7 @@ import {
 } from "./types";
 import AuthRecipe from "../authRecipe";
 import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -20,14 +21,15 @@ export default class Passwordless extends AuthRecipe<
     static RECIPE_ID: string;
     recipeImpl: RecipeInterface;
     constructor(config: Config);
-    getFeatures: () => RecipeFeatureComponentMap;
+    getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (
         componentName: "signInUp" | "linkClickedScreen",
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
-        }
+        },
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static init(
         config: UserInput

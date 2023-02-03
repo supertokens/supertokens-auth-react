@@ -20,6 +20,7 @@ import {
     SignInAndUp as SignInAndUpThirdpartyEmailPassword,
     Github,
     ThirdpartyEmailPasswordComponentsOverrideProvider,
+    ThirdPartySignInAndUpCallback,
 } from "../../lib/ts/recipe/thirdpartyemailpassword";
 import {
     SignInAndUp as SignInAndUpEmailPassword,
@@ -56,6 +57,8 @@ import { SignInUpFooter } from "../../lib/ts/recipe/passwordless/components/them
 import { SignInUpHeader } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/signInUpHeader";
 import { PhoneForm } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/phoneForm";
 import { EmailOrPhoneForm } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/emailOrPhoneForm";
+import ThirdParty from "../../lib/ts/recipe/thirdparty/recipe";
+import { Google, SignInAndUpCallback, ThirdpartyComponentsOverrideProvider } from "../../lib/ts/recipe/thirdparty";
 
 type AllComponentsOverrideMap = EmailPasswordOverrideMap &
     ThirdPartyOverrideMap &
@@ -203,6 +206,12 @@ describe("Components override per recipe provider", () => {
                     },
                     useShadowDom: false,
                 }),
+                ThirdParty.init({
+                    signInAndUpFeature: {
+                        providers: [Google.init()],
+                    },
+                    useShadowDom: false,
+                }),
                 EmailPassword.init({
                     useShadowDom: false,
                 }),
@@ -269,6 +278,43 @@ describe("Components override per recipe provider", () => {
             await within(await result.getByTestId("thirdpartyemailpassword-wrapper")).getByText(
                 thirdpartyEmailPasswordKey
             )
+        ).toBeInTheDocument();
+    });
+
+    it("Should not affect each others components when two recipes override the same component", async () => {
+        const thirdPartyText = "thirdparty";
+        const thirdpartyEmailPasswordText = "thirpartyemailpassword";
+        SuperTokens.getInstanceOrThrow().redirectToAuth = jest.fn();
+
+        const result = render(
+            <ThirdpartyComponentsOverrideProvider
+                components={{
+                    ThirdPartySignInAndUpCallbackTheme_Override: () => (
+                        <div data-testid="thirdparty-override"> {thirdPartyText} </div>
+                    ),
+                }}>
+                <ThirdpartyEmailPasswordComponentsOverrideProvider
+                    components={{
+                        ThirdPartySignInAndUpCallbackTheme_Override: () => (
+                            <div data-testid="thirdpartyemailpassword-override"> {thirdpartyEmailPasswordText} </div>
+                        ),
+                    }}>
+                    <div data-testid="thirdparty-wrapper">
+                        <SignInAndUpCallback />
+                    </div>
+                    <div data-testid="thirdpartyemailpassword-wrapper">
+                        <ThirdPartySignInAndUpCallback />
+                    </div>
+                </ThirdpartyEmailPasswordComponentsOverrideProvider>
+            </ThirdpartyComponentsOverrideProvider>
+        );
+
+        expect(await result.findAllByText(thirdPartyText)).toHaveLength(1);
+        expect(await result.findAllByText(thirdpartyEmailPasswordText)).toHaveLength(1);
+
+        expect(within(result.getByTestId("thirdparty-wrapper")).getByText(thirdPartyText)).toBeInTheDocument();
+        expect(
+            within(result.getByTestId("thirdpartyemailpassword-wrapper")).getByText(thirdpartyEmailPasswordText)
         ).toBeInTheDocument();
     });
 });

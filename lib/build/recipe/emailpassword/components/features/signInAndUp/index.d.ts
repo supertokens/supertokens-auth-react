@@ -1,5 +1,9 @@
 import * as React from "react";
-import { EmailPasswordSignInAndUpAction, EmailPasswordSignInAndUpChildProps } from "../../../types";
+import {
+    ComponentOverrideMap,
+    EmailPasswordSignInAndUpAction,
+    EmailPasswordSignInAndUpChildProps,
+} from "../../../types";
 import { FeatureBaseProps } from "../../../../../types";
 import { SignInAndUpState } from "../../../types";
 import Recipe from "../../../recipe";
@@ -22,6 +26,7 @@ export declare function useChildProps(
 export declare const SignInAndUpFeature: React.FC<
     FeatureBaseProps & {
         recipe: Recipe;
+        useComponentOverrides: () => ComponentOverrideMap;
     }
 >;
 export default SignInAndUpFeature;

@@ -30,15 +30,15 @@ import { useUserContext } from "../../../../../usercontext";
 import Session from "../../../../session/recipe";
 import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
+import { ComponentOverrideMap } from "../../../types";
 
-type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any };
+type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any; useComponentOverrides: () => ComponentOverrideMap };
 
 export const EmailVerification: React.FC<Prop> = (props) => {
     const sessionContext = useContext(SessionContext);
     const [status, setStatus] = useState("LOADING");
     const userContext = useUserContext();
-    const recipeComponentOverrides = useRecipeComponentOverrideContext();
+    const recipeComponentOverrides = props.useComponentOverrides();
 
     const redirectToAuthWithHistory = useCallback(async () => {
         await redirectToAuth({ redirectBack: false, history: props.history });

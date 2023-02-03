@@ -20,6 +20,7 @@ import * as React from "react";
 import { Fragment } from "react";
 
 import {
+    ComponentOverrideMap,
     EmailPasswordSignInAndUpAction,
     EmailPasswordSignInAndUpChildProps,
     FormFieldThemeProps,
@@ -39,7 +40,6 @@ import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
 import Session from "../../../../session/recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 
 export const useFeatureReducer = (recipe: Recipe | undefined) => {
     return React.useReducer(
@@ -182,11 +182,12 @@ export function useChildProps(
 export const SignInAndUpFeature: React.FC<
     FeatureBaseProps & {
         recipe: Recipe;
+        useComponentOverrides: () => ComponentOverrideMap;
     }
 > = (props) => {
     const [state, dispatch] = useFeatureReducer(props.recipe);
     const childProps = useChildProps(props.recipe, state, dispatch, props.history);
-    const recipeComponentOverrides = useRecipeComponentOverrideContext();
+    const recipeComponentOverrides = props.useComponentOverrides();
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>

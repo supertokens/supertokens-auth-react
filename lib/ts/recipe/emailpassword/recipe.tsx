@@ -40,6 +40,8 @@ import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import { OverrideableBuilder } from "supertokens-js-override";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
+import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 
 /*
  * Class.
@@ -70,13 +72,15 @@ export default class EmailPassword extends AuthRecipe<
         this.recipeImpl = builder.override(this.config.override.functions).build();
     }
 
-    getFeatures = (): RecipeFeatureComponentMap => {
+    getFeatures = (
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
         if (this.config.signInAndUpFeature.disableDefaultUI !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) => this.getFeatureComponent("signinup", props),
+                component: (props) => this.getFeatureComponent("signinup", props, useComponentOverrides),
             };
         }
 
@@ -86,7 +90,7 @@ export default class EmailPassword extends AuthRecipe<
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) => this.getFeatureComponent("resetpassword", props),
+                component: (props) => this.getFeatureComponent("resetpassword", props, useComponentOverrides),
             };
         }
 
@@ -106,7 +110,8 @@ export default class EmailPassword extends AuthRecipe<
 
     getFeatureComponent = (
         componentName: "signinup" | "resetpassword",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
+        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signinup") {
             if (props.redirectOnSessionExists !== false) {
@@ -120,21 +125,21 @@ export default class EmailPassword extends AuthRecipe<
                         >
                             authRecipe={this}
                             history={props.history}>
-                            <SignInAndUp recipe={this} {...props} />
+                            <SignInAndUp recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
                         </AuthWidgetWrapper>
                     </UserContextWrapper>
                 );
             } else {
                 return (
                     <UserContextWrapper userContext={props.userContext}>
-                        <SignInAndUp recipe={this} {...props} />
+                        <SignInAndUp recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
                     </UserContextWrapper>
                 );
             }
         } else if (componentName === "resetpassword") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
-                    <ResetPasswordUsingToken recipe={this} {...props} />
+                    <ResetPasswordUsingToken recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
                 </UserContextWrapper>
             );
         } else {

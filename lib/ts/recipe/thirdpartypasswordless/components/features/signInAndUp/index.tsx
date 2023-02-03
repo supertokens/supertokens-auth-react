@@ -36,10 +36,11 @@ import { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
 import { PasswordlessSignInUpAction } from "../../../../passwordless/types";
 import { useUserContext } from "../../../../../usercontext";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
+import { ComponentOverrideMap } from "../../../types";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
+    useComponentOverrides: () => ComponentOverrideMap;
 };
 
 const SignInAndUp: React.FC<PropType> = (props) => {
@@ -50,7 +51,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         userContext
     );
 
-    const recipeComponentOverrides = useRecipeComponentOverrideContext();
+    const recipeComponentOverrides = props.useComponentOverrides();
 
     const [combinedState, dispatch] = React.useReducer(
         (state: { error: string | undefined }, action: ThirdPartySignInUpActions | PasswordlessSignInUpAction) => {

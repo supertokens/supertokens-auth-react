@@ -34,10 +34,11 @@ import {
 
 import { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
 import { EmailPasswordSignInAndUpAction } from "../../../../emailpassword/types";
-import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
+import { ComponentOverrideMap } from "../../../types";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
+    useComponentOverrides: () => ComponentOverrideMap;
 };
 
 const SignInAndUp: React.FC<PropType> = (props) => {
@@ -68,7 +69,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         { error: tpState.error || epState.error }
     );
 
-    const recipeComponentOverrides = useRecipeComponentOverrideContext();
+    const recipeComponentOverrides = props.useComponentOverrides();
 
     const combinedTPDispatch = React.useCallback<typeof tpDispatch>(
         (action) => {

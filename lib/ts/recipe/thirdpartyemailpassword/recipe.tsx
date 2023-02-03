@@ -41,6 +41,8 @@ import { OverrideableBuilder } from "supertokens-js-override";
 import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
+import { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 
 export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
@@ -127,20 +129,22 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                   });
     }
 
-    getFeatures = (): RecipeFeatureComponentMap => {
+    getFeatures = (
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap => {
         let features: RecipeFeatureComponentMap = {};
 
         if (this.emailPasswordRecipe !== undefined) {
             features = {
                 ...features,
-                ...this.emailPasswordRecipe.getFeatures(),
+                ...this.emailPasswordRecipe.getFeatures(useComponentOverrides),
             };
         }
 
         if (this.thirdPartyRecipe !== undefined) {
             features = {
                 ...features,
-                ...this.thirdPartyRecipe.getFeatures(),
+                ...this.thirdPartyRecipe.getFeatures(useComponentOverrides),
             };
         }
 
@@ -148,7 +152,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (prop: any) => this.getFeatureComponent("signinup", prop),
+                component: (prop: any) => this.getFeatureComponent("signinup", prop, useComponentOverrides),
             };
         }
 
@@ -168,7 +172,8 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
 
     getFeatureComponent = (
         componentName: "signinup" | "signinupcallback" | "resetpassword",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
+        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signinup") {
             if (props.redirectOnSessionExists !== false) {
@@ -182,14 +187,14 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                         >
                             authRecipe={this}
                             history={props.history}>
-                            <SignInAndUp recipe={this} {...props} />
+                            <SignInAndUp recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
                         </AuthWidgetWrapper>
                     </UserContextWrapper>
                 );
             } else {
                 return (
                     <UserContextWrapper userContext={props.userContext}>
-                        <SignInAndUp recipe={this} {...props} />
+                        <SignInAndUp recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
                     </UserContextWrapper>
                 );
             }
@@ -197,14 +202,14 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             if (this.emailPasswordRecipe === undefined) {
                 throw new Error("Should not come here...");
             }
-            return this.emailPasswordRecipe.getFeatureComponent(componentName, props);
+            return this.emailPasswordRecipe.getFeatureComponent(componentName, props, useComponentOverrides);
         } else if (componentName === "signinupcallback") {
             if (this.thirdPartyRecipe === undefined) {
                 throw new Error(
                     "Embedding this component requires the thirdparty recipe to be enabled. Please check the value of signInAndUpFeature.providers in the configuration."
                 );
             }
-            return this.thirdPartyRecipe.getFeatureComponent(componentName, props);
+            return this.thirdPartyRecipe.getFeatureComponent(componentName, props, useComponentOverrides);
         } else {
             throw new Error("Should not come here...");
         }

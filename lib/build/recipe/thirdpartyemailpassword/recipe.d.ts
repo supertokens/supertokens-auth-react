@@ -12,6 +12,7 @@ import {
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
     never,
@@ -30,14 +31,15 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             emailPasswordInstance: EmailPassword | undefined;
         }
     );
-    getFeatures: () => RecipeFeatureComponentMap;
+    getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (
         componentName: "signinup" | "signinupcallback" | "resetpassword",
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
-        }
+        },
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static init(
         config: UserInput
