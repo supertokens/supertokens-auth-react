@@ -26,6 +26,7 @@ import { PrimitiveClaim } from "../../claims/primitiveClaim";
 import { PrimitiveArrayClaim } from "../../claims/primitiveArrayClaim";
 import { SessionClaimValidator } from "../../types";
 import { ClaimValidationError } from "supertokens-web-js/recipe/session";
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 
 export default class SessionAPIWrapper {
     static useSessionContext = useSessionContextFunc;
@@ -98,6 +99,8 @@ export default class SessionAPIWrapper {
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
+
+    static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
 const useSessionContext = SessionAPIWrapper.useSessionContext;
@@ -116,11 +119,13 @@ const signOut = SessionAPIWrapper.signOut;
 const validateClaims = SessionAPIWrapper.validateClaims;
 const getInvalidClaimsFromResponse = SessionAPIWrapper.getInvalidClaimsFromResponse;
 const getClaimValue = SessionAPIWrapper.getClaimValue;
+const SessionComponentsOverrideProvider = SessionAPIWrapper.ComponentsOverrideProvider;
 
 export {
     useSessionContext,
     useClaimValue,
     SessionAuth,
+    SessionComponentsOverrideProvider,
     init,
     getUserId,
     getAccessTokenPayloadSecurely,

@@ -51,6 +51,11 @@ export default class SessionAPIWrapper {
         userContext: any;
     }): Promise<ClaimValidationError[]>;
     static getClaimValue(input: { claim: SessionClaim<unknown>; userContext?: any }): Promise<unknown>;
+    static ComponentsOverrideProvider: import("react").FC<
+        import("react").PropsWithChildren<{
+            components: import("./types").ComponentOverrideMap;
+        }>
+    >;
 }
 declare const useSessionContext: () => SessionContextType;
 declare const useClaimValue: <T>(claim: SessionClaim<T>) =>
@@ -82,10 +87,16 @@ declare const signOut: typeof SessionAPIWrapper.signOut;
 declare const validateClaims: typeof SessionAPIWrapper.validateClaims;
 declare const getInvalidClaimsFromResponse: typeof SessionAPIWrapper.getInvalidClaimsFromResponse;
 declare const getClaimValue: typeof SessionAPIWrapper.getClaimValue;
+declare const SessionComponentsOverrideProvider: import("react").FC<
+    import("react").PropsWithChildren<{
+        components: import("./types").ComponentOverrideMap;
+    }>
+>;
 export {
     useSessionContext,
     useClaimValue,
     SessionAuth,
+    SessionComponentsOverrideProvider,
     init,
     getUserId,
     getAccessTokenPayloadSecurely,

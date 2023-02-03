@@ -14,13 +14,32 @@
  */
 
 import { UserInput as WebJSInputType, RecipeEvent } from "supertokens-web-js/recipe/session/types";
-import { ClaimValidationError } from "supertokens-web-js/recipe/session";
+import { ClaimValidationError, RecipeInterface } from "supertokens-web-js/recipe/session";
+import { FeatureBaseConfig, NormalisedAppInfo, NormalisedBaseConfig } from "../../types";
+import OverrideableBuilder from "supertokens-js-override";
+import { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import { AccessDeniedTheme } from "./components/themes/accessDeniedScreenTheme";
+import { NormalisedConfig } from "../recipeModule/types";
 
 export type RecipeEventWithSessionContext = RecipeEvent & { sessionContext: SessionContextUpdate };
 
 export type InputType = WebJSInputType & {
+    style?: string;
+    accessDeniedScreen?: SessionFeatureBaseConfig;
     onHandleEvent?: (event: RecipeEventWithSessionContext) => void;
 };
+
+export type NormalisedSessionConfig = NormalisedConfig<unknown, any, any> & {
+    accessDeniedScreen: NormalisedBaseConfig;
+    override: {
+        functions: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
+    };
+};
+
+export type SessionFeatureBaseConfig = FeatureBaseConfig;
 
 export type SessionContextUpdate = {
     doesSessionExist: boolean;
@@ -38,3 +57,13 @@ export type SessionContextType =
     | {
           loading: true;
       };
+
+export type AccessDeniedThemeProps = {
+    config: NormalisedSessionConfig;
+};
+
+export type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
+
+export type ComponentOverrideMap = {
+    SessionAccessDenied_Override?: ComponentOverride<typeof AccessDeniedTheme>;
+};

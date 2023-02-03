@@ -1,22 +1,11 @@
 /// <reference types="react" />
 import RecipeModule from "../recipeModule";
-import {
-    CreateRecipeFunction,
-    FeatureBaseProps,
-    NormalisedAppInfo,
-    RecipeFeatureComponentMap,
-    SessionClaimValidator,
-} from "../../types";
-import { RecipeEventWithSessionContext, InputType } from "./types";
+import { CreateRecipeFunction, FeatureBaseProps, RecipeFeatureComponentMap, SessionClaimValidator } from "../../types";
+import { RecipeEventWithSessionContext, InputType, ConfigType, NormalisedSessionConfig } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 import { ClaimValidationError } from "supertokens-web-js/recipe/session";
 import { SessionClaim } from "supertokens-web-js/recipe/session";
-declare type ConfigType = InputType & {
-    recipeId: string;
-    appInfo: NormalisedAppInfo;
-    enableDebugLogs: boolean;
-};
-export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
+export default class Session extends RecipeModule<unknown, unknown, unknown, NormalisedSessionConfig> {
     static instance?: Session;
     static RECIPE_ID: string;
     webJsRecipe: WebJSSessionRecipe;
@@ -77,4 +66,3 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     static getInstance(): Session | undefined;
     static reset(): void;
 }
-export {};

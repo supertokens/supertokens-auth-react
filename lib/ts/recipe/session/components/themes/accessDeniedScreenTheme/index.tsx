@@ -1,13 +1,24 @@
-import { Fragment } from "react";
+import React, { Fragment } from "react";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { hasFontDefined } from "../../../../../styles/styles";
 import { useTranslation } from "../../../../../translation/translationContext";
-import styles from "../styles.css";
+import { AccessDeniedThemeProps } from "../../../types";
+import { ThemeBase } from "../themeBase";
 
-export const AccessDeniedTheme = (): JSX.Element => {
-    const t = useTranslation();
-    return (
-        <Fragment>
-            <div data-supertokens="sessionAccessDenied">{t("ACCESS_DENIED")}</div>
-            <style>{styles}</style>
-        </Fragment>
-    );
-};
+export const AccessDeniedTheme = withOverride<React.FC<AccessDeniedThemeProps>>(
+    "SessionAccessDenied",
+    function AccessDeniedThemeScreen(props) {
+        const t = useTranslation();
+        const hasFont = hasFontDefined(props.config.rootStyle);
+
+        return (
+            <ThemeBase
+                loadDefaultFont={!hasFont}
+                userStyles={[props.config.rootStyle, props.config.accessDeniedScreen.style]}>
+                <Fragment>
+                    <div data-supertokens="accessDeniedTitle">{t("ACCESS_DENIED")}</div>
+                </Fragment>
+            </ThemeBase>
+        );
+    }
+);

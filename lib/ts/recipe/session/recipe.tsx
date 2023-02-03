@@ -33,20 +33,24 @@ import {
     removeFromLocalStorage,
     setLocalStorage,
 } from "../../utils";
-import { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
+import {
+    RecipeEventWithSessionContext,
+    InputType,
+    SessionContextUpdate,
+    ConfigType,
+    NormalisedSessionConfig,
+} from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 import { ClaimValidationError } from "supertokens-web-js/recipe/session";
-import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 import SuperTokens from "../../superTokens";
 import { SessionClaim } from "supertokens-web-js/recipe/session";
 import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import AccessDeniedScreen from "./components/features/accessDeniedScreen";
+import { normaliseSessionConfig } from "./utils";
 
-type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
-
-export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
+export default class Session extends RecipeModule<unknown, unknown, unknown, NormalisedSessionConfig> {
     static instance?: Session;
     static RECIPE_ID = "session";
 
@@ -56,7 +60,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     private redirectionHandlersFromAuthRecipes = new Map<string, (ctx: any, history: any) => Promise<void>>();
 
     constructor(config: ConfigType) {
-        const normalizedConfig = { ...config, ...normaliseRecipeModuleConfig(config) };
+        const normalizedConfig = { ...config, ...normaliseSessionConfig(config) };
         super(normalizedConfig);
 
         this.webJsRecipe = new WebJSSessionRecipe({
