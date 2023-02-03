@@ -13,14 +13,13 @@
  * under the License.
  */
 
-const { ST_ROOT_ID } = require("../lib/build/constants");
 const assert = require("assert");
 
 /*
  * Selectors and actions helpers.
  * Using Puppeteer within shadowDom https://github.com/puppeteer/puppeteer/issues/858#issuecomment-438540596
  */
-const ST_ROOT_SELECTOR = `#${ST_ROOT_ID}`;
+const ST_ROOT_SELECTOR = `#supertokens-root`;
 
 async function waitForSTElement(page, selector, inverted = false) {
     await page.waitForSelector(ST_ROOT_SELECTOR);

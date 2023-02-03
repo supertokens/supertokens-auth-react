@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixes
 
--   Fixed component override propagation into sub-recipe only components (i.e., ThirdPartySignInAndUpCallbackTheme_Override in thirdpartyemailpassword)
+-   Fixed component override propagation into sub-recipe only feature components (i.e., ThirdPartySignInAndUpCallbackTheme_Override in thirdpartyemailpassword)
 
 ## [0.30.2] - 2023-01-21
 
