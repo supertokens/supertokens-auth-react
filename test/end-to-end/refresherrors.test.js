@@ -53,11 +53,9 @@ describe("Refresh errors", function () {
         it("should be handled as logged out", async function () {
             await page.evaluate(() => {
                 document.cookie = "sAccessToken=asdfasdf;expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax";
-                document.cookie = "sIdRefreshToken=asdfasdf;expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax";
                 document.cookie = "sRefreshToken=asdfasdf;expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax";
                 document.cookie =
                     "sFrontToken=eyJ1aWQiOiIzMjU1Y2U0Zi1jMmM2LTQ4MWUtOTEzMC1jNmZiOGM3YjU4OGYiLCJhdGUiOjE2NjI1NTgyMTEzOTAsInVwIjp7InN0LWV2Ijp7InYiOnRydWUsInQiOjE2NjI1NDc4NDM2MDR9fX0=;expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax";
-                document.cookie = "sIRTFrontend=asdfasdf;expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax";
             });
             const consoleLogs = [];
             await page.on("console", (log) => {

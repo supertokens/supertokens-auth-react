@@ -48,6 +48,12 @@ export default class SessionAPIWrapper {
         });
     }
 
+    static async getAccessToken(input?: { userContext?: any }): Promise<string | undefined> {
+        return Session.getInstanceOrThrow().getAccessToken({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
     static async getAccessTokenPayloadSecurely(input?: { userContext?: any }): Promise<any> {
         return Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
             userContext: getNormalisedUserContext(input?.userContext),
@@ -110,6 +116,7 @@ const useClaimValue = SessionAPIWrapper.useClaimValue;
 const SessionAuth = SessionAPIWrapper.SessionAuth;
 const init = SessionAPIWrapper.init;
 const getUserId = SessionAPIWrapper.getUserId;
+const getAccessToken = SessionAPIWrapper.getAccessToken;
 const getAccessTokenPayloadSecurely = SessionAPIWrapper.getAccessTokenPayloadSecurely;
 const attemptRefreshingSession = SessionAPIWrapper.attemptRefreshingSession;
 const doesSessionExist = SessionAPIWrapper.doesSessionExist;
@@ -128,6 +135,7 @@ export {
     SessionAuth,
     init,
     getUserId,
+    getAccessToken,
     getAccessTokenPayloadSecurely,
     attemptRefreshingSession,
     doesSessionExist,
