@@ -74,6 +74,7 @@
         "typescript": "4.7.3"
     },
     "dependencies": {
+        "chokidar-cli": "^3.0.0",
         "intl-tel-input": "^17.0.19",
         "prop-types": "*",
         "supertokens-js-override": "^0.0.4"
@@ -102,6 +103,7 @@
         "tsc": "cd lib && npx tsc -p tsconfig.json",
         "build": "rm -rf lib/build && npx rollup -c",
         "watch": "npx rollup -cw",
+        "watch-mac": "chokidar lib/ts/* -c 'npx rollup -c'",
         "pretty": "npx pretty-quick .",
         "build-pretty": "npm run build && npm run pretty && npm run pretty",
         "lint": "node other/checkTranslationKeys.js && cd lib && eslint ./ts --ext .ts,.tsx",
