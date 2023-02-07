@@ -1,6 +1,6 @@
-import { Config, LoginAttemptInfo, NormalisedConfig } from "./types";
-import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
-import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
+import type { Config, LoginAttemptInfo, NormalisedConfig } from "./types";
+import type { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import type { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
 export declare function normalisePasswordlessConfig(config: Config): NormalisedConfig;
 export declare function getLoginAttemptInfo(input: {
     recipeImplementation: RecipeInterface;

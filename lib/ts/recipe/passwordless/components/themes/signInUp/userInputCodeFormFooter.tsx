@@ -13,11 +13,13 @@
  * under the License.
  */
 import { Fragment } from "react";
-import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { UserInputCodeFormFooterProps } from "../../../types";
+
 import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { useUserContext } from "../../../../../usercontext";
+
+import type { UserInputCodeFormFooterProps } from "../../../types";
 
 export const UserInputCodeFormFooter = withOverride(
     "PasswordlessUserInputCodeFormFooter",

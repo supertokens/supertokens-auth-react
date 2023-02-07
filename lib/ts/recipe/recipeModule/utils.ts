@@ -1,5 +1,6 @@
-import { Config, NormalisedConfig } from "./types";
 import { isIE } from "../../utils";
+
+import type { Config, NormalisedConfig } from "./types";
 
 export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): NormalisedConfig<T, S, R> {
     let { onHandleEvent, getRedirectionURL, preAPIHook, postAPIHook } = config;

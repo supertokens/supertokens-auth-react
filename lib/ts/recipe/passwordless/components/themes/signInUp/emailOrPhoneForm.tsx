@@ -13,17 +13,20 @@
  * under the License.
  */
 
-import { SignInUpEmailOrPhoneFormProps } from "../../../types";
-import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import FormBase from "../../../../emailpassword/components/library/formBase";
-import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
-import { defaultEmailValidator, defaultValidate } from "../../../validators";
 import { useMemo, useState } from "react";
-import STGeneralError from "supertokens-web-js/utils/error";
-import { useUserContext } from "../../../../../usercontext";
-import { SignInUpFooter } from "./signInUpFooter";
 import { useEffect } from "react";
+import STGeneralError from "supertokens-web-js/utils/error";
+
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useUserContext } from "../../../../../usercontext";
+import FormBase from "../../../../emailpassword/components/library/formBase";
 import { preloadPhoneNumberUtils } from "../../../phoneNumberUtils";
+import { defaultEmailValidator, defaultValidate } from "../../../validators";
+
+import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
+import { SignInUpFooter } from "./signInUpFooter";
+
+import type { SignInUpEmailOrPhoneFormProps } from "../../../types";
 
 export const EmailOrPhoneForm = withOverride(
     "PasswordlessEmailOrPhoneForm",

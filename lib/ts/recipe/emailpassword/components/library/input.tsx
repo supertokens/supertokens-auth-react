@@ -13,14 +13,15 @@
  * under the License.
  */
 
-import { ChangeEvent } from "react";
-
-import { APIFormField } from "../../../../types";
 import { useState } from "react";
-import ShowPasswordIcon from "../../../../components/assets/showPasswordIcon";
+
+import { useTranslation } from "../../../..";
 import CheckedIcon from "../../../../components/assets/checkedIcon";
 import ErrorIcon from "../../../../components/assets/errorIcon";
-import { useTranslation } from "../../../..";
+import ShowPasswordIcon from "../../../../components/assets/showPasswordIcon";
+
+import type { APIFormField } from "../../../../types";
+import type { ChangeEvent } from "react";
 
 export type InputProps = {
     type: string;

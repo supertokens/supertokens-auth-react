@@ -14,16 +14,16 @@
  */
 import { useState } from "react";
 
-import { EnterEmailProps, EnterEmailStatus } from "../../../types";
-
-import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
-import { validateForm } from "../../../../../utils";
-import GeneralError from "../../library/generalError";
 import { useUserContext } from "../../../../../usercontext";
-import BackToSignInButton from "../../library/backToSignInButton";
+import { validateForm } from "../../../../../utils";
 import BackButton from "../../library/backButton";
+import BackToSignInButton from "../../library/backToSignInButton";
+import FormBase from "../../library/formBase";
+import GeneralError from "../../library/generalError";
+
+import type { EnterEmailProps, EnterEmailStatus } from "../../../types";
 
 const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
     const t = useTranslation();

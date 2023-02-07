@@ -1,4 +1,4 @@
-import { SessionClaim } from "supertokens-web-js/recipe/session";
+import type { SessionClaim } from "supertokens-web-js/recipe/session";
 export declare const useClaimValue: <T>(claim: SessionClaim<T>) =>
     | {
           loading: true;

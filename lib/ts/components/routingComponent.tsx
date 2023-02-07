@@ -1,6 +1,7 @@
 import React from "react";
-import SuperTokens from "../superTokens";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+
+import type SuperTokens from "../superTokens";
 
 export function RoutingComponent(props: { supertokensInstance: SuperTokens; path: string }): JSX.Element | null {
     const stInstance = props.supertokensInstance;

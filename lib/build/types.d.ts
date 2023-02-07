@@ -1,11 +1,11 @@
-import RecipeModule from "./recipe/recipeModule";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
-import { ComponentClass, PropsWithChildren } from "react";
-import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
-import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/types";
-import { WindowHandlerInput } from "supertokens-web-js/utils/windowHandler/types";
+import type RecipeModule from "./recipe/recipeModule";
+import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
+import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
+import type { ComponentClass, PropsWithChildren } from "react";
+import type { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/types";
+import type NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
+import type NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import type { WindowHandlerInput } from "supertokens-web-js/utils/windowHandler/types";
 export declare type GetRedirectionURLContext = {
     action: "TO_AUTH";
     showSignIn: boolean | undefined;

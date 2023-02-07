@@ -18,20 +18,21 @@
  */
 
 import { useCallback, useState } from "react";
+import STGeneralError from "supertokens-web-js/utils/error";
+
 import ArrowRightIcon from "../../../../../components/assets/arrowRightIcon";
 import CheckedRoundIcon from "../../../../../components/assets/checkedRoundIcon";
 import ErrorLargeIcon from "../../../../../components/assets/errorLargeIcon";
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
-import { Button } from "../../../../emailpassword/components/library";
-
-import { VerifyEmailLinkClickedThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { useUserContext } from "../../../../../usercontext";
 import { useOnMountAPICall } from "../../../../../utils";
-import { Awaited } from "../../../../../types";
-import STGeneralError from "supertokens-web-js/utils/error";
+import { Button } from "../../../../emailpassword/components/library";
 import useSessionContext from "../../../../session/useSessionContext";
+
+import type { Awaited } from "../../../../../types";
+import type { VerifyEmailLinkClickedThemeProps } from "../../../types";
 
 export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkClickedThemeProps> = (props) => {
     const t = useTranslation();

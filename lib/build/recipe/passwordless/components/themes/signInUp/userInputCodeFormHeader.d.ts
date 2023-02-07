@@ -1,3 +1,3 @@
 /// <reference types="react" />
-import { UserInputCodeFormHeaderProps } from "../../../types";
+import type { UserInputCodeFormHeaderProps } from "../../../types";
 export declare const UserInputCodeFormHeader: import("react").ComponentType<UserInputCodeFormHeaderProps>;

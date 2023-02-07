@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 export declare type ComponentOverrideProps<TComponent extends React.ComponentType<any>> =
     React.ComponentProps<TComponent> & {
         DefaultComponent: TComponent;

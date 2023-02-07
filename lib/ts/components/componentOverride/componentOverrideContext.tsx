@@ -1,5 +1,6 @@
 import React from "react";
-import { ComponentOverride } from "./componentOverride";
+
+import type { ComponentOverride } from "./componentOverride";
 
 type ContextType<T> =
     | {

@@ -17,16 +17,17 @@
  * Imports.
  */
 import { Fragment, useState } from "react";
+import STGeneralError from "supertokens-web-js/utils/error";
 
-import { SubmitNewPasswordProps, SubmitNewPasswordStatus } from "../../../types";
-import { FormRow, Button } from "../../library";
-import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
-import STGeneralError from "supertokens-web-js/utils/error";
-import { validateForm } from "../../../../../utils";
-import GeneralError from "../../library/generalError";
 import { useUserContext } from "../../../../../usercontext";
+import { validateForm } from "../../../../../utils";
+import { FormRow, Button } from "../../library";
+import FormBase from "../../library/formBase";
+import GeneralError from "../../library/generalError";
+
+import type { SubmitNewPasswordProps, SubmitNewPasswordStatus } from "../../../types";
 
 const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props) => {
     const t = useTranslation();

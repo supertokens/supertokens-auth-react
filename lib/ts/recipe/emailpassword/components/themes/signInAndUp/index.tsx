@@ -17,13 +17,15 @@
  * Imports.
  */
 import * as React from "react";
-import { SignInAndUpThemeProps } from "../../../types";
 
-import { SignUp } from "./signUp";
-import { SignIn } from "./signIn";
-import { ThemeBase } from "../themeBase";
 import { hasFontDefined } from "../../../../../styles/styles";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
+import { ThemeBase } from "../themeBase";
+
+import { SignIn } from "./signIn";
+import { SignUp } from "./signUp";
+
+import type { SignInAndUpThemeProps } from "../../../types";
 
 export const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
     // If isSignUp, return signUp.

@@ -1,6 +1,6 @@
 /// <reference types="react" />
-import { RecipeFeatureComponentMap } from "../../types";
-import { NormalisedConfig } from "./types";
+import type { NormalisedConfig } from "./types";
+import type { RecipeFeatureComponentMap } from "../../types";
 export default abstract class RecipeModule<
     GetRedirectionURLContextType,
     Action,

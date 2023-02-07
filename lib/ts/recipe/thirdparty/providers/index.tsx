@@ -14,9 +14,11 @@
  */
 
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+
 import SuperTokens from "../../../superTokens";
 import ProviderButton from "../components/library/providerButton";
-import { ProviderConfig } from "./types";
+
+import type { ProviderConfig } from "./types";
 
 /*
  * Imports.

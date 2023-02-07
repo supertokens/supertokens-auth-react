@@ -1,13 +1,14 @@
-import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import Apple from "./providers/apple";
-import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
-import { RecipeInterface, StateObject, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
-import { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import { PropsWithChildren } from "react";
+import Google from "./providers/google";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import type { PropsWithChildren } from "react";
+import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
+import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 export default class Wrapper {
     static init(
         config: UserInput

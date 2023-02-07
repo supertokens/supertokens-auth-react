@@ -1,7 +1,6 @@
 /// <reference types="react" />
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
-import {
+import type {
     GetRedirectionURLContext,
     Config,
     NormalisedConfig,
@@ -9,7 +8,8 @@ import {
     OnHandleEventContext,
     UserInput,
 } from "./types";
-import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import type { CreateRecipeFunction, RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import type { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 export default class ThirdParty extends AuthRecipe<
     GetRedirectionURLContext,
     never,

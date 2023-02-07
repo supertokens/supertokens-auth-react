@@ -18,20 +18,25 @@
  */
 
 // /!\ ThirdParty must be imported before any of the providers to prevent circular dependencies.
-import ThirdParty from "./recipe";
-import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
+
+import { getNormalisedUserContext } from "../../utils";
+
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import Apple from "./providers/apple";
-import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
-import { getNormalisedUserContext } from "../../utils";
-import { RecipeInterface, StateObject, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
+import Google from "./providers/google";
+import ThirdParty from "./recipe";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./utils";
-import { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import { PropsWithChildren } from "react";
-import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
+
+import type { PropsWithChildren } from "react";
+import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
+import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+
 export default class Wrapper {
     /*
      * Static attributes.

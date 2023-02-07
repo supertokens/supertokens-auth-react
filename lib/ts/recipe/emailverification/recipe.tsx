@@ -17,9 +17,25 @@
  * Imports.
  */
 
+import { OverrideableBuilder } from "supertokens-js-override";
+import { EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
+import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
+
+import { SSR_ERROR } from "../../constants";
+import { UserContextContext } from "../../usercontext";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
+import { matchRecipeIdUsingQueryParams, saveInvalidClaimRedirectPathInContext } from "../../utils";
 import RecipeModule from "../recipeModule";
-import { RecipeFeatureComponentMap } from "../../types";
-import {
+import { SessionAuth } from "../session";
+
+import { default as EmailVerificationFeature } from "./components/features/emailVerification";
+import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
+import RecipeImplementation from "./recipeImplementation";
+import { normaliseEmailVerificationFeature } from "./utils";
+
+import type {
     UserInput,
     Config,
     NormalisedConfig,
@@ -27,21 +43,9 @@ import {
     OnHandleEventContext,
     PreAndPostAPIHookAction,
 } from "./types";
-import { default as EmailVerificationFeature } from "./components/features/emailVerification";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
-import { matchRecipeIdUsingQueryParams, saveInvalidClaimRedirectPathInContext } from "../../utils";
-import { normaliseEmailVerificationFeature } from "./utils";
-import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
-import { SSR_ERROR } from "../../constants";
-import RecipeImplementation from "./recipeImplementation";
-import { SessionAuth } from "../session";
-import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
-import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
-import { OverrideableBuilder } from "supertokens-js-override";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { UserContextContext } from "../../usercontext";
-import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
+import type { RecipeFeatureComponentMap } from "../../types";
+import type { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
+import type { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
