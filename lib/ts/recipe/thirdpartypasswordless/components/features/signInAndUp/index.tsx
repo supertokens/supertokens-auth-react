@@ -17,26 +17,27 @@
  */
 import * as React from "react";
 import { Fragment } from "react";
-import { FeatureBaseProps } from "../../../../../types";
+
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import Recipe from "../../../recipe";
-import SignInUpTheme from "../../themes/signInUp";
-import { defaultTranslationsThirdPartyPasswordless } from "../../themes/translations";
-import {
-    useChildProps as useThirdPartyChildProps,
-    useFeatureReducer as useThirdPartyFeatureReducer,
-} from "../../../../thirdparty/components/features/signInAndUp";
+import { useUserContext } from "../../../../../usercontext";
 import {
     useChildProps as usePasswordlessChildProps,
     useFeatureReducer as usePasswordlessFeatureReducer,
     useSuccessInAnotherTabChecker,
 } from "../../../../passwordless/components/features/signInAndUp";
+import {
+    useChildProps as useThirdPartyChildProps,
+    useFeatureReducer as useThirdPartyFeatureReducer,
+} from "../../../../thirdparty/components/features/signInAndUp";
+import SignInUpTheme from "../../themes/signInUp";
+import { defaultTranslationsThirdPartyPasswordless } from "../../themes/translations";
 
-import { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
-import { PasswordlessSignInUpAction } from "../../../../passwordless/types";
-import { useUserContext } from "../../../../../usercontext";
-import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { ComponentOverrideMap } from "../../../types";
+import type { FeatureBaseProps } from "../../../../../types";
+import type { PasswordlessSignInUpAction } from "../../../../passwordless/types";
+import type { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
+import type Recipe from "../../../recipe";
+import type { ComponentOverrideMap } from "../../../types";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;

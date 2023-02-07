@@ -16,19 +16,20 @@
  * Imports.
  */
 import { Fragment, useCallback } from "react";
-
-import { Awaited, FeatureBaseProps } from "../../../../../types";
-import { useOnMountAPICall } from "../../../../../utils";
-import FeatureWrapper from "../../../../../components/featureWrapper";
-import { ComponentOverrideMap, CustomStateProperties } from "../../../types";
-import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
-import Recipe from "../../../recipe";
-import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { defaultTranslationsThirdParty } from "../../themes/translations";
 import STGeneralError from "supertokens-web-js/utils/error";
-import { useUserContext } from "../../../../../usercontext";
-import Session from "../../../../session/recipe";
+
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
+import { useUserContext } from "../../../../../usercontext";
+import { useOnMountAPICall } from "../../../../../utils";
+import Session from "../../../../session/recipe";
+import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
+import { defaultTranslationsThirdParty } from "../../themes/translations";
+
+import type { Awaited, FeatureBaseProps } from "../../../../../types";
+import type Recipe from "../../../recipe";
+import type { ComponentOverrideMap, CustomStateProperties } from "../../../types";
 
 type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap };
 

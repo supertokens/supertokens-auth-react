@@ -17,29 +17,26 @@
  */
 import * as React from "react";
 import { Fragment } from "react";
-import SignInUpThemeWrapper from "../../themes/signInUp";
-import FeatureWrapper from "../../../../../components/featureWrapper";
-import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
-import Recipe from "../../../recipe";
-import {
-    PasswordlessSignInUpAction,
-    SignInUpState,
-    SignInUpChildProps,
-    NormalisedConfig,
-    ComponentOverrideMap,
-} from "../../../types";
-import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import Session from "../../../../session";
-import SessionRecipe from "../../../../session/recipe";
-import { defaultTranslationsPasswordless } from "../../themes/translations";
 import { useMemo } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
-import { FeatureBaseProps } from "../../../../../types";
-import { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
+
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
-import { getLoginAttemptInfo, setLoginAttemptInfo } from "../../../utils";
+import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
+import Session from "../../../../session";
+import SessionRecipe from "../../../../session/recipe";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
+import { getLoginAttemptInfo, setLoginAttemptInfo } from "../../../utils";
+import SignInUpThemeWrapper from "../../themes/signInUp";
+import { defaultTranslationsPasswordless } from "../../themes/translations";
+
+import type { FeatureBaseProps } from "../../../../../types";
+import type Recipe from "../../../recipe";
+import type { ComponentOverrideMap } from "../../../types";
+import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps, NormalisedConfig } from "../../../types";
+import type { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
 
 export const useSuccessInAnotherTabChecker = (
     state: SignInUpState,

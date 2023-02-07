@@ -13,17 +13,20 @@
  * under the License.
  */
 
-import { UserInput } from "./types";
+import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 
-import Passwordless from "./recipe";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import SignInUpThemeWrapper from "./components/themes/signInUp";
-import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
-import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
 import { getNormalisedUserContext } from "../../utils";
-import * as UtilFunctions from "./utils";
-import { PropsWithChildren } from "react";
+
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
+import SignInUpThemeWrapper from "./components/themes/signInUp";
+import Passwordless from "./recipe";
+import { UserInput } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import * as UtilFunctions from "./utils";
+
+import type { PropsWithChildren } from "react";
+import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/passwordless";
+import type { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
 
 export default class Wrapper {
     static init(config: UserInput) {

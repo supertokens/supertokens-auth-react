@@ -12,14 +12,15 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { SignUpThemeProps } from "../../../types";
-
-import { SignUpFooter } from "./signUpFooter";
-import { SignUpHeader } from "./signUpHeader";
-import { SignUpForm } from "./signUpForm";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import GeneralError from "../../library/generalError";
+
+import { SignUpFooter } from "./signUpFooter";
+import { SignUpForm } from "./signUpForm";
+import { SignUpHeader } from "./signUpHeader";
+
+import type { SignUpThemeProps } from "../../../types";
 
 export const SignUp = withOverride("EmailPasswordSignUp", function EmailPasswordSignUp(props: SignUpThemeProps) {
     return (

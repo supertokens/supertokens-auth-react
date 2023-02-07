@@ -17,21 +17,23 @@
  */
 import * as React from "react";
 import { Fragment } from "react";
-import SignInAndUpTheme from "../../themes/signInAndUp";
+import { useMemo } from "react";
+
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { FeatureBaseProps } from "../../../../../types";
 import { getQueryParams } from "../../../../../utils";
-import {
+import SignInAndUpTheme from "../../themes/signInAndUp";
+import { defaultTranslationsThirdParty } from "../../themes/translations";
+
+import type { FeatureBaseProps } from "../../../../../types";
+import type Recipe from "../../../recipe";
+import type {
     ComponentOverrideMap,
     ThirdPartySignInAndUpState,
     ThirdPartySignInUpActions,
     ThirdPartySignInUpChildProps,
 } from "../../../types";
-import Recipe from "../../../recipe";
-import { defaultTranslationsThirdParty } from "../../themes/translations";
-import { useMemo } from "react";
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
-import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import type { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 
 export const useFeatureReducer = () => {
     return React.useReducer(

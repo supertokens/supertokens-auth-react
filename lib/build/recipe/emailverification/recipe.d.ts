@@ -1,7 +1,7 @@
 /// <reference types="react" />
+import { EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
 import RecipeModule from "../recipeModule";
-import { RecipeFeatureComponentMap } from "../../types";
-import {
+import type {
     UserInput,
     Config,
     NormalisedConfig,
@@ -9,9 +9,10 @@ import {
     OnHandleEventContext,
     PreAndPostAPIHookAction,
 } from "./types";
-import { CreateRecipeFunction } from "../../types";
-import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
-import { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { RecipeFeatureComponentMap } from "../../types";
+import type { CreateRecipeFunction } from "../../types";
+import type { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,

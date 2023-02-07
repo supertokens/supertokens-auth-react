@@ -13,13 +13,16 @@
  * under the License.
  */
 
-import { SignInUpEmailFormProps } from "../../../types";
+import STGeneralError from "supertokens-web-js/utils/error";
+
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useUserContext } from "../../../../../usercontext";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { defaultValidate } from "../../../../emailpassword/validators";
+
 import { SignInUpFooter } from "./signInUpFooter";
-import STGeneralError from "supertokens-web-js/utils/error";
-import { useUserContext } from "../../../../../usercontext";
+
+import type { SignInUpEmailFormProps } from "../../../types";
 
 export const EmailForm = withOverride(
     "PasswordlessEmailForm",

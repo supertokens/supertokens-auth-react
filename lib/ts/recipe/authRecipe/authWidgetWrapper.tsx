@@ -16,13 +16,16 @@
 /*
  * Imports.
  */
-import React, { useEffect, useContext, useState, PropsWithChildren } from "react";
-import { SessionAuth, SessionContext } from "../session";
-import AuthRecipe from ".";
-import { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
-import { getRedirectToPathFromURL } from "../../utils";
-import Session from "../session/recipe";
+import React, { useEffect, useContext, useState } from "react";
+
 import { useUserContext } from "../../usercontext";
+import { getRedirectToPathFromURL } from "../../utils";
+import { SessionAuth, SessionContext } from "../session";
+import Session from "../session/recipe";
+
+import type AuthRecipe from ".";
+import type { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
+import type { PropsWithChildren } from "react";
 
 type Props<T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, R | OnHandleEventContext>> = {
     onSessionAlreadyExists?: () => void;

@@ -17,24 +17,25 @@
  */
 import * as React from "react";
 import { Fragment } from "react";
-import { FeatureBaseProps } from "../../../../../types";
-import FeatureWrapper from "../../../../../components/featureWrapper";
-import Recipe from "../../../recipe";
+
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import SignInAndUpTheme from "../../themes/signInAndUp";
-import { defaultTranslationsThirdPartyEmailPassword } from "../../themes/translations";
-import {
-    useChildProps as useThirdPartyChildProps,
-    useFeatureReducer as useThirdPartyFeatureReducer,
-} from "../../../../thirdparty/components/features/signInAndUp";
+import FeatureWrapper from "../../../../../components/featureWrapper";
 import {
     useChildProps as useEmailPasswordChildProps,
     useFeatureReducer as useEmailPasswordFeatureReducer,
 } from "../../../../emailpassword/components/features/signInAndUp";
+import {
+    useChildProps as useThirdPartyChildProps,
+    useFeatureReducer as useThirdPartyFeatureReducer,
+} from "../../../../thirdparty/components/features/signInAndUp";
+import SignInAndUpTheme from "../../themes/signInAndUp";
+import { defaultTranslationsThirdPartyEmailPassword } from "../../themes/translations";
 
-import { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
-import { EmailPasswordSignInAndUpAction } from "../../../../emailpassword/types";
-import { ComponentOverrideMap } from "../../../types";
+import type { FeatureBaseProps } from "../../../../../types";
+import type { EmailPasswordSignInAndUpAction } from "../../../../emailpassword/types";
+import type { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
+import type Recipe from "../../../recipe";
+import type { ComponentOverrideMap } from "../../../types";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;

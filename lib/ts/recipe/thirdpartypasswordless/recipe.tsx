@@ -17,9 +17,25 @@
  * Imports.
  */
 
+import { OverrideableBuilder } from "supertokens-js-override";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+
+import { SSR_ERROR } from "../../constants";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
-import {
+import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
+import Passwordless from "../passwordless/recipe";
+import ThirdParty from "../thirdparty/recipe";
+
+import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import SignInAndUp from "./components/features/signInAndUp";
+import RecipeImplementation from "./recipeImplementation";
+import getPasswordlessImpl from "./recipeImplementation/passwordlessImplementation";
+import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
+import { normaliseThirdPartyPasswordlessConfig } from "./utils";
+
+import type {
     Config,
     GetRedirectionURLContext,
     NormalisedConfig,
@@ -27,23 +43,10 @@ import {
     UserInput,
     PreAndPostAPIHookAction,
 } from "./types";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
-import { normaliseThirdPartyPasswordlessConfig } from "./utils";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { SSR_ERROR } from "../../constants";
-import RecipeModule from "../recipeModule";
-import SignInAndUp from "./components/features/signInAndUp";
-import Passwordless from "../passwordless/recipe";
-import ThirdParty from "../thirdparty/recipe";
-import RecipeImplementation from "./recipeImplementation";
-import getPasswordlessImpl from "./recipeImplementation/passwordlessImplementation";
-import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import { OverrideableBuilder } from "supertokens-js-override";
-import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
-import { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { CreateRecipeFunction, FeatureBaseProps, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
+import type RecipeModule from "../recipeModule";
+import type { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 
 export default class ThirdPartyPasswordless extends AuthRecipe<
     GetRedirectionURLContext,

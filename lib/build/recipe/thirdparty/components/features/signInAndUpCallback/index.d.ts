@@ -1,7 +1,7 @@
 /// <reference types="react" />
-import { FeatureBaseProps } from "../../../../../types";
-import { ComponentOverrideMap } from "../../../types";
-import Recipe from "../../../recipe";
+import type { FeatureBaseProps } from "../../../../../types";
+import type Recipe from "../../../recipe";
+import type { ComponentOverrideMap } from "../../../types";
 declare type PropType = FeatureBaseProps & {
     recipe: Recipe;
     useComponentOverrides: () => ComponentOverrideMap;

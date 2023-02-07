@@ -1,4 +1,5 @@
 import React from "react";
+
 import { useComponentOverride } from "./useComponentOverride";
 
 export const withOverride = <TComponent extends React.ComponentType<any>>(

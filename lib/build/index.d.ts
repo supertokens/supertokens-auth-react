@@ -1,6 +1,6 @@
 /// <reference types="react" />
-import { TranslationStore } from "./translation/translationHelpers";
-import { SuperTokensConfig } from "./types";
+import type { TranslationStore } from "./translation/translationHelpers";
+import type { SuperTokensConfig } from "./types";
 export default class SuperTokensAPIWrapper {
     static SuperTokensWrapper: import("react").FC<
         import("react").PropsWithChildren<{

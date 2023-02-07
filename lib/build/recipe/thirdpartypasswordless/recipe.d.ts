@@ -1,7 +1,8 @@
 /// <reference types="react" />
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
-import {
+import Passwordless from "../passwordless/recipe";
+import ThirdParty from "../thirdparty/recipe";
+import type {
     Config,
     GetRedirectionURLContext,
     NormalisedConfig,
@@ -9,10 +10,9 @@ import {
     UserInput,
     PreAndPostAPIHookAction,
 } from "./types";
-import Passwordless from "../passwordless/recipe";
-import ThirdParty from "../thirdparty/recipe";
-import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
-import { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { CreateRecipeFunction, FeatureBaseProps, RecipeFeatureComponentMap } from "../../types";
+import type { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 export default class ThirdPartyPasswordless extends AuthRecipe<
     GetRedirectionURLContext,
     never,

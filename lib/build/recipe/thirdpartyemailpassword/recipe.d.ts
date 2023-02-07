@@ -1,7 +1,8 @@
 /// <reference types="react" />
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
-import {
+import EmailPassword from "../emailpassword/recipe";
+import ThirdParty from "../thirdparty/recipe";
+import type {
     Config,
     GetRedirectionURLContext,
     NormalisedConfig,
@@ -9,10 +10,9 @@ import {
     UserInput,
     PreAndPostAPIHookAction,
 } from "./types";
-import EmailPassword from "../emailpassword/recipe";
-import ThirdParty from "../thirdparty/recipe";
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { CreateRecipeFunction, FeatureBaseProps, RecipeFeatureComponentMap } from "../../types";
+import type { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
     never,

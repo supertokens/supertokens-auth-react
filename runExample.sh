@@ -29,6 +29,12 @@ ln -s ../../../ supertokens-auth-react
 ln -s ../../../node_modules/react react
 ln -s ../../../node_modules/react-dom react-dom
 
+cd @types
+
+rm -rf @types/express
+
+ln -s ../supertokens-node/node_modules/@types/express
+
 cd ..
 
 BROWSER=none SKIP_PREFLIGHT_CHECK=true npm start;

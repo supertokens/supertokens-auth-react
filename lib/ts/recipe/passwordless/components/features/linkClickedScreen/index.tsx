@@ -17,21 +17,22 @@
  */
 import React from "react";
 import { Fragment, useCallback, useState } from "react";
-
-import { FeatureBaseProps } from "../../../../../types";
-import { getQueryParams, getURLHash, useOnMountAPICall } from "../../../../../utils";
-import FeatureWrapper from "../../../../../components/featureWrapper";
-import { Awaited } from "../../../../../types";
-import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
-import Recipe from "../../../recipe";
-import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { defaultTranslationsPasswordless } from "../../themes/translations";
-import { useUserContext } from "../../../../../usercontext";
-import { getLoginAttemptInfo } from "../../../utils";
 import STGeneralError from "supertokens-web-js/utils/error";
-import Session from "../../../../session/recipe";
+
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
-import { ComponentOverrideMap } from "../../../types";
+import { useUserContext } from "../../../../../usercontext";
+import { getQueryParams, getURLHash, useOnMountAPICall } from "../../../../../utils";
+import Session from "../../../../session/recipe";
+import { getLoginAttemptInfo } from "../../../utils";
+import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
+import { defaultTranslationsPasswordless } from "../../themes/translations";
+
+import type { Awaited } from "../../../../../types";
+import type { FeatureBaseProps } from "../../../../../types";
+import type Recipe from "../../../recipe";
+import type { ComponentOverrideMap } from "../../../types";
 
 type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap };
 

@@ -1,14 +1,14 @@
-import { FeatureBaseConfig, ThemeBaseProps } from "../../types";
-import {
+import type { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
+import type { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
+import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import type { FeatureBaseConfig, ThemeBaseProps } from "../../types";
+import type {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
     UserInput as RecipeModuleUserInput,
 } from "../recipeModule/types";
-import { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
-import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
-import { OverrideableBuilder } from "supertokens-js-override";
-import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
+import type { OverrideableBuilder } from "supertokens-js-override";
+import type { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 export declare type ComponentOverrideMap = {
     EmailVerificationSendVerifyEmail_Override?: ComponentOverride<typeof SendVerifyEmail>;
     EmailVerificationVerifyEmailLinkClicked_Override?: ComponentOverride<typeof VerifyEmailLinkClicked>;

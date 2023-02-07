@@ -1,7 +1,7 @@
 /// <reference types="react" />
-import { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import { RecipeFeatureComponentMap } from "../../types";
-import { NormalisedConfig } from "./types";
+import type { NormalisedConfig } from "./types";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { RecipeFeatureComponentMap } from "../../types";
 export default abstract class RecipeModule<
     GetRedirectionURLContextType,
     Action,

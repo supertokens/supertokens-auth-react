@@ -1,6 +1,9 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
+
 import { ComponentOverrideContext } from "./componentOverrideContext";
-import { ComponentOverride } from "./componentOverride";
+
+import type { ComponentOverride } from "./componentOverride";
+import type React from "react";
 
 export const useComponentOverride = <TComponent extends React.ComponentType<any>>(
     overrideKey: string

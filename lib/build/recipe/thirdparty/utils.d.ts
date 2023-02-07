@@ -1,6 +1,11 @@
-import { NormalisedSignInAndUpFeatureConfig, NormalisedConfig, SignInAndUpFeatureUserInput, Config } from "./types";
-import Recipe from "./recipe";
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import type Recipe from "./recipe";
+import type {
+    NormalisedSignInAndUpFeatureConfig,
+    NormalisedConfig,
+    SignInAndUpFeatureUserInput,
+    Config,
+} from "./types";
+import type { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 export declare function normaliseThirdPartyConfig(config: Config): NormalisedConfig;
 export declare function normaliseSignInAndUpFeature(
     config: SignInAndUpFeatureUserInput | undefined

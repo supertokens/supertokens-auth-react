@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { APIFormField } from "../../../../types";
+import type { APIFormField } from "../../../../types";
 export declare type InputProps = {
     type: string;
     name: string;

@@ -13,17 +13,20 @@
  * under the License.
  */
 
-import { SignInUpUserInputCodeFormProps } from "../../../types";
+import React, { useEffect, useState } from "react";
+import STGeneralError from "supertokens-web-js/utils/error";
+
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../translation/translationContext";
+import { useUserContext } from "../../../../../usercontext";
+import { Label } from "../../../../emailpassword/components/library";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { userInputCodeValidate } from "../../../validators";
-import { Label } from "../../../../emailpassword/components/library";
-import React, { useEffect, useState } from "react";
+
 import { ResendButton } from "./resendButton";
-import { useTranslation } from "../../../../../translation/translationContext";
-import STGeneralError from "supertokens-web-js/utils/error";
-import { useUserContext } from "../../../../../usercontext";
 import { UserInputCodeFormFooter } from "./userInputCodeFormFooter";
+
+import type { SignInUpUserInputCodeFormProps } from "../../../types";
 
 export const UserInputCodeForm = withOverride(
     "PasswordlessUserInputCodeForm",

@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { VerifyEmailLinkClickedThemeProps } from "../../../types";
+import type { VerifyEmailLinkClickedThemeProps } from "../../../types";
 export declare const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkClickedThemeProps>;
 export declare const VerifyEmailLinkClicked: import("react").ComponentType<
     import("../../../../../types").ThemeBaseProps & {

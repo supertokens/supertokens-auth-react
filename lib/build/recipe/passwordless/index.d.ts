@@ -1,9 +1,10 @@
+import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import SignInUpThemeWrapper from "./components/themes/signInUp";
 import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import SignInUpThemeWrapper from "./components/themes/signInUp";
-import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
-import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
+import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/passwordless";
+import type { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
 export default class Wrapper {
     static init(
         config: UserInput

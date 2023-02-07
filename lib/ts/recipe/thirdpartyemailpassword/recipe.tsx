@@ -16,9 +16,25 @@
 /*
  * Imports.
  */
+import { OverrideableBuilder } from "supertokens-js-override";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+
+import { SSR_ERROR } from "../../constants";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
-import {
+import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
+import EmailPassword from "../emailpassword/recipe";
+import ThirdParty from "../thirdparty/recipe";
+
+import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import SignInAndUp from "./components/features/signInAndUp";
+import RecipeImplementation from "./recipeImplementation";
+import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
+import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
+import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
+
+import type {
     Config,
     GetRedirectionURLContext,
     NormalisedConfig,
@@ -26,23 +42,10 @@ import {
     UserInput,
     PreAndPostAPIHookAction,
 } from "./types";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
-import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { SSR_ERROR } from "../../constants";
-import RecipeModule from "../recipeModule";
-import SignInAndUp from "./components/features/signInAndUp";
-import EmailPassword from "../emailpassword/recipe";
-import ThirdParty from "../thirdparty/recipe";
-import RecipeImplementation from "./recipeImplementation";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import { OverrideableBuilder } from "supertokens-js-override";
-import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
-import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { CreateRecipeFunction, FeatureBaseProps, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
+import type RecipeModule from "../recipeModule";
+import type { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
 export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,

@@ -1,12 +1,12 @@
 import * as React from "react";
-import { FeatureBaseProps } from "../../../../../types";
-import {
+import type { FeatureBaseProps } from "../../../../../types";
+import type Recipe from "../../../recipe";
+import type {
     ComponentOverrideMap,
     ThirdPartySignInAndUpState,
     ThirdPartySignInUpActions,
     ThirdPartySignInUpChildProps,
 } from "../../../types";
-import Recipe from "../../../recipe";
 export declare const useFeatureReducer: () => [ThirdPartySignInAndUpState, React.Dispatch<ThirdPartySignInUpActions>];
 export declare function useChildProps(recipe: Recipe): ThirdPartySignInUpChildProps;
 export declare function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChildProps | undefined;

@@ -13,12 +13,12 @@
  * under the License.
  */
 
-import { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import SuperTokens from "../../superTokens";
-import { RecipeFeatureComponentMap } from "../../types";
-
 import { appendQueryParamsToURL } from "../../utils";
-import { NormalisedConfig } from "./types";
+
+import type { NormalisedConfig } from "./types";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { RecipeFeatureComponentMap } from "../../types";
 
 /*
  * Class.
