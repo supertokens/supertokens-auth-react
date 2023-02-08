@@ -36,11 +36,6 @@ SuperTokens.init({
                     ThirdPartyEmailPassword.Apple.init(),
                 ],
             },
-            getRedirectionURL: async function (context) {
-                if (context.action === "SUCCESS") {
-                    return "/auth/verify";
-                }
-            },
         }),
         Session.init(),
     ],

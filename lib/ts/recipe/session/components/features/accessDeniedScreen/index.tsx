@@ -18,15 +18,14 @@ const AccessDeniedScreen: React.FC<
     const recipeComponentOverrides = useRecipeComponentOverrideContext();
 
     useEffect(() => {
+        const retrieveAccessDenialInfo = async () => {
+            const denialInfo = await getLocalStorage("supertokens-access-denial-info");
+            if (typeof denialInfo === "string") {
+                setAccessDenialInfo(JSON.parse(denialInfo));
+            }
+        };
         void retrieveAccessDenialInfo();
     }, []);
-
-    const retrieveAccessDenialInfo = async () => {
-        const denialInfo = await getLocalStorage("supertokens-access-denial-info");
-        if (typeof denialInfo === "string") {
-            setAccessDenialInfo(JSON.parse(denialInfo));
-        }
-    };
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>

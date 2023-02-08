@@ -17,8 +17,8 @@ export const AccessDeniedTheme = withOverride<React.FC<AccessDeniedThemeProps>>(
                 loadDefaultFont={!hasFont}
                 userStyles={[props.config.rootStyle, props.config.accessDeniedScreen.style]}>
                 <Fragment>
-                    <div data-supertokens="accessDeniedTitle">{t("ACCESS_DENIED")}</div>
-                    <div data-supertokens="accessDeniedTitle">
+                    <div data-supertokens="headerTitle">{t("ACCESS_DENIED")}</div>
+                    <div data-supertokens="headerTitle">
                         <div>Claim ID: {props.denialInfo?.validatorId}</div>
                         <div>Reason: {props.denialInfo?.reason}</div>
                     </div>

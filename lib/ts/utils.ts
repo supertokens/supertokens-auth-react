@@ -488,7 +488,7 @@ export const getFailureRedirectionInfo = async ({
     }
     return {
         accessForbidden: invalidClaims.length > 0 && redirects.length === 0,
-        redirectPath: redirects.filter(Boolean)[0],
+        redirectPath: redirects.filter((r) => r !== undefined)[0],
     };
 };
 
@@ -498,9 +498,10 @@ export const getSuccessRedirectionPath = async ({
     userContext,
 }: {
     invalidClaims: ClaimValidationError[];
-    overrideGlobalClaimValidators?:
-        | ((globalClaimValidators: SessionClaimValidator[], userContext: any) => SessionClaimValidator[])
-        | undefined;
+    overrideGlobalClaimValidators?: (
+        globalClaimValidators: SessionClaimValidator[],
+        userContext: any
+    ) => SessionClaimValidator[];
     userContext: any;
 }): Promise<string | undefined> => {
     const globalValidators: SessionClaimValidator[] = getGlobalClaimValidators({

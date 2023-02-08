@@ -174,8 +174,10 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     userContext,
                 });
                 if (failureRedirectInfo.redirectPath !== undefined) {
-                    await SuperTokens.getInstanceOrThrow().redirectToUrl(failureRedirectInfo.redirectPath, history);
-                    return;
+                    return await SuperTokens.getInstanceOrThrow().redirectToUrl(
+                        failureRedirectInfo.redirectPath,
+                        history
+                    );
                 }
                 if (failureRedirectInfo.accessForbidden) {
                     return await SuperTokens.getInstanceOrThrow().redirectToUrl(
@@ -222,16 +224,18 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     });
                     setContext({ ...event.sessionContext, loading: false, invalidClaims });
 
-                    const failureRedirectInfo = await getFailureRedirectionInfo({
-                        invalidClaims,
-                        overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
-                        userContext,
-                    });
-                    if (props.doRedirection !== false && failureRedirectInfo.redirectPath) {
-                        return await SuperTokens.getInstanceOrThrow().redirectToUrl(
-                            failureRedirectInfo.redirectPath,
-                            history
-                        );
+                    if (props.doRedirection !== false) {
+                        const failureRedirectInfo = await getFailureRedirectionInfo({
+                            invalidClaims,
+                            overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
+                            userContext,
+                        });
+                        if (failureRedirectInfo.redirectPath) {
+                            return await SuperTokens.getInstanceOrThrow().redirectToUrl(
+                                failureRedirectInfo.redirectPath,
+                                history
+                            );
+                        }
                     }
 
                     const successRedirectionPath = await getSuccessRedirectionPath({
