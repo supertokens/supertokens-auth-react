@@ -465,7 +465,7 @@ export const getFailureRedirectionInfo = async ({
         | ((globalClaimValidators: SessionClaimValidator[], userContext: any) => SessionClaimValidator[])
         | undefined;
     userContext: any;
-}): Promise<{ accessForbidden: boolean; redirectPath: string | undefined }> => {
+}): Promise<{ accessForbidden: boolean; redirectPath?: string; failedClaim?: ClaimValidationError }> => {
     const globalValidatorsMap = getGlobalClaimValidators({
         overrideGlobalClaimValidators,
         userContext,
@@ -474,21 +474,28 @@ export const getFailureRedirectionInfo = async ({
         return map;
     }, {} as Record<string, SessionClaimValidator>);
 
-    const redirects = [];
-
     for (const claim of invalidClaims) {
         const validator = globalValidatorsMap[claim.validatorId];
-        if (validator.onFailureRedirection) {
-            const redirectPath = await validator.onFailureRedirection({ reason: claim.reason, userContext });
-            redirects.push(redirectPath);
-            if (redirectPath !== undefined) {
-                break;
+        const failureCallback = validator.onFailureRedirection;
+        if (failureCallback) {
+            const redirectPath = await failureCallback({ reason: claim.reason, userContext });
+            if (redirectPath) {
+                return {
+                    accessForbidden: false,
+                    redirectPath,
+                    failedClaim: claim,
+                };
+            } else {
+                return {
+                    accessForbidden: true,
+                    failedClaim: claim,
+                };
             }
         }
     }
+
     return {
-        accessForbidden: invalidClaims.length > 0 && redirects.length === 0,
-        redirectPath: redirects.filter((r) => r !== undefined)[0],
+        accessForbidden: false,
     };
 };
 

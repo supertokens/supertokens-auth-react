@@ -65,7 +65,8 @@ export declare const getFailureRedirectionInfo: ({
     userContext: any;
 }) => Promise<{
     accessForbidden: boolean;
-    redirectPath: string | undefined;
+    redirectPath?: string;
+    failedClaim?: ClaimValidationError;
 }>;
 export declare const getSuccessRedirectionPath: ({
     invalidClaims,
