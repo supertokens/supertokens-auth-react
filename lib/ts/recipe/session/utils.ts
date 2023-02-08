@@ -58,29 +58,28 @@ export const getFailureRedirectionInfo = async ({
         map[validator.id] = validator;
         return map;
     }, {} as Record<string, SessionClaimValidator>);
+    let failedClaimWithoutCallback: ClaimValidationError | undefined;
 
     for (const claim of invalidClaims) {
         const validator = globalValidatorsMap[claim.validatorId];
         const failureCallback = validator.onFailureRedirection;
         if (failureCallback) {
             const redirectPath = await failureCallback({ reason: claim.reason, userContext });
-            if (redirectPath) {
+            if (redirectPath !== undefined) {
                 return {
                     accessForbidden: false,
                     redirectPath,
                     failedClaim: claim,
                 };
-            } else {
-                return {
-                    accessForbidden: true,
-                    failedClaim: claim,
-                };
             }
+        } else if (failedClaimWithoutCallback !== undefined) {
+            failedClaimWithoutCallback = claim;
         }
     }
 
     return {
-        accessForbidden: false,
+        accessForbidden: failedClaimWithoutCallback !== undefined,
+        failedClaim: failedClaimWithoutCallback,
     };
 };
 
