@@ -22,9 +22,10 @@ import Session from "./recipe";
 import { LoadedSessionContext, RecipeEventWithSessionContext, SessionContextType } from "./types";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { getFailureRedirectionInfo, getSuccessRedirectionPath, useOnMountAPICall } from "../../utils";
+import { useOnMountAPICall } from "../../utils";
 import SuperTokens from "../../superTokens";
 import { SessionClaimValidator } from "../../types";
+import { getFailureRedirectionInfo, getSuccessRedirectionPath } from "./utils";
 
 export type SessionAuthProps = {
     /**

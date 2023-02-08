@@ -25,9 +25,7 @@ import {
     SessionClaimValidator,
 } from "../../types";
 import {
-    getFailureRedirectionInfo,
     getLocalStorage,
-    getSuccessRedirectionPath,
     isTest,
     matchRecipeIdUsingQueryParams,
     removeFromLocalStorage,
@@ -48,7 +46,7 @@ import { SessionClaim } from "supertokens-web-js/recipe/session";
 import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import AccessDeniedScreen from "./components/features/accessDeniedScreen";
-import { normaliseSessionConfig } from "./utils";
+import { normaliseSessionConfig, getFailureRedirectionInfo, getSuccessRedirectionPath } from "./utils";
 
 export default class Session extends RecipeModule<unknown, unknown, unknown, NormalisedSessionConfig> {
     static instance?: Session;

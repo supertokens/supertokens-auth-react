@@ -1,8 +1,7 @@
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
-import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField, SessionClaimValidator } from "./types";
-import { ClaimValidationError } from "supertokens-web-js/recipe/session";
+import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
 export declare function clearQueryParams(paramNames: string[]): void;
 export declare function clearErrorQueryParam(): void;
@@ -53,29 +52,3 @@ export declare const useOnMountAPICall: <T>(
     handleError?: ((err: unknown, consumeResp: T | undefined) => void) | undefined,
     startLoading?: boolean
 ) => void;
-export declare const getFailureRedirectionInfo: ({
-    invalidClaims,
-    overrideGlobalClaimValidators,
-    userContext,
-}: {
-    invalidClaims: ClaimValidationError[];
-    overrideGlobalClaimValidators?:
-        | ((globalClaimValidators: SessionClaimValidator[], userContext: any) => SessionClaimValidator[])
-        | undefined;
-    userContext: any;
-}) => Promise<{
-    accessForbidden: boolean;
-    redirectPath?: string;
-    failedClaim?: ClaimValidationError;
-}>;
-export declare const getSuccessRedirectionPath: ({
-    invalidClaims,
-    overrideGlobalClaimValidators,
-    userContext,
-}: {
-    invalidClaims: ClaimValidationError[];
-    overrideGlobalClaimValidators?:
-        | ((globalClaimValidators: SessionClaimValidator[], userContext: any) => SessionClaimValidator[])
-        | undefined;
-    userContext: any;
-}) => Promise<string | undefined>;
