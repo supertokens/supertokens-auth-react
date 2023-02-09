@@ -72,7 +72,7 @@ export const getFailureRedirectionInfo = async ({
                     failedClaim: claim,
                 };
             }
-        } else if (failedClaimWithoutCallback !== undefined) {
+        } else if (failedClaimWithoutCallback === undefined) {
             failedClaimWithoutCallback = claim;
         }
     }
