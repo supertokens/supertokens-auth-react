@@ -17,13 +17,13 @@
  * Imports.
  */
 
-import SuperTokens from "../superTokens";
+import { RecipeRoutes } from "../recipe/recipeRoutes";
 import { RoutingComponent } from "./routingComponent";
 /*
  * Component.
  */
 
-export function getSuperTokensRoutesForReactRouterDomV6(supertokensInstance: SuperTokens): JSX.Element[] {
+export function getSuperTokensRoutesForReactRouterDomV6(supertokensInstance: RecipeRoutes): JSX.Element[] {
     const routerInfo = supertokensInstance.getReactRouterDomWithCustomHistory();
     if (routerInfo === undefined) {
         return [];

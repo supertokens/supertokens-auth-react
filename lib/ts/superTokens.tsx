@@ -188,13 +188,13 @@ export default class SuperTokens {
                 useHistoryCustom: useNavigateHookForRRDV6,
             };
 
-            return getSuperTokensRoutesForReactRouterDomV6(SuperTokens.getInstanceOrThrow());
+            return getSuperTokensRoutesForReactRouterDomV6(SuperTokens.getInstanceOrThrow() as any);
         }
         SuperTokens.reactRouterDom = {
             router: reactRouterDom,
             useHistoryCustom: reactRouterDom.useHistory,
         };
-        return getSuperTokensRoutesForReactRouterDom(SuperTokens.getInstanceOrThrow());
+        return getSuperTokensRoutesForReactRouterDom(SuperTokens.getInstanceOrThrow() as any);
     }
 
     static getReactRouterDomWithCustomHistory(): { router: { Route: any }; useHistoryCustom: () => any } | undefined {
@@ -210,7 +210,10 @@ export default class SuperTokens {
 
     getRoutingComponent = (): JSX.Element | null => {
         return (
-            <RoutingComponent path={getCurrentNormalisedUrlPath().getAsStringDangerous()} supertokensInstance={this} />
+            <RoutingComponent
+                path={getCurrentNormalisedUrlPath().getAsStringDangerous()}
+                supertokensInstance={this as any}
+            />
         );
     };
 

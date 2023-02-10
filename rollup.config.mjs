@@ -21,6 +21,7 @@ export default [
             emailpassword: "lib/ts/recipe/emailpassword/index.ts",
             passwordless: "lib/ts/recipe/passwordless/index.ts",
             thirdparty: "lib/ts/recipe/thirdparty/index.ts",
+            thirdpartyPreBuiltUIRoutes: "lib/ts/recipe/thirdparty/preBuiltUIRoutes.ts",
             thirdpartyemailpassword: "lib/ts/recipe/thirdpartyemailpassword/index.ts",
             thirdpartypasswordless: "lib/ts/recipe/thirdpartypasswordless/index.ts",
             userroles: "lib/ts/recipe/userroles/index.ts",
