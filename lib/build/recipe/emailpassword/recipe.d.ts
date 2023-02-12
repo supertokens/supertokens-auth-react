@@ -8,7 +8,8 @@ import type {
     NormalisedConfig,
     UserInput,
 } from "./types";
-import type { CreateRecipeFunction, RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { CreateRecipeFunction, FeatureBaseProps, RecipeFeatureComponentMap } from "../../types";
 import type { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 export default class EmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
@@ -20,14 +21,15 @@ export default class EmailPassword extends AuthRecipe<
     static RECIPE_ID: string;
     recipeImpl: WebJsRecipeInterface;
     constructor(config: Config);
-    getFeatures: () => RecipeFeatureComponentMap;
+    getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (
         componentName: "signinup" | "resetpassword",
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
-        }
+        },
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static init(
         config?: UserInput

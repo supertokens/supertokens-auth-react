@@ -22,13 +22,13 @@ import { useMemo } from "react";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { getQueryParams } from "../../../../../utils";
-import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 
 import type { FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type {
+    ComponentOverrideMap,
     ThirdPartySignInAndUpState,
     ThirdPartySignInUpActions,
     ThirdPartySignInUpChildProps,
@@ -97,13 +97,13 @@ export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChi
     }, [recipe]);
 }
 
-type PropType = FeatureBaseProps & { recipe: Recipe };
+type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap };
 
 export const SignInAndUpFeature: React.FC<PropType> = (props) => {
     const [state, dispatch] = useFeatureReducer();
     const childProps = useChildProps(props.recipe);
 
-    const recipeComponentOverrides = useRecipeComponentOverrideContext();
+    const recipeComponentOverrides = props.useComponentOverrides();
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>

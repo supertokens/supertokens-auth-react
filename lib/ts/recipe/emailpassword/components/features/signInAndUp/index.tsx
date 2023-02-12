@@ -27,7 +27,6 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import Session from "../../../../session/recipe";
-import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
 
@@ -35,6 +34,7 @@ import type { FeatureBaseProps, NormalisedFormField } from "../../../../../types
 import type Recipe from "../../../recipe";
 import type { SignInAndUpState } from "../../../types";
 import type {
+    ComponentOverrideMap,
     EmailPasswordSignInAndUpAction,
     EmailPasswordSignInAndUpChildProps,
     FormFieldThemeProps,
@@ -183,11 +183,12 @@ export function useChildProps(
 export const SignInAndUpFeature: React.FC<
     FeatureBaseProps & {
         recipe: Recipe;
+        useComponentOverrides: () => ComponentOverrideMap;
     }
 > = (props) => {
     const [state, dispatch] = useFeatureReducer(props.recipe);
     const childProps = useChildProps(props.recipe, state, dispatch, props.history);
-    const recipeComponentOverrides = useRecipeComponentOverrideContext();
+    const recipeComponentOverrides = props.useComponentOverrides();
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>

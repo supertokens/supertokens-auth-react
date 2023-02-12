@@ -24,15 +24,14 @@ import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import { useOnMountAPICall } from "../../../../../utils";
 import Session from "../../../../session/recipe";
-import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 
 import type { Awaited, FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
-import type { CustomStateProperties } from "../../../types";
+import type { ComponentOverrideMap, CustomStateProperties } from "../../../types";
 
-type PropType = FeatureBaseProps & { recipe: Recipe };
+type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap };
 
 const SignInAndUpCallback: React.FC<PropType> = (props) => {
     const userContext = useUserContext();
@@ -104,7 +103,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
 
     useOnMountAPICall(verifyCode, handleVerifyResponse, handleError);
 
-    const recipeComponentOverrides = useRecipeComponentOverrideContext();
+    const recipeComponentOverrides = props.useComponentOverrides();
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>

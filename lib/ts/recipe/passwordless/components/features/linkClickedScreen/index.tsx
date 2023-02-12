@@ -25,7 +25,6 @@ import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, getURLHash, useOnMountAPICall } from "../../../../../utils";
 import Session from "../../../../session/recipe";
-import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 import { getLoginAttemptInfo } from "../../../utils";
 import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
@@ -33,8 +32,9 @@ import { defaultTranslationsPasswordless } from "../../themes/translations";
 import type { Awaited } from "../../../../../types";
 import type { FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
+import type { ComponentOverrideMap } from "../../../types";
 
-type PropType = FeatureBaseProps & { recipe: Recipe };
+type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap };
 
 const LinkClickedScreen: React.FC<PropType> = (props) => {
     const userContext = useUserContext();
@@ -139,7 +139,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     );
     useOnMountAPICall(consumeCodeAtMount, handleConsumeResp, handleConsumeError);
 
-    const recipeComponentOverrides = useRecipeComponentOverrideContext();
+    const recipeComponentOverrides = props.useComponentOverrides();
 
     const childProps = {
         recipeImplementation: props.recipe.recipeImpl,

@@ -27,7 +27,6 @@ import { useUserContext } from "../../../../../usercontext";
 import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import Session from "../../../../session";
 import SessionRecipe from "../../../../session/recipe";
-import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import { getLoginAttemptInfo, setLoginAttemptInfo } from "../../../utils";
 import SignInUpThemeWrapper from "../../themes/signInUp";
@@ -35,6 +34,7 @@ import { defaultTranslationsPasswordless } from "../../themes/translations";
 
 import type { FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
+import type { ComponentOverrideMap } from "../../../types";
 import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps, NormalisedConfig } from "../../../types";
 import type { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
 
@@ -239,9 +239,10 @@ export function useChildProps(
 export const SignInUpFeature: React.FC<
     FeatureBaseProps & {
         recipe: Recipe;
+        useComponentOverrides: () => ComponentOverrideMap;
     }
 > = (props) => {
-    const recipeComponentOverrides = useRecipeComponentOverrideContext();
+    const recipeComponentOverrides = props.useComponentOverrides();
     const userContext = useUserContext();
     const [state, dispatch] = useFeatureReducer(props.recipe.recipeImpl, userContext);
     const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch, userContext);

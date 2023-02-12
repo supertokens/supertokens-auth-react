@@ -13,7 +13,7 @@ export default function CustomSignUp({ DefaultComponent, ...props }) {
     // we use useLayoutEffect instead of useEffect because that prevent the UI glitch that
     // happens cause of the JS manipulation
     React.useLayoutEffect(() => {
-        if (window.location.pathname === "/auth") {
+        if (window.location.pathname.startsWith("/auth")) {
             // here we hide the password field..
             document
                 .querySelector("#supertokens-root")

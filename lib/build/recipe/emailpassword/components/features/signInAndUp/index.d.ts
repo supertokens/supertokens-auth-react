@@ -2,7 +2,11 @@ import * as React from "react";
 import type { FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { SignInAndUpState } from "../../../types";
-import type { EmailPasswordSignInAndUpAction, EmailPasswordSignInAndUpChildProps } from "../../../types";
+import type {
+    ComponentOverrideMap,
+    EmailPasswordSignInAndUpAction,
+    EmailPasswordSignInAndUpChildProps,
+} from "../../../types";
 import type { Dispatch } from "react";
 export declare const useFeatureReducer: (
     recipe: Recipe | undefined
@@ -22,6 +26,7 @@ export declare function useChildProps(
 export declare const SignInAndUpFeature: React.FC<
     FeatureBaseProps & {
         recipe: Recipe;
+        useComponentOverrides: () => ComponentOverrideMap;
     }
 >;
 export default SignInAndUpFeature;

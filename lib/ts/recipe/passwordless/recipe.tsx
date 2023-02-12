@@ -26,6 +26,7 @@ import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthRecipe from "../authRecipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 
+import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import LinkClickedScreen from "./components/features/linkClickedScreen";
 import SignInUp from "./components/features/signInAndUp";
 import RecipeImplementation from "./recipeImplementation";
@@ -39,7 +40,8 @@ import type {
     NormalisedConfig,
     UserInput,
 } from "./types";
-import type { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { CreateRecipeFunction, FeatureBaseProps, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import type RecipeModule from "../recipeModule";
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 
@@ -72,20 +74,22 @@ export default class Passwordless extends AuthRecipe<
         this.recipeImpl = builder.override(this.config.override.functions).build();
     }
 
-    getFeatures = (): RecipeFeatureComponentMap => {
+    getFeatures = (
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
         if (this.config.signInUpFeature.disableDefaultUI !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) => this.getFeatureComponent("signInUp", props),
+                component: (props) => this.getFeatureComponent("signInUp", props, useComponentOverrides),
             };
         }
         if (this.config.linkClickedScreenFeature.disableDefaultUI !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/verify"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) => this.getFeatureComponent("linkClickedScreen", props),
+                component: (props) => this.getFeatureComponent("linkClickedScreen", props, useComponentOverrides),
             };
         }
 
@@ -98,7 +102,8 @@ export default class Passwordless extends AuthRecipe<
 
     getFeatureComponent = (
         componentName: "signInUp" | "linkClickedScreen",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
+        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signInUp") {
             if (props.redirectOnSessionExists !== false) {
@@ -112,14 +117,14 @@ export default class Passwordless extends AuthRecipe<
                         >
                             authRecipe={this}
                             history={props.history}>
-                            <SignInUp recipe={this} {...props} />
+                            <SignInUp recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
                         </AuthWidgetWrapper>
                     </UserContextWrapper>
                 );
             } else {
                 return (
                     <UserContextWrapper userContext={props.userContext}>
-                        <SignInUp recipe={this} {...props} />
+                        <SignInUp recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
                     </UserContextWrapper>
                 );
             }
@@ -127,7 +132,7 @@ export default class Passwordless extends AuthRecipe<
         if (componentName === "linkClickedScreen") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
-                    <LinkClickedScreen recipe={this} {...props} />
+                    <LinkClickedScreen recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
                 </UserContextWrapper>
             );
         } else {

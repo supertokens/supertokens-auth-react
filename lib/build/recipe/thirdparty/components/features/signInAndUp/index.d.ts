@@ -2,6 +2,7 @@ import * as React from "react";
 import type { FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type {
+    ComponentOverrideMap,
     ThirdPartySignInAndUpState,
     ThirdPartySignInUpActions,
     ThirdPartySignInUpChildProps,
@@ -11,6 +12,7 @@ export declare function useChildProps(recipe: Recipe): ThirdPartySignInUpChildPr
 export declare function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChildProps | undefined;
 declare type PropType = FeatureBaseProps & {
     recipe: Recipe;
+    useComponentOverrides: () => ComponentOverrideMap;
 };
 export declare const SignInAndUpFeature: React.FC<PropType>;
 export default SignInAndUpFeature;

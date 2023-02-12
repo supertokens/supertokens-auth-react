@@ -28,7 +28,6 @@ import {
     useChildProps as useThirdPartyChildProps,
     useFeatureReducer as useThirdPartyFeatureReducer,
 } from "../../../../thirdparty/components/features/signInAndUp";
-import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsThirdPartyEmailPassword } from "../../themes/translations";
 
@@ -36,9 +35,11 @@ import type { FeatureBaseProps } from "../../../../../types";
 import type { EmailPasswordSignInAndUpAction } from "../../../../emailpassword/types";
 import type { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
 import type Recipe from "../../../recipe";
+import type { ComponentOverrideMap } from "../../../types";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
+    useComponentOverrides: () => ComponentOverrideMap;
 };
 
 const SignInAndUp: React.FC<PropType> = (props) => {
@@ -69,7 +70,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         { error: tpState.error || epState.error }
     );
 
-    const recipeComponentOverrides = useRecipeComponentOverrideContext();
+    const recipeComponentOverrides = props.useComponentOverrides();
 
     const combinedTPDispatch = React.useCallback<typeof tpDispatch>(
         (action) => {
