@@ -2,8 +2,8 @@ import React from "react";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { RecipeRoutes } from "../recipe/recipeRoutes";
 
-export function RoutingComponent(props: { supertokensInstance: RecipeRoutes; path: string }): JSX.Element | null {
-    const stInstance = props.supertokensInstance;
+export function RoutingComponent(props: { recipeRoutesInstance: RecipeRoutes; path: string }): JSX.Element | null {
+    const stInstance = props.recipeRoutesInstance;
     const path = props.path;
     const componentToRender = React.useMemo(() => {
         // During development, this runs twice so as to warn devs of if there
@@ -12,7 +12,7 @@ export function RoutingComponent(props: { supertokensInstance: RecipeRoutes; pat
         return stInstance.getMatchingComponentForRouteAndRecipeId(new NormalisedURLPath(path));
     }, [stInstance, path]);
 
-    const history = props.supertokensInstance.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
+    const history = props.recipeRoutesInstance.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
 
     if (componentToRender === undefined) {
         return null;

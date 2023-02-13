@@ -18,7 +18,7 @@
  */
 
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
+import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -27,19 +27,15 @@ import {
     NormalisedConfig,
     UserInput,
 } from "./types";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
-import SignInAndUp from "./components/features/signInAndUp";
-import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken";
 import RecipeImplementation from "./recipeImplementation";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import { OverrideableBuilder } from "supertokens-js-override";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 /*
  * Class.
@@ -70,29 +66,6 @@ export default class EmailPassword extends AuthRecipe<
         this.recipeImpl = builder.override(this.config.override.functions).build();
     }
 
-    getFeatures = (): RecipeFeatureComponentMap => {
-        const features: RecipeFeatureComponentMap = {};
-        if (this.config.signInAndUpFeature.disableDefaultUI !== true) {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) => this.getFeatureComponent("signinup", props),
-            };
-        }
-
-        if (this.config.resetPasswordUsingTokenFeature.disableDefaultUI !== true) {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
-                new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH)
-            );
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) => this.getFeatureComponent("resetpassword", props),
-            };
-        }
-
-        return features;
-    };
-
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "RESET_PASSWORD") {
             const resetPasswordPath = new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH);
@@ -102,44 +75,6 @@ export default class EmailPassword extends AuthRecipe<
         }
 
         return this.getAuthRecipeDefaultRedirectionURL(context);
-    };
-
-    getFeatureComponent = (
-        componentName: "signinup" | "resetpassword",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
-    ): JSX.Element => {
-        if (componentName === "signinup") {
-            if (props.redirectOnSessionExists !== false) {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <AuthWidgetWrapper<
-                            GetRedirectionURLContext,
-                            PreAndPostAPIHookAction,
-                            OnHandleEventContext,
-                            NormalisedConfig
-                        >
-                            authRecipe={this}
-                            history={props.history}>
-                            <SignInAndUp recipe={this} {...props} />
-                        </AuthWidgetWrapper>
-                    </UserContextWrapper>
-                );
-            } else {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <SignInAndUp recipe={this} {...props} />
-                    </UserContextWrapper>
-                );
-            }
-        } else if (componentName === "resetpassword") {
-            return (
-                <UserContextWrapper userContext={props.userContext}>
-                    <ResetPasswordUsingToken recipe={this} {...props} />
-                </UserContextWrapper>
-            );
-        } else {
-            throw new Error("Should never come here.");
-        }
     };
 
     static init(

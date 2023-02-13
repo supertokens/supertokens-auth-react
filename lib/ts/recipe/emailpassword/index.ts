@@ -16,13 +16,10 @@
 import { UserInput } from "./types";
 
 import EmailPassword from "./recipe";
-import SignInAndUpTheme from "./components/themes/signInAndUp";
-import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { getNormalisedUserContext } from "../../utils";
 import { User } from "../authRecipe/types";
 import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
-import { PropsWithChildren } from "react";
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 
 export default class Wrapper {
@@ -168,12 +165,6 @@ export default class Wrapper {
         });
     }
 
-    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
-        EmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
-    static SignInAndUpTheme = SignInAndUpTheme;
-    static ResetPasswordUsingToken = (prop?: any) =>
-        EmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword", prop);
-    static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
@@ -184,15 +175,11 @@ const sendPasswordResetEmail = Wrapper.sendPasswordResetEmail;
 const signUp = Wrapper.signUp;
 const signIn = Wrapper.signIn;
 const doesEmailExist = Wrapper.doesEmailExist;
-const SignInAndUp = Wrapper.SignInAndUp;
 const getResetPasswordTokenFromURL = Wrapper.getResetPasswordTokenFromURL;
-const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
 const EmailPasswordComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 
 export {
     init,
-    SignInAndUp,
-    SignInAndUpTheme,
     signOut,
     submitNewPassword,
     sendPasswordResetEmail,
@@ -200,8 +187,6 @@ export {
     signIn,
     doesEmailExist,
     getResetPasswordTokenFromURL,
-    ResetPasswordUsingToken,
-    ResetPasswordUsingTokenTheme,
     EmailPasswordComponentsOverrideProvider,
     GetRedirectionURLContext,
     PreAPIHookContext,

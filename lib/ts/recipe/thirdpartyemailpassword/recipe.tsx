@@ -17,7 +17,7 @@
  * Imports.
  */
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
+import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import {
     Config,
     GetRedirectionURLContext,
@@ -26,21 +26,17 @@ import {
     UserInput,
     PreAndPostAPIHookAction,
 } from "./types";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest } from "../../utils";
 import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
-import SignInAndUp from "./components/features/signInAndUp";
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import RecipeImplementation from "./recipeImplementation";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import { OverrideableBuilder } from "supertokens-js-override";
 import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
@@ -127,34 +123,6 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                   });
     }
 
-    getFeatures = (): RecipeFeatureComponentMap => {
-        let features: RecipeFeatureComponentMap = {};
-
-        if (this.emailPasswordRecipe !== undefined) {
-            features = {
-                ...features,
-                ...this.emailPasswordRecipe.getFeatures(),
-            };
-        }
-
-        if (this.thirdPartyRecipe !== undefined) {
-            features = {
-                ...features,
-                ...this.thirdPartyRecipe.getFeatures(),
-            };
-        }
-
-        if (this.config.signInAndUpFeature.disableDefaultUI !== true) {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (prop: any) => this.getFeatureComponent("signinup", prop),
-            };
-        }
-
-        return features;
-    };
-
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "RESET_PASSWORD") {
             if (this.emailPasswordRecipe === undefined) {
@@ -163,50 +131,6 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             return this.emailPasswordRecipe.getDefaultRedirectionURL(context);
         } else {
             return this.getAuthRecipeDefaultRedirectionURL(context);
-        }
-    };
-
-    getFeatureComponent = (
-        componentName: "signinup" | "signinupcallback" | "resetpassword",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
-    ): JSX.Element => {
-        if (componentName === "signinup") {
-            if (props.redirectOnSessionExists !== false) {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <AuthWidgetWrapper<
-                            GetRedirectionURLContext,
-                            PreAndPostAPIHookAction,
-                            OnHandleEventContext,
-                            NormalisedConfig
-                        >
-                            authRecipe={this}
-                            history={props.history}>
-                            <SignInAndUp recipe={this} {...props} />
-                        </AuthWidgetWrapper>
-                    </UserContextWrapper>
-                );
-            } else {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <SignInAndUp recipe={this} {...props} />
-                    </UserContextWrapper>
-                );
-            }
-        } else if (componentName === "resetpassword") {
-            if (this.emailPasswordRecipe === undefined) {
-                throw new Error("Should not come here...");
-            }
-            return this.emailPasswordRecipe.getFeatureComponent(componentName, props);
-        } else if (componentName === "signinupcallback") {
-            if (this.thirdPartyRecipe === undefined) {
-                throw new Error(
-                    "Embedding this component requires the thirdparty recipe to be enabled. Please check the value of signInAndUpFeature.providers in the configuration."
-                );
-            }
-            return this.thirdPartyRecipe.getFeatureComponent(componentName, props);
-        } else {
-            throw new Error("Should not come here...");
         }
     };
 

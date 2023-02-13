@@ -1,11 +1,12 @@
 import { useState } from "react";
 import "./App.css";
-import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
+import { ThirdPartyPreBuiltUIRoutes } from "supertokens-auth-react/recipe/thirdparty/preBuiltUI";
 import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
 
@@ -50,7 +51,7 @@ function App() {
                     <div className="fill">
                         <Routes>
                             {/* This shows the login UI on "/auth" route */}
-                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                            {ThirdPartyPreBuiltUIRoutes.getRoutes(require("react-router-dom"))}
 
                             <Route
                                 path="/"

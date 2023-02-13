@@ -18,7 +18,7 @@
  */
 
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
+import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import {
     GetRedirectionURLContext,
     Config,
@@ -27,18 +27,13 @@ import {
     OnHandleEventContext,
     UserInput,
 } from "./types";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
-import { normaliseThirdPartyConfig, matchRecipeIdUsingState } from "./utils";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import { isTest } from "../../utils";
+import { normaliseThirdPartyConfig } from "./utils";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
-import SignInAndUp from "./components/features/signInAndUp";
-import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 import RecipeImplementation from "./recipeImplementation";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import { OverrideableBuilder } from "supertokens-js-override";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 /*
  * Class.
@@ -72,69 +67,6 @@ export default class ThirdParty extends AuthRecipe<
     /*
      * Instance methods.
      */
-
-    getFeatures = (): RecipeFeatureComponentMap => {
-        const features: RecipeFeatureComponentMap = {};
-        if (this.config.signInAndUpFeature.disableDefaultUI !== true) {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (prop: any) => this.getFeatureComponent("signinup", prop),
-            };
-        }
-
-        // Add callback route for each provider.
-        this.config.signInAndUpFeature.providers.forEach((provider) => {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
-                new NormalisedURLPath(`/callback/${provider.id}`)
-            );
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: () => matchRecipeIdUsingState(this, {}),
-                component: (prop: any) => this.getFeatureComponent("signinupcallback", prop),
-            };
-        });
-
-        return features;
-    };
-
-    getFeatureComponent = (
-        componentName: "signinup" | "signinupcallback",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
-    ): JSX.Element => {
-        if (componentName === "signinup") {
-            if (props.redirectOnSessionExists !== false) {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <AuthWidgetWrapper<
-                            GetRedirectionURLContext,
-                            PreAndPostAPIHookAction,
-                            OnHandleEventContext,
-                            NormalisedConfig
-                        >
-                            authRecipe={this}
-                            history={props.history}>
-                            <SignInAndUp recipe={this} {...props} />
-                        </AuthWidgetWrapper>
-                    </UserContextWrapper>
-                );
-            } else {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <SignInAndUp recipe={this} {...props} />
-                    </UserContextWrapper>
-                );
-            }
-        } else if (componentName === "signinupcallback") {
-            return (
-                <UserContextWrapper userContext={props.userContext}>
-                    <SignInAndUpCallback recipe={this} {...props} />
-                </UserContextWrapper>
-            );
-        } else {
-            throw new Error("Should never come here");
-        }
-    };
-
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         return this.getAuthRecipeDefaultRedirectionURL(context);
     };

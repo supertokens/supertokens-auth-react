@@ -15,9 +15,7 @@
 import ThirdPartyPasswordless from "./recipe";
 
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import SignInUpTheme from "./components/themes/signInUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
-import { LinkClickedScreen } from "../passwordless/components/themes/linkClickedScreen";
 import { getNormalisedUserContext } from "../../utils";
 import {
     PasswordlessFlowType,
@@ -28,7 +26,6 @@ import {
 import { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 import * as PasswordlessUtilFunctions from "../passwordless/utils";
-import { PropsWithChildren } from "react";
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 
 export default class Wrapper {
@@ -336,15 +333,6 @@ export default class Wrapper {
     static Apple = Apple;
     static Facebook = Facebook;
     static Github = Github;
-    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
-        ThirdPartyPasswordless.getInstanceOrThrow().getFeatureComponent("signInUp", prop);
-    static SignInAndUpTheme = SignInUpTheme;
-    static ThirdPartySignInAndUpCallback = (prop?: any) =>
-        ThirdPartyPasswordless.getInstanceOrThrow().getFeatureComponent("signinupcallback", prop);
-
-    static PasswordlessLinkClickedTheme = LinkClickedScreen;
-    static PasswordlessLinkClicked = (prop?: any) =>
-        ThirdPartyPasswordless.getInstanceOrThrow().getFeatureComponent("linkClickedScreen", prop);
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
@@ -372,9 +360,6 @@ const doesPasswordlessUserPhoneNumberExist = Wrapper.doesPasswordlessUserPhoneNu
 const getPasswordlessLoginAttemptInfo = Wrapper.getPasswordlessLoginAttemptInfo;
 const setPasswordlessLoginAttemptInfo = Wrapper.setPasswordlessLoginAttemptInfo;
 const clearPasswordlessLoginAttemptInfo = Wrapper.clearPasswordlessLoginAttemptInfo;
-const SignInAndUp = Wrapper.SignInAndUp;
-const ThirdPartySignInAndUpCallback = Wrapper.ThirdPartySignInAndUpCallback;
-const PasswordlessLinkClicked = Wrapper.PasswordlessLinkClicked;
 const ThirdpartyPasswordlessComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 
 export {
@@ -404,12 +389,8 @@ export {
     getPasswordlessLoginAttemptInfo,
     setPasswordlessLoginAttemptInfo,
     clearPasswordlessLoginAttemptInfo,
-    SignInAndUp,
-    SignInUpTheme,
-    ThirdPartySignInAndUpCallback,
     ThirdpartyPasswordlessComponentsOverrideProvider,
     signOut,
-    PasswordlessLinkClicked,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

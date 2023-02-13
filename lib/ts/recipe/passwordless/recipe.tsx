@@ -17,7 +17,7 @@
  * Imports.
  */
 
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
+import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -26,19 +26,14 @@ import {
     NormalisedConfig,
     UserInput,
 } from "./types";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest } from "../../utils";
 import { normalisePasswordlessConfig } from "./utils";
 import RecipeModule from "../recipeModule";
 import RecipeImplementation from "./recipeImplementation";
 import { OverrideableBuilder } from "supertokens-js-override";
 import AuthRecipe from "../authRecipe";
 import { SSR_ERROR } from "../../constants";
-import SignInUp from "./components/features/signInAndUp";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import LinkClickedScreen from "./components/features/linkClickedScreen";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 /*
  * Class.
@@ -69,67 +64,8 @@ export default class Passwordless extends AuthRecipe<
         this.recipeImpl = builder.override(this.config.override.functions).build();
     }
 
-    getFeatures = (): RecipeFeatureComponentMap => {
-        const features: RecipeFeatureComponentMap = {};
-        if (this.config.signInUpFeature.disableDefaultUI !== true) {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) => this.getFeatureComponent("signInUp", props),
-            };
-        }
-        if (this.config.linkClickedScreenFeature.disableDefaultUI !== true) {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/verify"));
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) => this.getFeatureComponent("linkClickedScreen", props),
-            };
-        }
-
-        return features;
-    };
-
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         return this.getAuthRecipeDefaultRedirectionURL(context);
-    };
-
-    getFeatureComponent = (
-        componentName: "signInUp" | "linkClickedScreen",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
-    ): JSX.Element => {
-        if (componentName === "signInUp") {
-            if (props.redirectOnSessionExists !== false) {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <AuthWidgetWrapper<
-                            GetRedirectionURLContext,
-                            PreAndPostAPIHookAction,
-                            OnHandleEventContext,
-                            NormalisedConfig
-                        >
-                            authRecipe={this}
-                            history={props.history}>
-                            <SignInUp recipe={this} {...props} />
-                        </AuthWidgetWrapper>
-                    </UserContextWrapper>
-                );
-            } else {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <SignInUp recipe={this} {...props} />
-                    </UserContextWrapper>
-                );
-            }
-        }
-        if (componentName === "linkClickedScreen") {
-            return (
-                <UserContextWrapper userContext={props.userContext}>
-                    <LinkClickedScreen recipe={this} {...props} />
-                </UserContextWrapper>
-            );
-        } else {
-            throw new Error("Should never come here.");
-        }
     };
 
     static init(

@@ -1,9 +1,8 @@
+/// <reference types="react" />
 import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import SignInUpThemeWrapper from "./components/themes/signInUp";
 import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
-import { PropsWithChildren } from "react";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -99,16 +98,8 @@ export default class Wrapper {
         userContext?: any;
     }): Promise<void>;
     static clearLoginAttemptInfo(input?: { userContext?: any }): Promise<void>;
-    static SignInUp: (
-        prop?: PropsWithChildren<{
-            redirectOnSessionExists?: boolean;
-            userContext?: any;
-        }>
-    ) => JSX.Element;
-    static SignInUpTheme: typeof SignInUpThemeWrapper;
-    static LinkClicked: (prop?: any) => JSX.Element;
     static ComponentsOverrideProvider: import("react").FC<
-        PropsWithChildren<{
+        import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
         }>
     >;
@@ -125,24 +116,13 @@ declare const getLoginAttemptInfo: typeof Wrapper.getLoginAttemptInfo;
 declare const setLoginAttemptInfo: typeof Wrapper.setLoginAttemptInfo;
 declare const clearLoginAttemptInfo: typeof Wrapper.clearLoginAttemptInfo;
 declare const signOut: typeof Wrapper.signOut;
-declare const SignInUp: (
-    prop?: PropsWithChildren<{
-        redirectOnSessionExists?: boolean;
-        userContext?: any;
-    }>
-) => JSX.Element;
-declare const SignInUpTheme: typeof SignInUpThemeWrapper;
-declare const LinkClicked: (prop?: any) => JSX.Element;
 declare const PasswordlessComponentsOverrideProvider: import("react").FC<
-    PropsWithChildren<{
+    import("react").PropsWithChildren<{
         components: import("./types").ComponentOverrideMap;
     }>
 >;
 export {
-    SignInUp,
-    SignInUpTheme,
     PasswordlessComponentsOverrideProvider,
-    LinkClicked,
     init,
     createCode,
     resendCode,

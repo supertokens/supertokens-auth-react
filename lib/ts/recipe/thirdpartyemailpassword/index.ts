@@ -13,10 +13,8 @@
  * under the License.
  */
 import ThirdPartyEmailPassword from "./recipe";
-import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import { getNormalisedUserContext } from "../../utils";
 import {
@@ -26,9 +24,7 @@ import {
     RecipeFunctionOptions,
 } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
-import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
 import { StateObject } from "supertokens-web-js/recipe/thirdparty";
-import { PropsWithChildren } from "react";
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 
 export default class Wrapper {
@@ -302,23 +298,11 @@ export default class Wrapper {
     static Apple = Apple;
     static Facebook = Facebook;
     static Github = Github;
-    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
-        ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
-    static SignInAndUpTheme = SignInAndUpTheme;
-    static ThirdPartySignInAndUpCallback = (prop?: any) =>
-        ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("signinupcallback", prop);
-    static ResetPasswordUsingToken = (prop?: any) =>
-        ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword", prop);
-    static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
-    static ThirdPartySignInAndUpCallbackTheme = ThirdPartySignInAndUpCallbackTheme;
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
 const init = Wrapper.init;
 const signOut = Wrapper.signOut;
-const SignInAndUp = Wrapper.SignInAndUp;
-const ThirdPartySignInAndUpCallback = Wrapper.ThirdPartySignInAndUpCallback;
-const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
 const ThirdpartyEmailPasswordComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 const submitNewPassword = Wrapper.submitNewPassword;
 const sendPasswordResetEmail = Wrapper.sendPasswordResetEmail;
@@ -344,11 +328,7 @@ export {
     Google,
     Facebook,
     Github,
-    SignInAndUp,
-    SignInAndUpTheme,
     ThirdpartyEmailPasswordComponentsOverrideProvider,
-    ThirdPartySignInAndUpCallback,
-    ThirdPartySignInAndUpCallbackTheme,
     signOut,
     submitNewPassword,
     sendPasswordResetEmail,
@@ -367,8 +347,6 @@ export {
     getAuthCodeFromURL,
     getAuthErrorFromURL,
     getAuthStateFromURL,
-    ResetPasswordUsingToken,
-    ResetPasswordUsingTokenTheme,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

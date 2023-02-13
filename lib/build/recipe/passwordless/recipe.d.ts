@@ -1,5 +1,4 @@
-/// <reference types="react" />
-import { CreateRecipeFunction, RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import { CreateRecipeFunction } from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -20,15 +19,7 @@ export default class Passwordless extends AuthRecipe<
     static RECIPE_ID: string;
     recipeImpl: RecipeInterface;
     constructor(config: Config);
-    getFeatures: () => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
-    getFeatureComponent: (
-        componentName: "signInUp" | "linkClickedScreen",
-        props: FeatureBaseProps & {
-            redirectOnSessionExists?: boolean;
-            userContext?: any;
-        }
-    ) => JSX.Element;
     static init(
         config: UserInput
     ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;

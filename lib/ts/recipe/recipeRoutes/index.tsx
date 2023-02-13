@@ -5,17 +5,21 @@ import { getSuperTokensRoutesForReactRouterDom } from "../../components/superTok
 import { getSuperTokensRoutesForReactRouterDomV6 } from "../../components/superTokensRouteV6";
 import { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
 import { getCurrentNormalisedUrlPath } from "../../utils";
-import RecipeModule from "../recipeModule";
+import { RecipeFeatureComponentMap } from "../../types";
 
-export class RecipeRoutes {
+export abstract class RecipeRoutes {
     private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;
-
-    constructor(private readonly recipe: RecipeModule<unknown, unknown, unknown, any>) {}
 
     private static reactRouterDom?: { router: { Route: any }; useHistoryCustom: () => any };
     private static reactRouterDomIsV6: boolean | undefined = undefined;
 
-    static getRoutes(reactRouterDom: any, instance: RecipeRoutes): JSX.Element[] {
+    static getRoutes(reactRouterDom: any, instance?: RecipeRoutes): JSX.Element[] {
+        if (instance === undefined) {
+            throw new Error(
+                // eslint-disable-next-line @typescript-eslint/quotes
+                "Instance should be passed"
+            );
+        }
         if (reactRouterDom === undefined) {
             throw new Error(
                 // eslint-disable-next-line @typescript-eslint/quotes
@@ -65,13 +69,19 @@ export class RecipeRoutes {
         return this.getMatchingComponentForRouteAndRecipeId(getCurrentNormalisedUrlPath()) !== undefined;
     };
 
+    static getReactRouterDomWithCustomHistory = ():
+        | { router: { Route: any }; useHistoryCustom: () => any }
+        | undefined => {
+        return RecipeRoutes.reactRouterDom;
+    };
+
     getReactRouterDomWithCustomHistory = (): { router: { Route: any }; useHistoryCustom: () => any } | undefined => {
         return RecipeRoutes.reactRouterDom;
     };
 
     getRoutingComponent = (): JSX.Element | null => {
         return (
-            <RoutingComponent path={getCurrentNormalisedUrlPath().getAsStringDangerous()} supertokensInstance={this} />
+            <RoutingComponent path={getCurrentNormalisedUrlPath().getAsStringDangerous()} recipeRoutesInstance={this} />
         );
     };
 
@@ -82,7 +92,7 @@ export class RecipeRoutes {
         }
 
         const pathsToFeatureComponentWithRecipeIdMap: BaseFeatureComponentMap = {};
-        const features = this.recipe.getFeatures();
+        const features = this.getFeatures();
         const featurePaths = Object.keys(features);
         for (let j = 0; j < featurePaths.length; j++) {
             // If no components yet for this route, initialize empty array.
@@ -115,4 +125,6 @@ export class RecipeRoutes {
         // Otherwise, If no recipe Id provided, or if no recipe id matches, return the first matching component.
         return routeComponents[0];
     };
+
+    abstract getFeatures(): RecipeFeatureComponentMap;
 }

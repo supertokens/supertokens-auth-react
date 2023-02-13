@@ -1,13 +1,11 @@
+/// <reference types="react" />
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import SignInAndUpTheme from "./components/themes/signInAndUp";
-import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import Apple from "./providers/apple";
 import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
 import { RecipeInterface, StateObject, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
 import { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import { PropsWithChildren } from "react";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -69,17 +67,8 @@ export default class Wrapper {
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
     static Github: typeof Github;
-    static SignInAndUp: (
-        prop?: PropsWithChildren<{
-            redirectOnSessionExists?: boolean;
-            userContext?: any;
-        }>
-    ) => JSX.Element;
-    static SignInAndUpTheme: import("react").FC<import("./types").SignInAndUpThemeProps>;
-    static SignInAndUpCallback: (prop?: any) => JSX.Element;
-    static SignInAndUpCallbackTheme: (props: { config: import("./types").NormalisedConfig }) => JSX.Element;
     static ComponentsOverrideProvider: import("react").FC<
-        PropsWithChildren<{
+        import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
         }>
     >;
@@ -97,15 +86,8 @@ declare const getAuthCodeFromURL: typeof Wrapper.getAuthCodeFromURL;
 declare const getAuthErrorFromURL: typeof Wrapper.getAuthErrorFromURL;
 declare const getAuthStateFromURL: typeof Wrapper.getAuthStateFromURL;
 declare const signInAndUp: typeof Wrapper.signInAndUp;
-declare const SignInAndUp: (
-    prop?: PropsWithChildren<{
-        redirectOnSessionExists?: boolean;
-        userContext?: any;
-    }>
-) => JSX.Element;
-declare const SignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const ThirdpartyComponentsOverrideProvider: import("react").FC<
-    PropsWithChildren<{
+    import("react").PropsWithChildren<{
         components: import("./types").ComponentOverrideMap;
     }>
 >;
@@ -126,10 +108,6 @@ export {
     getAuthStateFromURL,
     signInAndUp,
     redirectToThirdPartyLogin,
-    SignInAndUp,
-    SignInAndUpTheme,
-    SignInAndUpCallback,
-    SignInAndUpCallbackTheme,
     ThirdpartyComponentsOverrideProvider,
     signOut,
     User,

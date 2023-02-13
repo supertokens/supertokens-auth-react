@@ -12,6 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export * from "../../lib/build/recipe/thirdpartyPreBuiltUIRoutes";
-import * as _default from "../../lib/build/recipe/thirdpartyPreBuiltUIRoutes";
+export * from "../../lib/build/passwordlessPreBuiltUIRoutes";
+import * as _default from "../../lib/build/passwordlessPreBuiltUIRoutes";
 export default _default;

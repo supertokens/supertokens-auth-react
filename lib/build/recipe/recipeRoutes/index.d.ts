@@ -1,15 +1,21 @@
 /// <reference types="react" />
 import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
-import RecipeModule from "../recipeModule";
-export declare class RecipeRoutes {
-    private readonly recipe;
+import { RecipeFeatureComponentMap } from "../../types";
+export declare abstract class RecipeRoutes {
     private pathsToFeatureComponentWithRecipeIdMap?;
-    constructor(recipe: RecipeModule<unknown, unknown, unknown, any>);
     private static reactRouterDom?;
     private static reactRouterDomIsV6;
-    static getRoutes(reactRouterDom: any, instance: RecipeRoutes): JSX.Element[];
+    static getRoutes(reactRouterDom: any, instance?: RecipeRoutes): JSX.Element[];
     canHandleRoute: () => boolean;
+    static getReactRouterDomWithCustomHistory: () =>
+        | {
+              router: {
+                  Route: any;
+              };
+              useHistoryCustom: () => any;
+          }
+        | undefined;
     getReactRouterDomWithCustomHistory: () =>
         | {
               router: {
@@ -23,4 +29,5 @@ export declare class RecipeRoutes {
     getMatchingComponentForRouteAndRecipeId: (
         normalisedUrl: NormalisedURLPath
     ) => ComponentWithRecipeAndMatchingMethod | undefined;
+    abstract getFeatures(): RecipeFeatureComponentMap;
 }

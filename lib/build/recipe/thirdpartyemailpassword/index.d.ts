@@ -1,6 +1,5 @@
-import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
+/// <reference types="react" />
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import {
     RecipeInterface,
@@ -8,9 +7,7 @@ import {
     ThirdPartyUserType,
     RecipeFunctionOptions,
 } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
 import { StateObject } from "supertokens-web-js/recipe/thirdparty";
-import { PropsWithChildren } from "react";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -168,37 +165,16 @@ export default class Wrapper {
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
     static Github: typeof Github;
-    static SignInAndUp: (
-        prop?: PropsWithChildren<{
-            redirectOnSessionExists?: boolean;
-            userContext?: any;
-        }>
-    ) => JSX.Element;
-    static SignInAndUpTheme: typeof SignInAndUpTheme;
-    static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
-    static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
-    static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
-    static ThirdPartySignInAndUpCallbackTheme: (props: {
-        config: import("../thirdparty/types").NormalisedConfig;
-    }) => JSX.Element;
     static ComponentsOverrideProvider: import("react").FC<
-        PropsWithChildren<{
+        import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
         }>
     >;
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
-declare const SignInAndUp: (
-    prop?: PropsWithChildren<{
-        redirectOnSessionExists?: boolean;
-        userContext?: any;
-    }>
-) => JSX.Element;
-declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
-declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
 declare const ThirdpartyEmailPasswordComponentsOverrideProvider: import("react").FC<
-    PropsWithChildren<{
+    import("react").PropsWithChildren<{
         components: import("./types").ComponentOverrideMap;
     }>
 >;
@@ -225,11 +201,7 @@ export {
     Google,
     Facebook,
     Github,
-    SignInAndUp,
-    SignInAndUpTheme,
     ThirdpartyEmailPasswordComponentsOverrideProvider,
-    ThirdPartySignInAndUpCallback,
-    ThirdPartySignInAndUpCallbackTheme,
     signOut,
     submitNewPassword,
     sendPasswordResetEmail,
@@ -248,8 +220,6 @@ export {
     getAuthCodeFromURL,
     getAuthErrorFromURL,
     getAuthStateFromURL,
-    ResetPasswordUsingToken,
-    ResetPasswordUsingTokenTheme,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

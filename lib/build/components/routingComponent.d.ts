@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import { RecipeRoutes } from "../recipe/recipeRoutes";
 export declare function RoutingComponent(props: {
-    supertokensInstance: RecipeRoutes;
+    recipeRoutesInstance: RecipeRoutes;
     path: string;
 }): JSX.Element | null;

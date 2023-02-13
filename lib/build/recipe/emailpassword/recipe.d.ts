@@ -1,6 +1,5 @@
-/// <reference types="react" />
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import { CreateRecipeFunction } from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -20,15 +19,7 @@ export default class EmailPassword extends AuthRecipe<
     static RECIPE_ID: string;
     recipeImpl: WebJsRecipeInterface;
     constructor(config: Config);
-    getFeatures: () => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
-    getFeatureComponent: (
-        componentName: "signinup" | "resetpassword",
-        props: FeatureBaseProps & {
-            redirectOnSessionExists?: boolean;
-            userContext?: any;
-        }
-    ) => JSX.Element;
     static init(
         config?: UserInput
     ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;

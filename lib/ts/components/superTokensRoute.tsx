@@ -24,19 +24,19 @@ import { RoutingComponent } from "./routingComponent";
  * Component.
  */
 
-export function getSuperTokensRoutesForReactRouterDom(supertokensInstance: RecipeRoutes): JSX.Element[] {
-    const routerInfo = supertokensInstance.getReactRouterDomWithCustomHistory();
+export function getSuperTokensRoutesForReactRouterDom(recipeRoutesInstance: RecipeRoutes): JSX.Element[] {
+    const routerInfo = recipeRoutesInstance.getReactRouterDomWithCustomHistory();
     if (routerInfo === undefined) {
         return [];
     }
 
     const Route = routerInfo.router.Route;
-    const pathsToFeatureComponentWithRecipeIdMap = supertokensInstance.getPathsToFeatureComponentWithRecipeIdMap();
+    const pathsToFeatureComponentWithRecipeIdMap = recipeRoutesInstance.getPathsToFeatureComponentWithRecipeIdMap();
     return Object.keys(pathsToFeatureComponentWithRecipeIdMap).map((path) => {
         path = path === "" ? "/" : path;
         return (
             <Route exact key={`st-${path}`} path={path}>
-                <RoutingComponent supertokensInstance={supertokensInstance} path={path} />
+                <RoutingComponent recipeRoutesInstance={recipeRoutesInstance} path={path} />
             </Route>
         );
     });

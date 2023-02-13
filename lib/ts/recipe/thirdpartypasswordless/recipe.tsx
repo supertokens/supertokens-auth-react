@@ -18,7 +18,7 @@
  */
 
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
+import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import {
     Config,
     GetRedirectionURLContext,
@@ -27,21 +27,17 @@ import {
     UserInput,
     PreAndPostAPIHookAction,
 } from "./types";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest } from "../../utils";
 import { normaliseThirdPartyPasswordlessConfig } from "./utils";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
-import SignInAndUp from "./components/features/signInAndUp";
 import Passwordless from "../passwordless/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import RecipeImplementation from "./recipeImplementation";
 import getPasswordlessImpl from "./recipeImplementation/passwordlessImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { OverrideableBuilder } from "supertokens-js-override";
 import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 export default class ThirdPartyPasswordless extends AuthRecipe<
     GetRedirectionURLContext,
@@ -113,89 +109,8 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
                   });
     }
 
-    getFeatures = (): RecipeFeatureComponentMap => {
-        let features: RecipeFeatureComponentMap = {};
-
-        if (this.passwordlessRecipe !== undefined) {
-            features = {
-                ...features,
-                ...this.passwordlessRecipe.getFeatures(),
-            };
-        }
-
-        if (this.thirdPartyRecipe !== undefined) {
-            features = {
-                ...features,
-                ...this.thirdPartyRecipe.getFeatures(),
-            };
-        }
-
-        if (
-            (this.config.passwordlessUserInput !== undefined &&
-                this.config.passwordlessUserInput.signInUpFeature?.disableDefaultUI !== true) ||
-            (this.config.thirdpartyUserInput !== undefined &&
-                this.config.thirdpartyUserInput.signInAndUpFeature?.disableDefaultUI !== true)
-        ) {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (prop: any) => this.getFeatureComponent("signInUp", prop),
-            };
-        }
-
-        return {
-            ...features,
-        };
-    };
-
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         return this.getAuthRecipeDefaultRedirectionURL(context);
-    };
-
-    getFeatureComponent = (
-        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
-    ): JSX.Element => {
-        if (componentName === "signInUp") {
-            if (props.redirectOnSessionExists !== false) {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <AuthWidgetWrapper<
-                            GetRedirectionURLContext,
-                            PreAndPostAPIHookAction,
-                            OnHandleEventContext,
-                            NormalisedConfig
-                        >
-                            authRecipe={this}
-                            history={props.history}>
-                            <SignInAndUp recipe={this} {...props} />
-                        </AuthWidgetWrapper>
-                    </UserContextWrapper>
-                );
-            } else {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <SignInAndUp recipe={this} {...props} />
-                    </UserContextWrapper>
-                );
-            }
-        } else if (componentName === "linkClickedScreen") {
-            if (this.passwordlessRecipe === undefined) {
-                throw new Error(
-                    "Embedding this component requires the passwordless recipe to be enabled. Please check the value of disablePasswordless in the configuration."
-                );
-            }
-            return this.passwordlessRecipe.getFeatureComponent(componentName, props);
-        } else if (componentName === "signinupcallback") {
-            if (this.thirdPartyRecipe === undefined) {
-                throw new Error(
-                    "Embedding this component requires the thirdparty recipe to be enabled. Please check the value of signInUpFeature.providers in the configuration."
-                );
-            }
-            return this.thirdPartyRecipe.getFeatureComponent(componentName, props);
-        } else {
-            throw new Error("Should never come here.");
-        }
     };
 
     /*

@@ -18,7 +18,6 @@
  */
 
 import RecipeModule from "../recipeModule";
-import { RecipeFeatureComponentMap } from "../../types";
 import {
     UserInput,
     Config,
@@ -27,20 +26,16 @@ import {
     OnHandleEventContext,
     PreAndPostAPIHookAction,
 } from "./types";
-import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
-import { matchRecipeIdUsingQueryParams, saveInvalidClaimRedirectPathInContext } from "../../utils";
+import { saveInvalidClaimRedirectPathInContext } from "../../utils";
 import { normaliseEmailVerificationFeature } from "./utils";
 import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
 import RecipeImplementation from "./recipeImplementation";
-import { SessionAuth } from "../session";
 import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 import { OverrideableBuilder } from "supertokens-js-override";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { UserContextContext } from "../../usercontext";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
 export default class EmailVerification extends RecipeModule<
@@ -117,56 +112,6 @@ export default class EmailVerification extends RecipeModule<
 
         return EmailVerification.instance;
     }
-
-    getFeatures = (): RecipeFeatureComponentMap => {
-        const features: RecipeFeatureComponentMap = {};
-        if (this.config.disableDefaultUI !== true) {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
-                new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH)
-            );
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props: any) => this.getFeatureComponent("emailverification", props),
-            };
-        }
-        return features;
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getFeatureComponent = (_: "emailverification", props: any): JSX.Element => {
-        return (
-            <UserContextWrapper userContext={props.userContext}>
-                <SessionAuth requireAuth={false} overrideGlobalClaimValidators={() => []}>
-                    {/**
-                     * EmailVerificationFeature is a class component that accepts userContext
-                     * as a prop. If we pass userContext as a prop directly then Emailverification
-                     * will not respond to changes when the userContext in UserContextWrapper
-                     * changes. In order to prevent this we use a Consumer that will respond
-                     * to changes in UserContextWrapper and update the prop for EmailVerificationFeature
-                     *
-                     * NOTE: We cannot use static contextType in EmailVerificationFeature to solve
-                     * this because EmailVerificationFeature already uses SessionContext as its
-                     * context type. Read more here:
-                     * https://reactjs.org/docs/context.html#consuming-multiple-contexts
-                     */}
-                    <UserContextContext.Consumer>
-                        {(value) => {
-                            return (
-                                <EmailVerificationFeature
-                                    recipe={this}
-                                    {...{
-                                        ...props,
-                                        // We do this to make sure it does not add another provider
-                                        userContext: value,
-                                    }}
-                                />
-                            );
-                        }}
-                    </UserContextContext.Consumer>
-                </SessionAuth>
-            </UserContextWrapper>
-        );
-    };
 
     async isEmailVerified(userContext: any): Promise<{
         status: "OK";
