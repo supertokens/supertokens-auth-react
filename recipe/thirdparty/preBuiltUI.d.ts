@@ -12,6 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export * from "../../lib/build/thirdpartyPreBuiltUIRoutes";
-import * as _default from "../../lib/build/thirdpartyPreBuiltUIRoutes";
+export * from "../../lib/build/thirdpartyPreBuiltUI";
+import * as _default from "../../lib/build/thirdpartyPreBuiltUI";
 export default _default;

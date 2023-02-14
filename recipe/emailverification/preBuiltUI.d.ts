@@ -12,6 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export * from "../../lib/build/emailverificationPreBuiltUIRoutes";
-import * as _default from "../../lib/build/emailverificationPreBuiltUIRoutes";
+export * from "../../lib/build/emailverificationPreBuiltUI";
+import * as _default from "../../lib/build/emailverificationPreBuiltUI";
 export default _default;

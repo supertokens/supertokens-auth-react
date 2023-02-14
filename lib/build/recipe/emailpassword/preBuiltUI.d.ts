@@ -1,15 +1,14 @@
 import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import EmailPassword from "./recipe";
-import { RecipeRoutes } from "../recipeRoutes";
+import { RecipeRouter } from "../recipeRouter";
 import { PropsWithChildren } from "react";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
-export declare class EmailPasswordPreBuiltUIRoutes extends RecipeRoutes {
+export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
     private constructor();
-    static instance: EmailPasswordPreBuiltUIRoutes;
-    static init(recipeInstance: EmailPassword): void;
-    static getInstanceOrInitAndGetInstance(recipeInstance?: EmailPassword): EmailPasswordPreBuiltUIRoutes;
+    static instance: EmailPasswordPreBuiltUI;
+    static getInstanceOrInitAndGetInstance(recipeInstance?: EmailPassword): EmailPasswordPreBuiltUI;
     static canHandleRoute(): boolean;
     static getRoutingComponent(): JSX.Element | null;
     static getFeatures(recipeInstance?: EmailPassword): RecipeFeatureComponentMap;
@@ -20,7 +19,7 @@ export declare class EmailPasswordPreBuiltUIRoutes extends RecipeRoutes {
             userContext?: any;
         }
     ): JSX.Element;
-    static getRoutes(reactRouterDom: any): JSX.Element[];
+    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[];
     getFeatures: () => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "signinup" | "resetpassword",

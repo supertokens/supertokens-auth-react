@@ -1,14 +1,13 @@
-import { RecipeRoutes } from "../recipeRoutes";
+import { RecipeRouter } from "../recipeRouter";
 import ThirdParty from "./recipe";
 import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import { NormalisedConfig } from "./types";
 import { PropsWithChildren } from "react";
-export declare class ThirdPartyPreBuiltUIRoutes extends RecipeRoutes {
+export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
     constructor(recipeInstance: ThirdParty);
-    static instance: ThirdPartyPreBuiltUIRoutes;
-    static init(recipeInstance: ThirdParty): void;
-    static getInstanceOrInitAndGetInstance(recipeInstance?: ThirdParty): ThirdPartyPreBuiltUIRoutes;
+    static instance: ThirdPartyPreBuiltUI;
+    static getInstanceOrInitAndGetInstance(recipeInstance?: ThirdParty): ThirdPartyPreBuiltUI;
     static canHandleRoute(): boolean;
     static getRoutingComponent(): JSX.Element | null;
     static getFeatures(recipeInstance?: ThirdParty): RecipeFeatureComponentMap;
@@ -19,7 +18,7 @@ export declare class ThirdPartyPreBuiltUIRoutes extends RecipeRoutes {
             userContext?: any;
         }
     ): JSX.Element;
-    static getRoutes(reactRouterDom: any): JSX.Element[];
+    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[];
     getFeatures: () => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "signinup" | "signinupcallback",

@@ -2,11 +2,11 @@
 import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
 import { RecipeFeatureComponentMap } from "../../types";
-export declare abstract class RecipeRoutes {
+export declare abstract class RecipeRouter {
     private pathsToFeatureComponentWithRecipeIdMap?;
     private static reactRouterDom?;
     private static reactRouterDomIsV6;
-    static getRoutes(reactRouterDom: any, instance?: RecipeRoutes): JSX.Element[];
+    static getRecipeRoutes(reactRouterDom: any, instance: RecipeRouter): JSX.Element[];
     canHandleRoute: () => boolean;
     static getReactRouterDomWithCustomHistory: () =>
         | {

@@ -30,9 +30,9 @@ import Passwordless from "../../../recipe/passwordless";
 import { PasswordlessFlowType } from "supertokens-web-js/recipe/passwordless/types";
 import ThirdPartyPasswordless from "../../../recipe/thirdpartypasswordless";
 import { PermissionClaim, UserRoleClaim } from "../../../recipe/userroles";
-import { ThirdPartyPreBuiltUIRoutes } from "../../../recipe/thirdparty/preBuiltUI";
-import { ThirdPartyEmailPasswordPreBuiltUIRoutes } from "../../../recipe/thirdpartyemailpassword/preBuiltUI";
-import { EmailPasswordPreBuiltUIRoutes } from "../../../recipe/emailpassword/preBuiltUI";
+import { ThirdPartyPreBuiltUI } from "../../../recipe/thirdparty/preBuiltUI";
+import { ThirdPartyEmailPasswordPreBuiltUI } from "../../../recipe/thirdpartyemailpassword/preBuiltUI";
+import { EmailPasswordPreBuiltUI } from "../../../recipe/emailpassword/preBuiltUI";
 
 /*
  * This application is used with the purpose of illustrating Supertokens with typescript.
@@ -147,9 +147,11 @@ function App() {
                             <Router>
                                 <div className="fill">
                                     <Routes>
-                                        {ThirdPartyPreBuiltUIRoutes.getRoutes(require("react-router-dom"))}
-                                        {ThirdPartyEmailPasswordPreBuiltUIRoutes.getRoutes(require("react-router-dom"))}
-                                        {EmailPasswordPreBuiltUIRoutes.getRoutes(require("react-router-dom"))}
+                                        {ThirdPartyPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
+                                        {ThirdPartyEmailPasswordPreBuiltUI.getReactRouterDomRoutes(
+                                            require("react-router-dom")
+                                        )}
+                                        {EmailPasswordPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
                                         <Route
                                             path="/"
                                             element={
@@ -179,18 +181,15 @@ function App() {
                                         <Route
                                             path="/no-redirection-sign-in"
                                             element={
-                                                <EmailPasswordPreBuiltUIRoutes.SignInAndUp
-                                                    redirectOnSessionExists={false}
-                                                />
+                                                <EmailPasswordPreBuiltUI.SignInAndUp redirectOnSessionExists={false} />
                                             }
                                         />
                                         <Route
                                             path="/no-redirection-sign-in-with-children"
                                             element={
-                                                <EmailPasswordPreBuiltUIRoutes.SignInAndUp
-                                                    redirectOnSessionExists={false}>
+                                                <EmailPasswordPreBuiltUI.SignInAndUp redirectOnSessionExists={false}>
                                                     <Home />
-                                                </EmailPasswordPreBuiltUIRoutes.SignInAndUp>
+                                                </EmailPasswordPreBuiltUI.SignInAndUp>
                                             }
                                         />
                                     </Routes>

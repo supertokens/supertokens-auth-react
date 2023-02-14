@@ -1,8 +1,8 @@
 import React from "react";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { RecipeRoutes } from "../recipe/recipeRoutes";
+import { RecipeRouter } from "../recipe/recipeRouter";
 
-export function RoutingComponent(props: { recipeRoutesInstance: RecipeRoutes; path: string }): JSX.Element | null {
+export function RoutingComponent(props: { recipeRoutesInstance: RecipeRouter; path: string }): JSX.Element | null {
     const stInstance = props.recipeRoutesInstance;
     const path = props.path;
     const componentToRender = React.useMemo(() => {

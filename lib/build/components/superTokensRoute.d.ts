@@ -1,3 +1,3 @@
 /// <reference types="react" />
-import { RecipeRoutes } from "../recipe/recipeRoutes";
-export declare function getSuperTokensRoutesForReactRouterDom(recipeRoutesInstance: RecipeRoutes): JSX.Element[];
+import { RecipeRouter } from "../recipe/recipeRouter";
+export declare function getSuperTokensRoutesForReactRouterDom(recipeRoutesInstance: RecipeRouter): JSX.Element[];

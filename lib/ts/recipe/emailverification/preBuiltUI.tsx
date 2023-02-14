@@ -7,41 +7,41 @@ import { SessionAuth } from "../session";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { UserContextContext } from "../../usercontext";
 import { EmailVerificationTheme } from "./components/themes/emailVerification";
-import { RecipeRoutes } from "../recipeRoutes";
+import { RecipeRouter } from "../recipeRouter";
 import EmailVerification from "./recipe";
 
-export class EmailVerificationPreBuiltUIRoutes extends RecipeRoutes {
+export class EmailVerificationPreBuiltUI extends RecipeRouter {
     constructor(private readonly recipeInstance: EmailVerification) {
         super();
     }
-    static instance: EmailVerificationPreBuiltUIRoutes;
+    static instance: EmailVerificationPreBuiltUI;
 
-    static init(recipeInstance: EmailVerification): void {
-        EmailVerificationPreBuiltUIRoutes.instance = new EmailVerificationPreBuiltUIRoutes(recipeInstance);
-    }
-    static getInstanceOrInitAndGetInstance(): EmailVerificationPreBuiltUIRoutes {
-        if (EmailVerificationPreBuiltUIRoutes.instance === undefined) {
+    static getInstanceOrInitAndGetInstance(): EmailVerificationPreBuiltUI {
+        if (EmailVerificationPreBuiltUI.instance === undefined) {
             const recipeInstance = EmailVerification.getInstanceOrThrow();
-            EmailVerificationPreBuiltUIRoutes.init(recipeInstance);
+            EmailVerificationPreBuiltUI.instance = new EmailVerificationPreBuiltUI(recipeInstance);
         }
 
-        return EmailVerificationPreBuiltUIRoutes.instance;
+        return EmailVerificationPreBuiltUI.instance;
     }
     static canHandleRoute(): boolean {
-        return EmailVerificationPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().canHandleRoute();
+        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().canHandleRoute();
     }
     static getRoutingComponent(): JSX.Element | null {
-        return EmailVerificationPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().getRoutingComponent();
+        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getRoutingComponent();
     }
     static getFeatures(): RecipeFeatureComponentMap {
-        return EmailVerificationPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().getFeatures();
+        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     static getFeatureComponent(_: "emailverification", props: any): JSX.Element {
-        return EmailVerificationPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().getFeatureComponent(_, props);
+        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(_, props);
     }
-    static getRoutes(reactRouterDom: any): JSX.Element[] {
-        return super.getRoutes(reactRouterDom, EmailVerificationPreBuiltUIRoutes.getInstanceOrInitAndGetInstance());
+    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[] {
+        return RecipeRouter.getRecipeRoutes(
+            reactRouterDom,
+            EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance()
+        );
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {
@@ -95,9 +95,6 @@ export class EmailVerificationPreBuiltUIRoutes extends RecipeRoutes {
     };
 
     static EmailVerification = (props?: any) =>
-        EmailVerificationPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().getFeatureComponent(
-            "emailverification",
-            props
-        );
+        EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("emailverification", props);
     static EmailVerificationTheme = EmailVerificationTheme;
 }

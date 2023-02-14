@@ -12,6 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export * from "../../lib/build/passwordlessPreBuiltUIRoutes";
-import * as _default from "../../lib/build/passwordlessPreBuiltUIRoutes";
+export * from "../../lib/build/passwordlessPreBuiltUI";
+import * as _default from "../../lib/build/passwordlessPreBuiltUI";
 export default _default;

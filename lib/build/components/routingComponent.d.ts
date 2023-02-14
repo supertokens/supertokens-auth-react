@@ -1,6 +1,6 @@
 /// <reference types="react" />
-import { RecipeRoutes } from "../recipe/recipeRoutes";
+import { RecipeRouter } from "../recipe/recipeRouter";
 export declare function RoutingComponent(props: {
-    recipeRoutesInstance: RecipeRoutes;
+    recipeRoutesInstance: RecipeRouter;
     path: string;
 }): JSX.Element | null;

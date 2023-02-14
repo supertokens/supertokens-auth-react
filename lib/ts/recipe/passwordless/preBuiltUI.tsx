@@ -7,45 +7,42 @@ import LinkClickedScreen from "./components/features/linkClickedScreen";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import Passwordless from "./recipe";
-import { RecipeRoutes } from "../recipeRoutes";
+import { RecipeRouter } from "../recipeRouter";
 import { PropsWithChildren } from "react";
 import SignInUpTheme from "./components/themes/signInUp";
 
-export class PasswordlessPreBuiltUIRoutes extends RecipeRoutes {
+export class PasswordlessPreBuiltUI extends RecipeRouter {
     constructor(private readonly recipeInstance: Passwordless) {
         super();
     }
-    static instance: PasswordlessPreBuiltUIRoutes;
+    static instance: PasswordlessPreBuiltUI;
 
-    static init(recipeInstance: Passwordless): void {
-        PasswordlessPreBuiltUIRoutes.instance = new PasswordlessPreBuiltUIRoutes(recipeInstance);
-    }
-    static getInstanceOrInitAndGetInstance(recipeInstance?: Passwordless): PasswordlessPreBuiltUIRoutes {
-        if (PasswordlessPreBuiltUIRoutes.instance === undefined) {
+    static getInstanceOrInitAndGetInstance(recipeInstance?: Passwordless): PasswordlessPreBuiltUI {
+        if (PasswordlessPreBuiltUI.instance === undefined) {
             const instance = recipeInstance ?? Passwordless.getInstanceOrThrow();
-            PasswordlessPreBuiltUIRoutes.init(instance);
+            PasswordlessPreBuiltUI.instance = new PasswordlessPreBuiltUI(instance);
         }
 
-        return PasswordlessPreBuiltUIRoutes.instance;
+        return PasswordlessPreBuiltUI.instance;
     }
 
     static canHandleRoute(): boolean {
-        return PasswordlessPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().canHandleRoute();
+        return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().canHandleRoute();
     }
     static getRoutingComponent(): JSX.Element | null {
-        return PasswordlessPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().getRoutingComponent();
+        return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getRoutingComponent();
     }
     static getFeatures(recipeInstance?: Passwordless): RecipeFeatureComponentMap {
-        return PasswordlessPreBuiltUIRoutes.getInstanceOrInitAndGetInstance(recipeInstance).getFeatures();
+        return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatures();
     }
     static getFeatureComponent(
         componentName: "signInUp" | "linkClickedScreen",
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
     ): JSX.Element {
-        return PasswordlessPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().getFeatureComponent(componentName, props);
+        return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(componentName, props);
     }
-    static getRoutes(reactRouterDom: any): JSX.Element[] {
-        return super.getRoutes(reactRouterDom, PasswordlessPreBuiltUIRoutes.getInstanceOrInitAndGetInstance());
+    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[] {
+        return RecipeRouter.getRecipeRoutes(reactRouterDom, PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance());
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {

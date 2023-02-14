@@ -1,14 +1,13 @@
 import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import ThirdPartyPasswordless from "./recipe";
-import { RecipeRoutes } from "../recipeRoutes";
+import { RecipeRouter } from "../recipeRouter";
 import SignInUpTheme from "./components/themes/signInUp";
 import { PropsWithChildren } from "react";
-export declare class ThirdPartyPasswordlessPreBuiltUIRoutes extends RecipeRoutes {
+export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
     constructor(recipeInstance: ThirdPartyPasswordless);
-    static instance: ThirdPartyPasswordlessPreBuiltUIRoutes;
-    static init(recipeInstance: ThirdPartyPasswordless): void;
-    static getInstanceOrInitAndGetInstance(): ThirdPartyPasswordlessPreBuiltUIRoutes;
+    static instance: ThirdPartyPasswordlessPreBuiltUI;
+    static getInstanceOrInitAndGetInstance(): ThirdPartyPasswordlessPreBuiltUI;
     static canHandleRoute(): boolean;
     static getRoutingComponent(): JSX.Element | null;
     static getFeatures(): RecipeFeatureComponentMap;
@@ -19,7 +18,7 @@ export declare class ThirdPartyPasswordlessPreBuiltUIRoutes extends RecipeRoutes
             userContext?: any;
         }
     ): JSX.Element;
-    static getRoutes(reactRouterDom: any): JSX.Element[];
+    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[];
     getFeatureComponent: (
         componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
         props: FeatureBaseProps & {

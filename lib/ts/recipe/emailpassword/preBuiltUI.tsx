@@ -8,48 +8,42 @@ import ResetPasswordUsingTokenFeature from "./components/features/resetPasswordU
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import EmailPassword from "./recipe";
-import { RecipeRoutes } from "../recipeRoutes";
+import { RecipeRouter } from "../recipeRouter";
 import { PropsWithChildren } from "react";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 
-export class EmailPasswordPreBuiltUIRoutes extends RecipeRoutes {
+export class EmailPasswordPreBuiltUI extends RecipeRouter {
     private constructor(private readonly recipeInstance: EmailPassword) {
         super();
     }
-    static instance: EmailPasswordPreBuiltUIRoutes;
+    static instance: EmailPasswordPreBuiltUI;
 
-    static init(recipeInstance: EmailPassword): void {
-        EmailPasswordPreBuiltUIRoutes.instance = new EmailPasswordPreBuiltUIRoutes(recipeInstance);
-    }
-    static getInstanceOrInitAndGetInstance(recipeInstance?: EmailPassword): EmailPasswordPreBuiltUIRoutes {
-        if (EmailPasswordPreBuiltUIRoutes.instance === undefined) {
+    static getInstanceOrInitAndGetInstance(recipeInstance?: EmailPassword): EmailPasswordPreBuiltUI {
+        if (EmailPasswordPreBuiltUI.instance === undefined) {
             const instance = recipeInstance ?? EmailPassword.getInstanceOrThrow();
-            EmailPasswordPreBuiltUIRoutes.init(instance);
+            EmailPasswordPreBuiltUI.instance = new EmailPasswordPreBuiltUI(instance);
         }
 
-        return EmailPasswordPreBuiltUIRoutes.instance;
+        return EmailPasswordPreBuiltUI.instance;
     }
     static canHandleRoute(): boolean {
-        return EmailPasswordPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().canHandleRoute();
+        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().canHandleRoute();
     }
     static getRoutingComponent(): JSX.Element | null {
-        return EmailPasswordPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().getRoutingComponent();
+        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getRoutingComponent();
     }
     static getFeatures(recipeInstance?: EmailPassword): RecipeFeatureComponentMap {
-        return EmailPasswordPreBuiltUIRoutes.getInstanceOrInitAndGetInstance(recipeInstance).getFeatures();
+        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatures();
     }
     static getFeatureComponent(
         componentName: "signinup" | "resetpassword",
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
     ): JSX.Element {
-        return EmailPasswordPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().getFeatureComponent(
-            componentName,
-            props
-        );
+        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(componentName, props);
     }
-    static getRoutes(reactRouterDom: any): JSX.Element[] {
-        return super.getRoutes(reactRouterDom, EmailPasswordPreBuiltUIRoutes.getInstanceOrInitAndGetInstance());
+    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[] {
+        return RecipeRouter.getRecipeRoutes(reactRouterDom, EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance());
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {
@@ -117,9 +111,9 @@ export class EmailPasswordPreBuiltUIRoutes extends RecipeRoutes {
     };
 
     static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
-        EmailPasswordPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", prop);
+        EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", prop);
     static ResetPasswordUsingToken = (prop?: any) =>
-        EmailPasswordPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().getFeatureComponent("resetpassword", prop);
+        EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("resetpassword", prop);
 
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
     static SignInAndUpTheme = SignInAndUpTheme;

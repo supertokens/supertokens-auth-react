@@ -1,4 +1,4 @@
-import { RecipeRoutes } from "../recipeRoutes";
+import { RecipeRouter } from "../recipeRouter";
 import ThirdParty from "./recipe";
 import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import { GetRedirectionURLContext, NormalisedConfig, PreAndPostAPIHookAction, OnHandleEventContext } from "./types";
@@ -13,41 +13,38 @@ import { PropsWithChildren } from "react";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 
-export class ThirdPartyPreBuiltUIRoutes extends RecipeRoutes {
+export class ThirdPartyPreBuiltUI extends RecipeRouter {
     constructor(private readonly recipeInstance: ThirdParty) {
         super();
     }
-    static instance: ThirdPartyPreBuiltUIRoutes;
+    static instance: ThirdPartyPreBuiltUI;
 
-    static init(recipeInstance: ThirdParty): void {
-        ThirdPartyPreBuiltUIRoutes.instance = new ThirdPartyPreBuiltUIRoutes(recipeInstance);
-    }
-    static getInstanceOrInitAndGetInstance(recipeInstance?: ThirdParty): ThirdPartyPreBuiltUIRoutes {
-        if (ThirdPartyPreBuiltUIRoutes.instance === undefined) {
+    static getInstanceOrInitAndGetInstance(recipeInstance?: ThirdParty): ThirdPartyPreBuiltUI {
+        if (ThirdPartyPreBuiltUI.instance === undefined) {
             const instance = recipeInstance ?? ThirdParty.getInstanceOrThrow();
-            ThirdPartyPreBuiltUIRoutes.init(instance);
+            ThirdPartyPreBuiltUI.instance = new ThirdPartyPreBuiltUI(instance);
         }
 
-        return ThirdPartyPreBuiltUIRoutes.instance;
+        return ThirdPartyPreBuiltUI.instance;
     }
     static canHandleRoute(): boolean {
-        return ThirdPartyPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().canHandleRoute();
+        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().canHandleRoute();
     }
     static getRoutingComponent(): JSX.Element | null {
-        return ThirdPartyPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().getRoutingComponent();
+        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getRoutingComponent();
     }
     static getFeatures(recipeInstance?: ThirdParty): RecipeFeatureComponentMap {
-        return ThirdPartyPreBuiltUIRoutes.getInstanceOrInitAndGetInstance(recipeInstance).getFeatures();
+        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatures();
     }
     static getFeatureComponent(
         componentName: "signinup" | "signinupcallback",
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
     ): JSX.Element {
-        return ThirdPartyPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().getFeatureComponent(componentName, props);
+        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(componentName, props);
     }
 
-    static getRoutes(reactRouterDom: any): JSX.Element[] {
-        return super.getRoutes(reactRouterDom, ThirdPartyPreBuiltUIRoutes.getInstanceOrInitAndGetInstance());
+    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[] {
+        return RecipeRouter.getRecipeRoutes(reactRouterDom, ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance());
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {
@@ -115,9 +112,9 @@ export class ThirdPartyPreBuiltUIRoutes extends RecipeRoutes {
     };
 
     static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
-        ThirdPartyPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", prop);
+        ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", prop);
     static SignInAndUpCallback = (prop?: any) =>
-        ThirdPartyPreBuiltUIRoutes.getInstanceOrInitAndGetInstance().getFeatureComponent("signinupcallback", prop);
+        ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinupcallback", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
     static SignInAndUpCallbackTheme = SignInAndUpCallbackTheme;
 }
