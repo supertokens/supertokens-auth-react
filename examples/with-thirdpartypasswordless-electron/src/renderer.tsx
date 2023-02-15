@@ -28,8 +28,9 @@
 
 import "./index.css";
 import React, { useState } from "react";
-import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
+import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/preBuiltUI";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import SessionExpiredPopup from "./SessionExpiredPopup";
@@ -93,7 +94,7 @@ function App() {
                     <div className="fill">
                         <Routes>
                             {/* This shows the login UI on "/auth" route */}
-                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                            {ThirdPartyPasswordlessPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
 
                             <Route
                                 path="/"

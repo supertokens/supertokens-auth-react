@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { BaseComponent, Home } from "./App";
-import { canHandleRoute, getRoutingComponent } from "supertokens-auth-react";
+import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/preBuiltUI";
+import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/preBuiltUI";
+import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/preBuiltUI";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/preBuiltUI";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty";
 
 function AppWithoutRouter() {
     return (
@@ -11,6 +15,34 @@ function AppWithoutRouter() {
             <Routing></Routing>
         </div>
     );
+}
+const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
+
+let recipePreBuiltUI = EmailPasswordPreBuiltUI;
+if (authRecipe === "thirdparty") {
+    recipePreBuiltUI = ThirdPartyPreBuiltUI;
+} else if (authRecipe === "emailpassword") {
+    recipePreBuiltUI = EmailPasswordPreBuiltUI;
+} else if (authRecipe === "both") {
+    recipePreBuiltUI = {
+        canHandleRoute: () => {
+            return ThirdPartyPreBuiltUI.canHandleRoute() && EmailPasswordPreBuiltUI.canHandleRoute();
+        },
+        getRoutingComponent: () => {
+            return (
+                <>
+                    {ThirdPartyPreBuiltUI.getRoutingComponent()}
+                    {EmailPasswordPreBuiltUI.getRoutingComponent()}
+                </>
+            );
+        },
+    };
+} else if (authRecipe === "thirdpartyemailpassword") {
+    recipePreBuiltUI = ThirdPartyEmailPasswordPreBuiltUI;
+} else if (authRecipe === "passwordless") {
+    recipePreBuiltUI = PasswordlessPreBuiltUI;
+} else if (authRecipe === "thirdpartypasswordless") {
+    recipePreBuiltUI = ThirdPartyPasswordlessPreBuiltUI;
 }
 
 function Routing() {
@@ -24,8 +56,8 @@ function Routing() {
         window.addEventListener("popstate", onLocationChange);
     }, [setCurrentPath]);
 
-    if (canHandleRoute()) {
-        return <BaseComponent>{getRoutingComponent()}</BaseComponent>;
+    if (recipePreBuiltUI.canHandleRoute()) {
+        return <BaseComponent>{recipePreBuiltUI.getRoutingComponent()}</BaseComponent>;
     }
 
     // Custom router...

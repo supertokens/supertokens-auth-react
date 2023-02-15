@@ -3,13 +3,26 @@ import React, { useEffect } from "react";
 import styles from "../../styles/Home.module.css";
 import dynamic from "next/dynamic";
 import SuperTokens from "supertokens-auth-react";
+import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/preBuiltUI";
+import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/preBuiltUI";
 import { redirectToAuth } from "supertokens-auth-react";
 
-const SuperTokensComponentNoSSR = dynamic(new Promise((res) => res(SuperTokens.getRoutingComponent)), { ssr: false });
+const EmailVerificationComponentNoSSR = dynamic(
+    new Promise((res) => res(EmailVerificationPreBuiltUI.getRoutingComponent)),
+    {
+        ssr: false,
+    }
+);
+const EmailPasswordComponentNoSSR = dynamic(new Promise((res) => res(EmailPasswordPreBuiltUI.getRoutingComponent)), {
+    ssr: false,
+});
 
 export default function Auth() {
     useEffect(() => {
-        if (SuperTokens.canHandleRoute() === false) {
+        if (
+            EmailPasswordPreBuiltUI.canHandleRoute() === false &&
+            EmailVerificationPreBuiltUI.canHandleRoute() === false
+        ) {
             redirectToAuth();
         }
     }, []);
@@ -22,7 +35,8 @@ export default function Auth() {
             </Head>
 
             <main className={styles.main}>
-                <SuperTokensComponentNoSSR />
+                <EmailVerificationComponentNoSSR />
+                <EmailPasswordComponentNoSSR />
             </main>
         </div>
     );

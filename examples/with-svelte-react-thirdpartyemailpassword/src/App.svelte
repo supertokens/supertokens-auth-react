@@ -8,6 +8,7 @@
         Google,
         signOut,
     } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+    import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/preBuiltUI";
     import Session from "supertokens-auth-react/recipe/session";
     import { Router, Route } from "svelte-navigator";
     import { onMount } from "svelte";
@@ -31,8 +32,8 @@
 
     class SuperTokensComponent extends React.Component {
         render() {
-            if (SuperTokens.canHandleRoute()) {
-                return SuperTokens.getRoutingComponent();
+            if (ThirdPartyEmailPasswordPreBuiltUI.canHandleRoute()) {
+                return ThirdPartyEmailPasswordPreBuiltUI.getRoutingComponent();
             }
             return "Route not found";
         }

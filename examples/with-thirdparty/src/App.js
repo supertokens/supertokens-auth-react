@@ -2,11 +2,13 @@ import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/preBuiltUI";
 import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
-import { ThirdPartyPreBuiltUIRoutes } from "supertokens-auth-react/recipe/thirdparty/preBuiltUI";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/preBuiltUI";
 import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
 
@@ -32,6 +34,7 @@ SuperTokens.init({
         EmailVerification.init({
             mode: "REQUIRED",
         }),
+        Passwordless.init({ contactMethod: "EMAIL" }),
         ThirdParty.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init(), Apple.init()],
@@ -51,8 +54,8 @@ function App() {
                     <div className="fill">
                         <Routes>
                             {/* This shows the login UI on "/auth" route */}
-                            {ThirdPartyPreBuiltUIRoutes.getRoutes(require("react-router-dom"))}
-
+                            {PasswordlessPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
+                            {ThirdPartyPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
                             <Route
                                 path="/"
                                 element={

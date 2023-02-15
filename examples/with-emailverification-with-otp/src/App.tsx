@@ -1,5 +1,7 @@
-import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import ThirdPartyEmailpassword, { Github, Google } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/preBuiltUI";
+import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/preBuiltUI";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import EmailVerification, {
     EmailVerificationComponentsOverrideProvider,
@@ -50,7 +52,8 @@ function App() {
                 <div className="App">
                     <Router>
                         <Routes>
-                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                            {ThirdPartyEmailPasswordPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
+                            {EmailVerificationPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
                             <Route
                                 path="/"
                                 element={
