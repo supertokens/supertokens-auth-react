@@ -7,7 +7,7 @@ import SessionAuth from "../../../../lib/ts/recipe/session/sessionAuth";
 import SessionContext from "../../../../lib/ts/recipe/session/sessionContext";
 import { SessionContextType } from "../../../../lib/ts/recipe/session";
 import { PrimitiveClaim, SessionClaim, useClaimValue } from "../../../../lib/ts/recipe/session";
-import { saveInvalidClaimRedirectPathInContext } from "../../../../lib/ts/utils";
+import * as utils from "supertokens-web-js/utils";
 
 const TestClaim: SessionClaim<string> = new PrimitiveClaim({
     id: "st-test-claim",
@@ -74,6 +74,10 @@ jest.spyOn(SuperTokens, "getInstanceOrThrow").mockImplementation(
         } as any)
 );
 jest.spyOn(Session, "getInstanceOrThrow").mockImplementation(() => MockSession as any);
+
+jest.spyOn(utils, "getGlobalClaimValidators").mockReturnValue([
+    { id: "st-test-claim", onFailureRedirection: () => "/test-redirect" },
+] as any[]);
 
 describe("SessionAuth", () => {
     beforeEach(() => {
@@ -471,6 +475,13 @@ describe("SessionAuth", () => {
 
     describe("redirections", () => {
         test("redirect on ACCESS_TOKEN_PAYLOAD_UPDATED for invalid claim", async () => {
+            setMockResolves({
+                doesSessionExist: false,
+                accessTokenPayload: {},
+                userId: "",
+                invalidClaims: [{ validatorId: "st-test-claim", reason: "reason-test-claim" }],
+                loading: "falsy" as any,
+            });
             // given
             let listenerFn: (event: any) => void;
             MockSession.addEventListener.mockImplementationOnce((fn) => {
@@ -480,12 +491,16 @@ describe("SessionAuth", () => {
             });
 
             const result = render(
-                <SessionAuth>
+                <SessionAuth
+                    overrideGlobalClaimValidators={() =>
+                        [{ id: "st-test-claim", onFailureRedirection: () => "/test-redirect" }] as any[]
+                    }>
                     <MockSessionConsumer />
                 </SessionAuth>
             );
 
-            const accessTokenPayloadElement = await result.findByText(/^accessTokenPayload:/);
+            const accessTokenPayloadElement = await result.getByText(/^accessTokenPayload:/);
+
             expect(accessTokenPayloadElement).toHaveTextContent(`accessTokenPayload: ${JSON.stringify({})}`);
 
             expect(await result.findByText(/^testClaimValue:/)).toHaveTextContent(`testClaimValue: undefined`);
@@ -497,12 +512,6 @@ describe("SessionAuth", () => {
                     t: Date.now(),
                 },
             };
-
-            // when
-            MockSession.validateClaims.mockImplementationOnce(({ userContext }) => {
-                saveInvalidClaimRedirectPathInContext(userContext, "/test-redirect");
-                return [{ id: "st-test-claim" }];
-            });
 
             await act(() =>
                 listenerFn({
@@ -533,7 +542,11 @@ describe("SessionAuth", () => {
             });
 
             const result = render(
-                <SessionAuth doRedirection={false}>
+                <SessionAuth
+                    doRedirection={false}
+                    overrideGlobalClaimValidators={() =>
+                        [{ id: "st-test-claim", onFailureRedirection: () => "/test-redirect" }] as any[]
+                    }>
                     <MockSessionConsumer />
                 </SessionAuth>
             );
@@ -550,12 +563,6 @@ describe("SessionAuth", () => {
                     t: Date.now(),
                 },
             };
-
-            // when
-            MockSession.validateClaims.mockImplementationOnce(({ userContext }) => {
-                saveInvalidClaimRedirectPathInContext(userContext, "/test-redirect");
-                return [{ id: "st-test-claim" }];
-            });
 
             await act(() =>
                 listenerFn({
@@ -586,7 +593,10 @@ describe("SessionAuth", () => {
             });
 
             const result = render(
-                <SessionAuth>
+                <SessionAuth
+                    overrideGlobalClaimValidators={() =>
+                        [{ id: "st-test-claim", onFailureRedirection: () => "/test-redirect" }] as any[]
+                    }>
                     <MockSessionConsumer />
                 </SessionAuth>
             );
@@ -595,12 +605,6 @@ describe("SessionAuth", () => {
             expect(accessTokenPayloadElement).toHaveTextContent(`accessTokenPayload: ${JSON.stringify({})}`);
 
             expect(await result.findByText(/^testClaimValue:/)).toHaveTextContent(`testClaimValue: undefined`);
-
-            // when
-            MockSession.validateClaims.mockImplementationOnce(({ userContext }) => {
-                saveInvalidClaimRedirectPathInContext(userContext, "/test-redirect");
-                return [{ id: "st-test-claim" }];
-            });
 
             await Promise.all([
                 act(() =>
@@ -630,7 +634,11 @@ describe("SessionAuth", () => {
             });
 
             const result = render(
-                <SessionAuth doRedirection={false}>
+                <SessionAuth
+                    doRedirection={false}
+                    overrideGlobalClaimValidators={() =>
+                        [{ id: "st-test-claim", onFailureRedirection: () => "/test-redirect" }] as any[]
+                    }>
                     <MockSessionConsumer />
                 </SessionAuth>
             );
@@ -639,12 +647,6 @@ describe("SessionAuth", () => {
             expect(accessTokenPayloadElement).toHaveTextContent(`accessTokenPayload: ${JSON.stringify({})}`);
 
             expect(await result.findByText(/^testClaimValue:/)).toHaveTextContent(`testClaimValue: undefined`);
-
-            // when
-            MockSession.validateClaims.mockImplementationOnce(({ userContext }) => {
-                saveInvalidClaimRedirectPathInContext(userContext, "/test-redirect");
-                return [{ id: "st-test-claim" }];
-            });
 
             await Promise.all([
                 act(() =>
