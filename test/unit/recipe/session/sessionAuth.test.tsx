@@ -480,7 +480,7 @@ describe("SessionAuth", () => {
                 accessTokenPayload: {},
                 userId: "",
                 invalidClaims: [{ validatorId: "st-test-claim", reason: "reason-test-claim" }],
-                loading: "falsy" as any,
+                loading: false,
             });
             // given
             let listenerFn: (event: any) => void;
