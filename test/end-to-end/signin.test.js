@@ -486,13 +486,15 @@ describe("SuperTokens SignIn", function () {
                 `${TEST_CLIENT_BASE_URL}/redirect-here`
             );
 
-            // test that if we visit auth again, we end up in redirect-heree again
+            // test that if we visit auth again, we end up in redirect-heree again with query params kept
             await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=%2Fredirect-heree`),
+                page.goto(
+                    `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=%2Fredirect-heree%3Ffoo%3Dbar`
+                ),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/redirect-heree");
+            const { pathname, search } = await page.evaluate(() => window.location);
+            assert.deepStrictEqual(pathname + search, "/redirect-heree?foo=bar");
         });
 
         it("Successful Sign In with redirect to, redirectToPath directly without trailing slash", async function () {
