@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changes
+
+-   Provide user with ability to control redirections when validating session by specifying callbacks (onFailureRedirection and onSuccessRedirection)
+
 ## [0.30.2] - 2023-01-21
 
 ### Changes
