@@ -21,11 +21,11 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import SuperTokens from "../../superTokens";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { getFailureRedirectionInfo, getSuccessRedirectionPath } from "./utils";
 import { useOnMountAPICall } from "../../utils";
 
 import Session from "./recipe";
 import SessionContext from "./sessionContext";
+import { getFailureRedirectionInfo, getSuccessRedirectionPath } from "./utils";
 
 import type { LoadedSessionContext, RecipeEventWithSessionContext, SessionContextType } from "./types";
 import type { PropsWithChildren } from "react";

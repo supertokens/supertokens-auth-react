@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
+import { EmailVerificationClaimClass } from "../../claims/emailVerificationClaim";
 import RecipeModule from "../recipeModule";
 import type {
     UserInput,

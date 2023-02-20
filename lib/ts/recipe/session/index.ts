@@ -22,10 +22,10 @@ import {
     SessionClaim,
 } from "supertokens-web-js/recipe/session";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
-import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 
 import { getNormalisedUserContext } from "../../utils";
 
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 import Session from "./recipe";
 import SessionAuthWrapper from "./sessionAuth";
 import SessionContext from "./sessionContext";

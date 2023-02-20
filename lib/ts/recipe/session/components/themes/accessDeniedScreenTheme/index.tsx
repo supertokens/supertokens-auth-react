@@ -1,10 +1,12 @@
 /* eslint-disable react/jsx-no-literals */
 import React, { Fragment } from "react";
+
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { hasFontDefined } from "../../../../../styles/styles";
 import { useTranslation } from "../../../../../translation/translationContext";
-import { AccessDeniedThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
+
+import type { AccessDeniedThemeProps } from "../../../types";
 
 export const AccessDeniedTheme = withOverride<React.FC<AccessDeniedThemeProps>>(
     "SessionAccessDenied",

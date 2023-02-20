@@ -1,9 +1,9 @@
 /// <reference types="react" />
-import RecipeModule from "../recipeModule";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
-import { FeatureBaseProps } from "../../types";
-import { ConfigType, NormalisedSessionConfig } from "./types";
+import RecipeModule from "../recipeModule";
+import type { ConfigType, NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType } from "./types";
+import type { FeatureBaseProps } from "../../types";
 import type { CreateRecipeFunction, RecipeFeatureComponentMap } from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import type { SessionClaim } from "supertokens-web-js/recipe/session";

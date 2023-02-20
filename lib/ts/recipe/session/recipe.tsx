@@ -16,11 +16,11 @@
 /*
  * Imports.
  */
-import RecipeModule from "../recipeModule";
+import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 
 import SuperTokens from "../../superTokens";
-import { FeatureBaseProps } from "../../types";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 import {
     getLocalStorage,
     isTest,
@@ -28,13 +28,14 @@ import {
     removeFromLocalStorage,
     setLocalStorage,
 } from "../../utils";
-import { ConfigType, NormalisedSessionConfig } from "./types";
-import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
+import RecipeModule from "../recipeModule";
+
 import AccessDeniedScreen from "./components/features/accessDeniedScreen";
 import { normaliseSessionConfig, getFailureRedirectionInfo, getSuccessRedirectionPath } from "./utils";
 
+import type { ConfigType, NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
+import type { FeatureBaseProps } from "../../types";
 import type { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import type { SessionClaim } from "supertokens-web-js/recipe/session";

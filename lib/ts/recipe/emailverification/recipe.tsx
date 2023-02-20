@@ -18,11 +18,11 @@
  */
 
 import { OverrideableBuilder } from "supertokens-js-override";
-import { EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 
+import { EmailVerificationClaimClass } from "../../claims/emailVerificationClaim";
 import { SSR_ERROR } from "../../constants";
 import { UserContextContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";

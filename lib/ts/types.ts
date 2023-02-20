@@ -13,11 +13,11 @@
  * under the License.
  */
 
-import type { SessionClaimValidator as SessionClaimValidatorWebJS } from "supertokens-web-js/recipe/session";
 import type RecipeModule from "./recipe/recipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 import type { ComponentClass, PropsWithChildren } from "react";
+import type { SessionClaimValidator as SessionClaimValidatorWebJS } from "supertokens-web-js/recipe/session";
 import type { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/types";
 import type NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import type NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";

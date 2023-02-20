@@ -1,5 +1,7 @@
-import { PrimitiveClaim as PrimitiveClaimWebJS, PrimitiveClaimConfig } from "supertokens-web-js/recipe/session";
-import { ValidationFailureCallback, ValidationSuccessCallback } from "../types";
+import { PrimitiveClaim as PrimitiveClaimWebJS } from "supertokens-web-js/recipe/session";
+
+import type { ValidationFailureCallback, ValidationSuccessCallback } from "../types";
+import type { PrimitiveClaimConfig } from "supertokens-web-js/recipe/session";
 
 export class PrimitiveClaim<T> extends PrimitiveClaimWebJS<T> {
     constructor(

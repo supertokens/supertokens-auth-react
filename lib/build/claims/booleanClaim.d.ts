@@ -1,5 +1,6 @@
-import { BooleanClaim as BooleanClaimWebJS, PrimitiveClaimConfig } from "supertokens-web-js/recipe/session";
-import { ValidationFailureCallback, ValidationSuccessCallback } from "../types";
+import { BooleanClaim as BooleanClaimWebJS } from "supertokens-web-js/recipe/session";
+import type { ValidationFailureCallback, ValidationSuccessCallback } from "../types";
+import type { PrimitiveClaimConfig } from "supertokens-web-js/recipe/session";
 export declare class BooleanClaim extends BooleanClaimWebJS {
     constructor(
         config: PrimitiveClaimConfig & {

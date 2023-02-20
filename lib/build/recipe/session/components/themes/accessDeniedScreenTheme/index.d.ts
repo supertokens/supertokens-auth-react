@@ -1,5 +1,5 @@
 import React from "react";
-import { AccessDeniedThemeProps } from "../../../types";
+import type { AccessDeniedThemeProps } from "../../../types";
 export declare const AccessDeniedTheme: React.ComponentType<
     AccessDeniedThemeProps & {
         children?: React.ReactNode;

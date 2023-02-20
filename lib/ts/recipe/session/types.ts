@@ -13,12 +13,12 @@
  * under the License.
  */
 
-import { RecipeInterface } from "supertokens-web-js/recipe/session";
-import { FeatureBaseConfig, NormalisedAppInfo, NormalisedBaseConfig } from "../../types";
-import OverrideableBuilder from "supertokens-js-override";
-import { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import { AccessDeniedTheme } from "./components/themes/accessDeniedScreenTheme";
-import { NormalisedConfig } from "../recipeModule/types";
+import type { AccessDeniedTheme } from "./components/themes/accessDeniedScreenTheme";
+import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import type { FeatureBaseConfig, NormalisedAppInfo, NormalisedBaseConfig } from "../../types";
+import type { NormalisedConfig } from "../recipeModule/types";
+import type OverrideableBuilder from "supertokens-js-override";
+import type { RecipeInterface } from "supertokens-web-js/recipe/session";
 import type { ClaimValidationError } from "supertokens-web-js/recipe/session";
 import type { UserInput as WebJSInputType, RecipeEvent } from "supertokens-web-js/recipe/session/types";
 

@@ -1,8 +1,7 @@
-import {
-    PrimitiveArrayClaim as PrimitiveArrayClaimWebJS,
-    PrimitiveArrayClaimConfig,
-} from "supertokens-web-js/recipe/session";
-import { ValidationFailureCallback, ValidationSuccessCallback } from "../types";
+import { PrimitiveArrayClaim as PrimitiveArrayClaimWebJS } from "supertokens-web-js/recipe/session";
+
+import type { ValidationFailureCallback, ValidationSuccessCallback } from "../types";
+import type { PrimitiveArrayClaimConfig } from "supertokens-web-js/recipe/session";
 
 export class PrimitiveArrayClaim<T> extends PrimitiveArrayClaimWebJS<T> {
     constructor(

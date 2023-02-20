@@ -1,6 +1,6 @@
-import { ConfigType, NormalisedSessionConfig } from "./types";
-import { ClaimValidationError } from "supertokens-web-js/recipe/session";
-import { SessionClaimValidator } from "../../types";
+import type { ConfigType, NormalisedSessionConfig } from "./types";
+import type { SessionClaimValidator } from "../../types";
+import type { ClaimValidationError } from "supertokens-web-js/recipe/session";
 export declare function normaliseSessionConfig(config: ConfigType): NormalisedSessionConfig;
 export declare const getFailureRedirectionInfo: ({
     invalidClaims,

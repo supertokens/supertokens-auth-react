@@ -13,13 +13,15 @@
  * under the License.
  */
 
-import { NormalisedBaseConfig } from "../../types";
-import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
-import { RecipeInterface } from "supertokens-web-js/recipe/session";
-import { ConfigType, NormalisedSessionConfig } from "./types";
 import { getGlobalClaimValidators } from "supertokens-web-js/utils";
-import { ClaimValidationError } from "supertokens-web-js/recipe/session";
-import { SessionClaimValidator } from "../../types";
+
+import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
+
+import type { ConfigType, NormalisedSessionConfig } from "./types";
+import type { NormalisedBaseConfig } from "../../types";
+import type { SessionClaimValidator } from "../../types";
+import type { ClaimValidationError } from "supertokens-web-js/recipe/session";
+import type { RecipeInterface } from "supertokens-web-js/recipe/session";
 
 export function normaliseSessionConfig(config: ConfigType): NormalisedSessionConfig {
     const accessDeniedScreenStyle = config.accessDeniedScreen?.style ?? "";

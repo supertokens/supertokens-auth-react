@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { ClaimValidationError } from "supertokens-web-js/recipe/session";
+
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { FeatureBaseProps } from "../../../../../types";
 import { getLocalStorage } from "../../../../../utils";
 import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
-import Recipe from "../../../recipe";
 import { AccessDeniedTheme } from "../../themes/accessDeniedScreenTheme";
 import { defaultTranslationsSession } from "../../themes/translations";
+
+import type { FeatureBaseProps } from "../../../../../types";
+import type Recipe from "../../../recipe";
+import type { ClaimValidationError } from "supertokens-web-js/recipe/session";
 
 const AccessDeniedScreen: React.FC<
     FeatureBaseProps & {

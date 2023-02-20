@@ -1,9 +1,9 @@
-import {
-    EmailVerificationClaimClass as EmailVerificationClaimClassWebJS,
-    RecipeInterface,
-} from "supertokens-web-js/recipe/emailverification";
+import { EmailVerificationClaimClass as EmailVerificationClaimClassWebJS } from "supertokens-web-js/recipe/emailverification";
+
 import EmailVerification from "../recipe/emailverification/recipe";
-import { ValidationFailureCallback, ValidationSuccessCallback } from "../types";
+
+import type { ValidationFailureCallback, ValidationSuccessCallback } from "../types";
+import type { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
 export class EmailVerificationClaimClass extends EmailVerificationClaimClassWebJS {
     constructor(
