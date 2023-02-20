@@ -12,15 +12,16 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import RecipeModule from "./recipe/recipeModule";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
-import { ComponentClass, PropsWithChildren } from "react";
-import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
-import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import { SessionClaimValidator as SessionClaimValidatorWebJS } from "supertokens-web-js/recipe/session";
-import { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/types";
-import { WindowHandlerInput } from "supertokens-web-js/utils/windowHandler/types";
+
+import type { SessionClaimValidator as SessionClaimValidatorWebJS } from "supertokens-web-js/recipe/session";
+import type RecipeModule from "./recipe/recipeModule";
+import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
+import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
+import type { ComponentClass, PropsWithChildren } from "react";
+import type { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/types";
+import type NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
+import type NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import type { WindowHandlerInput } from "supertokens-web-js/utils/windowHandler/types";
 
 export type GetRedirectionURLContext = {
     action: "TO_AUTH" | "SESSION_VERIFICATION_FAILURE";

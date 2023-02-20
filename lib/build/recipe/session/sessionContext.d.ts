@@ -1,5 +1,5 @@
 import React from "react";
-import { SessionContextType } from "./types";
+import type { SessionContextType } from "./types";
 declare const SessionContext: React.Context<
     SessionContextType & {
         isDefault?: boolean | undefined;

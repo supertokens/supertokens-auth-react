@@ -1,6 +1,6 @@
 /// <reference types="react" />
+import type { BuiltInProviderConfig } from "./types";
 import Provider from ".";
-import { BuiltInProviderConfig } from "./types";
 export default class Google extends Provider {
     private static instance?;
     buttonComponent?: JSX.Element;

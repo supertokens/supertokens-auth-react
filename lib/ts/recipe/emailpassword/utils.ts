@@ -13,11 +13,17 @@
  * under the License.
  */
 
-import { FormField, FormFieldBaseConfig, NormalisedFormField } from "../../types";
-import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
-import { OverrideableBuilder } from "supertokens-js-override";
+import { normaliseAuthRecipe } from "../authRecipe/utils";
 
+import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
 import {
+    defaultLoginPasswordValidator,
+    defaultEmailValidator,
+    defaultPasswordValidator,
+    defaultValidate,
+} from "./validators";
+
+import type {
     Config,
     NormalisedConfig,
     NormalisedEnterEmailForm,
@@ -31,14 +37,9 @@ import {
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput,
 } from "./types";
-import {
-    defaultLoginPasswordValidator,
-    defaultEmailValidator,
-    defaultPasswordValidator,
-    defaultValidate,
-} from "./validators";
-import { normaliseAuthRecipe } from "../authRecipe/utils";
-import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import type { FormField, FormFieldBaseConfig, NormalisedFormField } from "../../types";
+import type { OverrideableBuilder } from "supertokens-js-override";
+import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
 export function normaliseEmailPasswordConfig(config: Config): NormalisedConfig {
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(

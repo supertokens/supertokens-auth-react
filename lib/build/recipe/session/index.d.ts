@@ -1,12 +1,15 @@
 /// <reference types="react" />
-import { ClaimValidationResult, RecipeInterface, SessionClaim } from "supertokens-web-js/recipe/session";
-import { InputType, SessionContextType } from "./types";
+import {
+    BooleanClaim,
+    ClaimValidationResult,
+    PrimitiveArrayClaim,
+    PrimitiveClaim,
+    RecipeInterface,
+    SessionClaim,
+} from "supertokens-web-js/recipe/session";
+import { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import SessionContext from "./sessionContext";
-import { BooleanClaim } from "../../claims/booleanClaim";
-import { PrimitiveClaim } from "../../claims/primitiveClaim";
-import { PrimitiveArrayClaim } from "../../claims/primitiveArrayClaim";
-import { SessionClaimValidator } from "../../types";
-import { ClaimValidationError } from "supertokens-web-js/recipe/session";
+import { InputType, SessionContextType } from "./types";
 export default class SessionAPIWrapper {
     static useSessionContext: () => SessionContextType;
     static useClaimValue: <T>(claim: SessionClaim<T>) =>
@@ -27,6 +30,7 @@ export default class SessionAPIWrapper {
     >;
     static init(config?: InputType): import("../../types").CreateRecipeFunction<unknown, unknown, unknown, any>;
     static getUserId(input?: { userContext?: any }): Promise<string>;
+    static getAccessToken(input?: { userContext?: any }): Promise<string | undefined>;
     static getAccessTokenPayloadSecurely(input?: { userContext?: any }): Promise<any>;
     static attemptRefreshingSession(): Promise<boolean>;
     static doesSessionExist(input?: { userContext?: any }): Promise<boolean>;
@@ -76,6 +80,7 @@ declare const SessionAuth: import("react").FC<
 >;
 declare const init: typeof SessionAPIWrapper.init;
 declare const getUserId: typeof SessionAPIWrapper.getUserId;
+declare const getAccessToken: typeof SessionAPIWrapper.getAccessToken;
 declare const getAccessTokenPayloadSecurely: typeof SessionAPIWrapper.getAccessTokenPayloadSecurely;
 declare const attemptRefreshingSession: typeof SessionAPIWrapper.attemptRefreshingSession;
 declare const doesSessionExist: typeof SessionAPIWrapper.doesSessionExist;
@@ -99,6 +104,7 @@ export {
     SessionComponentsOverrideProvider,
     init,
     getUserId,
+    getAccessToken,
     getAccessTokenPayloadSecurely,
     attemptRefreshingSession,
     doesSessionExist,

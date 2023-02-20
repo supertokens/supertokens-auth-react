@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { SignInUpProps } from "../../../types";
+import type { SignInUpProps } from "../../../types";
 export declare enum SignInUpScreens {
     CloseTab = 0,
     LinkSent = 1,

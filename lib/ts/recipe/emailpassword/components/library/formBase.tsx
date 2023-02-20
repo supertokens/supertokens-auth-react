@@ -16,16 +16,19 @@
 /*
  * Imports.
  */
-import { FormEvent, Fragment, useState } from "react";
-import { Button, FormRow, Input, InputError, Label } from ".";
-
-import { APIFormField } from "../../../../types";
-import { FormBaseProps } from "../../types";
-import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
+import { Fragment, useState } from "react";
 import { useCallback } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
 import STGeneralError from "supertokens-web-js/utils/error";
+
+import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
+
+import type { APIFormField } from "../../../../types";
+import type { FormBaseProps } from "../../types";
+import type { FormEvent } from "react";
+
+import { Button, FormRow, Input, InputError, Label } from ".";
 
 type FieldState = {
     id: string;

@@ -17,17 +17,23 @@
  */
 import * as React from "react";
 import { Fragment } from "react";
-import SignInAndUpTheme from "../../themes/signInAndUp";
-import FeatureWrapper from "../../../../../components/featureWrapper";
-import { FeatureBaseProps } from "../../../../../types";
-import { getQueryParams } from "../../../../../utils";
-import { ThirdPartySignInAndUpState, ThirdPartySignInUpActions, ThirdPartySignInUpChildProps } from "../../../types";
-import Recipe from "../../../recipe";
-import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { defaultTranslationsThirdParty } from "../../themes/translations";
 import { useMemo } from "react";
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
-import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
+
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import FeatureWrapper from "../../../../../components/featureWrapper";
+import { getQueryParams } from "../../../../../utils";
+import SignInAndUpTheme from "../../themes/signInAndUp";
+import { defaultTranslationsThirdParty } from "../../themes/translations";
+
+import type { FeatureBaseProps } from "../../../../../types";
+import type Recipe from "../../../recipe";
+import type {
+    ComponentOverrideMap,
+    ThirdPartySignInAndUpState,
+    ThirdPartySignInUpActions,
+    ThirdPartySignInUpChildProps,
+} from "../../../types";
+import type { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 
 export const useFeatureReducer = () => {
     return React.useReducer(
@@ -91,13 +97,13 @@ export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChi
     }, [recipe]);
 }
 
-type PropType = FeatureBaseProps & { recipe: Recipe };
+type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap };
 
 export const SignInAndUpFeature: React.FC<PropType> = (props) => {
     const [state, dispatch] = useFeatureReducer();
     const childProps = useChildProps(props.recipe);
 
-    const recipeComponentOverrides = useRecipeComponentOverrideContext();
+    const recipeComponentOverrides = props.useComponentOverrides();
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>

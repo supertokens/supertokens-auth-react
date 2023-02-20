@@ -1,5 +1,6 @@
-import { PropsWithChildren } from "react";
 import SessionAuthWrapper from "../recipe/session/sessionAuth";
+
+import type { PropsWithChildren } from "react";
 
 export const SuperTokensWrapper: React.FC<
     PropsWithChildren<{

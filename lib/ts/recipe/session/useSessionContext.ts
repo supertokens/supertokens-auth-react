@@ -1,7 +1,8 @@
 import React from "react";
 
 import SessionContext from "./sessionContext";
-import { SessionContextType } from "./types";
+
+import type { SessionContextType } from "./types";
 
 const useSessionContext = (): SessionContextType => {
     const ctx = React.useContext(SessionContext);

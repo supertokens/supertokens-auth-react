@@ -1,13 +1,17 @@
-import React, { PropsWithChildren, useCallback, useContext, useEffect, useState } from "react";
-import {
-    getCurrentLanguageFromCookie,
+import React, { useCallback, useContext, useEffect, useState } from "react";
+
+import { mergeObjects } from "../utils";
+
+import { getCurrentLanguageFromCookie } from "./translationHelpers";
+
+import type {
     TranslationContextType,
     TranslationControlEventSource,
     TranslationEventHandler,
     TranslationFunc,
     TranslationStore,
 } from "./translationHelpers";
-import { mergeObjects } from "../utils";
+import type { PropsWithChildren } from "react";
 
 const errCB = () => {
     throw new Error("Cannot use translation func outside TranslationContext provider.");

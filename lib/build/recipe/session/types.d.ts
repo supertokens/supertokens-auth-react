@@ -1,10 +1,11 @@
-import { UserInput as WebJSInputType, RecipeEvent } from "supertokens-web-js/recipe/session/types";
-import { ClaimValidationError, RecipeInterface } from "supertokens-web-js/recipe/session";
+import { RecipeInterface } from "supertokens-web-js/recipe/session";
 import { FeatureBaseConfig, NormalisedAppInfo, NormalisedBaseConfig } from "../../types";
 import OverrideableBuilder from "supertokens-js-override";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { AccessDeniedTheme } from "./components/themes/accessDeniedScreenTheme";
 import { NormalisedConfig } from "../recipeModule/types";
+import type { ClaimValidationError } from "supertokens-web-js/recipe/session";
+import type { UserInput as WebJSInputType, RecipeEvent } from "supertokens-web-js/recipe/session/types";
 export declare type RecipeEventWithSessionContext = RecipeEvent & {
     sessionContext: SessionContextUpdate;
 };

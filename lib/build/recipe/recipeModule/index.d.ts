@@ -1,6 +1,7 @@
 /// <reference types="react" />
-import { RecipeFeatureComponentMap } from "../../types";
-import { NormalisedConfig } from "./types";
+import type { NormalisedConfig } from "./types";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { RecipeFeatureComponentMap } from "../../types";
 export default abstract class RecipeModule<
     GetRedirectionURLContextType,
     Action,
@@ -16,6 +17,10 @@ export default abstract class RecipeModule<
     ) => Promise<void>;
     getRedirectUrl: (context: GetRedirectionURLContextType) => Promise<string>;
     getDefaultRedirectionURL(_: GetRedirectionURLContextType): Promise<string>;
-    abstract getFeatures(): RecipeFeatureComponentMap;
-    abstract getFeatureComponent(componentName: string, props: any): JSX.Element;
+    abstract getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
+    abstract getFeatureComponent(
+        componentName: string,
+        props: any,
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
+    ): JSX.Element;
 }

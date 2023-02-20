@@ -1,5 +1,6 @@
 import React from "react";
-import { SessionContextType } from "./types";
+
+import type { SessionContextType } from "./types";
 
 const SessionContext = React.createContext<SessionContextType & { isDefault?: boolean }>({
     loading: true,

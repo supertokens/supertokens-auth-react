@@ -9,7 +9,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
--   Provide user with ability to control redirections when validating session by specifying callbacks (onFailureRedirection and onSuccessRedirection)
+-   Introduce onFailureRedirection and onSuccessRedirection per claim callbacks to provide user with control over redirections when validating session
+
+## [0.31.1] - 2023-02-12
+
+### Changes
+
+-   Add ordering for imports
+-   Force consistent type imports
+
+### Fixes
+
+-   Fixed all buttons to have pointer cursor on hover.
+-   Fixed component override propagation into sub-recipe only feature components (i.e., ThirdPartySignInAndUpCallbackTheme_Override in thirdpartyemailpassword)
+
+## [0.31.0] - 2023-02-01
+
+## Breaking changes
+
+-   Updated `supertokens-web-js` dependency that requires a backend SDK update to:
+    -   supertokens-node: >= 13.0.0
+    -   supertokens-python: >= 0.12.0
+    -   supertokens-golang: >= 0.10.0
+-   Renamed configuration options:
+    -   `sessionScope` renamed to `sessionTokenFrontendDomain`
+    -   `cookieDomain` renamed to `sessionTokenBackendDomain`
+
+### Added
+
+-   Added support for authorizing requests using the `Authorization` header instead of cookies
+    -   Added `tokenTransferMethod` config option
+    -   Check out https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/sessions/token-transfer-method for more information
 
 ## [0.30.2] - 2023-01-21
 

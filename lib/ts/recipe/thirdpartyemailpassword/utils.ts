@@ -16,9 +16,16 @@
 /*
  * Imports.
  */
-import { Config, NormalisedConfig, NormalisedSignInAndUpFeatureConfig, SignInAndUpFeatureUserInput } from "./types";
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+
 import { normaliseAuthRecipe } from "../authRecipe/utils";
+
+import type {
+    Config,
+    NormalisedConfig,
+    NormalisedSignInAndUpFeatureConfig,
+    SignInAndUpFeatureUserInput,
+} from "./types";
+import type { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
 /*
  * Methods.

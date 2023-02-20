@@ -31,6 +31,7 @@ const {
 const SuperTokensNode = require("supertokens-node");
 const Session = require("supertokens-node/recipe/session");
 const Passwordless = require("supertokens-node/recipe/passwordless");
+const EmailVerification = require("supertokens-node/recipe/emailverification");
 const ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 
 // Run the tests in a DOM environment.
@@ -53,6 +54,9 @@ SuperTokensNode.init({
         Passwordless.init({
             contactMethod: "EMAIL_OR_PHONE",
             flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+        }),
+        EmailVerification.init({
+            mode: "OPTIONAL",
         }),
         ThirdPartyEmailPassword.init(),
         Session.init(),
@@ -125,9 +129,20 @@ describe("SuperTokens Example Basic tests", function () {
             await setInputValues(page, [{ name: "userInputCode", value: testOTP }]);
             await submitForm(page);
 
-            const callApiBtn = await page.waitForSelector(".sessionButton");
-
             const [user] = await ThirdPartyEmailPassword.getUsersByEmail(email);
+
+            // We get to the email verification screen
+            await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+            // Attempt reloading Home
+            await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+            await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+
+            // Create a new token and use it (we don't have access to the originally sent one)
+            const tokenInfo = await EmailVerification.createEmailVerificationToken(user.id, user.email);
+            await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
+            await submitForm(page);
+
+            const callApiBtn = await page.waitForSelector(".sessionButton");
 
             let setAlertContent;
             let alertContent = new Promise((res) => (setAlertContent = res));

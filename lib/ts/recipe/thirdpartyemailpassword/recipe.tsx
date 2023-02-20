@@ -16,9 +16,25 @@
 /*
  * Imports.
  */
+import { OverrideableBuilder } from "supertokens-js-override";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+
+import { SSR_ERROR } from "../../constants";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
-import {
+import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
+import EmailPassword from "../emailpassword/recipe";
+import ThirdParty from "../thirdparty/recipe";
+
+import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import SignInAndUp from "./components/features/signInAndUp";
+import RecipeImplementation from "./recipeImplementation";
+import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
+import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
+import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
+
+import type {
     Config,
     GetRedirectionURLContext,
     NormalisedConfig,
@@ -26,21 +42,10 @@ import {
     UserInput,
     PreAndPostAPIHookAction,
 } from "./types";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
-import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { SSR_ERROR } from "../../constants";
-import RecipeModule from "../recipeModule";
-import SignInAndUp from "./components/features/signInAndUp";
-import EmailPassword from "../emailpassword/recipe";
-import ThirdParty from "../thirdparty/recipe";
-import RecipeImplementation from "./recipeImplementation";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import { OverrideableBuilder } from "supertokens-js-override";
-import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
-import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { CreateRecipeFunction, FeatureBaseProps, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
+import type RecipeModule from "../recipeModule";
+import type { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
 export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
@@ -127,20 +132,22 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                   });
     }
 
-    getFeatures = (): RecipeFeatureComponentMap => {
+    getFeatures = (
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap => {
         let features: RecipeFeatureComponentMap = {};
 
         if (this.emailPasswordRecipe !== undefined) {
             features = {
                 ...features,
-                ...this.emailPasswordRecipe.getFeatures(),
+                ...this.emailPasswordRecipe.getFeatures(useComponentOverrides),
             };
         }
 
         if (this.thirdPartyRecipe !== undefined) {
             features = {
                 ...features,
-                ...this.thirdPartyRecipe.getFeatures(),
+                ...this.thirdPartyRecipe.getFeatures(useComponentOverrides),
             };
         }
 
@@ -148,7 +155,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (prop: any) => this.getFeatureComponent("signinup", prop),
+                component: (prop: any) => this.getFeatureComponent("signinup", prop, useComponentOverrides),
             };
         }
 
@@ -168,7 +175,8 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
 
     getFeatureComponent = (
         componentName: "signinup" | "signinupcallback" | "resetpassword",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
+        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signinup") {
             if (props.redirectOnSessionExists !== false) {
@@ -182,14 +190,14 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
                         >
                             authRecipe={this}
                             history={props.history}>
-                            <SignInAndUp recipe={this} {...props} />
+                            <SignInAndUp recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
                         </AuthWidgetWrapper>
                     </UserContextWrapper>
                 );
             } else {
                 return (
                     <UserContextWrapper userContext={props.userContext}>
-                        <SignInAndUp recipe={this} {...props} />
+                        <SignInAndUp recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
                     </UserContextWrapper>
                 );
             }
@@ -197,14 +205,14 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             if (this.emailPasswordRecipe === undefined) {
                 throw new Error("Should not come here...");
             }
-            return this.emailPasswordRecipe.getFeatureComponent(componentName, props);
+            return this.emailPasswordRecipe.getFeatureComponent(componentName, props, useComponentOverrides);
         } else if (componentName === "signinupcallback") {
             if (this.thirdPartyRecipe === undefined) {
                 throw new Error(
                     "Embedding this component requires the thirdparty recipe to be enabled. Please check the value of signInAndUpFeature.providers in the configuration."
                 );
             }
-            return this.thirdPartyRecipe.getFeatureComponent(componentName, props);
+            return this.thirdPartyRecipe.getFeatureComponent(componentName, props, useComponentOverrides);
         } else {
             throw new Error("Should not come here...");
         }

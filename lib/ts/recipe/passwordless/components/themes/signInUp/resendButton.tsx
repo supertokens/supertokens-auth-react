@@ -18,9 +18,11 @@
  */
 
 import React, { useCallback, useEffect, useState } from "react";
+
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { LoginAttemptInfo } from "../../../types";
 import { useTranslation } from "../../../../../translation/translationContext";
+
+import type { LoginAttemptInfo } from "../../../types";
 
 export const ResendButton = withOverride(
     "PasswordlessResendButton",

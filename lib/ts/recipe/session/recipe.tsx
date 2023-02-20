@@ -17,13 +17,10 @@
  * Imports.
  */
 import RecipeModule from "../recipeModule";
-import {
-    CreateRecipeFunction,
-    FeatureBaseProps,
-    NormalisedAppInfo,
-    RecipeFeatureComponentMap,
-    SessionClaimValidator,
-} from "../../types";
+import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
+
+import SuperTokens from "../../superTokens";
+import { FeatureBaseProps } from "../../types";
 import {
     getLocalStorage,
     isTest,
@@ -31,22 +28,17 @@ import {
     removeFromLocalStorage,
     setLocalStorage,
 } from "../../utils";
-import {
-    RecipeEventWithSessionContext,
-    InputType,
-    SessionContextUpdate,
-    ConfigType,
-    NormalisedSessionConfig,
-} from "./types";
-import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
-import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
-import { ClaimValidationError } from "supertokens-web-js/recipe/session";
-import SuperTokens from "../../superTokens";
-import { SessionClaim } from "supertokens-web-js/recipe/session";
+import { ConfigType, NormalisedSessionConfig } from "./types";
 import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import AccessDeniedScreen from "./components/features/accessDeniedScreen";
 import { normaliseSessionConfig, getFailureRedirectionInfo, getSuccessRedirectionPath } from "./utils";
+
+import type { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
+import type { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
+import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
+import type { SessionClaim } from "supertokens-web-js/recipe/session";
+import type { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 
 export default class Session extends RecipeModule<unknown, unknown, unknown, NormalisedSessionConfig> {
     static instance?: Session;
@@ -71,14 +63,13 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                 void this.notifyListeners(event);
             },
             preAPIHook: async (context) => {
+                const headers = new Headers(context.requestInit.headers);
+                headers.set("rid", config.recipeId);
                 const response = {
                     ...context,
                     requestInit: {
                         ...context.requestInit,
-                        headers: {
-                            ...context.requestInit.headers,
-                            rid: config.recipeId,
-                        },
+                        headers,
                     },
                 };
                 if (config.preAPIHook === undefined) {
@@ -92,6 +83,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
 
     getUserId = (input: { userContext: any }): Promise<string> => {
         return this.webJsRecipe.getUserId(input);
+    };
+
+    getAccessToken = (input: { userContext: any }): Promise<string | undefined> => {
+        return this.webJsRecipe.getAccessToken(input);
     };
 
     getClaimValue = (input: { claim: SessionClaim<unknown>; userContext: any }): Promise<unknown> => {

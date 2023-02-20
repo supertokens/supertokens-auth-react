@@ -17,19 +17,22 @@
  * Imports.
  */
 import React from "react";
-import { ThirdPartyEmailPasswordSignInAndUpThemeProps } from "../../../types";
-import { ThemeBase } from "../themeBase";
-import { Header } from "./header";
-import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
-import { hasFontDefined } from "../../../../../styles/styles";
+
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
+import { hasFontDefined } from "../../../../../styles/styles";
 import { useTranslation } from "../../../../../translation/translationContext";
-import GeneralError from "../../../../emailpassword/components/library/generalError";
-import { SignUpFooter } from "../../../../emailpassword/components/themes/signInAndUp/signUpFooter";
-import { SignInForm } from "../../../../emailpassword/components/themes/signInAndUp/signInForm";
-import { SignUpForm } from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
-import { SignInFooter } from "../../../../emailpassword/components/themes/signInAndUp/signInFooter";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
+import { SignInFooter } from "../../../../emailpassword/components/themes/signInAndUp/signInFooter";
+import { SignInForm } from "../../../../emailpassword/components/themes/signInAndUp/signInForm";
+import { SignUpFooter } from "../../../../emailpassword/components/themes/signInAndUp/signUpFooter";
+import { SignUpForm } from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
+import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
+import { ThemeBase } from "../themeBase";
+
+import { Header } from "./header";
+
+import type { ThirdPartyEmailPasswordSignInAndUpThemeProps } from "../../../types";
 
 const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> = (props) => {
     const t = useTranslation();

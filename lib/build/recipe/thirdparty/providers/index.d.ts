@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { ProviderConfig } from "./types";
+import type { ProviderConfig } from "./types";
 export default abstract class Provider {
     id: string;
     name: string;
