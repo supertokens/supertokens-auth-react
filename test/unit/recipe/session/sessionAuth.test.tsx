@@ -475,13 +475,6 @@ describe("SessionAuth", () => {
 
     describe("redirections", () => {
         test("redirect on ACCESS_TOKEN_PAYLOAD_UPDATED for invalid claim", async () => {
-            setMockResolves({
-                doesSessionExist: false,
-                accessTokenPayload: {},
-                userId: "",
-                invalidClaims: [{ validatorId: "st-test-claim", reason: "reason-test-claim" }],
-                loading: false,
-            });
             // given
             let listenerFn: (event: any) => void;
             MockSession.addEventListener.mockImplementationOnce((fn) => {
@@ -499,8 +492,7 @@ describe("SessionAuth", () => {
                 </SessionAuth>
             );
 
-            const accessTokenPayloadElement = await result.getByText(/^accessTokenPayload:/);
-
+            const accessTokenPayloadElement = await result.findByText(/^accessTokenPayload:/);
             expect(accessTokenPayloadElement).toHaveTextContent(`accessTokenPayload: ${JSON.stringify({})}`);
 
             expect(await result.findByText(/^testClaimValue:/)).toHaveTextContent(`testClaimValue: undefined`);
@@ -512,6 +504,14 @@ describe("SessionAuth", () => {
                     t: Date.now(),
                 },
             };
+
+            setMockResolves({
+                doesSessionExist: true,
+                accessTokenPayload: {},
+                userId: "mock-id",
+                invalidClaims: [{ validatorId: "st-test-claim", reason: "test-reason" }],
+                loading: false,
+            });
 
             await act(() =>
                 listenerFn({
