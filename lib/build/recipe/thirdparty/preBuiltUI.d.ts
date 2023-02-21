@@ -22,7 +22,8 @@ export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
-        }
+        },
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
     static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[];
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;

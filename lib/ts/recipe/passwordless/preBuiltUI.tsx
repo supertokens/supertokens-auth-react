@@ -42,8 +42,13 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
     static getRoutingComponent(): JSX.Element | null {
         return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getRoutingComponent();
     }
-    static getFeatures(recipeInstance?: Passwordless): RecipeFeatureComponentMap {
-        return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatures();
+    static getFeatures(
+        recipeInstance?: Passwordless,
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap {
+        return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatures(
+            useComponentOverrides
+        );
     }
     static getFeatureComponent(
         componentName: "signInUp" | "linkClickedScreen",

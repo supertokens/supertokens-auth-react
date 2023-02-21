@@ -111,7 +111,7 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
                     "Embedding this component requires the thirdparty recipe to be enabled. Please check the value of signInUpFeature.providers in the configuration."
                 );
             }
-            return ThirdPartyPreBuiltUI.getFeatureComponent(componentName, props);
+            return ThirdPartyPreBuiltUI.getFeatureComponent(componentName, props, useComponentOverrides);
         } else {
             throw new Error("Should never come here.");
         }
@@ -125,14 +125,14 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
         if (this.recipeInstance.passwordlessRecipe !== undefined) {
             features = {
                 ...features,
-                ...PasswordlessPreBuiltUI.getFeatures(this.recipeInstance.passwordlessRecipe),
+                ...PasswordlessPreBuiltUI.getFeatures(this.recipeInstance.passwordlessRecipe, useComponentOverrides),
             };
         }
 
         if (this.recipeInstance.thirdPartyRecipe !== undefined) {
             features = {
                 ...features,
-                ...ThirdPartyPreBuiltUI.getFeatures(this.recipeInstance.thirdPartyRecipe),
+                ...ThirdPartyPreBuiltUI.getFeatures(this.recipeInstance.thirdPartyRecipe, useComponentOverrides),
             };
         }
 

@@ -141,7 +141,7 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
                     "Embedding this component requires the thirdparty recipe to be enabled. Please check the value of signInAndUpFeature.providers in the configuration."
                 );
             }
-            return ThirdPartyPreBuiltUI.getFeatureComponent(componentName, props);
+            return ThirdPartyPreBuiltUI.getFeatureComponent(componentName, props, useComponentOverrides);
         } else {
             throw new Error("Should not come here...");
         }
