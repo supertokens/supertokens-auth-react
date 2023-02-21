@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changes
+
+-   Update example apps after header based auth
+
 ## [0.31.1] - 2023-02-12
 
 ### Changes
