@@ -17,12 +17,14 @@ describe("Exports", function () {
                 signOut,
                 signUp,
                 submitNewPassword,
+            } = require("../../recipe/emailpassword");
+            let _defaultPreBuiltUI = require("../../recipe/emailpassword/preBuiltUI");
+            let {
                 ResetPasswordUsingToken,
                 ResetPasswordUsingTokenTheme,
                 SignInAndUp,
                 SignInAndUpTheme,
-            } = require("../../recipe/emailpassword");
-
+            } = require("../../recipe/emailpassword/preBuiltUI");
             assert(init !== undefined && _default.init !== undefined);
             assert(doesEmailExist !== undefined && _default.doesEmailExist !== undefined);
             assert(getResetPasswordTokenFromURL !== undefined && _default.getResetPasswordTokenFromURL !== undefined);
@@ -31,10 +33,13 @@ describe("Exports", function () {
             assert(signUp !== undefined && _default.signUp !== undefined);
             assert(submitNewPassword !== undefined && _default.submitNewPassword !== undefined);
 
-            assert(ResetPasswordUsingToken !== undefined && _default.ResetPasswordUsingToken !== undefined);
-            assert(ResetPasswordUsingTokenTheme !== undefined && _default.ResetPasswordUsingTokenTheme !== undefined);
-            assert(SignInAndUp !== undefined && _default.SignInAndUp !== undefined);
-            assert(SignInAndUpTheme !== undefined && _default.SignInAndUpTheme !== undefined);
+            assert(ResetPasswordUsingToken !== undefined && _defaultPreBuiltUI.ResetPasswordUsingToken !== undefined);
+            assert(
+                ResetPasswordUsingTokenTheme !== undefined &&
+                    _defaultPreBuiltUI.ResetPasswordUsingTokenTheme !== undefined
+            );
+            assert(SignInAndUp !== undefined && _defaultPreBuiltUI.SignInAndUp !== undefined);
+            assert(SignInAndUpTheme !== undefined && _defaultPreBuiltUI.SignInAndUpTheme !== undefined);
         });
     });
 
@@ -59,11 +64,14 @@ describe("Exports", function () {
                 Apple,
                 Github,
                 Google,
+            } = require("../../recipe/thirdparty");
+            let _defaultPreBuiltUI = require("../../recipe/thirdparty/preBuiltUI");
+            let {
                 SignInAndUp,
                 SignInAndUpCallback,
                 SignInAndUpCallbackTheme,
                 SignInAndUpTheme,
-            } = require("../../recipe/thirdparty");
+            } = require("../../recipe/thirdparty/preBuiltUI");
 
             assert(init !== undefined && _default.init !== undefined);
             assert(
@@ -93,10 +101,10 @@ describe("Exports", function () {
             assert(Apple !== undefined && _default.Apple !== undefined);
             assert(Github !== undefined && _default.Github !== undefined);
             assert(Google !== undefined && _default.Google !== undefined);
-            assert(SignInAndUp !== undefined && _default.SignInAndUp !== undefined);
-            assert(SignInAndUpCallback !== undefined && _default.SignInAndUpCallback !== undefined);
-            assert(SignInAndUpCallbackTheme !== undefined && _default.SignInAndUpCallbackTheme !== undefined);
-            assert(SignInAndUpTheme !== undefined && _default.SignInAndUpTheme !== undefined);
+            assert(SignInAndUp !== undefined && _defaultPreBuiltUI.SignInAndUp !== undefined);
+            assert(SignInAndUpCallback !== undefined && _defaultPreBuiltUI.SignInAndUpCallback !== undefined);
+            assert(SignInAndUpCallbackTheme !== undefined && _defaultPreBuiltUI.SignInAndUpCallbackTheme !== undefined);
+            assert(SignInAndUpTheme !== undefined && _defaultPreBuiltUI.SignInAndUpTheme !== undefined);
         });
     });
 
@@ -127,13 +135,16 @@ describe("Exports", function () {
                 Facebook,
                 Github,
                 Google,
+            } = require("../../recipe/thirdpartyemailpassword");
+            let _defaultPreBuiltUI = require("../../recipe/thirdpartyemailpassword/preBuiltUI");
+            let {
                 ResetPasswordUsingToken,
                 ResetPasswordUsingTokenTheme,
                 SignInAndUp,
                 SignInAndUpTheme,
                 ThirdPartySignInAndUpCallback,
                 ThirdPartySignInAndUpCallbackTheme,
-            } = require("../../recipe/thirdpartyemailpassword");
+            } = require("../../recipe/thirdpartyemailpassword/preBuiltUI");
 
             assert(init !== undefined && _default.init !== undefined);
             assert(doesEmailExist !== undefined && _default.doesEmailExist !== undefined);
@@ -169,14 +180,20 @@ describe("Exports", function () {
             assert(Facebook !== undefined && _default.Facebook !== undefined);
             assert(Github !== undefined && _default.Github !== undefined);
             assert(Google !== undefined && _default.Google !== undefined);
-            assert(ResetPasswordUsingToken !== undefined && _default.ResetPasswordUsingToken !== undefined);
-            assert(ResetPasswordUsingTokenTheme !== undefined && _default.ResetPasswordUsingTokenTheme !== undefined);
-            assert(SignInAndUp !== undefined && _default.SignInAndUp !== undefined);
-            assert(SignInAndUpTheme !== undefined && _default.SignInAndUpTheme !== undefined);
-            assert(ThirdPartySignInAndUpCallback !== undefined && _default.ThirdPartySignInAndUpCallback !== undefined);
+            assert(ResetPasswordUsingToken !== undefined && _defaultPreBuiltUI.ResetPasswordUsingToken !== undefined);
+            assert(
+                ResetPasswordUsingTokenTheme !== undefined &&
+                    _defaultPreBuiltUI.ResetPasswordUsingTokenTheme !== undefined
+            );
+            assert(SignInAndUp !== undefined && _defaultPreBuiltUI.SignInAndUp !== undefined);
+            assert(SignInAndUpTheme !== undefined && _defaultPreBuiltUI.SignInAndUpTheme !== undefined);
+            assert(
+                ThirdPartySignInAndUpCallback !== undefined &&
+                    _defaultPreBuiltUI.ThirdPartySignInAndUpCallback !== undefined
+            );
             assert(
                 ThirdPartySignInAndUpCallbackTheme !== undefined &&
-                    _default.ThirdPartySignInAndUpCallbackTheme !== undefined
+                    _defaultPreBuiltUI.ThirdPartySignInAndUpCallbackTheme !== undefined
             );
         });
     });
@@ -197,10 +214,9 @@ describe("Exports", function () {
                 init,
                 setLoginAttemptInfo,
                 signOut,
-                LinkClicked,
-                SignInUp,
-                SignInUpTheme,
             } = require("../../recipe/passwordless");
+            let _defaultPreBuiltUI = require("../../recipe/passwordless/preBuiltUI");
+            let { LinkClicked, SignInUp, SignInUpTheme } = require("../../recipe/passwordless/preBuiltUI");
 
             assert(consumeCode !== undefined && _default.consumeCode !== undefined);
             assert(createCode !== undefined && _default.createCode !== undefined);
@@ -215,9 +231,9 @@ describe("Exports", function () {
             assert(setLoginAttemptInfo !== undefined && _default.setLoginAttemptInfo !== undefined);
             assert(signOut !== undefined && _default.signOut !== undefined);
 
-            assert(LinkClicked !== undefined && _default.LinkClicked !== undefined);
-            assert(SignInUp !== undefined && _default.SignInUp !== undefined);
-            assert(SignInUpTheme !== undefined && _default.SignInUpTheme !== undefined);
+            assert(LinkClicked !== undefined && _defaultPreBuiltUI.LinkClicked !== undefined);
+            assert(SignInUp !== undefined && _defaultPreBuiltUI.SignInUp !== undefined);
+            assert(SignInUpTheme !== undefined && _defaultPreBuiltUI.SignInUpTheme !== undefined);
         });
     });
 
@@ -252,11 +268,14 @@ describe("Exports", function () {
                 Facebook,
                 Github,
                 Google,
+            } = require("../../recipe/thirdpartypasswordless");
+            let _defaultPreBuiltUI = require("../../recipe/thirdpartypasswordless/preBuiltUI");
+            let {
                 PasswordlessLinkClicked,
                 SignInAndUp,
                 SignInUpTheme,
                 ThirdPartySignInAndUpCallback,
-            } = require("../../recipe/thirdpartypasswordless");
+            } = require("../../recipe/thirdpartypasswordless/preBuiltUI");
 
             assert(init !== undefined && _default.init !== undefined);
             assert(
@@ -320,10 +339,13 @@ describe("Exports", function () {
             assert(Facebook !== undefined && _default.Facebook !== undefined);
             assert(Github !== undefined && _default.Github !== undefined);
             assert(Google !== undefined && _default.Google !== undefined);
-            assert(PasswordlessLinkClicked !== undefined && _default.PasswordlessLinkClicked !== undefined);
-            assert(SignInAndUp !== undefined && _default.SignInAndUp !== undefined);
-            assert(SignInUpTheme !== undefined && _default.SignInUpTheme !== undefined);
-            assert(ThirdPartySignInAndUpCallback !== undefined && _default.ThirdPartySignInAndUpCallback !== undefined);
+            assert(PasswordlessLinkClicked !== undefined && _defaultPreBuiltUI.PasswordlessLinkClicked !== undefined);
+            assert(SignInAndUp !== undefined && _defaultPreBuiltUI.SignInAndUp !== undefined);
+            assert(SignInUpTheme !== undefined && _defaultPreBuiltUI.SignInUpTheme !== undefined);
+            assert(
+                ThirdPartySignInAndUpCallback !== undefined &&
+                    _defaultPreBuiltUI.ThirdPartySignInAndUpCallback !== undefined
+            );
         });
     });
 });

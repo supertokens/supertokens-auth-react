@@ -143,3 +143,21 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
     static SignInAndUpTheme = SignInAndUpTheme;
     static SignInAndUpCallbackTheme = SignInAndUpCallbackTheme;
 }
+
+const canHandleRoute = ThirdPartyPreBuiltUI.canHandleRoute;
+const getRoutingComponent = ThirdPartyPreBuiltUI.getRoutingComponent;
+const getFeatures = ThirdPartyPreBuiltUI.getFeatures;
+const getReactRouterDomRoutes = ThirdPartyPreBuiltUI.getReactRouterDomRoutes;
+const SignInAndUp = ThirdPartyPreBuiltUI.SignInAndUp;
+const SignInAndUpCallback = ThirdPartyPreBuiltUI.SignInAndUpCallback;
+
+export {
+    canHandleRoute,
+    getRoutingComponent,
+    getFeatures,
+    getReactRouterDomRoutes,
+    SignInAndUp,
+    SignInAndUpCallback,
+    SignInAndUpCallbackTheme,
+    SignInAndUpTheme,
+};

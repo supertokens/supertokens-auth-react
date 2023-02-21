@@ -40,3 +40,24 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
 }
+declare const canHandleRoute: typeof EmailPasswordPreBuiltUI.canHandleRoute;
+declare const getRoutingComponent: typeof EmailPasswordPreBuiltUI.getRoutingComponent;
+declare const getFeatures: typeof EmailPasswordPreBuiltUI.getFeatures;
+declare const getFeatureComponent: typeof EmailPasswordPreBuiltUI.getFeatureComponent;
+declare const SignInAndUp: (
+    prop?: PropsWithChildren<{
+        redirectOnSessionExists?: boolean;
+        userContext?: any;
+    }>
+) => JSX.Element;
+declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
+export {
+    canHandleRoute,
+    getFeatures,
+    getRoutingComponent,
+    getFeatureComponent,
+    SignInAndUp,
+    ResetPasswordUsingToken,
+    ResetPasswordUsingTokenTheme,
+    SignInAndUpTheme,
+};

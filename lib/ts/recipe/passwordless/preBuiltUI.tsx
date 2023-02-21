@@ -141,3 +141,22 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
 
     static SignInUpTheme = SignInUpTheme;
 }
+
+const canHandleRoute = PasswordlessPreBuiltUI.canHandleRoute;
+const getRoutingComponent = PasswordlessPreBuiltUI.getRoutingComponent;
+const getFeatures = PasswordlessPreBuiltUI.getFeatures;
+const getFeatureComponent = PasswordlessPreBuiltUI.getFeatureComponent;
+const getReactRouterDomRoutes = PasswordlessPreBuiltUI.getReactRouterDomRoutes;
+const SignInUp = PasswordlessPreBuiltUI.SignInUp;
+const LinkClicked = PasswordlessPreBuiltUI.LinkClicked;
+
+export {
+    canHandleRoute,
+    getRoutingComponent,
+    getFeatures,
+    getFeatureComponent,
+    getReactRouterDomRoutes,
+    SignInUp,
+    LinkClicked,
+    SignInUpTheme,
+};

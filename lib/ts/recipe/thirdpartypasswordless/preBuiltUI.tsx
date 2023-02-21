@@ -163,3 +163,24 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     static SignInUpTheme = SignInUpTheme;
     static PasswordlessLinkClicked = (prop?: any) => this.getFeatureComponent("linkClickedScreen", prop);
 }
+
+const canHandleRoute = ThirdPartyPasswordlessPreBuiltUI.canHandleRoute;
+const getRoutingComponent = ThirdPartyPasswordlessPreBuiltUI.getRoutingComponent;
+const getFeatures = ThirdPartyPasswordlessPreBuiltUI.getFeatures;
+const getFeatureComponent = ThirdPartyPasswordlessPreBuiltUI.getFeatureComponent;
+const getReactRouterDomRoutes = ThirdPartyPasswordlessPreBuiltUI.getReactRouterDomRoutes;
+const SignInAndUp = ThirdPartyPasswordlessPreBuiltUI.SignInAndUp;
+const ThirdPartySignInAndUpCallback = ThirdPartyPasswordlessPreBuiltUI.ThirdPartySignInAndUpCallback;
+const PasswordlessLinkClicked = ThirdPartyPasswordlessPreBuiltUI.PasswordlessLinkClicked;
+
+export {
+    canHandleRoute,
+    getRoutingComponent,
+    getFeatures,
+    getFeatureComponent,
+    getReactRouterDomRoutes,
+    SignInAndUp,
+    ThirdPartySignInAndUpCallback,
+    PasswordlessLinkClicked,
+    SignInUpTheme,
+};

@@ -4,7 +4,7 @@ import { render, waitFor } from "@testing-library/react";
 import SuperTokens from "../../../../lib/ts/superTokens";
 import Session from "../../../../lib/ts/recipe/session/recipe";
 import Recipe from "../../../../lib/ts/recipe/thirdpartypasswordless/recipe";
-import { SignInAndUp } from "../../../../lib/ts/recipe/thirdpartypasswordless";
+import { SignInAndUp } from "../../../../lib/ts/recipe/thirdpartypasswordless/preBuiltUI";
 import { SessionContextType } from "../../../../lib/ts/recipe/session";
 
 const MockSession = {

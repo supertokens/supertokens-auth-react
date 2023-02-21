@@ -155,3 +155,26 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
     static SignInAndUpTheme = SignInAndUpTheme;
 }
+
+const canHandleRoute = ThirdPartyEmailPasswordPreBuiltUI.canHandleRoute;
+const getRoutingComponent = ThirdPartyEmailPasswordPreBuiltUI.getRoutingComponent;
+const getFeatures = ThirdPartyEmailPasswordPreBuiltUI.getFeatures;
+const getFeatureComponent = ThirdPartyEmailPasswordPreBuiltUI.getFeatureComponent;
+const getReactRouterDomRoutes = ThirdPartyEmailPasswordPreBuiltUI.getReactRouterDomRoutes;
+const ThirdPartySignInAndUpCallback = ThirdPartyEmailPasswordPreBuiltUI.ThirdPartySignInAndUpCallback;
+const ResetPasswordUsingToken = ThirdPartyEmailPasswordPreBuiltUI.ResetPasswordUsingToken;
+const SignInAndUp = ThirdPartyEmailPasswordPreBuiltUI.SignInAndUp;
+
+export {
+    canHandleRoute,
+    getRoutingComponent,
+    getFeatures,
+    getFeatureComponent,
+    getReactRouterDomRoutes,
+    ThirdPartySignInAndUpCallback,
+    ResetPasswordUsingToken,
+    SignInAndUp,
+    ThirdPartySignInAndUpCallbackTheme,
+    ResetPasswordUsingTokenTheme,
+    SignInAndUpTheme,
+};

@@ -143,3 +143,21 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
     static SignInAndUpTheme = SignInAndUpTheme;
 }
+
+const canHandleRoute = EmailPasswordPreBuiltUI.canHandleRoute;
+const getRoutingComponent = EmailPasswordPreBuiltUI.getRoutingComponent;
+const getFeatures = EmailPasswordPreBuiltUI.getFeatures;
+const getFeatureComponent = EmailPasswordPreBuiltUI.getFeatureComponent;
+const SignInAndUp = EmailPasswordPreBuiltUI.SignInAndUp;
+const ResetPasswordUsingToken = EmailPasswordPreBuiltUI.ResetPasswordUsingToken;
+
+export {
+    canHandleRoute,
+    getFeatures,
+    getRoutingComponent,
+    getFeatureComponent,
+    SignInAndUp,
+    ResetPasswordUsingToken,
+    ResetPasswordUsingTokenTheme,
+    SignInAndUpTheme,
+};

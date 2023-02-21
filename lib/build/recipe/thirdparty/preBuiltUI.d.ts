@@ -1,4 +1,6 @@
 import { RecipeRouter } from "../recipeRouter";
+import SignInAndUpTheme from "./components/themes/signInAndUp";
+import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import ThirdParty from "./recipe";
 import type { NormalisedConfig } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
@@ -39,3 +41,24 @@ export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
     static SignInAndUpTheme: import("react").FC<import("./types").SignInAndUpThemeProps>;
     static SignInAndUpCallbackTheme: (props: { config: NormalisedConfig }) => JSX.Element;
 }
+declare const canHandleRoute: typeof ThirdPartyPreBuiltUI.canHandleRoute;
+declare const getRoutingComponent: typeof ThirdPartyPreBuiltUI.getRoutingComponent;
+declare const getFeatures: typeof ThirdPartyPreBuiltUI.getFeatures;
+declare const getReactRouterDomRoutes: typeof ThirdPartyPreBuiltUI.getReactRouterDomRoutes;
+declare const SignInAndUp: (
+    prop?: PropsWithChildren<{
+        redirectOnSessionExists?: boolean;
+        userContext?: any;
+    }>
+) => JSX.Element;
+declare const SignInAndUpCallback: (prop?: any) => JSX.Element;
+export {
+    canHandleRoute,
+    getRoutingComponent,
+    getFeatures,
+    getReactRouterDomRoutes,
+    SignInAndUp,
+    SignInAndUpCallback,
+    SignInAndUpCallbackTheme,
+    SignInAndUpTheme,
+};
