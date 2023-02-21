@@ -1,8 +1,9 @@
 import * as React from "react";
-import Recipe from "../../../recipe";
-import { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps } from "../../../types";
-import { FeatureBaseProps } from "../../../../../types";
-import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import type { FeatureBaseProps } from "../../../../../types";
+import type Recipe from "../../../recipe";
+import type { ComponentOverrideMap } from "../../../types";
+import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps } from "../../../types";
+import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 export declare const useSuccessInAnotherTabChecker: (
     state: SignInUpState,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
@@ -31,6 +32,7 @@ export declare function useChildProps(
 export declare const SignInUpFeature: React.FC<
     FeatureBaseProps & {
         recipe: Recipe;
+        useComponentOverrides: () => ComponentOverrideMap;
     }
 >;
 export default SignInUpFeature;

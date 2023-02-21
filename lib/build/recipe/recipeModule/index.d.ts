@@ -1,4 +1,4 @@
-import { NormalisedConfig } from "./types";
+import type { NormalisedConfig } from "./types";
 export default abstract class RecipeModule<
     GetRedirectionURLContextType,
     Action,

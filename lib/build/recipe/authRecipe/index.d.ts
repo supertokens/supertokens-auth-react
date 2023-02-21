@@ -1,5 +1,5 @@
 import RecipeModule from "../recipeModule";
-import { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
+import type { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
 export default abstract class AuthRecipe<
     T,
     Action,

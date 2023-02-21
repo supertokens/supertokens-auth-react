@@ -13,14 +13,17 @@
  * under the License.
  */
 
-import { UserInput } from "./types";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
-import EmailPassword from "./recipe";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { getNormalisedUserContext } from "../../utils";
-import { User } from "../authRecipe/types";
-import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
+import EmailPassword from "./recipe";
+import { UserInput } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+
+import type { User } from "../authRecipe/types";
+import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/emailpassword";
 
 export default class Wrapper {
     static init(config?: UserInput) {

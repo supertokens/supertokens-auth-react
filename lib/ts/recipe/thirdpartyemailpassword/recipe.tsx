@@ -16,9 +16,20 @@
 /*
  * Imports.
  */
+import { OverrideableBuilder } from "supertokens-js-override";
+
+import { SSR_ERROR } from "../../constants";
+import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
-import {
+import EmailPassword from "../emailpassword/recipe";
+import ThirdParty from "../thirdparty/recipe";
+
+import RecipeImplementation from "./recipeImplementation";
+import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
+import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
+import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
+
+import type {
     Config,
     GetRedirectionURLContext,
     NormalisedConfig,
@@ -26,17 +37,9 @@ import {
     UserInput,
     PreAndPostAPIHookAction,
 } from "./types";
-import { isTest } from "../../utils";
-import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
-import { SSR_ERROR } from "../../constants";
-import RecipeModule from "../recipeModule";
-import EmailPassword from "../emailpassword/recipe";
-import ThirdParty from "../thirdparty/recipe";
-import RecipeImplementation from "./recipeImplementation";
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import { OverrideableBuilder } from "supertokens-js-override";
-import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
-import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
+import type { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
+import type RecipeModule from "../recipeModule";
+import type { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
 export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,

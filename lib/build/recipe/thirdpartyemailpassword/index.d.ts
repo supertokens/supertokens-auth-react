@@ -1,13 +1,13 @@
 /// <reference types="react" />
-import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import {
     RecipeInterface,
     EmailPasswordUserType as UserType,
     ThirdPartyUserType,
-    RecipeFunctionOptions,
 } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import { StateObject } from "supertokens-web-js/recipe/thirdparty";
+import { Apple, Google, Facebook, Github } from "../thirdparty/";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
+import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 export default class Wrapper {
     static init(
         config: UserInput

@@ -1,15 +1,17 @@
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import { OnHandleEventContext, PreAndPostAPIHookAction } from "../types";
-import { NormalisedAppInfo } from "../../../types";
-import {
+import EmailPasswordRecipeImplementation from "../../emailpassword/recipeImplementation";
+import ThirdPartyRecipeImplementation from "../../thirdparty/recipeImplementation";
+
+import DerivedEP from "./emailPasswordImplementation";
+import DerivedTP from "./thirdPartyImplementation";
+
+import type { NormalisedAppInfo } from "../../../types";
+import type {
     RecipeOnHandleEventFunction,
     RecipePostAPIHookFunction,
     RecipePreAPIHookFunction,
 } from "../../recipeModule/types";
-import EmailPasswordRecipeImplementation from "../../emailpassword/recipeImplementation";
-import ThirdPartyRecipeImplementation from "../../thirdparty/recipeImplementation";
-import DerivedEP from "./emailPasswordImplementation";
-import DerivedTP from "./thirdPartyImplementation";
+import type { OnHandleEventContext, PreAndPostAPIHookAction } from "../types";
+import type { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
 export default function getRecipeImplementation(recipeInput: {
     recipeId: string;

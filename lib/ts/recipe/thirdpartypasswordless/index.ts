@@ -12,21 +12,23 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import ThirdPartyPasswordless from "./recipe";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 
-import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import { getNormalisedUserContext } from "../../utils";
-import {
+import * as PasswordlessUtilFunctions from "../passwordless/utils";
+import { Apple, Google, Facebook, Github } from "../thirdparty/";
+import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
+
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
+import ThirdPartyPasswordless from "./recipe";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+
+import type { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
+import type {
     PasswordlessFlowType,
     PasswordlessUser,
     RecipeFunctionOptions,
-    RecipeInterface,
 } from "supertokens-web-js/recipe/thirdpartypasswordless";
-import { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
-import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
-import * as PasswordlessUtilFunctions from "../passwordless/utils";
-import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 
 export default class Wrapper {
     static init(config: UserInput) {

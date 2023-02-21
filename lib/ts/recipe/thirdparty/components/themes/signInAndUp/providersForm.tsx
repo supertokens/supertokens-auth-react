@@ -14,11 +14,13 @@
  */
 
 import { Fragment } from "react";
-import { SignInAndUpThemeProps } from "../../../types";
-import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { redirectToThirdPartyLogin } from "../../../utils";
 import STGeneralError from "supertokens-web-js/utils/error";
+
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useUserContext } from "../../../../../usercontext";
+import { redirectToThirdPartyLogin } from "../../../utils";
+
+import type { SignInAndUpThemeProps } from "../../../types";
 
 export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps> = (props) => {
     const userContext = useUserContext();

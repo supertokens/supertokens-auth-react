@@ -17,17 +17,19 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import STGeneralError from "supertokens-web-js/utils/error";
 
 import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
 import EmailLargeIcon from "../../../../../components/assets/emailLargeIcon";
-import { LinkSentThemeProps } from "../../../types";
-import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { ResendButton } from "./resendButton";
 import SMSLargeIcon from "../../../../../components/assets/smsLargeIcon";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
-import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { useUserContext } from "../../../../../usercontext";
-import STGeneralError from "supertokens-web-js/utils/error";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
+
+import { ResendButton } from "./resendButton";
+
+import type { LinkSentThemeProps } from "../../../types";
 
 const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
     const t = useTranslation();

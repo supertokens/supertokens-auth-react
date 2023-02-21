@@ -1,7 +1,7 @@
 /// <reference types="react" />
-import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
-import { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
-import { RecipeFeatureComponentMap } from "../../types";
+import type { RecipeFeatureComponentMap } from "../../types";
+import type { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
+import type NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 export declare abstract class RecipeRouter {
     private pathsToFeatureComponentWithRecipeIdMap?;
     private static reactRouterDom?;

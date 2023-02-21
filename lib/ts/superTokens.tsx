@@ -16,8 +16,12 @@
 /*
  * Imports.
  */
-import RecipeModule from "./recipe/recipeModule";
-import { GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } from "./types";
+import { CookieHandlerReference } from "supertokens-web-js/utils/cookieHandler";
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
+import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
+
+import { SSR_ERROR } from "./constants";
+import { saveCurrentLanguage, TranslationController } from "./translation/translationHelpers";
 import {
     appendQueryParamsToURL,
     appendTrailingSlashToURL,
@@ -30,17 +34,11 @@ import {
     redirectWithFullPageReload,
     redirectWithHistory,
 } from "./utils";
-import { SSR_ERROR } from "./constants";
-import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
-import {
-    saveCurrentLanguage,
-    TranslationController,
-    TranslationFunc,
-    TranslationStore,
-} from "./translation/translationHelpers";
-import { CookieHandlerReference } from "supertokens-web-js/utils/cookieHandler";
-import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
-import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
+
+import type RecipeModule from "./recipe/recipeModule";
+import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
+import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
+import type { GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } from "./types";
 
 /*
  * Class.

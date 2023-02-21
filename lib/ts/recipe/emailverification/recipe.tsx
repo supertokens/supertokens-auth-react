@@ -17,8 +17,21 @@
  * Imports.
  */
 
+import { OverrideableBuilder } from "supertokens-js-override";
+import { EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
+import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
+
+import { SSR_ERROR } from "../../constants";
+import { saveInvalidClaimRedirectPathInContext } from "../../utils";
 import RecipeModule from "../recipeModule";
-import {
+
+import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
+import RecipeImplementation from "./recipeImplementation";
+import { normaliseEmailVerificationFeature } from "./utils";
+
+import type {
     UserInput,
     Config,
     NormalisedConfig,
@@ -26,17 +39,8 @@ import {
     OnHandleEventContext,
     PreAndPostAPIHookAction,
 } from "./types";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
-import { saveInvalidClaimRedirectPathInContext } from "../../utils";
-import { normaliseEmailVerificationFeature } from "./utils";
-import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
-import { SSR_ERROR } from "../../constants";
-import RecipeImplementation from "./recipeImplementation";
-import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
-import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
-import { OverrideableBuilder } from "supertokens-js-override";
-import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
+import type { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
+import type { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,

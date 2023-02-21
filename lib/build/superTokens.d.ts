@@ -1,7 +1,8 @@
-import RecipeModule from "./recipe/recipeModule";
-import { GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } from "./types";
-import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
-import { TranslationController, TranslationFunc, TranslationStore } from "./translation/translationHelpers";
+import { TranslationController } from "./translation/translationHelpers";
+import type RecipeModule from "./recipe/recipeModule";
+import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
+import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
+import type { GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } from "./types";
 export default class SuperTokens {
     private static instance?;
     appInfo: NormalisedAppInfo;

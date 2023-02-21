@@ -1,4 +1,5 @@
-import { NormalisedAppInfo } from "../../types";
+import type { NormalisedAppInfo } from "../../types";
+import type { RecipeConfig as WebJSRecipeConfig } from "supertokens-web-js/recipe/recipeModule/types";
 
 export type RecipePreAPIHookContext<Action> = {
     requestInit: RequestInit;
@@ -36,8 +37,6 @@ export type Config<GetRedirectionURLContextType, Action, OnHandleEventContextTyp
     recipeId: string;
     appInfo: NormalisedAppInfo;
 } & UserInput<GetRedirectionURLContextType, Action, OnHandleEventContextType>;
-
-import { RecipeConfig as WebJSRecipeConfig } from "supertokens-web-js/recipe/recipeModule/types";
 
 export type NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType> =
     WebJSRecipeConfig<Action> & {

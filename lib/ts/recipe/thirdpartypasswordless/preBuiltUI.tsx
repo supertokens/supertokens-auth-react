@@ -1,16 +1,26 @@
-import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
-import { GetRedirectionURLContext, NormalisedConfig, OnHandleEventContext, PreAndPostAPIHookAction } from "./types";
-import { matchRecipeIdUsingQueryParams } from "../../utils";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import SignInAndUpFeature from "./components/features/signInAndUp";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
+
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import ThirdPartyPasswordless from "./recipe";
+import { matchRecipeIdUsingQueryParams } from "../../utils";
+import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { PasswordlessPreBuiltUI } from "../passwordless/preBuiltUI";
-import { ThirdPartyPreBuiltUI } from "../thirdparty/preBuiltUI";
 import { RecipeRouter } from "../recipeRouter";
+import { ThirdPartyPreBuiltUI } from "../thirdparty/preBuiltUI";
+
+import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import SignInAndUpFeature from "./components/features/signInAndUp";
 import SignInUpTheme from "./components/themes/signInUp";
-import { PropsWithChildren } from "react";
+import ThirdPartyPasswordless from "./recipe";
+
+import type {
+    GetRedirectionURLContext,
+    NormalisedConfig,
+    OnHandleEventContext,
+    PreAndPostAPIHookAction,
+} from "./types";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import type { PropsWithChildren } from "react";
 
 export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     constructor(private readonly recipeInstance: ThirdPartyPasswordless) {
@@ -54,7 +64,8 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
 
     getFeatureComponent = (
         componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
+        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signInUp") {
             if (props.redirectOnSessionExists !== false) {
@@ -68,14 +79,22 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
                         >
                             authRecipe={this.recipeInstance}
                             history={props.history}>
-                            <SignInAndUpFeature recipe={this.recipeInstance} {...props} />
+                            <SignInAndUpFeature
+                                recipe={this.recipeInstance}
+                                {...props}
+                                useComponentOverrides={useComponentOverrides}
+                            />
                         </AuthWidgetWrapper>
                     </UserContextWrapper>
                 );
             } else {
                 return (
                     <UserContextWrapper userContext={props.userContext}>
-                        <SignInAndUpFeature recipe={this.recipeInstance} {...props} />
+                        <SignInAndUpFeature
+                            recipe={this.recipeInstance}
+                            {...props}
+                            useComponentOverrides={useComponentOverrides}
+                        />
                     </UserContextWrapper>
                 );
             }
@@ -98,7 +117,9 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
         }
     };
 
-    getFeatures = (): RecipeFeatureComponentMap => {
+    getFeatures = (
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap => {
         let features: RecipeFeatureComponentMap = {};
 
         if (this.recipeInstance.passwordlessRecipe !== undefined) {
@@ -126,7 +147,7 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
-                component: (prop: any) => this.getFeatureComponent("signInUp", prop),
+                component: (prop: any) => this.getFeatureComponent("signInUp", prop, useComponentOverrides),
             };
         }
 

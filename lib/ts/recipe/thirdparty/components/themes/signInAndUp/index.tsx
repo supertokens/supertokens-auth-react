@@ -12,15 +12,17 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { hasFontDefined } from "../../../../../styles/styles";
-import { SignUpFooter } from "./signUpFooter";
-import { SignInAndUpThemeProps } from "../../../types";
-import { ThemeBase } from "../themeBase";
-import { ProvidersForm } from "./providersForm";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
-import GeneralError from "../../../../emailpassword/components/library/generalError";
+import { hasFontDefined } from "../../../../../styles/styles";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
+import { ThemeBase } from "../themeBase";
+
+import { ProvidersForm } from "./providersForm";
 import { SignInAndUpHeader } from "./signInAndUpHeader";
+import { SignUpFooter } from "./signUpFooter";
+
+import type { SignInAndUpThemeProps } from "../../../types";
 
 const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
     return (

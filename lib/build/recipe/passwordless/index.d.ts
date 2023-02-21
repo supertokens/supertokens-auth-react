@@ -1,8 +1,9 @@
 /// <reference types="react" />
+import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
-import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
+import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/passwordless";
+import type { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
 export default class Wrapper {
     static init(
         config: UserInput

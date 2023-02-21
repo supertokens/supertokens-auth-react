@@ -1,4 +1,4 @@
-import {
+import type {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
     UserInput as UserInputRecipeModule,

@@ -16,12 +16,13 @@
  * Imports.
  */
 import React from "react";
+
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { hasFontDefined } from "../../../../../styles/styles";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
-import { SignInUpProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
+
 import { CloseTabScreen } from "./closeTabScreen";
 import { EmailForm } from "./emailForm";
 import { EmailOrPhoneForm } from "./emailOrPhoneForm";
@@ -30,6 +31,8 @@ import { PhoneForm } from "./phoneForm";
 import { SignInUpHeader } from "./signInUpHeader";
 import { UserInputCodeForm } from "./userInputCodeForm";
 import { UserInputCodeFormHeader } from "./userInputCodeFormHeader";
+
+import type { SignInUpProps } from "../../../types";
 
 export enum SignInUpScreens {
     CloseTab,

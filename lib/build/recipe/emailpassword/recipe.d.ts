@@ -1,6 +1,5 @@
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction } from "../../types";
-import {
+import type {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
@@ -8,7 +7,8 @@ import {
     NormalisedConfig,
     UserInput,
 } from "./types";
-import { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import type { CreateRecipeFunction } from "../../types";
+import type { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 export default class EmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
     never,

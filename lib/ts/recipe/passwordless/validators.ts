@@ -13,9 +13,11 @@
  * under the License.
  */
 
-import { CountryData } from "intl-tel-input";
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
+
 import { getPhoneNumberUtils } from "./phoneNumberUtils";
+
+import type { CountryData } from "intl-tel-input";
 
 export function defaultEmailValidator(value: any): string | undefined {
     if (typeof value !== "string") {

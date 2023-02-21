@@ -1,8 +1,9 @@
 import { RecipeRouter } from "../recipeRouter";
 import ThirdParty from "./recipe";
-import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
-import { NormalisedConfig } from "./types";
-import { PropsWithChildren } from "react";
+import type { NormalisedConfig } from "./types";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import type { PropsWithChildren } from "react";
 export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
     constructor(recipeInstance: ThirdParty);
@@ -19,13 +20,14 @@ export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
         }
     ): JSX.Element;
     static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[];
-    getFeatures: () => RecipeFeatureComponentMap;
+    getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "signinup" | "signinupcallback",
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
-        }
+        },
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static SignInAndUp: (
         prop?: PropsWithChildren<{

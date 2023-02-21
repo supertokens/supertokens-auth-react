@@ -1,5 +1,5 @@
-import { CreateRecipeFunction } from "../../types";
-import {
+import AuthRecipe from "../authRecipe";
+import type {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
@@ -7,8 +7,8 @@ import {
     NormalisedConfig,
     UserInput,
 } from "./types";
-import AuthRecipe from "../authRecipe";
-import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import type { CreateRecipeFunction } from "../../types";
+import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,

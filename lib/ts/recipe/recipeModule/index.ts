@@ -14,9 +14,9 @@
  */
 
 import SuperTokens from "../../superTokens";
-
 import { appendQueryParamsToURL } from "../../utils";
-import { NormalisedConfig } from "./types";
+
+import type { NormalisedConfig } from "./types";
 
 /*
  * Class.

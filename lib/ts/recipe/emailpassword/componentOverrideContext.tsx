@@ -1,10 +1,7 @@
 import { createGenericComponentsOverrideContext } from "../../components/componentOverride/genericComponentOverrideContext";
-import { ComponentOverrideMap } from "./types";
 
-const [useContext, Provider, Consumer] = createGenericComponentsOverrideContext<ComponentOverrideMap>();
+import type { ComponentOverrideMap } from "./types";
 
-export {
-    useContext as useRecipeComponentOverrideContext,
-    Provider as RecipeComponentsOverrideContextProvider,
-    Consumer as RecipeComponentsOverrideContextConsumer,
-};
+const [useContext, Provider] = createGenericComponentsOverrideContext<ComponentOverrideMap>();
+
+export { useContext as useRecipeComponentOverrideContext, Provider as RecipeComponentsOverrideContextProvider };

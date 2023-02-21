@@ -1,9 +1,10 @@
-import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
-import ThirdPartyEmailPassword from "./recipe";
-import { RecipeRouter } from "../recipeRouter";
-import { PropsWithChildren } from "react";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
+import { RecipeRouter } from "../recipeRouter";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
+import ThirdPartyEmailPassword from "./recipe";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import type { PropsWithChildren } from "react";
 export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
     constructor(recipeInstance: ThirdPartyEmailPassword);
@@ -20,13 +21,14 @@ export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
         }
     ): JSX.Element;
     static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[];
-    getFeatures: () => RecipeFeatureComponentMap;
+    getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "signinup" | "signinupcallback" | "resetpassword",
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
-        }
+        },
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
     static ResetPasswordUsingToken: (prop?: any) => JSX.Element;

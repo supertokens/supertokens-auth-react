@@ -16,8 +16,9 @@
 /*
  * Imports.
  */
-import RecipeModule from "../recipeModule";
-import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
+import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
+
+import SuperTokens from "../../superTokens";
 import {
     popInvalidClaimRedirectPathFromContext,
     getLocalStorage,
@@ -25,13 +26,14 @@ import {
     removeFromLocalStorage,
     setLocalStorage,
 } from "../../utils";
-import { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
-import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
-import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
-import { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
+import RecipeModule from "../recipeModule";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
-import SuperTokens from "../../superTokens";
-import { SessionClaim } from "supertokens-web-js/recipe/session";
+
+import type { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
+import type { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
+import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
+import type { SessionClaim } from "supertokens-web-js/recipe/session";
+import type { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
 

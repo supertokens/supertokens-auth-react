@@ -17,9 +17,16 @@
  * Imports.
  */
 
+import { OverrideableBuilder } from "supertokens-js-override";
+
+import { SSR_ERROR } from "../../constants";
+import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
-import {
+
+import RecipeImplementation from "./recipeImplementation";
+import { normaliseThirdPartyConfig } from "./utils";
+
+import type {
     GetRedirectionURLContext,
     Config,
     NormalisedConfig,
@@ -27,13 +34,9 @@ import {
     OnHandleEventContext,
     UserInput,
 } from "./types";
-import { isTest } from "../../utils";
-import { normaliseThirdPartyConfig } from "./utils";
-import { SSR_ERROR } from "../../constants";
-import RecipeModule from "../recipeModule";
-import RecipeImplementation from "./recipeImplementation";
-import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
-import { OverrideableBuilder } from "supertokens-js-override";
+import type { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
+import type RecipeModule from "../recipeModule";
+import type { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 
 /*
  * Class.

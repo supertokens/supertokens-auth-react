@@ -12,10 +12,11 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { CloseTabScreenProps } from "../../../types";
 import CheckedRoundIcon from "../../../../../components/assets/checkedRoundIcon";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+
+import type { CloseTabScreenProps } from "../../../types";
 
 const PasswordlessCloseTabScreen: React.FC<CloseTabScreenProps> = () => {
     const t = useTranslation();

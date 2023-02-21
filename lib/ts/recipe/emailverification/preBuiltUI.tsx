@@ -1,14 +1,19 @@
-import { RecipeFeatureComponentMap } from "../../types";
-import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
-import { matchRecipeIdUsingQueryParams } from "../../utils";
-import { SessionAuth } from "../session";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
+
 import { UserContextContext } from "../../usercontext";
-import { EmailVerificationTheme } from "./components/themes/emailVerification";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
+import { matchRecipeIdUsingQueryParams } from "../../utils";
 import { RecipeRouter } from "../recipeRouter";
+import { SessionAuth } from "../session";
+
+import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import { default as EmailVerificationFeature } from "./components/features/emailVerification";
+import { EmailVerificationTheme } from "./components/themes/emailVerification";
+import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
 import EmailVerification from "./recipe";
+
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { RecipeFeatureComponentMap } from "../../types";
 
 export class EmailVerificationPreBuiltUI extends RecipeRouter {
     constructor(private readonly recipeInstance: EmailVerification) {
@@ -44,7 +49,9 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
         );
     }
 
-    getFeatures = (): RecipeFeatureComponentMap => {
+    getFeatures = (
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
         if (this.recipeInstance.config.disableDefaultUI !== true) {
             const normalisedFullPath = this.recipeInstance.config.appInfo.websiteBasePath.appendPath(
@@ -52,14 +59,18 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
-                component: (props: any) => this.getFeatureComponent("emailverification", props),
+                component: (props: any) => this.getFeatureComponent("emailverification", props, useComponentOverrides),
             };
         }
         return features;
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getFeatureComponent = (_: "emailverification", props: any): JSX.Element => {
+    getFeatureComponent = (
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        _: "emailverification",
+        props: any,
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): JSX.Element => {
         return (
             <UserContextWrapper userContext={props.userContext}>
                 <SessionAuth requireAuth={false} overrideGlobalClaimValidators={() => []}>
@@ -80,6 +91,7 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
                             return (
                                 <EmailVerificationFeature
                                     recipe={this.recipeInstance}
+                                    useComponentOverrides={useComponentOverrides}
                                     {...{
                                         ...props,
                                         // We do this to make sure it does not add another provider

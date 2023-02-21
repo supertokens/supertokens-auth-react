@@ -1,17 +1,27 @@
-import { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
-import { GetRedirectionURLContext, OnHandleEventContext, PreAndPostAPIHookAction, NormalisedConfig } from "./types";
-import { matchRecipeIdUsingQueryParams } from "../../utils";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
-import SignInAndUpFeature from "./components/features/signInAndUp";
-import ResetPasswordUsingTokenFeature from "./components/features/resetPasswordUsingToken";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
+
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import EmailPassword from "./recipe";
+import { matchRecipeIdUsingQueryParams } from "../../utils";
+import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeRouter } from "../recipeRouter";
-import { PropsWithChildren } from "react";
-import SignInAndUpTheme from "./components/themes/signInAndUp";
+
+import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import ResetPasswordUsingTokenFeature from "./components/features/resetPasswordUsingToken";
+import SignInAndUpFeature from "./components/features/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
+import SignInAndUpTheme from "./components/themes/signInAndUp";
+import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
+import EmailPassword from "./recipe";
+
+import type {
+    GetRedirectionURLContext,
+    OnHandleEventContext,
+    PreAndPostAPIHookAction,
+    NormalisedConfig,
+} from "./types";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import type { PropsWithChildren } from "react";
 
 export class EmailPasswordPreBuiltUI extends RecipeRouter {
     private constructor(private readonly recipeInstance: EmailPassword) {
@@ -46,7 +56,9 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
         return RecipeRouter.getRecipeRoutes(reactRouterDom, EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance());
     }
 
-    getFeatures = (): RecipeFeatureComponentMap => {
+    getFeatures = (
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
         if (this.recipeInstance.config.signInAndUpFeature.disableDefaultUI !== true) {
             const normalisedFullPath = this.recipeInstance.config.appInfo.websiteBasePath.appendPath(
@@ -54,7 +66,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
-                component: (props) => this.getFeatureComponent("signinup", props as any),
+                component: (props) => this.getFeatureComponent("signinup", props as any, useComponentOverrides),
             };
         }
 
@@ -64,7 +76,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
-                component: (props) => this.getFeatureComponent("resetpassword", props as any),
+                component: (props) => this.getFeatureComponent("resetpassword", props as any, useComponentOverrides),
             };
         }
 
@@ -73,7 +85,8 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
 
     getFeatureComponent = (
         componentName: "signinup" | "resetpassword",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
+        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         const instance = EmailPassword.getInstanceOrThrow();
         if (componentName === "signinup") {
@@ -88,21 +101,33 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
                         >
                             authRecipe={instance}
                             history={props.history}>
-                            <SignInAndUpFeature recipe={instance} {...props} />
+                            <SignInAndUpFeature
+                                recipe={instance}
+                                {...props}
+                                useComponentOverrides={useComponentOverrides}
+                            />
                         </AuthWidgetWrapper>
                     </UserContextWrapper>
                 );
             } else {
                 return (
                     <UserContextWrapper userContext={props.userContext}>
-                        <SignInAndUpFeature recipe={instance} {...props} />
+                        <SignInAndUpFeature
+                            recipe={instance}
+                            {...props}
+                            useComponentOverrides={useComponentOverrides}
+                        />
                     </UserContextWrapper>
                 );
             }
         } else if (componentName === "resetpassword") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
-                    <ResetPasswordUsingTokenFeature recipe={instance} {...props} />
+                    <ResetPasswordUsingTokenFeature
+                        recipe={instance}
+                        {...props}
+                        useComponentOverrides={useComponentOverrides}
+                    />
                 </UserContextWrapper>
             );
         } else {

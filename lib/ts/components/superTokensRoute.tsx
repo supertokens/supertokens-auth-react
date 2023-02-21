@@ -17,8 +17,9 @@
  * Imports.
  */
 
-import { RecipeRouter } from "../recipe/recipeRouter";
 import { RoutingComponent } from "./routingComponent";
+
+import type { RecipeRouter } from "../recipe/recipeRouter";
 
 /*
  * Component.

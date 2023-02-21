@@ -1,13 +1,13 @@
 /// <reference types="react" />
-import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
-import {
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import type { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
+import type {
     PasswordlessFlowType,
     PasswordlessUser,
     RecipeFunctionOptions,
-    RecipeInterface,
 } from "supertokens-web-js/recipe/thirdpartypasswordless";
-import { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
 export default class Wrapper {
     static init(
         config: UserInput

@@ -1,5 +1,5 @@
-import { UserInput as WebJSInputType, RecipeEvent } from "supertokens-web-js/recipe/session/types";
-import { ClaimValidationError } from "supertokens-web-js/recipe/session";
+import type { ClaimValidationError } from "supertokens-web-js/recipe/session";
+import type { UserInput as WebJSInputType, RecipeEvent } from "supertokens-web-js/recipe/session/types";
 export declare type RecipeEventWithSessionContext = RecipeEvent & {
     sessionContext: SessionContextUpdate;
 };

@@ -1,11 +1,13 @@
 import React from "react";
-import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
+
 import { RoutingComponent } from "../../components/routingComponent";
 import { getSuperTokensRoutesForReactRouterDom } from "../../components/superTokensRoute";
 import { getSuperTokensRoutesForReactRouterDomV6 } from "../../components/superTokensRouteV6";
-import { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
 import { getCurrentNormalisedUrlPath } from "../../utils";
-import { RecipeFeatureComponentMap } from "../../types";
+
+import type { RecipeFeatureComponentMap } from "../../types";
+import type { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
+import type NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 
 export abstract class RecipeRouter {
     private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;

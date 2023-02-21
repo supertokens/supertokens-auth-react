@@ -1,6 +1,7 @@
 import React from "react";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { RecipeRouter } from "../recipe/recipeRouter";
+
+import type { RecipeRouter } from "../recipe/recipeRouter";
 
 export function RoutingComponent(props: { recipeRoutesInstance: RecipeRouter; path: string }): JSX.Element | null {
     const stInstance = props.recipeRoutesInstance;

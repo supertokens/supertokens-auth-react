@@ -17,9 +17,18 @@
  * Imports.
  */
 
+import { OverrideableBuilder } from "supertokens-js-override";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+
+import { SSR_ERROR } from "../../constants";
+import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
-import {
+
+import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
+import RecipeImplementation from "./recipeImplementation";
+import { normaliseEmailPasswordConfig } from "./utils";
+
+import type {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
@@ -27,15 +36,9 @@ import {
     NormalisedConfig,
     UserInput,
 } from "./types";
-import { isTest } from "../../utils";
-import { normaliseEmailPasswordConfig } from "./utils";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
-import { SSR_ERROR } from "../../constants";
-import RecipeModule from "../recipeModule";
-import RecipeImplementation from "./recipeImplementation";
-import { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
-import { OverrideableBuilder } from "supertokens-js-override";
+import type { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
+import type RecipeModule from "../recipeModule";
+import type { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
 /*
  * Class.

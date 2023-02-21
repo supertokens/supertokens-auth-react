@@ -75,7 +75,7 @@ describe("SuperTokens Example Basic tests", function () {
 
             // redirected to /auth
             await waitForSTElement(page);
-            assert.strictEqual(page.url(), websiteDomain + "/auth?redirectToPath=");
+            assert.strictEqual(page.url(), websiteDomain + "/auth/?redirectToPath=");
 
             // Go to separate sign up page
             const link = await waitForSTElement(page, "#signupLink");

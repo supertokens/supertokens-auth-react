@@ -12,20 +12,22 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import ThirdPartyEmailPassword from "./recipe";
-
-import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import { Apple, Google, Facebook, Github } from "../thirdparty/";
-import { getNormalisedUserContext } from "../../utils";
 import {
     RecipeInterface,
     EmailPasswordUserType as UserType,
     ThirdPartyUserType,
-    RecipeFunctionOptions,
 } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+
+import { getNormalisedUserContext } from "../../utils";
+import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
-import { StateObject } from "supertokens-web-js/recipe/thirdparty";
+
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
+import ThirdPartyEmailPassword from "./recipe";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+
+import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
+import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
 export default class Wrapper {
     static init(config: UserInput) {

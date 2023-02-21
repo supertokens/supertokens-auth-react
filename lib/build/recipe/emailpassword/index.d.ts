@@ -1,8 +1,9 @@
 /// <reference types="react" />
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import { User } from "../authRecipe/types";
-import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import type { User } from "../authRecipe/types";
+import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/emailpassword";
 export default class Wrapper {
     static init(
         config?: UserInput

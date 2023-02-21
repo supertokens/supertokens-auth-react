@@ -17,8 +17,16 @@
  * Imports.
  */
 
-import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
-import {
+import { OverrideableBuilder } from "supertokens-js-override";
+
+import { SSR_ERROR } from "../../constants";
+import { isTest } from "../../utils";
+import AuthRecipe from "../authRecipe";
+
+import RecipeImplementation from "./recipeImplementation";
+import { normalisePasswordlessConfig } from "./utils";
+
+import type {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
@@ -26,14 +34,9 @@ import {
     NormalisedConfig,
     UserInput,
 } from "./types";
-import { isTest } from "../../utils";
-import { normalisePasswordlessConfig } from "./utils";
-import RecipeModule from "../recipeModule";
-import RecipeImplementation from "./recipeImplementation";
-import { OverrideableBuilder } from "supertokens-js-override";
-import AuthRecipe from "../authRecipe";
-import { SSR_ERROR } from "../../constants";
-import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import type { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
+import type RecipeModule from "../recipeModule";
+import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 
 /*
  * Class.
