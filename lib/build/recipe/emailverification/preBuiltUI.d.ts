@@ -7,7 +7,7 @@ import type { RecipeFeatureComponentMap } from "../../types";
 export declare class EmailVerificationPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
     constructor(recipeInstance: EmailVerification);
-    static instance: EmailVerificationPreBuiltUI;
+    static instance?: EmailVerificationPreBuiltUI;
     static getInstanceOrInitAndGetInstance(): EmailVerificationPreBuiltUI;
     static canHandleRoute(): boolean;
     static getRoutingComponent(): JSX.Element | null;
@@ -20,6 +20,7 @@ export declare class EmailVerificationPreBuiltUI extends RecipeRouter {
         props: any,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
+    static reset(): void;
     static EmailVerification: (props?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
 }

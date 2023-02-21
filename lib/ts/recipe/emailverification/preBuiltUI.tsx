@@ -2,7 +2,7 @@ import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import { UserContextContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { RecipeRouter } from "../recipeRouter";
 import { SessionAuth } from "../session";
 
@@ -19,7 +19,7 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
     constructor(private readonly recipeInstance: EmailVerification) {
         super();
     }
-    static instance: EmailVerificationPreBuiltUI;
+    static instance?: EmailVerificationPreBuiltUI;
 
     static getInstanceOrInitAndGetInstance(): EmailVerificationPreBuiltUI {
         if (EmailVerificationPreBuiltUI.instance === undefined) {
@@ -105,6 +105,15 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
             </UserContextWrapper>
         );
     };
+
+    static reset(): void {
+        if (!isTest()) {
+            return;
+        }
+
+        EmailVerificationPreBuiltUI.instance = undefined;
+        return;
+    }
 
     static EmailVerification = (props?: any) =>
         EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("emailverification", props);

@@ -8,11 +8,14 @@ import type { PropsWithChildren } from "react";
 export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
     private constructor();
-    static instance: EmailPasswordPreBuiltUI;
+    static instance?: EmailPasswordPreBuiltUI;
     static getInstanceOrInitAndGetInstance(recipeInstance?: EmailPassword): EmailPasswordPreBuiltUI;
     static canHandleRoute(): boolean;
     static getRoutingComponent(): JSX.Element | null;
-    static getFeatures(recipeInstance?: EmailPassword): RecipeFeatureComponentMap;
+    static getFeatures(
+        recipeInstance?: EmailPassword,
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
+    ): RecipeFeatureComponentMap;
     static getFeatureComponent(
         componentName: "signinup" | "resetpassword",
         props: FeatureBaseProps & {
@@ -30,6 +33,7 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
         },
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
+    static reset(): void;
     static SignInAndUp: (
         prop?: PropsWithChildren<{
             redirectOnSessionExists?: boolean;

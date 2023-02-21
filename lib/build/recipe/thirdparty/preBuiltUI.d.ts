@@ -9,11 +9,14 @@ import type { PropsWithChildren } from "react";
 export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
     constructor(recipeInstance: ThirdParty);
-    static instance: ThirdPartyPreBuiltUI;
+    static instance?: ThirdPartyPreBuiltUI;
     static getInstanceOrInitAndGetInstance(recipeInstance?: ThirdParty): ThirdPartyPreBuiltUI;
     static canHandleRoute(): boolean;
     static getRoutingComponent(): JSX.Element | null;
-    static getFeatures(recipeInstance?: ThirdParty): RecipeFeatureComponentMap;
+    static getFeatures(
+        recipeInstance?: ThirdParty,
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
+    ): RecipeFeatureComponentMap;
     static getFeatureComponent(
         componentName: "signinup" | "signinupcallback",
         props: FeatureBaseProps & {
@@ -31,6 +34,7 @@ export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
         },
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
+    static reset(): void;
     static SignInAndUp: (
         prop?: PropsWithChildren<{
             redirectOnSessionExists?: boolean;

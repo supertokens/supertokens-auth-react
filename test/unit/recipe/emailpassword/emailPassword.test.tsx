@@ -49,6 +49,7 @@ describe("EmailPassword", function () {
 
     afterEach(async function () {
         EmailPassword.reset();
+        EmailPasswordPreBuiltUI.reset();
     });
 
     it("Initializing EmailPassword with empty configs", async function () {

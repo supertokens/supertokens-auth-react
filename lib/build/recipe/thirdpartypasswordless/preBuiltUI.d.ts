@@ -7,7 +7,7 @@ import type { PropsWithChildren } from "react";
 export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
     constructor(recipeInstance: ThirdPartyPasswordless);
-    static instance: ThirdPartyPasswordlessPreBuiltUI;
+    static instance?: ThirdPartyPasswordlessPreBuiltUI;
     static getInstanceOrInitAndGetInstance(): ThirdPartyPasswordlessPreBuiltUI;
     static canHandleRoute(): boolean;
     static getRoutingComponent(): JSX.Element | null;
@@ -29,6 +29,7 @@ export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
+    static reset(): void;
     static SignInAndUp: (
         prop?: PropsWithChildren<{
             redirectOnSessionExists?: boolean;

@@ -1,7 +1,7 @@
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 import { EmailPasswordPreBuiltUI } from "../emailpassword/preBuiltUI";
@@ -28,7 +28,7 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     constructor(private readonly recipeInstance: ThirdPartyEmailPassword) {
         super();
     }
-    static instance: ThirdPartyEmailPasswordPreBuiltUI;
+    static instance?: ThirdPartyEmailPasswordPreBuiltUI;
 
     static getInstanceOrInitAndGetInstance(): ThirdPartyEmailPasswordPreBuiltUI {
         if (ThirdPartyEmailPasswordPreBuiltUI.instance === undefined) {
@@ -70,14 +70,14 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
         if (this.recipeInstance.emailPasswordRecipe !== undefined) {
             features = {
                 ...features,
-                ...EmailPasswordPreBuiltUI.getFeatures(this.recipeInstance.emailPasswordRecipe),
+                ...EmailPasswordPreBuiltUI.getFeatures(this.recipeInstance.emailPasswordRecipe, useComponentOverrides),
             };
         }
 
         if (this.recipeInstance.thirdPartyRecipe !== undefined) {
             features = {
                 ...features,
-                ...ThirdPartyPreBuiltUI.getFeatures(this.recipeInstance.thirdPartyRecipe),
+                ...ThirdPartyPreBuiltUI.getFeatures(this.recipeInstance.thirdPartyRecipe, useComponentOverrides),
             };
         }
 
@@ -146,6 +146,15 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
             throw new Error("Should not come here...");
         }
     };
+
+    static reset(): void {
+        if (!isTest()) {
+            return;
+        }
+
+        ThirdPartyEmailPasswordPreBuiltUI.instance = undefined;
+        return;
+    }
 
     static ThirdPartySignInAndUpCallback = (prop?: any) => this.getFeatureComponent("signinupcallback", prop);
     static ResetPasswordUsingToken = (prop?: any) => this.getFeatureComponent("resetpassword", prop);

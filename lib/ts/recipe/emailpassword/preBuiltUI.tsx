@@ -1,7 +1,7 @@
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeRouter } from "../recipeRouter";
 
@@ -27,7 +27,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
     private constructor(private readonly recipeInstance: EmailPassword) {
         super();
     }
-    static instance: EmailPasswordPreBuiltUI;
+    static instance?: EmailPasswordPreBuiltUI;
 
     static getInstanceOrInitAndGetInstance(recipeInstance?: EmailPassword): EmailPasswordPreBuiltUI {
         if (EmailPasswordPreBuiltUI.instance === undefined) {
@@ -43,8 +43,13 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
     static getRoutingComponent(): JSX.Element | null {
         return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getRoutingComponent();
     }
-    static getFeatures(recipeInstance?: EmailPassword): RecipeFeatureComponentMap {
-        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatures();
+    static getFeatures(
+        recipeInstance?: EmailPassword,
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap {
+        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatures(
+            useComponentOverrides
+        );
     }
     static getFeatureComponent(
         componentName: "signinup" | "resetpassword",
@@ -134,6 +139,15 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
             throw new Error("Should never come here.");
         }
     };
+
+    static reset(): void {
+        if (!isTest()) {
+            return;
+        }
+
+        EmailPasswordPreBuiltUI.instance = undefined;
+        return;
+    }
 
     static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", prop);

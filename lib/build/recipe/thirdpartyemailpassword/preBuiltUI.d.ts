@@ -9,7 +9,7 @@ import type { PropsWithChildren } from "react";
 export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
     constructor(recipeInstance: ThirdPartyEmailPassword);
-    static instance: ThirdPartyEmailPasswordPreBuiltUI;
+    static instance?: ThirdPartyEmailPasswordPreBuiltUI;
     static getInstanceOrInitAndGetInstance(): ThirdPartyEmailPasswordPreBuiltUI;
     static canHandleRoute(): boolean;
     static getRoutingComponent(): JSX.Element | null;
@@ -31,6 +31,7 @@ export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
         },
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
+    static reset(): void;
     static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
     static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
     static SignInAndUp: (

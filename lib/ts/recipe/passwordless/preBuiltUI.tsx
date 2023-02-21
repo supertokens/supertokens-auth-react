@@ -1,7 +1,7 @@
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeRouter } from "../recipeRouter";
 
@@ -25,7 +25,7 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
     constructor(private readonly recipeInstance: Passwordless) {
         super();
     }
-    static instance: PasswordlessPreBuiltUI;
+    static instance?: PasswordlessPreBuiltUI;
 
     static getInstanceOrInitAndGetInstance(recipeInstance?: Passwordless): PasswordlessPreBuiltUI {
         if (PasswordlessPreBuiltUI.instance === undefined) {
@@ -133,6 +133,15 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
             throw new Error("Should never come here.");
         }
     };
+
+    static reset(): void {
+        if (!isTest()) {
+            return;
+        }
+
+        PasswordlessPreBuiltUI.instance = undefined;
+        return;
+    }
 
     static SignInUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         this.getFeatureComponent("signInUp", prop);

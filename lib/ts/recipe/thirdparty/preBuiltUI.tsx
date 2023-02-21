@@ -1,7 +1,7 @@
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeRouter } from "../recipeRouter";
 
@@ -27,7 +27,7 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
     constructor(private readonly recipeInstance: ThirdParty) {
         super();
     }
-    static instance: ThirdPartyPreBuiltUI;
+    static instance?: ThirdPartyPreBuiltUI;
 
     static getInstanceOrInitAndGetInstance(recipeInstance?: ThirdParty): ThirdPartyPreBuiltUI {
         if (ThirdPartyPreBuiltUI.instance === undefined) {
@@ -43,8 +43,11 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
     static getRoutingComponent(): JSX.Element | null {
         return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getRoutingComponent();
     }
-    static getFeatures(recipeInstance?: ThirdParty): RecipeFeatureComponentMap {
-        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatures();
+    static getFeatures(
+        recipeInstance?: ThirdParty,
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap {
+        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatures(useComponentOverrides);
     }
     static getFeatureComponent(
         componentName: "signinup" | "signinupcallback",
@@ -135,6 +138,15 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
             throw new Error("Should never come here");
         }
     };
+
+    static reset(): void {
+        if (!isTest()) {
+            return;
+        }
+
+        ThirdPartyPreBuiltUI.instance = undefined;
+        return;
+    }
 
     static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", prop);
