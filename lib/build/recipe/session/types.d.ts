@@ -40,14 +40,7 @@ export declare type SessionContextType =
       };
 export declare type AccessDeniedThemeProps = {
     config: NormalisedSessionConfig;
-    denialInfo?:
-        | ClaimValidationError
-        | {
-              validatorId: string;
-              reason?: {
-                  message: string;
-              };
-          };
+    denialInfo?: ClaimValidationError;
 };
 export declare type ConfigType = InputType & {
     recipeId: string;

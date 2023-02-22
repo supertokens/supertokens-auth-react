@@ -1,13 +1,9 @@
 /// <reference types="react" />
-import {
-    BooleanClaim,
-    ClaimValidationResult,
-    PrimitiveArrayClaim,
-    PrimitiveClaim,
-    RecipeInterface,
-    SessionClaim,
-} from "supertokens-web-js/recipe/session";
+import { ClaimValidationResult, RecipeInterface, SessionClaim } from "supertokens-web-js/recipe/session";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
+import { BooleanClaim } from "../../claims/booleanClaim";
+import { PrimitiveArrayClaim } from "../../claims/primitiveArrayClaim";
+import { PrimitiveClaim } from "../../claims/primitiveClaim";
 import SessionContext from "./sessionContext";
 import { InputType, SessionContextType } from "./types";
 export default class SessionAPIWrapper {

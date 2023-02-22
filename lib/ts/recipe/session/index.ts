@@ -13,16 +13,12 @@
  * under the License.
  */
 
-import {
-    BooleanClaim,
-    ClaimValidationResult,
-    PrimitiveArrayClaim,
-    PrimitiveClaim,
-    RecipeInterface,
-    SessionClaim,
-} from "supertokens-web-js/recipe/session";
+import { ClaimValidationResult, RecipeInterface, SessionClaim } from "supertokens-web-js/recipe/session";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 
+import { BooleanClaim } from "../../claims/booleanClaim";
+import { PrimitiveArrayClaim } from "../../claims/primitiveArrayClaim";
+import { PrimitiveClaim } from "../../claims/primitiveClaim";
 import { getNormalisedUserContext } from "../../utils";
 
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
