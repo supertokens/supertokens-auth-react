@@ -30,11 +30,13 @@ import {
 } from "../../utils";
 import RecipeModule from "../recipeModule";
 
+import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import AccessDeniedScreen from "./components/features/accessDeniedScreen";
 import { normaliseSessionConfig, getFailureRedirectionInfo, getSuccessRedirectionPath } from "./utils";
 
 import type { ConfigType, NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { FeatureBaseProps } from "../../types";
 import type { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
@@ -260,26 +262,29 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         );
     };
 
-    getFeatures = (): RecipeFeatureComponentMap => {
+    getFeatures = (
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
         const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
             new NormalisedURLPath("/access-denied")
         );
         features[normalisedFullPath.getAsStringDangerous()] = {
             matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-            component: (props) => this.getFeatureComponent("accessDenied", props as any),
+            component: (props) => this.getFeatureComponent("accessDenied", props as any, useComponentOverrides),
         };
         return features;
     };
 
     getFeatureComponent = (
         componentName: "accessDenied",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
+        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         const featureComponents = {
             accessDenied: (
                 <UserContextWrapper userContext={props.userContext}>
-                    <AccessDeniedScreen recipe={this} {...props} />
+                    <AccessDeniedScreen recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
                 </UserContextWrapper>
             ),
         };

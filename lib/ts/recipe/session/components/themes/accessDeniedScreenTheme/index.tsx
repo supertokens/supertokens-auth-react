@@ -7,25 +7,31 @@ import { useTranslation } from "../../../../../translation/translationContext";
 import { ThemeBase } from "../themeBase";
 
 import type { AccessDeniedThemeProps } from "../../../types";
+import type { FC } from "react";
 
-export const AccessDeniedTheme = withOverride<React.FC<AccessDeniedThemeProps>>(
-    "SessionAccessDenied",
-    function AccessDeniedThemeScreen(props) {
-        const t = useTranslation();
-        const hasFont = hasFontDefined(props.config.rootStyle);
+const AccessDeniedScreen: FC<AccessDeniedThemeProps> = (props) => {
+    const t = useTranslation();
+    return (
+        <Fragment>
+            <div data-supertokens="headerTitle">{t("ACCESS_DENIED")}</div>
+            <div data-supertokens="headerTitle">
+                <div>Claim ID: {props.denialInfo?.validatorId}</div>
+                <div>Reason: {props.denialInfo?.reason}</div>
+            </div>
+        </Fragment>
+    );
+};
 
-        return (
-            <ThemeBase
-                loadDefaultFont={!hasFont}
-                userStyles={[props.config.rootStyle, props.config.accessDeniedScreen.style]}>
-                <Fragment>
-                    <div data-supertokens="headerTitle">{t("ACCESS_DENIED")}</div>
-                    <div data-supertokens="headerTitle">
-                        <div>Claim ID: {props.denialInfo?.validatorId}</div>
-                        <div>Reason: {props.denialInfo?.reason}</div>
-                    </div>
-                </Fragment>
-            </ThemeBase>
-        );
-    }
-);
+const AccessDeniedThemeWithOverride = withOverride("SessionAccessDenied", AccessDeniedScreen);
+
+export const AccessDeniedTheme: React.FC<AccessDeniedThemeProps> = (props) => {
+    const hasFont = hasFontDefined(props.config.rootStyle);
+
+    return (
+        <ThemeBase
+            loadDefaultFont={!hasFont}
+            userStyles={[props.config.rootStyle, props.config.accessDeniedScreen.style]}>
+            <AccessDeniedThemeWithOverride {...props} />
+        </ThemeBase>
+    );
+};
