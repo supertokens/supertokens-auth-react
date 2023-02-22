@@ -11,12 +11,16 @@ import type { FC } from "react";
 
 const AccessDeniedScreen: FC<AccessDeniedThemeProps> = (props) => {
     const t = useTranslation();
+    const { validatorId, reason = {} } = props.denialInfo || {};
+    const failureReason =
+        typeof reason === "string" ? reason : typeof reason.message === "string" ? reason.message : null;
+
     return (
         <Fragment>
             <div data-supertokens="headerTitle">{t("ACCESS_DENIED")}</div>
             <div data-supertokens="headerTitle">
-                <div>Claim ID: {props.denialInfo?.validatorId}</div>
-                <div>Reason: {props.denialInfo?.reason}</div>
+                <div>Claim ID: {validatorId}</div>
+                <div>Reason: {failureReason}</div>
             </div>
         </Fragment>
     );
