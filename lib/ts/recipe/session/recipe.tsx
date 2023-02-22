@@ -185,8 +185,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                 );
                 return await SuperTokens.getInstanceOrThrow().redirectToUrl(
                     await SuperTokens.getInstanceOrThrow().getRedirectUrl({
-                        action: "SESSION_VERIFICATION_FAILURE",
-                        showSignIn: false,
+                        action: "SESSION_CLAIM_VERIFICATION_FAILURE",
                     }),
                     history
                 );

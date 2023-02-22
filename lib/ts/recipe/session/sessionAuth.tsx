@@ -187,8 +187,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 if (failureRedirectInfo.accessForbidden) {
                     return await SuperTokens.getInstanceOrThrow().redirectToUrl(
                         await SuperTokens.getInstanceOrThrow().getRedirectUrl({
-                            action: "SESSION_VERIFICATION_FAILURE",
-                            showSignIn: false,
+                            action: "SESSION_CLAIM_VERIFICATION_FAILURE",
                         }),
                         history
                     );
