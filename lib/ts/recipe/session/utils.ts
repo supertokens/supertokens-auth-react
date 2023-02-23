@@ -48,34 +48,37 @@ export const getFailureRedirectionInfo = async ({
     userContext,
 }: {
     invalidClaims: ClaimValidationError[];
-    overrideGlobalClaimValidators?:
-        | ((globalClaimValidators: SessionClaimValidator[], userContext: any) => SessionClaimValidator[])
-        | undefined;
+    overrideGlobalClaimValidators?: (
+        globalClaimValidators: SessionClaimValidator[],
+        userContext: any
+    ) => SessionClaimValidator[];
     userContext: any;
 }): Promise<{ accessForbidden: boolean; redirectPath?: string; failedClaim?: ClaimValidationError }> => {
-    const globalValidatorsMap = getGlobalClaimValidators({
+    const invalidClaimsMap = invalidClaims.reduce((map, validator) => {
+        map[validator.validatorId] = validator;
+        return map;
+    }, {} as Record<string, ClaimValidationError>);
+    const globalValidators = getGlobalClaimValidators({
         overrideGlobalClaimValidators,
         userContext,
-    }).reduce((map, validator) => {
-        map[validator.id] = validator;
-        return map;
-    }, {} as Record<string, SessionClaimValidator>);
+    }) as SessionClaimValidator[];
     let failedClaimWithoutCallback: ClaimValidationError | undefined;
-
-    for (const claim of invalidClaims) {
-        const validator = globalValidatorsMap[claim.validatorId];
-        const failureCallback = validator.onFailureRedirection;
-        if (failureCallback) {
-            const redirectPath = await failureCallback({ reason: claim.reason, userContext });
-            if (redirectPath !== undefined) {
-                return {
-                    accessForbidden: false,
-                    redirectPath,
-                    failedClaim: claim,
-                };
+    for (const validator of globalValidators) {
+        const claim = invalidClaimsMap[validator.id];
+        if (claim !== undefined) {
+            const failureCallback = validator.onFailureRedirection;
+            if (failureCallback) {
+                const redirectPath = await failureCallback({ reason: claim.reason, userContext });
+                if (redirectPath !== undefined) {
+                    return {
+                        accessForbidden: false,
+                        redirectPath,
+                        failedClaim: claim,
+                    };
+                }
+            } else if (failedClaimWithoutCallback === undefined) {
+                failedClaimWithoutCallback = claim;
             }
-        } else if (failedClaimWithoutCallback === undefined) {
-            failedClaimWithoutCallback = claim;
         }
     }
 

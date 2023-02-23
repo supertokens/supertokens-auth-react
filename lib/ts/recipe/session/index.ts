@@ -29,6 +29,7 @@ import { InputType, SessionContextType } from "./types";
 import { useClaimValue as useClaimValueFunc } from "./useClaimValue";
 import useSessionContextFunc from "./useSessionContext";
 
+import type { PropsWithChildren } from "react";
 export default class SessionAPIWrapper {
     static useSessionContext = useSessionContextFunc;
     static useClaimValue = useClaimValueFunc;
@@ -108,6 +109,9 @@ export default class SessionAPIWrapper {
     }
 
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
+
+    static AccessDenied = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
+        Session.getInstanceOrThrow().getFeatureComponent("accessDenied", prop);
 }
 
 const useSessionContext = SessionAPIWrapper.useSessionContext;
@@ -127,12 +131,14 @@ const signOut = SessionAPIWrapper.signOut;
 const validateClaims = SessionAPIWrapper.validateClaims;
 const getInvalidClaimsFromResponse = SessionAPIWrapper.getInvalidClaimsFromResponse;
 const getClaimValue = SessionAPIWrapper.getClaimValue;
+const AccessDenied = SessionAPIWrapper.AccessDenied;
 const SessionComponentsOverrideProvider = SessionAPIWrapper.ComponentsOverrideProvider;
 
 export {
     useSessionContext,
     useClaimValue,
     SessionAuth,
+    AccessDenied,
     SessionComponentsOverrideProvider,
     init,
     getUserId,

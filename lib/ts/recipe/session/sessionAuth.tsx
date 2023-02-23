@@ -228,12 +228,12 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     });
                     setContext({ ...event.sessionContext, loading: false, invalidClaims });
 
-                    const failureRedirectInfo = await getFailureRedirectionInfo({
-                        invalidClaims,
-                        overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
-                        userContext,
-                    });
                     if (props.doRedirection !== false) {
+                        const failureRedirectInfo = await getFailureRedirectionInfo({
+                            invalidClaims,
+                            overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
+                            userContext,
+                        });
                         if (failureRedirectInfo.redirectPath) {
                             return await SuperTokens.getInstanceOrThrow().redirectToUrl(
                                 failureRedirectInfo.redirectPath,

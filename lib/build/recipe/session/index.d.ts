@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import { ClaimValidationResult, RecipeInterface, SessionClaim } from "supertokens-web-js/recipe/session";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import { BooleanClaim } from "../../claims/booleanClaim";
@@ -6,6 +5,7 @@ import { PrimitiveArrayClaim } from "../../claims/primitiveArrayClaim";
 import { PrimitiveClaim } from "../../claims/primitiveClaim";
 import SessionContext from "./sessionContext";
 import { InputType, SessionContextType } from "./types";
+import type { PropsWithChildren } from "react";
 export default class SessionAPIWrapper {
     static useSessionContext: () => SessionContextType;
     static useClaimValue: <T>(claim: SessionClaim<T>) =>
@@ -18,7 +18,7 @@ export default class SessionAPIWrapper {
               value: T | undefined;
           };
     static SessionAuth: import("react").FC<
-        import("react").PropsWithChildren<
+        PropsWithChildren<
             import("./sessionAuth").SessionAuthProps & {
                 userContext?: any;
             }
@@ -52,10 +52,16 @@ export default class SessionAPIWrapper {
     }): Promise<ClaimValidationError[]>;
     static getClaimValue(input: { claim: SessionClaim<unknown>; userContext?: any }): Promise<unknown>;
     static ComponentsOverrideProvider: import("react").FC<
-        import("react").PropsWithChildren<{
+        PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
         }>
     >;
+    static AccessDenied: (
+        prop?: PropsWithChildren<{
+            redirectOnSessionExists?: boolean;
+            userContext?: any;
+        }>
+    ) => JSX.Element;
 }
 declare const useSessionContext: () => SessionContextType;
 declare const useClaimValue: <T>(claim: SessionClaim<T>) =>
@@ -68,7 +74,7 @@ declare const useClaimValue: <T>(claim: SessionClaim<T>) =>
           value: T | undefined;
       };
 declare const SessionAuth: import("react").FC<
-    import("react").PropsWithChildren<
+    PropsWithChildren<
         import("./sessionAuth").SessionAuthProps & {
             userContext?: any;
         }
@@ -88,8 +94,14 @@ declare const signOut: typeof SessionAPIWrapper.signOut;
 declare const validateClaims: typeof SessionAPIWrapper.validateClaims;
 declare const getInvalidClaimsFromResponse: typeof SessionAPIWrapper.getInvalidClaimsFromResponse;
 declare const getClaimValue: typeof SessionAPIWrapper.getClaimValue;
+declare const AccessDenied: (
+    prop?: PropsWithChildren<{
+        redirectOnSessionExists?: boolean;
+        userContext?: any;
+    }>
+) => JSX.Element;
 declare const SessionComponentsOverrideProvider: import("react").FC<
-    import("react").PropsWithChildren<{
+    PropsWithChildren<{
         components: import("./types").ComponentOverrideMap;
     }>
 >;
@@ -97,6 +109,7 @@ export {
     useSessionContext,
     useClaimValue,
     SessionAuth,
+    AccessDenied,
     SessionComponentsOverrideProvider,
     init,
     getUserId,

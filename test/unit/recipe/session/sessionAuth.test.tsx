@@ -484,10 +484,7 @@ describe("SessionAuth", () => {
             });
 
             const result = render(
-                <SessionAuth
-                    overrideGlobalClaimValidators={() =>
-                        [{ id: "st-test-claim", onFailureRedirection: () => "/test-redirect" }] as any[]
-                    }>
+                <SessionAuth>
                     <MockSessionConsumer />
                 </SessionAuth>
             );
@@ -542,11 +539,7 @@ describe("SessionAuth", () => {
             });
 
             const result = render(
-                <SessionAuth
-                    doRedirection={false}
-                    overrideGlobalClaimValidators={() =>
-                        [{ id: "st-test-claim", onFailureRedirection: () => "/test-redirect" }] as any[]
-                    }>
+                <SessionAuth doRedirection={false}>
                     <MockSessionConsumer />
                 </SessionAuth>
             );
@@ -593,10 +586,7 @@ describe("SessionAuth", () => {
             });
 
             const result = render(
-                <SessionAuth
-                    overrideGlobalClaimValidators={() =>
-                        [{ id: "st-test-claim", onFailureRedirection: () => "/test-redirect" }] as any[]
-                    }>
+                <SessionAuth>
                     <MockSessionConsumer />
                 </SessionAuth>
             );
@@ -634,11 +624,7 @@ describe("SessionAuth", () => {
             });
 
             const result = render(
-                <SessionAuth
-                    doRedirection={false}
-                    overrideGlobalClaimValidators={() =>
-                        [{ id: "st-test-claim", onFailureRedirection: () => "/test-redirect" }] as any[]
-                    }>
+                <SessionAuth doRedirection={false}>
                     <MockSessionConsumer />
                 </SessionAuth>
             );

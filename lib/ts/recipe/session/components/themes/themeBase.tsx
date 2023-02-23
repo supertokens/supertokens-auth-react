@@ -16,6 +16,8 @@
 import React from "react";
 import { Fragment } from "react";
 
+import styles from "./styles.css";
+
 import type { PropsWithChildren } from "react";
 
 export const ThemeBase: React.FC<
@@ -30,7 +32,10 @@ export const ThemeBase: React.FC<
                     rel="stylesheet"
                     type="text/css"></link>
             )}
-            <style>{userStyles.join("\n")}</style>
+            <style>
+                {styles}
+                {userStyles.join("\n")}
+            </style>
         </Fragment>
     );
 };

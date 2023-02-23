@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-literals */
-import React, { Fragment } from "react";
+import React from "react";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { hasFontDefined } from "../../../../../styles/styles";
@@ -16,13 +16,17 @@ const AccessDeniedScreen: FC<AccessDeniedThemeProps> = (props) => {
         typeof reason === "string" ? reason : typeof reason.message === "string" ? reason.message : null;
 
     return (
-        <Fragment>
+        <div data-supertokens="center">
             <div data-supertokens="headerTitle">{t("ACCESS_DENIED")}</div>
             <div data-supertokens="headerTitle">
-                <div>Claim ID: {validatorId}</div>
-                <div>Reason: {failureReason}</div>
+                <div>
+                    {t("CLAIM_ID")}: {validatorId}
+                </div>
+                <div>
+                    {t("REASON")}: {failureReason}
+                </div>
             </div>
-        </Fragment>
+        </div>
     );
 };
 
