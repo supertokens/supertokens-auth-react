@@ -28,7 +28,7 @@ export const ThemeBase: React.FC<
             {children}
             {loadDefaultFont && (
                 <link
-                    href="//fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700"
+                    href="//fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap"
                     rel="stylesheet"
                     type="text/css"></link>
             )}
