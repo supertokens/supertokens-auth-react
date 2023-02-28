@@ -13,21 +13,25 @@
  * under the License.
  */
 
-@import "../../../../styles/styles.css";
+import { useTranslation } from "../../../../translation/translationContext";
 
-[data-supertokens~="center"] {
-    text-align: center;
-}
+/*
+ * Props.
+ */
 
-[data-supertokens~="center"] {
-    display: "flex";
-    width: "116px";
-    height: "42px";
-    background-color: "#000000";
-    border-radius: "10px";
-    cursor: "pointer";
-    align-items: "center";
-    justify-content: "center";
-    color: "#ffffff";
-    font-weight: "bold";
+type ButtonProps = {
+    onClick: () => void;
+};
+
+/*
+ * Component.
+ */
+
+export function LogoutButton({ onClick }: ButtonProps): JSX.Element {
+    const t = useTranslation();
+    return (
+        <button data-supertokens="logoutButton" onClick={onClick}>
+            {t("SIGN_OUT")}
+        </button>
+    );
 }

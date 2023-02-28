@@ -13,21 +13,24 @@
  * under the License.
  */
 
-@import "../../../../styles/styles.css";
+import HeavyArrowLeftIcon from "../../../../components/assets/heavyArrowLeftIcon";
 
-[data-supertokens~="center"] {
-    text-align: center;
-}
+/*
+ * Props.
+ */
 
-[data-supertokens~="center"] {
-    display: "flex";
-    width: "116px";
-    height: "42px";
-    background-color: "#000000";
-    border-radius: "10px";
-    cursor: "pointer";
-    align-items: "center";
-    justify-content: "center";
-    color: "#ffffff";
-    font-weight: "bold";
+type ButtonProps = {
+    onClick?: () => void;
+};
+
+/*
+ * Component.
+ */
+
+export function BackButton({ onClick }: ButtonProps): JSX.Element {
+    return (
+        <button onClick={onClick} data-supertokens="backButton backButtonCommon">
+            <HeavyArrowLeftIcon color="rgb(var(--palette-textTitle))" />
+        </button>
+    );
 }

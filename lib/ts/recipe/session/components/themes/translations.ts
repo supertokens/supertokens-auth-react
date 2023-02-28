@@ -5,7 +5,6 @@ export const defaultTranslationsSession = {
         ...defaultTranslationsCommon.en,
 
         ACCESS_DENIED: "Access denied",
-        CLAIM_ID: "Claim ID",
-        REASON: "Reason",
+        SIGN_OUT: "SIGN OUT",
     },
 };
