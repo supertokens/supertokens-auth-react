@@ -19,15 +19,33 @@
     text-align: center;
 }
 
-[data-supertokens~="center"] {
-    display: "flex";
-    width: "116px";
-    height: "42px";
-    background-color: "#000000";
-    border-radius: "10px";
-    cursor: "pointer";
-    align-items: "center";
-    justify-content: "center";
-    color: "#ffffff";
-    font-weight: "bold";
+[data-supertokens~="buttons"] {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+[data-supertokens~="logoutButton"] {
+    display: flex;
+    padding: 8px 12px;
+    background-color: #000000;
+    border-radius: 10px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+[data-supertokens~="backButtonCommon"] {
+    width: 16px;
+    height: 13px;
+}
+
+[data-supertokens~="backButton"] {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    padding: 0px;
 }
