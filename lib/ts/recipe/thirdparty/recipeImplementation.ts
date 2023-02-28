@@ -79,7 +79,7 @@ export default function getRecipeImplementation(recipeInput: {
                 state: {
                     ...input.state,
                     rid: recipeInput.recipeId,
-                    redirectToPath: getRedirectToPathFromURL(),
+                    redirectToPath: getRedirectToPathFromURL({ includeQueryParams: true }),
                 },
                 userContext: input.userContext,
             });

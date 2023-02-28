@@ -221,7 +221,7 @@ export function useChildProps(
                         successRedirectContext: {
                             action: "SUCCESS",
                             isNewUser: result.createdNewUser,
-                            redirectToPath: getRedirectToPathFromURL(),
+                            redirectToPath: getRedirectToPathFromURL({ includeQueryParams: true }),
                         },
                     },
                     userContext,
@@ -309,7 +309,7 @@ function getModifiedRecipeImplementation(
                     lastResend: Date.now(),
                     contactMethod,
                     contactInfo,
-                    redirectToPath: getRedirectToPathFromURL(),
+                    redirectToPath: getRedirectToPathFromURL({ includeQueryParams: true }),
                 };
 
                 await setLoginAttemptInfo({
