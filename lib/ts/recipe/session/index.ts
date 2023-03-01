@@ -22,6 +22,7 @@ import { PrimitiveClaim } from "../../claims/primitiveClaim";
 import { getNormalisedUserContext } from "../../utils";
 
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
+import { AccessDeniedTheme } from "./components/themes/accessDeniedScreenTheme";
 import Session from "./recipe";
 import SessionAuthWrapper from "./sessionAuth";
 import SessionContext from "./sessionContext";
@@ -138,6 +139,7 @@ export {
     useSessionContext,
     useClaimValue,
     SessionAuth,
+    AccessDeniedTheme,
     AccessDenied,
     SessionComponentsOverrideProvider,
     init,

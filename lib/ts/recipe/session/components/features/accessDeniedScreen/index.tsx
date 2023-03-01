@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { getLocalStorage } from "../../../../../utils";
 import { AccessDeniedTheme } from "../../themes/accessDeniedScreenTheme";
 import { defaultTranslationsSession } from "../../themes/translations";
 
@@ -17,16 +16,6 @@ const AccessDeniedScreen: React.FC<
     }
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
-
-    useEffect(() => {
-        const retrieveAndLogAccessDenialInfo = async () => {
-            const denialInfo = await getLocalStorage("supertokens-access-denial-info");
-            if (typeof denialInfo === "string") {
-                console.warn(JSON.parse(denialInfo));
-            }
-        };
-        void retrieveAndLogAccessDenialInfo();
-    }, []);
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>

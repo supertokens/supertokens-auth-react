@@ -179,10 +179,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
             });
 
             if (failureRedirectInfo.accessForbidden) {
-                await setLocalStorage(
-                    "supertokens-access-denial-info",
-                    JSON.stringify(failureRedirectInfo.failedClaim)
-                );
+                console.warn(failureRedirectInfo.failedClaim);
                 return await SuperTokens.getInstanceOrThrow().redirectToUrl(
                     await SuperTokens.getInstanceOrThrow().getRedirectUrl({
                         action: "SESSION_CLAIM_VERIFICATION_FAILURE",

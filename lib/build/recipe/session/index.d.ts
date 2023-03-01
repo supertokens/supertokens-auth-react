@@ -3,6 +3,7 @@ import { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/
 import { BooleanClaim } from "../../claims/booleanClaim";
 import { PrimitiveArrayClaim } from "../../claims/primitiveArrayClaim";
 import { PrimitiveClaim } from "../../claims/primitiveClaim";
+import { AccessDeniedTheme } from "./components/themes/accessDeniedScreenTheme";
 import SessionContext from "./sessionContext";
 import { InputType, SessionContextType } from "./types";
 import type { PropsWithChildren } from "react";
@@ -109,6 +110,7 @@ export {
     useSessionContext,
     useClaimValue,
     SessionAuth,
+    AccessDeniedTheme,
     AccessDenied,
     SessionComponentsOverrideProvider,
     init,
