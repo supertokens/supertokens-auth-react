@@ -62,7 +62,7 @@ export function getURLHash(): string {
     return WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHash().substr(1);
 }
 
-export function getRedirectToPathFromURL({ includeQueryParams } = { includeQueryParams: false }): string | undefined {
+export function getRedirectToPathFromURL({ includeQueryParams } = { includeQueryParams: true }): string | undefined {
     const param = getQueryParams("redirectToPath");
     if (param === null) {
         return undefined;
@@ -73,7 +73,7 @@ export function getRedirectToPathFromURL({ includeQueryParams } = { includeQuery
             if (includeQueryParams === false) {
                 return normalisedURLPath;
             }
-            const pathQueryParams = param.split("?")[1] ? `?${param.split("?")[1]}` : "";
+            const pathQueryParams = param.split("?")[1] !== undefined ? `?${param.split("?")[1]}` : "";
             return normalisedURLPath + pathQueryParams;
         } catch {
             return undefined;

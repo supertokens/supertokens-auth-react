@@ -75,7 +75,7 @@ const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLCon
                             successRedirectContext: {
                                 action: "SUCCESS",
                                 isNewUser: false,
-                                redirectToPath: getRedirectToPathFromURL({ includeQueryParams: true }),
+                                redirectToPath: getRedirectToPathFromURL(),
                             },
                         },
                         userContext,

@@ -117,7 +117,7 @@ export function useChildProps(
                 successRedirectContext: {
                     action: "SUCCESS",
                     isNewUser: false,
-                    redirectToPath: getRedirectToPathFromURL({ includeQueryParams: true }),
+                    redirectToPath: getRedirectToPathFromURL(),
                 },
             },
             userContext,
@@ -132,7 +132,7 @@ export function useChildProps(
                 successRedirectContext: {
                     action: "SUCCESS",
                     isNewUser: true,
-                    redirectToPath: getRedirectToPathFromURL({ includeQueryParams: true }),
+                    redirectToPath: getRedirectToPathFromURL(),
                 },
             },
             userContext,
