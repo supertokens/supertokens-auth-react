@@ -57,6 +57,7 @@ export default class SessionAPIWrapper {
             components: import("./types").ComponentOverrideMap;
         }>
     >;
+    static AccessDeniedTheme: import("react").FC<import("./types").AccessDeniedThemeProps>;
     static AccessDenied: (
         prop?: PropsWithChildren<{
             redirectOnSessionExists?: boolean;

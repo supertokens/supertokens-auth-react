@@ -179,7 +179,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
             });
 
             if (failureRedirectInfo.accessForbidden) {
-                console.warn(failureRedirectInfo.failedClaim);
+                console.warn({
+                    message: "Redirecting to access denied screen",
+                    claimValidationError: failureRedirectInfo.failedClaim,
+                });
                 return await SuperTokens.getInstanceOrThrow().redirectToUrl(
                     await SuperTokens.getInstanceOrThrow().getRedirectUrl({
                         action: "SESSION_CLAIM_VERIFICATION_FAILURE",

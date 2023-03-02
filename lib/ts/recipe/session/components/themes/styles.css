@@ -37,15 +37,3 @@
     color: #ffffff;
     font-weight: bold;
 }
-
-[data-supertokens~="backButtonCommon"] {
-    width: 16px;
-    height: 13px;
-}
-
-[data-supertokens~="backButton"] {
-    cursor: pointer;
-    border: none;
-    background-color: transparent;
-    padding: 0px;
-}

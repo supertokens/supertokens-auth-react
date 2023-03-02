@@ -111,6 +111,7 @@ export default class SessionAPIWrapper {
 
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 
+    static AccessDeniedTheme = AccessDeniedTheme;
     static AccessDenied = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         Session.getInstanceOrThrow().getFeatureComponent("accessDenied", prop);
 }
