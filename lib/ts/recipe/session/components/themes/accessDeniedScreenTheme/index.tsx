@@ -1,39 +1,26 @@
 /* eslint-disable react/jsx-no-literals */
 import React from "react";
-import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
+import ErrorRoundIcon from "../../../../../components/assets/errorRoundIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { useUserContext } from "../../../../../usercontext";
-import BackButton from "../../../../emailpassword/components/library/backButton";
-import Session from "../../../recipe";
+import BackButton from "../../library/backButton";
+import LogoutButton from "../../library/logoutButton";
 import { ThemeBase } from "../themeBase";
 
 import type { AccessDeniedThemeProps } from "../../../types";
 import type { FC } from "react";
 
-type LogoutButtonProps = {
-    onClick: () => void;
-};
-
-export function LogoutButton({ onClick }: LogoutButtonProps): JSX.Element {
-    const t = useTranslation();
-    return (
-        <button data-supertokens="logoutButton" onClick={onClick}>
-            {t("SIGN_OUT")}
-        </button>
-    );
-}
-
-const AccessDeniedScreen: FC<AccessDeniedThemeProps> = () => {
+const AccessDeniedScreen: FC<AccessDeniedThemeProps> = (props) => {
     const userContext = useUserContext();
     const t = useTranslation();
 
     const onLogout = async () => {
         try {
-            await Session.getInstanceOrThrow().signOut({ userContext });
+            await props.recipe.signOut({ userContext });
         } catch (error) {
         } finally {
             await SuperTokens.getInstanceOrThrow().redirectToAuth({
@@ -44,17 +31,21 @@ const AccessDeniedScreen: FC<AccessDeniedThemeProps> = () => {
     };
 
     const onBackButtonClicked = () => {
-        try {
-            WindowHandlerReference.getReferenceOrThrow().windowHandler.getWindowUnsafe().history.back();
-        } catch (error) {}
+        throw "Not implemented";
     };
 
     return (
         <div data-supertokens="center">
-            <div data-supertokens="headerTitle">{t("ACCESS_DENIED")}</div>
-            <div data-supertokens="buttons">
-                <BackButton onClick={onBackButtonClicked} />
-                <LogoutButton onClick={onLogout} />
+            <div data-supertokens="container">
+                <div data-supertokens="row">
+                    <ErrorRoundIcon />
+                    <div data-supertokens="headerTitle">{t("ACCESS_DENIED")}</div>
+                    <div data-supertokens="divider"></div>
+                    <div data-supertokens="buttonsGroup">
+                        <LogoutButton onClick={onLogout} />
+                        <BackButton onClick={onBackButtonClicked} />
+                    </div>
+                </div>
             </div>
         </div>
     );

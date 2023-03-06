@@ -23,14 +23,10 @@ import type NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDoma
 import type NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import type { WindowHandlerInput } from "supertokens-web-js/utils/windowHandler/types";
 
-export type GetRedirectionURLContext =
-    | {
-          action: "TO_AUTH";
-          showSignIn?: boolean;
-      }
-    | {
-          action: "SESSION_CLAIM_VERIFICATION_FAILURE";
-      };
+export type GetRedirectionURLContext = {
+    action: "TO_AUTH";
+    showSignIn?: boolean;
+};
 
 export type ValidationSuccessCallback =
     | (({ userContext }: { userContext: any }) => Promise<string | undefined> | string | undefined)

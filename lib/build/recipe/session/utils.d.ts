@@ -13,18 +13,6 @@ export declare const getFailureRedirectionInfo: ({
         | undefined;
     userContext: any;
 }) => Promise<{
-    accessForbidden: boolean;
     redirectPath?: string;
     failedClaim?: ClaimValidationError;
 }>;
-export declare const getSuccessRedirectionPath: ({
-    invalidClaims,
-    overrideGlobalClaimValidators,
-    userContext,
-}: {
-    invalidClaims: ClaimValidationError[];
-    overrideGlobalClaimValidators?:
-        | ((globalClaimValidators: SessionClaimValidator[], userContext: any) => SessionClaimValidator[])
-        | undefined;
-    userContext: any;
-}) => Promise<string | undefined>;

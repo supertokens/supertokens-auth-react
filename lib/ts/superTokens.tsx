@@ -294,10 +294,6 @@ export default class SuperTokens {
             const redirectUrl = this.appInfo.websiteBasePath.getAsStringDangerous();
             return appendTrailingSlashToURL(redirectUrl);
         }
-        if (context.action === "SESSION_CLAIM_VERIFICATION_FAILURE") {
-            const redirectUrl = this.appInfo.websiteBasePath.getAsStringDangerous() + "/access-denied";
-            return appendTrailingSlashToURL(redirectUrl);
-        }
         throw new Error("Should never come here: unexpected redirection context");
     }
 

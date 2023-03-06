@@ -20,7 +20,7 @@ const AccessDeniedScreen: React.FC<
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper defaultStore={defaultTranslationsSession}>
-                <AccessDeniedTheme config={props.recipe.config} />
+                <AccessDeniedTheme config={props.recipe.config} history={props.history} recipe={props.recipe} />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );

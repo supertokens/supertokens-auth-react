@@ -4,8 +4,8 @@ import RecipeModule from "../recipeModule";
 import type { ConfigType, NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { FeatureBaseProps } from "../../types";
-import type { CreateRecipeFunction, RecipeFeatureComponentMap } from "../../types";
+import type { FeatureBaseProps, RecipeFeatureComponentMap } from "../../types";
+import type { CreateRecipeFunction } from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import type { SessionClaim } from "supertokens-web-js/recipe/session";
 export default class Session extends RecipeModule<unknown, unknown, unknown, NormalisedSessionConfig> {
@@ -55,7 +55,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
      */
     getDefaultRedirectionURL: () => Promise<string>;
     private notifyListeners;
-    getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
+    getFeatures: () => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "accessDenied",
         props: FeatureBaseProps & {

@@ -53,7 +53,7 @@ export const getFailureRedirectionInfo = async ({
         userContext: any
     ) => SessionClaimValidator[];
     userContext: any;
-}): Promise<{ accessForbidden: boolean; redirectPath?: string; failedClaim?: ClaimValidationError }> => {
+}): Promise<{ redirectPath?: string; failedClaim?: ClaimValidationError }> => {
     const invalidClaimsMap = invalidClaims.reduce((map, validator) => {
         map[validator.validatorId] = validator;
         return map;
@@ -62,7 +62,7 @@ export const getFailureRedirectionInfo = async ({
         overrideGlobalClaimValidators,
         userContext,
     }) as SessionClaimValidator[];
-    let failedClaimWithoutCallback: ClaimValidationError | undefined;
+
     for (const validator of globalValidators) {
         const claim = invalidClaimsMap[validator.id];
         if (claim !== undefined) {
@@ -71,49 +71,15 @@ export const getFailureRedirectionInfo = async ({
                 const redirectPath = await failureCallback({ reason: claim.reason, userContext });
                 if (redirectPath !== undefined) {
                     return {
-                        accessForbidden: false,
                         redirectPath,
                         failedClaim: claim,
                     };
                 }
-            } else if (failedClaimWithoutCallback === undefined) {
-                failedClaimWithoutCallback = claim;
             }
         }
     }
 
     return {
-        accessForbidden: failedClaimWithoutCallback !== undefined,
-        failedClaim: failedClaimWithoutCallback,
+        redirectPath: undefined,
     };
-};
-
-export const getSuccessRedirectionPath = async ({
-    invalidClaims,
-    overrideGlobalClaimValidators,
-    userContext,
-}: {
-    invalidClaims: ClaimValidationError[];
-    overrideGlobalClaimValidators?: (
-        globalClaimValidators: SessionClaimValidator[],
-        userContext: any
-    ) => SessionClaimValidator[];
-    userContext: any;
-}): Promise<string | undefined> => {
-    const globalValidators: SessionClaimValidator[] = getGlobalClaimValidators({
-        overrideGlobalClaimValidators,
-        userContext,
-    });
-    const invalidClaimsIDs = invalidClaims.map(({ validatorId }) => validatorId);
-    let succeededClaimValidatorRedirectString;
-    for (const validator of globalValidators) {
-        if (!invalidClaimsIDs.includes(validator.id)) {
-            const redirectPath = await validator.onSuccessRedirection?.({ userContext });
-            if (redirectPath !== undefined) {
-                succeededClaimValidatorRedirectString = redirectPath;
-                break;
-            }
-        }
-    }
-    return succeededClaimValidatorRedirectString;
 };

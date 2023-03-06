@@ -14,6 +14,7 @@
  */
 
 import type { AccessDeniedTheme } from "./components/themes/accessDeniedScreenTheme";
+import type Session from "./recipe";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type { FeatureBaseConfig, NormalisedAppInfo, NormalisedBaseConfig } from "../../types";
 import type { NormalisedConfig } from "../recipeModule/types";
@@ -51,6 +52,7 @@ export type SessionContextUpdate = {
 export type LoadedSessionContext = {
     loading: false;
     invalidClaims: ClaimValidationError[];
+    accessDenied?: boolean;
 } & SessionContextUpdate;
 
 export type SessionContextType =
@@ -60,6 +62,8 @@ export type SessionContextType =
       };
 
 export type AccessDeniedThemeProps = {
+    recipe: Session;
+    history: any;
     config: NormalisedSessionConfig;
 };
 

@@ -23,13 +23,15 @@ import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { useOnMountAPICall } from "../../utils";
 
+import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import AccessDeniedScreen from "./components/features/accessDeniedScreen";
 import Session from "./recipe";
 import SessionContext from "./sessionContext";
-import { getFailureRedirectionInfo, getSuccessRedirectionPath } from "./utils";
+import { getFailureRedirectionInfo } from "./utils";
 
 import type { LoadedSessionContext, RecipeEventWithSessionContext, SessionContextType } from "./types";
+import type { SessionClaimValidator } from "../../types";
 import type { PropsWithChildren } from "react";
-import type { SessionClaimValidator } from "supertokens-web-js/recipe/session";
 
 export type SessionAuthProps = {
     /**
@@ -41,6 +43,7 @@ export type SessionAuthProps = {
      */
     doRedirection?: boolean;
 
+    useDefaultAccessDeniedScreen?: boolean;
     onSessionExpired?: () => void;
     overrideGlobalClaimValidators?: (
         globalClaimValidators: SessionClaimValidator[],
@@ -73,7 +76,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             history = historyHookRef.current();
         }
     } catch {
-        // We catch and ignore errors here, because if this is may throw if
+        // We catch and ignore errors here, because this is may throw if
         // the app is using react-router-dom but added a session auth outside of the router.
     }
 
@@ -172,34 +175,25 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     redirectToLogin();
                     return;
                 }
-
-                const failureRedirectInfo = await getFailureRedirectionInfo({
-                    invalidClaims: toSetContext.invalidClaims,
-                    overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
-                    userContext,
-                });
-                if (failureRedirectInfo.redirectPath !== undefined) {
-                    return await SuperTokens.getInstanceOrThrow().redirectToUrl(
-                        failureRedirectInfo.redirectPath,
-                        history
-                    );
-                }
-                if (failureRedirectInfo.accessForbidden) {
-                    return await SuperTokens.getInstanceOrThrow().redirectToUrl(
-                        await SuperTokens.getInstanceOrThrow().getRedirectUrl({
-                            action: "SESSION_CLAIM_VERIFICATION_FAILURE",
-                        }),
-                        history
-                    );
-                }
-                const successRedirectionPath = await getSuccessRedirectionPath({
-                    invalidClaims: toSetContext.invalidClaims,
-                    overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
-                    userContext,
-                });
-
-                if (successRedirectionPath !== undefined) {
-                    return SuperTokens.getInstanceOrThrow().redirectToUrl(successRedirectionPath, history);
+                if (toSetContext.invalidClaims.length !== 0) {
+                    const failureRedirectInfo = await getFailureRedirectionInfo({
+                        invalidClaims: toSetContext.invalidClaims,
+                        overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
+                        userContext,
+                    });
+                    if (failureRedirectInfo.redirectPath !== undefined) {
+                        return await SuperTokens.getInstanceOrThrow().redirectToUrl(
+                            failureRedirectInfo.redirectPath,
+                            history
+                        );
+                    }
+                    if (props.useDefaultAccessDeniedScreen !== false) {
+                        console.warn({
+                            message: "Access denied",
+                            claimValidationError: failureRedirectInfo.failedClaim,
+                        });
+                        return setContext({ ...toSetContext, accessDenied: true });
+                    }
                 }
             }
 
@@ -242,16 +236,6 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                         }
                     }
 
-                    const successRedirectionPath = await getSuccessRedirectionPath({
-                        invalidClaims,
-                        overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
-                        userContext,
-                    });
-
-                    if (props.doRedirection !== false && successRedirectionPath !== undefined) {
-                        return SuperTokens.getInstanceOrThrow().redirectToUrl(successRedirectionPath, history);
-                    }
-
                     return;
                 }
                 case "SIGN_OUT":
@@ -283,6 +267,15 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
     if (props.requireAuth !== false && (context.loading || !context.doesSessionExist)) {
         return null;
+    }
+
+    if (!context.loading && context.accessDenied) {
+        return (
+            <AccessDeniedScreen
+                recipe={Session.getInstanceOrThrow()}
+                useComponentOverrides={useRecipeComponentOverrideContext}
+            />
+        );
     }
 
     return <SessionContext.Provider value={context}>{children}</SessionContext.Provider>;

@@ -16,29 +16,22 @@
 /*
  * Imports.
  */
-import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 
 import SuperTokens from "../../superTokens";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import {
-    getLocalStorage,
-    isTest,
-    matchRecipeIdUsingQueryParams,
-    removeFromLocalStorage,
-    setLocalStorage,
-} from "../../utils";
+import { getLocalStorage, isTest, removeFromLocalStorage, setLocalStorage } from "../../utils";
 import RecipeModule from "../recipeModule";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import AccessDeniedScreen from "./components/features/accessDeniedScreen";
-import { normaliseSessionConfig, getFailureRedirectionInfo, getSuccessRedirectionPath } from "./utils";
+import { normaliseSessionConfig, getFailureRedirectionInfo } from "./utils";
 
 import type { ConfigType, NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { FeatureBaseProps } from "../../types";
-import type { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
+import type { FeatureBaseProps, RecipeFeatureComponentMap } from "../../types";
+import type { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import type { SessionClaim } from "supertokens-web-js/recipe/session";
 import type { RecipeEvent } from "supertokens-web-js/recipe/session/types";
@@ -178,29 +171,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                 userContext,
             });
 
-            if (failureRedirectInfo.accessForbidden) {
-                console.warn({
-                    message: "Redirecting to access denied screen",
-                    claimValidationError: failureRedirectInfo.failedClaim,
-                });
-                return await SuperTokens.getInstanceOrThrow().redirectToUrl(
-                    await SuperTokens.getInstanceOrThrow().getRedirectUrl({
-                        action: "SESSION_CLAIM_VERIFICATION_FAILURE",
-                    }),
-                    history
-                );
-            }
-
             // if redirectPath is string that means failed claim had callback that returns path, we redirect there otherwise continue
             if (failureRedirectInfo.redirectPath !== undefined) {
                 return SuperTokens.getInstanceOrThrow().redirectToUrl(failureRedirectInfo.redirectPath, history);
             }
-        }
-
-        const successRedirectionPath = await getSuccessRedirectionPath({ invalidClaims, userContext });
-
-        if (successRedirectionPath !== undefined) {
-            return SuperTokens.getInstanceOrThrow().redirectToUrl(successRedirectionPath, history);
         }
 
         // If we don't need to redirect because of a claim, we try and execute the original redirection
@@ -261,18 +235,8 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         );
     };
 
-    getFeatures = (
-        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
-    ): RecipeFeatureComponentMap => {
-        const features: RecipeFeatureComponentMap = {};
-        const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
-            new NormalisedURLPath("/access-denied")
-        );
-        features[normalisedFullPath.getAsStringDangerous()] = {
-            matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-            component: (props) => this.getFeatureComponent("accessDenied", props as any, useComponentOverrides),
-        };
-        return features;
+    getFeatures = (): RecipeFeatureComponentMap => {
+        return {};
     };
 
     getFeatureComponent = (

@@ -15,25 +15,58 @@
 
 @import "../../../../styles/styles.css";
 
-[data-supertokens~="center"] {
-    text-align: center;
+/* Override */
+[data-supertokens~="row"] {
+    padding-top: 32px;
+    padding-bottom: 32px;
 }
 
-[data-supertokens~="buttons"] {
+[data-supertokens~="divider"] {
+    padding: 0;
+    margin: 24px 0;
+}
+
+[data-supertokens~="headerTitle"] {
+    padding-top: 24px;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 30px;
+}
+/* Override end */
+
+[data-supertokens~="center"] {
+    height: 100vh;
     display: flex;
-    gap: 20px;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    flex: 1 1 auto;
+}
+
+[data-supertokens~="buttonsGroup"] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+[data-supertokens~="buttonBase"] {
+    font-size: 14px;
+    line-height: 21px;
+    font-weight: 500;
+    background: transparent;
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+
+[data-supertokens~="backButton"] {
+    color: rgb(var(--palette-textLink));
 }
 
 [data-supertokens~="logoutButton"] {
     display: flex;
-    padding: 8px 12px;
-    background-color: #000000;
-    border-radius: 10px;
-    cursor: pointer;
     align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    font-weight: bold;
+    gap: 6px;
+    color: rgb(var(--palette-textDisabled));
 }

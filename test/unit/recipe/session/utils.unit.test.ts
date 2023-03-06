@@ -25,46 +25,9 @@ describe(`${getFailureRedirectionInfo.name} functionality`, () => {
                 userContext: {},
             })
         ).toEqual({
-            accessForbidden: false,
             redirectPath: "/redirect-path",
             failedClaim: {
                 validatorId: "with-onFailureRedirection-returning-path",
-            },
-        });
-    });
-
-    it("One of the failed claims has callback that returns string and takes precedence in redirection", async () => {
-        expect(
-            await getFailureRedirectionInfo({
-                invalidClaims: [
-                    { validatorId: "with-onFailureRedirection-returning-path" },
-                    { validatorId: "without-onFailureRedirection" },
-                ],
-                userContext: {},
-            })
-        ).toEqual({
-            accessForbidden: false,
-            redirectPath: "/redirect-path",
-            failedClaim: {
-                validatorId: "with-onFailureRedirection-returning-path",
-            },
-        });
-    });
-
-    it("One of the failed claims has callback that returns undefined so the one without takes precedence", async () => {
-        expect(
-            await getFailureRedirectionInfo({
-                invalidClaims: [
-                    { validatorId: "with-onFailureRedirection-returning-undefined" },
-                    { validatorId: "without-onFailureRedirection" },
-                ],
-                userContext: {},
-            })
-        ).toEqual({
-            accessForbidden: true,
-            redirectPath: undefined,
-            failedClaim: {
-                validatorId: "without-onFailureRedirection",
             },
         });
     });
@@ -90,7 +53,6 @@ describe(`${getFailureRedirectionInfo.name} functionality`, () => {
                 userContext: {},
             })
         ).toEqual({
-            accessForbidden: false,
             redirectPath: "/first",
             failedClaim: {
                 validatorId: "first-in-globalClaims-array",

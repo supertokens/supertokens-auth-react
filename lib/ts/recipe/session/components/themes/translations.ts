@@ -6,5 +6,7 @@ export const defaultTranslationsSession = {
 
         ACCESS_DENIED: "Access denied",
         SIGN_OUT: "SIGN OUT",
+        GO_BACK: "Go back",
+        LOGOUT: "Log out",
     },
 };

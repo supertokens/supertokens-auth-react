@@ -1,4 +1,5 @@
 import type { AccessDeniedTheme } from "./components/themes/accessDeniedScreenTheme";
+import type Session from "./recipe";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type { FeatureBaseConfig, NormalisedAppInfo, NormalisedBaseConfig } from "../../types";
 import type { NormalisedConfig } from "../recipeModule/types";
@@ -32,6 +33,7 @@ export declare type SessionContextUpdate = {
 export declare type LoadedSessionContext = {
     loading: false;
     invalidClaims: ClaimValidationError[];
+    accessDenied?: boolean;
 } & SessionContextUpdate;
 export declare type SessionContextType =
     | LoadedSessionContext
@@ -39,6 +41,8 @@ export declare type SessionContextType =
           loading: true;
       };
 export declare type AccessDeniedThemeProps = {
+    recipe: Session;
+    history: any;
     config: NormalisedSessionConfig;
 };
 export declare type ConfigType = InputType & {
