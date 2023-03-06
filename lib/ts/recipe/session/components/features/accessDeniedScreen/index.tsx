@@ -2,6 +2,7 @@ import React from "react";
 
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
+import SuperTokens from "../../../../../superTokens";
 import { AccessDeniedTheme } from "../../themes/accessDeniedScreenTheme";
 import { defaultTranslationsSession } from "../../themes/translations";
 
@@ -16,11 +17,12 @@ const AccessDeniedScreen: React.FC<
     }
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
+    const history = SuperTokens.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper defaultStore={defaultTranslationsSession}>
-                <AccessDeniedTheme config={props.recipe.config} history={props.history} recipe={props.recipe} />
+                <AccessDeniedTheme config={props.recipe.config} history={history} recipe={props.recipe} />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );

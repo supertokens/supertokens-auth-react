@@ -17,7 +17,6 @@ import type { FC } from "react";
 const AccessDeniedScreen: FC<AccessDeniedThemeProps> = (props) => {
     const userContext = useUserContext();
     const t = useTranslation();
-
     const onLogout = async () => {
         try {
             await props.recipe.signOut({ userContext });
@@ -31,7 +30,10 @@ const AccessDeniedScreen: FC<AccessDeniedThemeProps> = (props) => {
     };
 
     const onBackButtonClicked = () => {
-        throw "Not implemented";
+        if (props.history.back !== undefined) {
+            return props.history.back();
+        }
+        return props.history(-1);
     };
 
     return (
