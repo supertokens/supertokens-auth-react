@@ -81,5 +81,6 @@ export const getFailureRedirectionInfo = async ({
 
     return {
         redirectPath: undefined,
+        failedClaim: invalidClaims[0],
     };
 };
