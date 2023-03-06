@@ -1,10 +1,11 @@
-import { UserInput } from "./types";
-import SignInAndUpTheme from "./components/themes/signInAndUp";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
+import SignInAndUpTheme from "./components/themes/signInAndUp";
+import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import { User } from "../authRecipe/types";
-import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
-import { PropsWithChildren } from "react";
+import type { User } from "../authRecipe/types";
+import type { PropsWithChildren } from "react";
+import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/emailpassword";
 export default class Wrapper {
     static init(
         config?: UserInput

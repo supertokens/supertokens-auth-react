@@ -13,16 +13,19 @@
  * under the License.
  */
 
-import { SignInUpPhoneFormProps } from "../../../types";
-import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import FormBase from "../../../../emailpassword/components/library/formBase";
-import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
-import { defaultValidate } from "../../../../emailpassword/validators";
-import { SignInUpFooter } from "./signInUpFooter";
-import STGeneralError from "supertokens-web-js/utils/error";
-import { useUserContext } from "../../../../../usercontext";
 import { useEffect, useMemo } from "react";
+import STGeneralError from "supertokens-web-js/utils/error";
+
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useUserContext } from "../../../../../usercontext";
+import FormBase from "../../../../emailpassword/components/library/formBase";
+import { defaultValidate } from "../../../../emailpassword/validators";
 import { preloadPhoneNumberUtils } from "../../../phoneNumberUtils";
+
+import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
+import { SignInUpFooter } from "./signInUpFooter";
+
+import type { SignInUpPhoneFormProps } from "../../../types";
 
 export const PhoneForm = withOverride(
     "PasswordlessPhoneForm",

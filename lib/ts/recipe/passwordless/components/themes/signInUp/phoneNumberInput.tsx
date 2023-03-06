@@ -16,14 +16,14 @@
 /*
  * Imports.
  */
-import phoneNumberInputLibStyles from "intl-tel-input/build/css/intlTelInput.css";
 import intlTelInput from "intl-tel-input";
-
+import phoneNumberInputLibStyles from "intl-tel-input/build/css/intlTelInput.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { InputProps } from "../../../../emailpassword/components/library/input";
 import ErrorIcon from "../../../../../components/assets/errorIcon";
 import { ST_ROOT_ID } from "../../../../../constants";
+
+import type { InputProps } from "../../../../emailpassword/components/library/input";
 
 type PhoneNumberInputProps = {
     defaultCountry?: string;

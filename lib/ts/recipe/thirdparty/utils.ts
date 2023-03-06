@@ -16,19 +16,21 @@
 /*
  * Imports.
  */
+import { redirectWithFullPageReload } from "../../utils";
+import { normaliseAuthRecipe } from "../authRecipe/utils";
+
 import Provider from "./providers";
 import Custom from "./providers/custom";
-import {
+
+import type Recipe from "./recipe";
+import type {
     NormalisedSignInAndUpFeatureConfig,
     NormalisedConfig,
     SignInAndUpFeatureUserInput,
     Config,
     CustomStateProperties,
 } from "./types";
-import Recipe from "./recipe";
-import { normaliseAuthRecipe } from "../authRecipe/utils";
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
-import { redirectWithFullPageReload } from "../../utils";
+import type { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 
 /*
  * Methods.

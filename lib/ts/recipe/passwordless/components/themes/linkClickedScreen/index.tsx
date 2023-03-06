@@ -16,13 +16,15 @@
  * Imports.
  */
 import React, { useState } from "react";
+
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { LinkClickedScreenProps } from "../../../types";
+import { hasFontDefined } from "../../../../../styles/styles";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { Button } from "../../../../emailpassword/components/library";
 import { ThemeBase } from "../themeBase";
-import { hasFontDefined } from "../../../../../styles/styles";
+
+import type { LinkClickedScreenProps } from "../../../types";
 
 const PasswordlessLinkClickedScreen: React.FC<LinkClickedScreenProps> = (props) => {
     const t = useTranslation();

@@ -17,9 +17,22 @@
  * Imports.
  */
 
+import { OverrideableBuilder } from "supertokens-js-override";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+
+import { SSR_ERROR } from "../../constants";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthRecipe from "../authRecipe";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, FeatureBaseProps } from "../../types";
-import {
+import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
+
+import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import SignInAndUp from "./components/features/signInAndUp";
+import SignInAndUpCallback from "./components/features/signInAndUpCallback";
+import RecipeImplementation from "./recipeImplementation";
+import { normaliseThirdPartyConfig, matchRecipeIdUsingState } from "./utils";
+
+import type {
     GetRedirectionURLContext,
     Config,
     NormalisedConfig,
@@ -27,18 +40,10 @@ import {
     OnHandleEventContext,
     UserInput,
 } from "./types";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
-import { normaliseThirdPartyConfig, matchRecipeIdUsingState } from "./utils";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { SSR_ERROR } from "../../constants";
-import RecipeModule from "../recipeModule";
-import SignInAndUp from "./components/features/signInAndUp";
-import SignInAndUpCallback from "./components/features/signInAndUpCallback";
-import RecipeImplementation from "./recipeImplementation";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
-import { OverrideableBuilder } from "supertokens-js-override";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { CreateRecipeFunction, FeatureBaseProps, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
+import type RecipeModule from "../recipeModule";
+import type { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 
 /*
  * Class.
@@ -73,13 +78,15 @@ export default class ThirdParty extends AuthRecipe<
      * Instance methods.
      */
 
-    getFeatures = (): RecipeFeatureComponentMap => {
+    getFeatures = (
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
         if (this.config.signInAndUpFeature.disableDefaultUI !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (prop: any) => this.getFeatureComponent("signinup", prop),
+                component: (prop: any) => this.getFeatureComponent("signinup", prop, useComponentOverrides),
             };
         }
 
@@ -90,7 +97,7 @@ export default class ThirdParty extends AuthRecipe<
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: () => matchRecipeIdUsingState(this, {}),
-                component: (prop: any) => this.getFeatureComponent("signinupcallback", prop),
+                component: (prop: any) => this.getFeatureComponent("signinupcallback", prop, useComponentOverrides),
             };
         });
 
@@ -99,7 +106,8 @@ export default class ThirdParty extends AuthRecipe<
 
     getFeatureComponent = (
         componentName: "signinup" | "signinupcallback",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
+        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signinup") {
             if (props.redirectOnSessionExists !== false) {
@@ -113,21 +121,21 @@ export default class ThirdParty extends AuthRecipe<
                         >
                             authRecipe={this}
                             history={props.history}>
-                            <SignInAndUp recipe={this} {...props} />
+                            <SignInAndUp recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
                         </AuthWidgetWrapper>
                     </UserContextWrapper>
                 );
             } else {
                 return (
                     <UserContextWrapper userContext={props.userContext}>
-                        <SignInAndUp recipe={this} {...props} />
+                        <SignInAndUp recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
                     </UserContextWrapper>
                 );
             }
         } else if (componentName === "signinupcallback") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
-                    <SignInAndUpCallback recipe={this} {...props} />
+                    <SignInAndUpCallback recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
                 </UserContextWrapper>
             );
         } else {

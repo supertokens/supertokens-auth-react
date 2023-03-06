@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Keep redirectToPath's query params while redirecting to it from auth
 
+## [0.31.1] - 2023-02-12
+
+### Changes
+
+-   Add ordering for imports
+-   Force consistent type imports
+
+### Fixes
+
+-   Fixed all buttons to have pointer cursor on hover.
+-   Fixed component override propagation into sub-recipe only feature components (i.e., ThirdPartySignInAndUpCallbackTheme_Override in thirdpartyemailpassword)
+
 ## [0.31.0] - 2023-02-01
 
 ## Breaking changes

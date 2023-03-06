@@ -16,13 +16,14 @@
 /*
  * Imports.
  */
-import { ResetPasswordUsingTokenThemeProps } from "../../../types";
+import { hasFontDefined } from "../../../../../styles/styles";
+import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { ThemeBase } from "../themeBase";
 
 import { ResetPasswordEmail } from "./resetPasswordEmail";
 import { SubmitNewPassword } from "./submitNewPassword";
-import { hasFontDefined } from "../../../../../styles/styles";
-import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
+
+import type { ResetPasswordUsingTokenThemeProps } from "../../../types";
 
 /*
  * Component.

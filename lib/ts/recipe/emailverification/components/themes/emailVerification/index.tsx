@@ -19,9 +19,11 @@
 import { hasFontDefined } from "../../../../../styles/styles";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { ThemeBase } from "../../../../emailpassword/components/themes/themeBase";
-import { EmailVerificationThemeProps } from "../../../types";
+
 import { SendVerifyEmail } from "./sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "./verifyEmailLinkClicked";
+
+import type { EmailVerificationThemeProps } from "../../../types";
 
 /*
  * Component.

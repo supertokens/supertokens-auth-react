@@ -1,5 +1,5 @@
-import { TranslationStore } from "../translation/translationHelpers";
-import { PropsWithChildren } from "react";
+import type { TranslationStore } from "../translation/translationHelpers";
+import type { PropsWithChildren } from "react";
 declare type FeatureWrapperProps = {
     useShadowDom?: boolean;
     defaultStore: TranslationStore;

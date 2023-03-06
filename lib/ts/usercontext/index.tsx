@@ -14,6 +14,7 @@
  */
 
 import React, { useState } from "react";
+
 import { getNormalisedUserContext } from "../utils";
 
 export const UserContextContext = React.createContext<any>(undefined);

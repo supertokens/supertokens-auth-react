@@ -13,9 +13,11 @@
  * under the License.
  */
 import { Fragment } from "react";
+
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { UserInputCodeFormHeaderProps } from "../../../types";
 import { useTranslation } from "../../../../../translation/translationContext";
+
+import type { UserInputCodeFormHeaderProps } from "../../../types";
 
 export const UserInputCodeFormHeader = withOverride(
     "PasswordlessUserInputCodeFormHeader",

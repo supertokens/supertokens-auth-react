@@ -1,4 +1,5 @@
 import React from "react";
+
 import { useComponentOverride } from "./useComponentOverride";
 
 export const withOverride = <TComponent extends React.ComponentType<any>>(
@@ -9,7 +10,6 @@ export const withOverride = <TComponent extends React.ComponentType<any>>(
     DefaultComponent.displayName = finalKey;
     return (props: React.ComponentProps<TComponent>) => {
         const OverrideComponent = useComponentOverride(finalKey);
-
         if (OverrideComponent !== null) {
             return <OverrideComponent DefaultComponent={DefaultComponent} {...props} />;
         }

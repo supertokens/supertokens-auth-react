@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { ComponentOverrideMap } from "./types";
+import type { ComponentOverrideMap } from "./types";
 declare const useContext: () => ComponentOverrideMap,
     Provider: import("react").FC<
         import("react").PropsWithChildren<{

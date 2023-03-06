@@ -17,9 +17,26 @@
  * Imports.
  */
 
+import { OverrideableBuilder } from "supertokens-js-override";
+import { EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
+import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
+
+import { SSR_ERROR } from "../../constants";
+import { UserContextContext } from "../../usercontext";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
+import { matchRecipeIdUsingQueryParams, saveInvalidClaimRedirectPathInContext } from "../../utils";
 import RecipeModule from "../recipeModule";
-import { RecipeFeatureComponentMap } from "../../types";
-import {
+import { SessionAuth } from "../session";
+
+import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import { default as EmailVerificationFeature } from "./components/features/emailVerification";
+import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
+import RecipeImplementation from "./recipeImplementation";
+import { normaliseEmailVerificationFeature } from "./utils";
+
+import type {
     UserInput,
     Config,
     NormalisedConfig,
@@ -27,21 +44,10 @@ import {
     OnHandleEventContext,
     PreAndPostAPIHookAction,
 } from "./types";
-import { default as EmailVerificationFeature } from "./components/features/emailVerification";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
-import { matchRecipeIdUsingQueryParams, saveInvalidClaimRedirectPathInContext } from "../../utils";
-import { normaliseEmailVerificationFeature } from "./utils";
-import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
-import { SSR_ERROR } from "../../constants";
-import RecipeImplementation from "./recipeImplementation";
-import { SessionAuth } from "../session";
-import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
-import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
-import { OverrideableBuilder } from "supertokens-js-override";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { UserContextContext } from "../../usercontext";
-import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
+import type { RecipeFeatureComponentMap } from "../../types";
+import type { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
+import type { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -118,7 +124,9 @@ export default class EmailVerification extends RecipeModule<
         return EmailVerification.instance;
     }
 
-    getFeatures = (): RecipeFeatureComponentMap => {
+    getFeatures = (
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
         if (this.config.disableDefaultUI !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
@@ -126,14 +134,18 @@ export default class EmailVerification extends RecipeModule<
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props: any) => this.getFeatureComponent("emailverification", props),
+                component: (props: any) => this.getFeatureComponent("emailverification", props, useComponentOverrides),
             };
         }
         return features;
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getFeatureComponent = (_: "emailverification", props: any): JSX.Element => {
+    getFeatureComponent = (
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        _: "emailverification",
+        props: any,
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): JSX.Element => {
         return (
             <UserContextWrapper userContext={props.userContext}>
                 <SessionAuth requireAuth={false} overrideGlobalClaimValidators={() => []}>
@@ -154,6 +166,7 @@ export default class EmailVerification extends RecipeModule<
                             return (
                                 <EmailVerificationFeature
                                     recipe={this}
+                                    useComponentOverrides={useComponentOverrides}
                                     {...{
                                         ...props,
                                         // We do this to make sure it does not add another provider

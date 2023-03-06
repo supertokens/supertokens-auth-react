@@ -13,10 +13,11 @@
  * under the License.
  */
 
-import { NormalisedBaseConfig } from "../../types";
-import { Config, NormalisedConfig } from "./types";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
-import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
+
+import type { Config, NormalisedConfig } from "./types";
+import type { NormalisedBaseConfig } from "../../types";
+import type { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
 export function normaliseEmailVerificationFeature(config: Config): NormalisedConfig {
     const disableDefaultUI = config.disableDefaultUI === true;

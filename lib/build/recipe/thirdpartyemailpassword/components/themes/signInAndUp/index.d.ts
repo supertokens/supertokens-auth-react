@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { ThirdPartyEmailPasswordSignInAndUpThemeProps } from "../../../types";
+import type { ThirdPartyEmailPasswordSignInAndUpThemeProps } from "../../../types";
 export default function SignInAndUpThemeWrapper(
     props: ThirdPartyEmailPasswordSignInAndUpThemeProps & {
         userContext?: any;

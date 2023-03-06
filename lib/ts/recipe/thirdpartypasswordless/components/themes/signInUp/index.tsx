@@ -17,26 +17,29 @@
  * Imports.
  */
 import * as React from "react";
-import {
+
+import { useTranslation } from "../../../../..";
+import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
+import { hasFontDefined } from "../../../../../styles/styles";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
+import { getActiveScreen, SignInUpScreens } from "../../../../passwordless/components/themes/signInUp";
+import { CloseTabScreen } from "../../../../passwordless/components/themes/signInUp/closeTabScreen";
+import { EmailForm } from "../../../../passwordless/components/themes/signInUp/emailForm";
+import { EmailOrPhoneForm } from "../../../../passwordless/components/themes/signInUp/emailOrPhoneForm";
+import { LinkSent } from "../../../../passwordless/components/themes/signInUp/linkSent";
+import { PhoneForm } from "../../../../passwordless/components/themes/signInUp/phoneForm";
+import { UserInputCodeForm } from "../../../../passwordless/components/themes/signInUp/userInputCodeForm";
+import { UserInputCodeFormHeader } from "../../../../passwordless/components/themes/signInUp/userInputCodeFormHeader";
+import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
+import { ThemeBase } from "../themeBase";
+
+import { Header } from "./header";
+
+import type { SignInUpChildProps as PwlessSignInUpChildProps } from "../../../../passwordless/types";
+import type {
     ThirdPartyPasswordlessSignInAndUpThemeProps,
     ThirdPartyPasswordlessSignInAndUpThemePropsWithActiveScreen,
 } from "../../../types";
-import { Header } from "./header";
-import { hasFontDefined } from "../../../../../styles/styles";
-import { getActiveScreen, SignInUpScreens } from "../../../../passwordless/components/themes/signInUp";
-import { ThemeBase } from "../themeBase";
-import { useTranslation } from "../../../../..";
-import GeneralError from "../../../../emailpassword/components/library/generalError";
-import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
-import { CloseTabScreen } from "../../../../passwordless/components/themes/signInUp/closeTabScreen";
-import { LinkSent } from "../../../../passwordless/components/themes/signInUp/linkSent";
-import { UserInputCodeFormHeader } from "../../../../passwordless/components/themes/signInUp/userInputCodeFormHeader";
-import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
-import { UserInputCodeForm } from "../../../../passwordless/components/themes/signInUp/userInputCodeForm";
-import { EmailOrPhoneForm } from "../../../../passwordless/components/themes/signInUp/emailOrPhoneForm";
-import { PhoneForm } from "../../../../passwordless/components/themes/signInUp/phoneForm";
-import { EmailForm } from "../../../../passwordless/components/themes/signInUp/emailForm";
-import { SignInUpChildProps as PwlessSignInUpChildProps } from "../../../../passwordless/types";
 
 const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithActiveScreen> = (props) => {
     const t = useTranslation();

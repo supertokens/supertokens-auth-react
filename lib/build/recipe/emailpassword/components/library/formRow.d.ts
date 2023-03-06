@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 declare type FormRowProps = {
     hasError?: boolean;
 };

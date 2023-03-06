@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { InputProps } from "../../../../emailpassword/components/library/input";
+import type { InputProps } from "../../../../emailpassword/components/library/input";
 declare type PhoneNumberInputProps = {
     defaultCountry?: string;
 };

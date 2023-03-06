@@ -13,16 +13,10 @@
  * under the License.
  */
 
-import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import WebJSUtils from "supertokens-web-js/recipe/passwordless/utils";
+
 import { normaliseAuthRecipe } from "../authRecipe/utils";
-import {
-    AdditionalLoginAttemptInfoProperties,
-    Config,
-    LoginAttemptInfo,
-    NormalisedConfig,
-    SignInUpFeatureConfigInput,
-} from "./types";
-import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+
 import {
     defaultPhoneNumberValidator,
     defaultPhoneNumberValidatorForCombinedInput,
@@ -30,8 +24,17 @@ import {
     defaultEmailValidatorForCombinedInput,
     defaultGuessInternationPhoneNumberFromInputPhoneNumber,
 } from "./validators";
-import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
-import WebJSUtils from "supertokens-web-js/recipe/passwordless/utils";
+
+import type {
+    AdditionalLoginAttemptInfoProperties,
+    Config,
+    LoginAttemptInfo,
+    NormalisedConfig,
+    SignInUpFeatureConfigInput,
+} from "./types";
+import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import type { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import type { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
     if (!["EMAIL", "PHONE", "EMAIL_OR_PHONE"].includes(config.contactMethod)) {

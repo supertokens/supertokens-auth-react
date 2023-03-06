@@ -1,14 +1,14 @@
-import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import SignInUpTheme from "./components/themes/signInUp";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
-import {
+import SignInUpTheme from "./components/themes/signInUp";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import type { PropsWithChildren } from "react";
+import type { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
+import type {
     PasswordlessFlowType,
     PasswordlessUser,
     RecipeFunctionOptions,
-    RecipeInterface,
 } from "supertokens-web-js/recipe/thirdpartypasswordless";
-import { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
-import { PropsWithChildren } from "react";
 export default class Wrapper {
     static init(
         config: UserInput

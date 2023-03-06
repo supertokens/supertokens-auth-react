@@ -1,21 +1,21 @@
 /// <reference types="react" />
-import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
-import {
+import type { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
+import type { SignInAndUpHeader } from "./components/themes/signInAndUp/signInAndUpHeader";
+import type { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
+import type { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
+import type Provider from "./providers";
+import type { CustomProviderConfig } from "./providers/types";
+import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import type {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipe/types";
-import Provider from "./providers";
-import { CustomProviderConfig } from "./providers/types";
-import { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
-import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
-import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
-import { OverrideableBuilder } from "supertokens-js-override";
-import { StateObject as WebJsStateObject, RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
-import { SignInAndUpHeader } from "./components/themes/signInAndUp/signInAndUpHeader";
+import type { OverrideableBuilder } from "supertokens-js-override";
+import type { StateObject as WebJsStateObject, RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 export declare type ComponentOverrideMap = {
     ThirdPartySignUpFooter_Override?: ComponentOverride<typeof SignUpFooter>;
     ThirdPartySignInAndUpHeader_Override?: ComponentOverride<typeof SignInAndUpHeader>;

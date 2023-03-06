@@ -1,4 +1,4 @@
 /// <reference types="react" />
-import { SignInAndUpThemeProps } from "../../../types";
+import type { SignInAndUpThemeProps } from "../../../types";
 declare const SignInAndUpThemeWrapper: React.FC<SignInAndUpThemeProps>;
 export default SignInAndUpThemeWrapper;
