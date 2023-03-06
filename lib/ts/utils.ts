@@ -62,7 +62,7 @@ export function getURLHash(): string {
     return WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHash().substr(1);
 }
 
-export function getRedirectToPathFromURL({ includeQueryParams } = { includeQueryParams: true }): string | undefined {
+export function getRedirectToPathFromURL(): string | undefined {
     const param = getQueryParams("redirectToPath");
     if (param === null) {
         return undefined;
@@ -70,9 +70,6 @@ export function getRedirectToPathFromURL({ includeQueryParams } = { includeQuery
         // Prevent Open redirects by normalising path.
         try {
             const normalisedURLPath = new NormalisedURLPath(param).getAsStringDangerous();
-            if (includeQueryParams === false) {
-                return normalisedURLPath;
-            }
             const pathQueryParams = param.split("?")[1] !== undefined ? `?${param.split("?")[1]}` : "";
             return normalisedURLPath + pathQueryParams;
         } catch {

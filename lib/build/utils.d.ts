@@ -7,11 +7,7 @@ export declare function clearQueryParams(paramNames: string[]): void;
 export declare function clearErrorQueryParam(): void;
 export declare function getQueryParams(param: string): string | null;
 export declare function getURLHash(): string;
-export declare function getRedirectToPathFromURL({
-    includeQueryParams,
-}?: {
-    includeQueryParams: boolean;
-}): string | undefined;
+export declare function getRedirectToPathFromURL(): string | undefined;
 export declare function isTest(): boolean;
 export declare function normaliseInputAppInfoOrThrowError(appInfo: AppInfoUserInput): NormalisedAppInfo;
 export declare function validateForm(
