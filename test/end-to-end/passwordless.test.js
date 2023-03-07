@@ -724,7 +724,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
             it("Successful signin w/ redirectToPath and email verification", async function () {
                 await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here&mode=REQUIRED`),
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here%3Ffoo%3Dbar&mode=REQUIRED`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
@@ -742,8 +742,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
                 await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/redirect-here");
+                const { pathname, search } = await page.evaluate(() => window.location);
+                assert.deepStrictEqual(pathname + search, "/redirect-here?foo=bar");
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",

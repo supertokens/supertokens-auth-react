@@ -71,7 +71,9 @@ export function getRedirectToPathFromURL(): string | undefined {
     } else {
         // Prevent Open redirects by normalising path.
         try {
-            return new NormalisedURLPath(param).getAsStringDangerous();
+            const normalisedURLPath = new NormalisedURLPath(param).getAsStringDangerous();
+            const pathQueryParams = param.split("?")[1] !== undefined ? `?${param.split("?")[1]}` : "";
+            return normalisedURLPath + pathQueryParams;
         } catch {
             return undefined;
         }
