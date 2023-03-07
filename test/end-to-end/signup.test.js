@@ -288,6 +288,17 @@ describe("SuperTokens SignUp", function () {
             ]);
         });
 
+        it("Successful signup with query params kept", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here%3Ffoo%3Dbar`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await toggleSignInSignUp(page);
+            await defaultSignUp(page);
+            let { pathname, search } = await page.evaluate(() => window.location);
+            assert.deepStrictEqual(pathname + search, "/redirect-here?foo=bar");
+        });
+
         it("should show error message on sign up with duplicate email", async function () {
             const requestHandler = (request) => {
                 if (request.url().includes(EMAIL_EXISTS_API) && request.method() === "GET") {
