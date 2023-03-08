@@ -294,7 +294,15 @@ describe("SuperTokens SignUp", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await toggleSignInSignUp(page);
-            await defaultSignUp(page);
+            await setInputValues(page, [
+                { name: "email", value: "jack.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "name", value: "John Doe" },
+                { name: "age", value: "20" },
+            ]);
+
+            await submitForm(page);
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
             let { pathname, search } = await page.evaluate(() => window.location);
             assert.deepStrictEqual(pathname + search, "/redirect-here?foo=bar");
         });
