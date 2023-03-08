@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-no-literals */
 import React from "react";
+import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
 import ErrorRoundIcon from "../../../../../components/assets/errorRoundIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
@@ -17,21 +18,21 @@ import type { FC } from "react";
 const AccessDeniedScreen: FC<AccessDeniedThemeProps> = (props) => {
     const userContext = useUserContext();
     const t = useTranslation();
+
     const onLogout = async () => {
-        try {
-            await props.recipe.signOut({ userContext });
-        } catch (error) {
-        } finally {
-            await SuperTokens.getInstanceOrThrow().redirectToAuth({
-                show: "signin",
-                redirectBack: false,
-            });
-        }
+        await props.recipe.signOut({ userContext });
+        await SuperTokens.getInstanceOrThrow().redirectToAuth({
+            show: "signin",
+            redirectBack: false,
+        });
     };
 
     const onBackButtonClicked = () => {
-        if (props.history.back !== undefined) {
-            return props.history.back();
+        if (props.history === undefined) {
+            return WindowHandlerReference.getReferenceOrThrow().windowHandler.getWindowUnsafe().history.back();
+        }
+        if (props.history.goBack !== undefined) {
+            return props.history.goBack();
         }
         return props.history(-1);
     };

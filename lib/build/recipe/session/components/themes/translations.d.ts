@@ -1,7 +1,6 @@
 export declare const defaultTranslationsSession: {
     en: {
         ACCESS_DENIED: string;
-        SIGN_OUT: string;
         GO_BACK: string;
         LOGOUT: string;
         BRANDING_POWERED_BY_START: string;

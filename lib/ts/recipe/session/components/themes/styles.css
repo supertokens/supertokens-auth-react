@@ -55,7 +55,7 @@
 }
 
 [data-supertokens~="buttonBase"] {
-    font-size: 14px;
+    font-size: var(--font-size-1);
     line-height: 21px;
     font-weight: 500;
     background: transparent;
@@ -72,5 +72,5 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    color: rgb(var(--palette-textDisabled));
+    color: rgb(var(--palette-textGray));
 }

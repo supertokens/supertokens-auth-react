@@ -32,7 +32,7 @@ export default function LogoutButton({ onClick }: ButtonProps): JSX.Element {
     const t = useTranslation();
     return (
         <button onClick={onClick} data-supertokens="buttonBase logoutButton">
-            <ArrowLeftIcon color="rgb(var(--palette-textDisabled))" />
+            <ArrowLeftIcon color="rgb(var(--palette-textGray))" />
             <span>{t("LOGOUT")}</span>
         </button>
     );
