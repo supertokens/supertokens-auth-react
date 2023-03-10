@@ -6,6 +6,10 @@ export declare abstract class RecipeRouter {
     private pathsToFeatureComponentWithRecipeIdMap?;
     private static reactRouterDom?;
     private static reactRouterDomIsV6;
+    private static preBuiltUIList;
+    static getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
+        normalisedUrl: NormalisedURLPath
+    ): ComponentWithRecipeAndMatchingMethod | undefined;
     static getRecipeRoutes(reactRouterDom: any, instance: RecipeRouter): JSX.Element[];
     canHandleRoute: () => boolean;
     static getReactRouterDomWithCustomHistory: () =>
@@ -14,6 +18,7 @@ export declare abstract class RecipeRouter {
                   Route: any;
               };
               useHistoryCustom: () => any;
+              useLocation: () => any;
           }
         | undefined;
     getReactRouterDomWithCustomHistory: () =>
@@ -22,6 +27,7 @@ export declare abstract class RecipeRouter {
                   Route: any;
               };
               useHistoryCustom: () => any;
+              useLocation: () => any;
           }
         | undefined;
     getRoutingComponent: () => JSX.Element | null;

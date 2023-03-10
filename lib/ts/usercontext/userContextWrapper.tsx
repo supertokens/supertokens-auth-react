@@ -18,7 +18,7 @@ import { UserContextContext, UserContextProvider } from ".";
 
 export default function UserContextWrapper(props: { children: React.ReactNode; userContext?: any }): JSX.Element {
     /**
-     * If we recieve a userContext as a props we should assume that the user
+     * If we receive a userContext as a props we should assume that the user
      * is either trying to use a theme component as standalone or that they
      * want to override an existing value for userContext.
      *

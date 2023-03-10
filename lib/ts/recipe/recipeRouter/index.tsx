@@ -12,14 +12,41 @@ import type NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPa
 export abstract class RecipeRouter {
     private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;
 
-    private static reactRouterDom?: { router: { Route: any }; useHistoryCustom: () => any };
+    private static reactRouterDom?: { router: { Route: any }; useHistoryCustom: () => any; useLocation: () => any };
     private static reactRouterDomIsV6: boolean | undefined = undefined;
+    private static preBuiltUIList: RecipeRouter[] = [];
+
+    static getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
+        normalisedUrl: NormalisedURLPath
+    ): ComponentWithRecipeAndMatchingMethod | undefined {
+        const path = normalisedUrl.getAsStringDangerous();
+
+        const routeComponents = RecipeRouter.preBuiltUIList.reduce((components, c) => {
+            const routes = c.getPathsToFeatureComponentWithRecipeIdMap()[path];
+            return routes !== undefined ? components.concat(routes) : components;
+        }, [] as ComponentWithRecipeAndMatchingMethod[]);
+
+        if (routeComponents === undefined) {
+            return undefined;
+        }
+
+        const component = routeComponents.find((c) => c.matches());
+        if (component !== undefined) {
+            return component;
+        }
+
+        // Otherwise, If no recipe Id provided, or if no recipe id matches, return the first matching component.
+        return routeComponents[0];
+    }
 
     static getRecipeRoutes(reactRouterDom: any, instance: RecipeRouter): JSX.Element[] {
+        if (!RecipeRouter.preBuiltUIList.includes(instance)) {
+            RecipeRouter.preBuiltUIList.push(instance);
+        }
         if (reactRouterDom === undefined) {
             throw new Error(
                 // eslint-disable-next-line @typescript-eslint/quotes
-                'Please use getRoutes like getRoutes(require("react-router-dom")) in your render function'
+                'Please use getRecipeRoutes like getRecipeRoutes(require("react-router-dom")) in your render function'
             );
         }
         if (RecipeRouter.reactRouterDomIsV6 === undefined) {
@@ -47,6 +74,7 @@ export abstract class RecipeRouter {
                 RecipeRouter.reactRouterDom = {
                     router: reactRouterDom,
                     useHistoryCustom: useNavigateHookForRRDV6,
+                    useLocation: reactRouterDom.useLocation,
                 };
             }
 
@@ -56,6 +84,7 @@ export abstract class RecipeRouter {
             RecipeRouter.reactRouterDom = {
                 router: reactRouterDom,
                 useHistoryCustom: reactRouterDom.useHistory,
+                useLocation: reactRouterDom.useLocation,
             };
         }
         return getSuperTokensRoutesForReactRouterDom(instance);
@@ -69,12 +98,14 @@ export abstract class RecipeRouter {
     };
 
     static getReactRouterDomWithCustomHistory = ():
-        | { router: { Route: any }; useHistoryCustom: () => any }
+        | { router: { Route: any }; useHistoryCustom: () => any; useLocation: () => any }
         | undefined => {
         return RecipeRouter.reactRouterDom;
     };
 
-    getReactRouterDomWithCustomHistory = (): { router: { Route: any }; useHistoryCustom: () => any } | undefined => {
+    getReactRouterDomWithCustomHistory = ():
+        | { router: { Route: any }; useHistoryCustom: () => any; useLocation: () => any }
+        | undefined => {
         return RecipeRouter.reactRouterDom;
     };
 
