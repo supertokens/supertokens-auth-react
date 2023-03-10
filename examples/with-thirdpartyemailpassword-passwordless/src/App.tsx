@@ -59,7 +59,12 @@ function App() {
         <SuperTokensWrapper>
             <ThirdpartyEmailPasswordComponentsOverrideProvider
                 components={{
-                    ThirdPartySignInAndUpProvidersForm_Override: ({ DefaultComponent, ...props }) => (
+                    ThirdPartySignInAndUpProvidersForm_Override: ({
+                        DefaultComponent,
+                        ...props
+                    }: {
+                        DefaultComponent: any;
+                    }) => (
                         <div>
                             <DefaultComponent {...props} />
                             <div
@@ -93,7 +98,6 @@ function App() {
                     <Router>
                         <div className="fill">
                             <Routes>
-                                {/* This shows the login UI on "/auth" route */}
                                 {ThirdPartyEmailPasswordPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
                                 {EmailVerificationPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
                                 {PasswordlessPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}

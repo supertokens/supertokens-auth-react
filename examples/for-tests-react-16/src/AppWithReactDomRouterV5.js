@@ -5,11 +5,13 @@ import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword";
 import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from "./App";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/preBuiltUI";
 import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/preBuiltUI";
+import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/preBuiltUI";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/preBuiltUI";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/preBuiltUI";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty";
 
 const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
+const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
 
 let routesRenderer = EmailPasswordPreBuiltUI.getReactRouterDomRoutes;
 if (authRecipe === "thirdparty") {
@@ -38,6 +40,8 @@ function AppWithReactDomRouter(props) {
                 <BaseComponent>
                     <Switch>
                         {routesRenderer(require("react-router-domv5"))}
+                        {emailVerificationMode &&
+                            EmailVerificationPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
                         <Route exact path="/">
                             <Home />
                         </Route>
