@@ -28,12 +28,15 @@ const AccessDeniedScreen: FC<AccessDeniedThemeProps> = (props) => {
     };
 
     const onBackButtonClicked = () => {
+        // If we don't have history available this would mean we are not using react-router-dom, so we use window's history
         if (props.history === undefined) {
             return WindowHandlerReference.getReferenceOrThrow().windowHandler.getWindowUnsafe().history.back();
         }
+        // If we do have history and goBack function on it this means we are using react-router-dom v5 or lower
         if (props.history.goBack !== undefined) {
             return props.history.goBack();
         }
+        // If we reach this code this means we are using react-router-dom v6
         return props.history(-1);
     };
 
