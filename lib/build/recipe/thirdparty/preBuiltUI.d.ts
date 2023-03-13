@@ -48,7 +48,7 @@ export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
 }
 declare const canHandleRoute: typeof ThirdPartyPreBuiltUI.canHandleRoute;
 declare const getRoutingComponent: typeof ThirdPartyPreBuiltUI.getRoutingComponent;
-declare const getFeatures: typeof ThirdPartyPreBuiltUI.getFeatures;
+declare const _getFeatures: typeof ThirdPartyPreBuiltUI.getFeatures;
 declare const getReactRouterDomRoutes: typeof ThirdPartyPreBuiltUI.getReactRouterDomRoutes;
 declare const SignInAndUp: (
     prop?: PropsWithChildren<{
@@ -60,7 +60,7 @@ declare const SignInAndUpCallback: (prop?: any) => JSX.Element;
 export {
     canHandleRoute,
     getRoutingComponent,
-    getFeatures,
+    _getFeatures,
     getReactRouterDomRoutes,
     SignInAndUp,
     SignInAndUpCallback,

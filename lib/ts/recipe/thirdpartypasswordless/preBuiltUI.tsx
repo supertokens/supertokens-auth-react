@@ -175,8 +175,8 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
 
 const canHandleRoute = ThirdPartyPasswordlessPreBuiltUI.canHandleRoute;
 const getRoutingComponent = ThirdPartyPasswordlessPreBuiltUI.getRoutingComponent;
-const getFeatures = ThirdPartyPasswordlessPreBuiltUI.getFeatures;
-const getFeatureComponent = ThirdPartyPasswordlessPreBuiltUI.getFeatureComponent;
+const _getFeatures = ThirdPartyPasswordlessPreBuiltUI.getFeatures;
+const _getFeatureComponent = ThirdPartyPasswordlessPreBuiltUI.getFeatureComponent;
 const getReactRouterDomRoutes = ThirdPartyPasswordlessPreBuiltUI.getReactRouterDomRoutes;
 const SignInAndUp = ThirdPartyPasswordlessPreBuiltUI.SignInAndUp;
 const ThirdPartySignInAndUpCallback = ThirdPartyPasswordlessPreBuiltUI.ThirdPartySignInAndUpCallback;
@@ -185,8 +185,8 @@ const PasswordlessLinkClicked = ThirdPartyPasswordlessPreBuiltUI.PasswordlessLin
 export {
     canHandleRoute,
     getRoutingComponent,
-    getFeatures,
-    getFeatureComponent,
+    _getFeatures,
+    _getFeatureComponent,
     getReactRouterDomRoutes,
     SignInAndUp,
     ThirdPartySignInAndUpCallback,

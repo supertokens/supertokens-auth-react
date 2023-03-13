@@ -46,8 +46,8 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
 }
 declare const canHandleRoute: typeof EmailPasswordPreBuiltUI.canHandleRoute;
 declare const getRoutingComponent: typeof EmailPasswordPreBuiltUI.getRoutingComponent;
-declare const getFeatures: typeof EmailPasswordPreBuiltUI.getFeatures;
-declare const getFeatureComponent: typeof EmailPasswordPreBuiltUI.getFeatureComponent;
+declare const _getFeatures: typeof EmailPasswordPreBuiltUI.getFeatures;
+declare const _getFeatureComponent: typeof EmailPasswordPreBuiltUI.getFeatureComponent;
 declare const SignInAndUp: (
     prop?: PropsWithChildren<{
         redirectOnSessionExists?: boolean;
@@ -57,9 +57,9 @@ declare const SignInAndUp: (
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
 export {
     canHandleRoute,
-    getFeatures,
+    _getFeatures,
     getRoutingComponent,
-    getFeatureComponent,
+    _getFeatureComponent,
     SignInAndUp,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,

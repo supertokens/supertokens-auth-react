@@ -48,8 +48,8 @@ export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
 }
 declare const canHandleRoute: typeof ThirdPartyEmailPasswordPreBuiltUI.canHandleRoute;
 declare const getRoutingComponent: typeof ThirdPartyEmailPasswordPreBuiltUI.getRoutingComponent;
-declare const getFeatures: typeof ThirdPartyEmailPasswordPreBuiltUI.getFeatures;
-declare const getFeatureComponent: typeof ThirdPartyEmailPasswordPreBuiltUI.getFeatureComponent;
+declare const _getFeatures: typeof ThirdPartyEmailPasswordPreBuiltUI.getFeatures;
+declare const _getFeatureComponent: typeof ThirdPartyEmailPasswordPreBuiltUI.getFeatureComponent;
 declare const getReactRouterDomRoutes: typeof ThirdPartyEmailPasswordPreBuiltUI.getReactRouterDomRoutes;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
@@ -62,8 +62,8 @@ declare const SignInAndUp: (
 export {
     canHandleRoute,
     getRoutingComponent,
-    getFeatures,
-    getFeatureComponent,
+    _getFeatures,
+    _getFeatureComponent,
     getReactRouterDomRoutes,
     ThirdPartySignInAndUpCallback,
     ResetPasswordUsingToken,
