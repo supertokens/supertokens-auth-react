@@ -52,6 +52,8 @@ import {
     screenshotOnFailure,
     isGeneralErrorSupported,
     setGeneralErrorToLocalStorage,
+    getInvalidClaimsJSON as getInvalidClaims,
+    waitForText,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -501,6 +503,32 @@ describe("SuperTokens SignIn", function () {
                 `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=redirect-here`,
                 `${TEST_CLIENT_BASE_URL}/redirect-here`
             );
+        });
+
+        it("Should redirect back on access denied page's back button is clicked without react-router-dom", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await page.evaluate(() => {
+                window.setClaimValidators([window.UserRoleClaim.validators.includes("admin")]);
+            });
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+            await submitForm(page);
+            waitForText(page, "[data-supertokens~=headerTitle]", "Access denied");
+            const backBtn = await waitForSTElement(page, "[data-supertokens~=logoutButton]");
+            backBtn.click();
+
+            const redirectUrl = await page.evaluate(() => {
+                return window.location.pathname + window.location.search;
+            });
+
+            assert.deepStrictEqual(redirectUrl, "/dashboard");
         });
 
         it("Successful Sign In with redirect to, redirectToPath directly", async function () {
