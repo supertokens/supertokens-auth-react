@@ -17,6 +17,7 @@
  * Imports.
  */
 import * as React from "react";
+import SuperTokensWebJS from "supertokens-web-js";
 import { CookieHandlerReference } from "supertokens-web-js/utils/cookieHandler";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
@@ -109,8 +110,8 @@ export default class SuperTokens {
 
         this.userGetRedirectionURL = config.getRedirectionURL;
 
-        this.recipeList = config.recipeList.map((recipe) => {
-            return recipe(this.appInfo, enableDebugLogs);
+        this.recipeList = config.recipeList.map(({ authReact }) => {
+            return authReact(this.appInfo, enableDebugLogs);
         });
     }
 
@@ -125,6 +126,11 @@ export default class SuperTokens {
             console.warn("SuperTokens was already initialized");
             return;
         }
+
+        SuperTokensWebJS.init({
+            ...config,
+            recipeList: config.recipeList.map(({ webJS }) => webJS),
+        });
 
         SuperTokens.instance = new SuperTokens(config);
 

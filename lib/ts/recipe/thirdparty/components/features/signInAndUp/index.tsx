@@ -77,7 +77,7 @@ export const useFeatureReducer = () => {
 export function useChildProps(recipe: Recipe): ThirdPartySignInUpChildProps;
 export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChildProps | undefined;
 export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChildProps | undefined {
-    const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.recipeImpl), [recipe]);
+    const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe), [recipe]);
 
     return useMemo(() => {
         if (!recipe || !recipeImplementation) {

@@ -1,8 +1,13 @@
 /// <reference types="react" />
-import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
+import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
 import RecipeModule from "../recipeModule";
 import type { RecipeEventWithSessionContext, InputType } from "./types";
-import type { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
+import type {
+    NormalisedAppInfo,
+    NormalisedConfigWithAppInfoAndRecipeID,
+    RecipeFeatureComponentMap,
+    RecipeInitResult,
+} from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import type { SessionClaim } from "supertokens-web-js/recipe/session";
 declare type ConfigType = InputType & {
@@ -11,12 +16,15 @@ declare type ConfigType = InputType & {
     enableDebugLogs: boolean;
 };
 export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
+    readonly webJSRecipe: Omit<typeof WebJSSessionRecipe, "init" | "default">;
     static instance?: Session;
     static RECIPE_ID: string;
-    webJsRecipe: WebJSSessionRecipe;
     private eventListeners;
     private redirectionHandlersFromAuthRecipes;
-    constructor(config: ConfigType);
+    constructor(
+        config: NormalisedConfigWithAppInfoAndRecipeID<ConfigType>,
+        webJSRecipe?: Omit<typeof WebJSSessionRecipe, "init" | "default">
+    );
     getFeatureComponent: (_: string) => JSX.Element;
     getFeatures: () => RecipeFeatureComponentMap;
     getUserId: (input: { userContext: any }) => Promise<string>;
@@ -61,7 +69,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     private notifyListeners;
     private getSessionContext;
     static addAxiosInterceptors(axiosInstance: any, userContext: any): void;
-    static init(config?: InputType): CreateRecipeFunction<unknown, unknown, unknown, any>;
+    static init(config?: InputType): RecipeInitResult<unknown, unknown, unknown, any>;
     static getInstanceOrThrow(): Session;
     static getInstance(): Session | undefined;
     static reset(): void;

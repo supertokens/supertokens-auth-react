@@ -37,7 +37,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
     const userContext = useUserContext();
 
     const verifyCode = useCallback(() => {
-        return props.recipe.recipeImpl.signInAndUp({
+        return props.recipe.webJSRecipe.signInAndUp({
             userContext,
         });
     }, [props.recipe, props.history, userContext]);
@@ -55,7 +55,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
             }
 
             if (response.status === "OK") {
-                const stateResponse = props.recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
+                const stateResponse = props.recipe.webJSRecipe.getStateAndOtherInfoFromStorage<CustomStateProperties>({
                     userContext,
                 });
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;

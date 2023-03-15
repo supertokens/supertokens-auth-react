@@ -12,7 +12,7 @@ import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdparty
 export default class Wrapper {
     static init(
         config: UserInput
-    ): import("../../types").CreateRecipeFunction<
+    ): import("../../types").RecipeInitResult<
         import("../authRecipe/types").GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,

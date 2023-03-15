@@ -18,7 +18,7 @@ import { appendQueryParamsToURL } from "../../utils";
 
 import type { NormalisedConfig } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap } from "../../types";
+import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeFeatureComponentMap } from "../../types";
 
 /*
  * Class.
@@ -29,12 +29,12 @@ export default abstract class RecipeModule<
     OnHandleEventContextType,
     N extends NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType>
 > {
-    config: N;
+    config: NormalisedConfigWithAppInfoAndRecipeID<N>;
 
     /*
      * Constructor.
      */
-    constructor(config: N) {
+    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<N>) {
         this.config = config;
     }
 

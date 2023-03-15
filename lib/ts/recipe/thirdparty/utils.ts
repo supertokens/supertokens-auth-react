@@ -36,6 +36,9 @@ import type { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
  * Methods.
  */
 export function normaliseThirdPartyConfig(config: Config): NormalisedConfig {
+    if (config === undefined) {
+        throw new Error("ThirdParty config should not be empty");
+    }
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
         config.signInAndUpFeature
     );
@@ -104,7 +107,7 @@ export function normaliseSignInAndUpFeature(
 }
 
 export function matchRecipeIdUsingState(recipe: Recipe, userContext: any): boolean {
-    const stateResponse = recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
+    const stateResponse = recipe.webJSRecipe.getStateAndOtherInfoFromStorage<CustomStateProperties>({
         userContext,
     });
     if (stateResponse === undefined) {

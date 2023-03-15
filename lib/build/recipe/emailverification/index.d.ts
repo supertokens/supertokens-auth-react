@@ -10,7 +10,7 @@ export default class Wrapper {
     static EmailVerificationClaim: import("supertokens-web-js/recipe/emailverification").EmailVerificationClaimClass;
     static init(
         config: UserInput
-    ): import("../../types").CreateRecipeFunction<
+    ): import("../../types").RecipeInitResult<
         GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,

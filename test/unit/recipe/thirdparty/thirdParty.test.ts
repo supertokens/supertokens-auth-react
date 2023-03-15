@@ -57,14 +57,15 @@ describe("ThirdParty", function () {
     });
 
     it("Initializing ThirdParty with empty configs throws", async function () {
-        assert.throws(() => ThirdParty.init({})(SuperTokens.getInstanceOrThrow().appInfo, false), {
+        assert.throws(() => ThirdParty.init({}).authReact(SuperTokens.getInstanceOrThrow().appInfo, false), {
             message: "ThirdParty signInAndUpFeature providers array cannot be empty.",
         });
     });
 
     it("Initializing ThirdParty with empty signInAndUp attr throws", async function () {
         assert.throws(
-            () => ThirdParty.init({ signInAndUpFeature: {} })(SuperTokens.getInstanceOrThrow().appInfo, false),
+            () =>
+                ThirdParty.init({ signInAndUpFeature: {} }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false),
             { message: "ThirdParty signInAndUpFeature providers array cannot be empty." }
         );
     });
@@ -72,7 +73,7 @@ describe("ThirdParty", function () {
     it("Initializing ThirdParty with empty providers config throws", async function () {
         assert.throws(
             () =>
-                ThirdParty.init({ signInAndUpFeature: { providers: [] } })(
+                ThirdParty.init({ signInAndUpFeature: { providers: [] } }).authReact(
                     SuperTokens.getInstanceOrThrow().appInfo,
                     false
                 ),
@@ -85,7 +86,7 @@ describe("ThirdParty", function () {
             signInAndUpFeature: {
                 providers: [Google.init()],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
         assert.deepStrictEqual(
@@ -102,7 +103,7 @@ describe("ThirdParty", function () {
                 privacyPolicyLink,
                 providers: [Google.init()],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
         assert.deepStrictEqual(
@@ -124,7 +125,7 @@ describe("ThirdParty", function () {
             signInAndUpFeature: {
                 providers: [Google.init(), Github.init()],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
         assert.deepStrictEqual(
@@ -141,7 +142,7 @@ describe("ThirdParty", function () {
                     signInAndUpFeature: {
                         providers: [{} as any],
                     },
-                })(SuperTokens.getInstanceOrThrow().appInfo, false),
+                }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false),
             { message: "Custom provider config should contain id and name attributes" }
         );
     });
@@ -157,7 +158,7 @@ describe("ThirdParty", function () {
                             } as any,
                         ],
                     },
-                })(SuperTokens.getInstanceOrThrow().appInfo, false),
+                }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false),
             { message: "Custom provider config should contain id and name attributes" }
         );
     });
@@ -173,7 +174,7 @@ describe("ThirdParty", function () {
                             } as any,
                         ],
                     },
-                })(SuperTokens.getInstanceOrThrow().appInfo, false),
+                }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false),
             { message: "Custom provider config should contain id and name attributes" }
         );
     });
@@ -188,7 +189,7 @@ describe("ThirdParty", function () {
                     },
                 ],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
         assert.deepStrictEqual(
@@ -216,7 +217,7 @@ describe("ThirdParty", function () {
                     },
                 ],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
         assert.deepStrictEqual(
@@ -241,7 +242,7 @@ describe("ThirdParty", function () {
                     },
                 ],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
         assert.deepStrictEqual(
@@ -260,7 +261,7 @@ describe("ThirdParty", function () {
             signInAndUpFeature: {
                 providers: [Google.init(), Github.init(), Google.init()],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
         assert.deepStrictEqual(
@@ -281,7 +282,7 @@ describe("ThirdParty", function () {
                     signInAndUpFeature: {
                         providers: [Google.init(), Github.init(), "facebook" as any],
                     },
-                })(SuperTokens.getInstanceOrThrow().appInfo, false),
+                }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false),
             { message: "Custom provider config should contain id and name attributes" }
         );
     });
@@ -296,7 +297,7 @@ describe("ThirdParty", function () {
                     }),
                 ],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.deepStrictEqual(
             (ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0] as any).buttonComponent,
             CustomGoogle
@@ -322,7 +323,7 @@ describe("ThirdParty", function () {
             signInAndUpFeature: {
                 providers: [Google.init(), Github.init(), Facebook.init()],
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
         assert.deepStrictEqual(
@@ -343,7 +344,7 @@ describe("ThirdParty", function () {
     });
 
     it("Test that when calling redirectToThirdPartyLogin, userContext is passed to other functions", async function () {
-        ThirdParty.init({
+        const { authReact, webJS } = ThirdParty.init({
             signInAndUpFeature: {
                 providers: [Google.init(), Github.init(), Facebook.init()],
             },
@@ -381,7 +382,9 @@ describe("ThirdParty", function () {
                     };
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        });
+        authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
+        webJS(SuperTokens.getInstanceOrThrow().appInfo, false);
 
         try {
             await ThirdPartyIndex.redirectToThirdPartyLogin({
@@ -399,7 +402,7 @@ describe("ThirdParty", function () {
     });
 
     it("Test that when calling signInAndUp, userContext is passed to other functions", async function () {
-        ThirdParty.init({
+        const { authReact, webJS } = ThirdParty.init({
             signInAndUpFeature: {
                 providers: [Google.init(), Github.init(), Facebook.init()],
             },
@@ -430,7 +433,10 @@ describe("ThirdParty", function () {
                     };
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        });
+
+        authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
+        webJS(SuperTokens.getInstanceOrThrow().appInfo, false);
 
         try {
             await ThirdPartyIndex.signInAndUp({

@@ -41,7 +41,10 @@ import type { FormField, FormFieldBaseConfig, NormalisedFormField } from "../../
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
-export function normaliseEmailPasswordConfig(config: Config): NormalisedConfig {
+export function normaliseEmailPasswordConfig(config?: Config): NormalisedConfig {
+    if (config === undefined) {
+        config = {};
+    }
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
         config.signInAndUpFeature
     );

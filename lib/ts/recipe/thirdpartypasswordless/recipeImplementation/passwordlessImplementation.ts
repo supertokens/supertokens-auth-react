@@ -1,9 +1,10 @@
-import type { RecipeInterface as WebJSPasswordlessRecipeInterface } from "supertokens-web-js/recipe/passwordless";
-import type { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
+import type { WebJSRecipeInterface } from "../../../types";
+import type PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
+import type ThirdPartyPasswordlessWebJS from "supertokens-web-js/recipe/thirdpartypasswordless";
 
 export default function getRecipeImplementation(
-    originalImplementation: TPPWlessRecipeInterface
-): WebJSPasswordlessRecipeInterface {
+    originalImplementation: WebJSRecipeInterface<typeof ThirdPartyPasswordlessWebJS>
+): WebJSRecipeInterface<typeof PasswordlessWebJS> {
     return {
         clearLoginAttemptInfo: originalImplementation.clearPasswordlessLoginAttemptInfo.bind(originalImplementation),
         consumeCode: originalImplementation.consumePasswordlessCode.bind(originalImplementation),

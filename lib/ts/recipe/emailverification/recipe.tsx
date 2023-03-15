@@ -17,8 +17,8 @@
  * Imports.
  */
 
-import { OverrideableBuilder } from "supertokens-js-override";
 import { EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
+import EmailVerificationWebJS from "supertokens-web-js/recipe/emailverification";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
@@ -33,21 +33,24 @@ import { SessionAuth } from "../session";
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
-import RecipeImplementation from "./recipeImplementation";
+import { getFunctionOverrides } from "./functionOverrides";
 import { normaliseEmailVerificationFeature } from "./utils";
 
 import type {
     UserInput,
-    Config,
     NormalisedConfig,
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
 } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap } from "../../types";
-import type { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
-import type { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
+import type {
+    NormalisedConfigWithAppInfoAndRecipeID,
+    RecipeFeatureComponentMap,
+    RecipeInitResult,
+    WebJSRecipeInterface,
+} from "../../types";
+import type { NormalisedAppInfo } from "../../types";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -58,7 +61,7 @@ export default class EmailVerification extends RecipeModule<
     static instance?: EmailVerification;
     static RECIPE_ID = "emailverification";
     static EmailVerificationClaim = new EmailVerificationClaimClass(
-        () => EmailVerification.getInstanceOrThrow().recipeImpl,
+        () => EmailVerification.getInstanceOrThrow().webJSRecipe,
         async (userContext: any) => {
             const recipe = EmailVerification.getInstanceOrThrow();
             if (recipe.config.mode === "REQUIRED") {
@@ -70,23 +73,11 @@ export default class EmailVerification extends RecipeModule<
         }
     );
 
-    recipeImpl: RecipeInterface;
-
-    constructor(config: Config) {
-        super(normaliseEmailVerificationFeature(config));
-
-        {
-            const builder = new OverrideableBuilder(
-                RecipeImplementation({
-                    appInfo: this.config.appInfo,
-                    recipeId: this.config.recipeId,
-                    onHandleEvent: this.config.onHandleEvent,
-                    preAPIHook: this.config.preAPIHook,
-                    postAPIHook: this.config.postAPIHook,
-                })
-            );
-            this.recipeImpl = builder.override(this.config.override.functions).build();
-        }
+    constructor(
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
+        public readonly webJSRecipe: WebJSRecipeInterface<typeof EmailVerificationWebJS> = EmailVerificationWebJS
+    ) {
+        super(config);
 
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
             SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
@@ -97,16 +88,36 @@ export default class EmailVerification extends RecipeModule<
 
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
-        return (
-            appInfo: NormalisedAppInfo
-        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
-            EmailVerification.instance = new EmailVerification({
-                ...config,
-                appInfo,
-                recipeId: EmailVerification.RECIPE_ID,
-            });
-            return EmailVerification.instance;
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
+        const normalisedConfig = normaliseEmailVerificationFeature(config);
+
+        return {
+            authReact: (
+                appInfo: NormalisedAppInfo
+            ): RecipeModule<
+                GetRedirectionURLContext,
+                PreAndPostAPIHookAction,
+                OnHandleEventContext,
+                NormalisedConfig
+            > => {
+                EmailVerification.instance = new EmailVerification({
+                    ...normalisedConfig,
+                    appInfo,
+                    recipeId: EmailVerification.RECIPE_ID,
+                });
+                return EmailVerification.instance;
+            },
+            webJS: EmailVerificationWebJS.init({
+                ...normalisedConfig,
+                override: {
+                    functions: (originalImpl, builder) => {
+                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
+                        builder.override(functions);
+                        builder.override(normalisedConfig.override.functions);
+                        return originalImpl;
+                    },
+                },
+            }),
         };
     }
 
@@ -186,7 +197,7 @@ export default class EmailVerification extends RecipeModule<
         isVerified: boolean;
         fetchResponse: Response;
     }> {
-        return await this.recipeImpl.isEmailVerified({
+        return await this.webJSRecipe.isEmailVerified({
             userContext,
         });
     }

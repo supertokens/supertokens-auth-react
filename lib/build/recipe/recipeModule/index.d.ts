@@ -1,15 +1,15 @@
 /// <reference types="react" />
 import type { NormalisedConfig } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap } from "../../types";
+import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeFeatureComponentMap } from "../../types";
 export default abstract class RecipeModule<
     GetRedirectionURLContextType,
     Action,
     OnHandleEventContextType,
     N extends NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType>
 > {
-    config: N;
-    constructor(config: N);
+    config: NormalisedConfigWithAppInfoAndRecipeID<N>;
+    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<N>);
     redirect: (
         context: GetRedirectionURLContextType,
         history?: any,

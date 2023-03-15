@@ -1,9 +1,9 @@
 /// <reference types="react" />
+import ThirdPartyEmailPasswordWebJS from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import AuthRecipe from "../authRecipe";
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import type {
-    Config,
     GetRedirectionURLContext,
     NormalisedConfig,
     OnHandleEventContext,
@@ -11,25 +11,31 @@ import type {
     PreAndPostAPIHookAction,
 } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { CreateRecipeFunction, FeatureBaseProps, RecipeFeatureComponentMap } from "../../types";
-import type { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import type {
+    RecipeFeatureComponentMap,
+    FeatureBaseProps,
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipeInterface,
+} from "../../types";
 export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
     never,
     OnHandleEventContext,
     NormalisedConfig
 > {
+    readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdPartyEmailPasswordWebJS>;
     static instance?: ThirdPartyEmailPassword;
     static RECIPE_ID: string;
     emailPasswordRecipe: EmailPassword | undefined;
     thirdPartyRecipe: ThirdParty | undefined;
-    recipeImpl: RecipeInterface;
     constructor(
-        config: Config,
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         recipes: {
             thirdPartyInstance: ThirdParty | undefined;
             emailPasswordInstance: EmailPassword | undefined;
-        }
+        },
+        webJSRecipe?: WebJSRecipeInterface<typeof ThirdPartyEmailPasswordWebJS>
     );
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
@@ -43,7 +49,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     ) => JSX.Element;
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): ThirdPartyEmailPassword;
     static reset(): void;
 }

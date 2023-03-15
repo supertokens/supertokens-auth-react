@@ -1,26 +1,34 @@
 /// <reference types="react" />
+import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
 import AuthRecipe from "../authRecipe";
 import type {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
-    Config,
     NormalisedConfig,
     UserInput,
 } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { CreateRecipeFunction, FeatureBaseProps, RecipeFeatureComponentMap } from "../../types";
-import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import type {
+    RecipeFeatureComponentMap,
+    FeatureBaseProps,
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipeInterface,
+} from "../../types";
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
     OnHandleEventContext,
     NormalisedConfig
 > {
+    readonly webJSRecipe: WebJSRecipeInterface<typeof PasswordlessWebJS>;
     static instance?: Passwordless;
     static RECIPE_ID: string;
-    recipeImpl: RecipeInterface;
-    constructor(config: Config);
+    constructor(
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
+        webJSRecipe?: WebJSRecipeInterface<typeof PasswordlessWebJS>
+    );
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (
@@ -33,7 +41,7 @@ export default class Passwordless extends AuthRecipe<
     ) => JSX.Element;
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): Passwordless;
     static reset(): void;
 }

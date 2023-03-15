@@ -1,26 +1,34 @@
 /// <reference types="react" />
+import ThirdpartyWebJS from "supertokens-web-js/recipe/thirdparty";
 import AuthRecipe from "../authRecipe";
 import type {
     GetRedirectionURLContext,
-    Config,
     NormalisedConfig,
     PreAndPostAPIHookAction,
     OnHandleEventContext,
     UserInput,
 } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { CreateRecipeFunction, FeatureBaseProps, RecipeFeatureComponentMap } from "../../types";
-import type { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import type {
+    RecipeFeatureComponentMap,
+    FeatureBaseProps,
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipeInterface,
+} from "../../types";
 export default class ThirdParty extends AuthRecipe<
     GetRedirectionURLContext,
     never,
     OnHandleEventContext,
     NormalisedConfig
 > {
+    readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdpartyWebJS>;
     static instance?: ThirdParty;
     static RECIPE_ID: string;
-    recipeImpl: WebJSRecipeInterface;
-    constructor(config: Config);
+    constructor(
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
+        webJSRecipe?: WebJSRecipeInterface<typeof ThirdpartyWebJS>
+    );
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "signinup" | "signinupcallback",
@@ -33,7 +41,7 @@ export default class ThirdParty extends AuthRecipe<
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): ThirdParty;
     static reset(): void;
 }

@@ -1,8 +1,9 @@
-import { isIE } from "../../utils";
-
 import type { Config, NormalisedConfig } from "./types";
 
-export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): NormalisedConfig<T, S, R> {
+export function normaliseRecipeModuleConfig<T, S, R>(config?: Config<T, S, R>): NormalisedConfig<T, S, R> {
+    if (config === undefined) {
+        config = {};
+    }
     let { onHandleEvent, getRedirectionURL, preAPIHook, postAPIHook } = config;
     if (onHandleEvent === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
@@ -37,22 +38,9 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
         postAPIHook,
         useShadowDom,
         rootStyle,
-        recipeId: config.recipeId,
-        appInfo: config.appInfo,
     };
 }
 
 function getShouldUseShadowDomBasedOnBrowser(useShadowDom?: boolean): boolean {
-    /*
-     * Detect if browser is IE
-     * In order to disable unsupported shadowDom
-     * https://github.com/supertokens/supertokens-auth-react/issues/99
-     */
-    // If browser is Internet Explorer, always disable shadow dom.
-    if (isIE() === true) {
-        return false;
-    }
-
-    // Otherwise, use provided config or default to true.
     return useShadowDom !== undefined ? useShadowDom : true;
 }

@@ -17,7 +17,7 @@
  * Imports.
  */
 
-import { OverrideableBuilder } from "supertokens-js-override";
+import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import { SSR_ERROR } from "../../constants";
@@ -29,21 +29,26 @@ import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import LinkClickedScreen from "./components/features/linkClickedScreen";
 import SignInUp from "./components/features/signInAndUp";
-import RecipeImplementation from "./recipeImplementation";
+import { getFunctionOverrides } from "./functionOverrides";
 import { normalisePasswordlessConfig } from "./utils";
 
 import type {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
-    Config,
     NormalisedConfig,
     UserInput,
 } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { CreateRecipeFunction, FeatureBaseProps, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
+import type {
+    RecipeFeatureComponentMap,
+    NormalisedAppInfo,
+    FeatureBaseProps,
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipeInterface,
+} from "../../types";
 import type RecipeModule from "../recipeModule";
-import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 
 /*
  * Class.
@@ -57,21 +62,11 @@ export default class Passwordless extends AuthRecipe<
     static instance?: Passwordless;
     static RECIPE_ID = "passwordless";
 
-    recipeImpl: RecipeInterface;
-
-    constructor(config: Config) {
-        super(normalisePasswordlessConfig(config));
-
-        const builder = new OverrideableBuilder(
-            RecipeImplementation({
-                appInfo: this.config.appInfo,
-                recipeId: this.config.recipeId,
-                onHandleEvent: this.config.onHandleEvent,
-                preAPIHook: this.config.preAPIHook,
-                postAPIHook: this.config.postAPIHook,
-            })
-        );
-        this.recipeImpl = builder.override(this.config.override.functions).build();
+    constructor(
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
+        public readonly webJSRecipe: WebJSRecipeInterface<typeof PasswordlessWebJS> = PasswordlessWebJS
+    ) {
+        super(config);
     }
 
     getFeatures = (
@@ -82,14 +77,15 @@ export default class Passwordless extends AuthRecipe<
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) => this.getFeatureComponent("signInUp", props, useComponentOverrides),
+                component: (props) => this.getFeatureComponent("signInUp", props as any, useComponentOverrides),
             };
         }
         if (this.config.linkClickedScreenFeature.disableDefaultUI !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/verify"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) => this.getFeatureComponent("linkClickedScreen", props, useComponentOverrides),
+                component: (props) =>
+                    this.getFeatureComponent("linkClickedScreen", props as any, useComponentOverrides),
             };
         }
 
@@ -142,16 +138,36 @@ export default class Passwordless extends AuthRecipe<
 
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
-        return (
-            appInfo: NormalisedAppInfo
-        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
-            Passwordless.instance = new Passwordless({
-                ...config,
-                appInfo,
-                recipeId: Passwordless.RECIPE_ID,
-            });
-            return Passwordless.instance;
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
+        const normalisedConfig = normalisePasswordlessConfig(config);
+
+        return {
+            authReact: (
+                appInfo: NormalisedAppInfo
+            ): RecipeModule<
+                GetRedirectionURLContext,
+                PreAndPostAPIHookAction,
+                OnHandleEventContext,
+                NormalisedConfig
+            > => {
+                Passwordless.instance = new Passwordless({
+                    ...normalisedConfig,
+                    appInfo,
+                    recipeId: Passwordless.RECIPE_ID,
+                });
+                return Passwordless.instance;
+            },
+            webJS: PasswordlessWebJS.init({
+                ...normalisedConfig,
+                override: {
+                    functions: (originalImpl, builder) => {
+                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
+                        builder.override(functions);
+                        builder.override(normalisedConfig.override.functions);
+                        return originalImpl;
+                    },
+                },
+            }),
         };
     }
 

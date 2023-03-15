@@ -241,10 +241,6 @@ export function redirectWithHistory(to: string, history: any): void {
     }
 }
 
-export function isIE(): boolean {
-    return WindowHandlerReference.getReferenceOrThrow().windowHandler.getDocument().documentMode !== undefined;
-}
-
 export function getOriginOfPage(): NormalisedURLDomain {
     return new NormalisedURLDomain(WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getOrigin());
 }

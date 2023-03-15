@@ -17,6 +17,7 @@ import type RecipeModule from "./recipe/recipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 import type { ComponentClass, PropsWithChildren } from "react";
+import type { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
 import type { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/types";
 import type NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import type NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
@@ -40,7 +41,7 @@ export type SuperTokensConfig = {
     /*
      * List of recipes for authentication and session management.
      */
-    recipeList: CreateRecipeFunction<any, any, any, any>[];
+    recipeList: { authReact: CreateRecipeFunction<any, any, any, any>; webJS: CreateRecipeFunctionWebJS<any> }[];
 
     cookieHandler?: CookieHandlerInput;
 
@@ -78,6 +79,8 @@ export type SuperTokensConfig = {
     enableDebugLogs?: boolean;
     getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
 };
+
+export type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "signOut">;
 
 export type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
     appInfo: NormalisedAppInfo,
@@ -117,6 +120,16 @@ export type AppInfoUserInput = {
      * That path should be specified here.
      */
     apiGatewayPath?: string;
+};
+
+export type RecipeInitResult<T, Action, R, P extends NormalisedRecipeModuleConfig<T, Action, R>> = {
+    authReact: CreateRecipeFunction<T, Action, R, P>;
+    webJS: CreateRecipeFunctionWebJS<Action>;
+};
+
+export type NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig> = NormalisedConfig & {
+    appInfo: NormalisedAppInfo;
+    recipeId: string;
 };
 
 export type NormalisedAppInfo = {

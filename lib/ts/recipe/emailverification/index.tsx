@@ -44,7 +44,7 @@ export default class Wrapper {
         isVerified: boolean;
         fetchResponse: Response;
     }> {
-        return EmailVerificationRecipe.getInstanceOrThrow().recipeImpl.isEmailVerified({
+        return EmailVerificationRecipe.getInstanceOrThrow().webJSRecipe.isEmailVerified({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -54,7 +54,7 @@ export default class Wrapper {
         status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
         fetchResponse: Response;
     }> {
-        return EmailVerificationRecipe.getInstanceOrThrow().recipeImpl.verifyEmail({
+        return EmailVerificationRecipe.getInstanceOrThrow().webJSRecipe.verifyEmail({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -64,14 +64,14 @@ export default class Wrapper {
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }> {
-        return EmailVerificationRecipe.getInstanceOrThrow().recipeImpl.sendVerificationEmail({
+        return EmailVerificationRecipe.getInstanceOrThrow().webJSRecipe.sendVerificationEmail({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
     static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string {
-        return EmailVerificationRecipe.getInstanceOrThrow().recipeImpl.getEmailVerificationTokenFromURL({
+        return EmailVerificationRecipe.getInstanceOrThrow().webJSRecipe.getEmailVerificationTokenFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });

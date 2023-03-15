@@ -19,7 +19,10 @@ import type { Config, NormalisedConfig } from "./types";
 import type { NormalisedBaseConfig } from "../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
-export function normaliseEmailVerificationFeature(config: Config): NormalisedConfig {
+export function normaliseEmailVerificationFeature(config?: Config): NormalisedConfig {
+    if (config === undefined) {
+        config = {};
+    }
     const disableDefaultUI = config.disableDefaultUI === true;
     const mode = config.mode === undefined ? "REQUIRED" : config.mode;
 

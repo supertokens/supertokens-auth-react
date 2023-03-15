@@ -17,7 +17,7 @@
  * Imports.
  */
 
-import { OverrideableBuilder } from "supertokens-js-override";
+import ThirdpartyWebJS from "supertokens-web-js/recipe/thirdparty";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import { SSR_ERROR } from "../../constants";
@@ -29,21 +29,26 @@ import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpCallback from "./components/features/signInAndUpCallback";
-import RecipeImplementation from "./recipeImplementation";
+import { getFunctionOverrides } from "./functionOverrides";
 import { normaliseThirdPartyConfig, matchRecipeIdUsingState } from "./utils";
 
 import type {
     GetRedirectionURLContext,
-    Config,
     NormalisedConfig,
     PreAndPostAPIHookAction,
     OnHandleEventContext,
     UserInput,
 } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { CreateRecipeFunction, FeatureBaseProps, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
+import type {
+    RecipeFeatureComponentMap,
+    NormalisedAppInfo,
+    FeatureBaseProps,
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipeInterface,
+} from "../../types";
 import type RecipeModule from "../recipeModule";
-import type { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 
 /*
  * Class.
@@ -57,21 +62,11 @@ export default class ThirdParty extends AuthRecipe<
     static instance?: ThirdParty;
     static RECIPE_ID = "thirdparty";
 
-    recipeImpl: WebJSRecipeInterface;
-
-    constructor(config: Config) {
-        super(normaliseThirdPartyConfig(config));
-
-        const builder = new OverrideableBuilder(
-            RecipeImplementation({
-                appInfo: this.config.appInfo,
-                recipeId: this.config.recipeId,
-                onHandleEvent: this.config.onHandleEvent,
-                preAPIHook: this.config.preAPIHook,
-                postAPIHook: this.config.postAPIHook,
-            })
-        );
-        this.recipeImpl = builder.override(this.config.override.functions).build();
+    constructor(
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
+        public readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdpartyWebJS> = ThirdpartyWebJS
+    ) {
+        super(config);
     }
 
     /*
@@ -149,16 +144,35 @@ export default class ThirdParty extends AuthRecipe<
 
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
-        return (
-            appInfo: NormalisedAppInfo
-        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
-            ThirdParty.instance = new ThirdParty({
-                ...config,
-                appInfo,
-                recipeId: ThirdParty.RECIPE_ID,
-            });
-            return ThirdParty.instance;
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
+        const normalisedConfig = normaliseThirdPartyConfig(config);
+        return {
+            authReact: (
+                appInfo: NormalisedAppInfo
+            ): RecipeModule<
+                GetRedirectionURLContext,
+                PreAndPostAPIHookAction,
+                OnHandleEventContext,
+                NormalisedConfig
+            > => {
+                ThirdParty.instance = new ThirdParty({
+                    ...normalisedConfig,
+                    appInfo,
+                    recipeId: ThirdParty.RECIPE_ID,
+                });
+                return ThirdParty.instance;
+            },
+            webJS: ThirdpartyWebJS.init({
+                ...normalisedConfig,
+                override: {
+                    functions: (originalImpl, builder) => {
+                        const functions = getFunctionOverrides(ThirdParty.RECIPE_ID, normalisedConfig.onHandleEvent);
+                        builder.override(functions);
+                        builder.override(normalisedConfig.override.functions);
+                        return originalImpl;
+                    },
+                },
+            }),
         };
     }
 
