@@ -23,8 +23,6 @@ import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/
 import { getNormalisedUserContext } from "../../utils";
 
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
-import SignInAndUpTheme from "./components/themes/signInAndUp";
-import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import Apple from "./providers/apple";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
@@ -33,7 +31,6 @@ import ThirdParty from "./recipe";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./utils";
 
-import type { PropsWithChildren } from "react";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
@@ -177,12 +174,6 @@ export default class Wrapper {
     static Apple = Apple;
     static Facebook = Facebook;
     static Github = Github;
-    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
-        ThirdParty.getInstanceOrThrow().getFeatureComponent("signinup", prop);
-    static SignInAndUpTheme = SignInAndUpTheme;
-    static SignInAndUpCallback = (prop?: any) =>
-        ThirdParty.getInstanceOrThrow().getFeatureComponent("signinupcallback", prop);
-    static SignInAndUpCallbackTheme = SignInAndUpCallbackTheme;
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
@@ -199,8 +190,6 @@ const getAuthCodeFromURL = Wrapper.getAuthCodeFromURL;
 const getAuthErrorFromURL = Wrapper.getAuthErrorFromURL;
 const getAuthStateFromURL = Wrapper.getAuthStateFromURL;
 const signInAndUp = Wrapper.signInAndUp;
-const SignInAndUp = Wrapper.SignInAndUp;
-const SignInAndUpCallback = Wrapper.SignInAndUpCallback;
 const ThirdpartyComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 
 export {
@@ -220,10 +209,6 @@ export {
     getAuthStateFromURL,
     signInAndUp,
     redirectToThirdPartyLogin,
-    SignInAndUp,
-    SignInAndUpTheme,
-    SignInAndUpCallback,
-    SignInAndUpCallbackTheme,
     ThirdpartyComponentsOverrideProvider,
     signOut,
     User,

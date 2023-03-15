@@ -18,17 +18,11 @@
  */
 
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import { SSR_ERROR } from "../../constants";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 
-import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
-import LinkClickedScreen from "./components/features/linkClickedScreen";
-import SignInUp from "./components/features/signInAndUp";
 import { getFunctionOverrides } from "./functionOverrides";
 import { normalisePasswordlessConfig } from "./utils";
 
@@ -39,15 +33,8 @@ import type {
     NormalisedConfig,
     UserInput,
 } from "./types";
-import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type {
-    RecipeFeatureComponentMap,
-    NormalisedAppInfo,
-    FeatureBaseProps,
-    RecipeInitResult,
-    NormalisedConfigWithAppInfoAndRecipeID,
-    WebJSRecipeInterface,
-} from "../../types";
+import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
+import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
 
 /*
@@ -69,71 +56,8 @@ export default class Passwordless extends AuthRecipe<
         super(config);
     }
 
-    getFeatures = (
-        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
-    ): RecipeFeatureComponentMap => {
-        const features: RecipeFeatureComponentMap = {};
-        if (this.config.signInUpFeature.disableDefaultUI !== true) {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) => this.getFeatureComponent("signInUp", props as any, useComponentOverrides),
-            };
-        }
-        if (this.config.linkClickedScreenFeature.disableDefaultUI !== true) {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/verify"));
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) =>
-                    this.getFeatureComponent("linkClickedScreen", props as any, useComponentOverrides),
-            };
-        }
-
-        return features;
-    };
-
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         return this.getAuthRecipeDefaultRedirectionURL(context);
-    };
-
-    getFeatureComponent = (
-        componentName: "signInUp" | "linkClickedScreen",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
-        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
-    ): JSX.Element => {
-        if (componentName === "signInUp") {
-            if (props.redirectOnSessionExists !== false) {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <AuthWidgetWrapper<
-                            GetRedirectionURLContext,
-                            PreAndPostAPIHookAction,
-                            OnHandleEventContext,
-                            NormalisedConfig
-                        >
-                            authRecipe={this}
-                            history={props.history}>
-                            <SignInUp recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
-                        </AuthWidgetWrapper>
-                    </UserContextWrapper>
-                );
-            } else {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <SignInUp recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
-                    </UserContextWrapper>
-                );
-            }
-        }
-        if (componentName === "linkClickedScreen") {
-            return (
-                <UserContextWrapper userContext={props.userContext}>
-                    <LinkClickedScreen recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
-                </UserContextWrapper>
-            );
-        } else {
-            throw new Error("Should never come here.");
-        }
     };
 
     static init(

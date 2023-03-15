@@ -26,6 +26,7 @@ import assert from "assert";
 import SuperTokens from "../../../../lib/ts/superTokens";
 import { assertFormFieldsEqual } from "../../../helpers";
 import EmailPasswordIndex from "../../../../lib/ts/recipe/emailpassword";
+import { EmailPasswordPreBuiltUI } from "../../../../lib/ts/recipe/emailpassword/preBuiltUI";
 import { validateForm } from "../../../../lib/ts/utils";
 
 /*
@@ -48,6 +49,7 @@ describe("EmailPassword", function () {
 
     afterEach(async function () {
         EmailPassword.reset();
+        EmailPasswordPreBuiltUI.reset();
     });
 
     it("Initializing EmailPassword with empty configs", async function () {
@@ -77,9 +79,9 @@ describe("EmailPassword", function () {
                 ["", "test", "test123", "Str0ngP@ssword"],
             ]
         );
-        assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] !== undefined);
-        assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] !== undefined);
-        assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/verify-email"] === undefined);
+        assert(EmailPasswordPreBuiltUI.getFeatures()["/auth"] !== undefined);
+        assert(EmailPasswordPreBuiltUI.getFeatures()["/auth/reset-password"] !== undefined);
+        assert(EmailPasswordPreBuiltUI.getFeatures()["/auth/verify-email"] === undefined);
         assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().config.recipeId, "emailpassword");
     });
 
@@ -97,8 +99,9 @@ describe("EmailPassword", function () {
                 disableDefaultUI: true,
             },
         }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
-        assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] === undefined);
-        assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] === undefined);
+        // console.log(EmailPassword.getInstanceOrThrow().config);
+        assert(EmailPasswordPreBuiltUI.getFeatures()["/auth"] === undefined);
+        assert(EmailPasswordPreBuiltUI.getFeatures()["/auth/reset-password"] === undefined);
     });
 
     it("Initializing EmailPassword with optional custom Fields for SignUp", async function () {

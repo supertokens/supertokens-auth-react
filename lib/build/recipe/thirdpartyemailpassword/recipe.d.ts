@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import ThirdPartyEmailPasswordWebJS from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import AuthRecipe from "../authRecipe";
 import EmailPassword from "../emailpassword/recipe";
@@ -10,14 +9,7 @@ import type {
     UserInput,
     PreAndPostAPIHookAction,
 } from "./types";
-import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type {
-    RecipeFeatureComponentMap,
-    FeatureBaseProps,
-    RecipeInitResult,
-    NormalisedConfigWithAppInfoAndRecipeID,
-    WebJSRecipeInterface,
-} from "../../types";
+import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
 export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
     never,
@@ -37,16 +29,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
         },
         webJSRecipe?: WebJSRecipeInterface<typeof ThirdPartyEmailPasswordWebJS>
     );
-    getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
-    getFeatureComponent: (
-        componentName: "signinup" | "signinupcallback" | "resetpassword",
-        props: FeatureBaseProps & {
-            redirectOnSessionExists?: boolean;
-            userContext?: any;
-        },
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ) => JSX.Element;
     static init(
         config: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;

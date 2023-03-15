@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import ThirdpartyPasswordlessWebJS from "supertokens-web-js/recipe/thirdpartypasswordless";
 import AuthRecipe from "../authRecipe";
 import Passwordless from "../passwordless/recipe";
@@ -10,14 +9,7 @@ import type {
     UserInput,
     PreAndPostAPIHookAction,
 } from "./types";
-import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type {
-    FeatureBaseProps,
-    NormalisedConfigWithAppInfoAndRecipeID,
-    RecipeFeatureComponentMap,
-    RecipeInitResult,
-    WebJSRecipeInterface,
-} from "../../types";
+import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
 export default class ThirdPartyPasswordless extends AuthRecipe<
     GetRedirectionURLContext,
     never,
@@ -37,16 +29,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
         },
         webJSRecipe?: WebJSRecipeInterface<typeof ThirdpartyPasswordlessWebJS>
     );
-    getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
-    getFeatureComponent: (
-        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
-        props: FeatureBaseProps & {
-            redirectOnSessionExists?: boolean;
-            userContext?: any;
-        },
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ) => JSX.Element;
     static init(
         config: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;

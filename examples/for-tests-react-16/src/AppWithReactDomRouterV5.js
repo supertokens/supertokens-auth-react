@@ -1,9 +1,37 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-domv5";
-import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword";
 import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from "./App";
+import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/preBuiltUI";
+import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/preBuiltUI";
+import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/preBuiltUI";
+import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/preBuiltUI";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/preBuiltUI";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty";
+
+const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
+const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
+
+let routesRenderer = EmailPasswordPreBuiltUI.getReactRouterDomRoutes;
+if (authRecipe === "thirdparty") {
+    routesRenderer = ThirdPartyPreBuiltUI.getReactRouterDomRoutes;
+} else if (authRecipe === "emailpassword") {
+    routesRenderer = EmailPasswordPreBuiltUI.getReactRouterDomRoutes;
+} else if (authRecipe === "both") {
+    routesRenderer = (router) => {
+        return [
+            ...ThirdPartyPreBuiltUI.getReactRouterDomRoutes(router),
+            ...EmailPasswordPreBuiltUI.getReactRouterDomRoutes(router),
+        ];
+    };
+} else if (authRecipe === "thirdpartyemailpassword") {
+    routesRenderer = ThirdPartyEmailPasswordPreBuiltUI.getReactRouterDomRoutes;
+} else if (authRecipe === "passwordless") {
+    routesRenderer = PasswordlessPreBuiltUI.getReactRouterDomRoutes;
+} else if (authRecipe === "thirdpartypasswordless") {
+    routesRenderer = ThirdPartyPasswordlessPreBuiltUI.getReactRouterDomRoutes;
+}
 
 function AppWithReactDomRouter(props) {
     return (
@@ -11,7 +39,9 @@ function AppWithReactDomRouter(props) {
             <Router>
                 <BaseComponent>
                     <Switch>
-                        {getSuperTokensRoutesForReactRouterDom(require("react-router-domv5"))}
+                        {routesRenderer(require("react-router-domv5"))}
+                        {emailVerificationMode &&
+                            EmailVerificationPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
                         <Route exact path="/">
                             <Home />
                         </Route>

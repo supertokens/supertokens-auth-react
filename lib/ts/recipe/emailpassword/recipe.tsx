@@ -21,14 +21,9 @@ import EmailPasswordWebJS from "supertokens-web-js/recipe/emailpassword";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import { SSR_ERROR } from "../../constants";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 
-import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
-import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken";
-import SignInAndUp from "./components/features/signInAndUp";
 import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
 import { getFunctionOverrides } from "./functionOverrides";
 import { normaliseEmailPasswordConfig } from "./utils";
@@ -40,15 +35,8 @@ import type {
     NormalisedConfig,
     UserInput,
 } from "./types";
-import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type {
-    RecipeFeatureComponentMap,
-    NormalisedAppInfo,
-    FeatureBaseProps,
-    RecipeInitResult,
-    NormalisedConfigWithAppInfoAndRecipeID,
-    WebJSRecipeInterface,
-} from "../../types";
+import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
+import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
 
 /*
@@ -70,31 +58,6 @@ export default class EmailPassword extends AuthRecipe<
         super(config);
     }
 
-    getFeatures = (
-        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
-    ): RecipeFeatureComponentMap => {
-        const features: RecipeFeatureComponentMap = {};
-        if (this.config.signInAndUpFeature.disableDefaultUI !== true) {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) => this.getFeatureComponent("signinup", props as any, useComponentOverrides),
-            };
-        }
-
-        if (this.config.resetPasswordUsingTokenFeature.disableDefaultUI !== true) {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
-                new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH)
-            );
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) => this.getFeatureComponent("resetpassword", props as any, useComponentOverrides),
-            };
-        }
-
-        return features;
-    };
-
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "RESET_PASSWORD") {
             const resetPasswordPath = new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH);
@@ -104,45 +67,6 @@ export default class EmailPassword extends AuthRecipe<
         }
 
         return this.getAuthRecipeDefaultRedirectionURL(context);
-    };
-
-    getFeatureComponent = (
-        componentName: "signinup" | "resetpassword",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
-        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
-    ): JSX.Element => {
-        if (componentName === "signinup") {
-            if (props.redirectOnSessionExists !== false) {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <AuthWidgetWrapper<
-                            GetRedirectionURLContext,
-                            PreAndPostAPIHookAction,
-                            OnHandleEventContext,
-                            NormalisedConfig
-                        >
-                            authRecipe={this}
-                            history={props.history}>
-                            <SignInAndUp recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
-                        </AuthWidgetWrapper>
-                    </UserContextWrapper>
-                );
-            } else {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <SignInAndUp recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
-                    </UserContextWrapper>
-                );
-            }
-        } else if (componentName === "resetpassword") {
-            return (
-                <UserContextWrapper userContext={props.userContext}>
-                    <ResetPasswordUsingToken recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
-                </UserContextWrapper>
-            );
-        } else {
-            throw new Error("Should never come here.");
-        }
     };
 
     static init(

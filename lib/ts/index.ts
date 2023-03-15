@@ -35,24 +35,12 @@ export default class SuperTokensAPIWrapper {
         SuperTokens.init(config);
     }
 
-    static canHandleRoute(): boolean {
-        return SuperTokens.canHandleRoute();
-    }
-
-    static getRoutingComponent(): JSX.Element | null {
-        return SuperTokens.getRoutingComponent();
-    }
-
     static changeLanguage(language: string): Promise<void> {
         return SuperTokens.getInstanceOrThrow().changeLanguage(language);
     }
 
     static loadTranslation(store: TranslationStore): void {
         return SuperTokens.getInstanceOrThrow().loadTranslation(store);
-    }
-
-    static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any): JSX.Element[] {
-        return SuperTokens.getSuperTokensRoutesForReactRouterDom(reactRouterDom);
     }
 
     static redirectToAuth = async (options?: {
@@ -72,12 +60,9 @@ export default class SuperTokensAPIWrapper {
     static useUserContext = useUserContext;
 }
 
-export const canHandleRoute = SuperTokensAPIWrapper.canHandleRoute;
 export const init = SuperTokensAPIWrapper.init;
 export const changeLanguage = SuperTokensAPIWrapper.changeLanguage;
 export const loadTranslation = SuperTokensAPIWrapper.loadTranslation;
-export const getRoutingComponent = SuperTokensAPIWrapper.getRoutingComponent;
-export const getSuperTokensRoutesForReactRouterDom = SuperTokensAPIWrapper.getSuperTokensRoutesForReactRouterDom;
 export const redirectToAuth = SuperTokensAPIWrapper.redirectToAuth;
 
 export { SuperTokensWrapper } from "./components/supertokensWrapper";

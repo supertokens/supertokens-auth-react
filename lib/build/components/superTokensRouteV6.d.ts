@@ -1,3 +1,3 @@
 /// <reference types="react" />
-import type SuperTokens from "../superTokens";
-export declare function getSuperTokensRoutesForReactRouterDomV6(supertokensInstance: SuperTokens): JSX.Element[];
+import type { RecipeRouter } from "../recipe/recipeRouter";
+export declare function getSuperTokensRoutesForReactRouterDomV6(recipeRoutesInstance: RecipeRouter): JSX.Element[];

@@ -1,10 +1,8 @@
+/// <reference types="react" />
 import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
-import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
-import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import type { User } from "../authRecipe/types";
-import type { PropsWithChildren } from "react";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/emailpassword";
 export default class Wrapper {
     static init(
@@ -112,17 +110,8 @@ export default class Wrapper {
         fetchResponse: Response;
     }>;
     static getResetPasswordTokenFromURL(input?: { userContext?: any }): string;
-    static SignInAndUp: (
-        prop?: PropsWithChildren<{
-            redirectOnSessionExists?: boolean;
-            userContext?: any;
-        }>
-    ) => JSX.Element;
-    static SignInAndUpTheme: typeof SignInAndUpTheme;
-    static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
-    static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
     static ComponentsOverrideProvider: import("react").FC<
-        PropsWithChildren<{
+        import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
         }>
     >;
@@ -134,23 +123,14 @@ declare const sendPasswordResetEmail: typeof Wrapper.sendPasswordResetEmail;
 declare const signUp: typeof Wrapper.signUp;
 declare const signIn: typeof Wrapper.signIn;
 declare const doesEmailExist: typeof Wrapper.doesEmailExist;
-declare const SignInAndUp: (
-    prop?: PropsWithChildren<{
-        redirectOnSessionExists?: boolean;
-        userContext?: any;
-    }>
-) => JSX.Element;
 declare const getResetPasswordTokenFromURL: typeof Wrapper.getResetPasswordTokenFromURL;
-declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
 declare const EmailPasswordComponentsOverrideProvider: import("react").FC<
-    PropsWithChildren<{
+    import("react").PropsWithChildren<{
         components: import("./types").ComponentOverrideMap;
     }>
 >;
 export {
     init,
-    SignInAndUp,
-    SignInAndUpTheme,
     signOut,
     submitNewPassword,
     sendPasswordResetEmail,
@@ -158,8 +138,6 @@ export {
     signIn,
     doesEmailExist,
     getResetPasswordTokenFromURL,
-    ResetPasswordUsingToken,
-    ResetPasswordUsingTokenTheme,
     EmailPasswordComponentsOverrideProvider,
     GetRedirectionURLContext,
     PreAPIHookContext,

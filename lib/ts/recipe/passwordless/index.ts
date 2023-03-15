@@ -18,13 +18,11 @@ import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import { getNormalisedUserContext } from "../../utils";
 
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
-import SignInUpThemeWrapper from "./components/themes/signInUp";
 import Passwordless from "./recipe";
 import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import * as UtilFunctions from "./utils";
 
-import type { PropsWithChildren } from "react";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/passwordless";
 import type { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
 
@@ -173,12 +171,6 @@ export default class Wrapper {
         });
     }
 
-    static SignInUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
-        Passwordless.getInstanceOrThrow().getFeatureComponent("signInUp", prop);
-    static SignInUpTheme = SignInUpThemeWrapper;
-
-    static LinkClicked = (prop?: any) =>
-        Passwordless.getInstanceOrThrow().getFeatureComponent("linkClickedScreen", prop);
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
@@ -194,16 +186,10 @@ const getLoginAttemptInfo = Wrapper.getLoginAttemptInfo;
 const setLoginAttemptInfo = Wrapper.setLoginAttemptInfo;
 const clearLoginAttemptInfo = Wrapper.clearLoginAttemptInfo;
 const signOut = Wrapper.signOut;
-const SignInUp = Wrapper.SignInUp;
-const SignInUpTheme = Wrapper.SignInUpTheme;
-const LinkClicked = Wrapper.LinkClicked;
 const PasswordlessComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 
 export {
-    SignInUp,
-    SignInUpTheme,
     PasswordlessComponentsOverrideProvider,
-    LinkClicked,
     init,
     createCode,
     resendCode,
