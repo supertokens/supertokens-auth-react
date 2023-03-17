@@ -47,6 +47,8 @@ export type SuperTokensConfig = {
 
     windowHandler?: WindowHandlerInput;
 
+    usesDynamicLoginMethods?: boolean;
+
     languageTranslations?: {
         /*
          * Default (and fallback) language
