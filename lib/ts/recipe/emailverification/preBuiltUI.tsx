@@ -10,20 +10,20 @@ import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import { EmailVerificationTheme } from "./components/themes/emailVerification";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
-import EmailVerification from "./recipe";
+import EmailVerificationRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap } from "../../types";
 
 export class EmailVerificationPreBuiltUI extends RecipeRouter {
-    constructor(private readonly recipeInstance: EmailVerification) {
+    constructor(private readonly recipeInstance: EmailVerificationRecipe) {
         super();
     }
     static instance?: EmailVerificationPreBuiltUI;
 
     static getInstanceOrInitAndGetInstance(): EmailVerificationPreBuiltUI {
         if (EmailVerificationPreBuiltUI.instance === undefined) {
-            const recipeInstance = EmailVerification.getInstanceOrThrow();
+            const recipeInstance = EmailVerificationRecipe.getInstanceOrThrow();
             EmailVerificationPreBuiltUI.instance = new EmailVerificationPreBuiltUI(recipeInstance);
         }
 
@@ -119,3 +119,7 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
         EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("emailverification", props);
     static EmailVerificationTheme = EmailVerificationTheme;
 }
+
+const EmailVerification = EmailVerificationPreBuiltUI.canHandleRoute;
+
+export { EmailVerification };

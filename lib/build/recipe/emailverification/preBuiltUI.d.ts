@@ -1,12 +1,12 @@
 /// <reference types="react" />
 import { RecipeRouter } from "../recipeRouter";
 import { EmailVerificationTheme } from "./components/themes/emailVerification";
-import EmailVerification from "./recipe";
+import EmailVerificationRecipe from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap } from "../../types";
 export declare class EmailVerificationPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
-    constructor(recipeInstance: EmailVerification);
+    constructor(recipeInstance: EmailVerificationRecipe);
     static instance?: EmailVerificationPreBuiltUI;
     static getInstanceOrInitAndGetInstance(): EmailVerificationPreBuiltUI;
     static canHandleRoute(): boolean;
@@ -24,3 +24,5 @@ export declare class EmailVerificationPreBuiltUI extends RecipeRouter {
     static EmailVerification: (props?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
 }
+declare const EmailVerification: typeof EmailVerificationPreBuiltUI.canHandleRoute;
+export { EmailVerification };
