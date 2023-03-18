@@ -2,8 +2,6 @@ import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
-import Passwordless from "supertokens-auth-react/recipe/passwordless";
-import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/preBuiltUI";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/preBuiltUI";
 import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
@@ -35,7 +33,6 @@ SuperTokens.init({
         EmailVerification.init({
             mode: "REQUIRED",
         }),
-        Passwordless.init({ contactMethod: "EMAIL" }),
         ThirdParty.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init(), Apple.init()],
@@ -55,7 +52,6 @@ function App() {
                     <div className="fill">
                         <Routes>
                             {/* This shows the login UI on "/auth" route */}
-                            {PasswordlessPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
                             {ThirdPartyPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
                             {EmailVerificationPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
                             <Route

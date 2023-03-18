@@ -99,7 +99,6 @@ describe("EmailPassword", function () {
                 disableDefaultUI: true,
             },
         }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
-        // console.log(EmailPassword.getInstanceOrThrow().config);
         assert(EmailPasswordPreBuiltUI.getFeatures()["/auth"] === undefined);
         assert(EmailPasswordPreBuiltUI.getFeatures()["/auth/reset-password"] === undefined);
     });

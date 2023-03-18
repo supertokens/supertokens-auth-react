@@ -55,7 +55,7 @@ function AppWithReactDomRouter(props) {
                 <BaseComponent>
                     <Routes caseSensitive>
                         {routesRenderer(require("react-router-dom"))}
-                        {emailVerificationMode &&
+                        {emailVerificationMode !== "OFF" &&
                             EmailVerificationPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
                         <Route path="/" element={<Home />} />
                         <Route
