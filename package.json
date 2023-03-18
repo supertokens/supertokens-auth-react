@@ -138,12 +138,40 @@
             "limit": "30kb"
         },
         {
+            "path": "recipe/emailverification/index.js",
+            "limit": "8kb"
+        },
+        {
             "path": "recipe/passwordless/index.js",
             "limit": "105kb"
         },
         {
             "path": "recipe/thirdpartypasswordless/index.js",
             "limit": "120kb"
+        },
+        {
+            "path": "recipe/emailverification/preBuiltUI.js",
+            "limit": "21kb"
+        },
+        {
+            "path": "recipe/thirdpartyemailpassword/preBuiltUI.js",
+            "limit": "35kb"
+        },
+        {
+            "path": "recipe/thirdparty/preBuiltUI.js",
+            "limit": "19kb"
+        },
+        {
+            "path": "recipe/emailpassword/preBuiltUI.js",
+            "limit": "26kb"
+        },
+        {
+            "path": "recipe/passwordless/preBuiltUI.js",
+            "limit": "102kb"
+        },
+        {
+            "path": "recipe/thirdpartypasswordless/preBuiltUI.js",
+            "limit": "113kb"
         }
     ],
     "browserslist": {

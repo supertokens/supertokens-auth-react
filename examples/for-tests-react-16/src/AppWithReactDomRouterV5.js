@@ -40,7 +40,7 @@ function AppWithReactDomRouter(props) {
                 <BaseComponent>
                     <Switch>
                         {routesRenderer(require("react-router-domv5"))}
-                        {emailVerificationMode &&
+                        {emailVerificationMode !== "OFF" &&
                             EmailVerificationPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
                         <Route exact path="/">
                             <Home />
