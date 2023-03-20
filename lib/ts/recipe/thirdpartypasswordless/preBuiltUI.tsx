@@ -40,7 +40,9 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
         return ThirdPartyPasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().canHandleRoute();
     }
     static getRoutingComponent(): JSX.Element | null {
-        return ThirdPartyPasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getRoutingComponent();
+        const instance = ThirdPartyPasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance();
+        RecipeRouter.addPrebuiltUI(instance);
+        return instance.getRoutingComponent();
     }
     static getFeatures(): RecipeFeatureComponentMap {
         return ThirdPartyPasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures();

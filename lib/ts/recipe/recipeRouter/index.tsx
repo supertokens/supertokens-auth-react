@@ -22,7 +22,7 @@ export abstract class RecipeRouter {
         const path = normalisedUrl.getAsStringDangerous();
 
         const routeComponents = RecipeRouter.preBuiltUIList.reduce((components, c) => {
-            const routes = c.getPathsToFeatureComponentWithRecipeIdMap()[path];
+            const routes = c.getPathsToFeatureComponentWithRecipeIdMap?.()[path];
             return routes !== undefined ? components.concat(routes) : components;
         }, [] as ComponentWithRecipeAndMatchingMethod[]);
 
@@ -37,6 +37,12 @@ export abstract class RecipeRouter {
 
         // Otherwise, If no recipe Id provided, or if no recipe id matches, return the first matching component.
         return routeComponents[0];
+    }
+
+    static addPrebuiltUI(instance: RecipeRouter): void {
+        if (!RecipeRouter.preBuiltUIList.includes(instance)) {
+            RecipeRouter.preBuiltUIList.push(instance);
+        }
     }
 
     static getRecipeRoutes(reactRouterDom: any, instance: RecipeRouter): JSX.Element[] {

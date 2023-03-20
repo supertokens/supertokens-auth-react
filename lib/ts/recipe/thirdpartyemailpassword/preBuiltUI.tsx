@@ -42,7 +42,9 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
         return ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().canHandleRoute();
     }
     static getRoutingComponent(): JSX.Element | null {
-        return ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getRoutingComponent();
+        const instance = ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance();
+        RecipeRouter.addPrebuiltUI(instance);
+        return instance.getRoutingComponent();
     }
     static getFeatures(): RecipeFeatureComponentMap {
         return ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures();

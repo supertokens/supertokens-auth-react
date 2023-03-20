@@ -41,7 +41,9 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
         return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().canHandleRoute();
     }
     static getRoutingComponent(): JSX.Element | null {
-        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getRoutingComponent();
+        const instance = ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance();
+        RecipeRouter.addPrebuiltUI(instance);
+        return instance.getRoutingComponent();
     }
     static getFeatures(
         recipeInstance?: ThirdParty,
