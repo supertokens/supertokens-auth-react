@@ -14,8 +14,7 @@ export abstract class RecipeRouter {
 
     private static reactRouterDom?: { router: { Route: any }; useHistoryCustom: () => any; useLocation: () => any };
     private static reactRouterDomIsV6: boolean | undefined = undefined;
-    private static preBuiltUIList: RecipeRouter[] = [];
-
+    public static preBuiltUIList: RecipeRouter[] = [];
     static getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
         normalisedUrl: NormalisedURLPath
     ): ComponentWithRecipeAndMatchingMethod | undefined {
@@ -34,7 +33,6 @@ export abstract class RecipeRouter {
         if (component !== undefined) {
             return component;
         }
-
         // Otherwise, If no recipe Id provided, or if no recipe id matches, return the first matching component.
         return routeComponents[0];
     }
