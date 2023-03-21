@@ -33,7 +33,9 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
         return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().canHandleRoute();
     }
     static getRoutingComponent(): JSX.Element | null {
-        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getRoutingComponent();
+        const instance = EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance();
+        RecipeRouter.addPrebuiltUI(instance);
+        return instance.getRoutingComponent();
     }
     static getFeatures(): RecipeFeatureComponentMap {
         return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures();
@@ -120,6 +122,6 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
     static EmailVerificationTheme = EmailVerificationTheme;
 }
 
-const EmailVerification = EmailVerificationPreBuiltUI.canHandleRoute;
+const EmailVerification = EmailVerificationPreBuiltUI.EmailVerification;
 
-export { EmailVerification };
+export { EmailVerification, EmailVerificationTheme };

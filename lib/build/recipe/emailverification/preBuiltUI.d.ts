@@ -24,5 +24,5 @@ export declare class EmailVerificationPreBuiltUI extends RecipeRouter {
     static EmailVerification: (props?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
 }
-declare const EmailVerification: typeof EmailVerificationPreBuiltUI.canHandleRoute;
-export { EmailVerification };
+declare const EmailVerification: (props?: any) => JSX.Element;
+export { EmailVerification, EmailVerificationTheme };

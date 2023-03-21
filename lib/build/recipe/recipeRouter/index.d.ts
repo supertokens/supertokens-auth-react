@@ -6,10 +6,11 @@ export declare abstract class RecipeRouter {
     private pathsToFeatureComponentWithRecipeIdMap?;
     private static reactRouterDom?;
     private static reactRouterDomIsV6;
-    private static preBuiltUIList;
+    static preBuiltUIList: RecipeRouter[];
     static getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
         normalisedUrl: NormalisedURLPath
     ): ComponentWithRecipeAndMatchingMethod | undefined;
+    static addPrebuiltUI(instance: RecipeRouter): void;
     static getRecipeRoutes(reactRouterDom: any, instance: RecipeRouter): JSX.Element[];
     canHandleRoute: () => boolean;
     static getReactRouterDomWithCustomHistory: () =>

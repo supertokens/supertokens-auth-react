@@ -40,7 +40,9 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
         return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().canHandleRoute();
     }
     static getRoutingComponent(): JSX.Element | null {
-        return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getRoutingComponent();
+        const instance = PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance();
+        RecipeRouter.addPrebuiltUI(instance);
+        return instance.getRoutingComponent();
     }
     static getFeatures(
         recipeInstance?: Passwordless,

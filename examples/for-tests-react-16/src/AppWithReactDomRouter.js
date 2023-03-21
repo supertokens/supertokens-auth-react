@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword";
+import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword/preBuiltUI";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import {
     ResetPasswordUsingToken,
     SignInAndUp as TPSignInAndUp,
     ThirdPartySignInAndUpCallback,
-} from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+} from "supertokens-auth-react/recipe/thirdpartyemailpassword/preBuiltUI";
 import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from "./App";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/preBuiltUI";
 import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/preBuiltUI";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/preBuiltUI";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/preBuiltUI";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/preBuiltUI";
-import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/preBuiltUI";
 
 const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
 const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";

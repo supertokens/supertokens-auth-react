@@ -41,7 +41,9 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
         return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().canHandleRoute();
     }
     static getRoutingComponent(): JSX.Element | null {
-        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getRoutingComponent();
+        const instance = EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance();
+        RecipeRouter.addPrebuiltUI(instance);
+        return instance.getRoutingComponent();
     }
     static getFeatures(
         recipeInstance?: EmailPassword,
