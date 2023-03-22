@@ -59,9 +59,7 @@ supertokens.init({
             flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
         }),
         Session.init(),
-        Dashboard.init({
-            apiKey: "supertokens_is_awesome",
-        }),
+        Dashboard.init(),
     ],
 });
 

@@ -8,6 +8,7 @@ import { middleware, errorHandler, SessionRequest } from "supertokens-node/frame
 import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
 import Passwordless from "supertokens-node/recipe/passwordless";
 import EmailVerification from "supertokens-node/recipe/emailverification";
+import Dashboard from "supertokens-node/recipe/dashboard";
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -107,6 +108,7 @@ supertokens.init({
                 },
             },
         }),
+        Dashboard.init(),
     ],
 });
 

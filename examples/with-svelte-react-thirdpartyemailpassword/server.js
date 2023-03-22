@@ -5,6 +5,7 @@ const EmailVerification = require("supertokens-node/recipe/emailverification");
 const ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 const { middleware, errorHandler } = require("supertokens-node/framework/express");
 const cors = require("cors");
+const Dashboard = require("supertokens-node/recipe/dashboard");
 
 let { Google, Github } = ThirdPartyEmailPassword;
 
@@ -42,6 +43,7 @@ supertokens.init({
             ],
         }),
         Session.init(), // initializes session features
+        Dashboard.init(),
     ],
 });
 

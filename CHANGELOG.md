@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 -   Fix unsupported engine warning for npm v9
+-   Updates dependency versions for `supertokens-auth-react` and `supertokens-node` for all example apps
+-   Initialises the Dashboard recipe for all example apps
 
 ## [0.31.2] - 2023-03-07
 

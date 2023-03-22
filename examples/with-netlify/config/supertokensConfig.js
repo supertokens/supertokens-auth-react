@@ -1,5 +1,6 @@
 let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
+let Dashboard = require("supertokens-node/recipe/dashboard");
 
 function getBackendConfig() {
     return {
@@ -13,7 +14,7 @@ function getBackendConfig() {
             websiteDomain: process.env.SITE_NAME + ".netlify.app",
             apiBasePath: "/.netlify/functions/auth",
         },
-        recipeList: [EmailPassword.init(), Session.init()],
+        recipeList: [EmailPassword.init(), Session.init(), Dashboard.init()],
         isInServerlessEnv: true,
     };
 }

@@ -8,6 +8,7 @@ import EmailPassword from "supertokens-node/recipe/emailpassword";
 import Passwordless from "supertokens-node/recipe/passwordless";
 import parsePhoneNumber from "libphonenumber-js/max";
 import { PhoneVerifiedClaim } from "./phoneVerifiedClaim";
+import Dashboard from "supertokens-node/recipe/dashboard";
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -201,6 +202,7 @@ supertokens.init({
                 },
             },
         }),
+        Dashboard.init(),
     ],
 });
 
