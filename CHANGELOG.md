@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changes
+
+-   Fix unsupported engine warning for npm v9
+
 ## [0.31.2] - 2023-03-07
 
 ### Fixes
