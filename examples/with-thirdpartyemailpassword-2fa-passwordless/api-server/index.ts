@@ -9,6 +9,7 @@ import Passwordless from "supertokens-node/recipe/passwordless";
 import UserMetadata from "supertokens-node/recipe/usermetadata";
 import { SecondFactorClaim } from "./secondFactorClaim";
 import EmailVerification from "supertokens-node/recipe/emailverification";
+import Dashboard from "supertokens-node/recipe/dashboard";
 
 require("dotenv").config();
 
@@ -182,6 +183,7 @@ supertokens.init({
                 },
             },
         }),
+        Dashboard.init(),
     ],
 });
 
