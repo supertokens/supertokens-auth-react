@@ -27,12 +27,7 @@ supertokens.init({
         apiBasePath: "/api/auth",
         websiteBasePath: "/auth",
     },
-    recipeList: [
-        EmailVerification.init({ mode: "REQUIRED" }), 
-        EmailPassword.init(), 
-        Session.init(),
-        Dashboard.init(),
-    ],
+    recipeList: [EmailVerification.init({ mode: "REQUIRED" }), EmailPassword.init(), Session.init(), Dashboard.init()],
 });
 
 const app = express();
