@@ -8,6 +8,7 @@ let { verifySession } = require("supertokens-node/recipe/session/framework/expre
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
 let EmailVerification = require("supertokens-node/recipe/emailverification");
+let Dashboard = require("supertokens-node/recipe/dashboard");
 
 const apiDomain = process.env.VERCEL_URL !== undefined ? process.env.VERCEL_URL : `http://localhost:3001`;
 const websiteDomain = process.env.VERCEL_URL !== undefined ? process.env.VERCEL_URL : `http://localhost:3000`;
@@ -26,7 +27,12 @@ supertokens.init({
         apiBasePath: "/api/auth",
         websiteBasePath: "/auth",
     },
-    recipeList: [EmailVerification.init({ mode: "REQUIRED" }), EmailPassword.init(), Session.init()],
+    recipeList: [
+        EmailVerification.init({ mode: "REQUIRED" }), 
+        EmailPassword.init(), 
+        Session.init(),
+        Dashboard.init(),
+    ],
 });
 
 const app = express();

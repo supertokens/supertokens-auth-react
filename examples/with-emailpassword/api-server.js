@@ -31,9 +31,7 @@ supertokens.init({
         EmailVerification.init({ mode: "REQUIRED" }),
         EmailPassword.init(),
         Session.init(),
-        Dashboard.init({
-            apiKey: "supertokens_is_awesome",
-        }),
+        Dashboard.init(),
     ],
 });
 

@@ -5,6 +5,7 @@ import { appInfo } from "./appInfo";
 import jwt from "jsonwebtoken";
 import { getSupabase } from "../utils/supabase";
 import { TypeInput } from "supertokens-node/lib/build/types";
+import Dashboard from "supertokens-node/recipe/dashboard";
 
 export let backendConfig = (): TypeInput => {
     return {
@@ -131,6 +132,7 @@ export let backendConfig = (): TypeInput => {
                     },
                 },
             }),
+            Dashboard.init(),
         ],
         isInServerlessEnv: true,
     };

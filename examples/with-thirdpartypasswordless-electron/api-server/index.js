@@ -10,6 +10,7 @@ let ThirdPartyPasswordless = require("supertokens-node/recipe/thirdpartypassword
 // let Twilio = require("twilio");
 let axios = require("axios").default;
 let { mailTransporter, getEmailBody } = require("./mailer");
+let Dashboard = require("supertokens-node/recipe/dashboard");
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -177,6 +178,7 @@ supertokens.init({
             cookieSameSite: "none",
             cookieSecure: true,
         }),
+        Dashboard.init(),
     ],
 });
 

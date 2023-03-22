@@ -7,6 +7,7 @@ import { middleware, errorHandler, SessionRequest } from "supertokens-node/frame
 import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
 import Passwordless from "supertokens-node/recipe/passwordless";
 import UserMetadata from "supertokens-node/recipe/usermetadata";
+import Dashboard from "supertokens-node/recipe/dashboard";
 import { v4 as uuidv4 } from "uuid";
 import JWT from "supertokens-node/recipe/jwt";
 require("dotenv").config();
@@ -74,6 +75,7 @@ supertokens.init({
             },
         }),
         Session.init(),
+        Dashboard.init(),
     ],
 });
 
