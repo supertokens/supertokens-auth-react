@@ -16,7 +16,7 @@
         "react-dom": "^18.0.0",
         "react-router-dom": "^6.2.1",
         "react-scripts": "^5.0.1",
-        "supertokens-auth-react": "^0.31.2",
+        "supertokens-auth-react": "^0.31.3",
         "supertokens-node": "^13.1.5",
         "web-vitals": "^0.2.4"
     },
