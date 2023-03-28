@@ -16,14 +16,26 @@ import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordles
 
 import { getNormalisedUserContext } from "../../utils";
 import * as PasswordlessUtilFunctions from "../passwordless/utils";
-import { Apple, Google, Facebook, Github, Gitlab, Bitbucket, Discord } from "../thirdparty/";
+import {
+    Apple,
+    Google,
+    Facebook,
+    Github,
+    Gitlab,
+    Bitbucket,
+    Discord,
+    LinkedIn,
+    ActiveDirectory,
+    BoxySAML,
+    Okta,
+} from "../thirdparty/";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 import ThirdPartyPasswordless from "./recipe";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 
-import type { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
+import type { ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
 import type {
     PasswordlessFlowType,
     PasswordlessUser,
@@ -61,21 +73,6 @@ export default class Wrapper {
         });
     }
 
-    static async getAuthorisationURLFromBackend(input: {
-        providerId: string;
-        userContext?: any;
-        options?: RecipeFunctionOptions;
-    }): Promise<{
-        status: "OK";
-        url: string;
-        fetchResponse: Response;
-    }> {
-        return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.getAuthorisationURLFromBackend({
-            ...input,
-            userContext: getNormalisedUserContext(input.userContext),
-        });
-    }
-
     static async thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
@@ -94,30 +91,12 @@ export default class Wrapper {
         });
     }
 
-    static getThirdPartyStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
-        userContext?: any;
-    }): (StateObject & CustomStateProperties) | undefined {
-        return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.getThirdPartyStateAndOtherInfoFromStorage({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static async setThirdPartyStateAndOtherInfoToStorage<CustomStateProperties>(input: {
-        state: StateObject & CustomStateProperties;
-        userContext?: any;
-    }): Promise<void> {
-        return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.setThirdPartyStateAndOtherInfoToStorage({
-            ...input,
-            userContext: getNormalisedUserContext(input.userContext),
-        });
-    }
-
     static async getThirdPartyAuthorisationURLWithQueryParamsAndSetState(input: {
-        providerId: string;
-        authorisationURL: string;
+        thirdPartyId: string;
+        tenantId?: string | undefined;
+        frontendRedirectURI: string;
+        redirectURIOnProviderDashboard?: string;
         userContext?: any;
-        providerClientId?: string;
         options?: RecipeFunctionOptions;
     }): Promise<string> {
         return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.getThirdPartyAuthorisationURLWithQueryParamsAndSetState(
@@ -126,45 +105,6 @@ export default class Wrapper {
                 userContext: getNormalisedUserContext(input.userContext),
             }
         );
-    }
-
-    static generateThirdPartyStateToSendToOAuthProvider(input?: { userContext?: any }): string {
-        return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.generateThirdPartyStateToSendToOAuthProvider({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static async verifyAndGetThirdPartyStateOrThrowError<CustomStateProperties>(input: {
-        stateFromAuthProvider: string | undefined;
-        stateObjectFromStorage: (StateObject & CustomStateProperties) | undefined;
-        userContext?: any;
-    }): Promise<StateObject & CustomStateProperties> {
-        return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.verifyAndGetThirdPartyStateOrThrowError({
-            ...input,
-            userContext: getNormalisedUserContext(input.userContext),
-        });
-    }
-
-    static getThirdPartyAuthCodeFromURL(input?: { userContext?: any }): string {
-        return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.getThirdPartyAuthCodeFromURL({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static getThirdPartyAuthErrorFromURL(input?: { userContext?: any }): string | undefined {
-        return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.getThirdPartyAuthErrorFromURL({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static getThirdPartyAuthStateFromURL(input?: { userContext?: any }): string {
-        return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.getThirdPartyAuthStateFromURL({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
     }
 
     static async createPasswordlessCode(
@@ -338,23 +278,19 @@ export default class Wrapper {
     static Gitlab = Gitlab;
     static Google = Google;
     static Facebook = Facebook;
+    static LinkedIn = LinkedIn;
+    static ActiveDirectory = ActiveDirectory;
+    static BoxySAML = BoxySAML;
+    static Okta = Okta;
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
 const init = Wrapper.init;
 const signOut = Wrapper.signOut;
 const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
-const getAuthorisationURLFromBackend = Wrapper.getAuthorisationURLFromBackend;
 const thirdPartySignInAndUp = Wrapper.thirdPartySignInAndUp;
-const getThirdPartyStateAndOtherInfoFromStorage = Wrapper.getThirdPartyStateAndOtherInfoFromStorage;
-const setThirdPartyStateAndOtherInfoToStorage = Wrapper.setThirdPartyStateAndOtherInfoToStorage;
 const getThirdPartyAuthorisationURLWithQueryParamsAndSetState =
     Wrapper.getThirdPartyAuthorisationURLWithQueryParamsAndSetState;
-const generateThirdPartyStateToSendToOAuthProvider = Wrapper.generateThirdPartyStateToSendToOAuthProvider;
-const verifyAndGetThirdPartyStateOrThrowError = Wrapper.verifyAndGetThirdPartyStateOrThrowError;
-const getThirdPartyAuthCodeFromURL = Wrapper.getThirdPartyAuthCodeFromURL;
-const getThirdPartyAuthErrorFromURL = Wrapper.getThirdPartyAuthErrorFromURL;
-const getThirdPartyAuthStateFromURL = Wrapper.getThirdPartyAuthStateFromURL;
 const createPasswordlessCode = Wrapper.createPasswordlessCode;
 const resendPasswordlessCode = Wrapper.resendPasswordlessCode;
 const consumePasswordlessCode = Wrapper.consumePasswordlessCode;
@@ -376,17 +312,13 @@ export {
     Gitlab,
     Google,
     Facebook,
+    LinkedIn,
+    ActiveDirectory,
+    BoxySAML,
+    Okta,
     redirectToThirdPartyLogin,
-    getAuthorisationURLFromBackend,
     thirdPartySignInAndUp,
-    getThirdPartyStateAndOtherInfoFromStorage,
-    setThirdPartyStateAndOtherInfoToStorage,
     getThirdPartyAuthorisationURLWithQueryParamsAndSetState,
-    generateThirdPartyStateToSendToOAuthProvider,
-    verifyAndGetThirdPartyStateOrThrowError,
-    getThirdPartyAuthCodeFromURL,
-    getThirdPartyAuthErrorFromURL,
-    getThirdPartyAuthStateFromURL,
     createPasswordlessCode,
     resendPasswordlessCode,
     consumePasswordlessCode,

@@ -31,8 +31,8 @@ import type { SuperTokensConfig } from "./types";
 export default class SuperTokensAPIWrapper {
     static SuperTokensWrapper = SuperTokensWrapper;
 
-    static init(config: SuperTokensConfig): void {
-        SuperTokens.init(config);
+    static async init(config: SuperTokensConfig): Promise<void> {
+        await SuperTokens.init(config);
     }
 
     static changeLanguage(language: string): Promise<void> {

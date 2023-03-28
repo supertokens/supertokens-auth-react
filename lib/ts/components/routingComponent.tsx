@@ -1,15 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
+import Multitenancy from "../recipe/multitenancy/recipe";
 import { RecipeRouter } from "../recipe/recipeRouter";
+import SuperTokens from "../superTokens";
 
-import type { ReactRouterDom } from "../ui/types";
+import type { GetLoginMethodsResponseNormalized } from "../recipe/multitenancy/types";
+import type { ReactRouterDomWithCustomHistory } from "../ui/types";
 
 export function RoutingComponent(props: {
-    getReactRouterDomWithCustomHistory: () => ReactRouterDom | undefined;
+    getReactRouterDomWithCustomHistory: () => ReactRouterDomWithCustomHistory | undefined;
     preBuiltUIList: RecipeRouter[];
     path: string;
 }): JSX.Element | null {
+    const [enabled, setEnabled] = useState(SuperTokens.usesDynamicLoginMethods === false);
     const path = props.path;
     const location = props.getReactRouterDomWithCustomHistory()?.useLocation();
     const componentToRender = React.useMemo(() => {
@@ -23,9 +27,32 @@ export function RoutingComponent(props: {
         );
     }, [path, location]); // location dependency needs to be kept in order to get new component on url change
 
+    useEffect(() => {
+        const handler = () => {
+            if (enabled === false && componentToRender?.recipeID) {
+                let enabled =
+                    Multitenancy.dynamicLoginMethods?.[
+                        componentToRender?.recipeID as keyof GetLoginMethodsResponseNormalized
+                    ] !== undefined;
+                if (enabled === false) {
+                    for (const id in Multitenancy.dynamicLoginMethods) {
+                        if (componentToRender.recipeID.includes(id)) {
+                            enabled = true;
+                            break;
+                        }
+                    }
+                }
+                setEnabled(enabled);
+            }
+        };
+        SuperTokens.uiController.on("LoginMethodsLoaded", handler);
+
+        () => SuperTokens.uiController.off("LoginMethodsLoaded", handler);
+    }, []);
+
     const history = props.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
 
-    if (componentToRender === undefined) {
+    if (componentToRender === undefined || enabled === false) {
         return null;
     }
 

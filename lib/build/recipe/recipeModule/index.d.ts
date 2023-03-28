@@ -7,6 +7,7 @@ export default abstract class RecipeModule<
     N extends NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType>
 > {
     config: NormalisedConfigWithAppInfoAndRecipeID<N>;
+    abstract recipeID: string;
     constructor(config: NormalisedConfigWithAppInfoAndRecipeID<N>);
     redirect: (
         context: GetRedirectionURLContextType,

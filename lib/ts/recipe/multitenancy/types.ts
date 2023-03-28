@@ -11,7 +11,7 @@ export type UserInput = {
             builder: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
     };
-    getTenantID?: (input: { userContext: any }) => Promise<string>;
+    getTenantID?: (input?: { userContext: any }) => Promise<string>;
 } & RecipeModuleUserInput<any, PreAndPostAPIHookAction, any>;
 
 export type NormalisedConfig = UserInput & {
@@ -20,6 +20,40 @@ export type NormalisedConfig = UserInput & {
             originalImplementation: RecipeInterface,
             builder: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
+    };
+};
+
+export type GetLoginMethodsResponse = {
+    status: "OK";
+    emailPassword: {
+        enabled: boolean;
+    };
+    passwordless: {
+        enabled: boolean;
+    };
+    thirdParty: {
+        enabled: boolean;
+        providers: {
+            id: string;
+            name: string;
+        }[];
+    };
+    fetchResponse: Response;
+};
+
+export type GetLoginMethodsResponseNormalized = {
+    passwordless: {
+        enabled: boolean;
+    };
+    emailpassword: {
+        enabled: boolean;
+    };
+    thirdparty: {
+        enabled: boolean;
+        providers: {
+            id: string;
+            name: string;
+        }[];
     };
 };
 
@@ -37,21 +71,9 @@ export type RecipeInterface = {
      *
      * @returns `{status: OK, emailpassword, passwordless, thirdParty}` if successful
      */
-    getLoginMethods: (input: { tenantId?: string; options?: RecipeFunctionOptions; userContext: any }) => Promise<{
-        status: "OK";
-        emailPassword: {
-            enabled: boolean;
-        };
-        passwordless: {
-            enabled: boolean;
-        };
-        thirdParty: {
-            enabled: boolean;
-            providers: {
-                id: string;
-                name: string;
-            }[];
-        };
-        fetchResponse: Response;
-    }>;
+    getLoginMethods: (input: {
+        tenantId?: string;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }) => Promise<GetLoginMethodsResponse>;
 };

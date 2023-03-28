@@ -20,7 +20,7 @@ import type { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCa
 import type Provider from "./providers";
 import type { CustomProviderConfig } from "./providers/types";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import type { FeatureBaseConfig, NormalisedBaseConfig, WebJSRecipeInterface } from "../../types";
 import type {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -29,6 +29,7 @@ import type {
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipe/types";
 import type { OverrideableBuilder } from "supertokens-js-override";
+import type ThirdPartyWebJS from "supertokens-web-js/recipe/thirdparty";
 import type { StateObject as WebJsStateObject, RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 
 export type ComponentOverrideMap = {
@@ -109,7 +110,7 @@ export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
 
 export type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
 
-export type PreAndPostAPIHookAction = "GET_AUTHORISATION_URL" | "THIRD_PARTY_SIGN_IN_UP";
+export type PreAndPostAPIHookAction = "GET_AUTHORISATION_URL" | "THIRD_PARTY_SIGN_IN_UP" | "GET_PROVIDERS";
 
 export type PreAPIHookContext = {
     action: PreAndPostAPIHookAction;
@@ -132,11 +133,8 @@ export type SignInAndUpThemeProps = {
         error: string | undefined;
     };
     dispatch: (action: ThirdPartySignInUpActions) => void;
-    providers: {
-        id: string;
-        buttonComponent: JSX.Element;
-    }[];
-    recipeImplementation: RecipeInterface;
+    providers: Provider[];
+    recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;
     config: NormalisedConfig;
 };
 export type ThirdPartySignInUpChildProps = Omit<SignInAndUpThemeProps, "featureState" | "dispatch">;

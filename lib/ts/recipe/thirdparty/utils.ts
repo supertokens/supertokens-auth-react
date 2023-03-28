@@ -30,6 +30,8 @@ import type {
     Config,
     CustomStateProperties,
 } from "./types";
+import type { WebJSRecipeInterface } from "../../types";
+import type ThirdPartyWebJS from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 
 /*
@@ -123,7 +125,7 @@ export async function redirectToThirdPartyLogin(input: {
     thirdPartyId: string;
     config: NormalisedConfig;
     userContext: any;
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;
 }): Promise<{ status: "OK" | "ERROR" }> {
     const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
     if (provider === undefined) {
@@ -131,9 +133,9 @@ export async function redirectToThirdPartyLogin(input: {
     }
 
     const response = await input.recipeImplementation.getAuthorisationURLWithQueryParamsAndSetState({
-        providerId: input.thirdPartyId,
-        authorisationURL: provider.getRedirectURL(),
-        providerClientId: provider.clientId,
+        thirdPartyId: input.thirdPartyId,
+        frontendRedirectURI: provider.getFrontendRedirectURI(),
+        redirectURIOnProviderDashboard: provider.getRedirectURIOnProviderDashboard(),
         userContext: input.userContext,
     });
 

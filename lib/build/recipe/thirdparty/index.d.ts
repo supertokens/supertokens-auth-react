@@ -1,12 +1,16 @@
 /// <reference types="react" />
 import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
+import ActiveDirectory from "./providers/activeDirectory";
 import Apple from "./providers/apple";
 import Bitbucket from "./providers/bitbucket";
+import BoxySAML from "./providers/boxySaml";
 import Discord from "./providers/discord";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
 import Gitlab from "./providers/gitlab";
 import Google from "./providers/google";
+import LinkedIn from "./providers/linkedIn";
+import Okta from "./providers/okta";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
@@ -26,26 +30,14 @@ export default class Wrapper {
     static getStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
         userContext?: any;
     }): (StateObject & CustomStateProperties) | undefined;
-    static setStateAndOtherInfoToStorage<CustomStateProperties>(input: {
-        state: StateObject & CustomStateProperties;
-        userContext?: any;
-    }): Promise<void>;
     static getAuthorisationURLWithQueryParamsAndSetState(input: {
-        providerId: string;
-        authorisationURL: string;
-        providerClientId?: string;
+        thirdPartyId: string;
+        tenantId?: string;
+        frontendRedirectURI: string;
+        redirectURIOnProviderDashboard?: string;
         userContext?: any;
         options?: RecipeFunctionOptions;
     }): Promise<string>;
-    static getAuthorisationURLFromBackend(input: {
-        providerId: string;
-        userContext?: any;
-        options?: RecipeFunctionOptions;
-    }): Promise<{
-        status: "OK";
-        url: string;
-        fetchResponse: Response;
-    }>;
     static signInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
@@ -58,15 +50,6 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static generateStateToSendToOAuthProvider(input?: { userContext?: any }): string;
-    static verifyAndGetStateOrThrowError<CustomStateProperties>(input: {
-        stateFromAuthProvider: string | undefined;
-        stateObjectFromStorage: (StateObject & CustomStateProperties) | undefined;
-        userContext?: any;
-    }): Promise<StateObject & CustomStateProperties>;
-    static getAuthCodeFromURL(input?: { userContext?: any }): string;
-    static getAuthErrorFromURL(input?: { userContext?: any }): string | undefined;
-    static getAuthStateFromURL(input?: { userContext?: any }): string;
     static Apple: typeof Apple;
     static Bitbucket: typeof Bitbucket;
     static Discord: typeof Discord;
@@ -74,6 +57,10 @@ export default class Wrapper {
     static Gitlab: typeof Gitlab;
     static Google: typeof Google;
     static Facebook: typeof Facebook;
+    static LinkedIn: typeof LinkedIn;
+    static ActiveDirectory: typeof ActiveDirectory;
+    static BoxySAML: typeof BoxySAML;
+    static Okta: typeof Okta;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
@@ -84,14 +71,7 @@ declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
 declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogin;
 declare const getStateAndOtherInfoFromStorage: typeof Wrapper.getStateAndOtherInfoFromStorage;
-declare const setStateAndOtherInfoToStorage: typeof Wrapper.setStateAndOtherInfoToStorage;
 declare const getAuthorisationURLWithQueryParamsAndSetState: typeof Wrapper.getAuthorisationURLWithQueryParamsAndSetState;
-declare const getAuthorisationURLFromBackend: typeof Wrapper.getAuthorisationURLFromBackend;
-declare const generateStateToSendToOAuthProvider: typeof Wrapper.generateStateToSendToOAuthProvider;
-declare const verifyAndGetStateOrThrowError: typeof Wrapper.verifyAndGetStateOrThrowError;
-declare const getAuthCodeFromURL: typeof Wrapper.getAuthCodeFromURL;
-declare const getAuthErrorFromURL: typeof Wrapper.getAuthErrorFromURL;
-declare const getAuthStateFromURL: typeof Wrapper.getAuthStateFromURL;
 declare const signInAndUp: typeof Wrapper.signInAndUp;
 declare const ThirdpartyComponentsOverrideProvider: import("react").FC<
     import("react").PropsWithChildren<{
@@ -107,15 +87,12 @@ export {
     Gitlab,
     Google,
     Facebook,
+    LinkedIn,
+    ActiveDirectory,
+    BoxySAML,
+    Okta,
     getStateAndOtherInfoFromStorage,
-    setStateAndOtherInfoToStorage,
     getAuthorisationURLWithQueryParamsAndSetState,
-    getAuthorisationURLFromBackend,
-    generateStateToSendToOAuthProvider,
-    verifyAndGetStateOrThrowError,
-    getAuthCodeFromURL,
-    getAuthErrorFromURL,
-    getAuthStateFromURL,
     signInAndUp,
     redirectToThirdPartyLogin,
     ThirdpartyComponentsOverrideProvider,

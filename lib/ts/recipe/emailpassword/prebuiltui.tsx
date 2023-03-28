@@ -25,34 +25,31 @@ import type { PropsWithChildren } from "react";
 
 export class EmailPasswordPreBuiltUI extends RecipeRouter {
     static instance?: EmailPasswordPreBuiltUI;
-    private constructor(private readonly recipeInstance: EmailPassword) {
+
+    constructor(public readonly recipeInstance: EmailPassword) {
         super();
     }
 
     // Static methods
-    static getInstanceOrInitAndGetInstance(recipeInstance?: EmailPassword): EmailPasswordPreBuiltUI {
+    static getInstanceOrInitAndGetInstance(): EmailPasswordPreBuiltUI {
         if (EmailPasswordPreBuiltUI.instance === undefined) {
-            const instance = recipeInstance ?? EmailPassword.getInstanceOrThrow();
-            EmailPasswordPreBuiltUI.instance = new EmailPasswordPreBuiltUI(instance);
+            const recipeInstance = EmailPassword.getInstanceOrThrow();
+            EmailPasswordPreBuiltUI.instance = new EmailPasswordPreBuiltUI(recipeInstance);
         }
 
         return EmailPasswordPreBuiltUI.instance;
     }
     static getFeatures(
-        recipeInstance?: EmailPassword,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap {
-        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatures(
-            useComponentOverrides
-        );
+        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
     }
     static getFeatureComponent(
         componentName: "signinup" | "resetpassword",
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
-        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext,
-        recipeInstance?: EmailPassword
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
-        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatureComponent(
+        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
             componentName,
             props,
             useComponentOverrides
@@ -71,6 +68,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
                 component: (props) => this.getFeatureComponent("signinup", props as any, useComponentOverrides),
+                recipeID: EmailPassword.RECIPE_ID,
             };
         }
 
@@ -81,6 +79,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
                 component: (props) => this.getFeatureComponent("resetpassword", props as any, useComponentOverrides),
+                recipeID: EmailPassword.RECIPE_ID,
             };
         }
 
@@ -156,16 +155,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
     static SignInAndUpTheme = SignInAndUpTheme;
 }
 
-const _getFeatures = EmailPasswordPreBuiltUI.getFeatures;
-const _getFeatureComponent = EmailPasswordPreBuiltUI.getFeatureComponent;
 const SignInAndUp = EmailPasswordPreBuiltUI.SignInAndUp;
 const ResetPasswordUsingToken = EmailPasswordPreBuiltUI.ResetPasswordUsingToken;
 
-export {
-    _getFeatures,
-    _getFeatureComponent,
-    SignInAndUp,
-    ResetPasswordUsingToken,
-    ResetPasswordUsingTokenTheme,
-    SignInAndUpTheme,
-};
+export { SignInAndUp, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme, SignInAndUpTheme };

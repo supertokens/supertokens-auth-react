@@ -1,10 +1,12 @@
 import type { RecipeFeatureComponentMap } from "../../types";
 import type { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
+// import type AuthRecipe from "../authRecipe";
+import type RecipeModule from "../recipeModule";
 import type NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 
 export abstract class RecipeRouter {
     private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;
-
+    public abstract recipeInstance: RecipeModule<any, any, any, any>;
     static getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
         normalisedUrl: NormalisedURLPath,
         preBuiltUIList: RecipeRouter[]
@@ -43,7 +45,6 @@ export abstract class RecipeRouter {
             if (pathsToFeatureComponentWithRecipeIdMap[featurePath] === undefined) {
                 pathsToFeatureComponentWithRecipeIdMap[featurePath] = [];
             }
-
             pathsToFeatureComponentWithRecipeIdMap[featurePath].push(features[featurePath]);
         }
 

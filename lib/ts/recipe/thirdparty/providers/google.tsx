@@ -17,7 +17,7 @@
  */
 import { isTest } from "../../../utils";
 
-import type { BuiltInProviderConfig } from "./types";
+import type { BuiltInProviderConfig, CustomProviderConfig } from "./types";
 
 import Provider from ".";
 
@@ -30,7 +30,7 @@ export default class Google extends Provider {
      */
     private static instance?: Google;
 
-    buttonComponent?: JSX.Element;
+    buttonComponent?: CustomProviderConfig["buttonComponent"];
 
     /*
      * Constructor.
@@ -40,7 +40,7 @@ export default class Google extends Provider {
             id: "google",
             name: "Google",
             clientId: config?.clientId,
-            getRedirectURL: config?.getRedirectURL,
+            getFrontendRedirectURI: config?.getFrontendRedirectURI,
         });
 
         if (config === undefined) {
@@ -52,6 +52,9 @@ export default class Google extends Provider {
 
     getButton = (): JSX.Element => {
         if (this.buttonComponent !== undefined) {
+            if (typeof this.buttonComponent === "function") {
+                return <this.buttonComponent name={this.name} />;
+            }
             return this.buttonComponent;
         }
 

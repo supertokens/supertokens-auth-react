@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
-import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/prebuiltui";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import ThirdPartyEmailPassword, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
@@ -14,7 +14,7 @@ import SessionExpiredPopup from "./SessionExpiredPopup";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
-    const apiUrl = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
+    const apiUrl = process.env.REACT_APP_API_URL || `http://localhost:${8000}`;
     return apiUrl;
 }
 
@@ -25,6 +25,7 @@ export function getWebsiteDomain() {
 }
 
 SuperTokens.init({
+    usesDynamicLoginMethods: true,
     appInfo: {
         appName: "SuperTokens Demo App", // TODO: Your app name
         apiDomain: getApiDomain(), // TODO: Change to your app's API domain

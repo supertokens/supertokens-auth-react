@@ -21,7 +21,9 @@ import * as React from "react";
 import { useTranslation } from "../../../../..";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { hasFontDefined } from "../../../../../styles/styles";
+import SuperTokens from "../../../../../superTokens";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
+import Multitenancy from "../../../../multitenancy/recipe";
 import { getActiveScreen, SignInUpScreens } from "../../../../passwordless/components/themes/signInUp";
 import { CloseTabScreen } from "../../../../passwordless/components/themes/signInUp/closeTabScreen";
 import { EmailForm } from "../../../../passwordless/components/themes/signInUp/emailForm";
@@ -43,6 +45,11 @@ import type {
 
 const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithActiveScreen> = (props) => {
     const t = useTranslation();
+
+    const thirdPartyEnabled =
+        SuperTokens.usesDynamicLoginMethods === false || Multitenancy.dynamicLoginMethods?.thirdparty.enabled;
+    const passwordlessEnabled =
+        SuperTokens.usesDynamicLoginMethods === false || Multitenancy.dynamicLoginMethods?.passwordless.enabled;
 
     if (props.activeScreen === SignInUpScreens.CloseTab) {
         return <CloseTabScreen {...props.pwlessChildProps} />;
@@ -70,6 +77,7 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
                         )}
                         {props.commonState.error && <GeneralError error={props.commonState.error} />}
                         {props.tpChildProps !== undefined &&
+                            thirdPartyEnabled &&
                             props.activeScreen !== SignInUpScreens.UserInputCodeForm && (
                                 <ProvidersForm
                                     {...props.tpChildProps}
@@ -79,6 +87,7 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
                             )}
                         {props.thirdPartyRecipe !== undefined &&
                             props.passwordlessRecipe !== undefined &&
+                            passwordlessEnabled &&
                             props.activeScreen !== SignInUpScreens.UserInputCodeForm && (
                                 <div data-supertokens="thirdPartyPasswordlessDivider">
                                     <div data-supertokens="divider"></div>
@@ -88,7 +97,7 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
                                     <div data-supertokens="divider"></div>
                                 </div>
                             )}
-                        {props.activeScreen === SignInUpScreens.EmailForm ? (
+                        {!passwordlessEnabled ? null : props.activeScreen === SignInUpScreens.EmailForm ? (
                             <EmailForm {...getCommonPwlessProps(props.pwlessChildProps, props)} />
                         ) : props.activeScreen === SignInUpScreens.PhoneForm ? (
                             <PhoneForm {...getCommonPwlessProps(props.pwlessChildProps, props)} />

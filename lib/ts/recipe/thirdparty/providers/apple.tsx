@@ -15,9 +15,12 @@
 /*
  * Imports.
  */
+import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
+
+import SuperTokens from "../../../superTokens";
 import { isTest } from "../../../utils";
 
-import type { BuiltInProviderConfig } from "./types";
+import type { BuiltInProviderConfig, CustomProviderConfig } from "./types";
 
 import Provider from ".";
 
@@ -30,7 +33,7 @@ export default class Apple extends Provider {
      */
     private static instance?: Apple;
 
-    buttonComponent?: JSX.Element;
+    buttonComponent?: CustomProviderConfig["buttonComponent"];
 
     /*
      * Constructor.
@@ -40,7 +43,7 @@ export default class Apple extends Provider {
             id: "apple",
             name: "Apple",
             clientId: config?.clientId,
-            getRedirectURL: config?.getRedirectURL,
+            getFrontendRedirectURI: config?.getFrontendRedirectURI,
         });
 
         if (config === undefined) {
@@ -52,6 +55,9 @@ export default class Apple extends Provider {
 
     getButton = (): JSX.Element => {
         if (this.buttonComponent !== undefined) {
+            if (typeof this.buttonComponent === "function") {
+                return <this.buttonComponent name={this.name} />;
+            }
             return this.buttonComponent;
         }
 
@@ -107,6 +113,15 @@ export default class Apple extends Provider {
             </svg>
         );
     };
+
+    defaultGetRedirectURIOnProviderDashboard(): string | undefined {
+        const domain = SuperTokens.getInstanceOrThrow().appInfo.apiDomain.getAsStringDangerous();
+        const callbackPath = new NormalisedURLPath(`/callback/${this.id}`);
+        const path = SuperTokens.getInstanceOrThrow()
+            .appInfo.apiBasePath.appendPath(callbackPath)
+            .getAsStringDangerous();
+        return `${domain}${path}`;
+    }
 
     /*
      * Static Methods

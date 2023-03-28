@@ -25,7 +25,7 @@ import { getQueryParams } from "../../../../../utils";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 
-import type { FeatureBaseProps } from "../../../../../types";
+import type { FeatureBaseProps, WebJSRecipeInterface } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type {
     ComponentOverrideMap,
@@ -33,7 +33,7 @@ import type {
     ThirdPartySignInUpActions,
     ThirdPartySignInUpChildProps,
 } from "../../../types";
-import type { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import type ThirdPartyWebJS from "supertokens-web-js/recipe/thirdparty";
 
 export const useFeatureReducer = () => {
     return React.useReducer(
@@ -83,13 +83,9 @@ export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChi
         if (!recipe || !recipeImplementation) {
             return undefined;
         }
-        const providers = recipe.config.signInAndUpFeature.providers.map((provider) => ({
-            id: provider.id,
-            buttonComponent: provider.getButton(),
-        }));
 
         return {
-            providers: providers,
+            providers: recipe.config.signInAndUpFeature.providers,
             recipeImplementation,
             config: recipe.config,
             recipe,
@@ -133,7 +129,9 @@ export const SignInAndUpFeature: React.FC<PropType> = (props) => {
 
 export default SignInAndUpFeature;
 
-const getModifiedRecipeImplementation = (origImpl: RecipeInterface): RecipeInterface => {
+const getModifiedRecipeImplementation = (
+    origImpl: WebJSRecipeInterface<typeof ThirdPartyWebJS>
+): WebJSRecipeInterface<typeof ThirdPartyWebJS> => {
     return {
         ...origImpl,
     };

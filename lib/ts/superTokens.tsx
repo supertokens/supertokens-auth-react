@@ -22,12 +22,16 @@ import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuper
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
 import { SSR_ERROR } from "./constants";
+import Multitenancy from "./recipe/multitenancy/recipe";
+import ThirdParty from "./recipe/thirdparty/recipe";
 import { saveCurrentLanguage, TranslationController } from "./translation/translationHelpers";
+import { UIController } from "./ui/uiController";
 import {
     appendQueryParamsToURL,
     appendTrailingSlashToURL,
     getCurrentNormalisedUrlPath,
     getDefaultCookieScope,
+    getHasRecipesIntersection,
     getOriginOfPage,
     isTest,
     normaliseCookieScopeOrThrowError,
@@ -50,10 +54,14 @@ export default class SuperTokens {
      * Static Attributes.
      */
     private static instance?: SuperTokens;
+    static usesDynamicLoginMethods = false;
+    static uiController = new UIController();
+
     /*
      * Instance Attributes.
      */
     appInfo: NormalisedAppInfo;
+    usesDynamicLoginMethods = false;
     languageTranslations: {
         defaultLanguage: string;
         userTranslationStore: TranslationStore;
@@ -68,6 +76,8 @@ export default class SuperTokens {
      */
     constructor(config: SuperTokensConfig) {
         this.appInfo = normaliseInputAppInfoOrThrowError(config.appInfo);
+        this.usesDynamicLoginMethods =
+            config.usesDynamicLoginMethods === undefined ? false : config.usesDynamicLoginMethods;
 
         if (config.recipeList === undefined || config.recipeList.length === 0) {
             throw new Error(
@@ -93,7 +103,6 @@ export default class SuperTokens {
         }
 
         this.userGetRedirectionURL = config.getRedirectionURL;
-
         this.recipeList = config.recipeList.map(({ authReact }) => {
             return authReact(this.appInfo, enableDebugLogs);
         });
@@ -102,7 +111,7 @@ export default class SuperTokens {
     /*
      * Static Methods.
      */
-    static init(config: SuperTokensConfig): void {
+    static async init(config: SuperTokensConfig): Promise<void> {
         CookieHandlerReference.init(config.cookieHandler);
         WindowHandlerReference.init(config.windowHandler);
 
@@ -110,6 +119,10 @@ export default class SuperTokens {
             console.warn("SuperTokens was already initialized");
             return;
         }
+        const multitenancyRecipe =
+            config.recipeList.find(({ recipeID }) => recipeID === Multitenancy.RECIPE_ID) ?? Multitenancy.init({});
+
+        SuperTokens.usesDynamicLoginMethods = config.usesDynamicLoginMethods === true;
 
         SuperTokensWebJS.init({
             ...config,
@@ -117,6 +130,31 @@ export default class SuperTokens {
         });
 
         SuperTokens.instance = new SuperTokens(config);
+
+        if (SuperTokens.usesDynamicLoginMethods) {
+            const appInfo = normaliseInputAppInfoOrThrowError(config.appInfo);
+            const enableDebugLogs = config.enableDebugLogs === true;
+
+            // initialize auth-react and web-js multitenancy recipes
+            const multitenancyInstance = multitenancyRecipe.authReact(appInfo, enableDebugLogs) as Multitenancy;
+            multitenancyRecipe.webJS(appInfo, config.clientType, enableDebugLogs);
+
+            const tenantID = multitenancyInstance.config.getTenantID();
+            const tenantMethods = await Multitenancy.getDynamicLoginMethods({ tenantId: tenantID });
+            const hasIntersection = getHasRecipesIntersection(
+                tenantMethods,
+                SuperTokens.getInstanceOrThrow().recipeList
+            );
+
+            if (hasIntersection === false) {
+                throw new Error("Initialized recipes have no overlap with core recipes");
+            }
+            if (tenantMethods.thirdparty.enabled === true) {
+                ThirdParty.tenantProviders = tenantMethods.thirdparty.providers;
+            }
+
+            SuperTokens.uiController.emit("LoginMethodsLoaded");
+        }
 
         PostSuperTokensInitCallbacks.runPostInitCallbacks();
     }
@@ -176,7 +214,7 @@ export default class SuperTokens {
         history?: any;
         queryParams?: any;
         redirectBack: boolean;
-    }) => {
+    }): Promise<void> => {
         const queryParams = options.queryParams === undefined ? {} : options.queryParams;
         if (options.show !== undefined) {
             queryParams.show = options.show;

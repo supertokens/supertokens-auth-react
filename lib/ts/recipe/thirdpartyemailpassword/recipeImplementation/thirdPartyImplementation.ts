@@ -21,21 +21,10 @@ export default function getRecipeImplementation(
     originalImplementation: WebJSRecipeInterface<typeof ThirdPartyEmailPasswordWebJS>
 ): WebJSRecipeInterface<typeof ThirdPartyWebJS> {
     return {
-        generateStateToSendToOAuthProvider:
-            originalImplementation.generateStateToSendToOAuthProvider.bind(originalImplementation),
-        getAuthCodeFromURL: originalImplementation.getAuthCodeFromURL.bind(originalImplementation),
-        getAuthErrorFromURL: originalImplementation.getAuthErrorFromURL.bind(originalImplementation),
-        getAuthStateFromURL: originalImplementation.getAuthStateFromURL.bind(originalImplementation),
-        getAuthorisationURLFromBackend:
-            originalImplementation.getAuthorisationURLFromBackend.bind(originalImplementation),
         getAuthorisationURLWithQueryParamsAndSetState:
             originalImplementation.getAuthorisationURLWithQueryParamsAndSetState.bind(originalImplementation),
         getStateAndOtherInfoFromStorage:
             originalImplementation.getStateAndOtherInfoFromStorage.bind(originalImplementation),
-        setStateAndOtherInfoToStorage:
-            originalImplementation.setStateAndOtherInfoToStorage.bind(originalImplementation),
         signInAndUp: originalImplementation.thirdPartySignInAndUp.bind(originalImplementation),
-        verifyAndGetStateOrThrowError:
-            originalImplementation.verifyAndGetStateOrThrowError.bind(originalImplementation),
     };
 }

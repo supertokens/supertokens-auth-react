@@ -17,6 +17,7 @@ export default class EmailPassword extends AuthRecipe<
     readonly webJSRecipe: WebJSRecipeInterface<typeof EmailPasswordWebJS>;
     static instance?: EmailPassword;
     static RECIPE_ID: string;
+    recipeID: string;
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         webJSRecipe?: WebJSRecipeInterface<typeof EmailPasswordWebJS>

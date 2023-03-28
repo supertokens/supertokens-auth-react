@@ -3,7 +3,7 @@
     import React from "react";
     import ReactDOM from "react-dom";
     import SuperTokens from "supertokens-auth-react";
-    import { getRoutingComponent, canHandleRoute } from "supertokens-auth-react/prebuiltui";
+    import { getRoutingComponent, canHandleRoute } from "supertokens-auth-react/ui";
     import ThirdPartyEmailPassword, {
         Github,
         Google,

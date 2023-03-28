@@ -49,6 +49,8 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     static instance?: ThirdPartyEmailPassword;
     static RECIPE_ID = "thirdpartyemailpassword";
 
+    recipeID = ThirdPartyEmailPassword.RECIPE_ID;
+
     emailPasswordRecipe: EmailPassword | undefined;
 
     thirdPartyRecipe: ThirdParty | undefined;
@@ -122,8 +124,11 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
         const normalisedConfig = normaliseThirdPartyEmailPasswordConfig(config);
 
         return {
+            recipeID: ThirdPartyEmailPassword.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo: NormalisedAppInfo,
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                _: boolean
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,

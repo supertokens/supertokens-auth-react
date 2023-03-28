@@ -24,7 +24,6 @@ import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuper
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 
 import { SSR_ERROR } from "../../constants";
-import { saveInvalidClaimRedirectPathInContext } from "../../utils";
 import RecipeModule from "../recipeModule";
 
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
@@ -50,17 +49,10 @@ export default class EmailVerification extends RecipeModule<
     static instance?: EmailVerification;
     static RECIPE_ID = "emailverification";
     static EmailVerificationClaim = new EmailVerificationClaimClass(
-        () => EmailVerification.getInstanceOrThrow().webJSRecipe,
-        async (userContext: any) => {
-            const recipe = EmailVerification.getInstanceOrThrow();
-            if (recipe.config.mode === "REQUIRED") {
-                saveInvalidClaimRedirectPathInContext(
-                    userContext,
-                    await recipe.getRedirectUrl({ action: "VERIFY_EMAIL" })
-                );
-            }
-        }
+        () => EmailVerification.getInstanceOrThrow().webJSRecipe
     );
+
+    public recipeID = EmailVerification.RECIPE_ID;
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
@@ -81,8 +73,11 @@ export default class EmailVerification extends RecipeModule<
         const normalisedConfig = normaliseEmailVerificationFeature(config);
 
         return {
+            recipeID: EmailVerification.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo: NormalisedAppInfo,
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                _: boolean
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,

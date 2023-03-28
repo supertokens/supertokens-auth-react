@@ -35,6 +35,7 @@ import type {
 } from "./types";
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
 import type { NormalisedAppInfo } from "../../types";
+import type { GetLoginMethodsResponseNormalized } from "../multitenancy/types";
 import type RecipeModule from "../recipeModule";
 
 /*
@@ -48,6 +49,9 @@ export default class ThirdParty extends AuthRecipe<
 > {
     static instance?: ThirdParty;
     static RECIPE_ID = "thirdparty";
+    static tenantProviders?: GetLoginMethodsResponseNormalized["thirdparty"]["providers"];
+
+    recipeID = ThirdParty.RECIPE_ID;
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
@@ -68,8 +72,11 @@ export default class ThirdParty extends AuthRecipe<
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normaliseThirdPartyConfig(config);
         return {
+            recipeID: ThirdParty.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo: NormalisedAppInfo,
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                _: boolean
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,

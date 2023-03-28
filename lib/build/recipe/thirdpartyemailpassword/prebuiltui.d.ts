@@ -7,17 +7,20 @@ import type { GenericComponentOverrideMap } from "../../components/componentOver
 import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
 export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
-    private readonly recipeInstance;
+    readonly recipeInstance: ThirdPartyEmailPassword;
     static instance?: ThirdPartyEmailPasswordPreBuiltUI;
+    private thirdPartyPreBuiltUI;
+    private emailPasswordPreBuiltUI;
     constructor(recipeInstance: ThirdPartyEmailPassword);
     static getInstanceOrInitAndGetInstance(): ThirdPartyEmailPasswordPreBuiltUI;
-    static getFeatures(): RecipeFeatureComponentMap;
+    static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
         componentName: "signinup" | "signinupcallback" | "resetpassword",
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
-        }
+        },
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
@@ -43,8 +46,6 @@ export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
 }
-declare const _getFeatures: typeof ThirdPartyEmailPasswordPreBuiltUI.getFeatures;
-declare const _getFeatureComponent: typeof ThirdPartyEmailPasswordPreBuiltUI.getFeatureComponent;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
 declare const SignInAndUp: (
@@ -54,8 +55,6 @@ declare const SignInAndUp: (
     }>
 ) => JSX.Element;
 export {
-    _getFeatures,
-    _getFeatureComponent,
     ThirdPartySignInAndUpCallback,
     ResetPasswordUsingToken,
     SignInAndUp,

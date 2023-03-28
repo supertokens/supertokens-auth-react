@@ -48,6 +48,8 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     static instance?: Session;
     static RECIPE_ID = "session";
 
+    public recipeID = Session.RECIPE_ID;
+
     private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
     private redirectionHandlersFromAuthRecipes = new Map<string, (ctx: any, history: any) => Promise<void>>();
 
@@ -260,6 +262,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     static init(config?: InputType): RecipeInitResult<unknown, unknown, unknown, any> {
         const normalisedConfig = normaliseRecipeModuleConfig<GetRedirectionURLContext, any, any>(config);
         return {
+            recipeID: Session.RECIPE_ID,
             authReact: (
                 appInfo: NormalisedAppInfo,
                 enableDebugLogs: boolean

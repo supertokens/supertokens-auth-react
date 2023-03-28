@@ -38,10 +38,19 @@ export type SuperTokensConfig = {
      */
     appInfo: AppInfoUserInput;
 
+    /**
+     * Identifier for the client, such as `web`, `ios`, etc. to be used with thirdparty, multitenancy recipes.
+     */
+    clientType?: string;
+
     /*
      * List of recipes for authentication and session management.
      */
-    recipeList: { authReact: CreateRecipeFunction<any, any, any, any>; webJS: CreateRecipeFunctionWebJS<any> }[];
+    recipeList: {
+        recipeID: string;
+        authReact: CreateRecipeFunction<any, any, any, any>;
+        webJS: CreateRecipeFunctionWebJS<any>;
+    }[];
 
     cookieHandler?: CookieHandlerInput;
 
@@ -125,6 +134,7 @@ export type AppInfoUserInput = {
 };
 
 export type RecipeInitResult<T, Action, R, P extends NormalisedRecipeModuleConfig<T, Action, R>> = {
+    recipeID: string;
     authReact: CreateRecipeFunction<T, Action, R, P>;
     webJS: CreateRecipeFunctionWebJS<Action>;
 };
@@ -176,6 +186,11 @@ export type ComponentWithRecipeAndMatchingMethod = {
      * Matching method.
      */
     matches: () => boolean;
+
+    /**
+     * Recipe ID this component belongs
+     */
+    recipeID: string;
 };
 
 export type RecipeFeatureComponentMap = Record<string, ComponentWithRecipeAndMatchingMethod>;

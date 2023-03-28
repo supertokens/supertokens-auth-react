@@ -54,6 +54,8 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
     static instance?: ThirdPartyPasswordless;
     static RECIPE_ID = "thirdpartypasswordless";
 
+    recipeID = ThirdPartyPasswordless.RECIPE_ID;
+
     passwordlessRecipe: Passwordless | undefined;
 
     thirdPartyRecipe: ThirdParty | undefined;
@@ -120,8 +122,11 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
         const normalisedConfig = normaliseThirdPartyPasswordlessConfig(config);
 
         return {
+            recipeID: ThirdPartyPasswordless.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo: NormalisedAppInfo,
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                _: boolean
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,

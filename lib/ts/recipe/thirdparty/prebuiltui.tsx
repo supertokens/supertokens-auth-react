@@ -25,32 +25,30 @@ import type { PropsWithChildren } from "react";
 
 export class ThirdPartyPreBuiltUI extends RecipeRouter {
     static instance?: ThirdPartyPreBuiltUI;
-    constructor(private readonly recipeInstance: ThirdParty) {
+    constructor(public readonly recipeInstance: ThirdParty) {
         super();
     }
 
     // Static methods
-    static getInstanceOrInitAndGetInstance(recipeInstance?: ThirdParty): ThirdPartyPreBuiltUI {
+    static getInstanceOrInitAndGetInstance(): ThirdPartyPreBuiltUI {
         if (ThirdPartyPreBuiltUI.instance === undefined) {
-            const instance = recipeInstance ?? ThirdParty.getInstanceOrThrow();
-            ThirdPartyPreBuiltUI.instance = new ThirdPartyPreBuiltUI(instance);
+            const recipeInstace = ThirdParty.getInstanceOrThrow();
+            ThirdPartyPreBuiltUI.instance = new ThirdPartyPreBuiltUI(recipeInstace);
         }
 
         return ThirdPartyPreBuiltUI.instance;
     }
     static getFeatures(
-        recipeInstance?: ThirdParty,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap {
-        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatures(useComponentOverrides);
+        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
     }
     static getFeatureComponent(
         componentName: "signinup" | "signinupcallback",
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
-        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext,
-        recipeInstance?: ThirdParty
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
-        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatureComponent(
+        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
             componentName,
             props,
             useComponentOverrides
@@ -69,6 +67,7 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
                 component: (prop: any) => this.getFeatureComponent("signinup", prop, useComponentOverrides),
+                recipeID: ThirdParty.RECIPE_ID,
             };
         }
 
@@ -80,6 +79,7 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: () => matchRecipeIdUsingState(this.recipeInstance, {}),
                 component: (prop: any) => this.getFeatureComponent("signinupcallback", prop, useComponentOverrides),
+                recipeID: ThirdParty.RECIPE_ID,
             };
         });
 
@@ -154,8 +154,7 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
     static SignInAndUpCallbackTheme = SignInAndUpCallbackTheme;
 }
 
-const _getFeatures = ThirdPartyPreBuiltUI.getFeatures;
 const SignInAndUp = ThirdPartyPreBuiltUI.SignInAndUp;
 const SignInAndUpCallback = ThirdPartyPreBuiltUI.SignInAndUpCallback;
 
-export { _getFeatures, SignInAndUp, SignInAndUpCallback, SignInAndUpCallbackTheme, SignInAndUpTheme };
+export { SignInAndUp, SignInAndUpCallback, SignInAndUpCallbackTheme, SignInAndUpTheme };

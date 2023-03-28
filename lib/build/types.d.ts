@@ -13,12 +13,18 @@ export declare type GetRedirectionURLContext = {
 };
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
+    /**
+     * Identifier for the client, such as `web`, `ios`, etc. to be used with thirdparty, multitenancy recipes.
+     */
+    clientType?: string;
     recipeList: {
+        recipeID: string;
         authReact: CreateRecipeFunction<any, any, any, any>;
         webJS: CreateRecipeFunctionWebJS<any>;
     }[];
     cookieHandler?: CookieHandlerInput;
     windowHandler?: WindowHandlerInput;
+    usesDynamicLoginMethods?: boolean;
     languageTranslations?: {
         defaultLanguage?: string;
         currentLanguageCookieScope?: string;
@@ -46,6 +52,7 @@ export declare type AppInfoUserInput = {
     apiGatewayPath?: string;
 };
 export declare type RecipeInitResult<T, Action, R, P extends NormalisedRecipeModuleConfig<T, Action, R>> = {
+    recipeID: string;
     authReact: CreateRecipeFunction<T, Action, R, P>;
     webJS: CreateRecipeFunctionWebJS<Action>;
 };
@@ -63,6 +70,10 @@ export declare type NormalisedAppInfo = {
 export declare type ComponentWithRecipeAndMatchingMethod = {
     component: ReactComponentClass;
     matches: () => boolean;
+    /**
+     * Recipe ID this component belongs
+     */
+    recipeID: string;
 };
 export declare type RecipeFeatureComponentMap = Record<string, ComponentWithRecipeAndMatchingMethod>;
 export declare type BaseFeatureComponentMap = Record<string, ComponentWithRecipeAndMatchingMethod[]>;

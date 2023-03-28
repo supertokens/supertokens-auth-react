@@ -39,8 +39,21 @@ export default function FeatureWrapper({
     children,
     useShadowDom,
     defaultStore,
-}: PropsWithChildren<FeatureWrapperProps>): JSX.Element {
+}: PropsWithChildren<FeatureWrapperProps>): JSX.Element | null {
+    const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState(
+        SuperTokens.usesDynamicLoginMethods === false
+    );
     const st = SuperTokens.getInstanceOrThrow();
+    useEffect(() => {
+        const handler = () => setLoadedDynamicLoginMethods(true);
+        SuperTokens.uiController.on("LoginMethodsLoaded", handler);
+
+        () => SuperTokens.uiController.off("LoginMethodsLoaded", handler);
+    }, []);
+
+    if (loadedDynamicLoginMethods === false) {
+        return null;
+    }
     return (
         <ErrorBoundary>
             <TranslationContextProvider

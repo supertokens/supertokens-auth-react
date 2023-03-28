@@ -29,7 +29,7 @@ export default abstract class RecipeModule<
     N extends NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType>
 > {
     config: NormalisedConfigWithAppInfoAndRecipeID<N>;
-
+    public abstract recipeID: string;
     /*
      * Constructor.
      */

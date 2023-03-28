@@ -17,7 +17,7 @@ import type { RecipeFeatureComponentMap } from "../../types";
 
 export class EmailVerificationPreBuiltUI extends RecipeRouter {
     static instance?: EmailVerificationPreBuiltUI;
-    constructor(private readonly recipeInstance: EmailVerificationRecipe) {
+    constructor(public readonly recipeInstance: EmailVerificationRecipe) {
         super();
     }
 
@@ -30,11 +30,21 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
 
         return EmailVerificationPreBuiltUI.instance;
     }
-    static getFeatures(): RecipeFeatureComponentMap {
-        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures();
+    static getFeatures(
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap {
+        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
     }
-    static getFeatureComponent(componentName: "emailverification", props: any): JSX.Element {
-        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(componentName, props);
+    static getFeatureComponent(
+        componentName: "emailverification",
+        props: any,
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): JSX.Element {
+        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
+            componentName,
+            props,
+            useComponentOverrides
+        );
     }
 
     // Instance methods
@@ -49,6 +59,7 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
                 component: (props: any) => this.getFeatureComponent("emailverification", props, useComponentOverrides),
+                recipeID: EmailVerificationRecipe.RECIPE_ID,
             };
         }
         return features;

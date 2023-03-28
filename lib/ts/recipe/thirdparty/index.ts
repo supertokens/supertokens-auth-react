@@ -23,13 +23,17 @@ import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/
 import { getNormalisedUserContext } from "../../utils";
 
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
+import ActiveDirectory from "./providers/activeDirectory";
 import Apple from "./providers/apple";
 import Bitbucket from "./providers/bitbucket";
+import BoxySAML from "./providers/boxySaml";
 import Discord from "./providers/discord";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
 import Gitlab from "./providers/gitlab";
 import Google from "./providers/google";
+import LinkedIn from "./providers/linkedIn";
+import Okta from "./providers/okta";
 import ThirdParty from "./recipe";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./utils";
@@ -75,39 +79,15 @@ export default class Wrapper {
         });
     }
 
-    static async setStateAndOtherInfoToStorage<CustomStateProperties>(input: {
-        state: StateObject & CustomStateProperties;
-        userContext?: any;
-    }): Promise<void> {
-        return ThirdParty.getInstanceOrThrow().webJSRecipe.setStateAndOtherInfoToStorage({
-            ...input,
-            userContext: getNormalisedUserContext(input.userContext),
-        });
-    }
-
     static async getAuthorisationURLWithQueryParamsAndSetState(input: {
-        providerId: string;
-        authorisationURL: string;
-        providerClientId?: string;
+        thirdPartyId: string;
+        tenantId?: string;
+        frontendRedirectURI: string;
+        redirectURIOnProviderDashboard?: string;
         userContext?: any;
         options?: RecipeFunctionOptions;
     }): Promise<string> {
         return ThirdParty.getInstanceOrThrow().webJSRecipe.getAuthorisationURLWithQueryParamsAndSetState({
-            ...input,
-            userContext: getNormalisedUserContext(input.userContext),
-        });
-    }
-
-    static async getAuthorisationURLFromBackend(input: {
-        providerId: string;
-        userContext?: any;
-        options?: RecipeFunctionOptions;
-    }): Promise<{
-        status: "OK";
-        url: string;
-        fetchResponse: Response;
-    }> {
-        return ThirdParty.getInstanceOrThrow().webJSRecipe.getAuthorisationURLFromBackend({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -131,45 +111,6 @@ export default class Wrapper {
         });
     }
 
-    static generateStateToSendToOAuthProvider(input?: { userContext?: any }): string {
-        return ThirdParty.getInstanceOrThrow().webJSRecipe.generateStateToSendToOAuthProvider({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static async verifyAndGetStateOrThrowError<CustomStateProperties>(input: {
-        stateFromAuthProvider: string | undefined;
-        stateObjectFromStorage: (StateObject & CustomStateProperties) | undefined;
-        userContext?: any;
-    }): Promise<StateObject & CustomStateProperties> {
-        return ThirdParty.getInstanceOrThrow().webJSRecipe.verifyAndGetStateOrThrowError({
-            ...input,
-            userContext: getNormalisedUserContext(input.userContext),
-        });
-    }
-
-    static getAuthCodeFromURL(input?: { userContext?: any }): string {
-        return ThirdParty.getInstanceOrThrow().webJSRecipe.getAuthCodeFromURL({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static getAuthErrorFromURL(input?: { userContext?: any }): string | undefined {
-        return ThirdParty.getInstanceOrThrow().webJSRecipe.getAuthErrorFromURL({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static getAuthStateFromURL(input?: { userContext?: any }): string {
-        return ThirdParty.getInstanceOrThrow().webJSRecipe.getAuthStateFromURL({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
     /*
      * Providers
      */
@@ -180,6 +121,10 @@ export default class Wrapper {
     static Gitlab = Gitlab;
     static Google = Google;
     static Facebook = Facebook;
+    static LinkedIn = LinkedIn;
+    static ActiveDirectory = ActiveDirectory;
+    static BoxySAML = BoxySAML;
+    static Okta = Okta;
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
@@ -187,14 +132,7 @@ const init = Wrapper.init;
 const signOut = Wrapper.signOut;
 const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
 const getStateAndOtherInfoFromStorage = Wrapper.getStateAndOtherInfoFromStorage;
-const setStateAndOtherInfoToStorage = Wrapper.setStateAndOtherInfoToStorage;
 const getAuthorisationURLWithQueryParamsAndSetState = Wrapper.getAuthorisationURLWithQueryParamsAndSetState;
-const getAuthorisationURLFromBackend = Wrapper.getAuthorisationURLFromBackend;
-const generateStateToSendToOAuthProvider = Wrapper.generateStateToSendToOAuthProvider;
-const verifyAndGetStateOrThrowError = Wrapper.verifyAndGetStateOrThrowError;
-const getAuthCodeFromURL = Wrapper.getAuthCodeFromURL;
-const getAuthErrorFromURL = Wrapper.getAuthErrorFromURL;
-const getAuthStateFromURL = Wrapper.getAuthStateFromURL;
 const signInAndUp = Wrapper.signInAndUp;
 const ThirdpartyComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 
@@ -207,15 +145,12 @@ export {
     Gitlab,
     Google,
     Facebook,
+    LinkedIn,
+    ActiveDirectory,
+    BoxySAML,
+    Okta,
     getStateAndOtherInfoFromStorage,
-    setStateAndOtherInfoToStorage,
     getAuthorisationURLWithQueryParamsAndSetState,
-    getAuthorisationURLFromBackend,
-    generateStateToSendToOAuthProvider,
-    verifyAndGetStateOrThrowError,
-    getAuthCodeFromURL,
-    getAuthErrorFromURL,
-    getAuthStateFromURL,
     signInAndUp,
     redirectToThirdPartyLogin,
     ThirdpartyComponentsOverrideProvider,

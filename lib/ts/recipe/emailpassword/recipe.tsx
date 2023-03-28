@@ -51,6 +51,8 @@ export default class EmailPassword extends AuthRecipe<
     static instance?: EmailPassword;
     static RECIPE_ID = "emailpassword";
 
+    recipeID = EmailPassword.RECIPE_ID;
+
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         public readonly webJSRecipe: WebJSRecipeInterface<typeof EmailPasswordWebJS> = EmailPasswordWebJS
@@ -75,8 +77,11 @@ export default class EmailPassword extends AuthRecipe<
         const normalisedConfig = normaliseEmailPasswordConfig(config);
 
         return {
+            recipeID: EmailPassword.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo: NormalisedAppInfo,
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                _: boolean
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,

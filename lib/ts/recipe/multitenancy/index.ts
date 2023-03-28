@@ -13,9 +13,7 @@
  * under the License.
  */
 
-import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
-
-import { getNormalisedUserContext } from "../../utils";
+import { RecipeInterface } from "supertokens-web-js/recipe/multitenancy";
 
 import Multitenancy from "./recipe";
 import { UserInput } from "./types";
@@ -25,14 +23,13 @@ export default class Wrapper {
         return Multitenancy.init(config);
     }
 
-    static async signOut(input?: { userContext?: any }): Promise<void> {
-        return Multitenancy.getInstanceOrThrow().signOut({
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
+    // static async signOut(input?: { userContext?: any }): Promise<void> {
+    //     return Multitenancy.getInstanceOrThrow().signOut({
+    //         userContext: getNormalisedUserContext(input?.userContext),
+    //     });
+    // }
 }
 
 const init = Wrapper.init;
-const signOut = Wrapper.signOut;
 
-export { init, signOut, UserInput, RecipeInterface };
+export { init, UserInput, RecipeInterface };

@@ -22,6 +22,8 @@ import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "./constants";
 
 import type { FormFieldError } from "./recipe/emailpassword/types";
+import type { GetLoginMethodsResponseNormalized } from "./recipe/multitenancy/types";
+import type RecipeModule from "./recipe/recipeModule";
 import type { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 
 /*
@@ -453,22 +455,27 @@ export const useOnMountAPICall = <T>(
     }
 };
 
-export function saveInvalidClaimRedirectPathInContext(userContext: any, invalidClaimRedirectPath: string) {
-    if (userContext["_default"] === undefined) {
-        userContext["_default"] = {};
-    }
-    if (userContext["_default"].redirectPath === undefined) {
-        userContext["_default"] = {
-            ...userContext["_default"],
-            invalidClaimRedirectPath,
-        };
-    }
-}
-
 export function popInvalidClaimRedirectPathFromContext(userContext: any) {
     const res = userContext["_default"]?.invalidClaimRedirectPath;
     if (res !== undefined) {
         delete userContext["_default"].invalidClaimRedirectPath;
     }
     return res;
+}
+
+export function getHasRecipesIntersection(
+    tenantMethods: GetLoginMethodsResponseNormalized,
+    recipeList: RecipeModule<any, any, any, any>[]
+): boolean {
+    let hasIntersection = false;
+    let key: keyof GetLoginMethodsResponseNormalized;
+    for (key in tenantMethods) {
+        hasIntersection = recipeList.some((recipe) => {
+            if (tenantMethods[key].enabled) {
+                return recipe.recipeID === key || recipe.recipeID.includes(key);
+            }
+            return false;
+        });
+    }
+    return hasIntersection;
 }

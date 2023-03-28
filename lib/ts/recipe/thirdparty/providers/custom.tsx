@@ -27,7 +27,7 @@ export default class Custom extends Provider {
      * Static Attributes.
      */
 
-    buttonComponent?: JSX.Element | (() => JSX.Element);
+    buttonComponent?: CustomProviderConfig["buttonComponent"];
 
     /*
      * Constructor.
@@ -40,7 +40,7 @@ export default class Custom extends Provider {
     getButton = (): JSX.Element => {
         if (this.buttonComponent !== undefined) {
             if (typeof this.buttonComponent === "function") {
-                return this.buttonComponent();
+                return <this.buttonComponent name={this.name} />;
             }
             return this.buttonComponent;
         }

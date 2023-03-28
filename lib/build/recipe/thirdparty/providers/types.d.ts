@@ -1,19 +1,23 @@
-/// <reference types="react" />
+import type { FC } from "react";
 export declare type ProviderConfig = {
     id: string;
     name: string;
     clientId?: string;
-    getRedirectURL?: () => string;
+    getFrontendRedirectURI?: () => string;
 };
 export declare type BuiltInProviderConfig = {
-    buttonComponent?: JSX.Element;
+    buttonComponent?: CustomProviderConfig["buttonComponent"];
     clientId?: string;
-    getRedirectURL?: () => string;
+    getFrontendRedirectURI?: () => string;
 };
 export declare type CustomProviderConfig = {
     id: string;
     name: string;
     clientId?: string;
-    buttonComponent?: JSX.Element;
+    buttonComponent?:
+        | JSX.Element
+        | FC<{
+              name: string;
+          }>;
     getRedirectURL?: () => string;
 };

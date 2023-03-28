@@ -5,21 +5,18 @@ import type { GenericComponentOverrideMap } from "../../components/componentOver
 import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
 export declare class PasswordlessPreBuiltUI extends RecipeRouter {
-    private readonly recipeInstance;
+    readonly recipeInstance: Passwordless;
     static instance?: PasswordlessPreBuiltUI;
     constructor(recipeInstance: Passwordless);
-    static getInstanceOrInitAndGetInstance(recipeInstance?: Passwordless): PasswordlessPreBuiltUI;
-    static getFeatures(
-        recipeInstance?: Passwordless,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ): RecipeFeatureComponentMap;
+    static getInstanceOrInitAndGetInstance(): PasswordlessPreBuiltUI;
+    static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
         componentName: "signInUp" | "linkClickedScreen",
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
         },
-        recipeInstance?: Passwordless
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
@@ -40,8 +37,6 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     static LinkClicked: (prop?: any) => JSX.Element;
     static SignInUpTheme: typeof SignInUpTheme;
 }
-declare const _getFeatures: typeof PasswordlessPreBuiltUI.getFeatures;
-declare const _getFeatureComponent: typeof PasswordlessPreBuiltUI.getFeatureComponent;
 declare const SignInUp: (
     prop?: PropsWithChildren<{
         redirectOnSessionExists?: boolean;
@@ -49,4 +44,4 @@ declare const SignInUp: (
     }>
 ) => JSX.Element;
 declare const LinkClicked: (prop?: any) => JSX.Element;
-export { _getFeatures, _getFeatureComponent, SignInUp, LinkClicked, SignInUpTheme };
+export { SignInUp, LinkClicked, SignInUpTheme };

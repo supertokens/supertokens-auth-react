@@ -1,11 +1,15 @@
 import { TranslationController } from "./translation/translationHelpers";
+import { UIController } from "./ui/uiController";
 import type RecipeModule from "./recipe/recipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 import type { GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } from "./types";
 export default class SuperTokens {
     private static instance?;
+    static usesDynamicLoginMethods: boolean;
+    static uiController: UIController;
     appInfo: NormalisedAppInfo;
+    usesDynamicLoginMethods: boolean;
     languageTranslations: {
         defaultLanguage: string;
         userTranslationStore: TranslationStore;
@@ -16,7 +20,7 @@ export default class SuperTokens {
     recipeList: RecipeModule<any, any, any, any>[];
     private userGetRedirectionURL;
     constructor(config: SuperTokensConfig);
-    static init(config: SuperTokensConfig): void;
+    static init(config: SuperTokensConfig): Promise<void>;
     static getInstanceOrThrow(): SuperTokens;
     getRecipeOrThrow<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>>(
         recipeId: string

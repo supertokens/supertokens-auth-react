@@ -20,7 +20,7 @@
 import { RoutingComponent } from "./routingComponent";
 
 import type { RecipeRouter } from "../recipe/recipeRouter";
-import type { ReactRouterDom } from "../ui/types";
+import type { ReactRouterDomWithCustomHistory } from "../ui/types";
 
 /*
  * Component.
@@ -30,7 +30,7 @@ export function getSuperTokensRoutesForReactRouterDomV6({
     getReactRouterDomWithCustomHistory,
     recipeList,
 }: {
-    getReactRouterDomWithCustomHistory: () => ReactRouterDom | undefined;
+    getReactRouterDomWithCustomHistory: () => ReactRouterDomWithCustomHistory | undefined;
     recipeList: RecipeRouter[];
 }): JSX.Element[] {
     const routerInfo = getReactRouterDomWithCustomHistory();

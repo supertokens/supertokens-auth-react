@@ -19,6 +19,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     readonly webJSRecipe: Omit<typeof WebJSSessionRecipe, "init" | "default">;
     static instance?: Session;
     static RECIPE_ID: string;
+    recipeID: string;
     private eventListeners;
     private redirectionHandlersFromAuthRecipes;
     constructor(

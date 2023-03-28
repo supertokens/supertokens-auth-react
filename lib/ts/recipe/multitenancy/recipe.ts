@@ -20,35 +20,73 @@
 import MultitenancyWebJS from "supertokens-web-js/recipe/multitenancy";
 
 import { SSR_ERROR } from "../../constants";
+// import SuperTokens from "../../superTokens";
 import { isTest } from "../../utils";
-import AuthRecipe from "../authRecipe";
+import RecipeModule from "../recipeModule";
 
 import { normaliseMultitenancyConfig } from "./utils";
 
-import type { UserInput } from "./types";
+import type { NormalisedConfig, UserInput, GetLoginMethodsResponseNormalized } from "./types";
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
 import type { NormalisedAppInfo } from "../../types";
-import type RecipeModule from "../recipeModule";
 
 /*
  * Class.
  */
-export default class Multitenancy extends AuthRecipe<any, any, any, any> {
+export default class Multitenancy extends RecipeModule<any, any, any, any> {
     static instance?: Multitenancy;
     static RECIPE_ID = "multitenancy";
+    static tenantID?: string;
+    static dynamicLoginMethods?: GetLoginMethodsResponseNormalized;
+
+    public recipeID = Multitenancy.RECIPE_ID;
 
     constructor(
-        config: NormalisedConfigWithAppInfoAndRecipeID<any>,
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         public readonly webJSRecipe: WebJSRecipeInterface<typeof MultitenancyWebJS> = MultitenancyWebJS
     ) {
         super(config);
     }
 
+    static async getDynamicLoginMethods(
+        ...options: Parameters<typeof MultitenancyWebJS.getLoginMethods>
+    ): Promise<GetLoginMethodsResponseNormalized> {
+        if (Multitenancy.dynamicLoginMethods !== undefined) {
+            return Multitenancy.dynamicLoginMethods;
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { emailPassword, passwordless, thirdParty } = await MultitenancyWebJS.getLoginMethods(...options);
+        Multitenancy.dynamicLoginMethods = {
+            passwordless,
+            emailpassword: emailPassword,
+            thirdparty: {
+                ...thirdParty,
+                enabled: true,
+                providers: [
+                    {
+                        id: "google",
+                        name: "Im Google",
+                    },
+                    {
+                        id: "google-1",
+                        name: "Im another Google",
+                    },
+                ],
+                // enabled: thirdParty.enabled && thirdParty.providers !== null,
+            },
+        };
+        return Multitenancy.dynamicLoginMethods;
+    }
+
     static init(config: UserInput): RecipeInitResult<any, any, any, any> {
         const normalisedConfig = normaliseMultitenancyConfig(config);
-
         return {
-            authReact: (appInfo: NormalisedAppInfo): RecipeModule<any, any, any, any> => {
+            recipeID: Multitenancy.RECIPE_ID,
+            authReact: (
+                appInfo: NormalisedAppInfo,
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                _: boolean
+            ): RecipeModule<any, any, any, any> => {
                 Multitenancy.instance = new Multitenancy({
                     ...normalisedConfig,
                     appInfo,

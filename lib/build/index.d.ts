@@ -7,7 +7,7 @@ export default class SuperTokensAPIWrapper {
             userContext?: any;
         }>
     >;
-    static init(config: SuperTokensConfig): void;
+    static init(config: SuperTokensConfig): Promise<void>;
     static changeLanguage(language: string): Promise<void>;
     static loadTranslation(store: TranslationStore): void;
     static redirectToAuth: (options?: {

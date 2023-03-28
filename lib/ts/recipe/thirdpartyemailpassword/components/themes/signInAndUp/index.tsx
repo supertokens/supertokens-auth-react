@@ -20,6 +20,7 @@ import React from "react";
 
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { hasFontDefined } from "../../../../../styles/styles";
+import SuperTokens from "../../../../../superTokens";
 import { useTranslation } from "../../../../../translation/translationContext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
@@ -27,6 +28,7 @@ import { SignInFooter } from "../../../../emailpassword/components/themes/signIn
 import { SignInForm } from "../../../../emailpassword/components/themes/signInAndUp/signInForm";
 import { SignUpFooter } from "../../../../emailpassword/components/themes/signInAndUp/signUpFooter";
 import { SignUpForm } from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
+import Multitenancy from "../../../../multitenancy/recipe";
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 import { ThemeBase } from "../themeBase";
 
@@ -37,6 +39,10 @@ import type { ThirdPartyEmailPasswordSignInAndUpThemeProps } from "../../../type
 const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> = (props) => {
     const t = useTranslation();
 
+    const thirdPartyEnabled =
+        SuperTokens.usesDynamicLoginMethods === false || Multitenancy.dynamicLoginMethods?.thirdparty.enabled;
+    const emailPasswordEnabled =
+        SuperTokens.usesDynamicLoginMethods === false || Multitenancy.dynamicLoginMethods?.emailpassword.enabled;
     return (
         <div data-supertokens="container">
             <div data-supertokens="row">
@@ -45,19 +51,23 @@ const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> =
                     setIsSignUp={(isSignUp) => props.epDispatch({ type: isSignUp ? "setSignUp" : "setSignIn" })}
                 />
                 {props.commonState.error && <GeneralError error={props.commonState.error} />}
-                {props.tpChildProps !== undefined && (
+                {props.tpChildProps !== undefined && thirdPartyEnabled && (
                     <ProvidersForm {...props.tpChildProps} featureState={props.tpState} dispatch={props.tpDispatch} />
                 )}
-                {props.config.disableEmailPassword !== true && props.thirdPartyRecipe !== undefined && (
-                    <div data-supertokens="thirdPartyEmailPasswordDivider">
-                        <div data-supertokens="divider"></div>
-                        <div data-supertokens="thirdPartyEmailPasswordDividerOr">
-                            {t("THIRD_PARTY_EMAIL_PASSWORD_SIGN_IN_AND_UP_DIVIDER_OR")}
+                {props.config.disableEmailPassword !== true &&
+                    emailPasswordEnabled &&
+                    thirdPartyEnabled &&
+                    props.thirdPartyRecipe !== undefined && (
+                        <div data-supertokens="thirdPartyEmailPasswordDivider">
+                            <div data-supertokens="divider"></div>
+                            <div data-supertokens="thirdPartyEmailPasswordDividerOr">
+                                {t("THIRD_PARTY_EMAIL_PASSWORD_SIGN_IN_AND_UP_DIVIDER_OR")}
+                            </div>
+                            <div data-supertokens="divider"></div>
                         </div>
-                        <div data-supertokens="divider"></div>
-                    </div>
-                )}
+                    )}
                 {props.epChildProps !== undefined &&
+                    emailPasswordEnabled &&
                     (props.epState.isSignUp ? (
                         <SignUpForm
                             {...props.epChildProps.signUpForm}

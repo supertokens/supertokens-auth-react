@@ -19,7 +19,19 @@ import {
 } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
 import { getNormalisedUserContext } from "../../utils";
-import { Apple, Google, Facebook, Github, Gitlab, Bitbucket, Discord } from "../thirdparty/";
+import {
+    Apple,
+    Google,
+    Facebook,
+    Github,
+    Gitlab,
+    Bitbucket,
+    Discord,
+    LinkedIn,
+    ActiveDirectory,
+    BoxySAML,
+    Okta,
+} from "../thirdparty/";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
@@ -192,21 +204,6 @@ export default class Wrapper {
         });
     }
 
-    static async getAuthorisationURLFromBackend(input: {
-        providerId: string;
-        userContext?: any;
-        options?: RecipeFunctionOptions;
-    }): Promise<{
-        status: "OK";
-        url: string;
-        fetchResponse: Response;
-    }> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.getAuthorisationURLFromBackend({
-            ...input,
-            userContext: getNormalisedUserContext(input.userContext),
-        });
-    }
-
     static async thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
@@ -234,20 +231,11 @@ export default class Wrapper {
         });
     }
 
-    static async setStateAndOtherInfoToStorage<CustomStateProperties>(input: {
-        state: StateObject & CustomStateProperties;
-        userContext?: any;
-    }): Promise<void> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.setStateAndOtherInfoToStorage({
-            ...input,
-            userContext: getNormalisedUserContext(input.userContext),
-        });
-    }
-
     static async getAuthorisationURLWithQueryParamsAndSetState(input: {
-        providerId: string;
-        authorisationURL: string;
-        providerClientId?: string;
+        thirdPartyId: string;
+        tenantId?: string;
+        frontendRedirectURI: string;
+        redirectURIOnProviderDashboard?: string;
         userContext?: any;
         options?: RecipeFunctionOptions;
     }): Promise<string> {
@@ -257,52 +245,17 @@ export default class Wrapper {
         });
     }
 
-    static generateStateToSendToOAuthProvider(input?: { userContext?: any }): string {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.generateStateToSendToOAuthProvider({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static async verifyAndGetStateOrThrowError<CustomStateProperties>(input: {
-        stateFromAuthProvider: string | undefined;
-        stateObjectFromStorage: (StateObject & CustomStateProperties) | undefined;
-        userContext?: any;
-    }): Promise<StateObject & CustomStateProperties> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.verifyAndGetStateOrThrowError({
-            ...input,
-            userContext: getNormalisedUserContext(input.userContext),
-        });
-    }
-
-    static getAuthCodeFromURL(input?: { userContext?: any }): string {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.getAuthCodeFromURL({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static getAuthErrorFromURL(input?: { userContext?: any }): string | undefined {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.getAuthErrorFromURL({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static getAuthStateFromURL(input?: { userContext?: any }): string {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.getAuthStateFromURL({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
+    static Google = Google;
     static Apple = Apple;
     static Bitbucket = Bitbucket;
     static Discord = Discord;
     static Github = Github;
     static Gitlab = Gitlab;
-    static Google = Google;
     static Facebook = Facebook;
+    static LinkedIn = LinkedIn;
+    static ActiveDirectory = ActiveDirectory;
+    static BoxySAML = BoxySAML;
+    static Okta = Okta;
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
@@ -316,16 +269,9 @@ const emailPasswordSignUp = Wrapper.emailPasswordSignUp;
 const doesEmailExist = Wrapper.doesEmailExist;
 const getResetPasswordTokenFromURL = Wrapper.getResetPasswordTokenFromURL;
 const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
-const getAuthorisationURLFromBackend = Wrapper.getAuthorisationURLFromBackend;
 const thirdPartySignInAndUp = Wrapper.thirdPartySignInAndUp;
 const getStateAndOtherInfoFromStorage = Wrapper.getStateAndOtherInfoFromStorage;
-const setStateAndOtherInfoToStorage = Wrapper.setStateAndOtherInfoToStorage;
 const getAuthorisationURLWithQueryParamsAndSetState = Wrapper.getAuthorisationURLWithQueryParamsAndSetState;
-const generateStateToSendToOAuthProvider = Wrapper.generateStateToSendToOAuthProvider;
-const verifyAndGetStateOrThrowError = Wrapper.verifyAndGetStateOrThrowError;
-const getAuthCodeFromURL = Wrapper.getAuthCodeFromURL;
-const getAuthErrorFromURL = Wrapper.getAuthErrorFromURL;
-const getAuthStateFromURL = Wrapper.getAuthStateFromURL;
 
 export {
     init,
@@ -336,6 +282,10 @@ export {
     Gitlab,
     Google,
     Facebook,
+    LinkedIn,
+    ActiveDirectory,
+    BoxySAML,
+    Okta,
     ThirdpartyEmailPasswordComponentsOverrideProvider,
     signOut,
     submitNewPassword,
@@ -345,16 +295,9 @@ export {
     doesEmailExist,
     getResetPasswordTokenFromURL,
     redirectToThirdPartyLogin,
-    getAuthorisationURLFromBackend,
     thirdPartySignInAndUp,
     getStateAndOtherInfoFromStorage,
-    setStateAndOtherInfoToStorage,
     getAuthorisationURLWithQueryParamsAndSetState,
-    generateStateToSendToOAuthProvider,
-    verifyAndGetStateOrThrowError,
-    getAuthCodeFromURL,
-    getAuthErrorFromURL,
-    getAuthStateFromURL,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,
