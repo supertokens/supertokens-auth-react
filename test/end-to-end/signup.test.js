@@ -288,6 +288,25 @@ describe("SuperTokens SignUp", function () {
             ]);
         });
 
+        it("Successful signup with query params kept", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here%3Ffoo%3Dbar`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await toggleSignInSignUp(page);
+            await setInputValues(page, [
+                { name: "email", value: "jack.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "name", value: "John Doe" },
+                { name: "age", value: "20" },
+            ]);
+
+            await submitForm(page);
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            let { pathname, search } = await page.evaluate(() => window.location);
+            assert.deepStrictEqual(pathname + search, "/redirect-here?foo=bar");
+        });
+
         it("should show error message on sign up with duplicate email", async function () {
             const requestHandler = (request) => {
                 if (request.url().includes(EMAIL_EXISTS_API) && request.method() === "GET") {

@@ -10,6 +10,7 @@ import { makeSessionContainerFromJWT } from "./sessionContainer";
 import JsonWebToken, { JwtHeader, SigningKeyCallback } from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
 import SuperTokensError from "supertokens-node/lib/build/error";
+import Dashboard from "supertokens-node/recipe/dashboard";
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -264,6 +265,7 @@ supertokens.init({
                 },
             },
         }),
+        Dashboard.init(),
     ],
 });
 

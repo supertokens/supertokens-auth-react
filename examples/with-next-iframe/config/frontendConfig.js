@@ -13,6 +13,7 @@ export const frontendConfig = () => {
             EmailPassword.init(),
             Session.init({
                 isInIframe: true,
+                tokenTransferMethod: "header",
             }),
         ],
     };
