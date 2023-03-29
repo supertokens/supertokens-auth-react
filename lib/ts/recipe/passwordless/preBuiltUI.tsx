@@ -54,9 +54,13 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "signInUp" | "linkClickedScreen",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
+        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        recipeInstance?: Passwordless
     ): JSX.Element {
-        return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(componentName, props);
+        return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatureComponent(
+            componentName,
+            props
+        );
     }
     static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[] {
         return RecipeRouter.getRecipeRoutes(reactRouterDom, PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance());

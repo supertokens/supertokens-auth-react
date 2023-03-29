@@ -20,7 +20,8 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
-        }
+        },
+        recipeInstance?: Passwordless
     ): JSX.Element;
     static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[];
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;

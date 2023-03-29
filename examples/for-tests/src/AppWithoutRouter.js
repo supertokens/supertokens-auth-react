@@ -5,6 +5,7 @@ import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/preBuiltUI";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/preBuiltUI";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/preBuiltUI";
+import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/preBuiltUI";
 
 function AppWithoutRouter() {
     return (
@@ -31,8 +32,8 @@ if (authRecipe === "thirdparty") {
         getRoutingComponent: () => {
             return (
                 <>
-                    {ThirdPartyPreBuiltUI.getRoutingComponent()}
                     {EmailPasswordPreBuiltUI.getRoutingComponent()}
+                    {ThirdPartyPreBuiltUI.getRoutingComponent()}
                 </>
             );
         },
@@ -47,6 +48,7 @@ if (authRecipe === "thirdparty") {
 
 function Routing() {
     const [, setCurrentPath] = useState(window.location.pathname);
+    const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
 
     useEffect(() => {
         const onLocationChange = () => {
@@ -55,6 +57,10 @@ function Routing() {
 
         window.addEventListener("popstate", onLocationChange);
     }, [setCurrentPath]);
+
+    if (emailVerificationMode !== "OFF" && EmailVerificationPreBuiltUI.canHandleRoute()) {
+        return EmailVerificationPreBuiltUI.getRoutingComponent();
+    }
 
     if (recipePreBuiltUI.canHandleRoute()) {
         return <BaseComponent>{recipePreBuiltUI.getRoutingComponent()}</BaseComponent>;

@@ -54,9 +54,10 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
     static getFeatureComponent(
         componentName: "signinup" | "signinupcallback",
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
-        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext,
+        recipeInstance?: ThirdParty
     ): JSX.Element {
-        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
+        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatureComponent(
             componentName,
             props,
             useComponentOverrides

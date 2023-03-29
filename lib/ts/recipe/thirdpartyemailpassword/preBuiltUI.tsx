@@ -136,14 +136,24 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
             if (this.recipeInstance.emailPasswordRecipe === undefined) {
                 throw new Error("Should not come here...");
             }
-            return EmailPasswordPreBuiltUI.getFeatureComponent(componentName, props);
+            return EmailPasswordPreBuiltUI.getFeatureComponent(
+                componentName,
+                props,
+                useComponentOverrides,
+                this.recipeInstance.emailPasswordRecipe
+            );
         } else if (componentName === "signinupcallback") {
             if (this.recipeInstance.thirdPartyRecipe === undefined) {
                 throw new Error(
                     "Embedding this component requires the thirdparty recipe to be enabled. Please check the value of signInAndUpFeature.providers in the configuration."
                 );
             }
-            return ThirdPartyPreBuiltUI.getFeatureComponent(componentName, props, useComponentOverrides);
+            return ThirdPartyPreBuiltUI.getFeatureComponent(
+                componentName,
+                props,
+                useComponentOverrides,
+                this.recipeInstance.thirdPartyRecipe
+            );
         } else {
             throw new Error("Should not come here...");
         }

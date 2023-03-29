@@ -106,14 +106,23 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
                     "Embedding this component requires the passwordless recipe to be enabled. Please check the value of disablePasswordless in the configuration."
                 );
             }
-            return PasswordlessPreBuiltUI.getFeatureComponent(componentName, props);
+            return PasswordlessPreBuiltUI.getFeatureComponent(
+                componentName,
+                props,
+                this.recipeInstance.passwordlessRecipe
+            );
         } else if (componentName === "signinupcallback") {
             if (this.recipeInstance.thirdPartyRecipe === undefined) {
                 throw new Error(
                     "Embedding this component requires the thirdparty recipe to be enabled. Please check the value of signInUpFeature.providers in the configuration."
                 );
             }
-            return ThirdPartyPreBuiltUI.getFeatureComponent(componentName, props, useComponentOverrides);
+            return ThirdPartyPreBuiltUI.getFeatureComponent(
+                componentName,
+                props,
+                useComponentOverrides,
+                this.recipeInstance.thirdPartyRecipe
+            );
         } else {
             throw new Error("Should never come here.");
         }
