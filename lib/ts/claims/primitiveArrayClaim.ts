@@ -1,13 +1,13 @@
 import { PrimitiveArrayClaim as PrimitiveArrayClaimWebJS } from "supertokens-web-js/recipe/session";
 
-import type { ValidationFailureCallback, ValidationSuccessCallback } from "../types";
+import type { ValidationFailureCallback } from "../types";
 import type { PrimitiveArrayClaimConfig } from "supertokens-web-js/recipe/session";
 
 export class PrimitiveArrayClaim<T> extends PrimitiveArrayClaimWebJS<T> {
     constructor(
         config: PrimitiveArrayClaimConfig & {
-            onSuccessRedirection?: ValidationSuccessCallback;
             onFailureRedirection?: ValidationFailureCallback;
+            showAccessDeniedOnFailure?: boolean;
         }
     ) {
         super(config);
@@ -21,8 +21,8 @@ export class PrimitiveArrayClaim<T> extends PrimitiveArrayClaimWebJS<T> {
             ) => {
                 return {
                     ...validator(...args),
-                    onSuccessRedirection: config.onSuccessRedirection,
                     onFailureRedirection: config.onFailureRedirection,
+                    showAccessDeniedOnFailure: config.showAccessDeniedOnFailure,
                 };
             };
         }

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
--   Introduce onFailureRedirection and onSuccessRedirection per claim callbacks to provide user with control over redirections when validating session
+-   Introduce onFailureRedirection and showAccessDeniedOnFailure on claims and validators to make handling session claim validation failures easier
 
 ## [0.31.1] - 2023-02-12
 

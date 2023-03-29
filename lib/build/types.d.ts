@@ -11,14 +11,11 @@ export declare type GetRedirectionURLContext = {
     action: "TO_AUTH";
     showSignIn?: boolean;
 };
-export declare type ValidationSuccessCallback =
-    | (({ userContext }: { userContext: any }) => Promise<string | undefined> | string | undefined)
-    | undefined;
 export declare type ValidationFailureCallback =
     | (({ userContext, reason }: { userContext: any; reason: any }) => Promise<string | undefined> | string | undefined)
     | undefined;
 export declare type SessionClaimValidator = SessionClaimValidatorWebJS & {
-    onSuccessRedirection?: ValidationSuccessCallback;
+    showAccessDeniedOnFailure?: boolean;
     onFailureRedirection?: ValidationFailureCallback;
 };
 export declare type SuperTokensConfig = {

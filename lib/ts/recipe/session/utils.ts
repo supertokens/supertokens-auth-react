@@ -63,6 +63,7 @@ export const getFailureRedirectionInfo = async ({
         userContext,
     }) as SessionClaimValidator[];
 
+    let failedClaim: ClaimValidationError | undefined = undefined;
     for (const validator of globalValidators) {
         const claim = invalidClaimsMap[validator.id];
         if (claim !== undefined) {
@@ -77,10 +78,13 @@ export const getFailureRedirectionInfo = async ({
                 }
             }
         }
+        if (validator.showAccessDeniedOnFailure !== false && failedClaim === undefined) {
+            failedClaim = claim;
+        }
     }
 
     return {
         redirectPath: undefined,
-        failedClaim: invalidClaims[0],
+        failedClaim,
     };
 };

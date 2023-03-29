@@ -187,7 +187,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                             history
                         );
                     }
-                    if (props.useDefaultAccessDeniedScreen !== false) {
+                    if (props.useDefaultAccessDeniedScreen !== false && failureRedirectInfo.failedClaim !== undefined) {
                         console.warn({
                             message: "Access denied",
                             claimValidationError: failureRedirectInfo.failedClaim,
@@ -220,7 +220,6 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                         overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
                         userContext,
                     });
-                    setContext({ ...event.sessionContext, loading: false, invalidClaims });
 
                     if (props.doRedirection !== false) {
                         const failureRedirectInfo = await getFailureRedirectionInfo({
@@ -229,12 +228,29 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                             userContext,
                         });
                         if (failureRedirectInfo.redirectPath) {
+                            setContext({ ...event.sessionContext, loading: false, invalidClaims });
                             return await SuperTokens.getInstanceOrThrow().redirectToUrl(
                                 failureRedirectInfo.redirectPath,
                                 history
                             );
                         }
+                        if (
+                            props.useDefaultAccessDeniedScreen !== false &&
+                            failureRedirectInfo.failedClaim !== undefined
+                        ) {
+                            console.warn({
+                                message: "Access denied",
+                                claimValidationError: failureRedirectInfo.failedClaim,
+                            });
+                            return setContext({
+                                ...event.sessionContext,
+                                loading: false,
+                                invalidClaims,
+                                accessDenied: true,
+                            });
+                        }
                     }
+                    setContext({ ...event.sessionContext, loading: false, invalidClaims });
 
                     return;
                 }

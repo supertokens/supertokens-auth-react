@@ -2,15 +2,11 @@ import { EmailVerificationClaimClass as EmailVerificationClaimClassWebJS } from 
 
 import EmailVerification from "../recipe/emailverification/recipe";
 
-import type { ValidationFailureCallback, ValidationSuccessCallback } from "../types";
+import type { ValidationFailureCallback } from "../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
 export class EmailVerificationClaimClass extends EmailVerificationClaimClassWebJS {
-    constructor(
-        getRecipeImpl: () => RecipeInterface,
-        onSuccessRedirection?: ValidationSuccessCallback,
-        onFailureRedirection?: ValidationFailureCallback
-    ) {
+    constructor(getRecipeImpl: () => RecipeInterface, onFailureRedirection?: ValidationFailureCallback) {
         super(getRecipeImpl);
 
         const validatorsWithCallbacks: { [key: string]: any } = { ...this.validators };
@@ -22,7 +18,6 @@ export class EmailVerificationClaimClass extends EmailVerificationClaimClassWebJ
             ) => {
                 return {
                     ...validator(...args),
-                    onSuccessRedirection: onSuccessRedirection,
                     onFailureRedirection: (args: { userContext: any; reason: any }) => {
                         if (onFailureRedirection !== undefined) {
                             return onFailureRedirection(args);
@@ -33,6 +28,7 @@ export class EmailVerificationClaimClass extends EmailVerificationClaimClassWebJ
                         }
                         return undefined;
                     },
+                    showAccessDeniedOnFailure: false,
                 };
             };
         }

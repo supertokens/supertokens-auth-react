@@ -1,13 +1,13 @@
 import { BooleanClaim as BooleanClaimWebJS } from "supertokens-web-js/recipe/session";
 
-import type { ValidationFailureCallback, ValidationSuccessCallback } from "../types";
+import type { ValidationFailureCallback } from "../types";
 import type { PrimitiveClaimConfig } from "supertokens-web-js/recipe/session";
 
 export class BooleanClaim extends BooleanClaimWebJS {
     constructor(
         config: PrimitiveClaimConfig & {
-            onSuccessRedirection?: ValidationSuccessCallback;
             onFailureRedirection?: ValidationFailureCallback;
+            showAccessDeniedOnFailure?: boolean;
         }
     ) {
         super(config);
@@ -21,8 +21,8 @@ export class BooleanClaim extends BooleanClaimWebJS {
             ) => {
                 return {
                     ...validator(...args),
-                    onSuccessRedirection: config.onSuccessRedirection,
                     onFailureRedirection: config.onFailureRedirection,
+                    showAccessDeniedOnFailure: config.showAccessDeniedOnFailure,
                 };
             };
         }
