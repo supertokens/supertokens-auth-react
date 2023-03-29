@@ -37,8 +37,8 @@ function AppWithReactDomRouter(props) {
     } else if (authRecipe === "both") {
         routesRenderer = (router) => {
             return [
-                ...ThirdPartyPreBuiltUI.getReactRouterDomRoutes(router),
                 ...EmailPasswordPreBuiltUI.getReactRouterDomRoutes(router),
+                ...ThirdPartyPreBuiltUI.getReactRouterDomRoutes(router),
             ];
         };
     } else if (authRecipe === "thirdpartyemailpassword") {

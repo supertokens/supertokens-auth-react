@@ -55,9 +55,15 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "signinup" | "resetpassword",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
+        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext,
+        recipeInstance?: EmailPassword
     ): JSX.Element {
-        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(componentName, props);
+        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatureComponent(
+            componentName,
+            props,
+            useComponentOverrides
+        );
     }
     static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[] {
         return RecipeRouter.getRecipeRoutes(reactRouterDom, EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance());
@@ -95,7 +101,6 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
-        const instance = EmailPassword.getInstanceOrThrow();
         if (componentName === "signinup") {
             if (props.redirectOnSessionExists !== false) {
                 return (
@@ -106,10 +111,10 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
                             OnHandleEventContext,
                             NormalisedConfig
                         >
-                            authRecipe={instance}
+                            authRecipe={this.recipeInstance}
                             history={props.history}>
                             <SignInAndUpFeature
-                                recipe={instance}
+                                recipe={this.recipeInstance}
                                 {...props}
                                 useComponentOverrides={useComponentOverrides}
                             />
@@ -120,7 +125,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
                 return (
                     <UserContextWrapper userContext={props.userContext}>
                         <SignInAndUpFeature
-                            recipe={instance}
+                            recipe={this.recipeInstance}
                             {...props}
                             useComponentOverrides={useComponentOverrides}
                         />
@@ -131,7 +136,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
             return (
                 <UserContextWrapper userContext={props.userContext}>
                     <ResetPasswordUsingTokenFeature
-                        recipe={instance}
+                        recipe={this.recipeInstance}
                         {...props}
                         useComponentOverrides={useComponentOverrides}
                     />

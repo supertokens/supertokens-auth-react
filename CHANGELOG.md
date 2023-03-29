@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Eliminated the need for duplicate `init` call for non-react applications that use pre-built UI. [See the issue](https://github.com/supertokens/supertokens-auth-react/issues/616)
 
+## [0.31.3] - 2023-03-23
+
+### Changes
+
+-   Fix unsupported engine warning for npm v9
+-   Updates dependency versions for `supertokens-auth-react` and `supertokens-node` for all example apps
+-   Initialises the Dashboard recipe for all example apps
+
 ## [0.31.2] - 2023-03-07
 
 ### Fixes

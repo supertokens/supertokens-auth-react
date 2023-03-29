@@ -9,6 +9,7 @@ import EmailVerification from "supertokens-node/recipe/emailverification";
 import { associateNewEmailWithPrimaryEmail } from "./emailLinkingMap";
 import { epOverride } from "./epOverride";
 import { evOverride } from "./evOverride";
+import Dashboard from "supertokens-node/recipe/dashboard";
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -56,6 +57,7 @@ supertokens.init({
             },
         }),
         Session.init(),
+        Dashboard.init(),
     ],
 });
 

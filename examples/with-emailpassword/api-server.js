@@ -27,14 +27,7 @@ supertokens.init({
         apiDomain, // TODO: Change to your app's API domain
         websiteDomain, // TODO: Change to your app's website domain
     },
-    recipeList: [
-        EmailVerification.init({ mode: "REQUIRED" }),
-        EmailPassword.init(),
-        Session.init(),
-        Dashboard.init({
-            apiKey: "supertokens_is_awesome",
-        }),
-    ],
+    recipeList: [EmailVerification.init({ mode: "REQUIRED" }), EmailPassword.init(), Session.init(), Dashboard.init()],
 });
 
 const app = express();
