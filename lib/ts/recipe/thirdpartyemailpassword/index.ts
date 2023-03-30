@@ -300,10 +300,13 @@ export default class Wrapper {
         });
     }
 
-    static Google = Google;
     static Apple = Apple;
-    static Facebook = Facebook;
+    static Bitbucket = Bitbucket;
+    static Discord = Discord;
     static Github = Github;
+    static Gitlab = Gitlab;
+    static Google = Google;
+    static Facebook = Facebook;
     static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;

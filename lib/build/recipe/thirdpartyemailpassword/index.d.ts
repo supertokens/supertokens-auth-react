@@ -164,10 +164,13 @@ export default class Wrapper {
     static getAuthCodeFromURL(input?: { userContext?: any }): string;
     static getAuthErrorFromURL(input?: { userContext?: any }): string | undefined;
     static getAuthStateFromURL(input?: { userContext?: any }): string;
-    static Google: typeof Google;
     static Apple: typeof Apple;
-    static Facebook: typeof Facebook;
+    static Bitbucket: typeof Bitbucket;
+    static Discord: typeof Discord;
     static Github: typeof Github;
+    static Gitlab: typeof Gitlab;
+    static Google: typeof Google;
+    static Facebook: typeof Facebook;
     static SignInAndUp: (
         prop?: PropsWithChildren<{
             redirectOnSessionExists?: boolean;

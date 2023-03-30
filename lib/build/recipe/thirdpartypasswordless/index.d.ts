@@ -155,10 +155,13 @@ export default class Wrapper {
         userContext?: any;
     }): Promise<void>;
     static clearPasswordlessLoginAttemptInfo(input?: { userContext?: any }): Promise<void>;
-    static Google: typeof Google;
     static Apple: typeof Apple;
-    static Facebook: typeof Facebook;
+    static Bitbucket: typeof Bitbucket;
+    static Discord: typeof Discord;
     static Github: typeof Github;
+    static Gitlab: typeof Gitlab;
+    static Google: typeof Google;
+    static Facebook: typeof Facebook;
     static SignInAndUp: (
         prop?: PropsWithChildren<{
             redirectOnSessionExists?: boolean;
