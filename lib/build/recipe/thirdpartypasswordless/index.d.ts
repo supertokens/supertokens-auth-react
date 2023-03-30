@@ -1,5 +1,5 @@
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
-import { Apple, Google, Facebook, Github } from "../thirdparty/";
+import { Apple, Google, Facebook, Github, Gitlab, Bitbucket, Discord } from "../thirdparty/";
 import SignInUpTheme from "./components/themes/signInUp";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import type { PropsWithChildren } from "react";
@@ -214,9 +214,12 @@ declare const ThirdpartyPasswordlessComponentsOverrideProvider: import("react").
 export {
     init,
     Apple,
+    Bitbucket,
+    Discord,
+    Github,
+    Gitlab,
     Google,
     Facebook,
-    Github,
     redirectToThirdPartyLogin,
     getAuthorisationURLFromBackend,
     thirdPartySignInAndUp,

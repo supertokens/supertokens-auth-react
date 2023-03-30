@@ -4,7 +4,7 @@ import {
     ThirdPartyUserType,
 } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
-import { Apple, Google, Facebook, Github } from "../thirdparty/";
+import { Apple, Google, Facebook, Github, Gitlab, Bitbucket, Discord } from "../thirdparty/";
 import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
@@ -222,9 +222,12 @@ declare const getAuthStateFromURL: typeof Wrapper.getAuthStateFromURL;
 export {
     init,
     Apple,
+    Bitbucket,
+    Discord,
+    Github,
+    Gitlab,
     Google,
     Facebook,
-    Github,
     SignInAndUp,
     SignInAndUpTheme,
     ThirdpartyEmailPasswordComponentsOverrideProvider,

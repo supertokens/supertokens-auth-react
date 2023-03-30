@@ -26,8 +26,11 @@ import { RecipeComponentsOverrideContextProvider } from "./componentOverrideCont
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import Apple from "./providers/apple";
+import Bitbucket from "./providers/bitbucket";
+import Discord from "./providers/discord";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
+import Gitlab from "./providers/gitlab";
 import Google from "./providers/google";
 import ThirdParty from "./recipe";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
@@ -173,10 +176,13 @@ export default class Wrapper {
     /*
      * Providers
      */
-    static Google = Google;
     static Apple = Apple;
-    static Facebook = Facebook;
+    static Bitbucket = Bitbucket;
+    static Discord = Discord;
     static Github = Github;
+    static Gitlab = Gitlab;
+    static Google = Google;
+    static Facebook = Facebook;
     static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         ThirdParty.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
@@ -206,9 +212,12 @@ const ThirdpartyComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 export {
     init,
     Apple,
+    Bitbucket,
+    Discord,
+    Github,
+    Gitlab,
     Google,
     Facebook,
-    Github,
     getStateAndOtherInfoFromStorage,
     setStateAndOtherInfoToStorage,
     getAuthorisationURLWithQueryParamsAndSetState,

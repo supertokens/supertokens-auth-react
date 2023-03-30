@@ -20,7 +20,7 @@ import {
 
 import { getNormalisedUserContext } from "../../utils";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
-import { Apple, Google, Facebook, Github } from "../thirdparty/";
+import { Apple, Google, Facebook, Github, Gitlab, Bitbucket, Discord } from "../thirdparty/";
 import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 
@@ -343,9 +343,12 @@ const getAuthStateFromURL = Wrapper.getAuthStateFromURL;
 export {
     init,
     Apple,
+    Bitbucket,
+    Discord,
+    Github,
+    Gitlab,
     Google,
     Facebook,
-    Github,
     SignInAndUp,
     SignInAndUpTheme,
     ThirdpartyEmailPasswordComponentsOverrideProvider,
