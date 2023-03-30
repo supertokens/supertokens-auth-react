@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.31.5] - 2023-03-30
+
+### Changes
+
+-   Added new social providers(Gitlab, Discord, Bitbucket)
+
 ## [0.31.4] - 2023-03-29
 
 ### Changes

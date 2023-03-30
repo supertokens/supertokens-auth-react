@@ -4,7 +4,7 @@ import {
     ThirdPartyUserType,
 } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
-import { Apple, Google, Facebook, Github } from "../thirdparty/";
+import { Apple, Google, Facebook, Github, Gitlab, Bitbucket, Discord } from "../thirdparty/";
 import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
@@ -164,10 +164,13 @@ export default class Wrapper {
     static getAuthCodeFromURL(input?: { userContext?: any }): string;
     static getAuthErrorFromURL(input?: { userContext?: any }): string | undefined;
     static getAuthStateFromURL(input?: { userContext?: any }): string;
-    static Google: typeof Google;
     static Apple: typeof Apple;
-    static Facebook: typeof Facebook;
+    static Bitbucket: typeof Bitbucket;
+    static Discord: typeof Discord;
     static Github: typeof Github;
+    static Gitlab: typeof Gitlab;
+    static Google: typeof Google;
+    static Facebook: typeof Facebook;
     static SignInAndUp: (
         prop?: PropsWithChildren<{
             redirectOnSessionExists?: boolean;
@@ -222,9 +225,12 @@ declare const getAuthStateFromURL: typeof Wrapper.getAuthStateFromURL;
 export {
     init,
     Apple,
+    Bitbucket,
+    Discord,
+    Github,
+    Gitlab,
     Google,
     Facebook,
-    Github,
     SignInAndUp,
     SignInAndUpTheme,
     ThirdpartyEmailPasswordComponentsOverrideProvider,
