@@ -19,7 +19,7 @@ import {
 } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
 import { getNormalisedUserContext } from "../../utils";
-import { Apple, Google, Facebook, Github } from "../thirdparty/";
+import { Apple, Google, Facebook, Github, Gitlab, Bitbucket, Discord } from "../thirdparty/";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
@@ -296,10 +296,13 @@ export default class Wrapper {
         });
     }
 
-    static Google = Google;
     static Apple = Apple;
-    static Facebook = Facebook;
+    static Bitbucket = Bitbucket;
+    static Discord = Discord;
     static Github = Github;
+    static Gitlab = Gitlab;
+    static Google = Google;
+    static Facebook = Facebook;
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
@@ -327,9 +330,12 @@ const getAuthStateFromURL = Wrapper.getAuthStateFromURL;
 export {
     init,
     Apple,
+    Bitbucket,
+    Discord,
+    Github,
+    Gitlab,
     Google,
     Facebook,
-    Github,
     ThirdpartyEmailPasswordComponentsOverrideProvider,
     signOut,
     submitNewPassword,

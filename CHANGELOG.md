@@ -85,6 +85,18 @@ SuperTokens.init({
 </SuperTokensWrapper>;
 ```
 
+## [0.31.5] - 2023-03-30
+
+### Changes
+
+-   Added new social providers(Gitlab, Discord, Bitbucket)
+
+## [0.31.4] - 2023-03-29
+
+### Changes
+
+-   Switched dependency away from the removed/unpublished `mocha-split-tests` package
+
 ## [0.31.3] - 2023-03-23
 
 ### Changes

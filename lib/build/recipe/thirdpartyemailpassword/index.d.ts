@@ -4,7 +4,7 @@ import {
     EmailPasswordUserType as UserType,
     ThirdPartyUserType,
 } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import { Apple, Google, Facebook, Github } from "../thirdparty/";
+import { Apple, Google, Facebook, Github, Gitlab, Bitbucket, Discord } from "../thirdparty/";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
@@ -161,10 +161,13 @@ export default class Wrapper {
     static getAuthCodeFromURL(input?: { userContext?: any }): string;
     static getAuthErrorFromURL(input?: { userContext?: any }): string | undefined;
     static getAuthStateFromURL(input?: { userContext?: any }): string;
-    static Google: typeof Google;
     static Apple: typeof Apple;
-    static Facebook: typeof Facebook;
+    static Bitbucket: typeof Bitbucket;
+    static Discord: typeof Discord;
     static Github: typeof Github;
+    static Gitlab: typeof Gitlab;
+    static Google: typeof Google;
+    static Facebook: typeof Facebook;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
@@ -198,9 +201,12 @@ declare const getAuthStateFromURL: typeof Wrapper.getAuthStateFromURL;
 export {
     init,
     Apple,
+    Bitbucket,
+    Discord,
+    Github,
+    Gitlab,
     Google,
     Facebook,
-    Github,
     ThirdpartyEmailPasswordComponentsOverrideProvider,
     signOut,
     submitNewPassword,

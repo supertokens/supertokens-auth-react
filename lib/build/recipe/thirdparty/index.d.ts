@@ -1,8 +1,11 @@
 /// <reference types="react" />
 import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
 import Apple from "./providers/apple";
+import Bitbucket from "./providers/bitbucket";
+import Discord from "./providers/discord";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
+import Gitlab from "./providers/gitlab";
 import Google from "./providers/google";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
@@ -64,10 +67,13 @@ export default class Wrapper {
     static getAuthCodeFromURL(input?: { userContext?: any }): string;
     static getAuthErrorFromURL(input?: { userContext?: any }): string | undefined;
     static getAuthStateFromURL(input?: { userContext?: any }): string;
-    static Google: typeof Google;
     static Apple: typeof Apple;
-    static Facebook: typeof Facebook;
+    static Bitbucket: typeof Bitbucket;
+    static Discord: typeof Discord;
     static Github: typeof Github;
+    static Gitlab: typeof Gitlab;
+    static Google: typeof Google;
+    static Facebook: typeof Facebook;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
@@ -95,9 +101,12 @@ declare const ThirdpartyComponentsOverrideProvider: import("react").FC<
 export {
     init,
     Apple,
+    Bitbucket,
+    Discord,
+    Github,
+    Gitlab,
     Google,
     Facebook,
-    Github,
     getStateAndOtherInfoFromStorage,
     setStateAndOtherInfoToStorage,
     getAuthorisationURLWithQueryParamsAndSetState,
