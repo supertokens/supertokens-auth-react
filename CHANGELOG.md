@@ -10,6 +10,80 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 -   Eliminated the need for duplicate `init` call for non-react applications that use pre-built UI. [See the issue](https://github.com/supertokens/supertokens-auth-react/issues/616)
+-   Split/separate pre-built UI components from its recipe to reduce bundle sizes for apps that do not use pre-built UI
+
+### Migration
+
+#### App render
+
+```tsx
+import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
+// .... other imports
+
+SuperTokens.init({
+    appInfo: {
+        // appInfo
+    },
+    recipeList: [
+        Passwordless.init({
+            contactMethod: "EMAIL_OR_PHONE",
+        }),
+        Session.init(),
+    ],
+});
+
+<SuperTokensWrapper>
+    <div className="App">
+        <Router>
+            <div className="fill">
+                <Routes>
+                    {/* This shows the login UI on "/auth" route */}
+                    {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                    // ... other routes
+                </Routes>
+            </div>
+            <Footer />
+        </Router>
+    </div>
+</SuperTokensWrapper>;
+```
+
+Should become
+
+```tsx
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/preBuiltUI";
+// .... other imports
+
+SuperTokens.init({
+    appInfo: {
+        // appInfo
+    },
+    recipeList: [
+        Passwordless.init({
+            contactMethod: "EMAIL_OR_PHONE",
+        }),
+        Session.init(),
+    ],
+});
+
+<SuperTokensWrapper>
+    <div className="App">
+        <Router>
+            <div className="fill">
+                <Routes>
+                    {/* This shows the login UI on "/auth" route for Passwordless recipe */}
+                    {PasswordlessPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
+                    // ... other routes
+                </Routes>
+            </div>
+            <Footer />
+        </Router>
+    </div>
+</SuperTokensWrapper>;
+```
 
 ## [0.31.3] - 2023-03-23
 
