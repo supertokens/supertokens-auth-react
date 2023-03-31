@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Migration
 
-#### App render
+#### Adding the pre-built UI route for apps with react-router-dom
 
 ```tsx
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
@@ -83,6 +83,42 @@ SuperTokens.init({
         </Router>
     </div>
 </SuperTokensWrapper>;
+```
+
+#### Adding the pre-built UI route for apps without react-router-dom
+
+```tsx
+import React from "react";
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+
+class App extends React.Component {
+    render() {
+        if (SuperTokens.canHandleRoute()) {
+            // This renders the login UI on the /auth route
+            return SuperTokens.getRoutingComponent();
+        }
+
+        return <SuperTokensWrapper>{/*Your app*/}</SuperTokensWrapper>;
+    }
+}
+```
+
+Should become
+
+```tsx
+import { SuperTokensWrapper } from "supertokens-auth-react";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/preBuiltUI";
+
+class App extends React.Component {
+    render() {
+        if (PasswordlessPreBuiltUI.canHandleRoute()) {
+            // This renders the login UI on the /auth route
+            return PasswordlessPreBuiltUI.getRoutingComponent();
+        }
+
+        return <SuperTokensWrapper>{/*Your app*/}</SuperTokensWrapper>;
+    }
+}
 ```
 
 ## [0.31.5] - 2023-03-30

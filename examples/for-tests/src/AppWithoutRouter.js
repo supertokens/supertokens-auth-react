@@ -27,7 +27,7 @@ if (authRecipe === "thirdparty") {
 } else if (authRecipe === "both") {
     recipePreBuiltUI = {
         canHandleRoute: () => {
-            return ThirdPartyPreBuiltUI.canHandleRoute() && EmailPasswordPreBuiltUI.canHandleRoute();
+            return ThirdPartyPreBuiltUI.canHandleRoute() || EmailPasswordPreBuiltUI.canHandleRoute();
         },
         getRoutingComponent: () => {
             return (
