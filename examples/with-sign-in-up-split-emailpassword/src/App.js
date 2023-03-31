@@ -154,12 +154,12 @@ function App() {
                                 {/* we want to render the sign in component in /signin.
                                 We will override the <SignInAndUp> component to only show the sign in
                             UI on this route. See the init function call above for how to do this*/}
-                                <Route path="/signin" element={<EmailPassword.SignInAndUp />} />
+                                <Route path="/signin" element={<EmailPasswordPreBuiltUI.SignInAndUp />} />
 
                                 {/* we want to render the sign up component in /signup.
                                 We will override the <SignInAndUp> component to only show the sign up
                             UI on this route. See the init function call above for how to do this*/}
-                                <Route path="/signup" element={<EmailPassword.SignInAndUp />} />
+                                <Route path="/signup" element={<EmailPasswordPreBuiltUI.SignInAndUp />} />
                             </Routes>
                         </div>
                         <Footer />

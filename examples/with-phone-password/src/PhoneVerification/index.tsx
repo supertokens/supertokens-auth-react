@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Session, { useSessionContext } from "supertokens-auth-react/recipe/session";
-import { SignInUp, SignInUpTheme } from "supertokens-auth-react/recipe/passwordless";
+import { SignInUp, SignInUpTheme } from "supertokens-auth-react/recipe/passwordless/preBuiltUI";
 
 const CustomSignInUpTheme: typeof SignInUpTheme = (props) => {
     let [showDefaultUI, setShowDefaultUI] = useState(false);
