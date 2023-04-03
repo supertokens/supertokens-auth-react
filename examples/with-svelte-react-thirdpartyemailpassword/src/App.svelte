@@ -8,7 +8,7 @@
         Google,
         signOut,
     } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-    import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/preBuiltUI";
+    import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
     import Session from "supertokens-auth-react/recipe/session";
     import { Router, Route } from "svelte-navigator";
     import { onMount } from "svelte";

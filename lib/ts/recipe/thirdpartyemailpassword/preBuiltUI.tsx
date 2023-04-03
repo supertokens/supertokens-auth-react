@@ -4,10 +4,10 @@ import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
-import { EmailPasswordPreBuiltUI } from "../emailpassword/preBuiltUI";
+import { EmailPasswordPreBuiltUI } from "../emailpassword/prebuiltui";
 import { RecipeRouter } from "../recipeRouter";
 import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
-import { ThirdPartyPreBuiltUI } from "../thirdparty/preBuiltUI";
+import { ThirdPartyPreBuiltUI } from "../thirdparty/prebuiltui";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import SignInAndUpFeature from "./components/features/signInAndUp";

@@ -5,7 +5,7 @@ import SuperTokens from "../../../../lib/ts/superTokens";
 import Session from "../../../../lib/ts/recipe/session/recipe";
 import Recipe from "../../../../lib/ts/recipe/thirdparty/recipe";
 import { Github } from "../../../../lib/ts/recipe/thirdparty";
-import { SignInAndUp } from "../../../../lib/ts/recipe/thirdparty/preBuiltUI";
+import { SignInAndUp } from "../../../../lib/ts/recipe/thirdparty/prebuiltui";
 import { SessionContextType } from "../../../../lib/ts/recipe/session";
 
 const MockSession = {

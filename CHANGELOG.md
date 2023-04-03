@@ -7,6 +7,132 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changes
+
+-   Eliminated the need for duplicate `init` call for non-react applications that use pre-built UI. [See the issue](https://github.com/supertokens/supertokens-auth-react/issues/616)
+-   Split/separate pre-built UI components from its recipe to reduce bundle sizes for apps that do not use pre-built UI
+
+### Migration
+
+#### Adding the pre-built UI route for apps with react-router-dom
+
+```tsx
+import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
+// .... other imports
+
+SuperTokens.init({
+    appInfo: {
+        // appInfo
+    },
+    recipeList: [
+        Passwordless.init({
+            contactMethod: "EMAIL_OR_PHONE",
+        }),
+        Session.init(),
+    ],
+});
+
+<SuperTokensWrapper>
+    <div className="App">
+        <Router>
+            <div className="fill">
+                <Routes>
+                    {/* This shows the login UI on "/auth" route */}
+                    {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                    // ... other routes
+                </Routes>
+            </div>
+            <Footer />
+        </Router>
+    </div>
+</SuperTokensWrapper>;
+```
+
+Should become
+
+```tsx
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
+// .... other imports
+
+SuperTokens.init({
+    appInfo: {
+        // appInfo
+    },
+    recipeList: [
+        Passwordless.init({
+            contactMethod: "EMAIL_OR_PHONE",
+        }),
+        Session.init(),
+    ],
+});
+
+<SuperTokensWrapper>
+    <div className="App">
+        <Router>
+            <div className="fill">
+                <Routes>
+                    {/* This shows the login UI on "/auth" route for Passwordless recipe */}
+                    {PasswordlessPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
+                    // ... other routes
+                </Routes>
+            </div>
+            <Footer />
+        </Router>
+    </div>
+</SuperTokensWrapper>;
+```
+
+#### Adding the pre-built UI route for apps without react-router-dom
+
+```tsx
+import React from "react";
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+
+class App extends React.Component {
+    render() {
+        if (SuperTokens.canHandleRoute()) {
+            // This renders the login UI on the /auth route
+            return SuperTokens.getRoutingComponent();
+        }
+
+        return <SuperTokensWrapper>{/*Your app*/}</SuperTokensWrapper>;
+    }
+}
+```
+
+Should become
+
+```tsx
+import { SuperTokensWrapper } from "supertokens-auth-react";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
+
+class App extends React.Component {
+    render() {
+        if (PasswordlessPreBuiltUI.canHandleRoute()) {
+            // This renders the login UI on the /auth route
+            return PasswordlessPreBuiltUI.getRoutingComponent();
+        }
+
+        return <SuperTokensWrapper>{/*Your app*/}</SuperTokensWrapper>;
+    }
+}
+```
+
+## [0.31.5] - 2023-03-30
+
+### Changes
+
+-   Added new social providers(Gitlab, Discord, Bitbucket)
+
+## [0.31.4] - 2023-03-29
+
+### Changes
+
+-   Switched dependency away from the removed/unpublished `mocha-split-tests` package
+
 ## [0.31.3] - 2023-03-23
 
 ### Changes

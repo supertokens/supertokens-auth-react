@@ -20,9 +20,9 @@ import { Github, ThirdpartyEmailPasswordComponentsOverrideProvider } from "../..
 import {
     SignInAndUp as SignInAndUpThirdpartyEmailPassword,
     ThirdPartySignInAndUpCallback,
-} from "../../lib/ts/recipe/thirdpartyemailpassword/preBuiltUI";
+} from "../../lib/ts/recipe/thirdpartyemailpassword/prebuiltui";
 import { EmailPasswordComponentsOverrideProvider } from "../../lib/ts/recipe/emailpassword";
-import { SignInAndUp as SignInAndUpEmailPassword } from "../../lib/ts/recipe/emailpassword/preBuiltUI";
+import { SignInAndUp as SignInAndUpEmailPassword } from "../../lib/ts/recipe/emailpassword/prebuiltui";
 
 import { SignUp } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signUp";
 import { SignUpHeader } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signUpHeader";
@@ -56,7 +56,7 @@ import { PhoneForm } from "../../lib/ts/recipe/passwordless/components/themes/si
 import { EmailOrPhoneForm } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/emailOrPhoneForm";
 import ThirdParty from "../../lib/ts/recipe/thirdparty/recipe";
 import { Google, ThirdpartyComponentsOverrideProvider } from "../../lib/ts/recipe/thirdparty";
-import { SignInAndUpCallback } from "../../lib/ts/recipe/thirdparty/preBuiltUI";
+import { SignInAndUpCallback } from "../../lib/ts/recipe/thirdparty/prebuiltui";
 
 type AllComponentsOverrideMap = EmailPasswordOverrideMap &
     ThirdPartyOverrideMap &

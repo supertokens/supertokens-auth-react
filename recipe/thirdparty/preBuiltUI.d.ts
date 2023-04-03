@@ -12,6 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export * from "../../lib/build/recipe/thirdparty/preBuiltUI";
-import * as _default from "../../lib/build/recipe/thirdparty/preBuiltUI";
+export * from "../../lib/build/recipe/thirdparty/prebuiltui";
+import * as _default from "../../lib/build/recipe/thirdparty/prebuiltui";
 export default _default;

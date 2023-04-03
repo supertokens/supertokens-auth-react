@@ -12,6 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export * from "../../lib/build/recipe/thirdpartyemailpassword/preBuiltUI";
-import * as _default from "../../lib/build/recipe/thirdpartyemailpassword/preBuiltUI";
+export * from "../../lib/build/recipe/thirdpartyemailpassword/prebuiltui";
+import * as _default from "../../lib/build/recipe/thirdpartyemailpassword/prebuiltui";
 export default _default;

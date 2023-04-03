@@ -3,9 +3,9 @@ import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import { PasswordlessPreBuiltUI } from "../passwordless/preBuiltUI";
+import { PasswordlessPreBuiltUI } from "../passwordless/prebuiltui";
 import { RecipeRouter } from "../recipeRouter";
-import { ThirdPartyPreBuiltUI } from "../thirdparty/preBuiltUI";
+import { ThirdPartyPreBuiltUI } from "../thirdparty/prebuiltui";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import SignInAndUpFeature from "./components/features/signInAndUp";

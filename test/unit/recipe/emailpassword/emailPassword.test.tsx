@@ -26,7 +26,7 @@ import assert from "assert";
 import SuperTokens from "../../../../lib/ts/superTokens";
 import { assertFormFieldsEqual } from "../../../helpers";
 import EmailPasswordIndex from "../../../../lib/ts/recipe/emailpassword";
-import { EmailPasswordPreBuiltUI } from "../../../../lib/ts/recipe/emailpassword/preBuiltUI";
+import { EmailPasswordPreBuiltUI } from "../../../../lib/ts/recipe/emailpassword/prebuiltui";
 import { validateForm } from "../../../../lib/ts/utils";
 
 /*

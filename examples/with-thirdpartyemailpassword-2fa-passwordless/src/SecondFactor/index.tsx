@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { redirectToAuth } from "supertokens-auth-react";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import Session, { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { SecondFactorClaim } from "../secondFactorClaim";
 
-const CustomSignInUpTheme: typeof Passwordless.SignInUpTheme = (props) => {
+const CustomSignInUpTheme: typeof PasswordlessPreBuiltUI.SignInUpTheme = (props) => {
     let [showDefaultUI, setShowDefaultUI] = useState(false);
     const session = useSessionContext();
 
@@ -43,7 +44,7 @@ const CustomSignInUpTheme: typeof Passwordless.SignInUpTheme = (props) => {
     props.featureState.successInAnotherTab = false;
 
     if (showDefaultUI) {
-        return <Passwordless.SignInUpTheme {...props} />;
+        return <PasswordlessPreBuiltUI.SignInUpTheme {...props} />;
     }
     return <></>;
 };
@@ -70,12 +71,12 @@ export default function SecondFactor() {
                 alignItems: "center",
                 justifyContent: "center",
             }}>
-            <Passwordless.SignInUp redirectOnSessionExists={false}>
+            <PasswordlessPreBuiltUI.SignInUp redirectOnSessionExists={false}>
                 {
                     // @ts-ignore We ignore the error about missing props, since they'll be set by the feature component
                     <CustomSignInUpTheme />
                 }
-            </Passwordless.SignInUp>
+            </PasswordlessPreBuiltUI.SignInUp>
 
             <div
                 onClick={async () => {

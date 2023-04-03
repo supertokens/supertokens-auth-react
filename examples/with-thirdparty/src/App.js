@@ -2,12 +2,12 @@ import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
-import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/preBuiltUI";
+import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
-import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/preBuiltUI";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
 import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
 
