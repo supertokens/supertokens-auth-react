@@ -54,7 +54,7 @@ Should become
 ```tsx
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
-import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/preBuiltUI";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 // .... other imports
 
 SuperTokens.init({
@@ -107,7 +107,7 @@ Should become
 
 ```tsx
 import { SuperTokensWrapper } from "supertokens-auth-react";
-import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/preBuiltUI";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 
 class App extends React.Component {
     render() {

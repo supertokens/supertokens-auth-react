@@ -30,9 +30,9 @@ import Passwordless from "../../../recipe/passwordless";
 import { PasswordlessFlowType } from "supertokens-web-js/recipe/passwordless/types";
 import ThirdPartyPasswordless from "../../../recipe/thirdpartypasswordless";
 import { PermissionClaim, UserRoleClaim } from "../../../recipe/userroles";
-import { ThirdPartyPreBuiltUI } from "../../../recipe/thirdparty/preBuiltUI";
-import { ThirdPartyEmailPasswordPreBuiltUI } from "../../../recipe/thirdpartyemailpassword/preBuiltUI";
-import { EmailPasswordPreBuiltUI } from "../../../recipe/emailpassword/preBuiltUI";
+import { ThirdPartyPreBuiltUI } from "../../../recipe/thirdparty/prebuiltui";
+import { ThirdPartyEmailPasswordPreBuiltUI } from "../../../recipe/thirdpartyemailpassword/prebuiltui";
+import { EmailPasswordPreBuiltUI } from "../../../recipe/emailpassword/prebuiltui";
 
 /*
  * This application is used with the purpose of illustrating Supertokens with typescript.

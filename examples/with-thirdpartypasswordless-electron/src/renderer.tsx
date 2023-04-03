@@ -30,7 +30,7 @@ import "./index.css";
 import React, { useState } from "react";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
-import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/preBuiltUI";
+import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import SessionExpiredPopup from "./SessionExpiredPopup";

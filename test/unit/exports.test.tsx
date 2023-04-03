@@ -18,13 +18,13 @@ describe("Exports", function () {
                 signUp,
                 submitNewPassword,
             } = require("../../recipe/emailpassword");
-            let _defaultPreBuiltUI = require("../../recipe/emailpassword/preBuiltUI");
+            let _defaultPreBuiltUI = require("../../recipe/emailpassword/prebuiltui");
             let {
                 ResetPasswordUsingToken,
                 ResetPasswordUsingTokenTheme,
                 SignInAndUp,
                 SignInAndUpTheme,
-            } = require("../../recipe/emailpassword/preBuiltUI");
+            } = require("../../recipe/emailpassword/prebuiltui");
             assert(init !== undefined && _default.init !== undefined);
             assert(doesEmailExist !== undefined && _default.doesEmailExist !== undefined);
             assert(getResetPasswordTokenFromURL !== undefined && _default.getResetPasswordTokenFromURL !== undefined);
@@ -65,13 +65,13 @@ describe("Exports", function () {
                 Github,
                 Google,
             } = require("../../recipe/thirdparty");
-            let _defaultPreBuiltUI = require("../../recipe/thirdparty/preBuiltUI");
+            let _defaultPreBuiltUI = require("../../recipe/thirdparty/prebuiltui");
             let {
                 SignInAndUp,
                 SignInAndUpCallback,
                 SignInAndUpCallbackTheme,
                 SignInAndUpTheme,
-            } = require("../../recipe/thirdparty/preBuiltUI");
+            } = require("../../recipe/thirdparty/prebuiltui");
 
             assert(init !== undefined && _default.init !== undefined);
             assert(
@@ -136,7 +136,7 @@ describe("Exports", function () {
                 Github,
                 Google,
             } = require("../../recipe/thirdpartyemailpassword");
-            let _defaultPreBuiltUI = require("../../recipe/thirdpartyemailpassword/preBuiltUI");
+            let _defaultPreBuiltUI = require("../../recipe/thirdpartyemailpassword/prebuiltui");
             let {
                 ResetPasswordUsingToken,
                 ResetPasswordUsingTokenTheme,
@@ -144,7 +144,7 @@ describe("Exports", function () {
                 SignInAndUpTheme,
                 ThirdPartySignInAndUpCallback,
                 ThirdPartySignInAndUpCallbackTheme,
-            } = require("../../recipe/thirdpartyemailpassword/preBuiltUI");
+            } = require("../../recipe/thirdpartyemailpassword/prebuiltui");
 
             assert(init !== undefined && _default.init !== undefined);
             assert(doesEmailExist !== undefined && _default.doesEmailExist !== undefined);
@@ -215,8 +215,8 @@ describe("Exports", function () {
                 setLoginAttemptInfo,
                 signOut,
             } = require("../../recipe/passwordless");
-            let _defaultPreBuiltUI = require("../../recipe/passwordless/preBuiltUI");
-            let { LinkClicked, SignInUp, SignInUpTheme } = require("../../recipe/passwordless/preBuiltUI");
+            let _defaultPreBuiltUI = require("../../recipe/passwordless/prebuiltui");
+            let { LinkClicked, SignInUp, SignInUpTheme } = require("../../recipe/passwordless/prebuiltui");
 
             assert(consumeCode !== undefined && _default.consumeCode !== undefined);
             assert(createCode !== undefined && _default.createCode !== undefined);
@@ -269,13 +269,13 @@ describe("Exports", function () {
                 Github,
                 Google,
             } = require("../../recipe/thirdpartypasswordless");
-            let _defaultPreBuiltUI = require("../../recipe/thirdpartypasswordless/preBuiltUI");
+            let _defaultPreBuiltUI = require("../../recipe/thirdpartypasswordless/prebuiltui");
             let {
                 PasswordlessLinkClicked,
                 SignInAndUp,
                 SignInUpTheme,
                 ThirdPartySignInAndUpCallback,
-            } = require("../../recipe/thirdpartypasswordless/preBuiltUI");
+            } = require("../../recipe/thirdpartypasswordless/prebuiltui");
 
             assert(init !== undefined && _default.init !== undefined);
             assert(

@@ -24,7 +24,7 @@ import EmailPassword from "../../lib/ts/recipe/emailpassword";
 import EP from "../../lib/ts/recipe/emailpassword/recipe";
 import { DEFAULT_WEBSITE_BASE_PATH, DEFAULT_API_BASE_PATH } from "../constants";
 import assert from "assert";
-import { EmailPasswordPreBuiltUI } from "../../lib/ts/recipe/emailpassword/preBuiltUI";
+import { EmailPasswordPreBuiltUI } from "../../lib/ts/recipe/emailpassword/prebuiltui";
 
 let currentPath = "/";
 /*
