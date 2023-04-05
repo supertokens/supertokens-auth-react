@@ -6,11 +6,9 @@ import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
 export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
-    constructor(recipeInstance: Passwordless);
     static instance?: PasswordlessPreBuiltUI;
+    constructor(recipeInstance: Passwordless);
     static getInstanceOrInitAndGetInstance(recipeInstance?: Passwordless): PasswordlessPreBuiltUI;
-    static canHandleRoute(): boolean;
-    static getRoutingComponent(): JSX.Element | null;
     static getFeatures(
         recipeInstance?: Passwordless,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
@@ -23,7 +21,6 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
         },
         recipeInstance?: Passwordless
     ): JSX.Element;
-    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[];
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "signInUp" | "linkClickedScreen",
@@ -43,11 +40,8 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     static LinkClicked: (prop?: any) => JSX.Element;
     static SignInUpTheme: typeof SignInUpTheme;
 }
-declare const canHandleRoute: typeof PasswordlessPreBuiltUI.canHandleRoute;
-declare const getRoutingComponent: typeof PasswordlessPreBuiltUI.getRoutingComponent;
 declare const _getFeatures: typeof PasswordlessPreBuiltUI.getFeatures;
 declare const _getFeatureComponent: typeof PasswordlessPreBuiltUI.getFeatureComponent;
-declare const getReactRouterDomRoutes: typeof PasswordlessPreBuiltUI.getReactRouterDomRoutes;
 declare const SignInUp: (
     prop?: PropsWithChildren<{
         redirectOnSessionExists?: boolean;
@@ -55,13 +49,4 @@ declare const SignInUp: (
     }>
 ) => JSX.Element;
 declare const LinkClicked: (prop?: any) => JSX.Element;
-export {
-    canHandleRoute,
-    getRoutingComponent,
-    _getFeatures,
-    _getFeatureComponent,
-    getReactRouterDomRoutes,
-    SignInUp,
-    LinkClicked,
-    SignInUpTheme,
-};
+export { _getFeatures, _getFeatureComponent, SignInUp, LinkClicked, SignInUpTheme };

@@ -7,11 +7,9 @@ import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
 export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
-    private constructor();
     static instance?: EmailPasswordPreBuiltUI;
+    private constructor();
     static getInstanceOrInitAndGetInstance(recipeInstance?: EmailPassword): EmailPasswordPreBuiltUI;
-    static canHandleRoute(): boolean;
-    static getRoutingComponent(): JSX.Element | null;
     static getFeatures(
         recipeInstance?: EmailPassword,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
@@ -25,7 +23,6 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
         useComponentOverrides?: () => GenericComponentOverrideMap<any>,
         recipeInstance?: EmailPassword
     ): JSX.Element;
-    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[];
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "signinup" | "resetpassword",
@@ -46,8 +43,6 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
 }
-declare const canHandleRoute: typeof EmailPasswordPreBuiltUI.canHandleRoute;
-declare const getRoutingComponent: typeof EmailPasswordPreBuiltUI.getRoutingComponent;
 declare const _getFeatures: typeof EmailPasswordPreBuiltUI.getFeatures;
 declare const _getFeatureComponent: typeof EmailPasswordPreBuiltUI.getFeatureComponent;
 declare const SignInAndUp: (
@@ -58,9 +53,7 @@ declare const SignInAndUp: (
 ) => JSX.Element;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
 export {
-    canHandleRoute,
     _getFeatures,
-    getRoutingComponent,
     _getFeatureComponent,
     SignInAndUp,
     ResetPasswordUsingToken,

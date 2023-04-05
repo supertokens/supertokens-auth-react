@@ -6,14 +6,11 @@ import type { GenericComponentOverrideMap } from "../../components/componentOver
 import type { RecipeFeatureComponentMap } from "../../types";
 export declare class EmailVerificationPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
-    constructor(recipeInstance: EmailVerificationRecipe);
     static instance?: EmailVerificationPreBuiltUI;
+    constructor(recipeInstance: EmailVerificationRecipe);
     static getInstanceOrInitAndGetInstance(): EmailVerificationPreBuiltUI;
-    static canHandleRoute(): boolean;
-    static getRoutingComponent(): JSX.Element | null;
     static getFeatures(): RecipeFeatureComponentMap;
     static getFeatureComponent(_: "emailverification", props: any): JSX.Element;
-    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[];
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
         _: "emailverification",

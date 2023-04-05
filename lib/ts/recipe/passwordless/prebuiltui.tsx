@@ -22,11 +22,12 @@ import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
 
 export class PasswordlessPreBuiltUI extends RecipeRouter {
+    static instance?: PasswordlessPreBuiltUI;
     constructor(private readonly recipeInstance: Passwordless) {
         super();
     }
-    static instance?: PasswordlessPreBuiltUI;
 
+    // Static methods
     static getInstanceOrInitAndGetInstance(recipeInstance?: Passwordless): PasswordlessPreBuiltUI {
         if (PasswordlessPreBuiltUI.instance === undefined) {
             const instance = recipeInstance ?? Passwordless.getInstanceOrThrow();
@@ -34,15 +35,6 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
         }
 
         return PasswordlessPreBuiltUI.instance;
-    }
-
-    static canHandleRoute(): boolean {
-        return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().canHandleRoute();
-    }
-    static getRoutingComponent(): JSX.Element | null {
-        const instance = PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance();
-        RecipeRouter.addPrebuiltUI(instance);
-        return instance.getRoutingComponent();
     }
     static getFeatures(
         recipeInstance?: Passwordless,
@@ -62,10 +54,8 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
             props
         );
     }
-    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[] {
-        return RecipeRouter.getRecipeRoutes(reactRouterDom, PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance());
-    }
 
+    // Instance methods
     getFeatures = (
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap => {
@@ -92,7 +82,6 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
 
         return features;
     };
-
     getFeatureComponent = (
         componentName: "signInUp" | "linkClickedScreen",
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
@@ -145,6 +134,7 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
         }
     };
 
+    // For tests
     static reset(): void {
         if (!isTest()) {
             return;
@@ -162,21 +152,9 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
     static SignInUpTheme = SignInUpTheme;
 }
 
-const canHandleRoute = PasswordlessPreBuiltUI.canHandleRoute;
-const getRoutingComponent = PasswordlessPreBuiltUI.getRoutingComponent;
 const _getFeatures = PasswordlessPreBuiltUI.getFeatures;
 const _getFeatureComponent = PasswordlessPreBuiltUI.getFeatureComponent;
-const getReactRouterDomRoutes = PasswordlessPreBuiltUI.getReactRouterDomRoutes;
 const SignInUp = PasswordlessPreBuiltUI.SignInUp;
 const LinkClicked = PasswordlessPreBuiltUI.LinkClicked;
 
-export {
-    canHandleRoute,
-    getRoutingComponent,
-    _getFeatures,
-    _getFeatureComponent,
-    getReactRouterDomRoutes,
-    SignInUp,
-    LinkClicked,
-    SignInUpTheme,
-};
+export { _getFeatures, _getFeatureComponent, SignInUp, LinkClicked, SignInUpTheme };

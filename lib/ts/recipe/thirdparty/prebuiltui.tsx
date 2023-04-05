@@ -24,11 +24,12 @@ import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
 
 export class ThirdPartyPreBuiltUI extends RecipeRouter {
+    static instance?: ThirdPartyPreBuiltUI;
     constructor(private readonly recipeInstance: ThirdParty) {
         super();
     }
-    static instance?: ThirdPartyPreBuiltUI;
 
+    // Static methods
     static getInstanceOrInitAndGetInstance(recipeInstance?: ThirdParty): ThirdPartyPreBuiltUI {
         if (ThirdPartyPreBuiltUI.instance === undefined) {
             const instance = recipeInstance ?? ThirdParty.getInstanceOrThrow();
@@ -36,14 +37,6 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
         }
 
         return ThirdPartyPreBuiltUI.instance;
-    }
-    static canHandleRoute(): boolean {
-        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().canHandleRoute();
-    }
-    static getRoutingComponent(): JSX.Element | null {
-        const instance = ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance();
-        RecipeRouter.addPrebuiltUI(instance);
-        return instance.getRoutingComponent();
     }
     static getFeatures(
         recipeInstance?: ThirdParty,
@@ -64,10 +57,7 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
         );
     }
 
-    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[] {
-        return RecipeRouter.getRecipeRoutes(reactRouterDom, ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance());
-    }
-
+    // Instance methods
     getFeatures = (
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap => {
@@ -95,7 +85,6 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
 
         return features;
     };
-
     getFeatureComponent = (
         componentName: "signinup" | "signinupcallback",
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
@@ -147,6 +136,7 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
         }
     };
 
+    // For tests
     static reset(): void {
         if (!isTest()) {
             return;
@@ -164,20 +154,8 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
     static SignInAndUpCallbackTheme = SignInAndUpCallbackTheme;
 }
 
-const canHandleRoute = ThirdPartyPreBuiltUI.canHandleRoute;
-const getRoutingComponent = ThirdPartyPreBuiltUI.getRoutingComponent;
 const _getFeatures = ThirdPartyPreBuiltUI.getFeatures;
-const getReactRouterDomRoutes = ThirdPartyPreBuiltUI.getReactRouterDomRoutes;
 const SignInAndUp = ThirdPartyPreBuiltUI.SignInAndUp;
 const SignInAndUpCallback = ThirdPartyPreBuiltUI.SignInAndUpCallback;
 
-export {
-    canHandleRoute,
-    getRoutingComponent,
-    _getFeatures,
-    getReactRouterDomRoutes,
-    SignInAndUp,
-    SignInAndUpCallback,
-    SignInAndUpCallbackTheme,
-    SignInAndUpTheme,
-};
+export { _getFeatures, SignInAndUp, SignInAndUpCallback, SignInAndUpCallbackTheme, SignInAndUpTheme };

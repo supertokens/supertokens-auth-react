@@ -8,11 +8,9 @@ import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
 export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
-    constructor(recipeInstance: ThirdPartyEmailPassword);
     static instance?: ThirdPartyEmailPasswordPreBuiltUI;
+    constructor(recipeInstance: ThirdPartyEmailPassword);
     static getInstanceOrInitAndGetInstance(): ThirdPartyEmailPasswordPreBuiltUI;
-    static canHandleRoute(): boolean;
-    static getRoutingComponent(): JSX.Element | null;
     static getFeatures(): RecipeFeatureComponentMap;
     static getFeatureComponent(
         componentName: "signinup" | "signinupcallback" | "resetpassword",
@@ -21,7 +19,6 @@ export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
             userContext?: any;
         }
     ): JSX.Element;
-    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[];
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "signinup" | "signinupcallback" | "resetpassword",
@@ -46,11 +43,8 @@ export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
 }
-declare const canHandleRoute: typeof ThirdPartyEmailPasswordPreBuiltUI.canHandleRoute;
-declare const getRoutingComponent: typeof ThirdPartyEmailPasswordPreBuiltUI.getRoutingComponent;
 declare const _getFeatures: typeof ThirdPartyEmailPasswordPreBuiltUI.getFeatures;
 declare const _getFeatureComponent: typeof ThirdPartyEmailPasswordPreBuiltUI.getFeatureComponent;
-declare const getReactRouterDomRoutes: typeof ThirdPartyEmailPasswordPreBuiltUI.getReactRouterDomRoutes;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
 declare const SignInAndUp: (
@@ -60,11 +54,8 @@ declare const SignInAndUp: (
     }>
 ) => JSX.Element;
 export {
-    canHandleRoute,
-    getRoutingComponent,
     _getFeatures,
     _getFeatureComponent,
-    getReactRouterDomRoutes,
     ThirdPartySignInAndUpCallback,
     ResetPasswordUsingToken,
     SignInAndUp,
