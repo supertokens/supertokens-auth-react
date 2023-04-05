@@ -20,6 +20,7 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import SuperTokens from "../../lib/ts/superTokens";
+import { canHandleRoute } from "../../lib/ts/ui";
 import EmailPassword from "../../lib/ts/recipe/emailpassword";
 import EP from "../../lib/ts/recipe/emailpassword/recipe";
 import { DEFAULT_WEBSITE_BASE_PATH, DEFAULT_API_BASE_PATH } from "../constants";
@@ -218,24 +219,24 @@ describe("SuperTokens", function () {
         const randomWebsitePath = SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();
 
         currentPath = `${randomWebsitePath}/blog/`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), false);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), false);
         currentPath = `${randomWebsitePath}/blog/.`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), false);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), false);
         currentPath = `${randomWebsitePath}/blog/auth`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), false);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), false);
         currentPath = `${randomWebsitePath}/auth/404`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), false);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), false);
         currentPath = `${randomWebsitePath}/auth`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), true);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), true);
         currentPath = `${randomWebsitePath}/auth/`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), true);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), true);
         currentPath = `${randomWebsitePath}/auth/.`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), true);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), true);
         currentPath = `${randomWebsitePath}/auth?rid=emailpassword`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), true);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), true);
         currentPath = `${randomWebsitePath}/auth?rid=unknown-id`;
         // returns first component if rid=unknown-id.
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), true);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), true);
     });
 
     it("Recipe disable default Implementation should disable default routes for Sign In and Up", async function () {
@@ -253,11 +254,11 @@ describe("SuperTokens", function () {
         const randomWebsitePath = SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();
 
         currentPath = `${randomWebsitePath}/auth`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), false);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), false);
         currentPath = `${randomWebsitePath}/auth/`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), false);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), false);
         currentPath = `${randomWebsitePath}/auth/.`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), false);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), false);
     });
 
     it("Recipe canHandleRoute should work approriately", async function () {
@@ -269,25 +270,25 @@ describe("SuperTokens", function () {
         const randomWebsitePath = SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();
 
         currentPath = `${randomWebsitePath}/blog/`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), false);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), false);
         currentPath = `${randomWebsitePath}/blog/.`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), false);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), false);
         currentPath = `${randomWebsitePath}/blog/auth`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), false);
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), false);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), false);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), false);
         currentPath = `${randomWebsitePath}/auth`;
         currentPath = `${randomWebsitePath}/auth/404`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), false);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), false);
         currentPath = `${randomWebsitePath}/auth/.`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), true);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), true);
         currentPath = `${randomWebsitePath}/auth?rid=emailpassword`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), true);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), true);
         // returns first component if rid=unknown.
         currentPath = `${randomWebsitePath}/auth?rid=unknown-id`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), true);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), true);
         currentPath = `${randomWebsitePath}/auth/reset-password`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), true);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), true);
         currentPath = `${randomWebsitePath}/auth/reset-password?rid=unknown-id`;
-        assert.strictEqual(EmailPasswordPreBuiltUI.canHandleRoute(), true);
+        assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), true);
     });
 });
