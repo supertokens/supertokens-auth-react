@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
-import { Apple, Google, Facebook, Github } from "../thirdparty/";
+import { Apple, Google, Facebook, Github, Gitlab, Bitbucket, Discord } from "../thirdparty/";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import type { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
 import type {
@@ -154,10 +154,13 @@ export default class Wrapper {
         userContext?: any;
     }): Promise<void>;
     static clearPasswordlessLoginAttemptInfo(input?: { userContext?: any }): Promise<void>;
-    static Google: typeof Google;
     static Apple: typeof Apple;
-    static Facebook: typeof Facebook;
+    static Bitbucket: typeof Bitbucket;
+    static Discord: typeof Discord;
     static Github: typeof Github;
+    static Gitlab: typeof Gitlab;
+    static Google: typeof Google;
+    static Facebook: typeof Facebook;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
@@ -195,9 +198,12 @@ declare const ThirdpartyPasswordlessComponentsOverrideProvider: import("react").
 export {
     init,
     Apple,
+    Bitbucket,
+    Discord,
+    Github,
+    Gitlab,
     Google,
     Facebook,
-    Github,
     redirectToThirdPartyLogin,
     getAuthorisationURLFromBackend,
     thirdPartySignInAndUp,
