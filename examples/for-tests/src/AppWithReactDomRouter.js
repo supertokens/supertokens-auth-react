@@ -7,6 +7,7 @@ import {
     SignInAndUp as TPSignInAndUp,
     ThirdPartySignInAndUpCallback,
 } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+import { getSupertokensReactRouterDomRoutes } from "supertokens-auth-react/ui";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
@@ -18,7 +19,7 @@ import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from
 function AppWithReactDomRouter(props) {
     /**
      * For user context tests we add this query param so the additional routes
-     * dont interfere with other tests
+     * don't interfere with other tests
      */
     const urlParams = new URLSearchParams(window.location.search);
     const isForUserContext = urlParams.get("forUserContext") === "true";
@@ -29,24 +30,22 @@ function AppWithReactDomRouter(props) {
     const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
     const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
 
-    let routesRenderer = EmailPasswordPreBuiltUI.getReactRouterDomRoutes;
+    let recipePreBuiltUIList = [EmailPasswordPreBuiltUI];
     if (authRecipe === "thirdparty") {
-        routesRenderer = ThirdPartyPreBuiltUI.getReactRouterDomRoutes;
+        recipePreBuiltUIList = [ThirdPartyPreBuiltUI];
     } else if (authRecipe === "emailpassword") {
-        routesRenderer = EmailPasswordPreBuiltUI.getReactRouterDomRoutes;
+        recipePreBuiltUIList = [EmailPasswordPreBuiltUI];
     } else if (authRecipe === "both") {
-        routesRenderer = (router) => {
-            return [
-                ...EmailPasswordPreBuiltUI.getReactRouterDomRoutes(router),
-                ...ThirdPartyPreBuiltUI.getReactRouterDomRoutes(router),
-            ];
-        };
+        recipePreBuiltUIList = [EmailPasswordPreBuiltUI, ThirdPartyPreBuiltUI];
     } else if (authRecipe === "thirdpartyemailpassword") {
-        routesRenderer = ThirdPartyEmailPasswordPreBuiltUI.getReactRouterDomRoutes;
+        recipePreBuiltUIList = [ThirdPartyEmailPasswordPreBuiltUI];
     } else if (authRecipe === "passwordless") {
-        routesRenderer = PasswordlessPreBuiltUI.getReactRouterDomRoutes;
+        recipePreBuiltUIList = [PasswordlessPreBuiltUI];
     } else if (authRecipe === "thirdpartypasswordless") {
-        routesRenderer = ThirdPartyPasswordlessPreBuiltUI.getReactRouterDomRoutes;
+        recipePreBuiltUIList = [ThirdPartyPasswordlessPreBuiltUI];
+    }
+    if (emailVerificationMode !== "OFF") {
+        recipePreBuiltUIList.push(EmailVerificationPreBuiltUI);
     }
 
     return (
@@ -54,9 +53,7 @@ function AppWithReactDomRouter(props) {
             <Router>
                 <BaseComponent>
                     <Routes caseSensitive>
-                        {routesRenderer(require("react-router-dom"))}
-                        {emailVerificationMode !== "OFF" &&
-                            EmailVerificationPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
+                        {getSupertokensReactRouterDomRoutes(require("react-router-dom"), recipePreBuiltUIList)}
                         <Route path="/" element={<Home />} />
                         <Route
                             path="/CasE/Case-SensItive1-PAth"
