@@ -24,11 +24,12 @@ import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
 
 export class EmailPasswordPreBuiltUI extends RecipeRouter {
+    static instance?: EmailPasswordPreBuiltUI;
     private constructor(private readonly recipeInstance: EmailPassword) {
         super();
     }
-    static instance?: EmailPasswordPreBuiltUI;
 
+    // Static methods
     static getInstanceOrInitAndGetInstance(recipeInstance?: EmailPassword): EmailPasswordPreBuiltUI {
         if (EmailPasswordPreBuiltUI.instance === undefined) {
             const instance = recipeInstance ?? EmailPassword.getInstanceOrThrow();
@@ -36,14 +37,6 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
         }
 
         return EmailPasswordPreBuiltUI.instance;
-    }
-    static canHandleRoute(): boolean {
-        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().canHandleRoute();
-    }
-    static getRoutingComponent(): JSX.Element | null {
-        const instance = EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance();
-        RecipeRouter.addPrebuiltUI(instance);
-        return instance.getRoutingComponent();
     }
     static getFeatures(
         recipeInstance?: EmailPassword,
@@ -65,10 +58,8 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
             useComponentOverrides
         );
     }
-    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[] {
-        return RecipeRouter.getRecipeRoutes(reactRouterDom, EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance());
-    }
 
+    // Instance methods
     getFeatures = (
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap => {
@@ -95,7 +86,6 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
 
         return features;
     };
-
     getFeatureComponent = (
         componentName: "signinup" | "resetpassword",
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
@@ -147,6 +137,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
         }
     };
 
+    // For tests
     static reset(): void {
         if (!isTest()) {
             return;
@@ -165,17 +156,13 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
     static SignInAndUpTheme = SignInAndUpTheme;
 }
 
-const canHandleRoute = EmailPasswordPreBuiltUI.canHandleRoute;
-const getRoutingComponent = EmailPasswordPreBuiltUI.getRoutingComponent;
 const _getFeatures = EmailPasswordPreBuiltUI.getFeatures;
 const _getFeatureComponent = EmailPasswordPreBuiltUI.getFeatureComponent;
 const SignInAndUp = EmailPasswordPreBuiltUI.SignInAndUp;
 const ResetPasswordUsingToken = EmailPasswordPreBuiltUI.ResetPasswordUsingToken;
 
 export {
-    canHandleRoute,
     _getFeatures,
-    getRoutingComponent,
     _getFeatureComponent,
     SignInAndUp,
     ResetPasswordUsingToken,

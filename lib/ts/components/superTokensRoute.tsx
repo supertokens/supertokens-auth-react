@@ -20,25 +20,41 @@
 import { RoutingComponent } from "./routingComponent";
 
 import type { RecipeRouter } from "../recipe/recipeRouter";
+import type { ReactRouterDom } from "../ui/types";
 
 /*
  * Component.
  */
 
-export function getSuperTokensRoutesForReactRouterDom(recipeRoutesInstance: RecipeRouter): JSX.Element[] {
-    const routerInfo = recipeRoutesInstance.getReactRouterDomWithCustomHistory();
+export function getSuperTokensRoutesForReactRouterDom({
+    getReactRouterDomWithCustomHistory,
+    recipeList,
+}: {
+    getReactRouterDomWithCustomHistory: () => ReactRouterDom | undefined;
+    recipeList: RecipeRouter[];
+}): JSX.Element[] {
+    const routerInfo = getReactRouterDomWithCustomHistory();
     if (routerInfo === undefined) {
         return [];
     }
 
     const Route = routerInfo.router.Route;
-    const pathsToFeatureComponentWithRecipeIdMap = recipeRoutesInstance.getPathsToFeatureComponentWithRecipeIdMap();
-    return Object.keys(pathsToFeatureComponentWithRecipeIdMap).map((path) => {
-        path = path === "" ? "/" : path;
-        return (
-            <Route exact key={`st-${path}`} path={path}>
-                <RoutingComponent recipeRoutesInstance={recipeRoutesInstance} path={path} />
-            </Route>
-        );
-    });
+    const routes = recipeList.reduce((routes, recipe) => {
+        const pathsToFeatureComponentWithRecipeIdMap = recipe.getPathsToFeatureComponentWithRecipeIdMap();
+        const recipeRoutes = Object.keys(pathsToFeatureComponentWithRecipeIdMap).map((path) => {
+            path = path === "" ? "/" : path;
+            return (
+                <Route exact key={`st-${path}`} path={path}>
+                    <RoutingComponent
+                        getReactRouterDomWithCustomHistory={getReactRouterDomWithCustomHistory}
+                        preBuiltUIList={recipeList}
+                        path={path}
+                    />
+                </Route>
+            );
+        });
+        return routes.concat(recipeRoutes);
+    }, [] as JSX.Element[]);
+
+    return routes;
 }

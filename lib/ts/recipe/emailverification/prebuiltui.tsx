@@ -16,11 +16,12 @@ import type { GenericComponentOverrideMap } from "../../components/componentOver
 import type { RecipeFeatureComponentMap } from "../../types";
 
 export class EmailVerificationPreBuiltUI extends RecipeRouter {
+    static instance?: EmailVerificationPreBuiltUI;
     constructor(private readonly recipeInstance: EmailVerificationRecipe) {
         super();
     }
-    static instance?: EmailVerificationPreBuiltUI;
 
+    // Static methods
     static getInstanceOrInitAndGetInstance(): EmailVerificationPreBuiltUI {
         if (EmailVerificationPreBuiltUI.instance === undefined) {
             const recipeInstance = EmailVerificationRecipe.getInstanceOrThrow();
@@ -29,14 +30,6 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
 
         return EmailVerificationPreBuiltUI.instance;
     }
-    static canHandleRoute(): boolean {
-        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().canHandleRoute();
-    }
-    static getRoutingComponent(): JSX.Element | null {
-        const instance = EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance();
-        RecipeRouter.addPrebuiltUI(instance);
-        return instance.getRoutingComponent();
-    }
     static getFeatures(): RecipeFeatureComponentMap {
         return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures();
     }
@@ -44,13 +37,8 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
     static getFeatureComponent(_: "emailverification", props: any): JSX.Element {
         return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(_, props);
     }
-    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[] {
-        return RecipeRouter.getRecipeRoutes(
-            reactRouterDom,
-            EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance()
-        );
-    }
 
+    // Instance methods
     getFeatures = (
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap => {
@@ -66,7 +54,6 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
         }
         return features;
     };
-
     getFeatureComponent = (
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _: "emailverification",
@@ -108,6 +95,7 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
         );
     };
 
+    // For tests
     static reset(): void {
         if (!isTest()) {
             return;

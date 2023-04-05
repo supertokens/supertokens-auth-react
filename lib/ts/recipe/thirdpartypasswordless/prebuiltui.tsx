@@ -23,11 +23,12 @@ import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
 
 export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
+    static instance?: ThirdPartyPasswordlessPreBuiltUI;
     constructor(private readonly recipeInstance: ThirdPartyPasswordless) {
         super();
     }
-    static instance?: ThirdPartyPasswordlessPreBuiltUI;
 
+    // Static methods
     static getInstanceOrInitAndGetInstance(): ThirdPartyPasswordlessPreBuiltUI {
         if (ThirdPartyPasswordlessPreBuiltUI.instance === undefined) {
             const recipeInstance = ThirdPartyPasswordless.getInstanceOrThrow();
@@ -35,14 +36,6 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
         }
 
         return ThirdPartyPasswordlessPreBuiltUI.instance;
-    }
-    static canHandleRoute(): boolean {
-        return ThirdPartyPasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().canHandleRoute();
-    }
-    static getRoutingComponent(): JSX.Element | null {
-        const instance = ThirdPartyPasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance();
-        RecipeRouter.addPrebuiltUI(instance);
-        return instance.getRoutingComponent();
     }
     static getFeatures(): RecipeFeatureComponentMap {
         return ThirdPartyPasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures();
@@ -57,13 +50,7 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
         );
     }
 
-    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[] {
-        return RecipeRouter.getRecipeRoutes(
-            reactRouterDom,
-            ThirdPartyPasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance()
-        );
-    }
-
+    // Instance methods
     getFeatureComponent = (
         componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
@@ -127,7 +114,6 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
             throw new Error("Should never come here.");
         }
     };
-
     getFeatures = (
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap => {
@@ -167,6 +153,7 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
         };
     };
 
+    // For tests
     static reset(): void {
         if (!isTest()) {
             return;
@@ -184,21 +171,15 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     static PasswordlessLinkClicked = (prop?: any) => this.getFeatureComponent("linkClickedScreen", prop);
 }
 
-const canHandleRoute = ThirdPartyPasswordlessPreBuiltUI.canHandleRoute;
-const getRoutingComponent = ThirdPartyPasswordlessPreBuiltUI.getRoutingComponent;
 const _getFeatures = ThirdPartyPasswordlessPreBuiltUI.getFeatures;
 const _getFeatureComponent = ThirdPartyPasswordlessPreBuiltUI.getFeatureComponent;
-const getReactRouterDomRoutes = ThirdPartyPasswordlessPreBuiltUI.getReactRouterDomRoutes;
 const SignInAndUp = ThirdPartyPasswordlessPreBuiltUI.SignInAndUp;
 const ThirdPartySignInAndUpCallback = ThirdPartyPasswordlessPreBuiltUI.ThirdPartySignInAndUpCallback;
 const PasswordlessLinkClicked = ThirdPartyPasswordlessPreBuiltUI.PasswordlessLinkClicked;
 
 export {
-    canHandleRoute,
-    getRoutingComponent,
     _getFeatures,
     _getFeatureComponent,
-    getReactRouterDomRoutes,
     SignInAndUp,
     ThirdPartySignInAndUpCallback,
     PasswordlessLinkClicked,

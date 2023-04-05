@@ -25,11 +25,12 @@ import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
 
 export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
+    static instance?: ThirdPartyEmailPasswordPreBuiltUI;
     constructor(private readonly recipeInstance: ThirdPartyEmailPassword) {
         super();
     }
-    static instance?: ThirdPartyEmailPasswordPreBuiltUI;
 
+    // Static methods
     static getInstanceOrInitAndGetInstance(): ThirdPartyEmailPasswordPreBuiltUI {
         if (ThirdPartyEmailPasswordPreBuiltUI.instance === undefined) {
             const recipeInstance = ThirdPartyEmailPassword.getInstanceOrThrow();
@@ -37,14 +38,6 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
         }
 
         return ThirdPartyEmailPasswordPreBuiltUI.instance;
-    }
-    static canHandleRoute(): boolean {
-        return ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().canHandleRoute();
-    }
-    static getRoutingComponent(): JSX.Element | null {
-        const instance = ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance();
-        RecipeRouter.addPrebuiltUI(instance);
-        return instance.getRoutingComponent();
     }
     static getFeatures(): RecipeFeatureComponentMap {
         return ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures();
@@ -58,12 +51,8 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
             props
         );
     }
-    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[] {
-        return RecipeRouter.getRecipeRoutes(
-            reactRouterDom,
-            ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance()
-        );
-    }
+
+    // Instance methods
     getFeatures = (
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap => {
@@ -95,7 +84,6 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
 
         return features;
     };
-
     getFeatureComponent = (
         componentName: "signinup" | "signinupcallback" | "resetpassword",
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
@@ -159,6 +147,7 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
         }
     };
 
+    // For tests
     static reset(): void {
         if (!isTest()) {
             return;
@@ -177,21 +166,15 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     static SignInAndUpTheme = SignInAndUpTheme;
 }
 
-const canHandleRoute = ThirdPartyEmailPasswordPreBuiltUI.canHandleRoute;
-const getRoutingComponent = ThirdPartyEmailPasswordPreBuiltUI.getRoutingComponent;
 const _getFeatures = ThirdPartyEmailPasswordPreBuiltUI.getFeatures;
 const _getFeatureComponent = ThirdPartyEmailPasswordPreBuiltUI.getFeatureComponent;
-const getReactRouterDomRoutes = ThirdPartyEmailPasswordPreBuiltUI.getReactRouterDomRoutes;
 const ThirdPartySignInAndUpCallback = ThirdPartyEmailPasswordPreBuiltUI.ThirdPartySignInAndUpCallback;
 const ResetPasswordUsingToken = ThirdPartyEmailPasswordPreBuiltUI.ResetPasswordUsingToken;
 const SignInAndUp = ThirdPartyEmailPasswordPreBuiltUI.SignInAndUp;
 
 export {
-    canHandleRoute,
-    getRoutingComponent,
     _getFeatures,
     _getFeatureComponent,
-    getReactRouterDomRoutes,
     ThirdPartySignInAndUpCallback,
     ResetPasswordUsingToken,
     SignInAndUp,

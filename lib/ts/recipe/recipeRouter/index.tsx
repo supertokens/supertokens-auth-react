@@ -1,8 +1,3 @@
-import React from "react";
-
-import { RoutingComponent } from "../../components/routingComponent";
-import { getSuperTokensRoutesForReactRouterDom } from "../../components/superTokensRoute";
-import { getSuperTokensRoutesForReactRouterDomV6 } from "../../components/superTokensRouteV6";
 import { getCurrentNormalisedUrlPath } from "../../utils";
 
 import type { RecipeFeatureComponentMap } from "../../types";
@@ -12,15 +7,13 @@ import type NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPa
 export abstract class RecipeRouter {
     private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;
 
-    private static reactRouterDom?: { router: { Route: any }; useHistoryCustom: () => any; useLocation: () => any };
-    private static reactRouterDomIsV6: boolean | undefined = undefined;
-    public static preBuiltUIList: RecipeRouter[] = [];
     static getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
-        normalisedUrl: NormalisedURLPath
+        normalisedUrl: NormalisedURLPath,
+        preBuiltUIList: RecipeRouter[]
     ): ComponentWithRecipeAndMatchingMethod | undefined {
         const path = normalisedUrl.getAsStringDangerous();
 
-        const routeComponents = RecipeRouter.preBuiltUIList.reduce((components, c) => {
+        const routeComponents = preBuiltUIList.reduce((components, c) => {
             const routes = c.getPathsToFeatureComponentWithRecipeIdMap?.()[path];
             return routes !== undefined ? components.concat(routes) : components;
         }, [] as ComponentWithRecipeAndMatchingMethod[]);
@@ -37,86 +30,11 @@ export abstract class RecipeRouter {
         return routeComponents[0];
     }
 
-    static addPrebuiltUI(instance: RecipeRouter): void {
-        if (!RecipeRouter.preBuiltUIList.includes(instance)) {
-            RecipeRouter.preBuiltUIList.push(instance);
-        }
-    }
-
-    static getRecipeRoutes(reactRouterDom: any, instance: RecipeRouter): JSX.Element[] {
-        if (!RecipeRouter.preBuiltUIList.includes(instance)) {
-            RecipeRouter.preBuiltUIList.push(instance);
-        }
-        if (reactRouterDom === undefined) {
-            throw new Error(
-                // eslint-disable-next-line @typescript-eslint/quotes
-                'Please use getRecipeRoutes like getRecipeRoutes(require("react-router-dom")) in your render function'
-            );
-        }
-        if (RecipeRouter.reactRouterDomIsV6 === undefined) {
-            RecipeRouter.reactRouterDomIsV6 = reactRouterDom.withRouter === undefined;
-        }
-        if (RecipeRouter.reactRouterDomIsV6) {
-            if (RecipeRouter.reactRouterDom === undefined) {
-                // this function wraps the react-router-dom v6 useNavigate function in a way
-                // that enforces that it runs within a useEffect. The reason we do this is
-                // cause of https://github.com/remix-run/react-router/issues/7460
-                // which gets shown when visiting a social auth callback url like
-                // /auth/callback/github, without a valid code or state. This then
-                // doesn't navigate the user to the auth page.
-                const useNavigateHookForRRDV6 = function (): any {
-                    const navigateHook = reactRouterDom.useNavigate();
-                    const [to, setTo] = React.useState(undefined);
-                    React.useEffect(() => {
-                        if (to !== undefined) {
-                            setTo(undefined);
-                            navigateHook(to);
-                        }
-                    }, [to, navigateHook, setTo]);
-                    return setTo;
-                };
-                RecipeRouter.reactRouterDom = {
-                    router: reactRouterDom,
-                    useHistoryCustom: useNavigateHookForRRDV6,
-                    useLocation: reactRouterDom.useLocation,
-                };
-            }
-
-            return getSuperTokensRoutesForReactRouterDomV6(instance);
-        }
-        if (RecipeRouter.reactRouterDom === undefined) {
-            RecipeRouter.reactRouterDom = {
-                router: reactRouterDom,
-                useHistoryCustom: reactRouterDom.useHistory,
-                useLocation: reactRouterDom.useLocation,
-            };
-        }
-        return getSuperTokensRoutesForReactRouterDom(instance);
-    }
-
     /*
      * Instance Methods.
      */
     canHandleRoute = (): boolean => {
         return this.getMatchingComponentForRouteAndRecipeId(getCurrentNormalisedUrlPath()) !== undefined;
-    };
-
-    static getReactRouterDomWithCustomHistory = ():
-        | { router: { Route: any }; useHistoryCustom: () => any; useLocation: () => any }
-        | undefined => {
-        return RecipeRouter.reactRouterDom;
-    };
-
-    getReactRouterDomWithCustomHistory = ():
-        | { router: { Route: any }; useHistoryCustom: () => any; useLocation: () => any }
-        | undefined => {
-        return RecipeRouter.reactRouterDom;
-    };
-
-    getRoutingComponent = (): JSX.Element | null => {
-        return (
-            <RoutingComponent path={getCurrentNormalisedUrlPath().getAsStringDangerous()} recipeRoutesInstance={this} />
-        );
     };
 
     getPathsToFeatureComponentWithRecipeIdMap = (): BaseFeatureComponentMap => {

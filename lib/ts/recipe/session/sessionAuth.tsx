@@ -19,10 +19,10 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 
 import SuperTokens from "../../superTokens";
+import UI from "../../ui";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { popInvalidClaimRedirectPathFromContext, useOnMountAPICall } from "../../utils";
-import { RecipeRouter } from "../recipeRouter";
 
 import Session from "./recipe";
 import SessionContext from "./sessionContext";
@@ -65,7 +65,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
     const session = useRef<Session>();
 
     // We store this here, to prevent the list of called hooks changing even if a history hook is added later to SuperTokens.
-    const historyHookRef = useRef(RecipeRouter.getReactRouterDomWithCustomHistory()?.useHistoryCustom);
+    const historyHookRef = useRef(UI.getReactRouterDomWithCustomHistory()?.useHistoryCustom);
 
     let history: any | undefined;
     try {

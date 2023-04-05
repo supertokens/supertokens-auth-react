@@ -8,11 +8,9 @@ import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
 export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
-    constructor(recipeInstance: ThirdParty);
     static instance?: ThirdPartyPreBuiltUI;
+    constructor(recipeInstance: ThirdParty);
     static getInstanceOrInitAndGetInstance(recipeInstance?: ThirdParty): ThirdPartyPreBuiltUI;
-    static canHandleRoute(): boolean;
-    static getRoutingComponent(): JSX.Element | null;
     static getFeatures(
         recipeInstance?: ThirdParty,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
@@ -26,7 +24,6 @@ export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
         useComponentOverrides?: () => GenericComponentOverrideMap<any>,
         recipeInstance?: ThirdParty
     ): JSX.Element;
-    static getReactRouterDomRoutes(reactRouterDom: any): JSX.Element[];
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "signinup" | "signinupcallback",
@@ -47,10 +44,7 @@ export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
     static SignInAndUpTheme: import("react").FC<import("./types").SignInAndUpThemeProps>;
     static SignInAndUpCallbackTheme: (props: { config: NormalisedConfig }) => JSX.Element;
 }
-declare const canHandleRoute: typeof ThirdPartyPreBuiltUI.canHandleRoute;
-declare const getRoutingComponent: typeof ThirdPartyPreBuiltUI.getRoutingComponent;
 declare const _getFeatures: typeof ThirdPartyPreBuiltUI.getFeatures;
-declare const getReactRouterDomRoutes: typeof ThirdPartyPreBuiltUI.getReactRouterDomRoutes;
 declare const SignInAndUp: (
     prop?: PropsWithChildren<{
         redirectOnSessionExists?: boolean;
@@ -58,13 +52,4 @@ declare const SignInAndUp: (
     }>
 ) => JSX.Element;
 declare const SignInAndUpCallback: (prop?: any) => JSX.Element;
-export {
-    canHandleRoute,
-    getRoutingComponent,
-    _getFeatures,
-    getReactRouterDomRoutes,
-    SignInAndUp,
-    SignInAndUpCallback,
-    SignInAndUpCallbackTheme,
-    SignInAndUpTheme,
-};
+export { _getFeatures, SignInAndUp, SignInAndUpCallback, SignInAndUpCallbackTheme, SignInAndUpTheme };

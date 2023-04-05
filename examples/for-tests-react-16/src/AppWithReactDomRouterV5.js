@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-domv5";
+import { getSupertokensReactRouterDomRoutes } from "supertokens-auth-react/ui";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from "./App";
@@ -13,24 +14,22 @@ import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/p
 const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
 const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
 
-let routesRenderer = EmailPasswordPreBuiltUI.getReactRouterDomRoutes;
+let recipePreBuiltUIList = [EmailPasswordPreBuiltUI];
 if (authRecipe === "thirdparty") {
-    routesRenderer = ThirdPartyPreBuiltUI.getReactRouterDomRoutes;
+    recipePreBuiltUIList = [ThirdPartyPreBuiltUI];
 } else if (authRecipe === "emailpassword") {
-    routesRenderer = EmailPasswordPreBuiltUI.getReactRouterDomRoutes;
+    recipePreBuiltUIList = [EmailPasswordPreBuiltUI];
 } else if (authRecipe === "both") {
-    routesRenderer = (router) => {
-        return [
-            ...EmailPasswordPreBuiltUI.getReactRouterDomRoutes(router),
-            ...ThirdPartyPreBuiltUI.getReactRouterDomRoutes(router),
-        ];
-    };
+    recipePreBuiltUIList = [EmailPasswordPreBuiltUI, ThirdPartyPreBuiltUI];
 } else if (authRecipe === "thirdpartyemailpassword") {
-    routesRenderer = ThirdPartyEmailPasswordPreBuiltUI.getReactRouterDomRoutes;
+    recipePreBuiltUIList = [ThirdPartyEmailPasswordPreBuiltUI];
 } else if (authRecipe === "passwordless") {
-    routesRenderer = PasswordlessPreBuiltUI.getReactRouterDomRoutes;
+    recipePreBuiltUIList = [PasswordlessPreBuiltUI];
 } else if (authRecipe === "thirdpartypasswordless") {
-    routesRenderer = ThirdPartyPasswordlessPreBuiltUI.getReactRouterDomRoutes;
+    recipePreBuiltUIList = [ThirdPartyPasswordlessPreBuiltUI];
+}
+if (emailVerificationMode !== "OFF") {
+    recipePreBuiltUIList.push(EmailVerificationPreBuiltUI);
 }
 
 function AppWithReactDomRouter(props) {
@@ -39,9 +38,7 @@ function AppWithReactDomRouter(props) {
             <Router>
                 <BaseComponent>
                     <Switch>
-                        {routesRenderer(require("react-router-domv5"))}
-                        {emailVerificationMode !== "OFF" &&
-                            EmailVerificationPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
+                        {getSupertokensReactRouterDomRoutes(require("react-router-domv5", recipePreBuiltUIList))}
                         <Route exact path="/">
                             <Home />
                         </Route>
