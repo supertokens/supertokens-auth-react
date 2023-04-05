@@ -19,8 +19,8 @@
 
 import { RoutingComponent } from "./routingComponent";
 
-import type { ReactRouterDom } from "../prebuiltui/types";
 import type { RecipeRouter } from "../recipe/recipeRouter";
+import type { ReactRouterDom } from "../ui/types";
 
 /*
  * Component.

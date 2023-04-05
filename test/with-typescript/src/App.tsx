@@ -1,7 +1,7 @@
 import * as React from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "../../../";
-import { getSupertokensReactRouterDomRoutes } from "../../../prebuiltui";
+import { getSupertokensReactRouterDomRoutes } from "../../../ui";
 import EmailPassword, {
     EmailPasswordComponentsOverrideProvider,
     GetRedirectionURLContext as EmailPasswordGetRedirectionURLContext,

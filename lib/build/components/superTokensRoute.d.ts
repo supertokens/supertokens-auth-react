@@ -1,6 +1,6 @@
 /// <reference types="react" />
-import type { ReactRouterDom } from "../prebuiltui/types";
 import type { RecipeRouter } from "../recipe/recipeRouter";
+import type { ReactRouterDom } from "../ui/types";
 export declare function getSuperTokensRoutesForReactRouterDom({
     getReactRouterDomWithCustomHistory,
     recipeList,
