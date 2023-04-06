@@ -53,6 +53,7 @@ Should become
 
 ```tsx
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+import { getSupertokensReactRouterDomRoutes } from "supertokens-auth-react/ui";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 // .... other imports
@@ -75,7 +76,7 @@ SuperTokens.init({
             <div className="fill">
                 <Routes>
                     {/* This shows the login UI on "/auth" route for Passwordless recipe */}
-                    {PasswordlessPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
+                    {getSupertokensReactRouterDomRoutes(require("react-router-dom"), [PasswordlessPreBuiltUI])}
                     // ... other routes
                 </Routes>
             </div>
@@ -107,13 +108,14 @@ Should become
 
 ```tsx
 import { SuperTokensWrapper } from "supertokens-auth-react";
+import { canHandleRoute, getRoutingComponent } from "supertokens-auth-react/ui";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 
 class App extends React.Component {
     render() {
-        if (PasswordlessPreBuiltUI.canHandleRoute()) {
+        if (canHandleRoute([PasswordlessPreBuiltUI])) {
             // This renders the login UI on the /auth route
-            return PasswordlessPreBuiltUI.getRoutingComponent();
+            return getRoutingComponent([PasswordlessPreBuiltUI]);
         }
 
         return <SuperTokensWrapper>{/*Your app*/}</SuperTokensWrapper>;
