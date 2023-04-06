@@ -1,5 +1,6 @@
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+import { getSupertokensReactRouterDomRoutes } from "supertokens-auth-react/prebuiltui";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
@@ -42,7 +43,9 @@ function App() {
                                 If not try rendering our protected route. In case the user is unauthenticated 
                                 the auth wrapper will simply redirect them to the login page */}
                             {window.location.origin === getAuthDomain() ? (
-                                EmailPasswordPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))
+                                getSupertokensReactRouterDomRoutes(require("react-router-dom"), [
+                                    EmailPasswordPreBuiltUI,
+                                ])
                             ) : (
                                 <Route
                                     path="/"

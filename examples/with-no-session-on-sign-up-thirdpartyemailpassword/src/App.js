@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+import { getSupertokensReactRouterDomRoutes } from "supertokens-auth-react/prebuiltui";
 import ThirdPartyEmailPassword, {
     Google,
     Github,
@@ -73,7 +74,9 @@ function App() {
                         <div className="fill">
                             <Routes>
                                 {/* This shows the login UI on "/auth" route */}
-                                {ThirdPartyEmailPasswordPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
+                                {getSupertokensReactRouterDomRoutes(require("react-router-dom"), [
+                                    ThirdPartyEmailPasswordPreBuiltUI,
+                                ])}
 
                                 <Route
                                     path="/"

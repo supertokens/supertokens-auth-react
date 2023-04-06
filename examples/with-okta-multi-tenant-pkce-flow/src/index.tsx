@@ -4,6 +4,7 @@ import "./index.css";
 import * as reactRouterDom from "react-router-dom";
 
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+import { getSupertokensReactRouterDomRoutes } from "supertokens-auth-react/prebuiltui";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
 
@@ -110,7 +111,7 @@ root.render(
     <SuperTokensWrapper>
         <BrowserRouter>
             <Routes>
-                {ThirdPartyPreBuiltUI.getReactRouterDomRoutes(reactRouterDom)}
+                {getSupertokensReactRouterDomRoutes(reactRouterDom, [ThirdPartyPreBuiltUI])}
                 <Route path="/" element={<Index />} />
                 <Route
                     path="dashboard"
