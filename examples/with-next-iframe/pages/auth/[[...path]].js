@@ -7,22 +7,16 @@ import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/email
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import { redirectToAuth } from "supertokens-auth-react";
 
-const EmailVerificationComponentNoSSR = dynamic(
-    new Promise((res) => res(EmailVerificationPreBuiltUI.getRoutingComponent)),
+const SuperTokensComponentNoSSR = dynamic(
+    new Promise((res) => res(() => getRoutingComponent([EmailVerificationPreBuiltUI, EmailPasswordPreBuiltUI]))),
     {
         ssr: false,
     }
 );
-const EmailPasswordComponentNoSSR = dynamic(new Promise((res) => res(EmailPasswordPreBuiltUI.getRoutingComponent)), {
-    ssr: false,
-});
 
 export default function Auth() {
     useEffect(() => {
-        if (
-            EmailPasswordPreBuiltUI.canHandleRoute() === false &&
-            EmailVerificationPreBuiltUI.canHandleRoute() === false
-        ) {
+        if (canHandleRoute([EmailPasswordPreBuiltUI, EmailVerificationPreBuiltUI]) === false) {
             redirectToAuth();
         }
     }, []);
@@ -35,8 +29,7 @@ export default function Auth() {
             </Head>
 
             <main className={styles.main}>
-                <EmailVerificationComponentNoSSR />
-                <EmailPasswordComponentNoSSR />
+                <SuperTokensComponentNoSSR />
             </main>
         </div>
     );

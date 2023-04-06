@@ -3,6 +3,7 @@
     import React from "react";
     import ReactDOM from "react-dom";
     import SuperTokens from "supertokens-auth-react";
+    import { getRoutingComponent, canHandleRoute } from "supertokens-auth-react/prebuiltui";
     import ThirdPartyEmailPassword, {
         Github,
         Google,
@@ -32,8 +33,8 @@
 
     class SuperTokensComponent extends React.Component {
         render() {
-            if (ThirdPartyEmailPasswordPreBuiltUI.canHandleRoute()) {
-                return ThirdPartyEmailPasswordPreBuiltUI.getRoutingComponent();
+            if (canHandleRoute([ThirdPartyEmailPasswordPreBuiltUI])) {
+                return getRoutingComponent([ThirdPartyEmailPasswordPreBuiltUI]);
             }
             return "Route not found";
         }
