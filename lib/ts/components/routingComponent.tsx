@@ -12,8 +12,8 @@ export function RoutingComponent(props: {
 }): JSX.Element | null {
     const path = props.path;
     const location = props.getReactRouterDomWithCustomHistory()?.useLocation();
-    const normalizedPath = new NormalisedURLPath(path);
     const componentToRender = React.useMemo(() => {
+        const normalizedPath = new NormalisedURLPath(path);
         // During development, this runs twice so as to warn devs of if there
         // are any side effects that happen here. So in tests, it will result in
         // the console log twice

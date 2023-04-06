@@ -18,7 +18,7 @@ export abstract class RecipeRouter {
             return routes !== undefined ? components.concat(routes) : components;
         }, [] as ComponentWithRecipeAndMatchingMethod[]);
 
-        if (routeComponents === undefined) {
+        if (routeComponents.length === 0) {
             return undefined;
         }
 

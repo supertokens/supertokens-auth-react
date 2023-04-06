@@ -34,8 +34,8 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
         return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    static getFeatureComponent(_: "emailverification", props: any): JSX.Element {
-        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(_, props);
+    static getFeatureComponent(componentName: "emailverification", props: any): JSX.Element {
+        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(componentName, props);
     }
 
     // Instance methods
