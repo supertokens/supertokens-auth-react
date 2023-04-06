@@ -1,7 +1,7 @@
 import * as React from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "../../../";
-import { getSupertokensReactRouterDomRoutes } from "../../../ui";
+import { getSuperTokensReactRouterDomRoutes } from "../../../ui";
 import EmailPassword, {
     EmailPasswordComponentsOverrideProvider,
     GetRedirectionURLContext as EmailPasswordGetRedirectionURLContext,
@@ -148,7 +148,7 @@ function App() {
                             <Router>
                                 <div className="fill">
                                     <Routes>
-                                        {getSupertokensReactRouterDomRoutes(require("react-router-dom"), [
+                                        {getSuperTokensReactRouterDomRoutes(require("react-router-dom"), [
                                             ThirdPartyPreBuiltUI,
                                             ThirdPartyEmailPasswordPreBuiltUI,
                                             EmailPasswordPreBuiltUI,

@@ -11,7 +11,7 @@ export default class UI {
     private static reactRouterDom: ReactRouterDom;
     private static reactRouterDomIsV6?: boolean;
 
-    static getSupertokensReactRouterDomRoutes(
+    static getSuperTokensReactRouterDomRoutes(
         reactRouterDom: any,
         preBuiltUiClassList: PreBuiltRecipes
     ): JSX.Element[] {
@@ -90,8 +90,8 @@ export default class UI {
     }
 }
 
-const getSupertokensReactRouterDomRoutes = UI.getSupertokensReactRouterDomRoutes;
+const getSuperTokensReactRouterDomRoutes = UI.getSuperTokensReactRouterDomRoutes;
 const canHandleRoute = UI.canHandleRoute;
 const getRoutingComponent = UI.getRoutingComponent;
 
-export { getSupertokensReactRouterDomRoutes, canHandleRoute, getRoutingComponent };
+export { getSuperTokensReactRouterDomRoutes, canHandleRoute, getRoutingComponent };

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, redirectToAuth } from "supertokens-auth-react";
-import { getSupertokensReactRouterDomRoutes } from "supertokens-auth-react/ui";
+import { getSuperTokensReactRouterDomRoutes } from "supertokens-auth-react/ui";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import ThirdPartyEmailPassword, {
     Google,
@@ -99,7 +99,7 @@ function App() {
                     <Router>
                         <div className="fill">
                             <Routes>
-                                {getSupertokensReactRouterDomRoutes(require("react-router-dom"), [
+                                {getSuperTokensReactRouterDomRoutes(require("react-router-dom"), [
                                     ThirdPartyEmailPasswordPreBuiltUI,
                                     EmailVerificationPreBuiltUI,
                                     PasswordlessPreBuiltUI,
