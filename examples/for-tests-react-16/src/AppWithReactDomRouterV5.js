@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-domv5";
-import { getSupertokensReactRouterDomRoutes } from "supertokens-auth-react/ui";
+import { getSuperTokensReactRouterDomRoutes } from "supertokens-auth-react/ui";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from "./App";
@@ -38,7 +38,7 @@ function AppWithReactDomRouter(props) {
             <Router>
                 <BaseComponent>
                     <Switch>
-                        {getSupertokensReactRouterDomRoutes(require("react-router-domv5", recipePreBuiltUIList))}
+                        {getSuperTokensReactRouterDomRoutes(require("react-router-domv5", recipePreBuiltUIList))}
                         <Route exact path="/">
                             <Home />
                         </Route>

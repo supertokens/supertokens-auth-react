@@ -7,7 +7,7 @@ import {
     SignInAndUp as TPSignInAndUp,
     ThirdPartySignInAndUpCallback,
 } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
-import { getSupertokensReactRouterDomRoutes } from "supertokens-auth-react/ui";
+import { getSuperTokensReactRouterDomRoutes } from "supertokens-auth-react/ui";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
@@ -53,7 +53,7 @@ function AppWithReactDomRouter(props) {
             <Router>
                 <BaseComponent>
                     <Routes caseSensitive>
-                        {getSupertokensReactRouterDomRoutes(require("react-router-dom"), recipePreBuiltUIList)}
+                        {getSuperTokensReactRouterDomRoutes(require("react-router-dom"), recipePreBuiltUIList)}
                         <Route path="/" element={<Home />} />
                         <Route
                             path="/CasE/Case-SensItive1-PAth"

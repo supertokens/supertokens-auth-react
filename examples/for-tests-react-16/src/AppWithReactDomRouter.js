@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { getSupertokensReactRouterDomRoutes } from "supertokens-auth-react/ui";
+import { getSuperTokensReactRouterDomRoutes } from "supertokens-auth-react/ui";
 import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import {
@@ -54,7 +54,7 @@ function AppWithReactDomRouter(props) {
             <Router>
                 <BaseComponent>
                     <Routes caseSensitive>
-                        {getSupertokensReactRouterDomRoutes(require("react-router-dom", recipePreBuiltUIList))}
+                        {getSuperTokensReactRouterDomRoutes(require("react-router-dom", recipePreBuiltUIList))}
                         <Route path="/" element={<Home />} />
                         <Route
                             path="/CasE/Case-SensItive1-PAth"

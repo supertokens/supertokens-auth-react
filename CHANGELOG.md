@@ -53,6 +53,7 @@ Should become
 
 ```tsx
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+import { getSuperTokensReactRouterDomRoutes } from "supertokens-auth-react/ui";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 // .... other imports
@@ -75,7 +76,7 @@ SuperTokens.init({
             <div className="fill">
                 <Routes>
                     {/* This shows the login UI on "/auth" route for Passwordless recipe */}
-                    {PasswordlessPreBuiltUI.getReactRouterDomRoutes(require("react-router-dom"))}
+                    {getSuperTokensReactRouterDomRoutes(require("react-router-dom"), [PasswordlessPreBuiltUI])}
                     // ... other routes
                 </Routes>
             </div>
