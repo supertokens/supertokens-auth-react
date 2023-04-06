@@ -10,7 +10,7 @@ export declare class EmailVerificationPreBuiltUI extends RecipeRouter {
     constructor(recipeInstance: EmailVerificationRecipe);
     static getInstanceOrInitAndGetInstance(): EmailVerificationPreBuiltUI;
     static getFeatures(): RecipeFeatureComponentMap;
-    static getFeatureComponent(_: "emailverification", props: any): JSX.Element;
+    static getFeatureComponent(componentName: "emailverification", props: any): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
         _: "emailverification",

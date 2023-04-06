@@ -39,22 +39,25 @@ export function getSuperTokensRoutesForReactRouterDom({
     }
 
     const Route = routerInfo.router.Route;
-    const routes = recipeList.reduce((routes, recipe) => {
-        const pathsToFeatureComponentWithRecipeIdMap = recipe.getPathsToFeatureComponentWithRecipeIdMap();
-        const recipeRoutes = Object.keys(pathsToFeatureComponentWithRecipeIdMap).map((path) => {
-            path = path === "" ? "/" : path;
-            return (
-                <Route exact key={`st-${path}`} path={path}>
-                    <RoutingComponent
-                        getReactRouterDomWithCustomHistory={getReactRouterDomWithCustomHistory}
-                        preBuiltUIList={recipeList}
-                        path={path}
-                    />
-                </Route>
-            );
-        });
-        return routes.concat(recipeRoutes);
-    }, [] as JSX.Element[]);
+    return Object.values(
+        recipeList.reduce((routes, recipe) => {
+            const pathsToFeatureComponentWithRecipeIdMap = recipe.getPathsToFeatureComponentWithRecipeIdMap();
+            Object.keys(pathsToFeatureComponentWithRecipeIdMap).forEach((path) => {
+                path = path === "" ? "/" : path;
+                if (!(path in routes)) {
+                    routes[path] = (
+                        <Route exact key={`st-${path}`} path={path}>
+                            <RoutingComponent
+                                getReactRouterDomWithCustomHistory={getReactRouterDomWithCustomHistory}
+                                preBuiltUIList={recipeList}
+                                path={path}
+                            />
+                        </Route>
+                    );
+                }
+            });
 
-    return routes;
+            return routes;
+        }, {} as Record<string, JSX.Element>)
+    );
 }
