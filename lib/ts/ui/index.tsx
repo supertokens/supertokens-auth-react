@@ -1,8 +1,9 @@
 import React from "react";
 
 import { RoutingComponent } from "../components/routingComponent";
-import { getSuperTokensRoutesForReactRouterDom } from "../components/superTokensRoute";
+import { getSuperTokensRoutesForReactRouterDom as getSuperTokensRoutesForLegacyReactRouterDom } from "../components/superTokensRoute";
 import { getSuperTokensRoutesForReactRouterDomV6 } from "../components/superTokensRouteV6";
+import { RecipeRouter } from "../recipe/recipeRouter";
 import { getCurrentNormalisedUrlPath } from "../utils";
 
 import type { PreBuiltRecipes, ReactRouterDom } from "./types";
@@ -11,14 +12,14 @@ export default class UI {
     private static reactRouterDom: ReactRouterDom;
     private static reactRouterDomIsV6?: boolean;
 
-    static getSuperTokensReactRouterDomRoutes(
+    static getSuperTokensRoutesForReactRouterDom(
         reactRouterDom: any,
-        preBuiltUiClassList: PreBuiltRecipes
+        preBuiltUiClassList: PreBuiltRecipes = []
     ): JSX.Element[] {
-        if (reactRouterDom === undefined) {
+        if (reactRouterDom === undefined || preBuiltUiClassList.length === 0) {
             throw new Error(
                 // eslint-disable-next-line @typescript-eslint/quotes
-                'Please use getRecipeRoutes like getRecipeRoutes(require("react-router-dom")) in your render function'
+                'Please use getSuperTokensRoutesForReactRouterDom like getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [EmailPasswordPreBuiltUI]) in your render function'
             );
         }
         const recipeList = preBuiltUiClassList.map((r) => r.getInstanceOrInitAndGetInstance());
@@ -63,7 +64,7 @@ export default class UI {
                 useLocation: reactRouterDom.useLocation,
             };
         }
-        return getSuperTokensRoutesForReactRouterDom({
+        return getSuperTokensRoutesForLegacyReactRouterDom({
             getReactRouterDomWithCustomHistory: UI.getReactRouterDomWithCustomHistory,
             recipeList,
         });
@@ -75,7 +76,12 @@ export default class UI {
 
     static canHandleRoute(preBuiltUiClassList: PreBuiltRecipes): boolean {
         const recipeList = preBuiltUiClassList.map((r) => r.getInstanceOrInitAndGetInstance());
-        return recipeList.some((r) => r.canHandleRoute());
+        return (
+            RecipeRouter.getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
+                getCurrentNormalisedUrlPath(),
+                recipeList
+            ) !== undefined
+        );
     }
 
     static getRoutingComponent(preBuiltUiClassList: PreBuiltRecipes): JSX.Element {
@@ -90,8 +96,8 @@ export default class UI {
     }
 }
 
-const getSuperTokensReactRouterDomRoutes = UI.getSuperTokensReactRouterDomRoutes;
+const getSuperTokensRoutesForReactRouterDom = UI.getSuperTokensRoutesForReactRouterDom;
 const canHandleRoute = UI.canHandleRoute;
 const getRoutingComponent = UI.getRoutingComponent;
 
-export { getSuperTokensReactRouterDomRoutes, canHandleRoute, getRoutingComponent };
+export { getSuperTokensRoutesForReactRouterDom, canHandleRoute, getRoutingComponent };

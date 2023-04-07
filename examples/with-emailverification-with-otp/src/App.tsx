@@ -1,5 +1,5 @@
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
-import { getSuperTokensReactRouterDomRoutes } from "supertokens-auth-react/prebuiltui";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/prebuiltui";
 import ThirdPartyEmailpassword, { Github, Google } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
@@ -53,7 +53,7 @@ function App() {
                 <div className="App">
                     <Router>
                         <Routes>
-                            {getSuperTokensReactRouterDomRoutes(require("react-router-dom"), [
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
                                 ThirdPartyEmailPasswordPreBuiltUI,
                                 EmailVerificationPreBuiltUI,
                             ])}

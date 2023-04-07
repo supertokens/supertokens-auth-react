@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { EmailVerificationClaim } from "supertokens-auth-react/recipe/emailverification";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
-import { getSuperTokensReactRouterDomRoutes } from "supertokens-auth-react/prebuiltui";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/prebuiltui";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
@@ -105,7 +105,7 @@ function App() {
                     <div className="fill">
                         <Routes>
                             {/* This shows the login UI on "/auth" route */}
-                            {getSuperTokensReactRouterDomRoutes(require("react-router-dom"), [
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
                                 ThirdPartyEmailPasswordPreBuiltUI,
                                 EmailVerificationPreBuiltUI,
                                 PasswordlessPreBuiltUI,
