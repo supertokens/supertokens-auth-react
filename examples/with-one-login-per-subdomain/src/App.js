@@ -1,6 +1,6 @@
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
-import { getSuperTokensReactRouterDomRoutes } from "supertokens-auth-react/prebuiltui";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/prebuiltui";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
@@ -30,7 +30,9 @@ function App() {
                 <SuperTokensWrapper>
                     <div className="fill">
                         <Routes>
-                            {getSuperTokensReactRouterDomRoutes(require("react-router-dom"), [EmailPasswordPreBuiltUI])}
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
+                                EmailPasswordPreBuiltUI,
+                            ])}
                             <Route
                                 path="/"
                                 element={

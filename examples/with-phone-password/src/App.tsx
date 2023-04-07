@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
-import { getSuperTokensReactRouterDomRoutes } from "supertokens-auth-react/prebuiltui";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/prebuiltui";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless, { PasswordlessComponentsOverrideProvider } from "supertokens-auth-react/recipe/passwordless";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
@@ -131,7 +131,7 @@ function App() {
                                 }
                             />
                             {/* This shows the login UI on "/auth" route */}
-                            {getSuperTokensReactRouterDomRoutes(reactRouterDom, [
+                            {getSuperTokensRoutesForReactRouterDom(reactRouterDom, [
                                 PasswordlessPreBuiltUI,
                                 EmailPasswordPreBuiltUI,
                             ])}

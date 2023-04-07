@@ -29,7 +29,7 @@
 import "./index.css";
 import React, { useState } from "react";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
-import { getSuperTokensReactRouterDomRoutes } from "supertokens-auth-react/ui";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
@@ -95,7 +95,7 @@ function App() {
                     <div className="fill">
                         <Routes>
                             {/* This shows the login UI on "/auth" route */}
-                            {getSuperTokensReactRouterDomRoutes(require("react-router-dom"), [
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
                                 ThirdPartyPasswordlessPreBuiltUI,
                             ])}
 

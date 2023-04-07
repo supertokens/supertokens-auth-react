@@ -7,7 +7,6 @@ export declare abstract class RecipeRouter {
         normalisedUrl: NormalisedURLPath,
         preBuiltUIList: RecipeRouter[]
     ): ComponentWithRecipeAndMatchingMethod | undefined;
-    canHandleRoute: () => boolean;
     getPathsToFeatureComponentWithRecipeIdMap: () => BaseFeatureComponentMap;
     getMatchingComponentForRouteAndRecipeId: (
         normalisedUrl: NormalisedURLPath
