@@ -6,10 +6,10 @@ import { getSuperTokensRoutesForReactRouterDomV6 } from "../components/superToke
 import { RecipeRouter } from "../recipe/recipeRouter";
 import { getCurrentNormalisedUrlPath } from "../utils";
 
-import type { PreBuiltRecipes, ReactRouterDom } from "./types";
+import type { PreBuiltRecipes, ReactRouterDomWithCustomHistory } from "./types";
 
 export default class UI {
-    private static reactRouterDom: ReactRouterDom;
+    private static reactRouterDom: ReactRouterDomWithCustomHistory;
     private static reactRouterDomIsV6?: boolean;
 
     static getSuperTokensRoutesForReactRouterDom(
@@ -70,7 +70,7 @@ export default class UI {
         });
     }
 
-    static getReactRouterDomWithCustomHistory = (): ReactRouterDom | undefined => {
+    static getReactRouterDomWithCustomHistory = (): ReactRouterDomWithCustomHistory | undefined => {
         return UI.reactRouterDom;
     };
 

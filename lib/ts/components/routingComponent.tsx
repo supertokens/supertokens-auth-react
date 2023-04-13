@@ -3,10 +3,10 @@ import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import { RecipeRouter } from "../recipe/recipeRouter";
 
-import type { ReactRouterDom } from "../ui/types";
+import type { ReactRouterDomWithCustomHistory } from "../ui/types";
 
 export function RoutingComponent(props: {
-    getReactRouterDomWithCustomHistory: () => ReactRouterDom | undefined;
+    getReactRouterDomWithCustomHistory: () => ReactRouterDomWithCustomHistory | undefined;
     preBuiltUIList: RecipeRouter[];
     path: string;
 }): JSX.Element | null {

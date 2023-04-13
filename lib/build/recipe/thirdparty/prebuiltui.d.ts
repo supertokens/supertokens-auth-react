@@ -10,19 +10,15 @@ export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
     static instance?: ThirdPartyPreBuiltUI;
     constructor(recipeInstance: ThirdParty);
-    static getInstanceOrInitAndGetInstance(recipeInstance?: ThirdParty): ThirdPartyPreBuiltUI;
-    static getFeatures(
-        recipeInstance?: ThirdParty,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ): RecipeFeatureComponentMap;
+    static getInstanceOrInitAndGetInstance(): ThirdPartyPreBuiltUI;
+    static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
         componentName: "signinup" | "signinupcallback",
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
         },
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>,
-        recipeInstance?: ThirdParty
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
@@ -44,7 +40,6 @@ export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
     static SignInAndUpTheme: import("react").FC<import("./types").SignInAndUpThemeProps>;
     static SignInAndUpCallbackTheme: (props: { config: NormalisedConfig }) => JSX.Element;
 }
-declare const _getFeatures: typeof ThirdPartyPreBuiltUI.getFeatures;
 declare const SignInAndUp: (
     prop?: PropsWithChildren<{
         redirectOnSessionExists?: boolean;
@@ -52,4 +47,4 @@ declare const SignInAndUp: (
     }>
 ) => JSX.Element;
 declare const SignInAndUpCallback: (prop?: any) => JSX.Element;
-export { _getFeatures, SignInAndUp, SignInAndUpCallback, SignInAndUpCallbackTheme, SignInAndUpTheme };
+export { SignInAndUp, SignInAndUpCallback, SignInAndUpCallbackTheme, SignInAndUpTheme };

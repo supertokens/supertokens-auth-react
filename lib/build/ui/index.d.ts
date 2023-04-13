@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import type { PreBuiltRecipes, ReactRouterDom } from "./types";
+import type { PreBuiltRecipes, ReactRouterDomWithCustomHistory } from "./types";
 export default class UI {
     private static reactRouterDom;
     private static reactRouterDomIsV6?;
@@ -7,7 +7,7 @@ export default class UI {
         reactRouterDom: any,
         preBuiltUiClassList?: PreBuiltRecipes
     ): JSX.Element[];
-    static getReactRouterDomWithCustomHistory: () => ReactRouterDom | undefined;
+    static getReactRouterDomWithCustomHistory: () => ReactRouterDomWithCustomHistory | undefined;
     static canHandleRoute(preBuiltUiClassList: PreBuiltRecipes): boolean;
     static getRoutingComponent(preBuiltUiClassList: PreBuiltRecipes): JSX.Element;
 }

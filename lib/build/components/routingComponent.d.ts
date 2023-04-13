@@ -1,8 +1,8 @@
 /// <reference types="react" />
 import { RecipeRouter } from "../recipe/recipeRouter";
-import type { ReactRouterDom } from "../ui/types";
+import type { ReactRouterDomWithCustomHistory } from "../ui/types";
 export declare function RoutingComponent(props: {
-    getReactRouterDomWithCustomHistory: () => ReactRouterDom | undefined;
+    getReactRouterDomWithCustomHistory: () => ReactRouterDomWithCustomHistory | undefined;
     preBuiltUIList: RecipeRouter[];
     path: string;
 }): JSX.Element | null;

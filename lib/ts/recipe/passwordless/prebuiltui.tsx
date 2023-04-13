@@ -28,30 +28,28 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
     }
 
     // Static methods
-    static getInstanceOrInitAndGetInstance(recipeInstance?: Passwordless): PasswordlessPreBuiltUI {
+    static getInstanceOrInitAndGetInstance(): PasswordlessPreBuiltUI {
         if (PasswordlessPreBuiltUI.instance === undefined) {
-            const instance = recipeInstance ?? Passwordless.getInstanceOrThrow();
-            PasswordlessPreBuiltUI.instance = new PasswordlessPreBuiltUI(instance);
+            const recipeInstance = Passwordless.getInstanceOrThrow();
+            PasswordlessPreBuiltUI.instance = new PasswordlessPreBuiltUI(recipeInstance);
         }
 
         return PasswordlessPreBuiltUI.instance;
     }
     static getFeatures(
-        recipeInstance?: Passwordless,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap {
-        return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatures(
-            useComponentOverrides
-        );
+        return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
     }
     static getFeatureComponent(
         componentName: "signInUp" | "linkClickedScreen",
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
-        recipeInstance?: Passwordless
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
-        return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance(recipeInstance).getFeatureComponent(
+        return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
             componentName,
-            props
+            props,
+            useComponentOverrides
         );
     }
 
@@ -152,9 +150,7 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
     static SignInUpTheme = SignInUpTheme;
 }
 
-const _getFeatures = PasswordlessPreBuiltUI.getFeatures;
-const _getFeatureComponent = PasswordlessPreBuiltUI.getFeatureComponent;
 const SignInUp = PasswordlessPreBuiltUI.SignInUp;
 const LinkClicked = PasswordlessPreBuiltUI.LinkClicked;
 
-export { _getFeatures, _getFeatureComponent, SignInUp, LinkClicked, SignInUpTheme };
+export { SignInUp, LinkClicked, SignInUpTheme };
