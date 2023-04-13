@@ -30,11 +30,21 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
 
         return EmailVerificationPreBuiltUI.instance;
     }
-    static getFeatures(): RecipeFeatureComponentMap {
-        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures();
+    static getFeatures(
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap {
+        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
     }
-    static getFeatureComponent(componentName: "emailverification", props: any): JSX.Element {
-        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(componentName, props);
+    static getFeatureComponent(
+        componentName: "emailverification",
+        props: any,
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): JSX.Element {
+        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
+            componentName,
+            props,
+            useComponentOverrides
+        );
     }
 
     // Instance methods

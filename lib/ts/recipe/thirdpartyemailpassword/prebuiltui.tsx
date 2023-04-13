@@ -26,8 +26,19 @@ import type { PropsWithChildren } from "react";
 
 export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     static instance?: ThirdPartyEmailPasswordPreBuiltUI;
+
+    private thirdPartyPreBuiltUI: ThirdPartyPreBuiltUI | undefined;
+    private emailPasswordPreBuiltUI: EmailPasswordPreBuiltUI | undefined;
+
     constructor(private readonly recipeInstance: ThirdPartyEmailPassword) {
         super();
+        const { thirdPartyRecipe, emailPasswordRecipe } = recipeInstance;
+        if (thirdPartyRecipe !== undefined) {
+            this.thirdPartyPreBuiltUI = new ThirdPartyPreBuiltUI(thirdPartyRecipe);
+        }
+        if (emailPasswordRecipe !== undefined) {
+            this.emailPasswordPreBuiltUI = new EmailPasswordPreBuiltUI(emailPasswordRecipe);
+        }
     }
 
     // Static methods
@@ -39,16 +50,20 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
 
         return ThirdPartyEmailPasswordPreBuiltUI.instance;
     }
-    static getFeatures(): RecipeFeatureComponentMap {
-        return ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures();
+    static getFeatures(
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+    ): RecipeFeatureComponentMap {
+        return ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
     }
     static getFeatureComponent(
         componentName: "signinup" | "signinupcallback" | "resetpassword",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any }
+        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
             componentName,
-            props
+            props,
+            useComponentOverrides
         );
     }
 
@@ -58,17 +73,17 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     ): RecipeFeatureComponentMap => {
         let features: RecipeFeatureComponentMap = {};
 
-        if (this.recipeInstance.emailPasswordRecipe !== undefined) {
+        if (this.emailPasswordPreBuiltUI !== undefined) {
             features = {
                 ...features,
-                ...EmailPasswordPreBuiltUI.getFeatures(this.recipeInstance.emailPasswordRecipe, useComponentOverrides),
+                ...this.emailPasswordPreBuiltUI.getFeatures(useComponentOverrides),
             };
         }
 
-        if (this.recipeInstance.thirdPartyRecipe !== undefined) {
+        if (this.thirdPartyPreBuiltUI !== undefined) {
             features = {
                 ...features,
-                ...ThirdPartyPreBuiltUI.getFeatures(this.recipeInstance.thirdPartyRecipe, useComponentOverrides),
+                ...this.thirdPartyPreBuiltUI.getFeatures(useComponentOverrides),
             };
         }
 
@@ -121,27 +136,17 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
                 );
             }
         } else if (componentName === "resetpassword") {
-            if (this.recipeInstance.emailPasswordRecipe === undefined) {
+            if (this.emailPasswordPreBuiltUI === undefined) {
                 throw new Error("Should not come here...");
             }
-            return EmailPasswordPreBuiltUI.getFeatureComponent(
-                componentName,
-                props,
-                useComponentOverrides,
-                this.recipeInstance.emailPasswordRecipe
-            );
+            return this.emailPasswordPreBuiltUI.getFeatureComponent(componentName, props, useComponentOverrides);
         } else if (componentName === "signinupcallback") {
-            if (this.recipeInstance.thirdPartyRecipe === undefined) {
+            if (this.thirdPartyPreBuiltUI === undefined) {
                 throw new Error(
                     "Embedding this component requires the thirdparty recipe to be enabled. Please check the value of signInAndUpFeature.providers in the configuration."
                 );
             }
-            return ThirdPartyPreBuiltUI.getFeatureComponent(
-                componentName,
-                props,
-                useComponentOverrides,
-                this.recipeInstance.thirdPartyRecipe
-            );
+            return this.thirdPartyPreBuiltUI.getFeatureComponent(componentName, props, useComponentOverrides);
         } else {
             throw new Error("Should not come here...");
         }
@@ -166,15 +171,11 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     static SignInAndUpTheme = SignInAndUpTheme;
 }
 
-const _getFeatures = ThirdPartyEmailPasswordPreBuiltUI.getFeatures;
-const _getFeatureComponent = ThirdPartyEmailPasswordPreBuiltUI.getFeatureComponent;
 const ThirdPartySignInAndUpCallback = ThirdPartyEmailPasswordPreBuiltUI.ThirdPartySignInAndUpCallback;
 const ResetPasswordUsingToken = ThirdPartyEmailPasswordPreBuiltUI.ResetPasswordUsingToken;
 const SignInAndUp = ThirdPartyEmailPasswordPreBuiltUI.SignInAndUp;
 
 export {
-    _getFeatures,
-    _getFeatureComponent,
     ThirdPartySignInAndUpCallback,
     ResetPasswordUsingToken,
     SignInAndUp,

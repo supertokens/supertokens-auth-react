@@ -7,15 +7,18 @@ import type { PropsWithChildren } from "react";
 export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
     static instance?: ThirdPartyPasswordlessPreBuiltUI;
+    private thirdPartyPreBuiltUI;
+    private passwordlessPreBuiltUI;
     constructor(recipeInstance: ThirdPartyPasswordless);
     static getInstanceOrInitAndGetInstance(): ThirdPartyPasswordlessPreBuiltUI;
-    static getFeatures(): RecipeFeatureComponentMap;
+    static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
         componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
-        }
+        },
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
     getFeatureComponent: (
         componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
@@ -37,8 +40,6 @@ export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     static SignInUpTheme: typeof SignInUpTheme;
     static PasswordlessLinkClicked: (prop?: any) => JSX.Element;
 }
-declare const _getFeatures: typeof ThirdPartyPasswordlessPreBuiltUI.getFeatures;
-declare const _getFeatureComponent: typeof ThirdPartyPasswordlessPreBuiltUI.getFeatureComponent;
 declare const SignInAndUp: (
     prop?: PropsWithChildren<{
         redirectOnSessionExists?: boolean;
@@ -47,11 +48,4 @@ declare const SignInAndUp: (
 ) => JSX.Element;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const PasswordlessLinkClicked: (prop?: any) => JSX.Element;
-export {
-    _getFeatures,
-    _getFeatureComponent,
-    SignInAndUp,
-    ThirdPartySignInAndUpCallback,
-    PasswordlessLinkClicked,
-    SignInUpTheme,
-};
+export { SignInAndUp, ThirdPartySignInAndUpCallback, PasswordlessLinkClicked, SignInUpTheme };

@@ -5,7 +5,11 @@ import type { ThirdPartyPreBuiltUI } from "../recipe/thirdparty/prebuiltui";
 import type { ThirdPartyEmailPasswordPreBuiltUI } from "../recipe/thirdpartyemailpassword/prebuiltui";
 import type { ThirdPartyPasswordlessPreBuiltUI } from "../recipe/thirdpartypasswordless/prebuiltui";
 
-export type ReactRouterDom = { router: { Route: any }; useHistoryCustom: () => any; useLocation: () => any };
+export type ReactRouterDomWithCustomHistory = {
+    router: { Route: any };
+    useHistoryCustom: () => any;
+    useLocation: () => any;
+};
 
 export type PreBuiltRecipes = (
     | typeof ThirdPartyEmailPasswordPreBuiltUI

@@ -8,20 +8,16 @@ import type { PropsWithChildren } from "react";
 export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
     static instance?: EmailPasswordPreBuiltUI;
-    private constructor();
-    static getInstanceOrInitAndGetInstance(recipeInstance?: EmailPassword): EmailPasswordPreBuiltUI;
-    static getFeatures(
-        recipeInstance?: EmailPassword,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ): RecipeFeatureComponentMap;
+    constructor(recipeInstance: EmailPassword);
+    static getInstanceOrInitAndGetInstance(): EmailPasswordPreBuiltUI;
+    static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
         componentName: "signinup" | "resetpassword",
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
         },
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>,
-        recipeInstance?: EmailPassword
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
@@ -43,8 +39,6 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
 }
-declare const _getFeatures: typeof EmailPasswordPreBuiltUI.getFeatures;
-declare const _getFeatureComponent: typeof EmailPasswordPreBuiltUI.getFeatureComponent;
 declare const SignInAndUp: (
     prop?: PropsWithChildren<{
         redirectOnSessionExists?: boolean;
@@ -52,11 +46,4 @@ declare const SignInAndUp: (
     }>
 ) => JSX.Element;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
-export {
-    _getFeatures,
-    _getFeatureComponent,
-    SignInAndUp,
-    ResetPasswordUsingToken,
-    ResetPasswordUsingTokenTheme,
-    SignInAndUpTheme,
-};
+export { SignInAndUp, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme, SignInAndUpTheme };
