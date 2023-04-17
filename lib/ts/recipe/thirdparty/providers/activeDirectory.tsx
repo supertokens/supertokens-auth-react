@@ -15,9 +15,6 @@
 /*
  * Imports.
  */
-import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
-
-import SuperTokens from "../../../superTokens";
 import { isTest } from "../../../utils";
 
 import type { BuiltInProviderConfig, CustomProviderConfig } from "./types";
@@ -27,11 +24,11 @@ import Provider from ".";
 /*
  * Class.
  */
-export default class Apple extends Provider {
+export default class ActiveDirectory extends Provider {
     /*
      * Static Attributes.
      */
-    private static instance?: Apple;
+    private static instance?: ActiveDirectory;
 
     buttonComponent?: CustomProviderConfig["buttonComponent"];
 
@@ -40,8 +37,8 @@ export default class Apple extends Provider {
      */
     constructor(config?: BuiltInProviderConfig) {
         super({
-            id: "apple",
-            name: "Apple",
+            id: "activeDirectory",
+            name: "Active Directory",
             clientId: config?.clientId,
             getRedirectURL: config?.getRedirectURL,
         });
@@ -114,25 +111,16 @@ export default class Apple extends Provider {
         );
     };
 
-    defaultGetRedirectURIOnProviderDashboard(): string | undefined {
-        const domain = SuperTokens.getInstanceOrThrow().appInfo.apiDomain.getAsStringDangerous();
-        const callbackPath = new NormalisedURLPath(`/callback/${this.id}`);
-        const path = SuperTokens.getInstanceOrThrow()
-            .appInfo.apiBasePath.appendPath(callbackPath)
-            .getAsStringDangerous();
-        return `${domain}${path}`;
-    }
-
     /*
      * Static Methods
      */
     static init(config?: BuiltInProviderConfig): Provider {
-        if (Apple.instance !== undefined) {
-            console.warn("Apple Provider was already initialized");
-            return Apple.instance;
+        if (ActiveDirectory.instance !== undefined) {
+            console.warn("ActiveDirectory Provider was already initialized");
+            return ActiveDirectory.instance;
         }
-        Apple.instance = new Apple(config);
-        return Apple.instance;
+        ActiveDirectory.instance = new ActiveDirectory(config);
+        return ActiveDirectory.instance;
     }
 
     /*
@@ -142,7 +130,7 @@ export default class Apple extends Provider {
         if (!isTest()) {
             return;
         }
-        Apple.instance = undefined;
+        ActiveDirectory.instance = undefined;
         return;
     }
 }

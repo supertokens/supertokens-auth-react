@@ -7,7 +7,8 @@ export default abstract class Provider {
     clientId?: string;
     constructor(config: ProviderConfig);
     getDefaultButton(name?: string): JSX.Element;
-    defaultGetRedirectURL(): string;
+    defaultgetRedirectURL(): string;
+    getRedirectURIOnProviderDashboard(): string | undefined;
     abstract getButton(): JSX.Element;
     abstract getLogo(): JSX.Element | undefined;
     generateState: () => string;

@@ -15,9 +15,6 @@
 /*
  * Imports.
  */
-import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
-
-import SuperTokens from "../../../superTokens";
 import { isTest } from "../../../utils";
 
 import type { BuiltInProviderConfig, CustomProviderConfig } from "./types";
@@ -27,11 +24,11 @@ import Provider from ".";
 /*
  * Class.
  */
-export default class Apple extends Provider {
+export default class SAML extends Provider {
     /*
      * Static Attributes.
      */
-    private static instance?: Apple;
+    private static instance?: SAML;
 
     buttonComponent?: CustomProviderConfig["buttonComponent"];
 
@@ -40,8 +37,8 @@ export default class Apple extends Provider {
      */
     constructor(config?: BuiltInProviderConfig) {
         super({
-            id: "apple",
-            name: "Apple",
+            id: "saml",
+            name: "SAML",
             clientId: config?.clientId,
             getRedirectURL: config?.getRedirectURL,
         });
@@ -114,25 +111,16 @@ export default class Apple extends Provider {
         );
     };
 
-    defaultGetRedirectURIOnProviderDashboard(): string | undefined {
-        const domain = SuperTokens.getInstanceOrThrow().appInfo.apiDomain.getAsStringDangerous();
-        const callbackPath = new NormalisedURLPath(`/callback/${this.id}`);
-        const path = SuperTokens.getInstanceOrThrow()
-            .appInfo.apiBasePath.appendPath(callbackPath)
-            .getAsStringDangerous();
-        return `${domain}${path}`;
-    }
-
     /*
      * Static Methods
      */
     static init(config?: BuiltInProviderConfig): Provider {
-        if (Apple.instance !== undefined) {
-            console.warn("Apple Provider was already initialized");
-            return Apple.instance;
+        if (SAML.instance !== undefined) {
+            console.warn("SAML Provider was already initialized");
+            return SAML.instance;
         }
-        Apple.instance = new Apple(config);
-        return Apple.instance;
+        SAML.instance = new SAML(config);
+        return SAML.instance;
     }
 
     /*
@@ -142,7 +130,7 @@ export default class Apple extends Provider {
         if (!isTest()) {
             return;
         }
-        Apple.instance = undefined;
+        SAML.instance = undefined;
         return;
     }
 }

@@ -1,12 +1,18 @@
 /// <reference types="react" />
 import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
+import ActiveDirectory from "./providers/activeDirectory";
 import Apple from "./providers/apple";
 import Bitbucket from "./providers/bitbucket";
+import Boxy from "./providers/boxy";
 import Discord from "./providers/discord";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
 import Gitlab from "./providers/gitlab";
 import Google from "./providers/google";
+import LinkedIn from "./providers/linkedIn";
+import Okta from "./providers/okta";
+import Saml from "./providers/saml";
+import Twitter from "./providers/twitter";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
@@ -74,6 +80,12 @@ export default class Wrapper {
     static Gitlab: typeof Gitlab;
     static Google: typeof Google;
     static Facebook: typeof Facebook;
+    static Boxy: typeof Boxy;
+    static LinkedIn: typeof LinkedIn;
+    static ActiveDirectory: typeof ActiveDirectory;
+    static Twitter: typeof Twitter;
+    static Saml: typeof Saml;
+    static Okta: typeof Okta;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
@@ -107,6 +119,12 @@ export {
     Gitlab,
     Google,
     Facebook,
+    Boxy,
+    LinkedIn,
+    ActiveDirectory,
+    Twitter,
+    Saml,
+    Okta,
     getStateAndOtherInfoFromStorage,
     setStateAndOtherInfoToStorage,
     getAuthorisationURLWithQueryParamsAndSetState,

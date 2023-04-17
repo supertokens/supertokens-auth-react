@@ -1,4 +1,4 @@
-/// <reference types="react" />
+import type { Component } from "react";
 export declare type ProviderConfig = {
     id: string;
     name: string;
@@ -6,7 +6,7 @@ export declare type ProviderConfig = {
     getRedirectURL?: () => string;
 };
 export declare type BuiltInProviderConfig = {
-    buttonComponent?: JSX.Element;
+    buttonComponent?: CustomProviderConfig["buttonComponent"];
     clientId?: string;
     getRedirectURL?: () => string;
 };
@@ -14,6 +14,6 @@ export declare type CustomProviderConfig = {
     id: string;
     name: string;
     clientId?: string;
-    buttonComponent?: JSX.Element;
+    buttonComponent?: typeof Component;
     getRedirectURL?: () => string;
 };

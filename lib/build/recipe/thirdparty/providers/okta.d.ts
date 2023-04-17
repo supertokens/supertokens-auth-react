@@ -1,7 +1,7 @@
 /// <reference types="react" />
 import type { BuiltInProviderConfig, CustomProviderConfig } from "./types";
 import Provider from ".";
-export default class Bitbucket extends Provider {
+export default class Okta extends Provider {
     private static instance?;
     buttonComponent?: CustomProviderConfig["buttonComponent"];
     constructor(config?: BuiltInProviderConfig);

@@ -12,6 +12,8 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+import type { Component } from "react";
+
 export type ProviderConfig = {
     /*
      * Provider Id
@@ -31,7 +33,7 @@ export type BuiltInProviderConfig = {
     /*
      * Button Component
      */
-    buttonComponent?: JSX.Element;
+    buttonComponent?: CustomProviderConfig["buttonComponent"];
 
     clientId?: string; // optional clientId to be sent during signinup API
 
@@ -58,7 +60,7 @@ export type CustomProviderConfig = {
     /*
      * Button Component
      */
-    buttonComponent?: JSX.Element;
+    buttonComponent?: typeof Component;
 
     /*
      * Where to redirect the user during the callback.

@@ -1,6 +1,20 @@
 /// <reference types="react" />
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
-import { Apple, Google, Facebook, Github, Gitlab, Bitbucket, Discord } from "../thirdparty/";
+import {
+    Apple,
+    Google,
+    Facebook,
+    Github,
+    Gitlab,
+    Bitbucket,
+    Discord,
+    Boxy,
+    LinkedIn,
+    ActiveDirectory,
+    Twitter,
+    Saml,
+    Okta,
+} from "../thirdparty/";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import type { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
 import type {
@@ -161,6 +175,12 @@ export default class Wrapper {
     static Gitlab: typeof Gitlab;
     static Google: typeof Google;
     static Facebook: typeof Facebook;
+    static Boxy: typeof Boxy;
+    static LinkedIn: typeof LinkedIn;
+    static ActiveDirectory: typeof ActiveDirectory;
+    static Twitter: typeof Twitter;
+    static Saml: typeof Saml;
+    static Okta: typeof Okta;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
@@ -204,6 +224,12 @@ export {
     Gitlab,
     Google,
     Facebook,
+    Boxy,
+    LinkedIn,
+    ActiveDirectory,
+    Twitter,
+    Saml,
+    Okta,
     redirectToThirdPartyLogin,
     getAuthorisationURLFromBackend,
     thirdPartySignInAndUp,

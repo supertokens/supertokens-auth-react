@@ -19,7 +19,21 @@ import {
 } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
 import { getNormalisedUserContext } from "../../utils";
-import { Apple, Google, Facebook, Github, Gitlab, Bitbucket, Discord } from "../thirdparty/";
+import {
+    Apple,
+    Google,
+    Facebook,
+    Github,
+    Gitlab,
+    Bitbucket,
+    Discord,
+    Boxy,
+    LinkedIn,
+    ActiveDirectory,
+    Twitter,
+    Saml,
+    Okta,
+} from "../thirdparty/";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
@@ -303,6 +317,12 @@ export default class Wrapper {
     static Gitlab = Gitlab;
     static Google = Google;
     static Facebook = Facebook;
+    static Boxy = Boxy;
+    static LinkedIn = LinkedIn;
+    static ActiveDirectory = ActiveDirectory;
+    static Twitter = Twitter;
+    static Saml = Saml;
+    static Okta = Okta;
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
@@ -336,6 +356,12 @@ export {
     Gitlab,
     Google,
     Facebook,
+    Boxy,
+    LinkedIn,
+    ActiveDirectory,
+    Twitter,
+    Saml,
+    Okta,
     ThirdpartyEmailPasswordComponentsOverrideProvider,
     signOut,
     submitNewPassword,

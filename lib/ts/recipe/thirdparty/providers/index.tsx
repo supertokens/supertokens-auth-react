@@ -45,7 +45,7 @@ export default abstract class Provider {
         this.name = config.name;
         this.clientId = config.clientId;
         this.getRedirectURL =
-            config.getRedirectURL !== undefined ? config.getRedirectURL : () => this.defaultGetRedirectURL();
+            config.getRedirectURL !== undefined ? config.getRedirectURL : () => this.defaultgetRedirectURL();
     }
 
     /*
@@ -57,13 +57,17 @@ export default abstract class Provider {
         return <ProviderButton logo={this.getLogo()} providerName={providerName} displayName={this.name} />;
     }
 
-    defaultGetRedirectURL(): string {
+    defaultgetRedirectURL(): string {
         const domain = SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();
         const callbackPath = new NormalisedURLPath(`/callback/${this.id}`);
         const path = SuperTokens.getInstanceOrThrow()
             .appInfo.websiteBasePath.appendPath(callbackPath)
             .getAsStringDangerous();
         return `${domain}${path}`;
+    }
+
+    getRedirectURIOnProviderDashboard(): string | undefined {
+        return undefined;
     }
 
     abstract getButton(): JSX.Element;
