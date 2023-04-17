@@ -6,6 +6,7 @@ import Home from "./Home";
 import { SuperTokensConfig } from "./config";
 import { ThirdpartyComponentsOverrideProvider } from "supertokens-auth-react/recipe/thirdparty";
 import thirdParty from "supertokens-auth-react/recipe/thirdparty"
+import { getWebsiteDomain } from "./config";
 
 SuperTokens.init(SuperTokensConfig);
 
@@ -26,7 +27,7 @@ function App() {
                                             return (
                                                 <div>
                                                     <button onClick={async () => {
-                                                        const authUrl = await thirdParty.getAuthorisationURLWithQueryParamsAndSetState({providerId: provider.id, authorisationURL: `http://localhost:3000/auth/callback/${provider.id}`});
+                                                        const authUrl = await thirdParty.getAuthorisationURLWithQueryParamsAndSetState({providerId: provider.id, authorisationURL: `${getWebsiteDomain()}/auth/callback/${provider.id}`});
                                                         const win = window.open(authUrl, "_blank", "width=600,height=600");
                                                         var timer = setInterval(function() { 
                                                             if( win && win.closed) {

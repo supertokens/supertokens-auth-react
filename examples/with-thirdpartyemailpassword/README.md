@@ -16,7 +16,12 @@ Clone the repo, enter the directory, and use `npm` to install the project depend
 
 ```bash
 git clone https://github.com/supertokens/supertokens-auth-react
-cd supertokens-auth-react/examples/with-thirdpartyemailpassword
+cd supertokens-auth-react/examples/with-thirdparty-popup
+cd backend
+npm install
+cd ../frontend
+npm install
+cd ..
 npm install
 ```
 
@@ -25,7 +30,7 @@ npm install
 This compiles and serves the React app and starts the backend API server on port 3001.
 
 ```bash
-npm run dev
+npm run start
 ```
 
 The app will start on `http://localhost:3000`
