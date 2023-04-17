@@ -30,22 +30,10 @@ npm install
 This compiles and serves the React app and starts the backend API server on port 3001.
 
 ```bash
-npm run dev
+npm run start
 ```
 
 The app will start on `http://localhost:3000`
-
-If you would like to modify the website (http://localhost:3000) or the API server (http://localhost:3001) URL:
-
--   Change the `apiPort` or `apiDomain` values in `api-server.js`
--   Change the `apiPort` or `apiUrl` values in `src/App.js`
--   Change the `websitePort` or `websiteDomain` values in `api-server.js`
--   Change the `websitePort` or `websiteUrl` values in `src/App.js`
-
-## Project structure & Parameters
-
--   The frontend code is located in the `src` folder.
--   The backend API is in the `api-server.js` file.
 
 ## Author
 
