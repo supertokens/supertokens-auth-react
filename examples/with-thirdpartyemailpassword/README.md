@@ -21,6 +21,7 @@ npm install
 ```
 
 ## Run the demo app
+
 This compiles and serves the React app and starts the backend API server on port 3001.
 
 ```bash
