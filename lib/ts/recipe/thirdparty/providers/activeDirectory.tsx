@@ -63,8 +63,8 @@ export default class ActiveDirectory extends Provider {
 
     getLogo = (): JSX.Element => {
         return (
-            <svg width="17" height="16" viewBox="0 0 416 415" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g clip-path="url(#clip0_402_84)">
+            <svg width="18" height="16" viewBox="0 0 416 415" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clipPath="url(#clip0_402_84)">
                     <path
                         d="M415.575 316.343V403.598C415.575 413.817 412.431 415.914 402.736 414.341C337.753 404.646 271.984 395.737 206.477 386.566C194.686 384.994 190.494 380.802 190.494 367.963C191.542 321.584 191.018 274.943 190.494 228.04C190.494 217.821 193.638 214.677 203.857 214.677C270.936 215.201 336.967 215.201 402.736 215.201C413.479 215.201 416.099 219.393 416.099 229.088C415.051 258.435 415.575 287.258 415.575 316.343Z"
                         fill="#00AAF2"

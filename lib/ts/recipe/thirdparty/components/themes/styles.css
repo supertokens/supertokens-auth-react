@@ -27,7 +27,7 @@
 }
 
 [data-supertokens~="providerButtonLeft"] {
-    width: 34px;
+    min-width: 34px;
     margin-left: 66px;
 }
 
