@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   Added thirdparty login with popup window example
+
 ## [0.31.5] - 2023-03-30
 
 ### Changes
