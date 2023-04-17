@@ -123,6 +123,8 @@ class App extends React.Component {
 }
 ```
 
+-   Added thirdparty login with popup window example
+
 ## [0.31.5] - 2023-03-30
 
 ### Changes
