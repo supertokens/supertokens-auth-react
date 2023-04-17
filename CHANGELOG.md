@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+-   Added Active Directory, Okta, Linked In, Boxy SAML providers
+-   Added name prop to buttomComponent
+
+### Changes
+
 -   Eliminated the need for duplicate `init` call for non-react applications that use pre-built UI. [See the issue](https://github.com/supertokens/supertokens-auth-react/issues/616)
 -   Split/separate pre-built UI components from its recipe to reduce bundle sizes for apps that do not use pre-built UI
 
