@@ -1,7 +1,7 @@
 /// <reference types="react" />
 import type { BuiltInProviderConfig, CustomProviderConfig } from "./types";
 import Provider from ".";
-export default class Boxy extends Provider {
+export default class BoxySAML extends Provider {
     private static instance?;
     buttonComponent?: CustomProviderConfig["buttonComponent"];
     constructor(config?: BuiltInProviderConfig);

@@ -3,12 +3,7 @@ import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
-import ThirdPartyEmailPassword, {
-    Google,
-    Github,
-    Apple,
-    Boxy,
-} from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import ThirdPartyEmailPassword, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";

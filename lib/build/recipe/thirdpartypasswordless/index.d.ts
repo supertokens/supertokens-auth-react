@@ -8,11 +8,9 @@ import {
     Gitlab,
     Bitbucket,
     Discord,
-    Boxy,
     LinkedIn,
     ActiveDirectory,
-    Twitter,
-    Saml,
+    BoxySAML,
     Okta,
 } from "../thirdparty/";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
@@ -175,11 +173,9 @@ export default class Wrapper {
     static Gitlab: typeof Gitlab;
     static Google: typeof Google;
     static Facebook: typeof Facebook;
-    static Boxy: typeof Boxy;
     static LinkedIn: typeof LinkedIn;
     static ActiveDirectory: typeof ActiveDirectory;
-    static Twitter: typeof Twitter;
-    static Saml: typeof Saml;
+    static BoxySAML: typeof BoxySAML;
     static Okta: typeof Okta;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
@@ -224,11 +220,9 @@ export {
     Gitlab,
     Google,
     Facebook,
-    Boxy,
     LinkedIn,
     ActiveDirectory,
-    Twitter,
-    Saml,
+    BoxySAML,
     Okta,
     redirectToThirdPartyLogin,
     getAuthorisationURLFromBackend,

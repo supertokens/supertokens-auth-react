@@ -24,11 +24,9 @@ import {
     Gitlab,
     Bitbucket,
     Discord,
-    Boxy,
     LinkedIn,
     ActiveDirectory,
-    Twitter,
-    Saml,
+    BoxySAML,
     Okta,
 } from "../thirdparty/";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
@@ -352,11 +350,9 @@ export default class Wrapper {
     static Gitlab = Gitlab;
     static Google = Google;
     static Facebook = Facebook;
-    static Boxy = Boxy;
     static LinkedIn = LinkedIn;
     static ActiveDirectory = ActiveDirectory;
-    static Twitter = Twitter;
-    static Saml = Saml;
+    static BoxySAML = BoxySAML;
     static Okta = Okta;
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
@@ -396,11 +392,9 @@ export {
     Gitlab,
     Google,
     Facebook,
-    Boxy,
     LinkedIn,
     ActiveDirectory,
-    Twitter,
-    Saml,
+    BoxySAML,
     Okta,
     redirectToThirdPartyLogin,
     getAuthorisationURLFromBackend,
