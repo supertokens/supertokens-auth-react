@@ -17,7 +17,7 @@
  */
 import { isTest } from "../../../utils";
 
-import type { BuiltInProviderConfig, CustomProviderConfig } from "./types";
+import type { BuiltInProviderConfig } from "./types";
 
 import Provider from ".";
 
@@ -29,8 +29,6 @@ export default class Google extends Provider {
      * Static Attributes.
      */
     private static instance?: Google;
-
-    buttonComponent?: CustomProviderConfig["buttonComponent"];
 
     /*
      * Constructor.

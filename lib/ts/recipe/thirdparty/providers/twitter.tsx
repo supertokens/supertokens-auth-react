@@ -24,19 +24,19 @@ import Provider from ".";
 /*
  * Class.
  */
-export default class LinkedIn extends Provider {
+export default class Twitter extends Provider {
     /*
      * Static Attributes.
      */
-    private static instance?: LinkedIn;
+    private static instance?: Twitter;
 
     /*
      * Constructor.
      */
     constructor(config?: BuiltInProviderConfig) {
         super({
-            id: "linkedin",
-            name: "LinkedIn",
+            id: "twitter",
+            name: "Twitter",
             clientId: config?.clientId,
             getRedirectURL: config?.getRedirectURL,
         });
@@ -61,15 +61,16 @@ export default class LinkedIn extends Provider {
 
     getLogo = (): JSX.Element => {
         return (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20" height="20">
-                <path
-                    fill="#0288D1"
-                    d="M42,37c0,2.762-2.238,5-5,5H11c-2.761,0-5-2.238-5-5V11c0-2.762,2.239-5,5-5h26c2.762,0,5,2.238,5,5V37z"
-                />
-                <path
-                    fill="#FFF"
-                    d="M12 19H17V36H12zM14.485 17h-.028C12.965 17 12 15.888 12 14.499 12 13.08 12.995 12 14.514 12c1.521 0 2.458 1.08 2.486 2.499C17 15.887 16.035 17 14.485 17zM36 36h-5v-9.099c0-2.198-1.225-3.698-3.192-3.698-1.501 0-2.313 1.012-2.707 1.99C24.957 25.543 25 26.511 25 27v9h-5V19h5v2.616C25.721 20.5 26.85 19 29.738 19c3.578 0 6.261 2.25 6.261 7.274L36 36 36 36z"
-                />
+            <svg xmlns="http://www.w3.org/2000/svg" width="20.129" height="16.356" viewBox="0 0 20.129 16.356">
+                <g>
+                    <g>
+                        <path
+                            fill="#04ABEE"
+                            d="M45.232 35.964a8.242 8.242 0 0 1-2.372.649 4.141 4.141 0 0 0 1.816-2.284 8.268 8.268 0 0 1-2.623 1 4.133 4.133 0 0 0-7.037 3.771 11.724 11.724 0 0 1-8.516-4.317 4.133 4.133 0 0 0 1.282 5.517 4.1 4.1 0 0 1-1.87-.517v.052a4.132 4.132 0 0 0 3.313 4.049 4.147 4.147 0 0 1-1.865.071 4.134 4.134 0 0 0 3.858 2.868 8.338 8.338 0 0 1-6.114 1.71 11.745 11.745 0 0 0 18.08-9.894q0-.268-.012-.534a8.374 8.374 0 0 0 2.061-2.137z"
+                            transform="translate(34.799 -7.41) translate(2.201 4.266) translate(-62.103 -30.883)"
+                        />
+                    </g>
+                </g>
             </svg>
         );
     };
@@ -78,12 +79,12 @@ export default class LinkedIn extends Provider {
      * Static Methods
      */
     static init(config?: BuiltInProviderConfig): Provider {
-        if (LinkedIn.instance !== undefined) {
-            console.warn("LinkedIn Provider was already initialized");
-            return LinkedIn.instance;
+        if (Twitter.instance !== undefined) {
+            console.warn("Twitter Provider was already initialized");
+            return Twitter.instance;
         }
-        LinkedIn.instance = new LinkedIn(config);
-        return LinkedIn.instance;
+        Twitter.instance = new Twitter(config);
+        return Twitter.instance;
     }
 
     /*
@@ -93,7 +94,7 @@ export default class LinkedIn extends Provider {
         if (!isTest()) {
             return;
         }
-        LinkedIn.instance = undefined;
+        Twitter.instance = undefined;
         return;
     }
 }

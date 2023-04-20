@@ -4,7 +4,7 @@ import "./index.css";
 import * as reactRouterDom from "react-router-dom";
 
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
-import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/prebuiltui";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
 

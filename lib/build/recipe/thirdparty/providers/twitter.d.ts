@@ -1,7 +1,6 @@
-/// <reference types="react" />
 import type { BuiltInProviderConfig } from "./types";
 import Provider from ".";
-export default class ActiveDirectory extends Provider {
+export default class Twitter extends Provider {
     private static instance?;
     constructor(config?: BuiltInProviderConfig);
     getButton: () => JSX.Element;

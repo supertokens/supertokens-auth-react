@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import type { Component } from "react";
+import type { FC } from "react";
 
 export type ProviderConfig = {
     /*
@@ -33,7 +33,7 @@ export type BuiltInProviderConfig = {
     /*
      * Button Component
      */
-    buttonComponent?: CustomProviderConfig["buttonComponent"];
+    buttonComponent?: FC<{ name: string }>;
 
     clientId?: string; // optional clientId to be sent during signinup API
 
@@ -60,7 +60,7 @@ export type CustomProviderConfig = {
     /*
      * Button Component
      */
-    buttonComponent?: typeof Component;
+    buttonComponent?: FC<{ name: string }>;
 
     /*
      * Where to redirect the user during the callback.

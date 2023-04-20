@@ -23,10 +23,6 @@ import Provider from ".";
  * Class.
  */
 export default class Custom extends Provider {
-    /*
-     * Static Attributes.
-     */
-
     buttonComponent?: CustomProviderConfig["buttonComponent"];
 
     /*

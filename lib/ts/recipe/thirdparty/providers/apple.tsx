@@ -20,7 +20,7 @@ import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import SuperTokens from "../../../superTokens";
 import { isTest } from "../../../utils";
 
-import type { BuiltInProviderConfig, CustomProviderConfig } from "./types";
+import type { BuiltInProviderConfig } from "./types";
 
 import Provider from ".";
 
@@ -32,8 +32,6 @@ export default class Apple extends Provider {
      * Static Attributes.
      */
     private static instance?: Apple;
-
-    buttonComponent?: CustomProviderConfig["buttonComponent"];
 
     /*
      * Constructor.
@@ -114,7 +112,7 @@ export default class Apple extends Provider {
         );
     };
 
-    defaultGetRedirectURIOnProviderDashboard(): string | undefined {
+    getRedirectURIOnProviderDashboard(): string | undefined {
         const domain = SuperTokens.getInstanceOrThrow().appInfo.apiDomain.getAsStringDangerous();
         const callbackPath = new NormalisedURLPath(`/callback/${this.id}`);
         const path = SuperTokens.getInstanceOrThrow()
