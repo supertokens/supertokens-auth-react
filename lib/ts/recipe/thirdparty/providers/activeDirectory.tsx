@@ -48,17 +48,6 @@ export default class ActiveDirectory extends Provider {
         this.buttonComponent = config.buttonComponent;
     }
 
-    getButton = (): JSX.Element => {
-        if (this.buttonComponent !== undefined) {
-            if (typeof this.buttonComponent === "function") {
-                return <this.buttonComponent name={this.name} />;
-            }
-            return this.buttonComponent;
-        }
-
-        return this.getDefaultButton();
-    };
-
     getLogo = (): JSX.Element => {
         return (
             <svg width="18" height="16" viewBox="0 0 416 415" fill="none" xmlns="http://www.w3.org/2000/svg">

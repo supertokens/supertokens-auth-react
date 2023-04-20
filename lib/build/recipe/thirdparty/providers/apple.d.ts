@@ -4,7 +4,6 @@ import Provider from ".";
 export default class Apple extends Provider {
     private static instance?;
     constructor(config?: BuiltInProviderConfig);
-    getButton: () => JSX.Element;
     getLogo: () => JSX.Element;
     getRedirectURIOnProviderDashboard(): string | undefined;
     static init(config?: BuiltInProviderConfig): Provider;

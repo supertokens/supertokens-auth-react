@@ -48,17 +48,6 @@ export default class Facebook extends Provider {
         this.buttonComponent = config.buttonComponent;
     }
 
-    getButton = (): JSX.Element => {
-        if (this.buttonComponent !== undefined) {
-            if (typeof this.buttonComponent === "function") {
-                return <this.buttonComponent name={this.name} />;
-            }
-            return this.buttonComponent;
-        }
-
-        return this.getDefaultButton();
-    };
-
     getLogo = (): JSX.Element => {
         return (
             <svg fill="#1777F2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="24px" height="24px">

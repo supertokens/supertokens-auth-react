@@ -4,7 +4,6 @@ import Provider from ".";
 export default class Bitbucket extends Provider {
     private static instance?;
     constructor(config?: BuiltInProviderConfig);
-    getButton: () => JSX.Element;
     getLogo: () => JSX.Element;
     static init(config?: BuiltInProviderConfig): Provider;
     static reset(): void;

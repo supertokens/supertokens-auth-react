@@ -48,17 +48,6 @@ export default class Google extends Provider {
         this.buttonComponent = config.buttonComponent;
     }
 
-    getButton = (): JSX.Element => {
-        if (this.buttonComponent !== undefined) {
-            if (typeof this.buttonComponent === "function") {
-                return <this.buttonComponent name={this.name} />;
-            }
-            return this.buttonComponent;
-        }
-
-        return this.getDefaultButton();
-    };
-
     getLogo = (): JSX.Element => {
         return (
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="18px" height="18px">

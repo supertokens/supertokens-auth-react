@@ -48,17 +48,6 @@ export default class Bitbucket extends Provider {
         this.buttonComponent = config.buttonComponent;
     }
 
-    getButton = (): JSX.Element => {
-        if (this.buttonComponent !== undefined) {
-            if (typeof this.buttonComponent === "function") {
-                return <this.buttonComponent name={this.name} />;
-            }
-            return this.buttonComponent;
-        }
-
-        return this.getDefaultButton();
-    };
-
     getLogo = (): JSX.Element => {
         return (
             <svg width="19" height="17" viewBox="0 0 19 17" fill="none" xmlns="http://www.w3.org/2000/svg">

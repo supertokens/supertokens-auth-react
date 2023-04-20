@@ -48,17 +48,6 @@ export default class Twitter extends Provider {
         this.buttonComponent = config.buttonComponent;
     }
 
-    getButton = (): JSX.Element => {
-        if (this.buttonComponent !== undefined) {
-            if (typeof this.buttonComponent === "function") {
-                return <this.buttonComponent name={this.name} />;
-            }
-            return this.buttonComponent;
-        }
-
-        return this.getDefaultButton();
-    };
-
     getLogo = (): JSX.Element => {
         return (
             <svg xmlns="http://www.w3.org/2000/svg" width="20.129" height="16.356" viewBox="0 0 20.129 16.356">
