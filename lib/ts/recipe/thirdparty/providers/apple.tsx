@@ -40,15 +40,8 @@ export default class Apple extends Provider {
         super({
             id: "apple",
             name: "Apple",
-            clientId: config?.clientId,
-            getRedirectURL: config?.getRedirectURL,
+            ...config,
         });
-
-        if (config === undefined) {
-            return;
-        }
-
-        this.buttonComponent = config.buttonComponent;
     }
 
     getLogo = (): JSX.Element => {

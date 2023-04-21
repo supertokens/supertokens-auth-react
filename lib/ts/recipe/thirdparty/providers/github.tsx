@@ -37,15 +37,8 @@ export default class Github extends Provider {
         super({
             id: "github",
             name: "GitHub",
-            clientId: config?.clientId,
-            getRedirectURL: config?.getRedirectURL,
+            ...config,
         });
-
-        if (config === undefined) {
-            return;
-        }
-
-        this.buttonComponent = config.buttonComponent;
     }
 
     getLogo = (): JSX.Element => {

@@ -1,5 +1,5 @@
 import "./App.css";
-import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./Home";
@@ -16,8 +16,8 @@ function App() {
             <ThirdpartyComponentsOverrideProvider
                 components={{
                     // In this case, the <ThirdPartyPasswordlessHeader_Override>
-                    // will render the original component
-                    // wrapped in a div with an octocat picture above it.
+                    // will provider buttons
+                    // that will open popup when clicked.
                     ThirdPartySignInAndUpProvidersForm_Override: ({ DefaultComponent, providers, ...props }) => {
                         return (
                             <div>
@@ -41,14 +41,14 @@ function App() {
                                                             "_blank",
                                                             "width=600,height=600"
                                                         );
-                                                        var timer = setInterval(function () {
+                                                        const timer = setInterval(() => {
                                                             if (win && win.closed) {
                                                                 clearInterval(timer);
                                                                 window.location.replace("/");
                                                             }
                                                         }, 1000);
                                                     }}>
-                                                    Login with {provider.id}
+                                                    Login with {provider.name}
                                                 </button>
                                             </div>
                                         );

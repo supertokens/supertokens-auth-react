@@ -37,15 +37,8 @@ export default class Twitter extends Provider {
         super({
             id: "twitter",
             name: "Twitter",
-            clientId: config?.clientId,
-            getRedirectURL: config?.getRedirectURL,
+            ...config,
         });
-
-        if (config === undefined) {
-            return;
-        }
-
-        this.buttonComponent = config.buttonComponent;
     }
 
     getLogo = (): JSX.Element => {

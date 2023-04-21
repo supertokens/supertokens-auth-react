@@ -37,15 +37,8 @@ export default class Okta extends Provider {
         super({
             id: "okta",
             name: "Okta",
-            clientId: config?.clientId,
-            getRedirectURL: config?.getRedirectURL,
+            ...config,
         });
-
-        if (config === undefined) {
-            return;
-        }
-
-        this.buttonComponent = config.buttonComponent;
     }
 
     getLogo = (): JSX.Element => {

@@ -37,15 +37,8 @@ export default class BoxySAML extends Provider {
         super({
             id: "boxy-saml",
             name: "BoxySAML",
-            clientId: config?.clientId,
-            getRedirectURL: config?.getRedirectURL,
+            ...config,
         });
-
-        if (config === undefined) {
-            return;
-        }
-
-        this.buttonComponent = config.buttonComponent;
     }
 
     getLogo = (): JSX.Element => {

@@ -37,15 +37,8 @@ export default class Bitbucket extends Provider {
         super({
             id: "bitbucket",
             name: "Bitbucket",
-            clientId: config?.clientId,
-            getRedirectURL: config?.getRedirectURL,
+            ...config,
         });
-
-        if (config === undefined) {
-            return;
-        }
-
-        this.buttonComponent = config.buttonComponent;
     }
 
     getLogo = (): JSX.Element => {

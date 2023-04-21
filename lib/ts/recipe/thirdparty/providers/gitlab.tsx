@@ -37,15 +37,8 @@ export default class Gitlab extends Provider {
         super({
             id: "gitlab",
             name: "Gitlab",
-            clientId: config?.clientId,
-            getRedirectURL: config?.getRedirectURL,
+            ...config,
         });
-
-        if (config === undefined) {
-            return;
-        }
-
-        this.buttonComponent = config.buttonComponent;
     }
 
     getLogo = (): JSX.Element => {

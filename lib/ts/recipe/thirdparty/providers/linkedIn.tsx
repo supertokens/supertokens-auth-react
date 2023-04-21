@@ -37,15 +37,8 @@ export default class LinkedIn extends Provider {
         super({
             id: "linkedin",
             name: "LinkedIn",
-            clientId: config?.clientId,
-            getRedirectURL: config?.getRedirectURL,
+            ...config,
         });
-
-        if (config === undefined) {
-            return;
-        }
-
-        this.buttonComponent = config.buttonComponent;
     }
 
     getLogo = (): JSX.Element => {

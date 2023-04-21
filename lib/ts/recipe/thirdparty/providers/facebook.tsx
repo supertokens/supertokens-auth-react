@@ -37,15 +37,8 @@ export default class Facebook extends Provider {
         super({
             id: "facebook",
             name: "Facebook",
-            clientId: config?.clientId,
-            getRedirectURL: config?.getRedirectURL,
+            ...config,
         });
-
-        if (config === undefined) {
-            return;
-        }
-
-        this.buttonComponent = config.buttonComponent;
     }
 
     getLogo = (): JSX.Element => {

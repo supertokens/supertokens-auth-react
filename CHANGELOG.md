@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Added Active Directory, Okta, Linked In, Boxy SAML providers
 -   Added name prop to buttomComponent
+-   Added thirdparty login with popup window example
 
 ### Changes
 
@@ -127,8 +128,6 @@ class App extends React.Component {
     }
 }
 ```
-
--   Added thirdparty login with popup window example
 
 ## [0.31.5] - 2023-03-30
 
