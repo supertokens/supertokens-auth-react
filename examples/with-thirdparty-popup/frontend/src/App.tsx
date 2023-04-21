@@ -15,9 +15,8 @@ function App() {
         <SuperTokensWrapper>
             <ThirdpartyComponentsOverrideProvider
                 components={{
-                    // In this case, the <ThirdPartyPasswordlessHeader_Override>
-                    // will provider buttons
-                    // that will open popup when clicked.
+                    // In this case, the <ThirdPartySignInAndUpProvidersForm_Override>
+                    // will provider buttons that will open a popup when clicked.
                     ThirdPartySignInAndUpProvidersForm_Override: ({ DefaultComponent, providers, ...props }) => {
                         return (
                             <div>
