@@ -27,6 +27,7 @@ export type ProviderConfig = {
 
     clientId?: string; // optional clientId to be sent during signinup
     getRedirectURL?: () => string;
+    buttonComponent?: BuiltInProviderConfig["buttonComponent"];
 };
 
 export type BuiltInProviderConfig = {

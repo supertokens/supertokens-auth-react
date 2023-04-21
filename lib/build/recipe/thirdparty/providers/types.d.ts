@@ -4,6 +4,7 @@ export declare type ProviderConfig = {
     name: string;
     clientId?: string;
     getRedirectURL?: () => string;
+    buttonComponent?: BuiltInProviderConfig["buttonComponent"];
 };
 export declare type BuiltInProviderConfig = {
     buttonComponent?:

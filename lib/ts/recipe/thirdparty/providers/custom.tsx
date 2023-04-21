@@ -23,14 +23,11 @@ import Provider from ".";
  * Class.
  */
 export default class Custom extends Provider {
-    buttonComponent?: CustomProviderConfig["buttonComponent"];
-
     /*
      * Constructor.
      */
     constructor(config: CustomProviderConfig) {
         super(config);
-        this.buttonComponent = config.buttonComponent;
     }
 
     getLogo = (): undefined => {
