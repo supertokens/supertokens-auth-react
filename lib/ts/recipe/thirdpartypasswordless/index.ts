@@ -16,7 +16,19 @@ import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordles
 
 import { getNormalisedUserContext } from "../../utils";
 import * as PasswordlessUtilFunctions from "../passwordless/utils";
-import { Apple, Google, Facebook, Github, Gitlab, Bitbucket, Discord } from "../thirdparty/";
+import {
+    Apple,
+    Google,
+    Facebook,
+    Github,
+    Gitlab,
+    Bitbucket,
+    Discord,
+    LinkedIn,
+    ActiveDirectory,
+    BoxySAML,
+    Okta,
+} from "../thirdparty/";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
@@ -338,6 +350,10 @@ export default class Wrapper {
     static Gitlab = Gitlab;
     static Google = Google;
     static Facebook = Facebook;
+    static LinkedIn = LinkedIn;
+    static ActiveDirectory = ActiveDirectory;
+    static BoxySAML = BoxySAML;
+    static Okta = Okta;
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
@@ -376,6 +392,10 @@ export {
     Gitlab,
     Google,
     Facebook,
+    LinkedIn,
+    ActiveDirectory,
+    BoxySAML,
+    Okta,
     redirectToThirdPartyLogin,
     getAuthorisationURLFromBackend,
     thirdPartySignInAndUp,

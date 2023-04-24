@@ -18,7 +18,7 @@ import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import SuperTokens from "../../../superTokens";
 import ProviderButton from "../components/library/providerButton";
 
-import type { ProviderConfig } from "./types";
+import type { BuiltInProviderConfig, ProviderConfig } from "./types";
 
 /*
  * Imports.
@@ -35,7 +35,7 @@ export default abstract class Provider {
     name: string;
     getRedirectURL: () => string;
     clientId?: string;
-
+    buttonComponent?: BuiltInProviderConfig["buttonComponent"];
     /*
      * Constructor.
      */
@@ -44,6 +44,7 @@ export default abstract class Provider {
         this.id = config.id;
         this.name = config.name;
         this.clientId = config.clientId;
+        this.buttonComponent = config.buttonComponent;
         this.getRedirectURL =
             config.getRedirectURL !== undefined ? config.getRedirectURL : () => this.defaultGetRedirectURL();
     }
@@ -66,7 +67,21 @@ export default abstract class Provider {
         return `${domain}${path}`;
     }
 
-    abstract getButton(): JSX.Element;
+    getRedirectURIOnProviderDashboard(): string | undefined {
+        return undefined;
+    }
+
+    getButton = (): JSX.Element => {
+        if (this.buttonComponent !== undefined) {
+            if (typeof this.buttonComponent === "function") {
+                return <this.buttonComponent name={this.name} />;
+            }
+            return this.buttonComponent;
+        }
+
+        return this.getDefaultButton();
+    };
+
     abstract getLogo(): JSX.Element | undefined;
 
     /*

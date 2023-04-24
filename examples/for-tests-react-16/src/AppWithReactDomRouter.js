@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/prebuiltui";
 import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import {

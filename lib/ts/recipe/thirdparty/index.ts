@@ -23,13 +23,17 @@ import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/
 import { getNormalisedUserContext } from "../../utils";
 
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
+import ActiveDirectory from "./providers/activeDirectory";
 import Apple from "./providers/apple";
 import Bitbucket from "./providers/bitbucket";
+import BoxySAML from "./providers/boxySaml";
 import Discord from "./providers/discord";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
 import Gitlab from "./providers/gitlab";
 import Google from "./providers/google";
+import LinkedIn from "./providers/linkedIn";
+import Okta from "./providers/okta";
 import ThirdParty from "./recipe";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./utils";
@@ -180,6 +184,10 @@ export default class Wrapper {
     static Gitlab = Gitlab;
     static Google = Google;
     static Facebook = Facebook;
+    static LinkedIn = LinkedIn;
+    static ActiveDirectory = ActiveDirectory;
+    static BoxySAML = BoxySAML;
+    static Okta = Okta;
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
@@ -207,6 +215,10 @@ export {
     Gitlab,
     Google,
     Facebook,
+    LinkedIn,
+    ActiveDirectory,
+    BoxySAML,
+    Okta,
     getStateAndOtherInfoFromStorage,
     setStateAndOtherInfoToStorage,
     getAuthorisationURLWithQueryParamsAndSetState,

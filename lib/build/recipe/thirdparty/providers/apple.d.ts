@@ -3,10 +3,9 @@ import type { BuiltInProviderConfig } from "./types";
 import Provider from ".";
 export default class Apple extends Provider {
     private static instance?;
-    buttonComponent?: JSX.Element;
     constructor(config?: BuiltInProviderConfig);
-    getButton: () => JSX.Element;
     getLogo: () => JSX.Element;
+    getRedirectURIOnProviderDashboard(): string | undefined;
     static init(config?: BuiltInProviderConfig): Provider;
     static reset(): void;
 }

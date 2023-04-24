@@ -7,7 +7,7 @@ import {
     SignInAndUp as TPSignInAndUp,
     ThirdPartySignInAndUpCallback,
 } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
-import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/prebuiltui";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";

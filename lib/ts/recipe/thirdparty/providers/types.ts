@@ -12,6 +12,8 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+import type { FC } from "react";
+
 export type ProviderConfig = {
     /*
      * Provider Id
@@ -25,13 +27,14 @@ export type ProviderConfig = {
 
     clientId?: string; // optional clientId to be sent during signinup
     getRedirectURL?: () => string;
+    buttonComponent?: BuiltInProviderConfig["buttonComponent"];
 };
 
 export type BuiltInProviderConfig = {
     /*
      * Button Component
      */
-    buttonComponent?: JSX.Element;
+    buttonComponent?: FC<{ name: string }> | { new (props: { name: string }): React.Component<any, any> };
 
     clientId?: string; // optional clientId to be sent during signinup API
 
@@ -58,7 +61,7 @@ export type CustomProviderConfig = {
     /*
      * Button Component
      */
-    buttonComponent?: JSX.Element;
+    buttonComponent?: FC<{ name: string }> | { new (props: { name: string }): React.Component<any, any> };
 
     /*
      * Where to redirect the user during the callback.

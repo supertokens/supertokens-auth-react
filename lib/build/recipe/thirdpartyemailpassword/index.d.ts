@@ -4,7 +4,19 @@ import {
     EmailPasswordUserType as UserType,
     ThirdPartyUserType,
 } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import { Apple, Google, Facebook, Github, Gitlab, Bitbucket, Discord } from "../thirdparty/";
+import {
+    Apple,
+    Google,
+    Facebook,
+    Github,
+    Gitlab,
+    Bitbucket,
+    Discord,
+    LinkedIn,
+    ActiveDirectory,
+    BoxySAML,
+    Okta,
+} from "../thirdparty/";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
@@ -168,6 +180,10 @@ export default class Wrapper {
     static Gitlab: typeof Gitlab;
     static Google: typeof Google;
     static Facebook: typeof Facebook;
+    static LinkedIn: typeof LinkedIn;
+    static ActiveDirectory: typeof ActiveDirectory;
+    static BoxySAML: typeof BoxySAML;
+    static Okta: typeof Okta;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
@@ -207,6 +223,10 @@ export {
     Gitlab,
     Google,
     Facebook,
+    LinkedIn,
+    ActiveDirectory,
+    BoxySAML,
+    Okta,
     ThirdpartyEmailPasswordComponentsOverrideProvider,
     signOut,
     submitNewPassword,
