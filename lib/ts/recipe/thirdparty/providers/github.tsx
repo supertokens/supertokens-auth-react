@@ -17,7 +17,7 @@
  */
 import { isTest } from "../../../utils";
 
-import type { BuiltInProviderConfig, CustomProviderConfig } from "./types";
+import type { BuiltInProviderConfig } from "./types";
 
 import Provider from ".";
 
@@ -30,8 +30,6 @@ export default class Github extends Provider {
      */
     private static instance?: Github;
 
-    buttonComponent?: CustomProviderConfig["buttonComponent"];
-
     /*
      * Constructor.
      */
@@ -39,27 +37,9 @@ export default class Github extends Provider {
         super({
             id: "github",
             name: "GitHub",
-            clientId: config?.clientId,
-            getFrontendRedirectURI: config?.getFrontendRedirectURI,
+            ...config,
         });
-
-        if (config === undefined) {
-            return;
-        }
-
-        this.buttonComponent = config.buttonComponent;
     }
-
-    getButton = (): JSX.Element => {
-        if (this.buttonComponent !== undefined) {
-            if (typeof this.buttonComponent === "function") {
-                return <this.buttonComponent name={this.name} />;
-            }
-            return this.buttonComponent;
-        }
-
-        return this.getDefaultButton();
-    };
 
     getLogo = (): JSX.Element => {
         return (

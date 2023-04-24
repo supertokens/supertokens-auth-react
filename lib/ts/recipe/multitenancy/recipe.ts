@@ -61,18 +61,7 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
             emailpassword: emailPassword,
             thirdparty: {
                 ...thirdParty,
-                enabled: true,
-                providers: [
-                    {
-                        id: "google",
-                        name: "Im Google",
-                    },
-                    {
-                        id: "google-1",
-                        name: "Im another Google",
-                    },
-                ],
-                // enabled: thirdParty.enabled && thirdParty.providers !== null,
+                enabled: thirdParty.enabled && thirdParty.providers !== null,
             },
         };
         return Multitenancy.dynamicLoginMethods;

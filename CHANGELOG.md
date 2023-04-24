@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
--   Added thirdparty login with popup window example
 -   Added Active Directory, Okta, Linked In, Boxy SAML providers
 -   Added name prop to buttomComponent
+-   Added thirdparty login with popup window example
 
 ### Changes
 
