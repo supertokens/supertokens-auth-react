@@ -23,11 +23,6 @@ export default class Wrapper {
         return Multitenancy.init(config);
     }
 
-    // static async signOut(input?: { userContext?: any }): Promise<void> {
-    //     return Multitenancy.getInstanceOrThrow().signOut({
-    //         userContext: getNormalisedUserContext(input?.userContext),
-    //     });
-    // }
 }
 
 const init = Wrapper.init;
