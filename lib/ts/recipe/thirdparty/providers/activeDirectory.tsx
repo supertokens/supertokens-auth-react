@@ -37,15 +37,8 @@ export default class ActiveDirectory extends Provider {
         super({
             id: "activeDirectory",
             name: "Active Directory",
-            clientId: config?.clientId,
-            getFrontendRedirectURI: config?.getFrontendRedirectURI,
+            ...config,
         });
-
-        if (config === undefined) {
-            return;
-        }
-
-        this.buttonComponent = config.buttonComponent;
     }
 
     getLogo = (): JSX.Element => {

@@ -463,7 +463,7 @@ export function popInvalidClaimRedirectPathFromContext(userContext: any) {
     return res;
 }
 
-export function getHasRecipesIntersection(
+export function hasIntersectingRecipes(
     tenantMethods: GetLoginMethodsResponseNormalized,
     recipeList: RecipeModule<any, any, any, any>[]
 ): boolean {

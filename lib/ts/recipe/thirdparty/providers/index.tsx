@@ -56,7 +56,7 @@ export default abstract class Provider {
 
     getDefaultButton(name?: string): JSX.Element {
         const providerName = name !== undefined ? name : this.name;
-        return <ProviderButton logo={this.getLogo()} providerName={providerName} displayName={this.name} />;
+        return <ProviderButton logo={this.getLogo()} providerName={providerName} displayName={providerName} />;
     }
 
     defaultGetFrontendRedirectURI(): string {
@@ -72,23 +72,15 @@ export default abstract class Provider {
         return undefined;
     }
 
-    setId(id: string): void {
-        this.id = id;
-    }
-
-    setName(name: string): void {
-        this.name = name;
-    }
-
-    getButton = (): JSX.Element => {
+    getButton = (name?: string): JSX.Element => {
         if (this.buttonComponent !== undefined) {
             if (typeof this.buttonComponent === "function") {
-                return <this.buttonComponent name={this.name} />;
+                return <this.buttonComponent name={name ?? this.name} />;
             }
             return this.buttonComponent;
         }
 
-        return this.getDefaultButton();
+        return this.getDefaultButton(name);
     };
 
     abstract getLogo(): JSX.Element | undefined;

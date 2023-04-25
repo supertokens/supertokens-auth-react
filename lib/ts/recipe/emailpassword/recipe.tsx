@@ -79,9 +79,7 @@ export default class EmailPassword extends AuthRecipe<
         return {
             recipeID: EmailPassword.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo,
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                _: boolean
+                appInfo: NormalisedAppInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,

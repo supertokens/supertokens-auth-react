@@ -4,6 +4,9 @@ export declare type ProviderConfig = {
     name: string;
     clientId?: string;
     getFrontendRedirectURI?: () => string;
+    buttonComponent?: BuiltInProviderConfig["buttonComponent"];
+};
+export declare type BuiltInProviderConfig = {
     buttonComponent?:
         | FC<{
               name: string;
@@ -11,9 +14,6 @@ export declare type ProviderConfig = {
         | {
               new (props: { name: string }): React.Component<any, any>;
           };
-};
-export declare type BuiltInProviderConfig = {
-    buttonComponent?: ProviderConfig["buttonComponent"];
     clientId?: string;
     getFrontendRedirectURI?: () => string;
 };
@@ -21,6 +21,12 @@ export declare type CustomProviderConfig = {
     id: string;
     name: string;
     clientId?: string;
-    buttonComponent?: ProviderConfig["buttonComponent"];
+    buttonComponent?:
+        | FC<{
+              name: string;
+          }>
+        | {
+              new (props: { name: string }): React.Component<any, any>;
+          };
     getRedirectURL?: () => string;
 };

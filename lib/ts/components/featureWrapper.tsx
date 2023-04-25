@@ -23,6 +23,7 @@ import { createPortal } from "react-dom";
 import { ST_ROOT_ID } from "../constants";
 import SuperTokens from "../superTokens";
 import { TranslationContextProvider } from "../translation/translationContext";
+import UI from "../ui";
 import { mergeObjects } from "../utils";
 
 import ErrorBoundary from "./errorBoundary";
@@ -51,7 +52,8 @@ export default function FeatureWrapper({
         () => SuperTokens.uiController.off("LoginMethodsLoaded", handler);
     }, []);
 
-    if (loadedDynamicLoginMethods === false) {
+    const usesReactRouterDOM = UI.getReactRouterDomWithCustomHistory() !== undefined;
+    if (loadedDynamicLoginMethods === false && usesReactRouterDOM === false) {
         return null;
     }
     return (

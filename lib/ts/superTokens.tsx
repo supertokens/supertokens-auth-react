@@ -23,7 +23,6 @@ import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
 import { SSR_ERROR } from "./constants";
 import Multitenancy from "./recipe/multitenancy/recipe";
-import ThirdParty from "./recipe/thirdparty/recipe";
 import { saveCurrentLanguage, TranslationController } from "./translation/translationHelpers";
 import { UIController } from "./ui/uiController";
 import {
@@ -31,7 +30,7 @@ import {
     appendTrailingSlashToURL,
     getCurrentNormalisedUrlPath,
     getDefaultCookieScope,
-    getHasRecipesIntersection,
+    hasIntersectingRecipes,
     getOriginOfPage,
     isTest,
     normaliseCookieScopeOrThrowError,
@@ -61,7 +60,6 @@ export default class SuperTokens {
      * Instance Attributes.
      */
     appInfo: NormalisedAppInfo;
-    usesDynamicLoginMethods = false;
     languageTranslations: {
         defaultLanguage: string;
         userTranslationStore: TranslationStore;
@@ -76,9 +74,6 @@ export default class SuperTokens {
      */
     constructor(config: SuperTokensConfig) {
         this.appInfo = normaliseInputAppInfoOrThrowError(config.appInfo);
-        this.usesDynamicLoginMethods =
-            config.usesDynamicLoginMethods === undefined ? false : config.usesDynamicLoginMethods;
-
         if (config.recipeList === undefined || config.recipeList.length === 0) {
             throw new Error(
                 "Please provide at least one recipe to the supertokens.init function call. See https://supertokens.io/docs/emailpassword/quick-setup/frontend"
@@ -108,10 +103,31 @@ export default class SuperTokens {
         });
     }
 
+    private async initMultitenancyWithDynamicLoginMethods(config: SuperTokensConfig) {
+        const multitenancyRecipe =
+            config.recipeList.find(({ recipeID }) => recipeID === Multitenancy.RECIPE_ID) ?? Multitenancy.init({});
+        const appInfo = normaliseInputAppInfoOrThrowError(config.appInfo);
+        const enableDebugLogs = config.enableDebugLogs === true;
+
+        // initialize auth-react and web-js multitenancy recipes
+        const multitenancyInstance = multitenancyRecipe.authReact(appInfo, enableDebugLogs) as Multitenancy;
+        multitenancyRecipe.webJS(appInfo, config.clientType, enableDebugLogs);
+
+        const tenantID = multitenancyInstance.config.getTenantID?.();
+        const tenantMethods = await Multitenancy.getDynamicLoginMethods({ tenantId: tenantID });
+        const hasIntersection = hasIntersectingRecipes(tenantMethods, SuperTokens.getInstanceOrThrow().recipeList);
+
+        if (hasIntersection === false) {
+            throw new Error("Initialized recipes have no overlap with core recipes");
+        }
+
+        SuperTokens.uiController.emit("LoginMethodsLoaded");
+    }
+
     /*
      * Static Methods.
      */
-    static async init(config: SuperTokensConfig): Promise<void> {
+    static init(config: SuperTokensConfig): void {
         CookieHandlerReference.init(config.cookieHandler);
         WindowHandlerReference.init(config.windowHandler);
 
@@ -119,10 +135,6 @@ export default class SuperTokens {
             console.warn("SuperTokens was already initialized");
             return;
         }
-        const multitenancyRecipe =
-            config.recipeList.find(({ recipeID }) => recipeID === Multitenancy.RECIPE_ID) ?? Multitenancy.init({});
-
-        SuperTokens.usesDynamicLoginMethods = config.usesDynamicLoginMethods === true;
 
         SuperTokensWebJS.init({
             ...config,
@@ -130,30 +142,9 @@ export default class SuperTokens {
         });
 
         SuperTokens.instance = new SuperTokens(config);
-
-        if (SuperTokens.usesDynamicLoginMethods) {
-            const appInfo = normaliseInputAppInfoOrThrowError(config.appInfo);
-            const enableDebugLogs = config.enableDebugLogs === true;
-
-            // initialize auth-react and web-js multitenancy recipes
-            const multitenancyInstance = multitenancyRecipe.authReact(appInfo, enableDebugLogs) as Multitenancy;
-            multitenancyRecipe.webJS(appInfo, config.clientType, enableDebugLogs);
-
-            const tenantID = multitenancyInstance.config.getTenantID();
-            const tenantMethods = await Multitenancy.getDynamicLoginMethods({ tenantId: tenantID });
-            const hasIntersection = getHasRecipesIntersection(
-                tenantMethods,
-                SuperTokens.getInstanceOrThrow().recipeList
-            );
-
-            if (hasIntersection === false) {
-                throw new Error("Initialized recipes have no overlap with core recipes");
-            }
-            if (tenantMethods.thirdparty.enabled === true) {
-                ThirdParty.tenantProviders = tenantMethods.thirdparty.providers;
-            }
-
-            SuperTokens.uiController.emit("LoginMethodsLoaded");
+        SuperTokens.usesDynamicLoginMethods = config.usesDynamicLoginMethods ?? false;
+        if (config.usesDynamicLoginMethods === true) {
+            void SuperTokens.instance.initMultitenancyWithDynamicLoginMethods(config);
         }
 
         PostSuperTokensInitCallbacks.runPostInitCallbacks();

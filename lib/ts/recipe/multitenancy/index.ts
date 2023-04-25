@@ -22,7 +22,6 @@ export default class Wrapper {
     static init(config: UserInput) {
         return Multitenancy.init(config);
     }
-
 }
 
 const init = Wrapper.init;

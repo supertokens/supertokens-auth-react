@@ -27,14 +27,14 @@ export type ProviderConfig = {
 
     clientId?: string; // optional clientId to be sent during signinup
     getFrontendRedirectURI?: () => string;
-    buttonComponent?: FC<{ name: string }> | { new (props: { name: string }): React.Component<any, any> };
+    buttonComponent?: BuiltInProviderConfig["buttonComponent"];
 };
 
 export type BuiltInProviderConfig = {
     /*
      * Button Component
      */
-    buttonComponent?: ProviderConfig["buttonComponent"];
+    buttonComponent?: FC<{ name: string }> | { new (props: { name: string }): React.Component<any, any> };
 
     clientId?: string; // optional clientId to be sent during signinup API
 
@@ -61,7 +61,7 @@ export type CustomProviderConfig = {
     /*
      * Button Component
      */
-    buttonComponent?: ProviderConfig["buttonComponent"];
+    buttonComponent?: FC<{ name: string }> | { new (props: { name: string }): React.Component<any, any> };
 
     /*
      * Where to redirect the user during the callback.

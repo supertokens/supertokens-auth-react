@@ -11,7 +11,7 @@ export type UserInput = {
             builder: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
     };
-    getTenantID?: (input?: { userContext: any }) => Promise<string>;
+    getTenantID?: (input?: { userContext: any }) => Promise<string> | string;
 } & RecipeModuleUserInput<any, PreAndPostAPIHookAction, any>;
 
 export type NormalisedConfig = UserInput & {

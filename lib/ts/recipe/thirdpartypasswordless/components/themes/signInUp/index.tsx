@@ -47,9 +47,11 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
     const t = useTranslation();
 
     const thirdPartyEnabled =
-        SuperTokens.usesDynamicLoginMethods === false || Multitenancy.dynamicLoginMethods?.thirdparty.enabled;
+        (props.thirdPartyRecipe !== undefined && SuperTokens.usesDynamicLoginMethods === false) ||
+        Multitenancy.dynamicLoginMethods?.thirdparty.enabled;
     const passwordlessEnabled =
-        SuperTokens.usesDynamicLoginMethods === false || Multitenancy.dynamicLoginMethods?.passwordless.enabled;
+        (props.passwordlessRecipe !== undefined && SuperTokens.usesDynamicLoginMethods === false) ||
+        Multitenancy.dynamicLoginMethods?.passwordless.enabled;
 
     if (props.activeScreen === SignInUpScreens.CloseTab) {
         return <CloseTabScreen {...props.pwlessChildProps} />;
@@ -85,8 +87,7 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
                                     dispatch={props.tpDispatch}
                                 />
                             )}
-                        {props.thirdPartyRecipe !== undefined &&
-                            props.passwordlessRecipe !== undefined &&
+                        {thirdPartyEnabled &&
                             passwordlessEnabled &&
                             props.activeScreen !== SignInUpScreens.UserInputCodeForm && (
                                 <div data-supertokens="thirdPartyPasswordlessDivider">

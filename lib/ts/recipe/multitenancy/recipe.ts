@@ -20,7 +20,6 @@
 import MultitenancyWebJS from "supertokens-web-js/recipe/multitenancy";
 
 import { SSR_ERROR } from "../../constants";
-// import SuperTokens from "../../superTokens";
 import { isTest } from "../../utils";
 import RecipeModule from "../recipeModule";
 
@@ -36,7 +35,6 @@ import type { NormalisedAppInfo } from "../../types";
 export default class Multitenancy extends RecipeModule<any, any, any, any> {
     static instance?: Multitenancy;
     static RECIPE_ID = "multitenancy";
-    static tenantID?: string;
     static dynamicLoginMethods?: GetLoginMethodsResponseNormalized;
 
     public recipeID = Multitenancy.RECIPE_ID;
@@ -71,11 +69,7 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
         const normalisedConfig = normaliseMultitenancyConfig(config);
         return {
             recipeID: Multitenancy.RECIPE_ID,
-            authReact: (
-                appInfo: NormalisedAppInfo,
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                _: boolean
-            ): RecipeModule<any, any, any, any> => {
+            authReact: (appInfo: NormalisedAppInfo): RecipeModule<any, any, any, any> => {
                 Multitenancy.instance = new Multitenancy({
                     ...normalisedConfig,
                     appInfo,

@@ -9,7 +9,6 @@ export default class SuperTokens {
     static usesDynamicLoginMethods: boolean;
     static uiController: UIController;
     appInfo: NormalisedAppInfo;
-    usesDynamicLoginMethods: boolean;
     languageTranslations: {
         defaultLanguage: string;
         userTranslationStore: TranslationStore;
@@ -20,7 +19,8 @@ export default class SuperTokens {
     recipeList: RecipeModule<any, any, any, any>[];
     private userGetRedirectionURL;
     constructor(config: SuperTokensConfig);
-    static init(config: SuperTokensConfig): Promise<void>;
+    private initMultitenancyWithDynamicLoginMethods;
+    static init(config: SuperTokensConfig): void;
     static getInstanceOrThrow(): SuperTokens;
     getRecipeOrThrow<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>>(
         recipeId: string

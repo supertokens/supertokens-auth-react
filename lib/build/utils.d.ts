@@ -54,7 +54,7 @@ export declare const useOnMountAPICall: <T>(
     startLoading?: boolean
 ) => void;
 export declare function popInvalidClaimRedirectPathFromContext(userContext: any): any;
-export declare function getHasRecipesIntersection(
+export declare function hasIntersectingRecipes(
     tenantMethods: GetLoginMethodsResponseNormalized,
     recipeList: RecipeModule<any, any, any, any>[]
 ): boolean;

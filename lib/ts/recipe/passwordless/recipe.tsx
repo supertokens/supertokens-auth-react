@@ -70,9 +70,7 @@ export default class Passwordless extends AuthRecipe<
         return {
             recipeID: Passwordless.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo,
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                _: boolean
+                appInfo: NormalisedAppInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
