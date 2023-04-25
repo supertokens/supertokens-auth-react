@@ -21,9 +21,7 @@ import { useMemo } from "react";
 
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import SuperTokens from "../../../../../superTokens";
 import { getQueryParams } from "../../../../../utils";
-import Multitenancy from "../../../../multitenancy/recipe";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 
@@ -85,45 +83,12 @@ export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChi
         if (!recipe || !recipeImplementation) {
             return undefined;
         }
-        const childProps = {
+
+        return {
+            providers: recipe.config.signInAndUpFeature.providers,
             recipeImplementation,
             config: recipe.config,
             recipe,
-        };
-        const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods === true;
-        if (usesDynamicLoginMethods === false) {
-            return {
-                ...childProps,
-                providers: recipe.config.signInAndUpFeature.providers.map((provider) => ({
-                    id: provider.id,
-                    buttonComponent: provider.getButton(),
-                })),
-            };
-        }
-        const tenantProviders = Multitenancy.dynamicLoginMethods?.thirdparty.providers || [];
-        const providers: { id: string; buttonComponent: JSX.Element }[] = [];
-
-        for (const tenantProvider of tenantProviders) {
-            let provider = recipe.config.signInAndUpFeature.providers.find((provider) => {
-                const { id } = tenantProvider;
-                return provider.id === id || provider.id.includes(id);
-            });
-            if (provider === undefined) {
-                provider = recipe.config.signInAndUpFeature.providers.find((provider) => {
-                    const { id } = tenantProvider;
-                    return id.startsWith(provider.id);
-                });
-            }
-            if (provider !== undefined) {
-                providers.push({
-                    id: tenantProvider.id,
-                    buttonComponent: provider.getButton(tenantProvider.name),
-                });
-            }
-        }
-        return {
-            ...childProps,
-            providers,
         };
     }, [recipe]);
 }

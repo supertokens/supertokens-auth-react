@@ -133,7 +133,7 @@ export type SignInAndUpThemeProps = {
         error: string | undefined;
     };
     dispatch: (action: ThirdPartySignInUpActions) => void;
-    providers: { id: string; buttonComponent: JSX.Element }[];
+    providers: Provider[];
     recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;
     config: NormalisedConfig;
 };

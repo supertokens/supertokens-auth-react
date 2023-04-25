@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import type { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
 import type { SignInAndUpHeader } from "./components/themes/signInAndUp/signInAndUpHeader";
 import type { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
@@ -81,10 +80,7 @@ export declare type SignInAndUpThemeProps = {
         error: string | undefined;
     };
     dispatch: (action: ThirdPartySignInUpActions) => void;
-    providers: {
-        id: string;
-        buttonComponent: JSX.Element;
-    }[];
+    providers: Provider[];
     recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;
     config: NormalisedConfig;
 };
