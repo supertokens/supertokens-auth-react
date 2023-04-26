@@ -10,6 +10,7 @@ import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
+import Multitenancy from "supertokens-auth-react/recipe/multitenancy";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 import UserRoles from "supertokens-auth-react/recipe/userroles";
@@ -113,6 +114,8 @@ const themeQueryParams = getQueryParams("theme");
 if (themeQueryParams !== null) {
     window.localStorage.setItem("useTheme", themeQueryParams);
 }
+
+const multitenancyEnabled = getQueryParams("multitenancy") === "enabled";
 
 const theme = getTheme();
 
@@ -228,6 +231,7 @@ let recipeList = [
             console.log(`ST_LOGS SESSION ON_HANDLE_EVENT ${ctx.action}`);
         },
     }),
+    Multitenancy.init({}),
 ];
 
 const testContext = {
@@ -259,6 +263,7 @@ SuperTokens.init({
         apiDomain: getApiDomain(),
         websiteBasePath,
     },
+    usesDynamicLoginMethods: multitenancyEnabled,
     languageTranslations: {
         translations: {
             en: {

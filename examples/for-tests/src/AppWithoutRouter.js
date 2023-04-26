@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BaseComponent, Home } from "./App";
-import { getRoutingComponent, canHandleRoute } from "supertokens-auth-react/prebuiltui";
+import { getRoutingComponent, canHandleRoute } from "supertokens-auth-react/ui";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";

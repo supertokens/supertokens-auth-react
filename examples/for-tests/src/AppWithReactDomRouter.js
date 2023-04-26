@@ -7,7 +7,7 @@ import {
     SignInAndUp as TPSignInAndUp,
     ThirdPartySignInAndUpCallback,
 } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
-import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/prebuiltui";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
@@ -29,7 +29,7 @@ function AppWithReactDomRouter(props) {
         claimValidators !== undefined ? claimValidators.map((a) => a.id).join("_") : undefined;
     const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
     const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
-
+    console.log(window.localStorage.getItem("authRecipe"));
     let recipePreBuiltUIList = [EmailPasswordPreBuiltUI];
     if (authRecipe === "thirdparty") {
         recipePreBuiltUIList = [ThirdPartyPreBuiltUI];
