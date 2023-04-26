@@ -19,7 +19,6 @@ export default class SuperTokens {
     recipeList: RecipeModule<any, any, any, any>[];
     private userGetRedirectionURL;
     constructor(config: SuperTokensConfig);
-    private initMultitenancyWithDynamicLoginMethods;
     static init(config: SuperTokensConfig): void;
     static getInstanceOrThrow(): SuperTokens;
     getRecipeOrThrow<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>>(

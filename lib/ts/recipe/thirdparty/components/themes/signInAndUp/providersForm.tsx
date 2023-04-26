@@ -74,7 +74,7 @@ export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps>
                 buttonComponent: provider.getButton(),
             }));
         }
-        const tenantProviders = Multitenancy.dynamicLoginMethods?.thirdparty.providers || [];
+        const tenantProviders = Multitenancy.getInstanceOrThrow().dynamicLoginMethods?.thirdparty.providers || [];
         const providers: { id: string; buttonComponent: JSX.Element }[] = [];
 
         for (const tenantProvider of tenantProviders) {

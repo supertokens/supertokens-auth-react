@@ -5,13 +5,14 @@ import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRec
 export default class Multitenancy extends RecipeModule<any, any, any, any> {
     readonly webJSRecipe: WebJSRecipeInterface<typeof MultitenancyWebJS>;
     static instance?: Multitenancy;
-    static RECIPE_ID: string;
-    static dynamicLoginMethods?: GetLoginMethodsResponseNormalized;
-    recipeID: string;
+    static readonly RECIPE_ID = "multitenancy";
+    dynamicLoginMethods?: GetLoginMethodsResponseNormalized;
+    readonly recipeID = "multitenancy";
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         webJSRecipe?: WebJSRecipeInterface<typeof MultitenancyWebJS>
     );
+    initMultitenancyWithDynamicLoginMethods(): Promise<void>;
     static getDynamicLoginMethods(
         ...options: Parameters<typeof MultitenancyWebJS.getLoginMethods>
     ): Promise<GetLoginMethodsResponseNormalized>;

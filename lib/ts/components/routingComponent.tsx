@@ -31,11 +31,11 @@ export function RoutingComponent(props: {
         const handler = () => {
             if (enabled === false && componentToRender?.recipeID) {
                 let enabled =
-                    Multitenancy.dynamicLoginMethods?.[
+                    Multitenancy.getInstanceOrThrow().dynamicLoginMethods?.[
                         componentToRender?.recipeID as keyof GetLoginMethodsResponseNormalized
                     ] !== undefined;
                 if (enabled === false) {
-                    for (const id in Multitenancy.dynamicLoginMethods) {
+                    for (const id in Multitenancy.getInstanceOrThrow().dynamicLoginMethods) {
                         if (componentToRender.recipeID.includes(id)) {
                             enabled = true;
                             break;
