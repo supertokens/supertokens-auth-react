@@ -40,11 +40,16 @@ const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> =
     const t = useTranslation();
     const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods;
     const thirdPartyEnabled =
-        (props.config.disableEmailPassword !== true && usesDynamicLoginMethods === false) ||
+        (props.config.disableEmailPassword === false && usesDynamicLoginMethods === false) ||
         Multitenancy.getInstanceOrThrow().dynamicLoginMethods?.thirdparty.enabled;
     const emailPasswordEnabled =
         (props.thirdPartyRecipe !== undefined && usesDynamicLoginMethods === false) ||
         Multitenancy.getInstanceOrThrow().dynamicLoginMethods?.emailpassword.enabled;
+
+    if (thirdPartyEnabled === false && emailPasswordEnabled === false) {
+        return null;
+    }
+
     return (
         <div data-supertokens="container">
             <div data-supertokens="row">
