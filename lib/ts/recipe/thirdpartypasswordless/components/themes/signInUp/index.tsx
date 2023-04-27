@@ -48,10 +48,10 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
 
     const thirdPartyEnabled =
         (props.thirdPartyRecipe !== undefined && SuperTokens.usesDynamicLoginMethods === false) ||
-        Multitenancy.dynamicLoginMethods?.thirdparty.enabled;
+        Multitenancy.getInstanceOrThrow().dynamicLoginMethods?.thirdparty.enabled;
     const passwordlessEnabled =
         (props.passwordlessRecipe !== undefined && SuperTokens.usesDynamicLoginMethods === false) ||
-        Multitenancy.dynamicLoginMethods?.passwordless.enabled;
+        Multitenancy.getInstanceOrThrow().dynamicLoginMethods?.passwordless.enabled;
 
     if (props.activeScreen === SignInUpScreens.CloseTab) {
         return <CloseTabScreen {...props.pwlessChildProps} />;

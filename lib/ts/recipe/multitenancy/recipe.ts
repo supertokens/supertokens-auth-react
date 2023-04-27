@@ -20,7 +20,8 @@
 import MultitenancyWebJS from "supertokens-web-js/recipe/multitenancy";
 
 import { SSR_ERROR } from "../../constants";
-import { isTest } from "../../utils";
+import SuperTokens from "../../superTokens";
+import { hasIntersectingRecipes, isTest } from "../../utils";
 import RecipeModule from "../recipeModule";
 
 import { normaliseMultitenancyConfig } from "./utils";
@@ -34,10 +35,10 @@ import type { NormalisedAppInfo } from "../../types";
  */
 export default class Multitenancy extends RecipeModule<any, any, any, any> {
     static instance?: Multitenancy;
-    static RECIPE_ID = "multitenancy";
-    static dynamicLoginMethods?: GetLoginMethodsResponseNormalized;
+    static readonly RECIPE_ID = "multitenancy";
 
-    public recipeID = Multitenancy.RECIPE_ID;
+    public dynamicLoginMethods?: GetLoginMethodsResponseNormalized;
+    public readonly recipeID = Multitenancy.RECIPE_ID;
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
@@ -46,15 +47,29 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
         super(config);
     }
 
+    public async initMultitenancyWithDynamicLoginMethods(): Promise<void> {
+        const tenantID = Multitenancy.getInstanceOrThrow().config.getTenantID();
+
+        const tenantMethods = await Multitenancy.getDynamicLoginMethods({ tenantId: tenantID });
+        const hasIntersection = hasIntersectingRecipes(tenantMethods, SuperTokens.getInstanceOrThrow().recipeList);
+
+        if (hasIntersection === false) {
+            throw new Error("Initialized recipes have no overlap with core recipes");
+        }
+
+        SuperTokens.uiController.emit("LoginMethodsLoaded");
+    }
+
     static async getDynamicLoginMethods(
         ...options: Parameters<typeof MultitenancyWebJS.getLoginMethods>
     ): Promise<GetLoginMethodsResponseNormalized> {
-        if (Multitenancy.dynamicLoginMethods !== undefined) {
-            return Multitenancy.dynamicLoginMethods;
+        const instance = Multitenancy.getInstanceOrThrow();
+        if (instance.dynamicLoginMethods !== undefined) {
+            return instance.dynamicLoginMethods;
         }
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { emailPassword, passwordless, thirdParty } = await MultitenancyWebJS.getLoginMethods(...options);
-        Multitenancy.dynamicLoginMethods = {
+        instance.dynamicLoginMethods = {
             passwordless,
             emailpassword: emailPassword,
             thirdparty: {
@@ -62,7 +77,7 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
                 enabled: thirdParty.enabled && thirdParty.providers !== null,
             },
         };
-        return Multitenancy.dynamicLoginMethods;
+        return instance.dynamicLoginMethods;
     }
 
     static init(config: UserInput): RecipeInitResult<any, any, any, any> {
