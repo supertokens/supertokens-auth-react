@@ -21,6 +21,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { ST_ROOT_ID } from "../constants";
+import Multitenancy from "../recipe/multitenancy/recipe";
 import SuperTokens from "../superTokens";
 import { TranslationContextProvider } from "../translation/translationContext";
 import UI from "../ui";
@@ -42,7 +43,8 @@ export default function FeatureWrapper({
     defaultStore,
 }: PropsWithChildren<FeatureWrapperProps>): JSX.Element | null {
     const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState(
-        SuperTokens.usesDynamicLoginMethods === false
+        SuperTokens.usesDynamicLoginMethods === false &&
+            Multitenancy.getInstanceOrThrow().dynamicLoginMethods === undefined
     );
     const st = SuperTokens.getInstanceOrThrow();
     useEffect(() => {
