@@ -476,6 +476,9 @@ export function hasIntersectingRecipes(
             }
             return false;
         });
+        if (hasIntersection === true) {
+            break;
+        }
     }
     return hasIntersection;
 }

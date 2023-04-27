@@ -24,7 +24,6 @@ import { ST_ROOT_ID } from "../constants";
 import Multitenancy from "../recipe/multitenancy/recipe";
 import SuperTokens from "../superTokens";
 import { TranslationContextProvider } from "../translation/translationContext";
-import UI from "../ui";
 import { mergeObjects } from "../utils";
 
 import ErrorBoundary from "./errorBoundary";
@@ -43,8 +42,8 @@ export default function FeatureWrapper({
     defaultStore,
 }: PropsWithChildren<FeatureWrapperProps>): JSX.Element | null {
     const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState(
-        SuperTokens.usesDynamicLoginMethods === false &&
-            Multitenancy.getInstanceOrThrow().dynamicLoginMethods === undefined
+        SuperTokens.usesDynamicLoginMethods === false ||
+            Multitenancy.getInstanceOrThrow().dynamicLoginMethods !== undefined
     );
     const st = SuperTokens.getInstanceOrThrow();
     useEffect(() => {
@@ -54,8 +53,7 @@ export default function FeatureWrapper({
         () => SuperTokens.uiController.off("LoginMethodsLoaded", handler);
     }, []);
 
-    const usesReactRouterDOM = UI.getReactRouterDomWithCustomHistory() !== undefined;
-    if (loadedDynamicLoginMethods === false && usesReactRouterDOM === false) {
+    if (loadedDynamicLoginMethods === false) {
         return null;
     }
     return (
