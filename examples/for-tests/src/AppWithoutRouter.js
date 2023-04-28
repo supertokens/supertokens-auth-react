@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BaseComponent, Home } from "./App";
+import { BaseComponent, Home, getQueryParams } from "./App";
 import { getRoutingComponent, canHandleRoute } from "supertokens-auth-react/ui";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
@@ -18,7 +18,7 @@ function AppWithoutRouter() {
         </div>
     );
 }
-const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
+const authRecipe = window.localStorage.getItem("authRecipe") || getQueryParams("authRecipe") || "emailpassword";
 const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
 
 let recipePreBuiltUIList = [EmailPasswordPreBuiltUI];

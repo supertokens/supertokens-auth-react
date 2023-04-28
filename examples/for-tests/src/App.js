@@ -309,7 +309,7 @@ function App() {
     );
 }
 
-function getQueryParams(param) {
+export function getQueryParams(param) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
 }

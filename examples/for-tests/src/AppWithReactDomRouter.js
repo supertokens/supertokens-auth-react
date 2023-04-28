@@ -14,7 +14,7 @@ import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpass
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
-import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from "./App";
+import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired, getQueryParams } from "./App";
 
 function AppWithReactDomRouter(props) {
     /**
@@ -27,9 +27,8 @@ function AppWithReactDomRouter(props) {
     window.setClaimValidators = setClaimValidators;
     const keyWithClaimValidators =
         claimValidators !== undefined ? claimValidators.map((a) => a.id).join("_") : undefined;
-    const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
+    const authRecipe = window.localStorage.getItem("authRecipe") || getQueryParams("authRecipe") || "emailpassword";
     const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
-    console.log(window.localStorage.getItem("authRecipe"));
     let recipePreBuiltUIList = [EmailPasswordPreBuiltUI];
     if (authRecipe === "thirdparty") {
         recipePreBuiltUIList = [ThirdPartyPreBuiltUI];
