@@ -16,21 +16,15 @@ SuperTokens.init(SuperTokensConfig);
 function App() {
     const doLogin = async (data: any) => {
 
-        function insertUrlParam(key: string, value: string) {
-            let searchParams = new URLSearchParams(window.location.search);
-            searchParams.set(key, value);
-            let newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + searchParams.toString();
-            window.history.pushState({path: newurl}, '', newurl);
-        }
-
         if (data.credential) {
             await ThirdParty.getAuthorisationURLWithQueryParamsAndSetState({ providerId: "google", authorisationURL: window.location.toString() })
             const stateInfo = await ThirdParty.getStateAndOtherInfoFromStorage();
             if (data.credential && stateInfo !== undefined) {
-                insertUrlParam("code", data.credential);
-                insertUrlParam("state", stateInfo.stateForAuthProvider);
+                // Save for the overrides to read
+                window.localStorage.setItem("oneTapCredential", data.credential);
+                window.localStorage.setItem("oneTapState", stateInfo.stateForAuthProvider);
 
-                await ThirdParty.signInAndUp();
+                await ThirdParty.signInAndUp({ userContext: { oneTap: true }});
                 document.location.href="/";
             }
         }

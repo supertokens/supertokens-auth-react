@@ -26,6 +26,30 @@ export const SuperTokensConfig = {
             signInAndUpFeature: {
                 providers: [Google.init(), Github.init(), Apple.init()],
             },
+
+            override: {
+                functions: (oI) => {
+                    return {
+                        ...oI,
+                        getAuthCodeFromURL: (input) => {
+                            if (input.userContext.oneTap) {
+                                const code = window.localStorage.getItem("oneTapCredential");
+                                window.localStorage.removeItem("oneTapCredential");
+                                return `${code}`;
+                            }
+                            return oI.getAuthCodeFromURL(input);
+                        },
+                        getAuthStateFromURL: (input) => {
+                            if (input.userContext.oneTap) {
+                                const state = window.localStorage.getItem("oneTapState");
+                                window.localStorage.removeItem("oneTapState");
+                                return `${state}`;
+                            }
+                            return oI.getAuthStateFromURL(input)
+                        }
+                    }
+                },
+            }
         }),
         Session.init(),
     ],
