@@ -23,6 +23,7 @@ export const SuperTokensConfig = {
     // use from SuperTokens. See the full list here: https://supertokens.com/docs/guides
     recipeList: [
         ThirdParty.init({
+            useShadowDom: false,
             signInAndUpFeature: {
                 providers: [Google.init(), Github.init(), Apple.init()],
             },

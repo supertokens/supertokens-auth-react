@@ -44,7 +44,7 @@ function App() {
                                     return (
                                         <div>
                                             <div id="google-onetap-container"></div>
-                                            <GoogleOneTapLogin onSuccess={doLogin} googleAccountConfigs={{ client_id: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com", prompt_parent_id: "google-onetap-container" }} />
+                                            <GoogleOneTapLogin onSuccess={doLogin} googleAccountConfigs={{ client_id: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com", prompt_parent_id: "google-onetap-container", cancel_on_tap_outside: false }} />
                                             <DefaultComponent providers={providers.filter((provider) => provider.id !== 'google')} {...props} />
                                         </div>
                                     );
