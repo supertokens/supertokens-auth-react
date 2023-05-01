@@ -3,7 +3,7 @@ import Session from "supertokens-node/recipe/session";
 import { TypeInput } from "supertokens-node/types";
 import Dashboard from "supertokens-node/recipe/dashboard";
 import { TypeProviderGetResponse } from "supertokens-node/lib/build/recipe/thirdparty/types";
-import axios from 'axios';
+import axios from "axios";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -17,11 +17,15 @@ export function getWebsiteDomain() {
     return websiteUrl;
 }
 
-export function GoogleOneTap(config: any) : TypeProvider {
+export function GoogleOneTap(config: any): TypeProvider {
     const googleProvider = ThirdParty.Google(config);
     return {
         ...googleProvider,
-        get: (redirectURI: string | undefined, authCodeFromRequest: string | undefined, userContext: any) : TypeProviderGetResponse => {
+        get: (
+            redirectURI: string | undefined,
+            authCodeFromRequest: string | undefined,
+            userContext: any
+        ): TypeProviderGetResponse => {
             const originalGet = googleProvider.get(redirectURI, authCodeFromRequest, userContext);
             return {
                 ...originalGet,
@@ -30,13 +34,13 @@ export function GoogleOneTap(config: any) : TypeProvider {
                         id: authCodeResponse.sub,
                         email: {
                             id: authCodeResponse.email,
-                            isVerified: authCodeResponse.email_verified.toLowerCase() === 'true',
-                        }
-                    }
-                }
-            }
-        }
-    }
+                            isVerified: authCodeResponse.email_verified.toLowerCase() === "true",
+                        },
+                    };
+                },
+            };
+        },
+    };
 }
 
 export const SuperTokensConfig: TypeInput = {
@@ -82,12 +86,14 @@ export const SuperTokensConfig: TypeInput = {
                         ...oI,
                         signInUpPOST: async (input) => {
                             if (oI.signInUpPOST !== undefined) {
-                                if (input.provider.id === 'google') {
-                                    const authCodeResponse = (await axios.get("https://oauth2.googleapis.com/tokeninfo", {
-                                        params: {
-                                            id_token: input.code,
-                                        }
-                                    })).data
+                                if (input.provider.id === "google") {
+                                    const authCodeResponse = (
+                                        await axios.get("https://oauth2.googleapis.com/tokeninfo", {
+                                            params: {
+                                                id_token: input.code,
+                                            },
+                                        })
+                                    ).data;
                                     return await oI.signInUpPOST({
                                         ...input,
                                         code: "",
@@ -97,11 +103,11 @@ export const SuperTokensConfig: TypeInput = {
                                     return await oI.signInUpPOST(input);
                                 }
                             }
-                            throw "API not enabled"
-                        }
-                    }
-                }
-            }
+                            throw "API not enabled";
+                        },
+                    };
+                },
+            },
         }),
         Session.init(),
         Dashboard.init(),

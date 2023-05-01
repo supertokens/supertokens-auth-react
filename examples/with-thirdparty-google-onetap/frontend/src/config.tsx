@@ -23,6 +23,11 @@ export const SuperTokensConfig = {
     // use from SuperTokens. See the full list here: https://supertokens.com/docs/guides
     recipeList: [
         ThirdParty.init({
+            style: `
+                [data-supertokens~=container] {
+                    width: 500px;
+                }
+            `,
             useShadowDom: false,
             signInAndUpFeature: {
                 providers: [Github.init(), Apple.init()],
@@ -33,24 +38,20 @@ export const SuperTokensConfig = {
                     return {
                         ...oI,
                         getAuthCodeFromURL: (input) => {
-                            if (input.userContext.oneTap) {
-                                const code = window.localStorage.getItem("oneTapCredential");
-                                window.localStorage.removeItem("oneTapCredential");
-                                return `${code}`;
+                            if (input.userContext.authCode) {
+                                return input.userContext.authCode;
                             }
                             return oI.getAuthCodeFromURL(input);
                         },
                         getAuthStateFromURL: (input) => {
-                            if (input.userContext.oneTap) {
-                                const state = window.localStorage.getItem("oneTapState");
-                                window.localStorage.removeItem("oneTapState");
-                                return `${state}`;
+                            if (input.userContext.state) {
+                                return input.userContext.state;
                             }
-                            return oI.getAuthStateFromURL(input)
-                        }
-                    }
+                            return oI.getAuthStateFromURL(input);
+                        },
+                    };
                 },
-            }
+            },
         }),
         Session.init(),
     ],
