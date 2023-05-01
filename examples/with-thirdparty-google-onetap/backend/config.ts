@@ -82,16 +82,20 @@ export const SuperTokensConfig: TypeInput = {
                         ...oI,
                         signInUpPOST: async (input) => {
                             if (oI.signInUpPOST !== undefined) {
-                                const authCodeResponse = (await axios.get("https://oauth2.googleapis.com/tokeninfo", {
-                                    params: {
-                                        id_token: input.code,
-                                    }
-                                })).data
-                                return await oI.signInUpPOST({
-                                    ...input,
-                                    code: "",
-                                    authCodeResponse,
-                                });
+                                if (input.provider.id === 'google') {
+                                    const authCodeResponse = (await axios.get("https://oauth2.googleapis.com/tokeninfo", {
+                                        params: {
+                                            id_token: input.code,
+                                        }
+                                    })).data
+                                    return await oI.signInUpPOST({
+                                        ...input,
+                                        code: "",
+                                        authCodeResponse,
+                                    });
+                                } else {
+                                    return await oI.signInUpPOST(input);
+                                }
                             }
                             throw "API not enabled"
                         }
