@@ -1,4 +1,4 @@
-import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
+import ThirdParty, { Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
 import Session from "supertokens-auth-react/recipe/session";
 
 export function getApiDomain() {
@@ -25,7 +25,7 @@ export const SuperTokensConfig = {
         ThirdParty.init({
             useShadowDom: false,
             signInAndUpFeature: {
-                providers: [Google.init(), Github.init(), Apple.init()],
+                providers: [Github.init(), Apple.init()],
             },
 
             override: {
