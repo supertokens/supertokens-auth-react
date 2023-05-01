@@ -1,0 +1,22 @@
+
+    {
+        "name": "my-app",
+        "version": "0.0.1",
+        "description": "",
+        "main": "index.js",
+        "scripts": {
+            "start:frontend": "cd frontend && npm run start",
+            "start:frontend-live-demo-app": "cd frontend && npx -y serve -s build",
+            "start:backend": "cd backend && pip install virtualenv && virtualenv venv && chmod +x venv/bin/activate && . venv/bin/activate && pip install -r requirements.txt && python manage.py runserver",
+            "start:backend-live-demo-app": "cd backend && ./startLiveDemoApp.sh",
+            "start": "npm-run-all --parallel start:frontend start:backend",
+            "start-live-demo-app": "npm-run-all --parallel start:frontend-live-demo-app start:backend-live-demo-app"
+        },
+        "keywords": [],
+        "author": "",
+        "license": "ISC",
+        "dependencies": {
+            "npm-run-all": "^4.1.5"
+        }
+    }
+    

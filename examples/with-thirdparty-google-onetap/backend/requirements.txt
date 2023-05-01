@@ -1,0 +1,4 @@
+Django==3.2.12
+djangorestframework==3.14.0
+supertokens-python
+django-cors-headers==3.12.0
