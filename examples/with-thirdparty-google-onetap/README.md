@@ -17,6 +17,8 @@ git clone https://github.com/supertokens/supertokens-auth-react
 cd supertokens-auth-react/examples/with-thirdparty-google-onetap
 cd frontend
 npm install
+cd backend
+npm install
 cd ..
 npm install
 ```

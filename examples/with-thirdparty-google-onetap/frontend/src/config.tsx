@@ -1,4 +1,4 @@
-import ThirdParty, { Google } from "supertokens-auth-react/recipe/thirdparty";
+import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
 import Session from "supertokens-auth-react/recipe/session";
 
 export function getApiDomain() {
@@ -24,17 +24,8 @@ export const SuperTokensConfig = {
     recipeList: [
         ThirdParty.init({
             signInAndUpFeature: {
-                providers: [Google.init()],
+                providers: [Google.init(), Github.init(), Apple.init()],
             },
-            preAPIHook: async (context) => {
-                if (context.userContext.oneTap) {
-                    const body = JSON.parse(context.requestInit.body as string)
-                    body.oneTap = true;
-                    context.requestInit.body = JSON.stringify(body);
-                }
-
-                return context;
-            }
         }),
         Session.init(),
     ],
