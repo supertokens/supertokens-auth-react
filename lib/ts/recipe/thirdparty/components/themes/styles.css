@@ -14,7 +14,6 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
     padding: 2px 8px;
 
     background-color: white;
@@ -29,6 +28,7 @@
 
 [data-supertokens~="providerButtonLeft"] {
     width: 34px;
+    margin-left: 66px;
 }
 
 [data-supertokens~="providerButtonLogo"] {
@@ -49,10 +49,6 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     display: inline-block;
-}
-
-[data-supertokens~="providerButtonText"]:only-child {
-    padding-left: 34px;
 }
 
 [data-supertokens~="providerButtonText"]:only-child {
