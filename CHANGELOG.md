@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Migration
 
+#### Initializing web-js
+
+This version also initializes the web-js SDK. If you previously did that manually, you can remove/replace it with the auth-react init call.
+From this version forward, the recommended way to use this SDK, even with Angular and Vue, is to initialize auth-react in the root component. Importing `supertokens-auth-react` will not pull React into your main bundle; only importing the `prebuiltui` modules will.
+For more details, check out our quick setup guides for angular and vue.
+
 #### Adding the pre-built UI route for apps with react-router-dom
 
 ```tsx
