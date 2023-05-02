@@ -16,29 +16,28 @@ import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpass
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
 
-const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
-const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
-
-let recipePreBuiltUIList = [EmailPasswordPreBuiltUI];
-if (authRecipe === "thirdparty") {
-    recipePreBuiltUIList = [ThirdPartyPreBuiltUI];
-} else if (authRecipe === "emailpassword") {
-    recipePreBuiltUIList = [EmailPasswordPreBuiltUI];
-} else if (authRecipe === "both") {
-    recipePreBuiltUIList = [ThirdPartyPreBuiltUI, EmailPasswordPreBuiltUI];
-} else if (authRecipe === "thirdpartyemailpassword") {
-    recipePreBuiltUIList = [ThirdPartyEmailPasswordPreBuiltUI];
-} else if (authRecipe === "passwordless") {
-    recipePreBuiltUIList = [PasswordlessPreBuiltUI];
-} else if (authRecipe === "thirdpartypasswordless") {
-    recipePreBuiltUIList = [ThirdPartyPasswordlessPreBuiltUI];
-}
-
-if (emailVerificationMode !== "OFF") {
-    recipePreBuiltUIList.push(EmailVerificationPreBuiltUI);
-}
-
 function AppWithReactDomRouter(props) {
+    const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
+    const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
+
+    let recipePreBuiltUIList = [EmailPasswordPreBuiltUI];
+    if (authRecipe === "thirdparty") {
+        recipePreBuiltUIList = [ThirdPartyPreBuiltUI];
+    } else if (authRecipe === "emailpassword") {
+        recipePreBuiltUIList = [EmailPasswordPreBuiltUI];
+    } else if (authRecipe === "both") {
+        recipePreBuiltUIList = [EmailPasswordPreBuiltUI, ThirdPartyPreBuiltUI];
+    } else if (authRecipe === "thirdpartyemailpassword") {
+        recipePreBuiltUIList = [ThirdPartyEmailPasswordPreBuiltUI];
+    } else if (authRecipe === "passwordless") {
+        recipePreBuiltUIList = [PasswordlessPreBuiltUI];
+    } else if (authRecipe === "thirdpartypasswordless") {
+        recipePreBuiltUIList = [ThirdPartyPasswordlessPreBuiltUI];
+    }
+
+    if (emailVerificationMode !== "OFF") {
+        recipePreBuiltUIList.push(EmailVerificationPreBuiltUI);
+    }
     /**
      * For user context tests we add this query param so the additional routes
      * dont interfere with other tests
