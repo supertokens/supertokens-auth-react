@@ -38,7 +38,7 @@ function AppWithReactDomRouter(props) {
             <Router>
                 <BaseComponent>
                     <Switch>
-                        {getSuperTokensRoutesForReactRouterDom(require("react-router-domv5", recipePreBuiltUIList))}
+                        {getSuperTokensRoutesForReactRouterDom(require("react-router-domv5"), recipePreBuiltUIList)}
                         <Route exact path="/">
                             <Home />
                         </Route>

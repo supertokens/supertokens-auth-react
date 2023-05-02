@@ -54,7 +54,7 @@ function AppWithReactDomRouter(props) {
             <Router>
                 <BaseComponent>
                     <Routes caseSensitive>
-                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom", recipePreBuiltUIList))}
+                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), recipePreBuiltUIList)}
                         <Route path="/" element={<Home />} />
                         <Route
                             path="/CasE/Case-SensItive1-PAth"
