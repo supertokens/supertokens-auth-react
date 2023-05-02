@@ -1,5 +1,7 @@
 import "./App.css";
-import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./Home";
@@ -41,7 +43,7 @@ function App() {
                                                             "_blank",
                                                             "width=600,height=600"
                                                         );
-                                                        var timer = setInterval(function () {
+                                                        const timer = setInterval(() => {
                                                             if (win && win.closed) {
                                                                 clearInterval(timer);
                                                                 window.location.replace("/");
@@ -63,7 +65,9 @@ function App() {
                         <div className="fill">
                             <Routes>
                                 {/* This shows the login UI on "/auth" route */}
-                                {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                                {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
+                                    ThirdPartyPreBuiltUI,
+                                ])}
 
                                 <Route
                                     path="/"
