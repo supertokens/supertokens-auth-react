@@ -207,7 +207,7 @@ export function useChildProps(
     const recipeImplementation = React.useMemo(
         () =>
             recipe &&
-            getModifiedRecipeImplementation(recipe.recipeImpl, recipe.config, dispatch, callingConsumeCodeRef),
+            getModifiedRecipeImplementation(recipe.webJSRecipe, recipe.config, dispatch, callingConsumeCodeRef),
         [recipe]
     );
 
@@ -244,7 +244,7 @@ export const SignInUpFeature: React.FC<
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
     const userContext = useUserContext();
-    const [state, dispatch] = useFeatureReducer(props.recipe.recipeImpl, userContext);
+    const [state, dispatch] = useFeatureReducer(props.recipe.webJSRecipe, userContext);
     const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch, userContext);
     const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, userContext, props.history)!;
 
@@ -300,26 +300,25 @@ function getModifiedRecipeImplementation(
                 );
             }
 
-            const res = await originalImpl.createCode(input);
-            if (res.status === "OK") {
-                // This contactMethod refers to the one that was used to deliver the login info
-                // This can be an important distinction in case both email and phone are allowed
-                const contactMethod: "EMAIL" | "PHONE" = "email" in input ? "EMAIL" : "PHONE";
-                const loginAttemptInfo = {
-                    deviceId: res.deviceId,
-                    preAuthSessionId: res.preAuthSessionId,
-                    flowType: res.flowType,
-                    lastResend: Date.now(),
-                    contactMethod,
-                    contactInfo,
-                    redirectToPath: getRedirectToPathFromURL(),
-                };
+            // This contactMethod refers to the one that was used to deliver the login info
+            // This can be an important distinction in case both email and phone are allowed
+            const contactMethod: "EMAIL" | "PHONE" = "email" in input ? "EMAIL" : "PHONE";
+            const additionalAttemptInfo = {
+                lastResend: Date.now(),
+                contactMethod,
+                contactInfo,
+                redirectToPath: getRedirectToPathFromURL(),
+            };
 
-                await setLoginAttemptInfo({
+            const res = await originalImpl.createCode({
+                ...input,
+                userContext: { ...input.userContext, additionalAttemptInfo },
+            });
+            if (res.status === "OK") {
+                const loginAttemptInfo = (await getLoginAttemptInfo({
                     recipeImplementation: originalImpl,
                     userContext: input.userContext,
-                    attemptInfo: loginAttemptInfo,
-                });
+                }))!;
                 dispatch({ type: "startLogin", loginAttemptInfo });
             }
             return res;

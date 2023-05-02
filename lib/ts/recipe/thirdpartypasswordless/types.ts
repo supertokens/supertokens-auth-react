@@ -34,13 +34,13 @@ import type { SignInUpScreens } from "../passwordless/components/themes/signInUp
 import type PWlessRecipe from "../passwordless/recipe";
 import type { ComponentOverrideMap as PasswordlessOverrideMap } from "../passwordless/types";
 import type {
-    UserInput as PwlessUserInput,
     PasswordlessFeatureBaseConfig,
     PasswordlessSignInUpAction,
     SignInUpFeatureConfigInput as PwlessSignInUpFeatureConfigInput,
     SignInUpChildProps as PwlessChildProps,
     SignInUpState as PWlessSignInUpState,
     PreAndPostAPIHookAction as PasswordlessPreAndPostAPIHookAction,
+    NormalisedConfig as NormalisedPasswordlessConfig,
 } from "../passwordless/types";
 import type {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
@@ -54,8 +54,8 @@ import type {
     ThirdPartySignInAndUpState,
     ThirdPartySignInUpActions,
     ThirdPartySignInUpChildProps,
-    UserInput as TPUserInput,
     PreAndPostAPIHookAction as ThirdPartyPreAndPostAPIHookAction,
+    NormalisedConfig as NormalisedThirdPartyConfig,
 } from "../thirdparty/types";
 import type { ComponentOverrideMap as ThirdPartyOverrideMap } from "../thirdparty/types";
 import type { Dispatch } from "react";
@@ -131,8 +131,8 @@ export type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type NormalisedConfig = {
-    passwordlessUserInput: PwlessUserInput | undefined;
-    thirdpartyUserInput: TPUserInput | undefined;
+    passwordlessConfig: NormalisedPasswordlessConfig | undefined;
+    thirdpartyConfig: NormalisedThirdPartyConfig | undefined;
 
     thirdPartyProviderAndEmailOrPhoneFormStyle: string | undefined;
 

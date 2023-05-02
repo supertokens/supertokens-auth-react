@@ -1,6 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { BaseComponent, Home } from "./App";
-import { canHandleRoute, getRoutingComponent } from "supertokens-auth-react";
+import { getRoutingComponent, canHandleRoute } from "supertokens-auth-react/ui";
+import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
+import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
+
+const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
+const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
+
+let recipePreBuiltUIList = [EmailPasswordPreBuiltUI];
+if (authRecipe === "thirdparty") {
+    recipePreBuiltUIList = [ThirdPartyPreBuiltUI];
+} else if (authRecipe === "emailpassword") {
+    recipePreBuiltUIList = [EmailPasswordPreBuiltUI];
+} else if (authRecipe === "both") {
+    recipePreBuiltUIList = [ThirdPartyPreBuiltUI, EmailPasswordPreBuiltUI];
+} else if (authRecipe === "thirdpartyemailpassword") {
+    recipePreBuiltUIList = [ThirdPartyEmailPasswordPreBuiltUI];
+} else if (authRecipe === "passwordless") {
+    recipePreBuiltUIList = [PasswordlessPreBuiltUI];
+} else if (authRecipe === "thirdpartypasswordless") {
+    recipePreBuiltUIList = [ThirdPartyPasswordlessPreBuiltUI];
+}
+
+if (emailVerificationMode !== "OFF") {
+    recipePreBuiltUIList.push(EmailVerificationPreBuiltUI);
+}
 
 function AppWithoutRouter() {
     return (
@@ -15,6 +43,7 @@ function AppWithoutRouter() {
 
 function Routing() {
     const [, setCurrentPath] = useState(window.location.pathname);
+    const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
 
     useEffect(() => {
         const onLocationChange = () => {
@@ -24,8 +53,12 @@ function Routing() {
         window.addEventListener("popstate", onLocationChange);
     }, [setCurrentPath]);
 
-    if (canHandleRoute()) {
-        return <BaseComponent>{getRoutingComponent()}</BaseComponent>;
+    if (emailVerificationMode !== "OFF" && EmailVerificationPreBuiltUI.canHandleRoute()) {
+        return EmailVerificationPreBuiltUI.getRoutingComponent();
+    }
+
+    if (canHandleRoute(recipePreBuiltUIList)) {
+        return <BaseComponent>{getRoutingComponent(recipePreBuiltUIList)}</BaseComponent>;
     }
 
     // Custom router...

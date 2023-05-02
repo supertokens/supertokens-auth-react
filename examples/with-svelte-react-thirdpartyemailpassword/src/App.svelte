@@ -3,11 +3,13 @@
     import React from "react";
     import ReactDOM from "react-dom";
     import SuperTokens from "supertokens-auth-react";
+    import { getRoutingComponent, canHandleRoute } from "supertokens-auth-react/ui";
     import ThirdPartyEmailPassword, {
         Github,
         Google,
         signOut,
     } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+    import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
     import Session from "supertokens-auth-react/recipe/session";
     import { Router, Route } from "svelte-navigator";
     import { onMount } from "svelte";
@@ -31,8 +33,8 @@
 
     class SuperTokensComponent extends React.Component {
         render() {
-            if (SuperTokens.canHandleRoute()) {
-                return SuperTokens.getRoutingComponent();
+            if (canHandleRoute([ThirdPartyEmailPasswordPreBuiltUI])) {
+                return getRoutingComponent([ThirdPartyEmailPasswordPreBuiltUI]);
             }
             return "Route not found";
         }

@@ -1,6 +1,5 @@
+/// <reference types="react" />
 import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
-import SignInAndUpTheme from "./components/themes/signInAndUp";
-import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import Apple from "./providers/apple";
 import Bitbucket from "./providers/bitbucket";
 import Discord from "./providers/discord";
@@ -9,13 +8,12 @@ import Github from "./providers/github";
 import Gitlab from "./providers/gitlab";
 import Google from "./providers/google";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import type { PropsWithChildren } from "react";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 export default class Wrapper {
     static init(
         config: UserInput
-    ): import("../../types").CreateRecipeFunction<
+    ): import("../../types").RecipeInitResult<
         import("../authRecipe/types").GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
@@ -76,17 +74,8 @@ export default class Wrapper {
     static Gitlab: typeof Gitlab;
     static Google: typeof Google;
     static Facebook: typeof Facebook;
-    static SignInAndUp: (
-        prop?: PropsWithChildren<{
-            redirectOnSessionExists?: boolean;
-            userContext?: any;
-        }>
-    ) => JSX.Element;
-    static SignInAndUpTheme: import("react").FC<import("./types").SignInAndUpThemeProps>;
-    static SignInAndUpCallback: (prop?: any) => JSX.Element;
-    static SignInAndUpCallbackTheme: (props: { config: import("./types").NormalisedConfig }) => JSX.Element;
     static ComponentsOverrideProvider: import("react").FC<
-        PropsWithChildren<{
+        import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
         }>
     >;
@@ -104,15 +93,8 @@ declare const getAuthCodeFromURL: typeof Wrapper.getAuthCodeFromURL;
 declare const getAuthErrorFromURL: typeof Wrapper.getAuthErrorFromURL;
 declare const getAuthStateFromURL: typeof Wrapper.getAuthStateFromURL;
 declare const signInAndUp: typeof Wrapper.signInAndUp;
-declare const SignInAndUp: (
-    prop?: PropsWithChildren<{
-        redirectOnSessionExists?: boolean;
-        userContext?: any;
-    }>
-) => JSX.Element;
-declare const SignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const ThirdpartyComponentsOverrideProvider: import("react").FC<
-    PropsWithChildren<{
+    import("react").PropsWithChildren<{
         components: import("./types").ComponentOverrideMap;
     }>
 >;
@@ -136,10 +118,6 @@ export {
     getAuthStateFromURL,
     signInAndUp,
     redirectToThirdPartyLogin,
-    SignInAndUp,
-    SignInAndUpTheme,
-    SignInAndUpCallback,
-    SignInAndUpCallbackTheme,
     ThirdpartyComponentsOverrideProvider,
     signOut,
     User,

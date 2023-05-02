@@ -17,11 +17,16 @@
  * Imports.
  */
 import { normaliseAuthRecipe } from "../authRecipe/utils";
+import { normalisePasswordlessConfig } from "../passwordless/utils";
+import { normaliseThirdPartyConfig } from "../thirdparty/utils";
 
 import type { Config, NormalisedConfig } from "./types";
 import type { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 
-export function normaliseThirdPartyPasswordlessConfig(config: Config): NormalisedConfig {
+export function normaliseThirdPartyPasswordlessConfig(config?: Config): NormalisedConfig {
+    if (config === undefined) {
+        config = {} as Config;
+    }
     const disablePasswordless = config.disablePasswordless === true;
     const disableThirdParty =
         config.signInUpFeature === undefined ||
@@ -44,9 +49,9 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
         ...normaliseAuthRecipe(config),
 
         thirdPartyProviderAndEmailOrPhoneFormStyle,
-        thirdpartyUserInput: disableThirdParty
+        thirdpartyConfig: disableThirdParty
             ? undefined
-            : {
+            : normaliseThirdPartyConfig({
                   getRedirectionURL: config.getRedirectionURL,
                   style: config.style,
                   onHandleEvent: config.onHandleEvent,
@@ -58,10 +63,10 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
                   oAuthCallbackScreen: config.oAuthCallbackScreen,
                   useShadowDom: config.useShadowDom,
                   override: {},
-              },
-        passwordlessUserInput: disablePasswordless
+              }),
+        passwordlessConfig: disablePasswordless
             ? undefined
-            : {
+            : normalisePasswordlessConfig({
                   contactMethod: config.contactMethod,
                   style: config.style,
                   validateEmailAddress: "validateEmailAddress" in config ? config.validateEmailAddress : undefined,
@@ -76,7 +81,7 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
                   },
                   linkClickedScreenFeature: config.linkClickedScreenFeature,
                   override: {},
-              },
+              }),
         override,
     };
 }

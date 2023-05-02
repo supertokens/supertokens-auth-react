@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
-import SuperTokens, {
-    SuperTokensWrapper,
-    getSuperTokensRoutesForReactRouterDom,
-    redirectToAuth,
-} from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper, redirectToAuth } from "supertokens-auth-react";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import ThirdPartyEmailPassword, {
     Google,
@@ -12,6 +9,9 @@ import ThirdPartyEmailPassword, {
     Apple,
     ThirdpartyEmailPasswordComponentsOverrideProvider,
 } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
@@ -60,7 +60,12 @@ function App() {
         <SuperTokensWrapper>
             <ThirdpartyEmailPasswordComponentsOverrideProvider
                 components={{
-                    ThirdPartySignInAndUpProvidersForm_Override: ({ DefaultComponent, ...props }) => (
+                    ThirdPartySignInAndUpProvidersForm_Override: ({
+                        DefaultComponent,
+                        ...props
+                    }: {
+                        DefaultComponent: any;
+                    }) => (
                         <div>
                             <DefaultComponent {...props} />
                             <div
@@ -94,9 +99,11 @@ function App() {
                     <Router>
                         <div className="fill">
                             <Routes>
-                                {/* This shows the login UI on "/auth" route */}
-                                {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
-
+                                {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
+                                    ThirdPartyEmailPasswordPreBuiltUI,
+                                    EmailVerificationPreBuiltUI,
+                                    PasswordlessPreBuiltUI,
+                                ])}
                                 <Route
                                     path="/"
                                     element={

@@ -11,7 +11,7 @@ import type {
     SignUpFormFeatureUserInput,
 } from "./types";
 import type { FormField, NormalisedFormField } from "../../types";
-export declare function normaliseEmailPasswordConfig(config: Config): NormalisedConfig;
+export declare function normaliseEmailPasswordConfig(config?: Config): NormalisedConfig;
 export declare function normaliseSignInAndUpFeature(
     config?: SignInAndUpFeatureUserInput
 ): NormalisedSignInAndUpFeatureConfig;

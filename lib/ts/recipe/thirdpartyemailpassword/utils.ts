@@ -18,6 +18,8 @@
  */
 
 import { normaliseAuthRecipe } from "../authRecipe/utils";
+import { normaliseEmailPasswordConfig } from "../emailpassword/utils";
+import { normaliseThirdPartyConfig } from "../thirdparty/utils";
 
 import type {
     Config,
@@ -31,8 +33,11 @@ import type { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailp
  * Methods.
  */
 export function normaliseThirdPartyEmailPasswordConfig(config: Config): NormalisedConfig {
+    if (config === undefined) {
+        throw new Error("ThirdpartyEmailPassword config should not be empty");
+    }
     const disableEmailPassword = config.disableEmailPassword === true;
-
+    const disableThirdParty = !config.signInAndUpFeature?.providers?.length;
     if (
         disableEmailPassword &&
         (config.signInAndUpFeature === undefined ||
@@ -51,12 +56,35 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
         config.signInAndUpFeature
     );
 
+    let thirdpartyNormalisedConfig;
+    if (!disableThirdParty) {
+        thirdpartyNormalisedConfig = normaliseThirdPartyConfig({
+            getRedirectionURL: config.getRedirectionURL,
+            style: config.style,
+            onHandleEvent: config.onHandleEvent,
+            preAPIHook: config.preAPIHook,
+            signInAndUpFeature: config.signInAndUpFeature,
+            oAuthCallbackScreen: config.oAuthCallbackScreen,
+            useShadowDom: config.useShadowDom,
+        });
+    }
+
+    const emailPasswordNormalisedConfig = normaliseEmailPasswordConfig({
+        getRedirectionURL: config.getRedirectionURL,
+        onHandleEvent: config.onHandleEvent,
+        style: config.style,
+        preAPIHook: config.preAPIHook,
+        resetPasswordUsingTokenFeature: config.resetPasswordUsingTokenFeature,
+        signInAndUpFeature: config.signInAndUpFeature,
+        useShadowDom: config.useShadowDom,
+    });
+
     return {
         ...normaliseAuthRecipe(config),
-        signInAndUpFeature,
-        oAuthCallbackScreen: config.oAuthCallbackScreen,
-        resetPasswordUsingTokenFeature: config.resetPasswordUsingTokenFeature,
+        emailPasswordConfig: emailPasswordNormalisedConfig,
+        thirdPartyConfig: thirdpartyNormalisedConfig,
         disableEmailPassword,
+        signInAndUpFeature,
         override,
     };
 }

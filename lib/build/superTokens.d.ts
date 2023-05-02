@@ -1,20 +1,10 @@
-/// <reference types="react" />
 import { TranslationController } from "./translation/translationHelpers";
 import type RecipeModule from "./recipe/recipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import type {
-    ComponentWithRecipeAndMatchingMethod,
-    GetRedirectionURLContext,
-    NormalisedAppInfo,
-    SuperTokensConfig,
-} from "./types";
-import type { BaseFeatureComponentMap } from "./types";
-import type NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import type { GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } from "./types";
 export default class SuperTokens {
     private static instance?;
-    private static reactRouterDom?;
-    private static reactRouterDomIsV6;
     appInfo: NormalisedAppInfo;
     languageTranslations: {
         defaultLanguage: string;
@@ -24,39 +14,13 @@ export default class SuperTokens {
         userTranslationFunc?: TranslationFunc;
     };
     recipeList: RecipeModule<any, any, any, any>[];
-    private pathsToFeatureComponentWithRecipeIdMap?;
     private userGetRedirectionURL;
     constructor(config: SuperTokensConfig);
     static init(config: SuperTokensConfig): void;
     static getInstanceOrThrow(): SuperTokens;
-    static canHandleRoute(): boolean;
-    static getRoutingComponent(): JSX.Element | null;
-    static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any): JSX.Element[];
-    static getReactRouterDomWithCustomHistory():
-        | {
-              router: {
-                  Route: any;
-              };
-              useHistoryCustom: () => any;
-          }
-        | undefined;
-    canHandleRoute: () => boolean;
-    getRoutingComponent: () => JSX.Element | null;
-    getPathsToFeatureComponentWithRecipeIdMap: () => BaseFeatureComponentMap;
-    getMatchingComponentForRouteAndRecipeId: (
-        normalisedUrl: NormalisedURLPath
-    ) => ComponentWithRecipeAndMatchingMethod | undefined;
     getRecipeOrThrow<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>>(
         recipeId: string
     ): RecipeModule<T, S, R, N>;
-    getReactRouterDomWithCustomHistory: () =>
-        | {
-              router: {
-                  Route: any;
-              };
-              useHistoryCustom: () => any;
-          }
-        | undefined;
     changeLanguage: (lang: string) => Promise<void>;
     loadTranslation(store: TranslationStore): void;
     getRedirectUrl(context: GetRedirectionURLContext): Promise<string>;

@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.31.5",
+    "version": "0.32.0",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -72,7 +72,8 @@
         "ts-prune": "^0.10.3",
         "tslib": "^2.4.0",
         "typedoc": "^0.22.5",
-        "typescript": "4.7.3"
+        "typescript": "4.7.3",
+        "chokidar-cli": "^3.0.0"
     },
     "dependencies": {
         "intl-tel-input": "^17.0.19",
@@ -103,6 +104,7 @@
         "tsc": "cd lib && npx tsc -p tsconfig.json",
         "build": "rm -rf lib/build && npx rollup -c",
         "watch": "npx rollup -cw",
+        "watch-mac": "chokidar lib/ts/* -c 'npx rollup -c'",
         "pretty": "npx pretty-quick .",
         "build-pretty": "npm run build && npm run pretty && npm run pretty",
         "lint": "node other/checkTranslationKeys.js && cd lib && eslint ./ts --ext .ts,.tsx",
@@ -136,12 +138,40 @@
             "limit": "30kb"
         },
         {
+            "path": "recipe/emailverification/index.js",
+            "limit": "8kb"
+        },
+        {
             "path": "recipe/passwordless/index.js",
             "limit": "105kb"
         },
         {
             "path": "recipe/thirdpartypasswordless/index.js",
             "limit": "120kb"
+        },
+        {
+            "path": "recipe/emailverification/prebuiltui.js",
+            "limit": "21kb"
+        },
+        {
+            "path": "recipe/thirdpartyemailpassword/prebuiltui.js",
+            "limit": "35kb"
+        },
+        {
+            "path": "recipe/thirdparty/prebuiltui.js",
+            "limit": "19kb"
+        },
+        {
+            "path": "recipe/emailpassword/prebuiltui.js",
+            "limit": "26kb"
+        },
+        {
+            "path": "recipe/passwordless/prebuiltui.js",
+            "limit": "102kb"
+        },
+        {
+            "path": "recipe/thirdpartypasswordless/prebuiltui.js",
+            "limit": "113kb"
         }
     ],
     "browserslist": {

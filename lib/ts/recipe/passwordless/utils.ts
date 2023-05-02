@@ -37,6 +37,9 @@ import type { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/
 import type { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
+    if (config === undefined) {
+        throw new Error("Passwordless config should not be empty");
+    }
     if (!["EMAIL", "PHONE", "EMAIL_OR_PHONE"].includes(config.contactMethod)) {
         throw new Error("Please pass one of 'PHONE', 'EMAIL' or 'EMAIL_OR_PHONE' as the contactMethod");
     }

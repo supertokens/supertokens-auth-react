@@ -1,8 +1,11 @@
 import { useState } from "react";
 import "./App.css";
-import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import ThirdPartyEmailPassword, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
+import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
@@ -50,8 +53,10 @@ function App() {
                     <div className="fill">
                         <Routes>
                             {/* This shows the login UI on "/auth" route */}
-                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
-
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
+                                ThirdPartyEmailPasswordPreBuiltUI,
+                                EmailVerificationPreBuiltUI,
+                            ])}
                             <Route
                                 path="/"
                                 element={

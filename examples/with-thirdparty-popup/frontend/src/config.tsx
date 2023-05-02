@@ -35,9 +35,9 @@ export const SuperTokensConfig = {
                             window.close();
                             return result;
                         },
-                    }
+                    };
                 },
-            }
+            },
         }),
         Session.init(),
     ],
