@@ -39,7 +39,7 @@ export default class SessionAPIWrapper {
      */
     static addAxiosInterceptors(axiosInstance: any, userContext?: any): void;
     static signOut(input?: { userContext?: any }): Promise<void>;
-    static validateClaims(input: {
+    static validateClaims(input?: {
         overrideGlobalClaimValidators?: (
             globalClaimValidators: SessionClaimValidator[],
             userContext: any
