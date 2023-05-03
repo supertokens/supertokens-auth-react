@@ -81,6 +81,8 @@ function App() {
                                     borderRadius: "8px",
                                     marginTop: "10px",
                                     cursor: "pointer",
+                                    maxWidth: "240px",
+                                    margin: "0 auto",
                                 }}
                                 onClick={() => {
                                     redirectToAuth({
