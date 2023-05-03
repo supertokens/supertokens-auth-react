@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.32.1] - 2023-05-03
 
+### Changes
+
 -   Made Session.validateClaims argument optional
 
 ## [0.32.0] - 2023-05-02
