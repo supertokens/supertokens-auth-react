@@ -18,6 +18,7 @@
  */
 
 import MultitenancyWebJS from "supertokens-web-js/recipe/multitenancy";
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
 import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
@@ -45,6 +46,11 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
         public readonly webJSRecipe: WebJSRecipeInterface<typeof MultitenancyWebJS> = MultitenancyWebJS
     ) {
         super(config);
+        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
+            if (SuperTokens.usesDynamicLoginMethods === true) {
+                void Multitenancy.getInstanceOrThrow().initMultitenancyWithDynamicLoginMethods().catch();
+            }
+        });
     }
 
     public async initMultitenancyWithDynamicLoginMethods(): Promise<void> {
@@ -67,7 +73,6 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
         if (instance.dynamicLoginMethods !== undefined) {
             return instance.dynamicLoginMethods;
         }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { emailPassword, passwordless, thirdParty } = await MultitenancyWebJS.getLoginMethods(...options);
         instance.dynamicLoginMethods = {
             passwordless,
