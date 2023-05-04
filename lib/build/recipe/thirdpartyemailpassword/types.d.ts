@@ -108,5 +108,8 @@ export declare type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     thirdPartyRecipe?: TPRecipe;
     tpState: ThirdPartySignInAndUpState;
     tpDispatch: Dispatch<ThirdPartySignInUpActions>;
-    tpChildProps?: ThirdPartySignInUpChildProps;
+    tpChildProps?: ThirdPartySignInUpChildProps<{
+        id: string;
+        buttonComponent: JSX.Element;
+    }>;
 };

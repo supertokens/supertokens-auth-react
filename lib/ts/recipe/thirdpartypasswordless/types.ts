@@ -167,7 +167,7 @@ export type ThirdPartyPasswordlessSignInAndUpThemeProps = {
     thirdPartyRecipe?: TPRecipe;
     tpState: ThirdPartySignInAndUpState;
     tpDispatch: Dispatch<ThirdPartySignInUpActions>;
-    tpChildProps?: ThirdPartySignInUpChildProps;
+    tpChildProps?: ThirdPartySignInUpChildProps<{ id: string; buttonComponent: JSX.Element }>;
 };
 
 export type ThirdPartyPasswordlessSignInAndUpThemePropsWithActiveScreen = {
@@ -179,7 +179,7 @@ export type ThirdPartyPasswordlessSignInAndUpThemePropsWithActiveScreen = {
     thirdPartyRecipe?: TPRecipe;
     tpState: ThirdPartySignInAndUpState;
     tpDispatch: Dispatch<ThirdPartySignInUpActions>;
-    tpChildProps?: ThirdPartySignInUpChildProps;
+    tpChildProps?: ThirdPartySignInUpChildProps<{ id: string; buttonComponent: JSX.Element }>;
 } & (
     | {
           activeScreen: undefined;
