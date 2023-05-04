@@ -13,7 +13,7 @@ export function RoutingComponent(props: {
     preBuiltUIList: RecipeRouter[];
     path: string;
 }): JSX.Element | null {
-    const [enabled, setEnabled] = useState(
+    const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState(
         SuperTokens.usesDynamicLoginMethods === false ||
             Multitenancy.getInstanceOrThrow().dynamicLoginMethods !== undefined
     );
@@ -32,7 +32,7 @@ export function RoutingComponent(props: {
 
     useEffect(() => {
         const handler = () => {
-            if (enabled === false && componentToRender?.recipeID) {
+            if (loadedDynamicLoginMethods === false && componentToRender?.recipeID) {
                 let enabled =
                     Multitenancy.getInstanceOrThrow().dynamicLoginMethods?.[
                         componentToRender?.recipeID as keyof GetLoginMethodsResponseNormalized
@@ -45,7 +45,7 @@ export function RoutingComponent(props: {
                         }
                     }
                 }
-                setEnabled(enabled);
+                setLoadedDynamicLoginMethods(enabled);
             }
         };
         SuperTokens.uiController.on("LoginMethodsLoaded", handler);
@@ -55,7 +55,7 @@ export function RoutingComponent(props: {
 
     const history = props.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
 
-    if (componentToRender === undefined || enabled === false) {
+    if (componentToRender === undefined || loadedDynamicLoginMethods === false) {
         return null;
     }
 

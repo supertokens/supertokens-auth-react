@@ -10,7 +10,7 @@ export default abstract class Provider {
     getDefaultButton(name?: string): JSX.Element;
     defaultGetFrontendRedirectURI(): string;
     getRedirectURIOnProviderDashboard(): string | undefined;
-    getButton: (name?: string) => JSX.Element;
+    getButton: () => JSX.Element;
     abstract getLogo(): JSX.Element | undefined;
     generateState: () => string;
 }

@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import type { BuiltInProviderConfig } from "./types";
 import Provider from ".";
 export default class Twitter extends Provider {

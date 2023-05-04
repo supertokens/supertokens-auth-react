@@ -13,13 +13,11 @@
  * under the License.
  */
 
-import { Fragment, useMemo } from "react";
+import { Fragment } from "react";
 import STGeneralError from "supertokens-web-js/utils/error";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
-import Multitenancy from "../../../../multitenancy/recipe";
 import { redirectToThirdPartyLogin } from "../../../utils";
 
 import type { SignInAndUpThemeProps } from "../../../types";
@@ -66,44 +64,12 @@ export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps>
         }
     };
 
-    const providers = useMemo(() => {
-        const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods === true;
-        if (usesDynamicLoginMethods === false) {
-            return props.providers.map((provider) => ({
-                id: provider.id,
-                buttonComponent: provider.getButton(),
-            }));
-        }
-        const tenantProviders = Multitenancy.getInstanceOrThrow().dynamicLoginMethods?.thirdparty.providers || [];
-        const providers: { id: string; buttonComponent: JSX.Element }[] = [];
-
-        for (const tenantProvider of tenantProviders) {
-            let provider = props.providers.find((provider) => {
-                const { id } = tenantProvider;
-                return provider.id === id || provider.id.includes(id);
-            });
-            if (provider === undefined) {
-                provider = props.providers.find((provider) => {
-                    const { id } = tenantProvider;
-                    return id.startsWith(provider.id);
-                });
-            }
-            if (provider !== undefined) {
-                providers.push({
-                    id: tenantProvider.id,
-                    buttonComponent: provider.getButton(tenantProvider.name),
-                });
-            }
-        }
-        return providers;
-    }, [props.providers]);
-
     return (
         <Fragment>
-            {providers.map((provider) => {
+            {props.providers.map((provider) => {
                 return (
                     <div key={`provider-${provider.id}`} data-supertokens="providerContainer">
-                        <span onClick={() => signInClick(provider.id)}>{provider.buttonComponent}</span>
+                        <span onClick={() => signInClick(provider.id)}>{provider.getButton()}</span>
                     </div>
                 );
             })}

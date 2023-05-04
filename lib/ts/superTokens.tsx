@@ -119,23 +119,13 @@ export default class SuperTokens {
             recipeList: config.recipeList.map(({ webJS }) => webJS),
         });
 
-        const multitenancyRecipe =
-            config.recipeList.find(({ recipeID }) => recipeID === Multitenancy.RECIPE_ID) ?? Multitenancy.init({});
-        // we need to avoid duplicated init call in Supertokens constructor since we are doing it manually
-        const recipes = config.recipeList.filter((recipe) => recipe.recipeID !== Multitenancy.RECIPE_ID);
-
-        const appInfo = normaliseInputAppInfoOrThrowError(config.appInfo);
-        const enableDebugLogs = config.enableDebugLogs === true;
-
-        // initialize auth-react and web-js multitenancy recipes
-        multitenancyRecipe.authReact(appInfo, enableDebugLogs) as Multitenancy;
-        multitenancyRecipe.webJS(appInfo, config.clientType, enableDebugLogs);
+        const recipes =
+            config.recipeList.find((recipe) => recipe.recipeID === Multitenancy.RECIPE_ID) !== undefined
+                ? config.recipeList
+                : config.recipeList.concat(Multitenancy.init({}));
 
         SuperTokens.instance = new SuperTokens({ ...config, recipeList: recipes });
         SuperTokens.usesDynamicLoginMethods = config.usesDynamicLoginMethods ?? false;
-        if (config.usesDynamicLoginMethods === true) {
-            void Multitenancy.getInstanceOrThrow().initMultitenancyWithDynamicLoginMethods().catch();
-        }
 
         PostSuperTokensInitCallbacks.runPostInitCallbacks();
     }

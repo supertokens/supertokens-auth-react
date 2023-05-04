@@ -467,18 +467,16 @@ export function hasIntersectingRecipes(
     tenantMethods: GetLoginMethodsResponseNormalized,
     recipeList: RecipeModule<any, any, any, any>[]
 ): boolean {
-    let hasIntersection = false;
-    let key: keyof GetLoginMethodsResponseNormalized;
-    for (key in tenantMethods) {
-        hasIntersection = recipeList.some((recipe) => {
-            if (tenantMethods[key].enabled) {
+    for (const key in tenantMethods) {
+        const hasIntersection = recipeList.some((recipe) => {
+            if (tenantMethods[key as keyof GetLoginMethodsResponseNormalized].enabled) {
                 return recipe.recipeID === key || recipe.recipeID.includes(key);
             }
             return false;
         });
         if (hasIntersection === true) {
-            break;
+            return true;
         }
     }
-    return hasIntersection;
+    return false;
 }
