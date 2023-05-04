@@ -24,7 +24,7 @@ import { SignUpFooter } from "./signUpFooter";
 
 import type { SignInAndUpThemeProps } from "../../../types";
 
-const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
+const SignInAndUpTheme: React.FC<SignInAndUpThemeProps<{ id: string; buttonComponent: JSX.Element }>> = (props) => {
     return (
         <div data-supertokens="container">
             <div data-supertokens="row">
@@ -46,11 +46,11 @@ const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
     );
 };
 
-const SignInAndUpThemeWrapper: React.FC<SignInAndUpThemeProps> = (
-    props: SignInAndUpThemeProps & {
+const SignInAndUpThemeWrapper: React.FC<
+    SignInAndUpThemeProps<{ id: string; buttonComponent: JSX.Element }> & {
         userContext?: any;
     }
-) => {
+> = (props) => {
     const hasFont = hasFontDefined(props.config.rootStyle);
 
     return (

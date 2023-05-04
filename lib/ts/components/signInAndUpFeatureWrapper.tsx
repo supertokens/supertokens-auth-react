@@ -25,7 +25,7 @@ import type Provider from "../recipe/thirdparty/providers";
 import type { FC } from "react";
 
 export const SignInAndUpFeatureWrapper: FC<{
-    children: (providers: Provider[]) => JSX.Element;
+    children: (providers: { id: string; buttonComponent: JSX.Element }[]) => JSX.Element;
     providers: Provider[];
 }> = (props) => {
     const { children } = props;
@@ -33,10 +33,13 @@ export const SignInAndUpFeatureWrapper: FC<{
     const providers = useMemo(() => {
         const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods === true;
         if (usesDynamicLoginMethods === false) {
-            return props.providers;
+            return props.providers.map((provider) => ({
+                id: provider.id,
+                buttonComponent: provider.getButton(),
+            }));
         }
         const tenantProviders = Multitenancy.getInstanceOrThrow().dynamicLoginMethods?.thirdparty.providers || [];
-        const providers: Provider[] = [];
+        const providers: { id: string; buttonComponent: JSX.Element }[] = [];
 
         for (const tenantProvider of tenantProviders) {
             let provider = props.providers.find((provider) => {
@@ -50,7 +53,10 @@ export const SignInAndUpFeatureWrapper: FC<{
                 });
             }
             if (provider !== undefined) {
-                providers.push(Object.assign(provider, { id: tenantProvider.id, name: tenantProvider.name }));
+                providers.push({
+                    id: tenantProvider.id,
+                    buttonComponent: provider.getButton(tenantProvider.name),
+                });
             }
         }
         return providers;

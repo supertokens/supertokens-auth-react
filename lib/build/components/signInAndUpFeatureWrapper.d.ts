@@ -1,6 +1,11 @@
 import type Provider from "../recipe/thirdparty/providers";
 import type { FC } from "react";
 export declare const SignInAndUpFeatureWrapper: FC<{
-    children: (providers: Provider[]) => JSX.Element;
+    children: (
+        providers: {
+            id: string;
+            buttonComponent: JSX.Element;
+        }[]
+    ) => JSX.Element;
     providers: Provider[];
 }>;

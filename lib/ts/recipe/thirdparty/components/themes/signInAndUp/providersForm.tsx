@@ -22,7 +22,9 @@ import { redirectToThirdPartyLogin } from "../../../utils";
 
 import type { SignInAndUpThemeProps } from "../../../types";
 
-export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps> = (props) => {
+export const ThirdPartySignInAndUpProvidersForm: React.FC<
+    SignInAndUpThemeProps<{ id: string; buttonComponent: JSX.Element }>
+> = (props) => {
     const userContext = useUserContext();
 
     const signInClick = async (providerId: string): Promise<void> => {
@@ -69,7 +71,7 @@ export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps>
             {props.providers.map((provider) => {
                 return (
                     <div key={`provider-${provider.id}`} data-supertokens="providerContainer">
-                        <span onClick={() => signInClick(provider.id)}>{provider.getButton()}</span>
+                        <span onClick={() => signInClick(provider.id)}>{provider.buttonComponent}</span>
                     </div>
                 );
             })}
