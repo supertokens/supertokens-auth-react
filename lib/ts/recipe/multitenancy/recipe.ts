@@ -79,6 +79,12 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
             emailpassword: emailPassword,
             thirdparty: {
                 ...thirdParty,
+                providers: [
+                    {
+                        id: "github",
+                        name: "New",
+                    },
+                ],
                 enabled: thirdParty.enabled && thirdParty.providers !== null,
             },
         };

@@ -21,6 +21,7 @@ import { useMemo } from "react";
 
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
+import { SignInAndUpFeatureWrapper } from "../../../../../components/signInAndUpFeatureWrapper";
 import { getQueryParams } from "../../../../../utils";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
@@ -106,22 +107,34 @@ export const SignInAndUpFeature: React.FC<PropType> = (props) => {
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsThirdParty}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {props.children === undefined && (
-                        <SignInAndUpTheme {...childProps} featureState={state} dispatch={dispatch} />
+                <SignInAndUpFeatureWrapper providers={childProps.providers}>
+                    {(providers) => (
+                        <Fragment>
+                            {/* No custom theme, use default. */}
+                            {props.children === undefined && (
+                                <SignInAndUpTheme
+                                    {...{ ...childProps, providers }}
+                                    featureState={state}
+                                    dispatch={dispatch}
+                                />
+                            )}
+
+                            {/* Otherwise, custom theme is provided, propagate props. */}
+                            {props.children &&
+                                React.Children.map(props.children, (child) => {
+                                    if (React.isValidElement(child)) {
+                                        return React.cloneElement(child, {
+                                            ...childProps,
+                                            featureState: state,
+                                            dispatch,
+                                        });
+                                    }
+
+                                    return child;
+                                })}
+                        </Fragment>
                     )}
-
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {props.children &&
-                        React.Children.map(props.children, (child) => {
-                            if (React.isValidElement(child)) {
-                                return React.cloneElement(child, { ...childProps, featureState: state, dispatch });
-                            }
-
-                            return child;
-                        })}
-                </Fragment>
+                </SignInAndUpFeatureWrapper>
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );
