@@ -49,13 +49,13 @@ describe("SuperTokens Multitenancy", function () {
     before(async function () {
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-web-security"],
-            headless: true,
+            headless: false,
         });
         page = await browser.newPage();
     });
 
     after(async function () {
-        await browser.close();
+        // await browser.close();
     });
 
     function getResponder(request) {
@@ -288,5 +288,40 @@ describe("SuperTokens Multitenancy", function () {
         const providers = await getProvidersLabels(page);
         assert.deepStrictEqual(providers, []);
         await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]");
+    });
+
+    it("Renders providers based on the prefix", async function () {
+        await page.setRequestInterception(true);
+        let requestHandler = async (request) => {
+            if (request.method() === "GET" && request.url() === LOGIN_METHODS_API) {
+                getResponder(request)({
+                    thirdParty: {
+                        enabled: true,
+                        providers: [
+                            {
+                                id: "github",
+                                name: "Github",
+                            },
+                            {
+                                id: "github-1",
+                                name: "Github-1",
+                            },
+                        ],
+                    },
+                });
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            } else {
+                request.continue();
+            }
+        };
+        page.on("request", requestHandler);
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?authRecipe=thirdparty&multitenancy=enabled`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+
+        const providers = await getProvidersLabels(page);
+        assert.deepStrictEqual(providers, ["Continue with Github", "Continue with Github-1"]);
     });
 });
