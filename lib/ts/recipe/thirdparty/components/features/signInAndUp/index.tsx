@@ -107,7 +107,7 @@ export const SignInAndUpFeature: React.FC<PropType> = (props) => {
     const providers = useMemo(
         () =>
             getProviders({
-                tenantProviders: Multitenancy.getInstanceOrThrow().dynamicLoginMethods?.thirdparty.providers,
+                tenantProviders: Multitenancy.getInstanceOrThrow().getDynamicLoginMethods()?.thirdparty.providers,
                 clientProviders: childProps.providers,
             }),
         [childProps.providers]

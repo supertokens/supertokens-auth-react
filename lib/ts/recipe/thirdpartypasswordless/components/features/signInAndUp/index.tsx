@@ -150,7 +150,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
     const providers = React.useMemo(
         () =>
             getProviders({
-                tenantProviders: Multitenancy.getInstanceOrThrow().dynamicLoginMethods?.thirdparty.providers,
+                tenantProviders: Multitenancy.getInstanceOrThrow().getDynamicLoginMethods()?.thirdparty.providers,
                 clientProviders: tpChildProps.providers,
             }),
         [tpChildProps.providers]

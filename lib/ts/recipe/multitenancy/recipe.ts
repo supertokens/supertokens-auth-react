@@ -39,7 +39,8 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
     static instance?: Multitenancy;
     static readonly RECIPE_ID = "multitenancy";
 
-    public dynamicLoginMethods?: GetLoginMethodsResponseNormalized;
+    private dynamicLoginMethods?: GetLoginMethodsResponseNormalized;
+    private hasIntersection?: boolean;
     public readonly recipeID = Multitenancy.RECIPE_ID;
 
     constructor(
@@ -58,13 +59,16 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
         const tenantID = Multitenancy.getInstanceOrThrow().config.getTenantID();
 
         const tenantMethods = await Multitenancy.getDynamicLoginMethods({ tenantId: tenantID });
-        const hasIntersection = hasIntersectingRecipes(tenantMethods, SuperTokens.getInstanceOrThrow().recipeList);
-
-        if (hasIntersection === false) {
-            throw new Error("Initialized recipes have no overlap with core recipes");
-        }
+        this.hasIntersection = hasIntersectingRecipes(tenantMethods, SuperTokens.getInstanceOrThrow().recipeList);
 
         SuperTokens.uiController.emit("LoginMethodsLoaded");
+    }
+
+    public getDynamicLoginMethods(): GetLoginMethodsResponseNormalized | undefined {
+        if (this.hasIntersection === false) {
+            throw new Error("Initialized recipes have no overlap with core recipes");
+        }
+        return this.dynamicLoginMethods;
     }
 
     static async getDynamicLoginMethods(
