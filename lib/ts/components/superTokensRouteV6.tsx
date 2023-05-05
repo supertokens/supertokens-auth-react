@@ -19,8 +19,8 @@
 
 import { RoutingComponent } from "./routingComponent";
 
-import type { ReactRouterDomWithCustomHistory } from "../prebuiltui/types";
 import type { RecipeRouter } from "../recipe/recipeRouter";
+import type { ReactRouterDomWithCustomHistory } from "../ui/types";
 
 /*
  * Component.

@@ -13,7 +13,7 @@
  * under the License.
  */
 
-export * from "../lib/build/prebuiltui";
+export * from "../lib/build/ui";
 /**
  * 'export *' does not re-export a default.
  * import SuperTokens from "supertokens-auth-react";
@@ -21,5 +21,5 @@ export * from "../lib/build/prebuiltui";
  * - user add "esModuleInterop": true in their tsconfig.json file
  * - we do the following change:
  */
-import * as _default from "../lib/build/prebuiltui";
+import * as _default from "../lib/build/ui";
 export default _default;
