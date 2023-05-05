@@ -75,19 +75,16 @@ export declare type OnHandleEventContext =
           };
           userContext: any;
       };
-export declare type SignInAndUpThemeProps<P = Provider> = {
+export declare type SignInAndUpThemeProps = {
     featureState: {
         error: string | undefined;
     };
     dispatch: (action: ThirdPartySignInUpActions) => void;
-    providers: P[];
+    providers: Pick<Provider, "id" | "buttonComponent" | "getButton">[];
     recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;
     config: NormalisedConfig;
 };
-export declare type ThirdPartySignInUpChildProps<P = Provider> = Omit<
-    SignInAndUpThemeProps<P>,
-    "featureState" | "dispatch"
->;
+export declare type ThirdPartySignInUpChildProps = Omit<SignInAndUpThemeProps, "featureState" | "dispatch">;
 export declare type ThirdPartySignInUpActions = {
     type: "setError";
     error: string | undefined;

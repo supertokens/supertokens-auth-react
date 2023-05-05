@@ -15,7 +15,7 @@ export function RoutingComponent(props: {
 }): JSX.Element | null {
     const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState(
         SuperTokens.usesDynamicLoginMethods === false ||
-            Multitenancy.getInstanceOrThrow().dynamicLoginMethods !== undefined
+            Multitenancy.getInstanceOrThrow().getDynamicLoginMethods() !== undefined
     );
     const path = props.path;
     const location = props.getReactRouterDomWithCustomHistory()?.useLocation();
@@ -33,12 +33,12 @@ export function RoutingComponent(props: {
     useEffect(() => {
         const handler = () => {
             if (loadedDynamicLoginMethods === false && componentToRender?.recipeID) {
+                const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getDynamicLoginMethods();
                 let enabled =
-                    Multitenancy.getInstanceOrThrow().dynamicLoginMethods?.[
-                        componentToRender?.recipeID as keyof GetLoginMethodsResponseNormalized
-                    ] !== undefined;
+                    dynamicLoginMethods?.[componentToRender?.recipeID as keyof GetLoginMethodsResponseNormalized] !==
+                    undefined;
                 if (enabled === false) {
-                    for (const id in Multitenancy.getInstanceOrThrow().dynamicLoginMethods) {
+                    for (const id in dynamicLoginMethods) {
                         if (componentToRender.recipeID.includes(id)) {
                             enabled = true;
                             break;

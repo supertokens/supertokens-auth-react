@@ -43,7 +43,7 @@ export default function FeatureWrapper({
 }: PropsWithChildren<FeatureWrapperProps>): JSX.Element | null {
     const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState(
         SuperTokens.usesDynamicLoginMethods === false ||
-            Multitenancy.getInstanceOrThrow().dynamicLoginMethods !== undefined
+            Multitenancy.getInstanceOrThrow().getDynamicLoginMethods() !== undefined
     );
     const st = SuperTokens.getInstanceOrThrow();
     useEffect(() => {

@@ -6,13 +6,15 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
     readonly webJSRecipe: WebJSRecipeInterface<typeof MultitenancyWebJS>;
     static instance?: Multitenancy;
     static readonly RECIPE_ID = "multitenancy";
-    dynamicLoginMethods?: GetLoginMethodsResponseNormalized;
+    private dynamicLoginMethods?;
+    private hasIntersection?;
     readonly recipeID = "multitenancy";
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         webJSRecipe?: WebJSRecipeInterface<typeof MultitenancyWebJS>
     );
     initMultitenancyWithDynamicLoginMethods(): Promise<void>;
+    getDynamicLoginMethods(): GetLoginMethodsResponseNormalized | undefined;
     static getDynamicLoginMethods(
         ...options: Parameters<typeof MultitenancyWebJS.getLoginMethods>
     ): Promise<GetLoginMethodsResponseNormalized>;

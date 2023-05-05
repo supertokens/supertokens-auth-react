@@ -22,8 +22,6 @@ import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "./constants";
 
 import type { FormFieldError } from "./recipe/emailpassword/types";
-import type { GetLoginMethodsResponseNormalized } from "./recipe/multitenancy/types";
-import type RecipeModule from "./recipe/recipeModule";
 import type { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 
 /*
@@ -461,22 +459,4 @@ export function popInvalidClaimRedirectPathFromContext(userContext: any) {
         delete userContext["_default"].invalidClaimRedirectPath;
     }
     return res;
-}
-
-export function hasIntersectingRecipes(
-    tenantMethods: GetLoginMethodsResponseNormalized,
-    recipeList: RecipeModule<any, any, any, any>[]
-): boolean {
-    for (const key in tenantMethods) {
-        const hasIntersection = recipeList.some((recipe) => {
-            if (tenantMethods[key as keyof GetLoginMethodsResponseNormalized].enabled) {
-                return recipe.recipeID === key || recipe.recipeID.includes(key);
-            }
-            return false;
-        });
-        if (hasIntersection === true) {
-            return true;
-        }
-    }
-    return false;
 }

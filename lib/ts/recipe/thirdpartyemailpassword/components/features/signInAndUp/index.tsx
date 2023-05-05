@@ -20,11 +20,12 @@ import { Fragment } from "react";
 
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { SignInAndUpFeatureWrapper } from "../../../../../components/signInAndUpFeatureWrapper";
 import {
     useChildProps as useEmailPasswordChildProps,
     useFeatureReducer as useEmailPasswordFeatureReducer,
 } from "../../../../emailpassword/components/features/signInAndUp";
+import Multitenancy from "../../../../multitenancy/recipe";
+import { getProviders } from "../../../../multitenancy/utils";
 import {
     useChildProps as useThirdPartyChildProps,
     useFeatureReducer as useThirdPartyFeatureReducer,
@@ -71,8 +72,6 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         { error: tpState.error || epState.error }
     );
 
-    const recipeComponentOverrides = props.useComponentOverrides();
-
     const combinedTPDispatch = React.useCallback<typeof tpDispatch>(
         (action) => {
             dispatch(action);
@@ -110,41 +109,44 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         epChildProps,
     };
 
+    const providers = React.useMemo(
+        () =>
+            getProviders({
+                tenantProviders: Multitenancy.getInstanceOrThrow().getDynamicLoginMethods()?.thirdparty.providers,
+                clientProviders: tpChildProps.providers,
+            }),
+        [tpChildProps.providers]
+    );
+    const themeProps = { ...childProps, tpChildProps: { ...tpChildProps, providers } };
+
+    return (
+        <Fragment>
+            {/* No custom theme, use default. */}
+            {props.children === undefined && <SignInAndUpTheme {...themeProps} />}
+            {/* Otherwise, custom theme is provided, propagate props. */}
+            {props.children &&
+                React.Children.map(props.children, (child) => {
+                    if (React.isValidElement(child)) {
+                        return React.cloneElement(child, childProps);
+                    }
+
+                    return child;
+                })}
+        </Fragment>
+    );
+};
+
+const SignInAndUpFeatureWrapper: React.FC<PropType> = (props) => {
+    const recipeComponentOverrides = props.useComponentOverrides();
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsThirdPartyEmailPassword}>
-                <SignInAndUpFeatureWrapper providers={childProps.tpChildProps.providers}>
-                    {(providers) => (
-                        <Fragment>
-                            {/* No custom theme, use default. */}
-                            {props.children === undefined && (
-                                <SignInAndUpTheme
-                                    {...{
-                                        ...childProps,
-                                        tpChildProps: {
-                                            ...childProps.tpChildProps,
-                                            providers: providers,
-                                        },
-                                    }}
-                                />
-                            )}
-                            {/* Otherwise, custom theme is provided, propagate props. */}
-                            {props.children &&
-                                React.Children.map(props.children, (child) => {
-                                    if (React.isValidElement(child)) {
-                                        return React.cloneElement(child, childProps);
-                                    }
-
-                                    return child;
-                                })}
-                        </Fragment>
-                    )}
-                </SignInAndUpFeatureWrapper>
+                <SignInAndUp {...props} />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );
 };
 
-export default SignInAndUp;
+export default SignInAndUpFeatureWrapper;

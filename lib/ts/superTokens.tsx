@@ -114,15 +114,15 @@ export default class SuperTokens {
             return;
         }
 
-        SuperTokensWebJS.init({
-            ...config,
-            recipeList: config.recipeList.map(({ webJS }) => webJS),
-        });
-
         const recipes =
             config.recipeList.find((recipe) => recipe.recipeID === Multitenancy.RECIPE_ID) !== undefined
                 ? config.recipeList
                 : config.recipeList.concat(Multitenancy.init({}));
+
+        SuperTokensWebJS.init({
+            ...config,
+            recipeList: recipes.map(({ webJS }) => webJS),
+        });
 
         SuperTokens.instance = new SuperTokens({ ...config, recipeList: recipes });
         SuperTokens.usesDynamicLoginMethods = config.usesDynamicLoginMethods ?? false;

@@ -1,8 +1,6 @@
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import type { FormFieldError } from "./recipe/emailpassword/types";
-import type { GetLoginMethodsResponseNormalized } from "./recipe/multitenancy/types";
-import type RecipeModule from "./recipe/recipeModule";
 import type { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
 export declare function clearQueryParams(paramNames: string[]): void;
@@ -54,7 +52,3 @@ export declare const useOnMountAPICall: <T>(
     startLoading?: boolean
 ) => void;
 export declare function popInvalidClaimRedirectPathFromContext(userContext: any): any;
-export declare function hasIntersectingRecipes(
-    tenantMethods: GetLoginMethodsResponseNormalized,
-    recipeList: RecipeModule<any, any, any, any>[]
-): boolean;

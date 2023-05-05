@@ -11,6 +11,7 @@ import Gitlab from "./providers/gitlab";
 import Google from "./providers/google";
 import LinkedIn from "./providers/linkedIn";
 import Okta from "./providers/okta";
+import Twitter from "./providers/twitter";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
@@ -61,6 +62,7 @@ export default class Wrapper {
     static ActiveDirectory: typeof ActiveDirectory;
     static BoxySAML: typeof BoxySAML;
     static Okta: typeof Okta;
+    static Twitter: typeof Twitter;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
@@ -91,6 +93,7 @@ export {
     ActiveDirectory,
     BoxySAML,
     Okta,
+    Twitter,
     getStateAndOtherInfoFromStorage,
     getAuthorisationURLWithQueryParamsAndSetState,
     signInAndUp,

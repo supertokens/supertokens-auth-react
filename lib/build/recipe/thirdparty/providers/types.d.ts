@@ -13,7 +13,8 @@ export declare type BuiltInProviderConfig = {
           }>
         | {
               new (props: { name: string }): React.Component<any, any>;
-          };
+          }
+        | JSX.Element;
     clientId?: string;
     getFrontendRedirectURI?: () => string;
 };

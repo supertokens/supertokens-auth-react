@@ -21,12 +21,14 @@ import { useMemo } from "react";
 
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { SignInAndUpFeatureWrapper } from "../../../../../components/signInAndUpFeatureWrapper";
 import { getQueryParams } from "../../../../../utils";
+import Multitenancy from "../../../../multitenancy/recipe";
+import { getProviders } from "../../../../multitenancy/utils";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 
 import type { FeatureBaseProps, WebJSRecipeInterface } from "../../../../../types";
+import type Provider from "../../../providers";
 import type Recipe from "../../../recipe";
 import type {
     ComponentOverrideMap,
@@ -86,7 +88,10 @@ export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChi
         }
 
         return {
-            providers: recipe.config.signInAndUpFeature.providers,
+            providers: recipe.config.signInAndUpFeature.providers as Pick<
+                Provider,
+                "id" | "buttonComponent" | "getButton"
+            >[],
             recipeImplementation,
             config: recipe.config,
             recipe,
@@ -99,48 +104,54 @@ type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () =
 export const SignInAndUpFeature: React.FC<PropType> = (props) => {
     const [state, dispatch] = useFeatureReducer();
     const childProps = useChildProps(props.recipe);
+    const providers = useMemo(
+        () =>
+            getProviders({
+                tenantProviders: Multitenancy.getInstanceOrThrow().getDynamicLoginMethods()?.thirdparty.providers,
+                clientProviders: childProps.providers,
+            }),
+        [childProps.providers]
+    );
+    const themeProps = { ...childProps, providers };
 
+    return (
+        <Fragment>
+            {/* No custom theme, use default. */}
+            {props.children === undefined && (
+                <SignInAndUpTheme {...themeProps} featureState={state} dispatch={dispatch} />
+            )}
+
+            {/* Otherwise, custom theme is provided, propagate props. */}
+            {props.children &&
+                React.Children.map(props.children, (child) => {
+                    if (React.isValidElement(child)) {
+                        return React.cloneElement(child, {
+                            ...childProps,
+                            featureState: state,
+                            dispatch,
+                        });
+                    }
+
+                    return child;
+                })}
+        </Fragment>
+    );
+};
+
+const SignInAndUpFeatureWrapper: React.FC<PropType> = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
-
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsThirdParty}>
-                <SignInAndUpFeatureWrapper providers={childProps.providers}>
-                    {(providers) => (
-                        <Fragment>
-                            {/* No custom theme, use default. */}
-                            {props.children === undefined && (
-                                <SignInAndUpTheme
-                                    {...{ ...childProps, providers }}
-                                    featureState={state}
-                                    dispatch={dispatch}
-                                />
-                            )}
-
-                            {/* Otherwise, custom theme is provided, propagate props. */}
-                            {props.children &&
-                                React.Children.map(props.children, (child) => {
-                                    if (React.isValidElement(child)) {
-                                        return React.cloneElement(child, {
-                                            ...childProps,
-                                            featureState: state,
-                                            dispatch,
-                                        });
-                                    }
-
-                                    return child;
-                                })}
-                        </Fragment>
-                    )}
-                </SignInAndUpFeatureWrapper>
+                <SignInAndUpFeature {...props} />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );
 };
 
-export default SignInAndUpFeature;
+export default SignInAndUpFeatureWrapper;
 
 const getModifiedRecipeImplementation = (
     origImpl: WebJSRecipeInterface<typeof ThirdPartyWebJS>

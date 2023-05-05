@@ -24,7 +24,7 @@ import { SignUpFooter } from "./signUpFooter";
 
 import type { SignInAndUpThemeProps } from "../../../types";
 
-const SignInAndUpTheme: React.FC<SignInAndUpThemeProps<{ id: string; buttonComponent: JSX.Element }>> = (props) => {
+const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
     return (
         <div data-supertokens="container">
             <div data-supertokens="row">
@@ -47,7 +47,7 @@ const SignInAndUpTheme: React.FC<SignInAndUpThemeProps<{ id: string; buttonCompo
 };
 
 const SignInAndUpThemeWrapper: React.FC<
-    SignInAndUpThemeProps<{ id: string; buttonComponent: JSX.Element }> & {
+    SignInAndUpThemeProps & {
         userContext?: any;
     }
 > = (props) => {

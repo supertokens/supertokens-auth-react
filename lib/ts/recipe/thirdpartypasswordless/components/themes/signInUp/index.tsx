@@ -45,13 +45,15 @@ import type {
 
 const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithActiveScreen> = (props) => {
     const t = useTranslation();
+    const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods;
+    const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getDynamicLoginMethods();
 
     const thirdPartyEnabled =
-        (props.thirdPartyRecipe !== undefined && SuperTokens.usesDynamicLoginMethods === false) ||
-        Multitenancy.getInstanceOrThrow().dynamicLoginMethods?.thirdparty.enabled;
+        (props.thirdPartyRecipe !== undefined && usesDynamicLoginMethods === false) ||
+        dynamicLoginMethods?.thirdparty.enabled;
     const passwordlessEnabled =
-        (props.passwordlessRecipe !== undefined && SuperTokens.usesDynamicLoginMethods === false) ||
-        Multitenancy.getInstanceOrThrow().dynamicLoginMethods?.passwordless.enabled;
+        (props.passwordlessRecipe !== undefined && usesDynamicLoginMethods === false) ||
+        dynamicLoginMethods?.passwordless.enabled;
 
     if (thirdPartyEnabled === false && passwordlessEnabled === false) {
         return null;
