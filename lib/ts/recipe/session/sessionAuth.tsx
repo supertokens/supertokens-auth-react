@@ -18,8 +18,8 @@
  */
 import React, { useEffect, useState, useRef, useCallback } from "react";
 
+import UI from "../../prebuiltui";
 import SuperTokens from "../../superTokens";
-import UI from "../../ui";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { popInvalidClaimRedirectPathFromContext, useOnMountAPICall } from "../../utils";
