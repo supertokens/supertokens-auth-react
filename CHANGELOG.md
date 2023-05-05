@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 -   Fixed with-thirdpartyemailpassword-passwordless apps overwritten button's width
+-   Fixed supertokens-auth-react/ui import referencing .js file instead of .d.ts causing ts issue
 
 ## [0.32.1] - 2023-05-03
 
