@@ -34,6 +34,7 @@ import Gitlab from "./providers/gitlab";
 import Google from "./providers/google";
 import LinkedIn from "./providers/linkedIn";
 import Okta from "./providers/okta";
+import Twitter from "./providers/twitter";
 import ThirdParty from "./recipe";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./utils";
@@ -125,6 +126,7 @@ export default class Wrapper {
     static ActiveDirectory = ActiveDirectory;
     static BoxySAML = BoxySAML;
     static Okta = Okta;
+    static Twitter = Twitter;
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
@@ -149,6 +151,7 @@ export {
     ActiveDirectory,
     BoxySAML,
     Okta,
+    Twitter,
     getStateAndOtherInfoFromStorage,
     getAuthorisationURLWithQueryParamsAndSetState,
     signInAndUp,

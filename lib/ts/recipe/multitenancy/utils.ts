@@ -1,5 +1,19 @@
 import SuperTokens from "../../superTokens";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
+import {
+    ActiveDirectory,
+    Apple,
+    Bitbucket,
+    BoxySAML,
+    Discord,
+    Facebook,
+    Github,
+    Gitlab,
+    Google,
+    LinkedIn,
+    Okta,
+    Twitter,
+} from "../thirdparty";
 
 import type { UserInput, NormalisedConfig, RecipeInterface, GetLoginMethodsResponseNormalized } from "./types";
 import type RecipeModule from "../recipeModule";
@@ -45,8 +59,23 @@ export const getProviders = ({
     }[];
     clientProviders: Pick<Provider, "id" | "buttonComponent" | "getButton">[];
 }): Pick<Provider, "id" | "getButton">[] => {
+    const builtInProvidersMap = {
+        apple: Apple,
+        google: Google,
+        github: Github,
+        activeDirectory: ActiveDirectory,
+        bitbucket: Bitbucket,
+        "boxy-saml": BoxySAML,
+        discord: Discord,
+        gitlab: Gitlab,
+        linkedin: LinkedIn,
+        okta: Okta,
+        twitter: Twitter,
+        facebook: Facebook,
+    } as const;
+
     const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods === true;
-    if (usesDynamicLoginMethods === false) {
+    if (usesDynamicLoginMethods === false || tenantProviders.length === 0) {
         return clientProviders.map((provider) => ({
             id: provider.id,
             buttonComponent: provider.getButton(),
@@ -72,6 +101,18 @@ export const getProviders = ({
                 buttonComponent: provider.getButton(tenantProvider.name),
                 getButton: provider.getButton,
             });
+        } else {
+            const providerID = Object.keys(builtInProvidersMap).find((id) => {
+                return tenantProvider.id === id || tenantProvider.id.startsWith(id);
+            });
+            if (builtInProvidersMap[providerID as keyof typeof builtInProvidersMap]) {
+                const provider = builtInProvidersMap[providerID as keyof typeof builtInProvidersMap].init();
+                providers.push({
+                    id: tenantProvider.id,
+                    buttonComponent: provider.getButton(tenantProvider.name),
+                    getButton: provider.getButton,
+                });
+            }
         }
     }
     return providers;

@@ -82,10 +82,7 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
         instance.dynamicLoginMethods = {
             passwordless,
             emailpassword: emailPassword,
-            thirdparty: {
-                ...thirdParty,
-                enabled: thirdParty.enabled && thirdParty.providers !== null,
-            },
+            thirdparty: thirdParty,
         };
         return instance.dynamicLoginMethods;
     }
