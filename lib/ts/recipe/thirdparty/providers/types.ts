@@ -34,7 +34,7 @@ export type BuiltInProviderConfig = {
     /*
      * Button Component
      */
-    buttonComponent?: FC<{ name: string }> | { new (props: { name: string }): React.Component<any, any> };
+    buttonComponent?: FC<{ name: string }> | { new (props: { name: string }): React.Component<any, any> } | JSX.Element;
 
     clientId?: string; // optional clientId to be sent during signinup API
 

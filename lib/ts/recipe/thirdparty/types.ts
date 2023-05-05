@@ -128,16 +128,16 @@ export type OnHandleEventContext =
           userContext: any;
       };
 
-export type SignInAndUpThemeProps<P = Provider> = {
+export type SignInAndUpThemeProps = {
     featureState: {
         error: string | undefined;
     };
     dispatch: (action: ThirdPartySignInUpActions) => void;
-    providers: P[];
+    providers: Pick<Provider, "id" | "buttonComponent" | "getButton">[];
     recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;
     config: NormalisedConfig;
 };
-export type ThirdPartySignInUpChildProps<P = Provider> = Omit<SignInAndUpThemeProps<P>, "featureState" | "dispatch">;
+export type ThirdPartySignInUpChildProps = Omit<SignInAndUpThemeProps, "featureState" | "dispatch">;
 
 export type ThirdPartySignInUpActions = {
     type: "setError";

@@ -20,8 +20,9 @@ import { Fragment } from "react";
 
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { SignInAndUpFeatureWrapper } from "../../../../../components/signInAndUpFeatureWrapper";
 import { useUserContext } from "../../../../../usercontext";
+import Multitenancy from "../../../../multitenancy/recipe";
+import { getProviders } from "../../../../multitenancy/utils";
 import {
     useChildProps as usePasswordlessChildProps,
     useFeatureReducer as usePasswordlessFeatureReducer,
@@ -52,8 +53,6 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         props.recipe.passwordlessRecipe?.webJSRecipe,
         userContext
     );
-
-    const recipeComponentOverrides = props.useComponentOverrides();
 
     const [combinedState, dispatch] = React.useReducer(
         (state: { error: string | undefined }, action: ThirdPartySignInUpActions | PasswordlessSignInUpAction) => {
@@ -148,35 +147,44 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         pwlessChildProps,
     };
 
+    const providers = React.useMemo(
+        () =>
+            getProviders({
+                tenantProviders: Multitenancy.getInstanceOrThrow().dynamicLoginMethods?.thirdparty.providers,
+                clientProviders: tpChildProps.providers,
+            }),
+        [tpChildProps.providers]
+    );
+    const themeProps = { ...childProps, tpChildProps: { ...tpChildProps, providers } };
+
+    return (
+        <Fragment>
+            {/* No custom theme, use default. */}
+            {props.children === undefined && <SignInUpTheme {...themeProps} />}
+            {/* Otherwise, custom theme is provided, propagate props. */}
+            {props.children &&
+                React.Children.map(props.children, (child) => {
+                    if (React.isValidElement(child)) {
+                        return React.cloneElement(child, childProps);
+                    }
+
+                    return child;
+                })}
+        </Fragment>
+    );
+};
+
+const SignInAndUpFeatureWrapper: React.FC<PropType> = (props) => {
+    const recipeComponentOverrides = props.useComponentOverrides();
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsThirdPartyPasswordless}>
-                <SignInAndUpFeatureWrapper providers={childProps.tpChildProps.providers}>
-                    {(providers) => (
-                        <Fragment>
-                            {/* No custom theme, use default. */}
-                            {props.children === undefined && (
-                                <SignInUpTheme
-                                    {...{ ...childProps, tpChildProps: { ...childProps.tpChildProps, providers } }}
-                                />
-                            )}
-                            {/* Otherwise, custom theme is provided, propagate props. */}
-                            {props.children &&
-                                React.Children.map(props.children, (child) => {
-                                    if (React.isValidElement(child)) {
-                                        return React.cloneElement(child, childProps);
-                                    }
-
-                                    return child;
-                                })}
-                        </Fragment>
-                    )}
-                </SignInAndUpFeatureWrapper>
+                <SignInAndUp {...props} />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );
 };
 
-export default SignInAndUp;
+export default SignInAndUpFeatureWrapper;

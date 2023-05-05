@@ -22,9 +22,7 @@ import { redirectToThirdPartyLogin } from "../../../utils";
 
 import type { SignInAndUpThemeProps } from "../../../types";
 
-export const ThirdPartySignInAndUpProvidersForm: React.FC<
-    SignInAndUpThemeProps<{ id: string; buttonComponent: JSX.Element }>
-> = (props) => {
+export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps> = (props) => {
     const userContext = useUserContext();
 
     const signInClick = async (providerId: string): Promise<void> => {

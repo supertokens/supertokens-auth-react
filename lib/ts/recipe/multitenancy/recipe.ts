@@ -22,9 +22,10 @@ import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuper
 
 import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
-import { hasIntersectingRecipes, isTest } from "../../utils";
+import { isTest } from "../../utils";
 import RecipeModule from "../recipeModule";
 
+import { hasIntersectingRecipes } from "./utils";
 import { normaliseMultitenancyConfig } from "./utils";
 
 import type { NormalisedConfig, UserInput, GetLoginMethodsResponseNormalized } from "./types";

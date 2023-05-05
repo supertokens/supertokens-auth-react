@@ -37,7 +37,11 @@ export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
         }>
     ) => JSX.Element;
     static SignInAndUpCallback: (prop?: any) => JSX.Element;
-    static SignInAndUpTheme: import("react").FC<import("./types").SignInAndUpThemeProps>;
+    static SignInAndUpTheme: import("react").FC<
+        import("./types").SignInAndUpThemeProps & {
+            userContext?: any;
+        }
+    >;
     static SignInAndUpCallbackTheme: (props: { config: NormalisedConfig }) => JSX.Element;
 }
 declare const SignInAndUp: (
