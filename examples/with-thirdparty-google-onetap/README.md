@@ -32,9 +32,23 @@ The app will start on `http://localhost:3000`
 
 ## How it works
 
--   The overall flow is that google returns an ID token to the frontend post login. This ID token is then sent to the backend, which then verifies the token and creates a supertokens user for ths user along with their session.
--   This demo uses the pre build UI, but you can always build you own UI instead. For the pre built UI, we override the provider list UI to add the google one tab UI and provide it a callback handler which calls the supertokens' backend API with the id token. You can see how this is done in `App.tsx` file in the `frontend` folder, in the `doLogin` callback function.
--   On the backend, we override the sign in up API from supertokens in which we call Google's API to verify the ID token and get info from it (it can also be done using a JWT verification library). After we have the user's info, we call the original implementation with the info to login the user.
+Google's one tap library calls a callback function with the ID token on a successful login. We then use the provided ID token with the Sign In Up API to complete the login process.
+
+### On the frontend
+
+The demo uses the pre-built UI, but you can always build your own UI instead.
+
+-   We override the provider list to display One Tap UI in the place of Google button. That's achieved through a custom react component included in the example. The component accepts google client config and a callback.
+-   The `doLogin` function defined in the `App.tsx` contains the logic to complete the login.
+  -    We first call the `getAuthorisationURLWithQueryParamsAndSetState` function to create client state
+  -    Then we call the sign in up API with the ID token available as `data.credential`.
+  -    Note that `authCode` and `state` are added in to the `userContext` and `getAuthCodeFromURL` & `getAuthStateFromURL` have been overridden in the `config.tsx` to use these values when available.
+-    `useShadowDom` is set to `false` in the `config.tsx` to let the google one tap library render the UI in the right parent element.
+
+### On the backend
+
+-   We override the built in Google Provider to override the `getProfileInfo` function to get the user's info from the ID token payload.
+-   We override the sign in up API to call the Google API to verify the ID token and return the ID token payload. This can also be achieved using a JWT verification library. We then call the original implementation with the ID token payload as `authCodeResponse`.
 
 ## Author
 
