@@ -32,9 +32,23 @@ The app will start on `http://localhost:3000`
 
 ## How it works
 
--   The overall flow is that google returns an ID token to the frontend post login. This ID token is then sent to the backend, which then verifies the token and creates a supertokens user for ths user along with their session.
--   This demo uses the pre build UI, but you can always build you own UI instead. For the pre built UI, we override the provider list UI to add the google one tab UI and provide it a callback handler which calls the supertokens' backend API with the id token. You can see how this is done in `App.tsx` file in the `frontend` folder, in the `doLogin` callback function.
--   On the backend, we override the sign in up API from supertokens in which we call Google's API to verify the ID token and get info from it (it can also be done using a JWT verification library). After we have the user's info, we call the original implementation with the info to login the user.
+Google's one tap library calls a callback function with the ID token on a successful login. We then use the provided ID token with the Sign In Up API to complete the login process. More information on the google one tap login is available here - https://developers.google.com/identity/gsi/web/guides/features
+
+### On the frontend
+
+The demo uses the pre-built UI, but you can always build your own UI instead.
+
+-   A custom react component included in the example (`google-one-tap/index.ts`) which is added in the `ThirdPartySignInAndUpProvidersForm_Override` in the `App.tsx` that renders the One Tap UI. The component accepts google client config and a callback (`doLogin`) that is called on successful login.
+-   The `doLogin` function defined in the `App.tsx` contains the logic to complete the login.
+    -   We first call the `getAuthorisationURLWithQueryParamsAndSetState` function to create client state. We need to do this because the `signInAndUp` function does validation on the state.
+    -   Then we call the sign in up API (using `ThirdParty.signInAndUp` function) with the ID token available in the param `data.credential`.
+    -   Note that `authCode` and `state` are added in to the `userContext` and `getAuthCodeFromURL` & `getAuthStateFromURL` have been overridden in the `config.tsx` so that these values are used when they are set in the `userContext` and use default implementation in other cases.
+-   `useShadowDom` is set to `false` in the `config.tsx` to let the google one tap library render the UI in the right parent element.
+
+### On the backend
+
+-   We override the built in Google Provider to override the `getProfileInfo` function to get the user's info from the ID token payload.
+-   We override the sign in up API to call the Google API to verify the ID token and return the ID token payload. This can also be achieved using a JWT verification library. We then call the original implementation with the ID token payload as `authCodeResponse`.
 
 ## Author
 
