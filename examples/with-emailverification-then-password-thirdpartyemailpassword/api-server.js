@@ -171,6 +171,7 @@ supertokens.init({
             ],
         }),
         Session.init({
+            exposeAccessTokenToFrontendInCookieBasedAuth: true,
             override: {
                 functions: (oI) => ({
                     ...oI,

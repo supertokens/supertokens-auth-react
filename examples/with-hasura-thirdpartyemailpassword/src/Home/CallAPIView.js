@@ -3,14 +3,21 @@ import Session from "supertokens-auth-react/recipe/session";
 
 export default function CallAPIView() {
     async function callAPIClicked() {
-        let hasuraJWT = (await Session.getAccessTokenPayloadSecurely())["jwt"];
-
+        let hasuraTokenPayload = await Session.getAccessTokenPayloadSecurely();
+        let jwt = null;
+        if (hasuraTokenPayload.jwt === undefined) {
+            jwt = await Session.getAccessToken();
+        } else {
+            // This branch is only required if there are valid access tokens created before the update
+            // It can be removed after the validity period ends
+            jwt = hasuraTokenPayload.jwt;
+        }
         // We can also use apollo client here instead.
         let response = await axios({
             method: "post",
-            url: "https://informed-glowworm-75.hasura.app/v1/graphql",
+            url: "https://funky-blowfish-90.hasura.app/v1/graphql",
             headers: {
-                Authorization: `Bearer ${hasuraJWT}`,
+                Authorization: `Bearer ${jwt}`,
                 "content-type": "application/json",
             },
             data: {

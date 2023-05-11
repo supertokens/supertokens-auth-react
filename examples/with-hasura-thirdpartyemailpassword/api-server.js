@@ -52,11 +52,18 @@ supertokens.init({
             ],
         }),
         Session.init({
-            jwt: {
-                enable: true,
-                issuer: process.env.JWT_ISSUER_URL,
-            },
+            getTokenTransferMethod: () => "header",
             override: {
+                openIdFeature: {
+                    functions: (originalImplementation) => ({
+                        ...originalImplementation,
+                        getOpenIdDiscoveryConfiguration: async (input) => ({
+                            issuer: process.env.JWT_ISSUER_URL,
+                            jwks_uri: `${apiDomain}/auth/jwt/jwks.json`,
+                            status: "OK",
+                        }),
+                    }),
+                },
                 functions: (oI) => {
                     return {
                         ...oI,

@@ -25,7 +25,7 @@ npm install
 
 ## Run the demo app
 
-1. Run `ngrok` to list on port 3001. This will expose the API server to the internet which Hasura can query
+1. Run `ngrok` to listen on port 3001. This will expose the API server to the internet which Hasura can query
 
 ```
 ngrok http 3001
