@@ -9,6 +9,7 @@ let { middleware, errorHandler } = require("supertokens-node/framework/express")
 let EmailVerification = require("supertokens-node/recipe/emailverification");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 const { BooleanClaim } = require("supertokens-node/recipe/session/claims");
+let Dashboard = require("supertokens-node/recipe/dashboard");
 
 const RealPasswordClaim = new BooleanClaim({
     fetchValue: () => false,
@@ -180,6 +181,7 @@ supertokens.init({
                 }),
             },
         }),
+        Dashboard.init(),
     ],
 });
 

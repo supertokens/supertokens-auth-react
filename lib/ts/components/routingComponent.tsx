@@ -1,19 +1,29 @@
 import React from "react";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
-import type SuperTokens from "../superTokens";
+import { RecipeRouter } from "../recipe/recipeRouter";
 
-export function RoutingComponent(props: { supertokensInstance: SuperTokens; path: string }): JSX.Element | null {
-    const stInstance = props.supertokensInstance;
+import type { ReactRouterDomWithCustomHistory } from "../ui/types";
+
+export function RoutingComponent(props: {
+    getReactRouterDomWithCustomHistory: () => ReactRouterDomWithCustomHistory | undefined;
+    preBuiltUIList: RecipeRouter[];
+    path: string;
+}): JSX.Element | null {
     const path = props.path;
+    const location = props.getReactRouterDomWithCustomHistory()?.useLocation();
     const componentToRender = React.useMemo(() => {
+        const normalizedPath = new NormalisedURLPath(path);
         // During development, this runs twice so as to warn devs of if there
         // are any side effects that happen here. So in tests, it will result in
         // the console log twice
-        return stInstance.getMatchingComponentForRouteAndRecipeId(new NormalisedURLPath(path));
-    }, [stInstance, path]);
+        return RecipeRouter.getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
+            normalizedPath,
+            props.preBuiltUIList
+        );
+    }, [path, location]); // location dependency needs to be kept in order to get new component on url change
 
-    const history = props.supertokensInstance.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
+    const history = props.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
 
     if (componentToRender === undefined) {
         return null;

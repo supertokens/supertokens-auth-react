@@ -17,37 +17,28 @@
  * Imports.
  */
 
-import { OverrideableBuilder } from "supertokens-js-override";
+import EmailVerificationWebJS from "supertokens-web-js/recipe/emailverification";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 
 import { EmailVerificationClaimClass } from "../../claims/emailVerificationClaim";
 import { SSR_ERROR } from "../../constants";
-import { UserContextContext } from "../../usercontext";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { matchRecipeIdUsingQueryParams } from "../../utils";
 import RecipeModule from "../recipeModule";
-import { SessionAuth } from "../session";
 
-import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
-import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
-import RecipeImplementation from "./recipeImplementation";
+import { getFunctionOverrides } from "./functionOverrides";
 import { normaliseEmailVerificationFeature } from "./utils";
 
 import type {
     UserInput,
-    Config,
     NormalisedConfig,
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
 } from "./types";
-import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap } from "../../types";
-import type { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
-import type { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
+import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
+import type { NormalisedAppInfo } from "../../types";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -59,25 +50,14 @@ export default class EmailVerification extends RecipeModule<
     static RECIPE_ID = "emailverification";
 
     static EmailVerificationClaim = new EmailVerificationClaimClass(
-        () => EmailVerification.getInstanceOrThrow().recipeImpl
+        () => EmailVerification.getInstanceOrThrow().webJSRecipe
     );
 
-    recipeImpl: RecipeInterface;
-    constructor(config: Config) {
-        super(normaliseEmailVerificationFeature(config));
-
-        {
-            const builder = new OverrideableBuilder(
-                RecipeImplementation({
-                    appInfo: this.config.appInfo,
-                    recipeId: this.config.recipeId,
-                    onHandleEvent: this.config.onHandleEvent,
-                    preAPIHook: this.config.preAPIHook,
-                    postAPIHook: this.config.postAPIHook,
-                })
-            );
-            this.recipeImpl = builder.override(this.config.override.functions).build();
-        }
+    constructor(
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
+        public readonly webJSRecipe: WebJSRecipeInterface<typeof EmailVerificationWebJS> = EmailVerificationWebJS
+    ) {
+        super(config);
 
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
             const isVerifiedValidator = EmailVerification.EmailVerificationClaim.validators.isVerified(10);
@@ -87,16 +67,36 @@ export default class EmailVerification extends RecipeModule<
 
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
-        return (
-            appInfo: NormalisedAppInfo
-        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
-            EmailVerification.instance = new EmailVerification({
-                ...config,
-                appInfo,
-                recipeId: EmailVerification.RECIPE_ID,
-            });
-            return EmailVerification.instance;
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
+        const normalisedConfig = normaliseEmailVerificationFeature(config);
+
+        return {
+            authReact: (
+                appInfo: NormalisedAppInfo
+            ): RecipeModule<
+                GetRedirectionURLContext,
+                PreAndPostAPIHookAction,
+                OnHandleEventContext,
+                NormalisedConfig
+            > => {
+                EmailVerification.instance = new EmailVerification({
+                    ...normalisedConfig,
+                    appInfo,
+                    recipeId: EmailVerification.RECIPE_ID,
+                });
+                return EmailVerification.instance;
+            },
+            webJS: EmailVerificationWebJS.init({
+                ...normalisedConfig,
+                override: {
+                    functions: (originalImpl, builder) => {
+                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
+                        builder.override(functions);
+                        builder.override(normalisedConfig.override.functions);
+                        return originalImpl;
+                    },
+                },
+            }),
         };
     }
 
@@ -114,69 +114,12 @@ export default class EmailVerification extends RecipeModule<
         return EmailVerification.instance;
     }
 
-    getFeatures = (
-        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
-    ): RecipeFeatureComponentMap => {
-        const features: RecipeFeatureComponentMap = {};
-        if (this.config.disableDefaultUI !== true) {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
-                new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH)
-            );
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props: any) => this.getFeatureComponent("emailverification", props, useComponentOverrides),
-            };
-        }
-        return features;
-    };
-
-    getFeatureComponent = (
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _: "emailverification",
-        props: any,
-        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
-    ): JSX.Element => {
-        return (
-            <UserContextWrapper userContext={props.userContext}>
-                <SessionAuth requireAuth={false} overrideGlobalClaimValidators={() => []}>
-                    {/**
-                     * EmailVerificationFeature is a class component that accepts userContext
-                     * as a prop. If we pass userContext as a prop directly then Emailverification
-                     * will not respond to changes when the userContext in UserContextWrapper
-                     * changes. In order to prevent this we use a Consumer that will respond
-                     * to changes in UserContextWrapper and update the prop for EmailVerificationFeature
-                     *
-                     * NOTE: We cannot use static contextType in EmailVerificationFeature to solve
-                     * this because EmailVerificationFeature already uses SessionContext as its
-                     * context type. Read more here:
-                     * https://reactjs.org/docs/context.html#consuming-multiple-contexts
-                     */}
-                    <UserContextContext.Consumer>
-                        {(value) => {
-                            return (
-                                <EmailVerificationFeature
-                                    recipe={this}
-                                    useComponentOverrides={useComponentOverrides}
-                                    {...{
-                                        ...props,
-                                        // We do this to make sure it does not add another provider
-                                        userContext: value,
-                                    }}
-                                />
-                            );
-                        }}
-                    </UserContextContext.Consumer>
-                </SessionAuth>
-            </UserContextWrapper>
-        );
-    };
-
     async isEmailVerified(userContext: any): Promise<{
         status: "OK";
         isVerified: boolean;
         fetchResponse: Response;
     }> {
-        return await this.recipeImpl.isEmailVerified({
+        return await this.webJSRecipe.isEmailVerified({
             userContext,
         });
     }

@@ -16,13 +16,20 @@ export default [
     {
         input: {
             index: "lib/ts/index.ts",
+            "ui-entry": "lib/ts/ui/index.tsx",
             session: "lib/ts/recipe/session/index.ts",
             emailverification: "lib/ts/recipe/emailverification/index.tsx",
+            emailverificationprebuiltui: "lib/ts/recipe/emailverification/prebuiltui.tsx",
             emailpassword: "lib/ts/recipe/emailpassword/index.ts",
+            emailpasswordprebuiltui: "lib/ts/recipe/emailpassword/prebuiltui.tsx",
             passwordless: "lib/ts/recipe/passwordless/index.ts",
+            passwordlessprebuiltui: "lib/ts/recipe/passwordless/prebuiltui.tsx",
             thirdparty: "lib/ts/recipe/thirdparty/index.ts",
+            thirdpartyprebuiltui: "lib/ts/recipe/thirdparty/prebuiltui.tsx",
             thirdpartyemailpassword: "lib/ts/recipe/thirdpartyemailpassword/index.ts",
+            thirdpartyemailpasswordprebuiltui: "lib/ts/recipe/thirdpartyemailpassword/prebuiltui.tsx",
             thirdpartypasswordless: "lib/ts/recipe/thirdpartypasswordless/index.ts",
+            thirdpartypasswordlessprebuiltui: "lib/ts/recipe/thirdpartypasswordless/prebuiltui.tsx",
             userroles: "lib/ts/recipe/userroles/index.ts",
         },
         plugins: [

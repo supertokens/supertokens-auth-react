@@ -52,7 +52,7 @@ const ResetPasswordUsingToken: React.FC<PropType> = (props) => {
                   clearError: () => setError(undefined),
                   styleFromInit: submitNewPasswordFormFeature.style,
                   formFields: submitNewPasswordFormFeature.formFields,
-                  recipeImplementation: props.recipe.recipeImpl,
+                  recipeImplementation: props.recipe.webJSRecipe,
                   config: props.recipe.config,
                   onSignInClicked: () => {
                       void SuperTokens.getInstanceOrThrow().redirectToAuth({
@@ -76,7 +76,7 @@ const ResetPasswordUsingToken: React.FC<PropType> = (props) => {
         clearError: () => setError(undefined),
         styleFromInit: enterEmailFormFeature.style,
         formFields: enterEmailFormFeature.formFields,
-        recipeImplementation: props.recipe.recipeImpl,
+        recipeImplementation: props.recipe.webJSRecipe,
         config: props.recipe.config,
     };
 

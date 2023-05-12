@@ -1,39 +1,30 @@
-/// <reference types="react" />
+import EmailPasswordWebJS from "supertokens-web-js/recipe/emailpassword";
 import AuthRecipe from "../authRecipe";
 import type {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
-    Config,
     NormalisedConfig,
     UserInput,
 } from "./types";
-import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { CreateRecipeFunction, FeatureBaseProps, RecipeFeatureComponentMap } from "../../types";
-import type { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
 export default class EmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
     never,
     OnHandleEventContext,
     NormalisedConfig
 > {
+    readonly webJSRecipe: WebJSRecipeInterface<typeof EmailPasswordWebJS>;
     static instance?: EmailPassword;
     static RECIPE_ID: string;
-    recipeImpl: WebJsRecipeInterface;
-    constructor(config: Config);
-    getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
+    constructor(
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
+        webJSRecipe?: WebJSRecipeInterface<typeof EmailPasswordWebJS>
+    );
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
-    getFeatureComponent: (
-        componentName: "signinup" | "resetpassword",
-        props: FeatureBaseProps & {
-            redirectOnSessionExists?: boolean;
-            userContext?: any;
-        },
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ) => JSX.Element;
     static init(
         config?: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): EmailPassword;
     static reset(): void;
 }

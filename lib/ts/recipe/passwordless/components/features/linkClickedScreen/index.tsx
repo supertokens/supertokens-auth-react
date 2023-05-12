@@ -54,15 +54,13 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
             });
             return "REDIRECTING";
         }
-        const loginAttemptInfo = await props.recipe.recipeImpl.getLoginAttemptInfo({ userContext });
+        const loginAttemptInfo = await props.recipe.webJSRecipe.getLoginAttemptInfo({ userContext });
 
         if (loginAttemptInfo?.preAuthSessionId !== preAuthSessionId) {
             return "REQUIRES_INTERACTION";
         }
 
-        return props.recipe.recipeImpl.consumeCode({
-            preAuthSessionId,
-            linkCode,
+        return props.recipe.webJSRecipe.consumeCode({
             userContext,
         });
     }, [props.recipe, props.history]);
@@ -91,10 +89,10 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
 
             if (response.status === "OK") {
                 const loginAttemptInfo = await getLoginAttemptInfo({
-                    recipeImplementation: props.recipe.recipeImpl,
+                    recipeImplementation: props.recipe.webJSRecipe,
                     userContext,
                 });
-                await props.recipe.recipeImpl.clearLoginAttemptInfo({
+                await props.recipe.webJSRecipe.clearLoginAttemptInfo({
                     userContext,
                 });
                 return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
@@ -142,22 +140,12 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
 
     const childProps = {
-        recipeImplementation: props.recipe.recipeImpl,
+        recipeImplementation: props.recipe.webJSRecipe,
         config: props.recipe.config,
         requireUserInteraction,
         consumeCode: async () => {
-            const preAuthSessionId = getQueryParams("preAuthSessionId");
-            const linkCode = getURLHash();
-
-            if (preAuthSessionId === null || preAuthSessionId.length === 0 || linkCode.length === 0) {
-                // This should never happen, and even if it does the we should be already redirecting
-                throw new Error("Called consumeCode without link info");
-            }
-
             try {
-                const consumeResp = await props.recipe.recipeImpl.consumeCode({
-                    preAuthSessionId,
-                    linkCode,
+                const consumeResp = await props.recipe.webJSRecipe.consumeCode({
                     userContext,
                 });
                 await handleConsumeResp(consumeResp);

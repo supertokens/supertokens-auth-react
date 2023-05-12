@@ -21,18 +21,13 @@ import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import { getNormalisedUserContext } from "../../utils";
 
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
-import EmailVerificationTheme from "./components/themes/emailVerification";
 import EmailVerificationRecipe from "./recipe";
-import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import { UserInput } from "./types";
 
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/emailverification";
 
 export default class Wrapper {
-    static EmailVerification = (prop?: any) =>
-        EmailVerificationRecipe.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
-    static EmailVerificationTheme = EmailVerificationTheme;
-
     static EmailVerificationClaim = EmailVerificationRecipe.EmailVerificationClaim;
 
     static init(config: UserInput) {
@@ -44,7 +39,7 @@ export default class Wrapper {
         isVerified: boolean;
         fetchResponse: Response;
     }> {
-        return EmailVerificationRecipe.getInstanceOrThrow().recipeImpl.isEmailVerified({
+        return EmailVerificationRecipe.getInstanceOrThrow().webJSRecipe.isEmailVerified({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -54,7 +49,7 @@ export default class Wrapper {
         status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
         fetchResponse: Response;
     }> {
-        return EmailVerificationRecipe.getInstanceOrThrow().recipeImpl.verifyEmail({
+        return EmailVerificationRecipe.getInstanceOrThrow().webJSRecipe.verifyEmail({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -64,14 +59,14 @@ export default class Wrapper {
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }> {
-        return EmailVerificationRecipe.getInstanceOrThrow().recipeImpl.sendVerificationEmail({
+        return EmailVerificationRecipe.getInstanceOrThrow().webJSRecipe.sendVerificationEmail({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
     static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string {
-        return EmailVerificationRecipe.getInstanceOrThrow().recipeImpl.getEmailVerificationTokenFromURL({
+        return EmailVerificationRecipe.getInstanceOrThrow().webJSRecipe.getEmailVerificationTokenFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -84,7 +79,6 @@ const init = Wrapper.init;
 const isEmailVerified = Wrapper.isEmailVerified;
 const verifyEmail = Wrapper.verifyEmail;
 const sendVerificationEmail = Wrapper.sendVerificationEmail;
-const EmailVerification = Wrapper.EmailVerification;
 const getEmailVerificationTokenFromURL = Wrapper.getEmailVerificationTokenFromURL;
 const EmailVerificationComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 const EmailVerificationClaim = EmailVerificationRecipe.EmailVerificationClaim;
@@ -95,8 +89,6 @@ export {
     verifyEmail,
     sendVerificationEmail,
     getEmailVerificationTokenFromURL,
-    EmailVerification,
-    EmailVerificationTheme,
     EmailVerificationComponentsOverrideProvider,
     GetRedirectionURLContext,
     PreAPIHookContext as PreAPIHookContext,

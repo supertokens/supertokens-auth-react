@@ -1,20 +1,17 @@
+/// <reference types="react" />
 import {
     RecipeInterface,
     EmailPasswordUserType as UserType,
     ThirdPartyUserType,
 } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
-import { Apple, Google, Facebook, Github } from "../thirdparty/";
-import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
-import SignInAndUpTheme from "./components/themes/signInAndUp";
+import { Apple, Google, Facebook, Github, Gitlab, Bitbucket, Discord } from "../thirdparty/";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import type { PropsWithChildren } from "react";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 export default class Wrapper {
     static init(
         config: UserInput
-    ): import("../../types").CreateRecipeFunction<
+    ): import("../../types").RecipeInitResult<
         GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
@@ -164,41 +161,23 @@ export default class Wrapper {
     static getAuthCodeFromURL(input?: { userContext?: any }): string;
     static getAuthErrorFromURL(input?: { userContext?: any }): string | undefined;
     static getAuthStateFromURL(input?: { userContext?: any }): string;
-    static Google: typeof Google;
     static Apple: typeof Apple;
-    static Facebook: typeof Facebook;
+    static Bitbucket: typeof Bitbucket;
+    static Discord: typeof Discord;
     static Github: typeof Github;
-    static SignInAndUp: (
-        prop?: PropsWithChildren<{
-            redirectOnSessionExists?: boolean;
-            userContext?: any;
-        }>
-    ) => JSX.Element;
-    static SignInAndUpTheme: typeof SignInAndUpTheme;
-    static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
-    static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
-    static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
-    static ThirdPartySignInAndUpCallbackTheme: (props: {
-        config: import("../thirdparty/types").NormalisedConfig;
-    }) => JSX.Element;
+    static Gitlab: typeof Gitlab;
+    static Google: typeof Google;
+    static Facebook: typeof Facebook;
     static ComponentsOverrideProvider: import("react").FC<
-        PropsWithChildren<{
+        import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
         }>
     >;
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
-declare const SignInAndUp: (
-    prop?: PropsWithChildren<{
-        redirectOnSessionExists?: boolean;
-        userContext?: any;
-    }>
-) => JSX.Element;
-declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
-declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
 declare const ThirdpartyEmailPasswordComponentsOverrideProvider: import("react").FC<
-    PropsWithChildren<{
+    import("react").PropsWithChildren<{
         components: import("./types").ComponentOverrideMap;
     }>
 >;
@@ -222,14 +201,13 @@ declare const getAuthStateFromURL: typeof Wrapper.getAuthStateFromURL;
 export {
     init,
     Apple,
+    Bitbucket,
+    Discord,
+    Github,
+    Gitlab,
     Google,
     Facebook,
-    Github,
-    SignInAndUp,
-    SignInAndUpTheme,
     ThirdpartyEmailPasswordComponentsOverrideProvider,
-    ThirdPartySignInAndUpCallback,
-    ThirdPartySignInAndUpCallbackTheme,
     signOut,
     submitNewPassword,
     sendPasswordResetEmail,
@@ -248,8 +226,6 @@ export {
     getAuthCodeFromURL,
     getAuthErrorFromURL,
     getAuthStateFromURL,
-    ResetPasswordUsingToken,
-    ResetPasswordUsingTokenTheme,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

@@ -23,17 +23,17 @@ import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/
 import { getNormalisedUserContext } from "../../utils";
 
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
-import SignInAndUpTheme from "./components/themes/signInAndUp";
-import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import Apple from "./providers/apple";
+import Bitbucket from "./providers/bitbucket";
+import Discord from "./providers/discord";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
+import Gitlab from "./providers/gitlab";
 import Google from "./providers/google";
 import ThirdParty from "./recipe";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./utils";
 
-import type { PropsWithChildren } from "react";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
@@ -62,14 +62,14 @@ export default class Wrapper {
             thirdPartyId: input.thirdPartyId,
             config: recipeInstance.config,
             userContext: getNormalisedUserContext(input.userContext),
-            recipeImplementation: recipeInstance.recipeImpl,
+            recipeImplementation: recipeInstance.webJSRecipe,
         });
     }
 
     static getStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
         userContext?: any;
     }): (StateObject & CustomStateProperties) | undefined {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.getStateAndOtherInfoFromStorage({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.getStateAndOtherInfoFromStorage({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -79,7 +79,7 @@ export default class Wrapper {
         state: StateObject & CustomStateProperties;
         userContext?: any;
     }): Promise<void> {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.setStateAndOtherInfoToStorage({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.setStateAndOtherInfoToStorage({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -92,7 +92,7 @@ export default class Wrapper {
         userContext?: any;
         options?: RecipeFunctionOptions;
     }): Promise<string> {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthorisationURLWithQueryParamsAndSetState({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.getAuthorisationURLWithQueryParamsAndSetState({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -107,7 +107,7 @@ export default class Wrapper {
         url: string;
         fetchResponse: Response;
     }> {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthorisationURLFromBackend({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.getAuthorisationURLFromBackend({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -125,14 +125,14 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.signInAndUp({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.signInAndUp({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
     static generateStateToSendToOAuthProvider(input?: { userContext?: any }): string {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.generateStateToSendToOAuthProvider({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.generateStateToSendToOAuthProvider({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -143,28 +143,28 @@ export default class Wrapper {
         stateObjectFromStorage: (StateObject & CustomStateProperties) | undefined;
         userContext?: any;
     }): Promise<StateObject & CustomStateProperties> {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.verifyAndGetStateOrThrowError({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.verifyAndGetStateOrThrowError({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
 
     static getAuthCodeFromURL(input?: { userContext?: any }): string {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthCodeFromURL({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.getAuthCodeFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
     static getAuthErrorFromURL(input?: { userContext?: any }): string | undefined {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthErrorFromURL({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.getAuthErrorFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
     static getAuthStateFromURL(input?: { userContext?: any }): string {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthStateFromURL({
+        return ThirdParty.getInstanceOrThrow().webJSRecipe.getAuthStateFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -173,16 +173,13 @@ export default class Wrapper {
     /*
      * Providers
      */
-    static Google = Google;
     static Apple = Apple;
-    static Facebook = Facebook;
+    static Bitbucket = Bitbucket;
+    static Discord = Discord;
     static Github = Github;
-    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
-        ThirdParty.getInstanceOrThrow().getFeatureComponent("signinup", prop);
-    static SignInAndUpTheme = SignInAndUpTheme;
-    static SignInAndUpCallback = (prop?: any) =>
-        ThirdParty.getInstanceOrThrow().getFeatureComponent("signinupcallback", prop);
-    static SignInAndUpCallbackTheme = SignInAndUpCallbackTheme;
+    static Gitlab = Gitlab;
+    static Google = Google;
+    static Facebook = Facebook;
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
@@ -199,16 +196,17 @@ const getAuthCodeFromURL = Wrapper.getAuthCodeFromURL;
 const getAuthErrorFromURL = Wrapper.getAuthErrorFromURL;
 const getAuthStateFromURL = Wrapper.getAuthStateFromURL;
 const signInAndUp = Wrapper.signInAndUp;
-const SignInAndUp = Wrapper.SignInAndUp;
-const SignInAndUpCallback = Wrapper.SignInAndUpCallback;
 const ThirdpartyComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 
 export {
     init,
     Apple,
+    Bitbucket,
+    Discord,
+    Github,
+    Gitlab,
     Google,
     Facebook,
-    Github,
     getStateAndOtherInfoFromStorage,
     setStateAndOtherInfoToStorage,
     getAuthorisationURLWithQueryParamsAndSetState,
@@ -220,10 +218,6 @@ export {
     getAuthStateFromURL,
     signInAndUp,
     redirectToThirdPartyLogin,
-    SignInAndUp,
-    SignInAndUpTheme,
-    SignInAndUpCallback,
-    SignInAndUpCallbackTheme,
     ThirdpartyComponentsOverrideProvider,
     signOut,
     User,

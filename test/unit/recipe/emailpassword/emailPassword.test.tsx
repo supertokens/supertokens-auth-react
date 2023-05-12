@@ -26,6 +26,7 @@ import assert from "assert";
 import SuperTokens from "../../../../lib/ts/superTokens";
 import { assertFormFieldsEqual } from "../../../helpers";
 import EmailPasswordIndex from "../../../../lib/ts/recipe/emailpassword";
+import { EmailPasswordPreBuiltUI } from "../../../../lib/ts/recipe/emailpassword/prebuiltui";
 import { validateForm } from "../../../../lib/ts/utils";
 
 /*
@@ -48,10 +49,11 @@ describe("EmailPassword", function () {
 
     afterEach(async function () {
         EmailPassword.reset();
+        EmailPasswordPreBuiltUI.reset();
     });
 
     it("Initializing EmailPassword with empty configs", async function () {
-        EmailPassword.init()(SuperTokens.getInstanceOrThrow().appInfo, false);
+        EmailPassword.init().authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
 
         await assertFormFieldsEqual(
             EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields,
@@ -77,9 +79,9 @@ describe("EmailPassword", function () {
                 ["", "test", "test123", "Str0ngP@ssword"],
             ]
         );
-        assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] !== undefined);
-        assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] !== undefined);
-        assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/verify-email"] === undefined);
+        assert(EmailPasswordPreBuiltUI.getFeatures()["/auth"] !== undefined);
+        assert(EmailPasswordPreBuiltUI.getFeatures()["/auth/reset-password"] !== undefined);
+        assert(EmailPasswordPreBuiltUI.getFeatures()["/auth/verify-email"] === undefined);
         assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().config.recipeId, "emailpassword");
     });
 
@@ -96,9 +98,9 @@ describe("EmailPassword", function () {
             resetPasswordUsingTokenFeature: {
                 disableDefaultUI: true,
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
-        assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] === undefined);
-        assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] === undefined);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
+        assert(EmailPasswordPreBuiltUI.getFeatures()["/auth"] === undefined);
+        assert(EmailPasswordPreBuiltUI.getFeatures()["/auth/reset-password"] === undefined);
     });
 
     it("Initializing EmailPassword with optional custom Fields for SignUp", async function () {
@@ -114,7 +116,7 @@ describe("EmailPassword", function () {
                     formFields: [companyCustomField],
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         // Default Sign Up fields + Custom fields.
         await assertFormFieldsEqual(
             EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields,
@@ -166,7 +168,7 @@ describe("EmailPassword", function () {
                     formFields: [customEmailField],
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         // Default Sign Up fields + Custom fields.
         await assertFormFieldsEqual(
             EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields,
@@ -235,7 +237,7 @@ describe("EmailPassword", function () {
                     formFields: [customEmailField, randomFieldForSignInShouldBeIgnored],
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         // Sign Up fields unchanged.
         await assertFormFieldsEqual(
             EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields,
@@ -284,7 +286,7 @@ describe("EmailPassword", function () {
                     formFields: [companyCustomField],
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         // Default Sign Up fields + Custom fields.
         await assertFormFieldsEqual(
             EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields,
@@ -335,7 +337,7 @@ describe("EmailPassword", function () {
                     formFields: [customEmailField],
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         // Default Sign Up fields + Custom fields.
         await assertFormFieldsEqual(
             EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields,
@@ -403,7 +405,7 @@ describe("EmailPassword", function () {
                     formFields: [customPasswordField],
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
 
         // Sign Up fields changed
         await assertFormFieldsEqual(
@@ -447,7 +449,7 @@ describe("EmailPassword", function () {
     });
 
     it("Validate SignIn EmailPassword fields validation", async function () {
-        EmailPassword.init()(SuperTokens.getInstanceOrThrow().appInfo, false);
+        EmailPassword.init().authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         const formFields = [
             {
                 id: "email",
@@ -467,7 +469,7 @@ describe("EmailPassword", function () {
     });
 
     it("Validate SignIn EmailPassword fields validation with spaces in email should trim and return no errors", async function () {
-        EmailPassword.init()(SuperTokens.getInstanceOrThrow().appInfo, false);
+        EmailPassword.init().authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         const formFields = [
             {
                 id: "email",
@@ -486,7 +488,7 @@ describe("EmailPassword", function () {
     });
 
     it("Validate SignIn EmailPassword fields validation with invalid email should return error", async function () {
-        EmailPassword.init()(SuperTokens.getInstanceOrThrow().appInfo, false);
+        EmailPassword.init().authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         const formFields = [
             {
                 id: "email",
@@ -523,7 +525,7 @@ describe("EmailPassword", function () {
                     formFields: [companyCustomField],
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
 
         const input = [
             {
@@ -566,7 +568,7 @@ describe("EmailPassword", function () {
                     formFields: [companyCustomField],
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
 
         const input = [
             {
@@ -594,7 +596,7 @@ describe("EmailPassword", function () {
     });
 
     it("Test that when calling submitNewPassword, userContext gets passed to getResetPasswordTokenFromURL", async function () {
-        EmailPassword.init({
+        const { authReact, webJS } = EmailPassword.init({
             override: {
                 functions: (oI) => {
                     return {
@@ -606,7 +608,9 @@ describe("EmailPassword", function () {
                     };
                 },
             },
-        })(SuperTokens.getInstanceOrThrow().appInfo, false);
+        });
+        authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
+        webJS(SuperTokens.getInstanceOrThrow().appInfo, false);
 
         try {
             await EmailPasswordIndex.submitNewPassword({

@@ -19,26 +19,45 @@
 
 import { RoutingComponent } from "./routingComponent";
 
-import type SuperTokens from "../superTokens";
+import type { RecipeRouter } from "../recipe/recipeRouter";
+import type { ReactRouterDomWithCustomHistory } from "../ui/types";
 
 /*
  * Component.
  */
 
-export function getSuperTokensRoutesForReactRouterDom(supertokensInstance: SuperTokens): JSX.Element[] {
-    const routerInfo = supertokensInstance.getReactRouterDomWithCustomHistory();
+export function getSuperTokensRoutesForReactRouterDom({
+    getReactRouterDomWithCustomHistory,
+    recipeList,
+}: {
+    getReactRouterDomWithCustomHistory: () => ReactRouterDomWithCustomHistory | undefined;
+    recipeList: RecipeRouter[];
+}): JSX.Element[] {
+    const routerInfo = getReactRouterDomWithCustomHistory();
     if (routerInfo === undefined) {
         return [];
     }
 
     const Route = routerInfo.router.Route;
-    const pathsToFeatureComponentWithRecipeIdMap = supertokensInstance.getPathsToFeatureComponentWithRecipeIdMap();
-    return Object.keys(pathsToFeatureComponentWithRecipeIdMap).map((path) => {
-        path = path === "" ? "/" : path;
-        return (
-            <Route exact key={`st-${path}`} path={path}>
-                <RoutingComponent supertokensInstance={supertokensInstance} path={path} />
-            </Route>
-        );
-    });
+    return Object.values(
+        recipeList.reduce((routes, recipe) => {
+            const pathsToFeatureComponentWithRecipeIdMap = recipe.getPathsToFeatureComponentWithRecipeIdMap();
+            Object.keys(pathsToFeatureComponentWithRecipeIdMap).forEach((path) => {
+                path = path === "" ? "/" : path;
+                if (!(path in routes)) {
+                    routes[path] = (
+                        <Route exact key={`st-${path}`} path={path}>
+                            <RoutingComponent
+                                getReactRouterDomWithCustomHistory={getReactRouterDomWithCustomHistory}
+                                preBuiltUIList={recipeList}
+                                path={path}
+                            />
+                        </Route>
+                    );
+                }
+            });
+
+            return routes;
+        }, {} as Record<string, JSX.Element>)
+    );
 }

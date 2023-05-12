@@ -11,6 +11,172 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Introduce onFailureRedirection and showAccessDeniedOnFailure on claims and validators to make handling session claim validation failures easier
 
+## [0.32.2] - 2023-05-10
+
+-   Fixed with-thirdpartyemailpassword-passwordless apps overwritten button's width
+-   Fixed supertokens-auth-react/ui import referencing .js file instead of .d.ts causing ts issue
+
+## [0.32.1] - 2023-05-03
+
+### Changes
+
+-   Made Session.validateClaims argument optional
+
+## [0.32.0] - 2023-05-02
+
+### Changes
+
+-   Eliminated the need for duplicate `init` call for non-react applications that use pre-built UI. [See the issue](https://github.com/supertokens/supertokens-auth-react/issues/616)
+-   Split/separate pre-built UI components from its recipe to reduce bundle sizes for apps that do not use pre-built UI
+-   Added thirdparty login with popup window example
+
+### Migration
+
+#### Initializing web-js
+
+This version also initializes the web-js SDK. If you previously did that manually, you can remove/replace it with the auth-react init call.
+From this version forward, the recommended way to use this SDK, even with Angular and Vue, is to initialize auth-react in the root component. Importing `supertokens-auth-react` will not pull React into your main bundle; only importing the `prebuiltui` modules will.
+For more details, check out our quick setup guides for angular and vue.
+
+#### Adding the pre-built UI route for apps with react-router-dom
+
+```tsx
+import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
+// .... other imports
+
+SuperTokens.init({
+    appInfo: {
+        // appInfo
+    },
+    recipeList: [
+        Passwordless.init({
+            contactMethod: "EMAIL_OR_PHONE",
+        }),
+        Session.init(),
+    ],
+});
+
+<SuperTokensWrapper>
+    <div className="App">
+        <Router>
+            <div className="fill">
+                <Routes>
+                    {/* This shows the login UI on "/auth" route */}
+                    {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                    // ... other routes
+                </Routes>
+            </div>
+            <Footer />
+        </Router>
+    </div>
+</SuperTokensWrapper>;
+```
+
+Should become
+
+```tsx
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
+// .... other imports
+
+SuperTokens.init({
+    appInfo: {
+        // appInfo
+    },
+    recipeList: [
+        Passwordless.init({
+            contactMethod: "EMAIL_OR_PHONE",
+        }),
+        Session.init(),
+    ],
+});
+
+<SuperTokensWrapper>
+    <div className="App">
+        <Router>
+            <div className="fill">
+                <Routes>
+                    {/* This shows the login UI on "/auth" route for Passwordless recipe */}
+                    {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [PasswordlessPreBuiltUI])}
+                    // ... other routes
+                </Routes>
+            </div>
+            <Footer />
+        </Router>
+    </div>
+</SuperTokensWrapper>;
+```
+
+#### Adding the pre-built UI route for apps without react-router-dom
+
+```tsx
+import React from "react";
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+
+class App extends React.Component {
+    render() {
+        if (SuperTokens.canHandleRoute()) {
+            // This renders the login UI on the /auth route
+            return SuperTokens.getRoutingComponent();
+        }
+
+        return <SuperTokensWrapper>{/*Your app*/}</SuperTokensWrapper>;
+    }
+}
+```
+
+Should become
+
+```tsx
+import { SuperTokensWrapper } from "supertokens-auth-react";
+import { canHandleRoute, getRoutingComponent } from "supertokens-auth-react/ui";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
+
+class App extends React.Component {
+    render() {
+        if (canHandleRoute([PasswordlessPreBuiltUI])) {
+            // This renders the login UI on the /auth route
+            return getRoutingComponent([PasswordlessPreBuiltUI]);
+        }
+
+        return <SuperTokensWrapper>{/*Your app*/}</SuperTokensWrapper>;
+    }
+}
+```
+
+## [0.31.5] - 2023-03-30
+
+### Changes
+
+-   Added new social providers(Gitlab, Discord, Bitbucket)
+
+## [0.31.4] - 2023-03-29
+
+### Changes
+
+-   Switched dependency away from the removed/unpublished `mocha-split-tests` package
+
+## [0.31.3] - 2023-03-23
+
+### Changes
+
+-   Fix unsupported engine warning for npm v9
+-   Updates dependency versions for `supertokens-auth-react` and `supertokens-node` for all example apps
+-   Initialises the Dashboard recipe for all example apps
+
+## [0.31.2] - 2023-03-07
+
+### Fixes
+
+-   Keep redirectToPath's query params while redirecting to it from auth
+
+### Changes
+
+-   Update example apps after header based auth
+
 ## [0.31.1] - 2023-02-12
 
 ### Changes

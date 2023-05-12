@@ -2,6 +2,7 @@ import type RecipeModule from "./recipe/recipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 import type { ComponentClass, PropsWithChildren } from "react";
+import type { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
 import type { SessionClaimValidator as SessionClaimValidatorWebJS } from "supertokens-web-js/recipe/session";
 import type { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/types";
 import type NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
@@ -20,7 +21,10 @@ export declare type SessionClaimValidator = SessionClaimValidatorWebJS & {
 };
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
-    recipeList: CreateRecipeFunction<any, any, any, any>[];
+    recipeList: {
+        authReact: CreateRecipeFunction<any, any, any, any>;
+        webJS: CreateRecipeFunctionWebJS<any>;
+    }[];
     cookieHandler?: CookieHandlerInput;
     windowHandler?: WindowHandlerInput;
     languageTranslations?: {
@@ -32,6 +36,7 @@ export declare type SuperTokensConfig = {
     enableDebugLogs?: boolean;
     getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
 };
+export declare type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "signOut">;
 export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
     appInfo: NormalisedAppInfo,
     enableDebugLogs: boolean
@@ -47,6 +52,14 @@ export declare type AppInfoUserInput = {
      * That path should be specified here.
      */
     apiGatewayPath?: string;
+};
+export declare type RecipeInitResult<T, Action, R, P extends NormalisedRecipeModuleConfig<T, Action, R>> = {
+    authReact: CreateRecipeFunction<T, Action, R, P>;
+    webJS: CreateRecipeFunctionWebJS<Action>;
+};
+export declare type NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig> = NormalisedConfig & {
+    appInfo: NormalisedAppInfo;
+    recipeId: string;
 };
 export declare type NormalisedAppInfo = {
     appName: string;

@@ -1,5 +1,3 @@
-import type { NormalisedAppInfo } from "../../types";
-import type { RecipeConfig as WebJSRecipeConfig } from "supertokens-web-js/recipe/recipeModule/types";
 export declare type RecipePreAPIHookContext<Action> = {
     requestInit: RequestInit;
     url: string;
@@ -27,20 +25,19 @@ export declare type UserInput<GetRedirectionURLContextType, Action, OnHandleEven
     useShadowDom?: boolean;
     style?: string;
 };
-export declare type Config<GetRedirectionURLContextType, Action, OnHandleEventContextType> = {
-    recipeId: string;
-    appInfo: NormalisedAppInfo;
-} & UserInput<GetRedirectionURLContextType, Action, OnHandleEventContextType>;
-export declare type NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType> =
-    WebJSRecipeConfig<Action> & {
-        appInfo: NormalisedAppInfo;
-        getRedirectionURL: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
-        onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContextType>;
-        useShadowDom: boolean;
-        rootStyle: string;
-        preAPIHook: (context: RecipePreAPIHookContext<Action>) => Promise<{
-            url: string;
-            requestInit: RequestInit;
-        }>;
-        postAPIHook: (context: RecipePostAPIHookContext<Action>) => Promise<void>;
-    };
+export declare type Config<GetRedirectionURLContextType, Action, OnHandleEventContextType> = UserInput<
+    GetRedirectionURLContextType,
+    Action,
+    OnHandleEventContextType
+>;
+export declare type NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType> = {
+    getRedirectionURL: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
+    onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContextType>;
+    useShadowDom: boolean;
+    rootStyle: string;
+    preAPIHook: (context: RecipePreAPIHookContext<Action>) => Promise<{
+        url: string;
+        requestInit: RequestInit;
+    }>;
+    postAPIHook: (context: RecipePostAPIHookContext<Action>) => Promise<void>;
+};

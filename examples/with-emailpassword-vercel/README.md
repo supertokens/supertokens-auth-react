@@ -45,7 +45,7 @@ To deploy this demo application on Vercel, follow the steps outlined below:
 
 3. Run the `vercel` command, to deploy the project.
     ```
-    vercel
+    vercel --prod
     ```
 
 Also, this project is [live](https://with-emailpassword-vercel-beryl.vercel.app/) on Vercel, feel free to test out the project.

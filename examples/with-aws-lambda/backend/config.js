@@ -1,5 +1,6 @@
 let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
+let Dashboard = require("supertokens-node/recipe/dashboard");
 
 module.exports.getBackendConfig = () => {
     return {
@@ -14,7 +15,7 @@ module.exports.getBackendConfig = () => {
             apiBasePath: "/auth",
             apiGatewayPath: "/dev", // use this if you are using AWS API Gateway. The value should be equal to the stage value. i.e. if your stage in API Gateway is prod, this value should be /prod
         },
-        recipeList: [EmailPassword.init(), Session.init()],
+        recipeList: [EmailPassword.init(), Session.init(), Dashboard.init()],
         isInServerlessEnv: true,
     };
 };

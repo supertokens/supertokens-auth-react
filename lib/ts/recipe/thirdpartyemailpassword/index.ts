@@ -19,17 +19,13 @@ import {
 } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
 import { getNormalisedUserContext } from "../../utils";
-import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
-import { Apple, Google, Facebook, Github } from "../thirdparty/";
-import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
+import { Apple, Google, Facebook, Github, Gitlab, Bitbucket, Discord } from "../thirdparty/";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
-import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ThirdPartyEmailPassword from "./recipe";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 
-import type { PropsWithChildren } from "react";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
@@ -65,7 +61,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.submitNewPassword({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.submitNewPassword({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -92,7 +88,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.sendPasswordResetEmail({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.sendPasswordResetEmail({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -120,7 +116,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.emailPasswordSignUp({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.emailPasswordSignUp({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -152,7 +148,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.emailPasswordSignIn({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.emailPasswordSignIn({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -163,14 +159,14 @@ export default class Wrapper {
         doesExist: boolean;
         fetchResponse: Response;
     }> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.doesEmailExist({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.doesEmailExist({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
 
     static getResetPasswordTokenFromURL(input?: { userContext?: any }): string {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.getResetPasswordTokenFromURL({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.getResetPasswordTokenFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -192,7 +188,7 @@ export default class Wrapper {
             thirdPartyId: input.thirdPartyId,
             config: recipeInstance.thirdPartyRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
-            recipeImplementation: recipeInstance.thirdPartyRecipe.recipeImpl,
+            recipeImplementation: recipeInstance.thirdPartyRecipe.webJSRecipe,
         });
     }
 
@@ -205,7 +201,7 @@ export default class Wrapper {
         url: string;
         fetchResponse: Response;
     }> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.getAuthorisationURLFromBackend({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.getAuthorisationURLFromBackend({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -223,7 +219,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.thirdPartySignInAndUp({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.thirdPartySignInAndUp({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -232,7 +228,7 @@ export default class Wrapper {
     static getStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
         userContext?: any;
     }): (StateObject & CustomStateProperties) | undefined {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.getStateAndOtherInfoFromStorage({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.getStateAndOtherInfoFromStorage({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -242,7 +238,7 @@ export default class Wrapper {
         state: StateObject & CustomStateProperties;
         userContext?: any;
     }): Promise<void> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.setStateAndOtherInfoToStorage({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.setStateAndOtherInfoToStorage({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -255,14 +251,14 @@ export default class Wrapper {
         userContext?: any;
         options?: RecipeFunctionOptions;
     }): Promise<string> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.getAuthorisationURLWithQueryParamsAndSetState({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.getAuthorisationURLWithQueryParamsAndSetState({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
 
     static generateStateToSendToOAuthProvider(input?: { userContext?: any }): string {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.generateStateToSendToOAuthProvider({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.generateStateToSendToOAuthProvider({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -273,54 +269,45 @@ export default class Wrapper {
         stateObjectFromStorage: (StateObject & CustomStateProperties) | undefined;
         userContext?: any;
     }): Promise<StateObject & CustomStateProperties> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.verifyAndGetStateOrThrowError({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.verifyAndGetStateOrThrowError({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
 
     static getAuthCodeFromURL(input?: { userContext?: any }): string {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.getAuthCodeFromURL({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.getAuthCodeFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
     static getAuthErrorFromURL(input?: { userContext?: any }): string | undefined {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.getAuthErrorFromURL({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.getAuthErrorFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
     static getAuthStateFromURL(input?: { userContext?: any }): string {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.getAuthStateFromURL({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.getAuthStateFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
-    static Google = Google;
     static Apple = Apple;
-    static Facebook = Facebook;
+    static Bitbucket = Bitbucket;
+    static Discord = Discord;
     static Github = Github;
-    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
-        ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
-    static SignInAndUpTheme = SignInAndUpTheme;
-    static ThirdPartySignInAndUpCallback = (prop?: any) =>
-        ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("signinupcallback", prop);
-    static ResetPasswordUsingToken = (prop?: any) =>
-        ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword", prop);
-    static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
-    static ThirdPartySignInAndUpCallbackTheme = ThirdPartySignInAndUpCallbackTheme;
+    static Gitlab = Gitlab;
+    static Google = Google;
+    static Facebook = Facebook;
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
 const init = Wrapper.init;
 const signOut = Wrapper.signOut;
-const SignInAndUp = Wrapper.SignInAndUp;
-const ThirdPartySignInAndUpCallback = Wrapper.ThirdPartySignInAndUpCallback;
-const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
 const ThirdpartyEmailPasswordComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 const submitNewPassword = Wrapper.submitNewPassword;
 const sendPasswordResetEmail = Wrapper.sendPasswordResetEmail;
@@ -343,14 +330,13 @@ const getAuthStateFromURL = Wrapper.getAuthStateFromURL;
 export {
     init,
     Apple,
+    Bitbucket,
+    Discord,
+    Github,
+    Gitlab,
     Google,
     Facebook,
-    Github,
-    SignInAndUp,
-    SignInAndUpTheme,
     ThirdpartyEmailPasswordComponentsOverrideProvider,
-    ThirdPartySignInAndUpCallback,
-    ThirdPartySignInAndUpCallbackTheme,
     signOut,
     submitNewPassword,
     sendPasswordResetEmail,
@@ -369,8 +355,6 @@ export {
     getAuthCodeFromURL,
     getAuthErrorFromURL,
     getAuthStateFromURL,
-    ResetPasswordUsingToken,
-    ResetPasswordUsingTokenTheme,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

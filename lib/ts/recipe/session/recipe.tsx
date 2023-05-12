@@ -16,7 +16,8 @@
 /*
  * Imports.
  */
-import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
+import SessionWebJS from "supertokens-web-js/recipe/session";
+import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
 
 import SuperTokens from "../../superTokens";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
@@ -25,13 +26,18 @@ import RecipeModule from "../recipeModule";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import AccessDeniedScreen from "./components/features/accessDeniedScreen";
-import { normaliseSessionConfig, getFailureRedirectionInfo } from "./utils";
+import { getFailureRedirectionInfo, normaliseSessionConfig } from "./utils";
 
-import type { ConfigType, NormalisedSessionConfig } from "./types";
+import type { NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { FeatureBaseProps, RecipeFeatureComponentMap } from "../../types";
-import type { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
+import type {
+    NormalisedAppInfo,
+    NormalisedConfigWithAppInfoAndRecipeID,
+    RecipeFeatureComponentMap,
+    RecipeInitResult,
+    FeatureBaseProps,
+} from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import type { SessionClaim } from "supertokens-web-js/recipe/session";
 import type { RecipeEvent } from "supertokens-web-js/recipe/session/types";
@@ -40,69 +46,42 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     static instance?: Session;
     static RECIPE_ID = "session";
 
-    webJsRecipe: WebJSSessionRecipe;
-
     private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
     private redirectionHandlersFromAuthRecipes = new Map<string, (ctx: any, history: any) => Promise<void>>();
 
-    constructor(config: ConfigType) {
-        const normalizedConfig = { ...config, ...normaliseSessionConfig(config) };
-        super(normalizedConfig);
-
-        this.webJsRecipe = new WebJSSessionRecipe({
-            ...normalizedConfig,
-            onHandleEvent: (event) => {
-                if (config.onHandleEvent !== undefined) {
-                    config.onHandleEvent(event);
-                }
-
-                void this.notifyListeners(event);
-            },
-            preAPIHook: async (context) => {
-                const headers = new Headers(context.requestInit.headers);
-                headers.set("rid", config.recipeId);
-                const response = {
-                    ...context,
-                    requestInit: {
-                        ...context.requestInit,
-                        headers,
-                    },
-                };
-                if (config.preAPIHook === undefined) {
-                    return response;
-                } else {
-                    return config.preAPIHook(context);
-                }
-            },
-        });
+    constructor(
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedSessionConfig>,
+        public readonly webJSRecipe: Omit<typeof WebJSSessionRecipe, "init" | "default"> = WebJSSessionRecipe
+    ) {
+        super(config);
     }
 
     getUserId = (input: { userContext: any }): Promise<string> => {
-        return this.webJsRecipe.getUserId(input);
+        return this.webJSRecipe.getUserId(input);
     };
 
     getAccessToken = (input: { userContext: any }): Promise<string | undefined> => {
-        return this.webJsRecipe.getAccessToken(input);
+        return this.webJSRecipe.getAccessToken(input);
     };
 
     getClaimValue = (input: { claim: SessionClaim<unknown>; userContext: any }): Promise<unknown> => {
-        return this.webJsRecipe.getClaimValue(input);
+        return this.webJSRecipe.getClaimValue(input);
     };
 
     getAccessTokenPayloadSecurely = async (input: { userContext: any }): Promise<any> => {
-        return this.webJsRecipe.getAccessTokenPayloadSecurely(input);
+        return this.webJSRecipe.getAccessTokenPayloadSecurely(input);
     };
 
     doesSessionExist = (input: { userContext: any }): Promise<boolean> => {
-        return this.webJsRecipe.doesSessionExist(input);
+        return this.webJSRecipe.doesSessionExist(input);
     };
 
     signOut = (input: { userContext: any }): Promise<void> => {
-        return this.webJsRecipe.signOut(input);
+        return this.webJSRecipe.signOut(input);
     };
 
     attemptRefreshingSession = async (): Promise<boolean> => {
-        return this.webJsRecipe.attemptRefreshingSession();
+        return this.webJSRecipe.attemptRefreshingSession();
     };
 
     validateClaims = (input: {
@@ -112,14 +91,14 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         ) => SessionClaimValidator[];
         userContext: any;
     }): Promise<ClaimValidationError[]> | ClaimValidationError[] => {
-        return this.webJsRecipe.validateClaims(input);
+        return this.webJSRecipe.validateClaims(input);
     };
 
     getInvalidClaimsFromResponse = (input: {
         response: { data: any } | Response;
         userContext: any;
     }): Promise<ClaimValidationError[]> => {
-        return this.webJsRecipe.getInvalidClaimsFromResponse(input);
+        return this.webJSRecipe.getInvalidClaimsFromResponse(input);
     };
 
     /**
@@ -298,15 +277,45 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         return WebJSSessionRecipe.addAxiosInterceptors(axiosInstance, userContext);
     }
 
-    static init(config?: InputType): CreateRecipeFunction<unknown, unknown, unknown, any> {
-        return (appInfo: NormalisedAppInfo, enableDebugLogs: boolean): RecipeModule<unknown, unknown, unknown, any> => {
-            Session.instance = new Session({
-                ...config,
-                appInfo,
-                recipeId: Session.RECIPE_ID,
-                enableDebugLogs,
-            });
-            return Session.instance;
+    static init(config?: InputType): RecipeInitResult<unknown, unknown, unknown, any> {
+        const normalisedConfig = normaliseSessionConfig(config);
+
+        return {
+            authReact: (appInfo: NormalisedAppInfo): RecipeModule<unknown, unknown, unknown, any> => {
+                Session.instance = new Session({
+                    ...normalisedConfig,
+                    appInfo,
+                    recipeId: Session.RECIPE_ID,
+                });
+                return Session.instance;
+            },
+            webJS: SessionWebJS.init({
+                ...normalisedConfig,
+                onHandleEvent: (event) => {
+                    if (normalisedConfig.onHandleEvent !== undefined) {
+                        normalisedConfig.onHandleEvent(event);
+                    }
+
+                    void Session.getInstanceOrThrow().notifyListeners(event);
+                },
+                preAPIHook: async (context) => {
+                    const response = {
+                        ...context,
+                        requestInit: {
+                            ...context.requestInit,
+                            headers: {
+                                ...context.requestInit.headers,
+                                rid: Session.RECIPE_ID,
+                            },
+                        },
+                    };
+                    if (normalisedConfig.preAPIHook === undefined) {
+                        return response;
+                    } else {
+                        return normalisedConfig.preAPIHook(context);
+                    }
+                },
+            }),
         };
     }
 

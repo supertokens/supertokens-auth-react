@@ -1,16 +1,13 @@
 /// <reference types="react" />
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
-import EmailVerificationTheme from "./components/themes/emailVerification";
-import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import { UserInput } from "./types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/emailverification";
 export default class Wrapper {
-    static EmailVerification: (prop?: any) => JSX.Element;
-    static EmailVerificationTheme: typeof EmailVerificationTheme;
     static EmailVerificationClaim: import("../../claims/emailVerificationClaim").EmailVerificationClaimClass;
     static init(
         config: UserInput
-    ): import("../../types").CreateRecipeFunction<
+    ): import("../../types").RecipeInitResult<
         GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
@@ -40,7 +37,6 @@ declare const init: typeof Wrapper.init;
 declare const isEmailVerified: typeof Wrapper.isEmailVerified;
 declare const verifyEmail: typeof Wrapper.verifyEmail;
 declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
-declare const EmailVerification: (prop?: any) => JSX.Element;
 declare const getEmailVerificationTokenFromURL: typeof Wrapper.getEmailVerificationTokenFromURL;
 declare const EmailVerificationComponentsOverrideProvider: import("react").FC<
     import("react").PropsWithChildren<{
@@ -54,8 +50,6 @@ export {
     verifyEmail,
     sendVerificationEmail,
     getEmailVerificationTokenFromURL,
-    EmailVerification,
-    EmailVerificationTheme,
     EmailVerificationComponentsOverrideProvider,
     GetRedirectionURLContext,
     PreAPIHookContext as PreAPIHookContext,

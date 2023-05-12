@@ -25,7 +25,7 @@ export default class SessionAPIWrapper {
             }
         >
     >;
-    static init(config?: InputType): import("../../types").CreateRecipeFunction<unknown, unknown, unknown, any>;
+    static init(config?: InputType): import("../../types").RecipeInitResult<unknown, unknown, unknown, any>;
     static getUserId(input?: { userContext?: any }): Promise<string>;
     static getAccessToken(input?: { userContext?: any }): Promise<string | undefined>;
     static getAccessTokenPayloadSecurely(input?: { userContext?: any }): Promise<any>;
@@ -36,7 +36,7 @@ export default class SessionAPIWrapper {
      */
     static addAxiosInterceptors(axiosInstance: any, userContext?: any): void;
     static signOut(input?: { userContext?: any }): Promise<void>;
-    static validateClaims(input: {
+    static validateClaims(input?: {
         overrideGlobalClaimValidators?: (
             globalClaimValidators: SessionClaimValidator[],
             userContext: any

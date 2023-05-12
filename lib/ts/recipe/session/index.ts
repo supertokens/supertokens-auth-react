@@ -82,7 +82,7 @@ export default class SessionAPIWrapper {
         });
     }
 
-    static validateClaims(input: {
+    static validateClaims(input?: {
         overrideGlobalClaimValidators?: (
             globalClaimValidators: SessionClaimValidator[],
             userContext: any

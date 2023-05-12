@@ -6,6 +6,7 @@ import EmailVerification from "supertokens-node/recipe/emailverification";
 import { middleware, errorHandler } from "supertokens-node/framework/express";
 import cors from "cors";
 import { generateOtpAndMapToToken, mailTransporter, getMessageBody } from "./utils";
+import Dashboard from "supertokens-node/recipe/dashboard";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -100,6 +101,7 @@ supertokens.init({
             ],
         }),
         Session.init(), // initializes session features
+        Dashboard.init(),
     ],
 });
 

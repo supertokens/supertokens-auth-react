@@ -1,11 +1,11 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.31.1",
+    "version": "0.32.2",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
         "node": ">=16.0.0",
-        "npm": "^8"
+        "npm": ">=8"
     },
     "devDependencies": {
         "@babel/core": "7.12.1",
@@ -13,7 +13,6 @@
         "@babel/preset-env": "7.12.1",
         "@babel/preset-react": "7.12.1",
         "@babel/register": "7.12.1",
-        "@peakon/mocha-split-tests": "^1.4.0",
         "@percy/cli": "^1.16.0",
         "@percy/puppeteer": "^2.0.2",
         "@rollup/plugin-commonjs": "^23.0.3",
@@ -34,6 +33,7 @@
         "@typescript-eslint/eslint-plugin-tslint": "4.6.0",
         "@typescript-eslint/parser": "4.6.0",
         "babel-jest": "^29.3.1",
+        "chokidar-cli": "^3.0.0",
         "eslint": "^6.8.0",
         "eslint-plugin-import": "^2.27.5",
         "eslint-plugin-react": "^7.28.0",
@@ -49,6 +49,7 @@
         "mocha": "6.1.4",
         "mocha-junit-reporter": "^2.0.2",
         "mocha-multi": "1.1.6",
+        "mocha-split-tests": "github:rishabhpoddar/mocha-split-tests",
         "npm-run-all": "^4.1.5",
         "postcss": "^8.4.19",
         "postcss-import": "^15.0.0",
@@ -82,7 +83,7 @@
     "peerDependencies": {
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0",
-        "supertokens-web-js": "^0.5.0"
+        "supertokens-web-js": "github:supertokens/supertokens-web-js#0.6"
     },
     "scripts": {
         "init": "bash ./init.sh",
@@ -103,6 +104,7 @@
         "tsc": "cd lib && npx tsc -p tsconfig.json",
         "build": "rm -rf lib/build && npx rollup -c",
         "watch": "npx rollup -cw",
+        "watch-mac": "chokidar lib/ts/* -c 'npx rollup -c'",
         "pretty": "npx pretty-quick .",
         "build-pretty": "npm run build && npm run pretty && npm run pretty",
         "lint": "node other/checkTranslationKeys.js && cd lib && eslint ./ts --ext .ts,.tsx",
@@ -125,7 +127,7 @@
         },
         {
             "path": "recipe/thirdpartyemailpassword/index.js",
-            "limit": "40kb"
+            "limit": "42kb"
         },
         {
             "path": "recipe/thirdparty/index.js",
@@ -136,12 +138,40 @@
             "limit": "30kb"
         },
         {
+            "path": "recipe/emailverification/index.js",
+            "limit": "8kb"
+        },
+        {
             "path": "recipe/passwordless/index.js",
             "limit": "105kb"
         },
         {
             "path": "recipe/thirdpartypasswordless/index.js",
             "limit": "120kb"
+        },
+        {
+            "path": "recipe/emailverification/prebuiltui.js",
+            "limit": "21kb"
+        },
+        {
+            "path": "recipe/thirdpartyemailpassword/prebuiltui.js",
+            "limit": "35kb"
+        },
+        {
+            "path": "recipe/thirdparty/prebuiltui.js",
+            "limit": "19kb"
+        },
+        {
+            "path": "recipe/emailpassword/prebuiltui.js",
+            "limit": "26kb"
+        },
+        {
+            "path": "recipe/passwordless/prebuiltui.js",
+            "limit": "102kb"
+        },
+        {
+            "path": "recipe/thirdpartypasswordless/prebuiltui.js",
+            "limit": "113kb"
         }
     ],
     "browserslist": {

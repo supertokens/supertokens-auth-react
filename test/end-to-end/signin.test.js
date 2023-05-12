@@ -488,13 +488,15 @@ describe("SuperTokens SignIn", function () {
                 `${TEST_CLIENT_BASE_URL}/redirect-here`
             );
 
-            // test that if we visit auth again, we end up in redirect-heree again
+            // test that if we visit auth again, we end up in redirect-heree again with query params kept
             await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=%2Fredirect-heree`),
+                page.goto(
+                    `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=%2Fredirect-heree%3Ffoo%3Dbar`
+                ),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/redirect-heree");
+            const { pathname, search } = await page.evaluate(() => window.location);
+            assert.deepStrictEqual(pathname + search, "/redirect-heree?foo=bar");
         });
 
         it("Successful Sign In with redirect to, redirectToPath directly without trailing slash", async function () {
@@ -547,6 +549,27 @@ describe("SuperTokens SignIn", function () {
                 `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=javascript:alert(1)`,
                 `${TEST_CLIENT_BASE_URL}/javascript:alert(1)`
             );
+        });
+
+        it("Successful emailPassword Sign In with redirect to keeping query params", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here%3Ffoo%3Dbar`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+
+            // Submit.
+            await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            const { pathname, search } = await page.evaluate(() => window.location);
+            assert.deepStrictEqual(pathname + search, "/redirect-here?foo=bar");
         });
 
         describe("Successful Sign In with redirect to, with EmailPasswordAuth", async function () {

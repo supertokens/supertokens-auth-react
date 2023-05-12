@@ -16,14 +16,11 @@
 /*
  * Imports.
  */
-import * as React from "react";
+import SuperTokensWebJS from "supertokens-web-js";
 import { CookieHandlerReference } from "supertokens-web-js/utils/cookieHandler";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
-import { RoutingComponent } from "./components/routingComponent";
-import { getSuperTokensRoutesForReactRouterDom } from "./components/superTokensRoute";
-import { getSuperTokensRoutesForReactRouterDomV6 } from "./components/superTokensRouteV6";
 import { SSR_ERROR } from "./constants";
 import { saveCurrentLanguage, TranslationController } from "./translation/translationHelpers";
 import {
@@ -42,14 +39,7 @@ import {
 import type RecipeModule from "./recipe/recipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import type {
-    ComponentWithRecipeAndMatchingMethod,
-    GetRedirectionURLContext,
-    NormalisedAppInfo,
-    SuperTokensConfig,
-} from "./types";
-import type { BaseFeatureComponentMap } from "./types";
-import type NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import type { GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } from "./types";
 
 /*
  * Class.
@@ -60,10 +50,6 @@ export default class SuperTokens {
      * Static Attributes.
      */
     private static instance?: SuperTokens;
-
-    private static reactRouterDom?: { router: { Route: any }; useHistoryCustom: () => any };
-    private static reactRouterDomIsV6: boolean | undefined = undefined;
-
     /*
      * Instance Attributes.
      */
@@ -76,7 +62,6 @@ export default class SuperTokens {
         userTranslationFunc?: TranslationFunc;
     };
     recipeList: RecipeModule<any, any, any, any>[] = [];
-    private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;
     private userGetRedirectionURL: SuperTokensConfig["getRedirectionURL"];
     /*
      * Constructor.
@@ -109,8 +94,8 @@ export default class SuperTokens {
 
         this.userGetRedirectionURL = config.getRedirectionURL;
 
-        this.recipeList = config.recipeList.map((recipe) => {
-            return recipe(this.appInfo, enableDebugLogs);
+        this.recipeList = config.recipeList.map(({ authReact }) => {
+            return authReact(this.appInfo, enableDebugLogs);
         });
     }
 
@@ -125,6 +110,11 @@ export default class SuperTokens {
             console.warn("SuperTokens was already initialized");
             return;
         }
+
+        SuperTokensWebJS.init({
+            ...config,
+            recipeList: config.recipeList.map(({ webJS }) => webJS),
+        });
 
         SuperTokens.instance = new SuperTokens(config);
 
@@ -144,118 +134,6 @@ export default class SuperTokens {
         return SuperTokens.instance;
     }
 
-    static canHandleRoute(): boolean {
-        return SuperTokens.getInstanceOrThrow().canHandleRoute();
-    }
-
-    static getRoutingComponent(): JSX.Element | null {
-        return SuperTokens.getInstanceOrThrow().getRoutingComponent();
-    }
-
-    static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any): JSX.Element[] {
-        if (reactRouterDom === undefined) {
-            throw new Error(
-                // eslint-disable-next-line @typescript-eslint/quotes
-                'Please use getSuperTokensRoutesForReactRouterDom like getSuperTokensRoutesForReactRouterDom(require("react-router-dom")) in your render function'
-            );
-        }
-        SuperTokens.reactRouterDom = reactRouterDom;
-        if (SuperTokens.reactRouterDomIsV6 === undefined) {
-            SuperTokens.reactRouterDomIsV6 = reactRouterDom.withRouter === undefined;
-        }
-        if (SuperTokens.reactRouterDomIsV6) {
-            // this function wraps the react-router-dom v6 useNavigate function in a way
-            // that enforces that it runs within a useEffect. The reason we do this is
-            // cause of https://github.com/remix-run/react-router/issues/7460
-            // which gets shown when visiting a social auth callback url like
-            // /auth/callback/github, without a valid code or state. This then
-            // doesn't navigate the user to the auth page.
-            const useNavigateHookForRRDV6 = function (): any {
-                const navigateHook = reactRouterDom.useNavigate();
-                const [to, setTo] = React.useState(undefined);
-                React.useEffect(() => {
-                    if (to !== undefined) {
-                        setTo(undefined);
-                        navigateHook(to);
-                    }
-                }, [to, navigateHook, setTo]);
-                return setTo;
-            };
-            SuperTokens.reactRouterDom = {
-                router: reactRouterDom,
-                useHistoryCustom: useNavigateHookForRRDV6,
-            };
-
-            return getSuperTokensRoutesForReactRouterDomV6(SuperTokens.getInstanceOrThrow());
-        }
-        SuperTokens.reactRouterDom = {
-            router: reactRouterDom,
-            useHistoryCustom: reactRouterDom.useHistory,
-        };
-        return getSuperTokensRoutesForReactRouterDom(SuperTokens.getInstanceOrThrow());
-    }
-
-    static getReactRouterDomWithCustomHistory(): { router: { Route: any }; useHistoryCustom: () => any } | undefined {
-        return this.instance !== undefined ? this.instance.getReactRouterDomWithCustomHistory() : undefined;
-    }
-
-    /*
-     * Instance Methods.
-     */
-    canHandleRoute = (): boolean => {
-        return this.getMatchingComponentForRouteAndRecipeId(getCurrentNormalisedUrlPath()) !== undefined;
-    };
-
-    getRoutingComponent = (): JSX.Element | null => {
-        return (
-            <RoutingComponent path={getCurrentNormalisedUrlPath().getAsStringDangerous()} supertokensInstance={this} />
-        );
-    };
-
-    getPathsToFeatureComponentWithRecipeIdMap = (): BaseFeatureComponentMap => {
-        // Memoized version of the map.
-        if (this.pathsToFeatureComponentWithRecipeIdMap !== undefined) {
-            return this.pathsToFeatureComponentWithRecipeIdMap;
-        }
-
-        const pathsToFeatureComponentWithRecipeIdMap: BaseFeatureComponentMap = {};
-        for (let i = 0; i < this.recipeList.length; i++) {
-            const recipe = this.recipeList[i];
-            const features = recipe.getFeatures();
-            const featurePaths = Object.keys(features);
-            for (let j = 0; j < featurePaths.length; j++) {
-                // If no components yet for this route, initialize empty array.
-                const featurePath = featurePaths[j];
-                if (pathsToFeatureComponentWithRecipeIdMap[featurePath] === undefined) {
-                    pathsToFeatureComponentWithRecipeIdMap[featurePath] = [];
-                }
-
-                pathsToFeatureComponentWithRecipeIdMap[featurePath].push(features[featurePath]);
-            }
-        }
-
-        this.pathsToFeatureComponentWithRecipeIdMap = pathsToFeatureComponentWithRecipeIdMap;
-        return this.pathsToFeatureComponentWithRecipeIdMap;
-    };
-
-    getMatchingComponentForRouteAndRecipeId = (
-        normalisedUrl: NormalisedURLPath
-    ): ComponentWithRecipeAndMatchingMethod | undefined => {
-        const path = normalisedUrl.getAsStringDangerous();
-        const routeComponents = this.getPathsToFeatureComponentWithRecipeIdMap()[path];
-        if (routeComponents === undefined) {
-            return undefined;
-        }
-
-        const component = routeComponents.find((c) => c.matches());
-        if (component !== undefined) {
-            return component;
-        }
-
-        // Otherwise, If no recipe Id provided, or if no recipe id matches, return the first matching component.
-        return routeComponents[0];
-    };
-
     getRecipeOrThrow<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>>(
         recipeId: string
     ): RecipeModule<T, S, R, N> {
@@ -269,10 +147,6 @@ export default class SuperTokens {
 
         return recipe as RecipeModule<T, S, R, N>;
     }
-
-    getReactRouterDomWithCustomHistory = (): { router: { Route: any }; useHistoryCustom: () => any } | undefined => {
-        return SuperTokens.reactRouterDom;
-    };
 
     changeLanguage = async (lang: string): Promise<void> => {
         await saveCurrentLanguage(lang, this.languageTranslations.currentLanguageCookieScope);

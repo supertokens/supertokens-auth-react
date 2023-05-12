@@ -17,13 +17,17 @@ import { getGlobalClaimValidators } from "supertokens-web-js/utils";
 
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 
-import type { ConfigType, NormalisedSessionConfig } from "./types";
+import type { InputType, NormalisedSessionConfig } from "./types";
 import type { NormalisedBaseConfig } from "../../types";
 import type { SessionClaimValidator } from "../../types";
 import type { ClaimValidationError } from "supertokens-web-js/recipe/session";
 import type { RecipeInterface } from "supertokens-web-js/recipe/session";
 
-export function normaliseSessionConfig(config: ConfigType): NormalisedSessionConfig {
+export function normaliseSessionConfig(config?: InputType): NormalisedSessionConfig {
+    if (config === undefined) {
+        config = {};
+    }
+
     const accessDeniedScreenStyle = config.accessDeniedScreen?.style ?? "";
 
     const accessDeniedScreen: NormalisedBaseConfig = {

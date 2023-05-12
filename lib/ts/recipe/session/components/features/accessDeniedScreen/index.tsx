@@ -2,7 +2,7 @@ import React from "react";
 
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import SuperTokens from "../../../../../superTokens";
+import UI from "../../../../../ui";
 import { AccessDeniedTheme } from "../../themes/accessDeniedScreenTheme";
 import { defaultTranslationsSession } from "../../themes/translations";
 
@@ -17,7 +17,7 @@ const AccessDeniedScreen: React.FC<
     }
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
-    const history = SuperTokens.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
+    const history = UI.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>

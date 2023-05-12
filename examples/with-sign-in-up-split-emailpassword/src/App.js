@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import "./App.css";
-import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import EmailPassword, { EmailPasswordComponentsOverrideProvider } from "supertokens-auth-react/recipe/emailpassword";
+import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
@@ -133,7 +135,9 @@ function App() {
                         <div className="fill">
                             <Routes>
                                 {/* This shows the login UI on "/auth" route */}
-                                {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                                {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
+                                    EmailPasswordPreBuiltUI,
+                                ])}
 
                                 <Route
                                     path="/"
@@ -153,12 +157,12 @@ function App() {
                                 {/* we want to render the sign in component in /signin.
                                 We will override the <SignInAndUp> component to only show the sign in
                             UI on this route. See the init function call above for how to do this*/}
-                                <Route path="/signin" element={<EmailPassword.SignInAndUp />} />
+                                <Route path="/signin" element={<EmailPasswordPreBuiltUI.SignInAndUp />} />
 
                                 {/* we want to render the sign up component in /signup.
                                 We will override the <SignInAndUp> component to only show the sign up
                             UI on this route. See the init function call above for how to do this*/}
-                                <Route path="/signup" element={<EmailPassword.SignInAndUp />} />
+                                <Route path="/signup" element={<EmailPasswordPreBuiltUI.SignInAndUp />} />
                             </Routes>
                         </div>
                         <Footer />

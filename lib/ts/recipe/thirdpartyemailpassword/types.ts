@@ -39,6 +39,7 @@ import type {
     SignInAndUpState as EmailPasswordSignInAndUpState,
     EmailPasswordSignInAndUpAction,
     EmailPasswordSignInAndUpChildProps,
+    NormalisedConfig as NormalisedEmailPasswordConfig,
 } from "../emailpassword/types";
 import type { ComponentOverrideMap as EmailPasswordOverrideMap } from "../emailpassword/types";
 import type {
@@ -54,6 +55,7 @@ import type {
     ThirdPartySignInAndUpState,
     ThirdPartySignInUpActions,
     ThirdPartySignInUpChildProps,
+    NormalisedConfig as NormalisedThirdPartyConfig,
 } from "../thirdparty/types";
 import type { ComponentOverrideMap as ThirdPartyOverrideMap } from "../thirdparty/types";
 import type { Dispatch } from "react";
@@ -86,9 +88,9 @@ export type Config = UserInput &
 
 export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
-    resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
-    oAuthCallbackScreen?: FeatureBaseConfig;
     disableEmailPassword: boolean;
+    emailPasswordConfig: NormalisedEmailPasswordConfig;
+    thirdPartyConfig?: NormalisedThirdPartyConfig;
     override: {
         functions: (
             originalImplementation: RecipeInterface,
