@@ -16,9 +16,9 @@ export default [
     {
         input: {
             index: "lib/ts/index.ts",
-            ui: "lib/ts/ui/index.tsx",
+            "ui-entry": "lib/ts/ui/index.tsx",
             session: "lib/ts/recipe/session/index.ts",
-            emailverification: "lib/ts/recipe/emailverification/index.tsx",
+            emailverification: "lib/ts/recipe/emailverification/index.ts",
             emailverificationprebuiltui: "lib/ts/recipe/emailverification/prebuiltui.tsx",
             emailpassword: "lib/ts/recipe/emailpassword/index.ts",
             emailpasswordprebuiltui: "lib/ts/recipe/emailpassword/prebuiltui.tsx",

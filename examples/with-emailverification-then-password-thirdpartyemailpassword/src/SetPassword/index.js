@@ -1,5 +1,5 @@
 import React from "react";
-import { SignInAndUp } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import { SignInAndUp } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 
 /*
 You can build your own UI here to ask the user's password and then call the sign up API.
