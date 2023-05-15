@@ -42,7 +42,7 @@ const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> =
     const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getDynamicLoginMethods();
     const thirdPartyEnabled =
         (props.config.disableEmailPassword === false && usesDynamicLoginMethods === false) ||
-        dynamicLoginMethods?.thirdparty.enabled;
+        (dynamicLoginMethods?.thirdparty.enabled && props.tpChildProps?.providers.length !== 0);
     const emailPasswordEnabled =
         (props.thirdPartyRecipe !== undefined && usesDynamicLoginMethods === false) ||
         dynamicLoginMethods?.emailpassword.enabled;

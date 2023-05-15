@@ -50,7 +50,7 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
 
     const thirdPartyEnabled =
         (props.thirdPartyRecipe !== undefined && usesDynamicLoginMethods === false) ||
-        dynamicLoginMethods?.thirdparty.enabled;
+        (dynamicLoginMethods?.thirdparty.enabled && props.tpChildProps?.providers.length !== 0);
     const passwordlessEnabled =
         (props.passwordlessRecipe !== undefined && usesDynamicLoginMethods === false) ||
         dynamicLoginMethods?.passwordless.enabled;

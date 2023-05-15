@@ -20,12 +20,14 @@
 import ThirdpartyWebJS from "supertokens-web-js/recipe/thirdparty";
 
 import { SSR_ERROR } from "../../constants";
+import SuperTokens from "../../superTokens";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
 
 import { getFunctionOverrides } from "./functionOverrides";
 import { normaliseThirdPartyConfig } from "./utils";
 
+import type Provider from "./providers";
 import type {
     GetRedirectionURLContext,
     NormalisedConfig,
@@ -50,13 +52,16 @@ export default class ThirdParty extends AuthRecipe<
     static instance?: ThirdParty;
     static RECIPE_ID = "thirdparty";
     static tenantProviders?: GetLoginMethodsResponseNormalized["thirdparty"]["providers"];
-
+    static providers?: Pick<Provider, "id" | "getButton">[];
     recipeID = ThirdParty.RECIPE_ID;
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         public readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdpartyWebJS> = ThirdpartyWebJS
     ) {
+        if (SuperTokens.usesDynamicLoginMethods === false && config.signInAndUpFeature.providers.length === 0) {
+            throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
+        }
         super(config);
     }
 

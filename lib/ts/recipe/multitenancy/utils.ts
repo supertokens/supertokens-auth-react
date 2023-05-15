@@ -14,6 +14,7 @@ import {
     Okta,
     Twitter,
 } from "../thirdparty";
+import ThirdParty from "../thirdparty/recipe";
 
 import type { UserInput, NormalisedConfig, RecipeInterface, GetLoginMethodsResponseNormalized } from "./types";
 import type RecipeModule from "../recipeModule";
@@ -51,7 +52,7 @@ export function hasIntersectingRecipes(
 
 export const getProviders = ({
     tenantProviders = [],
-    clientProviders,
+    clientProviders = [],
 }: {
     tenantProviders?: {
         id: string;
@@ -74,7 +75,14 @@ export const getProviders = ({
         facebook: Facebook,
     } as const;
 
+    if (ThirdParty.providers !== undefined) {
+        return ThirdParty.providers;
+    }
+
     const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods === true;
+    if (usesDynamicLoginMethods === false && clientProviders.length === 0) {
+        throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
+    }
     if (usesDynamicLoginMethods === false || tenantProviders.length === 0) {
         return clientProviders.map((provider) => ({
             id: provider.id,
@@ -115,5 +123,6 @@ export const getProviders = ({
             }
         }
     }
+    ThirdParty.providers = providers;
     return providers;
 };

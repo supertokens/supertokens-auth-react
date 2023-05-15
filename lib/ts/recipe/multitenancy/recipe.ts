@@ -78,11 +78,14 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
         if (instance.dynamicLoginMethods !== undefined) {
             return instance.dynamicLoginMethods;
         }
-        const { emailPassword, passwordless, thirdParty } = await MultitenancyWebJS.getLoginMethods(...options);
+        const { emailPassword, passwordless } = await MultitenancyWebJS.getLoginMethods(...options);
         instance.dynamicLoginMethods = {
             passwordless,
             emailpassword: emailPassword,
-            thirdparty: thirdParty,
+            thirdparty: {
+                enabled: true,
+                providers: [],
+            },
         };
         return instance.dynamicLoginMethods;
     }

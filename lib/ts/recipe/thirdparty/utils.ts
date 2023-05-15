@@ -71,10 +71,6 @@ export function normaliseSignInAndUpFeature(
         config.providers = [];
     }
 
-    if (config.providers.length === 0) {
-        throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
-    }
-
     const disableDefaultUI = config.disableDefaultUI === true;
     const style = config.style !== undefined ? config.style : "";
     const privacyPolicyLink = config.privacyPolicyLink;

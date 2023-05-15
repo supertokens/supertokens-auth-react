@@ -113,6 +113,7 @@ export default class SuperTokens {
             console.warn("SuperTokens was already initialized");
             return;
         }
+        SuperTokens.usesDynamicLoginMethods = config.usesDynamicLoginMethods ?? false;
 
         const recipes =
             config.recipeList.find((recipe) => recipe.recipeID === Multitenancy.RECIPE_ID) !== undefined
@@ -125,7 +126,6 @@ export default class SuperTokens {
         });
 
         SuperTokens.instance = new SuperTokens({ ...config, recipeList: recipes });
-        SuperTokens.usesDynamicLoginMethods = config.usesDynamicLoginMethods ?? false;
 
         PostSuperTokensInitCallbacks.runPostInitCallbacks();
     }
