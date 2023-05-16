@@ -52,7 +52,7 @@ supertokens.init({
             ],
         }),
         Session.init({
-            getTokenTransferMethod: () => "header",
+            exposeAccessTokenToFrontendInCookieBasedAuth: true,
             override: {
                 openIdFeature: {
                     functions: (originalImplementation) => ({
