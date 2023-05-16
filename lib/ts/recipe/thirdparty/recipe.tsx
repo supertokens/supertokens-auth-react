@@ -37,7 +37,6 @@ import type {
 } from "./types";
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
 import type { NormalisedAppInfo } from "../../types";
-import type { GetLoginMethodsResponseNormalized } from "../multitenancy/types";
 import type RecipeModule from "../recipeModule";
 
 /*
@@ -51,7 +50,6 @@ export default class ThirdParty extends AuthRecipe<
 > {
     static instance?: ThirdParty;
     static RECIPE_ID = "thirdparty";
-    static tenantProviders?: GetLoginMethodsResponseNormalized["thirdparty"]["providers"];
     static providers?: Pick<Provider, "id" | "getButton">[];
     recipeID = ThirdParty.RECIPE_ID;
 

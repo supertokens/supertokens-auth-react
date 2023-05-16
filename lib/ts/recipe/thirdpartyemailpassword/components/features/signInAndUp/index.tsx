@@ -25,7 +25,7 @@ import {
     useFeatureReducer as useEmailPasswordFeatureReducer,
 } from "../../../../emailpassword/components/features/signInAndUp";
 import Multitenancy from "../../../../multitenancy/recipe";
-import { getProviders } from "../../../../multitenancy/utils";
+import { mergeProviders } from "../../../../multitenancy/utils";
 import {
     useChildProps as useThirdPartyChildProps,
     useFeatureReducer as useThirdPartyFeatureReducer,
@@ -111,8 +111,8 @@ const SignInAndUp: React.FC<PropType> = (props) => {
 
     const providers = React.useMemo(
         () =>
-            getProviders({
-                tenantProviders: Multitenancy.getInstanceOrThrow().getDynamicLoginMethods()?.thirdparty.providers,
+            mergeProviders({
+                tenantProviders: Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods()?.thirdparty.providers,
                 clientProviders: tpChildProps.providers,
             }),
         [tpChildProps.providers]

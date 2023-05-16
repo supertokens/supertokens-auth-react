@@ -39,7 +39,7 @@ import type { ThirdPartyEmailPasswordSignInAndUpThemeProps } from "../../../type
 const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> = (props) => {
     const t = useTranslation();
     const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods;
-    const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getDynamicLoginMethods();
+    const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods();
     const thirdPartyEnabled =
         (props.config.disableEmailPassword === false && usesDynamicLoginMethods === false) ||
         (dynamicLoginMethods?.thirdparty.enabled && props.tpChildProps?.providers.length !== 0);

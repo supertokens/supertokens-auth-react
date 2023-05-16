@@ -50,7 +50,7 @@ export function hasIntersectingRecipes(
     return false;
 }
 
-export const getProviders = ({
+export const mergeProviders = ({
     tenantProviders = [],
     clientProviders = [],
 }: {

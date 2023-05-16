@@ -9,7 +9,6 @@ import type {
     UserInput,
 } from "./types";
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
-import type { GetLoginMethodsResponseNormalized } from "../multitenancy/types";
 export default class ThirdParty extends AuthRecipe<
     GetRedirectionURLContext,
     never,
@@ -19,7 +18,6 @@ export default class ThirdParty extends AuthRecipe<
     readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdpartyWebJS>;
     static instance?: ThirdParty;
     static RECIPE_ID: string;
-    static tenantProviders?: GetLoginMethodsResponseNormalized["thirdparty"]["providers"];
     static providers?: Pick<Provider, "id" | "getButton">[];
     recipeID: string;
     constructor(

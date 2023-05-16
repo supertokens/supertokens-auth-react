@@ -23,12 +23,11 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { getQueryParams } from "../../../../../utils";
 import Multitenancy from "../../../../multitenancy/recipe";
-import { getProviders } from "../../../../multitenancy/utils";
+import { mergeProviders } from "../../../../multitenancy/utils";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 
 import type { FeatureBaseProps, WebJSRecipeInterface } from "../../../../../types";
-import type Provider from "../../../providers";
 import type Recipe from "../../../recipe";
 import type {
     ComponentOverrideMap,
@@ -88,10 +87,7 @@ export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChi
         }
 
         return {
-            providers: recipe.config.signInAndUpFeature.providers as Pick<
-                Provider,
-                "id" | "buttonComponent" | "getButton"
-            >[],
+            providers: recipe.config.signInAndUpFeature.providers,
             recipeImplementation,
             config: recipe.config,
             recipe,
@@ -106,8 +102,8 @@ export const SignInAndUpFeature: React.FC<PropType> = (props) => {
     const childProps = useChildProps(props.recipe);
     const providers = useMemo(
         () =>
-            getProviders({
-                tenantProviders: Multitenancy.getInstanceOrThrow().getDynamicLoginMethods()?.thirdparty.providers,
+            mergeProviders({
+                tenantProviders: Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods()?.thirdparty.providers,
                 clientProviders: childProps.providers,
             }),
         [childProps.providers]

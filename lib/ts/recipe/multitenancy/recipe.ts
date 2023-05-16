@@ -64,7 +64,7 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
         SuperTokens.uiController.emit("LoginMethodsLoaded");
     }
 
-    public getDynamicLoginMethods(): GetLoginMethodsResponseNormalized | undefined {
+    public getLoadedDynamicLoginMethods(): GetLoginMethodsResponseNormalized | undefined {
         if (this.hasIntersection === false) {
             throw new Error("Initialized recipes have no overlap with core recipes");
         }
@@ -78,14 +78,11 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
         if (instance.dynamicLoginMethods !== undefined) {
             return instance.dynamicLoginMethods;
         }
-        const { emailPassword, passwordless } = await MultitenancyWebJS.getLoginMethods(...options);
+        const { emailPassword, passwordless, thirdParty } = await MultitenancyWebJS.getLoginMethods(...options);
         instance.dynamicLoginMethods = {
             passwordless,
             emailpassword: emailPassword,
-            thirdparty: {
-                enabled: true,
-                providers: [],
-            },
+            thirdparty: thirdParty,
         };
         return instance.dynamicLoginMethods;
     }

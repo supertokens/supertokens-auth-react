@@ -6,7 +6,7 @@ export declare function hasIntersectingRecipes(
     tenantMethods: GetLoginMethodsResponseNormalized,
     recipeList: RecipeModule<any, any, any, any>[]
 ): boolean;
-export declare const getProviders: ({
+export declare const mergeProviders: ({
     tenantProviders,
     clientProviders,
 }: {
