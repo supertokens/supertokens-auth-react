@@ -151,16 +151,6 @@ supertokens.init({
                             ...input.claimValidatorsAddedByOtherRecipes,
                             SecondFactorClaim.validators.hasValue(true),
                         ],
-                        getSession: async (input) => {
-                            const result = await originalImplementation.getSession(input);
-                            if (result) {
-                                const origPayload = result.getAccessTokenPayload();
-                                if (origPayload.appSub === undefined) {
-                                    await result.mergeIntoAccessTokenPayload({ appSub: origPayload.sub, sub: null });
-                                }
-                            }
-                            return result;
-                        },
                         createNewSession: async function (input) {
                             if (input.userContext.session !== undefined) {
                                 /**
