@@ -3,7 +3,7 @@ import Session from "supertokens-auth-react/recipe/session";
 
 export default function CallAPIView() {
     async function callAPIClicked() {
-        const jwt = Session.getAccessToken();
+        const jwt = await Session.getAccessToken();
         // We can also use apollo client here instead.
         let response = await axios({
             method: "post",
