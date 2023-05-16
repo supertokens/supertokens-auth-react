@@ -59,7 +59,7 @@ supertokens.init({
                         ...originalImplementation,
                         getOpenIdDiscoveryConfiguration: async (input) => ({
                             issuer: process.env.JWT_ISSUER_URL,
-                            jwks_uri: `${apiDomain}/auth/jwt/jwks.json`,
+                            jwks_uri: `${process.env.JWT_ISSUER_URL}/auth/jwt/jwks.json`,
                             status: "OK",
                         }),
                     }),
