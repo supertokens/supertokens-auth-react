@@ -19,7 +19,7 @@
         "react-router-dom": "^6.2.1",
         "react-scripts": "^5.0.1",
         "supertokens-auth-react": "latest",
-        "supertokens-node": "^13.1.5",
+        "supertokens-node": "latest",
         "typescript": "^4.0.3",
         "web-vitals": "^0.2.4"
     },

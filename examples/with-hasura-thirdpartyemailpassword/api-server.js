@@ -52,11 +52,18 @@ supertokens.init({
             ],
         }),
         Session.init({
-            jwt: {
-                enable: true,
-                issuer: process.env.JWT_ISSUER_URL,
-            },
+            exposeAccessTokenToFrontendInCookieBasedAuth: true,
             override: {
+                openIdFeature: {
+                    functions: (originalImplementation) => ({
+                        ...originalImplementation,
+                        getOpenIdDiscoveryConfiguration: async (input) => ({
+                            issuer: process.env.JWT_ISSUER_URL,
+                            jwks_uri: `${process.env.JWT_ISSUER_URL}/jwt/jwks.json`,
+                            status: "OK",
+                        }),
+                    }),
+                },
                 functions: (oI) => {
                     return {
                         ...oI,
