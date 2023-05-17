@@ -13,18 +13,16 @@
  * under the License.
  */
 
-import {
-    BooleanClaim,
-    ClaimValidationResult,
-    PrimitiveArrayClaim,
-    PrimitiveClaim,
-    RecipeInterface,
-    SessionClaim,
-} from "supertokens-web-js/recipe/session";
+import { ClaimValidationResult, RecipeInterface, SessionClaim } from "supertokens-web-js/recipe/session";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 
+import { BooleanClaim } from "../../claims/booleanClaim";
+import { PrimitiveArrayClaim } from "../../claims/primitiveArrayClaim";
+import { PrimitiveClaim } from "../../claims/primitiveClaim";
 import { getNormalisedUserContext } from "../../utils";
 
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
+import { AccessDeniedTheme } from "./components/themes/accessDeniedScreenTheme";
 import Session from "./recipe";
 import SessionAuthWrapper from "./sessionAuth";
 import SessionContext from "./sessionContext";
@@ -32,6 +30,7 @@ import { InputType, SessionContextType } from "./types";
 import { useClaimValue as useClaimValueFunc } from "./useClaimValue";
 import useSessionContextFunc from "./useSessionContext";
 
+import type { PropsWithChildren } from "react";
 export default class SessionAPIWrapper {
     static useSessionContext = useSessionContextFunc;
     static useClaimValue = useClaimValueFunc;
@@ -83,7 +82,7 @@ export default class SessionAPIWrapper {
         });
     }
 
-    static validateClaims(input: {
+    static validateClaims(input?: {
         overrideGlobalClaimValidators?: (
             globalClaimValidators: SessionClaimValidator[],
             userContext: any
@@ -109,6 +108,12 @@ export default class SessionAPIWrapper {
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
+
+    static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
+
+    static AccessDeniedTheme = AccessDeniedTheme;
+    static AccessDenied = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
+        Session.getInstanceOrThrow().getFeatureComponent("accessDenied", prop);
 }
 
 const useSessionContext = SessionAPIWrapper.useSessionContext;
@@ -128,11 +133,16 @@ const signOut = SessionAPIWrapper.signOut;
 const validateClaims = SessionAPIWrapper.validateClaims;
 const getInvalidClaimsFromResponse = SessionAPIWrapper.getInvalidClaimsFromResponse;
 const getClaimValue = SessionAPIWrapper.getClaimValue;
+const AccessDenied = SessionAPIWrapper.AccessDenied;
+const SessionComponentsOverrideProvider = SessionAPIWrapper.ComponentsOverrideProvider;
 
 export {
     useSessionContext,
     useClaimValue,
     SessionAuth,
+    AccessDeniedTheme,
+    AccessDenied,
+    SessionComponentsOverrideProvider,
     init,
     getUserId,
     getAccessToken,

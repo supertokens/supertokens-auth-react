@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BaseComponent, Home } from "./App";
-import { getRoutingComponent, canHandleRoute } from "supertokens-auth-react/prebuiltui";
+import { getRoutingComponent, canHandleRoute } from "supertokens-auth-react/ui";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
@@ -41,6 +41,28 @@ if (emailVerificationMode !== "OFF") {
 }
 
 function Routing() {
+    const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
+    const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
+
+    let recipePreBuiltUIList = [EmailPasswordPreBuiltUI];
+    if (authRecipe === "thirdparty") {
+        recipePreBuiltUIList = [ThirdPartyPreBuiltUI];
+    } else if (authRecipe === "emailpassword") {
+        recipePreBuiltUIList = [EmailPasswordPreBuiltUI];
+    } else if (authRecipe === "both") {
+        recipePreBuiltUIList = [EmailPasswordPreBuiltUI, ThirdPartyPreBuiltUI];
+    } else if (authRecipe === "thirdpartyemailpassword") {
+        recipePreBuiltUIList = [ThirdPartyEmailPasswordPreBuiltUI];
+    } else if (authRecipe === "passwordless") {
+        recipePreBuiltUIList = [PasswordlessPreBuiltUI];
+    } else if (authRecipe === "thirdpartypasswordless") {
+        recipePreBuiltUIList = [ThirdPartyPasswordlessPreBuiltUI];
+    }
+
+    if (emailVerificationMode !== "OFF") {
+        recipePreBuiltUIList.push(EmailVerificationPreBuiltUI);
+    }
+
     const [, setCurrentPath] = useState(window.location.pathname);
 
     useEffect(() => {

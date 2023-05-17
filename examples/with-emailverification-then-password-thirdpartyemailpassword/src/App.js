@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
-import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/prebuiltui";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import ThirdPartyEmailPassword, {
     Google,
@@ -51,15 +51,6 @@ SuperTokens.init({
         ThirdPartyEmailPassword.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init(), Apple.init()],
-            },
-            getRedirectionURL: async function (context) {
-                if (context.action === "SUCCESS") {
-                    // this is called after sign up / in and after email is verified
-                    let accessTokenPayload = await Session.getAccessTokenPayloadSecurely();
-                    if (RealPasswordClaim.getValueFromPayload(accessTokenPayload) !== true) {
-                        return "/set-password?show=signup"; // we ask the user to set their password now
-                    }
-                }
             },
         }),
         Session.init({

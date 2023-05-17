@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, redirectToAuth } from "supertokens-auth-react";
-import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/prebuiltui";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import ThirdPartyEmailPassword, {
     Google,
@@ -81,6 +81,8 @@ function App() {
                                     borderRadius: "8px",
                                     marginTop: "10px",
                                     cursor: "pointer",
+                                    maxWidth: "240px",
+                                    margin: "0 auto",
                                 }}
                                 onClick={() => {
                                     redirectToAuth({

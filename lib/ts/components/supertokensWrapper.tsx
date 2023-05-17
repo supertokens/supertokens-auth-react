@@ -7,5 +7,7 @@ export const SuperTokensWrapper: React.FC<
         userContext?: any;
     }>
 > = (props) => {
-    return <SessionAuthWrapper {...props} requireAuth={false} doRedirection={false} />;
+    return (
+        <SessionAuthWrapper {...props} requireAuth={false} doRedirection={false} useDefaultAccessDeniedScreen={false} />
+    );
 };

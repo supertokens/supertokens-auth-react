@@ -22,14 +22,17 @@ import SuperTokens from "../../superTokens";
 import UI from "../../ui";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { popInvalidClaimRedirectPathFromContext, useOnMountAPICall } from "../../utils";
+import { useOnMountAPICall } from "../../utils";
 
+import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import AccessDeniedScreen from "./components/features/accessDeniedScreen";
 import Session from "./recipe";
 import SessionContext from "./sessionContext";
+import { getFailureRedirectionInfo } from "./utils";
 
 import type { LoadedSessionContext, RecipeEventWithSessionContext, SessionContextType } from "./types";
+import type { SessionClaimValidator } from "../../types";
 import type { PropsWithChildren } from "react";
-import type { SessionClaimValidator } from "supertokens-web-js/recipe/session";
 
 export type SessionAuthProps = {
     /**
@@ -41,6 +44,7 @@ export type SessionAuthProps = {
      */
     doRedirection?: boolean;
 
+    useDefaultAccessDeniedScreen?: boolean;
     onSessionExpired?: () => void;
     overrideGlobalClaimValidators?: (
         globalClaimValidators: SessionClaimValidator[],
@@ -73,7 +77,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             history = historyHookRef.current();
         }
     } catch {
-        // We catch and ignore errors here, because if this is may throw if
+        // We catch and ignore errors here, because this is may throw if
         // the app is using react-router-dom but added a session auth outside of the router.
     }
 
@@ -83,9 +87,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         void SuperTokens.getInstanceOrThrow().redirectToAuth({ history, redirectBack: true });
     }, []);
 
-    const buildContext = useCallback(async (): Promise<
-        LoadedSessionContext & { invalidClaimRedirectToPath?: string }
-    > => {
+    const buildContext = useCallback(async (): Promise<LoadedSessionContext> => {
         if (session.current === undefined) {
             session.current = Session.getInstanceOrThrow();
         }
@@ -130,15 +132,12 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 userId: "",
             };
         }
-        // TODO: basing redirection on userContext could break in certain edge-cases involving async validators
-        const invalidClaimRedirectToPath = popInvalidClaimRedirectPathFromContext(userContext);
 
         try {
             return {
                 loading: false,
                 doesSessionExist: true,
                 invalidClaims,
-                invalidClaimRedirectToPath,
                 accessTokenPayload: await session.current.getAccessTokenPayloadSecurely({
                     userContext,
                 }),
@@ -167,7 +166,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
     }, []);
 
     const setInitialContextAndMaybeRedirect = useCallback(
-        async (toSetContext: LoadedSessionContext & { invalidClaimRedirectToPath?: string }) => {
+        async (toSetContext: LoadedSessionContext) => {
             if (context.loading === false) {
                 return;
             }
@@ -176,16 +175,28 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 if (!toSetContext.doesSessionExist && props.requireAuth !== false) {
                     redirectToLogin();
                     return;
-                } else if (toSetContext.invalidClaimRedirectToPath !== undefined) {
-                    await SuperTokens.getInstanceOrThrow().redirectToUrl(
-                        toSetContext.invalidClaimRedirectToPath,
-                        history
-                    );
-                    return;
+                }
+                if (toSetContext.invalidClaims.length !== 0) {
+                    const failureRedirectInfo = await getFailureRedirectionInfo({
+                        invalidClaims: toSetContext.invalidClaims,
+                        overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
+                        userContext,
+                    });
+                    if (failureRedirectInfo.redirectPath !== undefined) {
+                        return await SuperTokens.getInstanceOrThrow().redirectToUrl(
+                            failureRedirectInfo.redirectPath,
+                            history
+                        );
+                    }
+                    if (props.useDefaultAccessDeniedScreen !== false && failureRedirectInfo.failedClaim !== undefined) {
+                        console.warn({
+                            message: "Access denied",
+                            claimValidationError: failureRedirectInfo.failedClaim,
+                        });
+                        return setContext({ ...toSetContext, accessDenied: true });
+                    }
                 }
             }
-
-            delete toSetContext.invalidClaimRedirectToPath;
 
             setContext(toSetContext);
         },
@@ -210,12 +221,37 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                         overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
                         userContext,
                     });
-                    setContext({ ...event.sessionContext, loading: false, invalidClaims });
 
-                    const redirectPath = popInvalidClaimRedirectPathFromContext(userContext);
-                    if (props.doRedirection !== false && redirectPath) {
-                        await SuperTokens.getInstanceOrThrow().redirectToUrl(redirectPath, history);
+                    if (props.doRedirection !== false) {
+                        const failureRedirectInfo = await getFailureRedirectionInfo({
+                            invalidClaims,
+                            overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
+                            userContext,
+                        });
+                        if (failureRedirectInfo.redirectPath) {
+                            setContext({ ...event.sessionContext, loading: false, invalidClaims });
+                            return await SuperTokens.getInstanceOrThrow().redirectToUrl(
+                                failureRedirectInfo.redirectPath,
+                                history
+                            );
+                        }
+                        if (
+                            props.useDefaultAccessDeniedScreen !== false &&
+                            failureRedirectInfo.failedClaim !== undefined
+                        ) {
+                            console.warn({
+                                message: "Access denied",
+                                claimValidationError: failureRedirectInfo.failedClaim,
+                            });
+                            return setContext({
+                                ...event.sessionContext,
+                                loading: false,
+                                invalidClaims,
+                                accessDenied: true,
+                            });
+                        }
                     }
+                    setContext({ ...event.sessionContext, loading: false, invalidClaims });
 
                     return;
                 }
@@ -248,6 +284,15 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
     if (props.requireAuth !== false && (context.loading || !context.doesSessionExist)) {
         return null;
+    }
+
+    if (!context.loading && context.accessDenied) {
+        return (
+            <AccessDeniedScreen
+                recipe={Session.getInstanceOrThrow()}
+                useComponentOverrides={useRecipeComponentOverrideContext}
+            />
+        );
     }
 
     return <SessionContext.Provider value={context}>{children}</SessionContext.Provider>;

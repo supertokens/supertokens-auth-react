@@ -12,13 +12,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Added Active Directory, Okta, Linked In, Boxy SAML providers
 -   Added name prop to buttomComponent
 -   Added thirdparty login with popup window example
+-   Introduce onFailureRedirection and showAccessDeniedOnFailure on claims and validators to make handling session claim validation failures easier
+
+## [0.32.2] - 2023-05-10
+
+-   Fixed with-thirdpartyemailpassword-passwordless apps overwritten button's width
+-   Fixed supertokens-auth-react/ui import referencing .js file instead of .d.ts causing ts issue
+
+## [0.32.1] - 2023-05-03
+
+### Changes
+
+-   Made Session.validateClaims argument optional
+
+## [0.32.0] - 2023-05-02
 
 ### Changes
 
 -   Eliminated the need for duplicate `init` call for non-react applications that use pre-built UI. [See the issue](https://github.com/supertokens/supertokens-auth-react/issues/616)
 -   Split/separate pre-built UI components from its recipe to reduce bundle sizes for apps that do not use pre-built UI
+-   Added thirdparty login with popup window example
 
 ### Migration
+
+#### Initializing web-js
+
+This version also initializes the web-js SDK. If you previously did that manually, you can remove/replace it with the auth-react init call.
+From this version forward, the recommended way to use this SDK, even with Angular and Vue, is to initialize auth-react in the root component. Importing `supertokens-auth-react` will not pull React into your main bundle; only importing the `prebuiltui` modules will.
+For more details, check out our quick setup guides for angular and vue.
 
 #### Adding the pre-built UI route for apps with react-router-dom
 

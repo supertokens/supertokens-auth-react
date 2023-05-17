@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
-import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/prebuiltui";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless, { PasswordlessComponentsOverrideProvider } from "supertokens-auth-react/recipe/passwordless";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
@@ -60,14 +60,6 @@ SuperTokens.init({
             },
         }),
         EmailPassword.init({
-            getRedirectionURL: async (context) => {
-                if (context.action === "SUCCESS") {
-                    // this means that the first login challenge is done. Now we should
-                    // redirect the user to the second login challenge
-                    return "/auth/verify-phone";
-                }
-                return undefined;
-            },
             signInAndUpFeature: {
                 signUpForm: {
                     formFields: [
