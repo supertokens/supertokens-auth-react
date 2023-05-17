@@ -48,6 +48,7 @@ export default class EmailVerification extends RecipeModule<
 > {
     static instance?: EmailVerification;
     static RECIPE_ID = "emailverification";
+
     static EmailVerificationClaim = new EmailVerificationClaimClass(
         () => EmailVerification.getInstanceOrThrow().webJSRecipe
     );
@@ -61,9 +62,8 @@ export default class EmailVerification extends RecipeModule<
         super(config);
 
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
-            SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
-                EmailVerification.EmailVerificationClaim.validators.isVerified(10)
-            );
+            const isVerifiedValidator = EmailVerification.EmailVerificationClaim.validators.isVerified(10);
+            SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(isVerifiedValidator);
         });
     }
 

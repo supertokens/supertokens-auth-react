@@ -49,6 +49,8 @@ import {
     getUserIdFromSessionContext,
     getTextInDashboardNoAuth,
     screenshotOnFailure,
+    waitForText,
+    waitForSTElement,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -508,6 +510,32 @@ describe("SuperTokens SignIn with react router dom v6", function () {
                 `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=javascript:alert(1)`,
                 `${TEST_CLIENT_BASE_URL}/javascript:alert(1)`
             );
+        });
+
+        it("Should redirect back on access denied page's back button is clicked", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await page.evaluate(() => {
+                window.setClaimValidators([window.UserRoleClaim.validators.includes("admin")]);
+            });
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+            await submitForm(page);
+            waitForText(page, "[data-supertokens~=headerTitle]", "Access denied");
+            const backBtn = await waitForSTElement(page, "[data-supertokens~=logoutButton]");
+            backBtn.click();
+
+            const redirectUrl = await page.evaluate(() => {
+                return window.location.pathname + window.location.search;
+            });
+
+            assert.deepStrictEqual(redirectUrl, "/dashboard");
         });
 
         describe("Successful Sign In with redirect to, with EmailPasswordAuth", async function () {

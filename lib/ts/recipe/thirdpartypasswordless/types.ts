@@ -125,6 +125,7 @@ export type UserInput = (
     linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
     oAuthCallbackScreen?: FeatureBaseConfig;
     disablePasswordless?: boolean;
+    disableThirdParty?: boolean;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type Config = UserInput &

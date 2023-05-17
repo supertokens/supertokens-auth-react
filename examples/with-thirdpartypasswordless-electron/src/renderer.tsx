@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /**
  * This file will automatically be loaded by webpack and run in the "renderer" context.
  * To learn more about the differences between the "main" and the "renderer" context in
@@ -29,7 +30,7 @@
 import "./index.css";
 import React, { useState } from "react";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
-import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/prebuiltui";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
@@ -86,7 +87,7 @@ SuperTokens.init({
 });
 
 function App() {
-    let [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
+    const [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
 
     return (
         <SuperTokensWrapper>

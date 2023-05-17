@@ -3,7 +3,7 @@ import React, { FC, useEffect } from "react";
 import styles from "../../styles/Home.module.css";
 import dynamic from "next/dynamic";
 import SuperTokens from "supertokens-auth-react";
-import { canHandleRoute, getRoutingComponent } from "supertokens-auth-react/prebuiltui";
+import { canHandleRoute, getRoutingComponent } from "supertokens-auth-react/ui";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 

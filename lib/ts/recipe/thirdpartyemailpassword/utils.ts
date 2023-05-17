@@ -37,13 +37,8 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
         throw new Error("ThirdpartyEmailPassword config should not be empty");
     }
     const disableEmailPassword = config.disableEmailPassword === true;
-    const disableThirdParty = !config.signInAndUpFeature?.providers?.length;
-    if (
-        disableEmailPassword &&
-        (config.signInAndUpFeature === undefined ||
-            config.signInAndUpFeature.providers === undefined ||
-            config.signInAndUpFeature.providers.length === 0)
-    ) {
+    const disableThirdParty = config.disableThirdParty === true;
+    if (disableEmailPassword && disableThirdParty) {
         throw new Error("You need to enable either email password or third party providers login.");
     }
 
@@ -56,18 +51,17 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
         config.signInAndUpFeature
     );
 
-    let thirdpartyNormalisedConfig;
-    if (!disableThirdParty) {
-        thirdpartyNormalisedConfig = normaliseThirdPartyConfig({
-            getRedirectionURL: config.getRedirectionURL,
-            style: config.style,
-            onHandleEvent: config.onHandleEvent,
-            preAPIHook: config.preAPIHook,
-            signInAndUpFeature: config.signInAndUpFeature,
-            oAuthCallbackScreen: config.oAuthCallbackScreen,
-            useShadowDom: config.useShadowDom,
-        });
-    }
+    const thirdpartyNormalisedConfig = disableThirdParty
+        ? undefined
+        : normaliseThirdPartyConfig({
+              getRedirectionURL: config.getRedirectionURL,
+              style: config.style,
+              onHandleEvent: config.onHandleEvent,
+              preAPIHook: config.preAPIHook,
+              signInAndUpFeature: config.signInAndUpFeature,
+              oAuthCallbackScreen: config.oAuthCallbackScreen,
+              useShadowDom: config.useShadowDom,
+          });
 
     const emailPasswordNormalisedConfig = normaliseEmailPasswordConfig({
         getRedirectionURL: config.getRedirectionURL,
@@ -84,6 +78,7 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
         emailPasswordConfig: emailPasswordNormalisedConfig,
         thirdPartyConfig: thirdpartyNormalisedConfig,
         disableEmailPassword,
+        disableThirdParty,
         signInAndUpFeature,
         override,
     };

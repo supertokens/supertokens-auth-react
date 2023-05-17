@@ -113,9 +113,9 @@ function App() {
                             <Route
                                 path="/"
                                 element={
-                                    <ProtectedRoute>
+                                    <SessionAuth>
                                         <Home />
-                                    </ProtectedRoute>
+                                    </SessionAuth>
                                 }
                             />
                             <Route
@@ -133,35 +133,6 @@ function App() {
             </PasswordlessComponentsOverrideProvider>
         </SuperTokensWrapper>
     );
-}
-
-function ProtectedRoute(props: any) {
-    return (
-        <SessionAuth>
-            <ProtectedRouteHelper>{props.children}</ProtectedRouteHelper>
-        </SessionAuth>
-    );
-}
-
-function ProtectedRouteHelper(props: any) {
-    const session = useSessionContext();
-    const navigate = useNavigate();
-    const [showUI, setShowUI] = React.useState(false);
-
-    useEffect(() => {
-        if (!session.loading) {
-            if (session.invalidClaims.find((a) => a.validatorId === SecondFactorClaim.id)) {
-                navigate("/second-factor");
-            } else if (session.invalidClaims.find((a) => a.validatorId === EmailVerificationClaim.id)) {
-                navigate("/auth/verify-email");
-            } else {
-                // all claims passed, so we now show the UI to the user.
-                setShowUI(true);
-            }
-        }
-    }, [session, navigate]);
-
-    return showUI ? props.children : null;
 }
 
 export default function AppWithRouter() {

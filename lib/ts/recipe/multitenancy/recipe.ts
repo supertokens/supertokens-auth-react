@@ -64,7 +64,7 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
         SuperTokens.uiController.emit("LoginMethodsLoaded");
     }
 
-    public getDynamicLoginMethods(): GetLoginMethodsResponseNormalized | undefined {
+    public getLoadedDynamicLoginMethods(): GetLoginMethodsResponseNormalized | undefined {
         if (this.hasIntersection === false) {
             throw new Error("Initialized recipes have no overlap with core recipes");
         }

@@ -29,6 +29,7 @@ import {
     submitForm,
     getInvalidClaimsJSON as getInvalidClaims,
     waitFor,
+    waitForText,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -141,7 +142,7 @@ describe("User Roles in the frontend", function () {
             );
         });
 
-        it("should set invalid claims when added to validators", async () => {
+        it("should show the access denied screen when added to validators", async () => {
             await page.evaluate(
                 (url) =>
                     window.fetch(url, {
@@ -160,6 +161,46 @@ describe("User Roles in the frontend", function () {
                     window.PermissionClaim.validators.excludes("testPerm"),
                 ]);
             });
+            await waitForText(page, "[data-supertokens~=headerTitle]", "Access denied");
+        });
+
+        it("should redirect away when added to validators", async () => {
+            await page.evaluate(
+                (url) =>
+                    window.fetch(url, {
+                        method: "POST",
+                        headers: [["content-type", "application/json"]],
+                        body: JSON.stringify({
+                            role: "testRole",
+                            permissions: ["testPerm"],
+                        }),
+                    }),
+                `${TEST_APPLICATION_SERVER_BASE_URL}/setRole`
+            );
+            await Promise.all([
+                page.evaluate(() => {
+                    // We do it like this because support for spread is weird
+                    const adminValidator = window.UserRoleClaim.validators.includes("admin");
+                    adminValidator.onFailureRedirection = () => "/not-an-admin";
+                    window.setClaimValidators([adminValidator, window.PermissionClaim.validators.excludes("testPerm")]);
+                }),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            let pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/not-an-admin");
+        });
+
+        it("should set invalid claims when added to validators", async () => {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/dashboard`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await page.evaluate(() => {
+                // We do it like this because support for spread is weird
+                const adminValidator = window.UserRoleClaim.validators.includes("admin");
+                adminValidator.showAccessDeniedOnFailure = false;
+                window.setClaimValidators([adminValidator]);
+            });
             await waitFor(500);
             await page.waitForSelector(".invalidClaims");
             assert.deepStrictEqual(await getInvalidClaims(page), [
@@ -169,14 +210,6 @@ describe("User Roles in the frontend", function () {
                         message: "wrong value",
                         expectedToInclude: "admin",
                         actualValue: ["testRole"],
-                    },
-                },
-                {
-                    validatorId: "st-perm",
-                    reason: {
-                        message: "wrong value",
-                        expectedToNotInclude: "testPerm",
-                        actualValue: ["testPerm"],
                     },
                 },
             ]);
