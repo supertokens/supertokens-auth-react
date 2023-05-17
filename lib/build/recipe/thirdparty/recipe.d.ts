@@ -1,6 +1,5 @@
 import ThirdpartyWebJS from "supertokens-web-js/recipe/thirdparty";
 import AuthRecipe from "../authRecipe";
-import type Provider from "./providers";
 import type {
     GetRedirectionURLContext,
     NormalisedConfig,
@@ -18,7 +17,6 @@ export default class ThirdParty extends AuthRecipe<
     readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdpartyWebJS>;
     static instance?: ThirdParty;
     static RECIPE_ID: string;
-    static providers?: Pick<Provider, "id" | "getButton">[];
     recipeID: string;
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,

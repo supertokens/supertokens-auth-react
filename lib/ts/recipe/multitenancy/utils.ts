@@ -14,7 +14,6 @@ import {
     Okta,
     Twitter,
 } from "../thirdparty";
-import ThirdParty from "../thirdparty/recipe";
 
 import type { UserInput, NormalisedConfig, RecipeInterface, GetLoginMethodsResponseNormalized } from "./types";
 import type RecipeModule from "../recipeModule";
@@ -75,14 +74,12 @@ export const mergeProviders = ({
         facebook: Facebook,
     } as const;
 
-    if (ThirdParty.providers !== undefined) {
-        return ThirdParty.providers;
-    }
-
     const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods === true;
     if (usesDynamicLoginMethods === false && clientProviders.length === 0) {
         throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
     }
+    // If we are not using dynamic login methods or if there is no providers
+    // from the core we use frontend initialized providers
     if (usesDynamicLoginMethods === false || tenantProviders.length === 0) {
         return clientProviders.map((provider) => ({
             id: provider.id,
@@ -93,6 +90,7 @@ export const mergeProviders = ({
     const providers: Pick<Provider, "id" | "buttonComponent" | "getButton">[] = [];
 
     for (const tenantProvider of tenantProviders) {
+        // try finding exact match first
         let provider = clientProviders.find((provider) => {
             const { id } = tenantProvider;
             return provider.id === id || provider.id.includes(id);
@@ -103,6 +101,7 @@ export const mergeProviders = ({
                 return id.startsWith(provider.id);
             });
         }
+        // means provider is initialized on the frontend and found
         if (provider !== undefined) {
             providers.push({
                 id: tenantProvider.id,
@@ -110,11 +109,12 @@ export const mergeProviders = ({
                 getButton: provider.getButton,
             });
         } else {
+            // try to find and initialize provider from all prebuilt providers list
             const providerID = Object.keys(builtInProvidersMap).find((id) => {
                 return tenantProvider.id === id || tenantProvider.id.startsWith(id);
             });
             if (builtInProvidersMap[providerID as keyof typeof builtInProvidersMap]) {
-                const provider = builtInProvidersMap[providerID as keyof typeof builtInProvidersMap].init();
+                const provider = new builtInProvidersMap[providerID as keyof typeof builtInProvidersMap]();
                 providers.push({
                     id: tenantProvider.id,
                     buttonComponent: provider.getButton(tenantProvider.name),
@@ -123,6 +123,5 @@ export const mergeProviders = ({
             }
         }
     }
-    ThirdParty.providers = providers;
     return providers;
 };

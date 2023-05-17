@@ -27,7 +27,6 @@ import AuthRecipe from "../authRecipe";
 import { getFunctionOverrides } from "./functionOverrides";
 import { normaliseThirdPartyConfig } from "./utils";
 
-import type Provider from "./providers";
 import type {
     GetRedirectionURLContext,
     NormalisedConfig,
@@ -50,7 +49,6 @@ export default class ThirdParty extends AuthRecipe<
 > {
     static instance?: ThirdParty;
     static RECIPE_ID = "thirdparty";
-    static providers?: Pick<Provider, "id" | "getButton">[];
     recipeID = ThirdParty.RECIPE_ID;
 
     constructor(
