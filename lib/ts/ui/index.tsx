@@ -14,7 +14,7 @@ export default class UI {
 
     static getSuperTokensRoutesForReactRouterDom(
         reactRouterDom: any,
-        preBuiltUiClassList: PreBuiltRecipes
+        preBuiltUiClassList: PreBuiltRecipes = []
     ): JSX.Element[] {
         if (reactRouterDom === undefined || preBuiltUiClassList.length === 0) {
             throw new Error(

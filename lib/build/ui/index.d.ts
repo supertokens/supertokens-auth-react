@@ -5,7 +5,7 @@ export default class UI {
     private static reactRouterDomIsV6?;
     static getSuperTokensRoutesForReactRouterDom(
         reactRouterDom: any,
-        preBuiltUiClassList: PreBuiltRecipes
+        preBuiltUiClassList?: PreBuiltRecipes
     ): JSX.Element[];
     static getReactRouterDomWithCustomHistory: () => ReactRouterDomWithCustomHistory | undefined;
     static canHandleRoute(preBuiltUiClassList: PreBuiltRecipes): boolean;

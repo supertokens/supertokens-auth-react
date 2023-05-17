@@ -10,7 +10,7 @@
         "next": "latest",
         "react": "^18.0.0",
         "react-dom": "^18.0.0",
-        "supertokens-auth-react": "^0.31.3",
+        "supertokens-auth-react": "latest",
         "supertokens-node": "^13.1.5"
     },
     "devDependencies": {

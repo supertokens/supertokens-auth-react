@@ -1,21 +1,18 @@
 /// <reference types="react" />
 import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
 import RecipeModule from "../recipeModule";
+import type { NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType } from "./types";
+import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type {
-    NormalisedAppInfo,
     NormalisedConfigWithAppInfoAndRecipeID,
     RecipeFeatureComponentMap,
     RecipeInitResult,
+    FeatureBaseProps,
 } from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import type { SessionClaim } from "supertokens-web-js/recipe/session";
-declare type ConfigType = InputType & {
-    recipeId: string;
-    appInfo: NormalisedAppInfo;
-    enableDebugLogs: boolean;
-};
-export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
+export default class Session extends RecipeModule<unknown, unknown, unknown, NormalisedSessionConfig> {
     readonly webJSRecipe: Omit<typeof WebJSSessionRecipe, "init" | "default">;
     static instance?: Session;
     static RECIPE_ID: string;
@@ -23,11 +20,9 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     private eventListeners;
     private redirectionHandlersFromAuthRecipes;
     constructor(
-        config: NormalisedConfigWithAppInfoAndRecipeID<ConfigType>,
+        config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedSessionConfig>,
         webJSRecipe?: Omit<typeof WebJSSessionRecipe, "init" | "default">
     );
-    getFeatureComponent: (_: string) => JSX.Element;
-    getFeatures: () => RecipeFeatureComponentMap;
     getUserId: (input: { userContext: any }) => Promise<string>;
     getAccessToken: (input: { userContext: any }) => Promise<string | undefined>;
     getClaimValue: (input: { claim: SessionClaim<unknown>; userContext: any }) => Promise<unknown>;
@@ -68,6 +63,15 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
      */
     getDefaultRedirectionURL: () => Promise<string>;
     private notifyListeners;
+    getFeatures: () => RecipeFeatureComponentMap;
+    getFeatureComponent: (
+        componentName: "accessDenied",
+        props: FeatureBaseProps & {
+            redirectOnSessionExists?: boolean;
+            userContext?: any;
+        },
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
+    ) => JSX.Element;
     private getSessionContext;
     static addAxiosInterceptors(axiosInstance: any, userContext: any): void;
     static init(config?: InputType): RecipeInitResult<unknown, unknown, unknown, any>;
@@ -75,4 +79,3 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     static getInstance(): Session | undefined;
     static reset(): void;
 }
-export {};

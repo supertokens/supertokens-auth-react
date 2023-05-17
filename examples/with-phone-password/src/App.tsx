@@ -60,14 +60,6 @@ SuperTokens.init({
             },
         }),
         EmailPassword.init({
-            getRedirectionURL: async (context) => {
-                if (context.action === "SUCCESS") {
-                    // this means that the first login challenge is done. Now we should
-                    // redirect the user to the second login challenge
-                    return "/auth/verify-phone";
-                }
-                return undefined;
-            },
             signInAndUpFeature: {
                 signUpForm: {
                     formFields: [
