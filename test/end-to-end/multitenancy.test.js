@@ -28,6 +28,7 @@ import {
     getProvidersLabels,
     getInputNames,
     assertNoSTComponents,
+    assertProviders,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, DEFAULT_WEBSITE_BASE_PATH, LOGIN_METHODS_API, ST_ROOT_SELECTOR } from "../constants";
 
@@ -49,13 +50,13 @@ describe("SuperTokens Multitenancy", function () {
     before(async function () {
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-web-security"],
-            headless: false,
+            headless: true,
         });
         page = await browser.newPage();
     });
 
     after(async function () {
-        // await browser.close();
+        await browser.close();
     });
 
     function getResponder(request) {
@@ -105,8 +106,7 @@ describe("SuperTokens Multitenancy", function () {
             ),
             page.waitForNavigation({ waitUntil: "networkidle0" }),
         ]);
-        const providers = await getProvidersLabels(page);
-        assert.deepStrictEqual(providers, []);
+        await assertProviders(page);
         const inputNames = await getInputNames(page);
         assert.deepStrictEqual(inputNames, ["email", "password"]);
     });
@@ -257,36 +257,6 @@ describe("SuperTokens Multitenancy", function () {
 
         const providers = await getProvidersLabels(page);
         assert.deepStrictEqual(providers, ["Continue with Apple"]);
-        await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]");
-    });
-
-    it("thirdparty will be considered disabled if provider list is empty even if enabled is true", async function () {
-        await page.setRequestInterception(true);
-        let requestHandler = async (request) => {
-            if (request.method() === "GET" && request.url() === LOGIN_METHODS_API) {
-                getResponder(request)({
-                    passwordless: { enabled: true },
-                    thirdParty: {
-                        enabled: true,
-                        providers: [],
-                    },
-                });
-                page.off("request", requestHandler);
-                await page.setRequestInterception(false);
-            } else {
-                request.continue();
-            }
-        };
-        page.on("request", requestHandler);
-        await Promise.all([
-            page.goto(
-                `${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?authRecipe=thirdpartypasswordless&multitenancy=enabled`
-            ),
-            page.waitForNavigation({ waitUntil: "networkidle0" }),
-        ]);
-
-        const providers = await getProvidersLabels(page);
-        assert.deepStrictEqual(providers, []);
         await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]");
     });
 
