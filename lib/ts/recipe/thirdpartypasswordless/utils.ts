@@ -28,8 +28,8 @@ export function normaliseThirdPartyPasswordlessConfig(config?: Config): Normalis
         config = {} as Config;
     }
     const disablePasswordless = config.disablePasswordless === true;
-    const disableThirdParty = config.signInUpFeature === undefined;
-    if (disablePasswordless) {
+    const disableThirdParty = config.disableThirdParty === true;
+    if (disablePasswordless && disableThirdParty) {
         throw new Error("You need to enable either passwordless or third party providers login.");
     }
 
