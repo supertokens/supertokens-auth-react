@@ -1,7 +1,5 @@
-import React from "react";
-
 export default function Logout(props: { logoutClicked: () => Promise<void> }) {
-    let logoutClicked = props.logoutClicked;
+    const logoutClicked = props.logoutClicked;
 
     return (
         <div

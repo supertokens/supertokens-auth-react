@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, redirectToAuth } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
@@ -55,7 +55,7 @@ SuperTokens.init({
 });
 
 function App() {
-    let [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
+    const [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
 
     return (
         <SuperTokensWrapper>
