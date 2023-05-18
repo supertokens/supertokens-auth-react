@@ -166,7 +166,8 @@ function App() {
                                                             "delete_user",
                                                             "delete_post",
                                                         ]),
-                                                    ]}>
+                                                    ]}
+                                                    useDefaultAccessDeniedScreen={false}>
                                                     <Home />
                                                 </SessionAuth>
                                             }
@@ -1168,3 +1169,53 @@ Session.validateClaims({
 });
 
 Session.getClaimValue({ claim: UserRoleClaim }).then((v) => {});
+
+Session.init({
+    override: {
+        functions: (oI) => {
+            return {
+                ...oI,
+                getGlobalClaimValidators: (input) => [
+                    ...input.claimValidatorsAddedByOtherRecipes,
+                    UserRoleClaim.validators.includes("admin"),
+                ],
+            };
+        },
+    },
+});
+
+Session.init({
+    override: {
+        functions: (oI) => {
+            return {
+                ...oI,
+                getGlobalClaimValidators: (input) => {
+                    return [
+                        ...input.claimValidatorsAddedByOtherRecipes,
+                        {
+                            ...UserRoleClaim.validators.includes("admin"),
+                            showAccessDeniedOnFailure: false, // if you want to handle the validation errors in you components
+                            onFailureRedirection: () => "/not-an-admin", // if you want to redirect to a specific path
+                        },
+                    ];
+                },
+            };
+        },
+    },
+});
+
+const AdminRoute: React.FC = (props) => {
+    return (
+        <SessionAuth
+            overrideGlobalClaimValidators={(globalValidators) => [
+                ...globalValidators,
+                {
+                    ...UserRoleClaim.validators.includes("admin"),
+                    showAccessDeniedOnFailure: false, // if you want to handle the validation errors in you components
+                    onFailureRedirection: () => "/not-an-admin", // if you want to redirect to a specific path
+                },
+            ]}>
+            {props.children}
+        </SessionAuth>
+    );
+};
