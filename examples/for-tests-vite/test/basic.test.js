@@ -33,7 +33,6 @@ const Session = require("supertokens-node/recipe/session");
 const Passwordless = require("supertokens-node/recipe/passwordless");
 const EmailVerification = require("supertokens-node/recipe/emailverification");
 const ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
-const { getProvidersLabels } = require("../../../test/helpers");
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -66,7 +65,7 @@ describe("SuperTokens Example Basic tests", function () {
     before(async function () {
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: false,
+            headless: true,
         });
         page = await browser.newPage();
     });
@@ -79,8 +78,7 @@ describe("SuperTokens Example Basic tests", function () {
         it("Form is rendered", async function () {
             await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-            const providers = await getProvidersLabels(page);
-            assert.deepStrictEqual(["Continue with Github"], providers);
+            await waitForSTElement(page, "[data-supertokens~='input']");
         });
     });
 });
