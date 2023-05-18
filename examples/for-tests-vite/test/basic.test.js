@@ -33,6 +33,7 @@ const Session = require("supertokens-node/recipe/session");
 const Passwordless = require("supertokens-node/recipe/passwordless");
 const EmailVerification = require("supertokens-node/recipe/emailverification");
 const ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
+const { getProvidersLabels } = require("../../../test/helpers");
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -50,17 +51,7 @@ SuperTokensNode.init({
         websiteDomain: websiteDomain,
         appName: "testNode",
     },
-    recipeList: [
-        Passwordless.init({
-            contactMethod: "EMAIL_OR_PHONE",
-            flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
-        }),
-        EmailVerification.init({
-            mode: "OPTIONAL",
-        }),
-        ThirdPartyEmailPassword.init(),
-        Session.init(),
-    ],
+    recipeList: [ThirdPartyEmailPassword.init(), Session.init()],
 });
 
 describe("SuperTokens Example Basic tests", function () {
@@ -75,7 +66,7 @@ describe("SuperTokens Example Basic tests", function () {
     before(async function () {
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
+            headless: false,
         });
         page = await browser.newPage();
     });
@@ -84,78 +75,12 @@ describe("SuperTokens Example Basic tests", function () {
         await browser.close();
     });
 
-    describe("Email Password test", function () {
-        it("Successful signup with credentials", async function () {
+    describe("Vite render", function () {
+        it("Form is rendered", async function () {
             await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-            // redirected to /auth
-            await toggleSignInSignUp(page);
-            await setInputValues(page, [
-                { name: "email", value: email },
-                { name: "password", value: testPW },
-            ]);
-            await submitForm(page);
-
-            // Sent the otp
-            await waitForSTElement(page, "[name=phoneNumber_text]");
-            assert.strictEqual(page.url(), websiteDomain + "/second-factor");
-
-            // Attempt reloading Home
-            await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-            // Redirect back to OTP screen
-            await waitForSTElement(page, "[name=phoneNumber_text]");
-            await setInputValues(page, [
-                {
-                    name: "phoneNumber_text",
-                    value: phoneNumber,
-                },
-            ]);
-            await submitForm(page);
-
-            // Redirected to email verification screen (OTP screen from passwordless w/ overrides)
-            await waitForSTElement(page, "[name=userInputCode]");
-            // Attempt reloading Home
-            await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-            await waitForSTElement(page, "[name=userInputCode]");
-
-            const loginAttemptInfo = JSON.parse(
-                await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-            );
-            // Create a new OTP and use it (we don't have access to the originally sent one)
-            await Passwordless.createNewCodeForDevice({
-                deviceId: loginAttemptInfo.deviceId,
-                userInputCode: testOTP,
-            });
-            await setInputValues(page, [{ name: "userInputCode", value: testOTP }]);
-            await submitForm(page);
-
-            const [user] = await ThirdPartyEmailPassword.getUsersByEmail(email);
-
-            // We get to the email verification screen
-            await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
-            // Attempt reloading Home
-            await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-            await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
-
-            // Create a new token and use it (we don't have access to the originally sent one)
-            const tokenInfo = await EmailVerification.createEmailVerificationToken(user.id, user.email);
-            await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
-            await submitForm(page);
-
-            const callApiBtn = await page.waitForSelector(".sessionButton");
-
-            let setAlertContent;
-            let alertContent = new Promise((res) => (setAlertContent = res));
-            page.on("dialog", async (dialog) => {
-                setAlertContent(dialog.message());
-                await dialog.dismiss();
-            });
-            await callApiBtn.click();
-
-            const alertText = await alertContent;
-            assert(alertText.startsWith("Session Information:"));
-            const sessionInfo = JSON.parse(alertText.replace(/^Session Information:/, ""));
-            assert.strictEqual(sessionInfo.userId, user.id);
+            const providers = await getProvidersLabels(page);
+            assert.deepStrictEqual(["Continue with Github"], providers);
         });
     });
 });

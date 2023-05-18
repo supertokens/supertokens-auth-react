@@ -2,7 +2,6 @@ import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper, redirectToAuth } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
-import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import ThirdPartyEmailPassword, {
     Google,
     Github,
@@ -10,9 +9,6 @@ import ThirdPartyEmailPassword, {
     ThirdpartyEmailPasswordComponentsOverrideProvider,
 } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
-import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
-import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
-import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
@@ -39,16 +35,10 @@ SuperTokens.init({
         websiteDomain: getWebsiteDomain(), // TODO: Change to your app's website domain
     },
     recipeList: [
-        EmailVerification.init({
-            mode: "REQUIRED",
-        }),
         ThirdPartyEmailPassword.init({
             signInAndUpFeature: {
-                providers: [Github.init(), Google.init(), Apple.init()],
+                providers: [Github.init()],
             },
-        }),
-        Passwordless.init({
-            contactMethod: "EMAIL_OR_PHONE",
         }),
         Session.init(),
     ],
@@ -104,8 +94,6 @@ function App() {
                             <Routes>
                                 {getSuperTokensRoutesForReactRouterDom(reactRouter, [
                                     ThirdPartyEmailPasswordPreBuiltUI,
-                                    EmailVerificationPreBuiltUI,
-                                    PasswordlessPreBuiltUI,
                                 ])}
                                 <Route
                                     path="/"
