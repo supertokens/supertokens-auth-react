@@ -1,5 +1,5 @@
 import SuperTokens from "../../superTokens";
-import { normaliseAuthRecipe } from "../authRecipe/utils";
+import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 import {
     ActiveDirectory,
     Apple,
@@ -22,7 +22,7 @@ import type Provider from "../thirdparty/providers";
 export function normaliseMultitenancyConfig(config: UserInput): NormalisedConfig {
     const getTenantID = config.getTenantID !== undefined ? config.getTenantID : () => undefined;
     return {
-        ...normaliseAuthRecipe(config),
+        ...normaliseRecipeModuleConfig(config),
         getTenantID,
         override: {
             functions: (originalImplementation: RecipeInterface) => originalImplementation,
@@ -90,11 +90,12 @@ export const mergeProviders = ({
     const providers: Pick<Provider, "id" | "buttonComponent" | "getButton">[] = [];
 
     for (const tenantProvider of tenantProviders) {
-        // try finding exact match first
+        // try finding exact and prefix match first
         let provider = clientProviders.find((provider) => {
             const { id } = tenantProvider;
             return provider.id === id || provider.id.includes(id);
         });
+        // if none found try finding by tenantProvider id prefix match only
         if (provider === undefined) {
             provider = clientProviders.find((provider) => {
                 const { id } = tenantProvider;
