@@ -1,3 +1,5 @@
+import Multitenancy from "../multitenancy/recipe";
+
 import type { RecipeFeatureComponentMap } from "../../types";
 import type { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
 import type RecipeModule from "../recipeModule";
@@ -21,10 +23,33 @@ export abstract class RecipeRouter {
             return undefined;
         }
 
-        const component = routeComponents.find((c) => c.matches());
-        if (component !== undefined) {
-            return component;
+        const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods();
+        const components = routeComponents.filter((c) => c.matches());
+        if (components.length === 1) {
+            return components[0];
         }
+        const possiblyEnabledRecipes =
+            dynamicLoginMethods !== undefined
+                ? {
+                      thirdpartyemailpassword: {
+                          enabled:
+                              dynamicLoginMethods["thirdparty"].enabled && dynamicLoginMethods["emailpassword"].enabled,
+                      },
+                      thirdpartypasswordless: {
+                          enabled:
+                              dynamicLoginMethods["thirdparty"].enabled && dynamicLoginMethods["passwordless"].enabled,
+                      },
+                      ...dynamicLoginMethods,
+                  }
+                : {};
+
+        for (const id in possiblyEnabledRecipes) {
+            const matching = routeComponents.find((c) => c.recipeID === id);
+            if (matching !== undefined) {
+                return matching;
+            }
+        }
+
         // Otherwise, If no recipe Id provided, or if no recipe id matches, return the first matching component.
         return routeComponents[0];
     }

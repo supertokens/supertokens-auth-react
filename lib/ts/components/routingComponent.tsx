@@ -5,7 +5,7 @@ import Multitenancy from "../recipe/multitenancy/recipe";
 import { RecipeRouter } from "../recipe/recipeRouter";
 import SuperTokens from "../superTokens";
 
-import type { GetLoginMethodsResponseNormalized } from "../recipe/multitenancy/types";
+// import type { GetLoginMethodsResponseNormalized } from "../recipe/multitenancy/types";
 import type { ReactRouterDomWithCustomHistory } from "../ui/types";
 
 export function RoutingComponent(props: {
@@ -28,25 +28,11 @@ export function RoutingComponent(props: {
             normalizedPath,
             props.preBuiltUIList
         );
-    }, [path, location]); // location dependency needs to be kept in order to get new component on url change
+    }, [path, location, loadedDynamicLoginMethods]); // location dependency needs to be kept in order to get new component on url change
 
     useEffect(() => {
         const handler = () => {
-            if (loadedDynamicLoginMethods === false && componentToRender?.recipeID) {
-                const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods();
-                let enabled =
-                    dynamicLoginMethods?.[componentToRender?.recipeID as keyof GetLoginMethodsResponseNormalized] !==
-                    undefined;
-                if (enabled === false) {
-                    for (const id in dynamicLoginMethods) {
-                        if (componentToRender.recipeID.includes(id)) {
-                            enabled = true;
-                            break;
-                        }
-                    }
-                }
-                setLoadedDynamicLoginMethods(enabled);
-            }
+            setLoadedDynamicLoginMethods(true);
         };
         SuperTokens.uiController.on("LoginMethodsLoaded", handler);
 
