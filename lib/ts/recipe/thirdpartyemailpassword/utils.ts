@@ -37,10 +37,7 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
         throw new Error("ThirdpartyEmailPassword config should not be empty");
     }
     const disableEmailPassword = config.disableEmailPassword === true;
-    const disableThirdParty = config.disableThirdParty === true;
-    if (disableEmailPassword && disableThirdParty) {
-        throw new Error("You need to enable either email password or third party providers login.");
-    }
+    const disableThirdParty = config.signInAndUpFeature?.providers?.length !== 0;
 
     const override: any = {
         functions: (originalImplementation: RecipeInterface) => originalImplementation,
@@ -78,7 +75,6 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
         emailPasswordConfig: emailPasswordNormalisedConfig,
         thirdPartyConfig: thirdpartyNormalisedConfig,
         disableEmailPassword,
-        disableThirdParty,
         signInAndUpFeature,
         override,
     };
