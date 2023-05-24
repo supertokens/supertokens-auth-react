@@ -75,7 +75,7 @@ export const mergeProviders = ({
     } as const;
 
     const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods === true;
-    if (usesDynamicLoginMethods === false && clientProviders.length === 0) {
+    if (usesDynamicLoginMethods === false && clientProviders?.length === 0) {
         throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
     }
     // If we are not using dynamic login methods or if there is no providers
