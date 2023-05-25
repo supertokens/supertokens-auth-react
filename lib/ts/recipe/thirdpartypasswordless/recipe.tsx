@@ -20,6 +20,7 @@
 import ThirdpartyPasswordlessWebJS from "supertokens-web-js/recipe/thirdpartypasswordless";
 
 import { SSR_ERROR } from "../../constants";
+import SuperTokens from "../../superTokens";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
 import Passwordless from "../passwordless/recipe";
@@ -70,6 +71,12 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
             typeof ThirdpartyPasswordlessWebJS
         > = ThirdpartyPasswordlessWebJS
     ) {
+        if (
+            SuperTokens.usesDynamicLoginMethods === false &&
+            config.thirdpartyConfig?.signInAndUpFeature.providers.length === 0
+        ) {
+            throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
+        }
         super(config);
 
         this.passwordlessRecipe =

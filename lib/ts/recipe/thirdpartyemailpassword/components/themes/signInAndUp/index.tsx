@@ -45,7 +45,7 @@ const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> =
         (dynamicLoginMethods?.thirdparty.enabled && props.tpChildProps?.providers.length !== 0);
     const emailPasswordEnabled =
         (props.emailPasswordRecipe !== undefined && usesDynamicLoginMethods === false) ||
-        dynamicLoginMethods?.emailpassword.enabled;
+        (dynamicLoginMethods?.emailpassword.enabled && props.emailPasswordRecipe !== undefined);
 
     if (thirdPartyEnabled === false && emailPasswordEnabled === false) {
         return null;

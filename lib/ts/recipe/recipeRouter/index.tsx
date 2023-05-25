@@ -24,28 +24,30 @@ export abstract class RecipeRouter {
         }
 
         const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods();
+        const possiblyEnabledRecipes = {
+            thirdpartyemailpassword: {
+                enabled: dynamicLoginMethods?.["thirdparty"].enabled && dynamicLoginMethods["emailpassword"].enabled,
+            },
+            thirdpartypasswordless: {
+                enabled: dynamicLoginMethods?.["thirdparty"].enabled && dynamicLoginMethods["passwordless"].enabled,
+            },
+            ...dynamicLoginMethods,
+        };
         const components = routeComponents.filter((c) => c.matches());
-        if (components.length === 1) {
+
+        if (
+            components.length === 1 &&
+            possiblyEnabledRecipes[components[0].recipeID as keyof typeof possiblyEnabledRecipes]?.enabled === true
+        ) {
             return components[0];
         }
-        const possiblyEnabledRecipes =
-            dynamicLoginMethods !== undefined
-                ? {
-                      thirdpartyemailpassword: {
-                          enabled:
-                              dynamicLoginMethods["thirdparty"].enabled && dynamicLoginMethods["emailpassword"].enabled,
-                      },
-                      thirdpartypasswordless: {
-                          enabled:
-                              dynamicLoginMethods["thirdparty"].enabled && dynamicLoginMethods["passwordless"].enabled,
-                      },
-                      ...dynamicLoginMethods,
-                  }
-                : {};
-
         for (const id in possiblyEnabledRecipes) {
             const matching = routeComponents.find((c) => c.recipeID === id);
-            if (matching !== undefined) {
+            if (
+                matching !== undefined &&
+                dynamicLoginMethods !== undefined &&
+                possiblyEnabledRecipes[id as keyof typeof possiblyEnabledRecipes]?.enabled === true
+            ) {
                 return matching;
             }
         }
