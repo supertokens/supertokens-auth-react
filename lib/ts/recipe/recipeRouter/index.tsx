@@ -24,7 +24,7 @@ export abstract class RecipeRouter {
         }
 
         const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods();
-        const possiblyEnabledRecipes = {
+        const componentMatchingRid = {
             thirdpartyemailpassword: {
                 enabled: dynamicLoginMethods?.["thirdparty"].enabled && dynamicLoginMethods["emailpassword"].enabled,
             },
@@ -33,20 +33,20 @@ export abstract class RecipeRouter {
             },
             ...dynamicLoginMethods,
         };
-        const components = routeComponents.filter((c) => c.matches());
+        const component = routeComponents.find((c) => c.matches());
 
         if (
-            components.length === 1 &&
-            possiblyEnabledRecipes[components[0].recipeID as keyof typeof possiblyEnabledRecipes]?.enabled === true
+            component &&
+            componentMatchingRid[component.recipeID as keyof typeof componentMatchingRid]?.enabled === true
         ) {
-            return components[0];
+            return component;
         }
-        for (const id in possiblyEnabledRecipes) {
+        for (const id in componentMatchingRid) {
             const matching = routeComponents.find((c) => c.recipeID === id);
             if (
                 matching !== undefined &&
                 dynamicLoginMethods !== undefined &&
-                possiblyEnabledRecipes[id as keyof typeof possiblyEnabledRecipes]?.enabled === true
+                componentMatchingRid[id as keyof typeof componentMatchingRid]?.enabled === true
             ) {
                 return matching;
             }
