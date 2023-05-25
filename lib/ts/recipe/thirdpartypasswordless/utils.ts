@@ -27,7 +27,6 @@ export function normaliseThirdPartyPasswordlessConfig(config?: Config): Normalis
     if (config === undefined) {
         config = {} as Config;
     }
-    const disablePasswordless = config.disablePasswordless === true;
     const disableThirdParty = config.signInUpFeature?.providers?.length === 0;
 
     const override: any = {
@@ -58,24 +57,23 @@ export function normaliseThirdPartyPasswordlessConfig(config?: Config): Normalis
                   useShadowDom: config.useShadowDom,
                   override: {},
               }),
-        passwordlessConfig: disablePasswordless
-            ? undefined
-            : normalisePasswordlessConfig({
-                  contactMethod: config.contactMethod,
-                  style: config.style,
-                  validateEmailAddress: "validateEmailAddress" in config ? config.validateEmailAddress : undefined,
-                  validatePhoneNumber: "validatePhoneNumber" in config ? config.validatePhoneNumber : undefined,
-                  getRedirectionURL: config.getRedirectionURL,
-                  onHandleEvent: config.onHandleEvent,
-                  preAPIHook: config.preAPIHook,
-                  useShadowDom: config.useShadowDom,
-                  signInUpFeature: {
-                      ...config.signInUpFeature,
-                      emailOrPhoneFormStyle: thirdPartyProviderAndEmailOrPhoneFormStyle,
-                  },
-                  linkClickedScreenFeature: config.linkClickedScreenFeature,
-                  override: {},
-              }),
+        passwordlessConfig: normalisePasswordlessConfig({
+            contactMethod: config.contactMethod,
+            style: config.style,
+            validateEmailAddress: "validateEmailAddress" in config ? config.validateEmailAddress : undefined,
+            validatePhoneNumber: "validatePhoneNumber" in config ? config.validatePhoneNumber : undefined,
+            getRedirectionURL: config.getRedirectionURL,
+            onHandleEvent: config.onHandleEvent,
+            preAPIHook: config.preAPIHook,
+            useShadowDom: config.useShadowDom,
+            signInUpFeature: {
+                ...config.signInUpFeature,
+                emailOrPhoneFormStyle: thirdPartyProviderAndEmailOrPhoneFormStyle,
+            },
+            linkClickedScreenFeature: config.linkClickedScreenFeature,
+            override: {},
+        }),
+        disablePasswordless: config.disablePasswordless === true,
         override,
     };
 }

@@ -78,11 +78,10 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
             throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
         }
         super(config);
-
         this.passwordlessRecipe =
             recipes.passwordlessInstance !== undefined
                 ? recipes.passwordlessInstance
-                : this.config.passwordlessConfig === undefined
+                : SuperTokens.usesDynamicLoginMethods === false && this.config.disablePasswordless
                 ? undefined
                 : new Passwordless(
                       {

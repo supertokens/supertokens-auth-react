@@ -53,7 +53,7 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
         (dynamicLoginMethods?.thirdparty.enabled && props.tpChildProps?.providers.length !== 0);
     const passwordlessEnabled =
         (props.passwordlessRecipe !== undefined && usesDynamicLoginMethods === false) ||
-        (dynamicLoginMethods?.passwordless.enabled && props.passwordlessRecipe !== undefined);
+        dynamicLoginMethods?.passwordless.enabled;
 
     if (thirdPartyEnabled === false && passwordlessEnabled === false) {
         return null;
