@@ -4,6 +4,7 @@ import ThirdPartyPasswordless from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
+declare type ComponentName = "signInUp" | "linkClickedScreen" | "signinupcallback";
 export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
     static instance?: ThirdPartyPasswordlessPreBuiltUI;
@@ -13,7 +14,7 @@ export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     static getInstanceOrInitAndGetInstance(): ThirdPartyPasswordlessPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
-        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
+        componentName: ComponentName,
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
@@ -21,7 +22,7 @@ export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
     getFeatureComponent: (
-        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
+        componentName: ComponentName,
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
