@@ -1,5 +1,7 @@
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
+import { SSRSafeWrapper } from "../../components/ssrSafeWrapper";
+import { getRecipeFeaturesSSRSafe } from "../../ui/uiutils";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
@@ -23,6 +25,8 @@ import type {
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
+
+type ComponentName = "signinup" | "signinupcallback" | "resetpassword";
 
 export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     static instance?: ThirdPartyEmailPasswordPreBuiltUI;
@@ -53,17 +57,26 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     static getFeatures(
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap {
-        return ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
+        return getRecipeFeaturesSSRSafe(
+            ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance,
+            (recipeInstance) => {
+                return recipeInstance.getFeatures(useComponentOverrides);
+            }
+        );
     }
     static getFeatureComponent(
-        componentName: "signinup" | "signinupcallback" | "resetpassword",
+        componentName: ComponentName,
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
-        return ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
-            componentName,
-            props,
-            useComponentOverrides
+        return (
+            <SSRSafeWrapper<ComponentName, ThirdPartyEmailPasswordPreBuiltUI>
+                getRecipe={ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance}
+                componentName={componentName}
+                getFeatureComponent={(componentName, recipeInstance) => {
+                    return recipeInstance.getFeatureComponent(componentName, props, useComponentOverrides);
+                }}
+            />
         );
     }
 
@@ -100,7 +113,7 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
         return features;
     };
     getFeatureComponent = (
-        componentName: "signinup" | "signinupcallback" | "resetpassword",
+        componentName: ComponentName,
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
@@ -162,10 +175,12 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static ThirdPartySignInAndUpCallback = (prop?: any) => this.getFeatureComponent("signinupcallback", prop);
-    static ResetPasswordUsingToken = (prop?: any) => this.getFeatureComponent("resetpassword", prop);
+    static ThirdPartySignInAndUpCallback = (prop?: any) =>
+        ThirdPartyEmailPasswordPreBuiltUI.getFeatureComponent("signinupcallback", prop);
+    static ResetPasswordUsingToken = (prop?: any) =>
+        ThirdPartyEmailPasswordPreBuiltUI.getFeatureComponent("resetpassword", prop);
     static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
-        this.getFeatureComponent("signinup", prop);
+        ThirdPartyEmailPasswordPreBuiltUI.getFeatureComponent("signinup", prop);
     static ThirdPartySignInAndUpCallbackTheme = ThirdPartySignInAndUpCallbackTheme;
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
     static SignInAndUpTheme = SignInAndUpTheme;
