@@ -260,6 +260,17 @@ const SessionAuthWrapper: React.FC<
         }
     >
 > = (props) => {
+    try {
+        Session.getInstanceOrThrow();
+    } catch (_) {
+        // We dont handle the case where window is defined becauase that will happen eventually as this
+        // component renders
+        // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
+        if (typeof window === "undefined") {
+            return <></>;
+        }
+    }
+
     return (
         <UserContextWrapper userContext={props.userContext}>
             <SessionAuth {...props} />
