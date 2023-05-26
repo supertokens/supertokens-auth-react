@@ -73,6 +73,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
     ) {
         if (
             SuperTokens.usesDynamicLoginMethods === false &&
+            config.disablePasswordless === true &&
             config.thirdpartyConfig?.signInAndUpFeature.providers.length === 0
         ) {
             throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");

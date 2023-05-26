@@ -1,3 +1,4 @@
+import SuperTokens from "../../superTokens";
 import Multitenancy from "../multitenancy/recipe";
 
 import type { RecipeFeatureComponentMap } from "../../types";
@@ -23,37 +24,44 @@ export abstract class RecipeRouter {
             return undefined;
         }
 
-        const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods();
-        const componentMatchingRid = {
+        const dynamicLoginMethods =
+            SuperTokens.usesDynamicLoginMethods === true
+                ? Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods()
+                : undefined;
+        if (SuperTokens.usesDynamicLoginMethods && dynamicLoginMethods === undefined) {
+            return;
+        }
+
+        const possiblyEnabledRecipes = {
             thirdpartyemailpassword: {
-                enabled: dynamicLoginMethods?.["thirdparty"].enabled && dynamicLoginMethods["emailpassword"].enabled,
+                enabled: dynamicLoginMethods?.["thirdparty"].enabled || dynamicLoginMethods?.["emailpassword"].enabled,
             },
             thirdpartypasswordless: {
                 enabled: dynamicLoginMethods?.["thirdparty"].enabled && dynamicLoginMethods["passwordless"].enabled,
             },
             ...dynamicLoginMethods,
         };
-        const component = routeComponents.find((c) => c.matches());
-
+        const componentMatchingRid = routeComponents.find((c) => c.matches());
         if (
-            component &&
-            componentMatchingRid[component.recipeID as keyof typeof componentMatchingRid]?.enabled === true
+            componentMatchingRid &&
+            possiblyEnabledRecipes[componentMatchingRid.recipeID as keyof typeof possiblyEnabledRecipes]?.enabled ===
+                true
         ) {
-            return component;
+            return componentMatchingRid;
         }
-        for (const id in componentMatchingRid) {
+        for (const id in possiblyEnabledRecipes) {
             const matching = routeComponents.find((c) => c.recipeID === id);
             if (
                 matching !== undefined &&
                 dynamicLoginMethods !== undefined &&
-                componentMatchingRid[id as keyof typeof componentMatchingRid]?.enabled === true
+                possiblyEnabledRecipes[id as keyof typeof possiblyEnabledRecipes]?.enabled === true
             ) {
                 return matching;
             }
         }
 
-        // Otherwise, If no recipe Id provided, or if no recipe id matches, return the first matching component.
-        return routeComponents[0];
+        // Otherwise, If no recipe Id provided, or if no recipe id matches, throw since no there are no enabled recipes on the backend to handle the actions
+        throw new Error("We found no enabled recipes handling the current route");
     }
 
     getPathsToFeatureComponentWithRecipeIdMap = (): BaseFeatureComponentMap => {

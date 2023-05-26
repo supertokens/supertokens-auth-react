@@ -90,10 +90,10 @@ export const mergeProviders = ({
     const providers: Pick<Provider, "id" | "buttonComponent" | "getButton">[] = [];
 
     for (const tenantProvider of tenantProviders) {
-        // try finding exact match or client provider that includes tenant id
+        // try finding exact match
         let provider = clientProviders.find((provider) => {
             const { id } = tenantProvider;
-            return provider.id === id || provider.id.includes(id);
+            return provider.id === id;
         });
         // if none found try finding by tenantProvider id prefix match only
         if (provider === undefined) {
