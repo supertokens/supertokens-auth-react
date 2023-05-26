@@ -15,6 +15,7 @@ import EmailVerificationRecipe from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap } from "../../types";
 import { SSRSafeWrapper } from "../../components/ssrSafeWrapper";
+import { getRecipeFeaturesSSRSafe } from "../../ui/uiutils";
 
 type ComponentName = "emailverification";
 
@@ -36,7 +37,12 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
     static getFeatures(
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap {
-        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
+        return getRecipeFeaturesSSRSafe(
+            EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance,
+            (recipeInstance) => {
+                return recipeInstance.getFeatures(useComponentOverrides);
+            }
+        );
     }
 
     static getFeatureComponent(
@@ -123,7 +129,7 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
     }
 
     static EmailVerification = (props?: any) =>
-        EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("emailverification", props);
+        EmailVerificationPreBuiltUI.getFeatureComponent("emailverification", props);
     static EmailVerificationTheme = EmailVerificationTheme;
 }
 
