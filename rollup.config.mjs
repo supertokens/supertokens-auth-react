@@ -32,6 +32,7 @@ export default [
             thirdpartypasswordlessprebuiltui: "lib/ts/recipe/thirdpartypasswordless/prebuiltui.tsx",
             userroles: "lib/ts/recipe/userroles/index.ts",
         },
+        cache: false,
         plugins: [
             external(),
             resolve(),

@@ -85,7 +85,18 @@ export default class UI {
     }
 
     static getRoutingComponent(preBuiltUiClassList: PreBuiltRecipes): JSX.Element {
-        const recipeList = preBuiltUiClassList.map((r) => r.getInstanceOrInitAndGetInstance());
+        let recipeList: RecipeRouter[];
+
+        try {
+            recipeList = preBuiltUiClassList.map((r) => r.getInstanceOrInitAndGetInstance());
+        } catch (e) {
+            if (typeof window === "undefined") {
+                return <></>;
+            }
+
+            throw e;
+        }
+
         return (
             <RoutingComponent
                 getReactRouterDomWithCustomHistory={UI.getReactRouterDomWithCustomHistory}

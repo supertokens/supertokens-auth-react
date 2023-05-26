@@ -14,6 +14,9 @@ import EmailVerificationRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap } from "../../types";
+import { SSRSafeWrapper } from "../../components/ssrSafeWrapper";
+
+type ComponentName = "emailverification";
 
 export class EmailVerificationPreBuiltUI extends RecipeRouter {
     static instance?: EmailVerificationPreBuiltUI;
@@ -35,15 +38,20 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
     ): RecipeFeatureComponentMap {
         return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
     }
+
     static getFeatureComponent(
-        componentName: "emailverification",
+        componentName: ComponentName,
         props: any,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
-        return EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
-            componentName,
-            props,
-            useComponentOverrides
+        return (
+            <SSRSafeWrapper<ComponentName, EmailVerificationPreBuiltUI>
+                componentName={componentName}
+                getRecipe={EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance}
+                getFeatureComponent={(componentName, recipeInstance) => {
+                    return recipeInstance.getFeatureComponent(componentName, props, useComponentOverrides);
+                }}
+            />
         );
     }
 
@@ -65,7 +73,7 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
     };
     getFeatureComponent = (
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _: "emailverification",
+        _: ComponentName,
         props: any,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
