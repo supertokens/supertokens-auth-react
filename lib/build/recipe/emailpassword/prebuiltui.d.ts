@@ -5,6 +5,7 @@ import EmailPassword from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
+declare type ComponentName = "signinup" | "resetpassword";
 export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
     static instance?: EmailPasswordPreBuiltUI;
@@ -12,7 +13,7 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
     static getInstanceOrInitAndGetInstance(): EmailPasswordPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
-        componentName: "signinup" | "resetpassword",
+        componentName: ComponentName,
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
@@ -21,7 +22,7 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
     ): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
-        componentName: "signinup" | "resetpassword",
+        componentName: ComponentName,
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
