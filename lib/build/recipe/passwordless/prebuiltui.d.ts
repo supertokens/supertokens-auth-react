@@ -4,6 +4,7 @@ import Passwordless from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
+declare type ComponentName = "signInUp" | "linkClickedScreen";
 export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     private readonly recipeInstance;
     static instance?: PasswordlessPreBuiltUI;
@@ -11,7 +12,7 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     static getInstanceOrInitAndGetInstance(): PasswordlessPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
-        componentName: "signInUp" | "linkClickedScreen",
+        componentName: ComponentName,
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
@@ -20,7 +21,7 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     ): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
-        componentName: "signInUp" | "linkClickedScreen",
+        componentName: ComponentName,
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;

@@ -1,5 +1,7 @@
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
+import { SSRSafeWrapper } from "../../components/ssrSafeWrapper";
+import { getRecipeFeaturesSSRSafe } from "../../ui/uiutils";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
@@ -21,6 +23,8 @@ import type { GenericComponentOverrideMap } from "../../components/componentOver
 import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
 
+type ComponentName = "signInUp" | "linkClickedScreen";
+
 export class PasswordlessPreBuiltUI extends RecipeRouter {
     static instance?: PasswordlessPreBuiltUI;
     constructor(private readonly recipeInstance: Passwordless) {
@@ -39,17 +43,23 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
     static getFeatures(
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap {
-        return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
+        return getRecipeFeaturesSSRSafe(PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance, (recipeInstance) => {
+            return recipeInstance.getFeatures(useComponentOverrides);
+        });
     }
     static getFeatureComponent(
-        componentName: "signInUp" | "linkClickedScreen",
+        componentName: ComponentName,
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
-        return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
-            componentName,
-            props,
-            useComponentOverrides
+        return (
+            <SSRSafeWrapper<ComponentName, PasswordlessPreBuiltUI>
+                getRecipe={PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance}
+                componentName={componentName}
+                getFeatureComponent={(componentName, recipeInstance) => {
+                    return recipeInstance.getFeatureComponent(componentName, props, useComponentOverrides);
+                }}
+            />
         );
     }
 
@@ -81,7 +91,7 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
         return features;
     };
     getFeatureComponent = (
-        componentName: "signInUp" | "linkClickedScreen",
+        componentName: ComponentName,
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
@@ -143,9 +153,9 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
     }
 
     static SignInUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
-        this.getFeatureComponent("signInUp", prop);
+        PasswordlessPreBuiltUI.getFeatureComponent("signInUp", prop);
 
-    static LinkClicked = (prop?: any) => this.getFeatureComponent("linkClickedScreen", prop);
+    static LinkClicked = (prop?: any) => PasswordlessPreBuiltUI.getFeatureComponent("linkClickedScreen", prop);
 
     static SignInUpTheme = SignInUpTheme;
 }
