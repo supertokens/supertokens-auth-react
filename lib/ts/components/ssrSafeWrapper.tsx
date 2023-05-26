@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 
 type Props<ComponentName, Recipe> = {
     componentName: ComponentName;
@@ -15,6 +15,7 @@ export const SSRSafeWrapper = <ComponentName, Recipe>(props: PropsWithChildren<P
     try {
         recipeInstance = getRecipe();
     } catch (e) {
+        // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
         if (typeof window === "undefined") {
             return <></>;
         }

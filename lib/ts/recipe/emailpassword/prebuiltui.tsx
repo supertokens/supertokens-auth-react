@@ -1,5 +1,7 @@
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
+import { SSRSafeWrapper } from "../../components/ssrSafeWrapper";
+import { getRecipeFeaturesSSRSafe } from "../../ui/uiutils";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
@@ -22,8 +24,6 @@ import type {
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
-import { getRecipeFeaturesSSRSafe } from "../../ui/uiutils";
-import { SSRSafeWrapper } from "../../components/ssrSafeWrapper";
 
 type ComponentName = "signinup" | "resetpassword";
 

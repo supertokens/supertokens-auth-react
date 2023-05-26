@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 declare type Props<ComponentName, Recipe> = {
     componentName: ComponentName;
     getRecipe: () => Recipe;

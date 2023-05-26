@@ -1,5 +1,7 @@
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
+import { SSRSafeWrapper } from "../../components/ssrSafeWrapper";
+import { getRecipeFeaturesSSRSafe } from "../../ui/uiutils";
 import { UserContextContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
@@ -14,8 +16,6 @@ import EmailVerificationRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap } from "../../types";
-import { SSRSafeWrapper } from "../../components/ssrSafeWrapper";
-import { getRecipeFeaturesSSRSafe } from "../../ui/uiutils";
 
 type ComponentName = "emailverification";
 
