@@ -90,6 +90,7 @@ export default class UI {
         try {
             recipeList = preBuiltUiClassList.map((r) => r.getInstanceOrInitAndGetInstance());
         } catch (e) {
+            // TODO during review: Is this checking required here if all recipes internally handle it?
             if (typeof window === "undefined") {
                 return <></>;
             }
