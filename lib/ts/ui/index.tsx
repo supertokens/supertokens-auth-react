@@ -91,6 +91,7 @@ export default class UI {
             recipeList = preBuiltUiClassList.map((r) => r.getInstanceOrInitAndGetInstance());
         } catch (e) {
             // TODO during review: Is this checking required here if all recipes internally handle it?
+            // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
             if (typeof window === "undefined") {
                 return <></>;
             }
