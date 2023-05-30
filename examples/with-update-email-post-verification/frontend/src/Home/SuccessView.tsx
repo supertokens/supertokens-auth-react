@@ -21,6 +21,7 @@ export default function SuccessView(props: { userId: string }) {
             return;
         }
         localStorage.setItem("to-update-email", email);
+        window.location.href = "/auth/verify-email";
     }
 
     const navigate = useNavigate();

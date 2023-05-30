@@ -29,6 +29,15 @@ export const SuperTokensConfig = {
         Session.init(),
         EmailVerification.init({
             mode: "REQUIRED",
+            preAPIHook: async (context) => {
+                let emailToUpdate = localStorage.getItem("to-update-email");
+                if (emailToUpdate !== null) {
+                    if (context.action === "IS_EMAIL_VERIFIED" || context.action === "SEND_VERIFY_EMAIL") {
+                        context.url = context.url + "?email=" + emailToUpdate;
+                    }
+                }
+                return context;
+            },
         }),
     ],
 };
