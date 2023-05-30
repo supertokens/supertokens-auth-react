@@ -119,11 +119,15 @@
     "size-limit": [
         {
             "path": "lib/build/index.js",
-            "limit": "10kb"
+            "limit": "11kb"
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "10kb"
+            "limit": "11kb"
+        },
+        {
+            "path": "recipe/session/prebuiltui.js",
+            "limit": "15kb"
         },
         {
             "path": "recipe/thirdpartyemailpassword/index.js",
@@ -155,7 +159,7 @@
         },
         {
             "path": "recipe/thirdpartyemailpassword/prebuiltui.js",
-            "limit": "35kb"
+            "limit": "36kb"
         },
         {
             "path": "recipe/thirdparty/prebuiltui.js",

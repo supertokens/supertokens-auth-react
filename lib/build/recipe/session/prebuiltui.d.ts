@@ -34,9 +34,9 @@ export declare class SessionPreBuiltUI extends RecipeRouter {
     ) => ReactElement;
     static AccessDeniedScreenTheme: import("react").FC<import("./types").AccessDeniedThemeProps>;
 }
-declare const SignInUp: (
+declare const AccessDeniedScreen: (
     prop?: PropsWithChildren<{
         userContext?: any;
     }>
 ) => ReactElement;
-export { SignInUp, AccessDeniedScreenTheme };
+export { AccessDeniedScreen, AccessDeniedScreenTheme };

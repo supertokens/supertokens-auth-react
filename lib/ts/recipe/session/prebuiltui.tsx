@@ -3,7 +3,7 @@ import { isTest } from "../../utils";
 import { RecipeRouter } from "../recipeRouter";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
-import AccessDeniedScreen from "./components/features/accessDeniedScreen";
+import AccessDeniedScreenFeature from "./components/features/accessDeniedScreen";
 import { AccessDeniedScreenTheme } from "./components/themes/accessDeniedScreenTheme";
 import Session from "./recipe";
 
@@ -58,7 +58,10 @@ export class SessionPreBuiltUI extends RecipeRouter {
         if (componentName === "accessDenied") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
-                    <AccessDeniedScreen recipe={this.recipeInstance} useComponentOverrides={useComponentOverrides} />
+                    <AccessDeniedScreenFeature
+                        recipe={this.recipeInstance}
+                        useComponentOverrides={useComponentOverrides}
+                    />
                 </UserContextWrapper>
             );
         }
@@ -81,6 +84,6 @@ export class SessionPreBuiltUI extends RecipeRouter {
     static AccessDeniedScreenTheme = AccessDeniedScreenTheme;
 }
 
-const SignInUp = SessionPreBuiltUI.AccessDeniedScreen;
+const AccessDeniedScreen = SessionPreBuiltUI.AccessDeniedScreen;
 
-export { SignInUp, AccessDeniedScreenTheme };
+export { AccessDeniedScreen, AccessDeniedScreenTheme };

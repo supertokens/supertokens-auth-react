@@ -34,6 +34,7 @@ import { PermissionClaim, UserRoleClaim } from "../../../recipe/userroles";
 import { ThirdPartyPreBuiltUI } from "../../../recipe/thirdparty/prebuiltui";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "../../../recipe/thirdpartyemailpassword/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "../../../recipe/emailpassword/prebuiltui";
+import { AccessDeniedScreen } from "../../../recipe/session/prebuiltui";
 
 /*
  * This application is used with the purpose of illustrating Supertokens with typescript.
@@ -1777,6 +1778,7 @@ Session.init({
 const AdminRoute: React.FC = (props) => {
     return (
         <SessionAuth
+            accessDeniedScreen={AccessDeniedScreen}
             overrideGlobalClaimValidators={(globalValidators) => [
                 ...globalValidators,
                 {
