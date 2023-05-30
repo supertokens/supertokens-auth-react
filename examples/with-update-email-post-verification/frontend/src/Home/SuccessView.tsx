@@ -101,7 +101,7 @@ export default function SuccessView(props: { userId: string }) {
                     </div>
 
                     <div>Your email is:</div>
-                    <div className="truncate" id="user-id">
+                    <div className="truncate" id="email-id">
                         {currEmail}
                     </div>
                     <CallAPIView />
@@ -109,6 +109,7 @@ export default function SuccessView(props: { userId: string }) {
                 <div className="inner-content">
                     <div>Change email to:</div>
                     <input
+                        name="new-email"
                         onChange={(e) => {
                             setNewEmail(e.target.value);
                         }}
@@ -120,7 +121,7 @@ export default function SuccessView(props: { userId: string }) {
                             height: "30px",
                         }}
                     />
-                    <div onClick={changeEmailClicked} className="sessionButton">
+                    <div id="change-email-button" onClick={changeEmailClicked} className="sessionButton">
                         Change email
                     </div>
                 </div>

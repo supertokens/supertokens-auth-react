@@ -108,5 +108,33 @@ describe("SuperTokens Example Basic tests", function () {
             const sessionInfo = JSON.parse(alertText.replace(/^Session Information:/, ""));
             assert.strictEqual(sessionInfo.userId, user.id);
         });
+
+        it("Successful change in email post verification", async function () {
+            const user = await EmailPassword.getUserByEmail(email);
+
+            let newEmail = getTestEmail();
+
+            let node = await page.$("input[name=new-email]");
+
+            await node.type(newEmail);
+
+            await page.click("#change-email-button");
+
+            await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+
+            const tokenInfo = await EmailVerification.createEmailVerificationToken(user.id, newEmail);
+            await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
+            await submitForm(page);
+
+            await page.waitForSelector(".sessionButton");
+
+            await new Promise((res) => setTimeout(res, 2000));
+
+            let emailNode = await page.$("#email-id");
+
+            let value = await page.evaluate((el) => el.textContent, emailNode);
+
+            assert.strictEqual(value, newEmail);
+        });
     });
 });

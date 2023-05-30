@@ -66,7 +66,8 @@
     align-items: center;
 }
 
-.inner-content #user-id {
+.inner-content #user-id,
+#email-id {
     position: relative;
     padding: 14px 17px;
     border-image-slice: 1;
@@ -79,7 +80,8 @@
     cursor: text;
 }
 
-.inner-content #user-id:before {
+.inner-content #user-id:before,
+#email-id:before {
     content: "";
     position: absolute;
     inset: 0;
