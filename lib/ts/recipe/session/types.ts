@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import type { AccessDeniedTheme } from "./components/themes/accessDeniedScreenTheme";
+import type { AccessDeniedScreenTheme } from "./components/themes/accessDeniedScreenTheme";
 import type Session from "./recipe";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
@@ -52,7 +52,7 @@ export type SessionContextUpdate = {
 export type LoadedSessionContext = {
     loading: false;
     invalidClaims: ClaimValidationError[];
-    accessDenied?: boolean;
+    accessDeniedValidatorError?: ClaimValidationError;
 } & SessionContextUpdate;
 
 export type SessionContextType =
@@ -68,5 +68,5 @@ export type AccessDeniedThemeProps = {
 };
 
 export type ComponentOverrideMap = {
-    SessionAccessDenied_Override?: ComponentOverride<typeof AccessDeniedTheme>;
+    SessionAccessDenied_Override?: ComponentOverride<typeof AccessDeniedScreenTheme>;
 };

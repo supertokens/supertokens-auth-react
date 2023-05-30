@@ -167,7 +167,9 @@ function App() {
                                                             "delete_post",
                                                         ]),
                                                     ]}
-                                                    useDefaultAccessDeniedScreen={false}>
+                                                    accessDeniedScreen={({ validationError }) => (
+                                                        <div>{JSON.stringify(validationError)}</div>
+                                                    )}>
                                                     <Home />
                                                 </SessionAuth>
                                             }

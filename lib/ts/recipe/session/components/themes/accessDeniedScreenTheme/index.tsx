@@ -59,7 +59,7 @@ const AccessDeniedScreen: FC<AccessDeniedThemeProps> = (props) => {
 
 const AccessDeniedThemeWithOverride = withOverride("SessionAccessDenied", AccessDeniedScreen);
 
-export const AccessDeniedTheme: React.FC<AccessDeniedThemeProps> = (props) => {
+export const AccessDeniedScreenTheme: React.FC<AccessDeniedThemeProps> = (props) => {
     const hasFont = hasFontDefined(props.config.rootStyle);
 
     return (

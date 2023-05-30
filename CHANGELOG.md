@@ -7,81 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-### Breaking Changes
+### Added Changes
 
--   Introduce onFailureRedirection and showAccessDeniedOnFailure on claims and validators to make handling session claim validation failures easier
--   Added an overrideable and styleable `AccessDeniedScreen`.
--   If a claim validator fails, instead of rendering children with invalidClaims inserted into the session context, we render `AccessDeniedScreen`.
-
-### Migration
-
-#### If you used to check the value of invalidClaims
-
-There are two options:
-
-1. Add `onFailureRedirection` and/or `showAccessDeniedOnFailure` to your validators:
-
-This example uses global claim validators but the same change can be applied if you used `overrideGlobalClaimValidators`. Before:
-
-```tsx
-Session.init({
-    override: {
-        functions: (oI) => {
-            return {
-                ...oI,
-                getGlobalClaimValidators: (input) => [
-                    ...input.claimValidatorsAddedByOtherRecipes,
-                    UserRoleClaim.validators.includes("admin"),
-                ],
-            };
-        },
-    },
-});
-```
-
-After:
-
-```tsx
-Session.init({
-    override: {
-        functions: (oI) => {
-            return {
-                ...oI,
-                getGlobalClaimValidators: (input) => {
-                    return [
-                        ...input.claimValidatorsAddedByOtherRecipes,
-                        {
-                            ...UserRoleClaim.validators.includes("admin"),
-                            showAccessDeniedOnFailure: false, // if you want to handle the validation errors in you components
-                            onFailureRedirection: () => "/not-an-admin", // if you want to redirect to a specific path
-                        },
-                    ];
-                },
-            };
-        },
-    },
-});
-```
-
-2. Disable the default access denied screen in `SessionAuth`:
-
-Before:
-
-```tsx
-<SessionAuth overrideGlobalClaimValidators={(o) => [...o, UserRoleClaim.validators.includes("admin")]}>
-    Protected page...
-</SessionAuth>
-```
-
-After:
-
-```tsx
-<SessionAuth
-    overrideGlobalClaimValidators={(o) => [...o, UserRoleClaim.validators.includes("admin")]}
-    useDefaultAccessDeniedScreen={false}>
-    Protected page...
-</SessionAuth>
-```
+-   Introduce `onFailureRedirection` and `showAccessDeniedOnFailure` on claims and validators to make handling session claim validation failures easier
+-   Added an `accessDeniedScreen` prop to `SessionAuth`. The component passed as this prop is rendered if a claim validator (with `showAccessDeniedOnFailure` set to true) fails.
+-   Added a styleable `AccessDeniedScreen` to provide a useful default for the above `accessDeniedScreen` prop.
 
 ## [0.32.2] - 2023-05-10
 

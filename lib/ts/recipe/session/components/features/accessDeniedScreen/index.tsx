@@ -3,7 +3,7 @@ import React from "react";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import UI from "../../../../../ui";
-import { AccessDeniedTheme } from "../../themes/accessDeniedScreenTheme";
+import { AccessDeniedScreenTheme } from "../../themes/accessDeniedScreenTheme";
 import { defaultTranslationsSession } from "../../themes/translations";
 
 import type { FeatureBaseProps } from "../../../../../types";
@@ -22,7 +22,7 @@ const AccessDeniedScreen: React.FC<
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper defaultStore={defaultTranslationsSession}>
-                <AccessDeniedTheme config={props.recipe.config} history={history} recipe={props.recipe} />
+                <AccessDeniedScreenTheme config={props.recipe.config} history={history} recipe={props.recipe} />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );
