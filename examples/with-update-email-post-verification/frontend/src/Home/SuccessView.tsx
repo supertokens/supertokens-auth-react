@@ -4,6 +4,7 @@ import { signOut } from "supertokens-auth-react/recipe/session";
 import { recipeDetails } from "../config";
 import CallAPIView from "./CallAPIView";
 import { BlogsIcon, CelebrateIcon, GuideIcon, SeparatorLine, SignOutIcon } from "../assets/images";
+import { getApiDomain } from "../config";
 
 interface ILink {
     name: string;
@@ -20,8 +21,28 @@ export default function SuccessView(props: { userId: string }) {
         if (email === "") {
             return;
         }
-        localStorage.setItem("to-update-email", email);
-        window.location.href = "/auth/verify-email";
+
+        let response = await fetch(`${getApiDomain()}/change-email`, {
+            method: "POST",
+            body: JSON.stringify({
+                email,
+            }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if (response.status === 200) {
+            let msg = await response.text();
+            window.alert(msg);
+        } else if (response.status === 202) {
+            // SessionAuth wrapper should redirect to email verification scree on it's own
+            // since the API will set the claim value to false.
+            // For custom UI, or if not using SessionAuth, you need to redirect to the email
+            // verification screen here yourself.
+        } else {
+            let msg = await response.text();
+            window.alert(msg);
+        }
     }
 
     const navigate = useNavigate();

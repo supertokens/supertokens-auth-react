@@ -17,24 +17,6 @@ export function getWebsiteDomain() {
     return websiteUrl;
 }
 
-function getEmailFromUserContext(userContext: any): string | undefined {
-    let request = supertokens.getRequestFromUserContext(userContext);
-    if (request !== undefined) {
-        let email = request.getKeyValueFromQuery("email");
-        if (email !== undefined) {
-            // we check if the email is a valid email here
-            let regexp = new RegExp(
-                /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            );
-
-            if (regexp.test(email)) {
-                return email;
-            }
-        }
-    }
-    return undefined;
-}
-
 export const SuperTokensConfig: TypeInput = {
     supertokens: {
         // this is the location of the SuperTokens core.
@@ -58,21 +40,45 @@ export const SuperTokensConfig: TypeInput = {
                     return {
                         ...oI,
                         isEmailVerifiedGET: async function (input) {
+                            let payload = input.session.getAccessTokenPayload();
+                            if (payload.toUpdateEmail !== undefined) {
+                                input.userContext.toUpdateEmail = payload.toUpdateEmail;
+                            }
                             let response = await oI.isEmailVerifiedGET!(input);
-                            if (response.status === "OK" && response.isVerified) {
-                                let email = getEmailFromUserContext(input.userContext);
-                                if (email !== undefined) {
-                                    await EmailPassword.updateEmailOrPassword({
-                                        userId: input.session.getUserId(),
-                                        email,
-                                    });
-                                }
+                            if (
+                                response.status === "OK" &&
+                                response.isVerified &&
+                                payload.toUpdateEmail !== undefined
+                            ) {
+                                // we have this here in case the user verifies the email
+                                // on another browser.
+                                await input.session.mergeIntoAccessTokenPayload({
+                                    toUpdateEmail: null,
+                                });
+                                await EmailPassword.updateEmailOrPassword({
+                                    userId: input.session.getUserId(),
+                                    email: payload.toUpdateEmail,
+                                });
                             }
                             return response;
+                        },
+                        generateEmailVerifyTokenPOST: async function (input) {
+                            let payload = input.session.getAccessTokenPayload();
+                            if (payload.toUpdateEmail !== undefined) {
+                                input.userContext.toUpdateEmail = payload.toUpdateEmail;
+                            }
+                            return oI.generateEmailVerifyTokenPOST!(input);
                         },
                         verifyEmailPOST: async function (input) {
                             let response = await oI.verifyEmailPOST!(input);
                             if (response.status === "OK") {
+                                if (input.session !== undefined) {
+                                    // session can be undefined if the user verifies the email
+                                    // using a different browser.
+                                    await input.session.mergeIntoAccessTokenPayload({
+                                        toUpdateEmail: null,
+                                    });
+                                }
                                 await EmailPassword.updateEmailOrPassword({
                                     userId: response.user.id,
                                     email: response.user.email,
@@ -84,11 +90,10 @@ export const SuperTokensConfig: TypeInput = {
                 },
             },
             getEmailForUserId: async (userId, userContext) => {
-                let email = getEmailFromUserContext(userContext);
-                if (email !== undefined) {
+                if (userContext.toUpdateEmail !== undefined) {
                     return {
                         status: "OK",
-                        email,
+                        email: userContext.toUpdateEmail,
                     };
                 }
                 // this means that we will let the default implementation of getEmailForUserId
