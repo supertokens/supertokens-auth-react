@@ -16,6 +16,20 @@ export default function SuccessView(props: { userId: string }) {
     let userId = props.userId;
     const [newEmail, setNewEmail] = React.useState("");
 
+    const [currEmail, setCurrEmail] = React.useState("");
+
+    React.useEffect(() => {
+        getEmail();
+    }, []);
+
+    async function getEmail() {
+        let response = await fetch(`${getApiDomain()}/email`);
+        if (response.status === 200) {
+            let email = await response.text();
+            setCurrEmail(email);
+        }
+    }
+
     async function changeEmailClicked() {
         let email = newEmail.trim();
         if (email === "") {
@@ -32,8 +46,8 @@ export default function SuccessView(props: { userId: string }) {
             },
         });
         if (response.status === 200) {
-            let msg = await response.text();
-            window.alert(msg);
+            getEmail();
+            window.alert("Success!");
         } else if (response.status === 202) {
             // SessionAuth wrapper should redirect to email verification scree on it's own
             // since the API will set the claim value to false.
@@ -84,6 +98,11 @@ export default function SuccessView(props: { userId: string }) {
                     <div>Your userID is:</div>
                     <div className="truncate" id="user-id">
                         {userId}
+                    </div>
+
+                    <div>Your email is:</div>
+                    <div className="truncate" id="user-id">
+                        {currEmail}
                     </div>
                     <CallAPIView />
                 </div>

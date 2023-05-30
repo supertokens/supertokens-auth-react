@@ -35,6 +35,16 @@ app.get("/sessioninfo", verifySession(), async (req: SessionRequest, res) => {
     });
 });
 
+app.get("/email", verifySession(), async (req: SessionRequest, res) => {
+    let userId = req.session!.getUserId();
+    let user = await EmailPassword.getUserById(userId);
+    if (user === undefined) {
+        throw new Error("Should never come here");
+    }
+
+    return res.send(user.email);
+});
+
 app.post("/change-email", verifySession(), async (req: SessionRequest, res) => {
     let session = req.session!;
     let email = req.body.email;
