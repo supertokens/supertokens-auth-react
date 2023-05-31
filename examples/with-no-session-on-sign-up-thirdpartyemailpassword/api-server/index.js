@@ -96,6 +96,7 @@ supertokens.init({
                                     getUserId: () => "",
                                     revokeSession: () => {},
                                     updateSessionDataInDatabase: () => {},
+                                    attachToRequestResponse: () => {},
                                 }; // this is an empty session
                             } else {
                                 return oI.createNewSession(input);
