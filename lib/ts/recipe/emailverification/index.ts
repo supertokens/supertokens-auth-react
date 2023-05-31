@@ -30,7 +30,7 @@ import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/emailverif
 export default class Wrapper {
     static EmailVerificationClaim = EmailVerificationRecipe.EmailVerificationClaim;
 
-    static init(config: UserInput) {
+    static init(config?: UserInput) {
         return EmailVerificationRecipe.init(config);
     }
 
