@@ -76,7 +76,7 @@ export default class EmailVerification extends RecipeModule<
     }
 
     static init(
-        config: UserInput
+        config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normaliseEmailVerificationFeature(config);
 

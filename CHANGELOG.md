@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.32.4] - 2023-05-31
+
+-   Fixed the types for EmailVerification.init to not require a config to be passed.
+
 ## [0.32.3] - 2023-05-10
 
 -   Changed email verification index.tsx to use index.ts instead so that auto generated docs add it.

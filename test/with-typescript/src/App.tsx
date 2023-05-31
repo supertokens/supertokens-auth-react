@@ -34,6 +34,7 @@ import { PermissionClaim, UserRoleClaim } from "../../../recipe/userroles";
 import { ThirdPartyPreBuiltUI } from "../../../recipe/thirdparty/prebuiltui";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "../../../recipe/thirdpartyemailpassword/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "../../../recipe/emailpassword/prebuiltui";
+import EmailVerification from "../../../recipe/emailverification";
 
 /*
  * This application is used with the purpose of illustrating Supertokens with typescript.
@@ -1736,3 +1737,7 @@ Session.validateClaims({
 });
 
 Session.getClaimValue({ claim: UserRoleClaim }).then((v) => {});
+
+EmailVerification.init();
+EmailVerification.init(undefined);
+EmailVerification.init({});
