@@ -118,9 +118,18 @@ describe("SuperTokens Example Basic tests", function () {
 
             await node.type(newEmail);
 
+            let setAlertContent;
+            let alertContent = new Promise((res) => (setAlertContent = res));
+            page.on("dialog", async (dialog) => {
+                setAlertContent(dialog.message());
+            });
+
             await page.click("#change-email-button");
 
-            await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+            await new Promise((r) => setTimeout(r, 1000));
+
+            const alertText = await alertContent;
+            assert(alertText === "Email verification email sent");
 
             const tokenInfo = await EmailVerification.createEmailVerificationToken(user.id, newEmail);
             await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
