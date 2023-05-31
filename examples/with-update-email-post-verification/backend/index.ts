@@ -81,51 +81,43 @@ app.post("/change-email", verifySession(), async (req: SessionRequest, res) => {
     // status based on the user ID AND the email, and not just the email.
     let isVerified = await EmailVerification.isEmailVerified(session.getUserId(), email);
 
-    if (isVerified) {
-        // This means that the user has already verified the email at some point in time
-        // in the past. So we attempt a direct update.
-        let resp = await EmailPassword.updateEmailOrPassword({
-            userId: session.getUserId(),
-            email: email,
-        });
+    if (!isVerified) {
+        // Now we create and send the email verification link to the user for the new email.
+        let tokenInfo = await EmailVerification.createEmailVerificationToken(session.getUserId(), email);
 
-        if (resp.status === "OK") {
-            return res.status(200).send("Successfully updated email");
+        if (tokenInfo.status === "OK") {
+            let link = "http://localhost:3000/auth/verify-email?token=" + tokenInfo.token;
+
+            await EmailVerification.sendEmail({
+                emailVerifyLink: link,
+                type: "EMAIL_VERIFICATION",
+                user: {
+                    id: session.getUserId(),
+                    email: email,
+                },
+            });
+
+            return res.status(200).send("Email verification email sent");
         }
-        if (resp.status === "EMAIL_ALREADY_EXISTS_ERROR") {
-            // Technically it should never come here cause we have
-            // checked for this above already, but just in case (some sort of race condition).
-            return res.status(400).send("Email already exists with another user");
-        }
-        throw new Error("Should never come here");
-    } else {
-        // Now we need to start the email verification flow. Usually, the
-        // email verification APIs use the email that is associated with the user's
-        // ID, but here we want to instruct it to use the input email.
-
-        // We do this by adding a custom payload to the access token, which will
-        // be read by the email verification recipe (see backend/config.ts file)
-        // and the flow will be done on this email.
-
-        // We also set the email verification claim value to false for this session
-        // so that the frontend redirects to the email verification screen (this happens
-        // automatically for the pre built UI). Setting it to false also ensures that
-        // the user no longer has access to any other application's APIs that is protected
-        // by verifySession / getSession until they verify the new email, or re-login with their
-        // older email.
-
-        await session.mergeIntoAccessTokenPayload({
-            toUpdateEmail: email,
-        });
-
-        await session.setClaimValue(EmailVerification.EmailVerificationClaim, false);
-
-        // status code 202 is not a special value here. You can use any other status code as well.
-        // But you need to make sure that the redirection to the email verification page
-        // happens via the frontend, so that the access token payload is correctly updated
-        // on the frontend as well.
-        return res.status(202).send("Redirect to email verification screen");
+        // else case is that the email is already verified (which can happen cause
+        // of some race condition). So we continue below..
     }
+
+    // Since the email is verified, we try and do an update
+    let resp = await EmailPassword.updateEmailOrPassword({
+        userId: session.getUserId(),
+        email: email,
+    });
+
+    if (resp.status === "OK") {
+        return res.status(200).send("Successfully updated email");
+    }
+    if (resp.status === "EMAIL_ALREADY_EXISTS_ERROR") {
+        // Technically it should never come here cause we have
+        // checked for this above already, but just in case (some sort of race condition).
+        return res.status(400).send("Email already exists with another user");
+    }
+    throw new Error("Should never come here");
 });
 
 function isValidEmail(email: string) {

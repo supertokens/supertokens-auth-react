@@ -47,12 +47,8 @@ export default function SuccessView(props: { userId: string }) {
         });
         if (response.status === 200) {
             getEmail();
-            window.alert("Success!");
-        } else if (response.status === 202) {
-            // SessionAuth wrapper should redirect to email verification scree on it's own
-            // since the API will set the claim value to false.
-            // For custom UI, or if not using SessionAuth, you need to redirect to the email
-            // verification screen here yourself.
+            let msg = await response.text();
+            window.alert(msg);
         } else {
             let msg = await response.text();
             window.alert(msg);
