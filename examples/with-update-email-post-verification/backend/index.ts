@@ -55,15 +55,6 @@ app.post("/change-email", verifySession(), async (req: SessionRequest, res) => {
         return res.status(400).send("Email is invalid");
     }
 
-    // This resets the state of the session related to the email update.
-    // We do this here cause there are many code flow branches below which result in
-    // not triggering the email verification flow, in which we want to do this.
-    // So instead of duplicating this code below, we do it once on top. If the
-    // toUpdateEmail doesn't exist in the session, this is a no-op.
-    await session.mergeIntoAccessTokenPayload({
-        toUpdateEmail: null,
-    });
-
     // First we check if the new email is already associated with another user.
     // If it is, then we throw an error. If it's already associated with this user,
     // then we return a success response with an appropriate message.
