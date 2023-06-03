@@ -35,7 +35,16 @@ let bodyParser = require("body-parser");
 let http = require("http");
 let cors = require("cors");
 const morgan = require("morgan");
-let { startST, killAllST, setupST, cleanST, setKeyValueInConfig, customAuth0Provider, maxVersion } = require("./utils");
+let {
+    startST,
+    killAllST,
+    setupST,
+    cleanST,
+    setKeyValueInConfig,
+    customAuth0Provider,
+    maxVersion,
+    stopST,
+} = require("./utils");
 let { version: nodeSDKVersion } = require("supertokens-node/lib/build/version");
 
 let passwordlessSupported;
@@ -168,7 +177,7 @@ app.post("/after", async (req, res) => {
     res.send();
 });
 
-app.post("/stopstst", async (req, res) => {
+app.post("/stopst", async (req, res) => {
     await stopST(req.body.pid);
     res.send("");
 });
