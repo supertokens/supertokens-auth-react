@@ -14,6 +14,7 @@ import {
     Okta,
     Twitter,
 } from "../thirdparty";
+import Custom from "../thirdparty/providers/custom";
 
 import type { UserInput, NormalisedConfig, RecipeInterface, GetLoginMethodsResponseNormalized } from "./types";
 import type RecipeModule from "../recipeModule";
@@ -116,6 +117,13 @@ export const mergeProviders = ({
             });
             if (builtInProvidersMap[providerID as keyof typeof builtInProvidersMap]) {
                 const provider = new builtInProvidersMap[providerID as keyof typeof builtInProvidersMap]();
+                providers.push({
+                    id: tenantProvider.id,
+                    buttonComponent: provider.getButton(tenantProvider.name),
+                    getButton: provider.getButton,
+                });
+            } else {
+                const provider = Custom.init(tenantProvider);
                 providers.push({
                     id: tenantProvider.id,
                     buttonComponent: provider.getButton(tenantProvider.name),

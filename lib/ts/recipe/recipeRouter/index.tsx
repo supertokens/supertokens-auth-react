@@ -3,6 +3,7 @@ import Multitenancy from "../multitenancy/recipe";
 
 import type { RecipeFeatureComponentMap } from "../../types";
 import type { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
+import type { GetLoginMethodsResponseNormalized } from "../multitenancy/types";
 import type RecipeModule from "../recipeModule";
 import type NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 
@@ -20,47 +21,60 @@ export abstract class RecipeRouter {
             return routes !== undefined ? components.concat(routes) : components;
         }, [] as ComponentWithRecipeAndMatchingMethod[]);
 
-        if (routeComponents.length === 0) {
-            return undefined;
-        }
-
-        const dynamicLoginMethods =
-            SuperTokens.usesDynamicLoginMethods === true
-                ? Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods()
-                : undefined;
-        if (SuperTokens.usesDynamicLoginMethods && dynamicLoginMethods === undefined) {
-            return;
-        }
-
-        const possiblyEnabledRecipes = {
-            thirdpartyemailpassword: {
-                enabled: dynamicLoginMethods?.["thirdparty"].enabled || dynamicLoginMethods?.["emailpassword"].enabled,
-            },
-            thirdpartypasswordless: {
-                enabled: dynamicLoginMethods?.["thirdparty"].enabled && dynamicLoginMethods["passwordless"].enabled,
-            },
-            ...dynamicLoginMethods,
-        };
         const componentMatchingRid = routeComponents.find((c) => c.matches());
+        if (SuperTokens.usesDynamicLoginMethods === false) {
+            if (routeComponents.length === 0) {
+                return undefined;
+            } else if (componentMatchingRid !== undefined) {
+                return componentMatchingRid;
+            } else {
+                return routeComponents[0];
+            }
+        }
+
+        const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods();
+        if (dynamicLoginMethods === undefined) {
+            throw new Error(
+                "Should never come here: dynamic login methods info has not been loaded but recipeRouter rendered"
+            );
+        }
+
         if (
             componentMatchingRid &&
-            possiblyEnabledRecipes[componentMatchingRid.recipeID as keyof typeof possiblyEnabledRecipes]?.enabled ===
+            dynamicLoginMethods[componentMatchingRid.recipeID as keyof GetLoginMethodsResponseNormalized]?.enabled ===
                 true
         ) {
             return componentMatchingRid;
         }
-        for (const id in possiblyEnabledRecipes) {
-            const matching = routeComponents.find((c) => c.recipeID === id);
-            if (
-                matching !== undefined &&
-                dynamicLoginMethods !== undefined &&
-                possiblyEnabledRecipes[id as keyof typeof possiblyEnabledRecipes]?.enabled === true
-            ) {
-                return matching;
+
+        // The related ADR: https://supertokens.com/docs/contribute/decisions/multitenancy/0006
+        const priorityOrder: { rid: string; includes: (keyof GetLoginMethodsResponseNormalized)[] }[] = [
+            { rid: "thirdpartyemailpassword", includes: ["thirdparty", "emailpassword"] },
+            { rid: "thirdpartypasswordless", includes: ["thirdparty", "passwordless"] },
+            { rid: "emailpassword", includes: ["emailpassword"] },
+            { rid: "passwordless", includes: ["passwordless"] },
+            { rid: "thirdparty", includes: ["thirdparty"] },
+        ];
+        // We first try to find an exact match
+        for (const { rid, includes } of priorityOrder) {
+            if (includes.every((subRId) => dynamicLoginMethods[subRId].enabled)) {
+                const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
+                if (matchingComp) {
+                    return matchingComp;
+                }
+            }
+        }
+        // We try to find a partial match
+        for (const { rid, includes } of priorityOrder) {
+            if (includes.some((subRId) => dynamicLoginMethods[subRId].enabled)) {
+                const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
+                if (matchingComp) {
+                    return matchingComp;
+                }
             }
         }
 
-        // Otherwise, If no recipe Id provided, or if no recipe id matches, throw since no there are no enabled recipes on the backend to handle the actions
+        // Otherwise, we throw since no there are is no overlap between recipes enabled on the FE and BE
         throw new Error("We found no enabled recipes handling the current route");
     }
 

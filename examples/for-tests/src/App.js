@@ -16,6 +16,7 @@ import UserRoles from "supertokens-auth-react/recipe/userroles";
 
 import axios from "axios";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
+import MultiTenancy from "supertokens-auth-react/recipe/multitenancy";
 
 import Session from "supertokens-auth-react/recipe/session";
 import Button from "./Button";
@@ -25,6 +26,7 @@ import HydrogenTheme from "./Themes/Hydrogen";
 import { logWithPrefix } from "./logWithPrefix";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { useNavigate } from "react-router-dom";
+import { getTestContext, getEnabledRecipes } from "./testContext";
 
 const loadv5RRD = window.localStorage.getItem("react-router-dom-is-v5") === "true";
 if (loadv5RRD) {
@@ -93,8 +95,6 @@ const passwordlessDisablePhoneGuess = window.localStorage.getItem("passwordlessD
 if (getQueryParams("authRecipe")) {
     window.localStorage.setItem("authRecipe", getQueryParams("authRecipe"));
 }
-
-const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
 
 if (getQueryParams("defaultToSignUp")) {
     window.localStorage.setItem("defaultToSignUp", getQueryParams("defaultToSignUp") === "true");
@@ -169,6 +169,27 @@ const formFields = [
 ];
 
 let recipeList = [
+    MultiTenancy.init({
+        override: {
+            functions: (oI) => ({
+                ...oI,
+                getLoginMethods: async (input) => {
+                    const resp = await oI.getLoginMethods(input);
+                    if (testContext.mockLoginMethodsForDynamicLogin) {
+                        console.log({
+                            ...resp,
+                            ...JSON.parse(testContext.mockLoginMethodsForDynamicLogin),
+                        });
+                        return {
+                            ...resp,
+                            ...JSON.parse(testContext.mockLoginMethodsForDynamicLogin),
+                        };
+                    }
+                    return resp;
+                },
+            }),
+        },
+    }),
     Session.init({
         override: {
             functions: (implementation) => {
@@ -230,29 +251,32 @@ let recipeList = [
     }),
 ];
 
-const testContext = {
-    disableDefaultUI: getQueryParams("disableDefaultUI") === "true",
-    thirdPartyRedirectURL: localStorage.getItem("thirdPartyRedirectURL"),
-};
+const testContext = getTestContext();
 
-if (authRecipe === "thirdparty") {
+let enabledRecipes = getEnabledRecipes();
+
+if (enabledRecipes.includes("thirdparty")) {
     recipeList = [getThirdPartyConfigs(testContext), ...recipeList];
-} else if (authRecipe === "emailpassword") {
+}
+if (enabledRecipes.includes("emailpassword")) {
     recipeList = [getEmailPasswordConfigs(testContext), ...recipeList];
-} else if (authRecipe === "both") {
-    recipeList = [getEmailPasswordConfigs(testContext), getThirdPartyConfigs(testContext), ...recipeList];
-} else if (authRecipe === "thirdpartyemailpassword") {
+}
+if (enabledRecipes.includes("thirdpartyemailpassword")) {
     recipeList = [getThirdPartyEmailPasswordConfigs(testContext), ...recipeList];
-} else if (authRecipe === "passwordless") {
+}
+if (enabledRecipes.includes("passwordless")) {
     recipeList = [getPasswordlessConfigs(testContext), ...recipeList];
-} else if (authRecipe === "thirdpartypasswordless") {
+}
+if (enabledRecipes.includes("thirdpartypasswordless")) {
     recipeList = [getThirdPartyPasswordlessConfigs(testContext), ...recipeList];
 }
 
 if (emailVerificationMode !== "OFF") {
     recipeList.push(getEmailVerificationConfigs(testContext));
 }
+
 SuperTokens.init({
+    usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
     appInfo: {
         appName: "SuperTokens",
         websiteDomain: getWebsiteDomain(),
@@ -299,12 +323,12 @@ function App() {
 
     return (
         <ErrorBoundary>
-            <AppWithReactDomRouter authRecipe={authRecipe} />
+            <AppWithReactDomRouter />
         </ErrorBoundary>
     );
 }
 
-function getQueryParams(param) {
+export function getQueryParams(param) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
 }
@@ -394,18 +418,8 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
     const [sessionInfoUsingFetch, setSessionInfoUsingFetch] = useState(undefined);
 
     async function logout() {
-        const useRecipe = getQueryParams("rid") || authRecipe;
-        if (useRecipe === "thirdparty") {
-            await ThirdParty.signOut();
-        } else if (useRecipe === "thirdpartyemailpassword") {
-            await ThirdPartyEmailPassword.signOut();
-        } else if (useRecipe === "passwordless") {
-            await Passwordless.signOut();
-        } else if (useRecipe === "thirdpartypasswordless") {
-            await ThirdPartyPasswordless.signOut();
-        } else {
-            await EmailPassword.signOut();
-        }
+        await Session.signOut();
+
         if (redirectOnLogout) {
             if (props.history === undefined) {
                 window.location.href = "/auth";
