@@ -24,7 +24,7 @@ export default class EmailVerification extends RecipeModule<
         webJSRecipe?: WebJSRecipeInterface<typeof EmailVerificationWebJS>
     );
     static init(
-        config: UserInput
+        config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): EmailVerification;
     isEmailVerified(userContext: any): Promise<{

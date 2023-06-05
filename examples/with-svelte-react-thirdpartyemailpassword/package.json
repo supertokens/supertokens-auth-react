@@ -42,7 +42,7 @@
         "react-router-dom": "^6.3.0",
         "sirv-cli": "^2.0.0",
         "supertokens-auth-react": "latest",
-        "supertokens-node": "^13.1.5",
+        "supertokens-node": "latest",
         "svelte-navigator": "^3.1.5"
     }
 }

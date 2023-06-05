@@ -13,6 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Added an `accessDeniedScreen` prop to `SessionAuth`. The component passed as this prop is rendered if a claim validator (with `showAccessDeniedOnFailure` set to true) fails.
 -   Added a styleable `AccessDeniedScreen` to provide a useful default for the above `accessDeniedScreen` prop.
 
+## [0.32.4] - 2023-05-31
+
+-   Fixed the types for EmailVerification.init to not require a config to be passed.
+
+## [0.32.3] - 2023-05-10
+
+-   Changed email verification index.tsx to use index.ts instead so that auto generated docs add it.
+
 ## [0.32.2] - 2023-05-10
 
 -   Fixed with-thirdpartyemailpassword-passwordless apps overwritten button's width

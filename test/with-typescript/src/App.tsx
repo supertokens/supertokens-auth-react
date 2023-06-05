@@ -35,6 +35,7 @@ import { ThirdPartyPreBuiltUI } from "../../../recipe/thirdparty/prebuiltui";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "../../../recipe/thirdpartyemailpassword/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "../../../recipe/emailpassword/prebuiltui";
 import { AccessDeniedScreen } from "../../../recipe/session/prebuiltui";
+import EmailVerification from "../../../recipe/emailverification";
 
 /*
  * This application is used with the purpose of illustrating Supertokens with typescript.
@@ -1791,3 +1792,6 @@ const AdminRoute: React.FC = (props) => {
         </SessionAuth>
     );
 };
+EmailVerification.init();
+EmailVerification.init(undefined);
+EmailVerification.init({});

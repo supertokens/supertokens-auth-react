@@ -35,7 +35,16 @@ let bodyParser = require("body-parser");
 let http = require("http");
 let cors = require("cors");
 const morgan = require("morgan");
-let { startST, killAllST, setupST, cleanST, setKeyValueInConfig, customAuth0Provider, maxVersion } = require("./utils");
+let {
+    startST,
+    killAllST,
+    setupST,
+    cleanST,
+    setKeyValueInConfig,
+    customAuth0Provider,
+    maxVersion,
+    stopST,
+} = require("./utils");
 let { version: nodeSDKVersion } = require("supertokens-node/lib/build/version");
 
 let passwordlessSupported;
@@ -168,7 +177,7 @@ app.post("/after", async (req, res) => {
     res.send();
 });
 
-app.post("/stopstst", async (req, res) => {
+app.post("/stopst", async (req, res) => {
     await stopST(req.body.pid);
     res.send("");
 });
@@ -176,21 +185,18 @@ app.post("/stopstst", async (req, res) => {
 // custom API that requires session verification
 app.get("/sessioninfo", verifySession(), async (req, res) => {
     let session = req.session;
-    if (session.getJWTPayload !== undefined) {
-        res.send({
-            sessionHandle: session.getHandle(),
-            userId: session.getUserId(),
-            accessTokenPayload: session.getJWTPayload(),
-            sessionData: await session.getSessionData(),
-        });
-    } else {
-        res.send({
-            sessionHandle: session.getHandle(),
-            userId: session.getUserId(),
-            accessTokenPayload: session.getAccessTokenPayload(),
-            sessionData: await session.getSessionData(),
-        });
-    }
+    const accessTokenPayload =
+        session.getJWTPayload !== undefined ? session.getJWTPayload() : session.getAccessTokenPayload();
+
+    const sessionData = session.getSessionData
+        ? await session.getSessionData()
+        : await session.getSessionDataFromDatabase();
+    res.send({
+        sessionHandle: session.getHandle(),
+        userId: session.getUserId(),
+        accessTokenPayload,
+        sessionData,
+    });
 });
 
 app.post("/deleteUser", async (req, res) => {
