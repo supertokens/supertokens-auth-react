@@ -10,6 +10,7 @@ import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/email
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { AccessDeniedScreen } from "supertokens-auth-react/recipe/session/prebuiltui";
 
 function AppWithReactDomRouter(props) {
     const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
@@ -73,7 +74,8 @@ function AppWithReactDomRouter(props) {
                                 key={keyWithClaimValidators}
                                 overrideGlobalClaimValidators={
                                     claimValidators !== undefined ? () => claimValidators : undefined
-                                }>
+                                }
+                                accessDeniedScreen={AccessDeniedScreen}>
                                 <Dashboard />
                             </SessionAuth>
                         </Route>
