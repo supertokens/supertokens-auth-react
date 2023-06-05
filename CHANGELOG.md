@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-### Added Changes
+### Added
 
 -   Introduce `onFailureRedirection` and `showAccessDeniedOnFailure` on claims and validators to make handling session claim validation failures easier
 -   Added an `accessDeniedScreen` prop to `SessionAuth`. The component passed as this prop is rendered if a claim validator (with `showAccessDeniedOnFailure` set to true) fails.
