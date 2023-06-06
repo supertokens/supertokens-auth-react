@@ -186,6 +186,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                         userContext,
                     });
                     if (failureRedirectInfo.redirectPath !== undefined) {
+                        setContext(toSetContext);
                         return await SuperTokens.getInstanceOrThrow().redirectToUrl(
                             failureRedirectInfo.redirectPath,
                             history

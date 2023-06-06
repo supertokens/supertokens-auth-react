@@ -42,7 +42,7 @@ SuperTokens.init({
     },
     recipeList: [
         EmailVerification.init({
-            mode: "OPTIONAL",
+            mode: "REQUIRED",
         }),
         ThirdPartyEmailPassword.init({
             signInAndUpFeature: {
