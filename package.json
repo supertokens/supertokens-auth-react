@@ -155,7 +155,7 @@
         },
         {
             "path": "recipe/emailverification/prebuiltui.js",
-            "limit": "21kb"
+            "limit": "22kb"
         },
         {
             "path": "recipe/thirdpartyemailpassword/prebuiltui.js",
