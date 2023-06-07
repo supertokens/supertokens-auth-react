@@ -17,14 +17,13 @@
  * Imports.
  */
 
-import { EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
 import EmailVerificationWebJS from "supertokens-web-js/recipe/emailverification";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 
+import { EmailVerificationClaimClass } from "../../claims/emailVerificationClaim";
 import { SSR_ERROR } from "../../constants";
-import { saveInvalidClaimRedirectPathInContext } from "../../utils";
 import RecipeModule from "../recipeModule";
 
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
@@ -49,17 +48,9 @@ export default class EmailVerification extends RecipeModule<
 > {
     static instance?: EmailVerification;
     static RECIPE_ID = "emailverification";
+
     static EmailVerificationClaim = new EmailVerificationClaimClass(
-        () => EmailVerification.getInstanceOrThrow().webJSRecipe,
-        async (userContext: any) => {
-            const recipe = EmailVerification.getInstanceOrThrow();
-            if (recipe.config.mode === "REQUIRED") {
-                saveInvalidClaimRedirectPathInContext(
-                    userContext,
-                    await recipe.getRedirectUrl({ action: "VERIFY_EMAIL" })
-                );
-            }
-        }
+        () => EmailVerification.getInstanceOrThrow().webJSRecipe
     );
 
     constructor(
@@ -69,9 +60,8 @@ export default class EmailVerification extends RecipeModule<
         super(config);
 
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
-            SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
-                EmailVerification.EmailVerificationClaim.validators.isVerified(10)
-            );
+            const isVerifiedValidator = EmailVerification.EmailVerificationClaim.validators.isVerified(10);
+            SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(isVerifiedValidator);
         });
     }
 

@@ -18,6 +18,7 @@ export default [
             index: "lib/ts/index.ts",
             "ui-entry": "lib/ts/ui/index.tsx",
             session: "lib/ts/recipe/session/index.ts",
+            sessionprebuiltui: "lib/ts/recipe/session/prebuiltui.tsx",
             emailverification: "lib/ts/recipe/emailverification/index.ts",
             emailverificationprebuiltui: "lib/ts/recipe/emailverification/prebuiltui.tsx",
             emailpassword: "lib/ts/recipe/emailpassword/index.ts",
@@ -48,7 +49,7 @@ export default [
                 dir: "lib/build",
                 format: "commonjs",
                 interop: "auto",
-                sourcemap: true,
+                sourcemap: false,
                 chunkFileNames: (chunkInfo) => {
                     const root = chunkInfo.moduleIds[chunkInfo.moduleIds.length - 1];
                     const recipeMatch = root.match(/\/lib\/ts\/recipe\/(\w+)\/\w+.tsx?/);

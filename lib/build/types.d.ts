@@ -3,13 +3,21 @@ import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 import type { ComponentClass, PropsWithChildren } from "react";
 import type { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
+import type { SessionClaimValidator as SessionClaimValidatorWebJS } from "supertokens-web-js/recipe/session";
 import type { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/types";
 import type NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import type NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import type { WindowHandlerInput } from "supertokens-web-js/utils/windowHandler/types";
 export declare type GetRedirectionURLContext = {
     action: "TO_AUTH";
-    showSignIn: boolean | undefined;
+    showSignIn?: boolean;
+};
+export declare type ValidationFailureCallback =
+    | (({ userContext, reason }: { userContext: any; reason: any }) => Promise<string | undefined> | string | undefined)
+    | undefined;
+export declare type SessionClaimValidator = SessionClaimValidatorWebJS & {
+    showAccessDeniedOnFailure?: boolean;
+    onFailureRedirection?: ValidationFailureCallback;
 };
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
@@ -88,7 +96,7 @@ export declare type NormalisedFormField = {
     autoComplete?: string;
     autofocus?: boolean;
 };
-export declare type ReactComponentClass = ComponentClass<any, any> | (<T>(props: T) => JSX.Element);
+export declare type ReactComponentClass<P = any> = ComponentClass<P, any> | ((props: P) => JSX.Element);
 export declare type FeatureBaseConfig = {
     style?: string;
 };

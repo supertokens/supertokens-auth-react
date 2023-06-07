@@ -34,6 +34,7 @@ import { PermissionClaim, UserRoleClaim } from "../../../recipe/userroles";
 import { ThirdPartyPreBuiltUI } from "../../../recipe/thirdparty/prebuiltui";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "../../../recipe/thirdpartyemailpassword/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "../../../recipe/emailpassword/prebuiltui";
+import { AccessDeniedScreen } from "../../../recipe/session/prebuiltui";
 import EmailVerification from "../../../recipe/emailverification";
 
 /*
@@ -167,7 +168,10 @@ function App() {
                                                             "delete_user",
                                                             "delete_post",
                                                         ]),
-                                                    ]}>
+                                                    ]}
+                                                    accessDeniedScreen={({ validationError }) => (
+                                                        <div>{JSON.stringify(validationError)}</div>
+                                                    )}>
                                                     <Home />
                                                 </SessionAuth>
                                             }
@@ -1738,6 +1742,56 @@ Session.validateClaims({
 
 Session.getClaimValue({ claim: UserRoleClaim }).then((v) => {});
 
+Session.init({
+    override: {
+        functions: (oI) => {
+            return {
+                ...oI,
+                getGlobalClaimValidators: (input) => [
+                    ...input.claimValidatorsAddedByOtherRecipes,
+                    UserRoleClaim.validators.includes("admin"),
+                ],
+            };
+        },
+    },
+});
+
+Session.init({
+    override: {
+        functions: (oI) => {
+            return {
+                ...oI,
+                getGlobalClaimValidators: (input) => {
+                    return [
+                        ...input.claimValidatorsAddedByOtherRecipes,
+                        {
+                            ...UserRoleClaim.validators.includes("admin"),
+                            showAccessDeniedOnFailure: false, // if you want to handle the validation errors in you components
+                            onFailureRedirection: () => "/not-an-admin", // if you want to redirect to a specific path
+                        },
+                    ];
+                },
+            };
+        },
+    },
+});
+
+const AdminRoute: React.FC = (props) => {
+    return (
+        <SessionAuth
+            accessDeniedScreen={AccessDeniedScreen}
+            overrideGlobalClaimValidators={(globalValidators) => [
+                ...globalValidators,
+                {
+                    ...UserRoleClaim.validators.includes("admin"),
+                    showAccessDeniedOnFailure: false, // if you want to handle the validation errors in you components
+                    onFailureRedirection: () => "/not-an-admin", // if you want to redirect to a specific path
+                },
+            ]}>
+            {props.children}
+        </SessionAuth>
+    );
+};
 EmailVerification.init();
 EmailVerification.init(undefined);
 EmailVerification.init({});

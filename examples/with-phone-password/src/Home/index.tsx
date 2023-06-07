@@ -10,18 +10,12 @@ export default function Home() {
     const session = useSessionContext();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (!session.loading && session.invalidClaims.find((err) => err.validatorId === PhoneVerifiedClaim.id)) {
-            navigate("/auth/verify-phone");
-        }
-    }, [session]);
-
     async function logoutClicked() {
         await signOut();
         navigate("/auth");
     }
 
-    if (session.loading || session.invalidClaims.length > 0) {
+    if (session.loading) {
         return null;
     }
 

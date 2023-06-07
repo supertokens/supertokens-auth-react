@@ -13,18 +13,15 @@
  * under the License.
  */
 
-import {
-    BooleanClaim,
-    ClaimValidationResult,
-    PrimitiveArrayClaim,
-    PrimitiveClaim,
-    RecipeInterface,
-    SessionClaim,
-} from "supertokens-web-js/recipe/session";
+import { ClaimValidationResult, RecipeInterface, SessionClaim } from "supertokens-web-js/recipe/session";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 
+import { BooleanClaim } from "../../claims/booleanClaim";
+import { PrimitiveArrayClaim } from "../../claims/primitiveArrayClaim";
+import { PrimitiveClaim } from "../../claims/primitiveClaim";
 import { getNormalisedUserContext } from "../../utils";
 
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 import Session from "./recipe";
 import SessionAuthWrapper from "./sessionAuth";
 import SessionContext from "./sessionContext";
@@ -109,6 +106,8 @@ export default class SessionAPIWrapper {
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
+
+    static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
 const useSessionContext = SessionAPIWrapper.useSessionContext;
@@ -128,11 +127,13 @@ const signOut = SessionAPIWrapper.signOut;
 const validateClaims = SessionAPIWrapper.validateClaims;
 const getInvalidClaimsFromResponse = SessionAPIWrapper.getInvalidClaimsFromResponse;
 const getClaimValue = SessionAPIWrapper.getClaimValue;
+const SessionComponentsOverrideProvider = SessionAPIWrapper.ComponentsOverrideProvider;
 
 export {
     useSessionContext,
     useClaimValue,
     SessionAuth,
+    SessionComponentsOverrideProvider,
     init,
     getUserId,
     getAccessToken,

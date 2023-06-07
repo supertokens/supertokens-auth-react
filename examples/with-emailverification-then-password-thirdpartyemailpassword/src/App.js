@@ -52,15 +52,6 @@ SuperTokens.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init(), Apple.init()],
             },
-            getRedirectionURL: async function (context) {
-                if (context.action === "SUCCESS") {
-                    // this is called after sign up / in and after email is verified
-                    let accessTokenPayload = await Session.getAccessTokenPayloadSecurely();
-                    if (RealPasswordClaim.getValueFromPayload(accessTokenPayload) !== true) {
-                        return "/set-password?show=signup"; // we ask the user to set their password now
-                    }
-                }
-            },
         }),
         Session.init({
             override: {

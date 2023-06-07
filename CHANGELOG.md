@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.33.0] - 2023-06-06
+
+### Added
+
+-   Introduce `onFailureRedirection` and `showAccessDeniedOnFailure` on claims and validators to make handling session claim validation failures easier
+-   Added an `accessDeniedScreen` prop to `SessionAuth`. The component passed as this prop is rendered if a claim validator (with `showAccessDeniedOnFailure` set to true) fails.
+-   Added a styleable `AccessDeniedScreen` to provide a useful default for the above `accessDeniedScreen` prop.
+-   Update to web-js interface version
+-   Updated supertokens-web-js dependency, which made SessionClaimValidator a type instead of an abstract class
+-   Added `textGray` to the palette variables (used in the default access denied screen)
+
 ## [0.32.4] - 2023-05-31
 
 -   Fixed the types for EmailVerification.init to not require a config to be passed.

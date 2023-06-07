@@ -14,7 +14,7 @@ export default function Home() {
         navigate("/auth");
     }
 
-    if (session.loading || session.invalidClaims.length > 0) {
+    if (session.loading) {
         return null;
     }
 

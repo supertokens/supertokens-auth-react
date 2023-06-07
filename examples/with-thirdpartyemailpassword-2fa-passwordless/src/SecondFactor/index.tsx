@@ -4,7 +4,6 @@ import { redirectToAuth } from "supertokens-auth-react";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import Session, { useSessionContext } from "supertokens-auth-react/recipe/session";
-import { SecondFactorClaim } from "../secondFactorClaim";
 
 const CustomSignInUpTheme: typeof PasswordlessPreBuiltUI.SignInUpTheme = (props) => {
     let [showDefaultUI, setShowDefaultUI] = useState(false);
@@ -52,16 +51,6 @@ const CustomSignInUpTheme: typeof PasswordlessPreBuiltUI.SignInUpTheme = (props)
 export default function SecondFactor() {
     const session = useSessionContext();
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (!session.loading) {
-            if (!session.invalidClaims.find((a) => a.validatorId === SecondFactorClaim.id)) {
-                navigate("/");
-            }
-        }
-
-        // We intentionally skip session.invalidClaims from the dependency array since that would mean we may navigate to / twice
-    }, [session.loading]);
 
     return (
         <div

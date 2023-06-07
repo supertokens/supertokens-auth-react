@@ -51,5 +51,3 @@ export declare const useOnMountAPICall: <T>(
     handleError?: ((err: unknown, consumeResp: T | undefined) => void) | undefined,
     startLoading?: boolean
 ) => void;
-export declare function saveInvalidClaimRedirectPathInContext(userContext: any, invalidClaimRedirectPath: string): void;
-export declare function popInvalidClaimRedirectPathFromContext(userContext: any): any;

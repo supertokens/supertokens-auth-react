@@ -4,7 +4,7 @@ import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } fro
 import { UserInput } from "./types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/emailverification";
 export default class Wrapper {
-    static EmailVerificationClaim: import("supertokens-web-js/recipe/emailverification").EmailVerificationClaimClass;
+    static EmailVerificationClaim: import("../../claims/emailVerificationClaim").EmailVerificationClaimClass;
     static init(
         config?: UserInput
     ): import("../../types").RecipeInitResult<
@@ -43,7 +43,7 @@ declare const EmailVerificationComponentsOverrideProvider: import("react").FC<
         components: import("./types").ComponentOverrideMap;
     }>
 >;
-declare const EmailVerificationClaim: import("supertokens-web-js/recipe/emailverification").EmailVerificationClaimClass;
+declare const EmailVerificationClaim: import("../../claims/emailVerificationClaim").EmailVerificationClaimClass;
 export {
     init,
     isEmailVerified,
