@@ -2,6 +2,7 @@ import EmailPassword from "supertokens-node/recipe/emailpassword";
 import Session from "supertokens-node/recipe/session";
 import { TypeInput } from "supertokens-node/types";
 import Dashboard from "supertokens-node/recipe/dashboard";
+import EmailVerification from "supertokens-node/recipe/emailverification";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -27,5 +28,12 @@ export const SuperTokensConfig: TypeInput = {
     },
     // recipeList contains all the modules that you want to
     // use from SuperTokens. See the full list here: https://supertokens.com/docs/guides
-    recipeList: [EmailPassword.init(), Session.init(), Dashboard.init()],
+    recipeList: [
+        EmailPassword.init(),
+        Session.init(),
+        Dashboard.init(),
+        EmailVerification.init({
+            mode: "REQUIRED",
+        }),
+    ],
 };
