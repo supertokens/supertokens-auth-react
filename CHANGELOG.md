@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Update to web-js interface version
 -   Updated supertokens-web-js dependency, which made SessionClaimValidator a type instead of an abstract class
 -   Added `textGray` to the palette variables (used in the default access denied screen)
+-   Now the email verification feature component will never render `SendVerifyEmail` without a session
 
 ## [0.32.4] - 2023-05-31
 
