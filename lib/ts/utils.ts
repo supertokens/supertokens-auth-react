@@ -179,6 +179,12 @@ export async function validateForm(
  * getCurrentNormalisedUrlPath
  */
 export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
+    try {
+        WindowHandlerReference.getReferenceOrThrow();
+    } catch (_) {
+        return new NormalisedURLPath("/");
+    }
+
     return new NormalisedURLPath(WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getPathName());
 }
 
