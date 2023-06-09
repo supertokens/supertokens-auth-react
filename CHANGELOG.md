@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.33.1] - 2023-06-08
+
+### Fixes
+
+-   CSS change to fix the responsiveness of the default `AccessDenied` screen
+
 ## [0.33.0] - 2023-06-06
 
 ### Added
