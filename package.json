@@ -83,7 +83,7 @@
     "peerDependencies": {
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0",
-        "supertokens-web-js": "^0.6.0"
+        "supertokens-web-js": "github:supertokens/supertokens-web-js#refactor/init-without-window"
     },
     "scripts": {
         "init": "bash ./init.sh",
