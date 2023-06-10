@@ -78,6 +78,43 @@ if (maxVersion(nodeSDKVersion, "9.9.9") === "9.9.9") {
     generalErrorSupported = true;
 }
 
+const providers = [
+    {
+        config: {
+            thirdPartyId: "google",
+            clients: [
+                {
+                    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                    clientId: process.env.GOOGLE_CLIENT_ID,
+                },
+            ],
+        },
+    },
+    {
+        config: {
+            thirdPartyId: "github",
+            clients: [
+                {
+                    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+                    clientId: process.env.GITHUB_CLIENT_ID,
+                },
+            ],
+        },
+    },
+    {
+        config: {
+            thirdPartyId: "facebook",
+            clients: [
+                {
+                    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+                    clientId: process.env.FACEBOOK_CLIENT_ID,
+                },
+            ],
+        },
+    },
+    customAuth0Provider(),
+];
+
 let urlencodedParser = bodyParser.urlencoded({ limit: "20mb", extended: true, parameterLimit: 20000 });
 let jsonParser = bodyParser.json({ limit: "20mb" });
 
@@ -453,21 +490,7 @@ function initST({ passwordlessConfig } = {}) {
         }),
         ThirdParty.init({
             signInAndUpFeature: {
-                providers: [
-                    ThirdParty.Google({
-                        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                        clientId: process.env.GOOGLE_CLIENT_ID,
-                    }),
-                    ThirdParty.Github({
-                        clientSecret: process.env.GITHUB_CLIENT_SECRET,
-                        clientId: process.env.GITHUB_CLIENT_ID,
-                    }),
-                    ThirdParty.Facebook({
-                        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-                        clientId: process.env.FACEBOOK_CLIENT_ID,
-                    }),
-                    customAuth0Provider(),
-                ],
+                providers,
             },
             override: {
                 apis: (originalImplementation) => {
@@ -509,21 +532,7 @@ function initST({ passwordlessConfig } = {}) {
                     latestURLWithToken = passwordResetURLWithToken;
                 },
             },
-            providers: [
-                ThirdPartyEmailPassword.Google({
-                    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                    clientId: process.env.GOOGLE_CLIENT_ID,
-                }),
-                ThirdPartyEmailPassword.Github({
-                    clientSecret: process.env.GITHUB_CLIENT_SECRET,
-                    clientId: process.env.GITHUB_CLIENT_ID,
-                }),
-                ThirdPartyEmailPassword.Facebook({
-                    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-                    clientId: process.env.FACEBOOK_CLIENT_ID,
-                }),
-                customAuth0Provider(),
-            ],
+            providers,
             override: {
                 apis: (originalImplementation) => {
                     return {
@@ -682,21 +691,7 @@ function initST({ passwordlessConfig } = {}) {
         recipeList.push(
             ThirdPartyPasswordless.init({
                 ...passwordlessConfig,
-                providers: [
-                    ThirdPartyEmailPassword.Google({
-                        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                        clientId: process.env.GOOGLE_CLIENT_ID,
-                    }),
-                    ThirdPartyEmailPassword.Github({
-                        clientSecret: process.env.GITHUB_CLIENT_SECRET,
-                        clientId: process.env.GITHUB_CLIENT_ID,
-                    }),
-                    ThirdPartyEmailPassword.Facebook({
-                        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-                        clientId: process.env.FACEBOOK_CLIENT_ID,
-                    }),
-                    customAuth0Provider(),
-                ],
+                providers,
                 override: {
                     apis: (originalImplementation) => {
                         return {

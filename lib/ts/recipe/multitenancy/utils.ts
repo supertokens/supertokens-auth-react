@@ -1,5 +1,5 @@
 import SuperTokens from "../../superTokens";
-import { normaliseAuthRecipe } from "../authRecipe/utils";
+import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 import {
     ActiveDirectory,
     Apple,
@@ -14,6 +14,7 @@ import {
     Okta,
     Twitter,
 } from "../thirdparty";
+import Custom from "../thirdparty/providers/custom";
 
 import type { UserInput, NormalisedConfig, RecipeInterface, GetLoginMethodsResponseNormalized } from "./types";
 import type RecipeModule from "../recipeModule";
@@ -22,7 +23,7 @@ import type Provider from "../thirdparty/providers";
 export function normaliseMultitenancyConfig(config: UserInput): NormalisedConfig {
     const getTenantID = config.getTenantID !== undefined ? config.getTenantID : () => undefined;
     return {
-        ...normaliseAuthRecipe(config),
+        ...normaliseRecipeModuleConfig(config),
         getTenantID,
         override: {
             functions: (originalImplementation: RecipeInterface) => originalImplementation,
@@ -75,7 +76,7 @@ export const mergeProviders = ({
     } as const;
 
     const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods === true;
-    if (usesDynamicLoginMethods === false && clientProviders.length === 0) {
+    if (usesDynamicLoginMethods === false && clientProviders?.length === 0) {
         throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
     }
     // If we are not using dynamic login methods or if there is no providers
@@ -90,11 +91,12 @@ export const mergeProviders = ({
     const providers: Pick<Provider, "id" | "buttonComponent" | "getButton">[] = [];
 
     for (const tenantProvider of tenantProviders) {
-        // try finding exact match first
+        // try finding exact match
         let provider = clientProviders.find((provider) => {
             const { id } = tenantProvider;
-            return provider.id === id || provider.id.includes(id);
+            return provider.id === id;
         });
+        // if none found try finding by tenantProvider id prefix match only
         if (provider === undefined) {
             provider = clientProviders.find((provider) => {
                 const { id } = tenantProvider;
@@ -115,6 +117,13 @@ export const mergeProviders = ({
             });
             if (builtInProvidersMap[providerID as keyof typeof builtInProvidersMap]) {
                 const provider = new builtInProvidersMap[providerID as keyof typeof builtInProvidersMap]();
+                providers.push({
+                    id: tenantProvider.id,
+                    buttonComponent: provider.getButton(tenantProvider.name),
+                    getButton: provider.getButton,
+                });
+            } else {
+                const provider = Custom.init(tenantProvider);
                 providers.push({
                     id: tenantProvider.id,
                     buttonComponent: provider.getButton(tenantProvider.name),

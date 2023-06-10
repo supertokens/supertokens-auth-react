@@ -75,7 +75,6 @@ export type UserInput = {
     oAuthCallbackScreen?: FeatureBaseConfig;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     disableEmailPassword?: boolean;
-    disableThirdParty?: boolean;
     override?: {
         functions?: (
             originalImplementation: RecipeInterface,
@@ -90,7 +89,6 @@ export type Config = UserInput &
 export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     disableEmailPassword: boolean;
-    disableThirdParty: boolean;
     emailPasswordConfig: NormalisedEmailPasswordConfig;
     thirdPartyConfig?: NormalisedThirdPartyConfig;
     override: {

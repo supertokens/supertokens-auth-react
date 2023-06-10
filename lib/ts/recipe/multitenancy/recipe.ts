@@ -79,8 +79,9 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
             return instance.dynamicLoginMethods;
         }
         const { emailPassword, passwordless, thirdParty } = await MultitenancyWebJS.getLoginMethods(...options);
+
         instance.dynamicLoginMethods = {
-            passwordless,
+            passwordless: passwordless,
             emailpassword: emailPassword,
             thirdparty: thirdParty,
         };
@@ -109,7 +110,7 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
         if (Multitenancy.instance === undefined) {
             let error =
                 "No instance of Multitenancy found. Make sure to call the Multitenancy.init method." +
-                "See https://supertokens.io/docs/multitenancy/quick-setup/frontend"; // TODO check if page exists in docs
+                "See https://supertokens.io/docs/multitenancy/quick-setup/frontend";
 
             // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
             if (typeof window === "undefined") {

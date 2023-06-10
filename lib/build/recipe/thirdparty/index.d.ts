@@ -62,7 +62,6 @@ export default class Wrapper {
     static ActiveDirectory: typeof ActiveDirectory;
     static BoxySAML: typeof BoxySAML;
     static Okta: typeof Okta;
-    static Twitter: typeof Twitter;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;

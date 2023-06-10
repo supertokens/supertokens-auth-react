@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-domv5";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
@@ -33,6 +33,11 @@ function AppWithReactDomRouter(props) {
         recipePreBuiltUIList.push(EmailVerificationPreBuiltUI);
     }
 
+    const [claimValidators, setClaimValidators] = useState(undefined);
+    window.setClaimValidators = setClaimValidators;
+    const keyWithClaimValidators =
+        claimValidators !== undefined ? claimValidators.map((a) => a.id).join("_") : undefined;
+
     return (
         <div className="App">
             <Router>
@@ -50,14 +55,25 @@ function AppWithReactDomRouter(props) {
                         </Route>
 
                         <Route path="/dashboard-no-auth">
-                            <SessionAuth requireAuth={false} {...props}>
+                            <SessionAuth
+                                requireAuth={false}
+                                {...props}
+                                key={keyWithClaimValidators}
+                                overrideGlobalClaimValidators={
+                                    claimValidators !== undefined ? () => claimValidators : undefined
+                                }>
                                 <DashboardNoAuthRequired />
                             </SessionAuth>
                         </Route>
 
                         {/* Logged In Components */}
                         <Route path="/dashboard">
-                            <SessionAuth {...props}>
+                            <SessionAuth
+                                {...props}
+                                key={keyWithClaimValidators}
+                                overrideGlobalClaimValidators={
+                                    claimValidators !== undefined ? () => claimValidators : undefined
+                                }>
                                 <Dashboard />
                             </SessionAuth>
                         </Route>

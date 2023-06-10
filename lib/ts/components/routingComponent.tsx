@@ -5,7 +5,6 @@ import Multitenancy from "../recipe/multitenancy/recipe";
 import { RecipeRouter } from "../recipe/recipeRouter";
 import SuperTokens from "../superTokens";
 
-import type { GetLoginMethodsResponseNormalized } from "../recipe/multitenancy/types";
 import type { ReactRouterDomWithCustomHistory } from "../ui/types";
 
 export function RoutingComponent(props: {
@@ -24,29 +23,20 @@ export function RoutingComponent(props: {
         // During development, this runs twice so as to warn devs of if there
         // are any side effects that happen here. So in tests, it will result in
         // the console log twice
-        return RecipeRouter.getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
-            normalizedPath,
-            props.preBuiltUIList
-        );
-    }, [path, location]); // location dependency needs to be kept in order to get new component on url change
+        if (loadedDynamicLoginMethods) {
+            return RecipeRouter.getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
+                normalizedPath,
+                props.preBuiltUIList
+            );
+        }
+        return undefined;
+        // location dependency needs to be kept in order to get new component on url change
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [path, location, loadedDynamicLoginMethods, props.preBuiltUIList]);
 
     useEffect(() => {
         const handler = () => {
-            if (loadedDynamicLoginMethods === false && componentToRender?.recipeID) {
-                const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods();
-                let enabled =
-                    dynamicLoginMethods?.[componentToRender?.recipeID as keyof GetLoginMethodsResponseNormalized] !==
-                    undefined;
-                if (enabled === false) {
-                    for (const id in dynamicLoginMethods) {
-                        if (componentToRender.recipeID.includes(id)) {
-                            enabled = true;
-                            break;
-                        }
-                    }
-                }
-                setLoadedDynamicLoginMethods(enabled);
-            }
+            setLoadedDynamicLoginMethods(true);
         };
         SuperTokens.uiController.on("LoginMethodsLoaded", handler);
 

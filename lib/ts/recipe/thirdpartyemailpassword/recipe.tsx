@@ -19,6 +19,7 @@
 import ThirdPartyEmailPasswordWebJS from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
 import { SSR_ERROR } from "../../constants";
+import SuperTokens from "../../superTokens";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
 import EmailPassword from "../emailpassword/recipe";
@@ -65,12 +66,19 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             typeof ThirdPartyEmailPasswordWebJS
         > = ThirdPartyEmailPasswordWebJS
     ) {
+        if (
+            SuperTokens.usesDynamicLoginMethods === false &&
+            config.disableEmailPassword === true &&
+            config.thirdPartyConfig?.signInAndUpFeature.providers.length === 0
+        ) {
+            throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
+        }
         super(config);
 
         this.emailPasswordRecipe =
             recipes.emailPasswordInstance !== undefined
                 ? recipes.emailPasswordInstance
-                : this.config.disableEmailPassword
+                : SuperTokens.usesDynamicLoginMethods === false && this.config.disableEmailPassword
                 ? undefined
                 : new EmailPassword(
                       {

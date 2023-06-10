@@ -52,10 +52,6 @@ function Routing() {
         window.addEventListener("popstate", onLocationChange);
     }, [setCurrentPath]);
 
-    if (emailVerificationMode !== "OFF" && EmailVerificationPreBuiltUI.canHandleRoute()) {
-        return EmailVerificationPreBuiltUI.getRoutingComponent();
-    }
-
     if (canHandleRoute(recipePreBuiltUIList)) {
         return <BaseComponent>{getRoutingComponent(recipePreBuiltUIList)}</BaseComponent>;
     }
