@@ -79,7 +79,8 @@ export default class UI {
         return (
             RecipeRouter.getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
                 getCurrentNormalisedUrlPath(),
-                recipeList
+                recipeList,
+                true
             ) !== undefined
         );
     }

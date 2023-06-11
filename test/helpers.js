@@ -132,6 +132,17 @@ export async function getProvidersLabels(page) {
     );
 }
 
+export async function getProviderLogoCount(page) {
+    await waitForSTElement(page);
+    return await page.evaluate(
+        ({ ST_ROOT_SELECTOR }) =>
+            document
+                .querySelector(ST_ROOT_SELECTOR)
+                .shadowRoot.querySelectorAll("[data-supertokens~='providerButtonLogo']").length,
+        { ST_ROOT_SELECTOR }
+    );
+}
+
 export async function getSubmitFormButtonLabelWithoutShadowDom(page) {
     return await page.evaluate(() => document.querySelector("form > div > button").innerText);
 }

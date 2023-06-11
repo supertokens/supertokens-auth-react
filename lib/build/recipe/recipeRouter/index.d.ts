@@ -7,7 +7,8 @@ export declare abstract class RecipeRouter {
     abstract recipeInstance: RecipeModule<any, any, any, any>;
     static getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
         normalisedUrl: NormalisedURLPath,
-        preBuiltUIList: RecipeRouter[]
+        preBuiltUIList: RecipeRouter[],
+        defaultToStaticList: boolean
     ): ComponentWithRecipeAndMatchingMethod | undefined;
     getPathsToFeatureComponentWithRecipeIdMap: () => BaseFeatureComponentMap;
     abstract getFeatures(): RecipeFeatureComponentMap;

@@ -12,7 +12,8 @@ export abstract class RecipeRouter {
     public abstract recipeInstance: RecipeModule<any, any, any, any>;
     static getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
         normalisedUrl: NormalisedURLPath,
-        preBuiltUIList: RecipeRouter[]
+        preBuiltUIList: RecipeRouter[],
+        defaultToStaticList: boolean
     ): ComponentWithRecipeAndMatchingMethod | undefined {
         const path = normalisedUrl.getAsStringDangerous();
 
@@ -21,8 +22,12 @@ export abstract class RecipeRouter {
             return routes !== undefined ? components.concat(routes) : components;
         }, [] as ComponentWithRecipeAndMatchingMethod[]);
 
+        const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods();
         const componentMatchingRid = routeComponents.find((c) => c.matches());
-        if (SuperTokens.usesDynamicLoginMethods === false) {
+        if (
+            SuperTokens.usesDynamicLoginMethods === false ||
+            (dynamicLoginMethods === undefined && defaultToStaticList)
+        ) {
             if (routeComponents.length === 0) {
                 return undefined;
             } else if (componentMatchingRid !== undefined) {
@@ -32,7 +37,6 @@ export abstract class RecipeRouter {
             }
         }
 
-        const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods();
         if (dynamicLoginMethods === undefined) {
             throw new Error(
                 "Should never come here: dynamic login methods info has not been loaded but recipeRouter rendered"
@@ -55,9 +59,15 @@ export abstract class RecipeRouter {
             { rid: "passwordless", includes: ["passwordless"] },
             { rid: "thirdparty", includes: ["thirdparty"] },
         ];
+        const enabledRecipeCount = Object.keys(dynamicLoginMethods).filter(
+            (key) => (dynamicLoginMethods as any)[key].enabled
+        ).length;
         // We first try to find an exact match
         for (const { rid, includes } of priorityOrder) {
-            if (includes.every((subRId) => dynamicLoginMethods[subRId].enabled)) {
+            if (
+                enabledRecipeCount === includes.length &&
+                includes.every((subRId) => dynamicLoginMethods[subRId].enabled)
+            ) {
                 const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
                 if (matchingComp) {
                     return matchingComp;
