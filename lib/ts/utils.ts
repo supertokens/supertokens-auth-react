@@ -180,7 +180,7 @@ export async function validateForm(
  */
 export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
     try {
-        WindowHandlerReference.getReferenceOrThrow();
+        WindowHandlerReference.getReferenceOrThrow().windowHandler.getWindowUnsafe();
     } catch (_) {
         return new NormalisedURLPath("/");
     }
