@@ -26,7 +26,8 @@ export function RoutingComponent(props: {
         if (loadedDynamicLoginMethods) {
             return RecipeRouter.getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
                 normalizedPath,
-                props.preBuiltUIList
+                props.preBuiltUIList,
+                false
             );
         }
         return undefined;

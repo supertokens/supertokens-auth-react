@@ -23,7 +23,7 @@ function AppWithoutRouter() {
 function Routing() {
     const enabledRecipes = getEnabledRecipes();
     const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
-    console.log(enabledRecipes);
+
     let recipePreBuiltUIList = [];
     if (enabledRecipes.includes("thirdparty")) {
         recipePreBuiltUIList.push(ThirdPartyPreBuiltUI);
