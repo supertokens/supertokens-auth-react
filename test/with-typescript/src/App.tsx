@@ -34,6 +34,8 @@ import { PermissionClaim, UserRoleClaim } from "../../../recipe/userroles";
 import { ThirdPartyPreBuiltUI } from "../../../recipe/thirdparty/prebuiltui";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "../../../recipe/thirdpartyemailpassword/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "../../../recipe/emailpassword/prebuiltui";
+import { AccessDeniedScreen } from "../../../recipe/session/prebuiltui";
+import EmailVerification from "../../../recipe/emailverification";
 
 /*
  * This application is used with the purpose of illustrating Supertokens with typescript.
@@ -167,7 +169,9 @@ function App() {
                                                             "delete_post",
                                                         ]),
                                                     ]}
-                                                    useDefaultAccessDeniedScreen={false}>
+                                                    accessDeniedScreen={({ validationError }) => (
+                                                        <div>{JSON.stringify(validationError)}</div>
+                                                    )}>
                                                     <Home />
                                                 </SessionAuth>
                                             }
@@ -1207,6 +1211,7 @@ Session.init({
 const AdminRoute: React.FC = (props) => {
     return (
         <SessionAuth
+            accessDeniedScreen={AccessDeniedScreen}
             overrideGlobalClaimValidators={(globalValidators) => [
                 ...globalValidators,
                 {
@@ -1219,3 +1224,6 @@ const AdminRoute: React.FC = (props) => {
         </SessionAuth>
     );
 };
+EmailVerification.init();
+EmailVerification.init(undefined);
+EmailVerification.init({});

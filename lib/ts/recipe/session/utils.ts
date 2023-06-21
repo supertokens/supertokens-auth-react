@@ -58,10 +58,6 @@ export const getFailureRedirectionInfo = async ({
     ) => SessionClaimValidator[];
     userContext: any;
 }): Promise<{ redirectPath?: string; failedClaim?: ClaimValidationError }> => {
-    const invalidClaimsMap = invalidClaims.reduce((map, validator) => {
-        map[validator.validatorId] = validator;
-        return map;
-    }, {} as Record<string, ClaimValidationError>);
     const globalValidators = getGlobalClaimValidators({
         overrideGlobalClaimValidators,
         userContext,
@@ -69,7 +65,7 @@ export const getFailureRedirectionInfo = async ({
 
     let failedClaim: ClaimValidationError | undefined = undefined;
     for (const validator of globalValidators) {
-        const claim = invalidClaimsMap[validator.id];
+        const claim = invalidClaims.find((c) => c.validatorId === validator.id);
         if (claim !== undefined) {
             const failureCallback = validator.onFailureRedirection;
             if (failureCallback) {

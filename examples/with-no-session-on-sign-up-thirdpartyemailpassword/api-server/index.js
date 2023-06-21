@@ -91,12 +91,12 @@ supertokens.init({
                                     getAccessTokenPayload: () => null,
                                     getExpiry: () => -1,
                                     getHandle: () => "",
-                                    getSessionData: () => null,
+                                    getSessionDataFromDatabase: () => null,
                                     getTimeCreated: () => -1,
                                     getUserId: () => "",
                                     revokeSession: () => {},
-                                    updateAccessTokenPayload: () => {},
-                                    updateSessionData: () => {},
+                                    updateSessionDataInDatabase: () => {},
+                                    attachToRequestResponse: () => {},
                                 }; // this is an empty session
                             } else {
                                 return oI.createNewSession(input);

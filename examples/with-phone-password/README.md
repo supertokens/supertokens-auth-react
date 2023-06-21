@@ -47,7 +47,7 @@ This demo app uses the EmailPassword and Passwordless recipes to achieve the aut
 ### Frontend
 
 -   Add a custom `PhoneVerifiedClaim`.
--   Override `getGlobalClaimValidators` in the Session recipe to add a validator for `PhoneVerifiedClaim`. This will add an error into `invalidClaims` in the session context of components wrapped by `SessionAuth` if `PhoneVerifiedClaim` is missing or set to false.
+-   Override `getGlobalClaimValidators` in the Session recipe to add a validator for `PhoneVerifiedClaim`. This will redirect to `/auth/verify-phone` if `PhoneVerifiedClaim` is missing or set to false.
 -   We modify the sign up and in forms to replace the "Email" label and place holder with "Phone number" (using formFields config).
 -   We add a custom validator for phone number in which we add logic to check for the input phone number syntax.
 -   Added text translation to password reset forms and sign-in / up forms

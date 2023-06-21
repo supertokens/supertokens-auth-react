@@ -20,24 +20,14 @@ import SessionWebJS from "supertokens-web-js/recipe/session";
 import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
 
 import SuperTokens from "../../superTokens";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { getLocalStorage, isTest, removeFromLocalStorage, setLocalStorage } from "../../utils";
 import RecipeModule from "../recipeModule";
 
-import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
-import AccessDeniedScreen from "./components/features/accessDeniedScreen";
 import { getFailureRedirectionInfo, normaliseSessionConfig } from "./utils";
 
 import type { NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
-import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type {
-    NormalisedAppInfo,
-    NormalisedConfigWithAppInfoAndRecipeID,
-    RecipeFeatureComponentMap,
-    RecipeInitResult,
-    FeatureBaseProps,
-} from "../../types";
+import type { NormalisedAppInfo, NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult } from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import type { SessionClaim } from "supertokens-web-js/recipe/session";
 import type { RecipeEvent } from "supertokens-web-js/recipe/session/types";
@@ -216,30 +206,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         );
     };
 
-    getFeatures = (): RecipeFeatureComponentMap => {
-        return {};
-    };
-
-    getFeatureComponent = (
-        componentName: "accessDenied",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
-        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
-    ): JSX.Element => {
-        const featureComponents = {
-            accessDenied: (
-                <UserContextWrapper userContext={props.userContext}>
-                    <AccessDeniedScreen recipe={this} {...props} useComponentOverrides={useComponentOverrides} />
-                </UserContextWrapper>
-            ),
-        };
-        const featureComponent = featureComponents[componentName];
-        if (featureComponent) {
-            return featureComponent;
-        } else {
-            throw new Error("Should never come here.");
-        }
-    };
-
     private async getSessionContext({ action, userContext }: RecipeEvent): Promise<SessionContextUpdate> {
         if (
             action === "SESSION_CREATED" ||
@@ -281,6 +247,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
 
     static init(config?: InputType): RecipeInitResult<unknown, unknown, unknown, any> {
         const normalisedConfig = normaliseSessionConfig(config);
+
         return {
             recipeID: Session.RECIPE_ID,
             authReact: (appInfo: NormalisedAppInfo): RecipeModule<unknown, unknown, unknown, any> => {

@@ -11,7 +11,7 @@
         "react": "^18.0.0",
         "react-dom": "^18.0.0",
         "supertokens-auth-react": "latest",
-        "supertokens-node": "^13.1.5"
+        "supertokens-node": "latest"
     },
     "devDependencies": {
         "@types/node": "^17.0.34",

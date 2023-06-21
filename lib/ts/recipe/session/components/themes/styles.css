@@ -33,10 +33,6 @@
     font-size: 20px;
     line-height: 30px;
 }
-
-[data-supertokens~="container"] {
-    width: 400px;
-}
 /* Override end */
 
 [data-supertokens~="center"] {

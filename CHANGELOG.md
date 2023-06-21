@@ -12,79 +12,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Added Active Directory, Okta, Linked In, Boxy SAML providers
 -   Added name prop to buttonComponent
 -   Added thirdparty login with popup window example
--   Introduce onFailureRedirection and showAccessDeniedOnFailure on claims and validators to make handling session claim validation failures easier
--   Added an overrideable and styleable `AccessDeniedScreen`.
--   If a claim validator fails, instead of rendering children with invalidClaims inserted into the session context, we render `AccessDeniedScreen`.
 
-### Migration
+## [0.33.1] - 2023-06-08
 
-#### If you used to check the value of invalidClaims
+### Fixes
 
-There are two options:
+-   CSS change to fix the responsiveness of the default `AccessDenied` screen
 
-1. Add `onFailureRedirection` and/or `showAccessDeniedOnFailure` to your validators:
+## [0.33.0] - 2023-06-06
 
-This example uses global claim validators but the same change can be applied if you used `overrideGlobalClaimValidators`. Before:
+### Added
 
-```tsx
-Session.init({
-    override: {
-        functions: (oI) => {
-            return {
-                ...oI,
-                getGlobalClaimValidators: (input) => [
-                    ...input.claimValidatorsAddedByOtherRecipes,
-                    UserRoleClaim.validators.includes("admin"),
-                ],
-            };
-        },
-    },
-});
-```
+-   Introduce `onFailureRedirection` and `showAccessDeniedOnFailure` on claims and validators to make handling session claim validation failures easier
+-   Added an `accessDeniedScreen` prop to `SessionAuth`. The component passed as this prop is rendered if a claim validator (with `showAccessDeniedOnFailure` set to true) fails.
+-   Added a styleable `AccessDeniedScreen` to provide a useful default for the above `accessDeniedScreen` prop.
+-   Update to web-js interface version
+-   Updated supertokens-web-js dependency, which made SessionClaimValidator a type instead of an abstract class
+-   Added `textGray` to the palette variables (used in the default access denied screen)
+-   Now the email verification feature component will never render `SendVerifyEmail` without a session
 
-After:
+## [0.32.4] - 2023-05-31
 
-```tsx
-Session.init({
-    override: {
-        functions: (oI) => {
-            return {
-                ...oI,
-                getGlobalClaimValidators: (input) => {
-                    return [
-                        ...input.claimValidatorsAddedByOtherRecipes,
-                        {
-                            ...UserRoleClaim.validators.includes("admin"),
-                            showAccessDeniedOnFailure: false, // if you want to handle the validation errors in you components
-                            onFailureRedirection: () => "/not-an-admin", // if you want to redirect to a specific path
-                        },
-                    ];
-                },
-            };
-        },
-    },
-});
-```
+-   Fixed the types for EmailVerification.init to not require a config to be passed.
 
-2. Disable the default access denied screen in `SessionAuth`:
+## [0.32.3] - 2023-05-10
 
-Before:
-
-```tsx
-<SessionAuth overrideGlobalClaimValidators={(o) => [...o, UserRoleClaim.validators.includes("admin")]}>
-    Protected page...
-</SessionAuth>
-```
-
-After:
-
-```tsx
-<SessionAuth
-    overrideGlobalClaimValidators={(o) => [...o, UserRoleClaim.validators.includes("admin")]}
-    useDefaultAccessDeniedScreen={false}>
-    Protected page...
-</SessionAuth>
-```
+-   Changed email verification index.tsx to use index.ts instead so that auto generated docs add it.
 
 ## [0.32.2] - 2023-05-10
 

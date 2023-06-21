@@ -42,7 +42,7 @@ SuperTokens.init({
     },
     recipeList: [
         EmailVerification.init({
-            mode: "OPTIONAL",
+            mode: "REQUIRED",
         }),
         ThirdPartyEmailPassword.init({
             signInAndUpFeature: {
@@ -89,7 +89,12 @@ function App() {
                         );
                     },
                     // we override the component which shows the change phone number button
-                    PasswordlessUserInputCodeFormFooter_Override: ({ DefaultComponent, ...props }) => {
+                    PasswordlessUserInputCodeFormFooter_Override: ({
+                        DefaultComponent,
+                        ...props
+                    }: {
+                        DefaultComponent: any;
+                    }) => {
                         const session = useSessionContext();
 
                         if (session.loading !== true && session.accessTokenPayload.phoneNumber === undefined) {

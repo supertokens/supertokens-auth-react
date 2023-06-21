@@ -14,6 +14,7 @@ import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpass
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { AccessDeniedScreen } from "supertokens-auth-react/recipe/session/prebuiltui";
 import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from "./App";
 import { getEnabledRecipes } from "./testContext";
 
@@ -90,6 +91,7 @@ function AppWithReactDomRouter(props) {
                                 <SessionAuth
                                     {...props}
                                     key={keyWithClaimValidators}
+                                    accessDeniedScreen={AccessDeniedScreen}
                                     overrideGlobalClaimValidators={
                                         claimValidators !== undefined ? () => claimValidators : undefined
                                     }>

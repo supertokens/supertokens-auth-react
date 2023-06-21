@@ -285,7 +285,7 @@ export type NormalisedFormField = {
     autofocus?: boolean;
 };
 
-export type ReactComponentClass = ComponentClass<any, any> | (<T>(props: T) => JSX.Element);
+export type ReactComponentClass<P = any> = ComponentClass<P, any> | ((props: P) => JSX.Element);
 
 /*
  * Features Config Types.

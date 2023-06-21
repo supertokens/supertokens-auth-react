@@ -19,28 +19,28 @@
 import { hasFontDefined } from "../../../../../styles/styles";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { ThemeBase } from "../../../../emailpassword/components/themes/themeBase";
+import { useSessionContext } from "../../../../session";
 
 import { SendVerifyEmail } from "./sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "./verifyEmailLinkClicked";
 
 import type { EmailVerificationThemeProps } from "../../../types";
 
-/*
- * Component.
- */
-
 export function EmailVerificationTheme(props: EmailVerificationThemeProps): JSX.Element {
-    /*
-     * Render.
-     */
+    const sessionContext = useSessionContext();
 
-    // If no token, return SendVerifyEmail.
-    if (props.verifyEmailLinkClickedScreen === undefined) {
+    // If we have a token, return VerifyEmailLinkClicked.
+    if (props.verifyEmailLinkClickedScreen !== undefined) {
+        return <VerifyEmailLinkClicked {...props.verifyEmailLinkClickedScreen} />;
+    }
+
+    // If we have an active session, we want to send the verification email
+    if (sessionContext.loading === false && sessionContext.doesSessionExist === true) {
         return <SendVerifyEmail {...props.sendVerifyEmailScreen} />;
     }
 
-    // Otherwise, return VerifyEmailLinkClicked.
-    return <VerifyEmailLinkClicked {...props.verifyEmailLinkClickedScreen} />;
+    // Otherwise, return an empty screen, waiting for the feature component to redirection to complete.
+    return <></>;
 }
 
 function EmailVerificationThemeWrapper(props: EmailVerificationThemeProps): JSX.Element {

@@ -107,7 +107,7 @@ export declare type NormalisedFormField = {
     autoComplete?: string;
     autofocus?: boolean;
 };
-export declare type ReactComponentClass = ComponentClass<any, any> | (<T>(props: T) => JSX.Element);
+export declare type ReactComponentClass<P = any> = ComponentClass<P, any> | ((props: P) => JSX.Element);
 export declare type FeatureBaseConfig = {
     style?: string;
 };

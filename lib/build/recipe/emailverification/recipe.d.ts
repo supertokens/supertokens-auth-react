@@ -1,5 +1,5 @@
-import { EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
 import EmailVerificationWebJS from "supertokens-web-js/recipe/emailverification";
+import { EmailVerificationClaimClass } from "../../claims/emailVerificationClaim";
 import RecipeModule from "../recipeModule";
 import type {
     UserInput,
@@ -25,7 +25,7 @@ export default class EmailVerification extends RecipeModule<
         webJSRecipe?: WebJSRecipeInterface<typeof EmailVerificationWebJS>
     );
     static init(
-        config: UserInput
+        config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): EmailVerification;
     isEmailVerified(userContext: any): Promise<{

@@ -72,7 +72,9 @@ supertokens.init({
                                     status: "WRONG_CREDENTIALS_ERROR",
                                 };
                             }
-                            return oI.emailPasswordSignInPOST(input);
+                            const res = await oI.emailPasswordSignInPOST(input);
+                            await res.session.setClaimValue(RealPasswordClaim, true, input.userContext);
+                            return res;
                         },
                         emailPasswordSignUpPOST: async function (input) {
                             // We remove claim checking here, since this needs to be callable without the second factor completed

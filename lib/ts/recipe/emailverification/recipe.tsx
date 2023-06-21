@@ -17,12 +17,12 @@
  * Imports.
  */
 
-import { EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
 import EmailVerificationWebJS from "supertokens-web-js/recipe/emailverification";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 
+import { EmailVerificationClaimClass } from "../../claims/emailVerificationClaim";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
 
@@ -68,7 +68,7 @@ export default class EmailVerification extends RecipeModule<
     }
 
     static init(
-        config: UserInput
+        config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normaliseEmailVerificationFeature(config);
 
