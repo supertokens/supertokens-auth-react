@@ -16,11 +16,24 @@
 /*
  * Imports.
  */
+import SuperTokens from "../../superTokens";
 import { redirectWithFullPageReload } from "../../utils";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
 
 import Provider from "./providers";
+import ActiveDirectory from "./providers/activeDirectory";
+import Apple from "./providers/apple";
+import Bitbucket from "./providers/bitbucket";
+import BoxySAML from "./providers/boxySaml";
 import Custom from "./providers/custom";
+import Discord from "./providers/discord";
+import Facebook from "./providers/facebook";
+import Github from "./providers/github";
+import Gitlab from "./providers/gitlab";
+import Google from "./providers/google";
+import LinkedIn from "./providers/linkedIn";
+import Okta from "./providers/okta";
+import Twitter from "./providers/twitter";
 
 import type Recipe from "./recipe";
 import type {
@@ -31,8 +44,8 @@ import type {
     CustomStateProperties,
 } from "./types";
 import type { WebJSRecipeInterface } from "../../types";
-import type ThirdPartyWebJS from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import type ThirdPartyWebJS from "supertokens-web-js/recipe/thirdparty";
 
 /*
  * Methods.
@@ -138,3 +151,88 @@ export async function redirectToThirdPartyLogin(input: {
     redirectWithFullPageReload(response);
     return { status: "OK" };
 }
+
+export const mergeProviders = ({
+    tenantProviders = [],
+    clientProviders = [],
+}: {
+    tenantProviders?: {
+        id: string;
+        name: string;
+    }[];
+    clientProviders: Pick<Provider, "id" | "buttonComponent" | "getButton">[];
+}): Pick<Provider, "id" | "getButton">[] => {
+    const builtInProvidersMap = {
+        apple: Apple,
+        google: Google,
+        github: Github,
+        activeDirectory: ActiveDirectory,
+        bitbucket: Bitbucket,
+        "boxy-saml": BoxySAML,
+        discord: Discord,
+        gitlab: Gitlab,
+        linkedin: LinkedIn,
+        okta: Okta,
+        twitter: Twitter,
+        facebook: Facebook,
+    } as const;
+
+    const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods === true;
+    if (usesDynamicLoginMethods === false && clientProviders?.length === 0) {
+        throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
+    }
+    // If we are not using dynamic login methods or if there is no providers
+    // from the core we use frontend initialized providers
+    if (usesDynamicLoginMethods === false || tenantProviders.length === 0) {
+        return clientProviders.map((provider) => ({
+            id: provider.id,
+            buttonComponent: provider.getButton(),
+            getButton: provider.getButton,
+        }));
+    }
+    const providers: Pick<Provider, "id" | "buttonComponent" | "getButton">[] = [];
+
+    for (const tenantProvider of tenantProviders) {
+        // try finding exact match
+        let provider = clientProviders.find((provider) => {
+            const { id } = tenantProvider;
+            return provider.id === id;
+        });
+        // if none found try finding by tenantProvider id prefix match only
+        if (provider === undefined) {
+            provider = clientProviders.find((provider) => {
+                const { id } = tenantProvider;
+                return id.startsWith(provider.id);
+            });
+        }
+        // means provider is initialized on the frontend and found
+        if (provider !== undefined) {
+            providers.push({
+                id: tenantProvider.id,
+                buttonComponent: provider.getButton(tenantProvider.name),
+                getButton: provider.getButton,
+            });
+        } else {
+            // try to find and initialize provider from all prebuilt providers list
+            const providerID = Object.keys(builtInProvidersMap).find((id) => {
+                return tenantProvider.id === id || tenantProvider.id.startsWith(id);
+            });
+            if (builtInProvidersMap[providerID as keyof typeof builtInProvidersMap]) {
+                const provider = new builtInProvidersMap[providerID as keyof typeof builtInProvidersMap]();
+                providers.push({
+                    id: tenantProvider.id,
+                    buttonComponent: provider.getButton(tenantProvider.name),
+                    getButton: provider.getButton,
+                });
+            } else {
+                const provider = Custom.init(tenantProvider);
+                providers.push({
+                    id: tenantProvider.id,
+                    buttonComponent: provider.getButton(tenantProvider.name),
+                    getButton: provider.getButton,
+                });
+            }
+        }
+    }
+    return providers;
+};

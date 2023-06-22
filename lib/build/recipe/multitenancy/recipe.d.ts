@@ -1,8 +1,8 @@
 import MultitenancyWebJS from "supertokens-web-js/recipe/multitenancy";
-import RecipeModule from "../recipeModule";
+import { BaseRecipeModule } from "../recipeModule/baseRecipeModule";
 import type { NormalisedConfig, UserInput, GetLoginMethodsResponseNormalized } from "./types";
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
-export default class Multitenancy extends RecipeModule<any, any, any, any> {
+export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
     readonly webJSRecipe: WebJSRecipeInterface<typeof MultitenancyWebJS>;
     static instance?: Multitenancy;
     static readonly RECIPE_ID = "multitenancy";

@@ -25,7 +25,7 @@ import type { UserInputCodeForm } from "./components/themes/signInUp/userInputCo
 import type { UserInputCodeFormFooter } from "./components/themes/signInUp/userInputCodeFormFooter";
 import type { UserInputCodeFormHeader } from "./components/themes/signInUp/userInputCodeFormHeader";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import type { FeatureBaseConfig, NormalisedBaseConfig, WebJSRecipeInterface } from "../../types";
 import type {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -34,6 +34,7 @@ import type {
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipe/types";
 import type { Dispatch } from "react";
+import type WebJSRecipe from "supertokens-web-js/recipe/passwordless";
 import type { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
 
 export type PreAndPostAPIHookAction =
@@ -184,7 +185,7 @@ export type UserInput = (
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type SignInUpProps = {
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: (result: { createdNewUser: boolean; user: PasswordlessUser }) => void;
     dispatch: Dispatch<PasswordlessSignInUpAction>;
@@ -220,11 +221,13 @@ export type AdditionalLoginAttemptInfoProperties = {
     redirectToPath?: string;
 };
 
+export type RecipeImplementation = WebJSRecipeInterface<typeof WebJSRecipe>;
+
 export type SignInUpEmailFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
     error: string | undefined;
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: () => void;
 };
@@ -233,7 +236,7 @@ export type SignInUpPhoneFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
     error: string | undefined;
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: () => void;
 };
@@ -242,7 +245,7 @@ export type SignInUpEmailOrPhoneFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
     error: string | undefined;
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: () => void;
 };
@@ -251,14 +254,14 @@ export type SignInUpUserInputCodeFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
     error: string | undefined;
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     loginAttemptInfo: LoginAttemptInfo;
     onSuccess?: (result: { createdNewUser: boolean; user: PasswordlessUser }) => void;
 };
 
 export type LinkClickedScreenProps = {
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     requireUserInteraction: boolean;
     consumeCode: () => void;
@@ -266,7 +269,7 @@ export type LinkClickedScreenProps = {
 };
 
 export type CloseTabScreenProps = {
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
 };
 
@@ -310,19 +313,19 @@ export type LinkSentThemeProps = {
     onError: (error: string) => void;
     error: string | undefined;
     loginAttemptInfo: LoginAttemptInfo;
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
 };
 
 export type UserInputCodeFormFooterProps = {
     loginAttemptInfo: LoginAttemptInfo;
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
 };
 
 export type UserInputCodeFormHeaderProps = {
     loginAttemptInfo: LoginAttemptInfo;
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
 };
 

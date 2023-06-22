@@ -34,11 +34,11 @@ function AppWithReactDomRouter(props) {
     const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
 
     let recipePreBuiltUIList = [];
-    if (enabledRecipes.includes("thirdparty")) {
-        recipePreBuiltUIList.push(ThirdPartyPreBuiltUI);
-    }
     if (enabledRecipes.includes("emailpassword")) {
         recipePreBuiltUIList.push(EmailPasswordPreBuiltUI);
+    }
+    if (enabledRecipes.includes("thirdparty")) {
+        recipePreBuiltUIList.push(ThirdPartyPreBuiltUI);
     }
     if (enabledRecipes.includes("thirdpartyemailpassword")) {
         recipePreBuiltUIList.push(ThirdPartyEmailPasswordPreBuiltUI);

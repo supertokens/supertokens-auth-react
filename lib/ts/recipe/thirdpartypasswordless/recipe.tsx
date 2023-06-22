@@ -71,12 +71,11 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
             typeof ThirdpartyPasswordlessWebJS
         > = ThirdpartyPasswordlessWebJS
     ) {
-        if (
-            SuperTokens.usesDynamicLoginMethods === false &&
-            config.disablePasswordless === true &&
-            config.thirdpartyConfig?.signInAndUpFeature.providers.length === 0
-        ) {
-            throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
+        const disableThirdParty =
+            config.thirdpartyConfig?.signInAndUpFeature?.providers === undefined ||
+            config.thirdpartyConfig?.signInAndUpFeature.providers.length === 0;
+        if (SuperTokens.usesDynamicLoginMethods === false && config.disablePasswordless === true && disableThirdParty) {
+            throw new Error("You need to enable either passwordless or third party providers login.");
         }
         super(config);
         this.passwordlessRecipe =

@@ -27,7 +27,8 @@ export function normaliseThirdPartyPasswordlessConfig(config?: Config): Normalis
     if (config === undefined) {
         config = {} as Config;
     }
-    const disableThirdParty = config.signInUpFeature?.providers?.length === 0;
+    const disableThirdParty =
+        config.signInUpFeature?.providers === undefined || config.signInUpFeature.providers.length === 0;
 
     const override: any = {
         functions: (originalImplementation: TPPWlessRecipeInterface) => originalImplementation,

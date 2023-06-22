@@ -66,12 +66,14 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             typeof ThirdPartyEmailPasswordWebJS
         > = ThirdPartyEmailPasswordWebJS
     ) {
+        const disableThirdParty =
+            config.signInAndUpFeature?.providers === undefined || config.signInAndUpFeature.providers.length === 0;
         if (
             SuperTokens.usesDynamicLoginMethods === false &&
             config.disableEmailPassword === true &&
-            config.thirdPartyConfig?.signInAndUpFeature.providers.length === 0
+            disableThirdParty
         ) {
-            throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
+            throw new Error("You need to enable either email password or third party providers login.");
         }
         super(config);
 

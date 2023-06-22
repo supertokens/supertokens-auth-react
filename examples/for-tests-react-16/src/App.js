@@ -183,7 +183,6 @@ let recipeList = [
             functions: (oI) => ({
                 ...oI,
                 getLoginMethods: async (input) => {
-                    console.log(testContext);
                     const resp = await oI.getLoginMethods(input);
                     if (testContext.mockLoginMethodsForDynamicLogin) {
                         return {
@@ -646,7 +645,7 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
         {
             id: "auth0",
             name: "Auth0",
-            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+            getFrontendRedirectURI: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
         },
     ];
     if (staticProviderList) {
@@ -848,7 +847,7 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
         {
             id: "auth0",
             name: "Auth0",
-            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+            getFrontendRedirectURI: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
         },
     ];
     if (staticProviderList) {
@@ -933,7 +932,7 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
         {
             id: "auth0",
             name: "Auth0",
-            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+            getFrontendRedirectURI: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
         },
     ];
     if (staticProviderList) {
@@ -1072,20 +1071,6 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
                         }
 
                         return implementation.verifyAndGetStateOrThrowError(input);
-                    },
-                    getAuthCodeFromURL(input) {
-                        if (input.userContext["key"] !== undefined) {
-                            log(`GET_AUTH_CODE_FROM_URL RECEIVED_USER_CONTEXT`);
-                        }
-
-                        return implementation.getAuthCodeFromURL(input);
-                    },
-                    getAuthErrorFromURL(input) {
-                        if (input.userContext["key"] !== undefined) {
-                            log(`GET_AUTH_ERROR_FROM_URL RECEIVED_USER_CONTEXT`);
-                        }
-
-                        return implementation.getAuthErrorFromURL(input);
                     },
                 };
             },

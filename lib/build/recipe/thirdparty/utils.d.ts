@@ -1,3 +1,4 @@
+import Provider from "./providers";
 import type Recipe from "./recipe";
 import type {
     NormalisedSignInAndUpFeatureConfig,
@@ -20,3 +21,15 @@ export declare function redirectToThirdPartyLogin(input: {
 }): Promise<{
     status: "OK" | "ERROR";
 }>;
+export declare const mergeProviders: ({
+    tenantProviders,
+    clientProviders,
+}: {
+    tenantProviders?:
+        | {
+              id: string;
+              name: string;
+          }[]
+        | undefined;
+    clientProviders: Pick<Provider, "id" | "buttonComponent" | "getButton">[];
+}) => Pick<Provider, "id" | "getButton">[];

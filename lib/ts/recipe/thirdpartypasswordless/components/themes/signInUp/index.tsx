@@ -48,9 +48,10 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
     const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods;
     const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods();
 
+    const hasProviders = props.tpChildProps?.providers !== undefined && props.tpChildProps.providers.length > 0;
     const thirdPartyEnabled =
-        (props.thirdPartyRecipe !== undefined && usesDynamicLoginMethods === false) ||
-        (dynamicLoginMethods?.thirdparty.enabled && props.tpChildProps?.providers.length !== 0);
+        (usesDynamicLoginMethods === false && hasProviders) ||
+        (dynamicLoginMethods?.thirdparty.enabled && hasProviders);
     const passwordlessEnabled =
         (props.passwordlessRecipe !== undefined && usesDynamicLoginMethods === false) ||
         dynamicLoginMethods?.passwordless.enabled;

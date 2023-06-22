@@ -21,8 +21,6 @@ import { Fragment } from "react";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
-import Multitenancy from "../../../../multitenancy/recipe";
-import { mergeProviders } from "../../../../multitenancy/utils";
 import {
     useChildProps as usePasswordlessChildProps,
     useFeatureReducer as usePasswordlessFeatureReducer,
@@ -147,20 +145,10 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         pwlessChildProps,
     };
 
-    const providers = React.useMemo(
-        () =>
-            mergeProviders({
-                tenantProviders: Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods()?.thirdparty.providers,
-                clientProviders: tpChildProps.providers,
-            }),
-        [tpChildProps.providers]
-    );
-    const themeProps = { ...childProps, tpChildProps: { ...tpChildProps, providers } };
-
     return (
         <Fragment>
             {/* No custom theme, use default. */}
-            {props.children === undefined && <SignInUpTheme {...themeProps} />}
+            {props.children === undefined && <SignInUpTheme {...childProps} />}
             {/* Otherwise, custom theme is provided, propagate props. */}
             {props.children &&
                 React.Children.map(props.children, (child) => {

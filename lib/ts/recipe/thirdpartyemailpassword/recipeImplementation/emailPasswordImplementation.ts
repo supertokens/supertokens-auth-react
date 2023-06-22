@@ -27,5 +27,6 @@ export default function getRecipeImplementation(
         submitNewPassword: originalImplementation.submitNewPassword.bind(originalImplementation),
         signIn: originalImplementation.emailPasswordSignIn.bind(originalImplementation),
         signUp: originalImplementation.emailPasswordSignUp.bind(originalImplementation),
+        getTenantIdFromURL: originalImplementation.getTenantIdFromURL.bind(originalImplementation),
     };
 }

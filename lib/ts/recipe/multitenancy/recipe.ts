@@ -23,7 +23,7 @@ import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuper
 import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
 import { isTest } from "../../utils";
-import RecipeModule from "../recipeModule";
+import { BaseRecipeModule } from "../recipeModule/baseRecipeModule";
 
 import { hasIntersectingRecipes } from "./utils";
 import { normaliseMultitenancyConfig } from "./utils";
@@ -35,7 +35,7 @@ import type { NormalisedAppInfo } from "../../types";
 /*
  * Class.
  */
-export default class Multitenancy extends RecipeModule<any, any, any, any> {
+export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
     static instance?: Multitenancy;
     static readonly RECIPE_ID = "multitenancy";
 
@@ -56,9 +56,9 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
     }
 
     public async initMultitenancyWithDynamicLoginMethods(): Promise<void> {
-        const tenantID = Multitenancy.getInstanceOrThrow().config.getTenantID();
+        const tenantId = await Multitenancy.getInstanceOrThrow().webJSRecipe.getTenantId();
 
-        const tenantMethods = await Multitenancy.getDynamicLoginMethods({ tenantId: tenantID });
+        const tenantMethods = await Multitenancy.getDynamicLoginMethods({ tenantId });
         this.hasIntersection = hasIntersectingRecipes(tenantMethods, SuperTokens.getInstanceOrThrow().recipeList);
 
         SuperTokens.uiController.emit("LoginMethodsLoaded");
@@ -92,7 +92,7 @@ export default class Multitenancy extends RecipeModule<any, any, any, any> {
         const normalisedConfig = normaliseMultitenancyConfig(config);
         return {
             recipeID: Multitenancy.RECIPE_ID,
-            authReact: (appInfo: NormalisedAppInfo): RecipeModule<any, any, any, any> => {
+            authReact: (appInfo: NormalisedAppInfo): BaseRecipeModule<any, any, any, any> => {
                 Multitenancy.instance = new Multitenancy({
                     ...normalisedConfig,
                     appInfo,

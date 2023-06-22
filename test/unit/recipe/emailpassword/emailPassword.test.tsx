@@ -610,7 +610,7 @@ describe("EmailPassword", function () {
             },
         });
         authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
-        webJS(SuperTokens.getInstanceOrThrow().appInfo, false);
+        webJS(SuperTokens.getInstanceOrThrow().appInfo, undefined, false);
 
         try {
             await EmailPasswordIndex.submitNewPassword({

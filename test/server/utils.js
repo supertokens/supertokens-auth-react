@@ -165,7 +165,7 @@ module.exports.customAuth0Provider = () => {
         override: (oI) => ({
             ...oI,
             getUserInfo: async (accessTokenAPIResponse) => {
-                let accessToken = accessTokenAPIResponse.access_token;
+                let accessToken = accessTokenAPIResponse.oAuthTokens.access_token;
                 if (accessToken === undefined) {
                     throw new Error("access token is undefined");
                 }
@@ -179,7 +179,7 @@ module.exports.customAuth0Provider = () => {
                 // });
                 // let userInfo = response.data;
                 return {
-                    id: "someId",
+                    thirdPartyUserId: "someId",
                     email: {
                         id: "test@example.com",
                         isVerified: true,

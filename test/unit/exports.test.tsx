@@ -48,14 +48,9 @@ describe("Exports", function () {
             let _default = require("../../recipe/thirdparty");
             let {
                 init,
-                generateStateToSendToOAuthProvider,
-                getAuthCodeFromURL,
-                getAuthErrorFromURL,
-                getAuthStateFromURL,
                 getAuthorisationURLFromBackend,
                 getAuthorisationURLWithQueryParamsAndSetState,
                 getStateAndOtherInfoFromStorage,
-                setStateAndOtherInfoToStorage,
                 signInAndUp,
                 signOut,
                 verifyAndGetStateOrThrowError,
@@ -74,16 +69,7 @@ describe("Exports", function () {
             } = require("../../recipe/thirdparty/prebuiltui");
 
             assert(init !== undefined && _default.init !== undefined);
-            assert(
-                generateStateToSendToOAuthProvider !== undefined &&
-                    _default.generateStateToSendToOAuthProvider !== undefined
-            );
-            assert(getAuthCodeFromURL !== undefined && _default.getAuthCodeFromURL !== undefined);
-            assert(getAuthErrorFromURL !== undefined && _default.getAuthErrorFromURL !== undefined);
-            assert(getAuthStateFromURL !== undefined && _default.getAuthStateFromURL !== undefined);
-            assert(
-                getAuthorisationURLFromBackend !== undefined && _default.getAuthorisationURLFromBackend !== undefined
-            );
+
             assert(
                 getAuthorisationURLWithQueryParamsAndSetState !== undefined &&
                     _default.getAuthorisationURLWithQueryParamsAndSetState !== undefined
@@ -91,10 +77,8 @@ describe("Exports", function () {
             assert(
                 getStateAndOtherInfoFromStorage !== undefined && _default.getStateAndOtherInfoFromStorage !== undefined
             );
-            assert(setStateAndOtherInfoToStorage !== undefined && _default.setStateAndOtherInfoToStorage !== undefined);
             assert(signInAndUp !== undefined && _default.signInAndUp !== undefined);
             assert(signOut !== undefined && _default.signOut !== undefined);
-            assert(verifyAndGetStateOrThrowError !== undefined && _default.verifyAndGetStateOrThrowError !== undefined);
 
             assert(redirectToThirdPartyLogin !== undefined && _default.redirectToThirdPartyLogin !== undefined);
             assert(Facebook !== undefined && _default.Facebook !== undefined);
@@ -116,20 +100,13 @@ describe("Exports", function () {
                 doesEmailExist,
                 emailPasswordSignIn,
                 emailPasswordSignUp,
-                generateStateToSendToOAuthProvider,
-                getAuthCodeFromURL,
-                getAuthErrorFromURL,
-                getAuthStateFromURL,
-                getAuthorisationURLFromBackend,
                 getAuthorisationURLWithQueryParamsAndSetState,
                 getResetPasswordTokenFromURL,
                 getStateAndOtherInfoFromStorage,
                 sendPasswordResetEmail,
-                setStateAndOtherInfoToStorage,
                 signOut,
                 submitNewPassword,
                 thirdPartySignInAndUp,
-                verifyAndGetStateOrThrowError,
                 redirectToThirdPartyLogin,
                 Apple,
                 Facebook,
@@ -150,16 +127,7 @@ describe("Exports", function () {
             assert(doesEmailExist !== undefined && _default.doesEmailExist !== undefined);
             assert(emailPasswordSignIn !== undefined && _default.emailPasswordSignIn !== undefined);
             assert(emailPasswordSignUp !== undefined && _default.emailPasswordSignUp !== undefined);
-            assert(
-                generateStateToSendToOAuthProvider !== undefined &&
-                    _default.generateStateToSendToOAuthProvider !== undefined
-            );
-            assert(getAuthCodeFromURL !== undefined && _default.getAuthCodeFromURL !== undefined);
-            assert(getAuthErrorFromURL !== undefined && _default.getAuthErrorFromURL !== undefined);
-            assert(getAuthStateFromURL !== undefined && _default.getAuthStateFromURL !== undefined);
-            assert(
-                getAuthorisationURLFromBackend !== undefined && _default.getAuthorisationURLFromBackend !== undefined
-            );
+
             assert(
                 getAuthorisationURLWithQueryParamsAndSetState !== undefined &&
                     _default.getAuthorisationURLWithQueryParamsAndSetState !== undefined
@@ -169,11 +137,9 @@ describe("Exports", function () {
                 getStateAndOtherInfoFromStorage !== undefined && _default.getStateAndOtherInfoFromStorage !== undefined
             );
             assert(sendPasswordResetEmail !== undefined && _default.sendPasswordResetEmail !== undefined);
-            assert(setStateAndOtherInfoToStorage !== undefined && _default.setStateAndOtherInfoToStorage !== undefined);
             assert(signOut !== undefined && _default.signOut !== undefined);
             assert(submitNewPassword !== undefined && _default.submitNewPassword !== undefined);
             assert(thirdPartySignInAndUp !== undefined && _default.thirdPartySignInAndUp !== undefined);
-            assert(verifyAndGetStateOrThrowError !== undefined && _default.verifyAndGetStateOrThrowError !== undefined);
 
             assert(redirectToThirdPartyLogin !== undefined && _default.redirectToThirdPartyLogin !== undefined);
             assert(Apple !== undefined && _default.Apple !== undefined);
@@ -247,22 +213,14 @@ describe("Exports", function () {
                 createPasswordlessCode,
                 doesPasswordlessUserEmailExist,
                 doesPasswordlessUserPhoneNumberExist,
-                generateThirdPartyStateToSendToOAuthProvider,
-                getAuthorisationURLFromBackend,
                 getPasswordlessLinkCodeFromURL,
                 getPasswordlessLoginAttemptInfo,
                 getPasswordlessPreAuthSessionIdFromURL,
-                getThirdPartyAuthCodeFromURL,
-                getThirdPartyAuthErrorFromURL,
-                getThirdPartyAuthStateFromURL,
                 getThirdPartyAuthorisationURLWithQueryParamsAndSetState,
-                getThirdPartyStateAndOtherInfoFromStorage,
                 resendPasswordlessCode,
                 setPasswordlessLoginAttemptInfo,
-                setThirdPartyStateAndOtherInfoToStorage,
                 signOut,
                 thirdPartySignInAndUp,
-                verifyAndGetThirdPartyStateOrThrowError,
                 redirectToThirdPartyLogin,
                 Apple,
                 Facebook,
@@ -292,13 +250,6 @@ describe("Exports", function () {
                     _default.doesPasswordlessUserPhoneNumberExist !== undefined
             );
             assert(
-                generateThirdPartyStateToSendToOAuthProvider !== undefined &&
-                    _default.generateThirdPartyStateToSendToOAuthProvider !== undefined
-            );
-            assert(
-                getAuthorisationURLFromBackend !== undefined && _default.getAuthorisationURLFromBackend !== undefined
-            );
-            assert(
                 getPasswordlessLinkCodeFromURL !== undefined && _default.getPasswordlessLinkCodeFromURL !== undefined
             );
             assert(
@@ -308,31 +259,16 @@ describe("Exports", function () {
                 getPasswordlessPreAuthSessionIdFromURL !== undefined &&
                     _default.getPasswordlessPreAuthSessionIdFromURL !== undefined
             );
-            assert(getThirdPartyAuthCodeFromURL !== undefined && _default.getThirdPartyAuthCodeFromURL !== undefined);
-            assert(getThirdPartyAuthErrorFromURL !== undefined && _default.getThirdPartyAuthErrorFromURL !== undefined);
-            assert(getThirdPartyAuthStateFromURL !== undefined && _default.getThirdPartyAuthStateFromURL !== undefined);
             assert(
                 getThirdPartyAuthorisationURLWithQueryParamsAndSetState !== undefined &&
                     _default.getThirdPartyAuthorisationURLWithQueryParamsAndSetState !== undefined
-            );
-            assert(
-                getThirdPartyStateAndOtherInfoFromStorage !== undefined &&
-                    _default.getThirdPartyStateAndOtherInfoFromStorage !== undefined
             );
             assert(resendPasswordlessCode !== undefined && _default.resendPasswordlessCode !== undefined);
             assert(
                 setPasswordlessLoginAttemptInfo !== undefined && _default.setPasswordlessLoginAttemptInfo !== undefined
             );
-            assert(
-                setThirdPartyStateAndOtherInfoToStorage !== undefined &&
-                    _default.setThirdPartyStateAndOtherInfoToStorage !== undefined
-            );
             assert(signOut !== undefined && _default.signOut !== undefined);
             assert(thirdPartySignInAndUp !== undefined && _default.thirdPartySignInAndUp !== undefined);
-            assert(
-                verifyAndGetThirdPartyStateOrThrowError !== undefined &&
-                    _default.verifyAndGetThirdPartyStateOrThrowError !== undefined
-            );
 
             assert(redirectToThirdPartyLogin !== undefined && _default.redirectToThirdPartyLogin !== undefined);
             assert(Apple !== undefined && _default.Apple !== undefined);

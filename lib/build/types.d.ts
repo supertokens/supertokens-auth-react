@@ -1,4 +1,4 @@
-import type RecipeModule from "./recipe/recipeModule";
+import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 import type { ComponentClass, PropsWithChildren } from "react";
@@ -46,7 +46,7 @@ export declare type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "sign
 export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
     appInfo: NormalisedAppInfo,
     enableDebugLogs: boolean
-) => RecipeModule<T, S, R, N>;
+) => BaseRecipeModule<T, S, R, N>;
 export declare type AppInfoUserInput = {
     appName: string;
     apiDomain: string;

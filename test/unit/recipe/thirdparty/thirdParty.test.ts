@@ -299,7 +299,7 @@ describe("ThirdParty", function () {
             },
         }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.deepStrictEqual(
-            (ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0] as any).buttonComponent,
+            ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0].buttonComponent,
             CustomGoogle
         );
         assert.deepStrictEqual(
@@ -357,7 +357,7 @@ describe("ThirdParty", function () {
                             return oI.getAuthorisationURLWithQueryParamsAndSetState(input);
                         },
                         generateStateToSendToOAuthProvider: function (input) {
-                            assert(input.userContext["key"] !== undefined);
+                            assert(input?.userContext["key"] !== undefined);
                             /**
                              * generateStateToSendToOAuthProvider internally uses crypto,
                              * which is not defined for mocha and jest
@@ -384,7 +384,7 @@ describe("ThirdParty", function () {
             },
         });
         authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
-        webJS(SuperTokens.getInstanceOrThrow().appInfo, false);
+        webJS(SuperTokens.getInstanceOrThrow().appInfo, undefined, false);
 
         try {
             await ThirdPartyIndex.redirectToThirdPartyLogin({
@@ -422,21 +422,13 @@ describe("ThirdParty", function () {
                             assert(input.userContext["key"] !== undefined);
                             return {} as any;
                         },
-                        getAuthCodeFromURL: function (input) {
-                            assert(input.userContext["key"] !== undefined);
-                            return "";
-                        },
-                        getAuthErrorFromURL: function (input) {
-                            assert(input.userContext["key"] !== undefined);
-                            throw new Error("Expected Test Error");
-                        },
                     };
                 },
             },
         });
 
         authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
-        webJS(SuperTokens.getInstanceOrThrow().appInfo, false);
+        webJS(SuperTokens.getInstanceOrThrow().appInfo, undefined, false);
 
         try {
             await ThirdPartyIndex.signInAndUp({

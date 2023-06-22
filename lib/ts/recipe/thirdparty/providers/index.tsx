@@ -44,6 +44,7 @@ export default abstract class Provider {
         this.id = config.id;
         this.name = config.name;
         this.clientId = config.clientId;
+        this.buttonComponent = config.buttonComponent;
         this.getFrontendRedirectURI =
             config.getFrontendRedirectURI !== undefined
                 ? config.getFrontendRedirectURI

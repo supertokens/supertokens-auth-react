@@ -18,7 +18,7 @@ export abstract class RecipeRouter {
         const path = normalisedUrl.getAsStringDangerous();
 
         const routeComponents = preBuiltUIList.reduce((components, c) => {
-            const routes = c.getPathsToFeatureComponentWithRecipeIdMap?.()[path];
+            const routes = c.getPathsToFeatureComponentWithRecipeIdMap()[path];
             return routes !== undefined ? components.concat(routes) : components;
         }, [] as ComponentWithRecipeAndMatchingMethod[]);
 

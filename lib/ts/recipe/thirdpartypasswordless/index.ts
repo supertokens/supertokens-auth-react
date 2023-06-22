@@ -15,7 +15,6 @@
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 
 import { getNormalisedUserContext } from "../../utils";
-import * as PasswordlessUtilFunctions from "../passwordless/utils";
 import {
     Apple,
     Google,
@@ -118,17 +117,9 @@ export default class Wrapper {
         flowType: PasswordlessFlowType;
         fetchResponse: Response;
     }> {
-        const recipe: ThirdPartyPasswordless = ThirdPartyPasswordless.getInstanceOrThrow();
-
-        if (recipe.passwordlessRecipe === undefined) {
-            throw new Error(
-                "createCode requires the passwordless recipe to be enabled. Please check the value of disablePasswordless in the configuration."
-            );
-        }
-
-        return PasswordlessUtilFunctions.createCode({
+        return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.createPasswordlessCode({
             ...input,
-            recipeImplementation: recipe.passwordlessRecipe.webJSRecipe,
+            userContext: getNormalisedUserContext(input.userContext),
         });
     }
 
@@ -136,17 +127,9 @@ export default class Wrapper {
         status: "OK" | "RESTART_FLOW_ERROR";
         fetchResponse: Response;
     }> {
-        const recipe: ThirdPartyPasswordless = ThirdPartyPasswordless.getInstanceOrThrow();
-
-        if (recipe.passwordlessRecipe === undefined) {
-            throw new Error(
-                "createCode requires the passwordless recipe to be enabled. Please check the value of disablePasswordless in the configuration."
-            );
-        }
-
-        return PasswordlessUtilFunctions.resendCode({
+        return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.resendPasswordlessCode({
             ...input,
-            recipeImplementation: recipe.passwordlessRecipe.webJSRecipe,
+            userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
@@ -176,17 +159,9 @@ export default class Wrapper {
           }
         | { status: "RESTART_FLOW_ERROR"; fetchResponse: Response }
     > {
-        const recipe: ThirdPartyPasswordless = ThirdPartyPasswordless.getInstanceOrThrow();
-
-        if (recipe.passwordlessRecipe === undefined) {
-            throw new Error(
-                "createCode requires the passwordless recipe to be enabled. Please check the value of disablePasswordless in the configuration."
-            );
-        }
-
-        return PasswordlessUtilFunctions.consumeCode({
+        return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.consumePasswordlessCode({
             ...input,
-            recipeImplementation: recipe.passwordlessRecipe.webJSRecipe,
+            userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 

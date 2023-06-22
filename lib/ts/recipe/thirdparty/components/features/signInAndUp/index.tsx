@@ -23,7 +23,7 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { getQueryParams } from "../../../../../utils";
 import Multitenancy from "../../../../multitenancy/recipe";
-import { mergeProviders } from "../../../../multitenancy/utils";
+import { mergeProviders } from "../../../utils";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 
@@ -87,7 +87,10 @@ export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChi
         }
 
         return {
-            providers: recipe.config.signInAndUpFeature.providers,
+            providers: mergeProviders({
+                tenantProviders: Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods()?.thirdparty.providers,
+                clientProviders: recipe.config.signInAndUpFeature.providers,
+            }),
             recipeImplementation,
             config: recipe.config,
             recipe,

@@ -28,13 +28,12 @@ import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "
 import Session from "../../../../session";
 import SessionRecipe from "../../../../session/recipe";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
-import { getLoginAttemptInfo, setLoginAttemptInfo } from "../../../utils";
 import SignInUpThemeWrapper from "../../themes/signInUp";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
 import type { FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
-import type { ComponentOverrideMap } from "../../../types";
+import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap } from "../../../types";
 import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps, NormalisedConfig } from "../../../types";
 import type { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
 
@@ -164,8 +163,7 @@ export const useFeatureReducer = (
                     error = messageQueryParam;
                 }
             }
-            const loginAttemptInfo = await getLoginAttemptInfo({
-                recipeImplementation: recipeImpl!,
+            const loginAttemptInfo = await recipeImpl?.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
                 userContext,
             });
             // No need to check if the component is unmounting, since this has no effect then.
@@ -315,8 +313,7 @@ function getModifiedRecipeImplementation(
                 userContext: { ...input.userContext, additionalAttemptInfo },
             });
             if (res.status === "OK") {
-                const loginAttemptInfo = (await getLoginAttemptInfo({
-                    recipeImplementation: originalImpl,
+                const loginAttemptInfo = (await originalImpl.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
                     userContext: input.userContext,
                 }))!;
                 dispatch({ type: "startLogin", loginAttemptInfo });
@@ -331,17 +328,14 @@ function getModifiedRecipeImplementation(
             const res = await originalImpl.resendCode(input);
 
             if (res.status === "OK") {
-                const loginAttemptInfo = await getLoginAttemptInfo({
-                    recipeImplementation: originalImpl,
+                const loginAttemptInfo = await originalImpl.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
                     userContext: input.userContext,
                 });
-                // If it was cleared or overwritten we don't want to save this.
-                // TODO: extend session checker to check for this case as well
-                if (loginAttemptInfo !== undefined && loginAttemptInfo.deviceId === input.deviceId) {
+
+                if (loginAttemptInfo !== undefined) {
                     const timestamp = Date.now();
 
-                    await setLoginAttemptInfo({
-                        recipeImplementation: originalImpl,
+                    await originalImpl.setLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
                         userContext: input.userContext,
                         attemptInfo: {
                             ...loginAttemptInfo,

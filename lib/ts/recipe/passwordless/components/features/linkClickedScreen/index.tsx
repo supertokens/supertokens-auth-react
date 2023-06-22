@@ -25,14 +25,13 @@ import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, getURLHash, useOnMountAPICall } from "../../../../../utils";
 import Session from "../../../../session/recipe";
-import { getLoginAttemptInfo } from "../../../utils";
 import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
 import type { Awaited } from "../../../../../types";
 import type { FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
-import type { ComponentOverrideMap } from "../../../types";
+import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap } from "../../../types";
 
 type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap };
 
@@ -88,10 +87,10 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
             }
 
             if (response.status === "OK") {
-                const loginAttemptInfo = await getLoginAttemptInfo({
-                    recipeImplementation: props.recipe.webJSRecipe,
-                    userContext,
-                });
+                const loginAttemptInfo =
+                    await props.recipe.webJSRecipe.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
+                        userContext,
+                    });
                 await props.recipe.webJSRecipe.clearLoginAttemptInfo({
                     userContext,
                 });

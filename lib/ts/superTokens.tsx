@@ -39,6 +39,7 @@ import {
 } from "./utils";
 
 import type RecipeModule from "./recipe/recipeModule";
+import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 import type { GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } from "./types";
@@ -66,7 +67,7 @@ export default class SuperTokens {
         translationEventSource: TranslationController;
         userTranslationFunc?: TranslationFunc;
     };
-    recipeList: RecipeModule<any, any, any, any>[] = [];
+    recipeList: BaseRecipeModule<any, any, any, any>[] = [];
     private userGetRedirectionURL: SuperTokensConfig["getRedirectionURL"];
     /*
      * Constructor.
@@ -203,25 +204,7 @@ export default class SuperTokens {
     };
 
     redirectToUrl = async (redirectUrl: string, history?: any): Promise<void> => {
-        try {
-            new URL(redirectUrl); // If full URL, no error thrown, skip in app redirection.
-        } catch (e) {
-            // For multi tenancy, If mismatch between websiteDomain and current location, prepend URL relative path with websiteDomain.
-            const origin = getOriginOfPage().getAsStringDangerous();
-            if (origin !== this.appInfo.websiteDomain.getAsStringDangerous()) {
-                redirectUrl = `${this.appInfo.websiteDomain.getAsStringDangerous()}${redirectUrl}`;
-                redirectWithFullPageReload(redirectUrl);
-                return;
-            }
-
-            // If history was provided, use to redirect without reloading.
-            if (history !== undefined) {
-                redirectWithHistory(redirectUrl, history);
-                return;
-            }
-        }
-        // Otherwise, redirect in app.
-        redirectWithFullPageReload(redirectUrl);
+        doRedirection(this.appInfo, redirectUrl, history);
     };
 
     /*
@@ -235,4 +218,26 @@ export default class SuperTokens {
         SuperTokens.instance = undefined;
         return;
     }
+}
+
+export function doRedirection(appInfo: NormalisedAppInfo, redirectUrl: string, history?: any) {
+    try {
+        new URL(redirectUrl); // If full URL, no error thrown, skip in app redirection.
+    } catch (e) {
+        // For multi tenancy, If mismatch between websiteDomain and current location, prepend URL relative path with websiteDomain.
+        const origin = getOriginOfPage().getAsStringDangerous();
+        if (origin !== appInfo.websiteDomain.getAsStringDangerous()) {
+            redirectUrl = `${appInfo.websiteDomain.getAsStringDangerous()}${redirectUrl}`;
+            redirectWithFullPageReload(redirectUrl);
+            return;
+        }
+
+        // If history was provided, use to redirect without reloading.
+        if (history !== undefined) {
+            redirectWithHistory(redirectUrl, history);
+            return;
+        }
+    }
+    // Otherwise, redirect in app.
+    redirectWithFullPageReload(redirectUrl);
 }

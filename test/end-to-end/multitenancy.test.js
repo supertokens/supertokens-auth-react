@@ -71,7 +71,7 @@ describe("SuperTokens Multitenancy", function () {
     before(async () => {
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-web-security"],
-            headless: false,
+            headless: true,
         });
     });
 

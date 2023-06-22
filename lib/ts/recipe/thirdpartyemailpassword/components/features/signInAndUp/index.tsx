@@ -24,8 +24,6 @@ import {
     useChildProps as useEmailPasswordChildProps,
     useFeatureReducer as useEmailPasswordFeatureReducer,
 } from "../../../../emailpassword/components/features/signInAndUp";
-import Multitenancy from "../../../../multitenancy/recipe";
-import { mergeProviders } from "../../../../multitenancy/utils";
 import {
     useChildProps as useThirdPartyChildProps,
     useFeatureReducer as useThirdPartyFeatureReducer,
@@ -79,7 +77,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         },
         [tpDispatch, dispatch]
     );
-    const tpChildProps = useThirdPartyChildProps(props.recipe.thirdPartyRecipe)!;
+    const tpChildProps = useThirdPartyChildProps(props.recipe.thirdPartyRecipe);
 
     const combinedEPDispatch = React.useCallback<typeof epDispatch>(
         (action) => {
@@ -93,7 +91,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         epState,
         combinedEPDispatch,
         props.history
-    )!;
+    );
 
     const childProps = {
         emailPasswordRecipe: props.recipe.emailPasswordRecipe,
@@ -109,20 +107,10 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         epChildProps,
     };
 
-    const providers = React.useMemo(
-        () =>
-            mergeProviders({
-                tenantProviders: Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods()?.thirdparty.providers,
-                clientProviders: tpChildProps.providers,
-            }),
-        [tpChildProps.providers]
-    );
-    const themeProps = { ...childProps, tpChildProps: { ...tpChildProps, providers } };
-
     return (
         <Fragment>
             {/* No custom theme, use default. */}
-            {props.children === undefined && <SignInAndUpTheme {...themeProps} />}
+            {props.children === undefined && <SignInAndUpTheme {...childProps} />}
             {/* Otherwise, custom theme is provided, propagate props. */}
             {props.children &&
                 React.Children.map(props.children, (child) => {
