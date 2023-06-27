@@ -3,12 +3,12 @@ import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 import type { UserInput, NormalisedConfig, GetLoginMethodsResponseNormalized } from "./types";
 import type { BaseRecipeModule } from "../recipeModule/baseRecipeModule";
 
-export function normaliseMultitenancyConfig(config: UserInput): NormalisedConfig {
+export function normaliseMultitenancyConfig(config?: UserInput): NormalisedConfig {
     return {
         ...normaliseRecipeModuleConfig(config),
         override: {
             functions: (originalImplementation) => originalImplementation,
-            ...config.override,
+            ...config?.override,
         },
     };
 }

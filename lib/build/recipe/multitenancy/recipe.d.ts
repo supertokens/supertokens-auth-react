@@ -18,7 +18,7 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
     static getDynamicLoginMethods(
         ...options: Parameters<typeof MultitenancyWebJS.getLoginMethods>
     ): Promise<GetLoginMethodsResponseNormalized>;
-    static init(config: UserInput): RecipeInitResult<any, any, any, any>;
+    static init(config?: UserInput): RecipeInitResult<any, any, any, any>;
     static getInstanceOrThrow(): Multitenancy;
     static reset(): void;
 }

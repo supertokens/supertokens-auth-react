@@ -9,6 +9,7 @@ import EmailPassword, {
     PreAPIHookContext as EmailPasswordPreAPIHookContext,
 } from "../../../recipe/emailpassword";
 import Session, { SessionAuth } from "../../../recipe/session";
+import Multitenancy, { AllowedDomainsClaim } from "../../../recipe/multitenancy";
 import ThirdParty, {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
     OnHandleEventContext as ThirdPartyOnHandleEventContext,
@@ -168,6 +169,10 @@ function App() {
                                                             "delete_user",
                                                             "delete_post",
                                                         ]),
+                                                        AllowedDomainsClaim.validators.hasAccessToCurrentDomain(),
+                                                        Multitenancy.AllowedDomainsClaim.validators.includes(
+                                                            "asdf.com"
+                                                        ),
                                                     ]}
                                                     accessDeniedScreen={({ validationError }) => (
                                                         <div>{JSON.stringify(validationError)}</div>
@@ -834,7 +839,6 @@ ThirdParty.getAuthorisationURLFromBackend();
 
 ThirdParty.getAuthorisationURLWithQueryParamsAndSetState({
     thirdPartyId: "",
-    tenantId: undefined,
     frontendRedirectURI: "",
     redirectURIOnProviderDashboard: undefined,
     userContext: undefined,
@@ -916,7 +920,6 @@ ThirdPartyEmailPassword.getAuthorisationURLFromBackend();
 
 ThirdPartyEmailPassword.getAuthorisationURLWithQueryParamsAndSetState({
     thirdPartyId: "",
-    tenantId: undefined,
     frontendRedirectURI: "",
     redirectURIOnProviderDashboard: undefined,
     userContext: undefined,
@@ -1058,7 +1061,6 @@ ThirdPartyPasswordless.getPasswordlessPreAuthSessionIdFromURL();
 
 ThirdPartyPasswordless.getThirdPartyAuthorisationURLWithQueryParamsAndSetState({
     thirdPartyId: "",
-    tenantId: undefined,
     frontendRedirectURI: "",
     redirectURIOnProviderDashboard: undefined,
     userContext: undefined,
@@ -1068,7 +1070,6 @@ ThirdPartyPasswordless.getThirdPartyAuthorisationURLWithQueryParamsAndSetState({
 });
 ThirdPartyPasswordless.getThirdPartyAuthorisationURLWithQueryParamsAndSetState({
     thirdPartyId: "",
-    tenantId: undefined,
     frontendRedirectURI: "",
     redirectURIOnProviderDashboard: undefined,
     userContext: undefined,
@@ -1227,3 +1228,14 @@ const AdminRoute: React.FC = (props) => {
 EmailVerification.init();
 EmailVerification.init(undefined);
 EmailVerification.init({});
+
+Multitenancy.init();
+
+Multitenancy.init({
+    override: {
+        functions: (oI) => ({
+            ...oI,
+            getTenantId: () => "sub-tenant-1",
+        }),
+    },
+});

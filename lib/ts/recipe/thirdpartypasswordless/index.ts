@@ -92,7 +92,6 @@ export default class Wrapper {
 
     static async getThirdPartyAuthorisationURLWithQueryParamsAndSetState(input: {
         thirdPartyId: string;
-        tenantId?: string | undefined;
         frontendRedirectURI: string;
         redirectURIOnProviderDashboard?: string;
         userContext?: any;

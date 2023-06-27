@@ -13,17 +13,21 @@
  * under the License.
  */
 
-import { RecipeInterface } from "supertokens-web-js/recipe/multitenancy";
+import { AllowedDomainsClaim } from "supertokens-web-js/recipe/multitenancy";
 
 import Multitenancy from "./recipe";
 import { UserInput } from "./types";
 
+import type { RecipeInterface } from "supertokens-web-js/recipe/multitenancy";
+
 export default class Wrapper {
-    static init(config: UserInput) {
+    static init(config?: UserInput) {
         return Multitenancy.init(config);
     }
+
+    static AllowedDomainsClaim = AllowedDomainsClaim;
 }
 
 const init = Wrapper.init;
 
-export { init, UserInput, RecipeInterface };
+export { init, UserInput, RecipeInterface, AllowedDomainsClaim };

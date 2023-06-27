@@ -88,7 +88,7 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
         return instance.dynamicLoginMethods;
     }
 
-    static init(config: UserInput): RecipeInitResult<any, any, any, any> {
+    static init(config?: UserInput): RecipeInitResult<any, any, any, any> {
         const normalisedConfig = normaliseMultitenancyConfig(config);
         return {
             recipeID: Multitenancy.RECIPE_ID,

@@ -33,7 +33,6 @@ export default class Wrapper {
     }): (StateObject & CustomStateProperties) | undefined;
     static getAuthorisationURLWithQueryParamsAndSetState(input: {
         thirdPartyId: string;
-        tenantId?: string;
         frontendRedirectURI: string;
         redirectURIOnProviderDashboard?: string;
         userContext?: any;
