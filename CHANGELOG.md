@@ -11,7 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Added Active Directory, Okta, Linked In, Boxy SAML providers
 -   Added name prop to buttonComponent
--   Added thirdparty login with popup window example
+-   Added thirdparty login with popup window
+
+### Changes
+
+-   Improved typing of `getClaimValue`
 
 ## [0.33.1] - 2023-06-08
 

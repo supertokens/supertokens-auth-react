@@ -50,7 +50,7 @@ export default class SessionAPIWrapper {
             | Response;
         userContext: any;
     }): Promise<ClaimValidationError[]>;
-    static getClaimValue(input: { claim: SessionClaim<unknown>; userContext?: any }): Promise<unknown>;
+    static getClaimValue<T>(input: { claim: SessionClaim<T>; userContext?: any }): Promise<T | undefined>;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;

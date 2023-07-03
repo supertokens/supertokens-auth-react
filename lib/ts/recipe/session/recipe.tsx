@@ -56,7 +56,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         return this.webJSRecipe.getAccessToken(input);
     };
 
-    getClaimValue = (input: { claim: SessionClaim<unknown>; userContext: any }): Promise<unknown> => {
+    getClaimValue = <T extends unknown>(input: {
+        claim: SessionClaim<T>;
+        userContext: any;
+    }): Promise<T | undefined> => {
         return this.webJSRecipe.getClaimValue(input);
     };
 
