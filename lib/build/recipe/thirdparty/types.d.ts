@@ -80,7 +80,7 @@ export declare type SignInAndUpThemeProps = {
         error: string | undefined;
     };
     dispatch: (action: ThirdPartySignInUpActions) => void;
-    providers: Pick<Provider, "id" | "buttonComponent" | "getButton">[];
+    providers: Pick<Provider, "id" | "getButton">[];
     recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;
     config: NormalisedConfig;
 };

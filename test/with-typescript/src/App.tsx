@@ -316,6 +316,9 @@ function getRecipeList() {
                         validateClaims: (input) => {
                             return oI.validateClaims(input);
                         },
+                        shouldDoInterceptionBasedOnUrl: (...input) => {
+                            return oI.shouldDoInterceptionBasedOnUrl(...input);
+                        },
                     };
                 },
             },
@@ -425,13 +428,15 @@ function getThirdPartyConfigs() {
             providers: [
                 ThirdParty.Github.init(),
                 ThirdParty.Google.init({
-                    clientId: "some client ID",
+                    id: "some client ID",
+                    buttonComponent: ({ name }) => <span>ASDF {name}</span>,
                 }),
                 ThirdParty.Facebook.init(),
                 ThirdParty.Apple.init(),
                 {
                     id: "custom",
                     name: "Custom",
+                    buttonComponent: <span>ASDF Custom</span>,
                 },
             ],
         },

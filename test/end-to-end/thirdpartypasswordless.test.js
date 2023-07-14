@@ -222,7 +222,7 @@ describe("SuperTokens Third Party Passwordless", function () {
         });
     });
 
-    describe.skip("Passwordless specific", function () {
+    describe("Passwordless specific", function () {
         getPasswordlessTestCases({
             authRecipe: "thirdpartypasswordless",
             logId: "THIRDPARTYPASSWORDLESS",

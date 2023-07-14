@@ -182,15 +182,22 @@ let recipeList = [
         override: {
             functions: (oI) => ({
                 ...oI,
-                getLoginMethods: async (input) => {
-                    const resp = await oI.getLoginMethods(input);
+                getTenantId: (input) => {
+                    if (testContext.mockTenantId) {
+                        return {
+                            ...JSON.parse(testContext.mockTenantId),
+                        };
+                    }
+
+                    return oI.getTenantId(input);
+                },
+                getLoginMethods: (input) => {
                     if (testContext.mockLoginMethodsForDynamicLogin) {
                         return {
-                            ...resp,
                             ...JSON.parse(testContext.mockLoginMethodsForDynamicLogin),
                         };
                     }
-                    return resp;
+                    return oI.getLoginMethods(input);
                 },
             }),
         },
@@ -645,7 +652,7 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
         {
             id: "auth0",
             name: "Auth0",
-            getFrontendRedirectURI: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
         },
     ];
     if (staticProviderList) {
@@ -847,7 +854,7 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
         {
             id: "auth0",
             name: "Auth0",
-            getFrontendRedirectURI: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
         },
     ];
     if (staticProviderList) {
@@ -932,7 +939,7 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
         {
             id: "auth0",
             name: "Auth0",
-            getFrontendRedirectURI: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
         },
     ];
     if (staticProviderList) {

@@ -28,11 +28,24 @@ import {
     getProvidersLabels,
     getInputNames,
     assertNoSTComponents,
-    assertProviders,
     getProviderLogoCount,
+    getGeneralError,
+    getSignInOrSignUpSwitchLink,
+    setInputValues,
+    submitForm,
+    loginWithGoogle,
+    clearBrowserCookiesWithoutAffectingConsole,
+    clickOnProviderButton,
+    loginWithGithub,
+    loginWithAuth0,
 } from "../helpers";
-import { TEST_CLIENT_BASE_URL, DEFAULT_WEBSITE_BASE_PATH, LOGIN_METHODS_API, ST_ROOT_SELECTOR } from "../constants";
-import { before } from "mocha";
+import {
+    TEST_CLIENT_BASE_URL,
+    DEFAULT_WEBSITE_BASE_PATH,
+    ST_ROOT_SELECTOR,
+    TEST_SERVER_BASE_URL,
+    SIGN_IN_UP_API,
+} from "../constants";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -40,12 +53,20 @@ require("jsdom-global")();
 /*
  * Tests.
  */
-describe("SuperTokens Multitenancy", function () {
+describe("SuperTokens Multitenancy dynamic login methods", function () {
     let browser;
     let page;
     let pageCrashed;
 
     beforeEach(async function () {
+        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+            method: "POST",
+        }).catch(console.error);
+
+        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+            method: "POST",
+        }).catch(console.error);
+
         page = await browser.newPage();
         pageCrashed = false;
         page.on("console", (c) => {
@@ -62,6 +83,13 @@ describe("SuperTokens Multitenancy", function () {
     });
 
     afterEach(async function () {
+        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+            method: "POST",
+        }).catch(console.error);
+
+        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
+            method: "POST",
+        }).catch(console.error);
         await screenshotOnFailure(this, browser);
         if (page) {
             await page.close();
@@ -79,7 +107,7 @@ describe("SuperTokens Multitenancy", function () {
         await browser.close();
     });
 
-    it("Renders correct signup form with emailpassword only when list of providers is empty", async function () {
+    it("Renders correct signup form with emailpassword when core list of providers is empty", async function () {
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
             passwordless: { enabled: true },
@@ -92,7 +120,13 @@ describe("SuperTokens Multitenancy", function () {
             page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
             page.waitForNavigation({ waitUntil: "networkidle0" }),
         ]);
-        await assertProviders(page);
+        const providers = await getProvidersLabels(page);
+        compareArrayContents(providers, [
+            "Continue with Github",
+            "Continue with Google",
+            "Continue with Facebook",
+            "Continue with Auth0",
+        ]);
         const inputNames = await getInputNames(page);
         assert.deepStrictEqual(inputNames, ["email", "password"]);
     });
@@ -145,7 +179,7 @@ describe("SuperTokens Multitenancy", function () {
             page.waitForNavigation({ waitUntil: "networkidle0" }),
         ]);
         const providers = await getProvidersLabels(page);
-        assert.deepStrictEqual(providers, ["Continue with Apple"]);
+        compareArrayContents(providers, ["Continue with Apple"]);
     });
 
     it("should postpone render with no react-router-dom", async function () {
@@ -162,7 +196,7 @@ describe("SuperTokens Multitenancy", function () {
         assert.deepStrictEqual(superTokensComponent, null);
         await page.waitForTimeout(2000);
         const providers = await getProvidersLabels(page);
-        assert.deepStrictEqual(providers, ["Continue with Apple"]);
+        compareArrayContents(providers, ["Continue with Apple"]);
     });
 
     it("renders passwordless form only when enabled on the core", async function () {
@@ -208,7 +242,7 @@ describe("SuperTokens Multitenancy", function () {
         ]);
 
         const providers = await getProvidersLabels(page);
-        assert.deepStrictEqual(providers, ["Continue with Apple"]);
+        compareArrayContents(providers, ["Continue with Apple"]);
         await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]");
     });
 
@@ -236,7 +270,7 @@ describe("SuperTokens Multitenancy", function () {
         ]);
 
         const providers = await getProvidersLabels(page);
-        assert.deepStrictEqual(providers, ["Continue with Github", "Continue with Github-1"]);
+        compareArrayContents(providers, ["Continue with Github", "Continue with Github-1"]);
         assert.strictEqual(await getProviderLogoCount(page), 2);
     });
 
@@ -260,7 +294,8 @@ describe("SuperTokens Multitenancy", function () {
         ]);
 
         const providers = await getProvidersLabels(page);
-        assert.deepStrictEqual(providers, ["Continue with Test"]);
+
+        compareArrayContents(providers, ["Continue with Test"]);
         assert.strictEqual(await getProviderLogoCount(page), 0);
     });
 
@@ -288,10 +323,11 @@ describe("SuperTokens Multitenancy", function () {
         ]);
 
         const providers = await getProvidersLabels(page);
-        assert.deepStrictEqual(providers, ["Continue with Apple", "Continue with Google"]);
+        compareArrayContents(providers, ["Continue with Apple", "Continue with Google"]);
         assert.strictEqual(await getProviderLogoCount(page), 2);
     });
-    it("should show static providers if the list from core is empty", async function () {
+
+    it("should show BE static providers if the list from core is empty", async function () {
         await setStaticProviderList(page, ["google"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: false },
@@ -307,8 +343,13 @@ describe("SuperTokens Multitenancy", function () {
         ]);
 
         const providers = await getProvidersLabels(page);
-        assert.deepStrictEqual(providers, ["Continue with Google"]);
-        assert.strictEqual(await getProviderLogoCount(page), 1);
+        compareArrayContents(providers, [
+            "Continue with Github",
+            "Continue with Google",
+            "Continue with Facebook",
+            "Continue with Auth0",
+        ]);
+        assert.strictEqual(await getProviderLogoCount(page), 3);
     });
 
     it("should only show providers enabled on the core", async function () {
@@ -334,7 +375,7 @@ describe("SuperTokens Multitenancy", function () {
         ]);
 
         const providers = await getProvidersLabels(page);
-        assert.deepStrictEqual(providers, ["Continue with Apple", "Continue with Google"]);
+        compareArrayContents(providers, ["Continue with Apple", "Continue with Google"]);
         assert.strictEqual(await getProviderLogoCount(page), 2);
     });
 
@@ -361,7 +402,7 @@ describe("SuperTokens Multitenancy", function () {
         ]);
 
         const providers = await getProvidersLabels(page);
-        assert.deepStrictEqual(providers, ["Continue with Google", "Continue with Facebook"]);
+        compareArrayContents(providers, ["Continue with Google", "Continue with Facebook"]);
         assert.strictEqual(await getProviderLogoCount(page), 2);
     });
 
@@ -388,7 +429,7 @@ describe("SuperTokens Multitenancy", function () {
         ]);
 
         const providers = await getProvidersLabels(page);
-        assert.deepStrictEqual(providers, ["Continue with Google", "Continue with Facebook"]);
+        compareArrayContents(providers, ["Continue with Google", "Continue with Facebook"]);
         assert.strictEqual(await getProviderLogoCount(page), 2);
     });
 
@@ -563,7 +604,7 @@ describe("SuperTokens Multitenancy", function () {
         assert.deepStrictEqual(inputNames, ["email", "password"]);
     });
 
-    it("should should show thirdpartypasswordless if FE has tpep and ep and both emailpassword and thirdparty is enabled", async function () {
+    it("should should show thirdpartypasswordless if FE has tppwless and ep and both emailpassword and thirdparty is enabled", async function () {
         await setEnabledRecipes(page, ["thirdpartypasswordless", "emailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
@@ -618,14 +659,147 @@ describe("SuperTokens Multitenancy", function () {
         const inputNames = await getInputNames(page);
         assert.deepStrictEqual(inputNames, ["email", "password"]);
     });
-});
 
-function enableDynamicLoginMethods(page, mockLoginMethods) {
-    return page.evaluate((serializedLoginMethods) => {
-        window.localStorage.setItem("usesDynamicLoginMethods", "true");
-        window.localStorage.setItem("mockLoginMethodsForDynamicLogin", serializedLoginMethods);
-    }, JSON.stringify(mockLoginMethods));
-}
+    it("should should show thirdpartypwless if rid has FE has tpep and tppwless and all 3 enabled in core", async function () {
+        await setEnabledRecipes(page, ["thirdpartypasswordless", "thirdpartyemailpassword"]);
+        await enableDynamicLoginMethods(page, {
+            emailPassword: { enabled: true },
+            passwordless: { enabled: true },
+            thirdParty: {
+                enabled: true,
+                providers: [],
+            },
+        });
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=thirdpartypasswordless`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+
+        // Thirdparty
+        const providers = await getProvidersLabels(page);
+        assert.notStrictEqual(providers.length, 0);
+        assert.notStrictEqual(await getProviderLogoCount(page), 0);
+
+        // Divider
+        await waitForSTElement(page, `[data-supertokens~='thirdPartyEmailPasswordDivider']`, false);
+
+        // Emailpassword
+        const inputNames = await getInputNames(page);
+        assert.deepStrictEqual(inputNames, ["email", "password"]);
+    });
+
+    it("should should show something went wrong if logging in with disabled method", async function () {
+        await setEnabledRecipes(page, ["emailpassword"]);
+        await enableDynamicLoginMethods(page, {
+            emailPassword: { enabled: false },
+            passwordless: { enabled: true },
+            thirdParty: {
+                enabled: false,
+                providers: [],
+            },
+        });
+
+        await page.evaluate(() => {
+            window.localStorage.setItem("usesDynamicLoginMethods", "false");
+        });
+
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+
+        const link = await getSignInOrSignUpSwitchLink(page);
+        await link.click();
+
+        const email = `john.doe.${Date.now()}@supertokens.io`;
+
+        await setInputValues(page, [
+            { name: "email", value: email },
+            { name: "password", value: "Str0ngP@ssw0rd" },
+            { name: "name", value: "John Doe" },
+            { name: "age", value: "20" },
+            { name: "country", value: "" },
+        ]);
+
+        let [_, error] = await Promise.all([submitForm(page), getGeneralError(page)]);
+
+        assert.strictEqual(error, "Something went wrong. Please try again.");
+    });
+
+    it("should should show thirdparty if FE has tp and pwless and both emailpassword and thirdparty is enabled", async function () {
+        await setEnabledRecipes(page, ["thirdparty", "passwordless"]);
+        await enableDynamicLoginMethods(page, {
+            emailPassword: { enabled: true },
+            passwordless: { enabled: false },
+            thirdParty: {
+                enabled: true,
+                providers: [],
+            },
+        });
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+
+        // Thirdparty
+        const providers = await getProvidersLabels(page);
+        assert.notStrictEqual(providers.length, 0);
+        assert.notStrictEqual(await getProviderLogoCount(page), 0);
+
+        // Divider
+        await waitForSTElement(page, `[data-supertokens~='thirdPartyEmailPasswordDivider']`, true);
+
+        // Emailpassword
+        const inputNames = await getInputNames(page);
+        assert.deepStrictEqual(inputNames, []);
+    });
+
+    it("should should be able to log in with dynamically added tp providers", async function () {
+        await setEnabledRecipes(page, ["thirdparty"]);
+        await enableDynamicLoginMethods(page, {
+            emailPassword: { enabled: false },
+            passwordless: { enabled: false },
+            thirdParty: {
+                enabled: true,
+                providers: [
+                    { id: "apple", name: "Apple" },
+                    { id: "auth0", name: "Auth0" },
+                    { id: "auth0-1", name: "Auth0 CustomName" },
+                ],
+            },
+        });
+
+        await page.evaluate((TEST_CLIENT_BASE_URL) => {
+            localStorage.setItem("thirdPartyRedirectURL", `${TEST_CLIENT_BASE_URL}/auth/callback/auth0`);
+        }, TEST_CLIENT_BASE_URL);
+
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+
+        await clickOnProviderButton(page, "Auth0");
+        await Promise.all([
+            loginWithAuth0(page),
+            page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
+        ]);
+        await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+        await clearBrowserCookiesWithoutAffectingConsole(page, []);
+
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+
+        await clickOnProviderButton(page, "Auth0 CustomName");
+        await Promise.all([
+            loginWithAuth0(page),
+            page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
+        ]);
+        await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+        await clearBrowserCookiesWithoutAffectingConsole(page, []);
+    });
+});
 
 function setEnabledRecipes(page, recipeIds) {
     return page.evaluate((serializedRecipeIdList) => {
@@ -647,3 +821,125 @@ function clearDynamicLoginMethodsSettings(page) {
         window.localStorage.removeItem("staticProviderList");
     });
 }
+
+export async function enableDynamicLoginMethods(page, mockLoginMethods, tenantId = "public", app = "public") {
+    let coreResp = await fetch(`http://localhost:9000/appid-${app}/recipe/multitenancy/tenant`, {
+        method: "PUT",
+        headers: new Headers([
+            ["content-type", "application/json"],
+            ["rid", "multitenancy"],
+        ]),
+        body: JSON.stringify({
+            tenantId,
+            emailPasswordEnabled: mockLoginMethods.emailPassword?.enabled === true,
+            thirdPartyEnabled: mockLoginMethods.thirdParty?.enabled === true,
+            passwordlessEnabled: mockLoginMethods.passwordless?.enabled === true,
+            coreConfig: {},
+        }),
+    });
+    assert.strictEqual(coreResp.status, 200);
+
+    for (const provider of mockLoginMethods["thirdParty"]?.providers) {
+        coreResp = await fetch(`http://localhost:9000/appid-${app}/${tenantId}/recipe/multitenancy/config/thirdparty`, {
+            method: "PUT",
+            headers: new Headers([
+                ["content-type", "application/json"],
+                ["rid", "multitenancy"],
+            ]),
+            body: JSON.stringify({
+                skipValidation: true,
+                config: {
+                    ...providerConfigs[provider.id.split("-")[0]],
+                    thirdPartyId: provider.id,
+                    name: provider.name,
+                },
+            }),
+        });
+
+        assert.strictEqual(coreResp.status, 200);
+    }
+    coreResp = await fetch(`http://localhost:9000/appid-${app}/${tenantId}/recipe/multitenancy/tenant`, {
+        method: "GET",
+        headers: new Headers([
+            ["content-type", "application/json"],
+            ["rid", "multitenancy"],
+        ]),
+    });
+
+    return page.evaluate(() => {
+        window.localStorage.setItem("usesDynamicLoginMethods", "true");
+    });
+}
+
+/**
+ *
+ * @param {Array<string>} actual
+ * @param {Array<string>} expected
+ * @returns
+ */
+function compareArrayContents(actual, expected) {
+    return assert.deepStrictEqual(actual.sort(), expected.sort());
+}
+
+const providerConfigs = {
+    apple: {
+        clients: [
+            {
+                clientId: "4398792-io.supertokens.example.service",
+                additionalConfig: {
+                    keyId: "7M48Y4RYDL",
+                    privateKey:
+                        "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgu8gXs+XYkqXD6Ala9Sf/iJXzhbwcoG5dMh1OonpdJUmgCgYIKoZIzj0DAQehRANCAASfrvlFbFCYqn3I2zeknYXLwtH30JuOKestDbSfZYxZNMqhF/OzdZFTV0zc5u5s3eN+oCWbnvl0hM+9IW0UlkdA\n-----END PRIVATE KEY-----",
+                    teamId: "YWQCXGJRJL",
+                },
+            },
+        ],
+    },
+    github: {
+        clients: [
+            {
+                clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
+                clientId: "467101b197249757c71f",
+            },
+        ],
+    },
+    google: {
+        clients: [
+            {
+                clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
+                clientSecret: "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",
+            },
+        ],
+    },
+    auth0: {
+        // this contains info about forming the authorisation redirect URL without the state params and without the redirect_uri param
+        authorizationEndpoint: `https://${process.env.AUTH0_DOMAIN}/authorize`,
+        authorizationEndpointQueryParams: {
+            scope: "openid profile email email_verified",
+        },
+        jwksURI: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
+        tokenEndpoint: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
+        clients: [
+            {
+                clientId: process.env.AUTH0_CLIENT_ID,
+                clientSecret: process.env.AUTH0_CLIENT_SECRET,
+            },
+        ],
+        userInfoMap: {
+            fromIdTokenPayload: {
+                userId: "sub",
+                email: "email",
+                emailVerified: "email_verified",
+            },
+        },
+    },
+    test: {
+        // We add a client since it's required
+        clients: [
+            {
+                clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
+                clientSecret: "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",
+            },
+        ],
+    },
+};

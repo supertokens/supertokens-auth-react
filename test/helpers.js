@@ -529,7 +529,9 @@ export async function clickOnProviderButtonWithoutWaiting(page, provider) {
             Array.from(
                 document
                     .querySelector(ST_ROOT_SELECTOR)
-                    .shadowRoot.querySelectorAll("[data-supertokens~='providerButton']")
+                    .shadowRoot.querySelectorAll(
+                        "[data-supertokens~='providerButton'] [data-supertokens~='providerButtonText']"
+                    )
             )
                 .find((button) => {
                     return button.innerText === `Continue with ${provider}`;
@@ -643,6 +645,7 @@ export async function getSessionHandleWithAxios(page) {
 }
 
 export async function getUserIdWithFetch(page) {
+    await page.waitForSelector("#root > div > div.fill > div > div.fetch > ul > li.sessionInfo-user-id");
     return await page.evaluate(
         () => document.querySelector("#root > div > div.fill > div > div.fetch > ul > li.sessionInfo-user-id").innerText
     );

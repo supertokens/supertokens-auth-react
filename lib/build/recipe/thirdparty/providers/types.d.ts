@@ -2,11 +2,12 @@ import type { FC } from "react";
 export declare type ProviderConfig = {
     id: string;
     name: string;
-    clientId?: string;
-    getFrontendRedirectURI?: () => string;
+    getRedirectURL?: (id: string) => string;
     buttonComponent?: BuiltInProviderConfig["buttonComponent"];
 };
 export declare type BuiltInProviderConfig = {
+    id?: string;
+    name?: string;
     buttonComponent?:
         | FC<{
               name: string;
@@ -15,19 +16,18 @@ export declare type BuiltInProviderConfig = {
               new (props: { name: string }): React.Component<any, any>;
           }
         | JSX.Element;
-    clientId?: string;
-    getFrontendRedirectURI?: () => string;
+    getRedirectURL?: (id: string) => string;
 };
 export declare type CustomProviderConfig = {
     id: string;
     name: string;
-    clientId?: string;
     buttonComponent?:
         | FC<{
               name: string;
           }>
         | {
               new (props: { name: string }): React.Component<any, any>;
-          };
-    getRedirectURL?: () => string;
+          }
+        | JSX.Element;
+    getRedirectURL?: (id: string) => string;
 };

@@ -103,15 +103,8 @@ type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () =
 export const SignInAndUpFeature: React.FC<PropType> = (props) => {
     const [state, dispatch] = useFeatureReducer();
     const childProps = useChildProps(props.recipe);
-    const providers = useMemo(
-        () =>
-            mergeProviders({
-                tenantProviders: Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods()?.thirdparty.providers,
-                clientProviders: childProps.providers,
-            }),
-        [childProps.providers]
-    );
-    const themeProps = { ...childProps, providers };
+
+    const themeProps = { ...childProps, providers: childProps.providers };
 
     return (
         <Fragment>

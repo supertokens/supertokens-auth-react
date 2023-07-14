@@ -175,15 +175,21 @@ let recipeList = [
         override: {
             functions: (oI) => ({
                 ...oI,
-                getLoginMethods: async (input) => {
-                    const resp = {}; //await oI.getLoginMethods(input);
+                getTenantId: (input) => {
+                    if (testContext.mockTenantId) {
+                        return testContext.mockTenantId;
+                    }
+
+                    return oI.getTenantId(input);
+                },
+                getLoginMethods: (input) => {
                     if (testContext.mockLoginMethodsForDynamicLogin) {
                         return {
-                            ...resp,
                             ...JSON.parse(testContext.mockLoginMethodsForDynamicLogin),
                         };
                     }
-                    return resp;
+
+                    return oI.getLoginMethods(input);
                 },
             }),
         },
@@ -649,7 +655,7 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
         {
             id: "auth0",
             name: "Auth0",
-            getFrontendRedirectURI: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
         },
     ];
     if (staticProviderList) {
@@ -872,7 +878,17 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
         {
             id: "auth0",
             name: "Auth0",
-            getFrontendRedirectURI: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+            buttonComponent: ({ name }) => (
+                <button data-supertokens={`button providerButton`}>
+                    <div data-supertokens="providerButtonLeft">
+                        <div data-supertokens="providerButtonLogo">
+                            <div data-supertokens="providerButtonLogoCenter">!!!</div>
+                        </div>
+                    </div>
+                    <div data-supertokens="providerButtonText">Continue with {name}</div>
+                </button>
+            ),
         },
     ];
     if (staticProviderList) {
@@ -969,7 +985,7 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
         {
             id: "auth0",
             name: "Auth0",
-            getFrontendRedirectURI: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
         },
     ];
     if (staticProviderList) {

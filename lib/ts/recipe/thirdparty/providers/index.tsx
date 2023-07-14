@@ -18,51 +18,26 @@ import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import SuperTokens from "../../../superTokens";
 import ProviderButton from "../components/library/providerButton";
 
-import type { BuiltInProviderConfig, ProviderConfig } from "./types";
+import type { ProviderConfig } from "./types";
 
-/*
- * Imports.
- */
-
-/*
- * Class.
- */
 export default abstract class Provider {
-    /*
-     * Instance Attributes.
-     */
-    id: string;
-    name: string;
-    getFrontendRedirectURI: () => string;
-    clientId?: string;
-    buttonComponent?: BuiltInProviderConfig["buttonComponent"];
-    /*
-     * Constructor.
-     */
-
-    constructor(config: ProviderConfig) {
-        this.id = config.id;
-        this.name = config.name;
-        this.clientId = config.clientId;
-        this.buttonComponent = config.buttonComponent;
-        this.getFrontendRedirectURI =
-            config.getFrontendRedirectURI !== undefined
-                ? config.getFrontendRedirectURI
-                : () => this.defaultGetFrontendRedirectURI();
+    get id(): string {
+        return this.config.id;
     }
 
-    /*
-     * Components.
-     */
-
-    getDefaultButton(name?: string): JSX.Element {
-        const providerName = name !== undefined ? name : this.name;
-        return <ProviderButton logo={this.getLogo()} providerName={providerName} displayName={providerName} />;
+    get name(): string {
+        return this.config.name;
     }
 
-    defaultGetFrontendRedirectURI(): string {
+    constructor(public readonly config: ProviderConfig) {}
+
+    getRedirectURL(): string {
+        if (this.config.getRedirectURL) {
+            return this.config.getRedirectURL(this.config.id);
+        }
+
         const domain = SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();
-        const callbackPath = new NormalisedURLPath(`/callback/${this.id}`);
+        const callbackPath = new NormalisedURLPath(`/callback/${this.config.id}`);
         const path = SuperTokens.getInstanceOrThrow()
             .appInfo.websiteBasePath.appendPath(callbackPath)
             .getAsStringDangerous();
@@ -74,26 +49,16 @@ export default abstract class Provider {
     }
 
     getButton = (name?: string): JSX.Element => {
-        if (this.buttonComponent !== undefined) {
-            if (typeof this.buttonComponent === "function") {
-                return <this.buttonComponent name={name ?? this.name} />;
+        if (this.config.buttonComponent !== undefined) {
+            if (typeof this.config.buttonComponent === "function") {
+                return <this.config.buttonComponent name={name ?? this.name} />;
             }
-            return this.buttonComponent;
+            return this.config.buttonComponent;
         }
 
-        return this.getDefaultButton(name);
+        const providerName = name !== undefined ? name : this.name;
+        return <ProviderButton logo={this.getLogo()} providerName={providerName} displayName={providerName} />;
     };
 
     abstract getLogo(): JSX.Element | undefined;
-
-    /*
-     * State management.
-     */
-
-    generateState = (): string => {
-        // Generate state using algorithm described in https://github.com/supertokens/supertokens-auth-react/issues/154#issue-796867579
-        return `${1e20}`.replace(/[018]/g, (c) =>
-            (parseInt(c) ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (parseInt(c) / 4)))).toString(16)
-        );
-    };
 }

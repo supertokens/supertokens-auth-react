@@ -1,16 +1,12 @@
 /// <reference types="react" />
-import type { BuiltInProviderConfig, ProviderConfig } from "./types";
+import type { ProviderConfig } from "./types";
 export default abstract class Provider {
-    id: string;
-    name: string;
-    getFrontendRedirectURI: () => string;
-    clientId?: string;
-    buttonComponent?: BuiltInProviderConfig["buttonComponent"];
+    readonly config: ProviderConfig;
+    get id(): string;
+    get name(): string;
     constructor(config: ProviderConfig);
-    getDefaultButton(name?: string): JSX.Element;
-    defaultGetFrontendRedirectURI(): string;
+    getRedirectURL(): string;
     getRedirectURIOnProviderDashboard(): string | undefined;
     getButton: (name?: string) => JSX.Element;
     abstract getLogo(): JSX.Element | undefined;
-    generateState: () => string;
 }

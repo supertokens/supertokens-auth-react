@@ -422,6 +422,10 @@ describe("ThirdParty", function () {
                             assert(input.userContext["key"] !== undefined);
                             return {} as any;
                         },
+                        signInAndUp: function (input) {
+                            assert(input.userContext["key"] !== undefined);
+                            throw new Error("Expected Test Error");
+                        },
                     };
                 },
             },

@@ -31,5 +31,5 @@ export declare const mergeProviders: ({
               name: string;
           }[]
         | undefined;
-    clientProviders: Pick<Provider, "id" | "buttonComponent" | "getButton">[];
-}) => Pick<Provider, "id" | "getButton">[];
+    clientProviders: Provider[];
+}) => Pick<Provider, "id" | "getButton" | "getRedirectURL" | "getRedirectURIOnProviderDashboard" | "name">[];

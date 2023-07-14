@@ -19,6 +19,7 @@
 import SuperTokens from "../../superTokens";
 import { redirectWithFullPageReload } from "../../utils";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
+import Multitenancy from "../multitenancy/recipe";
 
 import Provider from "./providers";
 import ActiveDirectory from "./providers/activeDirectory";
@@ -136,14 +137,19 @@ export async function redirectToThirdPartyLogin(input: {
     userContext: any;
     recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;
 }): Promise<{ status: "OK" | "ERROR" }> {
-    const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
+    const providers = mergeProviders({
+        tenantProviders: Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods()?.thirdparty.providers,
+        clientProviders: input.config.signInAndUpFeature.providers,
+    });
+
+    const provider = providers.find((p) => p.id === input.thirdPartyId);
     if (provider === undefined) {
         return { status: "ERROR" };
     }
 
     const response = await input.recipeImplementation.getAuthorisationURLWithQueryParamsAndSetState({
         thirdPartyId: input.thirdPartyId,
-        frontendRedirectURI: provider.getFrontendRedirectURI(),
+        frontendRedirectURI: provider.getRedirectURL(),
         redirectURIOnProviderDashboard: provider.getRedirectURIOnProviderDashboard(),
         userContext: input.userContext,
     });
@@ -160,8 +166,8 @@ export const mergeProviders = ({
         id: string;
         name: string;
     }[];
-    clientProviders: Pick<Provider, "id" | "buttonComponent" | "getButton">[];
-}): Pick<Provider, "id" | "getButton">[] => {
+    clientProviders: Provider[];
+}): Pick<Provider, "id" | "getButton" | "getRedirectURL" | "getRedirectURIOnProviderDashboard" | "name">[] => {
     const builtInProvidersMap = {
         apple: Apple,
         google: Google,
@@ -184,13 +190,12 @@ export const mergeProviders = ({
     // If we are not using dynamic login methods or if there is no providers
     // from the core we use frontend initialized providers
     if (usesDynamicLoginMethods === false || tenantProviders.length === 0) {
-        return clientProviders.map((provider) => ({
-            id: provider.id,
-            buttonComponent: provider.getButton(),
-            getButton: provider.getButton,
-        }));
+        return clientProviders;
     }
-    const providers: Pick<Provider, "id" | "buttonComponent" | "getButton">[] = [];
+    const providers: Pick<
+        Provider,
+        "id" | "getButton" | "getRedirectURL" | "getRedirectURIOnProviderDashboard" | "name"
+    >[] = [];
 
     for (const tenantProvider of tenantProviders) {
         // try finding exact match
@@ -207,32 +212,30 @@ export const mergeProviders = ({
         }
         // means provider is initialized on the frontend and found
         if (provider !== undefined) {
-            providers.push({
-                id: tenantProvider.id,
-                buttonComponent: provider.getButton(tenantProvider.name),
-                getButton: provider.getButton,
-            });
+            providers.push(
+                Custom.init({
+                    ...provider.config,
+                    id: tenantProvider.id,
+                    name: tenantProvider.name,
+                    buttonComponent: provider.getButton(tenantProvider.name),
+                })
+            );
         } else {
             // try to find and initialize provider from all prebuilt providers list
             const providerID = Object.keys(builtInProvidersMap).find((id) => {
                 return tenantProvider.id === id || tenantProvider.id.startsWith(id);
             });
             if (builtInProvidersMap[providerID as keyof typeof builtInProvidersMap]) {
-                const provider = new builtInProvidersMap[providerID as keyof typeof builtInProvidersMap]();
-                providers.push({
+                const provider = new builtInProvidersMap[providerID as keyof typeof builtInProvidersMap]({
                     id: tenantProvider.id,
-                    buttonComponent: provider.getButton(tenantProvider.name),
-                    getButton: provider.getButton,
+                    name: tenantProvider.name,
                 });
+                providers.push(provider);
             } else {
-                const provider = Custom.init(tenantProvider);
-                providers.push({
-                    id: tenantProvider.id,
-                    buttonComponent: provider.getButton(tenantProvider.name),
-                    getButton: provider.getButton,
-                });
+                providers.push(Custom.init(tenantProvider));
             }
         }
     }
+
     return providers;
 };

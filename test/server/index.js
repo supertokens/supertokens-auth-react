@@ -47,6 +47,7 @@ let {
     stopST,
 } = require("./utils");
 let { version: nodeSDKVersion } = require("supertokens-node/lib/build/version");
+const fetch = require("isomorphic-fetch");
 
 let passwordlessSupported;
 let PasswordlessRaw;
@@ -198,6 +199,18 @@ app.post("/startst", async (req, res) => {
         }
     }
     let pid = await startST();
+    const OPAQUE_KEY_WITH_MULTITENANCY_FEATURE =
+        "ijaleljUd2kU9XXWLiqFYv5br8nutTxbyBqWypQdv2N-BocoNriPrnYQd0NXPm8rVkeEocN9ayq0B7c3Pv-BTBIhAZSclXMlgyfXtlwAOJk=9BfESEleW6LyTov47dXu";
+
+    await fetch(`http://localhost:9000/ee/license`, {
+        method: "PUT",
+        headers: {
+            "content-type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify({
+            licenseKey: OPAQUE_KEY_WITH_MULTITENANCY_FEATURE,
+        }),
+    });
     res.send(pid + "");
 });
 
@@ -221,20 +234,24 @@ app.post("/stopst", async (req, res) => {
 });
 
 // custom API that requires session verification
-app.get("/sessioninfo", verifySession(), async (req, res) => {
+app.get("/sessioninfo", verifySession(), async (req, res, next) => {
     let session = req.session;
     const accessTokenPayload =
         session.getJWTPayload !== undefined ? session.getJWTPayload() : session.getAccessTokenPayload();
 
-    const sessionData = session.getSessionData
-        ? await session.getSessionData()
-        : await session.getSessionDataFromDatabase();
-    res.send({
-        sessionHandle: session.getHandle(),
-        userId: session.getUserId(),
-        accessTokenPayload,
-        sessionData,
-    });
+    try {
+        const sessionData = session.getSessionData
+            ? await session.getSessionData()
+            : await session.getSessionDataFromDatabase();
+        res.send({
+            sessionHandle: session.getHandle(),
+            userId: session.getUserId(),
+            accessTokenPayload,
+            sessionData,
+        });
+    } catch (err) {
+        next(err);
+    }
 });
 
 app.post("/deleteUser", async (req, res) => {
@@ -295,8 +312,23 @@ app.post("/test/setFlow", (req, res) => {
         passwordlessConfig: {
             contactMethod: req.body.contactMethod,
             flowType: req.body.flowType,
-            createAndSendCustomTextMessage: saveCode,
-            createAndSendCustomEmail: saveCode,
+
+            emailDelivery: {
+                override: (oI) => {
+                    return {
+                        ...oI,
+                        sendEmail: saveCode,
+                    };
+                },
+            },
+            smsDelivery: {
+                override: (oI) => {
+                    return {
+                        ...oI,
+                        sendSms: saveCode,
+                    };
+                },
+            },
         },
     });
     res.sendStatus(200);
@@ -304,6 +336,33 @@ app.post("/test/setFlow", (req, res) => {
 
 app.get("/test/getDevice", (req, res) => {
     res.send(deviceStore.get(req.query.preAuthSessionId));
+});
+
+app.post("/test/setFlow", (req, res) => {
+    initST({
+        passwordlessConfig: {
+            contactMethod: req.body.contactMethod,
+            flowType: req.body.flowType,
+
+            emailDelivery: {
+                override: (oI) => {
+                    return {
+                        ...oI,
+                        sendEmail: saveCode,
+                    };
+                },
+            },
+            smsDelivery: {
+                override: (oI) => {
+                    return {
+                        ...oI,
+                        sendSms: saveCode,
+                    };
+                },
+            },
+        },
+    });
+    res.sendStatus(200);
 });
 
 app.get("/test/featureFlags", (req, res) => {
@@ -390,9 +449,16 @@ function initST({ passwordlessConfig } = {}) {
     const recipeList = [
         EmailVerification.init({
             mode: "OPTIONAL",
-            createAndSendCustomEmail: (_, emailVerificationURLWithToken) => {
-                console.log(emailVerificationURLWithToken);
-                latestURLWithToken = emailVerificationURLWithToken;
+            emailDelivery: {
+                override: (oI) => {
+                    return {
+                        ...oI,
+                        sendEmail: async (input) => {
+                            console.log(input.emailVerifyLink);
+                            latestURLWithToken = input.emailVerifyLink;
+                        },
+                    };
+                },
             },
             override: {
                 apis: (oI) => {
@@ -489,10 +555,15 @@ function initST({ passwordlessConfig } = {}) {
             signUpFeature: {
                 formFields,
             },
-            resetPasswordUsingTokenFeature: {
-                createAndSendCustomEmail: (_, passwordResetURLWithToken) => {
-                    console.log(passwordResetURLWithToken);
-                    latestURLWithToken = passwordResetURLWithToken;
+            emailDelivery: {
+                override: (oI) => {
+                    return {
+                        ...oI,
+                        sendEmail: async (input) => {
+                            console.log(input.passwordResetLink);
+                            latestURLWithToken = input.passwordResetLink;
+                        },
+                    };
                 },
             },
         }),
@@ -534,10 +605,15 @@ function initST({ passwordlessConfig } = {}) {
             signUpFeature: {
                 formFields,
             },
-            resetPasswordUsingTokenFeature: {
-                createAndSendCustomEmail: (_, passwordResetURLWithToken) => {
-                    console.log(passwordResetURLWithToken);
-                    latestURLWithToken = passwordResetURLWithToken;
+            emailDelivery: {
+                override: (oI) => {
+                    return {
+                        ...oI,
+                        sendEmail: async (input) => {
+                            console.log(input.passwordResetLink);
+                            latestURLWithToken = input.passwordResetLink;
+                        },
+                    };
                 },
             },
             providers,
@@ -646,8 +722,22 @@ function initST({ passwordlessConfig } = {}) {
     passwordlessConfig = {
         contactMethod: "EMAIL_OR_PHONE",
         flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
-        createAndSendCustomTextMessage: saveCode,
-        createAndSendCustomEmail: saveCode,
+        emailDelivery: {
+            override: (oI) => {
+                return {
+                    ...oI,
+                    sendEmail: saveCode,
+                };
+            },
+        },
+        smsDelivery: {
+            override: (oI) => {
+                return {
+                    ...oI,
+                    sendSms: saveCode,
+                };
+            },
+        },
         ...passwordlessConfig,
     };
     if (passwordlessSupported) {
