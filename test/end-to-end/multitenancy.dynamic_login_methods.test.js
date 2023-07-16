@@ -45,6 +45,7 @@ import {
     ST_ROOT_SELECTOR,
     TEST_SERVER_BASE_URL,
     SIGN_IN_UP_API,
+    SOMETHING_WENT_WRONG_ERROR,
 } from "../constants";
 
 // Run the tests in a DOM environment.
@@ -723,7 +724,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
 
         let [_, error] = await Promise.all([submitForm(page), getGeneralError(page)]);
 
-        assert.strictEqual(error, "Something went wrong. Please try again.");
+        assert.strictEqual(error, SOMETHING_WENT_WRONG_ERROR);
     });
 
     it("should should show thirdparty if FE has tp and pwless and both emailpassword and thirdparty is enabled", async function () {
