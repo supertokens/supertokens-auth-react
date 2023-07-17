@@ -22,7 +22,7 @@ export abstract class RecipeRouter {
             for (const [routePath, routeComps] of Object.entries(routes)) {
                 if (
                     routePath === path ||
-                    new RegExp(routePath.replace(/:\w+/g, "[^/]+").replace(/\/\*/g, "/[^/]+")).test(path)
+                    new RegExp("^" + routePath.replace(/:\w+/g, "[^/]+").replace(/\/\*/g, "/[^/]+") + "$").test(path)
                 ) {
                     components = components.concat(routeComps);
                 }
@@ -51,14 +51,6 @@ export abstract class RecipeRouter {
             );
         }
 
-        if (
-            componentMatchingRid &&
-            dynamicLoginMethods[componentMatchingRid.recipeID as keyof GetLoginMethodsResponseNormalized]?.enabled ===
-                true
-        ) {
-            return componentMatchingRid;
-        }
-
         // The related ADR: https://supertokens.com/docs/contribute/decisions/multitenancy/0006
         const priorityOrder: { rid: string; includes: (keyof GetLoginMethodsResponseNormalized)[] }[] = [
             { rid: "thirdpartyemailpassword", includes: ["thirdparty", "emailpassword"] },
@@ -67,6 +59,24 @@ export abstract class RecipeRouter {
             { rid: "passwordless", includes: ["passwordless"] },
             { rid: "thirdparty", includes: ["thirdparty"] },
         ];
+
+        if (
+            componentMatchingRid && // if we find a component matching by rid
+            (!priorityOrder.map((a) => a.rid).includes(componentMatchingRid.recipeID) || // from a non-auth recipe
+                dynamicLoginMethods[componentMatchingRid.recipeID as keyof GetLoginMethodsResponseNormalized]
+                    ?.enabled === true) // or an enabled auth recipe
+        ) {
+            return componentMatchingRid;
+        }
+
+        const matchingNonAuthComponent = routeComponents.find(
+            (comp) => !priorityOrder.map((a) => a.rid).includes(comp.recipeID)
+        );
+
+        if (matchingNonAuthComponent) {
+            return matchingNonAuthComponent;
+        }
+
         const enabledRecipeCount = Object.keys(dynamicLoginMethods).filter(
             (key) => (dynamicLoginMethods as any)[key].enabled
         ).length;
