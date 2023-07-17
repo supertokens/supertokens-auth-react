@@ -71,17 +71,15 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
             };
         }
 
-        // Add callback route for each provider.
-        this.recipeInstance.config.signInAndUpFeature.providers.forEach((provider) => {
-            const normalisedFullPath = this.recipeInstance.config.appInfo.websiteBasePath.appendPath(
-                new NormalisedURLPath(`/callback/${provider.id}`)
-            );
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: () => matchRecipeIdUsingState(this.recipeInstance, {}),
-                component: (prop: any) => this.getFeatureComponent("signinupcallback", prop, useComponentOverrides),
-                recipeID: ThirdParty.RECIPE_ID,
-            };
-        });
+        // Add callback route for all provider
+        const normalisedFullPath = this.recipeInstance.config.appInfo.websiteBasePath.appendPath(
+            new NormalisedURLPath("/callback/:id")
+        );
+        features[normalisedFullPath.getAsStringDangerous()] = {
+            matches: () => matchRecipeIdUsingState(this.recipeInstance, {}),
+            component: (prop: any) => this.getFeatureComponent("signinupcallback", prop, useComponentOverrides),
+            recipeID: ThirdParty.RECIPE_ID,
+        };
 
         return features;
     };

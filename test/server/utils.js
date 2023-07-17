@@ -149,6 +149,7 @@ module.exports.customAuth0Provider = () => {
     return {
         config: {
             thirdPartyId: "auth0",
+            name: "Auth0",
             // this contains info about forming the authorisation redirect URL without the state params and without the redirect_uri param
             authorizationEndpoint: `https://${process.env.AUTH0_DOMAIN}/authorize`,
             authorizationEndpointQueryParams: {

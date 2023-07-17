@@ -9,6 +9,7 @@ import Facebook from "./providers/facebook";
 import Github from "./providers/github";
 import Gitlab from "./providers/gitlab";
 import Google from "./providers/google";
+import GoogleWorkspaces from "./providers/googleWorkspaces";
 import LinkedIn from "./providers/linkedIn";
 import Okta from "./providers/okta";
 import Twitter from "./providers/twitter";
@@ -56,6 +57,7 @@ export default class Wrapper {
     static Github: typeof Github;
     static Gitlab: typeof Gitlab;
     static Google: typeof Google;
+    static GoogleWorkspaces: typeof GoogleWorkspaces;
     static Facebook: typeof Facebook;
     static LinkedIn: typeof LinkedIn;
     static ActiveDirectory: typeof ActiveDirectory;
@@ -86,6 +88,7 @@ export {
     Github,
     Gitlab,
     Google,
+    GoogleWorkspaces,
     Facebook,
     LinkedIn,
     ActiveDirectory,

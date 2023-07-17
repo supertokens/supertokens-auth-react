@@ -35,7 +35,7 @@ export default class ActiveDirectory extends Provider {
      */
     constructor(config?: BuiltInProviderConfig) {
         super({
-            id: "activeDirectory",
+            id: "active-directory",
             name: "Active Directory",
             ...config,
         });

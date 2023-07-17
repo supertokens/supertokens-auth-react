@@ -96,7 +96,7 @@ export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     passwordlessConfig: NormalisedPasswordlessConfig;
-    thirdpartyConfig: NormalisedThirdPartyConfig | undefined;
+    thirdpartyConfig: NormalisedThirdPartyConfig;
     thirdPartyProviderAndEmailOrPhoneFormStyle: string | undefined;
     disablePasswordless: boolean;
     override: {

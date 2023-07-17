@@ -102,7 +102,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
         this.thirdPartyRecipe =
             recipes.thirdPartyInstance !== undefined
                 ? recipes.thirdPartyInstance
-                : this.config.thirdpartyConfig === undefined
+                : SuperTokens.usesDynamicLoginMethods === false && disableThirdParty
                 ? undefined
                 : new ThirdParty(
                       {

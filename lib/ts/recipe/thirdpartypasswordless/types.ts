@@ -132,7 +132,7 @@ export type Config = UserInput &
 
 export type NormalisedConfig = {
     passwordlessConfig: NormalisedPasswordlessConfig;
-    thirdpartyConfig: NormalisedThirdPartyConfig | undefined;
+    thirdpartyConfig: NormalisedThirdPartyConfig;
 
     thirdPartyProviderAndEmailOrPhoneFormStyle: string | undefined;
     disablePasswordless: boolean;

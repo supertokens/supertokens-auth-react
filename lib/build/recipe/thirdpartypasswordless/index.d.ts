@@ -3,6 +3,7 @@ import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordles
 import {
     Apple,
     Google,
+    GoogleWorkspaces,
     Facebook,
     Github,
     Gitlab,
@@ -147,6 +148,7 @@ export default class Wrapper {
     static Github: typeof Github;
     static Gitlab: typeof Gitlab;
     static Google: typeof Google;
+    static GoogleWorkspaces: typeof GoogleWorkspaces;
     static Facebook: typeof Facebook;
     static LinkedIn: typeof LinkedIn;
     static ActiveDirectory: typeof ActiveDirectory;
@@ -186,6 +188,7 @@ export {
     Github,
     Gitlab,
     Google,
+    GoogleWorkspaces,
     Facebook,
     LinkedIn,
     ActiveDirectory,

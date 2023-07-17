@@ -101,7 +101,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
         this.thirdPartyRecipe =
             recipes.thirdPartyInstance !== undefined
                 ? recipes.thirdPartyInstance
-                : this.config.thirdPartyConfig === undefined
+                : SuperTokens.usesDynamicLoginMethods === false && disableThirdParty
                 ? undefined
                 : new ThirdParty(
                       {

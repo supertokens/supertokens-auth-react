@@ -27,8 +27,6 @@ export function normaliseThirdPartyPasswordlessConfig(config?: Config): Normalis
     if (config === undefined) {
         config = {} as Config;
     }
-    const disableThirdParty =
-        config.signInUpFeature?.providers === undefined || config.signInUpFeature.providers.length === 0;
 
     const override: any = {
         functions: (originalImplementation: TPPWlessRecipeInterface) => originalImplementation,
@@ -43,21 +41,19 @@ export function normaliseThirdPartyPasswordlessConfig(config?: Config): Normalis
         ...normaliseAuthRecipe(config),
 
         thirdPartyProviderAndEmailOrPhoneFormStyle,
-        thirdpartyConfig: disableThirdParty
-            ? undefined
-            : normaliseThirdPartyConfig({
-                  getRedirectionURL: config.getRedirectionURL,
-                  style: config.style,
-                  onHandleEvent: config.onHandleEvent,
-                  preAPIHook: config.preAPIHook,
-                  signInAndUpFeature: {
-                      ...config.signInUpFeature,
-                      style: thirdPartyProviderAndEmailOrPhoneFormStyle,
-                  },
-                  oAuthCallbackScreen: config.oAuthCallbackScreen,
-                  useShadowDom: config.useShadowDom,
-                  override: {},
-              }),
+        thirdpartyConfig: normaliseThirdPartyConfig({
+            getRedirectionURL: config.getRedirectionURL,
+            style: config.style,
+            onHandleEvent: config.onHandleEvent,
+            preAPIHook: config.preAPIHook,
+            signInAndUpFeature: {
+                ...config.signInUpFeature,
+                style: thirdPartyProviderAndEmailOrPhoneFormStyle,
+            },
+            oAuthCallbackScreen: config.oAuthCallbackScreen,
+            useShadowDom: config.useShadowDom,
+            override: {},
+        }),
         passwordlessConfig: normalisePasswordlessConfig({
             contactMethod: config.contactMethod,
             style: config.style,

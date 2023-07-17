@@ -7,6 +7,7 @@ import {
 import {
     Apple,
     Google,
+    GoogleWorkspaces,
     Facebook,
     Github,
     Gitlab,
@@ -152,6 +153,7 @@ export default class Wrapper {
         options?: RecipeFunctionOptions;
     }): Promise<string>;
     static Google: typeof Google;
+    static GoogleWorkspaces: typeof GoogleWorkspaces;
     static Apple: typeof Apple;
     static Bitbucket: typeof Bitbucket;
     static Discord: typeof Discord;
@@ -193,6 +195,7 @@ export {
     Github,
     Gitlab,
     Google,
+    GoogleWorkspaces,
     Facebook,
     LinkedIn,
     ActiveDirectory,

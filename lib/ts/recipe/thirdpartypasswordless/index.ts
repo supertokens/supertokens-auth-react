@@ -18,6 +18,7 @@ import { getNormalisedUserContext } from "../../utils";
 import {
     Apple,
     Google,
+    GoogleWorkspaces,
     Facebook,
     Github,
     Gitlab,
@@ -251,6 +252,7 @@ export default class Wrapper {
     static Github = Github;
     static Gitlab = Gitlab;
     static Google = Google;
+    static GoogleWorkspaces = GoogleWorkspaces;
     static Facebook = Facebook;
     static LinkedIn = LinkedIn;
     static ActiveDirectory = ActiveDirectory;
@@ -285,6 +287,7 @@ export {
     Github,
     Gitlab,
     Google,
+    GoogleWorkspaces,
     Facebook,
     LinkedIn,
     ActiveDirectory,

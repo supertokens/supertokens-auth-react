@@ -95,7 +95,7 @@ export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChi
             config: recipe.config,
             recipe,
         };
-    }, [recipe]);
+    }, [recipe, recipeImplementation]);
 }
 
 type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap };

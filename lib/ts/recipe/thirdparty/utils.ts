@@ -32,6 +32,7 @@ import Facebook from "./providers/facebook";
 import Github from "./providers/github";
 import Gitlab from "./providers/gitlab";
 import Google from "./providers/google";
+import GoogleWorkspaces from "./providers/googleWorkspaces";
 import LinkedIn from "./providers/linkedIn";
 import Okta from "./providers/okta";
 import Twitter from "./providers/twitter";
@@ -171,8 +172,9 @@ export const mergeProviders = ({
     const builtInProvidersMap = {
         apple: Apple,
         google: Google,
+        "google-workspaces": GoogleWorkspaces,
         github: Github,
-        activeDirectory: ActiveDirectory,
+        "active-directory": ActiveDirectory,
         bitbucket: Bitbucket,
         "boxy-saml": BoxySAML,
         discord: Discord,

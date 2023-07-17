@@ -652,6 +652,7 @@ export async function getUserIdWithFetch(page) {
 }
 
 export async function getSessionHandleWithFetch(page) {
+    await page.waitForSelector("#root > div > div.fill > div > div.fetch > ul > li.sessionInfo-session-handle");
     return await page.evaluate(
         () =>
             document.querySelector("#root > div > div.fill > div > div.fetch > ul > li.sessionInfo-session-handle")

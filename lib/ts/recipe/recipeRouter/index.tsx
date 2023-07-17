@@ -18,8 +18,16 @@ export abstract class RecipeRouter {
         const path = normalisedUrl.getAsStringDangerous();
 
         const routeComponents = preBuiltUIList.reduce((components, c) => {
-            const routes = c.getPathsToFeatureComponentWithRecipeIdMap()[path];
-            return routes !== undefined ? components.concat(routes) : components;
+            const routes = c.getPathsToFeatureComponentWithRecipeIdMap();
+            for (const [routePath, routeComps] of Object.entries(routes)) {
+                if (
+                    routePath === path ||
+                    new RegExp(routePath.replace(/:\w+/g, "[^/]+").replace(/\/\*/g, "/[^/]+")).test(path)
+                ) {
+                    components = components.concat(routeComps);
+                }
+            }
+            return components;
         }, [] as ComponentWithRecipeAndMatchingMethod[]);
 
         const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods();
