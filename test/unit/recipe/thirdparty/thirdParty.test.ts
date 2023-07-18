@@ -299,7 +299,7 @@ describe("ThirdParty", function () {
             },
         }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.deepStrictEqual(
-            ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0].buttonComponent,
+            (ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0] as any).config.buttonComponent,
             CustomGoogle
         );
         assert.deepStrictEqual(

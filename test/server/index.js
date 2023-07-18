@@ -338,33 +338,6 @@ app.get("/test/getDevice", (req, res) => {
     res.send(deviceStore.get(req.query.preAuthSessionId));
 });
 
-app.post("/test/setFlow", (req, res) => {
-    initST({
-        passwordlessConfig: {
-            contactMethod: req.body.contactMethod,
-            flowType: req.body.flowType,
-
-            emailDelivery: {
-                override: (oI) => {
-                    return {
-                        ...oI,
-                        sendEmail: saveCode,
-                    };
-                },
-            },
-            smsDelivery: {
-                override: (oI) => {
-                    return {
-                        ...oI,
-                        sendSms: saveCode,
-                    };
-                },
-            },
-        },
-    });
-    res.sendStatus(200);
-});
-
 app.get("/test/featureFlags", (req, res) => {
     const available = [];
 

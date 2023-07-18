@@ -35,7 +35,7 @@ import { RecipeComponentsOverrideContextProvider } from "./componentOverrideCont
 import ThirdPartyPasswordless from "./recipe";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 
-import type { ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
+import type { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
 import type {
     PasswordlessFlowType,
     PasswordlessUser,
@@ -86,6 +86,15 @@ export default class Wrapper {
           }
     > {
         return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.thirdPartySignInAndUp({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static getThirdPartyStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
+        userContext?: any;
+    }): (StateObject & CustomStateProperties) | undefined {
+        return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.getThirdPartyStateAndOtherInfoFromStorage({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -265,6 +274,7 @@ const init = Wrapper.init;
 const signOut = Wrapper.signOut;
 const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
 const thirdPartySignInAndUp = Wrapper.thirdPartySignInAndUp;
+const getThirdPartyStateAndOtherInfoFromStorage = Wrapper.getThirdPartyStateAndOtherInfoFromStorage;
 const getThirdPartyAuthorisationURLWithQueryParamsAndSetState =
     Wrapper.getThirdPartyAuthorisationURLWithQueryParamsAndSetState;
 const createPasswordlessCode = Wrapper.createPasswordlessCode;
@@ -295,6 +305,7 @@ export {
     Okta,
     redirectToThirdPartyLogin,
     thirdPartySignInAndUp,
+    getThirdPartyStateAndOtherInfoFromStorage,
     getThirdPartyAuthorisationURLWithQueryParamsAndSetState,
     createPasswordlessCode,
     resendPasswordlessCode,

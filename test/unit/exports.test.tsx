@@ -50,7 +50,6 @@ describe("Exports", function () {
                 init,
                 getAuthorisationURLFromBackend,
                 getAuthorisationURLWithQueryParamsAndSetState,
-                getStateAndOtherInfoFromStorage,
                 signInAndUp,
                 signOut,
                 verifyAndGetStateOrThrowError,
@@ -73,9 +72,6 @@ describe("Exports", function () {
             assert(
                 getAuthorisationURLWithQueryParamsAndSetState !== undefined &&
                     _default.getAuthorisationURLWithQueryParamsAndSetState !== undefined
-            );
-            assert(
-                getStateAndOtherInfoFromStorage !== undefined && _default.getStateAndOtherInfoFromStorage !== undefined
             );
             assert(signInAndUp !== undefined && _default.signInAndUp !== undefined);
             assert(signOut !== undefined && _default.signOut !== undefined);
@@ -102,7 +98,6 @@ describe("Exports", function () {
                 emailPasswordSignUp,
                 getAuthorisationURLWithQueryParamsAndSetState,
                 getResetPasswordTokenFromURL,
-                getStateAndOtherInfoFromStorage,
                 sendPasswordResetEmail,
                 signOut,
                 submitNewPassword,
@@ -133,9 +128,6 @@ describe("Exports", function () {
                     _default.getAuthorisationURLWithQueryParamsAndSetState !== undefined
             );
             assert(getResetPasswordTokenFromURL !== undefined && _default.getResetPasswordTokenFromURL !== undefined);
-            assert(
-                getStateAndOtherInfoFromStorage !== undefined && _default.getStateAndOtherInfoFromStorage !== undefined
-            );
             assert(sendPasswordResetEmail !== undefined && _default.sendPasswordResetEmail !== undefined);
             assert(signOut !== undefined && _default.signOut !== undefined);
             assert(submitNewPassword !== undefined && _default.submitNewPassword !== undefined);

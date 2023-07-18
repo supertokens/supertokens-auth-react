@@ -459,10 +459,17 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH", // This is the callback page load
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
+                `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
+                `ST_LOGS ${logId} OVERRIDE ${thirdPartySignInUpLog}`,
+                `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
+                `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH`,
+                ...signInUpPageLoadLogs,
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/callback/unknown");
-            await assertNoSTComponents(page);
+            const search = await page.evaluate(() => window.location.search);
+            assert.deepStrictEqual(pathname, "/auth/");
+            assert(search.endsWith("error=signin"));
         });
 
         it("Expired state", async function () {

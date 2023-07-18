@@ -15,7 +15,7 @@ import {
     Okta,
 } from "../thirdparty/";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import type { ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
+import type { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
 import type {
     PasswordlessFlowType,
     PasswordlessUser,
@@ -46,6 +46,9 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
+    static getThirdPartyStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
+        userContext?: any;
+    }): (StateObject & CustomStateProperties) | undefined;
     static getThirdPartyAuthorisationURLWithQueryParamsAndSetState(input: {
         thirdPartyId: string;
         frontendRedirectURI: string;
@@ -164,6 +167,7 @@ declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
 declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogin;
 declare const thirdPartySignInAndUp: typeof Wrapper.thirdPartySignInAndUp;
+declare const getThirdPartyStateAndOtherInfoFromStorage: typeof Wrapper.getThirdPartyStateAndOtherInfoFromStorage;
 declare const getThirdPartyAuthorisationURLWithQueryParamsAndSetState: typeof Wrapper.getThirdPartyAuthorisationURLWithQueryParamsAndSetState;
 declare const createPasswordlessCode: typeof Wrapper.createPasswordlessCode;
 declare const resendPasswordlessCode: typeof Wrapper.resendPasswordlessCode;
@@ -196,6 +200,7 @@ export {
     Okta,
     redirectToThirdPartyLogin,
     thirdPartySignInAndUp,
+    getThirdPartyStateAndOtherInfoFromStorage,
     getThirdPartyAuthorisationURLWithQueryParamsAndSetState,
     createPasswordlessCode,
     resendPasswordlessCode,
