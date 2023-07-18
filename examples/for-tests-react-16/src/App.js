@@ -184,9 +184,7 @@ let recipeList = [
                 ...oI,
                 getTenantId: (input) => {
                     if (testContext.mockTenantId) {
-                        return {
-                            ...JSON.parse(testContext.mockTenantId),
-                        };
+                        return testContext.mockTenantId;
                     }
 
                     return oI.getTenantId(input);
