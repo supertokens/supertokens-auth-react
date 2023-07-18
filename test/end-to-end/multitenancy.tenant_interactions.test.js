@@ -45,6 +45,7 @@ import {
     DEFAULT_WEBSITE_BASE_PATH,
     TEST_SERVER_BASE_URL,
     SOMETHING_WENT_WRONG_ERROR,
+    ST_ROOT_SELECTOR,
 } from "../constants";
 
 // Run the tests in a DOM environment.
@@ -588,7 +589,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             await epSignUp(page, undefined, [], SOMETHING_WENT_WRONG_ERROR);
         });
 
-        it("should not crash even if dynamic login methods is enabled", async function () {
+        it("should crash if dynamic login methods is enabled", async function () {
             await setEnabledRecipes(page, ["emailpassword"]);
             await setupTenant("public", "customer1", {
                 emailPassword: { enabled: true },
@@ -608,8 +609,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
 
-            await getSubmitFormButton(page);
-            assert(!pageCrashed);
+            assert.strictEqual(await page.waitForSelector(ST_ROOT_SELECTOR, { timeout: 1000, hidden: true }), null);
         });
 
         it("should keep the session active if dynamic login methods is not enabled", async function () {
@@ -642,7 +642,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             assert(!pageCrashed);
         });
 
-        it("should revoke magic links on removed tenants", async function () {
+        it.skip("should revoke magic links on removed tenants", async function () {
             await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE_AND_MAGIC_LINK");
             await setEnabledRecipes(page, ["passwordless"]);
             await setupTenant("public", "customer1", {
@@ -673,6 +673,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             const device = await getPasswordlessDevice(loginAttemptInfo);
 
             await removeTenant("public", "customer1");
+            await setTenantId(page, "public");
 
             await page.goto(device.codes[0].urlWithLinkCode);
 

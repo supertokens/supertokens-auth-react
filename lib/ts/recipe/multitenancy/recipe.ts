@@ -66,7 +66,7 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
 
     public getLoadedDynamicLoginMethods(): GetLoginMethodsResponseNormalized | undefined {
         if (this.hasIntersection === false) {
-            throw new Error("Initialized recipes have no overlap with core recipes");
+            throw new Error("Initialized recipes have no overlap with core recipes or could not load login methods");
         }
         return this.dynamicLoginMethods;
     }
