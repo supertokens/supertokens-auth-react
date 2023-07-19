@@ -192,7 +192,7 @@ supertokens.init({
                                     ...input,
                                     accessTokenPayload: {
                                         ...input.accessTokenPayload,
-                                        ...PhoneVerifiedClaim.build(input.userId, input.userContext),
+                                        ...PhoneVerifiedClaim.build(input.userId, input.tenantId, input.userContext),
                                         phoneNumber: userInfo?.email,
                                     },
                                 });
