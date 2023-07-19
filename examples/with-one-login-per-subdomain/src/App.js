@@ -28,7 +28,7 @@ SuperTokens.init({
                 }),
             },
         }),
-        ThirdPartyEmailPassword.init({}),
+        ThirdPartyEmailPassword.init(),
         ThirdPartyPasswordless.init({
             contactMethod: "EMAIL",
         }),

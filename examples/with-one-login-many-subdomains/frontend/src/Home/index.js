@@ -9,7 +9,7 @@ export default function Home() {
 
     async function logoutClicked() {
         await signOut();
-        window.location.replace(getAuthDomain() + "?tenantId");
+        window.location.replace(getAuthDomain() + "/auth");
     }
 
     if (session.loading === true) {

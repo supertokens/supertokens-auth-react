@@ -14,7 +14,7 @@ let Dashboard = require("supertokens-node/recipe/dashboard");
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain = process.env.REACT_APP_API_URL || `http://example.com:${apiPort}`;
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
-const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://auth.example.com:${websitePort}`;
+const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://example.com:${websitePort}`;
 
 supertokens.init({
     framework: "express",
@@ -25,17 +25,16 @@ supertokens.init({
         appName: "SuperTokens Demo App",
         apiDomain,
         websiteDomain,
-        websiteBasePath: "/",
     },
     recipeList: [
         MultiTenancy.init({
             getAllowedDomainsForTenantId: async (tenantId, userContext) => {
                 // query your db to get the allowed domain for the input tenantId
                 // or you can make the tenantId equal to the sub domain itself
-                return [tenantId + ".example.com"];
+                return [tenantId + ".example.com", "example.com"];
             },
         }),
-        ThirdPartyEmailPassword.init({}),
+        ThirdPartyEmailPassword.init(),
         ThirdPartyPasswordless.init({ contactMethod: "EMAIL", flowType: "USER_INPUT_CODE_AND_MAGIC_LINK" }),
         Session.init(),
         Dashboard.init(),

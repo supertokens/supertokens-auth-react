@@ -6,7 +6,7 @@ export function getApiDomain() {
 }
 
 export function getAuthDomain() {
-    const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://auth.example.com:${websitePort}`;
+    const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://example.com:${websitePort}`;
     return websiteUrl;
 }
 
