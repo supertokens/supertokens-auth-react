@@ -59,6 +59,13 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     let page;
     let pageCrashed;
 
+    before(async function () {
+        const isSupported = await isMultitenancySupported();
+        if (!isSupported) {
+            this.skip();
+        }
+    });
+
     beforeEach(async function () {
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
             method: "POST",

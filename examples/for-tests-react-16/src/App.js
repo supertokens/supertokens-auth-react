@@ -1111,3 +1111,4 @@ window.SuperTokens = SuperTokens;
 window.Session = Session;
 window.UserRoleClaim = UserRoles.UserRoleClaim;
 window.PermissionClaim = UserRoles.PermissionClaim;
+window.AllowedDomainsClaim = MultiTenancy.AllowedDomainsClaim;

@@ -15,7 +15,6 @@
 require("dotenv").config();
 let SuperTokens = require("supertokens-node");
 let { default: SuperTokensRaw } = require("supertokens-node/lib/build/supertokens");
-const { default: MultitenancyRaw } = require("supertokens-node/lib/build/recipe/multitenancy/recipe");
 const { default: EmailVerificationRaw } = require("supertokens-node/lib/build/recipe/emailverification/recipe");
 const { default: EmailPasswordRaw } = require("supertokens-node/lib/build/recipe/emailpassword/recipe");
 const { default: ThirdPartyRaw } = require("supertokens-node/lib/build/recipe/thirdparty/recipe");
@@ -80,6 +79,16 @@ try {
 } catch (ex) {
     userRolesSupported = false;
 }
+
+let Multitenancy, MultitenancyRaw, multitenancySupported;
+try {
+    MultitenancyRaw = require("supertokens-node/lib/build/recipe/multitenancy/recipe").default;
+    Multitenancy = require("supertokens-node/lib/build/recipe/multitenancy");
+    multitenancySupported = true;
+} catch {
+    multitenancySupported = false;
+}
+
 let generalErrorSupported;
 
 if (maxVersion(nodeSDKVersion, "9.9.9") === "9.9.9") {
@@ -357,6 +366,10 @@ app.get("/test/featureFlags", (req, res) => {
         available.push("userroles");
     }
 
+    if (multitenancySupported) {
+        available.push("multitenancy");
+    }
+
     res.send({
         available,
     });
@@ -409,12 +422,15 @@ function initST({ passwordlessConfig } = {}) {
             PasswordlessRaw.reset();
         }
 
+        if (multitenancySupported) {
+            MultitenancyRaw.reset();
+        }
+
         EmailVerificationRaw.reset();
         EmailPasswordRaw.reset();
         ThirdPartyRaw.reset();
         ThirdPartyEmailPasswordRaw.reset();
         SessionRaw.reset();
-        MultitenancyRaw.reset();
 
         SuperTokensRaw.reset();
     }
@@ -828,6 +844,17 @@ function initST({ passwordlessConfig } = {}) {
 
     if (userRolesSupported) {
         recipeList.push(UserRoles.init());
+    }
+
+    if (multitenancySupported) {
+        recipeList.push(
+            Multitenancy.init({
+                getAllowedDomainsForTenantId: (tenantId) => [
+                    `${tenantId}.example.com`,
+                    websiteDomain.replace(/https?:\/\/([^:\/]*).*/, "$1"),
+                ],
+            })
+        );
     }
 
     SuperTokens.init({

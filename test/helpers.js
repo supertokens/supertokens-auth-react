@@ -798,6 +798,15 @@ export async function isUserRolesSupported() {
     return true;
 }
 
+export async function isMultitenancySupported() {
+    const features = await getFeatureFlags();
+    if (!features.includes("multitenancy")) {
+        return false;
+    }
+
+    return true;
+}
+
 /**
  * For example setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "EMAIL_PASSWORD_SIGN_UP", page) to
  * set for signUp in email password

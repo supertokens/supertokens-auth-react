@@ -39,6 +39,7 @@ import {
     sendEmailResetPasswordSuccessMessage,
     getTextByDataSupertokens,
     getVerificationEmailErrorTitle,
+    isMultitenancySupported,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -58,6 +59,13 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
     let browser;
     let page;
     let pageCrashed;
+
+    before(async function () {
+        const isSupported = await isMultitenancySupported();
+        if (!isSupported) {
+            this.skip();
+        }
+    });
 
     beforeEach(async function () {
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
@@ -1141,6 +1149,85 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             await page.goto(latestURLWithToken);
 
             assert.strictEqual(await getVerificationEmailErrorTitle(page), "!\nSomething went wrong");
+        });
+    });
+
+    describe("AllowedDomainsClaim", () => {
+        it("should return the right value on a custom tenant", async function () {
+            await setEnabledRecipes(page, ["emailpassword"]);
+            await setupTenant("public", "customer1", {
+                emailPassword: { enabled: true },
+                passwordless: { enabled: false },
+                thirdParty: {
+                    enabled: true,
+                    providers: [],
+                },
+            });
+            await setTenantId(page, "customer1");
+
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            await epSignUp(page);
+
+            assert.deepStrictEqual(
+                await page.evaluate(() =>
+                    window.Session.getAccessTokenPayloadSecurely().then((payload) =>
+                        window.AllowedDomainsClaim.getValueFromPayload(payload)
+                    )
+                ),
+                ["customer1.example.com", "localhost"]
+            );
+            assert.deepStrictEqual(
+                await page.evaluate(() =>
+                    window.Session.getAccessTokenPayloadSecurely().then((payload) =>
+                        window.AllowedDomainsClaim.validators.hasAccessToCurrentDomain().validate(payload)
+                    )
+                ),
+                {
+                    isValid: true,
+                }
+            );
+        });
+
+        it("should return the right value on the default tenant", async function () {
+            await setEnabledRecipes(page, ["emailpassword"]);
+            await setupTenant("public", "public", {
+                emailPassword: { enabled: true },
+                passwordless: { enabled: false },
+                thirdParty: {
+                    enabled: true,
+                    providers: [],
+                },
+            });
+
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            await epSignUp(page);
+
+            assert.deepStrictEqual(
+                await page.evaluate(() =>
+                    window.Session.getAccessTokenPayloadSecurely().then((payload) =>
+                        window.AllowedDomainsClaim.getValueFromPayload(payload)
+                    )
+                ),
+                ["public.example.com", "localhost"]
+            );
+            assert.deepStrictEqual(
+                await page.evaluate(() =>
+                    window.Session.getAccessTokenPayloadSecurely().then((payload) =>
+                        window.AllowedDomainsClaim.validators.hasAccessToCurrentDomain().validate(payload)
+                    )
+                ),
+                {
+                    isValid: true,
+                }
+            );
         });
     });
 });
