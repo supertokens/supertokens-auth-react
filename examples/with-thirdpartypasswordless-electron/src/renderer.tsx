@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 /**
  * This file will automatically be loaded by webpack and run in the "renderer" context.
  * To learn more about the differences between the "main" and the "renderer" context in
@@ -87,7 +86,7 @@ SuperTokens.init({
 });
 
 function App() {
-    const [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
+    let [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
 
     return (
         <SuperTokensWrapper>
