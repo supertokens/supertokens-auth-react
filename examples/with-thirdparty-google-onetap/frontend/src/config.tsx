@@ -37,12 +37,6 @@ export const SuperTokensConfig = {
                 functions: (oI) => {
                     return {
                         ...oI,
-                        getAuthCodeFromURL: (input) => {
-                            if (input.userContext.authCode) {
-                                return input.userContext.authCode;
-                            }
-                            return oI.getAuthCodeFromURL(input);
-                        },
                         getAuthStateFromURL: (input) => {
                             if (input.userContext.state) {
                                 return input.userContext.state;
@@ -51,6 +45,20 @@ export const SuperTokensConfig = {
                         },
                     };
                 },
+            },
+            preAPIHook: async (context) => {
+                if (context.action === "THIRD_PARTY_SIGN_IN_UP") {
+                    if (typeof context.requestInit.body !== "string") {
+                        throw new Error("should not happen");
+                    }
+                    let body = JSON.parse(context.requestInit.body);
+
+                    body!.redirectURIInfo = undefined;
+                    body!.oAuthTokens = { id_token: context.userContext.id_token };
+
+                    context.requestInit.body = JSON.stringify(body);
+                }
+                return context;
             },
         }),
         Session.init(),

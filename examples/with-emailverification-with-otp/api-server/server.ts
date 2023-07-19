@@ -1,7 +1,7 @@
 import express from "express";
 import supertokens from "supertokens-node";
 import Session from "supertokens-node/recipe/session";
-import ThirdPartyEmailPassword, { Google, Github } from "supertokens-node/recipe/thirdpartyemailpassword";
+import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
 import EmailVerification from "supertokens-node/recipe/emailverification";
 import { middleware, errorHandler } from "supertokens-node/framework/express";
 import cors from "cors";
@@ -34,22 +34,26 @@ supertokens.init({
     recipeList: [
         EmailVerification.init({
             mode: "REQUIRED",
-            createAndSendCustomEmail: async (user, url) => {
-                // retrieve the token from the url
-                const token = new URL(url).searchParams.get("token");
+            emailDelivery: {
+                service: {
+                    sendEmail: async ({ user, emailVerifyLink: url }) => {
+                        // retrieve the token from the url
+                        const token = new URL(url).searchParams.get("token");
 
-                if (token !== null) {
-                    // generate a 6 digit otp
-                    let otp = generateOtpAndMapToToken(token, otpToTokenMapping);
-                    console.log(otp, user.email);
-                    // send a mail to the user with the otp
-                    await mailTransporter.sendMail({
-                        from: process.env.NODEMAILER_USER,
-                        to: user.email,
-                        subject: "SuperTokens Demo OTP",
-                        html: getMessageBody(otp, user.email),
-                    });
-                }
+                        if (token !== null) {
+                            // generate a 6 digit otp
+                            let otp = generateOtpAndMapToToken(token, otpToTokenMapping);
+                            console.log(otp, user.email);
+                            // send a mail to the user with the otp
+                            await mailTransporter.sendMail({
+                                from: process.env.NODEMAILER_USER,
+                                to: user.email,
+                                subject: "SuperTokens Demo OTP",
+                                html: getMessageBody(otp, user.email),
+                            });
+                        }
+                    },
+                },
             },
             override: {
                 apis: (oI) => {
@@ -90,14 +94,28 @@ supertokens.init({
             providers: [
                 // We have provided you with development keys which you can use for testing.
                 // IMPORTANT: Please replace them with your own OAuth keys for production use.
-                Google({
-                    clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
-                    clientSecret: "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",
-                }),
-                Github({
-                    clientId: "467101b197249757c71f",
-                    clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
-                }),
+                {
+                    config: {
+                        thirdPartyId: "google",
+                        clients: [
+                            {
+                                clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
+                                clientSecret: "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",
+                            },
+                        ],
+                    },
+                },
+                {
+                    config: {
+                        thirdPartyId: "github",
+                        clients: [
+                            {
+                                clientId: "467101b197249757c71f",
+                                clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
+                            },
+                        ],
+                    },
+                },
             ],
         }),
         Session.init(), // initializes session features

@@ -31,8 +31,8 @@ function App() {
                                                         const authUrl =
                                                             await thirdParty.getAuthorisationURLWithQueryParamsAndSetState(
                                                                 {
-                                                                    providerId: provider.id,
-                                                                    authorisationURL: `${getWebsiteDomain()}/auth/callback/${
+                                                                    thirdPartyId: provider.id,
+                                                                    frontendRedirectURI: `${getWebsiteDomain()}/auth/callback/${
                                                                         provider.id
                                                                     }`,
                                                                 }
