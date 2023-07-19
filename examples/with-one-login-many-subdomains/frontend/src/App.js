@@ -1,7 +1,8 @@
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
-import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import MultiTenancy, { AllowedDomainsClaim } from "supertokens-auth-react/recipe/multitenancy";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
@@ -17,17 +18,42 @@ SuperTokens.init({
         websiteBasePath: "/",
     },
     recipeList: [
-        EmailPassword.init({
+        MultiTenancy.init({
+            override: {
+                functions: (oI) => ({
+                    ...oI,
+                    getTenantId: () => localStorage.getItem("tenantId") ?? undefined,
+                }),
+            },
+        }),
+        ThirdPartyEmailPassword.init({
             getRedirectionURL: async (context) => {
                 if (context.action === "SUCCESS") {
                     // redirect users to their associated subdomain e.g abc.example.com for user abc
-                    const redirectionUrl = await getRedirectionUrlForUser();
-                    return redirectionUrl;
+                    const claimValue = await Session.getClaimValue(AllowedDomainsClaim);
+                    return "http://" + claimValue[0];
                 }
             },
         }),
         Session.init({
             sessionTokenFrontendDomain: ".example.com",
+            override: {
+                functions: (oI) => ({
+                    ...oI,
+                    getGlobalClaimValidators: ({ claimValidatorsAddedByOtherRecipes }) => [
+                        ...claimValidatorsAddedByOtherRecipes,
+                        {
+                            ...AllowedDomainsClaim.validators.hasAccessToCurrentDomain(),
+                            onFailureRedirection: async () => {
+                                let claimValue = await Session.getClaimValue({
+                                    claim: AllowedDomainsClaim,
+                                });
+                                return "http://" + claimValue[0];
+                            },
+                        },
+                    ],
+                }),
+            },
         }),
     ],
 });

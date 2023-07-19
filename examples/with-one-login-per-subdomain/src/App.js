@@ -1,9 +1,10 @@
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
-import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
-import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
-import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
+import MultiTenancy, { AllowedDomainsClaim } from "supertokens-auth-react/recipe/multitenancy";
+import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+import Session, { SessionAuth, getClaimValue } from "supertokens-auth-react/recipe/session";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./Home";
 import Footer from "./Footer";
@@ -15,10 +16,36 @@ SuperTokens.init({
         apiDomain: getApiDomain(),
         websiteDomain: getAuthDomain(),
     },
+    usesDynamicLoginMethods: true,
     recipeList: [
-        EmailPassword.init(),
+        MultiTenancy.init({
+            override: {
+                functions: (oI) => ({
+                    ...oI,
+                    getTenantId: () => window.location.hostname.split(".")[0],
+                }),
+            },
+        }),
+        ThirdPartyEmailPassword.init({}),
         Session.init({
-            sessionFrontendDomain: ".example.com:3000",
+            sessionTokenFrontendDomain: ".example.com:3000",
+            override: {
+                functions: (oI) => ({
+                    ...oI,
+                    getGlobalClaimValidators: ({ claimValidatorsAddedByOtherRecipes }) => [
+                        ...claimValidatorsAddedByOtherRecipes,
+                        {
+                            ...AllowedDomainsClaim.validators.hasAccessToCurrentDomain(),
+                            onFailureRedirection: async () => {
+                                let claimValue = await getClaimValue({
+                                    claim: AllowedDomainsClaim,
+                                });
+                                return "http://" + claimValue[0];
+                            },
+                        },
+                    ],
+                }),
+            },
         }),
     ],
 });
@@ -31,7 +58,7 @@ function App() {
                     <div className="fill">
                         <Routes>
                             {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
-                                EmailPasswordPreBuiltUI,
+                                ThirdPartyEmailPasswordPreBuiltUI,
                             ])}
                             <Route
                                 path="/"
