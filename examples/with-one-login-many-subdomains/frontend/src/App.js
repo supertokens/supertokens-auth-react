@@ -31,7 +31,7 @@ SuperTokens.init({
             getRedirectionURL: async (context) => {
                 if (context.action === "SUCCESS") {
                     // redirect users to their associated subdomain e.g abc.example.com for user abc
-                    const claimValue = await Session.getClaimValue(AllowedDomainsClaim);
+                    const claimValue = await Session.getClaimValue({ claim: AllowedDomainsClaim });
                     return "http://" + claimValue[0] + ":3000";
                 }
             },
@@ -41,7 +41,7 @@ SuperTokens.init({
             getRedirectionURL: async (context) => {
                 if (context.action === "SUCCESS") {
                     // redirect users to their associated subdomain e.g abc.example.com for user abc
-                    const claimValue = await Session.getClaimValue(AllowedDomainsClaim);
+                    const claimValue = await Session.getClaimValue({ claim: AllowedDomainsClaim });
                     return "http://" + claimValue[0] + ":3000";
                 }
             },
