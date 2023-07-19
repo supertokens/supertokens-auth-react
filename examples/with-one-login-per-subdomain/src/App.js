@@ -3,7 +3,9 @@ import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import MultiTenancy, { AllowedDomainsClaim } from "supertokens-auth-react/recipe/multitenancy";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
 import Session, { SessionAuth, getClaimValue } from "supertokens-auth-react/recipe/session";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./Home";
@@ -27,6 +29,9 @@ SuperTokens.init({
             },
         }),
         ThirdPartyEmailPassword.init({}),
+        ThirdPartyPasswordless.init({
+            contactMethod: "EMAIL",
+        }),
         Session.init({
             sessionTokenFrontendDomain: ".example.com:3000",
             override: {
@@ -40,7 +45,7 @@ SuperTokens.init({
                                 let claimValue = await getClaimValue({
                                     claim: AllowedDomainsClaim,
                                 });
-                                return "http://" + claimValue[0];
+                                return "http://" + claimValue[0] + ":3000";
                             },
                         },
                     ],
@@ -59,6 +64,7 @@ function App() {
                         <Routes>
                             {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
                                 ThirdPartyEmailPasswordPreBuiltUI,
+                                ThirdPartyPasswordlessPreBuiltUI,
                             ])}
                             <Route
                                 path="/"

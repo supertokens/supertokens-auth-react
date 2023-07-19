@@ -50,7 +50,7 @@ async function main() {
             providers: [
                 {
                     thirdPartyId: "google",
-                    name: "Google cust",
+                    name: "Google",
                     clients: [
                         {
                             clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
@@ -70,8 +70,8 @@ async function main() {
         },
     });
     await setupTenant("public", "tenant3", {
-        emailPassword: { enabled: true },
-        passwordless: { enabled: false },
+        emailPassword: { enabled: false },
+        passwordless: { enabled: true },
         thirdParty: {
             enabled: true,
             providers: [

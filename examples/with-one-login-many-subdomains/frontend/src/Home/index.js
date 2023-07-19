@@ -1,8 +1,7 @@
 import React from "react";
 import Logout from "./Logout";
 import SuccessView from "./SuccessView";
-import { useSessionContext } from "supertokens-auth-react/recipe/session";
-import { signOut } from "supertokens-auth-react/recipe/emailpassword";
+import { useSessionContext, signOut } from "supertokens-auth-react/recipe/session";
 import { getAuthDomain } from "../utils";
 
 export default function Home() {
@@ -10,7 +9,7 @@ export default function Home() {
 
     async function logoutClicked() {
         await signOut();
-        window.location.replace(getAuthDomain());
+        window.location.replace(getAuthDomain() + "?tenantId");
     }
 
     if (session.loading === true) {

@@ -70,8 +70,8 @@ async function main() {
         },
     });
     await setupTenant("public", "tenant3", {
-        emailPassword: { enabled: true },
-        passwordless: { enabled: false },
+        emailPassword: { enabled: false },
+        passwordless: { enabled: true },
         thirdParty: {
             enabled: true,
             providers: [
