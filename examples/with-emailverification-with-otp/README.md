@@ -64,7 +64,7 @@ Our backend will need to handle two main things:
 
 In the regular email verification flow, the url which is sent to the user for verification contains a token. This token will be used for verifying the user.
 
-We will use the `emailDelivery` config in our backend config where we will generate an OTP, map it to the token and send the OTP to the user via email using node mailer.
+We will use the `createAndSendCustomEmail` function in our backend config where we will generate an OTP, map it to the token and send the OTP to the user via email using node mailer.
 
 #### Verifying the OTP
 
