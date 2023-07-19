@@ -7,6 +7,8 @@ const { middleware, errorHandler } = require("supertokens-node/framework/express
 const cors = require("cors");
 const Dashboard = require("supertokens-node/recipe/dashboard");
 
+let { Google, Github } = ThirdPartyEmailPassword;
+
 const apiPort = process.env.API_PORT || 4000;
 const apiDomain = process.env.API_URL || `http://localhost:${apiPort}`;
 const websitePort = process.env.WEBSITE_PORT || 8080;
@@ -30,28 +32,14 @@ supertokens.init({
             providers: [
                 // We have provided you with development keys which you can use for testsing.
                 // IMPORTANT: Please replace them with your own OAuth keys for production use.
-                {
-                    config: {
-                        thirdPartyId: "google",
-                        clients: [
-                            {
-                                clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
-                                clientSecret: "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",
-                            },
-                        ],
-                    },
-                },
-                {
-                    config: {
-                        thirdPartyId: "github",
-                        clients: [
-                            {
-                                clientId: "467101b197249757c71f",
-                                clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
-                            },
-                        ],
-                    },
-                },
+                Google({
+                    clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
+                    clientSecret: "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",
+                }),
+                Github({
+                    clientId: "467101b197249757c71f",
+                    clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
+                }),
             ],
         }),
         Session.init(), // initializes session features

@@ -18,14 +18,14 @@ function App() {
         if (data.credential) {
             // we do this call so that the state is created and saved in storage.
             await ThirdParty.getAuthorisationURLWithQueryParamsAndSetState({
-                thirdPartyId: "google",
-                frontendRedirectURI: window.location.toString(),
+                providerId: "google",
+                authorisationURL: window.location.toString(),
             });
             const stateInfo = await ThirdParty.getStateAndOtherInfoFromStorage();
             if (data.credential && stateInfo !== undefined) {
                 await ThirdParty.signInAndUp({
                     userContext: {
-                        id_token: data.credential,
+                        authCode: data.credential,
                         state: stateInfo.stateForAuthProvider,
                     },
                 });
