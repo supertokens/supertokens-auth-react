@@ -18,6 +18,11 @@ SuperTokens.init({
         websiteBasePath: "/",
     },
     usesDynamicLoginMethods: true,
+    getRedirectionURL: async (context) => {
+        if (context.action === "TO_AUTH") {
+            return "/auth";
+        }
+    },
     recipeList: [
         MultiTenancy.init({
             override: {
@@ -33,6 +38,8 @@ SuperTokens.init({
                     // redirect users to their associated subdomain e.g abc.example.com for user abc
                     const claimValue = await Session.getClaimValue({ claim: AllowedDomainsClaim });
                     return "http://" + claimValue[0] + ":3000";
+                } else if (context.action === "RESET_PASSWORD") {
+                    return "/auth/reset-password";
                 }
             },
         }),
@@ -43,6 +50,8 @@ SuperTokens.init({
                     // redirect users to their associated subdomain e.g abc.example.com for user abc
                     const claimValue = await Session.getClaimValue({ claim: AllowedDomainsClaim });
                     return "http://" + claimValue[0] + ":3000";
+                } else if (context.action === "RESET_PASSWORD") {
+                    return "/auth/reset-password";
                 }
             },
         }),
@@ -82,7 +91,7 @@ function App() {
                     <div className="fill">
                         <Routes>
                             {window.location.origin === getAuthDomain() ? (
-                                <Route path="/auth" element={<AuthPage />} />
+                                <Route path="/auth/*" element={<AuthPage />} />
                             ) : (
                                 <Route
                                     path="/"
