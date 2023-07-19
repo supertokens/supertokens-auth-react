@@ -30,8 +30,6 @@ export default class Github extends Provider {
      */
     private static instance?: Github;
 
-    buttonComponent?: JSX.Element;
-
     /*
      * Constructor.
      */
@@ -39,24 +37,9 @@ export default class Github extends Provider {
         super({
             id: "github",
             name: "GitHub",
-            clientId: config?.clientId,
-            getRedirectURL: config?.getRedirectURL,
+            ...config,
         });
-
-        if (config === undefined) {
-            return;
-        }
-
-        this.buttonComponent = config.buttonComponent;
     }
-
-    getButton = (): JSX.Element => {
-        if (this.buttonComponent !== undefined) {
-            return this.buttonComponent;
-        }
-
-        return this.getDefaultButton();
-    };
 
     getLogo = (): JSX.Element => {
         return (

@@ -27,14 +27,6 @@ export function normaliseThirdPartyPasswordlessConfig(config?: Config): Normalis
     if (config === undefined) {
         config = {} as Config;
     }
-    const disablePasswordless = config.disablePasswordless === true;
-    const disableThirdParty =
-        config.signInUpFeature === undefined ||
-        config.signInUpFeature.providers === undefined ||
-        config.signInUpFeature.providers.length === 0;
-    if (disablePasswordless && disableThirdParty) {
-        throw new Error("You need to enable either passwordless or third party providers login.");
-    }
 
     const override: any = {
         functions: (originalImplementation: TPPWlessRecipeInterface) => originalImplementation,
@@ -49,39 +41,36 @@ export function normaliseThirdPartyPasswordlessConfig(config?: Config): Normalis
         ...normaliseAuthRecipe(config),
 
         thirdPartyProviderAndEmailOrPhoneFormStyle,
-        thirdpartyConfig: disableThirdParty
-            ? undefined
-            : normaliseThirdPartyConfig({
-                  getRedirectionURL: config.getRedirectionURL,
-                  style: config.style,
-                  onHandleEvent: config.onHandleEvent,
-                  preAPIHook: config.preAPIHook,
-                  signInAndUpFeature: {
-                      ...config.signInUpFeature,
-                      style: thirdPartyProviderAndEmailOrPhoneFormStyle,
-                  },
-                  oAuthCallbackScreen: config.oAuthCallbackScreen,
-                  useShadowDom: config.useShadowDom,
-                  override: {},
-              }),
-        passwordlessConfig: disablePasswordless
-            ? undefined
-            : normalisePasswordlessConfig({
-                  contactMethod: config.contactMethod,
-                  style: config.style,
-                  validateEmailAddress: "validateEmailAddress" in config ? config.validateEmailAddress : undefined,
-                  validatePhoneNumber: "validatePhoneNumber" in config ? config.validatePhoneNumber : undefined,
-                  getRedirectionURL: config.getRedirectionURL,
-                  onHandleEvent: config.onHandleEvent,
-                  preAPIHook: config.preAPIHook,
-                  useShadowDom: config.useShadowDom,
-                  signInUpFeature: {
-                      ...config.signInUpFeature,
-                      emailOrPhoneFormStyle: thirdPartyProviderAndEmailOrPhoneFormStyle,
-                  },
-                  linkClickedScreenFeature: config.linkClickedScreenFeature,
-                  override: {},
-              }),
+        thirdpartyConfig: normaliseThirdPartyConfig({
+            getRedirectionURL: config.getRedirectionURL,
+            style: config.style,
+            onHandleEvent: config.onHandleEvent,
+            preAPIHook: config.preAPIHook,
+            signInAndUpFeature: {
+                ...config.signInUpFeature,
+                style: thirdPartyProviderAndEmailOrPhoneFormStyle,
+            },
+            oAuthCallbackScreen: config.oAuthCallbackScreen,
+            useShadowDom: config.useShadowDom,
+            override: {},
+        }),
+        passwordlessConfig: normalisePasswordlessConfig({
+            contactMethod: config.contactMethod,
+            style: config.style,
+            validateEmailAddress: "validateEmailAddress" in config ? config.validateEmailAddress : undefined,
+            validatePhoneNumber: "validatePhoneNumber" in config ? config.validatePhoneNumber : undefined,
+            getRedirectionURL: config.getRedirectionURL,
+            onHandleEvent: config.onHandleEvent,
+            preAPIHook: config.preAPIHook,
+            useShadowDom: config.useShadowDom,
+            signInUpFeature: {
+                ...config.signInUpFeature,
+                emailOrPhoneFormStyle: thirdPartyProviderAndEmailOrPhoneFormStyle,
+            },
+            linkClickedScreenFeature: config.linkClickedScreenFeature,
+            override: {},
+        }),
+        disablePasswordless: config.disablePasswordless === true,
         override,
     };
 }

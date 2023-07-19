@@ -5,7 +5,7 @@ import type { GenericComponentOverrideMap } from "../../components/componentOver
 import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
 export declare class PasswordlessPreBuiltUI extends RecipeRouter {
-    private readonly recipeInstance;
+    readonly recipeInstance: Passwordless;
     static instance?: PasswordlessPreBuiltUI;
     constructor(recipeInstance: Passwordless);
     static getInstanceOrInitAndGetInstance(): PasswordlessPreBuiltUI;

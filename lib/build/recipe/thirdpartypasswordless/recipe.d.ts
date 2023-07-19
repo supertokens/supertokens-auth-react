@@ -19,6 +19,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
     readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdpartyPasswordlessWebJS>;
     static instance?: ThirdPartyPasswordless;
     static RECIPE_ID: string;
+    recipeID: string;
     passwordlessRecipe: Passwordless | undefined;
     thirdPartyRecipe: ThirdParty | undefined;
     constructor(

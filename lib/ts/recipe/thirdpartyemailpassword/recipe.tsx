@@ -19,6 +19,7 @@
 import ThirdPartyEmailPasswordWebJS from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
 import { SSR_ERROR } from "../../constants";
+import SuperTokens from "../../superTokens";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
 import EmailPassword from "../emailpassword/recipe";
@@ -49,6 +50,8 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     static instance?: ThirdPartyEmailPassword;
     static RECIPE_ID = "thirdpartyemailpassword";
 
+    recipeID = ThirdPartyEmailPassword.RECIPE_ID;
+
     emailPasswordRecipe: EmailPassword | undefined;
 
     thirdPartyRecipe: ThirdParty | undefined;
@@ -63,12 +66,21 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             typeof ThirdPartyEmailPasswordWebJS
         > = ThirdPartyEmailPasswordWebJS
     ) {
+        const disableThirdParty =
+            config.signInAndUpFeature?.providers === undefined || config.signInAndUpFeature.providers.length === 0;
+        if (
+            SuperTokens.usesDynamicLoginMethods === false &&
+            config.disableEmailPassword === true &&
+            disableThirdParty
+        ) {
+            throw new Error("You need to enable either email password or third party providers login.");
+        }
         super(config);
 
         this.emailPasswordRecipe =
             recipes.emailPasswordInstance !== undefined
                 ? recipes.emailPasswordInstance
-                : this.config.disableEmailPassword
+                : SuperTokens.usesDynamicLoginMethods === false && this.config.disableEmailPassword
                 ? undefined
                 : new EmailPassword(
                       {
@@ -89,7 +101,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
         this.thirdPartyRecipe =
             recipes.thirdPartyInstance !== undefined
                 ? recipes.thirdPartyInstance
-                : this.config.thirdPartyConfig === undefined
+                : SuperTokens.usesDynamicLoginMethods === false && disableThirdParty
                 ? undefined
                 : new ThirdParty(
                       {
@@ -122,6 +134,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
         const normalisedConfig = normaliseThirdPartyEmailPasswordConfig(config);
 
         return {
+            recipeID: ThirdPartyEmailPassword.RECIPE_ID,
             authReact: (
                 appInfo: NormalisedAppInfo
             ): RecipeModule<

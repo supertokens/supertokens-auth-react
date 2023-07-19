@@ -19,6 +19,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdPartyEmailPasswordWebJS>;
     static instance?: ThirdPartyEmailPassword;
     static RECIPE_ID: string;
+    recipeID: string;
     emailPasswordRecipe: EmailPassword | undefined;
     thirdPartyRecipe: ThirdParty | undefined;
     constructor(

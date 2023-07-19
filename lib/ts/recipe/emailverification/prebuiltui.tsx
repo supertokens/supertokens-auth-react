@@ -17,7 +17,7 @@ import type { RecipeFeatureComponentMap } from "../../types";
 
 export class EmailVerificationPreBuiltUI extends RecipeRouter {
     static instance?: EmailVerificationPreBuiltUI;
-    constructor(private readonly recipeInstance: EmailVerificationRecipe) {
+    constructor(public readonly recipeInstance: EmailVerificationRecipe) {
         super();
     }
 
@@ -59,6 +59,7 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
                 component: (props: any) => this.getFeatureComponent("emailverification", props, useComponentOverrides),
+                recipeID: EmailVerificationRecipe.RECIPE_ID,
             };
         }
         return features;

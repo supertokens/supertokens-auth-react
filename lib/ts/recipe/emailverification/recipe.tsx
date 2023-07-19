@@ -53,6 +53,8 @@ export default class EmailVerification extends RecipeModule<
         () => EmailVerification.getInstanceOrThrow().webJSRecipe
     );
 
+    public recipeID = EmailVerification.RECIPE_ID;
+
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         public readonly webJSRecipe: WebJSRecipeInterface<typeof EmailVerificationWebJS> = EmailVerificationWebJS
@@ -71,6 +73,7 @@ export default class EmailVerification extends RecipeModule<
         const normalisedConfig = normaliseEmailVerificationFeature(config);
 
         return {
+            recipeID: EmailVerification.RECIPE_ID,
             authReact: (
                 appInfo: NormalisedAppInfo
             ): RecipeModule<

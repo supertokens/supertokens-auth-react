@@ -28,7 +28,7 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     private thirdPartyPreBuiltUI: ThirdPartyPreBuiltUI | undefined;
     private passwordlessPreBuiltUI: PasswordlessPreBuiltUI | undefined;
 
-    constructor(private readonly recipeInstance: ThirdPartyPasswordless) {
+    constructor(public readonly recipeInstance: ThirdPartyPasswordless) {
         super();
         const { thirdPartyRecipe, passwordlessRecipe } = recipeInstance;
         if (thirdPartyRecipe !== undefined) {
@@ -151,6 +151,7 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
                 component: (prop: any) => this.getFeatureComponent("signInUp", prop, useComponentOverrides),
+                recipeID: ThirdPartyPasswordless.RECIPE_ID,
             };
         }
 

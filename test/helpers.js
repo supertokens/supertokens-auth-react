@@ -132,6 +132,17 @@ export async function getProvidersLabels(page) {
     );
 }
 
+export async function getProviderLogoCount(page) {
+    await waitForSTElement(page);
+    return await page.evaluate(
+        ({ ST_ROOT_SELECTOR }) =>
+            document
+                .querySelector(ST_ROOT_SELECTOR)
+                .shadowRoot.querySelectorAll("[data-supertokens~='providerButtonLogo']").length,
+        { ST_ROOT_SELECTOR }
+    );
+}
+
 export async function getSubmitFormButtonLabelWithoutShadowDom(page) {
     return await page.evaluate(() => document.querySelector("form > div > button").innerText);
 }
@@ -518,7 +529,9 @@ export async function clickOnProviderButtonWithoutWaiting(page, provider) {
             Array.from(
                 document
                     .querySelector(ST_ROOT_SELECTOR)
-                    .shadowRoot.querySelectorAll("[data-supertokens~='providerButton']")
+                    .shadowRoot.querySelectorAll(
+                        "[data-supertokens~='providerButton'] [data-supertokens~='providerButtonText']"
+                    )
             )
                 .find((button) => {
                     return button.innerText === `Continue with ${provider}`;
@@ -632,12 +645,14 @@ export async function getSessionHandleWithAxios(page) {
 }
 
 export async function getUserIdWithFetch(page) {
+    await page.waitForSelector("#root > div > div.fill > div > div.fetch > ul > li.sessionInfo-user-id");
     return await page.evaluate(
         () => document.querySelector("#root > div > div.fill > div > div.fetch > ul > li.sessionInfo-user-id").innerText
     );
 }
 
 export async function getSessionHandleWithFetch(page) {
+    await page.waitForSelector("#root > div > div.fill > div > div.fetch > ul > li.sessionInfo-session-handle");
     return await page.evaluate(
         () =>
             document.querySelector("#root > div > div.fill > div > div.fetch > ul > li.sessionInfo-session-handle")

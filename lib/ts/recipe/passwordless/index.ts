@@ -21,7 +21,6 @@ import { RecipeComponentsOverrideContextProvider } from "./componentOverrideCont
 import Passwordless from "./recipe";
 import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import * as UtilFunctions from "./utils";
 
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/passwordless";
 import type { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
@@ -48,9 +47,9 @@ export default class Wrapper {
         flowType: PasswordlessFlowType;
         fetchResponse: Response;
     }> {
-        return UtilFunctions.createCode({
+        return Passwordless.getInstanceOrThrow().webJSRecipe.createCode({
             ...input,
-            recipeImplementation: Passwordless.getInstanceOrThrow().webJSRecipe,
+            userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
@@ -58,9 +57,9 @@ export default class Wrapper {
         status: "OK" | "RESTART_FLOW_ERROR";
         fetchResponse: Response;
     }> {
-        return UtilFunctions.resendCode({
+        return Passwordless.getInstanceOrThrow().webJSRecipe.resendCode({
             ...input,
-            recipeImplementation: Passwordless.getInstanceOrThrow().webJSRecipe,
+            userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
@@ -90,9 +89,9 @@ export default class Wrapper {
           }
         | { status: "RESTART_FLOW_ERROR"; fetchResponse: Response }
     > {
-        return UtilFunctions.consumeCode({
+        return Passwordless.getInstanceOrThrow().webJSRecipe.consumeCode({
             ...input,
-            recipeImplementation: Passwordless.getInstanceOrThrow().webJSRecipe,
+            userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 

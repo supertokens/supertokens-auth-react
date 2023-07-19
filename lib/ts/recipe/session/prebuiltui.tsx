@@ -13,7 +13,7 @@ import type { PropsWithChildren, ReactElement } from "react";
 
 export class SessionPreBuiltUI extends RecipeRouter {
     static instance?: SessionPreBuiltUI;
-    constructor(private readonly recipeInstance: Session) {
+    constructor(public readonly recipeInstance: Session) {
         super();
     }
 

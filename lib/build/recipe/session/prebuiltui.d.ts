@@ -5,7 +5,7 @@ import type { GenericComponentOverrideMap } from "../../components/componentOver
 import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren, ReactElement } from "react";
 export declare class SessionPreBuiltUI extends RecipeRouter {
-    private readonly recipeInstance;
+    readonly recipeInstance: Session;
     static instance?: SessionPreBuiltUI;
     constructor(recipeInstance: Session);
     static getInstanceOrInitAndGetInstance(): SessionPreBuiltUI;

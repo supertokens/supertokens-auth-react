@@ -16,27 +16,16 @@
 import SuperTokens from "../../superTokens";
 import { appendQueryParamsToURL } from "../../utils";
 
-import type { NormalisedConfig } from "./types";
-import type { NormalisedConfigWithAppInfoAndRecipeID } from "../../types";
+import { BaseRecipeModule } from "./baseRecipeModule";
 
-/*
- * Class.
- */
+import type { NormalisedConfig } from "./types";
+
 export default abstract class RecipeModule<
     GetRedirectionURLContextType,
     Action,
     OnHandleEventContextType,
     N extends NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType>
-> {
-    config: NormalisedConfigWithAppInfoAndRecipeID<N>;
-
-    /*
-     * Constructor.
-     */
-    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<N>) {
-        this.config = config;
-    }
-
+> extends BaseRecipeModule<GetRedirectionURLContextType, Action, OnHandleEventContextType, N> {
     redirect = async (
         context: GetRedirectionURLContextType,
         history?: any,

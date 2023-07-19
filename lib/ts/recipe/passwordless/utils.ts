@@ -13,8 +13,6 @@
  * under the License.
  */
 
-import WebJSUtils from "supertokens-web-js/recipe/passwordless/utils";
-
 import { normaliseAuthRecipe } from "../authRecipe/utils";
 
 import {
@@ -25,16 +23,9 @@ import {
     defaultGuessInternationPhoneNumberFromInputPhoneNumber,
 } from "./validators";
 
-import type {
-    AdditionalLoginAttemptInfoProperties,
-    Config,
-    LoginAttemptInfo,
-    NormalisedConfig,
-    SignInUpFeatureConfigInput,
-} from "./types";
+import type { Config, NormalisedConfig, SignInUpFeatureConfigInput } from "./types";
 import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
-import type { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
-import type { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
+import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
     if (config === undefined) {
@@ -144,90 +135,4 @@ function normalisePasswordlessBaseConfig<T>(config?: T & FeatureBaseConfig): T &
         ...(config as T),
         style,
     };
-}
-
-export async function getLoginAttemptInfo(input: {
-    recipeImplementation: RecipeInterface;
-    userContext: any;
-}): Promise<LoginAttemptInfo | undefined> {
-    return await input.recipeImplementation.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
-        userContext: input.userContext,
-    });
-}
-
-export async function setLoginAttemptInfo(input: {
-    recipeImplementation: RecipeInterface;
-    userContext: any;
-    attemptInfo: LoginAttemptInfo;
-}): Promise<void> {
-    return await input.recipeImplementation.setLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
-        userContext: input.userContext,
-        attemptInfo: input.attemptInfo,
-    });
-}
-
-/**
- * These functions are helper functions so that the logic can be exposed from both
- * passwordless and thirdpartypasswordless recipes without having to duplicate code
- */
-
-export async function createCode(
-    input:
-        | { email: string; userContext?: any; options?: RecipeFunctionOptions; recipeImplementation: RecipeInterface }
-        | {
-              phoneNumber: string;
-              userContext?: any;
-              options?: RecipeFunctionOptions;
-              recipeImplementation: RecipeInterface;
-          }
-): Promise<{
-    status: "OK";
-    deviceId: string;
-    preAuthSessionId: string;
-    flowType: PasswordlessFlowType;
-    fetchResponse: Response;
-}> {
-    return WebJSUtils.createCode(input);
-}
-
-export async function resendCode(input: {
-    userContext?: any;
-    options?: RecipeFunctionOptions;
-    recipeImplementation: RecipeInterface;
-}): Promise<{
-    status: "OK" | "RESTART_FLOW_ERROR";
-    fetchResponse: Response;
-}> {
-    return WebJSUtils.resendCode(input);
-}
-
-export async function consumeCode(
-    input:
-        | {
-              userInputCode: string;
-              userContext?: any;
-              options?: RecipeFunctionOptions;
-              recipeImplementation: RecipeInterface;
-          }
-        | {
-              userContext?: any;
-              options?: RecipeFunctionOptions;
-              recipeImplementation: RecipeInterface;
-          }
-): Promise<
-    | {
-          status: "OK";
-          createdNewUser: boolean;
-          user: PasswordlessUser;
-          fetchResponse: Response;
-      }
-    | {
-          status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
-          failedCodeInputAttemptCount: number;
-          maximumCodeInputAttempts: number;
-          fetchResponse: Response;
-      }
-    | { status: "RESTART_FLOW_ERROR"; fetchResponse: Response }
-> {
-    return WebJSUtils.consumeCode(input);
 }

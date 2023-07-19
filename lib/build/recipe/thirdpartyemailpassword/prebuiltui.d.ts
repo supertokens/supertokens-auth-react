@@ -7,7 +7,7 @@ import type { GenericComponentOverrideMap } from "../../components/componentOver
 import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
 export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
-    private readonly recipeInstance;
+    readonly recipeInstance: ThirdPartyEmailPassword;
     static instance?: ThirdPartyEmailPasswordPreBuiltUI;
     private thirdPartyPreBuiltUI;
     private emailPasswordPreBuiltUI;

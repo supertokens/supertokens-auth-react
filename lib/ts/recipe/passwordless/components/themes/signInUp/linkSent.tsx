@@ -56,8 +56,6 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
 
             try {
                 response = await props.recipeImplementation.resendCode({
-                    deviceId: props.loginAttemptInfo.deviceId,
-                    preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
                     userContext,
                 });
             } catch (e) {

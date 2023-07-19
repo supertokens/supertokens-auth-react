@@ -22,7 +22,9 @@ import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuper
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
 import { SSR_ERROR } from "./constants";
+import Multitenancy from "./recipe/multitenancy/recipe";
 import { saveCurrentLanguage, TranslationController } from "./translation/translationHelpers";
+import { UIController } from "./ui/uiController";
 import {
     appendQueryParamsToURL,
     appendTrailingSlashToURL,
@@ -37,6 +39,7 @@ import {
 } from "./utils";
 
 import type RecipeModule from "./recipe/recipeModule";
+import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 import type { GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } from "./types";
@@ -50,6 +53,9 @@ export default class SuperTokens {
      * Static Attributes.
      */
     private static instance?: SuperTokens;
+    static usesDynamicLoginMethods = false;
+    static uiController = new UIController();
+
     /*
      * Instance Attributes.
      */
@@ -61,14 +67,13 @@ export default class SuperTokens {
         translationEventSource: TranslationController;
         userTranslationFunc?: TranslationFunc;
     };
-    recipeList: RecipeModule<any, any, any, any>[] = [];
+    recipeList: BaseRecipeModule<any, any, any, any>[] = [];
     private userGetRedirectionURL: SuperTokensConfig["getRedirectionURL"];
     /*
      * Constructor.
      */
     constructor(config: SuperTokensConfig) {
         this.appInfo = normaliseInputAppInfoOrThrowError(config.appInfo);
-
         if (config.recipeList === undefined || config.recipeList.length === 0) {
             throw new Error(
                 "Please provide at least one recipe to the supertokens.init function call. See https://supertokens.io/docs/emailpassword/quick-setup/frontend"
@@ -93,7 +98,6 @@ export default class SuperTokens {
         }
 
         this.userGetRedirectionURL = config.getRedirectionURL;
-
         this.recipeList = config.recipeList.map(({ authReact }) => {
             return authReact(this.appInfo, enableDebugLogs);
         });
@@ -110,13 +114,19 @@ export default class SuperTokens {
             console.warn("SuperTokens was already initialized");
             return;
         }
+        SuperTokens.usesDynamicLoginMethods = config.usesDynamicLoginMethods ?? false;
+
+        const recipes =
+            config.recipeList.find((recipe) => recipe.recipeID === Multitenancy.RECIPE_ID) !== undefined
+                ? config.recipeList
+                : config.recipeList.concat(Multitenancy.init({}));
 
         SuperTokensWebJS.init({
             ...config,
-            recipeList: config.recipeList.map(({ webJS }) => webJS),
+            recipeList: recipes.map(({ webJS }) => webJS),
         });
 
-        SuperTokens.instance = new SuperTokens(config);
+        SuperTokens.instance = new SuperTokens({ ...config, recipeList: recipes });
 
         PostSuperTokensInitCallbacks.runPostInitCallbacks();
     }
@@ -176,7 +186,7 @@ export default class SuperTokens {
         history?: any;
         queryParams?: any;
         redirectBack: boolean;
-    }) => {
+    }): Promise<void> => {
         const queryParams = options.queryParams === undefined ? {} : options.queryParams;
         if (options.show !== undefined) {
             queryParams.show = options.show;
@@ -194,25 +204,7 @@ export default class SuperTokens {
     };
 
     redirectToUrl = async (redirectUrl: string, history?: any): Promise<void> => {
-        try {
-            new URL(redirectUrl); // If full URL, no error thrown, skip in app redirection.
-        } catch (e) {
-            // For multi tenancy, If mismatch between websiteDomain and current location, prepend URL relative path with websiteDomain.
-            const origin = getOriginOfPage().getAsStringDangerous();
-            if (origin !== this.appInfo.websiteDomain.getAsStringDangerous()) {
-                redirectUrl = `${this.appInfo.websiteDomain.getAsStringDangerous()}${redirectUrl}`;
-                redirectWithFullPageReload(redirectUrl);
-                return;
-            }
-
-            // If history was provided, use to redirect without reloading.
-            if (history !== undefined) {
-                redirectWithHistory(redirectUrl, history);
-                return;
-            }
-        }
-        // Otherwise, redirect in app.
-        redirectWithFullPageReload(redirectUrl);
+        doRedirection(this.appInfo, redirectUrl, history);
     };
 
     /*
@@ -226,4 +218,26 @@ export default class SuperTokens {
         SuperTokens.instance = undefined;
         return;
     }
+}
+
+export function doRedirection(appInfo: NormalisedAppInfo, redirectUrl: string, history?: any) {
+    try {
+        new URL(redirectUrl); // If full URL, no error thrown, skip in app redirection.
+    } catch (e) {
+        // For multi tenancy, If mismatch between websiteDomain and current location, prepend URL relative path with websiteDomain.
+        const origin = getOriginOfPage().getAsStringDangerous();
+        if (origin !== appInfo.websiteDomain.getAsStringDangerous()) {
+            redirectUrl = `${appInfo.websiteDomain.getAsStringDangerous()}${redirectUrl}`;
+            redirectWithFullPageReload(redirectUrl);
+            return;
+        }
+
+        // If history was provided, use to redirect without reloading.
+        if (history !== undefined) {
+            redirectWithHistory(redirectUrl, history);
+            return;
+        }
+    }
+    // Otherwise, redirect in app.
+    redirectWithFullPageReload(redirectUrl);
 }

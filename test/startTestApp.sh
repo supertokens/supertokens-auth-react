@@ -11,9 +11,13 @@ export EXIT_PID=$$
 apiPort=$1
 
 function killServers () {
-    echo "Kill servers."
-    lsof -i tcp:8082 | grep -m 1 node | awk '{printf $2}' | cut -c 1- | xargs -I {} kill -9 {} > /dev/null 2>&1
-    lsof -i tcp:3031 | grep -m 1 node | awk '{printf $2}' | cut -c 1- | xargs -I {} kill -9 {} > /dev/null 2>&1
+    if [[ "${SERVER_STARTED}" != "true" ]]; then
+        echo "Kill servers."
+        lsof -i tcp:8082 | grep -m 1 node | awk '{printf $2}' | cut -c 1- | xargs -I {} kill -9 {} > /dev/null 2>&1
+        lsof -i tcp:3031 | grep -m 1 node | awk '{printf $2}' | cut -c 1- | xargs -I {} kill -9 {} > /dev/null 2>&1
+    else
+        echo "Leaving servers running because SERVER_STARTED=true"
+    fi
 }
 
 function startEndToEnd () {
@@ -26,7 +30,10 @@ function startEndToEnd () {
     sleep 2 # Because the server is responding does not mean the app is ready. Let's wait another 5secs to make sure the app is up.
     echo "Start mocha testing"
 
-    if ! [[ -z "${SPEC_FILES}" ]]; then
+    if ! [[ -z "${GREP}" ]]; then
+        echo "$GREP"
+        APP_SERVER=$apiPort TEST_MODE=testing mocha --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config --grep "$GREP"
+    elif ! [[ -z "${SPEC_FILES}" ]]; then
         APP_SERVER=$apiPort TEST_MODE=testing mocha --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config $SPEC_FILES
     elif [[ -z "${MOCHA_FILE}" ]]; then
         APP_SERVER=$apiPort TEST_MODE=testing mocha --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config test/end-to-end/**/*.test.js
@@ -69,9 +76,12 @@ mkdir -p test_report/logs
 
 if [[ "${RUN_REACT_16_TESTS}" == "true" ]]; then
     echo "Running tests with React 16"
-    (cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . >> ../../test_report/logs/backend-react16.log 2>&1 &)
-    
-    (cd examples/for-tests-react-16/ && cat | CI=true BROWSER=none PORT=3031 REACT_APP_API_PORT=$apiPort npm run start >> ../../test_report/logs/frontend-react-16.log 2>&1 &)
+
+    if [[ "${SERVER_STARTED}" != "true" ]]; then
+        (cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . >> ../../test_report/logs/backend-react16.log 2>&1 &)
+        
+        (cd examples/for-tests-react-16/ && cat | CI=true BROWSER=none PORT=3031 REACT_APP_API_PORT=$apiPort npm run start >> ../../test_report/logs/frontend-react-16.log 2>&1 &)
+    fi
     
     IS_REACT_16=true RUN_RRD5=true startEndToEnd
 
@@ -79,9 +89,11 @@ if [[ "${RUN_REACT_16_TESTS}" == "true" ]]; then
 else
     echo "Running tests with React 18"
     # Run node server in background.
-    (cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . >> ../../test_report/logs/backend.log 2>&1 &)
+    if [[ "${SERVER_STARTED}" != "true" ]]; then
+        (cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . >> ../../test_report/logs/backend.log 2>&1 &)
 
-    (cd ./examples/for-tests/ && cat | CI=true BROWSER=none PORT=3031 REACT_APP_API_PORT=$apiPort npm run start >> ../../test_report/logs/frontend.log 2>&1 &)
+        (cd ./examples/for-tests/ && cat | CI=true BROWSER=none PORT=3031 REACT_APP_API_PORT=$apiPort npm run start >> ../../test_report/logs/frontend.log 2>&1 &)
+    fi
     # Start front end test app and run tests.
     startEndToEnd
 

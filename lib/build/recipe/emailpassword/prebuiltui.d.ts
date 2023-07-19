@@ -6,7 +6,7 @@ import type { GenericComponentOverrideMap } from "../../components/componentOver
 import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
 export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
-    private readonly recipeInstance;
+    readonly recipeInstance: EmailPassword;
     static instance?: EmailPasswordPreBuiltUI;
     constructor(recipeInstance: EmailPassword);
     static getInstanceOrInitAndGetInstance(): EmailPasswordPreBuiltUI;

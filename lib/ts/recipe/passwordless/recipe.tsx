@@ -49,6 +49,8 @@ export default class Passwordless extends AuthRecipe<
     static instance?: Passwordless;
     static RECIPE_ID = "passwordless";
 
+    recipeID = Passwordless.RECIPE_ID;
+
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         public readonly webJSRecipe: WebJSRecipeInterface<typeof PasswordlessWebJS> = PasswordlessWebJS
@@ -66,6 +68,7 @@ export default class Passwordless extends AuthRecipe<
         const normalisedConfig = normalisePasswordlessConfig(config);
 
         return {
+            recipeID: Passwordless.RECIPE_ID,
             authReact: (
                 appInfo: NormalisedAppInfo
             ): RecipeModule<

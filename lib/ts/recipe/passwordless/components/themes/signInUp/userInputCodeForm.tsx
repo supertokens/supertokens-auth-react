@@ -56,8 +56,6 @@ export const UserInputCodeForm = withOverride(
 
                 try {
                     response = await props.recipeImplementation.resendCode({
-                        deviceId: props.loginAttemptInfo.deviceId,
-                        preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
                         userContext,
                     });
                 } catch (e) {
@@ -135,8 +133,6 @@ export const UserInputCodeForm = withOverride(
                             throw new STGeneralError("GENERAL_ERROR_OTP_UNDEFINED");
                         }
                         const response = await props.recipeImplementation.consumeCode({
-                            deviceId: props.loginAttemptInfo.deviceId,
-                            preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
                             userInputCode,
                             userContext,
                         });

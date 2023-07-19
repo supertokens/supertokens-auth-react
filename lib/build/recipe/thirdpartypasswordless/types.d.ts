@@ -95,9 +95,10 @@ export declare type UserInput = (
 export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
-    passwordlessConfig: NormalisedPasswordlessConfig | undefined;
-    thirdpartyConfig: NormalisedThirdPartyConfig | undefined;
+    passwordlessConfig: NormalisedPasswordlessConfig;
+    thirdpartyConfig: NormalisedThirdPartyConfig;
     thirdPartyProviderAndEmailOrPhoneFormStyle: string | undefined;
+    disablePasswordless: boolean;
     override: {
         functions: (
             originalImplementation: RecipeInterface,

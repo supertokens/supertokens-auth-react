@@ -23,7 +23,7 @@ import type { PropsWithChildren } from "react";
 
 export class PasswordlessPreBuiltUI extends RecipeRouter {
     static instance?: PasswordlessPreBuiltUI;
-    constructor(private readonly recipeInstance: Passwordless) {
+    constructor(public readonly recipeInstance: Passwordless) {
         super();
     }
 
@@ -65,6 +65,7 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
                 component: (props) => this.getFeatureComponent("signInUp", props as any, useComponentOverrides),
+                recipeID: Passwordless.RECIPE_ID,
             };
         }
         if (this.recipeInstance.config.linkClickedScreenFeature.disableDefaultUI !== true) {
@@ -75,6 +76,7 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
                 component: (props) =>
                     this.getFeatureComponent("linkClickedScreen", props as any, useComponentOverrides),
+                recipeID: Passwordless.RECIPE_ID,
             };
         }
 

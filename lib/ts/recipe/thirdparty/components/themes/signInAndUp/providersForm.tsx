@@ -69,7 +69,7 @@ export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps>
             {props.providers.map((provider) => {
                 return (
                     <div key={`provider-${provider.id}`} data-supertokens="providerContainer">
-                        <span onClick={() => signInClick(provider.id)}>{provider.buttonComponent}</span>
+                        <span onClick={() => signInClick(provider.id)}>{provider.getButton()}</span>
                     </div>
                 );
             })}

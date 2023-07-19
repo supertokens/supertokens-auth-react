@@ -17,6 +17,7 @@ export default class Passwordless extends AuthRecipe<
     readonly webJSRecipe: WebJSRecipeInterface<typeof PasswordlessWebJS>;
     static instance?: Passwordless;
     static RECIPE_ID: string;
+    recipeID: string;
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         webJSRecipe?: WebJSRecipeInterface<typeof PasswordlessWebJS>

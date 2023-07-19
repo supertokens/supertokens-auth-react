@@ -25,7 +25,7 @@ import type { PropsWithChildren } from "react";
 
 export class ThirdPartyPreBuiltUI extends RecipeRouter {
     static instance?: ThirdPartyPreBuiltUI;
-    constructor(private readonly recipeInstance: ThirdParty) {
+    constructor(public readonly recipeInstance: ThirdParty) {
         super();
     }
 
@@ -67,19 +67,19 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
                 component: (prop: any) => this.getFeatureComponent("signinup", prop, useComponentOverrides),
+                recipeID: ThirdParty.RECIPE_ID,
             };
         }
 
-        // Add callback route for each provider.
-        this.recipeInstance.config.signInAndUpFeature.providers.forEach((provider) => {
-            const normalisedFullPath = this.recipeInstance.config.appInfo.websiteBasePath.appendPath(
-                new NormalisedURLPath(`/callback/${provider.id}`)
-            );
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: () => matchRecipeIdUsingState(this.recipeInstance, {}),
-                component: (prop: any) => this.getFeatureComponent("signinupcallback", prop, useComponentOverrides),
-            };
-        });
+        // Add callback route for all provider
+        const normalisedFullPath = this.recipeInstance.config.appInfo.websiteBasePath.appendPath(
+            new NormalisedURLPath("/callback/:id")
+        );
+        features[normalisedFullPath.getAsStringDangerous()] = {
+            matches: () => matchRecipeIdUsingState(this.recipeInstance, {}),
+            component: (prop: any) => this.getFeatureComponent("signinupcallback", prop, useComponentOverrides),
+            recipeID: ThirdParty.RECIPE_ID,
+        };
 
         return features;
     };

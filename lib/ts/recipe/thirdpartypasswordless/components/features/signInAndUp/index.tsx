@@ -52,8 +52,6 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         userContext
     );
 
-    const recipeComponentOverrides = props.useComponentOverrides();
-
     const [combinedState, dispatch] = React.useReducer(
         (state: { error: string | undefined }, action: ThirdPartySignInUpActions | PasswordlessSignInUpAction) => {
             switch (action.type) {
@@ -148,26 +146,33 @@ const SignInAndUp: React.FC<PropType> = (props) => {
     };
 
     return (
+        <Fragment>
+            {/* No custom theme, use default. */}
+            {props.children === undefined && <SignInUpTheme {...childProps} />}
+            {/* Otherwise, custom theme is provided, propagate props. */}
+            {props.children &&
+                React.Children.map(props.children, (child) => {
+                    if (React.isValidElement(child)) {
+                        return React.cloneElement(child, childProps);
+                    }
+
+                    return child;
+                })}
+        </Fragment>
+    );
+};
+
+const SignInAndUpFeatureWrapper: React.FC<PropType> = (props) => {
+    const recipeComponentOverrides = props.useComponentOverrides();
+    return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsThirdPartyPasswordless}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {props.children === undefined && <SignInUpTheme {...childProps} />}
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {props.children &&
-                        React.Children.map(props.children, (child) => {
-                            if (React.isValidElement(child)) {
-                                return React.cloneElement(child, childProps);
-                            }
-
-                            return child;
-                        })}
-                </Fragment>
+                <SignInAndUp {...props} />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );
 };
 
-export default SignInAndUp;
+export default SignInAndUpFeatureWrapper;

@@ -20,6 +20,7 @@
 import ThirdpartyPasswordlessWebJS from "supertokens-web-js/recipe/thirdpartypasswordless";
 
 import { SSR_ERROR } from "../../constants";
+import SuperTokens from "../../superTokens";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
 import Passwordless from "../passwordless/recipe";
@@ -54,6 +55,8 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
     static instance?: ThirdPartyPasswordless;
     static RECIPE_ID = "thirdpartypasswordless";
 
+    recipeID = ThirdPartyPasswordless.RECIPE_ID;
+
     passwordlessRecipe: Passwordless | undefined;
 
     thirdPartyRecipe: ThirdParty | undefined;
@@ -68,12 +71,17 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
             typeof ThirdpartyPasswordlessWebJS
         > = ThirdpartyPasswordlessWebJS
     ) {
+        const disableThirdParty =
+            config.thirdpartyConfig?.signInAndUpFeature?.providers === undefined ||
+            config.thirdpartyConfig?.signInAndUpFeature.providers.length === 0;
+        if (SuperTokens.usesDynamicLoginMethods === false && config.disablePasswordless === true && disableThirdParty) {
+            throw new Error("You need to enable either passwordless or third party providers login.");
+        }
         super(config);
-
         this.passwordlessRecipe =
             recipes.passwordlessInstance !== undefined
                 ? recipes.passwordlessInstance
-                : this.config.passwordlessConfig === undefined
+                : SuperTokens.usesDynamicLoginMethods === false && this.config.disablePasswordless
                 ? undefined
                 : new Passwordless(
                       {
@@ -94,7 +102,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
         this.thirdPartyRecipe =
             recipes.thirdPartyInstance !== undefined
                 ? recipes.thirdPartyInstance
-                : this.config.thirdpartyConfig === undefined
+                : SuperTokens.usesDynamicLoginMethods === false && disableThirdParty
                 ? undefined
                 : new ThirdParty(
                       {
@@ -120,6 +128,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
         const normalisedConfig = normaliseThirdPartyPasswordlessConfig(config);
 
         return {
+            recipeID: ThirdPartyPasswordless.RECIPE_ID,
             authReact: (
                 appInfo: NormalisedAppInfo
             ): RecipeModule<

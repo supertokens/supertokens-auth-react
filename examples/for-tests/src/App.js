@@ -10,6 +10,7 @@ import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
+import MultiTenancy from "supertokens-auth-react/recipe/multitenancy";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 import UserRoles from "supertokens-auth-react/recipe/userroles";
@@ -25,6 +26,7 @@ import HydrogenTheme from "./Themes/Hydrogen";
 import { logWithPrefix } from "./logWithPrefix";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { useNavigate } from "react-router-dom";
+import { getTestContext, getEnabledRecipes, getQueryParams } from "./testContext";
 
 const loadv5RRD = window.localStorage.getItem("react-router-dom-is-v5") === "true";
 if (loadv5RRD) {
@@ -93,8 +95,6 @@ const passwordlessDisablePhoneGuess = window.localStorage.getItem("passwordlessD
 if (getQueryParams("authRecipe")) {
     window.localStorage.setItem("authRecipe", getQueryParams("authRecipe"));
 }
-
-const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
 
 if (getQueryParams("defaultToSignUp")) {
     window.localStorage.setItem("defaultToSignUp", getQueryParams("defaultToSignUp") === "true");
@@ -168,7 +168,32 @@ const formFields = [
     },
 ];
 
+const testContext = getTestContext();
+
 let recipeList = [
+    MultiTenancy.init({
+        override: {
+            functions: (oI) => ({
+                ...oI,
+                getTenantId: (input) => {
+                    if (testContext.mockTenantId) {
+                        return testContext.mockTenantId;
+                    }
+
+                    return oI.getTenantId(input);
+                },
+                getLoginMethods: (input) => {
+                    if (testContext.mockLoginMethodsForDynamicLogin) {
+                        return {
+                            ...JSON.parse(testContext.mockLoginMethodsForDynamicLogin),
+                        };
+                    }
+
+                    return oI.getLoginMethods(input);
+                },
+            }),
+        },
+    }),
     Session.init({
         override: {
             functions: (implementation) => {
@@ -230,29 +255,30 @@ let recipeList = [
     }),
 ];
 
-const testContext = {
-    disableDefaultUI: getQueryParams("disableDefaultUI") === "true",
-    thirdPartyRedirectURL: localStorage.getItem("thirdPartyRedirectURL"),
-};
+let enabledRecipes = getEnabledRecipes();
 
-if (authRecipe === "thirdparty") {
+if (enabledRecipes.includes("thirdparty")) {
     recipeList = [getThirdPartyConfigs(testContext), ...recipeList];
-} else if (authRecipe === "emailpassword") {
+}
+if (enabledRecipes.includes("emailpassword")) {
     recipeList = [getEmailPasswordConfigs(testContext), ...recipeList];
-} else if (authRecipe === "both") {
-    recipeList = [getEmailPasswordConfigs(testContext), getThirdPartyConfigs(testContext), ...recipeList];
-} else if (authRecipe === "thirdpartyemailpassword") {
+}
+if (enabledRecipes.includes("thirdpartyemailpassword")) {
     recipeList = [getThirdPartyEmailPasswordConfigs(testContext), ...recipeList];
-} else if (authRecipe === "passwordless") {
+}
+if (enabledRecipes.includes("passwordless")) {
     recipeList = [getPasswordlessConfigs(testContext), ...recipeList];
-} else if (authRecipe === "thirdpartypasswordless") {
+}
+if (enabledRecipes.includes("thirdpartypasswordless")) {
     recipeList = [getThirdPartyPasswordlessConfigs(testContext), ...recipeList];
 }
 
 if (emailVerificationMode !== "OFF") {
     recipeList.push(getEmailVerificationConfigs(testContext));
 }
+
 SuperTokens.init({
+    usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
     appInfo: {
         appName: "SuperTokens",
         websiteDomain: getWebsiteDomain(),
@@ -299,14 +325,9 @@ function App() {
 
     return (
         <ErrorBoundary>
-            <AppWithReactDomRouter authRecipe={authRecipe} />
+            <AppWithReactDomRouter />
         </ErrorBoundary>
     );
-}
-
-function getQueryParams(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
 }
 
 export default App;
@@ -394,18 +415,8 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
     const [sessionInfoUsingFetch, setSessionInfoUsingFetch] = useState(undefined);
 
     async function logout() {
-        const useRecipe = getQueryParams("rid") || authRecipe;
-        if (useRecipe === "thirdparty") {
-            await ThirdParty.signOut();
-        } else if (useRecipe === "thirdpartyemailpassword") {
-            await ThirdPartyEmailPassword.signOut();
-        } else if (useRecipe === "passwordless") {
-            await Passwordless.signOut();
-        } else if (useRecipe === "thirdpartypasswordless") {
-            await ThirdPartyPasswordless.signOut();
-        } else {
-            await EmailPassword.signOut();
-        }
+        await Session.signOut();
+
         if (redirectOnLogout) {
             if (props.history === undefined) {
                 window.location.href = "/auth";
@@ -631,7 +642,26 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
     });
 }
 
-function getThirdPartyPasswordlessConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
+function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI, thirdPartyRedirectURL }) {
+    let providers = [
+        ThirdParty.Github.init(),
+        ThirdParty.Google.init(),
+        ThirdParty.Facebook.init(),
+        ThirdParty.Apple.init(),
+        {
+            id: "custom",
+            name: "Custom",
+        },
+        {
+            id: "auth0",
+            name: "Auth0",
+            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+        },
+    ];
+    if (staticProviderList) {
+        const ids = JSON.parse(staticProviderList);
+        providers = ids.map((id) => providers.find((p) => p.id === id) || { id, name: id });
+    }
     return ThirdPartyPasswordless.init({
         override: {
             functions: (implementation) => {
@@ -734,21 +764,7 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultUI, thirdPartyRedirect
             `,
             privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
             termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
-            providers: [
-                ThirdPartyEmailPassword.Github.init(),
-                ThirdPartyEmailPassword.Google.init(),
-                ThirdPartyEmailPassword.Facebook.init(),
-                ThirdPartyEmailPassword.Apple.init(),
-                {
-                    id: "custom",
-                    name: "Custom",
-                },
-                {
-                    id: "auth0",
-                    name: "Auth0",
-                    getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
-                },
-            ],
+            providers,
             defaultCountry: passwordlessDefaultCountry,
             resendEmailOrSMSGapInSeconds: 2,
             guessInternationPhoneNumberFromInputPhoneNumber: passwordlessDisablePhoneGuess
@@ -849,7 +865,36 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
     });
 }
 
-function getThirdPartyConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
+function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdPartyRedirectURL }) {
+    let providers = [
+        ThirdParty.Github.init(),
+        ThirdParty.Google.init(),
+        ThirdParty.Facebook.init(),
+        ThirdParty.Apple.init(),
+        {
+            id: "custom",
+            name: "Custom",
+        },
+        {
+            id: "auth0",
+            name: "Auth0",
+            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+            buttonComponent: ({ name }) => (
+                <button data-supertokens={`button providerButton`}>
+                    <div data-supertokens="providerButtonLeft">
+                        <div data-supertokens="providerButtonLogo">
+                            <div data-supertokens="providerButtonLogoCenter">!!!</div>
+                        </div>
+                    </div>
+                    <div data-supertokens="providerButtonText">Continue with {name}</div>
+                </button>
+            ),
+        },
+    ];
+    if (staticProviderList) {
+        const ids = JSON.parse(staticProviderList);
+        providers = ids.map((id) => providers.find((p) => p.id === id) || { id, name: id });
+    }
     return ThirdParty.init({
         style: `          
             [data-supertokens~=container] {
@@ -918,21 +963,7 @@ function getThirdPartyConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
             style: theme,
             privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
             termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
-            providers: [
-                ThirdParty.Github.init(),
-                ThirdParty.Google.init(),
-                ThirdParty.Facebook.init(),
-                ThirdParty.Apple.init(),
-                {
-                    id: "custom",
-                    name: "Custom",
-                },
-                {
-                    id: "auth0",
-                    name: "Auth0",
-                    getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
-                },
-            ],
+            providers,
         },
 
         oAuthCallbackScreen: {
@@ -941,7 +972,26 @@ function getThirdPartyConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
     });
 }
 
-function getThirdPartyEmailPasswordConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
+function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultUI, thirdPartyRedirectURL }) {
+    let providers = [
+        ThirdParty.Github.init(),
+        ThirdParty.Google.init(),
+        ThirdParty.Facebook.init(),
+        ThirdParty.Apple.init(),
+        {
+            id: "custom",
+            name: "Custom",
+        },
+        {
+            id: "auth0",
+            name: "Auth0",
+            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+        },
+    ];
+    if (staticProviderList) {
+        const ids = JSON.parse(staticProviderList);
+        providers = ids.map((id) => providers.find((p) => p.id === id) || { id, name: id });
+    }
     return ThirdPartyEmailPassword.init({
         preAPIHook: async (context) => {
             if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `THIRD_PARTY_EMAIL_PASSWORD ${context.action}`) {
@@ -1088,20 +1138,6 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultUI, thirdPartyRedirec
 
                         return implementation.verifyAndGetStateOrThrowError(input);
                     },
-                    getAuthCodeFromURL(input) {
-                        if (input.userContext["key"] !== undefined) {
-                            log(`GET_AUTH_CODE_FROM_URL RECEIVED_USER_CONTEXT`);
-                        }
-
-                        return implementation.getAuthCodeFromURL(input);
-                    },
-                    getAuthErrorFromURL(input) {
-                        if (input.userContext["key"] !== undefined) {
-                            log(`GET_AUTH_ERROR_FROM_URL RECEIVED_USER_CONTEXT`);
-                        }
-
-                        return implementation.getAuthErrorFromURL(input);
-                    },
                 };
             },
         },
@@ -1118,21 +1154,7 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultUI, thirdPartyRedirec
                 termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
             },
             style: theme,
-            providers: [
-                ThirdPartyEmailPassword.Github.init(),
-                ThirdPartyEmailPassword.Google.init(),
-                ThirdPartyEmailPassword.Facebook.init(),
-                ThirdPartyEmailPassword.Apple.init(),
-                {
-                    id: "custom",
-                    name: "Custom",
-                },
-                {
-                    id: "auth0",
-                    name: "Auth0",
-                    getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
-                },
-            ],
+            providers,
         },
         disableEmailPassword: false,
 

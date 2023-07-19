@@ -10,7 +10,7 @@ import type { UserInputCodeForm } from "./components/themes/signInUp/userInputCo
 import type { UserInputCodeFormFooter } from "./components/themes/signInUp/userInputCodeFormFooter";
 import type { UserInputCodeFormHeader } from "./components/themes/signInUp/userInputCodeFormHeader";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import type { FeatureBaseConfig, NormalisedBaseConfig, WebJSRecipeInterface } from "../../types";
 import type {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -19,6 +19,7 @@ import type {
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipe/types";
 import type { Dispatch } from "react";
+import type WebJSRecipe from "supertokens-web-js/recipe/passwordless";
 import type { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
 export declare type PreAndPostAPIHookAction =
     | "PASSWORDLESS_CREATE_CODE"
@@ -120,7 +121,7 @@ export declare type UserInput = (
     linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type SignInUpProps = {
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: (result: { createdNewUser: boolean; user: PasswordlessUser }) => void;
     dispatch: Dispatch<PasswordlessSignInUpAction>;
@@ -154,11 +155,12 @@ export declare type AdditionalLoginAttemptInfoProperties = {
     lastResend: number;
     redirectToPath?: string;
 };
+export declare type RecipeImplementation = WebJSRecipeInterface<typeof WebJSRecipe>;
 export declare type SignInUpEmailFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
     error: string | undefined;
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: () => void;
 };
@@ -166,7 +168,7 @@ export declare type SignInUpPhoneFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
     error: string | undefined;
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: () => void;
 };
@@ -174,7 +176,7 @@ export declare type SignInUpEmailOrPhoneFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
     error: string | undefined;
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: () => void;
 };
@@ -182,20 +184,20 @@ export declare type SignInUpUserInputCodeFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
     error: string | undefined;
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     loginAttemptInfo: LoginAttemptInfo;
     onSuccess?: (result: { createdNewUser: boolean; user: PasswordlessUser }) => void;
 };
 export declare type LinkClickedScreenProps = {
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     requireUserInteraction: boolean;
     consumeCode: () => void;
     onSuccess?: () => void;
 };
 export declare type CloseTabScreenProps = {
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
 };
 export declare type PasswordlessSignInUpAction =
@@ -235,17 +237,17 @@ export declare type LinkSentThemeProps = {
     onError: (error: string) => void;
     error: string | undefined;
     loginAttemptInfo: LoginAttemptInfo;
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
 };
 export declare type UserInputCodeFormFooterProps = {
     loginAttemptInfo: LoginAttemptInfo;
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
 };
 export declare type UserInputCodeFormHeaderProps = {
     loginAttemptInfo: LoginAttemptInfo;
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
 };
 export declare type ComponentOverrideMap = {

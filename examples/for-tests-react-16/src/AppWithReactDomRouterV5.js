@@ -11,25 +11,29 @@ import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpass
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
 import { AccessDeniedScreen } from "supertokens-auth-react/recipe/session/prebuiltui";
+import { getEnabledRecipes } from "./testContext";
 
 function AppWithReactDomRouter(props) {
-    const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
+    const enabledRecipes = getEnabledRecipes();
     const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
 
-    let recipePreBuiltUIList = [EmailPasswordPreBuiltUI];
-    if (authRecipe === "thirdparty") {
-        recipePreBuiltUIList = [ThirdPartyPreBuiltUI];
-    } else if (authRecipe === "emailpassword") {
-        recipePreBuiltUIList = [EmailPasswordPreBuiltUI];
-    } else if (authRecipe === "both") {
-        recipePreBuiltUIList = [EmailPasswordPreBuiltUI, ThirdPartyPreBuiltUI];
-    } else if (authRecipe === "thirdpartyemailpassword") {
-        recipePreBuiltUIList = [ThirdPartyEmailPasswordPreBuiltUI];
-    } else if (authRecipe === "passwordless") {
-        recipePreBuiltUIList = [PasswordlessPreBuiltUI];
-    } else if (authRecipe === "thirdpartypasswordless") {
-        recipePreBuiltUIList = [ThirdPartyPasswordlessPreBuiltUI];
+    let recipePreBuiltUIList = [];
+    if (enabledRecipes.includes("emailpassword")) {
+        recipePreBuiltUIList.push(EmailPasswordPreBuiltUI);
     }
+    if (enabledRecipes.includes("thirdparty")) {
+        recipePreBuiltUIList.push(ThirdPartyPreBuiltUI);
+    }
+    if (enabledRecipes.includes("thirdpartyemailpassword")) {
+        recipePreBuiltUIList.push(ThirdPartyEmailPasswordPreBuiltUI);
+    }
+    if (enabledRecipes.includes("passwordless")) {
+        recipePreBuiltUIList.push(PasswordlessPreBuiltUI);
+    }
+    if (enabledRecipes.includes("thirdpartypasswordless")) {
+        recipePreBuiltUIList.push(ThirdPartyPasswordlessPreBuiltUI);
+    }
+
     if (emailVerificationMode !== "OFF") {
         recipePreBuiltUIList.push(EmailVerificationPreBuiltUI);
     }

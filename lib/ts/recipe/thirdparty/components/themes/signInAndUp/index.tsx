@@ -46,11 +46,11 @@ const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
     );
 };
 
-const SignInAndUpThemeWrapper: React.FC<SignInAndUpThemeProps> = (
-    props: SignInAndUpThemeProps & {
+const SignInAndUpThemeWrapper: React.FC<
+    SignInAndUpThemeProps & {
         userContext?: any;
     }
-) => {
+> = (props) => {
     const hasFont = hasFontDefined(props.config.rootStyle);
 
     return (

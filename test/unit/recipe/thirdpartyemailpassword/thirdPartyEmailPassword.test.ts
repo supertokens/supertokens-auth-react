@@ -106,7 +106,10 @@ describe("ThirdPartyEmailPassword", function () {
             });
             fail();
         } catch (err) {
-            assert((err as any).message === "You need to enable either email password or third party providers login.");
+            assert.strictEqual(
+                (err as any).message,
+                "You need to enable either email password or third party providers login."
+            );
         }
     });
 });

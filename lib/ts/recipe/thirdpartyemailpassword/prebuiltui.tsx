@@ -30,7 +30,7 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     private thirdPartyPreBuiltUI: ThirdPartyPreBuiltUI | undefined;
     private emailPasswordPreBuiltUI: EmailPasswordPreBuiltUI | undefined;
 
-    constructor(private readonly recipeInstance: ThirdPartyEmailPassword) {
+    constructor(public readonly recipeInstance: ThirdPartyEmailPassword) {
         super();
         const { thirdPartyRecipe, emailPasswordRecipe } = recipeInstance;
         if (thirdPartyRecipe !== undefined) {
@@ -94,6 +94,7 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
                 component: (prop: any) => this.getFeatureComponent("signinup", prop, useComponentOverrides),
+                recipeID: ThirdPartyEmailPassword.RECIPE_ID,
             };
         }
 

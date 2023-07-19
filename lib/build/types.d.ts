@@ -1,4 +1,4 @@
-import type RecipeModule from "./recipe/recipeModule";
+import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 import type { ComponentClass, PropsWithChildren } from "react";
@@ -21,12 +21,18 @@ export declare type SessionClaimValidator = SessionClaimValidatorWebJS & {
 };
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
+    /**
+     * Identifier for the client, such as `web`, `ios`, etc. to be used with thirdparty, multitenancy recipes.
+     */
+    clientType?: string;
     recipeList: {
+        recipeID: string;
         authReact: CreateRecipeFunction<any, any, any, any>;
         webJS: CreateRecipeFunctionWebJS<any>;
     }[];
     cookieHandler?: CookieHandlerInput;
     windowHandler?: WindowHandlerInput;
+    usesDynamicLoginMethods?: boolean;
     languageTranslations?: {
         defaultLanguage?: string;
         currentLanguageCookieScope?: string;
@@ -40,7 +46,7 @@ export declare type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "sign
 export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
     appInfo: NormalisedAppInfo,
     enableDebugLogs: boolean
-) => RecipeModule<T, S, R, N>;
+) => BaseRecipeModule<T, S, R, N>;
 export declare type AppInfoUserInput = {
     appName: string;
     apiDomain: string;
@@ -54,6 +60,7 @@ export declare type AppInfoUserInput = {
     apiGatewayPath?: string;
 };
 export declare type RecipeInitResult<T, Action, R, P extends NormalisedRecipeModuleConfig<T, Action, R>> = {
+    recipeID: string;
     authReact: CreateRecipeFunction<T, Action, R, P>;
     webJS: CreateRecipeFunctionWebJS<Action>;
 };
@@ -71,6 +78,10 @@ export declare type NormalisedAppInfo = {
 export declare type ComponentWithRecipeAndMatchingMethod = {
     component: ReactComponentClass;
     matches: () => boolean;
+    /**
+     * Recipe ID this component belongs
+     */
+    recipeID: string;
 };
 export declare type RecipeFeatureComponentMap = Record<string, ComponentWithRecipeAndMatchingMethod>;
 export declare type BaseFeatureComponentMap = Record<string, ComponentWithRecipeAndMatchingMethod[]>;

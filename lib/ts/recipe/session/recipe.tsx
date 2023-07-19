@@ -36,6 +36,8 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     static instance?: Session;
     static RECIPE_ID = "session";
 
+    public recipeID = Session.RECIPE_ID;
+
     private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
     private redirectionHandlersFromAuthRecipes = new Map<string, (ctx: any, history: any) => Promise<void>>();
 
@@ -54,7 +56,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         return this.webJSRecipe.getAccessToken(input);
     };
 
-    getClaimValue = (input: { claim: SessionClaim<unknown>; userContext: any }): Promise<unknown> => {
+    getClaimValue = <T extends unknown>(input: {
+        claim: SessionClaim<T>;
+        userContext: any;
+    }): Promise<T | undefined> => {
         return this.webJSRecipe.getClaimValue(input);
     };
 
@@ -247,6 +252,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         const normalisedConfig = normaliseSessionConfig(config);
 
         return {
+            recipeID: Session.RECIPE_ID,
             authReact: (appInfo: NormalisedAppInfo): RecipeModule<unknown, unknown, unknown, any> => {
                 Session.instance = new Session({
                     ...normalisedConfig,

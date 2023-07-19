@@ -17,6 +17,7 @@ export default class ThirdParty extends AuthRecipe<
     readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdpartyWebJS>;
     static instance?: ThirdParty;
     static RECIPE_ID: string;
+    recipeID: string;
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         webJSRecipe?: WebJSRecipeInterface<typeof ThirdpartyWebJS>

@@ -15,4 +15,5 @@ declare type PropType = FeatureBaseProps & {
     useComponentOverrides: () => ComponentOverrideMap;
 };
 export declare const SignInAndUpFeature: React.FC<PropType>;
-export default SignInAndUpFeature;
+declare const SignInAndUpFeatureWrapper: React.FC<PropType>;
+export default SignInAndUpFeatureWrapper;

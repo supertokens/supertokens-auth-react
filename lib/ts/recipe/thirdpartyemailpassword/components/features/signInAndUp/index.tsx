@@ -70,8 +70,6 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         { error: tpState.error || epState.error }
     );
 
-    const recipeComponentOverrides = props.useComponentOverrides();
-
     const combinedTPDispatch = React.useCallback<typeof tpDispatch>(
         (action) => {
             dispatch(action);
@@ -79,7 +77,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         },
         [tpDispatch, dispatch]
     );
-    const tpChildProps = useThirdPartyChildProps(props.recipe.thirdPartyRecipe)!;
+    const tpChildProps = useThirdPartyChildProps(props.recipe.thirdPartyRecipe);
 
     const combinedEPDispatch = React.useCallback<typeof epDispatch>(
         (action) => {
@@ -93,7 +91,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         epState,
         combinedEPDispatch,
         props.history
-    )!;
+    );
 
     const childProps = {
         emailPasswordRecipe: props.recipe.emailPasswordRecipe,
@@ -110,26 +108,33 @@ const SignInAndUp: React.FC<PropType> = (props) => {
     };
 
     return (
+        <Fragment>
+            {/* No custom theme, use default. */}
+            {props.children === undefined && <SignInAndUpTheme {...childProps} />}
+            {/* Otherwise, custom theme is provided, propagate props. */}
+            {props.children &&
+                React.Children.map(props.children, (child) => {
+                    if (React.isValidElement(child)) {
+                        return React.cloneElement(child, childProps);
+                    }
+
+                    return child;
+                })}
+        </Fragment>
+    );
+};
+
+const SignInAndUpFeatureWrapper: React.FC<PropType> = (props) => {
+    const recipeComponentOverrides = props.useComponentOverrides();
+    return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsThirdPartyEmailPassword}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {props.children === undefined && <SignInAndUpTheme {...childProps} />}
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {props.children &&
-                        React.Children.map(props.children, (child) => {
-                            if (React.isValidElement(child)) {
-                                return React.cloneElement(child, childProps);
-                            }
-
-                            return child;
-                        })}
-                </Fragment>
+                <SignInAndUp {...props} />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );
 };
 
-export default SignInAndUp;
+export default SignInAndUpFeatureWrapper;

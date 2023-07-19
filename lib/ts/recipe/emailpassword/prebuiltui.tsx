@@ -25,7 +25,8 @@ import type { PropsWithChildren } from "react";
 
 export class EmailPasswordPreBuiltUI extends RecipeRouter {
     static instance?: EmailPasswordPreBuiltUI;
-    constructor(private readonly recipeInstance: EmailPassword) {
+
+    constructor(public readonly recipeInstance: EmailPassword) {
         super();
     }
 
@@ -67,6 +68,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
                 component: (props) => this.getFeatureComponent("signinup", props as any, useComponentOverrides),
+                recipeID: EmailPassword.RECIPE_ID,
             };
         }
 
@@ -77,6 +79,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
                 component: (props) => this.getFeatureComponent("resetpassword", props as any, useComponentOverrides),
+                recipeID: EmailPassword.RECIPE_ID,
             };
         }
 

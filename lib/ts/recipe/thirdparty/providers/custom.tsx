@@ -24,29 +24,11 @@ import Provider from ".";
  */
 export default class Custom extends Provider {
     /*
-     * Static Attributes.
-     */
-
-    buttonComponent?: JSX.Element | (() => JSX.Element);
-
-    /*
      * Constructor.
      */
     constructor(config: CustomProviderConfig) {
         super(config);
-        this.buttonComponent = config.buttonComponent;
     }
-
-    getButton = (): JSX.Element => {
-        if (this.buttonComponent !== undefined) {
-            if (typeof this.buttonComponent === "function") {
-                return this.buttonComponent();
-            }
-            return this.buttonComponent;
-        }
-
-        return this.getDefaultButton("Custom");
-    };
 
     getLogo = (): undefined => {
         return undefined;

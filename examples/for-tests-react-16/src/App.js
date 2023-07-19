@@ -14,6 +14,7 @@ import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 import UserRoles from "supertokens-auth-react/recipe/userroles";
+import MultiTenancy from "supertokens-auth-react/recipe/multitenancy";
 
 import axios from "axios";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
@@ -25,6 +26,7 @@ import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
 import { logWithPrefix } from "./logWithPrefix";
 import { ErrorBoundary } from "./ErrorBoundary";
+import { getTestContext, getEnabledRecipes, getQueryParams } from "./testContext";
 let { useNavigate } = require("react-router-dom");
 let withRouter = undefined;
 const loadv5RRD = window.localStorage.getItem("react-router-dom-is-v5") === "true";
@@ -173,7 +175,31 @@ const formFields = [
     },
 ];
 
+const testContext = getTestContext();
+
 let recipeList = [
+    MultiTenancy.init({
+        override: {
+            functions: (oI) => ({
+                ...oI,
+                getTenantId: (input) => {
+                    if (testContext.mockTenantId) {
+                        return testContext.mockTenantId;
+                    }
+
+                    return oI.getTenantId(input);
+                },
+                getLoginMethods: (input) => {
+                    if (testContext.mockLoginMethodsForDynamicLogin) {
+                        return {
+                            ...JSON.parse(testContext.mockLoginMethodsForDynamicLogin),
+                        };
+                    }
+                    return oI.getLoginMethods(input);
+                },
+            }),
+        },
+    }),
     Session.init({
         override: {
             functions: (implementation) => {
@@ -223,22 +249,21 @@ let recipeList = [
     }),
 ];
 
-const testContext = {
-    disableDefaultUI: getQueryParams("disableDefaultUI") === "true",
-    thirdPartyRedirectURL: localStorage.getItem("thirdPartyRedirectURL"),
-};
+let enabledRecipes = getEnabledRecipes();
 
-if (authRecipe === "thirdparty") {
+if (enabledRecipes.includes("thirdparty")) {
     recipeList = [getThirdPartyConfigs(testContext), ...recipeList];
-} else if (authRecipe === "emailpassword") {
+}
+if (enabledRecipes.includes("emailpassword")) {
     recipeList = [getEmailPasswordConfigs(testContext), ...recipeList];
-} else if (authRecipe === "both") {
-    recipeList = [getEmailPasswordConfigs(testContext), getThirdPartyConfigs(testContext), ...recipeList];
-} else if (authRecipe === "thirdpartyemailpassword") {
+}
+if (enabledRecipes.includes("thirdpartyemailpassword")) {
     recipeList = [getThirdPartyEmailPasswordConfigs(testContext), ...recipeList];
-} else if (authRecipe === "passwordless") {
+}
+if (enabledRecipes.includes("passwordless")) {
     recipeList = [getPasswordlessConfigs(testContext), ...recipeList];
-} else if (authRecipe === "thirdpartypasswordless") {
+}
+if (enabledRecipes.includes("thirdpartypasswordless")) {
     recipeList = [getThirdPartyPasswordlessConfigs(testContext), ...recipeList];
 }
 
@@ -246,6 +271,7 @@ if (emailVerificationMode !== "OFF") {
     recipeList.push(getEmailVerificationConfigs(testContext));
 }
 SuperTokens.init({
+    usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
     appInfo: {
         appName: "SuperTokens",
         websiteDomain: getWebsiteDomain(),
@@ -303,11 +329,6 @@ function App() {
             </ErrorBoundary>
         );
     }
-}
-
-function getQueryParams(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
 }
 
 export default App;
@@ -616,7 +637,27 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
     });
 }
 
-function getThirdPartyPasswordlessConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
+function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI, thirdPartyRedirectURL }) {
+    let providers = [
+        ThirdParty.Github.init(),
+        ThirdParty.Google.init(),
+        ThirdParty.Facebook.init(),
+        ThirdParty.Apple.init(),
+        {
+            id: "custom",
+            name: "Custom",
+        },
+        {
+            id: "auth0",
+            name: "Auth0",
+            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+        },
+    ];
+    if (staticProviderList) {
+        const ids = JSON.parse(staticProviderList);
+        providers = ids.map((id) => providers.find((p) => p.id === id) || { id, name: id });
+    }
+
     return ThirdPartyPasswordless.init({
         override: {
             functions: (implementation) => {
@@ -706,21 +747,7 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultUI, thirdPartyRedirect
             `,
             privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
             termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
-            providers: [
-                ThirdPartyEmailPassword.Github.init(),
-                ThirdPartyEmailPassword.Google.init(),
-                ThirdPartyEmailPassword.Facebook.init(),
-                ThirdPartyEmailPassword.Apple.init(),
-                {
-                    id: "custom",
-                    name: "Custom",
-                },
-                {
-                    id: "auth0",
-                    name: "Auth0",
-                    getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
-                },
-            ],
+            providers,
             defaultCountry: passwordlessDefaultCountry,
             resendEmailOrSMSGapInSeconds: 2,
             guessInternationPhoneNumberFromInputPhoneNumber: passwordlessDisablePhoneGuess
@@ -812,7 +839,26 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
     });
 }
 
-function getThirdPartyConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
+function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdPartyRedirectURL }) {
+    let providers = [
+        ThirdParty.Github.init(),
+        ThirdParty.Google.init(),
+        ThirdParty.Facebook.init(),
+        ThirdParty.Apple.init(),
+        {
+            id: "custom",
+            name: "Custom",
+        },
+        {
+            id: "auth0",
+            name: "Auth0",
+            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+        },
+    ];
+    if (staticProviderList) {
+        const ids = JSON.parse(staticProviderList);
+        providers = ids.map((id) => providers.find((p) => p.id === id) || { id, name: id });
+    }
     return ThirdParty.init({
         style: `
             [data-supertokens~=container] {
@@ -869,21 +915,7 @@ function getThirdPartyConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
             style: theme.style,
             privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
             termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
-            providers: [
-                ThirdParty.Github.init(),
-                ThirdParty.Google.init(),
-                ThirdParty.Facebook.init(),
-                ThirdParty.Apple.init(),
-                {
-                    id: "custom",
-                    name: "Custom",
-                },
-                {
-                    id: "auth0",
-                    name: "Auth0",
-                    getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
-                },
-            ],
+            providers,
         },
 
         oAuthCallbackScreen: {
@@ -892,7 +924,26 @@ function getThirdPartyConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
     });
 }
 
-function getThirdPartyEmailPasswordConfigs({ disableDefaultUI, thirdPartyRedirectURL }) {
+function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultUI, thirdPartyRedirectURL }) {
+    let providers = [
+        ThirdParty.Github.init(),
+        ThirdParty.Google.init(),
+        ThirdParty.Facebook.init(),
+        ThirdParty.Apple.init(),
+        {
+            id: "custom",
+            name: "Custom",
+        },
+        {
+            id: "auth0",
+            name: "Auth0",
+            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+        },
+    ];
+    if (staticProviderList) {
+        const ids = JSON.parse(staticProviderList);
+        providers = ids.map((id) => providers.find((p) => p.id === id) || { id, name: id });
+    }
     return ThirdPartyEmailPassword.init({
         preAPIHook: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
@@ -1026,20 +1077,6 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultUI, thirdPartyRedirec
 
                         return implementation.verifyAndGetStateOrThrowError(input);
                     },
-                    getAuthCodeFromURL(input) {
-                        if (input.userContext["key"] !== undefined) {
-                            log(`GET_AUTH_CODE_FROM_URL RECEIVED_USER_CONTEXT`);
-                        }
-
-                        return implementation.getAuthCodeFromURL(input);
-                    },
-                    getAuthErrorFromURL(input) {
-                        if (input.userContext["key"] !== undefined) {
-                            log(`GET_AUTH_ERROR_FROM_URL RECEIVED_USER_CONTEXT`);
-                        }
-
-                        return implementation.getAuthErrorFromURL(input);
-                    },
                 };
             },
         },
@@ -1056,21 +1093,7 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultUI, thirdPartyRedirec
                 termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
             },
             style: theme.style,
-            providers: [
-                ThirdPartyEmailPassword.Github.init(),
-                ThirdPartyEmailPassword.Google.init(),
-                ThirdPartyEmailPassword.Facebook.init(),
-                ThirdPartyEmailPassword.Apple.init(),
-                {
-                    id: "custom",
-                    name: "Custom",
-                },
-                {
-                    id: "auth0",
-                    name: "Auth0",
-                    getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
-                },
-            ],
+            providers,
         },
         disableEmailPassword: false,
 

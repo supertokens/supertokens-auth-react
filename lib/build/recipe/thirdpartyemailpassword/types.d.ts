@@ -67,7 +67,7 @@ export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     disableEmailPassword: boolean;
     emailPasswordConfig: NormalisedEmailPasswordConfig;
-    thirdPartyConfig?: NormalisedThirdPartyConfig;
+    thirdPartyConfig: NormalisedThirdPartyConfig;
     override: {
         functions: (
             originalImplementation: RecipeInterface,

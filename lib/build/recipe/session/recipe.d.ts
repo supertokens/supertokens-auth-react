@@ -1,3 +1,4 @@
+import SessionWebJS from "supertokens-web-js/recipe/session";
 import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
 import RecipeModule from "../recipeModule";
 import type { NormalisedSessionConfig } from "./types";
@@ -9,6 +10,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     readonly webJSRecipe: Omit<typeof WebJSSessionRecipe, "init" | "default">;
     static instance?: Session;
     static RECIPE_ID: string;
+    recipeID: string;
     private eventListeners;
     private redirectionHandlersFromAuthRecipes;
     constructor(
@@ -17,7 +19,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     );
     getUserId: (input: { userContext: any }) => Promise<string>;
     getAccessToken: (input: { userContext: any }) => Promise<string | undefined>;
-    getClaimValue: (input: { claim: SessionClaim<unknown>; userContext: any }) => Promise<unknown>;
+    getClaimValue: <T extends unknown>(input: {
+        claim: SessionWebJS.SessionClaim<T>;
+        userContext: any;
+    }) => Promise<T | undefined>;
     getAccessTokenPayloadSecurely: (input: { userContext: any }) => Promise<any>;
     doesSessionExist: (input: { userContext: any }) => Promise<boolean>;
     signOut: (input: { userContext: any }) => Promise<void>;

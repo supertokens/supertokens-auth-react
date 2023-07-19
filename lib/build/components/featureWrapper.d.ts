@@ -8,5 +8,5 @@ export default function FeatureWrapper({
     children,
     useShadowDom,
     defaultStore,
-}: PropsWithChildren<FeatureWrapperProps>): JSX.Element;
+}: PropsWithChildren<FeatureWrapperProps>): JSX.Element | null;
 export {};

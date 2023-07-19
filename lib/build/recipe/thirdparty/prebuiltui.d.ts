@@ -7,7 +7,7 @@ import type { GenericComponentOverrideMap } from "../../components/componentOver
 import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
 import type { PropsWithChildren } from "react";
 export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
-    private readonly recipeInstance;
+    readonly recipeInstance: ThirdParty;
     static instance?: ThirdPartyPreBuiltUI;
     constructor(recipeInstance: ThirdParty);
     static getInstanceOrInitAndGetInstance(): ThirdPartyPreBuiltUI;
@@ -37,7 +37,11 @@ export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
         }>
     ) => JSX.Element;
     static SignInAndUpCallback: (prop?: any) => JSX.Element;
-    static SignInAndUpTheme: import("react").FC<import("./types").SignInAndUpThemeProps>;
+    static SignInAndUpTheme: import("react").FC<
+        import("./types").SignInAndUpThemeProps & {
+            userContext?: any;
+        }
+    >;
     static SignInAndUpCallbackTheme: (props: { config: NormalisedConfig }) => JSX.Element;
 }
 declare const SignInAndUp: (

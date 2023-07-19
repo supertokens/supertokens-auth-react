@@ -192,19 +192,7 @@ describe("SuperTokens userContext with UI components test", function () {
 
         assert(
             consoleLogs.includes(
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_AUTH_CODE_FROM_URL RECEIVED_USER_CONTEXT"
-            )
-        );
-
-        assert(
-            consoleLogs.includes(
                 "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_AUTHORISATION_URL RECEIVED_USER_CONTEXT"
-            )
-        );
-
-        assert(
-            consoleLogs.includes(
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_AUTH_ERROR_FROM_URL RECEIVED_USER_CONTEXT"
             )
         );
     });

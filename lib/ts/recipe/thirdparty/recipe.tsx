@@ -20,6 +20,7 @@
 import ThirdpartyWebJS from "supertokens-web-js/recipe/thirdparty";
 
 import { SSR_ERROR } from "../../constants";
+import SuperTokens from "../../superTokens";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
 
@@ -48,11 +49,15 @@ export default class ThirdParty extends AuthRecipe<
 > {
     static instance?: ThirdParty;
     static RECIPE_ID = "thirdparty";
+    recipeID = ThirdParty.RECIPE_ID;
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         public readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdpartyWebJS> = ThirdpartyWebJS
     ) {
+        if (SuperTokens.usesDynamicLoginMethods === false && config.signInAndUpFeature.providers.length === 0) {
+            throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
+        }
         super(config);
     }
 
@@ -68,6 +73,7 @@ export default class ThirdParty extends AuthRecipe<
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normaliseThirdPartyConfig(config);
         return {
+            recipeID: ThirdParty.RECIPE_ID,
             authReact: (
                 appInfo: NormalisedAppInfo
             ): RecipeModule<

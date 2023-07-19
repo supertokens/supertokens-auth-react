@@ -16,11 +16,26 @@
 /*
  * Imports.
  */
+import SuperTokens from "../../superTokens";
 import { redirectWithFullPageReload } from "../../utils";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
+import Multitenancy from "../multitenancy/recipe";
 
 import Provider from "./providers";
+import ActiveDirectory from "./providers/activeDirectory";
+import Apple from "./providers/apple";
+import Bitbucket from "./providers/bitbucket";
+import BoxySAML from "./providers/boxySaml";
 import Custom from "./providers/custom";
+import Discord from "./providers/discord";
+import Facebook from "./providers/facebook";
+import Github from "./providers/github";
+import Gitlab from "./providers/gitlab";
+import Google from "./providers/google";
+import GoogleWorkspaces from "./providers/googleWorkspaces";
+import LinkedIn from "./providers/linkedIn";
+import Okta from "./providers/okta";
+import Twitter from "./providers/twitter";
 
 import type Recipe from "./recipe";
 import type {
@@ -30,7 +45,9 @@ import type {
     Config,
     CustomStateProperties,
 } from "./types";
+import type { WebJSRecipeInterface } from "../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import type ThirdPartyWebJS from "supertokens-web-js/recipe/thirdparty";
 
 /*
  * Methods.
@@ -67,10 +84,6 @@ export function normaliseSignInAndUpFeature(
 
     if (config.providers === undefined) {
         config.providers = [];
-    }
-
-    if (config.providers.length === 0) {
-        throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
     }
 
     const disableDefaultUI = config.disableDefaultUI === true;
@@ -123,20 +136,108 @@ export async function redirectToThirdPartyLogin(input: {
     thirdPartyId: string;
     config: NormalisedConfig;
     userContext: any;
-    recipeImplementation: RecipeInterface;
+    recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;
 }): Promise<{ status: "OK" | "ERROR" }> {
-    const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
+    const providers = mergeProviders({
+        tenantProviders: Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods()?.thirdparty.providers,
+        clientProviders: input.config.signInAndUpFeature.providers,
+    });
+
+    const provider = providers.find((p) => p.id === input.thirdPartyId);
     if (provider === undefined) {
         return { status: "ERROR" };
     }
 
     const response = await input.recipeImplementation.getAuthorisationURLWithQueryParamsAndSetState({
-        providerId: input.thirdPartyId,
-        authorisationURL: provider.getRedirectURL(),
-        providerClientId: provider.clientId,
+        thirdPartyId: input.thirdPartyId,
+        frontendRedirectURI: provider.getRedirectURL(),
+        redirectURIOnProviderDashboard: provider.getRedirectURIOnProviderDashboard(),
         userContext: input.userContext,
     });
 
     redirectWithFullPageReload(response);
     return { status: "OK" };
 }
+
+export const mergeProviders = ({
+    tenantProviders = [],
+    clientProviders = [],
+}: {
+    tenantProviders?: {
+        id: string;
+        name: string;
+    }[];
+    clientProviders: Provider[];
+}): Pick<Provider, "id" | "getButton" | "getRedirectURL" | "getRedirectURIOnProviderDashboard" | "name">[] => {
+    const builtInProvidersMap = {
+        apple: Apple,
+        google: Google,
+        "google-workspaces": GoogleWorkspaces,
+        github: Github,
+        "active-directory": ActiveDirectory,
+        bitbucket: Bitbucket,
+        "boxy-saml": BoxySAML,
+        discord: Discord,
+        gitlab: Gitlab,
+        linkedin: LinkedIn,
+        okta: Okta,
+        twitter: Twitter,
+        facebook: Facebook,
+    } as const;
+
+    const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods === true;
+    if (usesDynamicLoginMethods === false && clientProviders?.length === 0) {
+        throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
+    }
+    // If we are not using dynamic login methods or if there is no providers
+    // from the core we use frontend initialized providers
+    if (usesDynamicLoginMethods === false || tenantProviders.length === 0) {
+        return clientProviders;
+    }
+    const providers: Pick<
+        Provider,
+        "id" | "getButton" | "getRedirectURL" | "getRedirectURIOnProviderDashboard" | "name"
+    >[] = [];
+
+    for (const tenantProvider of tenantProviders) {
+        // try finding exact match
+        let provider = clientProviders.find((provider) => {
+            const { id } = tenantProvider;
+            return provider.id === id;
+        });
+        // if none found try finding by tenantProvider id prefix match only
+        if (provider === undefined) {
+            provider = clientProviders.find((provider) => {
+                const { id } = tenantProvider;
+                return id.startsWith(provider.id);
+            });
+        }
+        // means provider is initialized on the frontend and found
+        if (provider !== undefined) {
+            providers.push(
+                Custom.init({
+                    ...provider.config,
+                    id: tenantProvider.id,
+                    name: tenantProvider.name,
+                    buttonComponent: provider.getButton(tenantProvider.name),
+                })
+            );
+        } else {
+            // try to find and initialize provider from all prebuilt providers list
+            const providerID = Object.keys(builtInProvidersMap).find((id) => {
+                return tenantProvider.id === id || tenantProvider.id.startsWith(id);
+            });
+            if (builtInProvidersMap[providerID as keyof typeof builtInProvidersMap]) {
+                const provider = new builtInProvidersMap[providerID as keyof typeof builtInProvidersMap]({
+                    id: tenantProvider.id,
+                    name: tenantProvider.name,
+                });
+                providers.push(provider);
+            } else {
+                providers.push(Custom.init(tenantProvider));
+            }
+        }
+    }
+
+    return providers;
+};

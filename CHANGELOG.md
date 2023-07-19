@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.34.0] - 2023-07-18
+
+### Changes
+
+-   Added Active Directory, Okta, Linked In, Boxy SAML, Google Workspaces providers
+-   Added name prop to buttonComponent
+-   Added thirdparty login with popup window
+-   Added Multitenancy recipe
+-   Improved typing of `getClaimValue`
+-   Optional `clientType` config in the input for `SuperTokens.init` function, that is used by thirdparty and multitenancy recipes.
+-   Optional `usesDynamicLoginMethods` config in the input for `SuperTokens.init` function, which makes the SDK check the backend to see which recipes should be enabled
+-   Added an overrideable `getTenantIdFromURL` to multiple recipes
+
+### Breaking Changes
+
+-   Only supporting FDI 1.17
+-   Backend SDKs have to be updated first to a version that supports multi-tenancy for thirdparty
+    -   supertokens-node: >= 15.0.0
+-   In ThirdParty recipe,
+    -   Changed signatures of the functions `getAuthorisationURLWithQueryParamsAndSetState`
+    -   Removed functions - `setStateAndOtherInfoToStorage`, `getAuthorisationURLFromBackend`, `generateStateToSendToOAuthProvider`, `verifyAndGetStateOrThrowError`, `getAuthCodeFromURL`, `getAuthErrorFromURL`, `getAuthStateFromURL`
+-   In ThirdPartyEmailpassword recipe,
+    -   Changed signatures of the functions `getAuthorisationURLWithQueryParamsAndSetState`
+    -   Removed functions - `setStateAndOtherInfoToStorage`, `getAuthorisationURLFromBackend`, `generateStateToSendToOAuthProvider`, `verifyAndGetStateOrThrowError`, `getAuthCodeFromURL`, `getAuthErrorFromURL`, `getAuthStateFromURL`
+-   In ThirdPartyPasswordless recipe,
+    -   Changed signatures of the functions `getThirdPartyAuthorisationURLWithQueryParamsAndSetState`
+    -   Removed functions - `setThirdPartyStateAndOtherInfoToStorage`, `getAuthorisationURLFromBackend`, `generateThirdPartyStateToSendToOAuthProvider`, `verifyAndGetThirdPartyStateOrThrowError`, `getThirdPartyAuthCodeFromURL`, `getThirdPartyAuthErrorFromURL`, `getThirdPartyAuthStateFromURL`
+
 ## [0.33.1] - 2023-06-08
 
 ### Fixes

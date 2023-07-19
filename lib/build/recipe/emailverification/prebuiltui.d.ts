@@ -5,7 +5,7 @@ import EmailVerificationRecipe from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap } from "../../types";
 export declare class EmailVerificationPreBuiltUI extends RecipeRouter {
-    private readonly recipeInstance;
+    readonly recipeInstance: EmailVerificationRecipe;
     static instance?: EmailVerificationPreBuiltUI;
     constructor(recipeInstance: EmailVerificationRecipe);
     static getInstanceOrInitAndGetInstance(): EmailVerificationPreBuiltUI;

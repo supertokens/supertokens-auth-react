@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import type { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
 import type { SignInAndUpHeader } from "./components/themes/signInAndUp/signInAndUpHeader";
 import type { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
@@ -6,7 +5,7 @@ import type { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCa
 import type Provider from "./providers";
 import type { CustomProviderConfig } from "./providers/types";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import type { FeatureBaseConfig, NormalisedBaseConfig, WebJSRecipeInterface } from "../../types";
 import type {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -15,6 +14,7 @@ import type {
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipe/types";
 import type { OverrideableBuilder } from "supertokens-js-override";
+import type ThirdPartyWebJS from "supertokens-web-js/recipe/thirdparty";
 import type { StateObject as WebJsStateObject, RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 export declare type ComponentOverrideMap = {
     ThirdPartySignUpFooter_Override?: ComponentOverride<typeof SignUpFooter>;
@@ -80,11 +80,8 @@ export declare type SignInAndUpThemeProps = {
         error: string | undefined;
     };
     dispatch: (action: ThirdPartySignInUpActions) => void;
-    providers: {
-        id: string;
-        buttonComponent: JSX.Element;
-    }[];
-    recipeImplementation: RecipeInterface;
+    providers: Pick<Provider, "id" | "getButton">[];
+    recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;
     config: NormalisedConfig;
 };
 export declare type ThirdPartySignInUpChildProps = Omit<SignInAndUpThemeProps, "featureState" | "dispatch">;

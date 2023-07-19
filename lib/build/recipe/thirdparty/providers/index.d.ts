@@ -1,14 +1,12 @@
 /// <reference types="react" />
 import type { ProviderConfig } from "./types";
 export default abstract class Provider {
-    id: string;
-    name: string;
-    getRedirectURL: () => string;
-    clientId?: string;
+    readonly config: ProviderConfig;
+    get id(): string;
+    get name(): string;
     constructor(config: ProviderConfig);
-    getDefaultButton(name?: string): JSX.Element;
-    defaultGetRedirectURL(): string;
-    abstract getButton(): JSX.Element;
+    getRedirectURL(): string;
+    getRedirectURIOnProviderDashboard(): string | undefined;
+    getButton: (name?: string) => JSX.Element;
     abstract getLogo(): JSX.Element | undefined;
-    generateState: () => string;
 }

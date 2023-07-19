@@ -12,6 +12,8 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+import type { FC } from "react";
+
 export type ProviderConfig = {
     /*
      * Provider Id
@@ -23,23 +25,24 @@ export type ProviderConfig = {
      */
     name: string;
 
-    clientId?: string; // optional clientId to be sent during signinup
-    getRedirectURL?: () => string;
+    getRedirectURL?: (id: string) => string;
+    buttonComponent?: BuiltInProviderConfig["buttonComponent"];
 };
 
 export type BuiltInProviderConfig = {
+    id?: string;
+    name?: string;
+
     /*
      * Button Component
      */
-    buttonComponent?: JSX.Element;
-
-    clientId?: string; // optional clientId to be sent during signinup API
+    buttonComponent?: FC<{ name: string }> | { new (props: { name: string }): React.Component<any, any> } | JSX.Element;
 
     /*
      * Where to redirect the user during the callback.
      * Defaults to `${websiteDomain}/${websiteBasePath}/callback/${id}`
      */
-    getRedirectURL?: () => string;
+    getRedirectURL?: (id: string) => string;
 };
 
 export type CustomProviderConfig = {
@@ -53,16 +56,14 @@ export type CustomProviderConfig = {
      */
     name: string;
 
-    clientId?: string;
-
     /*
      * Button Component
      */
-    buttonComponent?: JSX.Element;
+    buttonComponent?: FC<{ name: string }> | { new (props: { name: string }): React.Component<any, any> } | JSX.Element;
 
     /*
      * Where to redirect the user during the callback.
      * Defaults to `${websiteDomain}/${websiteBasePath}/callback/${id}`
      */
-    getRedirectURL?: () => string;
+    getRedirectURL?: (id: string) => string;
 };

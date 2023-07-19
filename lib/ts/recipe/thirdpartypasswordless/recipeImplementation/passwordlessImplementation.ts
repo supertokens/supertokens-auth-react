@@ -17,5 +17,6 @@ export default function getRecipeImplementation(
         getLinkCodeFromURL: originalImplementation.getPasswordlessLinkCodeFromURL.bind(originalImplementation),
         getPreAuthSessionIdFromURL:
             originalImplementation.getPasswordlessPreAuthSessionIdFromURL.bind(originalImplementation),
+        getTenantIdFromURL: originalImplementation.getTenantIdFromURL.bind(originalImplementation),
     };
 }
