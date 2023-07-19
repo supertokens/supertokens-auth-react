@@ -25,3 +25,13 @@
     font-weight: bold;
     font-size: 17px;
 }
+
+.tenantForm {
+    margin: auto auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.tenantForm button {
+    align-self: flex-end;
+}

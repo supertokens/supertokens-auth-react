@@ -1,13 +1,14 @@
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
-import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
-import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
-import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
+import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
+import MultiTenancy, { AllowedDomainsClaim } from "supertokens-auth-react/recipe/multitenancy";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
-import { getApiDomain, getAuthDomain, getRedirectionUrlForUser } from "./utils";
+import { clearTenantId, getApiDomain, getAuthDomain } from "./utils";
+import { AuthPage } from "./AuthPage";
 
 SuperTokens.init({
     appInfo: {
@@ -16,18 +17,59 @@ SuperTokens.init({
         websiteDomain: getAuthDomain(),
         websiteBasePath: "/",
     },
+    usesDynamicLoginMethods: true,
     recipeList: [
-        EmailPassword.init({
+        MultiTenancy.init({
+            override: {
+                functions: (oI) => ({
+                    ...oI,
+                    getTenantId: () => localStorage.getItem("tenantId") ?? undefined,
+                }),
+            },
+        }),
+        ThirdPartyEmailPassword.init({
             getRedirectionURL: async (context) => {
                 if (context.action === "SUCCESS") {
                     // redirect users to their associated subdomain e.g abc.example.com for user abc
-                    const redirectionUrl = await getRedirectionUrlForUser();
-                    return redirectionUrl;
+                    const claimValue = await Session.getClaimValue({ claim: AllowedDomainsClaim });
+                    return "http://" + claimValue[0] + ":3000";
+                }
+            },
+        }),
+        ThirdPartyPasswordless.init({
+            contactMethod: "EMAIL",
+            getRedirectionURL: async (context) => {
+                if (context.action === "SUCCESS") {
+                    // redirect users to their associated subdomain e.g abc.example.com for user abc
+                    const claimValue = await Session.getClaimValue({ claim: AllowedDomainsClaim });
+                    return "http://" + claimValue[0] + ":3000";
                 }
             },
         }),
         Session.init({
             sessionTokenFrontendDomain: ".example.com",
+            onHandleEvent: (event) => {
+                if (["SIGN_OUT", "UNAUTHORISED", "SESSION_CREATED"].includes(event.action)) {
+                    clearTenantId();
+                }
+            },
+            override: {
+                functions: (oI) => ({
+                    ...oI,
+                    getGlobalClaimValidators: ({ claimValidatorsAddedByOtherRecipes }) => [
+                        ...claimValidatorsAddedByOtherRecipes,
+                        {
+                            ...AllowedDomainsClaim.validators.hasAccessToCurrentDomain(),
+                            onFailureRedirection: async () => {
+                                let claimValue = await Session.getClaimValue({
+                                    claim: AllowedDomainsClaim,
+                                });
+                                return "http://" + claimValue[0] + ":3000";
+                            },
+                        },
+                    ],
+                }),
+            },
         }),
     ],
 });
@@ -39,13 +81,8 @@ function App() {
                 <Router>
                     <div className="fill">
                         <Routes>
-                            {/* Present users with login/signup when they are on auth.example.com. 
-                                If not try rendering our protected route. In case the user is unauthenticated 
-                                the auth wrapper will simply redirect them to the login page */}
                             {window.location.origin === getAuthDomain() ? (
-                                getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
-                                    EmailPasswordPreBuiltUI,
-                                ])
+                                <Route path="/auth" element={<AuthPage />} />
                             ) : (
                                 <Route
                                     path="/"
