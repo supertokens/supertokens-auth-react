@@ -2,6 +2,7 @@ import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
+import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import MultiTenancy, { AllowedDomainsClaim } from "supertokens-auth-react/recipe/multitenancy";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
@@ -69,6 +70,7 @@ function App() {
                             {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
                                 ThirdPartyEmailPasswordPreBuiltUI,
                                 ThirdPartyPasswordlessPreBuiltUI,
+                                EmailVerificationPreBuiltUI,
                             ])}
                             <Route
                                 path="/"

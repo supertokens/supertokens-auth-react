@@ -86,7 +86,7 @@ function App() {
                     <div className="fill">
                         <Routes>
                             {window.location.origin === getAuthDomain() ? (
-                                <Route path={`/${getWebsiteBasePath()}/*`} element={<AuthPage />} />
+                                <Route path={`${getWebsiteBasePath()}/*`} element={<AuthPage />} />
                             ) : (
                                 <Route
                                     path="/"

@@ -6,12 +6,17 @@ import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
 import { getWebsiteBasePath } from "./utils";
+import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 
 export const AuthPage = () => {
     const location = reactRouterDom.useLocation();
     const [inputTenantId, setInputTenantId] = useState("");
     const tenantId = localStorage.getItem("tenantId") ?? undefined;
     const session = useSessionContext();
+
+    if (session.loading === true) {
+        return null;
+    }
 
     if (
         tenantId !== undefined || // if we have a tenantId stored
@@ -22,7 +27,7 @@ export const AuthPage = () => {
             <Routes>
                 {getSuperTokensRoutesForReactRouterDom(
                     reactRouterDom,
-                    [ThirdPartyEmailPasswordPreBuiltUI, ThirdPartyPasswordlessPreBuiltUI],
+                    [ThirdPartyEmailPasswordPreBuiltUI, ThirdPartyPasswordlessPreBuiltUI, EmailVerificationPreBuiltUI],
                     getWebsiteBasePath()
                 )}
             </Routes>
