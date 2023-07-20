@@ -91,6 +91,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         await clearBrowserCookiesWithoutAffectingConsole(page, []);
         await clearDynamicLoginMethodsSettings(page);
         await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+        await page.evaluate(() => localStorage.removeItem("mode"));
         await Promise.all([
             page.goto(`${TEST_CLIENT_BASE_URL}`),
             page.waitForNavigation({ waitUntil: "networkidle0" }),
