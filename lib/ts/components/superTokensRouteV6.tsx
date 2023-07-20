@@ -46,11 +46,13 @@ export function getSuperTokensRoutesForReactRouterDomV6({
             const pathsToFeatureComponentWithRecipeIdMap = recipe.getPathsToFeatureComponentWithRecipeIdMap();
             Object.keys(pathsToFeatureComponentWithRecipeIdMap).forEach((path) => {
                 path = path === "" ? "/" : path;
+
+                let pathForRouter = path;
                 if (basePath !== undefined) {
-                    if (path.startsWith(basePath)) {
-                        path = path.slice(basePath.length);
-                        if (!path.startsWith("/")) {
-                            path = "/" + path;
+                    if (pathForRouter.startsWith(basePath)) {
+                        pathForRouter = pathForRouter.slice(basePath.length);
+                        if (!pathForRouter.startsWith("/")) {
+                            pathForRouter = "/" + pathForRouter;
                         }
                     } else {
                         throw new Error("basePath has to be a prefix of websiteBasePath passed to SuperTokens.init");
@@ -60,7 +62,7 @@ export function getSuperTokensRoutesForReactRouterDomV6({
                     routes[path] = (
                         <Route
                             key={`st-${path}`}
-                            path={path}
+                            path={pathForRouter}
                             element={
                                 <RoutingComponent
                                     getReactRouterDomWithCustomHistory={getReactRouterDomWithCustomHistory}
