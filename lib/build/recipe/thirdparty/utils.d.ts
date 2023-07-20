@@ -8,7 +8,7 @@ import type {
 } from "./types";
 import type { WebJSRecipeInterface } from "../../types";
 import type ThirdPartyWebJS from "supertokens-web-js/recipe/thirdparty";
-export declare function normaliseThirdPartyConfig(config: Config): NormalisedConfig;
+export declare function normaliseThirdPartyConfig(config: Config | undefined): NormalisedConfig;
 export declare function normaliseSignInAndUpFeature(
     config: SignInAndUpFeatureUserInput | undefined
 ): NormalisedSignInAndUpFeatureConfig;

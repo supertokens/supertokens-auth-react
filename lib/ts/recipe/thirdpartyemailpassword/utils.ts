@@ -32,9 +32,9 @@ import type { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailp
 /*
  * Methods.
  */
-export function normaliseThirdPartyEmailPasswordConfig(config: Config): NormalisedConfig {
+export function normaliseThirdPartyEmailPasswordConfig(config: Config | undefined): NormalisedConfig {
     if (config === undefined) {
-        throw new Error("ThirdpartyEmailPassword config should not be empty");
+        config = {};
     }
 
     const override: any = {

@@ -69,7 +69,7 @@ export default class ThirdParty extends AuthRecipe<
     };
 
     static init(
-        config: UserInput
+        config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normaliseThirdPartyConfig(config);
         return {

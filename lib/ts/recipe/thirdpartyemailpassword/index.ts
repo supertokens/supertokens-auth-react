@@ -43,7 +43,7 @@ import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
 export default class Wrapper {
-    static init(config: UserInput) {
+    static init(config?: UserInput) {
         return ThirdPartyEmailPassword.init(config);
     }
 
