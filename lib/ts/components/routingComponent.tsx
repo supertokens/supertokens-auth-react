@@ -49,7 +49,7 @@ export function RoutingComponent(props: {
 
     useEffect(() => {
         if (
-            SuperTokens.usesDynamicLoginMethods === false &&
+            SuperTokens.usesDynamicLoginMethods === true &&
             loadedDynamicLoginMethods === true &&
             componentToRender === undefined
         ) {
