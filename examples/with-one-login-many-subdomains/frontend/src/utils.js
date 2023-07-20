@@ -10,6 +10,10 @@ export function getAuthDomain() {
     return websiteUrl;
 }
 
+export function getWebsiteBasePath() {
+    return "/auth";
+}
+
 export function clearTenantId() {
     localStorage.removeItem("tenantId");
 }

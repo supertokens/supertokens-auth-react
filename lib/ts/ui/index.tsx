@@ -14,7 +14,8 @@ export default class UI {
 
     static getSuperTokensRoutesForReactRouterDom(
         reactRouterDom: any,
-        preBuiltUiClassList: PreBuiltRecipes = []
+        preBuiltUiClassList: PreBuiltRecipes = [],
+        basePath?: string
     ): JSX.Element[] {
         if (reactRouterDom === undefined || preBuiltUiClassList.length === 0) {
             throw new Error(
@@ -55,6 +56,7 @@ export default class UI {
             return getSuperTokensRoutesForReactRouterDomV6({
                 getReactRouterDomWithCustomHistory: UI.getReactRouterDomWithCustomHistory,
                 recipeList,
+                basePath,
             });
         }
         if (UI.reactRouterDom === undefined) {
@@ -67,6 +69,7 @@ export default class UI {
         return getSuperTokensRoutesForLegacyReactRouterDom({
             getReactRouterDomWithCustomHistory: UI.getReactRouterDomWithCustomHistory,
             recipeList,
+            basePath,
         });
     }
 

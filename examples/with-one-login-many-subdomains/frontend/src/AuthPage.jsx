@@ -4,18 +4,21 @@ import { Routes } from "react-router-dom";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/lib/build/index2";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
+import { getWebsiteBasePath } from "./utils";
 
 export const AuthPage = () => {
+    const location = reactRouterDom.useLocation();
     const [inputTenantId, setInputTenantId] = useState("");
     const tenantId = localStorage.getItem("tenantId") ?? undefined;
 
-    if (tenantId !== undefined) {
+    if (tenantId !== undefined || location.pathname !== getWebsiteBasePath()) {
         return (
             <Routes>
-                {getSuperTokensRoutesForReactRouterDom(reactRouterDom, [
-                    ThirdPartyEmailPasswordPreBuiltUI,
-                    ThirdPartyPasswordlessPreBuiltUI,
-                ])}
+                {getSuperTokensRoutesForReactRouterDom(
+                    reactRouterDom,
+                    [ThirdPartyEmailPasswordPreBuiltUI, ThirdPartyPasswordlessPreBuiltUI],
+                    getWebsiteBasePath()
+                )}
             </Routes>
         );
     } else {

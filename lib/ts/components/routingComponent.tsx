@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
+import { redirectToAuth } from "..";
 import Multitenancy from "../recipe/multitenancy/recipe";
 import { RecipeRouter } from "../recipe/recipeRouter";
 import SuperTokens from "../superTokens";
@@ -45,6 +46,16 @@ export function RoutingComponent(props: {
     }, []);
 
     const history = props.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
+
+    useEffect(() => {
+        if (
+            SuperTokens.usesDynamicLoginMethods === false &&
+            loadedDynamicLoginMethods === true &&
+            componentToRender === undefined
+        ) {
+            void redirectToAuth({ history, redirectBack: false }).catch(console.error);
+        }
+    }, [history, loadedDynamicLoginMethods, componentToRender]);
 
     if (componentToRender === undefined || loadedDynamicLoginMethods === false) {
         return null;
