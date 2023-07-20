@@ -46,12 +46,24 @@ export default function FeatureWrapper({
             Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods() !== undefined
     );
     const st = SuperTokens.getInstanceOrThrow();
+
     useEffect(() => {
-        const handler = () => setLoadedDynamicLoginMethods(true);
+        if (loadedDynamicLoginMethods) {
+            return;
+        }
+
+        if (Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods() !== undefined) {
+            setLoadedDynamicLoginMethods(true);
+            return;
+        }
+
+        const handler = () => {
+            setLoadedDynamicLoginMethods(true);
+        };
         SuperTokens.uiController.on("LoginMethodsLoaded", handler);
 
         () => SuperTokens.uiController.off("LoginMethodsLoaded", handler);
-    }, []);
+    }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
 
     if (loadedDynamicLoginMethods === false) {
         return null;
