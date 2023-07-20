@@ -28,6 +28,18 @@ supertokens.init({
     recipeList: [
         EmailVerification.init({
             mode: "REQUIRED",
+            emailDelivery: {
+                override: (oI) => ({
+                    ...oI,
+                    sendEmail: (input) => {
+                        input.emailVerifyLink = input.emailVerifyLink.replace(
+                            "//example.com",
+                            `//${input.tenantId}.example.com`
+                        );
+                        return oI.sendEmail(input);
+                    },
+                }),
+            },
         }),
         MultiTenancy.init({
             getAllowedDomainsForTenantId: async (tenantId, userContext) => {
