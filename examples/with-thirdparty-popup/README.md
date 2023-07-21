@@ -7,7 +7,6 @@ This demo app demonstrates the following use cases:
 -   Thirdparty Login / Sign-up using a popup window
 -   Sign up
 -   Logout
--   Forgot password flow
 -   Session management & Calling APIs
 
 ## Project setup
