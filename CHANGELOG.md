@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+-   Added a new optional parameter to `getSuperTokensRoutesForReactRouterDom` to support embedded routes
 -   Added Active Directory, Okta, Linked In, Boxy SAML, Google Workspaces providers
 -   Added name prop to buttonComponent
 -   Added thirdparty login with popup window

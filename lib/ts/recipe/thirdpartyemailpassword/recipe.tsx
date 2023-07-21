@@ -129,7 +129,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
      */
 
     static init(
-        config: UserInput
+        config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normaliseThirdPartyEmailPasswordConfig(config);
 

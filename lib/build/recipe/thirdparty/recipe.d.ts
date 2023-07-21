@@ -24,7 +24,7 @@ export default class ThirdParty extends AuthRecipe<
     );
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     static init(
-        config: UserInput
+        config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): ThirdParty;
     static reset(): void;

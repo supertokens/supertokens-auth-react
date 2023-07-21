@@ -4,7 +4,9 @@ import type { ReactRouterDomWithCustomHistory } from "../ui/types";
 export declare function getSuperTokensRoutesForReactRouterDom({
     getReactRouterDomWithCustomHistory,
     recipeList,
+    basePath,
 }: {
     getReactRouterDomWithCustomHistory: () => ReactRouterDomWithCustomHistory | undefined;
     recipeList: RecipeRouter[];
+    basePath: string | undefined;
 }): JSX.Element[];

@@ -10,6 +10,7 @@ let MultiTenancy = require("supertokens-node/recipe/multitenancy");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 let ThirdPartyPasswordless = require("supertokens-node/recipe/thirdpartypasswordless");
 let Dashboard = require("supertokens-node/recipe/dashboard");
+let EmailVerification = require("supertokens-node/recipe/emailverification");
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain = process.env.REACT_APP_API_URL || `http://example.com:${apiPort}`;
@@ -27,6 +28,9 @@ supertokens.init({
         websiteDomain,
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+        }),
         MultiTenancy.init({
             getAllowedDomainsForTenantId: async (tenantId, userContext) => {
                 // query your db to get the allowed domain for the input tenantId
