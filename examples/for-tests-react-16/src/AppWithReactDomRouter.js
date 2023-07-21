@@ -48,6 +48,8 @@ function AppWithReactDomRouter(props) {
      */
     const urlParams = new URLSearchParams(window.location.search);
     const isForUserContext = urlParams.get("forUserContext") === "true";
+    const websiteBasePath = window.localStorage.getItem("websiteBasePath") || undefined;
+
     const [claimValidators, setClaimValidators] = useState(undefined);
     window.setClaimValidators = setClaimValidators;
     const keyWithClaimValidators =
@@ -58,6 +60,16 @@ function AppWithReactDomRouter(props) {
                 <BaseComponent>
                     <Routes caseSensitive>
                         {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), recipePreBuiltUIList)}
+                        {websiteBasePath && websiteBasePath.startsWith("/en") && (
+                            <Route
+                                path="/en"
+                                element={getSuperTokensRoutesForReactRouterDom(
+                                    require("react-router-dom"),
+                                    recipePreBuiltUIList,
+                                    "/en"
+                                )}
+                            />
+                        )}
                         <Route path="/" element={<Home />} />
                         <Route
                             path="/CasE/Case-SensItive1-PAth"

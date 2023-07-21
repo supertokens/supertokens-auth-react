@@ -38,6 +38,8 @@ function AppWithReactDomRouter(props) {
         recipePreBuiltUIList.push(EmailVerificationPreBuiltUI);
     }
 
+    const websiteBasePath = window.localStorage.getItem("websiteBasePath") || undefined;
+
     const [claimValidators, setClaimValidators] = useState(undefined);
     window.setClaimValidators = setClaimValidators;
     const keyWithClaimValidators =
@@ -49,6 +51,16 @@ function AppWithReactDomRouter(props) {
                 <BaseComponent>
                     <Switch>
                         {getSuperTokensRoutesForReactRouterDom(require("react-router-domv5"), recipePreBuiltUIList)}
+                        {websiteBasePath && websiteBasePath.startsWith("/en") && (
+                            <Route
+                                path="/en"
+                                element={getSuperTokensRoutesForReactRouterDom(
+                                    require("react-router-domv5"),
+                                    recipePreBuiltUIList,
+                                    "/en"
+                                )}
+                            />
+                        )}
                         <Route exact path="/">
                             <Home />
                         </Route>
