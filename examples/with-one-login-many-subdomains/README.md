@@ -7,7 +7,6 @@
 
 ```
 127.0.0.1   example.com
-127.0.0.1   auth.example.com
 127.0.0.1   tenant1.example.com
 127.0.0.1   tenant2.example.com
 127.0.0.1   tenant3.example.com
@@ -20,7 +19,7 @@ In the project directory, you can run:
 ### `npm i && npm start`
 
 Runs the app in the development mode.
-Open [http://auth.example:3000](http://auth.example:3000) to view it in the browser.
+Open [http://example:3000](http://example:3000) to view it in the browser.
 
 ### `node tenant-setup.mjs`
 

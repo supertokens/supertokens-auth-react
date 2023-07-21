@@ -48,7 +48,7 @@ export default class Wrapper {
      * Static attributes.
      */
 
-    static init(config: UserInput) {
+    static init(config?: UserInput) {
         return ThirdParty.init(config);
     }
 

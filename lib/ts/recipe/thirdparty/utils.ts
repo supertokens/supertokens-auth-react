@@ -52,9 +52,9 @@ import type ThirdPartyWebJS from "supertokens-web-js/recipe/thirdparty";
 /*
  * Methods.
  */
-export function normaliseThirdPartyConfig(config: Config): NormalisedConfig {
+export function normaliseThirdPartyConfig(config: Config | undefined): NormalisedConfig {
     if (config === undefined) {
-        throw new Error("ThirdParty config should not be empty");
+        config = {};
     }
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
         config.signInAndUpFeature

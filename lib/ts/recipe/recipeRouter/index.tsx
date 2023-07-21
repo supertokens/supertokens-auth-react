@@ -32,10 +32,7 @@ export abstract class RecipeRouter {
 
         const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods();
         const componentMatchingRid = routeComponents.find((c) => c.matches());
-        if (
-            SuperTokens.usesDynamicLoginMethods === false ||
-            (dynamicLoginMethods === undefined && defaultToStaticList)
-        ) {
+        if (SuperTokens.usesDynamicLoginMethods === false || defaultToStaticList) {
             if (routeComponents.length === 0) {
                 return undefined;
             } else if (componentMatchingRid !== undefined) {
@@ -102,8 +99,7 @@ export abstract class RecipeRouter {
             }
         }
 
-        // Otherwise, we throw since no there are is no overlap between recipes enabled on the FE and BE
-        throw new Error("We found no enabled recipes handling the current route");
+        return undefined;
     }
 
     getPathsToFeatureComponentWithRecipeIdMap = (): BaseFeatureComponentMap => {

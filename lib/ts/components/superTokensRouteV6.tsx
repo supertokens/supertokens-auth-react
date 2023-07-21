@@ -29,9 +29,11 @@ import type { ReactRouterDomWithCustomHistory } from "../ui/types";
 export function getSuperTokensRoutesForReactRouterDomV6({
     getReactRouterDomWithCustomHistory,
     recipeList,
+    basePath,
 }: {
     getReactRouterDomWithCustomHistory: () => ReactRouterDomWithCustomHistory | undefined;
     recipeList: RecipeRouter[];
+    basePath: string | undefined;
 }): JSX.Element[] {
     const routerInfo = getReactRouterDomWithCustomHistory();
     if (routerInfo === undefined) {
@@ -44,11 +46,23 @@ export function getSuperTokensRoutesForReactRouterDomV6({
             const pathsToFeatureComponentWithRecipeIdMap = recipe.getPathsToFeatureComponentWithRecipeIdMap();
             Object.keys(pathsToFeatureComponentWithRecipeIdMap).forEach((path) => {
                 path = path === "" ? "/" : path;
+
+                let pathForRouter = path;
+                if (basePath !== undefined) {
+                    if (pathForRouter.startsWith(basePath)) {
+                        pathForRouter = pathForRouter.slice(basePath.length);
+                        if (!pathForRouter.startsWith("/")) {
+                            pathForRouter = "/" + pathForRouter;
+                        }
+                    } else {
+                        throw new Error("basePath has to be a prefix of websiteBasePath passed to SuperTokens.init");
+                    }
+                }
                 if (!(path in routes)) {
                     routes[path] = (
                         <Route
                             key={`st-${path}`}
-                            path={path}
+                            path={pathForRouter}
                             element={
                                 <RoutingComponent
                                     getReactRouterDomWithCustomHistory={getReactRouterDomWithCustomHistory}

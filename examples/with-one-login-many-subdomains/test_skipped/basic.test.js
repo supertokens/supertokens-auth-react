@@ -77,7 +77,7 @@ describe("SuperTokens Example Basic tests", function () {
         it("Successful signup with credentials", async function () {
             await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-            assert.strictEqual(page.url(), "http://auth.example.com:3000/?redirectToPath=");
+            assert.strictEqual(page.url(), "http://example.com:3000/?redirectToPath=");
             // redirected to /auth
             await toggleSignInSignUp(page);
             await setInputValues(page, [

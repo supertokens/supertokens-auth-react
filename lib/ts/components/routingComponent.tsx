@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
+import { redirectToAuth } from "..";
 import Multitenancy from "../recipe/multitenancy/recipe";
 import { RecipeRouter } from "../recipe/recipeRouter";
 import SuperTokens from "../superTokens";
@@ -16,7 +17,9 @@ export function RoutingComponent(props: {
         SuperTokens.usesDynamicLoginMethods === false ||
             Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods() !== undefined
     );
+    const history = props.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
     const path = props.path;
+
     const location = props.getReactRouterDomWithCustomHistory()?.useLocation();
     const componentToRender = React.useMemo(() => {
         const normalizedPath = new NormalisedURLPath(path);
@@ -24,11 +27,15 @@ export function RoutingComponent(props: {
         // are any side effects that happen here. So in tests, it will result in
         // the console log twice
         if (loadedDynamicLoginMethods) {
-            return RecipeRouter.getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
+            const result = RecipeRouter.getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
                 normalizedPath,
                 props.preBuiltUIList,
                 false
             );
+            if (result === undefined && SuperTokens.usesDynamicLoginMethods === true) {
+                void redirectToAuth({ history, redirectBack: false });
+            }
+            return result;
         }
         return undefined;
         // location dependency needs to be kept in order to get new component on url change
@@ -36,15 +43,22 @@ export function RoutingComponent(props: {
     }, [path, location, loadedDynamicLoginMethods, props.preBuiltUIList]);
 
     useEffect(() => {
+        if (loadedDynamicLoginMethods) {
+            return;
+        }
+
+        if (Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods() !== undefined) {
+            setLoadedDynamicLoginMethods(true);
+            return;
+        }
+
         const handler = () => {
             setLoadedDynamicLoginMethods(true);
         };
         SuperTokens.uiController.on("LoginMethodsLoaded", handler);
 
         () => SuperTokens.uiController.off("LoginMethodsLoaded", handler);
-    }, []);
-
-    const history = props.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
+    }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
 
     if (componentToRender === undefined || loadedDynamicLoginMethods === false) {
         return null;

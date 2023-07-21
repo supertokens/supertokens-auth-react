@@ -36,8 +36,8 @@ import {
     loginWithGoogle,
     clearBrowserCookiesWithoutAffectingConsole,
     clickOnProviderButton,
-    loginWithGithub,
     loginWithAuth0,
+    isMultitenancySupported,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -58,6 +58,13 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     let browser;
     let page;
     let pageCrashed;
+
+    before(async function () {
+        const isSupported = await isMultitenancySupported();
+        if (!isSupported) {
+            this.skip();
+        }
+    });
 
     beforeEach(async function () {
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {

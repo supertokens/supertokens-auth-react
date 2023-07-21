@@ -1,21 +1,35 @@
 import { useState } from "react";
 import * as reactRouterDom from "react-router-dom";
 import { Routes } from "react-router-dom";
-import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/lib/build/index2";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
+import { getWebsiteBasePath } from "./utils";
+import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 
 export const AuthPage = () => {
+    const location = reactRouterDom.useLocation();
     const [inputTenantId, setInputTenantId] = useState("");
     const tenantId = localStorage.getItem("tenantId") ?? undefined;
+    const session = useSessionContext();
 
-    if (tenantId !== undefined) {
+    if (session.loading === true) {
+        return null;
+    }
+
+    if (
+        tenantId !== undefined || // if we have a tenantId stored
+        session.doesSessionExist === true || // or an active session (it'll contain the tenantId)
+        new URLSearchParams(location.search).has("tenantId") // or we are on a link (e.g.: email verification) that contains the tenantId
+    ) {
         return (
             <Routes>
-                {getSuperTokensRoutesForReactRouterDom(reactRouterDom, [
-                    ThirdPartyEmailPasswordPreBuiltUI,
-                    ThirdPartyPasswordlessPreBuiltUI,
-                ])}
+                {getSuperTokensRoutesForReactRouterDom(
+                    reactRouterDom,
+                    [ThirdPartyEmailPasswordPreBuiltUI, ThirdPartyPasswordlessPreBuiltUI, EmailVerificationPreBuiltUI],
+                    getWebsiteBasePath()
+                )}
             </Routes>
         );
     } else {
