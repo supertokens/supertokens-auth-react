@@ -612,6 +612,84 @@ describe("SuperTokens Routing in Test App", function () {
             });
         });
 
+        describe("=/en/auth", async function () {
+            describe("rrdv5", () => {
+                let skipped = false;
+                before(function () {
+                    if (process.env.RUN_RRD5 !== "true") {
+                        skipped = true;
+                        this.skip();
+                    }
+                });
+                beforeEach(async function () {
+                    await clearBrowserCookiesWithoutAffectingConsole(page, []);
+                    page = await browser.newPage();
+                    // Update websiteBasePath config.
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/?websiteBasePath=/en/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+                    await page.evaluate(() => {
+                        localStorage.setItem("react-router-dom-is-v5", "true");
+                        localStorage.setItem("useReactRouterDom", "true");
+                    });
+                });
+
+                after(async () => {
+                    if (!skipped) {
+                        await page.evaluate(() => {
+                            localStorage.removeItem("useReactRouterDom", "true");
+                            localStorage.removeItem("react-router-dom-is-v5");
+                        });
+                    }
+                });
+
+                it("/en/auth should show sign in form", async function () {
+                    page.evaluate(() => localStorage.setItem("websiteBasePath", "/en/auth"));
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/en/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+                    const signInButtonLabel = await getSubmitFormButtonLabel(page);
+                    assert.strictEqual(signInButtonLabel, "SIGN IN");
+                });
+            });
+
+            describe("rrdv6", () => {
+                beforeEach(async function () {
+                    await clearBrowserCookiesWithoutAffectingConsole(page, []);
+                    page = await browser.newPage();
+                    // Update websiteBasePath config.
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/?websiteBasePath=/en/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+                    await page.evaluate(() => {
+                        localStorage.setItem("useReactRouterDom", "true");
+                    });
+                });
+
+                it("/en/auth should show sign in form", async function () {
+                    page.evaluate(() => localStorage.setItem("websiteBasePath", "/en/auth"));
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/en/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+                    const signInButtonLabel = await getSubmitFormButtonLabel(page);
+                    assert.strictEqual(signInButtonLabel, "SIGN IN");
+                });
+            });
+
+            after(async function () {
+                page = await browser.newPage();
+                // Reset websiteBasePath config.
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/?websiteBasePath=/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+            });
+        });
+
         describe("default to signup = true", function () {
             before(async function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, []);
@@ -632,7 +710,7 @@ describe("SuperTokens Routing in Test App", function () {
                 ]);
             });
 
-            it("/auth should show signin form", async function () {
+            it("/auth should show sign up form", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),

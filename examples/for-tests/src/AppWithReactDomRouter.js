@@ -32,6 +32,7 @@ function AppWithReactDomRouter(props) {
 
     const enabledRecipes = getEnabledRecipes();
     const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
+    const websiteBasePath = window.localStorage.getItem("websiteBasePath") || undefined;
 
     let recipePreBuiltUIList = [];
     if (enabledRecipes.includes("emailpassword")) {
@@ -59,6 +60,16 @@ function AppWithReactDomRouter(props) {
                 <BaseComponent>
                     <Routes caseSensitive>
                         {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), recipePreBuiltUIList)}
+                        {websiteBasePath && websiteBasePath.startsWith("/en") && (
+                            <Route
+                                path="/en"
+                                element={getSuperTokensRoutesForReactRouterDom(
+                                    require("react-router-dom"),
+                                    recipePreBuiltUIList,
+                                    "/en"
+                                )}
+                            />
+                        )}
                         <Route path="/" element={<Home />} />
                         <Route
                             path="/CasE/Case-SensItive1-PAth"
