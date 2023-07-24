@@ -88,7 +88,7 @@ describe("SuperTokens Example Basic tests", function () {
 
             const callApiBtn = await page.waitForSelector(".sessionButton");
             assert.strictEqual(page.url(), "http://supertokens.example.com:3000/");
-            const userId = page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
+            const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
             let setAlertContent;
             let alertContent = new Promise((res) => (setAlertContent = res));

@@ -91,7 +91,7 @@ describe("SuperTokens Example Basic tests", function () {
                 // Wait until the ... disappears from the button indicating it's done
                 await page.waitForFunction((e) => !e.innerText.endsWith("..."), {}, submitButton);
             }
-            const userId = page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
+            const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
             // We switch back over to sign in...
             await toggleSignInSignUp(page);

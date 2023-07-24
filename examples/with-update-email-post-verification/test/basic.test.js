@@ -83,7 +83,7 @@ describe("SuperTokens Example Basic tests", function () {
 
             // Redirected to email verification screen
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
-            const userId = page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
+            const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
             // Attempt reloading Home
             await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
@@ -110,7 +110,7 @@ describe("SuperTokens Example Basic tests", function () {
         });
 
         it("Successful change in email post verification", async function () {
-            const userId = page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
+            const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
             let newEmail = getTestEmail();
 

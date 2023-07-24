@@ -115,7 +115,7 @@ describe("SuperTokens Example Basic tests", function () {
             await submitForm(page);
 
             const callApiBtn = await page.waitForSelector(".sessionButton");
-            const userId = page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
+            const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
             let setAlertContent;
             let alertContent = new Promise((res) => (setAlertContent = res));
             page.on("dialog", async (dialog) => {

@@ -93,7 +93,7 @@ describe("SuperTokens Example Basic tests", function () {
 
             // Redirected to email verification screen
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
-            const userId = page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
+            const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
             // Attempt reloading Home
             await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
@@ -157,7 +157,7 @@ describe("SuperTokens Example Basic tests", function () {
             await submitForm(page);
 
             const callApiBtn = await page.waitForSelector(".sessionButton");
-            const userId = page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
+            const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
             let setAlertContent;
             let alertContent = new Promise((res) => (setAlertContent = res));
