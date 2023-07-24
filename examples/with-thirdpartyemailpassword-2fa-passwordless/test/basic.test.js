@@ -123,6 +123,7 @@ describe("SuperTokens Example Basic tests", function () {
             );
             // Create a new OTP and use it (we don't have access to the originally sent one)
             await Passwordless.createNewCodeForDevice({
+                tenantId: "public",
                 deviceId: loginAttemptInfo.deviceId,
                 userInputCode: testOTP,
             });
@@ -138,7 +139,7 @@ describe("SuperTokens Example Basic tests", function () {
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
 
             // Create a new token and use it (we don't have access to the originally sent one)
-            const tokenInfo = await EmailVerification.createEmailVerificationToken(user.id, user.email);
+            const tokenInfo = await EmailVerification.createEmailVerificationToken("public", user.id, user.email);
             await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
             await submitForm(page);
 

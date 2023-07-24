@@ -108,6 +108,7 @@ describe("SuperTokens Example Basic tests", function () {
             );
             // Create a new OTP and use it (we don't have access to the originally sent one)
             await Passwordless.createNewCodeForDevice({
+                tenantId: "public",
                 deviceId: loginAttemptInfo.deviceId,
                 userInputCode: testOTP,
             });

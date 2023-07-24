@@ -90,7 +90,7 @@ describe("SuperTokens Example Basic tests", function () {
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
 
             // Create a new token and use it (we don't have access to the originally sent one)
-            const tokenInfo = await EmailVerification.createEmailVerificationToken(userId, email);
+            const tokenInfo = await EmailVerification.createEmailVerificationToken("public", userId, email);
             await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
             await waitForSTElement(page, "[data-supertokens='button']");
             await submitForm(page);
@@ -121,7 +121,7 @@ describe("SuperTokens Example Basic tests", function () {
             await submitForm(page);
             // Redirected to email verification screen
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
-            const tokenInfo2 = await EmailVerification.createEmailVerificationToken(userId, email2);
+            const tokenInfo2 = await EmailVerification.createEmailVerificationToken("public", userId, email2);
             await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo2.token}`);
             await waitForSTElement(page, "[data-supertokens='button']");
             await submitForm(page);

@@ -85,9 +85,7 @@ describe("SuperTokens Example Basic tests", function () {
             // Redirected to email verification screen
             await waitForSTElement(page, "#otp");
 
-            const userList = await ThirdPartyEmailPassword.getUsersByEmail(email);
-            assert.strictEqual(userList.length, 1);
-            const user = userList[0];
+            const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
             let otps = [];
             while (otps.length === 0) {
@@ -101,7 +99,7 @@ describe("SuperTokens Example Basic tests", function () {
 
             const userIdElement = await page.waitForSelector("#userId");
             const userIdText = await page.evaluate((e) => e.innerText, userIdElement);
-            assert.strictEqual(userIdText, user.id);
+            assert.strictEqual(userIdText, userId);
         });
     });
 });
