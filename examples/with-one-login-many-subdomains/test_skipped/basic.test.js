@@ -88,7 +88,7 @@ describe("SuperTokens Example Basic tests", function () {
 
             const callApiBtn = await page.waitForSelector(".sessionButton");
             assert.strictEqual(page.url(), "http://supertokens.example.com:3000/");
-            const user = await EmailPassword.getUserByEmail(email);
+            const userId = page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
             let setAlertContent;
             let alertContent = new Promise((res) => (setAlertContent = res));
@@ -101,7 +101,7 @@ describe("SuperTokens Example Basic tests", function () {
             const alertText = await alertContent;
             assert(alertText.startsWith("Session Information:"));
             const sessionInfo = JSON.parse(alertText.replace(/^Session Information:/, ""));
-            assert.strictEqual(sessionInfo.userId, user.id);
+            assert.strictEqual(sessionInfo.userId, userId);
         });
     });
 });

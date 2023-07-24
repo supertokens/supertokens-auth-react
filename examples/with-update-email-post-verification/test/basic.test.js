@@ -83,14 +83,14 @@ describe("SuperTokens Example Basic tests", function () {
 
             // Redirected to email verification screen
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
-            const user = await EmailPassword.getUserByEmail(email);
+            const userId = page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
             // Attempt reloading Home
             await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
 
             // Create a new token and use it (we don't have access to the originally sent one)
-            const tokenInfo = await EmailVerification.createEmailVerificationToken(user.id, user.email);
+            const tokenInfo = await EmailVerification.createEmailVerificationToken(userId, email);
             await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
             await submitForm(page);
 
@@ -106,11 +106,11 @@ describe("SuperTokens Example Basic tests", function () {
             const alertText = await alertContent;
             assert(alertText.startsWith("Session Information:"));
             const sessionInfo = JSON.parse(alertText.replace(/^Session Information:/, ""));
-            assert.strictEqual(sessionInfo.userId, user.id);
+            assert.strictEqual(sessionInfo.userId, userId);
         });
 
         it("Successful change in email post verification", async function () {
-            const user = await EmailPassword.getUserByEmail(email);
+            const userId = page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
             let newEmail = getTestEmail();
 
@@ -131,7 +131,7 @@ describe("SuperTokens Example Basic tests", function () {
             const alertText = await alertContent;
             assert(alertText === "Email verification email sent");
 
-            const tokenInfo = await EmailVerification.createEmailVerificationToken(user.id, newEmail);
+            const tokenInfo = await EmailVerification.createEmailVerificationToken(userId, newEmail);
             await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
             await submitForm(page);
 

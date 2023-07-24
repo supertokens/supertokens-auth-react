@@ -91,7 +91,7 @@ describe("SuperTokens Example Basic tests", function () {
                 // Wait until the ... disappears from the button indicating it's done
                 await page.waitForFunction((e) => !e.innerText.endsWith("..."), {}, submitButton);
             }
-            const user = await EmailPassword.getUserByEmail(email);
+            const userId = page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
             // We switch back over to sign in...
             await toggleSignInSignUp(page);
@@ -116,7 +116,7 @@ describe("SuperTokens Example Basic tests", function () {
 
             const userIdEle = await page.waitForSelector("#userId");
             const userIdText = await page.evaluate((e) => e.innerText, userIdEle);
-            assert.strictEqual(userIdText, user.id);
+            assert.strictEqual(userIdText, userId);
         });
     });
 });
