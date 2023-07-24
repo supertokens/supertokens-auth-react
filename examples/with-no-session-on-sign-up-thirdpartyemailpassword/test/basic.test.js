@@ -104,7 +104,6 @@ describe("SuperTokens Example Basic tests", function () {
                 { name: "password", value: testPW },
             ]);
             await submitForm(page);
-            const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
             {
                 const submitButton = await getSubmitFormButton(page);
@@ -115,6 +114,7 @@ describe("SuperTokens Example Basic tests", function () {
             }
 
             const userIdEle = await page.waitForSelector("#userId");
+            const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
             const userIdText = await page.evaluate((e) => e.innerText, userIdEle);
             assert.strictEqual(userIdText, userId);
         });

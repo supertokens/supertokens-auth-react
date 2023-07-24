@@ -64,7 +64,7 @@ describe("SuperTokens Example Basic tests", function () {
                 "--disable-setuid-sandbox",
                 "--host-resolver-rules=MAP example.com 127.0.0.1, MAP *.example.com 127.0.0.1",
             ],
-            headless: false,
+            headless: true,
         });
         page = await browser.newPage();
     });

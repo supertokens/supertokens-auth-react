@@ -44,13 +44,20 @@ supertokens.init({
                             // generate a 6 digit otp
                             let otp = generateOtpAndMapToToken(token, otpToTokenMapping);
                             console.log(otp, user.email);
-                            // send a mail to the user with the otp
-                            await mailTransporter.sendMail({
-                                from: process.env.NODEMAILER_USER,
-                                to: user.email,
-                                subject: "SuperTokens Demo OTP",
-                                html: getMessageBody(otp, user.email),
-                            });
+                            try {
+                                /**
+                                 * This will not work if you have not set up your email credentials in the .env file. Refer to .env.example
+                                 * in this example app to know which environment variables you need to set.
+                                 */
+                                await mailTransporter.sendMail({
+                                    from: process.env.NODEMAILER_USER,
+                                    to: user.email,
+                                    subject: "SuperTokens Demo OTP",
+                                    html: getMessageBody(otp, user.email),
+                                });
+                            } catch {
+                                // We ignore this in the example so the example is still usable by getting the otp from the console
+                            }
                         }
                     },
                 },
@@ -69,7 +76,7 @@ supertokens.init({
 
                             // retrieve the token mapped to the otp if it exists
                             let superTokensToken = otpToTokenMapping.get(otp);
-
+                            console.log(superTokensToken);
                             if (superTokensToken !== undefined) {
                                 // if the mapping exists set the token value in the input object to the retrieved token.
                                 input.token = superTokensToken;
