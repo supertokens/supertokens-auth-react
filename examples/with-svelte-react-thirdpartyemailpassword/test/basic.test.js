@@ -84,9 +84,9 @@ describe("SuperTokens Example Basic tests", function () {
             const userIdEle = await page.waitForSelector("h3");
             const userIdText = await page.evaluate((e) => e.innerText, userIdEle);
 
-            const user = await EmailPassword.getUserByEmail(email);
+            const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
-            assert.strictEqual(userIdText, user.id);
+            assert.strictEqual(userIdText, userId);
         });
     });
 });

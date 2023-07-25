@@ -17,9 +17,8 @@ function App() {
         <SuperTokensWrapper>
             <ThirdpartyComponentsOverrideProvider
                 components={{
-                    // In this case, the <ThirdPartyPasswordlessHeader_Override>
-                    // will render the original component
-                    // wrapped in a div with an octocat picture above it.
+                    // In this case, the <ThirdPartySignInAndUpProvidersForm_Override>
+                    // will provider buttons that will open a popup when clicked.
                     ThirdPartySignInAndUpProvidersForm_Override: ({ DefaultComponent, providers, ...props }) => {
                         return (
                             <div>
@@ -32,8 +31,8 @@ function App() {
                                                         const authUrl =
                                                             await thirdParty.getAuthorisationURLWithQueryParamsAndSetState(
                                                                 {
-                                                                    providerId: provider.id,
-                                                                    authorisationURL: `${getWebsiteDomain()}/auth/callback/${
+                                                                    thirdPartyId: provider.id,
+                                                                    frontendRedirectURI: `${getWebsiteDomain()}/auth/callback/${
                                                                         provider.id
                                                                     }`,
                                                                 }

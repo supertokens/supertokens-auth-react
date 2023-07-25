@@ -83,14 +83,14 @@ describe("SuperTokens Example Basic tests", function () {
 
             // Redirected to email verification screen
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
-            const user = await EmailPassword.getUserByEmail(email);
+            const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
             // Attempt reloading Home
             await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
 
             // Create a new token and use it (we don't have access to the originally sent one)
-            const tokenInfo = await EmailVerification.createEmailVerificationToken(user.id, user.email);
+            const tokenInfo = await EmailVerification.createEmailVerificationToken("public", userId, email);
             await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
             await waitForSTElement(page, "[data-supertokens='button']");
             await submitForm(page);
@@ -98,7 +98,7 @@ describe("SuperTokens Example Basic tests", function () {
             {
                 const userIdEle = await page.waitForSelector("#userId");
                 const userIdText = await page.evaluate((e) => e.innerText, userIdEle);
-                assert.strictEqual(userIdText, user.id);
+                assert.strictEqual(userIdText, userId);
             }
 
             const email2 = getTestEmail();
@@ -121,7 +121,7 @@ describe("SuperTokens Example Basic tests", function () {
             await submitForm(page);
             // Redirected to email verification screen
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
-            const tokenInfo2 = await EmailVerification.createEmailVerificationToken(user.id, email2);
+            const tokenInfo2 = await EmailVerification.createEmailVerificationToken("public", userId, email2);
             await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo2.token}`);
             await waitForSTElement(page, "[data-supertokens='button']");
             await submitForm(page);
@@ -129,7 +129,7 @@ describe("SuperTokens Example Basic tests", function () {
             {
                 const userIdEle = await page.waitForSelector("#userId");
                 const userIdText = await page.evaluate((e) => e.innerText, userIdEle);
-                assert.strictEqual(userIdText, user.id);
+                assert.strictEqual(userIdText, userId);
             }
         });
     });

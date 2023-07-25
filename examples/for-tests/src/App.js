@@ -10,7 +10,7 @@ import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
-import MultiTenancy from "supertokens-auth-react/recipe/multitenancy";
+import Multitenancy from "supertokens-auth-react/recipe/multitenancy";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 import UserRoles from "supertokens-auth-react/recipe/userroles";
@@ -171,7 +171,7 @@ const formFields = [
 const testContext = getTestContext();
 
 let recipeList = [
-    MultiTenancy.init({
+    Multitenancy.init({
         override: {
             functions: (oI) => ({
                 ...oI,
@@ -1172,4 +1172,5 @@ window.SuperTokens = SuperTokens;
 window.Session = Session;
 window.UserRoleClaim = UserRoles.UserRoleClaim;
 window.PermissionClaim = UserRoles.PermissionClaim;
-window.AllowedDomainsClaim = MultiTenancy.AllowedDomainsClaim;
+window.AllowedDomainsClaim = Multitenancy.AllowedDomainsClaim;
+window.Multitenancy = Multitenancy;

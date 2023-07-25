@@ -81,12 +81,10 @@ describe("SuperTokens Example Basic tests", function () {
 
             // Redirected to email verification screen
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
-            const userList = await ThirdPartyEmailPassword.getUsersByEmail(email);
-            assert.strictEqual(userList.length, 1);
-            const user = userList[0];
+            const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
             // Create a new token and use it (we don't have access to the originally sent one)
-            const tokenInfo = await EmailVerification.createEmailVerificationToken(user.id, user.email);
+            const tokenInfo = await EmailVerification.createEmailVerificationToken("public", userId, email);
             await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
             await submitForm(page);
 
@@ -105,7 +103,7 @@ describe("SuperTokens Example Basic tests", function () {
             const alertText = await alertContent;
             assert(alertText.startsWith("Session Information:"));
             const sessionInfo = JSON.parse(alertText.replace(/^Session Information:/, ""));
-            assert.strictEqual(sessionInfo.userId, user.id);
+            assert.strictEqual(sessionInfo.userId, userId);
         });
     });
 });

@@ -58,7 +58,7 @@ app.post("/change-email", verifySession(), async (req: SessionRequest, res) => {
     // First we check if the new email is already associated with another user.
     // If it is, then we throw an error. If it's already associated with this user,
     // then we return a success response with an appropriate message.
-    let existingUser = await EmailPassword.getUserByEmail(email);
+    let existingUser = await EmailPassword.getUserByEmail(session.getTenantId(), email);
     if (existingUser !== undefined) {
         if (existingUser.id === session.getUserId()) {
             return res.status(200).send("Email already belongs to this account");
@@ -73,21 +73,14 @@ app.post("/change-email", verifySession(), async (req: SessionRequest, res) => {
     let isVerified = await EmailVerification.isEmailVerified(session.getUserId(), email);
 
     if (!isVerified) {
-        // Now we create and send the email verification link to the user for the new email.
-        let tokenInfo = await EmailVerification.createEmailVerificationToken(session.getUserId(), email);
+        // Now we send the email verification link to the user for the new email.
+        const sendEmailRes = await EmailVerification.sendEmailVerificationEmail(
+            session.getTenantId(),
+            session.getUserId(),
+            email
+        );
 
-        if (tokenInfo.status === "OK") {
-            let link = "http://localhost:3000/auth/verify-email?token=" + tokenInfo.token;
-
-            await EmailVerification.sendEmail({
-                emailVerifyLink: link,
-                type: "EMAIL_VERIFICATION",
-                user: {
-                    id: session.getUserId(),
-                    email: email,
-                },
-            });
-
+        if (sendEmailRes.status === "OK") {
             return res.status(200).send("Email verification email sent");
         }
         // else case is that the email is already verified (which can happen cause

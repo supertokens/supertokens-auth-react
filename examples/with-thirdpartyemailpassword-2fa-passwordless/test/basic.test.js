@@ -123,13 +123,14 @@ describe("SuperTokens Example Basic tests", function () {
             );
             // Create a new OTP and use it (we don't have access to the originally sent one)
             await Passwordless.createNewCodeForDevice({
+                tenantId: "public",
                 deviceId: loginAttemptInfo.deviceId,
                 userInputCode: testOTP,
             });
             await setInputValues(page, [{ name: "userInputCode", value: testOTP }]);
             await submitForm(page);
 
-            const [user] = await ThirdPartyEmailPassword.getUsersByEmail(email);
+            const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
             // We get to the email verification screen
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
@@ -138,7 +139,7 @@ describe("SuperTokens Example Basic tests", function () {
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
 
             // Create a new token and use it (we don't have access to the originally sent one)
-            const tokenInfo = await EmailVerification.createEmailVerificationToken(user.id, user.email);
+            const tokenInfo = await EmailVerification.createEmailVerificationToken("public", userId, email);
             await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
             await submitForm(page);
 
@@ -155,7 +156,7 @@ describe("SuperTokens Example Basic tests", function () {
             const alertText = await alertContent;
             assert(alertText.startsWith("Session Information:"));
             const sessionInfo = JSON.parse(alertText.replace(/^Session Information:/, ""));
-            assert.strictEqual(sessionInfo.userId, user.id);
+            assert.strictEqual(sessionInfo.userId, userId);
         });
     });
 });

@@ -7,7 +7,7 @@ let { middleware, errorHandler } = require("supertokens-node/framework/express")
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 let ThirdPartyPasswordless = require("supertokens-node/recipe/thirdpartypasswordless");
 let Dashboard = require("supertokens-node/recipe/dashboard");
-let MultiTenancy = require("supertokens-node/recipe/multitenancy");
+let Multitenancy = require("supertokens-node/recipe/multitenancy");
 let EmailVerification = require("supertokens-node/recipe/emailverification");
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -18,7 +18,9 @@ const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://example.com:$
 supertokens.init({
     framework: "express",
     supertokens: {
-        connectionURI: "http://localhost:3567",
+        // TODO: This is a core hosted for demo purposes. You can use this, but make sure to change it to your core instance URI eventually.
+        connectionURI: "https://try.supertokens.com",
+        //apiKey: "<REQUIRED FOR MANAGED SERVICE, ELSE YOU CAN REMOVE THIS FIELD>",
     },
     appInfo: {
         appName: "SuperTokens Demo App",
@@ -41,7 +43,7 @@ supertokens.init({
                 }),
             },
         }),
-        MultiTenancy.init({
+        Multitenancy.init({
             getAllowedDomainsForTenantId: async (tenantId, userContext) => {
                 // query your db to get the allowed domain for the input tenantId
                 // or you can make the tenantId equal to the sub domain itself

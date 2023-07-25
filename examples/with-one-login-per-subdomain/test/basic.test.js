@@ -36,7 +36,7 @@ const EmailPassword = require("supertokens-node/recipe/emailpassword");
 require("jsdom-global")();
 
 const apiDomain = "http://example.com:3001";
-const websiteDomain = "http://a.example.com:3000";
+const websiteDomain = "http://tenant1.example.com:3000";
 SuperTokensNode.init({
     supertokens: {
         // We are running these tests without running a local ST instance
@@ -77,7 +77,7 @@ describe("SuperTokens Example Basic tests", function () {
         it("Successful signup with credentials", async function () {
             await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-            assert.strictEqual(page.url(), "http://a.example.com:3000/auth/?redirectToPath=");
+            assert.strictEqual(page.url(), "http://tenant1.example.com:3000/auth/?redirectToPath=");
             // redirected to /auth
             await toggleSignInSignUp(page);
             await setInputValues(page, [
@@ -86,9 +86,21 @@ describe("SuperTokens Example Basic tests", function () {
             ]);
             await submitForm(page);
 
+            // Redirected to email verification screen
+            await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+            const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
+
+            // Attempt reloading Home
+            await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+            await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+
+            // Create a new token and use it (we don't have access to the originally sent one)
+            const tokenInfo = await EmailVerification.createEmailVerificationToken("public", userId, email);
+            await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
+            await submitForm(page);
+
             const callApiBtn = await page.waitForSelector(".sessionButton");
-            assert.strictEqual(page.url(), "http://supertokens.example.com:3000/");
-            const user = await EmailPassword.getUserByEmail(email);
+            assert.strictEqual(page.url(), "http://tenant1.example.com:3000/");
 
             let setAlertContent;
             let alertContent = new Promise((res) => (setAlertContent = res));
@@ -101,11 +113,7 @@ describe("SuperTokens Example Basic tests", function () {
             const alertText = await alertContent;
             assert(alertText.startsWith("Session Information:"));
             const sessionInfo = JSON.parse(alertText.replace(/^Session Information:/, ""));
-            assert.strictEqual(sessionInfo.userId, user.id);
-
-            await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-            await page.waitForSelector(".sessionButton");
-            assert.strictEqual(page.url(), "http://supertokens.example.com:3000/");
+            assert.strictEqual(sessionInfo.userId, userId);
         });
     });
 });
