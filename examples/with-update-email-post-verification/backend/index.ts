@@ -73,26 +73,14 @@ app.post("/change-email", verifySession(), async (req: SessionRequest, res) => {
     let isVerified = await EmailVerification.isEmailVerified(session.getUserId(), email);
 
     if (!isVerified) {
-        // Now we create and send the email verification link to the user for the new email.
-        let tokenInfo = await EmailVerification.createEmailVerificationToken(
+        // Now we send the email verification link to the user for the new email.
+        const sendEmailRes = await EmailVerification.sendEmailVerificationEmail(
             session.getTenantId(),
             session.getUserId(),
             email
         );
 
-        if (tokenInfo.status === "OK") {
-            let link = "http://localhost:3000/auth/verify-email?token=" + tokenInfo.token;
-
-            await EmailVerification.sendEmail({
-                emailVerifyLink: link,
-                type: "EMAIL_VERIFICATION",
-                tenantId: session.getTenantId(),
-                user: {
-                    id: session.getUserId(),
-                    email: email,
-                },
-            });
-
+        if (sendEmailRes.status === "OK") {
             return res.status(200).send("Email verification email sent");
         }
         // else case is that the email is already verified (which can happen cause
