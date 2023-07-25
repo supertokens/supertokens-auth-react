@@ -6,7 +6,7 @@ let supertokens = require("supertokens-node");
 let Session = require("supertokens-node/recipe/session");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
-let MultiTenancy = require("supertokens-node/recipe/multitenancy");
+let Multitenancy = require("supertokens-node/recipe/multitenancy");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 let ThirdPartyPasswordless = require("supertokens-node/recipe/thirdpartypasswordless");
 let Dashboard = require("supertokens-node/recipe/dashboard");
@@ -33,7 +33,7 @@ supertokens.init({
         EmailVerification.init({
             mode: "REQUIRED",
         }),
-        MultiTenancy.init({
+        Multitenancy.init({
             getAllowedDomainsForTenantId: async (tenantId, userContext) => {
                 // query your db to get the allowed domain for the input tenantId
                 // or you can make the tenantId equal to the sub domain itself

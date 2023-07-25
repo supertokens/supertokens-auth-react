@@ -3,7 +3,7 @@ import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
-import MultiTenancy, { AllowedDomainsClaim } from "supertokens-auth-react/recipe/multitenancy";
+import Multitenancy, { AllowedDomainsClaim } from "supertokens-auth-react/recipe/multitenancy";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
@@ -25,7 +25,7 @@ SuperTokens.init({
         EmailVerification.init({
             mode: "REQUIRED",
         }),
-        MultiTenancy.init({
+        Multitenancy.init({
             override: {
                 functions: (oI) => ({
                     ...oI,

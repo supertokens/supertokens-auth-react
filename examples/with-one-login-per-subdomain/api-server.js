@@ -7,7 +7,7 @@ let { middleware, errorHandler } = require("supertokens-node/framework/express")
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 let ThirdPartyPasswordless = require("supertokens-node/recipe/thirdpartypasswordless");
 let Dashboard = require("supertokens-node/recipe/dashboard");
-let MultiTenancy = require("supertokens-node/recipe/multitenancy");
+let Multitenancy = require("supertokens-node/recipe/multitenancy");
 let EmailVerification = require("supertokens-node/recipe/emailverification");
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -43,7 +43,7 @@ supertokens.init({
                 }),
             },
         }),
-        MultiTenancy.init({
+        Multitenancy.init({
             getAllowedDomainsForTenantId: async (tenantId, userContext) => {
                 // query your db to get the allowed domain for the input tenantId
                 // or you can make the tenantId equal to the sub domain itself

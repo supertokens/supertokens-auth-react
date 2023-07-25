@@ -3,7 +3,7 @@ import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
-import MultiTenancy, { AllowedDomainsClaim } from "supertokens-auth-react/recipe/multitenancy";
+import Multitenancy, { AllowedDomainsClaim } from "supertokens-auth-react/recipe/multitenancy";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
@@ -23,7 +23,7 @@ SuperTokens.init({
         EmailVerification.init({
             mode: "REQUIRED",
         }),
-        MultiTenancy.init({
+        Multitenancy.init({
             override: {
                 functions: (oI) => ({
                     ...oI,
