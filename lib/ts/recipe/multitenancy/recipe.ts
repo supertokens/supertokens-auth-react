@@ -18,7 +18,6 @@
  */
 
 import MultitenancyWebJS from "supertokens-web-js/recipe/multitenancy";
-import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
 import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
@@ -39,6 +38,7 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
     static instance?: Multitenancy;
     static readonly RECIPE_ID = "multitenancy";
 
+    private initPromise?: Promise<void>;
     private dynamicLoginMethods?: GetLoginMethodsResponseNormalized;
     private hasIntersection?: boolean;
     public readonly recipeID = Multitenancy.RECIPE_ID;
@@ -48,20 +48,34 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
         public readonly webJSRecipe: WebJSRecipeInterface<typeof MultitenancyWebJS> = MultitenancyWebJS
     ) {
         super(config);
-        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
-            if (SuperTokens.usesDynamicLoginMethods === true) {
-                void Multitenancy.getInstanceOrThrow().initMultitenancyWithDynamicLoginMethods().catch();
-            }
-        });
     }
 
     public async initMultitenancyWithDynamicLoginMethods(): Promise<void> {
-        const tenantId = await Multitenancy.getInstanceOrThrow().webJSRecipe.getTenantId();
+        if (SuperTokens.usesDynamicLoginMethods === false) {
+            return;
+        }
 
-        const tenantMethods = await Multitenancy.getDynamicLoginMethods({ tenantId });
-        this.hasIntersection = hasIntersectingRecipes(tenantMethods, SuperTokens.getInstanceOrThrow().recipeList);
+        if (this.initPromise !== undefined) {
+            return this.initPromise;
+        }
+        let initPromResolve!: () => void;
+        let initPromReject!: (err: any) => void;
+        this.initPromise = new Promise((res, rej) => {
+            initPromReject = rej;
+            initPromResolve = res;
+        });
 
-        SuperTokens.uiController.emit("LoginMethodsLoaded");
+        try {
+            const tenantId = await Multitenancy.getInstanceOrThrow().webJSRecipe.getTenantId();
+
+            const tenantMethods = await Multitenancy.getDynamicLoginMethods({ tenantId });
+            this.hasIntersection = hasIntersectingRecipes(tenantMethods, SuperTokens.getInstanceOrThrow().recipeList);
+
+            SuperTokens.uiController.emit("LoginMethodsLoaded");
+            initPromResolve();
+        } catch (err) {
+            initPromReject(err);
+        }
     }
 
     public getLoadedDynamicLoginMethods(): GetLoginMethodsResponseNormalized | undefined {

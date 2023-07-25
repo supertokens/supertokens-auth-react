@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changes
+
+-   Delaying the initial `getDynamicLoginMethods` until the first
+-   Added a spinner that shows up if `usesDynamicLoginMethods` is true and `getDynamicLoginMethods` takes longer than 200ms
+
 ## [0.34.0] - 2023-07-18
 
 ### Changes

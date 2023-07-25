@@ -22,10 +22,12 @@ import { createPortal } from "react-dom";
 
 import { ST_ROOT_ID } from "../constants";
 import Multitenancy from "../recipe/multitenancy/recipe";
+import styles from "../styles/styles.css";
 import SuperTokens from "../superTokens";
 import { TranslationContextProvider } from "../translation/translationContext";
 import { mergeObjects } from "../utils";
 
+import SpinnerIcon from "./assets/spinnerIcon";
 import ErrorBoundary from "./errorBoundary";
 
 import type { TranslationStore } from "../translation/translationHelpers";
@@ -41,6 +43,7 @@ export default function FeatureWrapper({
     useShadowDom,
     defaultStore,
 }: PropsWithChildren<FeatureWrapperProps>): JSX.Element | null {
+    const [error, setError] = useState<any>(undefined);
     const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState(
         SuperTokens.usesDynamicLoginMethods === false ||
             Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods() !== undefined
@@ -55,6 +58,8 @@ export default function FeatureWrapper({
         if (Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods() !== undefined) {
             setLoadedDynamicLoginMethods(true);
             return;
+        } else {
+            void Multitenancy.getInstanceOrThrow().initMultitenancyWithDynamicLoginMethods().catch(setError);
         }
 
         const handler = () => {
@@ -64,6 +69,23 @@ export default function FeatureWrapper({
 
         () => SuperTokens.uiController.off("LoginMethodsLoaded", handler);
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
+
+    if (error) {
+        throw error;
+    }
+
+    if (SuperTokens.usesDynamicLoginMethods && !loadedDynamicLoginMethods) {
+        return (
+            <div data-supertokens="container delayedRender">
+                <div data-supertokens="row">
+                    <div data-supertokens="spinner delayedRender">
+                        <style type="text/css">{styles}</style>
+                        <SpinnerIcon />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     if (loadedDynamicLoginMethods === false) {
         return null;

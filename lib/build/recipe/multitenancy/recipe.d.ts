@@ -6,6 +6,7 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
     readonly webJSRecipe: WebJSRecipeInterface<typeof MultitenancyWebJS>;
     static instance?: Multitenancy;
     static readonly RECIPE_ID = "multitenancy";
+    private initPromise?;
     private dynamicLoginMethods?;
     private hasIntersection?;
     readonly recipeID = "multitenancy";

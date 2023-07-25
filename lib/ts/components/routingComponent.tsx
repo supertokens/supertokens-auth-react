@@ -4,7 +4,10 @@ import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { redirectToAuth } from "..";
 import Multitenancy from "../recipe/multitenancy/recipe";
 import { RecipeRouter } from "../recipe/recipeRouter";
+import styles from "../styles/styles.css";
 import SuperTokens from "../superTokens";
+
+import SpinnerIcon from "./assets/spinnerIcon";
 
 import type { ReactRouterDomWithCustomHistory } from "../ui/types";
 
@@ -13,6 +16,7 @@ export function RoutingComponent(props: {
     preBuiltUIList: RecipeRouter[];
     path: string;
 }): JSX.Element | null {
+    const [error, setError] = useState<any>(undefined);
     const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState(
         SuperTokens.usesDynamicLoginMethods === false ||
             Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods() !== undefined
@@ -36,6 +40,8 @@ export function RoutingComponent(props: {
                 void redirectToAuth({ history, redirectBack: false });
             }
             return result;
+        } else {
+            void Multitenancy.getInstanceOrThrow().initMultitenancyWithDynamicLoginMethods().catch(setError);
         }
         return undefined;
         // location dependency needs to be kept in order to get new component on url change
@@ -59,6 +65,23 @@ export function RoutingComponent(props: {
 
         () => SuperTokens.uiController.off("LoginMethodsLoaded", handler);
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
+
+    if (error) {
+        throw error;
+    }
+
+    if (SuperTokens.usesDynamicLoginMethods && !loadedDynamicLoginMethods) {
+        return (
+            <div data-supertokens="container delayedRender">
+                <div data-supertokens="row">
+                    <div data-supertokens="spinner">
+                        <style type="text/css">{styles}</style>
+                        <SpinnerIcon />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     if (componentToRender === undefined || loadedDynamicLoginMethods === false) {
         return null;
