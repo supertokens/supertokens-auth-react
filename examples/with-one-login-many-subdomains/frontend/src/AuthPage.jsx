@@ -13,14 +13,13 @@ import { TenantSelector } from "./TenantSelector";
 
 // We display this component as part of the SuperTokens login form to
 // allow users to go back and select another tenant without logging in
-const ChangeTenantsButton = () => {
+const ChangeTenantsButton = ({ clearTenantChoice }) => {
     return (
         <div
             data-supertokens="link"
             className="tenant-link"
             onClick={() => {
-                localStorage.removeItem("tenantId");
-                window.location.reload();
+                clearTenantChoice();
             }}>
             Log in to a different organisation
         </div>
@@ -50,7 +49,12 @@ export const AuthPage = () => {
                         return (
                             <div>
                                 <DefaultComponent {...props} />
-                                <ChangeTenantsButton />
+                                <ChangeTenantsButton
+                                    clearTenantChoice={() => {
+                                        localStorage.removeItem("tenantId");
+                                        setHasSelectedTenantId(undefined);
+                                    }}
+                                />
                             </div>
                         );
                     },
@@ -61,7 +65,12 @@ export const AuthPage = () => {
                             return (
                                 <div>
                                     <DefaultComponent {...props} />
-                                    <ChangeTenantsButton />
+                                    <ChangeTenantsButton
+                                        clearTenantChoice={() => {
+                                            localStorage.removeItem("tenantId");
+                                            setHasSelectedTenantId(undefined);
+                                        }}
+                                    />
                                 </div>
                             );
                         },
