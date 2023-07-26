@@ -78,6 +78,11 @@ app.get("/sessioninfo", verifySession(), async (req, res) => {
     });
 });
 
+app.get("/tenants", async (req, res) => {
+    let tenants = await Multitenancy.listAllTenants();
+    res.send(tenants);
+});
+
 app.use(errorHandler());
 
 app.use((err, req, res, next) => {
