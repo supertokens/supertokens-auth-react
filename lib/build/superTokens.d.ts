@@ -1,5 +1,4 @@
 import { TranslationController } from "./translation/translationHelpers";
-import { UIController } from "./ui/uiController";
 import type RecipeModule from "./recipe/recipeModule";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
@@ -8,7 +7,6 @@ import type { GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } f
 export default class SuperTokens {
     private static instance?;
     static usesDynamicLoginMethods: boolean;
-    static uiController: UIController;
     appInfo: NormalisedAppInfo;
     languageTranslations: {
         defaultLanguage: string;

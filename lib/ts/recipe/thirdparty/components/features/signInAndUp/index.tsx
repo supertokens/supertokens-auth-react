@@ -21,8 +21,9 @@ import { useMemo } from "react";
 
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
+import SuperTokens from "../../../../../superTokens";
 import { getQueryParams } from "../../../../../utils";
-import Multitenancy from "../../../../multitenancy/recipe";
+import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import { mergeProviders } from "../../../utils";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
@@ -80,15 +81,24 @@ export function useChildProps(recipe: Recipe): ThirdPartySignInUpChildProps;
 export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChildProps | undefined;
 export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChildProps | undefined {
     const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe), [recipe]);
+    const dynamicLoginMethods = useDynamicLoginMethods();
 
     return useMemo(() => {
         if (!recipe || !recipeImplementation) {
             return undefined;
         }
+        let tenantProviders;
+        if (SuperTokens.usesDynamicLoginMethods) {
+            if (dynamicLoginMethods.loaded === false) {
+                throw new Error("Component requiring dynamicLoginMethods rendered without FeatureWrapper.");
+            } else {
+                tenantProviders = dynamicLoginMethods.loginMethods.thirdparty.providers;
+            }
+        }
 
         return {
             providers: mergeProviders({
-                tenantProviders: Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods()?.thirdparty.providers,
+                tenantProviders,
                 clientProviders: recipe.config.signInAndUpFeature.providers,
             }),
             recipeImplementation,

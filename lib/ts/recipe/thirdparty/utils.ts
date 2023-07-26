@@ -138,8 +138,11 @@ export async function redirectToThirdPartyLogin(input: {
     userContext: any;
     recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;
 }): Promise<{ status: "OK" | "ERROR" }> {
+    const loginMethods = await Multitenancy.getInstanceOrThrow().getCurrentDynamicLoginMethods({
+        userContext: input.userContext,
+    });
     const providers = mergeProviders({
-        tenantProviders: Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods()?.thirdparty.providers,
+        tenantProviders: loginMethods?.thirdparty.providers,
         clientProviders: input.config.signInAndUpFeature.providers,
     });
 

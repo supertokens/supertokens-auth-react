@@ -24,7 +24,6 @@ import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 import { SSR_ERROR } from "./constants";
 import Multitenancy from "./recipe/multitenancy/recipe";
 import { saveCurrentLanguage, TranslationController } from "./translation/translationHelpers";
-import { UIController } from "./ui/uiController";
 import {
     appendQueryParamsToURL,
     appendTrailingSlashToURL,
@@ -54,7 +53,6 @@ export default class SuperTokens {
      */
     private static instance?: SuperTokens;
     static usesDynamicLoginMethods = false;
-    static uiController = new UIController();
 
     /*
      * Instance Attributes.

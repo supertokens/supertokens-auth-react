@@ -190,6 +190,24 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         compareArrayContents(providers, ["Continue with Apple"]);
     });
 
+    it("should postpone render with react-router-dom", async function () {
+        await enableDynamicLoginMethods(page, {
+            emailPassword: { enabled: false },
+            passwordless: { enabled: false },
+            thirdParty: {
+                enabled: true,
+                providers: [{ id: "apple", name: "Apple" }],
+            },
+        });
+        await Promise.all([page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`)]);
+
+        const spinner = await waitForSTElement(page, "[data-supertokens~=delayedRender]");
+        assert.ok(spinner);
+        await page.waitForTimeout(2000);
+        const providers = await getProvidersLabels(page);
+        compareArrayContents(providers, ["Continue with Apple"]);
+    });
+
     it("should postpone render with no react-router-dom", async function () {
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: false },
@@ -200,8 +218,9 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
             },
         });
         await Promise.all([page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?router=no-router`)]);
-        const superTokensComponent = await page.$(ST_ROOT_SELECTOR);
-        assert.deepStrictEqual(superTokensComponent, null);
+
+        const spinner = await waitForSTElement(page, "[data-supertokens~=delayedRender]");
+        assert.ok(spinner);
         await page.waitForTimeout(2000);
         const providers = await getProvidersLabels(page);
         compareArrayContents(providers, ["Continue with Apple"]);

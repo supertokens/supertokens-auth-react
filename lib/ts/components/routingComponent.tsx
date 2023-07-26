@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
-import { redirectToAuth } from "..";
+import { redirectToAuth, useUserContext } from "..";
 import DynamicLoginMethodsSpinner from "../recipe/multitenancy/components/features/dynamicLoginMethodsSpinner";
 import Multitenancy from "../recipe/multitenancy/recipe";
 import { RecipeRouter } from "../recipe/recipeRouter";
 import SuperTokens from "../superTokens";
 
+import type { GetLoginMethodsResponseNormalized } from "../recipe/multitenancy/types";
 import type { ReactRouterDomWithCustomHistory } from "../ui/types";
 
 export function RoutingComponent(props: {
@@ -14,11 +15,11 @@ export function RoutingComponent(props: {
     preBuiltUIList: RecipeRouter[];
     path: string;
 }): JSX.Element | null {
+    const userContext = useUserContext();
     const [error, setError] = useState<any>(undefined);
-    const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState(
-        SuperTokens.usesDynamicLoginMethods === false ||
-            Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods() !== undefined
-    );
+    const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState<
+        GetLoginMethodsResponseNormalized | undefined
+    >(undefined);
     const history = props.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
     const path = props.path;
 
@@ -28,18 +29,17 @@ export function RoutingComponent(props: {
         // During development, this runs twice so as to warn devs of if there
         // are any side effects that happen here. So in tests, it will result in
         // the console log twice
-        if (loadedDynamicLoginMethods) {
+        if (loadedDynamicLoginMethods !== undefined || SuperTokens.usesDynamicLoginMethods === false) {
             const result = RecipeRouter.getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
                 normalizedPath,
                 props.preBuiltUIList,
-                false
+                false,
+                loadedDynamicLoginMethods
             );
             if (result === undefined && SuperTokens.usesDynamicLoginMethods === true) {
                 void redirectToAuth({ history, redirectBack: false });
             }
             return result;
-        } else {
-            void Multitenancy.getInstanceOrThrow().initMultitenancyWithDynamicLoginMethods().catch(setError);
         }
         return undefined;
         // location dependency needs to be kept in order to get new component on url change
@@ -50,29 +50,26 @@ export function RoutingComponent(props: {
         if (loadedDynamicLoginMethods) {
             return;
         }
-
-        if (Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods() !== undefined) {
-            setLoadedDynamicLoginMethods(true);
-            return;
-        }
-
-        const handler = () => {
-            setLoadedDynamicLoginMethods(true);
-        };
-        SuperTokens.uiController.on("LoginMethodsLoaded", handler);
-
-        () => SuperTokens.uiController.off("LoginMethodsLoaded", handler);
+        Multitenancy.getInstanceOrThrow()
+            .getCurrentDynamicLoginMethods({ userContext })
+            .then(
+                (loginMethods) => setLoadedDynamicLoginMethods(loginMethods),
+                (err) => setError(err)
+            );
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
 
     if (error) {
         throw error;
     }
 
-    if (SuperTokens.usesDynamicLoginMethods && !loadedDynamicLoginMethods) {
+    if (SuperTokens.usesDynamicLoginMethods && loadedDynamicLoginMethods === undefined) {
         return <DynamicLoginMethodsSpinner />;
     }
 
-    if (componentToRender === undefined || loadedDynamicLoginMethods === false) {
+    if (
+        componentToRender === undefined ||
+        (loadedDynamicLoginMethods === undefined && SuperTokens.usesDynamicLoginMethods)
+    ) {
         return null;
     }
 

@@ -18,6 +18,7 @@
  */
 
 import MultitenancyWebJS from "supertokens-web-js/recipe/multitenancy";
+import { getNormalisedUserContext } from "supertokens-web-js/utils";
 
 import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
@@ -38,9 +39,7 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
     static instance?: Multitenancy;
     static readonly RECIPE_ID = "multitenancy";
 
-    private initPromise?: Promise<void>;
-    private dynamicLoginMethods?: GetLoginMethodsResponseNormalized;
-    private hasIntersection?: boolean;
+    private dynamicLoginMethodsCache: { [tenantId: string]: Promise<GetLoginMethodsResponseNormalized> };
     public readonly recipeID = Multitenancy.RECIPE_ID;
 
     constructor(
@@ -48,58 +47,43 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
         public readonly webJSRecipe: WebJSRecipeInterface<typeof MultitenancyWebJS> = MultitenancyWebJS
     ) {
         super(config);
+        this.dynamicLoginMethodsCache = {};
     }
 
-    public async initMultitenancyWithDynamicLoginMethods(): Promise<void> {
+    public async getCurrentDynamicLoginMethods(input: {
+        userContext?: any;
+    }): Promise<GetLoginMethodsResponseNormalized | undefined> {
         if (SuperTokens.usesDynamicLoginMethods === false) {
-            return;
+            return undefined;
         }
+        const userContext = getNormalisedUserContext(input.userContext);
 
-        if (this.initPromise !== undefined) {
-            return this.initPromise;
+        const tenantId = (await Multitenancy.getInstanceOrThrow().webJSRecipe.getTenantId()) ?? "public";
+
+        if (this.dynamicLoginMethodsCache[tenantId] === undefined) {
+            this.dynamicLoginMethodsCache[tenantId] = Multitenancy.getDynamicLoginMethods({
+                tenantId,
+                userContext,
+            });
         }
-        let initPromResolve!: () => void;
-        let initPromReject!: (err: any) => void;
-        this.initPromise = new Promise((res, rej) => {
-            initPromReject = rej;
-            initPromResolve = res;
-        });
+        const tenantMethods = await this.dynamicLoginMethodsCache[tenantId]!;
 
-        try {
-            const tenantId = await Multitenancy.getInstanceOrThrow().webJSRecipe.getTenantId();
-
-            const tenantMethods = await Multitenancy.getDynamicLoginMethods({ tenantId });
-            this.hasIntersection = hasIntersectingRecipes(tenantMethods, SuperTokens.getInstanceOrThrow().recipeList);
-
-            SuperTokens.uiController.emit("LoginMethodsLoaded");
-            initPromResolve();
-        } catch (err) {
-            initPromReject(err);
-        }
-    }
-
-    public getLoadedDynamicLoginMethods(): GetLoginMethodsResponseNormalized | undefined {
-        if (this.hasIntersection === false) {
+        if (!hasIntersectingRecipes(tenantMethods, SuperTokens.getInstanceOrThrow().recipeList)) {
             throw new Error("Initialized recipes have no overlap with core recipes or could not load login methods");
         }
-        return this.dynamicLoginMethods;
+        return tenantMethods;
     }
 
     static async getDynamicLoginMethods(
-        ...options: Parameters<typeof MultitenancyWebJS.getLoginMethods>
+        input: Parameters<typeof MultitenancyWebJS.getLoginMethods>[0]
     ): Promise<GetLoginMethodsResponseNormalized> {
-        const instance = Multitenancy.getInstanceOrThrow();
-        if (instance.dynamicLoginMethods !== undefined) {
-            return instance.dynamicLoginMethods;
-        }
-        const { emailPassword, passwordless, thirdParty } = await MultitenancyWebJS.getLoginMethods(...options);
+        const { emailPassword, passwordless, thirdParty } = await MultitenancyWebJS.getLoginMethods(input);
 
-        instance.dynamicLoginMethods = {
+        return {
             passwordless: passwordless,
             emailpassword: emailPassword,
             thirdparty: thirdParty,
         };
-        return instance.dynamicLoginMethods;
     }
 
     static init(config?: UserInput): RecipeInitResult<any, any, any, any> {
