@@ -21,13 +21,12 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { ST_ROOT_ID } from "../constants";
+import DynamicLoginMethodsSpinner from "../recipe/multitenancy/components/features/dynamicLoginMethodsSpinner";
 import Multitenancy from "../recipe/multitenancy/recipe";
-import styles from "../styles/styles.css";
 import SuperTokens from "../superTokens";
 import { TranslationContextProvider } from "../translation/translationContext";
 import { mergeObjects } from "../utils";
 
-import SpinnerIcon from "./assets/spinnerIcon";
 import ErrorBoundary from "./errorBoundary";
 
 import type { TranslationStore } from "../translation/translationHelpers";
@@ -75,16 +74,7 @@ export default function FeatureWrapper({
     }
 
     if (SuperTokens.usesDynamicLoginMethods && !loadedDynamicLoginMethods) {
-        return (
-            <div data-supertokens="container delayedRender">
-                <div data-supertokens="row">
-                    <div data-supertokens="spinner delayedRender">
-                        <style type="text/css">{styles}</style>
-                        <SpinnerIcon />
-                    </div>
-                </div>
-            </div>
-        );
+        return <DynamicLoginMethodsSpinner />;
     }
 
     if (loadedDynamicLoginMethods === false) {
@@ -126,7 +116,7 @@ type WithOrWithoutShadowDomProps = {
     useShadowDom?: boolean;
 };
 
-function WithOrWithoutShadowDom({
+export function WithOrWithoutShadowDom({
     children,
     useShadowDom,
 }: PropsWithChildren<WithOrWithoutShadowDomProps>): JSX.Element {

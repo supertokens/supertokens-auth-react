@@ -2,12 +2,10 @@ import React, { useEffect, useState } from "react";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import { redirectToAuth } from "..";
+import DynamicLoginMethodsSpinner from "../recipe/multitenancy/components/features/dynamicLoginMethodsSpinner";
 import Multitenancy from "../recipe/multitenancy/recipe";
 import { RecipeRouter } from "../recipe/recipeRouter";
-import styles from "../styles/styles.css";
 import SuperTokens from "../superTokens";
-
-import SpinnerIcon from "./assets/spinnerIcon";
 
 import type { ReactRouterDomWithCustomHistory } from "../ui/types";
 
@@ -71,16 +69,7 @@ export function RoutingComponent(props: {
     }
 
     if (SuperTokens.usesDynamicLoginMethods && !loadedDynamicLoginMethods) {
-        return (
-            <div data-supertokens="container delayedRender">
-                <div data-supertokens="row">
-                    <div data-supertokens="spinner">
-                        <style type="text/css">{styles}</style>
-                        <SpinnerIcon />
-                    </div>
-                </div>
-            </div>
-        );
+        return <DynamicLoginMethodsSpinner />;
     }
 
     if (componentToRender === undefined || loadedDynamicLoginMethods === false) {

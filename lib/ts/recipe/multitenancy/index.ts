@@ -15,6 +15,7 @@
 
 import { AllowedDomainsClaim } from "supertokens-web-js/recipe/multitenancy";
 
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 import Multitenancy from "./recipe";
 import { UserInput } from "./types";
 
@@ -26,8 +27,11 @@ export default class Wrapper {
     }
 
     static AllowedDomainsClaim = AllowedDomainsClaim;
+
+    static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
 const init = Wrapper.init;
+const MultitenancyComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 
-export { init, UserInput, RecipeInterface, AllowedDomainsClaim };
+export { init, UserInput, RecipeInterface, AllowedDomainsClaim, MultitenancyComponentsOverrideProvider };
