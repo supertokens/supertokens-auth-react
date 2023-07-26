@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
--   Delaying the initial `getDynamicLoginMethods` until the first
+-   Delaying the initial `getDynamicLoginMethods` until the first feature/routing component renders
 -   Added a spinner that shows up if `usesDynamicLoginMethods` is true and `getDynamicLoginMethods` takes longer than 200ms
+-   Updated with-one-login-many-subdomains example to match the create-supertokens-app-example
 
 ## [0.34.0] - 2023-07-18
 
