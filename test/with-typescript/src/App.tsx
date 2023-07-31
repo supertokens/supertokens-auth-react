@@ -1240,7 +1240,17 @@ Multitenancy.init({
     override: {
         functions: (oI) => ({
             ...oI,
-            getTenantId: () => "sub-tenant-1",
+            getTenantId: () => "...",
+            getLoginMethods: async (input) => {
+                try {
+                    return oI.getLoginMethods(input);
+                } catch (err) {
+                    if (err.message === "AppId or tenantId not found") {
+                        // redirect the user here.
+                    }
+                    throw err;
+                }
+            },
         }),
     },
 });
