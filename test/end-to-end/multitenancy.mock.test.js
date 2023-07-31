@@ -31,7 +31,7 @@ import {
     assertProviders,
     getProviderLogoCount,
 } from "../helpers";
-import { TEST_CLIENT_BASE_URL, DEFAULT_WEBSITE_BASE_PATH, LOGIN_METHODS_API, ST_ROOT_SELECTOR } from "../constants";
+import { TEST_CLIENT_BASE_URL, DEFAULT_WEBSITE_BASE_PATH, ST_ROOT_SELECTOR } from "../constants";
 import { before } from "mocha";
 
 // Run the tests in a DOM environment.

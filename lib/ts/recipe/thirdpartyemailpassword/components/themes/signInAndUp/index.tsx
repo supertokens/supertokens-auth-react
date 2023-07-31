@@ -28,7 +28,7 @@ import { SignInFooter } from "../../../../emailpassword/components/themes/signIn
 import { SignInForm } from "../../../../emailpassword/components/themes/signInAndUp/signInForm";
 import { SignUpFooter } from "../../../../emailpassword/components/themes/signInAndUp/signUpFooter";
 import { SignUpForm } from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
-import Multitenancy from "../../../../multitenancy/recipe";
+import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 import { ThemeBase } from "../themeBase";
 
@@ -39,14 +39,21 @@ import type { ThirdPartyEmailPasswordSignInAndUpThemeProps } from "../../../type
 const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> = (props) => {
     const t = useTranslation();
     const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods;
-    const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods();
+    const dynamicLoginMethods = useDynamicLoginMethods();
+    let loginMethods;
+    if (usesDynamicLoginMethods) {
+        if (dynamicLoginMethods.loaded === false) {
+            throw new Error("Component requiring dynamicLoginMethods rendered without FeatureWrapper.");
+        } else {
+            loginMethods = dynamicLoginMethods.loginMethods;
+        }
+    }
     const hasProviders = props.tpChildProps?.providers !== undefined && props.tpChildProps.providers.length > 0;
     const thirdPartyEnabled =
-        (usesDynamicLoginMethods === false && hasProviders) ||
-        (dynamicLoginMethods?.thirdparty.enabled && hasProviders);
+        (usesDynamicLoginMethods === false && hasProviders) || (loginMethods?.thirdparty.enabled && hasProviders);
     const emailPasswordEnabled =
         (props.emailPasswordRecipe !== undefined && usesDynamicLoginMethods === false) ||
-        dynamicLoginMethods?.emailpassword.enabled;
+        loginMethods?.emailpassword.enabled;
 
     if (thirdPartyEnabled === false && emailPasswordEnabled === false) {
         return null;

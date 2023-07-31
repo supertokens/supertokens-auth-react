@@ -9,4 +9,11 @@ export default function FeatureWrapper({
     useShadowDom,
     defaultStore,
 }: PropsWithChildren<FeatureWrapperProps>): JSX.Element | null;
+declare type WithOrWithoutShadowDomProps = {
+    useShadowDom?: boolean;
+};
+export declare function WithOrWithoutShadowDom({
+    children,
+    useShadowDom,
+}: PropsWithChildren<WithOrWithoutShadowDomProps>): JSX.Element;
 export {};

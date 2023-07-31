@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.34.0",
+    "version": "0.34.1",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -123,7 +123,7 @@
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "15kb"
+            "limit": "16kb"
         },
         {
             "path": "recipe/session/prebuiltui.js",
@@ -159,11 +159,11 @@
         },
         {
             "path": "recipe/thirdpartyemailpassword/prebuiltui.js",
-            "limit": "54kb"
+            "limit": "55kb"
         },
         {
             "path": "recipe/thirdparty/prebuiltui.js",
-            "limit": "37kb"
+            "limit": "40kb"
         },
         {
             "path": "recipe/emailpassword/prebuiltui.js",
@@ -171,7 +171,7 @@
         },
         {
             "path": "recipe/passwordless/prebuiltui.js",
-            "limit": "105kb"
+            "limit": "107kb"
         },
         {
             "path": "recipe/thirdpartypasswordless/prebuiltui.js",

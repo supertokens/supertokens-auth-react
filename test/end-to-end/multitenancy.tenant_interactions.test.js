@@ -47,6 +47,7 @@ import {
     TEST_SERVER_BASE_URL,
     SOMETHING_WENT_WRONG_ERROR,
     ST_ROOT_SELECTOR,
+    TEST_APPLICATION_SERVER_BASE_URL,
 } from "../constants";
 
 // Run the tests in a DOM environment.
@@ -77,7 +78,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         }).catch(console.error);
 
         page = await browser.newPage();
-        pageCrashed = false;
+
         page.on("console", (c) => {
             if (c.text() === "ST_THROWN_ERROR") {
                 pageCrashed = true;
@@ -92,6 +93,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         await clearDynamicLoginMethodsSettings(page);
         await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
         await page.evaluate(() => localStorage.removeItem("mode"));
+        pageCrashed = false;
         await Promise.all([
             page.goto(`${TEST_CLIENT_BASE_URL}`),
             page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -619,9 +621,11 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             ]);
 
             assert.strictEqual(await page.waitForSelector(ST_ROOT_SELECTOR, { timeout: 1000, hidden: true }), null);
+
+            assert(pageCrashed);
         });
 
-        it("should keep the session active if dynamic login methods is not enabled", async function () {
+        it("should keep the session active if even if dynamic login methods is enabled", async function () {
             await setEnabledRecipes(page, ["emailpassword"]);
             await setupTenant("public", "customer1", {
                 emailPassword: { enabled: true },
@@ -631,6 +635,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
+            await enableDynamicLoginMethods(page);
             await setTenantId(page, "customer1");
 
             await Promise.all([
@@ -641,14 +646,34 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
 
             await removeTenant("public", "customer1");
 
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/dashboard`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
+            let getDynamicLoginMethodsCalled = false;
+            await page.setRequestInterception(true);
+            const requestHandler = (request) => {
+                if (
+                    request.url() === `${TEST_APPLICATION_SERVER_BASE_URL}/auth/customer1/loginmethods?` &&
+                    request.method() === "GET"
+                ) {
+                    getDynamicLoginMethodsCalled = true;
+                }
 
-            await getLogoutButton(page);
+                return request.continue();
+            };
+            page.on("request", requestHandler);
 
-            assert(!pageCrashed);
+            try {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/dashboard`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await getLogoutButton(page);
+
+                assert(!pageCrashed);
+                assert(!getDynamicLoginMethodsCalled);
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            }
         });
 
         it.skip("should revoke magic links on removed tenants", async function () {

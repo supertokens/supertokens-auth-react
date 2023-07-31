@@ -23,7 +23,7 @@ import { SuperTokensBranding } from "../../../../../components/SuperTokensBrandi
 import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
-import Multitenancy from "../../../../multitenancy/recipe";
+import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import { getActiveScreen, SignInUpScreens } from "../../../../passwordless/components/themes/signInUp";
 import { CloseTabScreen } from "../../../../passwordless/components/themes/signInUp/closeTabScreen";
 import { EmailForm } from "../../../../passwordless/components/themes/signInUp/emailForm";
@@ -46,15 +46,22 @@ import type {
 const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithActiveScreen> = (props) => {
     const t = useTranslation();
     const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods;
-    const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods();
+    const dynamicLoginMethods = useDynamicLoginMethods();
+    let loginMethods;
+    if (usesDynamicLoginMethods) {
+        if (dynamicLoginMethods.loaded === false) {
+            throw new Error("Component requiring dynamicLoginMethods rendered without FeatureWrapper.");
+        } else {
+            loginMethods = dynamicLoginMethods.loginMethods;
+        }
+    }
 
     const hasProviders = props.tpChildProps?.providers !== undefined && props.tpChildProps.providers.length > 0;
     const thirdPartyEnabled =
-        (usesDynamicLoginMethods === false && hasProviders) ||
-        (dynamicLoginMethods?.thirdparty.enabled && hasProviders);
+        (usesDynamicLoginMethods === false && hasProviders) || (loginMethods?.thirdparty.enabled && hasProviders);
     const passwordlessEnabled =
         (props.passwordlessRecipe !== undefined && usesDynamicLoginMethods === false) ||
-        dynamicLoginMethods?.passwordless.enabled;
+        loginMethods?.passwordless.enabled;
 
     if (thirdPartyEnabled === false && passwordlessEnabled === false) {
         return null;

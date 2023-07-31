@@ -18,7 +18,7 @@
  */
 
 import MultitenancyWebJS from "supertokens-web-js/recipe/multitenancy";
-import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
+import { getNormalisedUserContext } from "supertokens-web-js/utils";
 
 import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
@@ -39,8 +39,7 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
     static instance?: Multitenancy;
     static readonly RECIPE_ID = "multitenancy";
 
-    private dynamicLoginMethods?: GetLoginMethodsResponseNormalized;
-    private hasIntersection?: boolean;
+    private dynamicLoginMethodsCache: { [tenantId: string]: Promise<GetLoginMethodsResponseNormalized> };
     public readonly recipeID = Multitenancy.RECIPE_ID;
 
     constructor(
@@ -48,44 +47,43 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
         public readonly webJSRecipe: WebJSRecipeInterface<typeof MultitenancyWebJS> = MultitenancyWebJS
     ) {
         super(config);
-        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
-            if (SuperTokens.usesDynamicLoginMethods === true) {
-                void Multitenancy.getInstanceOrThrow().initMultitenancyWithDynamicLoginMethods().catch();
-            }
-        });
+        this.dynamicLoginMethodsCache = {};
     }
 
-    public async initMultitenancyWithDynamicLoginMethods(): Promise<void> {
-        const tenantId = await Multitenancy.getInstanceOrThrow().webJSRecipe.getTenantId();
+    public async getCurrentDynamicLoginMethods(input: {
+        userContext?: any;
+    }): Promise<GetLoginMethodsResponseNormalized | undefined> {
+        if (SuperTokens.usesDynamicLoginMethods === false) {
+            return undefined;
+        }
+        const userContext = getNormalisedUserContext(input.userContext);
 
-        const tenantMethods = await Multitenancy.getDynamicLoginMethods({ tenantId });
-        this.hasIntersection = hasIntersectingRecipes(tenantMethods, SuperTokens.getInstanceOrThrow().recipeList);
+        const tenantId = (await Multitenancy.getInstanceOrThrow().webJSRecipe.getTenantId()) ?? "public";
 
-        SuperTokens.uiController.emit("LoginMethodsLoaded");
-    }
+        if (this.dynamicLoginMethodsCache[tenantId] === undefined) {
+            this.dynamicLoginMethodsCache[tenantId] = Multitenancy.getDynamicLoginMethods({
+                tenantId,
+                userContext,
+            });
+        }
+        const tenantMethods = await this.dynamicLoginMethodsCache[tenantId]!;
 
-    public getLoadedDynamicLoginMethods(): GetLoginMethodsResponseNormalized | undefined {
-        if (this.hasIntersection === false) {
+        if (!hasIntersectingRecipes(tenantMethods, SuperTokens.getInstanceOrThrow().recipeList)) {
             throw new Error("Initialized recipes have no overlap with core recipes or could not load login methods");
         }
-        return this.dynamicLoginMethods;
+        return tenantMethods;
     }
 
     static async getDynamicLoginMethods(
-        ...options: Parameters<typeof MultitenancyWebJS.getLoginMethods>
+        input: Parameters<typeof MultitenancyWebJS.getLoginMethods>[0]
     ): Promise<GetLoginMethodsResponseNormalized> {
-        const instance = Multitenancy.getInstanceOrThrow();
-        if (instance.dynamicLoginMethods !== undefined) {
-            return instance.dynamicLoginMethods;
-        }
-        const { emailPassword, passwordless, thirdParty } = await MultitenancyWebJS.getLoginMethods(...options);
+        const { emailPassword, passwordless, thirdParty } = await MultitenancyWebJS.getLoginMethods(input);
 
-        instance.dynamicLoginMethods = {
+        return {
             passwordless: passwordless,
             emailpassword: emailPassword,
             thirdparty: thirdParty,
         };
-        return instance.dynamicLoginMethods;
     }
 
     static init(config?: UserInput): RecipeInitResult<any, any, any, any> {

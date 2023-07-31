@@ -1,5 +1,4 @@
 import SuperTokens from "../../superTokens";
-import Multitenancy from "../multitenancy/recipe";
 
 import type { RecipeFeatureComponentMap } from "../../types";
 import type { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
@@ -13,7 +12,8 @@ export abstract class RecipeRouter {
     static getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
         normalisedUrl: NormalisedURLPath,
         preBuiltUIList: RecipeRouter[],
-        defaultToStaticList: boolean
+        defaultToStaticList: boolean,
+        dynamicLoginMethods?: GetLoginMethodsResponseNormalized
     ): ComponentWithRecipeAndMatchingMethod | undefined {
         const path = normalisedUrl.getAsStringDangerous();
 
@@ -30,7 +30,6 @@ export abstract class RecipeRouter {
             return components;
         }, [] as ComponentWithRecipeAndMatchingMethod[]);
 
-        const dynamicLoginMethods = Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods();
         const componentMatchingRid = routeComponents.find((c) => c.matches());
         if (SuperTokens.usesDynamicLoginMethods === false || defaultToStaticList) {
             if (routeComponents.length === 0) {

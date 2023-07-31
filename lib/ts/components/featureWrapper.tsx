@@ -21,13 +21,17 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { ST_ROOT_ID } from "../constants";
+import DynamicLoginMethodsSpinner from "../recipe/multitenancy/components/features/dynamicLoginMethodsSpinner";
+import { DynamicLoginMethodsProvider } from "../recipe/multitenancy/dynamicLoginMethodsContext";
 import Multitenancy from "../recipe/multitenancy/recipe";
 import SuperTokens from "../superTokens";
 import { TranslationContextProvider } from "../translation/translationContext";
+import { useUserContext } from "../usercontext";
 import { mergeObjects } from "../utils";
 
 import ErrorBoundary from "./errorBoundary";
 
+import type { GetLoginMethodsResponseNormalized } from "../recipe/multitenancy/types";
 import type { TranslationStore } from "../translation/translationHelpers";
 import type { PropsWithChildren } from "react";
 
@@ -41,43 +45,45 @@ export default function FeatureWrapper({
     useShadowDom,
     defaultStore,
 }: PropsWithChildren<FeatureWrapperProps>): JSX.Element | null {
-    const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState(
-        SuperTokens.usesDynamicLoginMethods === false ||
-            Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods() !== undefined
-    );
+    const userContext = useUserContext();
+    const [error, setError] = useState<any>(undefined);
+    const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState<
+        GetLoginMethodsResponseNormalized | undefined
+    >(undefined);
     const st = SuperTokens.getInstanceOrThrow();
 
     useEffect(() => {
         if (loadedDynamicLoginMethods) {
             return;
         }
-
-        if (Multitenancy.getInstanceOrThrow().getLoadedDynamicLoginMethods() !== undefined) {
-            setLoadedDynamicLoginMethods(true);
-            return;
-        }
-
-        const handler = () => {
-            setLoadedDynamicLoginMethods(true);
-        };
-        SuperTokens.uiController.on("LoginMethodsLoaded", handler);
-
-        () => SuperTokens.uiController.off("LoginMethodsLoaded", handler);
+        Multitenancy.getInstanceOrThrow()
+            .getCurrentDynamicLoginMethods({ userContext })
+            .then(
+                (loginMethods) => setLoadedDynamicLoginMethods(loginMethods),
+                (err) => setError(err)
+            );
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
 
-    if (loadedDynamicLoginMethods === false) {
-        return null;
+    if (error) {
+        throw error;
     }
+
+    if (SuperTokens.usesDynamicLoginMethods && !loadedDynamicLoginMethods) {
+        return <DynamicLoginMethodsSpinner />;
+    }
+
     return (
-        <ErrorBoundary>
-            <TranslationContextProvider
-                defaultLanguage={st.languageTranslations.defaultLanguage}
-                defaultStore={mergeObjects(defaultStore, st.languageTranslations.userTranslationStore)}
-                translationControlEventSource={st.languageTranslations.translationEventSource}
-                userTranslationFunc={st.languageTranslations.userTranslationFunc}>
-                <WithOrWithoutShadowDom useShadowDom={useShadowDom}>{children}</WithOrWithoutShadowDom>
-            </TranslationContextProvider>
-        </ErrorBoundary>
+        <DynamicLoginMethodsProvider value={loadedDynamicLoginMethods}>
+            <ErrorBoundary>
+                <TranslationContextProvider
+                    defaultLanguage={st.languageTranslations.defaultLanguage}
+                    defaultStore={mergeObjects(defaultStore, st.languageTranslations.userTranslationStore)}
+                    translationControlEventSource={st.languageTranslations.translationEventSource}
+                    userTranslationFunc={st.languageTranslations.userTranslationFunc}>
+                    <WithOrWithoutShadowDom useShadowDom={useShadowDom}>{children}</WithOrWithoutShadowDom>
+                </TranslationContextProvider>
+            </ErrorBoundary>
+        </DynamicLoginMethodsProvider>
     );
 }
 
@@ -104,7 +110,7 @@ type WithOrWithoutShadowDomProps = {
     useShadowDom?: boolean;
 };
 
-function WithOrWithoutShadowDom({
+export function WithOrWithoutShadowDom({
     children,
     useShadowDom,
 }: PropsWithChildren<WithOrWithoutShadowDomProps>): JSX.Element {

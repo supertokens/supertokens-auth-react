@@ -26,12 +26,68 @@
     font-size: 17px;
 }
 
-.tenantForm {
-    margin: auto auto;
+.tenants-container {
+    margin: auto;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.16);
+    background-color: white;
+    width: 300px;
+    border-radius: 8px;
+    margin-top: calc(50vh - 100px);
+    padding-top: 30px;
+    padding-bottom: 30px;
+    font-family: "Rubik";
+    padding-left: 24px;
+    padding-right: 24px;
 }
 
-.tenantForm button {
-    align-self: flex-end;
+.tenants-label {
+    font-size: 24px;
+    line-height: 40px;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.loader {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid rgb(255, 155, 51);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1.5s linear infinite;
+    margin: auto;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.tenant-selector {
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 8px;
+    padding-top: 8px;
+    border-radius: 8px;
+    border-color: rgb(221, 221, 221);
+    font-size: 16px;
+}
+
+.tenants-button {
+    margin-top: 24px;
+    background-color: rgb(255, 155, 51);
+    color: white;
+    font-weight: 700;
+    height: 34px;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 6px;
+    border-color: rgb(238, 141, 35);
+    cursor: pointer;
 }
