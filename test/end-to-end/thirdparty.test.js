@@ -32,11 +32,12 @@ import {
     getGeneralError,
     waitFor,
     screenshotOnFailure,
+    clickOnProviderButtonWithoutWaiting,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../constants";
+import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
 
 describe("SuperTokens Third Party", function () {
     getThirdPartyTestCases({
@@ -90,6 +91,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
     afterEach(async function () {
         await page.evaluate(() => {
             localStorage.removeItem("thirdPartyRedirectURL");
+            localStorage.removeItem("clientType");
         });
         return screenshotOnFailure(this, browser);
     });
@@ -354,6 +356,25 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
 
             const error = await getGeneralError(page);
             assert.deepStrictEqual(error, "Test message!!!!");
+        });
+
+        it("clientType should be included when getting the auth url", async function () {
+            await page.evaluate(() => {
+                localStorage.setItem("clientType", `test-web`);
+            });
+
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            const res = await Promise.all([
+                page.waitForRequest((request) => request.url().startsWith(GET_AUTH_URL_API)),
+                clickOnProviderButtonWithoutWaiting(page, "Auth0"),
+            ]);
+
+            const url = new URL(res[0].url());
+            assert.strictEqual(url.searchParams.get("clientType"), "test-web");
         });
     });
 

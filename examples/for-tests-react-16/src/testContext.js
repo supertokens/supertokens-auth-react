@@ -13,6 +13,7 @@ export function getTestContext() {
         mockLoginMethodsForDynamicLogin: localStorage.getItem("mockLoginMethodsForDynamicLogin"),
         staticProviderList: localStorage.getItem("staticProviderList"),
         mockTenantId: localStorage.getItem("mockTenantId"),
+        clientType: localStorage.getItem("clientType"),
     };
     return ret;
 }

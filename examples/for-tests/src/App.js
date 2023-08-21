@@ -279,6 +279,7 @@ if (emailVerificationMode !== "OFF") {
 
 SuperTokens.init({
     usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
+    clientType: testContext.clientType,
     appInfo: {
         appName: "SuperTokens",
         websiteDomain: getWebsiteDomain(),

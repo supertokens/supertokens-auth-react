@@ -42,6 +42,7 @@ import {
     waitForSTElement,
     waitFor,
     getFieldErrors,
+    clickOnProviderButtonWithoutWaiting,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -50,6 +51,7 @@ import {
     SIGN_UP_API,
     SOMETHING_WENT_WRONG_ERROR,
     EMAIL_EXISTS_API,
+    GET_AUTH_URL_API,
 } from "../constants";
 
 // Run the tests in a DOM environment.
@@ -136,6 +138,10 @@ describe("SuperTokens Third Party Email Password", function () {
     });
 
     describe("Third Party Email Password test", function () {
+        afterEach(async function () {
+            await page.evaluate(() => window.localStorage.removeItem("clientType"));
+        });
+
         it("Successful signup with credentials", async function () {
             await toggleSignInSignUp(page);
             await defaultSignUp(page, "thirdpartyemailpassword");
@@ -345,6 +351,25 @@ describe("SuperTokens Third Party Email Password", function () {
 
             // 3. Compare userIds
             assert.notDeepStrictEqual(thirdPartyUserId, emailPasswordUserId);
+        });
+
+        it("clientType should be included when getting the auth url", async function () {
+            await page.evaluate(() => {
+                localStorage.setItem("clientType", `test-web`);
+            });
+
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            const res = await Promise.all([
+                page.waitForRequest((request) => request.url().startsWith(GET_AUTH_URL_API)),
+                clickOnProviderButtonWithoutWaiting(page, "Auth0"),
+            ]);
+
+            const url = new URL(res[0].url());
+            assert.strictEqual(url.searchParams.get("clientType"), "test-web");
         });
     });
 
