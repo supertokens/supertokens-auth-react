@@ -92,7 +92,9 @@ export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChi
             if (dynamicLoginMethods.loaded === false) {
                 throw new Error("Component requiring dynamicLoginMethods rendered without FeatureWrapper.");
             } else {
-                tenantProviders = dynamicLoginMethods.loginMethods.thirdparty.providers;
+                tenantProviders = dynamicLoginMethods.loginMethods.thirdparty.enabled
+                    ? dynamicLoginMethods.loginMethods.thirdparty.providers
+                    : [];
             }
         }
 

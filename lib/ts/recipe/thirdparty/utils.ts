@@ -141,8 +141,9 @@ export async function redirectToThirdPartyLogin(input: {
     const loginMethods = await Multitenancy.getInstanceOrThrow().getCurrentDynamicLoginMethods({
         userContext: input.userContext,
     });
+    const tenantProviders = loginMethods?.thirdparty.enabled ? loginMethods.thirdparty.providers : [];
     const providers = mergeProviders({
-        tenantProviders: loginMethods?.thirdparty.providers,
+        tenantProviders,
         clientProviders: input.config.signInAndUpFeature.providers,
     });
 
