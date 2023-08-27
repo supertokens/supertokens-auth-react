@@ -137,7 +137,13 @@ export const UserInputCodeForm = withOverride(
                             userContext,
                         });
 
-                        if (response.status === "OK" || response.status === "RESTART_FLOW_ERROR") {
+                        // We can redirect these statuses, since they all cause a redirection
+                        // and we don't really want to show anything
+                        if (
+                            response.status === "OK" ||
+                            response.status === "RESTART_FLOW_ERROR" ||
+                            response.status === "SIGN_IN_UP_NOT_ALLOWED"
+                        ) {
                             return response;
                         }
 

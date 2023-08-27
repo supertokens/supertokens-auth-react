@@ -77,18 +77,18 @@ supertokens.init({
                         thirdPartySignInUp: async function (input) {
                             let resp = await oI.thirdPartySignInUp(input);
                             if (resp.status === "OK") {
-                                if (resp.createdNewUser) {
+                                if (resp.createdNewRecipeUser) {
                                     // we set this context here so that
                                     // the createNewSession recipe function can
                                     // check this and NOT create a new session
                                     // (since we want to disable session creation during sign up)
-                                    input.userContext.isNewUser = true;
+                                    input.userContext.isNewRecipeUser = true;
                                 }
                             }
                             return resp;
                         },
                         emailPasswordSignUp: async function (input) {
-                            input.userContext.isNewUser = true;
+                            input.userContext.isNewRecipeUser = true;
                             // we set this context here so that
                             // the createNewSession recipe function can
                             // check this and NOT create a new session
@@ -105,7 +105,7 @@ supertokens.init({
                     return {
                         ...oI,
                         createNewSession: async function (input) {
-                            if (input.userContext.isNewUser) {
+                            if (input.userContext.isNewRecipeUser) {
                                 // we do not want to create a session for a new user.
                                 return {
                                     getAccessToken: () => "",

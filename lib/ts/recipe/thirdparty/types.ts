@@ -31,6 +31,7 @@ import type {
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type ThirdPartyWebJS from "supertokens-web-js/recipe/thirdparty";
 import type { StateObject as WebJsStateObject, RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import type { User } from "supertokens-web-js/types";
 
 export type ComponentOverrideMap = {
     ThirdPartySignUpFooter_Override?: ComponentOverride<typeof SignUpFooter>;
@@ -123,8 +124,8 @@ export type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {
           action: "SUCCESS";
-          isNewUser: boolean;
-          user: { id: string; email: string };
+          isNewRecipeUser: boolean;
+          user: User;
           userContext: any;
       };
 

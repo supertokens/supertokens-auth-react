@@ -54,6 +54,19 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                 });
             }
 
+            if (
+                response.status === "EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT" ||
+                response.status === "SIGN_IN_UP_NOT_ALLOWED"
+            ) {
+                return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                    history: props.history,
+                    queryParams: {
+                        error: "reason" in response ? response.reason : response.status,
+                    },
+                    redirectBack: false,
+                });
+            }
+
             if (response.status === "OK") {
                 const stateResponse = props.recipe.webJSRecipe.getStateAndOtherInfoFromStorage<CustomStateProperties>({
                     userContext,
@@ -65,7 +78,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                         rid: props.recipe.config.recipeId,
                         successRedirectContext: {
                             action: "SUCCESS",
-                            isNewUser: response.createdNewUser,
+                            isNewRecipeUser: response.createdNewRecipeUser,
                             redirectToPath,
                         },
                     },

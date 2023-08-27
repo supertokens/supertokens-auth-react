@@ -610,7 +610,7 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
-                setIsNewUserToStorage("emailpassword", context.isNewUser);
+                setIsNewUserToStorage("emailpassword", context.isNewRecipeUser);
                 return context.redirectToPath || "/dashboard";
             }
         },
@@ -745,7 +745,7 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRDPARTYPASSWORDLESS GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
-                setIsNewUserToStorage("thirdpartypasswordless", context.isNewUser);
+                setIsNewUserToStorage("thirdpartypasswordless", context.isNewRecipeUser);
                 return context.redirectToPath || "/dashboard";
             }
         },
@@ -838,7 +838,7 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS PASSWORDLESS GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
-                setIsNewUserToStorage("passwordless", context.isNewUser);
+                setIsNewUserToStorage("passwordless", context.isNewRecipeUser);
                 return context.redirectToPath || "/dashboard";
             }
         },
@@ -922,7 +922,7 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
-                setIsNewUserToStorage("thirdparty", context.isNewUser);
+                setIsNewUserToStorage("thirdparty", context.isNewRecipeUser);
                 return context.redirectToPath || "/dashboard";
             }
         },
@@ -1014,7 +1014,7 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
-                setIsNewUserToStorage("thirdpartyemailpassword", context.isNewUser);
+                setIsNewUserToStorage("thirdpartyemailpassword", context.isNewRecipeUser);
                 return context.redirectToPath || "/dashboard";
             }
         },
@@ -1165,8 +1165,8 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
     });
 }
 
-function setIsNewUserToStorage(recipeName, isNewUser) {
-    localStorage.setItem("isNewUserCheck", `${recipeName}-${isNewUser}`);
+function setIsNewUserToStorage(recipeName, isNewRecipeUser) {
+    localStorage.setItem("isNewUserCheck", `${recipeName}-${isNewRecipeUser}`);
 }
 
 window.SuperTokens = SuperTokens;

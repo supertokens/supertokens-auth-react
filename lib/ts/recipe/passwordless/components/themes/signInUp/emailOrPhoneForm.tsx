@@ -83,6 +83,10 @@ export const EmailOrPhoneForm = withOverride(
                                 userContext,
                             });
 
+                            if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
+                                throw new STGeneralError(response.reason);
+                            }
+
                             return response;
                         } else {
                             throw new STGeneralError(emailValidationRes);
@@ -95,6 +99,9 @@ export const EmailOrPhoneForm = withOverride(
                                 userContext,
                             });
 
+                            if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
+                                throw new STGeneralError(response.reason);
+                            }
                             return response;
                         }
 
@@ -108,10 +115,15 @@ export const EmailOrPhoneForm = withOverride(
                             const phoneValidationResAfterGuess = await props.config.validatePhoneNumber(intPhoneNumber);
                             if (phoneValidationResAfterGuess === undefined) {
                                 try {
-                                    return await props.recipeImplementation.createCode({
+                                    const response = await props.recipeImplementation.createCode({
                                         phoneNumber: intPhoneNumber,
                                         userContext,
                                     });
+
+                                    if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
+                                        throw new STGeneralError(response.reason);
+                                    }
+                                    return response;
                                 } catch (ex) {
                                     // General errors from the API can make createCode throw but we want to switch to the phone UI anyway
                                     setValue("emailOrPhone", intPhoneNumber);

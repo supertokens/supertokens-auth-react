@@ -14,7 +14,7 @@ export const getFunctionOverrides =
             if (response.status === "OK") {
                 onHandleEvent({
                     action: "SUCCESS",
-                    isNewUser: response.createdNewUser,
+                    isNewRecipeUser: response.createdNewRecipeUser,
                     user: response.user,
                     userContext: input.userContext,
                 });

@@ -12,11 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import {
-    RecipeInterface,
-    EmailPasswordUserType as UserType,
-    ThirdPartyUserType,
-} from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
 import { getNormalisedUserContext } from "../../utils";
 import {
@@ -41,6 +37,7 @@ import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventCo
 
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import type { User } from "supertokens-web-js/types";
 
 export default class Wrapper {
     static init(config?: UserInput) {
@@ -62,7 +59,13 @@ export default class Wrapper {
         userContext?: any;
     }): Promise<
         | {
-              status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
+              status: "OK";
+              user: User;
+              email: string;
+              fetchResponse: Response;
+          }
+        | {
+              status: "RESET_PASSWORD_INVALID_TOKEN_ERROR";
               fetchResponse: Response;
           }
         | {
@@ -89,7 +92,7 @@ export default class Wrapper {
         userContext?: any;
     }): Promise<
         | {
-              status: "OK";
+              status: "OK" | "PASSWORD_RESET_NOT_ALLOWED";
               fetchResponse: Response;
           }
         | {
@@ -117,7 +120,7 @@ export default class Wrapper {
     }): Promise<
         | {
               status: "OK";
-              user: UserType;
+              user: User;
               fetchResponse: Response;
           }
         | {
@@ -145,7 +148,7 @@ export default class Wrapper {
     }): Promise<
         | {
               status: "OK";
-              user: UserType;
+              user: User;
               fetchResponse: Response;
           }
         | {
@@ -208,12 +211,17 @@ export default class Wrapper {
     static async thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
-              user: ThirdPartyUserType;
-              createdNewUser: boolean;
+              user: User;
+              createdNewRecipeUser: boolean;
               fetchResponse: Response;
           }
         | {
-              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT";
+              fetchResponse: Response;
+          }
+        | {
+              status: "SIGN_IN_UP_NOT_ALLOWED";
+              reason: string;
               fetchResponse: Response;
           }
     > {
@@ -305,6 +313,4 @@ export {
     OnHandleEventContext,
     UserInput,
     RecipeInterface,
-    UserType,
-    ThirdPartyUserType,
 };

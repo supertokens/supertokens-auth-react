@@ -77,6 +77,10 @@ export const PhoneForm = withOverride(
                         userContext,
                     });
 
+                    if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
+                        throw new STGeneralError(response.reason);
+                    }
+
                     return response;
                 }}
                 validateOnBlur={false}

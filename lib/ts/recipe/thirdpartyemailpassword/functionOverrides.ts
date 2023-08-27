@@ -14,7 +14,7 @@ export const getFunctionOverrides =
             if (response.status === "OK") {
                 onHandleEvent({
                     action: "SUCCESS",
-                    isNewUser: response.createdNewUser,
+                    isNewRecipeUser: response.createdNewRecipeUser,
                     user: response.user,
                     userContext: input.userContext,
                 });
@@ -45,6 +45,8 @@ export const getFunctionOverrides =
             if (response.status === "OK") {
                 onHandleEvent({
                     action: "PASSWORD_RESET_SUCCESSFUL",
+                    user: response.user,
+                    email: response.email,
                     userContext: input.userContext,
                 });
             }
@@ -58,6 +60,7 @@ export const getFunctionOverrides =
             if (response.status === "OK") {
                 onHandleEvent({
                     action: "RESET_PASSWORD_EMAIL_SENT",
+                    email: input.formFields.find(({ id }) => id === "email")!.value,
                     userContext: input.userContext,
                 });
             }
@@ -70,7 +73,7 @@ export const getFunctionOverrides =
             if (response.status === "OK") {
                 onHandleEvent({
                     action: "SUCCESS",
-                    isNewUser: true,
+                    isNewRecipeUser: true,
                     user: response.user,
                     userContext: input.userContext,
                 });
@@ -84,7 +87,7 @@ export const getFunctionOverrides =
             if (response.status === "OK") {
                 onHandleEvent({
                     action: "SUCCESS",
-                    isNewUser: false,
+                    isNewRecipeUser: false,
                     user: response.user,
                     userContext: input.userContext,
                 });

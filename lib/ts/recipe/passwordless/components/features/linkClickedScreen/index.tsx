@@ -86,6 +86,16 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                 });
             }
 
+            if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
+                return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                    history: props.history,
+                    queryParams: {
+                        error: response.reason ?? "sign_in_up_not_allowed",
+                    },
+                    redirectBack: false,
+                });
+            }
+
             if (response.status === "OK") {
                 const loginAttemptInfo =
                     await props.recipe.webJSRecipe.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
@@ -99,7 +109,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                         rid: props.recipe.config.recipeId,
                         successRedirectContext: {
                             action: "SUCCESS",
-                            isNewUser: response.createdNewUser,
+                            isNewRecipeUser: response.createdNewRecipeUser,
                             redirectToPath: loginAttemptInfo?.redirectToPath,
                         },
                     },

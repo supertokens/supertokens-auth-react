@@ -37,7 +37,6 @@ import type {
 import type {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
-    User,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
@@ -46,6 +45,7 @@ import type React from "react";
 import type { Dispatch } from "react";
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import type { User } from "supertokens-web-js/types";
 
 export type ComponentOverrideMap = {
     EmailPasswordSignIn_Override?: ComponentOverride<typeof SignIn>;
@@ -343,12 +343,18 @@ export type OnHandleEventContext =
            * On Handle Event actions
            */
           action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
+          email: string;
           userContext: any;
       }
     | {
+          action: "PASSWORD_RESET_SUCCESSFUL";
+          user: User;
+          email: string;
+      }
+    | {
           action: "SUCCESS";
-          isNewUser: boolean;
-          user: { id: string; email: string };
+          isNewRecipeUser: boolean;
+          user: User;
           userContext: any;
       };
 

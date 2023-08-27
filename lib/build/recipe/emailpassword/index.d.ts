@@ -2,8 +2,8 @@
 import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import type { User } from "../authRecipe/types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/emailpassword";
+import type { User } from "supertokens-web-js/types";
 export default class Wrapper {
     static init(
         config?: UserInput
@@ -23,7 +23,13 @@ export default class Wrapper {
         userContext?: any;
     }): Promise<
         | {
-              status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
+              status: "OK";
+              user: User;
+              email: string;
+              fetchResponse: Response;
+          }
+        | {
+              status: "RESET_PASSWORD_INVALID_TOKEN_ERROR";
               fetchResponse: Response;
           }
         | {
@@ -44,7 +50,7 @@ export default class Wrapper {
         userContext?: any;
     }): Promise<
         | {
-              status: "OK";
+              status: "OK" | "PASSWORD_RESET_NOT_ALLOWED";
               fetchResponse: Response;
           }
         | {

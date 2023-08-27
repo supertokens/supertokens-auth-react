@@ -78,7 +78,7 @@ describe("ThirdParty.SignInAndUp", () => {
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledWith(
                 {
                     rid: "thirdparty",
-                    successRedirectContext: { action: "SUCCESS", isNewUser: false, redirectToPath: undefined },
+                    successRedirectContext: { action: "SUCCESS", isNewRecipeUser: false, redirectToPath: undefined },
                 },
                 {},
                 undefined

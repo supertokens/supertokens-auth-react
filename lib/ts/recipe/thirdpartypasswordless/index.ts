@@ -35,12 +35,9 @@ import { RecipeComponentsOverrideContextProvider } from "./componentOverrideCont
 import ThirdPartyPasswordless from "./recipe";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 
-import type { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
-import type {
-    PasswordlessFlowType,
-    PasswordlessUser,
-    RecipeFunctionOptions,
-} from "supertokens-web-js/recipe/thirdpartypasswordless";
+import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
+import type { PasswordlessFlowType, RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartypasswordless";
+import type { User } from "supertokens-web-js/types";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -76,12 +73,17 @@ export default class Wrapper {
     static async thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
-              user: UserType;
-              createdNewUser: boolean;
+              user: User;
+              createdNewRecipeUser: boolean;
               fetchResponse: Response;
           }
         | {
-              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT";
+              fetchResponse: Response;
+          }
+        | {
+              status: "SIGN_IN_UP_NOT_ALLOWED";
+              reason: string;
               fetchResponse: Response;
           }
     > {
@@ -119,13 +121,20 @@ export default class Wrapper {
         input:
             | { email: string; userContext?: any; options?: RecipeFunctionOptions }
             | { phoneNumber: string; userContext?: any; options?: RecipeFunctionOptions }
-    ): Promise<{
-        status: "OK";
-        deviceId: string;
-        preAuthSessionId: string;
-        flowType: PasswordlessFlowType;
-        fetchResponse: Response;
-    }> {
+    ): Promise<
+        | {
+              status: "OK";
+              deviceId: string;
+              preAuthSessionId: string;
+              flowType: PasswordlessFlowType;
+              fetchResponse: Response;
+          }
+        | {
+              status: "SIGN_IN_UP_NOT_ALLOWED";
+              reason: string;
+              fetchResponse: Response;
+          }
+    > {
         return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.createPasswordlessCode({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
@@ -156,8 +165,8 @@ export default class Wrapper {
     ): Promise<
         | {
               status: "OK";
-              createdNewUser: boolean;
-              user: PasswordlessUser;
+              createdNewRecipeUser: boolean;
+              user: User;
               fetchResponse: Response;
           }
         | {
@@ -167,6 +176,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
         | { status: "RESTART_FLOW_ERROR"; fetchResponse: Response }
+        | { status: "SIGN_IN_UP_NOT_ALLOWED"; reason: string; fetchResponse: Response }
     > {
         return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.consumePasswordlessCode({
             ...input,

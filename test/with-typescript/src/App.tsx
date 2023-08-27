@@ -518,7 +518,7 @@ Passwordless.init({
             // in this case, they are usually redirected to the main app
         } else if (context.action === "SUCCESS") {
             let user = context.user;
-            if (context.isNewUser) {
+            if (context.isNewRecipeUser) {
                 // sign up success
             } else {
                 // sign in success

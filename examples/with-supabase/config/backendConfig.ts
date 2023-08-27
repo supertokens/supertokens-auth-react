@@ -74,7 +74,7 @@ export let backendConfig = (): TypeInput => {
                                 let response = await originalImplementation.thirdPartySignInUpPOST(input);
 
                                 // check that there is no issue with sign up and that a new user is created
-                                if (response.status === "OK" && response.createdNewUser) {
+                                if (response.status === "OK" && response.createdNewRecipeUser) {
                                     // retrieve the supabase_token from the accessTokenPayload
                                     const accessTokenPayload = response.session.getAccessTokenPayload();
 

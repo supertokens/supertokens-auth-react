@@ -18,7 +18,7 @@
  */
 
 // /!\ ThirdParty must be imported before any of the providers to prevent circular dependencies.
-import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 
 import { getNormalisedUserContext } from "../../utils";
 
@@ -42,6 +42,7 @@ import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./u
 
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import type { User } from "supertokens-web-js/types";
 
 export default class Wrapper {
     /*
@@ -98,11 +99,16 @@ export default class Wrapper {
         | {
               status: "OK";
               user: User;
-              createdNewUser: boolean;
+              createdNewRecipeUser: boolean;
               fetchResponse: Response;
           }
         | {
-              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT";
+              fetchResponse: Response;
+          }
+        | {
+              status: "SIGN_IN_UP_NOT_ALLOWED";
+              reason: string;
               fetchResponse: Response;
           }
     > {
@@ -159,7 +165,6 @@ export {
     redirectToThirdPartyLogin,
     ThirdpartyComponentsOverrideProvider,
     signOut,
-    User,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

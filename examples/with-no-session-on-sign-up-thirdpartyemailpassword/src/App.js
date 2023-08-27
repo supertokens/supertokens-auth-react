@@ -36,7 +36,7 @@ SuperTokens.init({
         ThirdPartyEmailPassword.init({
             onHandleEvent: (context) => {
                 if (context.action === "SUCCESS") {
-                    if (context.isNewUser) {
+                    if (context.isNewRecipeUser) {
                         // we save info in localstorage to indicate to the UI that we should show
                         // a sign in message in the sign in page.
                         localStorage.setItem("showSignInMessage", "true");
