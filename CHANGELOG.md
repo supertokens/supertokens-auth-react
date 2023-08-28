@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.34.2] - 2023-08-27
+
+### Fixes
+
+-   Fixed the SDK trying to merge the providers from the tenant config if the third party login method is disabled.
+
 ## [0.34.1] - 2023-07-31
 
 ### Changes
@@ -35,10 +41,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Backend SDKs have to be updated first to a version that supports multi-tenancy for thirdparty
     -   supertokens-node: >= 15.0.0
 -   In ThirdParty recipe,
+
     -   Changed signatures of the functions `getAuthorisationURLWithQueryParamsAndSetState`
+
         ```diff
          import { getAuthorisationURLWithQueryParamsAndSetState } from 'supertokens-auth-react/recipe/thirdparty';
-        
+
          getAuthorisationURLWithQueryParamsAndSetState({
         -  providerId: "google",
         +  thirdPartyId: "google",
@@ -46,12 +54,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
         +  frontendRedirectURI: "http://localhost/auth/callback/google",
          });
         ```
+
     -   Removed functions - `setStateAndOtherInfoToStorage`, `getAuthorisationURLFromBackend`, `generateStateToSendToOAuthProvider`, `verifyAndGetStateOrThrowError`, `getAuthCodeFromURL`, `getAuthErrorFromURL`, `getAuthStateFromURL`
+
 -   In ThirdPartyEmailpassword recipe,
+
     -   Changed signatures of the functions `getAuthorisationURLWithQueryParamsAndSetState`
+
         ```diff
          import { getAuthorisationURLWithQueryParamsAndSetState } from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
-        
+
          getAuthorisationURLWithQueryParamsAndSetState({
         -  providerId: "google",
         +  thirdPartyId: "google",
@@ -59,12 +71,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
         +  frontendRedirectURI: "http://localhost/auth/callback/google",
          });
         ```
+
     -   Removed functions - `setStateAndOtherInfoToStorage`, `getAuthorisationURLFromBackend`, `generateStateToSendToOAuthProvider`, `verifyAndGetStateOrThrowError`, `getAuthCodeFromURL`, `getAuthErrorFromURL`, `getAuthStateFromURL`
+
 -   In ThirdPartyPasswordless recipe,
+
     -   Changed signatures of the functions `getThirdPartyAuthorisationURLWithQueryParamsAndSetState`
+
         ```diff
          import { getAuthorisationURLWithQueryParamsAndSetState } from 'supertokens-auth-react/recipe/thirdpartypasswordless';
-        
+
          getAuthorisationURLWithQueryParamsAndSetState({
         -  providerId: "google",
         +  thirdPartyId: "google",
@@ -72,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
         +  frontendRedirectURI: "http://localhost/auth/callback/google",
          });
         ```
+
     -   Removed functions - `setThirdPartyStateAndOtherInfoToStorage`, `getAuthorisationURLFromBackend`, `generateThirdPartyStateToSendToOAuthProvider`, `verifyAndGetThirdPartyStateOrThrowError`, `getThirdPartyAuthCodeFromURL`, `getThirdPartyAuthErrorFromURL`, `getThirdPartyAuthStateFromURL`
 
 ## [0.33.1] - 2023-06-08
