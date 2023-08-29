@@ -394,10 +394,10 @@ app.post("/test/setFlow", (req, res) => {
 });
 
 app.post("/test/setAccountLinkingConfig", (req, res) => {
-    (accountLinkingConfig = {
+    accountLinkingConfig = {
         ...req.body,
-    }),
-        initST();
+    };
+    initST();
     res.sendStatus(200);
 });
 
@@ -516,7 +516,6 @@ function initST() {
                         return {
                             ...oI,
                             sendEmail: async (input) => {
-                                console.log(input.emailVerifyLink);
                                 latestURLWithToken = input.emailVerifyLink;
                             },
                         };
@@ -955,7 +954,6 @@ function initST() {
         ]);
     }
 
-    console.log(accountLinkingConfig);
     accountLinkingConfig = {
         enabled: false,
         shouldAutoLink: {
@@ -967,18 +965,17 @@ function initST() {
     };
     if (accountLinkingSupported) {
         if (accountLinkingConfig.enabled) {
-            console.log(accountLinkingConfig);
-            recipeList.push(
+            recipeList.push([
+                "accountlinking",
                 AccountLinking.init({
                     shouldDoAutomaticAccountLinking: () => ({
                         ...accountLinkingConfig.shouldAutoLink,
                     }),
-                })
-            );
+                }),
+            ]);
         }
     }
 
-    console.log("a");
     SuperTokens.init({
         appInfo: {
             appName: "SuperTokens",
@@ -993,5 +990,4 @@ function initST() {
                 ? recipeList.filter(([key]) => enabledRecipes.includes(key)).map(([_key, recipeFunc]) => recipeFunc)
                 : recipeList.map(([_key, recipeFunc]) => recipeFunc),
     });
-    console.log("b");
 }

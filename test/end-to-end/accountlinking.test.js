@@ -42,10 +42,12 @@ import {
     getFieldErrors,
     assertProviders,
     getGeneralError,
+    getLatestURLWithToken,
+    submitFormReturnRequestAndResponse,
+    getTextByDataSupertokens,
+    sendEmailResetPasswordSuccessMessage,
 } from "../helpers";
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../constants";
-import { getThirdPartyTestCases } from "./thirdparty.test";
-import { getPasswordlessTestCases } from "./passwordless.test";
+import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, RESET_PASSWORD_API } from "../constants";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -57,13 +59,6 @@ describe("SuperTokens Account linking Third Party Passwordless", function () {
     let browser;
     let page;
     let consoleLogs;
-
-    const signInUpPageLoadLogs = isReact16()
-        ? ["ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO"]
-        : [
-              "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-              "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-          ];
 
     before(async function () {
         const features = await getFeatureFlags();
@@ -84,7 +79,7 @@ describe("SuperTokens Account linking Third Party Passwordless", function () {
 
             browser = await puppeteer.launch({
                 args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: false,
+                headless: true,
             });
             page = await browser.newPage();
             page.on("console", (consoleObj) => {
@@ -112,59 +107,166 @@ describe("SuperTokens Account linking Third Party Passwordless", function () {
             await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE_AND_MAGIC_LINK");
             await Promise.all([
                 page.goto(
-                    `${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartypasswordless&passwordlessContactMethodType=EMAIL_OR_PHONE`
+                    `${TEST_CLIENT_BASE_URL}/auth/?authRecipe=thirdpartypasswordless&passwordlessContactMethodType=EMAIL_OR_PHONE`
                 ),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
+            await page.evaluate(() => window.localStorage.removeItem("mode"));
         });
 
         afterEach(async function () {
             await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
         });
 
-        it("should consolidate accounts", async function () {
-            const email = "bradparishdoh@gmail.com";
-            setAccountLinkingConfig(true, true, true);
-            // 1. Sign up with credentials
-            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE");
-            await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
+        describe("account consolidation", () => {
+            const loginTypes = [
+                ["passwordless", tryPasswordlessSignInUp],
+                ["thirdparty", tryTPSignInUp],
+                ["emailpassword", tryEmailPasswordSignUp],
+            ];
 
-            await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
-            await submitForm(page);
+            for (const login1 of loginTypes) {
+                for (const login2 of loginTypes) {
+                    if (login1 !== login2) {
+                        const doLogin1 = login1[1];
+                        const doLogin2 = login2[1];
 
-            await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+                        it(`should work for ${login1[0]} - ${login2[0]} w/ email verification not required`, async () => {
+                            const email = `test-user+${Date.now()}@supertokens.com`;
+                            await setAccountLinkingConfig(true, true, false);
+                            // 1. Sign up with login method 1
+                            await doLogin1(page, email);
 
-            const loginAttemptInfo = JSON.parse(
-                await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-            );
-            const device = await getPasswordlessDevice(loginAttemptInfo);
-            await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
-            await submitForm(page);
+                            await Promise.all([
+                                page.waitForSelector(".sessionInfo-user-id"),
+                                page.waitForNetworkIdle(),
+                            ]);
+                            const userId1 = await getUserIdWithFetch(page);
 
-            await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
-            const passwordlessUserId = await getUserIdWithFetch(page);
+                            // 2. Log out
+                            const logoutButton = await getLogoutButton(page);
+                            await Promise.all([
+                                await logoutButton.click(),
+                                page.waitForNavigation({ waitUntil: "networkidle0" }),
+                            ]);
 
-            // 2. Log out
-            const logoutButton = await getLogoutButton(page);
-            await Promise.all([await logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+                            await waitForSTElement(page);
 
-            await waitForSTElement(page, `input[name=emailOrPhone]`);
+                            // 3. Sign in with other login method
+                            await doLogin2(page, email, true);
+                            await Promise.all([
+                                page.waitForSelector(".sessionInfo-user-id"),
+                                page.waitForNetworkIdle(),
+                            ]);
 
-            // 3. Sign in with auth0 with same address.
-            await clickOnProviderButton(page, "Auth0");
-            await Promise.all([
-                loginWithAuth0(page),
-                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
-            ]);
-            await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
-            const thirdPartyUserId = await getUserIdWithFetch(page);
+                            const thirdPartyUserId = await getUserIdWithFetch(page);
 
-            // 4. Compare userIds
-            assert.strictEqual(thirdPartyUserId, passwordlessUserId);
+                            // 4. Compare userIds
+                            assert.strictEqual(thirdPartyUserId, userId1);
+                        });
+
+                        if (login2[0] !== "emailpassword") {
+                            it(`should work for ${login1[0]} - ${login2[0]} w/ email verification required`, async () => {
+                                await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
+
+                                const email = `test-user+${Date.now()}@supertokens.com`;
+                                await setAccountLinkingConfig(true, true, true);
+                                // 1. Sign up with login method 1
+                                await doLogin1(page, email);
+                                if (login1[0] === "emailpassword") {
+                                    await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+                                    await new Promise((res) => setTimeout(res, 250));
+                                    const latestURLWithToken = await getLatestURLWithToken();
+                                    await Promise.all([
+                                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                                        page.goto(latestURLWithToken),
+                                    ]);
+                                    await Promise.all([
+                                        submitForm(page),
+                                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                                    ]);
+                                }
+
+                                await Promise.all([
+                                    page.waitForSelector(".sessionInfo-user-id"),
+                                    page.waitForNetworkIdle(),
+                                ]);
+                                const userId1 = await getUserIdWithFetch(page);
+
+                                // 2. Log out
+                                const logoutButton = await getLogoutButton(page);
+                                await Promise.all([
+                                    await logoutButton.click(),
+                                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                                ]);
+
+                                await waitForSTElement(page);
+
+                                // 3. Sign in with other login method
+                                await doLogin2(page, email, true);
+                                await Promise.all([
+                                    page.waitForSelector(".sessionInfo-user-id"),
+                                    page.waitForNetworkIdle(),
+                                ]);
+
+                                const thirdPartyUserId = await getUserIdWithFetch(page);
+
+                                // 4. Compare userIds
+                                assert.strictEqual(thirdPartyUserId, userId1);
+                            });
+                        } else {
+                            it(`should work for ${login1[0]} - password reset (invite link flow) w/ email verification required`, async () => {
+                                await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
+
+                                const email = `test-user+${Date.now()}@supertokens.com`;
+                                await setAccountLinkingConfig(true, true, true);
+                                // 1. Sign up with login method 1
+                                await doLogin1(page, email);
+                                if (login1[0] === "emailpassword") {
+                                    await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+                                    await new Promise((res) => setTimeout(res, 250));
+                                    const latestURLWithToken = await getLatestURLWithToken();
+                                    await Promise.all([
+                                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                                        page.goto(latestURLWithToken),
+                                    ]);
+                                    await Promise.all([
+                                        submitForm(page),
+                                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                                    ]);
+                                }
+
+                                await Promise.all([
+                                    page.waitForSelector(".sessionInfo-user-id"),
+                                    page.waitForNetworkIdle(),
+                                ]);
+                                const userId1 = await getUserIdWithFetch(page);
+
+                                // 2. Log out
+                                const logoutButton = await getLogoutButton(page);
+                                await Promise.all([
+                                    await logoutButton.click(),
+                                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                                ]);
+
+                                await waitForSTElement(page);
+
+                                // 3. Sign in with other login method
+                                await tryEmailPasswordResetPassword(page, email);
+                                await Promise.all([
+                                    page.waitForSelector(".sessionInfo-user-id"),
+                                    page.waitForNetworkIdle(),
+                                ]);
+
+                                const thirdPartyUserId = await getUserIdWithFetch(page);
+
+                                // 4. Compare userIds
+                                assert.strictEqual(thirdPartyUserId, userId1);
+                            });
+                        }
+                    }
+                }
+            }
         });
 
         it("should not allow sign up w/ emailpassword in case of conflict", async function () {
@@ -172,24 +274,7 @@ describe("SuperTokens Account linking Third Party Passwordless", function () {
 
             await setAccountLinkingConfig(true, true, true);
             // 1. Sign up with credentials
-            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE");
-            await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
-
-            await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
-            await submitForm(page);
-
-            await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-
-            const loginAttemptInfo = JSON.parse(
-                await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-            );
-            const device = await getPasswordlessDevice(loginAttemptInfo);
-            await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
-            await submitForm(page);
+            await tryPasswordlessSignInUp(page, email);
 
             await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
 
@@ -200,19 +285,8 @@ describe("SuperTokens Account linking Third Party Passwordless", function () {
             await waitForSTElement(page, `input[name=emailOrPhone]`);
 
             // 3. Try sign up with email password
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=emailpassword`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
+            await tryEmailPasswordSignUp(page, email);
 
-            await toggleSignInSignUp(page);
-
-            await setInputValues(page, [
-                { name: "email", value: email },
-                { name: "password", value: "Asdf12.." },
-                { name: "name", value: "asdf" },
-                { name: "age", value: "20" },
-            ]);
             const successAdornments = await getInputAdornmentsSuccess(page);
             assert.strictEqual(successAdornments.length, 3);
 
@@ -220,32 +294,53 @@ describe("SuperTokens Account linking Third Party Passwordless", function () {
             assert.strictEqual(errorAdornments.length, 1);
             let fieldErrors = await getFieldErrors(page);
 
-            assert.deepStrictEqual(fieldErrors, ["This email already exists. Please sign in instead"]);
+            assert.deepStrictEqual(fieldErrors, ["This email already exists. Please sign in instead."]);
+        });
+
+        it("should not allow sign in w/ an unverified emailpassword user in case of conflict", async function () {
+            const email = `test-user+${Date.now()}@supertokens.com`;
+
+            await setAccountLinkingConfig(true, false);
+            // 1. Sign up without account linking with an unverified tp user & log out
+            await tryEmailPasswordSignUp(page, email);
+            const logoutButton1 = await getLogoutButton(page);
+            await Promise.all([logoutButton1.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+            await setAccountLinkingConfig(true, true, false);
+            // 2. Sign up with passwordless to create a primary user
+            await tryPasswordlessSignInUp(page, email);
+
+            await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+
+            // 3. Log out
+            const logoutButton2 = await getLogoutButton(page);
+            await Promise.all([logoutButton2.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+            await waitForSTElement(page, `input[name=emailOrPhone]`);
+
+            await setAccountLinkingConfig(true, true, true);
+            // 4. Try sign in with emailpassword
+
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=emailpassword`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await setInputValues(page, [
+                { name: "email", value: email },
+                { name: "password", value: "Asdf12.." },
+            ]);
+
+            await submitForm(page);
+            assert.strictEqual(new URL(page.url()).pathname, "/auth/");
+            assert.strictEqual(await getGeneralError(page), "Incorrect email and password combination");
         });
 
         it("should not allow sign up w/ an unverified thirdparty user in case of conflict", async function () {
-            const email = `test-user-${Date.now()}@supertokens.com`;
+            const email = `test-user+${Date.now()}@supertokens.com`;
 
             await setAccountLinkingConfig(true, true, true);
             // 1. Sign up with credentials
-            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE");
-            await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
-
-            await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
-            await submitForm(page);
-
-            await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-
-            const loginAttemptInfo = JSON.parse(
-                await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-            );
-            const device = await getPasswordlessDevice(loginAttemptInfo);
-            await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
-            await submitForm(page);
+            await tryPasswordlessSignInUp(page, email);
 
             await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
 
@@ -256,26 +351,7 @@ describe("SuperTokens Account linking Third Party Passwordless", function () {
             await waitForSTElement(page, `input[name=emailOrPhone]`);
 
             // 3. Try sign up with third party
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdparty`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
-
-            await assertProviders(page);
-
-            await clickOnProviderButton(page, "Mock Provider");
-            const url = new URL(page.url());
-            assert.strictEqual(url.pathname, `/mockProvider/auth`);
-            assert.ok(url.searchParams.get("state"));
-
-            await Promise.all([
-                page.goto(
-                    `${TEST_CLIENT_BASE_URL}/auth/callback/mock-provider?code=asdf&email=${email}&userId=${email}&isVerified=false&state=${url.searchParams.get(
-                        "state"
-                    )}`
-                ),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
+            await tryTPSignInUp(page, email, false);
 
             assert.strictEqual(new URL(page.url()).pathname, "/auth/");
             assert.strictEqual(
@@ -285,29 +361,13 @@ describe("SuperTokens Account linking Third Party Passwordless", function () {
         });
 
         it("should not allow using thirdparty sign in with changed email in case of conflict", async function () {
-            const email = `test-user-${Date.now()}@supertokens.com`;
-            const email2 = `test-user-2-${Date.now()}@supertokens.com`;
+            const email = `test-user+${Date.now()}@supertokens.com`;
+            const email2 = `test-user-2+${Date.now()}@supertokens.com`;
 
             await setAccountLinkingConfig(true, true, true);
             // 1. Sign up with credentials
-            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE");
-            await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
 
-            await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
-            await submitForm(page);
-
-            await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-
-            const loginAttemptInfo = JSON.parse(
-                await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-            );
-            const device = await getPasswordlessDevice(loginAttemptInfo);
-            await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
-            await submitForm(page);
+            await tryPasswordlessSignInUp(page, email);
 
             await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
 
@@ -318,26 +378,7 @@ describe("SuperTokens Account linking Third Party Passwordless", function () {
             await waitForSTElement(page, `input[name=emailOrPhone]`);
 
             // 3. Sign up with third party
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdparty`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
-
-            await assertProviders(page);
-
-            await clickOnProviderButton(page, "Mock Provider");
-            const url = new URL(page.url());
-            assert.strictEqual(url.pathname, `/mockProvider/auth`);
-            assert.ok(url.searchParams.get("state"));
-
-            await Promise.all([
-                page.goto(
-                    `${TEST_CLIENT_BASE_URL}/auth/callback/mock-provider?code=asdf&email=${email2}&userId=${email}&isVerified=false&state=${url.searchParams.get(
-                        "state"
-                    )}`
-                ),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
+            await tryTPSignInUp(page, email2, false);
             await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
 
             // 4. Log out
@@ -345,21 +386,8 @@ describe("SuperTokens Account linking Third Party Passwordless", function () {
             await Promise.all([logoutButton2.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             // 5. Sign in with changed email address (thirdPartyUserId matching the previous sign in)
-            await assertProviders(page);
 
-            await clickOnProviderButton(page, "Mock Provider");
-            const url2 = new URL(page.url());
-            assert.strictEqual(url2.pathname, `/mockProvider/auth`);
-            assert.ok(url2.searchParams.get("state"));
-
-            await Promise.all([
-                page.goto(
-                    `${TEST_CLIENT_BASE_URL}/auth/callback/mock-provider?code=asdf&email=${email}&userId=${email}&isVerified=false&state=${url2.searchParams.get(
-                        "state"
-                    )}`
-                ),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
+            await tryTPSignInUp(page, email, false, email2);
 
             assert.strictEqual(new URL(page.url()).pathname, "/auth/");
             assert.strictEqual(
@@ -367,5 +395,242 @@ describe("SuperTokens Account linking Third Party Passwordless", function () {
                 "Cannot sign in / up because new email cannot be applied to existing account. Please contact support. (ANOTHER_PRIM_USER_HAS_EMAIL)"
             );
         });
+
+        it("should not allow sign in w/ an unverified thirdparty user in case of conflict", async function () {
+            const email = `test-user+${Date.now()}@supertokens.com`;
+
+            await setAccountLinkingConfig(true, false);
+            // 1. Sign up without account linking with an unverified tp user & log out
+            await tryTPSignInUp(page, email, false);
+            const logoutButton1 = await getLogoutButton(page);
+            await Promise.all([logoutButton1.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+            await setAccountLinkingConfig(true, true, false);
+            // 2. Sign up with passwordless to create a primary user
+            await tryPasswordlessSignInUp(page, email);
+
+            await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+
+            // 3. Log out
+            const logoutButton2 = await getLogoutButton(page);
+            await Promise.all([logoutButton2.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+            await waitForSTElement(page, `input[name=emailOrPhone]`);
+
+            await setAccountLinkingConfig(true, true, true);
+            // . Try sign in with third party
+            await tryTPSignInUp(page, email, false);
+
+            assert.strictEqual(new URL(page.url()).pathname, "/auth/");
+            assert.strictEqual(
+                await getGeneralError(page),
+                "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
+            );
+        });
+
+        it("should not allow sign up w/ passwordless if it conflicts with an unverified user", async function () {
+            const email = `test-user+${Date.now()}@supertokens.com`;
+
+            await setAccountLinkingConfig(true, false);
+            // 1. Sign up without account linking with an unverified tp user & log out
+            await tryEmailPasswordSignUp(page, email);
+            const logoutButton1 = await getLogoutButton(page);
+            await Promise.all([logoutButton1.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+            await setAccountLinkingConfig(true, true, true);
+            // 2. Sign up with passwordless
+            await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=passwordless`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
+            await submitForm(page);
+
+            assert.strictEqual(
+                await getGeneralError(page),
+                "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_UP_ALLOWED_FALSE)"
+            );
+            assert.strictEqual(new URL(page.url()).pathname, "/auth/");
+        });
+
+        it("should not allow sign in w/ passwordless if it conflicts with an unverified user", async function () {
+            const email = `test-user+${Date.now()}@supertokens.com`;
+
+            await setAccountLinkingConfig(true, false);
+            // 1. Sign up without account linking with an unverified tp user & log out
+            await tryEmailPasswordSignUp(page, email);
+            const logoutButton1 = await getLogoutButton(page);
+            await Promise.all([logoutButton1.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+            // 2. Sign up with passwordless
+            await tryPasswordlessSignInUp(page, email);
+            const logoutButton2 = await getLogoutButton(page);
+            await Promise.all([logoutButton2.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+            await setAccountLinkingConfig(true, true, true);
+            // 3. Sign in with passwordless
+            await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=passwordless`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
+            await submitForm(page);
+
+            assert.strictEqual(
+                await getGeneralError(page),
+                "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
+            );
+            assert.strictEqual(new URL(page.url()).pathname, "/auth/");
+        });
+
+        it("should allow sign in w/ a verified emailpassword user in case of conflict", async function () {
+            const email = `test-user+${Date.now()}@supertokens.com`;
+            await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
+
+            await setAccountLinkingConfig(true, false);
+            // 1. Sign up without account linking with an unverified tp user & log out
+            await tryEmailPasswordSignUp(page, email);
+            await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+
+            await new Promise((res) => setTimeout(res, 250));
+            const latestURLWithToken = await getLatestURLWithToken();
+            await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
+            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+            const logoutButton1 = await getLogoutButton(page);
+            await Promise.all([logoutButton1.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+            await setAccountLinkingConfig(true, true, false);
+            // 2. Sign up with passwordless to create a primary user
+            await tryPasswordlessSignInUp(page, email);
+
+            await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+
+            // 3. Log out
+            const logoutButton2 = await getLogoutButton(page);
+            await Promise.all([logoutButton2.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+            await waitForSTElement(page, `input[name=emailOrPhone]`);
+
+            await setAccountLinkingConfig(true, true, true);
+            // 4. Try sign in with emailpassword
+
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=emailpassword`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await setInputValues(page, [
+                { name: "email", value: email },
+                { name: "password", value: "Asdf12.." },
+            ]);
+
+            await submitForm(page);
+            await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+        });
     });
 });
+
+async function tryEmailPasswordSignUp(page, email) {
+    await Promise.all([
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=emailpassword`),
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
+    ]);
+
+    await toggleSignInSignUp(page);
+
+    await setInputValues(page, [
+        { name: "email", value: email },
+        { name: "password", value: "Asdf12.." },
+        { name: "name", value: "asdf" },
+        { name: "age", value: "20" },
+    ]);
+
+    await submitForm(page);
+    await new Promise((res) => setTimeout(res, 250));
+}
+
+async function tryPasswordlessSignInUp(page, email) {
+    await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+    await Promise.all([
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=passwordless`),
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
+    ]);
+
+    await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
+    await submitForm(page);
+
+    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+    const loginAttemptInfo = JSON.parse(
+        await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+    );
+    const device = await getPasswordlessDevice(loginAttemptInfo);
+    await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+    await submitForm(page);
+}
+
+async function tryTPSignInUp(page, email, isVerified, userId = email) {
+    await Promise.all([
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=thirdparty`),
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
+    ]);
+
+    await assertProviders(page);
+
+    await clickOnProviderButton(page, "Mock Provider");
+    const url = new URL(page.url());
+    assert.strictEqual(url.pathname, `/mockProvider/auth`);
+    assert.ok(url.searchParams.get("state"));
+
+    await Promise.all([
+        page.goto(
+            `${TEST_CLIENT_BASE_URL}/auth/callback/mock-provider?code=asdf&email=${encodeURIComponent(
+                email
+            )}&userId=${encodeURIComponent(userId)}&isVerified=${isVerified}&state=${url.searchParams.get("state")}`
+        ),
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
+    ]);
+}
+
+async function tryEmailPasswordResetPassword(page, email) {
+    await Promise.all([
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password?authRecipe=emailpassword`),
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
+    ]);
+
+    await setInputValues(page, [{ name: "email", value: email }]);
+
+    await submitForm(page);
+    const successMessage = await sendEmailResetPasswordSuccessMessage(page);
+
+    assert.deepStrictEqual(
+        successMessage,
+        `A password reset email has been sent to ${email}, if it exists in our system. Resend or change email`
+    );
+    // Get valid token.
+    const latestURLWithToken = await getLatestURLWithToken();
+    await page.goto(latestURLWithToken);
+
+    // Submit new password
+    await setInputValues(page, [
+        { name: "password", value: "Asdf12.." },
+        { name: "confirm-password", value: "Asdf12.." },
+    ]);
+    await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_API);
+
+    const title = await getTextByDataSupertokens(page, "headerTitle");
+    assert.deepStrictEqual(title, "Success!");
+    await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+    await setInputValues(page, [
+        { name: "email", value: email },
+        { name: "password", value: "Asdf12.." },
+    ]);
+
+    await submitForm(page);
+    await new Promise((res) => setTimeout(res, 250));
+}
