@@ -43,6 +43,8 @@ import {
     waitFor,
     getFieldErrors,
     clickOnProviderButtonWithoutWaiting,
+    getFeatureFlags,
+    setEnabledRecipes,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -370,6 +372,22 @@ describe("SuperTokens Third Party Email Password", function () {
 
             const url = new URL(res[0].url());
             assert.strictEqual(url.searchParams.get("clientType"), "test-web");
+        });
+
+        it("should handle no providers enabled on the backend", async function () {
+            if (!(await getFeatureFlags()).includes("recipeConfig")) {
+                this.skip();
+            }
+            await assertProviders(page);
+            await setEnabledRecipes(["thirdpartyemailpassword"], []);
+
+            await Promise.all([
+                page.waitForResponse(
+                    (response) => response.url().startsWith(GET_AUTH_URL_API) && response.status() === 400
+                ),
+                clickOnProviderButtonWithoutWaiting(page, "Auth0"),
+            ]);
+            assert.strictEqual(await getGeneralError(page), "Something went wrong. Please try again.");
         });
     });
 

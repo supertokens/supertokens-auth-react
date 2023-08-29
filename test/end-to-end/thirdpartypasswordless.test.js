@@ -34,8 +34,12 @@ import {
     setPasswordlessFlowType,
     getFeatureFlags,
     isReact16,
+    assertProviders,
+    setEnabledRecipes,
+    clickOnProviderButtonWithoutWaiting,
+    getGeneralError,
 } from "../helpers";
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../constants";
+import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
 import { getThirdPartyTestCases } from "./thirdparty.test";
 import { getPasswordlessTestCases } from "./passwordless.test";
 
@@ -209,6 +213,22 @@ describe("SuperTokens Third Party Passwordless", function () {
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
+        });
+
+        it("should handle no providers enabled on the backend", async function () {
+            if (!(await getFeatureFlags()).includes("recipeConfig")) {
+                this.skip();
+            }
+            await assertProviders(page);
+            await setEnabledRecipes(["thirdpartypasswordless"], []);
+
+            await Promise.all([
+                page.waitForResponse(
+                    (response) => response.url().startsWith(GET_AUTH_URL_API) && response.status() === 400
+                ),
+                clickOnProviderButtonWithoutWaiting(page, "Auth0"),
+            ]);
+            assert.strictEqual(await getGeneralError(page), "Something went wrong. Please try again.");
         });
     });
 

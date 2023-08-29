@@ -757,6 +757,17 @@ export function setAccountLinkingConfig(enabled, shouldAutomaticallyLink, should
     });
 }
 
+export function setEnabledRecipes(enabledRecipes, enabledProviders) {
+    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setEnabledRecipes`, {
+        method: "POST",
+        headers: [["content-type", "application/json"]],
+        body: JSON.stringify({
+            enabledRecipes,
+            enabledProviders,
+        }),
+    });
+}
+
 export function isReact16() {
     return process.env.IS_REACT_16 === "true";
 }
