@@ -61,7 +61,8 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
                     history: props.history,
                     queryParams: {
-                        error: "reason" in response ? response.reason : response.status,
+                        error: response.status,
+                        message: "reason" in response ? response.reason : response.status,
                     },
                     redirectBack: false,
                 });

@@ -254,7 +254,7 @@ export async function getInputAdornmentsError(page) {
                 document
                     .querySelector(ST_ROOT_SELECTOR)
                     .shadowRoot.querySelectorAll("[data-supertokens~='inputAdornmentError']"),
-                (i) => i.name
+                (i) => i.textContent
             ),
         { ST_ROOT_SELECTOR }
     );
@@ -509,6 +509,7 @@ export async function assertProviders(page) {
         "Continue with Apple",
         "Continue with Custom",
         "Continue with Auth0",
+        "Continue with Mock Provider",
     ]);
 }
 
@@ -593,11 +594,7 @@ export async function defaultSignUp(page, rid = "emailpassword") {
         rid
     );
 }
-export async function signUp(page, fields, postValues, rid = "emailpassword") {
-    if (postValues === undefined) {
-        postValues = JSON.stringify({ formFields: fields.map((v) => ({ id: v.name, value: v.value })) });
-    }
-
+export async function signUp(page, fields, postValues = undefined, rid = "emailpassword") {
     // Set values.
     await setInputValues(page, fields);
     const successAdornments = await getInputAdornmentsSuccess(page);
@@ -614,7 +611,9 @@ export async function signUp(page, fields, postValues, rid = "emailpassword") {
     assert.strictEqual(hasEmailExistMethodBeenCalled, false);
 
     assert.strictEqual(request.headers().rid, rid);
-    assert.strictEqual(request.postData(), postValues);
+    if (postValues !== undefined) {
+        assert.strictEqual(request.postData(), postValues);
+    }
 
     assert.strictEqual(response.status, "OK");
     await page.setRequestInterception(false);
@@ -740,6 +739,20 @@ export function setPasswordlessFlowType(contactMethod, flowType) {
         body: JSON.stringify({
             contactMethod,
             flowType,
+        }),
+    });
+}
+
+export function setAccountLinkingConfig(enabled, shouldAutomaticallyLink, shouldRequireVerification) {
+    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setAccountLinkingConfig`, {
+        method: "POST",
+        headers: [["content-type", "application/json"]],
+        body: JSON.stringify({
+            enabled,
+            shouldAutoLink: {
+                shouldAutomaticallyLink,
+                shouldRequireVerification,
+            },
         }),
     });
 }

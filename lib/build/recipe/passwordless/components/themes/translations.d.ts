@@ -55,6 +55,8 @@ export declare const defaultTranslationsPasswordless: {
         "Failed to generate a one time code. Please try again": undefined;
         "Phone number is invalid": undefined;
         "Email is invalid": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_UP_ALLOWED_FALSE)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)": undefined;
         BRANDING_POWERED_BY_START: string;
         BRANDING_POWERED_BY_END: string;
         SOMETHING_WENT_WRONG_ERROR: string;

@@ -44,6 +44,7 @@ let {
     customAuth0Provider,
     maxVersion,
     stopST,
+    mockThirdPartyProvider,
 } = require("./utils");
 let { version: nodeSDKVersion } = require("supertokens-node/lib/build/version");
 const fetch = require("isomorphic-fetch");
@@ -87,6 +88,15 @@ try {
     multitenancySupported = true;
 } catch {
     multitenancySupported = false;
+}
+
+let AccountLinking, AccountLinkingRaw, accountLinkingSupported;
+try {
+    AccountLinkingRaw = require("supertokens-node/lib/build/recipe/accountlinking/recipe").default;
+    AccountLinking = require("supertokens-node/recipe/accountlinking");
+    accountLinkingSupported = true;
+} catch (ex) {
+    accountLinkingSupported = false;
 }
 
 let generalErrorSupported;
@@ -133,6 +143,7 @@ const providers = [
         },
     },
     customAuth0Provider(),
+    mockThirdPartyProvider,
 ];
 
 let urlencodedParser = bodyParser.urlencoded({ limit: "20mb", extended: true, parameterLimit: 20000 });
@@ -142,6 +153,7 @@ let app = express();
 morgan.token("body", function (req, res) {
     return JSON.stringify(req.body && req.body["formFields"]);
 });
+app.use(morgan("tiny", { immediate: true }));
 app.use(morgan("[:date[iso]] :url :method :status :response-time ms - :res[content-length] - :body"));
 app.use(urlencodedParser);
 app.use(jsonParser);
@@ -184,6 +196,10 @@ const formFields = (process.env.MIN_FIELDS && []) || [
         optional: true,
     },
 ];
+
+let passwordlessConfig = {};
+let accountLinkingConfig = {};
+
 initST();
 
 app.use(
@@ -209,7 +225,7 @@ app.post("/startst", async (req, res) => {
     }
     let pid = await startST();
     const OPAQUE_KEY_WITH_MULTITENANCY_FEATURE =
-        "ijaleljUd2kU9XXWLiqFYv5br8nutTxbyBqWypQdv2N-BocoNriPrnYQd0NXPm8rVkeEocN9ayq0B7c3Pv-BTBIhAZSclXMlgyfXtlwAOJk=9BfESEleW6LyTov47dXu";
+        "N2yITHflaFS4BPm7n0bnfFCjP4sJoTERmP0J=kXQ5YONtALeGnfOOe2rf2QZ0mfOh0aO3pBqfF-S0jb0ABpat6pySluTpJO6jieD6tzUOR1HrGjJO=50Ob3mHi21tQHJ";
 
     await fetch(`http://localhost:9000/ee/license`, {
         method: "PUT",
@@ -225,6 +241,9 @@ app.post("/startst", async (req, res) => {
 
 app.post("/beforeeach", async (req, res) => {
     deviceStore = new Map();
+
+    accountLinkingConfig = {};
+    passwordlessConfig = {};
 
     await killAllST();
     await setupST();
@@ -269,6 +288,34 @@ app.post("/deleteUser", async (req, res) => {
     }
     const user = await EmailPassword.getUserByEmail("public", req.body.email);
     res.send(await SuperTokens.deleteUser(user.id));
+});
+
+app.post("/changeEmail", async (req, res) => {
+    let resp;
+    if (req.body.rid === "emailpassword") {
+        resp = await EmailPassword.updateEmailOrPassword({
+            recipeUserId: SuperTokens.convertToRecipeUserId(req.body.recipeUserId),
+            email: req.body.email,
+            tenantIdForPasswordPolicy: req.body.tenantId,
+        });
+    } else if (req.body.rid === "thirdparty") {
+        const user = await SuperTokens.getUser({ userId: req.body.recipeUserId });
+        const loginMethod = user.loginMethod.find((lm) => lm.recipeUserId.getAsString() === req.body.recipeUserId);
+        resp = await ThirdParty.manuallyCreateOrUpdateUser(
+            req.body.tenantId,
+            loginMethod.thirdParty.id,
+            loginMethod.thirdParty.userId,
+            req.body.email,
+            false
+        );
+    } else if (req.body.rid === "passwordless") {
+        resp = await Passwordless.updateUser({
+            recipeUserId: SuperTokens.convertToRecipeUserId(req.body.recipeUserId),
+            email: req.body.email,
+            phoneNumber: req.body.phoneNumber,
+        });
+    }
+    res.json(resp);
 });
 
 app.get("/unverifyEmail", verifySession(), async (req, res) => {
@@ -317,29 +364,36 @@ app.get("/token", async (_, res) => {
 });
 
 app.post("/test/setFlow", (req, res) => {
-    initST({
-        passwordlessConfig: {
-            contactMethod: req.body.contactMethod,
-            flowType: req.body.flowType,
+    passwordlessConfig = {
+        contactMethod: req.body.contactMethod,
+        flowType: req.body.flowType,
 
-            emailDelivery: {
-                override: (oI) => {
-                    return {
-                        ...oI,
-                        sendEmail: saveCode,
-                    };
-                },
-            },
-            smsDelivery: {
-                override: (oI) => {
-                    return {
-                        ...oI,
-                        sendSms: saveCode,
-                    };
-                },
+        emailDelivery: {
+            override: (oI) => {
+                return {
+                    ...oI,
+                    sendEmail: saveCode,
+                };
             },
         },
-    });
+        smsDelivery: {
+            override: (oI) => {
+                return {
+                    ...oI,
+                    sendSms: saveCode,
+                };
+            },
+        },
+    };
+    initST();
+    res.sendStatus(200);
+});
+
+app.post("/test/setAccountLinkingConfig", (req, res) => {
+    (accountLinkingConfig = {
+        ...req.body,
+    }),
+        initST();
     res.sendStatus(200);
 });
 
@@ -408,7 +462,7 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
     }
 })(process.env.START === "true");
 
-function initST({ passwordlessConfig } = {}) {
+function initST() {
     if (process.env.TEST_MODE) {
         if (userRolesSupported) {
             UserRolesRaw.reset();
@@ -424,6 +478,10 @@ function initST({ passwordlessConfig } = {}) {
 
         if (multitenancySupported) {
             MultitenancyRaw.reset();
+        }
+
+        if (accountLinkingSupported) {
+            AccountLinkingRaw.reset();
         }
 
         EmailVerificationRaw.reset();
@@ -857,6 +915,30 @@ function initST({ passwordlessConfig } = {}) {
         );
     }
 
+    console.log(accountLinkingConfig);
+    accountLinkingConfig = {
+        enabled: false,
+        shouldAutoLink: {
+            ...accountLinkingConfig?.shouldAutoLink,
+            shouldAutomaticallyLink: true,
+            shouldRequireVerification: true,
+        },
+        ...accountLinkingConfig,
+    };
+    if (accountLinkingSupported) {
+        if (accountLinkingConfig.enabled) {
+            console.log(accountLinkingConfig);
+            recipeList.push(
+                AccountLinking.init({
+                    shouldDoAutomaticAccountLinking: () => ({
+                        ...accountLinkingConfig.shouldAutoLink,
+                    }),
+                })
+            );
+        }
+    }
+
+    console.log("a");
     SuperTokens.init({
         appInfo: {
             appName: "SuperTokens",
@@ -868,4 +950,5 @@ function initST({ passwordlessConfig } = {}) {
         },
         recipeList,
     });
+    console.log("b");
 }

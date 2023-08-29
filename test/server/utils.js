@@ -141,6 +141,36 @@ module.exports.startST = async function (host = "localhost", port = 9000) {
     });
 };
 
+const WEB_PORT = process.env.WEB_PORT || 3031;
+const websiteDomain = `http://localhost:${WEB_PORT}`;
+module.exports.mockThirdPartyProvider = {
+    config: {
+        name: "Mock Provider",
+        thirdPartyId: "mock-provider",
+        authorizationEndpoint: `${websiteDomain}/mockProvider/auth`,
+        tokenEndpoint: `${websiteDomain}/mockProvider/token`,
+        clients: [
+            {
+                clientId: "supertokens",
+                clientSecret: "",
+            },
+        ],
+    },
+    override: (oI) => ({
+        ...oI,
+        exchangeAuthCodeForOAuthTokens: ({ redirectURIInfo }) => redirectURIInfo.redirectURIQueryParams,
+        getUserInfo: ({ oAuthTokens }) => {
+            return {
+                thirdPartyUserId: oAuthTokens.userId ?? "user",
+                email: {
+                    id: oAuthTokens.email ?? "email@test.com",
+                    isVerified: oAuthTokens.isVerified !== "false",
+                },
+                rawUserInfoFromProvider: {},
+            };
+        },
+    }),
+};
 /**
  *
  * @returns {import("supertokens-node/lib/build/recipe/thirdparty/types").ProviderConfig}
