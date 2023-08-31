@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.33.2] - 2023-08-31
+
+-   Modifies tests to fix CICD errors
+
 ## [0.33.1] - 2023-06-08
 
 ### Fixes
