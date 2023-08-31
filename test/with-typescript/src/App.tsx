@@ -311,6 +311,9 @@ function getRecipeList() {
                         validateClaims: (input) => {
                             return oI.validateClaims(input);
                         },
+                        shouldDoInterceptionBasedOnUrl: (...args) => {
+                            return oI.shouldDoInterceptionBasedOnUrl(...args);
+                        },
                     };
                 },
             },
