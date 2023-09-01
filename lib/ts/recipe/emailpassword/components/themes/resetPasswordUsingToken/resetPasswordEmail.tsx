@@ -112,7 +112,7 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                         if (resp.status === "PASSWORD_RESET_NOT_ALLOWED") {
                             return {
                                 status: "FIELD_ERROR",
-                                formFields: [{ id: "email", error: resp.status }],
+                                formFields: [{ id: "email", error: resp.reason }],
                             };
                         }
                         return resp;
