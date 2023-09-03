@@ -26,7 +26,6 @@ import {
     clickOnProviderButton,
     getUserIdWithFetch,
     getLogoutButton,
-    loginWithAuth0,
     setInputValues,
     submitForm,
     waitForSTElement,
@@ -55,7 +54,7 @@ require("jsdom-global")();
 /*
  * Tests.
  */
-describe("SuperTokens Account linking Third Party Passwordless", function () {
+describe("SuperTokens Account linking", function () {
     let browser;
     let page;
     let consoleLogs;
@@ -121,7 +120,7 @@ describe("SuperTokens Account linking Third Party Passwordless", function () {
         describe("account consolidation", () => {
             const loginTypes = [
                 ["passwordless", tryPasswordlessSignInUp],
-                ["thirdparty", tryTPSignInUp],
+                ["thirdparty", tryThirdPartySignInUp],
                 ["emailpassword", tryEmailPasswordSignUp],
             ];
 
@@ -144,13 +143,7 @@ describe("SuperTokens Account linking Third Party Passwordless", function () {
                             const userId1 = await getUserIdWithFetch(page);
 
                             // 2. Log out
-                            const logoutButton = await getLogoutButton(page);
-                            await Promise.all([
-                                await logoutButton.click(),
-                                page.waitForNavigation({ waitUntil: "networkidle0" }),
-                            ]);
-
-                            await waitForSTElement(page);
+                            await logOut(page);
 
                             // 3. Sign in with other login method
                             await doLogin2(page, email, true);
@@ -194,13 +187,7 @@ describe("SuperTokens Account linking Third Party Passwordless", function () {
                                 const userId1 = await getUserIdWithFetch(page);
 
                                 // 2. Log out
-                                const logoutButton = await getLogoutButton(page);
-                                await Promise.all([
-                                    await logoutButton.click(),
-                                    page.waitForNavigation({ waitUntil: "networkidle0" }),
-                                ]);
-
-                                await waitForSTElement(page);
+                                await logOut(page);
 
                                 // 3. Sign in with other login method
                                 await doLogin2(page, email, true);
@@ -243,13 +230,7 @@ describe("SuperTokens Account linking Third Party Passwordless", function () {
                                 const userId1 = await getUserIdWithFetch(page);
 
                                 // 2. Log out
-                                const logoutButton = await getLogoutButton(page);
-                                await Promise.all([
-                                    await logoutButton.click(),
-                                    page.waitForNavigation({ waitUntil: "networkidle0" }),
-                                ]);
-
-                                await waitForSTElement(page);
+                                await logOut(page);
 
                                 // 3. Sign in with other login method
                                 await tryEmailPasswordResetPassword(page, email);
@@ -269,267 +250,259 @@ describe("SuperTokens Account linking Third Party Passwordless", function () {
             }
         });
 
-        it("should not allow sign up w/ emailpassword in case of conflict", async function () {
-            const email = `test-user+${Date.now()}@supertokens.com`;
+        describe("conflicting accounts", () => {
+            it("should not allow sign up w/ emailpassword in case of conflict", async function () {
+                const email = `test-user+${Date.now()}@supertokens.com`;
 
-            await setAccountLinkingConfig(true, true, true);
-            // 1. Sign up with credentials
-            await tryPasswordlessSignInUp(page, email);
+                await setAccountLinkingConfig(true, true, true);
+                // 1. Sign up with credentials
+                await tryPasswordlessSignInUp(page, email);
 
-            await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+                await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
 
-            // 2. Log out
-            const logoutButton = await getLogoutButton(page);
-            await Promise.all([await logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+                // 2. Log out
+                await logOut(page);
 
-            await waitForSTElement(page, `input[name=emailOrPhone]`);
+                await waitForSTElement(page, `input[name=emailOrPhone]`);
 
-            // 3. Try sign up with email password
-            await tryEmailPasswordSignUp(page, email);
+                // 3. Try sign up with email password
+                await tryEmailPasswordSignUp(page, email);
 
-            const successAdornments = await getInputAdornmentsSuccess(page);
-            assert.strictEqual(successAdornments.length, 3);
+                const successAdornments = await getInputAdornmentsSuccess(page);
+                assert.strictEqual(successAdornments.length, 3);
 
-            const errorAdornments = await getInputAdornmentsError(page);
-            assert.strictEqual(errorAdornments.length, 1);
-            let fieldErrors = await getFieldErrors(page);
+                const errorAdornments = await getInputAdornmentsError(page);
+                assert.strictEqual(errorAdornments.length, 1);
+                let fieldErrors = await getFieldErrors(page);
 
-            assert.deepStrictEqual(fieldErrors, ["This email already exists. Please sign in instead."]);
-        });
+                assert.deepStrictEqual(fieldErrors, ["This email already exists. Please sign in instead."]);
+            });
 
-        it("should not allow sign in w/ an unverified emailpassword user in case of conflict", async function () {
-            const email = `test-user+${Date.now()}@supertokens.com`;
+            it("should not allow sign in w/ an unverified emailpassword user in case of conflict", async function () {
+                const email = `test-user+${Date.now()}@supertokens.com`;
 
-            await setAccountLinkingConfig(true, false);
-            // 1. Sign up without account linking with an unverified tp user & log out
-            await tryEmailPasswordSignUp(page, email);
-            const logoutButton1 = await getLogoutButton(page);
-            await Promise.all([logoutButton1.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+                await setAccountLinkingConfig(true, false);
+                // 1. Sign up without account linking with an unverified tp user & log out
+                await tryEmailPasswordSignUp(page, email);
+                await logOut(page);
 
-            await setAccountLinkingConfig(true, true, false);
-            // 2. Sign up with passwordless to create a primary user
-            await tryPasswordlessSignInUp(page, email);
+                await setAccountLinkingConfig(true, true, false);
+                // 2. Sign up with passwordless to create a primary user
+                await tryPasswordlessSignInUp(page, email);
 
-            await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+                await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
 
-            // 3. Log out
-            const logoutButton2 = await getLogoutButton(page);
-            await Promise.all([logoutButton2.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+                // 3. Log out
+                await logOut(page);
 
-            await waitForSTElement(page, `input[name=emailOrPhone]`);
+                await waitForSTElement(page, `input[name=emailOrPhone]`);
 
-            await setAccountLinkingConfig(true, true, true);
-            // 4. Try sign in with emailpassword
+                await setAccountLinkingConfig(true, true, true);
+                // 4. Try sign in with emailpassword
 
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=emailpassword`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
-            await setInputValues(page, [
-                { name: "email", value: email },
-                { name: "password", value: "Asdf12.." },
-            ]);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=emailpassword`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+                await setInputValues(page, [
+                    { name: "email", value: email },
+                    { name: "password", value: "Asdf12.." },
+                ]);
 
-            await submitForm(page);
-            assert.strictEqual(new URL(page.url()).pathname, "/auth/");
-            assert.strictEqual(await getGeneralError(page), "Incorrect email and password combination");
-        });
+                await submitForm(page);
+                assert.strictEqual(new URL(page.url()).pathname, "/auth/");
+                assert.strictEqual(await getGeneralError(page), "Incorrect email and password combination");
+            });
 
-        it("should not allow sign up w/ an unverified thirdparty user in case of conflict", async function () {
-            const email = `test-user+${Date.now()}@supertokens.com`;
+            it("should not allow sign up w/ an unverified thirdparty user in case of conflict", async function () {
+                const email = `test-user+${Date.now()}@supertokens.com`;
 
-            await setAccountLinkingConfig(true, true, true);
-            // 1. Sign up with credentials
-            await tryPasswordlessSignInUp(page, email);
+                await setAccountLinkingConfig(true, true, true);
+                // 1. Sign up with credentials
+                await tryPasswordlessSignInUp(page, email);
 
-            await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+                await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
 
-            // 2. Log out
-            const logoutButton = await getLogoutButton(page);
-            await Promise.all([logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+                // 2. Log out
+                await logOut(page);
 
-            await waitForSTElement(page, `input[name=emailOrPhone]`);
+                await waitForSTElement(page, `input[name=emailOrPhone]`);
 
-            // 3. Try sign up with third party
-            await tryTPSignInUp(page, email, false);
+                // 3. Try sign up with third party
+                await tryThirdPartySignInUp(page, email, false);
 
-            assert.strictEqual(new URL(page.url()).pathname, "/auth/");
-            assert.strictEqual(
-                await getGeneralError(page),
-                "Cannot sign in / up due to security reasons. Please contact support. (EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT)"
-            );
-        });
+                assert.strictEqual(new URL(page.url()).pathname, "/auth/");
+                assert.strictEqual(
+                    await getGeneralError(page),
+                    "Cannot sign in / up due to security reasons. Please contact support. (EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT)"
+                );
+            });
 
-        it("should not allow using thirdparty sign in with changed email in case of conflict", async function () {
-            const email = `test-user+${Date.now()}@supertokens.com`;
-            const email2 = `test-user-2+${Date.now()}@supertokens.com`;
+            it("should not allow using thirdparty sign in with changed email in case of conflict", async function () {
+                const email = `test-user+${Date.now()}@supertokens.com`;
+                const email2 = `test-user-2+${Date.now()}@supertokens.com`;
 
-            await setAccountLinkingConfig(true, true, true);
-            // 1. Sign up with credentials
+                await setAccountLinkingConfig(true, true, true);
+                // 1. Sign up with credentials
 
-            await tryPasswordlessSignInUp(page, email);
+                await tryPasswordlessSignInUp(page, email);
 
-            await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
-
-            // 2. Log out
-            const logoutButton = await getLogoutButton(page);
-            await Promise.all([logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-
-            await waitForSTElement(page, `input[name=emailOrPhone]`);
-
-            // 3. Sign up with third party
-            await tryTPSignInUp(page, email2, false);
-            await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
-
-            // 4. Log out
-            const logoutButton2 = await getLogoutButton(page);
-            await Promise.all([logoutButton2.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-
-            // 5. Sign in with changed email address (thirdPartyUserId matching the previous sign in)
-
-            await tryTPSignInUp(page, email, false, email2);
-
-            assert.strictEqual(new URL(page.url()).pathname, "/auth/");
-            assert.strictEqual(
-                await getGeneralError(page),
-                "Cannot sign in / up because new email cannot be applied to existing account. Please contact support. (ANOTHER_PRIM_USER_HAS_EMAIL)"
-            );
-        });
-
-        it("should not allow sign in w/ an unverified thirdparty user in case of conflict", async function () {
-            const email = `test-user+${Date.now()}@supertokens.com`;
-
-            await setAccountLinkingConfig(true, false);
-            // 1. Sign up without account linking with an unverified tp user & log out
-            await tryTPSignInUp(page, email, false);
-            const logoutButton1 = await getLogoutButton(page);
-            await Promise.all([logoutButton1.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-
-            await setAccountLinkingConfig(true, true, false);
-            // 2. Sign up with passwordless to create a primary user
-            await tryPasswordlessSignInUp(page, email);
-
-            await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
-
-            // 3. Log out
-            const logoutButton2 = await getLogoutButton(page);
-            await Promise.all([logoutButton2.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-
-            await waitForSTElement(page, `input[name=emailOrPhone]`);
-
-            await setAccountLinkingConfig(true, true, true);
-            // . Try sign in with third party
-            await tryTPSignInUp(page, email, false);
-
-            assert.strictEqual(new URL(page.url()).pathname, "/auth/");
-            assert.strictEqual(
-                await getGeneralError(page),
-                "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
-            );
-        });
-
-        it("should not allow sign up w/ passwordless if it conflicts with an unverified user", async function () {
-            const email = `test-user+${Date.now()}@supertokens.com`;
-
-            await setAccountLinkingConfig(true, false);
-            // 1. Sign up without account linking with an unverified tp user & log out
-            await tryEmailPasswordSignUp(page, email);
-            const logoutButton1 = await getLogoutButton(page);
-            await Promise.all([logoutButton1.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-
-            await setAccountLinkingConfig(true, true, true);
-            // 2. Sign up with passwordless
-            await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=passwordless`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
-
-            await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
-            await submitForm(page);
-
-            assert.strictEqual(
-                await getGeneralError(page),
-                "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_UP_ALLOWED_FALSE)"
-            );
-            assert.strictEqual(new URL(page.url()).pathname, "/auth/");
-        });
-
-        it("should not allow sign in w/ passwordless if it conflicts with an unverified user", async function () {
-            const email = `test-user+${Date.now()}@supertokens.com`;
-
-            await setAccountLinkingConfig(true, false);
-            // 1. Sign up without account linking with an unverified tp user & log out
-            await tryEmailPasswordSignUp(page, email);
-            const logoutButton1 = await getLogoutButton(page);
-            await Promise.all([logoutButton1.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-
-            // 2. Sign up with passwordless
-            await tryPasswordlessSignInUp(page, email);
-            const logoutButton2 = await getLogoutButton(page);
-            await Promise.all([logoutButton2.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-
-            await setAccountLinkingConfig(true, true, true);
-            // 3. Sign in with passwordless
-            await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=passwordless`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
-
-            await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
-            await submitForm(page);
-
-            assert.strictEqual(
-                await getGeneralError(page),
-                "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
-            );
-            assert.strictEqual(new URL(page.url()).pathname, "/auth/");
-        });
-
-        it("should allow sign in w/ a verified emailpassword user in case of conflict", async function () {
-            const email = `test-user+${Date.now()}@supertokens.com`;
-            await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
-
-            await setAccountLinkingConfig(true, false);
-            // 1. Sign up without account linking with an unverified tp user & log out
-            await tryEmailPasswordSignUp(page, email);
-            await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
-
-            await new Promise((res) => setTimeout(res, 250));
-            const latestURLWithToken = await getLatestURLWithToken();
-            await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
-            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-
-            const logoutButton1 = await getLogoutButton(page);
-            await Promise.all([logoutButton1.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-
-            await setAccountLinkingConfig(true, true, false);
-            // 2. Sign up with passwordless to create a primary user
-            await tryPasswordlessSignInUp(page, email);
-
-            await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
-
-            // 3. Log out
-            const logoutButton2 = await getLogoutButton(page);
-            await Promise.all([logoutButton2.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-
-            await waitForSTElement(page, `input[name=emailOrPhone]`);
-
-            await setAccountLinkingConfig(true, true, true);
-            // 4. Try sign in with emailpassword
-
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=emailpassword`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
-            await setInputValues(page, [
-                { name: "email", value: email },
-                { name: "password", value: "Asdf12.." },
-            ]);
-
-            await submitForm(page);
-            await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+                await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+
+                // 2. Log out
+                await logOut(page);
+
+                await waitForSTElement(page, `input[name=emailOrPhone]`);
+
+                // 3. Sign up with third party
+                await tryThirdPartySignInUp(page, email2, false);
+                await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+
+                // 4. Log out
+                await logOut(page);
+
+                // 5. Sign in with changed email address (thirdPartyUserId matching the previous sign in)
+
+                await tryThirdPartySignInUp(page, email, false, email2);
+
+                assert.strictEqual(new URL(page.url()).pathname, "/auth/");
+                assert.strictEqual(
+                    await getGeneralError(page),
+                    "Cannot sign in / up because new email cannot be applied to existing account. Please contact support. (ANOTHER_PRIM_USER_HAS_EMAIL)"
+                );
+            });
+
+            it("should not allow sign in w/ an unverified thirdparty user in case of conflict", async function () {
+                const email = `test-user+${Date.now()}@supertokens.com`;
+
+                await setAccountLinkingConfig(true, false);
+                // 1. Sign up without account linking with an unverified tp user & log out
+                await tryThirdPartySignInUp(page, email, false);
+                await logOut(page);
+
+                await setAccountLinkingConfig(true, true, false);
+                // 2. Sign up with passwordless to create a primary user
+                await tryPasswordlessSignInUp(page, email);
+
+                await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+
+                // 3. Log out
+                await logOut(page);
+
+                await waitForSTElement(page, `input[name=emailOrPhone]`);
+
+                await setAccountLinkingConfig(true, true, true);
+                // . Try sign in with third party
+                await tryThirdPartySignInUp(page, email, false);
+
+                assert.strictEqual(new URL(page.url()).pathname, "/auth/");
+                assert.strictEqual(
+                    await getGeneralError(page),
+                    "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
+                );
+            });
+
+            it("should not allow sign up w/ passwordless if it conflicts with an unverified user", async function () {
+                const email = `test-user+${Date.now()}@supertokens.com`;
+
+                await setAccountLinkingConfig(true, false);
+                // 1. Sign up without account linking with an unverified tp user & log out
+                await tryEmailPasswordSignUp(page, email);
+                await logOut(page);
+
+                await setAccountLinkingConfig(true, true, true);
+                // 2. Sign up with passwordless
+                await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=passwordless`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
+                await submitForm(page);
+
+                assert.strictEqual(
+                    await getGeneralError(page),
+                    "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_UP_ALLOWED_FALSE)"
+                );
+                assert.strictEqual(new URL(page.url()).pathname, "/auth/");
+            });
+
+            it("should not allow sign in w/ passwordless if it conflicts with an unverified user", async function () {
+                const email = `test-user+${Date.now()}@supertokens.com`;
+
+                await setAccountLinkingConfig(true, false);
+                // 1. Sign up without account linking with an unverified tp user & log out
+                await tryEmailPasswordSignUp(page, email);
+                await logOut(page);
+
+                // 2. Sign up with passwordless
+                await tryPasswordlessSignInUp(page, email);
+                await logOut(page);
+
+                await setAccountLinkingConfig(true, true, true);
+                // 3. Sign in with passwordless
+                await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=passwordless`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
+                await submitForm(page);
+
+                assert.strictEqual(
+                    await getGeneralError(page),
+                    "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
+                );
+                assert.strictEqual(new URL(page.url()).pathname, "/auth/");
+            });
+
+            it("should allow sign in w/ a verified emailpassword user in case of conflict", async function () {
+                const email = `test-user+${Date.now()}@supertokens.com`;
+                await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
+
+                await setAccountLinkingConfig(true, false);
+                // 1. Sign up without account linking with an unverified tp user & log out
+                await tryEmailPasswordSignUp(page, email);
+                await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+
+                await new Promise((res) => setTimeout(res, 250));
+                const latestURLWithToken = await getLatestURLWithToken();
+                await Promise.all([
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    page.goto(latestURLWithToken),
+                ]);
+                await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+                await logOut(page);
+
+                await setAccountLinkingConfig(true, true, false);
+                // 2. Sign up with passwordless to create a primary user
+                await tryPasswordlessSignInUp(page, email);
+
+                await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+
+                // 3. Log out
+                await logOut(page);
+
+                await waitForSTElement(page, `input[name=emailOrPhone]`);
+
+                await setAccountLinkingConfig(true, true, true);
+                // 4. Try sign in with emailpassword
+
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=emailpassword`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+                await setInputValues(page, [
+                    { name: "email", value: email },
+                    { name: "password", value: "Asdf12.." },
+                ]);
+
+                await submitForm(page);
+                await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+            });
         });
     });
 });
@@ -573,7 +546,7 @@ async function tryPasswordlessSignInUp(page, email) {
     await submitForm(page);
 }
 
-async function tryTPSignInUp(page, email, isVerified, userId = email) {
+async function tryThirdPartySignInUp(page, email, isVerified = true, userId = email) {
     await Promise.all([
         page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=thirdparty`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -633,4 +606,11 @@ async function tryEmailPasswordResetPassword(page, email) {
 
     await submitForm(page);
     await new Promise((res) => setTimeout(res, 250));
+}
+
+async function logOut(page) {
+    await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+    const logoutButton = await getLogoutButton(page);
+    await Promise.all([logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+    await waitForSTElement(page);
 }

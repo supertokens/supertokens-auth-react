@@ -703,12 +703,12 @@ export async function screenshotOnFailure(ctx, browser) {
                 continue;
             }
 
-            const title = ctx.currentTest
+            let title = ctx.currentTest
                 .fullTitle()
                 .split(/\W/)
                 .filter((a) => a.length !== 0)
-                .join("_")
-                .substring(0, 20);
+                .join("_");
+            title = title.substring(title.length - 30);
             await pages[i].screenshot({
                 path: path.join(screenshotRoot, testFileName, `${title}-tab_${i}-${Date.now()}.png`),
             });

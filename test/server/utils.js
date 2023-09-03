@@ -14,6 +14,7 @@
  */
 const { exec } = require("child_process");
 let fs = require("fs");
+let assert = require("assert");
 let axios = require("axios").default;
 
 module.exports.executeCommand = async function (cmd) {
@@ -94,7 +95,10 @@ module.exports.killAllST = async function () {
     }
 };
 
-module.exports.startST = async function (host = "localhost", port = 9000) {
+module.exports.startST = async function (config = {}) {
+    const host = config.host ?? "localhost";
+    const port = config.port ?? 9000;
+
     return new Promise(async (resolve, reject) => {
         let installationPath = process.env.INSTALL_PATH;
         let pidsBefore = await getListOfPids();
@@ -106,7 +110,8 @@ module.exports.startST = async function (host = "localhost", port = 9000) {
                     ` && java -Djava.security.egd=file:/dev/urandom -classpath "./core/*:./plugin-interface/*" io.supertokens.Main ./ DEV host=` +
                     host +
                     " port=" +
-                    port
+                    port +
+                    " test_mode"
             )
             .catch((err) => {
                 if (!returned) {
@@ -130,7 +135,53 @@ module.exports.startST = async function (host = "localhost", port = 9000) {
             } else {
                 if (!returned) {
                     returned = true;
-                    resolve(nonIntersection[0]);
+                    console.log(`Application started on http://localhost:${process.env.NODE_PORT | 8080}`);
+                    console.log(`processId: ${nonIntersection[0]}`);
+
+                    if (host !== "localhost" || port !== 9000 || config.noApp) {
+                        return resolve(`http://${host}:${port}`);
+                    }
+
+                    try {
+                        // Math.random is an unsafe random but it doesn't actually matter here
+                        // const appId = configs.appId ?? `testapp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+                        const appId = config.appId ?? `testapp`;
+
+                        await module.exports.removeAppAndTenants(host, port, appId);
+
+                        const OPAQUE_KEY_WITH_MULTITENANCY_FEATURE =
+                            "ijaleljUd2kU9XXWLiqFYv5br8nutTxbyBqWypQdv2N-BocoNriPrnYQd0NXPm8rVkeEocN9ayq0B7c3Pv-BTBIhAZSclXMlgyfXtlwAOJk=9BfESEleW6LyTov47dXu";
+
+                        await fetch(`http://${host}:${port}/ee/license`, {
+                            method: "PUT",
+                            headers: {
+                                "content-type": "application/json; charset=utf-8",
+                            },
+                            body: JSON.stringify({
+                                licenseKey: OPAQUE_KEY_WITH_MULTITENANCY_FEATURE,
+                            }),
+                        });
+
+                        // Create app
+                        const createAppResp = await fetch(`http://${host}:${port}/recipe/multitenancy/app`, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                appId,
+                                emailPasswordEnabled: true,
+                                thirdPartyEnabled: true,
+                                passwordlessEnabled: true,
+                                coreConfig: config.coreConfig,
+                            }),
+                        });
+                        const respBody = await createAppResp.json();
+                        assert.strictEqual(respBody.status, "OK");
+                        resolve(`http://${host}:${port}/appid-${appId}`);
+                    } catch (err) {
+                        reject(err);
+                    }
                 }
             }
         }
@@ -139,6 +190,51 @@ module.exports.startST = async function (host = "localhost", port = 9000) {
             reject("could not start ST process");
         }
     });
+};
+
+module.exports.removeAppAndTenants = async function (host, port, appId) {
+    const tenantsResp = await fetch(`http://${host}:${port}/appid-${appId}/recipe/multitenancy/tenant/list`);
+    if (tenantsResp.status === 401) {
+        const updateAppResp = await fetch(`http://${host}:${port}/recipe/multitenancy/app`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                appId,
+                coreConfig: { api_keys: null },
+            }),
+        });
+        assert.strictEqual(updateAppResp.status, 200);
+        await module.exports.removeAppAndTenants(host, port, appId);
+    } else if (tenantsResp.status === 200) {
+        const tenants = (await tenantsResp.json()).tenants;
+        for (const t of tenants) {
+            if (t.tenantId !== "public") {
+                await fetch(`http://${host}:${port}/appid-${appId}/recipe/multitenancy/tenant/remove`, {
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json; charset=utf-8",
+                    },
+                    body: JSON.stringify({
+                        tenantId: t.tenantId,
+                    }),
+                });
+            }
+        }
+
+        const removeResp = await fetch(`http://${host}:${port}/recipe/multitenancy/app/remove`, {
+            method: "POST",
+            headers: {
+                "content-type": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify({
+                appId,
+            }),
+        });
+        const removeRespBody = await removeResp.json();
+        assert.strictEqual(removeRespBody.status, "OK");
+    }
 };
 
 const WEB_PORT = process.env.WEB_PORT || 3031;

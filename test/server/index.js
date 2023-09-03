@@ -197,6 +197,7 @@ const formFields = (process.env.MIN_FIELDS && []) || [
     },
 ];
 
+let connectionURI = "http://localhost:9000";
 let passwordlessConfig = {};
 let accountLinkingConfig = {};
 let enabledProviders = undefined;
@@ -220,25 +221,27 @@ app.get("/ping", async (req, res) => {
 });
 
 app.post("/startst", async (req, res) => {
-    if (req.body && req.body.configUpdates) {
-        for (const update of req.body.configUpdates) {
-            await setKeyValueInConfig(update.key, update.value);
-        }
-    }
-    let pid = await startST();
-    const OPAQUE_KEY_WITH_MULTITENANCY_FEATURE =
-        "N2yITHflaFS4BPm7n0bnfFCjP4sJoTERmP0J=kXQ5YONtALeGnfOOe2rf2QZ0mfOh0aO3pBqfF-S0jb0ABpat6pySluTpJO6jieD6tzUOR1HrGjJO=50Ob3mHi21tQHJ";
+    try {
+        connectionURI = await startST(req.body);
+        console.log("Connection URI: " + connectionURI);
+        const OPAQUE_KEY_WITH_ALL_FEATURES_ENABLED =
+            "N2yITHflaFS4BPm7n0bnfFCjP4sJoTERmP0J=kXQ5YONtALeGnfOOe2rf2QZ0mfOh0aO3pBqfF-S0jb0ABpat6pySluTpJO6jieD6tzUOR1HrGjJO=50Ob3mHi21tQHJ";
 
-    await fetch(`http://localhost:9000/ee/license`, {
-        method: "PUT",
-        headers: {
-            "content-type": "application/json; charset=utf-8",
-        },
-        body: JSON.stringify({
-            licenseKey: OPAQUE_KEY_WITH_MULTITENANCY_FEATURE,
-        }),
-    });
-    res.send(pid + "");
+        await fetch(`${connectionURI}/ee/license`, {
+            method: "PUT",
+            headers: {
+                "content-type": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify({
+                licenseKey: OPAQUE_KEY_WITH_ALL_FEATURES_ENABLED,
+            }),
+        });
+        initST();
+        res.send(connectionURI + "");
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err.toString());
+    }
 });
 
 app.post("/beforeeach", async (req, res) => {
@@ -278,6 +281,7 @@ app.get("/sessioninfo", verifySession(), async (req, res, next) => {
         res.send({
             sessionHandle: session.getHandle(),
             userId: session.getUserId(),
+            recipeUserId: session.getRecipeUserId(),
             accessTokenPayload,
             sessionData,
         });
@@ -287,11 +291,8 @@ app.get("/sessioninfo", verifySession(), async (req, res, next) => {
 });
 
 app.post("/deleteUser", async (req, res) => {
-    if (req.body.rid !== "emailpassword") {
-        res.status(400).send({ message: "Not implemented" });
-    }
-    const user = await EmailPassword.getUserByEmail("public", req.body.email);
-    res.send(await SuperTokens.deleteUser(user.id));
+    const users = await SuperTokens.listUsersByAccountInfo("public", req.body);
+    res.send(await SuperTokens.deleteUser(users[0].id));
 });
 
 app.post("/changeEmail", async (req, res) => {
@@ -324,7 +325,7 @@ app.post("/changeEmail", async (req, res) => {
 
 app.get("/unverifyEmail", verifySession(), async (req, res) => {
     let session = req.session;
-    await EmailVerification.unverifyEmail(session.getUserId());
+    await EmailVerification.unverifyEmail(session.getRecipeUserId());
     await session.fetchAndSetClaim(EmailVerification.EmailVerificationClaim);
     res.send({ status: "OK" });
 });
@@ -469,9 +470,8 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
         } catch (e) {}
 
         await setupST();
-        const pid = await startST();
-        console.log(`Application started on http://localhost:${process.env.NODE_PORT | 8080}`);
-        console.log(`processId: ${pid}`);
+        connectionURI = await startST();
+        console.log("Connection URI: " + connectionURI);
     }
 })(process.env.START === "true");
 
@@ -983,7 +983,7 @@ function initST() {
             websiteDomain,
         },
         supertokens: {
-            connectionURI: "http://localhost:9000",
+            connectionURI,
         },
         recipeList:
             enabledRecipes !== undefined

@@ -1470,6 +1470,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
                     `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH`,
                     ...signInUpPageLoadLogs,
                 ]);
@@ -2130,10 +2131,10 @@ async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCoun
         method: "POST",
         headers: [["content-type", "application/json"]],
         body: JSON.stringify({
-            configUpdates: [
-                { key: "passwordless_code_lifetime", value: 4000 },
-                { key: "passwordless_max_code_input_attempts", value: 3 },
-            ],
+            coreConfig: {
+                passwordless_code_lifetime: 4000,
+                passwordless_max_code_input_attempts: 3,
+            },
         }),
     }).catch(console.error);
 

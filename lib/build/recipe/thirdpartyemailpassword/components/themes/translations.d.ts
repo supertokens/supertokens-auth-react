@@ -58,6 +58,7 @@ export declare const defaultTranslationsThirdPartyEmailPassword: {
         "Password must contain at least one alphabet": undefined;
         "Password must contain at least one number": undefined;
         "Email is invalid": undefined;
+        "Token generation was not done because of account take over risk. Please contact support. (HAS_OTHER_EMAIL_OR_PHONE)": undefined;
         EMAIL_VERIFICATION_RESEND_SUCCESS: string;
         EMAIL_VERIFICATION_SEND_TITLE: string;
         EMAIL_VERIFICATION_SEND_DESC_START: string;
@@ -86,5 +87,8 @@ export declare const defaultTranslationsThirdPartyEmailPassword: {
         THIRD_PARTY_PROVIDER_DEFAULT_BTN_START: string;
         THIRD_PARTY_PROVIDER_DEFAULT_BTN_END: string;
         THIRD_PARTY_ERROR_NO_EMAIL: string;
+        EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT: string;
+        "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)": undefined;
+        "Cannot sign in / up because new email cannot be applied to existing account. Please contact support. (ANOTHER_PRIM_USER_HAS_EMAIL)": undefined;
     };
 };

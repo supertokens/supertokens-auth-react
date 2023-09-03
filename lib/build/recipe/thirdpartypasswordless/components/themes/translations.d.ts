@@ -57,6 +57,8 @@ export declare const defaultTranslationsThirdPartyPasswordless: {
         "Failed to generate a one time code. Please try again": undefined;
         "Phone number is invalid": undefined;
         "Email is invalid": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_UP_ALLOWED_FALSE)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)": undefined;
         BRANDING_POWERED_BY_START: string;
         BRANDING_POWERED_BY_END: string;
         SOMETHING_WENT_WRONG_ERROR: string;
@@ -69,5 +71,7 @@ export declare const defaultTranslationsThirdPartyPasswordless: {
         THIRD_PARTY_PROVIDER_DEFAULT_BTN_START: string;
         THIRD_PARTY_PROVIDER_DEFAULT_BTN_END: string;
         THIRD_PARTY_ERROR_NO_EMAIL: string;
+        EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT: string;
+        "Cannot sign in / up because new email cannot be applied to existing account. Please contact support. (ANOTHER_PRIM_USER_HAS_EMAIL)": undefined;
     };
 };

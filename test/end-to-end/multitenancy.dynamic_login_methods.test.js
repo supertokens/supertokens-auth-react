@@ -51,6 +51,7 @@ import {
 // Run the tests in a DOM environment.
 require("jsdom-global")();
 
+let connectionURI;
 /*
  * Tests.
  */
@@ -71,9 +72,12 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
             method: "POST",
         }).catch(console.error);
 
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+        const startSTResp = await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
         }).catch(console.error);
+
+        assert.strictEqual(startSTResp.status, 200);
+        connectionURI = await startSTResp.text();
 
         page = await browser.newPage();
         pageCrashed = false;
@@ -134,6 +138,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
             "Continue with Google",
             "Continue with Facebook",
             "Continue with Auth0",
+            "Continue with Mock Provider",
         ]);
         const inputNames = await getInputNames(page);
         assert.deepStrictEqual(inputNames, ["email", "password"]);
@@ -375,6 +380,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
             "Continue with Google",
             "Continue with Facebook",
             "Continue with Auth0",
+            "Continue with Mock Provider",
         ]);
         assert.strictEqual(await getProviderLogoCount(page), 3);
     });
@@ -849,8 +855,8 @@ function clearDynamicLoginMethodsSettings(page) {
     });
 }
 
-export async function enableDynamicLoginMethods(page, mockLoginMethods, tenantId = "public", app = "public") {
-    let coreResp = await fetch(`http://localhost:9000/appid-${app}/recipe/multitenancy/tenant`, {
+export async function enableDynamicLoginMethods(page, mockLoginMethods, tenantId = "public") {
+    let coreResp = await fetch(`${connectionURI}/recipe/multitenancy/tenant`, {
         method: "PUT",
         headers: new Headers([
             ["content-type", "application/json"],
@@ -867,7 +873,7 @@ export async function enableDynamicLoginMethods(page, mockLoginMethods, tenantId
     assert.strictEqual(coreResp.status, 200);
 
     for (const provider of mockLoginMethods["thirdParty"]?.providers) {
-        coreResp = await fetch(`http://localhost:9000/appid-${app}/${tenantId}/recipe/multitenancy/config/thirdparty`, {
+        coreResp = await fetch(`${connectionURI}/${tenantId}/recipe/multitenancy/config/thirdparty`, {
             method: "PUT",
             headers: new Headers([
                 ["content-type", "application/json"],
@@ -885,13 +891,6 @@ export async function enableDynamicLoginMethods(page, mockLoginMethods, tenantId
 
         assert.strictEqual(coreResp.status, 200);
     }
-    coreResp = await fetch(`http://localhost:9000/appid-${app}/${tenantId}/recipe/multitenancy/tenant`, {
-        method: "GET",
-        headers: new Headers([
-            ["content-type", "application/json"],
-            ["rid", "multitenancy"],
-        ]),
-    });
 
     return page.evaluate(() => {
         window.localStorage.setItem("usesDynamicLoginMethods", "true");

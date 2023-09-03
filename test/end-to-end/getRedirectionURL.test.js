@@ -220,10 +220,10 @@ describe("getRedirectionURL Tests", function () {
                     method: "POST",
                     headers: [["content-type", "application/json"]],
                     body: JSON.stringify({
-                        configUpdates: [
-                            { key: "passwordless_code_lifetime", value: 4000 },
-                            { key: "passwordless_max_code_input_attempts", value: 3 },
-                        ],
+                        coreConfig: {
+                            passwordless_code_lifetime: 4000,
+                            passwordless_max_code_input_attempts: 3,
+                        },
                     }),
                 }).catch(console.error);
 
@@ -309,10 +309,10 @@ describe("getRedirectionURL Tests", function () {
                     method: "POST",
                     headers: [["content-type", "application/json"]],
                     body: JSON.stringify({
-                        configUpdates: [
-                            { key: "passwordless_code_lifetime", value: 4000 },
-                            { key: "passwordless_max_code_input_attempts", value: 3 },
-                        ],
+                        coreConfig: {
+                            passwordless_code_lifetime: 4000,
+                            passwordless_max_code_input_attempts: 3,
+                        },
                     }),
                 }).catch(console.error);
 
