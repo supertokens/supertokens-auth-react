@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.25.2] - 2023-09-04
+
+-   Uses a different source for mocha-split-tests to fix failures in CICD
+
 ## [0.25.1] - 2022-09-18
 
 ### Bug fixes
