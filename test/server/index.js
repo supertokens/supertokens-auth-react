@@ -150,13 +150,27 @@ let urlencodedParser = bodyParser.urlencoded({ limit: "20mb", extended: true, pa
 let jsonParser = bodyParser.json({ limit: "20mb" });
 
 let app = express();
+
+const originalSend = app.response.send;
+app.response.send = function sendOverWrite(body) {
+    originalSend.call(this, body);
+    this.__custombody__ = body;
+};
+
 morgan.token("body", function (req, res) {
-    return JSON.stringify(req.body && req.body["formFields"]);
+    return JSON.stringify(req.body);
 });
-app.use(morgan("tiny", { immediate: true }));
-app.use(morgan("[:date[iso]] :url :method :status :response-time ms - :res[content-length] - :body"));
+
+morgan.token("res-body", function (req, res) {
+    return typeof res.__custombody__ ? res.__custombody__ : JSON.stringify(res.__custombody__);
+});
+
 app.use(urlencodedParser);
 app.use(jsonParser);
+
+app.use(morgan("[:date[iso]] :url :method :body", { immediate: true }));
+app.use(morgan("[:date[iso]] :url :method :status :response-time ms - :res[content-length] :res-body"));
+
 app.use(cookieParser());
 
 const WEB_PORT = process.env.WEB_PORT || 3031;

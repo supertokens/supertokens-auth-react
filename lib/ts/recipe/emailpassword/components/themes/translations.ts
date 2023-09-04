@@ -80,7 +80,7 @@ export const defaultTranslationsEmailPassword = {
         "Password must contain at least one alphabet": undefined,
         "Password must contain at least one number": undefined,
         "Email is invalid": undefined,
-        "Token generation was not done because of account take over risk. Please contact support. (HAS_OTHER_EMAIL_OR_PHONE)":
+        "Reset password link was not created because of account take over risk. Please contact support. (ERR_CODE_001)":
             undefined,
     },
 };

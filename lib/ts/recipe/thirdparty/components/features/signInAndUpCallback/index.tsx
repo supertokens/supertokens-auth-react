@@ -62,7 +62,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                     history: props.history,
                     queryParams: {
                         error: response.status,
-                        message: "reason" in response ? response.reason : response.status,
+                        message: response.reason,
                     },
                     redirectBack: false,
                 });

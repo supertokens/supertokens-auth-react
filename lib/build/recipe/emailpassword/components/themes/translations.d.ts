@@ -57,7 +57,7 @@ export declare const defaultTranslationsEmailPassword: {
         "Password must contain at least one alphabet": undefined;
         "Password must contain at least one number": undefined;
         "Email is invalid": undefined;
-        "Token generation was not done because of account take over risk. Please contact support. (HAS_OTHER_EMAIL_OR_PHONE)": undefined;
+        "Reset password link was not created because of account take over risk. Please contact support. (ERR_CODE_001)": undefined;
         EMAIL_VERIFICATION_RESEND_SUCCESS: string;
         EMAIL_VERIFICATION_SEND_TITLE: string;
         EMAIL_VERIFICATION_SEND_DESC_START: string;

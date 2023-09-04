@@ -141,11 +141,11 @@ export default class Wrapper {
               fetchResponse: Response;
           }
         | {
-              status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT";
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
               fetchResponse: Response;
           }
         | {
-              status: "SIGN_IN_UP_NOT_ALLOWED";
+              status: "SIGN_IN_UP_NOT_ALLOWED" | "EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT";
               reason: string;
               fetchResponse: Response;
           }

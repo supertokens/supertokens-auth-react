@@ -334,7 +334,7 @@ describe("SuperTokens Account linking", function () {
                 assert.strictEqual(new URL(page.url()).pathname, "/auth/");
                 assert.strictEqual(
                     await getGeneralError(page),
-                    "Cannot sign in / up due to security reasons. Please contact support. (EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT)"
+                    "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_006)"
                 );
             });
 
@@ -368,7 +368,7 @@ describe("SuperTokens Account linking", function () {
                 assert.strictEqual(new URL(page.url()).pathname, "/auth/");
                 assert.strictEqual(
                     await getGeneralError(page),
-                    "Cannot sign in / up because new email cannot be applied to existing account. Please contact support. (ANOTHER_PRIM_USER_HAS_EMAIL)"
+                    "Cannot sign in / up because new email cannot be applied to existing account. Please contact support. (ERR_CODE_005)"
                 );
             });
 
@@ -392,13 +392,13 @@ describe("SuperTokens Account linking", function () {
                 await waitForSTElement(page, `input[name=emailOrPhone]`);
 
                 await setAccountLinkingConfig(true, true, true);
-                // . Try sign in with third party
+                // 4. Try sign in with third party
                 await tryThirdPartySignInUp(page, email, false);
 
                 assert.strictEqual(new URL(page.url()).pathname, "/auth/");
                 assert.strictEqual(
                     await getGeneralError(page),
-                    "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
+                    "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_004)"
                 );
             });
 
@@ -423,7 +423,7 @@ describe("SuperTokens Account linking", function () {
 
                 assert.strictEqual(
                     await getGeneralError(page),
-                    "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_UP_ALLOWED_FALSE)"
+                    "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_002)"
                 );
                 assert.strictEqual(new URL(page.url()).pathname, "/auth/");
             });
@@ -453,9 +453,75 @@ describe("SuperTokens Account linking", function () {
 
                 assert.strictEqual(
                     await getGeneralError(page),
-                    "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
+                    "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_003)"
                 );
                 assert.strictEqual(new URL(page.url()).pathname, "/auth/");
+            });
+
+            it("should not allow sign up w/ passwordless if it conflicts with an unverified user", async function () {
+                const email = `test-user+${Date.now()}@supertokens.com`;
+
+                await setAccountLinkingConfig(true, false);
+                // 1. Sign up without account linking with an unverified tp user & log out
+                await tryEmailPasswordSignUp(page, email);
+                await logOut(page);
+
+                await setAccountLinkingConfig(true, true, true);
+                // 2. Sign in with passwordless
+                await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=passwordless`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
+                await submitForm(page);
+
+                assert.strictEqual(
+                    await getGeneralError(page),
+                    "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_002)"
+                );
+                assert.strictEqual(new URL(page.url()).pathname, "/auth/");
+            });
+
+            it("should not allow password reset if it conflicts with an unverified user", async function () {
+                const email = `test-user+${Date.now()}@supertokens.com`;
+                const email2 = `test-user2+${Date.now()}@supertokens.com`;
+
+                await setAccountLinkingConfig(true, true, false);
+                // 1. Sign up without account linking with an unverified tp user & log out
+                await tryThirdPartySignInUp(page, email2, false);
+                await logOut(page);
+
+                // 2. Sign up with an EP user that will be linked to the first one
+                await tryEmailPasswordSignUp(page, email2);
+                await logOut(page);
+
+                // 3. Change the email of the initial tp user
+                await tryThirdPartySignInUp(page, email, false, email2);
+                await logOut(page);
+
+                await setAccountLinkingConfig(true, false, false);
+                // 4. Add a recipe level user
+                await tryEmailPasswordSignUp(page, email);
+                await logOut(page);
+
+                await setAccountLinkingConfig(true, true, true);
+                // 5. Try resetting the password of the recipe leve user
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password?authRecipe=emailpassword`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: "email", value: email }]);
+
+                await submitForm(page);
+
+                await new Promise((res) => setTimeout(res, 200));
+                assert.deepStrictEqual(await getFieldErrors(page), [
+                    "Reset password link was not created because of account take over risk. Please contact support. (ERR_CODE_001)",
+                ]);
+                assert.strictEqual(new URL(page.url()).pathname, "/auth/reset-password");
             });
 
             it("should allow sign in w/ a verified emailpassword user in case of conflict", async function () {
