@@ -17,7 +17,7 @@ rm -rf node_modules/supertokens-web-js || true
 rm -rf node_modules/supertokens-website || true
 
 # install prod dependencies only
-npm i --production --legacy-peer-deps || exit $?
+GIT_SSH_COMMAND="ssh" npm i --production --legacy-peer-deps || exit $?
 
 # We symlink the supertokens-web-js dep to ensure it's the same version (maybe linked locally)
 ln -s ../../../../node_modules/supertokens-web-js node_modules/supertokens-web-js
