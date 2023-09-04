@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.30.2",
+    "version": "0.30.3",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -13,7 +13,7 @@
         "@babel/preset-env": "7.12.1",
         "@babel/preset-react": "7.12.1",
         "@babel/register": "7.12.1",
-        "@peakon/mocha-split-tests": "^1.4.0",
+        "mocha-split-tests": "github:rishabhpoddar/mocha-split-tests",
         "@percy/cli": "^1.16.0",
         "@percy/puppeteer": "^2.0.2",
         "@rollup/plugin-commonjs": "^23.0.3",
