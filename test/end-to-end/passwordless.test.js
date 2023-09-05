@@ -37,6 +37,7 @@ import {
     isGeneralErrorSupported,
     setGeneralErrorToLocalStorage,
     getInputField,
+    isAccountLinkingSupported,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -535,10 +536,12 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
     });
 
     function getTestCases(contactMethod, inputName, contactInfo) {
+        let accountLinkingSupported;
         describe(`UserInputCode`, function () {
             before(async function () {
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
                 await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
+                accountLinkingSupported = await isAccountLinkingSupported();
             });
 
             after(async function () {
@@ -1039,6 +1042,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
             before(async function () {
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
                 await setPasswordlessFlowType(contactMethod, "MAGIC_LINK");
+                accountLinkingSupported = await isAccountLinkingSupported();
             });
 
             after(async function () {
@@ -1470,7 +1474,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
+                    ...(accountLinkingSupported ? [`ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`] : []),
                     `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH`,
                     ...signInUpPageLoadLogs,
                 ]);
@@ -1546,6 +1550,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
             before(async function () {
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
                 await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE_AND_MAGIC_LINK");
+                accountLinkingSupported = await isAccountLinkingSupported();
             });
 
             after(async function () {

@@ -61,7 +61,7 @@ describe("SuperTokens Account linking", function () {
 
     before(async function () {
         const features = await getFeatureFlags();
-        if (!features.includes("thirdpartypasswordless")) {
+        if (!features.includes("accountlinking")) {
             this.skip();
         }
     });

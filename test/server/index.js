@@ -295,7 +295,7 @@ app.get("/sessioninfo", verifySession(), async (req, res, next) => {
         res.send({
             sessionHandle: session.getHandle(),
             userId: session.getUserId(),
-            recipeUserId: session.getRecipeUserId(),
+            recipeUserId: accountLinkingSupported ? session.getRecipeUserId().getAsString() : session.getUserId(),
             accessTokenPayload,
             sessionData,
         });
@@ -305,6 +305,11 @@ app.get("/sessioninfo", verifySession(), async (req, res, next) => {
 });
 
 app.post("/deleteUser", async (req, res) => {
+    if (!accountLinkingSupported) {
+        const user = await EmailPassword.getUserByEmail("public", req.body.email);
+        return res.send(await SuperTokens.deleteUser(user.id));
+    }
+
     const users = await SuperTokens.listUsersByAccountInfo("public", req.body);
     res.send(await SuperTokens.deleteUser(users[0].id));
 });
@@ -339,7 +344,7 @@ app.post("/changeEmail", async (req, res) => {
 
 app.get("/unverifyEmail", verifySession(), async (req, res) => {
     let session = req.session;
-    await EmailVerification.unverifyEmail(session.getRecipeUserId());
+    await EmailVerification.unverifyEmail(accountLinkingSupported ? session.getRecipeUserId() : session.getUserId());
     await session.fetchAndSetClaim(EmailVerification.EmailVerificationClaim);
     res.send({ status: "OK" });
 });
@@ -448,6 +453,10 @@ app.get("/test/featureFlags", (req, res) => {
 
     if (multitenancySupported) {
         available.push("multitenancy");
+    }
+
+    if (accountLinkingSupported) {
+        available.push("accountlinking");
     }
 
     available.push("recipeConfig");
