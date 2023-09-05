@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.35.0] - 2023-09-XX
+
+### Breaking changes
+
+-   Added support for FDI 1.18
+-   User type has changed across recipes and functions: recipe specific user types have been removed and replaced by a generic one that contains more information
+-   `createdNewUser` has been renamed to `createdNewRecipeUser`
+-   `createCode`, `consumeCode`, `createPasswordlessCode` and `consumePasswordlessCode` can now return status: `SIGN_IN_UP_NOT_ALLOWED`
+-   `signInAndUp` and `thirdPartySignInAndUp` can now return new statuses: `EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT`, `SIGN_IN_UP_NOT_ALLOWED`
+-   `sendPasswordResetEmail` can now return `status: "PASSWORD_RESET_NOT_ALLOWED"`
+
 ## [0.34.1] - 2023-07-31
 
 ### Changes
