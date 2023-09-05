@@ -47,7 +47,6 @@ export const SuperTokensConfig = {
                             return `${getWebsiteDomain()}/auth/callback/${id}`;
                         },
                     }),
-                    Apple.init(),
                 ],
             },
         }),

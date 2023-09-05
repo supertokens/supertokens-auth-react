@@ -57,8 +57,7 @@ export const LinkingPage: React.FC = () => {
                             <span className="recipeId">{lm.recipeId}</span>
                             <span className="userId">{lm.recipeUserId}</span>
                             <span className="contactInfo">
-                                {" "}
-                                Provider: {lm.thirdParty.id} - Email: {lm.email}
+                                Provider: {lm.thirdParty.id} ({lm.thirdParty.userId}) - Email: {lm.email}
                             </span>
                         </div>
                     ))}
@@ -131,7 +130,7 @@ export const LinkingPage: React.FC = () => {
             {thirdPartyLoginMethod?.length === 0 && (
                 <form>
                     <button onClick={() => redirectToThirdPartyLogin({ thirdPartyId: "google" })}>
-                        Add Google account{" "}
+                        Add Google account
                     </button>
                 </form>
             )}

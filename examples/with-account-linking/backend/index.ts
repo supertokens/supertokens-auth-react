@@ -76,11 +76,10 @@ app.post("/addPassword", verifySession(), async (req: SessionRequest, res) => {
         });
     }
 
-    // Technically we do not need this limitation
     if (loginMethod.email === undefined) {
         return res.json({
             status: "GENERAL_ERROR",
-            message: "You can only add a password when to accounts associated with email addresses",
+            message: "You can only add a password to accounts associated with email addresses",
         });
     }
 
@@ -100,21 +99,9 @@ app.post("/addPassword", verifySession(), async (req: SessionRequest, res) => {
         });
     }
 
-    if (signUpResp.status !== "OK") {
-        return res.json(signUpResp);
-    }
     // Here we can assume the user in signUpResp is not a primary user since it was just created
-    // Plus the linkAccounts core impl checks anyway
+    // Plus the linkAccounts checks anyway
     const newRecipeUserId = signUpResp.user.loginMethods[0].recipeUserId;
-
-    const tokenResp = await EmailVerification.createEmailVerificationToken(
-        session.getTenantId(),
-        newRecipeUserId,
-        loginMethod.email
-    );
-    if (tokenResp.status === "OK") {
-        await EmailVerification.verifyEmailUsingToken(session.getTenantId(), tokenResp.token, false);
-    }
 
     const linkResp = await AccountLinking.linkAccounts(newRecipeUserId, session.getUserId());
     if (linkResp.status !== "OK") {
@@ -212,15 +199,6 @@ app.post("/addThirdPartyUser", verifySession(), async (req: SessionRequest, res)
     // Here we can assume the user in signUpResp is not a primary user since it was just created
     // Plus the linkAccounts core impl checks anyway
     const newRecipeUserId = signUpResp.user.loginMethods[0].recipeUserId;
-
-    const tokenResp = await EmailVerification.createEmailVerificationToken(
-        session.getTenantId(),
-        newRecipeUserId,
-        loginMethod.email
-    );
-    if (tokenResp.status === "OK") {
-        await EmailVerification.verifyEmailUsingToken(session.getTenantId(), tokenResp.token, false);
-    }
 
     const linkResp = await AccountLinking.linkAccounts(newRecipeUserId, session.getUserId());
     if (linkResp.status !== "OK") {

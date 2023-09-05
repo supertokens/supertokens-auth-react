@@ -23,9 +23,7 @@ function App() {
                             <Route
                                 path="/link"
                                 element={
-                                    /* This protects the "/" route so that it shows
-                                  <Home /> only if the user is logged in.
-                                  Else it redirects the user to "/auth" */
+                                    /* Showing the linking page only makes sense for logged in users */
                                     <SessionAuth>
                                         <LinkingPage />
                                     </SessionAuth>
@@ -34,9 +32,7 @@ function App() {
                             <Route
                                 path="/link/tpcallback/:thirdPartyId"
                                 element={
-                                    /* This protects the "/" route so that it shows
-                                  <Home /> only if the user is logged in.
-                                  Else it redirects the user to "/auth" */
+                                    /* Showing the linking page only makes sense for logged in users */
                                     <SessionAuth>
                                         <LinkingCallbackPage />
                                     </SessionAuth>

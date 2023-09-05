@@ -38,12 +38,23 @@ export const SuperTokensConfig: TypeInput = {
         }),
         UserMetadata.init(),
         AccountLinking.init({
-            shouldDoAutomaticAccountLinking: async (_newInfo, _user, _tenantId, context) => {
+            shouldDoAutomaticAccountLinking: async (newAccountInfo, user, _tenantId, context) => {
                 if (context.doNotLink === true) {
                     return {
                         shouldAutomaticallyLink: false,
                     };
                 }
+
+                if (newAccountInfo.recipeUserId !== undefined && user !== undefined) {
+                    let userId = newAccountInfo.recipeUserId.getAsString();
+                    let hasInfoAssociatedWithUserId = false; // TODO: add your own implementation here.
+                    if (hasInfoAssociatedWithUserId) {
+                        return {
+                            shouldAutomaticallyLink: false,
+                        };
+                    }
+                }
+
                 return {
                     shouldAutomaticallyLink: true,
                     shouldRequireVerification: true,
@@ -76,28 +87,7 @@ export const SuperTokensConfig: TypeInput = {
                         ],
                     },
                 },
-                {
-                    config: {
-                        thirdPartyId: "apple",
-                        clients: [
-                            {
-                                clientId: "4398792-io.supertokens.example.service",
-                                additionalConfig: {
-                                    keyId: "7M48Y4RYDL",
-                                    privateKey:
-                                        "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgu8gXs+XYkqXD6Ala9Sf/iJXzhbwcoG5dMh1OonpdJUmgCgYIKoZIzj0DAQehRANCAASfrvlFbFCYqn3I2zeknYXLwtH30JuOKestDbSfZYxZNMqhF/OzdZFTV0zc5u5s3eN+oCWbnvl0hM+9IW0UlkdA\n-----END PRIVATE KEY-----",
-                                    teamId: "YWQCXGJRJL",
-                                },
-                            },
-                        ],
-                    },
-                },
             ],
-            override: {
-                apis: (oI) => ({
-                    ...oI,
-                }),
-            },
         }),
         Passwordless.init({
             contactMethod: "PHONE",
