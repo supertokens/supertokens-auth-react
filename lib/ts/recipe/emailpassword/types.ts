@@ -342,14 +342,16 @@ export type OnHandleEventContext =
           /*
            * On Handle Event actions
            */
-          action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
+          action: "RESET_PASSWORD_EMAIL_SENT";
           email: string;
           userContext: any;
       }
     | {
+          /*
+           * On Handle Event actions
+           */
           action: "PASSWORD_RESET_SUCCESSFUL";
-          user: User;
-          email: string;
+          userContext: any;
       }
     | {
           action: "SUCCESS";

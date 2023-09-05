@@ -38,8 +38,6 @@ export default class Wrapper {
     }): Promise<
         | {
               status: "OK";
-              user: User;
-              email: string;
               fetchResponse: Response;
           }
         | {

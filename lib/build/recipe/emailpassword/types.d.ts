@@ -172,14 +172,13 @@ export declare type GetRedirectionURLContext =
 export declare type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {
-          action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
+          action: "RESET_PASSWORD_EMAIL_SENT";
           email: string;
           userContext: any;
       }
     | {
           action: "PASSWORD_RESET_SUCCESSFUL";
-          user: User;
-          email: string;
+          userContext: any;
       }
     | {
           action: "SUCCESS";

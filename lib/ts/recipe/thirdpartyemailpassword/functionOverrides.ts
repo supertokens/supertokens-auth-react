@@ -45,8 +45,6 @@ export const getFunctionOverrides =
             if (response.status === "OK") {
                 onHandleEvent({
                     action: "PASSWORD_RESET_SUCCESSFUL",
-                    user: response.user,
-                    email: response.email,
                     userContext: input.userContext,
                 });
             }
