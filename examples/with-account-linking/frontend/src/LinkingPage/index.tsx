@@ -23,6 +23,47 @@ export const LinkingPage: React.FC = () => {
         setUserInfo(await res.json());
     }, [setUserInfo]);
 
+    const addPassword = useCallback(async () => {
+        const resp = await fetch(`${getApiDomain()}/addPassword`, {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+            },
+            body: JSON.stringify({
+                password,
+            }),
+        });
+
+        const respBody = await resp.json();
+        if (respBody.status !== "OK") {
+            setSuccess(null);
+            setError(respBody.reason ?? respBody.message ?? respBody.status);
+        } else {
+            setSuccess("Successfully added password");
+            setError(null);
+        }
+    }, [setError, setSuccess]);
+
+    const addPhoneNumber = useCallback(async () => {
+        const resp = await fetch(`${getApiDomain()}/addPhoneNumber`, {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+            },
+            body: JSON.stringify({
+                phoneNumber,
+            }),
+        });
+
+        const respBody = await resp.json();
+        if (respBody.status !== "OK") {
+            setError(respBody.reason ?? respBody.message ?? respBody.status);
+        } else {
+            setSuccess("Successfully added password");
+        }
+        loadUserInfo();
+    }, [setError, setSuccess, loadUserInfo]);
+
     useEffect(() => {
         loadUserInfo();
     }, [loadUserInfo]);
@@ -73,23 +114,7 @@ export const LinkingPage: React.FC = () => {
             {passwordLoginMethods?.length === 0 && (
                 <form
                     onSubmit={(ev) => {
-                        fetch(`${getApiDomain()}/addPassword`, {
-                            method: "POST",
-                            headers: {
-                                "content-type": "application/json",
-                            },
-                            body: JSON.stringify({
-                                password,
-                            }),
-                        }).then((resp) => {
-                            resp.json().then((body) => {
-                                if (body.status !== "OK") {
-                                    setError(body.reason ?? body.message ?? body.status);
-                                } else {
-                                    setSuccess("Successfully added password");
-                                }
-                            });
-                        });
+                        addPassword();
                         ev.preventDefault();
                         return false;
                     }}>
@@ -100,26 +125,7 @@ export const LinkingPage: React.FC = () => {
             {phoneLoginMethod?.length === 0 && (
                 <form
                     onSubmit={(ev) => {
-                        fetch(`${getApiDomain()}/addPhoneNumber`, {
-                            method: "POST",
-                            headers: {
-                                "content-type": "application/json",
-                            },
-                            body: JSON.stringify({
-                                phoneNumber,
-                            }),
-                        }).then((resp) => {
-                            resp.json().then((body) => {
-                                if (body.status !== "OK") {
-                                    setError(body.reason ?? body.message ?? body.status);
-                                } else {
-                                    setSuccess("Successfully added phone number");
-                                }
-                            });
-                            loadUserInfo();
-                            setPhoneNumber("");
-                            setPassword("");
-                        });
+                        addPhoneNumber();
                         ev.preventDefault();
                         return false;
                     }}>

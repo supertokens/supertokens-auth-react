@@ -20,7 +20,7 @@ export const LinkingCallbackPage: React.FC = () => {
             }),
         (resp) => {
             if (resp.status === "OK") {
-                navigate(`/link?success=${encodeURIComponent("Successfully added account")}`);
+                navigate(`/link?success=${encodeURIComponent("Successfully added third-party account")}`);
             } else if ("reason" in resp) {
                 navigate(`/link?error=${encodeURIComponent(resp.reason)}`);
             } else {

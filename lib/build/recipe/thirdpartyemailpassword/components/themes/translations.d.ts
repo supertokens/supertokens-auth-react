@@ -58,7 +58,6 @@ export declare const defaultTranslationsThirdPartyEmailPassword: {
         "Password must contain at least one alphabet": undefined;
         "Password must contain at least one number": undefined;
         "Email is invalid": undefined;
-        "Reset password link was not created because of account take over risk. Please contact support. (ERR_CODE_001)": undefined;
         EMAIL_VERIFICATION_RESEND_SUCCESS: string;
         EMAIL_VERIFICATION_SEND_TITLE: string;
         EMAIL_VERIFICATION_SEND_DESC_START: string;
@@ -87,8 +86,5 @@ export declare const defaultTranslationsThirdPartyEmailPassword: {
         THIRD_PARTY_PROVIDER_DEFAULT_BTN_START: string;
         THIRD_PARTY_PROVIDER_DEFAULT_BTN_END: string;
         THIRD_PARTY_ERROR_NO_EMAIL: string;
-        "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_004)": undefined;
-        "Cannot sign in / up because new email cannot be applied to existing account. Please contact support. (ERR_CODE_005)": undefined;
-        "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_006)": undefined;
     };
 };

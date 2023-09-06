@@ -51,51 +51,55 @@ app.get("/userInfo", verifySession(), async (req: SessionRequest, res) => {
 
 app.post("/addPassword", verifySession(), async (req: SessionRequest, res) => {
     const session = req.session!;
+    // First we check that the current session (and the user it belongs to) can have a user linked to it.
     const user = await getUser(session.getRecipeUserId().getAsString());
     if (!user) {
         throw new Session.Error({ type: Session.Error.UNAUTHORISED, message: "user removed" });
     }
-    const loginMethod = user.loginMethods.find(
+
+    const currentLoginMethod = user.loginMethods.find(
         (m) => m.recipeUserId.getAsString() === session.getRecipeUserId().getAsString()
     );
-    if (!loginMethod) {
+    if (!currentLoginMethod) {
         throw new Error("This should never happen");
     }
 
-    if (loginMethod.recipeId === "emailpassword") {
+    if (currentLoginMethod.recipeId === "emailpassword") {
         return res.json({
             status: "GENERAL_ERROR",
-            message: "This user already has a password associated to it",
+            message: "This user already logged in using a password",
         });
     }
 
-    if (!loginMethod.verified) {
+    if (!currentLoginMethod.verified) {
         return res.json({
             status: "GENERAL_ERROR",
             message: "You can only add a password when logged in using a verified account",
         });
     }
 
-    if (loginMethod.email === undefined) {
+    if (currentLoginMethod.email === undefined) {
         return res.json({
             status: "GENERAL_ERROR",
             message: "You can only add a password to accounts associated with email addresses",
         });
     }
 
+    // We then "add the password" by signing up with a new user
     let password: string = req.body.password;
-
     const signUpResp = await ThirdPartyEmailPassword.emailPasswordSignUp(
         session.getTenantId(),
-        loginMethod.email,
+        currentLoginMethod.email,
         password
     );
 
     if (signUpResp.status === "EMAIL_ALREADY_EXISTS_ERROR") {
-        // This is an edge-case where the current third-party user has an email that has already signed up but not linked for some reason.
+        // In this case the current user has an email that has already signed up
+        // If they are not linked, the other user can be deleted on the dashboard
+        // (or merged here if you provide an app specific implementation, but that is a longer/separate topic)
         return res.json({
             status: "GENERAL_ERROR",
-            message: "This user has already signed up. Please delete it first.",
+            message: "This user has already signed up using a password.",
         });
     }
 
@@ -107,7 +111,7 @@ app.post("/addPassword", verifySession(), async (req: SessionRequest, res) => {
     if (linkResp.status !== "OK") {
         return res.json({
             status: "GENERAL_ERROR",
-            message: linkResp.status, // TODO: proper string
+            message: `Account linking failed (${linkResp.status})`,
         });
     }
     // if the access token payload contains any information that'd change based on the new account, we'd want to update it here.
@@ -122,6 +126,7 @@ app.post("/addThirdPartyUser", verifySession(), async (req: SessionRequest, res)
     // We need this because several functions below require it
     const userContext = {};
     const session = req.session!;
+    // First we check that the current session (and the user it belongs to) can have a user linked to it.
     const user = await getUser(session.getRecipeUserId().getAsString());
     if (!user) {
         throw new Session.Error({ type: Session.Error.UNAUTHORISED, message: "user removed" });
@@ -140,6 +145,7 @@ app.post("/addThirdPartyUser", verifySession(), async (req: SessionRequest, res)
         });
     }
 
+    // We then get get the user info from the third party provider
     const provider = await ThirdPartyEmailPassword.thirdPartyGetProvider(
         session.getTenantId(),
         req.body.thirdPartyId,
@@ -171,12 +177,15 @@ app.post("/addThirdPartyUser", verifySession(), async (req: SessionRequest, res)
         });
     }
 
+    // In general, we require email verification before linking, but we can skip it in case if the user
+    // already verified this address in some other way
     if (!user.emails.includes(emailInfo.id) && !emailInfo.isVerified) {
         return res.json({
             status: "GENERAL_ERROR",
             message: "The email of the third-party account doesn't match the current user and is not verified",
         });
     }
+    // We create the new user here
     const signUpResp = await ThirdPartyEmailPassword.thirdPartyManuallyCreateOrUpdateUser(
         session.getTenantId(),
         req.body.thirdPartyId,
@@ -191,12 +200,15 @@ app.post("/addThirdPartyUser", verifySession(), async (req: SessionRequest, res)
     }
 
     if (!signUpResp.createdNewRecipeUser) {
+        // In this case the third party user we tried to add has already signed up
+        // The other user can be deleted on the dashboard
+        // (or merged here if you provide an app specific implementation, but that is a longer/separate topic)
         return res.json({
             status: "GENERAL_ERROR",
             message: "This user has already signed up. Please delete it first.",
         });
     }
-    // Here we can assume the user in signUpResp is not a primary user since it was just created
+    // Now we can assume the user in signUpResp is not a primary user since it was just created
     // Plus the linkAccounts core impl checks anyway
     const newRecipeUserId = signUpResp.user.loginMethods[0].recipeUserId;
 
@@ -204,7 +216,7 @@ app.post("/addThirdPartyUser", verifySession(), async (req: SessionRequest, res)
     if (linkResp.status !== "OK") {
         return res.json({
             status: "GENERAL_ERROR",
-            message: linkResp.status, // TODO: proper string
+            message: `Account linking failed (${linkResp.status})`,
         });
     }
     // if the access token payload contains any information that'd change based on the new account, we'd want to update it here.
@@ -217,6 +229,7 @@ app.post("/addThirdPartyUser", verifySession(), async (req: SessionRequest, res)
 
 app.post("/addPhoneNumber", verifySession(), async (req: SessionRequest, res) => {
     const session = req.session!;
+    // First we check that the current session (and the user it belongs to) can have a user linked to it.
     const user = await getUser(session.getRecipeUserId().getAsString());
     if (!user) {
         throw new Session.Error({ type: Session.Error.UNAUTHORISED, message: "user removed" });
@@ -236,15 +249,6 @@ app.post("/addPhoneNumber", verifySession(), async (req: SessionRequest, res) =>
     }
 
     const phoneNumber = req.body.phoneNumber;
-
-    const otherUsers = await listUsersByAccountInfo("public", { phoneNumber });
-    if (otherUsers.length > 0) {
-        return res.json({
-            status: "GENERAL_ERROR",
-            message: "You can only add a phone number to a single user",
-        });
-    }
-
     const signUpResp = await Passwordless.signInUp({
         tenantId: session.getTenantId(),
         phoneNumber,
@@ -252,7 +256,6 @@ app.post("/addPhoneNumber", verifySession(), async (req: SessionRequest, res) =>
     });
 
     if (signUpResp.createdNewRecipeUser === false) {
-        // This is possible only in a race-condition where 2 users are adding the same phone number.
         return res.json({
             status: "GENERAL_ERROR",
             message: "You can only add a phone number to a single user",
@@ -264,7 +267,7 @@ app.post("/addPhoneNumber", verifySession(), async (req: SessionRequest, res) =>
     if (linkResp.status !== "OK") {
         return res.json({
             status: "GENERAL_ERROR",
-            message: linkResp.status, // TODO: proper string
+            message: `Account linking failed (${linkResp.status})`,
         });
     }
     // if the access token payload contains any information that'd change based on the new account, we'd want to update it here.

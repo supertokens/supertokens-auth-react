@@ -36,7 +36,6 @@ export const SuperTokensConfig: TypeInput = {
         EmailVerification.init({
             mode: "REQUIRED",
         }),
-        UserMetadata.init(),
         AccountLinking.init({
             shouldDoAutomaticAccountLinking: async (newAccountInfo, user, _tenantId, context) => {
                 if (context.doNotLink === true) {
@@ -50,6 +49,8 @@ export const SuperTokensConfig: TypeInput = {
                     let hasInfoAssociatedWithUserId = false; // TODO: add your own implementation here.
                     if (hasInfoAssociatedWithUserId) {
                         return {
+                            // Alternatively, you can link users but then you should provide an `onAccountLinked` callback
+                            // that implements merging the user of the two users.
                             shouldAutomaticallyLink: false,
                         };
                     }
