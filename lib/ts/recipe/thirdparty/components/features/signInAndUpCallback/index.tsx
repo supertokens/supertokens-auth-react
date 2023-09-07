@@ -54,10 +54,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                 });
             }
 
-            if (
-                response.status === "EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT" ||
-                response.status === "SIGN_IN_UP_NOT_ALLOWED"
-            ) {
+            if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
                     history: props.history,
                     queryParams: {

@@ -454,6 +454,14 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
+            await setupTenant("customer1", {
+                emailPassword: { enabled: true },
+                passwordless: { enabled: false },
+                thirdParty: {
+                    enabled: true,
+                    providers: [],
+                },
+            });
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
@@ -463,7 +471,8 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             const email = await epSignUp(page);
 
             const userId = await getUserIdWithFetch(page);
-            removeUserFromTenant("public", userId);
+            await addUserToTenant("customer1", userId);
+            await removeUserFromTenant("public", userId);
 
             await clearBrowserCookiesWithoutAffectingConsole(page, []);
 
@@ -501,7 +510,8 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             const email = await epSignUp(page);
 
             const userId = await getUserIdWithFetch(page);
-            removeUserFromTenant("public", userId);
+            await addUserToTenant("customer1", userId);
+            await removeUserFromTenant("public", userId);
             await clearBrowserCookiesWithoutAffectingConsole(page, []);
 
             await Promise.all([
@@ -540,7 +550,8 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             await epSignUp(page);
 
             const userId = await getUserIdWithFetch(page);
-            removeUserFromTenant("public", userId);
+            await addUserToTenant("customer1", userId);
+            await removeUserFromTenant("public", userId);
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/dashboard`),
