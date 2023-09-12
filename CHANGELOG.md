@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   `createCode`, `consumeCode`, `createPasswordlessCode` and `consumePasswordlessCode` can now return status: `SIGN_IN_UP_NOT_ALLOWED`
 -   `signInAndUp` and `thirdPartySignInAndUp` can now return new status: `SIGN_IN_UP_NOT_ALLOWED`
 -   `sendPasswordResetEmail` can now return `status: "PASSWORD_RESET_NOT_ALLOWED"`
+-   `signIn` and `emailPasswordSignIn` can now return `SIGN_IN_NOT_ALLOWED`
+-   `signUp` and `emailPasswordSignUp` can now return `SIGN_UP_NOT_ALLOWED`
+-   The context param of `getRedirectionURL` gets an optional `user` prop (it's always defined if `createdNewRecipeUser` is set to true)
+-   Added new language translation keys
 
 ## [0.34.1] - 2023-07-31
 

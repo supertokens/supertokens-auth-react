@@ -275,7 +275,10 @@ describe("SuperTokens Account linking", function () {
                 assert.strictEqual(errorAdornments.length, 0);
 
                 assert.strictEqual(new URL(page.url()).pathname, "/auth/");
-                assert.strictEqual(await getGeneralError(page), "Cannot sign up due to security reasons. Please try logging in, use a different login method or contact support. (ERR_CODE_007)");
+                assert.strictEqual(
+                    await getGeneralError(page),
+                    "Cannot sign up due to security reasons. Please try logging in, use a different login method or contact support. (ERR_CODE_007)"
+                );
             });
 
             it("should not allow sign in w/ an unverified emailpassword user in case of conflict", async function () {
@@ -311,7 +314,10 @@ describe("SuperTokens Account linking", function () {
 
                 await submitForm(page);
                 assert.strictEqual(new URL(page.url()).pathname, "/auth/");
-                assert.strictEqual(await getGeneralError(page), "Cannot sign in due to security reasons. Please try resetting your password, use a different login method or contact support. (ERR_CODE_008)");
+                assert.strictEqual(
+                    await getGeneralError(page),
+                    "Cannot sign in due to security reasons. Please try resetting your password, use a different login method or contact support. (ERR_CODE_008)"
+                );
             });
 
             it("should not allow sign up w/ an unverified thirdparty user in case of conflict", async function () {
