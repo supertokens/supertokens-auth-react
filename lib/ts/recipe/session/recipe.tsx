@@ -170,6 +170,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                     successRedirectContext: {
                         action: "SUCCESS",
                         isNewRecipeUser: false,
+                        user: undefined,
                     },
                 };
             }

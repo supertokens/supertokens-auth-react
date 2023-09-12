@@ -222,6 +222,7 @@ export function useChildProps(
                         successRedirectContext: {
                             action: "SUCCESS",
                             isNewRecipeUser: result.createdNewRecipeUser,
+                            user: result.user,
                             redirectToPath: getRedirectToPathFromURL(),
                         },
                     },

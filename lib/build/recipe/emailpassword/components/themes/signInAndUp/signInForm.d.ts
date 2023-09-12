@@ -10,7 +10,7 @@ export declare const SignInForm: import("react").ComponentType<
         config: import("../../../types").NormalisedConfig;
         signUpClicked?: (() => void) | undefined;
         forgotPasswordClick: () => void;
-        onSuccess: () => void;
+        onSuccess: (result: { user: import("supertokens-web-js/types").User }) => void;
     } & {
         header?: JSX.Element | undefined;
         footer?: JSX.Element | undefined;

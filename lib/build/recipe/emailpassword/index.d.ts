@@ -81,6 +81,11 @@ export default class Wrapper {
               }[];
               fetchResponse: Response;
           }
+        | {
+              status: "SIGN_UP_NOT_ALLOWED";
+              reason: string;
+              fetchResponse: Response;
+          }
     >;
     static signIn(input: {
         formFields: {
@@ -105,6 +110,11 @@ export default class Wrapper {
           }
         | {
               status: "WRONG_CREDENTIALS_ERROR";
+              fetchResponse: Response;
+          }
+        | {
+              status: "SIGN_IN_NOT_ALLOWED";
+              reason: string;
               fetchResponse: Response;
           }
     >;

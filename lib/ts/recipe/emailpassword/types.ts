@@ -245,7 +245,7 @@ export type SignInThemeProps = FormThemeBaseProps & {
     config: NormalisedConfig;
     signUpClicked?: () => void;
     forgotPasswordClick: () => void;
-    onSuccess: () => void;
+    onSuccess: (result: { user: User }) => void;
 };
 
 export type SignUpThemeProps = FormThemeBaseProps & {
@@ -254,7 +254,7 @@ export type SignUpThemeProps = FormThemeBaseProps & {
     onError: (error: string) => void;
     config: NormalisedConfig;
     signInClicked?: () => void;
-    onSuccess: () => void;
+    onSuccess: (result: { user: User }) => void;
 };
 
 export type SignInAndUpThemeProps = {

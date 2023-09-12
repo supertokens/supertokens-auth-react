@@ -13,6 +13,8 @@
  * under the License.
  */
 
+import type { User } from "supertokens-web-js/types";
+
 import type {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -25,11 +27,19 @@ export type Config<T, S, R> = UserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
 
 export type NormalisedConfig<T, Action, R> = NormalisedRecipeModuleConfig<T, Action, R>;
 
-export type GetRedirectionURLContext = {
-    action: "SUCCESS";
-    isNewRecipeUser: boolean;
-    redirectToPath?: string;
-};
+export type GetRedirectionURLContext =
+    | {
+          action: "SUCCESS";
+          isNewRecipeUser: true;
+          user: User;
+          redirectToPath?: string;
+      }
+    | {
+          action: "SUCCESS";
+          isNewRecipeUser: false;
+          user?: User;
+          redirectToPath?: string;
+      };
 
 export type OnHandleEventContext = {
     action: "SESSION_ALREADY_EXISTS";

@@ -122,7 +122,7 @@ export declare type SignInThemeProps = FormThemeBaseProps & {
     config: NormalisedConfig;
     signUpClicked?: () => void;
     forgotPasswordClick: () => void;
-    onSuccess: () => void;
+    onSuccess: (result: { user: User }) => void;
 };
 export declare type SignUpThemeProps = FormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
@@ -130,7 +130,7 @@ export declare type SignUpThemeProps = FormThemeBaseProps & {
     onError: (error: string) => void;
     config: NormalisedConfig;
     signInClicked?: () => void;
-    onSuccess: () => void;
+    onSuccess: (result: { user: User }) => void;
 };
 export declare type SignInAndUpThemeProps = {
     signInForm: SignInThemeProps;

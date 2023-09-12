@@ -269,13 +269,13 @@ describe("SuperTokens Account linking", function () {
                 await tryEmailPasswordSignUp(page, email);
 
                 const successAdornments = await getInputAdornmentsSuccess(page);
-                assert.strictEqual(successAdornments.length, 3);
+                assert.strictEqual(successAdornments.length, 4);
 
                 const errorAdornments = await getInputAdornmentsError(page);
-                assert.strictEqual(errorAdornments.length, 1);
-                let fieldErrors = await getFieldErrors(page);
+                assert.strictEqual(errorAdornments.length, 0);
 
-                assert.deepStrictEqual(fieldErrors, ["This email already exists. Please sign in instead."]);
+                assert.strictEqual(new URL(page.url()).pathname, "/auth/");
+                assert.strictEqual(await getGeneralError(page), "Cannot sign up due to security reasons. Please try logging in, use a different login method or contact support. (ERR_CODE_007)");
             });
 
             it("should not allow sign in w/ an unverified emailpassword user in case of conflict", async function () {
@@ -311,7 +311,7 @@ describe("SuperTokens Account linking", function () {
 
                 await submitForm(page);
                 assert.strictEqual(new URL(page.url()).pathname, "/auth/");
-                assert.strictEqual(await getGeneralError(page), "Incorrect email and password combination");
+                assert.strictEqual(await getGeneralError(page), "Cannot sign in due to security reasons. Please try resetting your password, use a different login method or contact support. (ERR_CODE_008)");
             });
 
             it("should not allow sign up w/ an unverified thirdparty user in case of conflict", async function () {
