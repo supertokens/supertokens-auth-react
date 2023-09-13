@@ -170,10 +170,6 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                             os.map((fs) => ({ ...fs, error: errorFields.find((ef: any) => ef.id === fs.id)?.error }))
                         );
                     }
-                    if (result.status !== "OK" && result.reason !== undefined) {
-                        props.onError(result.reason);
-                        generalError = result.reason;
-                    }
                 }
             } catch (e) {
                 props.onError("SOMETHING_WENT_WRONG_ERROR");

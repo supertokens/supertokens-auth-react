@@ -318,7 +318,7 @@ app.post("/changeEmail", async (req, res) => {
     let resp;
     if (req.body.rid === "emailpassword") {
         resp = await EmailPassword.updateEmailOrPassword({
-            recipeUserId: SuperTokens.convertToRecipeUserId(req.body.recipeUserId),
+            recipeUserId: convertToRecipeUserIdIfAvailable(req.body.recipeUserId),
             email: req.body.email,
             tenantIdForPasswordPolicy: req.body.tenantId,
         });
@@ -334,7 +334,7 @@ app.post("/changeEmail", async (req, res) => {
         );
     } else if (req.body.rid === "passwordless") {
         resp = await Passwordless.updateUser({
-            recipeUserId: SuperTokens.convertToRecipeUserId(req.body.recipeUserId),
+            recipeUserId: convertToRecipeUserIdIfAvailable(req.body.recipeUserId),
             email: req.body.email,
             phoneNumber: req.body.phoneNumber,
         });
@@ -385,6 +385,38 @@ app.get("/token", async (_, res) => {
     res.send({
         latestURLWithToken,
     });
+});
+
+app.post("/setupTenant", async (req, res) => {
+    const { tenantId, mockLoginMethods } = req.body;
+    let coreResp = await Multitenancy.createOrUpdateTenant(tenantId, {
+        emailPasswordEnabled: mockLoginMethods.emailPassword?.enabled === true,
+        thirdPartyEnabled: mockLoginMethods.thirdParty?.enabled === true,
+        passwordlessEnabled: mockLoginMethods.passwordless?.enabled === true,
+        coreConfig: {},
+    });
+    res.send(coreResp);
+});
+
+app.post("/addUserToTenant", async (req, res) => {
+    const { tenantId, recipeUserId } = req.body;
+    let coreResp = await Multitenancy.associateUserToTenant(tenantId, convertToRecipeUserIdIfAvailable(recipeUserId));
+    res.send(coreResp);
+});
+
+app.post("/removeUserFromTenant", async (req, res) => {
+    const { tenantId, recipeUserId } = req.body;
+    let coreResp = await Multitenancy.disassociateUserFromTenant(
+        tenantId,
+        convertToRecipeUserIdIfAvailable(recipeUserId)
+    );
+    res.send(coreResp);
+});
+
+app.post("/removeTenant", async (req, res) => {
+    const { tenantId } = req.body;
+    let coreResp = await Multitenancy.deleteTenant(tenantId);
+    res.send(coreResp);
 });
 
 app.post("/test/setFlow", (req, res) => {
@@ -1013,4 +1045,11 @@ function initST() {
                 ? recipeList.filter(([key]) => enabledRecipes.includes(key)).map(([_key, recipeFunc]) => recipeFunc)
                 : recipeList.map(([_key, recipeFunc]) => recipeFunc),
     });
+}
+
+function convertToRecipeUserIdIfAvailable(id) {
+    if (SuperTokens.convertToRecipeUserId !== undefined) {
+        return SuperTokens.convertToRecipeUserId(id);
+    }
+    return id;
 }

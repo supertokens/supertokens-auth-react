@@ -757,6 +757,19 @@ export function setAccountLinkingConfig(enabled, shouldAutomaticallyLink, should
     });
 }
 
+export function changeEmail(rid, recipeUserId, email, phoneNumber) {
+    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/changeEmail`, {
+        method: "POST",
+        headers: [["content-type", "application/json"]],
+        body: JSON.stringify({
+            rid,
+            recipeUserId,
+            email,
+            phoneNumber,
+        }),
+    });
+}
+
 export function setEnabledRecipes(enabledRecipes, enabledProviders) {
     return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setEnabledRecipes`, {
         method: "POST",

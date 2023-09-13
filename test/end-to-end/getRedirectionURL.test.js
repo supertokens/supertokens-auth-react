@@ -17,8 +17,7 @@ import {
     isPasswordlessSupported,
     isThirdPartyPasswordlessSupported,
 } from "../helpers";
-// Run the tests in a DOM environment.
-require("jsdom-global")();
+
 import {
     TEST_CLIENT_BASE_URL,
     TEST_SERVER_BASE_URL,

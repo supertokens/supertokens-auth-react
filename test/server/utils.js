@@ -138,7 +138,7 @@ module.exports.startST = async function (config = {}) {
                     console.log(`Application started on http://localhost:${process.env.NODE_PORT | 8080}`);
                     console.log(`processId: ${nonIntersection[0]}`);
 
-                    if (host !== "localhost" || port !== 9000 || config.noApp) {
+                    if (process.env.REAL_DB_TEST !== "true" || host !== "localhost" || port !== 9000 || config.noApp) {
                         return resolve(`http://${host}:${port}`);
                     }
 

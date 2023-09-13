@@ -17,8 +17,6 @@
  * Imports
  */
 
-/* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
-import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
 import fetch from "isomorphic-fetch";
@@ -47,9 +45,6 @@ import {
     SIGN_IN_UP_API,
     SOMETHING_WENT_WRONG_ERROR,
 } from "../constants";
-
-// Run the tests in a DOM environment.
-require("jsdom-global")();
 
 let connectionURI;
 /*

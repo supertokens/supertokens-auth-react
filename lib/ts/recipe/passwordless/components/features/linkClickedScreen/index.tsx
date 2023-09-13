@@ -90,7 +90,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
                     history: props.history,
                     queryParams: {
-                        error: response.reason ?? "sign_in_up_not_allowed",
+                        error: response.reason,
                     },
                     redirectBack: false,
                 });

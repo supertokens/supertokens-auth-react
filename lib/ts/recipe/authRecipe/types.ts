@@ -13,13 +13,12 @@
  * under the License.
  */
 
-import type { User } from "supertokens-web-js/types";
-
 import type {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
     UserInput as UserInputRecipeModule,
 } from "../recipeModule/types";
+import type { User } from "supertokens-web-js/types";
 
 export type UserInput<T, Action, R> = UserInputRecipeModule<T, Action, R>;
 

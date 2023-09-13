@@ -41,7 +41,7 @@ import type {
 } from "../../../types";
 import type { Dispatch } from "react";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
-import { User } from "supertokens-web-js/types";
+import type { User } from "supertokens-web-js/types";
 
 export const useFeatureReducer = (recipe: Recipe | undefined) => {
     return React.useReducer(
