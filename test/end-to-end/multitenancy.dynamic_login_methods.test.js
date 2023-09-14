@@ -114,7 +114,9 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     after(async function () {
-        await browser.close();
+        if (browser !== undefined) {
+            await browser.close();
+        }
     });
 
     it("Renders correct signup form with emailpassword when core list of providers is empty", async function () {

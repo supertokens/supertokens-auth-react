@@ -124,7 +124,9 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
     });
 
     after(async function () {
-        await browser.close();
+        if (browser !== undefined) {
+            await browser.close();
+        }
     });
 
     describe("without user sharing", () => {
