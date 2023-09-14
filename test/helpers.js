@@ -844,6 +844,15 @@ export async function isMultitenancySupported() {
     return true;
 }
 
+export async function isMultitenancyManagementEndpointsSupported() {
+    const features = await getFeatureFlags();
+    if (!features.includes("multitenancyManagementEndpoints")) {
+        return false;
+    }
+
+    return true;
+}
+
 export async function isAccountLinkingSupported() {
     const features = await getFeatureFlags();
     if (!features.includes("accountlinking")) {
@@ -866,4 +875,51 @@ export async function setGeneralErrorToLocalStorage(recipeName, action, page) {
 
 export async function getTestEmail() {
     return `john.doe+${Date.now()}@supertokens.io`;
+}
+
+export async function setupTenant(tenantId, mockLoginMethods) {
+    let coreResp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/setupTenant`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            tenantId,
+            mockLoginMethods,
+        }),
+    });
+    assert.strictEqual(coreResp.status, 200);
+}
+
+export async function addUserToTenant(tenantId, recipeUserId) {
+    let coreResp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/addUserToTenant`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            tenantId,
+            recipeUserId,
+        }),
+    });
+    assert.strictEqual(coreResp.status, 200);
+}
+
+export async function removeUserFromTenant(tenantId, recipeUserId) {
+    let coreResp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/removeUserFromTenant`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            tenantId,
+            recipeUserId,
+        }),
+    });
+    assert.strictEqual(coreResp.status, 200);
+}
+
+export async function removeTenant(tenantId) {
+    let coreResp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/removeTenant`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            tenantId,
+        }),
+    });
+    assert.strictEqual(coreResp.status, 200);
 }

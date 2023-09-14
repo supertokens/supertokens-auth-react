@@ -485,6 +485,7 @@ app.get("/test/featureFlags", (req, res) => {
 
     if (multitenancySupported) {
         available.push("multitenancy");
+        available.push("multitenancyManagementEndpoints");
     }
 
     if (accountLinkingSupported) {

@@ -40,6 +40,11 @@ import {
     getTextByDataSupertokens,
     getVerificationEmailErrorTitle,
     isMultitenancySupported,
+    isMultitenancyManagementEndpointsSupported,
+    setupTenant,
+    addUserToTenant,
+    removeUserFromTenant,
+    removeTenant,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -59,7 +64,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
     let pageCrashed;
 
     before(async function () {
-        const isSupported = await isMultitenancySupported();
+        const isSupported = (await isMultitenancySupported()) && (await isMultitenancyManagementEndpointsSupported());
         if (!isSupported) {
             this.skip();
         }
@@ -1317,53 +1322,6 @@ export async function enableDynamicLoginMethods(page) {
     return page.evaluate(() => {
         window.localStorage.setItem("usesDynamicLoginMethods", "true");
     });
-}
-
-async function setupTenant(tenantId, mockLoginMethods) {
-    let coreResp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/setupTenant`, {
-        method: "POST",
-        headers: new Headers([["content-type", "application/json"]]),
-        body: JSON.stringify({
-            tenantId,
-            mockLoginMethods,
-        }),
-    });
-    assert.strictEqual(coreResp.status, 200);
-}
-
-async function addUserToTenant(tenantId, recipeUserId) {
-    let coreResp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/addUserToTenant`, {
-        method: "POST",
-        headers: new Headers([["content-type", "application/json"]]),
-        body: JSON.stringify({
-            tenantId,
-            recipeUserId,
-        }),
-    });
-    assert.strictEqual(coreResp.status, 200);
-}
-
-async function removeUserFromTenant(tenantId, recipeUserId) {
-    let coreResp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/removeUserFromTenant`, {
-        method: "POST",
-        headers: new Headers([["content-type", "application/json"]]),
-        body: JSON.stringify({
-            tenantId,
-            recipeUserId,
-        }),
-    });
-    assert.strictEqual(coreResp.status, 200);
-}
-
-async function removeTenant(tenantId) {
-    let coreResp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/removeTenant`, {
-        method: "POST",
-        headers: new Headers([["content-type", "application/json"]]),
-        body: JSON.stringify({
-            tenantId,
-        }),
-    });
-    assert.strictEqual(coreResp.status, 200);
 }
 
 async function epSignUp(page, email, fieldErrors, generalError, emailVerificationRequired) {
