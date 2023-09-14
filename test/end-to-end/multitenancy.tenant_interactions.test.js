@@ -689,8 +689,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             }
         });
 
-        it.skip("should revoke magic links on removed tenants", async function () {
-            // TODO: validate that this should pass
+        it("should revoke magic links on removed tenants", async function () {
             await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE_AND_MAGIC_LINK");
             await setEnabledRecipes(page, ["passwordless"]);
             await setupTenant("customer1", {
@@ -723,10 +722,12 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             await removeTenant("customer1");
             await setTenantId(page, "public");
 
-            await page.goto(device.codes[0].urlWithLinkCode);
+            await Promise.all([
+                page.goto(device.codes[0].urlWithLinkCode),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
 
             assert.strictEqual(await getGeneralError(page), SOMETHING_WENT_WRONG_ERROR);
-            await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]");
         });
     });
 
