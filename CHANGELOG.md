@@ -22,6 +22,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   The context param of `getRedirectionURL` gets an optional `user` prop (it's always defined if `createdNewRecipeUser` is set to true)
 -   Added new language translation keys
 
+### Migration
+
+#### New User structure
+
+We've added a generic `User` type instead of the old recipe specific ones. The mapping of old props to new in case you are not using account-linking:
+
+-   `user.id` stays `user.id`
+-   `user.email` becomes `user.emails[0]`
+-   `user.phoneNumber` becomes `user.phoneNumbers[0]`
+-   `user.thirdParty` becomes `user.thirdParty[0]`
+-   `user.timeJoined` is still `user.timeJoined`
+-   `user.tenantIds` is still `user.tenantIds`
+
+#### Checking if a new primary user was created
+
+In `getRedirectionURL`
+
+```
+EmailPassword.init({ // This looks the same for other recipes
+    // Other config options.
+    async getRedirectionURL(context) {
+        if (context.action === "SUCCESS") {
+            if (context.isNewRecipeUser && context.user.loginMethods.length === 1) {
+                // new primary user
+            } else {
+                // only a recipe user was created
+            }
+        }
+        return undefined;
+    }
+})
+```
+
+In `onHandleEvent`:
+
+```
+EmailPassword.init({ // This looks the same for other recipes
+    // Other config options.
+    onHandleEvent(context: EmailPasswordOnHandleEventContext) {
+        if (context.action === "SUCCESS") {
+            if (context.isNewRecipeUser && context.user.loginMethods.length === 1) {
+                // new primary user
+            } else {
+                // only a recipe user was created
+            }
+        }
+    },
+})
+```
+
 ## [0.34.1] - 2023-07-31
 
 ### Changes

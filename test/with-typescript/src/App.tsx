@@ -377,13 +377,28 @@ function getEmailPasswordConfigs() {
             },
         },
 
-        onHandleEvent(context: EmailPasswordOnHandleEventContext) {},
+        onHandleEvent(context: EmailPasswordOnHandleEventContext) {
+            if (context.action === "SUCCESS") {
+                if (context.isNewRecipeUser && context.user.loginMethods.length === 1) {
+                    // new primary user
+                } else {
+                    // only a recipe user was created
+                }
+            }
+        },
 
         async preAPIHook(context: EmailPasswordPreAPIHookContext) {
             return context;
         },
 
         async getRedirectionURL(context: EmailPasswordGetRedirectionURLContext) {
+            if (context.action === "SUCCESS") {
+                if (context.isNewRecipeUser && context.user.loginMethods.length === 1) {
+                    // new primary user
+                } else {
+                    // only a recipe user was created
+                }
+            }
             return undefined;
         },
         override: {
