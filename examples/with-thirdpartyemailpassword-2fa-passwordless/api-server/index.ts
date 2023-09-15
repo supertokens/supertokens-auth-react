@@ -185,17 +185,22 @@ supertokens.init({
                                 // we alreay have a phone number associated with this user,
                                 // so we will add it to the access token payload so that
                                 // we can send an OTP to it without asking the end user.
-                                let passwordlessUserInfo = await Passwordless.getUserById({
-                                    userId: userMetadata.metadata.passwordlessUserId as string,
-                                    userContext: input.userContext,
-                                });
-                                phoneNumber = passwordlessUserInfo?.phoneNumber;
+                                let passwordlessUserInfo = await supertokens.getUser(
+                                    userMetadata.metadata.passwordlessUserId as string,
+                                    input.userContext
+                                );
+                                phoneNumber = passwordlessUserInfo?.phoneNumbers[0];
                             }
                             return originalImplementation.createNewSession({
                                 ...input,
                                 accessTokenPayload: {
                                     ...input.accessTokenPayload,
-                                    ...(await SecondFactorClaim.build(input.userId, input.tenantId, input.userContext)),
+                                    ...(await SecondFactorClaim.build(
+                                        input.userId,
+                                        input.recipeUserId,
+                                        input.tenantId,
+                                        input.userContext
+                                    )),
                                     phoneNumber,
                                 },
                             });

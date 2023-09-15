@@ -71,6 +71,7 @@ describe("SuperTokens Example Basic tests", function () {
 
     describe("Email Password test", function () {
         it("Successful signup with credentials", async function () {
+            await new Promise((res) => setTimeout(res, 1000));
             await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             // redirected to /auth

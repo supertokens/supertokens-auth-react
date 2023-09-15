@@ -37,12 +37,12 @@ app.get("/sessioninfo", verifySession(), async (req: SessionRequest, res) => {
 
 app.get("/email", verifySession(), async (req: SessionRequest, res) => {
     let userId = req.session!.getUserId();
-    let user = await EmailPassword.getUserById(userId);
+    let user = await supertokens.getUser(userId);
     if (user === undefined) {
         throw new Error("Should never come here");
     }
 
-    return res.send(user.email);
+    return res.send(user.emails[0]);
 });
 
 // This API is called from the frontend when the user enters their new email.
@@ -58,7 +58,8 @@ app.post("/change-email", verifySession(), async (req: SessionRequest, res) => {
     // First we check if the new email is already associated with another user.
     // If it is, then we throw an error. If it's already associated with this user,
     // then we return a success response with an appropriate message.
-    let existingUser = await EmailPassword.getUserByEmail(session.getTenantId(), email);
+    let users = await supertokens.listUsersByAccountInfo(session.getTenantId(), { email });
+    const existingUser = users[0];
     if (existingUser !== undefined) {
         if (existingUser.id === session.getUserId()) {
             return res.status(200).send("Email already belongs to this account");
@@ -70,13 +71,14 @@ app.post("/change-email", verifySession(), async (req: SessionRequest, res) => {
     // Then, we check if the email is verified for this user ID or not.
     // It is important to understand that SuperTokens stores email verification
     // status based on the user ID AND the email, and not just the email.
-    let isVerified = await EmailVerification.isEmailVerified(session.getUserId(), email);
+    let isVerified = await EmailVerification.isEmailVerified(session.getRecipeUserId(), email);
 
     if (!isVerified) {
         // Now we send the email verification link to the user for the new email.
         const sendEmailRes = await EmailVerification.sendEmailVerificationEmail(
             session.getTenantId(),
             session.getUserId(),
+            session.getRecipeUserId(),
             email
         );
 
@@ -89,7 +91,7 @@ app.post("/change-email", verifySession(), async (req: SessionRequest, res) => {
 
     // Since the email is verified, we try and do an update
     let resp = await EmailPassword.updateEmailOrPassword({
-        userId: session.getUserId(),
+        recipeUserId: session.getRecipeUserId(),
         email: email,
     });
 

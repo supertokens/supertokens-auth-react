@@ -44,7 +44,7 @@ export const SuperTokensConfig: TypeInput = {
                                 // This will update the email of the user to the one
                                 // that was just marked as verified by the token.
                                 await EmailPassword.updateEmailOrPassword({
-                                    userId: response.user.id,
+                                    recipeUserId: response.user.recipeUserId,
                                     email: response.user.email,
                                 });
                             }

@@ -115,6 +115,7 @@ supertokens.init({
                                     getSessionDataFromDatabase: () => null,
                                     getTimeCreated: () => -1,
                                     getUserId: () => "",
+                                    getRecipeUserId: () => input.recipeUserId,
                                     revokeSession: () => {},
                                     updateSessionDataInDatabase: () => {},
                                     attachToRequestResponse: () => {},

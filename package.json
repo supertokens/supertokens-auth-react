@@ -83,7 +83,7 @@
     "peerDependencies": {
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0",
-        "supertokens-web-js": "^0.7.0"
+        "supertokens-web-js": "^0.8.0"
     },
     "scripts": {
         "init": "bash ./init.sh",

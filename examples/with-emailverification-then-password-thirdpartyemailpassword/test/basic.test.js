@@ -84,7 +84,11 @@ describe("SuperTokens Example Basic tests", function () {
             const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
             // Create a new token and use it (we don't have access to the originally sent one)
-            const tokenInfo = await EmailVerification.createEmailVerificationToken("public", userId, email);
+            const tokenInfo = await EmailVerification.createEmailVerificationToken(
+                "public",
+                SuperTokensNode.convertToRecipeUserId(userId),
+                email
+            );
             await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
             await submitForm(page);
 

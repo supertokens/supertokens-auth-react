@@ -159,6 +159,7 @@ supertokens.init({
                                 // session's payload as PhoneVerifiedClaim: true so that
                                 // the user has access to API routes and the frontend UI
                                 await session.setClaimValue(PhoneVerifiedClaim, true, input.userContext);
+                                resp.user = (await supertokens.getUser(session.getUserId()))!;
                             }
 
                             return resp;
@@ -187,13 +188,18 @@ supertokens.init({
 
                                 // we also get the phone number of the user and save it in the
                                 // session so that the OTP can be sent to it directly
-                                let userInfo = await EmailPassword.getUserById(input.userId, input.userContext);
+                                let userInfo = await supertokens.getUser(input.userId, input.userContext);
                                 return originalImplementation.createNewSession({
                                     ...input,
                                     accessTokenPayload: {
                                         ...input.accessTokenPayload,
-                                        ...PhoneVerifiedClaim.build(input.userId, input.tenantId, input.userContext),
-                                        phoneNumber: userInfo?.email,
+                                        ...PhoneVerifiedClaim.build(
+                                            input.userId,
+                                            input.recipeUserId,
+                                            input.tenantId,
+                                            input.userContext
+                                        ),
+                                        phoneNumber: userInfo?.emails[0],
                                     },
                                 });
                             }

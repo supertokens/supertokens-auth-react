@@ -53,7 +53,7 @@ supertokens.init({
         }),
         EmailPassword.init({
             override: {
-                functions: (oI) => epOverride(oI),
+                apis: (oI) => epOverride(oI),
             },
         }),
         Session.init(),
@@ -79,7 +79,7 @@ app.use(middleware());
 app.post("/add-email", verifySession(), async (req: SessionRequest, res) => {
     let userId = req.session!.getUserId();
     let emailToAdd = req.body.email;
-    let success = associateNewEmailWithPrimaryEmail(emailToAdd, (await EmailPassword.getUserById(userId))!.email);
+    let success = associateNewEmailWithPrimaryEmail(emailToAdd, (await supertokens.getUser(userId))!.emails[0]);
     res.send({
         status: success ? "OK" : "INPUT_EMAIL_ASSOCIATED_WITH_ANOTHER_USER",
     });
