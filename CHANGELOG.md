@@ -72,6 +72,12 @@ EmailPassword.init({ // This looks the same for other recipes
 })
 ```
 
+## [0.34.2] - 2023-08-27
+
+### Fixes
+
+-   Fixed the SDK trying to merge the providers from the tenant config if the third party login method is disabled.
+
 ## [0.34.1] - 2023-07-31
 
 ### Changes

@@ -478,7 +478,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
 
     // Examples from https://supertokens.com/docs/contribute/decisions/multitenancy/0006
 
-    it("should should show emailpassword if it's the only one added on both", async function () {
+    it("should show emailpassword if it's the only one added on both", async function () {
         await setEnabledRecipes(page, ["emailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
@@ -506,7 +506,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.deepStrictEqual(inputNames, ["email", "password"]);
     });
 
-    it("should should show thirdpartyemailpassword with emailpassword disabled if FE only has tpep but only thirdparty is enabled", async function () {
+    it("should show thirdpartyemailpassword with emailpassword disabled if FE only has tpep but only thirdparty is enabled", async function () {
         await setEnabledRecipes(page, ["thirdpartyemailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: false },
@@ -534,7 +534,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.deepStrictEqual(inputNames, []);
     });
 
-    it("should should show thirdpartyemailpassword if FE has tpep and both emailpassword and thirdparty is enabled", async function () {
+    it("should show thirdpartyemailpassword if FE has tpep and both emailpassword and thirdparty is enabled", async function () {
         await setEnabledRecipes(page, ["thirdpartyemailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
@@ -563,7 +563,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     // This is slightly different than the version in the ADR, since it hasn't been updated
-    it("should should show emailpassword if FE has tp and ep but (no tpep) and both emailpassword and thirdparty is enabled", async function () {
+    it("should show emailpassword if FE has tp and ep but (no tpep) and both emailpassword and thirdparty is enabled", async function () {
         await setEnabledRecipes(page, ["thirdparty", "emailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
@@ -591,7 +591,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.deepStrictEqual(inputNames, ["email", "password"]);
     });
 
-    it("should should show thirdparty if FE has tp and pwless and both emailpassword and thirdparty is enabled", async function () {
+    it("should show thirdparty if FE has tp and pwless and both emailpassword and thirdparty is enabled", async function () {
         await setEnabledRecipes(page, ["thirdparty", "passwordless"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
@@ -619,7 +619,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.deepStrictEqual(inputNames, []);
     });
 
-    it("should should show thirdpartyemailpassword if FE has tpep and ep and both emailpassword and thirdparty is enabled", async function () {
+    it("should show thirdpartyemailpassword if FE has tpep and ep and both emailpassword and thirdparty is enabled", async function () {
         await setEnabledRecipes(page, ["thirdpartyemailpassword", "emailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
@@ -647,7 +647,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.deepStrictEqual(inputNames, ["email", "password"]);
     });
 
-    it("should should show thirdpartypasswordless if FE has tppwless and ep and both emailpassword and thirdparty is enabled", async function () {
+    it("should show thirdpartypasswordless if FE has tppwless and ep and both emailpassword and thirdparty is enabled", async function () {
         await setEnabledRecipes(page, ["thirdpartypasswordless", "emailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
@@ -675,7 +675,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.deepStrictEqual(inputNames, []);
     });
 
-    it("should should show thirdpartyemailpassword if FE has tpep and tppwless and all 3 enabled in core", async function () {
+    it("should show thirdpartyemailpassword if FE has tpep and tppwless and all 3 enabled in core", async function () {
         await setEnabledRecipes(page, ["thirdpartypasswordless", "thirdpartyemailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
@@ -703,7 +703,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.deepStrictEqual(inputNames, ["email", "password"]);
     });
 
-    it("should should show thirdpartypwless if rid has FE has tpep and tppwless and all 3 enabled in core", async function () {
+    it("should show thirdpartypwless if rid has FE has tpep and tppwless and all 3 enabled in core", async function () {
         await setEnabledRecipes(page, ["thirdpartypasswordless", "thirdpartyemailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
@@ -731,7 +731,109 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.deepStrictEqual(inputNames, ["email", "password"]);
     });
 
-    it("should should show something went wrong if logging in with disabled method", async function () {
+    it("should show thirdpartyemailpassword if FE has only tpep and thirdparty is disbled in core", async function () {
+        await setEnabledRecipes(page, ["thirdpartyemailpassword"]);
+        await enableDynamicLoginMethods(page, {
+            emailPassword: { enabled: true },
+            passwordless: { enabled: true },
+            thirdParty: {
+                enabled: false,
+                providers: [],
+            },
+        });
+
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+
+        // Thirdparty
+        const providers = await getProvidersLabels(page);
+        assert.strictEqual(providers.length, 0);
+        assert.strictEqual(await getProviderLogoCount(page), 0);
+
+        // Emailpassword
+        const inputNames = await getInputNames(page);
+        assert.deepStrictEqual(inputNames, ["email", "password"]);
+    });
+
+    it("should show thirdpartyemailpassword if FE has only tpep and thirdparty is disbled in core", async function () {
+        await setEnabledRecipes(page, ["thirdpartyemailpassword"]);
+        await enableDynamicLoginMethods(page, {
+            emailPassword: { enabled: false },
+            passwordless: { enabled: false },
+            thirdParty: {
+                enabled: true,
+                providers: [],
+            },
+        });
+
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+
+        // Thirdparty
+        const providers = await getProvidersLabels(page);
+        assert.notStrictEqual(providers.length, 0);
+        assert.notStrictEqual(await getProviderLogoCount(page), 0);
+
+        // Emailpassword
+        const inputNames = await getInputNames(page);
+        assert.deepStrictEqual(inputNames, []);
+    });
+
+    it("should show thirdpartpasswordless if FE has only tppwless and thirdparty is disbled in core", async function () {
+        await setEnabledRecipes(page, ["thirdpartypasswordless"]);
+        await enableDynamicLoginMethods(page, {
+            emailPassword: { enabled: true },
+            passwordless: { enabled: true },
+            thirdParty: {
+                enabled: false,
+                providers: [],
+            },
+        });
+
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+
+        // Thirdparty
+        const providers = await getProvidersLabels(page);
+        assert.strictEqual(providers.length, 0);
+        assert.strictEqual(await getProviderLogoCount(page), 0);
+
+        // pwless
+        await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]");
+    });
+
+    it("should show thirdpartpasswordless if FE has only tppwless and passwordless is disbled in core", async function () {
+        await setEnabledRecipes(page, ["thirdpartypasswordless"]);
+        await enableDynamicLoginMethods(page, {
+            emailPassword: { enabled: false },
+            passwordless: { enabled: false },
+            thirdParty: {
+                enabled: true,
+                providers: [],
+            },
+        });
+
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+
+        // Thirdparty
+        const providers = await getProvidersLabels(page);
+        assert.notStrictEqual(providers.length, 0);
+        assert.notStrictEqual(await getProviderLogoCount(page), 0);
+
+        // pwless
+        await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]", true);
+    });
+
+    it("should show something went wrong if logging in with disabled method", async function () {
         await setEnabledRecipes(page, ["emailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: false },
@@ -769,7 +871,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.strictEqual(error, SOMETHING_WENT_WRONG_ERROR);
     });
 
-    it("should should show thirdparty if FE has tp and pwless and both emailpassword and thirdparty is enabled", async function () {
+    it("should show thirdparty if FE has tp and pwless and both emailpassword and thirdparty is enabled", async function () {
         await setEnabledRecipes(page, ["thirdparty", "passwordless"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
@@ -797,7 +899,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.deepStrictEqual(inputNames, []);
     });
 
-    it("should should be able to log in with dynamically added tp providers", async function () {
+    it("should be able to log in with dynamically added tp providers", async function () {
         await setEnabledRecipes(page, ["thirdparty"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: false },
