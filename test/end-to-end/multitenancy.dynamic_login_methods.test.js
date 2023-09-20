@@ -38,6 +38,7 @@ import {
     clickOnProviderButton,
     loginWithAuth0,
     isMultitenancySupported,
+    isAccountLinkingSupported,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -134,6 +135,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
             "Continue with Google",
             "Continue with Facebook",
             "Continue with Auth0",
+            ...((await isAccountLinkingSupported()) ? ["Continue with Mock Provider"] : []),
         ]);
         const inputNames = await getInputNames(page);
         assert.deepStrictEqual(inputNames, ["email", "password"]);
@@ -375,6 +377,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
             "Continue with Google",
             "Continue with Facebook",
             "Continue with Auth0",
+            ...((await isAccountLinkingSupported()) ? ["Continue with Mock Provider"] : []),
         ]);
         assert.strictEqual(await getProviderLogoCount(page), 3);
     });
@@ -957,6 +960,7 @@ export async function enableDynamicLoginMethods(page, mockLoginMethods, tenantId
         headers: new Headers([
             ["content-type", "application/json"],
             ["rid", "multitenancy"],
+            ["cdi-version", "3.0"],
         ]),
         body: JSON.stringify({
             tenantId,
@@ -974,6 +978,7 @@ export async function enableDynamicLoginMethods(page, mockLoginMethods, tenantId
             headers: new Headers([
                 ["content-type", "application/json"],
                 ["rid", "multitenancy"],
+                ["cdi-version", "3.0"],
             ]),
             body: JSON.stringify({
                 skipValidation: true,

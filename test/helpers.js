@@ -807,6 +807,15 @@ export async function isMultitenancySupported() {
     return true;
 }
 
+export async function isAccountLinkingSupported() {
+    const features = await getFeatureFlags();
+    if (!features.includes("accountlinking")) {
+        return false;
+    }
+
+    return true;
+}
+
 /**
  * For example setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "EMAIL_PASSWORD_SIGN_UP", page) to
  * set for signUp in email password
