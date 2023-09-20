@@ -9,9 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.35.0] - 2023-09-XX
 
+### Overview
+
+#### Introducing account-linking
+
+With this release, we are introducing AccountLinking, this will let you:
+
+-   link accounts automatically,
+-   implement manual account linking flows.
+
+Check our [guide](https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/account-linking/overview) for more information.
+
+To use this you'll need compatible versions:
+
+-   Core>=7.0.0
+-   supertokens-node>=16.0.0 (support is pending in other backend SDKs)
+-   supertokens-website>=17.0.3
+-   supertokens-web-js>=0.8.0
+-   supertokens-auth-react>=0.35.0
+
 ### Breaking changes
 
--   Added support for FDI 1.18
+-   Added support for FDI 1.18 (Node SDK>= 16.0.0), but keeping support FDI version1.17 (node >= 15.0.0, golang>=0.13, python>=0.15.0)
 -   User type has changed across recipes and functions: recipe specific user types have been removed and replaced by a generic one that contains more information
 -   `createdNewUser` has been renamed to `createdNewRecipeUser`
 -   `createCode`, `consumeCode`, `createPasswordlessCode` and `consumePasswordlessCode` can now return status: `SIGN_IN_UP_NOT_ALLOWED`
@@ -21,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   `signUp` and `emailPasswordSignUp` can now return `SIGN_UP_NOT_ALLOWED`
 -   The context param of `getRedirectionURL` gets an optional `user` prop (it's always defined if `createdNewRecipeUser` is set to true)
 -   Added new language translation keys
+-   We've added error messages for all of the above error statuses. Please see the new UI [here](https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/account-linking/automatic-account-linking#support-status-codes). You can change the text using the language translation feature
 
 ### Migration
 
@@ -35,9 +55,22 @@ We've added a generic `User` type instead of the old recipe specific ones. The m
 -   `user.timeJoined` is still `user.timeJoined`
 -   `user.tenantIds` is still `user.tenantIds`
 
-#### Checking if a new primary user was created
+#### Checking if a user signed up or signed in
 
-In `getRedirectionURL`
+-   When calling passwordless consumeCode / social login signinup APIs, you can check if a user signed up by:
+
+```
+    // Here res refers to the result the function/api functions mentioned above.
+    const isNewUser = res.createdNewRecipeUser && res.user.loginMethods.length === 1;
+```
+
+-   When calling the emailpassword sign up API, you can check if a user signed up by:
+
+```
+    const isNewUser = res.user.loginMethods.length === 1;
+```
+
+-   In `getRedirectionURL`
 
 ```
 EmailPassword.init({ // This looks the same for other recipes
@@ -55,7 +88,7 @@ EmailPassword.init({ // This looks the same for other recipes
 })
 ```
 
-In `onHandleEvent`:
+-   In `onHandleEvent`:
 
 ```
 EmailPassword.init({ // This looks the same for other recipes
