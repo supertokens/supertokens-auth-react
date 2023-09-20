@@ -1316,6 +1316,7 @@ async function setupTenant(appId, tenantId, mockLoginMethods) {
         headers: new Headers([
             ["content-type", "application/json"],
             ["rid", "multitenancy"],
+            ["cdi-version", "3.0"],
         ]),
         body: JSON.stringify({
             tenantId,
@@ -1334,6 +1335,7 @@ async function addUserToTenant(appId, tenantId, userId) {
         headers: new Headers([
             ["content-type", "application/json"],
             ["rid", "multitenancy"],
+            ["cdi-version", "3.0"],
         ]),
         body: JSON.stringify({
             userId,
@@ -1350,6 +1352,7 @@ async function removeUserFromTenant(appId, tenantId, userId) {
             headers: new Headers([
                 ["content-type", "application/json"],
                 ["rid", "multitenancy"],
+                ["cdi-version", "3.0"],
             ]),
             body: JSON.stringify({
                 userId,
@@ -1362,7 +1365,7 @@ async function removeUserFromTenant(appId, tenantId, userId) {
 async function removeTenant(appId, tenantId) {
     let coreResp = await fetch(`http://localhost:9000/appid-${appId}/recipe/multitenancy/tenant/remove`, {
         method: "POST",
-        headers: new Headers([["rid", "multitenancy"]]),
+        headers: new Headers([["rid", "multitenancy"][("cdi-version", "3.0")]]),
         body: JSON.stringify({
             tenantId,
         }),
