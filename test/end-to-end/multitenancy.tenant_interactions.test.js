@@ -1365,7 +1365,10 @@ async function removeUserFromTenant(appId, tenantId, userId) {
 async function removeTenant(appId, tenantId) {
     let coreResp = await fetch(`http://localhost:9000/appid-${appId}/recipe/multitenancy/tenant/remove`, {
         method: "POST",
-        headers: new Headers([["rid", "multitenancy"][("cdi-version", "3.0")]]),
+        headers: new Headers([
+            ["rid", "multitenancy"],
+            ["cdi-version", "3.0"],
+        ]),
         body: JSON.stringify({
             tenantId,
         }),
