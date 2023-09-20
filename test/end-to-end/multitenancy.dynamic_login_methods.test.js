@@ -17,8 +17,6 @@
  * Imports
  */
 
-/* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
-import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
 import fetch from "isomorphic-fetch";
@@ -38,6 +36,9 @@ import {
     clickOnProviderButton,
     loginWithAuth0,
     isMultitenancySupported,
+    isAccountLinkingSupported,
+    isMultitenancyManagementEndpointsSupported,
+    setupTenant,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -48,9 +49,7 @@ import {
     SOMETHING_WENT_WRONG_ERROR,
 } from "../constants";
 
-// Run the tests in a DOM environment.
-require("jsdom-global")();
-
+let connectionURI;
 /*
  * Tests.
  */
@@ -60,7 +59,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     let pageCrashed;
 
     before(async function () {
-        const isSupported = await isMultitenancySupported();
+        const isSupported = (await isMultitenancySupported()) && (await isMultitenancyManagementEndpointsSupported());
         if (!isSupported) {
             this.skip();
         }
@@ -71,9 +70,12 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
             method: "POST",
         }).catch(console.error);
 
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+        const startSTResp = await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
         }).catch(console.error);
+
+        assert.strictEqual(startSTResp.status, 200);
+        connectionURI = await startSTResp.text();
 
         page = await browser.newPage();
         pageCrashed = false;
@@ -112,7 +114,9 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     after(async function () {
-        await browser.close();
+        if (browser !== undefined) {
+            await browser.close();
+        }
     });
 
     it("Renders correct signup form with emailpassword when core list of providers is empty", async function () {
@@ -129,12 +133,18 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
             page.waitForNavigation({ waitUntil: "networkidle0" }),
         ]);
         const providers = await getProvidersLabels(page);
-        compareArrayContents(providers, [
-            "Continue with Github",
-            "Continue with Google",
-            "Continue with Facebook",
-            "Continue with Auth0",
-        ]);
+        compareArrayContents(
+            providers,
+            (await isAccountLinkingSupported())
+                ? [
+                      "Continue with Github",
+                      "Continue with Google",
+                      "Continue with Facebook",
+                      "Continue with Auth0",
+                      "Continue with Mock Provider",
+                  ]
+                : ["Continue with Github", "Continue with Google", "Continue with Facebook", "Continue with Auth0"]
+        );
         const inputNames = await getInputNames(page);
         assert.deepStrictEqual(inputNames, ["email", "password"]);
     });
@@ -370,12 +380,18 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         ]);
 
         const providers = await getProvidersLabels(page);
-        compareArrayContents(providers, [
-            "Continue with Github",
-            "Continue with Google",
-            "Continue with Facebook",
-            "Continue with Auth0",
-        ]);
+        compareArrayContents(
+            providers,
+            (await isAccountLinkingSupported())
+                ? [
+                      "Continue with Github",
+                      "Continue with Google",
+                      "Continue with Facebook",
+                      "Continue with Auth0",
+                      "Continue with Mock Provider",
+                  ]
+                : ["Continue with Github", "Continue with Google", "Continue with Facebook", "Continue with Auth0"]
+        );
         assert.strictEqual(await getProviderLogoCount(page), 3);
     });
 
@@ -951,42 +967,8 @@ function clearDynamicLoginMethodsSettings(page) {
     });
 }
 
-export async function enableDynamicLoginMethods(page, mockLoginMethods, tenantId = "public", app = "public") {
-    let coreResp = await fetch(`http://localhost:9000/appid-${app}/recipe/multitenancy/tenant`, {
-        method: "PUT",
-        headers: new Headers([
-            ["content-type", "application/json"],
-            ["rid", "multitenancy"],
-        ]),
-        body: JSON.stringify({
-            tenantId,
-            emailPasswordEnabled: mockLoginMethods.emailPassword?.enabled === true,
-            thirdPartyEnabled: mockLoginMethods.thirdParty?.enabled === true,
-            passwordlessEnabled: mockLoginMethods.passwordless?.enabled === true,
-            coreConfig: {},
-        }),
-    });
-    assert.strictEqual(coreResp.status, 200);
-
-    for (const provider of mockLoginMethods["thirdParty"]?.providers) {
-        coreResp = await fetch(`http://localhost:9000/appid-${app}/${tenantId}/recipe/multitenancy/config/thirdparty`, {
-            method: "PUT",
-            headers: new Headers([
-                ["content-type", "application/json"],
-                ["rid", "multitenancy"],
-            ]),
-            body: JSON.stringify({
-                skipValidation: true,
-                config: {
-                    ...providerConfigs[provider.id.split("-")[0]],
-                    thirdPartyId: provider.id,
-                    name: provider.name,
-                },
-            }),
-        });
-
-        assert.strictEqual(coreResp.status, 200);
-    }
+export async function enableDynamicLoginMethods(page, mockLoginMethods, tenantId = "public") {
+    await setupTenant(tenantId, mockLoginMethods);
 
     return page.evaluate(() => {
         window.localStorage.setItem("usesDynamicLoginMethods", "true");
@@ -1002,66 +984,3 @@ export async function enableDynamicLoginMethods(page, mockLoginMethods, tenantId
 function compareArrayContents(actual, expected) {
     return assert.deepStrictEqual(actual.sort(), expected.sort());
 }
-
-const providerConfigs = {
-    apple: {
-        clients: [
-            {
-                clientId: "4398792-io.supertokens.example.service",
-                additionalConfig: {
-                    keyId: "7M48Y4RYDL",
-                    privateKey:
-                        "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgu8gXs+XYkqXD6Ala9Sf/iJXzhbwcoG5dMh1OonpdJUmgCgYIKoZIzj0DAQehRANCAASfrvlFbFCYqn3I2zeknYXLwtH30JuOKestDbSfZYxZNMqhF/OzdZFTV0zc5u5s3eN+oCWbnvl0hM+9IW0UlkdA\n-----END PRIVATE KEY-----",
-                    teamId: "YWQCXGJRJL",
-                },
-            },
-        ],
-    },
-    github: {
-        clients: [
-            {
-                clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
-                clientId: "467101b197249757c71f",
-            },
-        ],
-    },
-    google: {
-        clients: [
-            {
-                clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
-                clientSecret: "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",
-            },
-        ],
-    },
-    auth0: {
-        // this contains info about forming the authorisation redirect URL without the state params and without the redirect_uri param
-        authorizationEndpoint: `https://${process.env.AUTH0_DOMAIN}/authorize`,
-        authorizationEndpointQueryParams: {
-            scope: "openid profile email email_verified",
-        },
-        jwksURI: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
-        tokenEndpoint: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
-        clients: [
-            {
-                clientId: process.env.AUTH0_CLIENT_ID,
-                clientSecret: process.env.AUTH0_CLIENT_SECRET,
-            },
-        ],
-        userInfoMap: {
-            fromIdTokenPayload: {
-                userId: "sub",
-                email: "email",
-                emailVerified: "email_verified",
-            },
-        },
-    },
-    test: {
-        // We add a client since it's required
-        clients: [
-            {
-                clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
-                clientSecret: "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",
-            },
-        ],
-    },
-};

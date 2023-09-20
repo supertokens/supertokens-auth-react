@@ -12,8 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-/* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
-import regeneratorRuntime from "regenerator-runtime";
+
 import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
@@ -34,9 +33,6 @@ import {
     SIGN_IN_UP_API,
 } from "../constants";
 import assert from "assert";
-
-// Run the tests in a DOM environment.
-require("jsdom-global")();
 
 describe("SuperTokens userContext with UI components test", function () {
     let browser;

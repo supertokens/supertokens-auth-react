@@ -17,8 +17,6 @@
  * Imports
  */
 
-/* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
-import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import fetch from "isomorphic-fetch";
 import puppeteer from "puppeteer";
@@ -35,8 +33,6 @@ import {
     clickOnProviderButtonWithoutWaiting,
 } from "../helpers";
 
-// Run the tests in a DOM environment.
-require("jsdom-global")();
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
 
 describe("SuperTokens Third Party", function () {

@@ -62,6 +62,8 @@ export const SignInForm = withOverride(
                     });
                     if (response.status === "WRONG_CREDENTIALS_ERROR") {
                         throw new STGeneralError("EMAIL_PASSWORD_SIGN_IN_WRONG_CREDENTIALS_ERROR");
+                    } else if (response.status === "SIGN_IN_NOT_ALLOWED") {
+                        throw new STGeneralError(response.reason);
                     } else {
                         return response;
                     }

@@ -17,8 +17,6 @@
  * Imports
  */
 
-/* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
-import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
 import fetch from "isomorphic-fetch";
@@ -52,15 +50,14 @@ import {
     waitForSTElement,
     isGeneralErrorSupported,
     setGeneralErrorToLocalStorage,
+    isAccountLinkingSupported,
 } from "../helpers";
-
-// Run the tests in a DOM environment.
-require("jsdom-global")();
 
 describe("SuperTokens Email Verification", function () {
     let browser;
     let page;
     let consoleLogs;
+    let accountLinkingSupported;
 
     before(async function () {
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
@@ -73,6 +70,8 @@ describe("SuperTokens Email Verification", function () {
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
             headless: true,
         });
+        accountLinkingSupported = await isAccountLinkingSupported();
+
         page = await browser.newPage();
         await Promise.all([
             page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
@@ -126,7 +125,7 @@ describe("SuperTokens Email Verification", function () {
             ]);
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
 
-            await fetch(`${TEST_SERVER_BASE_URL}/deleteUser`, {
+            await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/deleteUser`, {
                 method: "POST",
                 headers: [["content-type", "application/json"]],
                 body: JSON.stringify({
@@ -183,7 +182,7 @@ describe("SuperTokens Email Verification", function () {
             let pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
 
-            await fetch(`${TEST_SERVER_BASE_URL}/deleteUser`, {
+            await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/deleteUser`, {
                 method: "POST",
                 headers: [["content-type", "application/json"]],
                 body: JSON.stringify({
@@ -257,9 +256,13 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
-                "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
-                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                ...(accountLinkingSupported
+                    ? []
+                    : [
+                          "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
+                          "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                          "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                      ]),
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
@@ -343,9 +346,13 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
-                "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
-                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                ...(accountLinkingSupported
+                    ? []
+                    : [
+                          "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
+                          "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                          "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                      ]),
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
@@ -489,9 +496,13 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
-                "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
-                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                ...(accountLinkingSupported
+                    ? []
+                    : [
+                          "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
+                          "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                          "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                      ]),
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",

@@ -17,8 +17,6 @@
  * Imports
  */
 
-/* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
-import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import fetch from "isomorphic-fetch";
 import puppeteer from "puppeteer";
@@ -43,6 +41,8 @@ import {
     waitFor,
     getFieldErrors,
     clickOnProviderButtonWithoutWaiting,
+    getFeatureFlags,
+    setEnabledRecipes,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -53,9 +53,6 @@ import {
     EMAIL_EXISTS_API,
     GET_AUTH_URL_API,
 } from "../constants";
-
-// Run the tests in a DOM environment.
-require("jsdom-global")();
 
 /*
  * Tests.
@@ -370,6 +367,22 @@ describe("SuperTokens Third Party Email Password", function () {
 
             const url = new URL(res[0].url());
             assert.strictEqual(url.searchParams.get("clientType"), "test-web");
+        });
+
+        it("should handle no providers enabled on the backend", async function () {
+            if (!(await getFeatureFlags()).includes("recipeConfig")) {
+                this.skip();
+            }
+            await assertProviders(page);
+            await setEnabledRecipes(["thirdpartyemailpassword"], []);
+
+            await Promise.all([
+                page.waitForResponse(
+                    (response) => response.url().startsWith(GET_AUTH_URL_API) && response.status() === 400
+                ),
+                clickOnProviderButtonWithoutWaiting(page, "Auth0"),
+            ]);
+            assert.strictEqual(await getGeneralError(page), "Something went wrong. Please try again.");
         });
     });
 

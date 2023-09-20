@@ -37,7 +37,6 @@ import type {
 import type {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
-    User,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
@@ -46,6 +45,7 @@ import type React from "react";
 import type { Dispatch } from "react";
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import type { User } from "supertokens-web-js/types";
 
 export type ComponentOverrideMap = {
     EmailPasswordSignIn_Override?: ComponentOverride<typeof SignIn>;
@@ -245,7 +245,7 @@ export type SignInThemeProps = FormThemeBaseProps & {
     config: NormalisedConfig;
     signUpClicked?: () => void;
     forgotPasswordClick: () => void;
-    onSuccess: () => void;
+    onSuccess: (result: { user: User }) => void;
 };
 
 export type SignUpThemeProps = FormThemeBaseProps & {
@@ -254,7 +254,7 @@ export type SignUpThemeProps = FormThemeBaseProps & {
     onError: (error: string) => void;
     config: NormalisedConfig;
     signInClicked?: () => void;
-    onSuccess: () => void;
+    onSuccess: (result: { user: User }) => void;
 };
 
 export type SignInAndUpThemeProps = {
@@ -342,13 +342,21 @@ export type OnHandleEventContext =
           /*
            * On Handle Event actions
            */
-          action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
+          action: "RESET_PASSWORD_EMAIL_SENT";
+          email: string;
+          userContext: any;
+      }
+    | {
+          /*
+           * On Handle Event actions
+           */
+          action: "PASSWORD_RESET_SUCCESSFUL";
           userContext: any;
       }
     | {
           action: "SUCCESS";
-          isNewUser: boolean;
-          user: { id: string; email: string };
+          isNewRecipeUser: boolean;
+          user: User;
           userContext: any;
       };
 

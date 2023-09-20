@@ -79,5 +79,9 @@ export const defaultTranslationsPasswordless = {
         "Failed to generate a one time code. Please try again": undefined,
         "Phone number is invalid": undefined,
         "Email is invalid": undefined,
+        "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_002)":
+            undefined,
+        "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_003)":
+            undefined,
     },
 };

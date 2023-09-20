@@ -42,8 +42,6 @@ import {
     setGeneralErrorToLocalStorage,
 } from "../helpers";
 
-// Run the tests in a DOM environment.
-require("jsdom-global")();
 import {
     TEST_SERVER_BASE_URL,
     SIGN_UP_API,

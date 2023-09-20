@@ -17,8 +17,7 @@ import {
     isPasswordlessSupported,
     isThirdPartyPasswordlessSupported,
 } from "../helpers";
-// Run the tests in a DOM environment.
-require("jsdom-global")();
+
 import {
     TEST_CLIENT_BASE_URL,
     TEST_SERVER_BASE_URL,
@@ -27,7 +26,7 @@ import {
 } from "../constants";
 
 describe("getRedirectionURL Tests", function () {
-    describe("Test that isNewUser is passed correctly", function () {
+    describe("Test that isNewRecipeUser is passed correctly", function () {
         describe("Email Password Recipe", function () {
             let browser;
             let page;
@@ -70,7 +69,7 @@ describe("getRedirectionURL Tests", function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, []);
             });
 
-            it("Test that isNewUser is true when signing up", async function () {
+            it("Test that isNewRecipeUser is true when signing up", async function () {
                 await toggleSignInSignUp(page);
                 await defaultSignUp(page);
                 const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
@@ -117,7 +116,7 @@ describe("getRedirectionURL Tests", function () {
                 await page.evaluate(() => localStorage.removeItem("isNewUserCheck"));
             });
 
-            it("Test that isNewUser works correctly", async function () {
+            it("Test that isNewRecipeUser works correctly", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -175,14 +174,14 @@ describe("getRedirectionURL Tests", function () {
                 await page.evaluate(() => localStorage.removeItem("isNewUserCheck"));
             });
 
-            it("Test that isNewUser is true when signing up with email", async function () {
+            it("Test that isNewRecipeUser is true when signing up with email", async function () {
                 await toggleSignInSignUp(page);
                 await defaultSignUp(page, "thirdpartyemailpassword");
                 const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
                 assert.equal(newUserCheck, "thirdpartyemailpassword-true");
             });
 
-            it("Test that isNewUser works correctly when signing up with auth 0", async function () {
+            it("Test that isNewRecipeUser works correctly when signing up with auth 0", async function () {
                 await assertProviders(page);
                 await clickOnProviderButton(page, "Auth0");
                 await Promise.all([
@@ -220,10 +219,10 @@ describe("getRedirectionURL Tests", function () {
                     method: "POST",
                     headers: [["content-type", "application/json"]],
                     body: JSON.stringify({
-                        configUpdates: [
-                            { key: "passwordless_code_lifetime", value: 4000 },
-                            { key: "passwordless_max_code_input_attempts", value: 3 },
-                        ],
+                        coreConfig: {
+                            passwordless_code_lifetime: 4000,
+                            passwordless_max_code_input_attempts: 3,
+                        },
                     }),
                 }).catch(console.error);
 
@@ -264,7 +263,7 @@ describe("getRedirectionURL Tests", function () {
                 await page.evaluate(() => localStorage.removeItem("isNewUserCheck"));
             });
 
-            it("Test that isNewUser is passed correctly", async function () {
+            it("Test that isNewRecipeUser is passed correctly", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -309,10 +308,10 @@ describe("getRedirectionURL Tests", function () {
                     method: "POST",
                     headers: [["content-type", "application/json"]],
                     body: JSON.stringify({
-                        configUpdates: [
-                            { key: "passwordless_code_lifetime", value: 4000 },
-                            { key: "passwordless_max_code_input_attempts", value: 3 },
-                        ],
+                        coreConfig: {
+                            passwordless_code_lifetime: 4000,
+                            passwordless_max_code_input_attempts: 3,
+                        },
                     }),
                 }).catch(console.error);
 
@@ -354,7 +353,7 @@ describe("getRedirectionURL Tests", function () {
                 await page.evaluate(() => localStorage.removeItem("isNewUserCheck"));
             });
 
-            it("Test that isNewUser is passed correctly", async function () {
+            it("Test that isNewRecipeUser is passed correctly", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -375,7 +374,7 @@ describe("getRedirectionURL Tests", function () {
                 assert.equal(newUserCheck, "thirdpartypasswordless-true");
             });
 
-            it("Test that isNewUser works correctly when signing up with auth 0", async function () {
+            it("Test that isNewRecipeUser works correctly when signing up with auth 0", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),

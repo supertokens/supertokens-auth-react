@@ -105,10 +105,17 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                             setEmailFieldValue(emailField.value);
                         }
 
-                        return await props.recipeImplementation.sendPasswordResetEmail({
+                        const resp = await props.recipeImplementation.sendPasswordResetEmail({
                             formFields,
                             userContext,
                         });
+                        if (resp.status === "PASSWORD_RESET_NOT_ALLOWED") {
+                            return {
+                                status: "FIELD_ERROR",
+                                formFields: [{ id: "email", error: resp.reason }],
+                            };
+                        }
+                        return resp;
                     }}
                     showLabels={true}
                     validateOnBlur={true}

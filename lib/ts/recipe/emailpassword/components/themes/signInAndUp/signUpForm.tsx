@@ -15,6 +15,8 @@
 /*
  * Imports.
  */
+import STGeneralError from "supertokens-web-js/lib/build/error";
+
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useUserContext } from "../../../../../usercontext";
 import { validateForm } from "../../../../../utils";
@@ -56,10 +58,15 @@ export const SignUpForm = withOverride(
                         };
                     }
 
-                    return props.recipeImplementation.signUp({
+                    const res = await props.recipeImplementation.signUp({
                         formFields,
                         userContext,
                     });
+
+                    if (res.status === "SIGN_UP_NOT_ALLOWED") {
+                        throw new STGeneralError(res.reason);
+                    }
+                    return res;
                 }}
                 validateOnBlur={true}
                 showLabels={true}

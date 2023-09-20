@@ -35,7 +35,8 @@ import type {
 } from "../authRecipe/types";
 import type { Dispatch } from "react";
 import type WebJSRecipe from "supertokens-web-js/recipe/passwordless";
-import type { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
+import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import type { User } from "supertokens-web-js/types";
 
 export type PreAndPostAPIHookAction =
     | "PASSWORDLESS_CREATE_CODE"
@@ -66,8 +67,8 @@ export type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
 export type OnHandleEventContext =
     | {
           action: "SUCCESS";
-          isNewUser: boolean;
-          user: PasswordlessUser;
+          isNewRecipeUser: boolean;
+          user: User;
       }
     | {
           action: "PASSWORDLESS_RESTART_FLOW";
@@ -187,7 +188,7 @@ export type UserInput = (
 export type SignInUpProps = {
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
-    onSuccess?: (result: { createdNewUser: boolean; user: PasswordlessUser }) => void;
+    onSuccess?: (result: { createdNewRecipeUser: boolean; user: User }) => void;
     dispatch: Dispatch<PasswordlessSignInUpAction>;
     featureState: {
         loginAttemptInfo?: LoginAttemptInfo;
@@ -257,7 +258,7 @@ export type SignInUpUserInputCodeFormProps = {
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     loginAttemptInfo: LoginAttemptInfo;
-    onSuccess?: (result: { createdNewUser: boolean; user: PasswordlessUser }) => void;
+    onSuccess?: (result: { createdNewRecipeUser: boolean; user: User }) => void;
 };
 
 export type LinkClickedScreenProps = {

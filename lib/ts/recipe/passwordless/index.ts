@@ -23,7 +23,8 @@ import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/passwordless";
-import type { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
+import type { PasswordlessFlowType } from "supertokens-web-js/recipe/passwordless/types";
+import type { User } from "supertokens-web-js/types";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -40,13 +41,19 @@ export default class Wrapper {
         input:
             | { email: string; userContext?: any; options?: RecipeFunctionOptions }
             | { phoneNumber: string; userContext?: any; options?: RecipeFunctionOptions }
-    ): Promise<{
-        status: "OK";
-        deviceId: string;
-        preAuthSessionId: string;
-        flowType: PasswordlessFlowType;
-        fetchResponse: Response;
-    }> {
+    ): Promise<
+        | {
+              status: "OK";
+              deviceId: string;
+              preAuthSessionId: string;
+              flowType: PasswordlessFlowType;
+              fetchResponse: Response;
+          }
+        | {
+              status: "SIGN_IN_UP_NOT_ALLOWED";
+              reason: string;
+          }
+    > {
         return Passwordless.getInstanceOrThrow().webJSRecipe.createCode({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
@@ -77,8 +84,8 @@ export default class Wrapper {
     ): Promise<
         | {
               status: "OK";
-              createdNewUser: boolean;
-              user: PasswordlessUser;
+              createdNewRecipeUser: boolean;
+              user: User;
               fetchResponse: Response;
           }
         | {
@@ -88,6 +95,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
         | { status: "RESTART_FLOW_ERROR"; fetchResponse: Response }
+        | { status: "SIGN_IN_UP_NOT_ALLOWED"; reason: string; fetchResponse: Response }
     > {
         return Passwordless.getInstanceOrThrow().webJSRecipe.consumeCode({
             ...input,

@@ -1,29 +1,27 @@
-import { RecipeInterface } from "supertokens-node/recipe/emailpassword";
+import { APIInterface } from "supertokens-node/recipe/emailpassword";
 import { getPrimaryEmailFromInputEmail } from "./emailLinkingMap";
 
-export function epOverride(oI: RecipeInterface): RecipeInterface {
+export function epOverride(oI: APIInterface): APIInterface {
     return {
         ...oI,
-        signIn: async function (input) {
-            let primaryEmail = getPrimaryEmailFromInputEmail(input.email);
+        signInPOST: async function (input) {
+            const emailField = input.formFields.find((f) => f.id === "email")!;
+
+            let primaryEmail = getPrimaryEmailFromInputEmail(emailField.value);
             if (primaryEmail !== undefined) {
-                input.email = primaryEmail;
+                emailField.value = primaryEmail;
             }
-            return oI.signIn(input);
+            return oI.signInPOST!(input);
         },
-        signUp: async function (input) {
-            let primaryEmail = getPrimaryEmailFromInputEmail(input.email);
+        signUpPOST: async function (input) {
+            const emailField = input.formFields.find((f) => f.id === "email")!;
+
+            let primaryEmail = getPrimaryEmailFromInputEmail(emailField.value);
             if (primaryEmail !== undefined) {
-                input.email = primaryEmail;
+                emailField.value = primaryEmail;
             }
-            return oI.signUp(input);
-        },
-        getUserByEmail: async function (input) {
-            let primaryEmail = getPrimaryEmailFromInputEmail(input.email);
-            if (primaryEmail !== undefined) {
-                input.email = primaryEmail;
-            }
-            return oI.getUserByEmail(input);
+
+            return oI.signUpPOST!(input);
         },
     };
 }

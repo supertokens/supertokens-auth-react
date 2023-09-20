@@ -32,8 +32,6 @@ import {
     waitForText,
 } from "../helpers";
 
-// Run the tests in a DOM environment.
-require("jsdom-global")();
 import { TEST_APPLICATION_SERVER_BASE_URL, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 
 describe("User Roles in the frontend", function () {

@@ -1,0 +1,62 @@
+.success-message {
+    line-height: 1;
+    padding-block: 26px;
+    background-color: #e7ffed;
+    text-align: center;
+    color: #3eb655;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    font-size: 20px;
+    margin: 8px;
+    padding: 16px;
+    border-radius: 16px;
+}
+
+.error-message {
+    line-height: 1;
+    padding-block: 26px;
+    background-color: #ef9a9a;
+    text-align: center;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    font-size: 20px;
+    margin: 8px;
+    padding: 16px;
+    border-radius: 16px;
+}
+
+.login-method {
+    padding: 1em;
+    background-color: white;
+    margin: 1.25em;
+    display: grid;
+    grid-template-columns: 8em auto;
+    border-radius: 1em;
+}
+
+.contactInfo {
+    grid-column: 1 / 3;
+    margin-top: 0.5em;
+}
+
+.userId {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+form {
+    margin: 1.25em;
+}
+
+button {
+    box-sizing: border-box;
+    border-radius: 6px;
+    font-size: 16px;
+    margin: 0.5em;
+    border: 1px solid black;
+    text-decoration: none;
+}

@@ -89,12 +89,12 @@ supertokens.init({
                     return {
                         ...oI,
                         createNewSession: async function (input) {
-                            let userInfo = await ThirdPartyEmailPassword.getUserById(input.userId);
+                            let userInfo = await supertokens.getUser(input.userId);
 
                             input.accessTokenPayload = {
                                 ...input.accessTokenPayload,
                                 "https://hasura.io/jwt/claims": {
-                                    "x-hasura-user-id": userInfo.email,
+                                    "x-hasura-user-id": userInfo.emails[0],
                                     "x-hasura-default-role": "user",
                                     "x-hasura-allowed-roles": ["user"],
                                 },

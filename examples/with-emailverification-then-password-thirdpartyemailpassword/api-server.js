@@ -74,7 +74,9 @@ supertokens.init({
                                 };
                             }
                             const res = await oI.emailPasswordSignInPOST(input);
-                            await res.session.setClaimValue(RealPasswordClaim, true, input.userContext);
+                            if (res.status === "OK") {
+                                await res.session.setClaimValue(RealPasswordClaim, true, input.userContext);
+                            }
                             return res;
                         },
                         emailPasswordSignUpPOST: async function (input) {
@@ -101,10 +103,11 @@ supertokens.init({
                                     if (signInResponse.status === "WRONG_CREDENTIALS_ERROR") {
                                         return response;
                                     } else {
-                                        await EmailVerification.unverifyEmail(signInResponse.user.id, email);
+                                        await EmailVerification.unverifyEmail(signInResponse.recipeUserId, email);
                                         response = {
                                             status: "OK",
                                             user: signInResponse.user,
+                                            recipeUserId: signInResponse.recipeUserId,
                                         };
                                     }
                                 }
@@ -112,23 +115,30 @@ supertokens.init({
 
                                 // we have just created a user with the fake password.
                                 // so we mark their session as unusable by the APIs
-                                await Session.createNewSession(
+                                const newSession = await Session.createNewSession(
                                     input.options.req,
                                     input.options.res,
                                     input.tenantId,
-                                    user.id,
+                                    response.recipeUserId,
                                     {
-                                        ...RealPasswordClaim.build(user.id, input.tenantId, input.userContext),
+                                        ...RealPasswordClaim.build(
+                                            user.id,
+                                            response.recipeUserId,
+                                            input.tenantId,
+                                            input.userContext
+                                        ),
                                     },
                                     {}
                                 );
                                 return {
+                                    ...response,
                                     status: "OK",
                                     user,
+                                    session: newSession,
                                 };
                             } else {
                                 // session exists.. so the user is trying to change their password now
-                                let userId = session.getUserId();
+                                let recipeUserId = session.getRecipeUserId();
                                 let password = input.formFields.filter((f) => f.id === "password")[0].value;
 
                                 if (password === FAKE_PASSWORD) {
@@ -137,16 +147,18 @@ supertokens.init({
 
                                 // now we modify the user's password to the new password + change the session to set RealPasswordClaim to true
                                 await ThirdPartyEmailPassword.updateEmailOrPassword({
-                                    userId,
+                                    recipeUserId,
                                     password,
                                 });
 
                                 await session.setClaimValue(RealPasswordClaim, true);
 
-                                let user = await ThirdPartyEmailPassword.getUserById(userId);
+                                let user = await supertokens.getUser(recipeUserId.getAsString());
                                 return {
                                     status: "OK",
                                     user,
+                                    recipeUserId,
+                                    session,
                                 };
                             }
                         },

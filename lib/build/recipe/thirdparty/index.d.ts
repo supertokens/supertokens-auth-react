@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import ActiveDirectory from "./providers/activeDirectory";
 import Apple from "./providers/apple";
 import Bitbucket from "./providers/bitbucket";
@@ -16,6 +16,7 @@ import Twitter from "./providers/twitter";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import type { User } from "supertokens-web-js/types";
 export default class Wrapper {
     static init(
         config?: UserInput
@@ -43,11 +44,16 @@ export default class Wrapper {
         | {
               status: "OK";
               user: User;
-              createdNewUser: boolean;
+              createdNewRecipeUser: boolean;
               fetchResponse: Response;
           }
         | {
               status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              fetchResponse: Response;
+          }
+        | {
+              status: "SIGN_IN_UP_NOT_ALLOWED";
+              reason: string;
               fetchResponse: Response;
           }
     >;
@@ -101,7 +107,6 @@ export {
     redirectToThirdPartyLogin,
     ThirdpartyComponentsOverrideProvider,
     signOut,
-    User,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

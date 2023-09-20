@@ -377,13 +377,28 @@ function getEmailPasswordConfigs() {
             },
         },
 
-        onHandleEvent(context: EmailPasswordOnHandleEventContext) {},
+        onHandleEvent(context: EmailPasswordOnHandleEventContext) {
+            if (context.action === "SUCCESS") {
+                if (context.isNewRecipeUser && context.user.loginMethods.length === 1) {
+                    // new primary user
+                } else {
+                    // only a recipe user was created
+                }
+            }
+        },
 
         async preAPIHook(context: EmailPasswordPreAPIHookContext) {
             return context;
         },
 
         async getRedirectionURL(context: EmailPasswordGetRedirectionURLContext) {
+            if (context.action === "SUCCESS") {
+                if (context.isNewRecipeUser && context.user.loginMethods.length === 1) {
+                    // new primary user
+                } else {
+                    // only a recipe user was created
+                }
+            }
             return undefined;
         },
         override: {
@@ -518,7 +533,7 @@ Passwordless.init({
             // in this case, they are usually redirected to the main app
         } else if (context.action === "SUCCESS") {
             let user = context.user;
-            if (context.isNewUser) {
+            if (context.isNewRecipeUser) {
                 // sign up success
             } else {
                 // sign in success

@@ -17,8 +17,6 @@
  * Imports
  */
 
-/* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
-import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
 import fetch from "isomorphic-fetch";
@@ -37,10 +35,9 @@ import {
     isGeneralErrorSupported,
     setGeneralErrorToLocalStorage,
     getInputField,
+    isAccountLinkingSupported,
 } from "../helpers";
 
-// Run the tests in a DOM environment.
-require("jsdom-global")();
 import {
     TEST_CLIENT_BASE_URL,
     TEST_SERVER_BASE_URL,
@@ -535,10 +532,12 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
     });
 
     function getTestCases(contactMethod, inputName, contactInfo) {
+        let accountLinkingSupported;
         describe(`UserInputCode`, function () {
             before(async function () {
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
                 await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
+                accountLinkingSupported = await isAccountLinkingSupported();
             });
 
             after(async function () {
@@ -1039,6 +1038,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
             before(async function () {
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
                 await setPasswordlessFlowType(contactMethod, "MAGIC_LINK");
+                accountLinkingSupported = await isAccountLinkingSupported();
             });
 
             after(async function () {
@@ -1470,6 +1470,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                    ...(accountLinkingSupported ? [`ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`] : []),
                     `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH`,
                     ...signInUpPageLoadLogs,
                 ]);
@@ -1545,6 +1546,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
             before(async function () {
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
                 await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE_AND_MAGIC_LINK");
+                accountLinkingSupported = await isAccountLinkingSupported();
             });
 
             after(async function () {
@@ -2130,10 +2132,10 @@ async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCoun
         method: "POST",
         headers: [["content-type", "application/json"]],
         body: JSON.stringify({
-            configUpdates: [
-                { key: "passwordless_code_lifetime", value: 4000 },
-                { key: "passwordless_max_code_input_attempts", value: 3 },
-            ],
+            coreConfig: {
+                passwordless_code_lifetime: 4000,
+                passwordless_max_code_input_attempts: 3,
+            },
         }),
     }).catch(console.error);
 

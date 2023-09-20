@@ -22,7 +22,6 @@ import type {
 import type {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
-    User,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
@@ -31,6 +30,7 @@ import type React from "react";
 import type { Dispatch } from "react";
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import type { User } from "supertokens-web-js/types";
 export declare type ComponentOverrideMap = {
     EmailPasswordSignIn_Override?: ComponentOverride<typeof SignIn>;
     EmailPasswordSignInFooter_Override?: ComponentOverride<typeof SignInFooter>;
@@ -122,7 +122,7 @@ export declare type SignInThemeProps = FormThemeBaseProps & {
     config: NormalisedConfig;
     signUpClicked?: () => void;
     forgotPasswordClick: () => void;
-    onSuccess: () => void;
+    onSuccess: (result: { user: User }) => void;
 };
 export declare type SignUpThemeProps = FormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
@@ -130,7 +130,7 @@ export declare type SignUpThemeProps = FormThemeBaseProps & {
     onError: (error: string) => void;
     config: NormalisedConfig;
     signInClicked?: () => void;
-    onSuccess: () => void;
+    onSuccess: (result: { user: User }) => void;
 };
 export declare type SignInAndUpThemeProps = {
     signInForm: SignInThemeProps;
@@ -172,16 +172,18 @@ export declare type GetRedirectionURLContext =
 export declare type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {
-          action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
+          action: "RESET_PASSWORD_EMAIL_SENT";
+          email: string;
+          userContext: any;
+      }
+    | {
+          action: "PASSWORD_RESET_SUCCESSFUL";
           userContext: any;
       }
     | {
           action: "SUCCESS";
-          isNewUser: boolean;
-          user: {
-              id: string;
-              email: string;
-          };
+          isNewRecipeUser: boolean;
+          user: User;
           userContext: any;
       };
 export declare type ResetPasswordUsingTokenThemeProps = {

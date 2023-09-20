@@ -41,6 +41,7 @@ import type {
 } from "../../../types";
 import type { Dispatch } from "react";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import type { User } from "supertokens-web-js/types";
 
 export const useFeatureReducer = (recipe: Recipe | undefined) => {
     return React.useReducer(
@@ -111,35 +112,43 @@ export function useChildProps(
     const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe), [recipe]);
     const userContext = useUserContext();
 
-    const onSignInSuccess = useCallback(async (): Promise<void> => {
-        return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-            {
-                rid: recipe!.config.recipeId,
-                successRedirectContext: {
-                    action: "SUCCESS",
-                    isNewUser: false,
-                    redirectToPath: getRedirectToPathFromURL(),
+    const onSignInSuccess = useCallback(
+        async (response: { user: User }): Promise<void> => {
+            return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                {
+                    rid: recipe!.config.recipeId,
+                    successRedirectContext: {
+                        action: "SUCCESS",
+                        isNewRecipeUser: false,
+                        user: response.user,
+                        redirectToPath: getRedirectToPathFromURL(),
+                    },
                 },
-            },
-            userContext,
-            history
-        );
-    }, [recipe, userContext, history]);
+                userContext,
+                history
+            );
+        },
+        [recipe, userContext, history]
+    );
 
-    const onSignUpSuccess = useCallback(async (): Promise<void> => {
-        return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-            {
-                rid: recipe!.config.recipeId,
-                successRedirectContext: {
-                    action: "SUCCESS",
-                    isNewUser: true,
-                    redirectToPath: getRedirectToPathFromURL(),
+    const onSignUpSuccess = useCallback(
+        async (response: { user: User }): Promise<void> => {
+            return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                {
+                    rid: recipe!.config.recipeId,
+                    successRedirectContext: {
+                        action: "SUCCESS",
+                        isNewRecipeUser: true,
+                        user: response.user,
+                        redirectToPath: getRedirectToPathFromURL(),
+                    },
                 },
-            },
-            userContext,
-            history
-        );
-    }, [recipe, userContext, history]);
+                userContext,
+                history
+            );
+        },
+        [recipe, userContext, history]
+    );
 
     return useMemo(() => {
         if (recipe === undefined || recipeImplementation === undefined) {

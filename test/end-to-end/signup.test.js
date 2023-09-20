@@ -17,8 +17,6 @@
  * Imports
  */
 
-/* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
-import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import fetch from "isomorphic-fetch";
 import puppeteer from "puppeteer";
@@ -42,8 +40,6 @@ import {
     waitForSTElement,
 } from "../helpers";
 
-// Run the tests in a DOM environment.
-require("jsdom-global")();
 import {
     EMAIL_EXISTS_API,
     SIGN_UP_API,

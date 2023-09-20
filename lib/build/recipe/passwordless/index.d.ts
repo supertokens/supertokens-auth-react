@@ -3,7 +3,8 @@ import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/passwordless";
-import type { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
+import type { PasswordlessFlowType } from "supertokens-web-js/recipe/passwordless/types";
+import type { User } from "supertokens-web-js/types";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -26,13 +27,19 @@ export default class Wrapper {
                   userContext?: any;
                   options?: RecipeFunctionOptions;
               }
-    ): Promise<{
-        status: "OK";
-        deviceId: string;
-        preAuthSessionId: string;
-        flowType: PasswordlessFlowType;
-        fetchResponse: Response;
-    }>;
+    ): Promise<
+        | {
+              status: "OK";
+              deviceId: string;
+              preAuthSessionId: string;
+              flowType: PasswordlessFlowType;
+              fetchResponse: Response;
+          }
+        | {
+              status: "SIGN_IN_UP_NOT_ALLOWED";
+              reason: string;
+          }
+    >;
     static resendCode(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK" | "RESTART_FLOW_ERROR";
         fetchResponse: Response;
@@ -51,8 +58,8 @@ export default class Wrapper {
     ): Promise<
         | {
               status: "OK";
-              createdNewUser: boolean;
-              user: PasswordlessUser;
+              createdNewRecipeUser: boolean;
+              user: User;
               fetchResponse: Response;
           }
         | {
@@ -63,6 +70,11 @@ export default class Wrapper {
           }
         | {
               status: "RESTART_FLOW_ERROR";
+              fetchResponse: Response;
+          }
+        | {
+              status: "SIGN_IN_UP_NOT_ALLOWED";
+              reason: string;
               fetchResponse: Response;
           }
     >;

@@ -21,8 +21,6 @@ import puppeteer from "puppeteer";
 
 import { clearBrowserCookiesWithoutAffectingConsole, getTextInDashboardNoAuth, screenshotOnFailure } from "../helpers";
 
-// Run the tests in a DOM environment.
-require("jsdom-global")();
 import { TEST_CLIENT_BASE_URL } from "../constants";
 
 describe("Refresh errors", function () {

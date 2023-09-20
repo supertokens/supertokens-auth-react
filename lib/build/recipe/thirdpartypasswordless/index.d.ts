@@ -15,17 +15,14 @@ import {
     Okta,
 } from "../thirdparty/";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import type { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
-import type {
-    PasswordlessFlowType,
-    PasswordlessUser,
-    RecipeFunctionOptions,
-} from "supertokens-web-js/recipe/thirdpartypasswordless";
+import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
+import type { PasswordlessFlowType, RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartypasswordless";
+import type { User } from "supertokens-web-js/types";
 export default class Wrapper {
     static init(
         config: UserInput
     ): import("../../types").RecipeInitResult<
-        import("../authRecipe/types").GetRedirectionURLContext,
+        GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
         import("./types").NormalisedConfig
@@ -37,12 +34,17 @@ export default class Wrapper {
     static thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
-              user: UserType;
-              createdNewUser: boolean;
+              user: User;
+              createdNewRecipeUser: boolean;
               fetchResponse: Response;
           }
         | {
               status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              fetchResponse: Response;
+          }
+        | {
+              status: "SIGN_IN_UP_NOT_ALLOWED";
+              reason: string;
               fetchResponse: Response;
           }
     >;
@@ -68,13 +70,20 @@ export default class Wrapper {
                   userContext?: any;
                   options?: RecipeFunctionOptions;
               }
-    ): Promise<{
-        status: "OK";
-        deviceId: string;
-        preAuthSessionId: string;
-        flowType: PasswordlessFlowType;
-        fetchResponse: Response;
-    }>;
+    ): Promise<
+        | {
+              status: "OK";
+              deviceId: string;
+              preAuthSessionId: string;
+              flowType: PasswordlessFlowType;
+              fetchResponse: Response;
+          }
+        | {
+              status: "SIGN_IN_UP_NOT_ALLOWED";
+              reason: string;
+              fetchResponse: Response;
+          }
+    >;
     static resendPasswordlessCode(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK" | "RESTART_FLOW_ERROR";
         fetchResponse: Response;
@@ -93,8 +102,8 @@ export default class Wrapper {
     ): Promise<
         | {
               status: "OK";
-              createdNewUser: boolean;
-              user: PasswordlessUser;
+              createdNewRecipeUser: boolean;
+              user: User;
               fetchResponse: Response;
           }
         | {
@@ -105,6 +114,11 @@ export default class Wrapper {
           }
         | {
               status: "RESTART_FLOW_ERROR";
+              fetchResponse: Response;
+          }
+        | {
+              status: "SIGN_IN_UP_NOT_ALLOWED";
+              reason: string;
               fetchResponse: Response;
           }
     >;

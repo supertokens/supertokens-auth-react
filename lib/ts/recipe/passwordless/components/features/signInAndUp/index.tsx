@@ -35,7 +35,8 @@ import type { FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap } from "../../../types";
 import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps, NormalisedConfig } from "../../../types";
-import type { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
+import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import type { User } from "supertokens-web-js/types";
 
 export const useSuccessInAnotherTabChecker = (
     state: SignInUpState,
@@ -214,13 +215,14 @@ export function useChildProps(
             return undefined;
         }
         return {
-            onSuccess: (result: { createdNewUser: boolean; user: PasswordlessUser }) => {
+            onSuccess: (result: { createdNewRecipeUser: boolean; user: User }) => {
                 return SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
                     {
                         rid: recipe.config.recipeId,
                         successRedirectContext: {
                             action: "SUCCESS",
-                            isNewUser: result.createdNewUser,
+                            isNewRecipeUser: result.createdNewRecipeUser,
+                            user: result.user,
                             redirectToPath: getRedirectToPathFromURL(),
                         },
                     },
@@ -367,6 +369,12 @@ function getModifiedRecipeImplementation(
                 });
 
                 dispatch({ type: "restartFlow", error: "ERROR_SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW" });
+            } else if (res.status === "SIGN_IN_UP_NOT_ALLOWED") {
+                await originalImpl.clearLoginAttemptInfo({
+                    userContext: input.userContext,
+                });
+
+                dispatch({ type: "restartFlow", error: res.reason });
             } else if (res.status === "OK") {
                 await originalImpl.clearLoginAttemptInfo({
                     userContext: input.userContext,

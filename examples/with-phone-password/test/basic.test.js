@@ -68,9 +68,9 @@ describe("SuperTokens Example Basic tests", function () {
     const testOTP = "test123456";
 
     before(async function () {
-        const user = await EmailPassword.getUserByEmail("public", phoneNumber);
-        if (user) {
-            await SuperTokensNode.deleteUser(user.id);
+        const user = await SuperTokensNode.listUsersByAccountInfo("public", { email: phoneNumber });
+        if (user.length > 0) {
+            await SuperTokensNode.deleteUser(user[0].id);
         }
 
         browser = await puppeteer.launch({

@@ -17,8 +17,6 @@
  * Imports
  */
 
-/* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
-import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
 import fetch from "isomorphic-fetch";
@@ -33,9 +31,6 @@ import {
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, DEFAULT_WEBSITE_BASE_PATH, ST_ROOT_SELECTOR } from "../constants";
 import { before } from "mocha";
-
-// Run the tests in a DOM environment.
-require("jsdom-global")();
 
 /*
  * Tests.

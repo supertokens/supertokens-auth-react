@@ -57,6 +57,9 @@ export declare const defaultTranslationsEmailPassword: {
         "Password must contain at least one alphabet": undefined;
         "Password must contain at least one number": undefined;
         "Email is invalid": undefined;
+        "Reset password link was not created because of account take over risk. Please contact support. (ERR_CODE_001)": undefined;
+        "Cannot sign up due to security reasons. Please try logging in, use a different login method or contact support. (ERR_CODE_007)": undefined;
+        "Cannot sign in due to security reasons. Please try resetting your password, use a different login method or contact support. (ERR_CODE_008)": undefined;
         EMAIL_VERIFICATION_RESEND_SUCCESS: string;
         EMAIL_VERIFICATION_SEND_TITLE: string;
         EMAIL_VERIFICATION_SEND_DESC_START: string;

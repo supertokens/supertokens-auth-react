@@ -77,7 +77,8 @@ const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLCon
                             rid: props.authRecipe.config.recipeId,
                             successRedirectContext: {
                                 action: "SUCCESS",
-                                isNewUser: false,
+                                isNewRecipeUser: false,
+                                user: undefined,
                                 redirectToPath: getRedirectToPathFromURL(),
                             },
                         },
