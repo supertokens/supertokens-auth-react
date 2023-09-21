@@ -82,6 +82,7 @@ describe("SuperTokens Third Party Passwordless", function () {
             page = await browser.newPage();
             page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
+                console.log(log);
                 if (log.startsWith("ST_LOGS")) {
                     consoleLogs.push(log);
                 }
