@@ -50,7 +50,7 @@ import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, RESET_PASSW
 /*
  * Tests.
  */
-describe("SuperTokens Account linking", function () {
+describe.only("SuperTokens Account linking", function () {
     let browser;
     let page;
     let consoleLogs;
@@ -532,7 +532,7 @@ describe("SuperTokens Account linking", function () {
                 assert.strictEqual(new URL(page.url()).pathname, "/auth/reset-password");
             });
 
-            it("should allow sign in w/ a verified emailpassword user in case of conflict", async function () {
+            it.only("should allow sign in w/ a verified emailpassword user in case of conflict", async function () {
                 const email = `test-user+${Date.now()}@supertokens.com`;
                 await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
 

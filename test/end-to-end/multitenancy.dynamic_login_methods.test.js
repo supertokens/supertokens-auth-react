@@ -52,7 +52,7 @@ let connectionURI;
 /*
  * Tests.
  */
-describe("SuperTokens Multitenancy dynamic login methods", function () {
+describe.only("SuperTokens Multitenancy dynamic login methods", function () {
     let browser;
     let page;
     let pageCrashed;

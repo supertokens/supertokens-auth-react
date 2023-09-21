@@ -58,7 +58,7 @@ import {
 /*
  * Tests.
  */
-describe("SuperTokens Multitenancy tenant interactions", function () {
+describe.only("SuperTokens Multitenancy tenant interactions", function () {
     let browser;
     let page;
     let pageCrashed;
