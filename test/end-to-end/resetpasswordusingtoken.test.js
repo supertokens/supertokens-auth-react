@@ -52,6 +52,7 @@ import {
     getResetPasswordFormBackButton,
     waitForSTElement,
     getResetPasswordSuccessBackToSignInButton,
+    backendBeforeEach,
 } from "../helpers";
 
 /*
@@ -63,9 +64,7 @@ describe("SuperTokens Reset password", function () {
     let consoleLogs;
 
     before(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",

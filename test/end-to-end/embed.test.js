@@ -5,7 +5,7 @@ import { TEST_SERVER_BASE_URL } from "../constants";
 import { AuthPage } from "./pages/AuthPage";
 import { EmailVerificationPage } from "./pages/EmailVerificationPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
-import { clearBrowserCookiesWithoutAffectingConsole, screenshotOnFailure } from "../helpers";
+import { backendBeforeEach, clearBrowserCookiesWithoutAffectingConsole, screenshotOnFailure } from "../helpers";
 
 describe("Embed components", async () => {
     let browser;
@@ -17,9 +17,7 @@ describe("Embed components", async () => {
             headless: true,
         });
 
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendBeforeEach();
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
         }).catch(console.error);

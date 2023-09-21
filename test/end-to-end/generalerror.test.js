@@ -40,6 +40,7 @@ import {
     loginWithAuth0,
     isGeneralErrorSupported,
     setGeneralErrorToLocalStorage,
+    backendBeforeEach,
 } from "../helpers";
 
 import {
@@ -70,9 +71,7 @@ describe("General error rendering", function () {
         let browser;
         let page;
         before(async function () {
-            await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-                method: "POST",
-            }).catch(console.error);
+            await backendBeforeEach();
 
             await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
                 method: "POST",
@@ -236,9 +235,7 @@ function getEmailPasswordTests(rid, ridForStorage) {
         let browser;
         let page;
         before(async function () {
-            await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-                method: "POST",
-            }).catch(console.error);
+            await backendBeforeEach();
 
             await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
                 method: "POST",
@@ -376,9 +373,7 @@ function getThirdPartyTests(rid, ridForStorage) {
         let browser;
         let page;
         before(async function () {
-            await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-                method: "POST",
-            }).catch(console.error);
+            await backendBeforeEach();
 
             await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
                 method: "POST",

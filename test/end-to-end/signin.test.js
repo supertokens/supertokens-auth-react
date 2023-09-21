@@ -52,6 +52,7 @@ import {
     setGeneralErrorToLocalStorage,
     getInvalidClaimsJSON as getInvalidClaims,
     waitForText,
+    backendBeforeEach,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -67,9 +68,7 @@ describe("SuperTokens SignIn", function () {
     let consoleLogs = [];
 
     before(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",

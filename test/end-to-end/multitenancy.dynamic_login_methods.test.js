@@ -38,6 +38,7 @@ import {
     isMultitenancySupported,
     isMultitenancyManagementEndpointsSupported,
     setupTenant,
+    backendBeforeEach,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -65,9 +66,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     beforeEach(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendBeforeEach();
 
         const startSTResp = await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",

@@ -36,6 +36,7 @@ import {
     setGeneralErrorToLocalStorage,
     getInputField,
     isAccountLinkingSupported,
+    backendBeforeEach,
 } from "../helpers";
 
 import {
@@ -2121,12 +2122,7 @@ async function setupDevice(page, inputName, contactInfo, forLinkOnly = true, cle
 }
 
 async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCountry, disablePhoneGuess } = {}) {
-    await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-        method: "POST",
-    }).catch(console.error);
-    await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/beforeeach`, {
-        method: "POST",
-    }).catch(console.error);
+    await backendBeforeEach();
 
     await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
         method: "POST",

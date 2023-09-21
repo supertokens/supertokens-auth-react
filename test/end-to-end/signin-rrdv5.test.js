@@ -49,6 +49,7 @@ import {
     screenshotOnFailure,
     waitForText,
     waitForSTElement,
+    backendBeforeEach,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -68,9 +69,7 @@ describe("SuperTokens SignIn with react router dom v5", function () {
             this.skip();
         }
 
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",

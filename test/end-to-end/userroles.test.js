@@ -30,6 +30,7 @@ import {
     getInvalidClaimsJSON as getInvalidClaims,
     waitFor,
     waitForText,
+    backendBeforeEach,
 } from "../helpers";
 
 import { TEST_APPLICATION_SERVER_BASE_URL, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
@@ -46,9 +47,7 @@ describe("User Roles in the frontend", function () {
         let browser;
         let page;
         before(async function () {
-            await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-                method: "POST",
-            }).catch(console.error);
+            await backendBeforeEach();
 
             await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
                 method: "POST",
