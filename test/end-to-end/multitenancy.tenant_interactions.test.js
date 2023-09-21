@@ -1094,7 +1094,7 @@ describe.only("SuperTokens Multitenancy tenant interactions", function () {
                 { name: "confirm-password", value: newPassword },
             ]);
             await submitForm(page);
-            assert.strictEqual(await getGeneralError(page), "Invalid password reset token");
+            assert.strictEqual(await getGeneralError(page), "Something went wrong. Please try again.");
         });
     });
 
