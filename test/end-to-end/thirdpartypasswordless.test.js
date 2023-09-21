@@ -65,7 +65,7 @@ describe("SuperTokens Third Party Passwordless", function () {
         }
     });
 
-    describe.only("Recipe combination tests", () => {
+    describe("Recipe combination tests", () => {
         before(async function () {
             await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
                 method: "POST",
