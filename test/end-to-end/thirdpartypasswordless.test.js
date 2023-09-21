@@ -81,7 +81,6 @@ describe("SuperTokens Third Party Passwordless", function () {
             page = await browser.newPage();
             page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
-                console.log(log);
                 if (log.startsWith("ST_LOGS")) {
                     consoleLogs.push(log);
                 }
@@ -117,62 +116,42 @@ describe("SuperTokens Third Party Passwordless", function () {
 
         it("No account consolidation", async function () {
             // 1. Sign up with credentials
-            console.log("a");
             await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE");
-            console.log("b");
             await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
-            console.log("c");
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            console.log("d");
 
             await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
-            console.log("e");
             await submitForm(page);
-            console.log("f");
 
             await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-            console.log("g");
 
             const loginAttemptInfo = JSON.parse(
                 await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
             );
-            console.log("h");
             const device = await getPasswordlessDevice(loginAttemptInfo);
-            console.log("i");
             await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
-            console.log("j");
             await submitForm(page);
-            console.log("k");
 
             await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
-            console.log("l");
             const passwordlessUserId = await getUserIdWithFetch(page);
 
             // 2. Log out
-            console.log("m");
             const logoutButton = await getLogoutButton(page);
-            console.log("n");
             await Promise.all([await logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-            console.log("o");
             await waitForSTElement(page, `input[name=emailOrPhone]`);
 
             // 3. Sign in with auth0 with same address.
-            console.log("p");
             await clickOnProviderButton(page, "Auth0");
-            console.log("q");
             await Promise.all([
                 loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
-            console.log("r");
             await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
-            console.log("s");
             const thirdPartyUserId = await getUserIdWithFetch(page);
-            console.log(thirdPartyUserId, passwordlessUserId);
 
             // 4. Compare userIds
             assert.notDeepStrictEqual(thirdPartyUserId, passwordlessUserId);
