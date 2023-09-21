@@ -1052,7 +1052,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             await epSignIn(page, email);
         });
 
-        it.skip("should be revoked when removing tenants", async function () {
+        it("should be revoked when removing tenants", async function () {
             await setEnabledRecipes(page, ["emailpassword"]);
             await setupTenant("public", {
                 emailPassword: { enabled: true },
