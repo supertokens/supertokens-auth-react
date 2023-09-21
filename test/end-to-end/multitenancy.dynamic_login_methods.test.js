@@ -36,7 +36,6 @@ import {
     clickOnProviderButton,
     loginWithAuth0,
     isMultitenancySupported,
-    isAccountLinkingSupported,
     isMultitenancyManagementEndpointsSupported,
     setupTenant,
 } from "../helpers";
@@ -135,7 +134,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         const providers = await getProvidersLabels(page);
         compareArrayContents(
             providers,
-            (await isAccountLinkingSupported())
+            (await isMultitenancyManagementEndpointsSupported())
                 ? [
                       "Continue with Github",
                       "Continue with Google",
@@ -382,7 +381,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         const providers = await getProvidersLabels(page);
         compareArrayContents(
             providers,
-            (await isAccountLinkingSupported())
+            (await isMultitenancyManagementEndpointsSupported())
                 ? [
                       "Continue with Github",
                       "Continue with Google",
