@@ -51,6 +51,7 @@ import {
     isGeneralErrorSupported,
     setGeneralErrorToLocalStorage,
     isAccountLinkingSupported,
+    backendBeforeEach,
 } from "../helpers";
 
 describe("SuperTokens Email Verification", function () {
@@ -60,9 +61,7 @@ describe("SuperTokens Email Verification", function () {
     let accountLinkingSupported;
 
     before(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendBeforeEach();
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
         }).catch(console.error);
@@ -675,9 +674,7 @@ describe("SuperTokens Email Verification general errors", function () {
     const generalErrorMessageString = "General Error";
 
     before(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendBeforeEach();
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
         }).catch(console.error);
@@ -797,9 +794,7 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
 
     before(async function () {
         // Start server.
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
@@ -880,9 +875,7 @@ describe("Email verification signOut errors", function () {
     let browser;
     let page;
     before(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",

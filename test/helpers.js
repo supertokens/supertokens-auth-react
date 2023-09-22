@@ -22,6 +22,7 @@ import {
     SIGN_UP_API,
     EMAIL_EXISTS_API,
     TEST_CLIENT_BASE_URL,
+    TEST_SERVER_BASE_URL,
 } from "./constants";
 
 import path from "path";
@@ -994,3 +995,14 @@ const testProviderConfigs = {
         ],
     },
 };
+
+export async function backendBeforeEach() {
+    await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+        method: "POST",
+    }).catch(console.error);
+    if (TEST_SERVER_BASE_URL !== TEST_APPLICATION_SERVER_BASE_URL) {
+        await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/beforeeach`, {
+            method: "POST",
+        }).catch(console.error);
+    }
+}

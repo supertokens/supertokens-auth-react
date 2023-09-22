@@ -38,6 +38,7 @@ import {
     screenshotOnFailure,
     getGeneralError,
     waitForSTElement,
+    backendBeforeEach,
 } from "../helpers";
 
 import {
@@ -57,9 +58,7 @@ describe("SuperTokens SignUp", function () {
     let consoleLogs;
 
     before(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",

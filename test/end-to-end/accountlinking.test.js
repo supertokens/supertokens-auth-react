@@ -44,6 +44,7 @@ import {
     getTextByDataSupertokens,
     sendEmailResetPasswordSuccessMessage,
     changeEmail,
+    backendBeforeEach,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, RESET_PASSWORD_API } from "../constants";
 
@@ -64,9 +65,7 @@ describe("SuperTokens Account linking", function () {
 
     describe("Recipe combination tests", () => {
         before(async function () {
-            await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-                method: "POST",
-            }).catch(console.error);
+            await backendBeforeEach();
 
             await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
                 method: "POST",

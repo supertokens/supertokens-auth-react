@@ -16,6 +16,7 @@ import {
     clearBrowserCookiesWithoutAffectingConsole,
     isPasswordlessSupported,
     isThirdPartyPasswordlessSupported,
+    backendBeforeEach,
 } from "../helpers";
 
 import {
@@ -31,9 +32,7 @@ describe("getRedirectionURL Tests", function () {
             let browser;
             let page;
             before(async function () {
-                await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-                    method: "POST",
-                }).catch(console.error);
+                await backendBeforeEach();
 
                 await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
                     method: "POST",
@@ -81,9 +80,7 @@ describe("getRedirectionURL Tests", function () {
             let browser;
             let page;
             before(async function () {
-                await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-                    method: "POST",
-                }).catch(console.error);
+                await backendBeforeEach();
 
                 await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
                     method: "POST",
@@ -136,9 +133,7 @@ describe("getRedirectionURL Tests", function () {
             let browser;
             let page;
             before(async function () {
-                await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-                    method: "POST",
-                }).catch(console.error);
+                await backendBeforeEach();
 
                 await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
                     method: "POST",
@@ -208,12 +203,7 @@ describe("getRedirectionURL Tests", function () {
                     return;
                 }
 
-                await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-                    method: "POST",
-                }).catch(console.error);
-                await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/beforeeach`, {
-                    method: "POST",
-                }).catch(console.error);
+                await backendBeforeEach();
 
                 await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
                     method: "POST",
@@ -300,9 +290,7 @@ describe("getRedirectionURL Tests", function () {
                     return;
                 }
 
-                await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-                    method: "POST",
-                }).catch(console.error);
+                await backendBeforeEach();
 
                 await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
                     method: "POST",

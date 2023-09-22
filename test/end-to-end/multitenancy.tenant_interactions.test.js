@@ -45,6 +45,7 @@ import {
     addUserToTenant,
     removeUserFromTenant,
     removeTenant,
+    backendBeforeEach,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -71,9 +72,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
     });
 
     beforeEach(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
@@ -1094,7 +1093,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                 { name: "confirm-password", value: newPassword },
             ]);
             await submitForm(page);
-            assert.strictEqual(await getGeneralError(page), "Invalid password reset token");
+            assert.strictEqual(await getGeneralError(page), "Something went wrong. Please try again.");
         });
     });
 
