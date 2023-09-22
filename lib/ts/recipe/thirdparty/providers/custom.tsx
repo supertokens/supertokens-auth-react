@@ -23,15 +23,17 @@ import Provider from ".";
  * Class.
  */
 export default class Custom extends Provider {
+    private logo: JSX.Element | undefined;
     /*
      * Constructor.
      */
     constructor(config: CustomProviderConfig) {
         super(config);
+        this.logo = config.logo;
     }
 
-    getLogo = (): undefined => {
-        return undefined;
+    getLogo = (): JSX.Element | undefined => {
+        return this.logo;
     };
 
     /*

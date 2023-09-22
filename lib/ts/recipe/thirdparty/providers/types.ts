@@ -56,6 +56,11 @@ export type CustomProviderConfig = {
      */
     name: string;
 
+    /**
+     * Provider Logo.
+     */
+    logo?: JSX.Element;
+
     /*
      * Button Component
      */
