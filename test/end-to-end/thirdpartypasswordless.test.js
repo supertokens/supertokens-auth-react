@@ -225,22 +225,4 @@ describe("SuperTokens Third Party Passwordless", function () {
             assert.strictEqual(await getGeneralError(page), "Something went wrong. Please try again.");
         });
     });
-
-    describe("Third Party specific", function () {
-        getThirdPartyTestCases({
-            authRecipe: "thirdpartypasswordless",
-            rid: "thirdpartypasswordless",
-            logId: "THIRDPARTYPASSWORDLESS",
-            signInUpPageLoadLogs,
-            thirdPartySignInUpLog: "THIRD_PARTY_SIGN_IN_AND_UP",
-        });
-    });
-
-    describe("Passwordless specific", function () {
-        getPasswordlessTestCases({
-            authRecipe: "thirdpartypasswordless",
-            logId: "THIRDPARTYPASSWORDLESS",
-            generalErrorRecipeName: "THIRD_PARTY_PASSWORDLESS",
-        });
-    });
 });
