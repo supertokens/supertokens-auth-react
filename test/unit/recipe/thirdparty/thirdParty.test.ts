@@ -256,6 +256,31 @@ describe("ThirdParty", function () {
         );
     });
 
+    it("Initializing ThirdParty with custom provider and custom logo if provided", async function () {
+        ThirdParty.init({
+            signInAndUpFeature: {
+                providers: [
+                    {
+                        id: "slack",
+                        name: "Slack",
+                        logo: "LOGO" as any,
+                    },
+                ],
+            },
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
+        assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
+        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
+        assert.deepStrictEqual(
+            ThirdParty.getInstanceOrThrow().config.appInfo,
+            SuperTokens.getInstanceOrThrow().appInfo
+        );
+        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.length, 1);
+        assert.deepStrictEqual(
+            ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0].getLogo(),
+            "LOGO"
+        );
+    });
+
     it("Initializing ThirdParty with Google twice only shows a warning and filters duplicate", async function () {
         ThirdParty.init({
             signInAndUpFeature: {

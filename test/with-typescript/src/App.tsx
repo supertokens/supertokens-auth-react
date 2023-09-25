@@ -453,6 +453,12 @@ function getThirdPartyConfigs() {
                     name: "Custom",
                     buttonComponent: <span>ASDF Custom</span>,
                 },
+                {
+                    id: "custom-2",
+                    name: "Custom-2",
+                    logo: <svg></svg>,
+                    buttonComponent: <span>ASDF Custom</span>,
+                },
             ],
         },
         oAuthCallbackScreen: {
@@ -493,6 +499,11 @@ function getThirdPartyEmailPasswordConfigs() {
                 {
                     id: "custom",
                     name: "Custom",
+                    logo: <svg></svg>,
+                },
+                {
+                    id: "custom-2",
+                    name: "Custom-2",
                 },
             ],
         },
