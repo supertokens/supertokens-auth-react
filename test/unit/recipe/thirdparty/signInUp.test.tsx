@@ -53,7 +53,14 @@ describe("ThirdParty.SignInAndUp", () => {
             recipeList: [
                 Recipe.init({
                     signInAndUpFeature: {
-                        providers: [Github.init()],
+                        providers: [
+                            Github.init(),
+                            {
+                                id: "custom",
+                                name: "Custom",
+                                logo: "LOGO" as any,
+                            },
+                        ],
                     },
                     useShadowDom: false,
                 }),
@@ -84,6 +91,11 @@ describe("ThirdParty.SignInAndUp", () => {
                 undefined
             );
         });
+    });
+
+    test("check if the logo is rendered, when a logo is provided for custom providers", async () => {
+        const result = render(<SignInAndUp />);
+        expect(await result.findByText("LOGO")).toBeInTheDocument();
     });
 
     test("not redirect if session exists but redirectOnSessionExists=false", async () => {
