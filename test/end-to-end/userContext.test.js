@@ -24,6 +24,7 @@ import {
     assertProviders,
     clickOnProviderButton,
     loginWithAuth0,
+    backendBeforeEach,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -40,9 +41,7 @@ describe("SuperTokens userContext with UI components test", function () {
     let consoleLogs = [];
 
     before(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",

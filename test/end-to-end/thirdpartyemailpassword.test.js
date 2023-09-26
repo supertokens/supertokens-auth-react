@@ -43,6 +43,7 @@ import {
     clickOnProviderButtonWithoutWaiting,
     getFeatureFlags,
     setEnabledRecipes,
+    backendBeforeEach,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -52,6 +53,7 @@ import {
     SOMETHING_WENT_WRONG_ERROR,
     EMAIL_EXISTS_API,
     GET_AUTH_URL_API,
+    TEST_APPLICATION_SERVER_BASE_URL,
 } from "../constants";
 
 /*
@@ -63,9 +65,7 @@ describe("SuperTokens Third Party Email Password", function () {
     let consoleLogs;
 
     before(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",

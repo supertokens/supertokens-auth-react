@@ -36,6 +36,7 @@ import {
     setEnabledRecipes,
     clickOnProviderButtonWithoutWaiting,
     getGeneralError,
+    backendBeforeEach,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
 import { getThirdPartyTestCases } from "./thirdparty.test";
@@ -67,9 +68,7 @@ describe("SuperTokens Third Party Passwordless", function () {
 
     describe("Recipe combination tests", () => {
         before(async function () {
-            await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-                method: "POST",
-            }).catch(console.error);
+            await backendBeforeEach();
 
             await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
                 method: "POST",
@@ -224,24 +223,6 @@ describe("SuperTokens Third Party Passwordless", function () {
                 clickOnProviderButtonWithoutWaiting(page, "Auth0"),
             ]);
             assert.strictEqual(await getGeneralError(page), "Something went wrong. Please try again.");
-        });
-    });
-
-    describe("Third Party specific", function () {
-        getThirdPartyTestCases({
-            authRecipe: "thirdpartypasswordless",
-            rid: "thirdpartypasswordless",
-            logId: "THIRDPARTYPASSWORDLESS",
-            signInUpPageLoadLogs,
-            thirdPartySignInUpLog: "THIRD_PARTY_SIGN_IN_AND_UP",
-        });
-    });
-
-    describe("Passwordless specific", function () {
-        getPasswordlessTestCases({
-            authRecipe: "thirdpartypasswordless",
-            logId: "THIRDPARTYPASSWORDLESS",
-            generalErrorRecipeName: "THIRD_PARTY_PASSWORDLESS",
         });
     });
 });

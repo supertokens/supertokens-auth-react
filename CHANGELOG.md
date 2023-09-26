@@ -7,7 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-## [0.35.0] - 2023-09-XX
+## [0.35.2] - 2023-09-24
+
+### Test changes
+
+-   Split some test suites into multiple files to help with test parallelization
+
+## [0.35.1] - 2023-09-21
+
+### Test changes
+
+-   Test fixes for backend SDK CI
+
+## [0.35.0] - 2023-09-21
 
 ### Overview
 

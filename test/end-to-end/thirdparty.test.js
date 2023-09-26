@@ -31,6 +31,7 @@ import {
     waitFor,
     screenshotOnFailure,
     clickOnProviderButtonWithoutWaiting,
+    backendBeforeEach,
 } from "../helpers";
 
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
@@ -51,9 +52,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
     let consoleLogs = [];
 
     before(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
