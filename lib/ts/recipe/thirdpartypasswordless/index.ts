@@ -28,6 +28,7 @@ import {
     ActiveDirectory,
     BoxySAML,
     Okta,
+    Twitter,
 } from "../thirdparty/";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 
@@ -277,6 +278,7 @@ export default class Wrapper {
     static ActiveDirectory = ActiveDirectory;
     static BoxySAML = BoxySAML;
     static Okta = Okta;
+    static Twitter = Twitter;
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
@@ -313,6 +315,7 @@ export {
     ActiveDirectory,
     BoxySAML,
     Okta,
+    Twitter,
     redirectToThirdPartyLogin,
     thirdPartySignInAndUp,
     getThirdPartyStateAndOtherInfoFromStorage,
