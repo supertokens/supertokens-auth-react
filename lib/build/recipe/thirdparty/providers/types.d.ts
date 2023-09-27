@@ -21,6 +21,10 @@ export declare type BuiltInProviderConfig = {
 export declare type CustomProviderConfig = {
     id: string;
     name: string;
+    /**
+     * Provider Logo.
+     */
+    logo?: JSX.Element;
     buttonComponent?:
         | FC<{
               name: string;
