@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Example changes
+
+-   Updated dev/start script in netlify example
+
 ## [0.35.3] - 2023-09-26
 
 ### Added
