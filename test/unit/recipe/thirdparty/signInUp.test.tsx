@@ -58,7 +58,7 @@ describe("ThirdParty.SignInAndUp", () => {
                             {
                                 id: "custom",
                                 name: "Custom",
-                                logo: "LOGO" as any,
+                                logo: <span>LOGO</span>,
                             },
                         ],
                     },
@@ -94,7 +94,7 @@ describe("ThirdParty.SignInAndUp", () => {
     });
 
     test("check if the logo is rendered, when a logo is provided for custom providers", async () => {
-        const result = render(<SignInAndUp />);
+        const result = render(<SignInAndUp redirectOnSessionExists={false} />);
         expect(await result.findByText("LOGO")).toBeInTheDocument();
     });
 
