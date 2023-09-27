@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+-   Added new social provider `twitter`
+
 -   Introduced a new option `logo` for thirdparty custom providers to set a custom logo, just like the `name` property.
 
 Following is an example of how to use this new `logo` property.
