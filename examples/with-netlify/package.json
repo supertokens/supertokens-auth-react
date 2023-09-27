@@ -24,7 +24,7 @@
         "web-vitals": "^0.2.4"
     },
     "scripts": {
-        "start": "netlify dev -c 'npx react-scripts start'",
+        "start": "netlify dev -c 'npx react-scripts start' -f netlify/functions/",
         "build": "npx react-scripts build",
         "test": "npx react-scripts test",
         "eject": "npx react-scripts eject",
