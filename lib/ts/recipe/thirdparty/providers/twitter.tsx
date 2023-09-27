@@ -41,9 +41,9 @@ export default class Twitter extends Provider {
     constructor(config?: TwitterProviderConfig) {
         let id = "x";
         let name = "X";
-        const _useLegacyTwitterLogo = config?.useLegacyTwitterLogo === true;
+        const normalisedUseLegacyTwitterLogo = config?.useLegacyTwitterLogo === true;
 
-        if (_useLegacyTwitterLogo) {
+        if (normalisedUseLegacyTwitterLogo) {
             id = "twitter";
             name = "Twitter";
         }
@@ -54,7 +54,7 @@ export default class Twitter extends Provider {
             ...config,
         });
 
-        this.useLegacyTwitterLogo = _useLegacyTwitterLogo;
+        this.useLegacyTwitterLogo = normalisedUseLegacyTwitterLogo;
     }
 
     getLogo = (): JSX.Element => {
