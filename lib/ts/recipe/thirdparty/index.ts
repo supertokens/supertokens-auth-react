@@ -133,6 +133,7 @@ export default class Wrapper {
     static ActiveDirectory = ActiveDirectory;
     static BoxySAML = BoxySAML;
     static Okta = Okta;
+    static Twitter = Twitter;
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 

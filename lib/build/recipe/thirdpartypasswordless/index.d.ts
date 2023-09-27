@@ -13,6 +13,7 @@ import {
     ActiveDirectory,
     BoxySAML,
     Okta,
+    Twitter,
 } from "../thirdparty/";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
@@ -171,6 +172,7 @@ export default class Wrapper {
     static ActiveDirectory: typeof ActiveDirectory;
     static BoxySAML: typeof BoxySAML;
     static Okta: typeof Okta;
+    static Twitter: typeof Twitter;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
@@ -212,6 +214,7 @@ export {
     ActiveDirectory,
     BoxySAML,
     Okta,
+    Twitter,
     redirectToThirdPartyLogin,
     thirdPartySignInAndUp,
     getThirdPartyStateAndOtherInfoFromStorage,
