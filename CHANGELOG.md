@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixes
 
--   fixed using `twitter` as id by default.
+-   fixed using `twitter` as id by default in twitter provider.
 
 ## [0.35.3] - 2023-09-26
 
