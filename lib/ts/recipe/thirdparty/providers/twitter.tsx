@@ -39,7 +39,6 @@ export default class Twitter extends Provider {
      * Constructor.
      */
     constructor(config?: TwitterProviderConfig) {
-        const id = "twitter";
         let name = "X";
 
         const normalisedUseLegacyTwitterLogo = config?.useLegacyTwitterLogo === true;
@@ -49,7 +48,7 @@ export default class Twitter extends Provider {
         }
 
         super({
-            id,
+            id: "twitter",
             name,
             ...config,
         });
