@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Updated dev/start script in netlify example
 
+## [0.35.4] - 2023-09-28
+
+### Fixes
+
+-   fixed using `twitter` as id by default in twitter provider.
+
 ## [0.35.3] - 2023-09-26
 
 ### Added

@@ -39,17 +39,16 @@ export default class Twitter extends Provider {
      * Constructor.
      */
     constructor(config?: TwitterProviderConfig) {
-        let id = "x";
         let name = "X";
+
         const normalisedUseLegacyTwitterLogo = config?.useLegacyTwitterLogo === true;
 
         if (normalisedUseLegacyTwitterLogo) {
-            id = "twitter";
             name = "Twitter";
         }
 
         super({
-            id,
+            id: "twitter",
             name,
             ...config,
         });
