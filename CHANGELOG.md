@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Fixes
+
+-   Fixed shadow dom issue in nextjs dev mode by checking if a shadow root is already attached to the div before creating one.
+
 ### Example changes
 
 -   Updated dev/start script in netlify example

@@ -94,7 +94,12 @@ function WithShadowDom({ children }: PropsWithChildren<unknown>) {
     useEffect(() => {
         if (rootDiv.current) {
             // defaults from react-shadow
-            setShadowRoot((os) => os || rootDiv.current!.attachShadow({ mode: "open", delegatesFocus: false }));
+            setShadowRoot(
+                (os) =>
+                    os ||
+                    rootDiv.current!.shadowRoot ||
+                    rootDiv.current!.attachShadow({ mode: "open", delegatesFocus: false })
+            );
         }
     }, [rootDiv]);
 
