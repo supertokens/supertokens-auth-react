@@ -120,6 +120,10 @@ function getTestEmail() {
     return `john.doe+${Date.now()}@supertokens.io`;
 }
 
+function getTestPhoneNumber() {
+    return `+3670${Date.now().toString().substring(6)}`;
+}
+
 async function getSignInOrSignUpSwitchLink(page) {
     return waitForSTElement(
         page,
@@ -142,6 +146,7 @@ module.exports = {
     getFieldErrors,
     setInputValues,
     getTestEmail,
+    getTestPhoneNumber,
     getSignInOrSignUpSwitchLink,
     toggleSignInSignUp,
 };

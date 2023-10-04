@@ -15,7 +15,8 @@
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.2.1",
         "react-scripts": "5.0.1",
-        "supertokens-auth-react": "github:supertokens/supertokens-auth-react#feat/account-linking",
+        "supertokens-auth-react": "^0.35.4",
+        "supertokens-web-js": "^0.8.0",
         "typescript": "^4.8.2",
         "web-vitals": "^2.1.4"
     },
