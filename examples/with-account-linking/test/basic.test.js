@@ -72,7 +72,7 @@ describe("SuperTokens Example Basic tests", function () {
     before(async function () {
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: false,
+            headless: true,
         });
         page = await browser.newPage();
     });
@@ -186,7 +186,7 @@ async function checkLoginMethods(page, expectedLoginMethods) {
         const className = await classNameProp.jsonValue();
         const method = className.split(" ")[0];
         const contactInfo = (await (await div.$(".contactInfo")).evaluate((el) => el.textContent)).trim();
-        console.log({ expectedLoginMethods, method, contactInfo });
+
         assert(
             expectedLoginMethods.some(
                 (m) =>
