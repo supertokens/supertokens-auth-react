@@ -56,6 +56,7 @@ export const PhoneForm = withOverride(
                         optional: false,
                         autofocus: true,
                         placeholder: "",
+                        autoComplete: "tel",
                         validate: defaultValidate,
                     },
                 ]}

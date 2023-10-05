@@ -59,6 +59,9 @@ export const EmailOrPhoneForm = withOverride(
                         optional: false,
                         autofocus: true,
                         placeholder: "",
+                        // We do not add an autocomplete prop in this case, since we do not really have any sensible option to set
+                        // Setting them to either "tel" or "email" would give people the wrong impression since this could have either
+                        // AFAIK we can't set them both at the same time
                         validate: defaultValidate,
                     },
                 ]}
