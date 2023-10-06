@@ -121,6 +121,7 @@ export const UserInputCodeForm = withOverride(
                             autofocus: true,
                             optional: false,
                             clearOnSubmit: true,
+                            autoComplete: "one-time-code",
                             placeholder: "",
                             validate: userInputCodeValidate,
                         },

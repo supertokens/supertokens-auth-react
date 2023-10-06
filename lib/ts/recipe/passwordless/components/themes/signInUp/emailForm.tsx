@@ -40,6 +40,7 @@ export const EmailForm = withOverride(
                         optional: false,
                         autofocus: true,
                         placeholder: "",
+                        autoComplete: "email",
                         // We are using the default validator that allows any string
                         validate: defaultValidate,
                     },
