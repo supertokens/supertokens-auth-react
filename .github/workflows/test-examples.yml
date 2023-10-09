@@ -25,8 +25,8 @@ jobs:
                 working-directory: ${{ matrix.examplePath }}
         steps:
             - uses: actions/checkout@v2
-            - run: bash '[ -d "frontend" ] && npm i --prefix ./frontend'
-            - run: bash '[ -d "backend" ] && npm i --prefix ./backend'
+            - run: bash -c '[ -d "frontend" ] && npm i --prefix ./frontend'
+            - run: bash -c '[ -d "backend" ] && npm i --prefix ./backend'
             - run: npm install git+https://github.com:supertokens/supertokens-auth-react.git#$GITHUB_SHA
             - run: npm install
             - run: npm install mocha@6.1.4 jsdom-global@3.0.2 puppeteer@^11.0.0 isomorphic-fetch@^3.0.0
