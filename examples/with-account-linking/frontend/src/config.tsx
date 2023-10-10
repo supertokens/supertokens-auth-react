@@ -1,8 +1,10 @@
 import ThirdPartyEmailPassword, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import Session from "supertokens-auth-react/recipe/session";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -50,6 +52,9 @@ export const SuperTokensConfig = {
                 ],
             },
         }),
+        Passwordless.init({
+            contactMethod: "EMAIL_OR_PHONE",
+        }),
         Session.init(),
     ],
 };
@@ -58,4 +63,4 @@ export const recipeDetails = {
     docsLink: "https://supertokens.com/docs/thirdpartyemailpassword/introduction",
 };
 
-export const PreBuiltUIList = [ThirdPartyEmailPasswordPreBuiltUI, EmailVerificationPreBuiltUI];
+export const PreBuiltUIList = [ThirdPartyEmailPasswordPreBuiltUI, PasswordlessPreBuiltUI, EmailVerificationPreBuiltUI];

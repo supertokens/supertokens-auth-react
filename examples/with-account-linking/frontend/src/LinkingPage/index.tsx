@@ -42,7 +42,7 @@ export const LinkingPage: React.FC = () => {
             setSuccess("Successfully added password");
             setError(null);
         }
-    }, [setError, setSuccess]);
+    }, [setError, setSuccess, password]);
 
     const addPhoneNumber = useCallback(async () => {
         const resp = await fetch(`${getApiDomain()}/addPhoneNumber`, {
@@ -62,7 +62,7 @@ export const LinkingPage: React.FC = () => {
             setSuccess("Successfully added password");
         }
         loadUserInfo();
-    }, [setError, setSuccess, loadUserInfo]);
+    }, [setError, setSuccess, loadUserInfo, phoneNumber]);
 
     useEffect(() => {
         loadUserInfo();
@@ -87,7 +87,7 @@ export const LinkingPage: React.FC = () => {
             ) : (
                 <ul className="loginMethods">
                     {passwordLoginMethods.map((lm: any) => (
-                        <div key={lm.recipeUserId} className="email-password login-method">
+                        <div key={lm.recipeUserId} className="emailpassword login-method">
                             <span className="recipeId">{lm.recipeId}</span>
                             <span className="userId">{lm.recipeUserId}</span>
                             <span className="contactInfo"> Email: {lm.email}</span>
@@ -103,10 +103,11 @@ export const LinkingPage: React.FC = () => {
                         </div>
                     ))}
                     {phoneLoginMethod.map((lm: any) => (
-                        <div key={lm.recipeUserId} className="thirdparty login-method">
+                        <div key={lm.recipeUserId} className="passwordless login-method">
                             <span className="recipeId">{lm.recipeId}</span>
                             <span className="userId">{lm.recipeUserId}</span>
-                            <span className="contactInfo"> Phone number: {lm.phoneNumber}</span>
+                            {lm.phoneNumber && <span className="contactInfo"> Phone number: {lm.phoneNumber}</span>}
+                            {lm.email && <span className="contactInfo"> Email: {lm.email}</span>}
                         </div>
                     ))}
                 </ul>
