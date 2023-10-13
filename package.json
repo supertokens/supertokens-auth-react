@@ -180,6 +180,10 @@
         {
             "path": "recipe/multitenancy/index.js",
             "limit": "10kb"
+        },
+        {
+            "path": "recipe/multifactorauth/index.js",
+            "limit": "10kb"
         }
     ],
     "browserslist": {
