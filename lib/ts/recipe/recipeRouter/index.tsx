@@ -1,10 +1,69 @@
 import SuperTokens from "../../superTokens";
+import MultiFactorAuth from "../multifactorauth/recipe";
 
 import type { RecipeFeatureComponentMap } from "../../types";
 import type { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
 import type { GetLoginMethodsResponseNormalized } from "../multitenancy/types";
 import type RecipeModule from "../recipeModule";
 import type NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
+
+// The related ADR: https://supertokens.com/docs/contribute/decisions/multitenancy/0006
+const priorityOrder: {
+    rid: string;
+    includes: ("thirdparty" | "emailpassword" | "passwordless")[];
+    factorsProvided: string[];
+}[] = [
+    {
+        rid: "thirdpartyemailpassword",
+        includes: ["thirdparty", "emailpassword"],
+        factorsProvided: ["thirdparty", "emailpassword"],
+    },
+    {
+        rid: "thirdpartypasswordless",
+        includes: ["thirdparty", "passwordless"],
+        factorsProvided: ["thirdparty", "otp-phone", "otp-email", "link-phone", "link-email"],
+    },
+    { rid: "emailpassword", includes: ["emailpassword"], factorsProvided: ["emailpassword"] },
+    {
+        rid: "passwordless",
+        includes: ["passwordless"],
+        factorsProvided: ["otp-phone", "otp-email", "link-phone", "link-email"],
+    },
+    { rid: "thirdparty", includes: ["thirdparty"], factorsProvided: ["thirdparty"] },
+];
+
+function chooseComponentBasedOnFirstFactors(
+    firstFactors: string[],
+    routeComponents: ComponentWithRecipeAndMatchingMethod[]
+) {
+    // We first try to find an exact match
+    for (const { rid, factorsProvided } of priorityOrder) {
+        if (
+            firstFactors.length === factorsProvided.length &&
+            factorsProvided.every((factor) => firstFactors.includes(factor))
+        ) {
+            const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
+            if (matchingComp) {
+                return matchingComp;
+            }
+        }
+    }
+
+    const maxProvided = 0;
+    let component = undefined;
+    // We find the component that provides the most factors
+    for (const { rid, factorsProvided } of priorityOrder.reverse()) {
+        const providedByCurrent = factorsProvided.filter((id) => firstFactors.includes(id)).length;
+        if (providedByCurrent > maxProvided) {
+            const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
+            if (matchingComp) {
+                component = matchingComp;
+            }
+        }
+    }
+
+    return component;
+}
 
 export abstract class RecipeRouter {
     private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;
@@ -31,38 +90,14 @@ export abstract class RecipeRouter {
         }, [] as ComponentWithRecipeAndMatchingMethod[]);
 
         const componentMatchingRid = routeComponents.find((c) => c.matches());
-        if (SuperTokens.usesDynamicLoginMethods === false || defaultToStaticList) {
-            if (routeComponents.length === 0) {
-                return undefined;
-            } else if (componentMatchingRid !== undefined) {
-                return componentMatchingRid;
-            } else {
-                return routeComponents[0];
-            }
-        }
 
-        if (dynamicLoginMethods === undefined) {
-            throw new Error(
-                "Should never come here: dynamic login methods info has not been loaded but recipeRouter rendered"
-            );
-        }
-
-        // The related ADR: https://supertokens.com/docs/contribute/decisions/multitenancy/0006
-        const priorityOrder: { rid: string; includes: (keyof GetLoginMethodsResponseNormalized)[] }[] = [
-            { rid: "thirdpartyemailpassword", includes: ["thirdparty", "emailpassword"] },
-            { rid: "thirdpartypasswordless", includes: ["thirdparty", "passwordless"] },
-            { rid: "emailpassword", includes: ["emailpassword"] },
-            { rid: "passwordless", includes: ["passwordless"] },
-            { rid: "thirdparty", includes: ["thirdparty"] },
-        ];
-
-        if (
-            componentMatchingRid && // if we find a component matching by rid
-            (!priorityOrder.map((a) => a.rid).includes(componentMatchingRid.recipeID) || // from a non-auth recipe
-                dynamicLoginMethods[componentMatchingRid.recipeID as keyof GetLoginMethodsResponseNormalized]
-                    ?.enabled === true) // or an enabled auth recipe
-        ) {
-            return componentMatchingRid;
+        let defaultComp;
+        if (routeComponents.length === 0) {
+            defaultComp = undefined;
+        } else if (componentMatchingRid !== undefined) {
+            defaultComp = componentMatchingRid;
+        } else {
+            defaultComp = routeComponents[0];
         }
 
         const matchingNonAuthComponent = routeComponents.find(
@@ -73,6 +108,43 @@ export abstract class RecipeRouter {
             return matchingNonAuthComponent;
         }
 
+        if (defaultToStaticList) {
+            return defaultComp;
+        }
+
+        const mfaRecipe = MultiFactorAuth.getInstance();
+        if (SuperTokens.usesDynamicLoginMethods === false) {
+            if (componentMatchingRid) {
+                return componentMatchingRid;
+            }
+
+            if (mfaRecipe) {
+                return chooseComponentBasedOnFirstFactors(mfaRecipe.config.getFirstFactors(), routeComponents);
+            } else {
+                return defaultComp;
+            }
+        }
+
+        if (dynamicLoginMethods === undefined) {
+            throw new Error(
+                "Should never come here: dynamic login methods info has not been loaded but recipeRouter rendered"
+            );
+        }
+
+        if (
+            componentMatchingRid && // if we find a component matching by rid
+            (!priorityOrder.map((a) => a.rid).includes(componentMatchingRid.recipeID) || // from a non-auth recipe
+                dynamicLoginMethods[componentMatchingRid.recipeID as "passwordless" | "thirdparty" | "emailpassword"]
+                    ?.enabled === true) // or an enabled auth recipe
+        ) {
+            return componentMatchingRid;
+        }
+
+        if (dynamicLoginMethods.firstFactors !== undefined) {
+            return chooseComponentBasedOnFirstFactors(dynamicLoginMethods.firstFactors, routeComponents);
+        }
+
+        // TODO: do we even need the else branch? (maybe for backwards comp.)
         const enabledRecipeCount = Object.keys(dynamicLoginMethods).filter(
             (key) => (dynamicLoginMethods as any)[key].enabled
         ).length;

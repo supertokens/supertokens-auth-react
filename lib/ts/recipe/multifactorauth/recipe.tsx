@@ -36,6 +36,7 @@ import type {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
+    SecondaryFactorRedirectionInfo,
 } from "./types";
 import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
 import type { NormalisedAppInfo } from "../../types";
@@ -52,6 +53,8 @@ export default class MultiFactorAuth extends RecipeModule<
     static MultiFactorAuthClaim = MultiFactorAuthClaim;
 
     public recipeID = MultiFactorAuth.RECIPE_ID;
+    public firstFactors: string[] = [];
+    public factorRedirectionInfo: SecondaryFactorRedirectionInfo[] = [];
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
@@ -102,6 +105,10 @@ export default class MultiFactorAuth extends RecipeModule<
         };
     }
 
+    static getInstance(): MultiFactorAuth | undefined {
+        return MultiFactorAuth.instance;
+    }
+
     static getInstanceOrThrow(): MultiFactorAuth {
         if (MultiFactorAuth.instance === undefined) {
             let error = "No instance of EmailVerification found. Make sure to call the EmailVerification.init method.";
@@ -123,7 +130,11 @@ export default class MultiFactorAuth extends RecipeModule<
                 this.config.recipeId
             }`;
         } else if (context.action === "GO_TO_FACTOR") {
-            // TODO
+            const redirectInfo = this.factorRedirectionInfo.find((f) => f.id === context.factorId);
+            if (redirectInfo !== undefined) {
+                return redirectInfo.path;
+            }
+            // TODO: access denied screen if not defined?
             return "/";
         } else {
             return "/";
@@ -131,6 +142,11 @@ export default class MultiFactorAuth extends RecipeModule<
     };
 
     getDefaultFirstFactors(): string[] {
-        return [];
+        return this.firstFactors;
+    }
+
+    addMFAFactors(firstFactors: string[], secondaryFactors: SecondaryFactorRedirectionInfo[]) {
+        this.firstFactors.push(...firstFactors);
+        this.factorRedirectionInfo.push(...secondaryFactors);
     }
 }

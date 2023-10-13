@@ -24,7 +24,7 @@ export declare type UserInput = {
 export declare type Config = UserInput &
     RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
-    getFirstFactors?: () => string[];
+    getFirstFactors: () => string[];
     disableDefaultUI: boolean;
     factorChooserScreen: FeatureBaseConfig;
     override: {
@@ -34,9 +34,14 @@ export declare type NormalisedConfig = {
         ) => RecipeInterface;
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-export declare type GetRedirectionURLContext = {
-    action: "FACTOR_CHOICE_REQUIRED" | "GO_TO_FACTOR";
-};
+export declare type GetRedirectionURLContext =
+    | {
+          action: "FACTOR_CHOICE_REQUIRED";
+      }
+    | {
+          action: "GO_TO_FACTOR";
+          factorId: string;
+      };
 export declare type PreAndPostAPIHookAction = "GET_MFA_INFO";
 export declare type PreAPIHookContext = {
     action: PreAndPostAPIHookAction;
@@ -51,4 +56,10 @@ export declare type OnHandleEventContext = {
 export declare type FactorChooserThemeProps = {
     config: NormalisedConfig;
     userContext?: any;
+};
+export declare type SecondaryFactorRedirectionInfo = {
+    id: string;
+    name: string;
+    description: string;
+    path: string;
 };

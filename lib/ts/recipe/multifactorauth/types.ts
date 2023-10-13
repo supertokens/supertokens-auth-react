@@ -45,7 +45,7 @@ export type Config = UserInput &
     RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type NormalisedConfig = {
-    getFirstFactors?: () => string[];
+    getFirstFactors: () => string[];
     disableDefaultUI: boolean;
     factorChooserScreen: FeatureBaseConfig;
 
@@ -57,9 +57,14 @@ export type NormalisedConfig = {
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
-export type GetRedirectionURLContext = {
-    action: "FACTOR_CHOICE_REQUIRED" | "GO_TO_FACTOR";
-};
+export type GetRedirectionURLContext =
+    | {
+          action: "FACTOR_CHOICE_REQUIRED";
+      }
+    | {
+          action: "GO_TO_FACTOR";
+          factorId: string;
+      };
 
 export type PreAndPostAPIHookAction = "GET_MFA_INFO";
 
@@ -78,4 +83,11 @@ export type OnHandleEventContext = {
 export type FactorChooserThemeProps = {
     config: NormalisedConfig;
     userContext?: any;
+};
+
+export type SecondaryFactorRedirectionInfo = {
+    id: string;
+    name: string;
+    description: string;
+    path: string;
 };

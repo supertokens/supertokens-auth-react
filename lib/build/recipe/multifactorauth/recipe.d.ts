@@ -6,6 +6,7 @@ import type {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAndPostAPIHookAction,
+    SecondaryFactorRedirectionInfo,
 } from "./types";
 import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
 export default class MultiFactorAuth extends RecipeModule<
@@ -19,6 +20,8 @@ export default class MultiFactorAuth extends RecipeModule<
     static RECIPE_ID: string;
     static MultiFactorAuthClaim: import("supertokens-web-js/lib/build/recipe/multifactorauth/multiFactorAuthClaim").MultiFactorAuthClaimClass;
     recipeID: string;
+    firstFactors: string[];
+    factorRedirectionInfo: SecondaryFactorRedirectionInfo[];
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         webJSRecipe?: WebJSRecipeInterface<typeof MultiFactorAuthWebJS>
@@ -26,7 +29,9 @@ export default class MultiFactorAuth extends RecipeModule<
     static init(
         config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
+    static getInstance(): MultiFactorAuth | undefined;
     static getInstanceOrThrow(): MultiFactorAuth;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getDefaultFirstFactors(): string[];
+    addMFAFactors(firstFactors: string[], secondaryFactors: SecondaryFactorRedirectionInfo[]): void;
 }

@@ -34,7 +34,10 @@ export function normaliseMultiFactorAuthFeature(config?: Config): NormalisedConf
     return {
         ...normaliseRecipeModuleConfig(config),
         disableDefaultUI,
-        getFirstFactors: () => MultiFactorAuth.getInstanceOrThrow().getDefaultFirstFactors(),
+        getFirstFactors:
+            config?.firstFactors !== undefined
+                ? () => config!.firstFactors!
+                : () => MultiFactorAuth.getInstanceOrThrow().getDefaultFirstFactors(),
         factorChooserScreen: config.factorChooserScreen ?? {},
         override,
     };
