@@ -49,14 +49,15 @@ function chooseComponentBasedOnFirstFactors(
         }
     }
 
-    const maxProvided = 0;
+    let maxProvided = 0;
     let component = undefined;
     // We find the component that provides the most factors
     for (const { rid, factorsProvided } of priorityOrder.reverse()) {
         const providedByCurrent = factorsProvided.filter((id) => firstFactors.includes(id)).length;
-        if (providedByCurrent > maxProvided) {
+        if (providedByCurrent >= maxProvided) {
             const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
             if (matchingComp) {
+                maxProvided = providedByCurrent;
                 component = matchingComp;
             }
         }
