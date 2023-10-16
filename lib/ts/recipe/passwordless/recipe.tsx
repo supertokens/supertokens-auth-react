@@ -18,10 +18,12 @@
  */
 
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
 import { SSR_ERROR } from "../../constants";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
+import MultiFactorAuth from "../multifactorauth/recipe";
 
 import { getFunctionOverrides } from "./functionOverrides";
 import { normalisePasswordlessConfig } from "./utils";
@@ -66,6 +68,23 @@ export default class Passwordless extends AuthRecipe<
         config: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normalisePasswordlessConfig(config);
+
+        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
+            const mfa = MultiFactorAuth.getInstance();
+            if (mfa !== undefined) {
+                mfa.addMFAFactors(
+                    ["otp-phone", "otp-email", "link-phone", "link-email"],
+                    [
+                        {
+                            id: "otp-phone",
+                            name: "Phone-based OTP",
+                            description: "OTP delivered by a text message",
+                            path: "/check-auth/otp",
+                        },
+                    ]
+                );
+            }
+        });
 
         return {
             recipeID: Passwordless.RECIPE_ID,

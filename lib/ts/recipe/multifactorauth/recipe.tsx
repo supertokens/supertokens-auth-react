@@ -18,7 +18,6 @@
  */
 
 import MultiFactorAuthWebJS from "supertokens-web-js/recipe/multifactorauth";
-import { MultiFactorAuthClaim } from "supertokens-web-js/recipe/multifactorauth";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
@@ -28,6 +27,7 @@ import RecipeModule from "../recipeModule";
 
 import { DEFAULT_FACTOR_CHOOSER_PATH } from "./constants";
 import { getFunctionOverrides } from "./functionOverrides";
+import { MultiFactorAuthClaimClass } from "./multiFactorAuthClaim";
 import { normaliseMultiFactorAuthFeature } from "./utils";
 
 import type {
@@ -50,7 +50,10 @@ export default class MultiFactorAuth extends RecipeModule<
     static instance?: MultiFactorAuth;
     static RECIPE_ID = "multifactorauth";
 
-    static MultiFactorAuthClaim = MultiFactorAuthClaim;
+    static MultiFactorAuthClaim = new MultiFactorAuthClaimClass(
+        () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe,
+        (context) => this.getInstanceOrThrow().getDefaultRedirectionURL(context)
+    );
 
     public recipeID = MultiFactorAuth.RECIPE_ID;
     public firstFactors: string[] = [];

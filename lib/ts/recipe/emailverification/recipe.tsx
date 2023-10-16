@@ -22,11 +22,11 @@ import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 
-import { EmailVerificationClaimClass } from "../../claims/emailVerificationClaim";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
 
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
+import { EmailVerificationClaimClass } from "./emailVerificationClaim";
 import { getFunctionOverrides } from "./functionOverrides";
 import { normaliseEmailVerificationFeature } from "./utils";
 

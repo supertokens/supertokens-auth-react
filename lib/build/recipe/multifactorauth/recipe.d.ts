@@ -1,5 +1,6 @@
 import MultiFactorAuthWebJS from "supertokens-web-js/recipe/multifactorauth";
 import RecipeModule from "../recipeModule";
+import { MultiFactorAuthClaimClass } from "./multiFactorAuthClaim";
 import type {
     UserInput,
     NormalisedConfig,
@@ -18,7 +19,7 @@ export default class MultiFactorAuth extends RecipeModule<
     readonly webJSRecipe: WebJSRecipeInterface<typeof MultiFactorAuthWebJS>;
     static instance?: MultiFactorAuth;
     static RECIPE_ID: string;
-    static MultiFactorAuthClaim: import("supertokens-web-js/lib/build/recipe/multifactorauth/multiFactorAuthClaim").MultiFactorAuthClaimClass;
+    static MultiFactorAuthClaim: MultiFactorAuthClaimClass;
     recipeID: string;
     firstFactors: string[];
     factorRedirectionInfo: SecondaryFactorRedirectionInfo[];

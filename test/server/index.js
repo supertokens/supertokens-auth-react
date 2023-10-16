@@ -382,6 +382,18 @@ app.post(
     }
 );
 
+app.post("/payload", verifySession(), async (req, res) => {
+    let session = req.session;
+
+    await session.mergeIntoAccessTokenPayload(req.body);
+
+    res.send({ status: "OK" });
+});
+
+app.get("/auth/mfa/info", (req, res) => {
+    res.send({ status: "OK" });
+});
+
 app.get("/token", async (_, res) => {
     res.send({
         latestURLWithToken,

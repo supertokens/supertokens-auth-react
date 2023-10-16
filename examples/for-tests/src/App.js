@@ -14,6 +14,7 @@ import Multitenancy from "supertokens-auth-react/recipe/multitenancy";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 import UserRoles from "supertokens-auth-react/recipe/userroles";
+import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
 
 import axios from "axios";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
@@ -171,6 +172,9 @@ const formFields = [
 const testContext = getTestContext();
 
 let recipeList = [
+    MultiFactorAuth.init({
+        firstFactors: ["emailpassword", "thirdparty"],
+    }),
     Multitenancy.init({
         override: {
             functions: (oI) => ({

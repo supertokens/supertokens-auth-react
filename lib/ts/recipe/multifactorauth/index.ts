@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
+import { RecipeInterface } from "supertokens-web-js/recipe/multifactorauth";
 
 import { getNormalisedUserContext } from "../../utils";
 
@@ -25,8 +25,8 @@ import MultiFactorAuthRecipe from "./recipe";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { UserInput } from "./types";
 
-import type { MFAFactorInfo } from "supertokens-web-js/lib/build/recipe/multifactorauth/types";
-import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/emailverification";
+import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/multifactorauth";
+import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 
 export default class Wrapper {
     static MultiFactorAuthClaim = MultiFactorAuthRecipe.MultiFactorAuthClaim;
