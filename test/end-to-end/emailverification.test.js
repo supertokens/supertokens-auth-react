@@ -255,13 +255,9 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
-                ...(accountLinkingSupported
-                    ? []
-                    : [
-                          "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
-                          "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                          "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                      ]),
+                "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
@@ -345,13 +341,9 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
-                ...(accountLinkingSupported
-                    ? []
-                    : [
-                          "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
-                          "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                          "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                      ]),
+                "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
@@ -495,13 +487,9 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
-                ...(accountLinkingSupported
-                    ? []
-                    : [
-                          "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
-                          "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                          "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                      ]),
+                "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
