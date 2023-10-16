@@ -382,7 +382,22 @@ app.post(
     }
 );
 
-app.post("/payload", verifySession(), async (req, res) => {
+let mfaInfo = {
+    factors: {
+        isAlreadySetup: [],
+        isAllowedToSetup: ["otp-phone", "link-phone"],
+    },
+};
+app.post("/setMFAInfo", verifySession(), async (req, res) => {
+    let session = req.session;
+
+    mfaInfo = req.body.mfaInfo;
+    await session.mergeIntoAccessTokenPayload(req.body.payload);
+
+    res.send({ status: "OK" });
+});
+
+app.post("/mergeIntoAccessTokenPayload", verifySession(), async (req, res) => {
     let session = req.session;
 
     await session.mergeIntoAccessTokenPayload(req.body);
@@ -390,8 +405,9 @@ app.post("/payload", verifySession(), async (req, res) => {
     res.send({ status: "OK" });
 });
 
+// TODO: remove this after we get backend SDK support
 app.get("/auth/mfa/info", (req, res) => {
-    res.send({ status: "OK" });
+    res.send({ status: "OK", ...mfaInfo });
 });
 
 app.get("/token", async (_, res) => {

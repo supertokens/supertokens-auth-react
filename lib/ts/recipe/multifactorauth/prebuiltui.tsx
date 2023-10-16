@@ -6,7 +6,7 @@ import { RecipeRouter } from "../recipeRouter";
 import { SessionAuth } from "../session";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
-import { default as EmailVerificationFeature } from "./components/features/factorChooser";
+import { default as FactorChooserFeature } from "./components/features/factorChooser";
 import FactorChooserTheme from "./components/themes/factorChooser";
 import { DEFAULT_FACTOR_CHOOSER_PATH } from "./constants";
 import MultiFactorAuthRecipe from "./recipe";
@@ -71,8 +71,8 @@ export class MultiFactorAuthPreBuiltUI extends RecipeRouter {
     ): JSX.Element => {
         return (
             <UserContextWrapper userContext={props.userContext}>
-                <SessionAuth requireAuth={false} overrideGlobalClaimValidators={() => []}>
-                    <EmailVerificationFeature
+                <SessionAuth overrideGlobalClaimValidators={() => []}>
+                    <FactorChooserFeature
                         recipe={this.recipeInstance}
                         useComponentOverrides={useComponentOverrides}
                         {...props}

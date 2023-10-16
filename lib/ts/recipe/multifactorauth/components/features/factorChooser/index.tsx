@@ -27,7 +27,7 @@ import { useOnMountAPICall } from "../../../../../utils";
 import { SessionContext } from "../../../../session";
 import Session from "../../../../session/recipe";
 import FactorChooserTheme from "../../themes/factorChooser";
-import { defaultTranslationsEmailVerification } from "../../themes/translations";
+import { defaultTranslationsMultiFactorAuth } from "../../themes/translations";
 
 import type { FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
@@ -36,9 +36,9 @@ import type { MFAFactorInfo } from "supertokens-web-js/lib/build/recipe/multifac
 
 type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any; useComponentOverrides: () => ComponentOverrideMap };
 
-export const EmailVerification: React.FC<Prop> = (props) => {
+export const FactorChooser: React.FC<Prop> = (props) => {
     const sessionContext = useContext(SessionContext);
-    const [status, setStatus] = useState("LOADING");
+    const [mfaInfo, setMFAInfo] = useState<MFAFactorInfo | undefined>(undefined);
     const userContext = useUserContext();
     const recipeComponentOverrides = props.useComponentOverrides();
 
@@ -46,7 +46,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         await redirectToAuth({ redirectBack: false, history: props.history });
     }, [props.history]);
 
-    const fetchIsEmailVerified = useCallback(async () => {
+    const fetchMFAInfo = useCallback(async () => {
         if (sessionContext.loading === true) {
             // This callback should only be called if the session is already loaded
             throw new Error("Should never come here");
@@ -56,9 +56,9 @@ export const EmailVerification: React.FC<Prop> = (props) => {
 
     const checkIsEmailVerified = useCallback(
         async (mfaInfo: { factors: MFAFactorInfo }): Promise<void> => {
-            setStatus("READY" + mfaInfo.factors.isAllowedToSetup.length); // TODO
+            setMFAInfo(mfaInfo.factors);
         },
-        [setStatus]
+        [setMFAInfo]
     );
 
     const handleError = useCallback(
@@ -72,13 +72,21 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         [redirectToAuthWithHistory]
     );
 
-    useOnMountAPICall(fetchIsEmailVerified, checkIsEmailVerified, handleError, sessionContext.loading === false);
+    useOnMountAPICall(fetchMFAInfo, checkIsEmailVerified, handleError, sessionContext.loading === false);
 
-    if (status === "LOADING") {
+    const navigateToFactor = useCallback(
+        (factorId) => props.recipe.redirect({ action: "GO_TO_FACTOR", factorId }),
+        [props.recipe]
+    );
+    const signOut = useCallback(async (): Promise<void> => {
+        const session = Session.getInstanceOrThrow();
+        await session.signOut(props.userContext);
+        return redirectToAuthWithHistory();
+    }, [props.recipe, redirectToAuthWithHistory]);
+
+    if (mfaInfo === undefined) {
         return <Fragment />;
     }
-
-    // const factorChooserScreen = props.recipe.config.factorChooserScreen;
 
     const childProps = {
         config: props.recipe.config,
@@ -87,10 +95,20 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
-                defaultStore={defaultTranslationsEmailVerification}>
+                defaultStore={defaultTranslationsMultiFactorAuth}>
                 <Fragment>
                     {/* No custom theme, use default. */}
-                    {props.children === undefined && <FactorChooserTheme {...childProps} />}
+                    {props.children === undefined && (
+                        <FactorChooserTheme
+                            {...childProps}
+                            mfaInfo={mfaInfo}
+                            availableFactors={props.recipe.factorRedirectionInfo.filter(
+                                ({ id }) => mfaInfo.isAllowedToSetup.includes(id) || mfaInfo.isAlreadySetup.includes(id)
+                            )}
+                            logout={signOut}
+                            navigateToFactor={navigateToFactor}
+                        />
+                    )}
                     {/* Otherwise, custom theme is provided, propagate props. */}
                     {props.children &&
                         React.Children.map(props.children, (child) => {
@@ -106,4 +124,4 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     );
 };
 
-export default EmailVerification;
+export default FactorChooser;

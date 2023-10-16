@@ -5,8 +5,10 @@ import type {
     NormalisedConfig as NormalisedRecipeModuleConfig,
     UserInput as RecipeModuleUserInput,
 } from "../recipeModule/types";
+import type { FC } from "react";
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/multifactorauth";
+import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 export declare type ComponentOverrideMap = {
     FactorChooser_Override?: ComponentOverride<any>;
 };
@@ -54,6 +56,10 @@ export declare type OnHandleEventContext = {
     userContext: any;
 };
 export declare type FactorChooserThemeProps = {
+    mfaInfo: MFAFactorInfo;
+    availableFactors: SecondaryFactorRedirectionInfo[];
+    navigateToFactor: (factorId: string) => void;
+    logout: () => void;
     config: NormalisedConfig;
     userContext?: any;
 };
@@ -61,5 +67,6 @@ export declare type SecondaryFactorRedirectionInfo = {
     id: string;
     name: string;
     description: string;
+    logo: FC;
     path: string;
 };

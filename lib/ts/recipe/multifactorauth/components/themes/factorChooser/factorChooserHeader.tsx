@@ -12,4 +12,18 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export const DEFAULT_FACTOR_CHOOSER_PATH = "/mfa";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../translation/translationContext";
+
+export const FactorChooserHeader = withOverride(
+    "MultiFactorAuthFactorChooserHeader",
+    function MultiFactorAuthFactorChooserHeader(): JSX.Element {
+        const t = useTranslation();
+
+        return (
+            <div data-supertokens="row factorChooserHeader">
+                <div data-supertokens="headerTitle">{t("MULTI_FACTOR_CHOOSER_HEADER_TITLE")}</div>
+            </div>
+        );
+    }
+);

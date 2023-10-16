@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type { FeatureBaseConfig } from "../../types";
 import type {
@@ -19,8 +20,10 @@ import type {
     NormalisedConfig as NormalisedRecipeModuleConfig,
     UserInput as RecipeModuleUserInput,
 } from "../recipeModule/types";
+import type { FC } from "react";
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/multifactorauth";
+import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 
 export type ComponentOverrideMap = {
     FactorChooser_Override?: ComponentOverride<any>; // TODO
@@ -81,6 +84,10 @@ export type OnHandleEventContext = {
 };
 
 export type FactorChooserThemeProps = {
+    mfaInfo: MFAFactorInfo;
+    availableFactors: SecondaryFactorRedirectionInfo[];
+    navigateToFactor: (factorId: string) => void;
+    logout: () => void;
     config: NormalisedConfig;
     userContext?: any;
 };
@@ -89,5 +96,6 @@ export type SecondaryFactorRedirectionInfo = {
     id: string;
     name: string;
     description: string;
+    logo: FC;
     path: string;
 };

@@ -7,5 +7,5 @@ declare type Prop = FeatureBaseProps & {
     userContext?: any;
     useComponentOverrides: () => ComponentOverrideMap;
 };
-export declare const EmailVerification: React.FC<Prop>;
-export default EmailVerification;
+export declare const FactorChooser: React.FC<Prop>;
+export default FactorChooser;

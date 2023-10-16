@@ -129,9 +129,7 @@ export default class MultiFactorAuth extends RecipeModule<
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "FACTOR_CHOICE_REQUIRED") {
             const chooserPath = new NormalisedURLPath(DEFAULT_FACTOR_CHOOSER_PATH);
-            return `${this.config.appInfo.websiteBasePath.appendPath(chooserPath).getAsStringDangerous()}?rid=${
-                this.config.recipeId
-            }`;
+            return `${this.config.appInfo.websiteBasePath.appendPath(chooserPath).getAsStringDangerous()}`;
         } else if (context.action === "GO_TO_FACTOR") {
             const redirectInfo = this.factorRedirectionInfo.find((f) => f.id === context.factorId);
             if (redirectInfo !== undefined) {

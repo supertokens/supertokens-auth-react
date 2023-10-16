@@ -20,6 +20,8 @@
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
+import { LinkIcon } from "../../components/assets/linkIcon";
+import { OTPIcon } from "../../components/assets/otpIcon";
 import { SSR_ERROR } from "../../constants";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
@@ -77,9 +79,32 @@ export default class Passwordless extends AuthRecipe<
                     [
                         {
                             id: "otp-phone",
-                            name: "Phone-based OTP",
-                            description: "OTP delivered by a text message",
-                            path: "/check-auth/otp",
+                            name: "SMS based OTP",
+                            description: "Get an OTP code on your phone to complete the authentication request",
+                            path: "/check-auth/otp-phone",
+                            logo: OTPIcon,
+                        },
+                        {
+                            id: "link-phone",
+                            name: "SMS based Magic link",
+                            description: "Get a magic link on your phone to complete the authentication request",
+                            path: "/check-auth/link-phone",
+                            logo: LinkIcon,
+                        },
+                        {
+                            id: "otp-email",
+                            name: "SMS based OTP",
+                            description: "Get an OTP code on your email address to complete the authentication request",
+                            path: "/check-auth/otp-email",
+                            logo: OTPIcon,
+                        },
+                        {
+                            id: "link-email",
+                            name: "SMS based Magic link",
+                            description:
+                                "Get a magic link on your email address to complete the authentication request",
+                            path: "/check-auth/link-email",
+                            logo: LinkIcon,
                         },
                     ]
                 );
