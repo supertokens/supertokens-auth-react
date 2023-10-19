@@ -20,7 +20,7 @@
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
-import { LinkIcon } from "../../components/assets/linkIcon";
+// import { LinkIcon } from "../../components/assets/linkIcon";
 import { OTPIcon } from "../../components/assets/otpIcon";
 import { SSR_ERROR } from "../../constants";
 import { isTest } from "../../utils";
@@ -81,31 +81,31 @@ export default class Passwordless extends AuthRecipe<
                             id: "otp-phone",
                             name: "SMS based OTP",
                             description: "Get an OTP code on your phone to complete the authentication request",
-                            path: "/check-auth/otp-phone",
+                            path: "/auth/mfa/otp-phone", // TODO: websitebasepath
                             logo: OTPIcon,
                         },
-                        {
-                            id: "link-phone",
-                            name: "SMS based Magic link",
-                            description: "Get a magic link on your phone to complete the authentication request",
-                            path: "/check-auth/link-phone",
-                            logo: LinkIcon,
-                        },
+                        // {
+                        //     id: "link-phone",
+                        //     name: "SMS based Magic link",
+                        //     description: "Get a magic link on your phone to complete the authentication request",
+                        //     path: "/auth/mfa/link-phone",
+                        //     logo: LinkIcon,
+                        // },
                         {
                             id: "otp-email",
-                            name: "SMS based OTP",
+                            name: "Email based OTP",
                             description: "Get an OTP code on your email address to complete the authentication request",
-                            path: "/check-auth/otp-email",
+                            path: "/auth/mfa/otp-email", // TODO: websitebasepath
                             logo: OTPIcon,
                         },
-                        {
-                            id: "link-email",
-                            name: "SMS based Magic link",
-                            description:
-                                "Get a magic link on your email address to complete the authentication request",
-                            path: "/check-auth/link-email",
-                            logo: LinkIcon,
-                        },
+                        // {
+                        //     id: "link-email",
+                        //     name: "SMS based Magic link",
+                        //     description:
+                        //         "Get a magic link on your email address to complete the authentication request",
+                        //     path: "/auth/mfa/link-email",
+                        //     logo: LinkIcon,
+                        // },
                     ]
                 );
             }

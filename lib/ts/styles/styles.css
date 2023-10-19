@@ -252,3 +252,19 @@
 [data-supertokens~="button"]:focus {
     outline: none;
 }
+
+[data-supertokens~="backButtonCommon"] {
+    width: 16px;
+    height: 13px;
+}
+
+[data-supertokens~="backButton"] {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+}
+
+[data-supertokens~="backButtonPlaceholder"] {
+    display: block;
+}

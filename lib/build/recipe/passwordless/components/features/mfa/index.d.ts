@@ -1,38 +1,40 @@
 import * as React from "react";
 import type { FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
-import type { ComponentOverrideMap } from "../../../types";
-import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps } from "../../../types";
+import type { ComponentOverrideMap, MFAChildProps } from "../../../types";
+import type { MFAAction, MFAState } from "../../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import type { PasswordlessFlowType } from "supertokens-web-js/recipe/thirdpartypasswordless";
 export declare const useSuccessInAnotherTabChecker: (
-    state: SignInUpState,
-    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
+    callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    recipeImpl: RecipeInterface,
+    state: MFAState,
+    dispatch: React.Dispatch<MFAAction>,
     userContext: any
-) => React.MutableRefObject<boolean>;
-export declare const useFeatureReducer: (
-    recipeImpl: RecipeInterface | undefined,
-    userContext: any
-) => [SignInUpState, React.Dispatch<PasswordlessSignInUpAction>];
+) => void;
+export declare const useFeatureReducer: () => [MFAState, React.Dispatch<MFAAction>];
 export declare function useChildProps(
     recipe: Recipe,
-    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
-    state: SignInUpState,
-    callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    recipeImplementation: RecipeInterface,
+    state: MFAState,
+    contactMethod: "PHONE" | "EMAIL",
     userContext: any,
     history: any
-): SignInUpChildProps;
+): MFAChildProps;
 export declare function useChildProps(
     recipe: Recipe | undefined,
-    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
-    state: SignInUpState,
-    callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    recipeImplementation: RecipeInterface,
+    state: MFAState,
+    contactMethod: "PHONE" | "EMAIL",
     userContext: any,
     history: any
-): SignInUpChildProps | undefined;
-export declare const SignInUpFeature: React.FC<
+): MFAChildProps | undefined;
+export declare const MFAFeature: React.FC<
     FeatureBaseProps & {
+        contactMethod: "PHONE" | "EMAIL";
+        flowType: PasswordlessFlowType;
         recipe: Recipe;
         useComponentOverrides: () => ComponentOverrideMap;
     }
 >;
-export default SignInUpFeature;
+export default MFAFeature;

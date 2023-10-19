@@ -136,15 +136,19 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
 function SignInUpThemeWrapper(props: ThirdPartyPasswordlessSignInAndUpThemeProps) {
     const hasFont = hasFontDefined(props.config.rootStyle);
 
+    const currentDynamicLoginMethods = useDynamicLoginMethods();
     // By defining it in a single object here TSC can deduce the connection between props
     const childProps =
         props.passwordlessRecipe !== undefined && props.pwlessChildProps !== undefined
             ? {
                   ...props,
-                  activeScreen: getActiveScreen({
-                      config: props.pwlessChildProps.config,
-                      featureState: props.pwlessState,
-                  }),
+                  activeScreen: getActiveScreen(
+                      {
+                          config: props.pwlessChildProps.config,
+                          featureState: props.pwlessState,
+                      },
+                      currentDynamicLoginMethods
+                  ),
                   pwlessChildProps: props.pwlessChildProps,
                   passwordlessRecipe: props.passwordlessRecipe,
               }

@@ -106,6 +106,7 @@ export type NormalisedConfig = {
         disableDefaultUI?: boolean;
     };
     linkClickedScreenFeature: PasswordlessNormalisedBaseConfig;
+    mfaFeature: PasswordlessNormalisedBaseConfig;
 
     contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
 
@@ -183,8 +184,27 @@ export type UserInput = (
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
     };
     linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
+    mfaFeature?: PasswordlessFeatureBaseConfig;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
+export type MFAProps = {
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+    contactMethod: "EMAIL" | "PHONE";
+    onBackButtonClicked: () => void;
+    onSignOutClicked: () => void;
+    onFactorChooserButtonClicked: () => void;
+    onSuccess?: () => void;
+    dispatch: Dispatch<MFAAction>;
+    featureState: {
+        isSetupAllowed: boolean;
+        loginAttemptInfo?: LoginAttemptInfo;
+        loaded: boolean;
+        successInAnotherTab: boolean;
+        error: string | undefined;
+    };
+    userContext?: any;
+};
 export type SignInUpProps = {
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
@@ -307,7 +327,42 @@ export type SignInUpState = {
     successInAnotherTab: boolean;
 };
 
+export type MFAAction =
+    | {
+          type: "load";
+          loginAttemptInfo: LoginAttemptInfo | undefined;
+          isAllowedToSetup: boolean;
+          error: string | undefined;
+      }
+    | {
+          type: "startLogin";
+          loginAttemptInfo: LoginAttemptInfo;
+      }
+    | {
+          type: "resendCode";
+          timestamp: number;
+      }
+    | {
+          type: "restartFlow";
+          error: string | undefined;
+      }
+    | {
+          type: "setError";
+          error: string | undefined;
+      }
+    | {
+          type: "successInAnotherTab";
+      };
+export type MFAState = {
+    error: string | undefined;
+    loaded: boolean;
+    loginAttemptInfo: LoginAttemptInfo | undefined;
+    isSetupAllowed: boolean;
+    successInAnotherTab: boolean;
+};
+
 export type SignInUpChildProps = Omit<SignInUpProps, "featureState" | "dispatch">;
+export type MFAChildProps = Omit<MFAProps, "featureState" | "dispatch">;
 
 export type LinkSentThemeProps = {
     clearError: () => void;
@@ -325,6 +380,31 @@ export type UserInputCodeFormFooterProps = {
 };
 
 export type UserInputCodeFormHeaderProps = {
+    loginAttemptInfo: LoginAttemptInfo;
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+};
+
+export type MFAFooterProps = {
+    isSetupAllowed: boolean;
+    onSignOutClicked: () => void;
+    onFactorChooserButtonClicked: () => void;
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+};
+
+export type MFAOTPFooterProps = {
+    isSetupAllowed: boolean;
+    onSignOutClicked: () => void;
+    onFactorChooserButtonClicked: () => void;
+    loginAttemptInfo: LoginAttemptInfo;
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+};
+
+export type MFAOTPHeaderProps = {
+    isSetupAllowed: boolean;
+    onBackButtonClicked: () => void;
     loginAttemptInfo: LoginAttemptInfo;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;

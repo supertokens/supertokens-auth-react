@@ -71,6 +71,7 @@ export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
         signInUpFeature,
 
         linkClickedScreenFeature: normalisePasswordlessBaseConfig(config.linkClickedScreenFeature),
+        mfaFeature: normalisePasswordlessBaseConfig(config.mfaFeature),
 
         contactMethod: config.contactMethod,
 

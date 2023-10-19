@@ -20,40 +20,49 @@ import { Fragment } from "react";
 import { useMemo } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
+import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
+import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
-import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
-import Session from "../../../../session";
+import {
+    clearErrorQueryParam,
+    getQueryParams,
+    getRedirectToPathFromURL,
+    useOnMountAPICall,
+} from "../../../../../utils";
+import MultiFactorAuth from "../../../../multifactorauth/recipe";
 import SessionRecipe from "../../../../session/recipe";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
-import SignInUpThemeWrapper from "../../themes/signInUp";
+import MFAThemeWrapper from "../../themes/mfa";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
 import type { FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
-import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap } from "../../../types";
-import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps, NormalisedConfig } from "../../../types";
+import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap, MFAChildProps } from "../../../types";
+import type { MFAAction, MFAState, NormalisedConfig } from "../../../types";
+import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
-import type { User } from "supertokens-web-js/types";
+import type { PasswordlessFlowType } from "supertokens-web-js/recipe/thirdpartypasswordless";
 
 export const useSuccessInAnotherTabChecker = (
-    state: SignInUpState,
-    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
+    callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    recipeImpl: RecipeInterface,
+    state: MFAState,
+    dispatch: React.Dispatch<MFAAction>,
     userContext: any
 ) => {
-    const callingConsumeCodeRef = useRef(false);
-
     useEffect(() => {
         // We only need to start checking this if we have an active login attempt
         if (state.loginAttemptInfo && !state.successInAnotherTab) {
             const checkSessionIntervalHandle = setInterval(async () => {
                 if (callingConsumeCodeRef.current === false) {
-                    const hasSession = await Session.doesSessionExist({
-                        userContext,
-                    });
-                    if (hasSession) {
+                    const currLoginAttempt = await recipeImpl.getLoginAttemptInfo({ userContext });
+                    if (
+                        currLoginAttempt === undefined ||
+                        currLoginAttempt.deviceId !== state.loginAttemptInfo?.deviceId
+                    ) {
                         dispatch({ type: "successInAnotherTab" });
                     }
                 }
@@ -66,22 +75,18 @@ export const useSuccessInAnotherTabChecker = (
         // Nothing to clean up
         return;
     }, [state.loginAttemptInfo, state.successInAnotherTab]);
-
-    return callingConsumeCodeRef;
 };
 
-export const useFeatureReducer = (
-    recipeImpl: RecipeInterface | undefined,
-    userContext: any
-): [SignInUpState, React.Dispatch<PasswordlessSignInUpAction>] => {
-    const [state, dispatch] = React.useReducer(
-        (oldState: SignInUpState, action: PasswordlessSignInUpAction) => {
+export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
+    return React.useReducer(
+        (oldState: MFAState, action: MFAAction): MFAState => {
             switch (action.type) {
                 case "load":
                     return {
                         loaded: true,
                         error: action.error,
                         loginAttemptInfo: action.loginAttemptInfo,
+                        isSetupAllowed: action.isAllowedToSetup,
                         successInAnotherTab: false,
                     };
                 case "resendCode":
@@ -110,8 +115,10 @@ export const useFeatureReducer = (
                 case "startLogin":
                     return {
                         ...oldState,
+                        loaded: true,
                         loginAttemptInfo: action.loginAttemptInfo,
                         error: undefined,
+                        successInAnotherTab: false,
                     };
                 case "successInAnotherTab":
                     return {
@@ -126,6 +133,7 @@ export const useFeatureReducer = (
             error: undefined,
             loaded: false,
             loginAttemptInfo: undefined,
+            isSetupAllowed: false,
             successInAnotherTab: false,
         },
         (initArg) => {
@@ -147,106 +155,115 @@ export const useFeatureReducer = (
             };
         }
     );
-    useEffect(() => {
-        if (recipeImpl === undefined) {
-            return;
-        }
-        async function load() {
-            let error: string | undefined = undefined;
-            const errorQueryParam = getQueryParams("error");
-            const messageQueryParam = getQueryParams("message");
-            if (errorQueryParam !== null) {
-                if (errorQueryParam === "signin") {
-                    error = "SOMETHING_WENT_WRONG_ERROR";
-                } else if (errorQueryParam === "restart_link") {
-                    error = "ERROR_SIGN_IN_UP_LINK";
-                } else if (errorQueryParam === "custom" && messageQueryParam !== null) {
-                    error = messageQueryParam;
-                }
-            }
-            const loginAttemptInfo = await recipeImpl?.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
-                userContext,
-            });
-            // No need to check if the component is unmounting, since this has no effect then.
-            dispatch({ type: "load", loginAttemptInfo, error });
-        }
-        if (state.loaded === false) {
-            void load();
-        }
-    }, [state.loaded, recipeImpl, userContext]);
-    return [state, dispatch];
 };
 
 // We are overloading to explicitly state that if recipe is defined then the return value is defined as well.
 export function useChildProps(
     recipe: Recipe,
-    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
-    state: SignInUpState,
-    callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    recipeImplementation: RecipeInterface,
+    state: MFAState,
+    contactMethod: "PHONE" | "EMAIL",
     userContext: any,
     history: any
-): SignInUpChildProps;
+): MFAChildProps;
 export function useChildProps(
     recipe: Recipe | undefined,
-    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
-    state: SignInUpState,
-    callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    recipeImplementation: RecipeInterface,
+    state: MFAState,
+    contactMethod: "PHONE" | "EMAIL",
     userContext: any,
     history: any
-): SignInUpChildProps | undefined;
+): MFAChildProps | undefined;
 
 export function useChildProps(
     recipe: Recipe | undefined,
-    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
-    state: SignInUpState,
-    callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    recipeImplementation: RecipeInterface,
+    state: MFAState,
+    contactMethod: "PHONE" | "EMAIL",
     userContext: any,
     history: any
-): SignInUpChildProps | undefined {
-    const recipeImplementation = React.useMemo(
-        () =>
-            recipe &&
-            getModifiedRecipeImplementation(recipe.webJSRecipe, recipe.config, dispatch, callingConsumeCodeRef),
-        [recipe]
-    );
-
+): MFAChildProps | undefined {
     return useMemo(() => {
         if (!recipe || !recipeImplementation) {
             return undefined;
         }
         return {
-            onSuccess: (result: { createdNewRecipeUser: boolean; user: User }) => {
+            onSuccess: () => {
                 return SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                    {
-                        rid: recipe.config.recipeId,
-                        successRedirectContext: {
-                            action: "SUCCESS",
-                            isNewRecipeUser: result.createdNewRecipeUser,
-                            user: result.user,
-                            redirectToPath: getRedirectToPathFromURL(),
-                        },
-                    },
+                    undefined,
                     userContext,
                     history
                 );
             },
+            onSignOutClicked: async () => {
+                await SessionRecipe.getInstanceOrThrow().signOut({ userContext });
+                await recipeImplementation.clearLoginAttemptInfo({ userContext });
+                await redirectToAuth({ redirectBack: false, history: history });
+            },
+            onBackButtonClicked: () => {
+                // If we don't have history available this would mean we are not using react-router-dom, so we use window's history
+                if (history === undefined) {
+                    return WindowHandlerReference.getReferenceOrThrow().windowHandler.getWindowUnsafe().history.back();
+                }
+                // If we do have history and goBack function on it this means we are using react-router-dom v5 or lower
+                if (history.goBack !== undefined) {
+                    return history.goBack();
+                }
+                // If we reach this code this means we are using react-router-dom v6
+                return history(-1);
+            },
+            onFactorChooserButtonClicked: () => {
+                return MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser(history);
+            },
             recipeImplementation: recipeImplementation,
             config: recipe.config,
+            contactMethod,
         };
-    }, [state, recipeImplementation]);
+    }, [contactMethod, state, recipeImplementation]);
 }
 
-export const SignInUpFeature: React.FC<
+export const MFAFeature: React.FC<
     FeatureBaseProps & {
+        contactMethod: "PHONE" | "EMAIL";
+        flowType: PasswordlessFlowType;
         recipe: Recipe;
         useComponentOverrides: () => ComponentOverrideMap;
     }
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
     const userContext = useUserContext();
-    const [state, dispatch] = useFeatureReducer(props.recipe.webJSRecipe, userContext);
-    const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch, userContext);
-    const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, userContext, props.history)!;
+
+    const callingConsumeCodeRef = useRef(false);
+    const [state, dispatch] = useFeatureReducer();
+    const recipeImplementation = React.useMemo(
+        () =>
+            props.recipe &&
+            getModifiedRecipeImplementation(
+                props.recipe.webJSRecipe,
+                props.recipe.config,
+                dispatch,
+                callingConsumeCodeRef
+            ),
+        [props.recipe]
+    );
+
+    useOnLoad(props, recipeImplementation, dispatch, userContext);
+
+    const childProps = useChildProps(
+        props.recipe,
+        recipeImplementation,
+        state,
+        props.contactMethod,
+        userContext,
+        props.history
+    )!;
+    useSuccessInAnotherTabChecker(callingConsumeCodeRef, recipeImplementation, state, dispatch, userContext);
+
+    useEffect(() => {
+        if (state.loaded && state.isSetupAllowed === false && state.loginAttemptInfo === undefined) {
+            void MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser();
+        }
+    }, [state.loaded, state.isSetupAllowed, state.loginAttemptInfo]);
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
@@ -256,7 +273,7 @@ export const SignInUpFeature: React.FC<
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {props.children === undefined && (
-                        <SignInUpThemeWrapper {...childProps} featureState={state} dispatch={dispatch} />
+                        <MFAThemeWrapper {...childProps} featureState={state} dispatch={dispatch} />
                     )}
 
                     {/* Otherwise, custom theme is provided, propagate props. */}
@@ -277,12 +294,100 @@ export const SignInUpFeature: React.FC<
     );
 };
 
-export default SignInUpFeature;
+export default MFAFeature;
+
+function useOnLoad(
+    props: React.PropsWithChildren<
+        { history?: any } & { children?: React.ReactNode } & {
+            contactMethod: "PHONE" | "EMAIL";
+            flowType: PasswordlessFlowType;
+            recipe: Recipe;
+            useComponentOverrides: () => ComponentOverrideMap;
+        }
+    >,
+    recipeImplementation: RecipeInterface,
+    dispatch: React.Dispatch<MFAAction>,
+    userContext: any
+) {
+    const fetchMFAInfo = React.useCallback(
+        async () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe.getMFAInfo({ userContext }),
+        [props.recipe, userContext]
+    );
+    const handleLoadError = React.useCallback(
+        // Test this, it may show an empty screen in many cases
+        () => dispatch({ type: "setError", error: "Getting mfaInfo failed!" }),
+        [dispatch]
+    ); // TODO: translation/proper error handling)
+    const onLoad = React.useCallback(
+        async (mfaInfo: { factors: MFAFactorInfo; email?: string; phoneNumber?: string }) => {
+            let error: string | undefined = undefined;
+            const errorQueryParam = getQueryParams("error");
+            const messageQueryParam = getQueryParams("message");
+            const doSetup = getQueryParams("setup");
+            if (errorQueryParam !== null) {
+                if (errorQueryParam === "signin") {
+                    error = "SOMETHING_WENT_WRONG_ERROR";
+                } else if (errorQueryParam === "restart_link") {
+                    error = "ERROR_SIGN_IN_UP_LINK";
+                } else if (errorQueryParam === "custom" && messageQueryParam !== null) {
+                    error = messageQueryParam;
+                }
+            }
+            const loginAttemptInfo =
+                await recipeImplementation.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
+                    userContext,
+                });
+
+            const isAlreadySetup =
+                props.contactMethod === "EMAIL"
+                    ? mfaInfo.factors.isAlreadySetup.includes("otp-email")
+                    : mfaInfo.factors.isAlreadySetup.includes("otp-phone");
+            const isAllowedToSetup =
+                props.contactMethod === "EMAIL"
+                    ? mfaInfo.factors.isAllowedToSetup.includes("otp-email")
+                    : mfaInfo.factors.isAllowedToSetup.includes("otp-phone");
+
+            if (!loginAttemptInfo) {
+                if (props.contactMethod === "EMAIL") {
+                    if (isAlreadySetup && doSetup !== "true") {
+                        // createCode also dispatches the necessary events
+                        await recipeImplementation!.createCode({
+                            email: mfaInfo.email!, // We can assume this is set here, since the mfaInfo states that otp-email has been set up
+                            userContext,
+                        });
+                    } else if (!mfaInfo.factors.isAllowedToSetup.includes("otp-email")) {
+                        dispatch({ type: "setError", error: "Factor not enabled" }); // TODO: translation
+                    } else {
+                        dispatch({ type: "load", loginAttemptInfo, error, isAllowedToSetup: true }); // since loginAttemptInfo is undefined, this will ask the user for the email
+                    }
+                } else {
+                    if (isAlreadySetup && doSetup !== "true") {
+                        // createCode also dispatches the necessary events
+                        await recipeImplementation!.createCode({
+                            phoneNumber: mfaInfo.phoneNumber!, // We can assume this is set here, since the mfaInfo states that otp-phone has been set up
+                            userContext,
+                        });
+                    } else if (!mfaInfo.factors.isAllowedToSetup.includes("otp-phone")) {
+                        dispatch({ type: "setError", error: "Factor not enabled" }); // TODO: translation
+                    } else {
+                        dispatch({ type: "load", loginAttemptInfo, error, isAllowedToSetup: true }); // since loginAttemptInfo is undefined, this will ask the user for the phone number
+                    }
+                }
+            } else {
+                // No need to check if the component is unmounting, since this has no effect then.
+                dispatch({ type: "load", loginAttemptInfo, error, isAllowedToSetup });
+            }
+        },
+        [dispatch, recipeImplementation, props.contactMethod, userContext]
+    );
+
+    useOnMountAPICall(fetchMFAInfo, onLoad, handleLoadError);
+}
 
 function getModifiedRecipeImplementation(
     originalImpl: RecipeInterface,
     config: NormalisedConfig,
-    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
+    dispatch: React.Dispatch<MFAAction>,
     callingConsumeCodeRef: React.MutableRefObject<boolean>
 ): RecipeInterface {
     return {
@@ -314,6 +419,7 @@ function getModifiedRecipeImplementation(
                 ...input,
                 userContext: { ...input.userContext, additionalAttemptInfo },
             });
+
             if (res.status === "OK") {
                 const loginAttemptInfo = (await originalImpl.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
                     userContext: input.userContext,

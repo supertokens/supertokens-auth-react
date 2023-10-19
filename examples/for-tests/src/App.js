@@ -173,7 +173,7 @@ const testContext = getTestContext();
 
 let recipeList = [
     MultiFactorAuth.init({
-        firstFactors: ["emailpassword", "thirdparty"],
+        firstFactors: ["otp-phone", "otp-email", "thirdparty"],
     }),
     Multitenancy.init({
         override: {
@@ -868,6 +868,10 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
             termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
         },
         linkClickedScreenFeature: {
+            disableDefaultUI,
+            style: theme,
+        },
+        mfa: {
             disableDefaultUI,
             style: theme,
         },
