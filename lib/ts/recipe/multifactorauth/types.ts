@@ -32,6 +32,7 @@ export type ComponentOverrideMap = {
 // Config is what does in the constructor of the recipe.
 export type UserInput = {
     firstFactors?: string[];
+    getFactorInfo?: (builtInFactors: SecondaryFactorRedirectionInfo[]) => SecondaryFactorRedirectionInfo[];
     disableDefaultUI?: boolean;
     factorChooserScreen?: FeatureBaseConfig;
 
@@ -48,7 +49,8 @@ export type Config = UserInput &
     RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type NormalisedConfig = {
-    getFirstFactors: () => string[];
+    firstFactors?: string[];
+    getFactorInfo: (builtInFactors: SecondaryFactorRedirectionInfo[]) => SecondaryFactorRedirectionInfo[];
     disableDefaultUI: boolean;
     factorChooserScreen: FeatureBaseConfig;
 
@@ -62,7 +64,7 @@ export type NormalisedConfig = {
 
 export type GetRedirectionURLContext =
     | {
-          action: "FACTOR_CHOICE_REQUIRED";
+          action: "FACTOR_CHOOSER";
       }
     | {
           action: "GO_TO_FACTOR";

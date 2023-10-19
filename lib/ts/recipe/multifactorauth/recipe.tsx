@@ -23,6 +23,7 @@ import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuper
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 
 import { SSR_ERROR } from "../../constants";
+import SuperTokens from "../../superTokens";
 import RecipeModule from "../recipeModule";
 
 import { DEFAULT_FACTOR_CHOOSER_PATH } from "./constants";
@@ -56,8 +57,8 @@ export default class MultiFactorAuth extends RecipeModule<
     );
 
     public recipeID = MultiFactorAuth.RECIPE_ID;
-    public firstFactors: string[] = [];
-    public factorRedirectionInfo: SecondaryFactorRedirectionInfo[] = [];
+    private readonly firstFactors: string[] = [];
+    private readonly secondaryFactors: SecondaryFactorRedirectionInfo[] = [];
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
@@ -127,11 +128,11 @@ export default class MultiFactorAuth extends RecipeModule<
     }
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
-        if (context.action === "FACTOR_CHOICE_REQUIRED") {
+        if (context.action === "FACTOR_CHOOSER") {
             const chooserPath = new NormalisedURLPath(DEFAULT_FACTOR_CHOOSER_PATH);
             return `${this.config.appInfo.websiteBasePath.appendPath(chooserPath).getAsStringDangerous()}`;
         } else if (context.action === "GO_TO_FACTOR") {
-            const redirectInfo = this.factorRedirectionInfo.find((f) => f.id === context.factorId);
+            const redirectInfo = this.getSecondaryFactors().find((f) => f.id === context.factorId);
             if (redirectInfo !== undefined) {
                 return redirectInfo.path;
             }
@@ -148,6 +149,27 @@ export default class MultiFactorAuth extends RecipeModule<
 
     addMFAFactors(firstFactors: string[], secondaryFactors: SecondaryFactorRedirectionInfo[]) {
         this.firstFactors.push(...firstFactors);
-        this.factorRedirectionInfo.push(...secondaryFactors);
+        this.secondaryFactors.push(...secondaryFactors);
+    }
+
+    getFirstFactors() {
+        return this.config.firstFactors ?? this.firstFactors;
+    }
+
+    getSecondaryFactors() {
+        return this.config.getFactorInfo(this.secondaryFactors);
+    }
+
+    async redirectToFactor(factorId: string, history?: any) {
+        return SuperTokens.getInstanceOrThrow().redirectToUrl(
+            await this.getRedirectUrl({ action: "GO_TO_FACTOR", factorId }),
+            history
+        );
+    }
+    async redirectToFactorChooser(history?: any) {
+        return SuperTokens.getInstanceOrThrow().redirectToUrl(
+            await this.getRedirectUrl({ action: "FACTOR_CHOOSER" }),
+            history
+        );
     }
 }

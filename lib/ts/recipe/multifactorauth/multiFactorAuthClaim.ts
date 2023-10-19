@@ -31,7 +31,7 @@ export class MultiFactorAuthClaimClass {
     constructor(
         getRecipeImpl: () => RecipeInterface,
         getRedirectURL: (
-            context: { action: "GO_TO_FACTOR"; factorId: string } | { action: "FACTOR_CHOICE_REQUIRED" },
+            context: { action: "GO_TO_FACTOR"; factorId: string } | { action: "FACTOR_CHOOSER" },
             userContext: any
         ) => Promise<string>,
         onFailureRedirection?: ValidationFailureCallback
@@ -50,7 +50,7 @@ export class MultiFactorAuthClaimClass {
                         userContext
                     );
                 } else {
-                    return getRedirectURL({ action: "FACTOR_CHOICE_REQUIRED" }, userContext);
+                    return getRedirectURL({ action: "FACTOR_CHOOSER" }, userContext);
                 }
             }
             return getRedirectURL({ action: "GO_TO_FACTOR", factorId: reason.factorId }, userContext);

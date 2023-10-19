@@ -26,6 +26,7 @@ import { useUserContext } from "../../../../../usercontext";
 import { useOnMountAPICall } from "../../../../../utils";
 import { SessionContext } from "../../../../session";
 import Session from "../../../../session/recipe";
+import MultiFactorAuth from "../../../recipe";
 import FactorChooserTheme from "../../themes/factorChooser";
 import { defaultTranslationsMultiFactorAuth } from "../../themes/translations";
 
@@ -46,17 +47,24 @@ export const FactorChooser: React.FC<Prop> = (props) => {
         await redirectToAuth({ redirectBack: false, history: props.history });
     }, [props.history]);
 
-    const fetchMFAInfo = useCallback(async () => {
-        if (sessionContext.loading === true) {
-            // This callback should only be called if the session is already loaded
-            throw new Error("Should never come here");
-        }
-        return await props.recipe.webJSRecipe.getMFAInfo({ userContext });
-    }, [props.recipe, sessionContext, redirectToAuthWithHistory, userContext]);
+    const fetchMFAInfo = useCallback(
+        async () => props.recipe.webJSRecipe.getMFAInfo({ userContext }),
+        [props.recipe, userContext]
+    );
 
-    const checkIsEmailVerified = useCallback(
+    const checkMFAInfo = useCallback(
         async (mfaInfo: { factors: MFAFactorInfo }): Promise<void> => {
-            setMFAInfo(mfaInfo.factors);
+            const availableFactors = props.recipe
+                .getSecondaryFactors()
+                .filter(
+                    ({ id }) =>
+                        mfaInfo.factors.isAllowedToSetup.includes(id) || mfaInfo.factors.isAlreadySetup.includes(id)
+                );
+            if (availableFactors.length === 1) {
+                return MultiFactorAuth.getInstanceOrThrow().redirectToFactor(availableFactors[0].id, props.history);
+            } else {
+                setMFAInfo(mfaInfo.factors);
+            }
         },
         [setMFAInfo]
     );
@@ -72,7 +80,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
         [redirectToAuthWithHistory]
     );
 
-    useOnMountAPICall(fetchMFAInfo, checkIsEmailVerified, handleError, sessionContext.loading === false);
+    useOnMountAPICall(fetchMFAInfo, checkMFAInfo, handleError, sessionContext.loading === false);
 
     const navigateToFactor = useCallback(
         (factorId) => props.recipe.redirect({ action: "GO_TO_FACTOR", factorId }),
@@ -91,6 +99,9 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     const childProps = {
         config: props.recipe.config,
     };
+    const availableFactors = props.recipe
+        .getSecondaryFactors()
+        .filter(({ id }) => mfaInfo.isAllowedToSetup.includes(id) || mfaInfo.isAlreadySetup.includes(id));
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
@@ -102,9 +113,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
                         <FactorChooserTheme
                             {...childProps}
                             mfaInfo={mfaInfo}
-                            availableFactors={props.recipe.factorRedirectionInfo.filter(
-                                ({ id }) => mfaInfo.isAllowedToSetup.includes(id) || mfaInfo.isAlreadySetup.includes(id)
-                            )}
+                            availableFactors={availableFactors}
                             logout={signOut}
                             navigateToFactor={navigateToFactor}
                         />

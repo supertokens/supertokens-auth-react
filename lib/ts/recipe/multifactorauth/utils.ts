@@ -15,8 +15,6 @@
 
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 
-import MultiFactorAuth from "./recipe";
-
 import type { Config, NormalisedConfig } from "./types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/multifactorauth";
 
@@ -34,10 +32,8 @@ export function normaliseMultiFactorAuthFeature(config?: Config): NormalisedConf
     return {
         ...normaliseRecipeModuleConfig(config),
         disableDefaultUI,
-        getFirstFactors:
-            config?.firstFactors !== undefined
-                ? () => config!.firstFactors!
-                : () => MultiFactorAuth.getInstanceOrThrow().getDefaultFirstFactors(),
+        firstFactors: config?.firstFactors,
+        getFactorInfo: (orig) => orig,
         factorChooserScreen: config.factorChooserScreen ?? {},
         override,
     };

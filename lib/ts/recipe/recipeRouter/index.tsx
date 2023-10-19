@@ -120,7 +120,7 @@ export abstract class RecipeRouter {
             }
 
             if (mfaRecipe) {
-                return chooseComponentBasedOnFirstFactors(mfaRecipe.config.getFirstFactors(), routeComponents);
+                return chooseComponentBasedOnFirstFactors(mfaRecipe.getFirstFactors(), routeComponents);
             } else {
                 return defaultComp;
             }

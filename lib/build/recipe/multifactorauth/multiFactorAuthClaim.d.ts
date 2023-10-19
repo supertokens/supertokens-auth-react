@@ -39,7 +39,7 @@ export declare class MultiFactorAuthClaimClass {
                       factorId: string;
                   }
                 | {
-                      action: "FACTOR_CHOICE_REQUIRED";
+                      action: "FACTOR_CHOOSER";
                   },
             userContext: any
         ) => Promise<string>,

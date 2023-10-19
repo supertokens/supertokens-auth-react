@@ -14,6 +14,7 @@ export declare type ComponentOverrideMap = {
 };
 export declare type UserInput = {
     firstFactors?: string[];
+    getFactorInfo?: (builtInFactors: SecondaryFactorRedirectionInfo[]) => SecondaryFactorRedirectionInfo[];
     disableDefaultUI?: boolean;
     factorChooserScreen?: FeatureBaseConfig;
     override?: {
@@ -26,7 +27,8 @@ export declare type UserInput = {
 export declare type Config = UserInput &
     RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
-    getFirstFactors: () => string[];
+    firstFactors?: string[];
+    getFactorInfo: (builtInFactors: SecondaryFactorRedirectionInfo[]) => SecondaryFactorRedirectionInfo[];
     disableDefaultUI: boolean;
     factorChooserScreen: FeatureBaseConfig;
     override: {
@@ -38,7 +40,7 @@ export declare type NormalisedConfig = {
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type GetRedirectionURLContext =
     | {
-          action: "FACTOR_CHOICE_REQUIRED";
+          action: "FACTOR_CHOOSER";
       }
     | {
           action: "GO_TO_FACTOR";
