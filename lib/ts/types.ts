@@ -239,7 +239,7 @@ export type FormField = FormFieldBaseConfig & {
     /*
      * Ability to add custom components
      */
-    inputComponent?: React.FC<InputProps>;
+    inputComponent?: (props: InputProps) => JSX.Element;
 };
 
 export type APIFormField = {
