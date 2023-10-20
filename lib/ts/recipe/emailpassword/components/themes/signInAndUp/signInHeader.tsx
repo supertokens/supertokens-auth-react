@@ -21,13 +21,15 @@ export const SignInHeader = withOverride(
     "EmailPasswordSignInHeader",
     function EmailPasswordSignInHeader({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
         const t = useTranslation();
+        const testing = "TESTING";
 
         return (
             <Fragment>
                 <div data-supertokens="headerTitle">{t("EMAIL_PASSWORD_SIGN_IN_HEADER_TITLE")}</div>
                 <div data-supertokens="headerSubtitle">
                     <div data-supertokens="secondaryText">
-                        {t("EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_START")}
+                        {/* {t("EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_START")} */}
+                        {testing}
                         <span data-supertokens="link" onClick={onClick}>
                             {t("EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_SIGN_UP_LINK")}
                         </span>
