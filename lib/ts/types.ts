@@ -13,6 +13,7 @@
  * under the License.
  */
 
+import type { InputProps } from "./recipe/emailpassword/components/library/input";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
@@ -234,6 +235,11 @@ export type FormField = FormFieldBaseConfig & {
      * Whether the field is optional or not.
      */
     optional?: boolean;
+
+    /*
+     * Ability to add custom components
+     */
+    inputComponent?: React.FC<InputProps>;
 };
 
 export type APIFormField = {
