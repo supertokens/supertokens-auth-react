@@ -289,11 +289,6 @@ export type NormalisedFormField = {
      * Moves focus to the input element when it mounts
      */
     autofocus?: boolean;
-
-    /*
-     * Ability to add custom components
-     */
-    inputComponent?: React.FC<InputProps>;
 };
 
 export type ReactComponentClass<P = any> = ComponentClass<P, any> | ((props: P) => JSX.Element);
