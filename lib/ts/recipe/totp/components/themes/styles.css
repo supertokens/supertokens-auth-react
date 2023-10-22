@@ -1,0 +1,64 @@
+@import "../../../../styles/styles.css";
+
+[data-supertokens~="container"] {
+    padding-top: 24px;
+}
+
+[data-supertokens~="row"] {
+    padding-top: 16px;
+    padding-bottom: 8px;
+}
+
+[data-supertokens~="factorChooserList"] {
+    padding-top: 4px;
+}
+
+[data-supertokens~="factorChooserOption"] {
+    display: flex;
+    flex-direction: row;
+    border-radius: 6px;
+    border: 1px solid rgb(var(--palette-inputBorder));
+    padding: 16px;
+    cursor: pointer;
+    margin-top: 12px;
+}
+
+[data-supertokens~="factorChooserOption"]:hover {
+    border: 1px solid rgb(var(--palette-textLink));
+}
+
+[data-supertokens~="factorOptionText"] {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    text-align: left;
+}
+
+[data-supertokens~="factorLogo"] {
+    flex-grow: 0;
+    min-width: 30px;
+    text-align: left;
+    margin-top: 6px;
+}
+
+[data-supertokens~="factorName"] {
+    color: rgb(var(--palette-textPrimary));
+    font-size: var(--font-size-1);
+    margin: 4px;
+}
+
+[data-supertokens~="factorChooserOption"]:hover [data-supertokens~="factorName"] {
+    color: rgb(var(--palette-textLink));
+}
+
+[data-supertokens~="factorDescription"] {
+    color: rgb(var(--palette-textSecondary));
+    font-size: var(--font-size-0);
+    margin: 4px;
+}
+
+[data-supertokens~="secondaryLinkWithLeftArrow"] {
+    margin-bottom: 32px;
+    text-align: right;
+}
