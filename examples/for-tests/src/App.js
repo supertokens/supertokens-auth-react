@@ -168,6 +168,52 @@ const formFields = [
     },
 ];
 
+const customFields = [
+    {
+        id: "ratings",
+        label: "Ratings",
+        inputComponent: ({ value, name, ...rest }) => (
+            <select
+                name={name}
+                data-supertokens="inputComponent"
+                placeholder="Add Ratings"
+                onChange={(e) => rest.onChange({ id: name, value: e.target.value })}>
+                <option value="" disabled hidden>
+                    Select an option
+                </option>
+                <option value={1}>1</option>
+                <option value={2}>2</option>
+                <option value={3}>3</option>
+            </select>
+        ),
+        optional: true,
+    },
+    {
+        id: "terms",
+        showLabels: false,
+        optional: false,
+        inputComponent: ({ value, name, ...rest }) => (
+            <div
+                data-supertokens="inputComponent"
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "left",
+                }}>
+                <input
+                    name={name}
+                    type="checkbox"
+                    onChange={(e) => rest.onChange({ id: name, value: e.target.checked })}></input>
+                <span style={{ marginLeft: 5 }}>I agree to the terms and conditions</span>
+            </div>
+        ),
+        validate: async (value) => {
+            if (value) return undefined;
+            return "Please check Terms and conditions";
+        },
+    },
+];
+
 const testContext = getTestContext();
 
 let recipeList = [
@@ -637,7 +683,8 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
                 style: theme,
                 privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
-                formFields,
+                formFields:
+                    localStorage.getItem("SHOW_CUSTOM_FIELDS") === "YES" ? formFields.concat(customFields) : formFields,
             },
         },
     });

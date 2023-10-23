@@ -28,6 +28,7 @@ import {
 import path from "path";
 import assert from "assert";
 import mkdirp from "mkdirp";
+import { async } from "regenerator-runtime";
 
 const SESSION_STORAGE_STATE_KEY = "supertokens-oauth-state";
 
@@ -231,6 +232,10 @@ export async function getInputNames(page) {
             ),
         { ST_ROOT_SELECTOR }
     );
+}
+
+export async function getCustomComponents(page, element) {
+    return waitForSTElement(page, element);
 }
 
 export async function getInputAdornmentsSuccess(page) {

@@ -39,6 +39,7 @@ import {
     getGeneralError,
     waitForSTElement,
     backendBeforeEach,
+    getCustomComponents,
 } from "../helpers";
 
 import {
@@ -412,5 +413,136 @@ describe("SuperTokens SignUp => Server Error", function () {
         assert.strictEqual(generalError, SOMETHING_WENT_WRONG_ERROR);
         await toggleSignInSignUp(page);
         await waitForSTElement(page, "[data-supertokens~=generalError]", true);
+    });
+});
+
+// CUSTOM FIELDS TEST
+
+describe("Signup custom fields test", function () {
+    let browser;
+    let page;
+    let consoleLogs;
+
+    before(async function () {
+        await backendBeforeEach();
+
+        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+            method: "POST",
+        }).catch(console.error);
+
+        browser = await puppeteer.launch({
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            headless: false,
+        });
+        page = await browser.newPage();
+    });
+
+    // after(async function () {
+    //     await browser.close();
+    // });
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
+    });
+
+    beforeEach(async function () {
+        consoleLogs = [];
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+
+        await page.evaluate(() => window.localStorage.setItem("SHOW_CUSTOM_FIELDS", "YES"));
+
+        let elem = await getLoginWithRedirectToSignUp(page);
+        await page.evaluate((e) => e.click(), elem);
+        await page.waitForNavigation({ waitUntil: "networkidle0" });
+    });
+
+    it("Check if the custom fields are loaded", async function () {
+        let text = await getAuthPageHeaderText(page);
+        assert.deepStrictEqual(text, "Sign Up");
+
+        // check if select dropdown is loaded
+        const selectDropdownExists = await getCustomComponents(page, "select");
+        assert.ok(selectDropdownExists, "Select dropdown exists");
+
+        // check if checbox is loaded
+        const checkboxExists = await getCustomComponents(page, 'input[type="checkbox"]');
+        assert.ok(checkboxExists, "Checkbox exists");
+    });
+
+    it("Should show error messages, based on the validation", async function () {
+        await submitForm(page);
+        let formFieldErrors = await getFieldErrors(page);
+
+        // 4 regular form field errors +
+        // 1 required custom field => terms checkbox
+        assert.deepStrictEqual(formFieldErrors, [
+            "Field is not optional",
+            "Field is not optional",
+            "Field is not optional",
+            "Field is not optional",
+            "Field is not optional",
+        ]);
+
+        // supply values for regular-required fields only
+        await setInputValues(page, [
+            { name: "email", value: "jack.doe@supertokens.io" },
+            { name: "password", value: "Str0ngP@ssw0rd" },
+            { name: "name", value: "John Doe" },
+            { name: "age", value: "20" },
+        ]);
+        await submitForm(page);
+        formFieldErrors = await getFieldErrors(page);
+        assert.deepStrictEqual(formFieldErrors, ["Field is not optional"]);
+
+        // check terms and condition checkbox
+        let termsCheckbox = await getCustomComponents(page, '[name="terms"]');
+        await page.evaluate((e) => e.click(), termsCheckbox);
+        await submitForm(page);
+        formFieldErrors = await getFieldErrors(page);
+        assert.deepStrictEqual(formFieldErrors, []);
+    });
+
+    it.only("Check if custom values are part of the signup payload", async function () {
+        const customFieldNames = ["terms", "ratings"];
+        const requestHandler = (request) => {
+            if (request.url().includes(SIGN_UP_API) && request.method() === "POST") {
+                assert.ok(
+                    customFieldNames.every((key) => request.data.hasOwnProperty(key)),
+                    "Custom field are part of the payload"
+                );
+            }
+            return request.continue();
+        };
+
+        try {
+            await page.setRequestInterception(true);
+            page.on("request", requestHandler);
+
+            // Fill the entire form
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@assw0rd" },
+                { name: "name", value: "Supertokens" },
+                { name: "age", value: "20" },
+            ]);
+
+            // Select value from dropdown (ratings)
+            let dropdownEle = await getCustomComponents(page, '[name="ratings"]');
+            const dropdownValue = 3;
+            await page.select(dropdownEle, dropdownValue);
+
+            // Check terms and condition checkbox
+            let termsCheckbox = await getCustomComponents(page, '[name="terms"]');
+            await page.evaluate((e) => e.click(), termsCheckbox);
+
+            await submitForm(page);
+        } finally {
+            page.off("request", requestHandler);
+            await page.setRequestInterception(false);
+        }
     });
 });

@@ -108,6 +108,7 @@ export declare type NormalisedFormField = {
     optional: boolean;
     autoComplete?: string;
     autofocus?: boolean;
+    inputComponent?: React.FC<InputProps>;
 };
 export declare type ReactComponentClass<P = any> = ComponentClass<P, any> | ((props: P) => JSX.Element);
 export declare type FeatureBaseConfig = {
