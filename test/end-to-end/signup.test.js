@@ -40,6 +40,7 @@ import {
     waitForSTElement,
     backendBeforeEach,
     getCustomComponents,
+    setSelectDropdownValue,
 } from "../helpers";
 
 import {
@@ -347,44 +348,17 @@ describe("SuperTokens SignUp", function () {
     // CUSTOM FIELDS TEST
 
     describe("Signup custom fields test", function () {
-        before(async function () {
-            await backendBeforeEach();
-
-            await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                method: "POST",
-            }).catch(console.error);
-
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: false,
-            });
-            page = await browser.newPage();
-        });
-
-        // after(async function () {
-        //     await browser.close();
-        // });
-
-        afterEach(function () {
-            return screenshotOnFailure(this, browser);
-        });
-
         beforeEach(async function () {
-            consoleLogs = [];
-            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
-
+            // set cookie and reload which loads the form with custom field
             await page.evaluate(() => window.localStorage.setItem("SHOW_CUSTOM_FIELDS", "YES"));
 
-            let elem = await getLoginWithRedirectToSignUp(page);
-            await page.evaluate((e) => e.click(), elem);
-            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+            await toggleSignInSignUp(page);
         });
 
-        it.only("Check if the custom fields are loaded", async function () {
+        it("Check if the custom fields are loaded", async function () {
             let text = await getAuthPageHeaderText(page);
             assert.deepStrictEqual(text, "Sign Up");
 
@@ -397,7 +371,7 @@ describe("SuperTokens SignUp", function () {
             assert.ok(checkboxExists, "Checkbox exists");
         });
 
-        it.only("Should show error messages, based on the validation", async function () {
+        it("Should show error messages, based on optional flag", async function () {
             await submitForm(page);
             let formFieldErrors = await getFieldErrors(page);
 
@@ -430,23 +404,24 @@ describe("SuperTokens SignUp", function () {
             assert.deepStrictEqual(formFieldErrors, []);
         });
 
-        it.only("Check if custom values are part of the signup payload", async function () {
-            const customFieldNames = ["terms", "ratings"];
+        it("Check if custom values are part of the signup payload", async function () {
+            const customFields = {
+                terms: true, // checked
+                ratings: "best",
+            };
             const requestHandler = (request) => {
                 if (request.url().includes(SIGN_UP_API) && request.method() === "POST") {
-                    assert.ok(
-                        customFieldNames.every((key) => request.data.hasOwnProperty(key)),
-                        "Custom field are part of the payload"
-                    );
+                    Object.keys(customFields).every((key) => {
+                        assert.equal(data[key], customFields[key]);
+                    });
                 }
                 return request.continue();
             };
+            await page.setRequestInterception(true);
+            page.on("request", requestHandler);
 
+            // Fill and submit the form with custom fields
             try {
-                await page.setRequestInterception(true);
-                page.on("request", requestHandler);
-
-                // Fill the entire form
                 await setInputValues(page, [
                     { name: "email", value: "john.doe@supertokens.io" },
                     { name: "password", value: "Str0ngP@assw0rd" },
@@ -454,10 +429,7 @@ describe("SuperTokens SignUp", function () {
                     { name: "age", value: "20" },
                 ]);
 
-                // Select value from dropdown (ratings)
-                let dropdownEle = await getCustomComponents(page, '[name="ratings"]');
-                const dropdownValue = 3;
-                await page.select(dropdownEle, dropdownValue);
+                await setSelectDropdownValue(page, 'select[name="ratings"]', customFields["ratings"]);
 
                 // Check terms and condition checkbox
                 let termsCheckbox = await getCustomComponents(page, '[name="terms"]');

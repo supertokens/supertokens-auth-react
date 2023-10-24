@@ -422,6 +422,21 @@ export async function setInputValues(page, fields) {
     return await new Promise((r) => setTimeout(r, 300));
 }
 
+export async function setSelectDropdownValue(page, selector, optionValue) {
+    return await page.evaluate(
+        (selector, optionValue, ST_ROOT_SELECTOR) => {
+            const dropdownElement = document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector(selector);
+            if (dropdownElement) {
+                dropdownElement.value = optionValue;
+                dropdownElement.dispatchEvent(new Event("change", { bubbles: false }));
+            }
+        },
+        selector,
+        optionValue,
+        ST_ROOT_SELECTOR
+    );
+}
+
 export async function clearBrowserCookiesWithoutAffectingConsole(page, console) {
     let toReturn = [...console];
     const client = await page.target().createCDPSession();
