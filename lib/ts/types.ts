@@ -235,11 +235,6 @@ export type FormField = FormFieldBaseConfig & {
      * Whether the field is optional or not.
      */
     optional?: boolean;
-
-    /*
-     * Ability to add custom components
-     */
-    inputComponent?: React.FC<InputProps>;
 };
 
 export type APIFormField = {

@@ -94,7 +94,9 @@ export declare type NormalisedSignInFormFeatureConfig = NormalisedBaseConfig & {
     formFields: NormalisedFormField[];
 };
 export declare type FormFieldSignInConfig = FormFieldBaseConfig;
-export declare type FormFieldSignUpConfig = FormField;
+export declare type FormFieldSignUpConfig = FormField & {
+    inputComponent?: React.FC<InputProps>;
+};
 export declare type ResetPasswordUsingTokenUserInput = {
     disableDefaultUI?: boolean;
     submitNewPasswordForm?: FeatureBaseConfig;
@@ -131,6 +133,9 @@ export declare type SignUpThemeProps = FormThemeBaseProps & {
     config: NormalisedConfig;
     signInClicked?: () => void;
     onSuccess: (result: { user: User }) => void;
+    formFields: (FormFieldThemeProps & {
+        inputComponent?: React.FC<InputProps>;
+    })[];
 };
 export declare type SignInAndUpThemeProps = {
     signInForm: SignInThemeProps;
@@ -144,7 +149,6 @@ export declare type SignInAndUpThemeProps = {
 };
 export declare type FormFieldThemeProps = NormalisedFormField & {
     labelComponent?: JSX.Element;
-    inputComponent?: React.FC<InputProps>;
     showIsRequired?: boolean;
     clearOnSubmit?: boolean;
 };

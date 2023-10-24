@@ -94,7 +94,6 @@ export declare type FormFieldBaseConfig = {
 export declare type FormField = FormFieldBaseConfig & {
     validate?: (value: any) => Promise<string | undefined>;
     optional?: boolean;
-    inputComponent?: React.FC<InputProps>;
 };
 export declare type APIFormField = {
     id: string;

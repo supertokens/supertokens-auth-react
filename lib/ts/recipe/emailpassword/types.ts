@@ -181,7 +181,12 @@ export type NormalisedSignInFormFeatureConfig = NormalisedBaseConfig & {
 
 export type FormFieldSignInConfig = FormFieldBaseConfig;
 
-export type FormFieldSignUpConfig = FormField;
+export type FormFieldSignUpConfig = FormField & {
+    /*
+     * Ability to add custom components
+     */
+    inputComponent?: React.FC<InputProps>;
+};
 
 export type ResetPasswordUsingTokenUserInput = {
     /*
@@ -255,6 +260,7 @@ export type SignUpThemeProps = FormThemeBaseProps & {
     config: NormalisedConfig;
     signInClicked?: () => void;
     onSuccess: (result: { user: User }) => void;
+    formFields: (FormFieldThemeProps & { inputComponent?: React.FC<InputProps> })[];
 };
 
 export type SignInAndUpThemeProps = {
@@ -273,11 +279,6 @@ export type FormFieldThemeProps = NormalisedFormField & {
      * Custom component that replaces the label entirely
      */
     labelComponent?: JSX.Element;
-
-    /*
-     * Custom component that replaces the standard input component
-     */
-    inputComponent?: React.FC<InputProps>;
 
     /*
      * Show Is required (*) next to label
