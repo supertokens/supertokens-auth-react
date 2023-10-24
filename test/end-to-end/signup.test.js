@@ -347,7 +347,7 @@ describe("SuperTokens SignUp", function () {
 
     // CUSTOM FIELDS TEST
 
-    describe("Signup custom fields test", function () {
+    describe.only("Signup custom fields test", function () {
         beforeEach(async function () {
             // set cookie and reload which loads the form with custom field
             await page.evaluate(() => window.localStorage.setItem("SHOW_CUSTOM_FIELDS", "YES"));
@@ -412,7 +412,7 @@ describe("SuperTokens SignUp", function () {
             const requestHandler = (request) => {
                 if (request.url().includes(SIGN_UP_API) && request.method() === "POST") {
                     Object.keys(customFields).every((key) => {
-                        assert.equal(data[key], customFields[key]);
+                        assert.strictEqual(data[key], customFields[key]);
                     });
                 }
                 return request.continue();
