@@ -347,7 +347,7 @@ describe("SuperTokens SignUp", function () {
 
     // CUSTOM FIELDS TEST
 
-    describe.only("Signup custom fields test", function () {
+    describe("Signup custom fields test", function () {
         beforeEach(async function () {
             // set cookie and reload which loads the form with custom field
             await page.evaluate(() => window.localStorage.setItem("SHOW_CUSTOM_FIELDS", "YES"));
@@ -414,6 +414,8 @@ describe("SuperTokens SignUp", function () {
                     Object.keys(customFields).every((key) => {
                         assert.strictEqual(data[key], customFields[key]);
                     });
+                    // remove it after updating backend to handle the custom fields
+                    return request.abort();
                 }
                 return request.continue();
             };
