@@ -28,7 +28,6 @@ import {
 import path from "path";
 import assert from "assert";
 import mkdirp from "mkdirp";
-import { async } from "regenerator-runtime";
 
 const SESSION_STORAGE_STATE_KEY = "supertokens-oauth-state";
 
