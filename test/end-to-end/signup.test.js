@@ -39,7 +39,6 @@ import {
     getGeneralError,
     waitForSTElement,
     backendBeforeEach,
-    getCustomComponents,
     setSelectDropdownValue,
 } from "../helpers";
 
@@ -363,11 +362,11 @@ describe("SuperTokens SignUp", function () {
             assert.deepStrictEqual(text, "Sign Up");
 
             // check if select dropdown is loaded
-            const selectDropdownExists = await getCustomComponents(page, "select");
+            const selectDropdownExists = await waitForSTElement(page, "select");
             assert.ok(selectDropdownExists, "Select dropdown exists");
 
             // check if checbox is loaded
-            const checkboxExists = await getCustomComponents(page, 'input[type="checkbox"]');
+            const checkboxExists = await waitForSTElement(page, 'input[type="checkbox"]');
             assert.ok(checkboxExists, "Checkbox exists");
         });
 
@@ -397,7 +396,7 @@ describe("SuperTokens SignUp", function () {
             assert.deepStrictEqual(formFieldErrors, ["Field is not optional"]);
 
             // check terms and condition checkbox
-            let termsCheckbox = await getCustomComponents(page, '[name="terms"]');
+            let termsCheckbox = await waitForSTElement(page, '[name="terms"]');
             await page.evaluate((e) => e.click(), termsCheckbox);
             await submitForm(page);
             formFieldErrors = await getFieldErrors(page);
@@ -434,7 +433,7 @@ describe("SuperTokens SignUp", function () {
                 await setSelectDropdownValue(page, 'select[name="ratings"]', customFields["ratings"]);
 
                 // Check terms and condition checkbox
-                let termsCheckbox = await getCustomComponents(page, '[name="terms"]');
+                let termsCheckbox = await waitForSTElement(page, '[name="terms"]');
                 await page.evaluate((e) => e.click(), termsCheckbox);
 
                 await submitForm(page);

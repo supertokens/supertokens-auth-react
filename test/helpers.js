@@ -234,10 +234,6 @@ export async function getInputNames(page) {
     );
 }
 
-export async function getCustomComponents(page, element) {
-    return waitForSTElement(page, element);
-}
-
 export async function getInputAdornmentsSuccess(page) {
     await waitForSTElement(page);
     return await page.evaluate(
