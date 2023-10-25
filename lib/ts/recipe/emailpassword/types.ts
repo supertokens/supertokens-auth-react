@@ -152,7 +152,7 @@ export type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
     /*
      * Normalised form fields for SignUp.
      */
-    formFields: NormalisedFormField[];
+    formFields: (NormalisedFormField & { inputComponent?: React.FC<InputProps> })[];
 
     /*
      * Privacy policy link for sign up form.
@@ -230,29 +230,16 @@ export type NormalisedEnterEmailForm = FeatureBaseConfig & {
     formFields: NormalisedFormField[];
 };
 
-/*
- * Props Types.
- */
-
 type FormThemeBaseProps = ThemeBaseProps & {
     /*
      * Form fields to use in the signup form.
-     */
-    formFields: FormFieldThemeProps[];
-
-    error: string | undefined;
-};
-
-type SignInFormThemeBaseProps = ThemeBaseProps & {
-    /*
-     * Form fields to use in the signin form. exclude custom component
      */
     formFields: Omit<FormFieldThemeProps, "inputComponent">[];
 
     error: string | undefined;
 };
 
-export type SignInThemeProps = SignInFormThemeBaseProps & {
+export type SignInThemeProps = FormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
@@ -262,13 +249,15 @@ export type SignInThemeProps = SignInFormThemeBaseProps & {
     onSuccess: (result: { user: User }) => void;
 };
 
-export type SignUpThemeProps = FormThemeBaseProps & {
+export type SignUpThemeProps = ThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
     signInClicked?: () => void;
     onSuccess: (result: { user: User }) => void;
+    formFields: FormFieldThemeProps[];
+    error: string | undefined;
 };
 
 export type SignInAndUpThemeProps = {
