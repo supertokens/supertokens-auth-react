@@ -41,7 +41,6 @@ import type {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipe/types";
-import type React from "react";
 import type { Dispatch } from "react";
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
@@ -135,7 +134,7 @@ export type SignUpFormFeatureUserInput = FeatureBaseConfig & {
     /*
      * Form fields for SignUp.
      */
-    formFields?: (FormField & { inputComponent?: React.FC<InputProps> })[];
+    formFields?: (FormField & { inputComponent?: (props: InputProps) => JSX.Element })[];
 
     /*
      * Privacy policy link for sign up form.
@@ -152,7 +151,7 @@ export type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
     /*
      * Normalised form fields for SignUp.
      */
-    formFields: (NormalisedFormField & { inputComponent?: React.FC<InputProps> })[];
+    formFields: (NormalisedFormField & { inputComponent?: (props: InputProps) => JSX.Element })[];
 
     /*
      * Privacy policy link for sign up form.
@@ -283,7 +282,7 @@ export type FormFieldThemeProps = NormalisedFormField & {
     /*
      * Ability to add custom components
      */
-    inputComponent?: React.FC<InputProps>;
+    inputComponent?: (props: InputProps) => JSX.Element;
 };
 
 export type FormFieldError = {
