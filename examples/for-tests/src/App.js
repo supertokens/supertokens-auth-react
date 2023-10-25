@@ -208,7 +208,9 @@ const customFields = [
             </div>
         ),
         validate: async (value) => {
-            if (value) return undefined;
+            if (value === true) {
+                return undefined;
+            }
             return "Please check Terms and conditions";
         },
     },
