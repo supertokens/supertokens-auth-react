@@ -117,7 +117,11 @@ declare type FormThemeBaseProps = ThemeBaseProps & {
     formFields: FormFieldThemeProps[];
     error: string | undefined;
 };
-export declare type SignInThemeProps = FormThemeBaseProps & {
+declare type SignInFormThemeBaseProps = ThemeBaseProps & {
+    formFields: Omit<FormFieldThemeProps, "inputComponent">[];
+    error: string | undefined;
+};
+export declare type SignInThemeProps = SignInFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
@@ -133,9 +137,6 @@ export declare type SignUpThemeProps = FormThemeBaseProps & {
     config: NormalisedConfig;
     signInClicked?: () => void;
     onSuccess: (result: { user: User }) => void;
-    formFields: (FormFieldThemeProps & {
-        inputComponent?: React.FC<InputProps>;
-    })[];
 };
 export declare type SignInAndUpThemeProps = {
     signInForm: SignInThemeProps;
@@ -151,6 +152,7 @@ export declare type FormFieldThemeProps = NormalisedFormField & {
     labelComponent?: JSX.Element;
     showIsRequired?: boolean;
     clearOnSubmit?: boolean;
+    inputComponent?: React.FC<InputProps>;
 };
 export declare type FormFieldError = {
     id: string;

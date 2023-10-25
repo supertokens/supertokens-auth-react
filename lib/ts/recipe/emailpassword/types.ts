@@ -236,14 +236,23 @@ export type NormalisedEnterEmailForm = FeatureBaseConfig & {
 
 type FormThemeBaseProps = ThemeBaseProps & {
     /*
-     * Form fields to use in the signin form.
+     * Form fields to use in the signup form.
      */
     formFields: FormFieldThemeProps[];
 
     error: string | undefined;
 };
 
-export type SignInThemeProps = FormThemeBaseProps & {
+type SignInFormThemeBaseProps = ThemeBaseProps & {
+    /*
+     * Form fields to use in the signin form. exclude custom component
+     */
+    formFields: Omit<FormFieldThemeProps, "inputComponent">[];
+
+    error: string | undefined;
+};
+
+export type SignInThemeProps = SignInFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
@@ -260,7 +269,6 @@ export type SignUpThemeProps = FormThemeBaseProps & {
     config: NormalisedConfig;
     signInClicked?: () => void;
     onSuccess: (result: { user: User }) => void;
-    formFields: (FormFieldThemeProps & { inputComponent?: React.FC<InputProps> })[];
 };
 
 export type SignInAndUpThemeProps = {
@@ -289,6 +297,11 @@ export type FormFieldThemeProps = NormalisedFormField & {
      * Clears the field after calling the API.
      */
     clearOnSubmit?: boolean;
+
+    /*
+     * Ability to add custom components
+     */
+    inputComponent?: React.FC<InputProps>;
 };
 
 export type FormFieldError = {
