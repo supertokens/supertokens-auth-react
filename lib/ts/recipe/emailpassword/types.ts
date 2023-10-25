@@ -135,7 +135,7 @@ export type SignUpFormFeatureUserInput = FeatureBaseConfig & {
     /*
      * Form fields for SignUp.
      */
-    formFields?: FormFieldSignUpConfig[];
+    formFields?: (FormField & { inputComponent?: React.FC<InputProps> })[];
 
     /*
      * Privacy policy link for sign up form.
@@ -180,13 +180,6 @@ export type NormalisedSignInFormFeatureConfig = NormalisedBaseConfig & {
 };
 
 export type FormFieldSignInConfig = FormFieldBaseConfig;
-
-export type FormFieldSignUpConfig = FormField & {
-    /*
-     * Ability to add custom components
-     */
-    inputComponent?: React.FC<InputProps>;
-};
 
 export type ResetPasswordUsingTokenUserInput = {
     /*

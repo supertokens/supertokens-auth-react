@@ -78,7 +78,9 @@ export declare type NormalisedSignInAndUpFeatureConfig = {
     signInForm: NormalisedSignInFormFeatureConfig;
 };
 export declare type SignUpFormFeatureUserInput = FeatureBaseConfig & {
-    formFields?: FormFieldSignUpConfig[];
+    formFields?: (FormField & {
+        inputComponent?: React.FC<InputProps>;
+    })[];
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
 };
@@ -96,9 +98,6 @@ export declare type NormalisedSignInFormFeatureConfig = NormalisedBaseConfig & {
     formFields: NormalisedFormField[];
 };
 export declare type FormFieldSignInConfig = FormFieldBaseConfig;
-export declare type FormFieldSignUpConfig = FormField & {
-    inputComponent?: React.FC<InputProps>;
-};
 export declare type ResetPasswordUsingTokenUserInput = {
     disableDefaultUI?: boolean;
     submitNewPasswordForm?: FeatureBaseConfig;
