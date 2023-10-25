@@ -223,16 +223,16 @@ export type NormalisedEnterEmailForm = FeatureBaseConfig & {
     formFields: NormalisedFormField[];
 };
 
-type FormThemeBaseProps = ThemeBaseProps & {
+type NonSignUpFormThemeBaseProps = ThemeBaseProps & {
     /*
-     * Form fields to use in the signup form.
+     * Omit since, custom inputComponent only part of signup
      */
     formFields: Omit<FormFieldThemeProps, "inputComponent">[];
 
     error: string | undefined;
 };
 
-export type SignInThemeProps = FormThemeBaseProps & {
+export type SignInThemeProps = NonSignUpFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
@@ -363,7 +363,7 @@ export type ResetPasswordUsingTokenThemeProps = {
     userContext?: any;
 };
 
-export type EnterEmailProps = FormThemeBaseProps & {
+export type EnterEmailProps = NonSignUpFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     error: string | undefined;
     clearError: () => void;
@@ -372,7 +372,7 @@ export type EnterEmailProps = FormThemeBaseProps & {
     onBackButtonClicked: () => void;
 };
 
-export type SubmitNewPasswordProps = FormThemeBaseProps & {
+export type SubmitNewPasswordProps = NonSignUpFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     error: string | undefined;
     clearError: () => void;

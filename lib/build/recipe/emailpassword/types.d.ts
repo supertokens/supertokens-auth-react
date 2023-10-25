@@ -114,11 +114,11 @@ export declare type NormalisedSubmitNewPasswordForm = FeatureBaseConfig & {
 export declare type NormalisedEnterEmailForm = FeatureBaseConfig & {
     formFields: NormalisedFormField[];
 };
-declare type FormThemeBaseProps = ThemeBaseProps & {
+declare type NonSignUpFormThemeBaseProps = ThemeBaseProps & {
     formFields: Omit<FormFieldThemeProps, "inputComponent">[];
     error: string | undefined;
 };
-export declare type SignInThemeProps = FormThemeBaseProps & {
+export declare type SignInThemeProps = NonSignUpFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
@@ -197,7 +197,7 @@ export declare type ResetPasswordUsingTokenThemeProps = {
     config: NormalisedConfig;
     userContext?: any;
 };
-export declare type EnterEmailProps = FormThemeBaseProps & {
+export declare type EnterEmailProps = NonSignUpFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     error: string | undefined;
     clearError: () => void;
@@ -205,7 +205,7 @@ export declare type EnterEmailProps = FormThemeBaseProps & {
     config: NormalisedConfig;
     onBackButtonClicked: () => void;
 };
-export declare type SubmitNewPasswordProps = FormThemeBaseProps & {
+export declare type SubmitNewPasswordProps = NonSignUpFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     error: string | undefined;
     clearError: () => void;
