@@ -15,6 +15,7 @@ import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyema
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 import UserRoles from "supertokens-auth-react/recipe/userroles";
 import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
+import MultiFactorAuth from "supertokens-auth-react/recipe/totp";
 
 import axios from "axios";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";

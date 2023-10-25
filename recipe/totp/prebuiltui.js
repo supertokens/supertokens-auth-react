@@ -1,5 +1,3 @@
-"use strict";
-
 /* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
@@ -14,8 +12,9 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-var MANDATORY_FORM_FIELDS_ID_ARRAY = ["email", "password"];
-var DEFAULT_RESET_PASSWORD_PATH = "/reset-password";
-
-exports.DEFAULT_RESET_PASSWORD_PATH = DEFAULT_RESET_PASSWORD_PATH;
-exports.MANDATORY_FORM_FIELDS_ID_ARRAY = MANDATORY_FORM_FIELDS_ID_ARRAY;
+"use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+exports.__esModule = true;
+__export(require("../../lib/build/totpprebuiltui"));
