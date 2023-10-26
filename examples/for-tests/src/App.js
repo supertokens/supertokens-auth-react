@@ -165,6 +165,81 @@ const formFields = [
         label: "Your Country",
         placeholder: "Where do you live?",
         optional: true,
+        getDefaultValue: "India",
+    },
+];
+
+const formFieldsWithDefault = [
+    {
+        id: "country",
+        label: "Your Country",
+        placeholder: "Where do you live?",
+        optional: true,
+        getDefaultValue: () => "India",
+    },
+    {
+        id: "ratings",
+        label: "Ratings",
+        getDefaultValue: () => "best",
+        inputComponent: ({ value, name, onChange }) => (
+            <select value={value} name={name} onChange={(e) => onChange(e.target.value)} placeholder="Add Ratings">
+                <option value="" disabled hidden>
+                    Select an option
+                </option>
+                <option value="good">Good</option>
+                <option value="better">Better</option>
+                <option value="best">Best</option>
+            </select>
+        ),
+        optional: true,
+    },
+];
+
+const incorrectFormFields = [
+    {
+        id: "country",
+        label: "Your Country",
+        placeholder: "Where do you live?",
+        optional: true,
+        getDefaultValue: () => 23,
+    },
+    {
+        id: "ratings",
+        label: "Ratings",
+        getDefaultValue: "best",
+        inputComponent: ({ value, name, onChange }) => (
+            <select value={value} name={name} onChange={(e) => onChange(e.target.value)} placeholder="Add Ratings">
+                <option value="" disabled hidden>
+                    Select an option
+                </option>
+                <option value="good">Good</option>
+                <option value="better">Better</option>
+                <option value="best">Best</option>
+            </select>
+        ),
+        optional: true,
+    },
+    {
+        id: "terms",
+        label: "",
+        optional: false,
+        inputComponent: ({ name, onChange }) => (
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "left",
+                }}>
+                <input name={name} type="checkbox" onChange={(e) => onChange(e.target.checked)}></input>
+                <span style={{ marginLeft: 5 }}>I agree to the terms and conditions</span>
+            </div>
+        ),
+        validate: async (value) => {
+            if (value === "true") {
+                return undefined;
+            }
+            return "Please check Terms and conditions";
+        },
     },
 ];
 
@@ -172,8 +247,8 @@ const customFields = [
     {
         id: "ratings",
         label: "Ratings",
-        inputComponent: ({ name, onChange }) => (
-            <select name={name} onChange={(e) => onChange(e.target.value)} placeholder="Add Ratings">
+        inputComponent: ({ value, name, onChange }) => (
+            <select value={value} name={name} onChange={(e) => onChange(e.target.value)} placeholder="Add Ratings">
                 <option value="" disabled hidden>
                     Select an option
                 </option>
@@ -678,7 +753,13 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
                 privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
                 formFields:
-                    localStorage.getItem("SHOW_CUSTOM_FIELDS") === "YES" ? formFields.concat(customFields) : formFields,
+                    localStorage.getItem("SHOW_INCORRECT_FIELDS") === "YES"
+                        ? incorrectFormFields
+                        : localStorage.getItem("SHOW_DEFAULT_FIELDS") === "YES"
+                        ? formFieldsWithDefault
+                        : localStorage.getItem("SHOW_CUSTOM_FIELDS") === "YES"
+                        ? customFields
+                        : formFields,
             },
         },
     });

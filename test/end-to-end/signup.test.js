@@ -40,6 +40,7 @@ import {
     waitForSTElement,
     backendBeforeEach,
     setSelectDropdownValue,
+    getInputField,
 } from "../helpers";
 
 import {
@@ -344,8 +345,6 @@ describe("SuperTokens SignUp", function () {
         });
     });
 
-    // CUSTOM FIELDS TEST
-
     describe("Signup custom fields test", function () {
         beforeEach(async function () {
             // set cookie and reload which loads the form with custom field
@@ -374,11 +373,9 @@ describe("SuperTokens SignUp", function () {
             await submitForm(page);
             let formFieldErrors = await getFieldErrors(page);
 
-            // 4 regular form field errors +
+            // 2 regular form field errors +
             // 1 required custom field => terms checkbox
             assert.deepStrictEqual(formFieldErrors, [
-                "Field is not optional",
-                "Field is not optional",
                 "Field is not optional",
                 "Field is not optional",
                 "Field is not optional",
@@ -388,9 +385,8 @@ describe("SuperTokens SignUp", function () {
             await setInputValues(page, [
                 { name: "email", value: "jack.doe@supertokens.io" },
                 { name: "password", value: "Str0ngP@ssw0rd" },
-                { name: "name", value: "John Doe" },
-                { name: "age", value: "20" },
             ]);
+
             await submitForm(page);
             formFieldErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldErrors, ["Field is not optional"]);
@@ -426,8 +422,6 @@ describe("SuperTokens SignUp", function () {
                 await setInputValues(page, [
                     { name: "email", value: "john.doe@supertokens.io" },
                     { name: "password", value: "Str0ngP@assw0rd" },
-                    { name: "name", value: "Supertokens" },
-                    { name: "age", value: "20" },
                 ]);
 
                 await setSelectDropdownValue(page, 'select[name="ratings"]', customFields["ratings"]);
@@ -441,6 +435,56 @@ describe("SuperTokens SignUp", function () {
                 page.off("request", requestHandler);
                 await page.setRequestInterception(false);
             }
+        });
+    });
+
+    // Default values test
+    describe("Signup default value for fields test", function () {
+        beforeEach(async function () {
+            // set cookie and reload which loads the form fields with default values
+            await page.evaluate(() => window.localStorage.setItem("SHOW_DEFAULT_FIELDS", "YES"));
+
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+            await toggleSignInSignUp(page);
+        });
+
+        it("Check if default values are set already", async function () {
+            const fieldsWithDefault = {
+                country: "India",
+                ratings: "best",
+            };
+
+            // regular input field default value
+            const countryInput = await getInputField(page, "country");
+            const defaultCountry = await countryInput.evaluate((f) => f.value);
+            assert.strictEqual(defaultCountry, fieldsWithDefault["country"]);
+
+            // custom dropdown default value is also getting set correctly
+            const ratingsDropdown = await waitForSTElement(page, "select");
+            const defaultRating = await ratingsDropdown.evaluate((f) => f.value);
+            assert.strictEqual(defaultRating, fieldsWithDefault["ratings"]);
+        });
+
+        it("Check if changing the field value actually overwrites the default value", async function () {
+            const updatedFields = {
+                country: "USA",
+                ratings: "good",
+            };
+
+            await setInputValues(page, [{ name: "country", value: updatedFields["country"] }]);
+            await setSelectDropdownValue(page, 'select[name="ratings"]', updatedFields["ratings"]);
+
+            // input field default value
+            const countryInput = await getInputField(page, "country");
+            const defaultCountry = await countryInput.evaluate((f) => f.value);
+            assert.strictEqual(defaultCountry, updatedFields["country"]);
+
+            // dropdown default value is also getting set correctly
+            const ratingsDropdown = await waitForSTElement(page, "select");
+            const defaultRating = await ratingsDropdown.evaluate((f) => f.value);
+            assert.strictEqual(defaultRating, updatedFields["ratings"]);
         });
     });
 });
