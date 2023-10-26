@@ -16,5 +16,7 @@ export const defaultTranslationsTOTP = {
         TOTP_CODE_INPUT_LABEL: "Please enter TOTP from the app",
         TOTP_CODE_CONTINUE_BUTTON: "Continue",
         TOTP_REMOVE_DEVICE_LINK: "Choose another factor",
+        TOTP_BLOCKED_TITLE: "Account locked",
+        TOTP_BLOCKED_SUBTITLE: "Account locked due to multiple failed login attempts.",
     },
 };

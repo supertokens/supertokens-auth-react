@@ -24,6 +24,7 @@ import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClai
 
 import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
+import { appendQueryParamsToURL, getCurrentNormalisedUrlPath, getRedirectToPathFromURL } from "../../utils";
 import RecipeModule from "../recipeModule";
 
 import { DEFAULT_FACTOR_CHOOSER_PATH } from "./constants";
@@ -41,7 +42,6 @@ import type {
 } from "./types";
 import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
 import type { NormalisedAppInfo } from "../../types";
-import { appendQueryParamsToURL, getCurrentNormalisedUrlPath, getRedirectToPathFromURL } from "../../utils";
 
 export default class MultiFactorAuth extends RecipeModule<
     GetRedirectionURLContext,
@@ -161,13 +161,13 @@ export default class MultiFactorAuth extends RecipeModule<
         return this.config.getFactorInfo(this.secondaryFactors);
     }
 
-    async redirectToFactor(factorId: string, redirectBack: boolean = false, history?: any) {
+    async redirectToFactor(factorId: string, redirectBack = false, history?: any) {
         let url = await this.getRedirectUrl({ action: "GO_TO_FACTOR", factorId });
         if (redirectBack) {
-            let redirectUrl = getCurrentNormalisedUrlPath().getAsStringDangerous();
+            const redirectUrl = getCurrentNormalisedUrlPath().getAsStringDangerous();
             url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
         } else {
-            let redirectUrl = getRedirectToPathFromURL();
+            const redirectUrl = getRedirectToPathFromURL();
             if (redirectUrl) {
                 url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
             }
@@ -175,13 +175,13 @@ export default class MultiFactorAuth extends RecipeModule<
         return SuperTokens.getInstanceOrThrow().redirectToUrl(url, history);
     }
 
-    async redirectToFactorChooser(redirectBack: boolean = false, history?: any) {
+    async redirectToFactorChooser(redirectBack = false, history?: any) {
         let url = await this.getRedirectUrl({ action: "FACTOR_CHOOSER" });
         if (redirectBack) {
-            let redirectUrl = getCurrentNormalisedUrlPath().getAsStringDangerous();
+            const redirectUrl = getCurrentNormalisedUrlPath().getAsStringDangerous();
             url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
         } else {
-            let redirectUrl = getRedirectToPathFromURL();
+            const redirectUrl = getRedirectToPathFromURL();
             if (redirectUrl) {
                 url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
             }

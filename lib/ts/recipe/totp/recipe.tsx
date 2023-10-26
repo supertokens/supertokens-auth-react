@@ -25,6 +25,7 @@ import { OTPIcon } from "../../components/assets/otpIcon";
 import { SSR_ERROR } from "../../constants";
 import MultiFactorAuth from "../multifactorauth/recipe";
 import RecipeModule from "../recipeModule";
+import Session from "../session/recipe";
 
 import { DEFAULT_TOTP_PATH } from "./constants";
 import { getFunctionOverrides } from "./functionOverrides";
@@ -39,7 +40,6 @@ import type {
 } from "./types";
 import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
 import type { NormalisedAppInfo } from "../../types";
-import Session from "../session/recipe";
 
 export default class TOTP extends RecipeModule<
     GetRedirectionURLContext,

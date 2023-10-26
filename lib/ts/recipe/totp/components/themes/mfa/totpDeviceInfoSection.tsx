@@ -13,12 +13,13 @@
  * under the License.
  */
 
+import QRCode from "react-qr-code";
+
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 import type { TOTPMFACommonProps } from "../../../types";
 import type { DeviceInfo } from "supertokens-web-js/recipe/totp";
-import QRCode from "react-qr-code";
-import { useTranslation } from "../../../../../translation/translationContext";
 
 export const DeviceInfoSection = withOverride(
     "TOTPDeviceInfoSection",

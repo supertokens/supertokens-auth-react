@@ -102,17 +102,6 @@ export type TOTPMFAScreenConfig = {
     loadingScreenStyle: string; // TODO: ??
 };
 
-/**
- * When calling getLoginAttemptInfo/setLoginAttemptInfo from web-js we use generics to get
- * access to properties in local storage that web-js does not set by default.
- * This allows us to strongly type the response while keeping it dynamic.
- *
- * In the context of auth-react this type indicates all the additional properties we need.
- */
-export type AdditionalDeviceInfoProperties = {
-    redirectToPath?: string;
-};
-
 // Config is what does in the constructor of the recipe.
 export type UserInput = {
     totpMFAScreen?: Partial<TOTPMFAScreenConfig>;

@@ -11,6 +11,8 @@ export declare const defaultTranslationsTOTP: {
         TOTP_CODE_INPUT_LABEL: string;
         TOTP_CODE_CONTINUE_BUTTON: string;
         TOTP_REMOVE_DEVICE_LINK: string;
+        TOTP_BLOCKED_TITLE: string;
+        TOTP_BLOCKED_SUBTITLE: string;
         BRANDING_POWERED_BY_START: string;
         BRANDING_POWERED_BY_END: string;
         SOMETHING_WENT_WRONG_ERROR: string;

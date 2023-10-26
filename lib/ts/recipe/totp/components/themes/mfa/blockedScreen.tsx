@@ -16,7 +16,7 @@ import { BlockedIcon } from "../../../../../components/assets/blockedIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 
-const TOTPBlockedScreen: React.FC = (props: { onRestartClicked: () => void }) => {
+const TOTPBlockedScreen: React.FC = () => {
     const t = useTranslation();
 
     return (
@@ -25,9 +25,8 @@ const TOTPBlockedScreen: React.FC = (props: { onRestartClicked: () => void }) =>
                 <BlockedIcon />
                 <div data-supertokens="headerTitle">{t("TOTP_BLOCKED_TITLE")}</div>
                 <div data-supertokens="divider" />
-                <div data-supertokens="headerSubtitle secondaryText">
-                    {t("TOTP_BLOCKED_SUBTITLE")}
-                </div>
+                <div data-supertokens="headerSubtitle secondaryText">{t("TOTP_BLOCKED_SUBTITLE")}</div>
+                <div data-supertokens="divider" />
             </div>
         </div>
     );

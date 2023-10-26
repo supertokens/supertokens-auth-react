@@ -30,6 +30,7 @@ export declare type TOTPMFAAction =
     | {
           type: "setBlocked";
           error: string | undefined;
+          nextRetryAt: number;
       }
     | {
           type: "setError";
@@ -48,6 +49,7 @@ export declare type TOTPMFAAction =
 export declare type TOTPMFAState = {
     deviceInfo?: TOTPDeviceInfo;
     showSecret: boolean;
+    nextRetryAt?: number;
     isBlocked: boolean;
     loaded: boolean;
     error: string | undefined;
@@ -63,6 +65,8 @@ export declare type TOTPMFAProps = {
     config: NormalisedConfig;
     onSuccess: () => void;
     onShowSecretClick: () => void;
+    onBackButtonClicked: () => void;
+    onRetryClicked: () => void;
     dispatch: Dispatch<TOTPMFAAction>;
     featureState: TOTPMFAState;
     userContext?: any;
@@ -74,16 +78,6 @@ export declare type TOTPMFAScreenConfig = {
     verificationScreenStyle: string;
     blockedScreenStyle: string;
     loadingScreenStyle: string;
-};
-/**
- * When calling getLoginAttemptInfo/setLoginAttemptInfo from web-js we use generics to get
- * access to properties in local storage that web-js does not set by default.
- * This allows us to strongly type the response while keeping it dynamic.
- *
- * In the context of auth-react this type indicates all the additional properties we need.
- */
-export declare type AdditionalDeviceInfoProperties = {
-    redirectToPath?: string;
 };
 export declare type UserInput = {
     totpMFAScreen?: Partial<TOTPMFAScreenConfig>;

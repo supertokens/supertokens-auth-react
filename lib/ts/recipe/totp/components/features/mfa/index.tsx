@@ -18,11 +18,13 @@
 import * as React from "react";
 import { Fragment } from "react";
 import { useMemo } from "react";
+import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, getRedirectToPathFromURL, useOnMountAPICall } from "../../../../../utils";
+import MultiFactorAuth from "../../../../multifactorauth/recipe";
 import SessionRecipe from "../../../../session/recipe";
 import MFATOTPThemeWrapper from "../../themes/mfa";
 import { defaultTranslationsTOTP } from "../../themes/translations";
@@ -36,9 +38,8 @@ import type {
     TOTPMFAChildProps,
     TOTPMFAState,
 } from "../../../types";
+import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/totp";
-import MultiFactorAuth from "../../../../multifactorauth/recipe";
-import { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 
 export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction>] => {
     return React.useReducer(
@@ -67,12 +68,23 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
                     return {
                         ...oldState,
                         deviceInfo: action.deviceInfo,
+                        isBlocked: false,
+                        showSecret: false,
+                        nextRetryAt: undefined,
                         error: undefined,
                     };
                 case "showSecret":
                     return {
                         ...oldState,
                         showSecret: true,
+                    };
+                case "restartFlow":
+                    return {
+                        ...oldState,
+                        isBlocked: false,
+                        showSecret: false,
+                        nextRetryAt: undefined,
+                        error: action.error,
                     };
                 default:
                     return oldState;
@@ -143,12 +155,8 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                 dispatch({ type: "setError", error: "Setup not allowed" });
                 return;
             }
-            // let deviceInfo = await recipeImpl.getDeviceInfo<AdditionalDeviceInfoProperties>({
-            //     userContext,
-            // });
             let deviceInfo: TOTPDeviceInfo | undefined;
             if (isAllowedToSetup && (doSetup || !isAlreadySetup)) {
-                // if (!deviceInfo) {
                 const createResp = await recipeImpl.createDevice({ userContext });
                 if (createResp?.status !== "OK") {
                     throw new Error("TOTP device creation failed with duplicate name; should never happen");
@@ -157,15 +165,7 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                     ...createResp,
                 };
                 delete (deviceInfo as any).status;
-                // deviceInfo = await recipeImpl.getDeviceInfo<AdditionalDeviceInfoProperties>({
-                //     userContext,
-                // });
-                // }
             }
-            // if (deviceInfo && !isAllowedToSetup) {
-            //     await recipeImpl.removeDevice({ deviceName: deviceInfo.deviceName, userContext });
-            //     deviceInfo = undefined;
-            // }
 
             // No need to check if the component is unmounting, since this has no effect then.
             dispatch({ type: "load", deviceInfo, error });
@@ -188,6 +188,27 @@ export function useChildProps(
         return {
             onShowSecretClick: () => {
                 dispatch({ type: "showSecret" });
+            },
+            onBackButtonClicked: async () => {
+                if (state.deviceInfo) {
+                    await recipeImplementation.removeDevice({
+                        deviceName: state.deviceInfo.deviceName,
+                        userContext,
+                    });
+                }
+                // If we don't have history available this would mean we are not using react-router-dom, so we use window's history
+                if (history === undefined) {
+                    return WindowHandlerReference.getReferenceOrThrow().windowHandler.getWindowUnsafe().history.back();
+                }
+                // If we do have history and goBack function on it this means we are using react-router-dom v5 or lower
+                if (history.goBack !== undefined) {
+                    return history.goBack();
+                }
+                // If we reach this code this means we are using react-router-dom v6
+                return history(-1);
+            },
+            onRetryClicked() {
+                dispatch({ type: "restartFlow", error: undefined });
             },
             onSuccess: () => {
                 const redirectToPath = getRedirectToPathFromURL();
@@ -293,7 +314,11 @@ function getModifiedRecipeImplementation(
             const res = await originalImpl.verifyCode(input);
 
             if (res.status === "LIMIT_REACHED_ERROR") {
-                dispatch({ type: "setBlocked", error: "ERROR_SIGN_IN_UP_CODE_VERIFY_BLOCKED", nextRetryAt: Date.now() + res.retryAfterMs });
+                dispatch({
+                    type: "setBlocked",
+                    error: "ERROR_SIGN_IN_UP_CODE_VERIFY_BLOCKED",
+                    nextRetryAt: Date.now() + res.retryAfterMs,
+                });
             } else if (res.status === "INVALID_TOTP_ERROR") {
                 dispatch({ type: "setError", error: "ERROR_SIGN_IN_UP_CODE_VERIFY_INVALID_TOTP" });
             }
@@ -305,7 +330,11 @@ function getModifiedRecipeImplementation(
             const res = await originalImpl.verifyDevice(input);
 
             if (res.status === "LIMIT_REACHED_ERROR") {
-                dispatch({ type: "setBlocked", error: "ERROR_TOTP_MFA_VERIFY_DEVICE_BLOCKED", nextRetryAt: Date.now() + res.retryAfterMs });
+                dispatch({
+                    type: "setBlocked",
+                    error: "ERROR_TOTP_MFA_VERIFY_DEVICE_BLOCKED",
+                    nextRetryAt: Date.now() + res.retryAfterMs,
+                });
             } else if (res.status === "INVALID_TOTP_ERROR") {
                 dispatch({ type: "setError", error: "ERROR_TOTP_MFA_VERIFY_DEVICE_INVALID_TOTP" });
             } else if (res.status === "UNKNOWN_DEVICE_ERROR") {
