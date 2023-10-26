@@ -44,7 +44,7 @@ export const CodeForm = withOverride(
                     formFields={[
                         {
                             id: "totp",
-                            label: "PWLESS_USER_INPUT_CODE_INPUT_LABEL",
+                            label: "TOTP_CODE_INPUT_LABEL",
                             autofocus: true,
                             optional: false,
                             clearOnSubmit: true,
@@ -54,7 +54,7 @@ export const CodeForm = withOverride(
                         },
                     ]}
                     onSuccess={props.onSuccess}
-                    buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
+                    buttonLabel={"TOTP_CODE_CONTINUE_BUTTON"}
                     callAPI={async (formFields) => {
                         const totp = formFields.find((field) => field.id === "totp")?.value;
                         if (totp === undefined || totp.length === 0) {

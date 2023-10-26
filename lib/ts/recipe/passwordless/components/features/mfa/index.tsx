@@ -189,8 +189,22 @@ export function useChildProps(
         }
         return {
             onSuccess: () => {
+                const redirectToPath = getRedirectToPathFromURL();
+                const redirectInfo =
+                    redirectToPath === undefined
+                        ? undefined
+                        : {
+                              rid: "totp",
+                              successRedirectContext: {
+                                  action: "SUCCESS",
+                                  isNewRecipeUser: false,
+                                  user: undefined,
+                                  redirectToPath,
+                              },
+                          };
+
                 return SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                    undefined,
+                    redirectInfo,
                     userContext,
                     history
                 );
@@ -213,7 +227,7 @@ export function useChildProps(
                 return history(-1);
             },
             onFactorChooserButtonClicked: () => {
-                return MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser(history);
+                return MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser(false, history);
             },
             recipeImplementation: recipeImplementation,
             config: recipe.config,
@@ -261,7 +275,7 @@ export const MFAFeature: React.FC<
 
     useEffect(() => {
         if (state.loaded && state.isSetupAllowed === false && state.loginAttemptInfo === undefined) {
-            void MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser();
+            void MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser(false, props.history);
         }
     }, [state.loaded, state.isSetupAllowed, state.loginAttemptInfo]);
 
@@ -311,7 +325,7 @@ function useOnLoad(
 ) {
     const fetchMFAInfo = React.useCallback(
         async () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe.getMFAInfo({ userContext }),
-        [props.recipe, userContext]
+        [userContext]
     );
     const handleLoadError = React.useCallback(
         // Test this, it may show an empty screen in many cases

@@ -9,4 +9,14 @@ export const getFunctionOverrides =
     ) =>
     (originalImp: RecipeInterface): RecipeInterface => ({
         ...originalImp,
+
+        setDeviceInfo: async function (input) {
+            return originalImp.setDeviceInfo({
+                ...input,
+                deviceInfo: {
+                    ...input.deviceInfo,
+                    ...input.userContext.additionalDeviceInfo,
+                },
+            });
+        },
     });

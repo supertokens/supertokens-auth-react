@@ -12,23 +12,21 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import CheckedRoundIcon from "../../../../../components/assets/checkedRoundIcon";
+import { BlockedIcon } from "../../../../../components/assets/blockedIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 
-const TOTPBlockedScreen: React.FC = () => {
+const TOTPBlockedScreen: React.FC = (props: { onRestartClicked: () => void }) => {
     const t = useTranslation();
 
     return (
         <div data-supertokens="container">
             <div data-supertokens="row noFormRow">
-                <CheckedRoundIcon />
-                <div data-supertokens="headerTitle">{t("PWLESS_CLOSE_TAB_TITLE")}</div>
+                <BlockedIcon />
+                <div data-supertokens="headerTitle">{t("TOTP_BLOCKED_TITLE")}</div>
                 <div data-supertokens="divider" />
                 <div data-supertokens="headerSubtitle secondaryText">
-                    {t("PWLESS_CLOSE_TAB_SUBTITLE_LINE1")}
-                    <br />
-                    {t("PWLESS_CLOSE_TAB_SUBTITLE_LINE2")}
+                    {t("TOTP_BLOCKED_SUBTITLE")}
                 </div>
             </div>
         </div>

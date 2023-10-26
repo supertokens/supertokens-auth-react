@@ -26,7 +26,7 @@ export const DeviceSetupFooter = withOverride(
 
         return (
             <div data-supertokens="secondaryText privacyPolicyAndTermsAndConditions">
-                {t("PWLESS_SIGN_IN_UP_FOOTER_START")}
+                {t("TOTP_DEVICE_SETUP_FOOTER")}
             </div>
         );
     }

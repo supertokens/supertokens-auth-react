@@ -27,7 +27,8 @@ export const CodeVerificationHeader = withOverride(
 
         return (
             <Fragment>
-                <div data-supertokens="headerTitle">{t("PWLESS_USER_INPUT_CODE_HEADER_TITLE")}</div>
+                <div data-supertokens="headerTitle">{t("TOTP_CODE_VERIFICATION_HEADER_TITLE")}</div>
+                <div data-supertokens="headerSubtitle secondaryText">{t("TOTP_CODE_VERIFICATION_HEADER_SUBTITLE")}</div>
                 <div data-supertokens="divider"></div>
             </Fragment>
         );

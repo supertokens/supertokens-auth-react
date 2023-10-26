@@ -84,7 +84,7 @@ export const getFunctionOverrides =
                 ...input,
                 attemptInfo: {
                     ...input.attemptInfo,
-                    ...input.userContext.additionalAttemptInfo,
+                    ...input.userContext.additionalDeviceInfo,
                 },
             });
         },

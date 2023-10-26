@@ -18,12 +18,11 @@
 import * as React from "react";
 import { Fragment } from "react";
 import { useMemo } from "react";
-import { useEffect } from "react";
 
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
-import { getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
+import { getQueryParams, getRedirectToPathFromURL, useOnMountAPICall } from "../../../../../utils";
 import SessionRecipe from "../../../../session/recipe";
 import MFATOTPThemeWrapper from "../../themes/mfa";
 import { defaultTranslationsTOTP } from "../../themes/translations";
@@ -31,20 +30,19 @@ import { defaultTranslationsTOTP } from "../../themes/translations";
 import type { FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type {
-    AdditionalDeviceInfoProperties,
     ComponentOverrideMap,
+    TOTPDeviceInfo,
     TOTPMFAAction,
     TOTPMFAChildProps,
     TOTPMFAState,
 } from "../../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/totp";
+import MultiFactorAuth from "../../../../multifactorauth/recipe";
+import { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 
-export const useFeatureReducer = (
-    recipeImpl: RecipeInterface | undefined,
-    userContext: any
-): [TOTPMFAState, React.Dispatch<TOTPMFAAction>] => {
-    const [state, dispatch] = React.useReducer(
-        (oldState: TOTPMFAState, action: TOTPMFAAction) => {
+export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction>] => {
+    return React.useReducer(
+        (oldState: TOTPMFAState, action: TOTPMFAAction): TOTPMFAState => {
             switch (action.type) {
                 case "load":
                     return {
@@ -52,6 +50,7 @@ export const useFeatureReducer = (
                         error: action.error,
                         deviceInfo: action.deviceInfo,
                         isBlocked: false,
+                        showSecret: false,
                     };
                 case "setBlocked":
                     return {
@@ -70,10 +69,10 @@ export const useFeatureReducer = (
                         deviceInfo: action.deviceInfo,
                         error: undefined,
                     };
-                case "successInAnotherTab":
+                case "showSecret":
                     return {
                         ...oldState,
-                        successInAnotherTab: true,
+                        showSecret: true,
                     };
                 default:
                     return oldState;
@@ -83,6 +82,7 @@ export const useFeatureReducer = (
             error: undefined,
             loaded: false,
             deviceInfo: undefined,
+            showSecret: false,
             isBlocked: false,
         },
         (initArg) => {
@@ -104,14 +104,25 @@ export const useFeatureReducer = (
             };
         }
     );
-    useEffect(() => {
-        if (recipeImpl === undefined) {
-            return;
-        }
-        async function load() {
+};
+
+function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFAAction>, userContext: any) {
+    const fetchMFAInfo = React.useCallback(
+        async () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe.getMFAInfo({ userContext }),
+        [userContext]
+    );
+
+    const handleLoadError = React.useCallback(
+        // Test this, it may show an empty screen in many cases
+        () => dispatch({ type: "setError", error: "Getting mfaInfo failed!" }),
+        [dispatch]
+    ); // TODO: translation/proper error handling)
+    const onLoad = React.useCallback(
+        async (mfaInfo: { factors: MFAFactorInfo; email?: string; phoneNumber?: string }) => {
             let error: string | undefined = undefined;
             const errorQueryParam = getQueryParams("error");
             const messageQueryParam = getQueryParams("message");
+            const doSetup = getQueryParams("setup");
             if (errorQueryParam !== null) {
                 if (errorQueryParam === "signin") {
                     error = "SOMETHING_WENT_WRONG_ERROR";
@@ -121,61 +132,79 @@ export const useFeatureReducer = (
                     error = messageQueryParam;
                 }
             }
-            const deviceInfo = await recipeImpl?.getDeviceInfo({
-                userContext,
-            });
+            const isAllowedToSetup = mfaInfo.factors.isAllowedToSetup.includes("totp");
+            const isAlreadySetup = mfaInfo.factors.isAlreadySetup.includes("totp");
+            if (!isAllowedToSetup && !isAlreadySetup) {
+                // TODO: redirect to access denied
+                dispatch({ type: "setError", error: "Setup and completion not allowed" });
+                return;
+            }
+            if (doSetup && !isAllowedToSetup) {
+                dispatch({ type: "setError", error: "Setup not allowed" });
+                return;
+            }
+            // let deviceInfo = await recipeImpl.getDeviceInfo<AdditionalDeviceInfoProperties>({
+            //     userContext,
+            // });
+            let deviceInfo: TOTPDeviceInfo | undefined;
+            if (isAllowedToSetup && (doSetup || !isAlreadySetup)) {
+                // if (!deviceInfo) {
+                const createResp = await recipeImpl.createDevice({ userContext });
+                if (createResp?.status !== "OK") {
+                    throw new Error("TOTP device creation failed with duplicate name; should never happen");
+                }
+                deviceInfo = {
+                    ...createResp,
+                };
+                delete (deviceInfo as any).status;
+                // deviceInfo = await recipeImpl.getDeviceInfo<AdditionalDeviceInfoProperties>({
+                //     userContext,
+                // });
+                // }
+            }
+            // if (deviceInfo && !isAllowedToSetup) {
+            //     await recipeImpl.removeDevice({ deviceName: deviceInfo.deviceName, userContext });
+            //     deviceInfo = undefined;
+            // }
+
             // No need to check if the component is unmounting, since this has no effect then.
             dispatch({ type: "load", deviceInfo, error });
-        }
-        if (state.loaded === false) {
-            void load();
-        }
-    }, [state.loaded, recipeImpl, userContext]);
-    return [state, dispatch];
-};
+        },
+        [dispatch, recipeImpl, userContext]
+    );
 
-// We are overloading to explicitly state that if recipe is defined then the return value is defined as well.
+    useOnMountAPICall(fetchMFAInfo, onLoad, handleLoadError);
+}
+
 export function useChildProps(
     recipe: Recipe,
-    dispatch: React.Dispatch<TOTPMFAAction>,
+    recipeImplementation: RecipeInterface,
     state: TOTPMFAState,
-    userContext: any,
-    history: any
-): TOTPMFAChildProps;
-export function useChildProps(
-    recipe: Recipe | undefined,
     dispatch: React.Dispatch<TOTPMFAAction>,
-    state: TOTPMFAState,
-    userContext: any,
-    history: any
-): TOTPMFAChildProps | undefined;
-
-export function useChildProps(
-    recipe: Recipe | undefined,
-    dispatch: React.Dispatch<TOTPMFAAction>,
-    state: TOTPMFAState,
     userContext: any,
     history: any
 ): TOTPMFAChildProps | undefined {
-    const recipeImplementation = React.useMemo(
-        () => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe, dispatch),
-        [recipe]
-    );
-
     return useMemo(() => {
-        if (!recipe || !recipeImplementation) {
-            return undefined;
-        }
         return {
+            onShowSecretClick: () => {
+                dispatch({ type: "showSecret" });
+            },
             onSuccess: () => {
+                const redirectToPath = getRedirectToPathFromURL();
+                const redirectInfo =
+                    redirectToPath === undefined
+                        ? undefined
+                        : {
+                              rid: "totp",
+                              successRedirectContext: {
+                                  action: "SUCCESS",
+                                  redirectToPath,
+                                  userContext,
+                              },
+                          };
+
                 return SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                    {
-                        rid: recipe.config.recipeId,
-                        successRedirectContext: {
-                            action: "SUCCESS",
-                            redirectToPath: getRedirectToPathFromURL(),
-                        },
-                    },
+                    redirectInfo,
                     userContext,
                     history
                 );
@@ -193,9 +222,15 @@ export const SignInUpFeature: React.FC<
     }
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
+    const [state, dispatch] = useFeatureReducer();
     const userContext = useUserContext();
-    const [state, dispatch] = useFeatureReducer(props.recipe.webJSRecipe, userContext);
-    const childProps = useChildProps(props.recipe, dispatch, state, userContext, props.history)!;
+
+    const recipeImplementation = React.useMemo(
+        () => getModifiedRecipeImplementation(props.recipe.webJSRecipe, dispatch),
+        [props.recipe]
+    );
+    const childProps = useChildProps(props.recipe, recipeImplementation, state, dispatch, userContext, props.history)!;
+    useOnLoad(recipeImplementation, dispatch, userContext);
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
@@ -233,18 +268,22 @@ function getModifiedRecipeImplementation(
     return {
         ...originalImpl,
         createDevice: async (input) => {
-            const additionalAttemptInfo = {
+            const additionalDeviceInfo = {
                 redirectToPath: getRedirectToPathFromURL(),
             };
 
             const res = await originalImpl.createDevice({
                 ...input,
-                userContext: { ...input.userContext, additionalAttemptInfo },
+                userContext: { ...input.userContext, additionalDeviceInfo },
             });
             if (res.status === "OK") {
-                const deviceInfo = (await originalImpl.getDeviceInfo<AdditionalDeviceInfoProperties>({
-                    userContext: input.userContext,
-                }))!;
+                // const deviceInfo = (await originalImpl.getDeviceInfo<AdditionalDeviceInfoProperties>({
+                //     userContext: input.userContext,
+                // }))!;
+                const deviceInfo = {
+                    ...res,
+                };
+                delete (deviceInfo as any).status;
                 dispatch({ type: "createDevice", deviceInfo });
             }
             return res;
@@ -254,7 +293,7 @@ function getModifiedRecipeImplementation(
             const res = await originalImpl.verifyCode(input);
 
             if (res.status === "LIMIT_REACHED_ERROR") {
-                dispatch({ type: "setBlocked", error: "ERROR_SIGN_IN_UP_CODE_VERIFY_BLOCKED" });
+                dispatch({ type: "setBlocked", error: "ERROR_SIGN_IN_UP_CODE_VERIFY_BLOCKED", nextRetryAt: Date.now() + res.retryAfterMs });
             } else if (res.status === "INVALID_TOTP_ERROR") {
                 dispatch({ type: "setError", error: "ERROR_SIGN_IN_UP_CODE_VERIFY_INVALID_TOTP" });
             }
@@ -266,7 +305,7 @@ function getModifiedRecipeImplementation(
             const res = await originalImpl.verifyDevice(input);
 
             if (res.status === "LIMIT_REACHED_ERROR") {
-                dispatch({ type: "setBlocked", error: "ERROR_TOTP_MFA_VERIFY_DEVICE_BLOCKED" });
+                dispatch({ type: "setBlocked", error: "ERROR_TOTP_MFA_VERIFY_DEVICE_BLOCKED", nextRetryAt: Date.now() + res.retryAfterMs });
             } else if (res.status === "INVALID_TOTP_ERROR") {
                 dispatch({ type: "setError", error: "ERROR_TOTP_MFA_VERIFY_DEVICE_INVALID_TOTP" });
             } else if (res.status === "UNKNOWN_DEVICE_ERROR") {

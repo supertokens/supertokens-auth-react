@@ -15,7 +15,7 @@ import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyema
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 import UserRoles from "supertokens-auth-react/recipe/userroles";
 import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
-import MultiFactorAuth from "supertokens-auth-react/recipe/totp";
+import TOTP from "supertokens-auth-react/recipe/totp";
 
 import axios from "axios";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
@@ -172,7 +172,73 @@ const formFields = [
 
 const testContext = getTestContext();
 
+let totpDevices = [];
+let tryCount = 0;
+setInterval(() => (tryCount = tryCount > 0 ? tryCount - 1 : 0), 30);
+window.resetTOTP = () => {
+    totpDevices = [];
+    tryCount = 0;
+};
 let recipeList = [
+    TOTP.init({
+        override: {
+            functions: (oI) => ({
+                ...oI,
+                listDevices: async () => ({ devices: totpDevices, status: "OK" }),
+                removeDevice: async ({ deviceName }) => {
+                    const origLength = totpDevices.length;
+                    totpDevices = totpDevices.filter((d) => d.deviceName !== deviceName);
+                    return { status: "OK", didDeviceExist: origLength !== totpDevices.length };
+                },
+                createDevice: async ({ deviceName }) => {
+                    deviceName = deviceName ?? `totp-${Date.now()}`;
+                    totpDevices.push({
+                        deviceName,
+                        verified: false,
+                    });
+                    return {
+                        status: "OK",
+                        deviceName: deviceName,
+                        issuerName: "st",
+                        qrCodeString: deviceName,
+                        secret: `secret-${deviceName}`,
+                    };
+                },
+                verifyCode: async ({ totp }) => {
+                    const dev = totpDevices.find((d) => d.deviceName.endsWith(totp) && d.verified);
+                    if (dev) {
+                        return { status: "OK" };
+                    }
+
+                    if (++tryCount > 3) {
+                        return { status: "LIMIT_REACHED_ERROR", retryAfterMs: 30000 };
+                    }
+                    return { status: "INVALID_TOTP_ERROR" };
+                },
+                verifyDevice: async ({ deviceName, totp }) => {
+                    const dev = totpDevices.find((d) => d.deviceName === deviceName);
+                    if (!dev) {
+                        return { status: "UNKNOWN_DEVICE_ERROR" };
+                    }
+                    if (deviceName.endsWith(totp)) {
+                        const wasAlreadyVerified = dev.verified;
+                        dev.verified = true;
+                        await fetch("http://localhost:8082/mergeIntoAccessTokenPayload", {
+                            method: "POST",
+                            body: JSON.stringify({ hasTOTP: true }),
+                            headers: new Headers([["Content-Type", "application/json"]]),
+                        });
+                        return { status: "OK", wasAlreadyVerified };
+                    }
+
+                    if (++tryCount > 3) {
+                        return { status: "LIMIT_REACHED_ERROR", retryAfterMs: 30000 };
+                    }
+                    return { status: "INVALID_TOTP_ERROR" };
+                },
+            }),
+        },
+    }),
     MultiFactorAuth.init({
         firstFactors: ["otp-phone", "otp-email", "thirdparty"],
     }),

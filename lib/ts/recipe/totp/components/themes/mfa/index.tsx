@@ -73,7 +73,12 @@ const SignInUpTheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> =
                         )}
                         {featureState.error !== undefined && <GeneralError error={featureState.error} />}
                         {activeScreen === TOTPMFAScreens.DeviceSetup && (
-                            <DeviceInfoSection {...commonProps} deviceInfo={featureState.deviceInfo!} />
+                            <DeviceInfoSection
+                                {...commonProps}
+                                deviceInfo={featureState.deviceInfo!}
+                                showSecret={featureState.showSecret}
+                                onShowSecretClick={props.onShowSecretClick}
+                            />
                         )}
                         <CodeForm
                             {...commonProps}
@@ -94,7 +99,7 @@ const SignInUpTheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> =
     );
 };
 
-function SignInUpThemeWrapper(props: TOTPMFAProps): JSX.Element {
+function TOTPMFAThemeWrapper(props: TOTPMFAProps): JSX.Element {
     const hasFont = hasFontDefined(props.config.rootStyle);
 
     const activeScreen = getActiveScreen(props);
@@ -119,7 +124,7 @@ function SignInUpThemeWrapper(props: TOTPMFAProps): JSX.Element {
     );
 }
 
-export default SignInUpThemeWrapper;
+export default TOTPMFAThemeWrapper;
 
 export function getActiveScreen(props: Pick<TOTPMFAProps, "featureState" | "config">) {
     if (props.featureState.isBlocked) {

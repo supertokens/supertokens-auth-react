@@ -61,7 +61,11 @@ export const FactorChooser: React.FC<Prop> = (props) => {
                         mfaInfo.factors.isAllowedToSetup.includes(id) || mfaInfo.factors.isAlreadySetup.includes(id)
                 );
             if (availableFactors.length === 1) {
-                return MultiFactorAuth.getInstanceOrThrow().redirectToFactor(availableFactors[0].id, props.history);
+                return MultiFactorAuth.getInstanceOrThrow().redirectToFactor(
+                    availableFactors[0].id,
+                    false,
+                    props.history
+                );
             } else {
                 setMFAInfo(mfaInfo.factors);
             }
@@ -83,7 +87,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     useOnMountAPICall(fetchMFAInfo, checkMFAInfo, handleError, sessionContext.loading === false);
 
     const navigateToFactor = useCallback(
-        (factorId) => props.recipe.redirect({ action: "GO_TO_FACTOR", factorId }),
+        (factorId) => props.recipe.redirectToFactor(factorId, false, props.history),
         [props.recipe]
     );
     const signOut = useCallback(async (): Promise<void> => {

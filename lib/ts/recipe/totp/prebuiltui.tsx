@@ -9,37 +9,37 @@ import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import { default as MFATOTPFeature } from "./components/features/mfa";
 import MFATOTPTheme from "./components/themes/mfa";
 import { DEFAULT_TOTP_PATH } from "./constants";
-import MultiFactorAuthRecipe from "./recipe";
+import TOTPRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap } from "../../types";
 
-export class MultiFactorAuthPreBuiltUI extends RecipeRouter {
-    static instance?: MultiFactorAuthPreBuiltUI;
-    constructor(public readonly recipeInstance: MultiFactorAuthRecipe) {
+export class TOTPPreBuiltUI extends RecipeRouter {
+    static instance?: TOTPPreBuiltUI;
+    constructor(public readonly recipeInstance: TOTPRecipe) {
         super();
     }
 
     // Static methods
-    static getInstanceOrInitAndGetInstance(): MultiFactorAuthPreBuiltUI {
-        if (MultiFactorAuthPreBuiltUI.instance === undefined) {
-            const recipeInstance = MultiFactorAuthRecipe.getInstanceOrThrow();
-            MultiFactorAuthPreBuiltUI.instance = new MultiFactorAuthPreBuiltUI(recipeInstance);
+    static getInstanceOrInitAndGetInstance(): TOTPPreBuiltUI {
+        if (TOTPPreBuiltUI.instance === undefined) {
+            const recipeInstance = TOTPRecipe.getInstanceOrThrow();
+            TOTPPreBuiltUI.instance = new TOTPPreBuiltUI(recipeInstance);
         }
 
-        return MultiFactorAuthPreBuiltUI.instance;
+        return TOTPPreBuiltUI.instance;
     }
     static getFeatures(
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap {
-        return MultiFactorAuthPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
+        return TOTPPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
     }
     static getFeatureComponent(
         componentName: "mfaTOTP",
         props: any,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
-        return MultiFactorAuthPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
+        return TOTPPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
             componentName,
             props,
             useComponentOverrides
@@ -58,7 +58,7 @@ export class MultiFactorAuthPreBuiltUI extends RecipeRouter {
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
                 component: (props: any) => this.getFeatureComponent("mfaTOTP", props, useComponentOverrides),
-                recipeID: MultiFactorAuthRecipe.RECIPE_ID,
+                recipeID: TOTPRecipe.RECIPE_ID,
             };
         }
         return features;
@@ -88,15 +88,15 @@ export class MultiFactorAuthPreBuiltUI extends RecipeRouter {
             return;
         }
 
-        MultiFactorAuthPreBuiltUI.instance = undefined;
+        TOTPPreBuiltUI.instance = undefined;
         return;
     }
 
     static MFATOTP = (props?: any): JSX.Element =>
-        MultiFactorAuthPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("mfaTOTP", props);
+        TOTPPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("mfaTOTP", props);
     static MFATOTPTheme = MFATOTPTheme;
 }
 
-const MFATOTP = MultiFactorAuthPreBuiltUI.MFATOTP;
+const MFATOTP = TOTPPreBuiltUI.MFATOTP;
 
 export { MFATOTP, MFATOTPTheme };

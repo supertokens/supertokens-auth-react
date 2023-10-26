@@ -6,19 +6,26 @@ import type {
 } from "../recipeModule/types";
 import type { Dispatch } from "react";
 import type { OverrideableBuilder } from "supertokens-js-override";
-import type { RecipeInterface, DeviceInfo } from "supertokens-web-js/recipe/totp";
+import type { RecipeInterface } from "supertokens-web-js/recipe/totp";
 export declare type ComponentOverrideMap = {
     TOTPMFAScreen_Override?: ComponentOverride<any>;
+};
+export declare type TOTPDeviceInfo = {
+    issuerName: string;
+    deviceName: string;
+    secret: string;
+    qrCodeString: string;
+    userIdentifier?: string | undefined;
 };
 export declare type TOTPMFAAction =
     | {
           type: "load";
-          deviceInfo: DeviceInfo | undefined;
+          deviceInfo: TOTPDeviceInfo | undefined;
           error: string | undefined;
       }
     | {
           type: "createDevice";
-          deviceInfo: DeviceInfo;
+          deviceInfo: TOTPDeviceInfo;
       }
     | {
           type: "setBlocked";
@@ -36,10 +43,11 @@ export declare type TOTPMFAAction =
           type: "success";
       }
     | {
-          type: "successInAnotherTab";
+          type: "showSecret";
       };
 export declare type TOTPMFAState = {
-    deviceInfo?: DeviceInfo;
+    deviceInfo?: TOTPDeviceInfo;
+    showSecret: boolean;
     isBlocked: boolean;
     loaded: boolean;
     error: string | undefined;
@@ -54,6 +62,7 @@ export declare type TOTPMFAProps = {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onSuccess: () => void;
+    onShowSecretClick: () => void;
     dispatch: Dispatch<TOTPMFAAction>;
     featureState: TOTPMFAState;
     userContext?: any;
@@ -96,9 +105,16 @@ export declare type NormalisedConfig = {
         ) => RecipeInterface;
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-export declare type GetRedirectionURLContext = {
-    action: "MFA_TOTP";
-};
+export declare type GetRedirectionURLContext =
+    | {
+          action: "MFA_TOTP";
+          userContext: any;
+      }
+    | {
+          action: "SUCCESS";
+          redirectToPath?: string;
+          userContext: any;
+      };
 export declare type PreAndPostAPIHookAction =
     | "CREATE_DEVICE"
     | "VERIFY_CODE"

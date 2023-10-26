@@ -6,6 +6,6 @@ export declare enum TOTPMFAScreens {
     Loading = 2,
     Blocked = 3,
 }
-declare function SignInUpThemeWrapper(props: TOTPMFAProps): JSX.Element;
-export default SignInUpThemeWrapper;
+declare function TOTPMFAThemeWrapper(props: TOTPMFAProps): JSX.Element;
+export default TOTPMFAThemeWrapper;
 export declare function getActiveScreen(props: Pick<TOTPMFAProps, "featureState" | "config">): TOTPMFAScreens;

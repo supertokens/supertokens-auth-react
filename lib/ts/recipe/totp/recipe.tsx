@@ -39,6 +39,7 @@ import type {
 } from "./types";
 import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
 import type { NormalisedAppInfo } from "../../types";
+import Session from "../session/recipe";
 
 export default class TOTP extends RecipeModule<
     GetRedirectionURLContext,
@@ -56,12 +57,6 @@ export default class TOTP extends RecipeModule<
         public readonly webJSRecipe: WebJSRecipeInterface<typeof TOTPWebJS> = TOTPWebJS
     ) {
         super(config);
-    }
-
-    static init(
-        config?: UserInput
-    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
-        const normalisedConfig = normaliseMultiFactorAuthFeature(config);
 
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
             const mfa = MultiFactorAuth.getInstance();
@@ -79,7 +74,18 @@ export default class TOTP extends RecipeModule<
                     ]
                 );
             }
+            const session = Session.getInstance();
+            if (session !== undefined) {
+                session.addAuthRecipeRedirectionHandler("totp", this.redirect.bind(this));
+            }
         });
+    }
+
+    static init(
+        config?: UserInput
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
+        const normalisedConfig = normaliseMultiFactorAuthFeature(config);
+
         return {
             recipeID: TOTP.RECIPE_ID,
             authReact: (
@@ -133,9 +139,9 @@ export default class TOTP extends RecipeModule<
         if (context.action === "MFA_TOTP") {
             const chooserPath = new NormalisedURLPath(DEFAULT_TOTP_PATH);
             return `${this.config.appInfo.websiteBasePath.appendPath(chooserPath).getAsStringDangerous()}`;
+        } else if (context.action === "SUCCESS") {
+            return context.redirectToPath === undefined ? "/" : context.redirectToPath;
         }
-        {
-            return "/";
-        }
+        return "/";
     };
 }

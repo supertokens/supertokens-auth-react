@@ -41,6 +41,7 @@ import type {
 } from "./types";
 import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
 import type { NormalisedAppInfo } from "../../types";
+import { appendQueryParamsToURL, getCurrentNormalisedUrlPath, getRedirectToPathFromURL } from "../../utils";
 
 export default class MultiFactorAuth extends RecipeModule<
     GetRedirectionURLContext,
@@ -160,16 +161,31 @@ export default class MultiFactorAuth extends RecipeModule<
         return this.config.getFactorInfo(this.secondaryFactors);
     }
 
-    async redirectToFactor(factorId: string, history?: any) {
-        return SuperTokens.getInstanceOrThrow().redirectToUrl(
-            await this.getRedirectUrl({ action: "GO_TO_FACTOR", factorId }),
-            history
-        );
+    async redirectToFactor(factorId: string, redirectBack: boolean = false, history?: any) {
+        let url = await this.getRedirectUrl({ action: "GO_TO_FACTOR", factorId });
+        if (redirectBack) {
+            let redirectUrl = getCurrentNormalisedUrlPath().getAsStringDangerous();
+            url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
+        } else {
+            let redirectUrl = getRedirectToPathFromURL();
+            if (redirectUrl) {
+                url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
+            }
+        }
+        return SuperTokens.getInstanceOrThrow().redirectToUrl(url, history);
     }
-    async redirectToFactorChooser(history?: any) {
-        return SuperTokens.getInstanceOrThrow().redirectToUrl(
-            await this.getRedirectUrl({ action: "FACTOR_CHOOSER" }),
-            history
-        );
+
+    async redirectToFactorChooser(redirectBack: boolean = false, history?: any) {
+        let url = await this.getRedirectUrl({ action: "FACTOR_CHOOSER" });
+        if (redirectBack) {
+            let redirectUrl = getCurrentNormalisedUrlPath().getAsStringDangerous();
+            url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
+        } else {
+            let redirectUrl = getRedirectToPathFromURL();
+            if (redirectUrl) {
+                url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
+            }
+        }
+        return SuperTokens.getInstanceOrThrow().redirectToUrl(url, history);
     }
 }

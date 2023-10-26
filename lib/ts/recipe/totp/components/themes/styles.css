@@ -1,64 +1,37 @@
 @import "../../../../styles/styles.css";
+@import "../../../emailpassword/components/themes/styles.css";
 
 [data-supertokens~="container"] {
     padding-top: 24px;
 }
 
+[data-supertokens~="divider"] {
+    margin-top: 32px;
+    margin-bottom: 32px;
+}
+
 [data-supertokens~="row"] {
     padding-top: 16px;
     padding-bottom: 8px;
+    width: auto;
+    margin: 0 50px;
 }
 
-[data-supertokens~="factorChooserList"] {
-    padding-top: 4px;
-}
-
-[data-supertokens~="factorChooserOption"] {
-    display: flex;
-    flex-direction: row;
-    border-radius: 6px;
+[data-supertokens~="totpDeviceQR"] {
+    border-radius: 12px;
     border: 1px solid rgb(var(--palette-inputBorder));
     padding: 16px;
-    cursor: pointer;
-    margin-top: 12px;
 }
 
-[data-supertokens~="factorChooserOption"]:hover {
-    border: 1px solid rgb(var(--palette-textLink));
-}
-
-[data-supertokens~="factorOptionText"] {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    text-align: left;
-}
-
-[data-supertokens~="factorLogo"] {
-    flex-grow: 0;
-    min-width: 30px;
-    text-align: left;
-    margin-top: 6px;
-}
-
-[data-supertokens~="factorName"] {
-    color: rgb(var(--palette-textPrimary));
-    font-size: var(--font-size-1);
-    margin: 4px;
-}
-
-[data-supertokens~="factorChooserOption"]:hover [data-supertokens~="factorName"] {
-    color: rgb(var(--palette-textLink));
-}
-
-[data-supertokens~="factorDescription"] {
+[data-supertokens~="showTOTPSecret"] {
+    display: block;
     color: rgb(var(--palette-textSecondary));
     font-size: var(--font-size-0);
     margin: 4px;
 }
 
-[data-supertokens~="secondaryLinkWithLeftArrow"] {
-    margin-bottom: 32px;
-    text-align: right;
+[data-supertokens~="totpSecret"] {
+    display: block;
+    border-radius: 6px;
+    background: rgba(var(--palette-textLink), 0.08);
 }

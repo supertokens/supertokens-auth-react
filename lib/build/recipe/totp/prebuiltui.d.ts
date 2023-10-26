@@ -1,14 +1,14 @@
 /// <reference types="react" />
 import { RecipeRouter } from "../recipeRouter";
 import MFATOTPTheme from "./components/themes/mfa";
-import MultiFactorAuthRecipe from "./recipe";
+import TOTPRecipe from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap } from "../../types";
-export declare class MultiFactorAuthPreBuiltUI extends RecipeRouter {
-    readonly recipeInstance: MultiFactorAuthRecipe;
-    static instance?: MultiFactorAuthPreBuiltUI;
-    constructor(recipeInstance: MultiFactorAuthRecipe);
-    static getInstanceOrInitAndGetInstance(): MultiFactorAuthPreBuiltUI;
+export declare class TOTPPreBuiltUI extends RecipeRouter {
+    readonly recipeInstance: TOTPRecipe;
+    static instance?: TOTPPreBuiltUI;
+    constructor(recipeInstance: TOTPRecipe);
+    static getInstanceOrInitAndGetInstance(): TOTPPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
         componentName: "mfaTOTP",

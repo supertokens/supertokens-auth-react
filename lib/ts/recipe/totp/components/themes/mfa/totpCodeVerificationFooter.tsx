@@ -32,13 +32,14 @@ export const CodeVerificationFooter = withOverride(
                 <div
                     data-supertokens="secondaryText secondaryLinkWithLeftArrow"
                     onClick={() =>
+                        // TODO: onChooseAnotherFactor
                         recipeImplementation.removeDevice({
                             deviceName: featureState.deviceInfo!.deviceName,
                             userContext,
                         })
                     }>
                     <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
-                    {t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL")}
+                    {t("TOTP_REMOVE_DEVICE_LINK")}
                 </div>
             </Fragment>
         );

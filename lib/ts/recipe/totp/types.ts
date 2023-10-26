@@ -21,25 +21,34 @@ import type {
 } from "../recipeModule/types";
 import type { Dispatch } from "react";
 import type { OverrideableBuilder } from "supertokens-js-override";
-import type { RecipeInterface, DeviceInfo } from "supertokens-web-js/recipe/totp";
+import type { RecipeInterface } from "supertokens-web-js/recipe/totp";
 
 export type ComponentOverrideMap = {
     TOTPMFAScreen_Override?: ComponentOverride<any>; // TODO
 };
 
+export type TOTPDeviceInfo = {
+    issuerName: string;
+    deviceName: string;
+    secret: string;
+    qrCodeString: string;
+    userIdentifier?: string | undefined;
+};
+
 export type TOTPMFAAction =
     | {
           type: "load";
-          deviceInfo: DeviceInfo | undefined;
+          deviceInfo: TOTPDeviceInfo | undefined;
           error: string | undefined;
       }
     | {
           type: "createDevice";
-          deviceInfo: DeviceInfo;
+          deviceInfo: TOTPDeviceInfo;
       }
     | {
           type: "setBlocked";
           error: string | undefined;
+          nextRetryAt: number;
       }
     | {
           type: "setError";
@@ -53,11 +62,13 @@ export type TOTPMFAAction =
           type: "success";
       }
     | {
-          type: "successInAnotherTab";
+          type: "showSecret";
       };
 
 export type TOTPMFAState = {
-    deviceInfo?: DeviceInfo;
+    deviceInfo?: TOTPDeviceInfo;
+    showSecret: boolean;
+    nextRetryAt?: number;
     isBlocked: boolean;
     loaded: boolean;
     error: string | undefined;
@@ -74,6 +85,9 @@ export type TOTPMFAProps = {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onSuccess: () => void;
+    onShowSecretClick: () => void;
+    onBackButtonClicked: () => void;
+    onRetryClicked: () => void;
     dispatch: Dispatch<TOTPMFAAction>;
     featureState: TOTPMFAState;
     userContext?: any;
@@ -126,9 +140,16 @@ export type NormalisedConfig = {
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
-export type GetRedirectionURLContext = {
-    action: "MFA_TOTP";
-};
+export type GetRedirectionURLContext =
+    | {
+          action: "MFA_TOTP";
+          userContext: any;
+      }
+    | {
+          action: "SUCCESS";
+          redirectToPath?: string;
+          userContext: any;
+      };
 
 export type PreAndPostAPIHookAction =
     | "CREATE_DEVICE"

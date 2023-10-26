@@ -413,6 +413,9 @@ app.get("/auth/mfa/info", verifySession(), async (req, res) => {
     if (user.emails.length > 0) {
         isAlreadySetup.push("otp-email");
     }
+    if (payload.hasTOTP) {
+        isAlreadySetup.push("totp");
+    }
     const mfaClaim = payload["st-mfa"];
     if (mfaClaim === undefined) {
         await session.mergeIntoAccessTokenPayload({
@@ -426,10 +429,8 @@ app.get("/auth/mfa/info", verifySession(), async (req, res) => {
         isAlreadySetup.length === 0 ||
         (mfaClaim !== undefined && isAlreadySetup.some((id) => mfaClaim.c[id] !== undefined))
     ) {
-        isAllowedToSetup = ["otp-phone", "otp-email"].filter((id) => !isAlreadySetup.includes(id));
-        // isAllowedToSetup = ["otp-phone", "otp-email"];
+        isAllowedToSetup = ["otp-phone", "otp-email", "totp"].filter((id) => !isAlreadySetup.includes(id));
     }
-    // isAllowedToSetup = ["otp-phone", "otp-email"];
 
     res.send({
         status: "OK",
