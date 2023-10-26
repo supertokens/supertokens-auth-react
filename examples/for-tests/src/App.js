@@ -172,12 +172,8 @@ const customFields = [
     {
         id: "ratings",
         label: "Ratings",
-        inputComponent: ({ value, name, ...rest }) => (
-            <select
-                name={name}
-                data-supertokens="inputComponent"
-                placeholder="Add Ratings"
-                onChange={(e) => rest.onChange({ id: name, value: e.target.value })}>
+        inputComponent: ({ name, onChange }) => (
+            <select name={name} onChange={(e) => onChange(e.target.value)} placeholder="Add Ratings">
                 <option value="" disabled hidden>
                     Select an option
                 </option>
@@ -190,25 +186,21 @@ const customFields = [
     },
     {
         id: "terms",
-        showLabels: false,
+        label: "",
         optional: false,
-        inputComponent: ({ value, name, ...rest }) => (
+        inputComponent: ({ name, onChange }) => (
             <div
-                data-supertokens="inputComponent"
                 style={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "left",
                 }}>
-                <input
-                    name={name}
-                    type="checkbox"
-                    onChange={(e) => rest.onChange({ id: name, value: e.target.checked })}></input>
+                <input name={name} type="checkbox" onChange={(e) => onChange(e.target.checked.toString())}></input>
                 <span style={{ marginLeft: 5 }}>I agree to the terms and conditions</span>
             </div>
         ),
         validate: async (value) => {
-            if (value === true) {
+            if (value === "true") {
                 return undefined;
             }
             return "Please check Terms and conditions";

@@ -71,10 +71,7 @@ function PhoneNumberInput({
     const handleChange = useCallback(
         (newValue: string) => {
             if (onChangeRef.current !== undefined) {
-                onChangeRef.current({
-                    id: name,
-                    value: newValue,
-                });
+                onChangeRef.current(newValue);
             }
         },
         [onChangeRef]
@@ -83,10 +80,7 @@ function PhoneNumberInput({
     const handleCountryChange = useCallback(
         (ev) => {
             if (onChangeRef.current !== undefined && phoneInputInstance !== undefined) {
-                onChangeRef.current({
-                    id: name,
-                    value: ev.target.value,
-                });
+                onChangeRef.current(ev.target.value);
             }
         },
         [onChangeRef]
