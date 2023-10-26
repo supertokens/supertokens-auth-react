@@ -25,7 +25,7 @@ import STGeneralError from "supertokens-web-js/utils/error";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
 
 import type { APIFormField } from "../../../../types";
-import type { FormBaseProps } from "../../types";
+import type { FormBaseProps, FormFieldThemeProps } from "../../types";
 import type { FormEvent } from "react";
 
 import { Button, FormRow, Input, InputError, Label } from ".";
@@ -49,8 +49,15 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
         };
     }, [unmounting]);
 
+    const fetchDefaultValue = (field: FormFieldThemeProps) => {
+        if (field && field.getDefaultValue) {
+            return field.getDefaultValue();
+        }
+        return "";
+    };
+
     const [fieldStates, setFieldStates] = useState<FieldState[]>(
-        props.formFields.map((f) => ({ id: f.id, value: "" }))
+        props.formFields.map((f) => ({ id: f.id, value: fetchDefaultValue(f) }))
     );
     const [isLoading, setIsLoading] = useState(false);
 

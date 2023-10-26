@@ -134,7 +134,10 @@ export type SignUpFormFeatureUserInput = FeatureBaseConfig & {
     /*
      * Form fields for SignUp.
      */
-    formFields?: (FormField & { inputComponent?: (props: InputProps) => JSX.Element })[];
+    formFields?: (FormField & {
+        inputComponent?: (props: InputProps) => JSX.Element;
+        getDefaultValue?: () => string;
+    })[];
 
     /*
      * Privacy policy link for sign up form.
@@ -151,7 +154,10 @@ export type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
     /*
      * Normalised form fields for SignUp.
      */
-    formFields: (NormalisedFormField & { inputComponent?: (props: InputProps) => JSX.Element })[];
+    formFields: (NormalisedFormField & {
+        inputComponent?: (props: InputProps) => JSX.Element;
+        getDefaultValue?: () => string;
+    })[];
 
     /*
      * Privacy policy link for sign up form.
@@ -283,6 +289,11 @@ export type FormFieldThemeProps = NormalisedFormField & {
      * Ability to add custom components
      */
     inputComponent?: (props: InputProps) => JSX.Element;
+
+    /*
+     * Ability to add custom components
+     */
+    getDefaultValue?: () => string;
 };
 
 export type FormFieldError = {
