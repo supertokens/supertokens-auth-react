@@ -120,6 +120,19 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                 };
             });
 
+            // field.value must be a string
+            try {
+                const fieldsWithIncorrectValues = apiFields.filter((field) => typeof field.value !== "string");
+                if (fieldsWithIncorrectValues.length > 0) {
+                    const errorFields = fieldsWithIncorrectValues.map(({ id }) => id).join(", ");
+                    throw new Error(`${errorFields} value must be a string`);
+                }
+            } catch (error) {
+                console.error(error);
+                setIsLoading(false);
+                return props.onError("SOMETHING_WENT_WRONG_ERROR");
+            }
+
             const fieldUpdates: FieldState[] = [];
             // Call API.
             try {
@@ -219,7 +232,7 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                                     autofocus={field.autofocus}
                                     onInputFocus={onInputFocus}
                                     onInputBlur={onInputBlur}
-                                    onChange={onInputChange}
+                                    onChange={(value) => onInputChange({ id: field.id, value: value })}
                                     hasError={fstate.error !== undefined}
                                 />
                             ) : (
@@ -232,7 +245,7 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                                     autoComplete={field.autoComplete}
                                     onInputFocus={onInputFocus}
                                     onInputBlur={onInputBlur}
-                                    onChange={onInputChange}
+                                    onChange={(value) => onInputChange({ id: field.id, value: value })}
                                     autofocus={field.autofocus}
                                     hasError={fstate.error !== undefined}
                                 />
