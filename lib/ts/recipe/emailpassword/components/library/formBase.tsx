@@ -120,14 +120,14 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
 
     const onInputChange = useCallback(
         (field: APIFormField) => {
-            try {
-                if (typeof field.value !== "string") {
-                    throw new Error(`${field.id} value must be a string`);
-                }
-            } catch (error) {
-                console.error(error);
-                return props.onError("SOMETHING_WENT_WRONG_ERROR");
-            }
+            // try {
+            //     if (typeof field.value !== "string") {
+            //         throw new Error(`${field.id} value must be a string`);
+            //     }
+            // } catch (error) {
+            //     console.error(error);
+            //     return props.onError("SOMETHING_WENT_WRONG_ERROR");
+            // }
             updateFieldState(field.id, (os) => ({ ...os, value: field.value, error: undefined }));
             props.clearError();
         },
