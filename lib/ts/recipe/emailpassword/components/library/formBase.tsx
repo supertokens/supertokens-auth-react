@@ -68,7 +68,9 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
         };
     }, [unmounting]);
 
-    const [fieldStates, setFieldStates] = useState<FieldState[]>([]);
+    const [fieldStates, setFieldStates] = useState<FieldState[]>(
+        props.formFields.map((f) => ({ id: f.id, value: "" }))
+    );
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
