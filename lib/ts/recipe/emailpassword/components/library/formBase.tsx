@@ -120,14 +120,14 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
 
     const onInputChange = useCallback(
         (field: APIFormField) => {
-            // try {
-            //     if (typeof field.value !== "string") {
-            //         throw new Error(`${field.id} value must be a string`);
-            //     }
-            // } catch (error) {
-            //     console.error(error);
-            //     return props.onError("SOMETHING_WENT_WRONG_ERROR");
-            // }
+            try {
+                if (typeof field.value !== "string") {
+                    throw new Error(`${field.id} value must be a string`);
+                }
+            } catch (error) {
+                console.error(error);
+                return props.onError("SOMETHING_WENT_WRONG_ERROR");
+            }
             updateFieldState(field.id, (os) => ({ ...os, value: field.value, error: undefined }));
             props.clearError();
         },
@@ -252,7 +252,7 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                                     autofocus={field.autofocus}
                                     onInputFocus={onInputFocus}
                                     onInputBlur={onInputBlur}
-                                    onChange={onInputChange}
+                                    onChange={(value) => onInputChange({ id: field.id, value: value })}
                                     hasError={fstate.error !== undefined}
                                 />
                             ) : (
@@ -265,7 +265,7 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                                     autoComplete={field.autoComplete}
                                     onInputFocus={onInputFocus}
                                     onInputBlur={onInputBlur}
-                                    onChange={onInputChange}
+                                    onChange={(value) => onInputChange({ id: field.id, value: value })}
                                     autofocus={field.autofocus}
                                     hasError={fstate.error !== undefined}
                                 />
