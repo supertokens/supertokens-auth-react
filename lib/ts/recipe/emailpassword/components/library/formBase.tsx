@@ -252,7 +252,7 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                                     autofocus={field.autofocus}
                                     onInputFocus={onInputFocus}
                                     onInputBlur={onInputBlur}
-                                    onChange={(value) => onInputChange({ id: field.id, value: value })}
+                                    onChange={onInputChange}
                                     hasError={fstate.error !== undefined}
                                 />
                             ) : (
@@ -265,7 +265,7 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                                     autoComplete={field.autoComplete}
                                     onInputFocus={onInputFocus}
                                     onInputBlur={onInputBlur}
-                                    onChange={(value) => onInputChange({ id: field.id, value: value })}
+                                    onChange={onInputChange}
                                     autofocus={field.autofocus}
                                     hasError={fstate.error !== undefined}
                                 />

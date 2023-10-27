@@ -34,7 +34,7 @@ export type InputProps = {
     value: string;
     onInputBlur?: (field: APIFormField) => void;
     onInputFocus?: (field: APIFormField) => void;
-    onChange?: (value: string) => void;
+    onChange?: (field: APIFormField) => void;
 };
 
 const Input: React.FC<InputProps> = ({
@@ -77,7 +77,10 @@ const Input: React.FC<InputProps> = ({
 
     function handleChange(event: ChangeEvent<HTMLInputElement>) {
         if (onChange) {
-            onChange(event.target.value);
+            onChange({
+                id: name,
+                value: event.target.value,
+            });
         }
     }
 

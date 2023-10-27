@@ -11,7 +11,7 @@ export declare type InputProps = {
     value: string;
     onInputBlur?: (field: APIFormField) => void;
     onInputFocus?: (field: APIFormField) => void;
-    onChange?: (value: string) => void;
+    onChange?: (field: APIFormField) => void;
 };
 declare const Input: React.FC<InputProps>;
 export default Input;
