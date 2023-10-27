@@ -409,8 +409,6 @@ describe("SuperTokens SignUp", function () {
                     Object.keys(customFields).every((key) => {
                         assert.strictEqual(data[key], customFields[key]);
                     });
-                    // remove it after updating backend to handle the custom fields
-                    return request.abort();
                 }
                 return request.continue();
             };
