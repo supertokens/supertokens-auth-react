@@ -25,7 +25,7 @@ import STGeneralError from "supertokens-web-js/utils/error";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
 
 import type { APIFormField } from "../../../../types";
-import type { FormBaseProps, FormFieldThemeProps } from "../../types";
+import type { FormBaseProps } from "../../types";
 import type { FormEvent } from "react";
 
 import { Button, FormRow, Input, InputError, Label } from ".";
@@ -37,24 +37,24 @@ type FieldState = {
     value: string;
 };
 
-const fetchDefaultValue = (field: FormFieldThemeProps): string => {
-    if (field && field.getDefaultValue) {
-        try {
-            if (typeof field.getDefaultValue !== "function") {
-                throw new Error(`getDefaultValue for ${field.id} must be a function`);
-            }
-            const defaultValue = field.getDefaultValue();
-            if (typeof defaultValue !== "string") {
-                throw new Error(`getDefaultValue for ${field.id} must return a string`);
-            } else {
-                return defaultValue;
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-    return "";
-};
+// const fetchDefaultValue = (field: FormFieldThemeProps): string => {
+//     if (field && field.getDefaultValue) {
+//         try {
+//             if (typeof field.getDefaultValue !== "function") {
+//                 throw new Error(`getDefaultValue for ${field.id} must be a function`);
+//             }
+//             const defaultValue = field.getDefaultValue();
+//             if (typeof defaultValue !== "string") {
+//                 throw new Error(`getDefaultValue for ${field.id} must return a string`);
+//             } else {
+//                 return defaultValue;
+//             }
+//         } catch (error) {
+//             console.error(error);
+//         }
+//     }
+//     return "";
+// };
 
 export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
     const { footer, buttonLabel, showLabels, validateOnBlur, formFields } = props;
@@ -73,13 +73,13 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
     );
     const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        const initialValues = props.formFields.map((f) => ({
-            id: f.id,
-            value: fetchDefaultValue(f),
-        }));
-        setFieldStates(initialValues);
-    }, []);
+    // useEffect(() => {
+    //     const initialValues = props.formFields.map((f) => ({
+    //         id: f.id,
+    //         value: fetchDefaultValue(f),
+    //     }));
+    //     setFieldStates(initialValues);
+    // }, []);
 
     const updateFieldState = useCallback(
         (id: string, update: (os: FieldState) => FieldState) => {
