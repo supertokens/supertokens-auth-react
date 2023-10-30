@@ -507,7 +507,7 @@ describe("SuperTokens SignUp", function () {
                 "getDefaultValue for ratings must be a function",
                 "getDefaultValue for country must return a string",
             ];
-            const consoleErrorMessages = [];
+            let consoleErrorMessages = [];
 
             page.on("console", async (msg) => {
                 // serialize the args, returns error text
@@ -521,12 +521,30 @@ describe("SuperTokens SignUp", function () {
                         }, arg)
                     )
                 );
-
-                consoleErrorMessages = [...args.filter(Boolean(msg))];
-                const isSubset = expectedErrors.every((err) => consoleErrorMessages.includes(err));
-
-                assert(isSubset, "Throwing errors for incorrect field config");
+                consoleErrorMessages.push(...args.filter(Boolean));
             });
+
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+            await toggleSignInSignUp(page);
+
+            // Some delay  so that console messages have been processed
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            let isSubset = expectedErrors.every((err) => consoleErrorMessages.includes(err));
+            assert(isSubset, "Throwing errors for incorrect field config - getDefaultValue prop");
+
+            // Supply NON-STRING value to onChange function should throw error
+            const expectedOnChangeError = ["terms value must be a string"];
+            // check terms and condition checkbox
+
+            let termsCheckbox = await waitForSTElement(page, '[name="terms"]');
+            await page.evaluate((e) => e.click(), termsCheckbox);
+            isSubset = false;
+
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            isSubset = expectedOnChangeError.every((err) => consoleErrorMessages.includes(err));
+            assert(isSubset, "Throwing errors for incorrect field config - onChange func.");
         });
     });
 });
