@@ -326,6 +326,97 @@ function getRecipeList() {
     ];
 }
 
+const formFieldsForSignUp = [
+    {
+        id: "email",
+        label: "Your Email",
+        placeholder: "Your work email",
+    },
+    {
+        id: "name",
+        label: "Full name",
+        placeholder: "First name and last name",
+    },
+    {
+        id: "age",
+        label: "Your age",
+        placeholder: "How old are you?",
+        validate: async (value) => {
+            if (parseInt(value) > 18) {
+                return undefined;
+            }
+
+            return "You must be over 18 to register";
+        },
+    },
+    {
+        id: "country",
+        label: "Your Country",
+        placeholder: "Where do you live?",
+        optional: true,
+    },
+];
+
+const customFormFieldsWithDefault = [
+    {
+        id: "terms",
+        label: "",
+        optional: false,
+        inputComponent: (inputProps) => (
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "left",
+                }}>
+                <input
+                    name={inputProps.name}
+                    type="checkbox"
+                    onChange={(e) => {
+                        if (inputProps.onChange) {
+                            inputProps.onChange(e.target.checked.toString());
+                        }
+                    }}></input>
+                <span style={{ marginLeft: 5 }}>I agree to the terms and conditions</span>
+            </div>
+        ),
+        validate: async (value) => {
+            if (value === "true") {
+                return undefined;
+            }
+            return "Please check Terms and conditions";
+        },
+    },
+    {
+        id: "ratings",
+        label: "Ratings",
+        getDefaultValue: () => "best",
+        inputComponent: (inputProps) => (
+            <select
+                value={inputProps.value}
+                name={inputProps.name}
+                onChange={(e) => {
+                    if (inputProps.onChange) {
+                        inputProps.onChange(e.target.value.toString());
+                    }
+                }}
+                placeholder="Add Ratings">
+                <option value="" disabled hidden>
+                    Select an option
+                </option>
+                <option value="good">Good</option>
+                <option value="better">Better</option>
+                <option value="best">Best</option>
+            </select>
+        ),
+        optional: true,
+    },
+];
+
+const getFormFieldsForSignUp = () => {
+    return localStorage.getItem("SHOW_CUSTOM_FIELDS") === "YES" ? customFormFieldsWithDefault : formFieldsForSignUp;
+};
+
 function getEmailPasswordConfigs() {
     return EmailPassword.init({
         resetPasswordUsingTokenFeature: {
@@ -344,36 +435,7 @@ function getEmailPasswordConfigs() {
                 style: theme.style,
                 privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
-                formFields: [
-                    {
-                        id: "email",
-                        label: "Your Email",
-                        placeholder: "Your work email",
-                    },
-                    {
-                        id: "name",
-                        label: "Full name",
-                        placeholder: "First name and last name",
-                    },
-                    {
-                        id: "age",
-                        label: "Your age",
-                        placeholder: "How old are you?",
-                        validate: async (value) => {
-                            if (parseInt(value) > 18) {
-                                return undefined;
-                            }
-
-                            return "You must be over 18 to register";
-                        },
-                    },
-                    {
-                        id: "country",
-                        label: "Your Country",
-                        placeholder: "Where do you live?",
-                        optional: true,
-                    },
-                ],
+                formFields: getFormFieldsForSignUp(),
             },
         },
 

@@ -394,9 +394,13 @@ describe("SuperTokens SignUp", function () {
             // check terms and condition checkbox
             let termsCheckbox = await waitForSTElement(page, '[name="terms"]');
             await page.evaluate((e) => e.click(), termsCheckbox);
+
+            //un-checking the required checkbox should throw custom error message
+            await page.evaluate((e) => e.click(), termsCheckbox);
+
             await submitForm(page);
             formFieldErrors = await getFieldErrors(page);
-            assert.deepStrictEqual(formFieldErrors, []);
+            assert.deepStrictEqual(formFieldErrors, ["Please check Terms and conditions"]);
         });
 
         it("Check if custom values are part of the signup payload", async function () {
