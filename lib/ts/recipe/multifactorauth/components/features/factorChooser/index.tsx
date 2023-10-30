@@ -18,13 +18,15 @@
  */
 import * as React from "react";
 import { useContext, useState, useCallback, Fragment } from "react";
+import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
+import { MultiFactorAuthClaim } from "../../..";
 import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
 import { useOnMountAPICall } from "../../../../../utils";
-import { SessionContext } from "../../../../session";
+import { SessionContext, useClaimValue } from "../../../../session";
 import Session from "../../../../session/recipe";
 import MultiFactorAuth from "../../../recipe";
 import FactorChooserTheme from "../../themes/factorChooser";
@@ -40,6 +42,7 @@ type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any; useComponent
 export const FactorChooser: React.FC<Prop> = (props) => {
     const sessionContext = useContext(SessionContext);
     const [mfaInfo, setMFAInfo] = useState<MFAFactorInfo | undefined>(undefined);
+    const mfaClaimValue = useClaimValue(MultiFactorAuthClaim);
     const userContext = useUserContext();
     const recipeComponentOverrides = props.useComponentOverrides();
 
@@ -54,12 +57,16 @@ export const FactorChooser: React.FC<Prop> = (props) => {
 
     const checkMFAInfo = useCallback(
         async (mfaInfo: { factors: MFAFactorInfo }): Promise<void> => {
+            if (mfaClaimValue.loading === true) {
+                throw new Error("This should never happen: session context loaded but claim value loading");
+            }
             const availableFactors = props.recipe
                 .getSecondaryFactors()
                 .filter(
                     ({ id }) =>
                         mfaInfo.factors.isAllowedToSetup.includes(id) || mfaInfo.factors.isAlreadySetup.includes(id)
-                );
+                )
+                .filter(({ id }) => mfaClaimValue.value!.n.length === 0 || mfaClaimValue.value!.n.includes(id));
             if (availableFactors.length === 1) {
                 return MultiFactorAuth.getInstanceOrThrow().redirectToFactor(availableFactors[0].id, props.history);
             } else {
@@ -92,16 +99,38 @@ export const FactorChooser: React.FC<Prop> = (props) => {
         return redirectToAuthWithHistory();
     }, [props.recipe, redirectToAuthWithHistory]);
 
-    if (mfaInfo === undefined) {
+    const onBackButtonClicked = useCallback(() => {
+        // If we don't have history available this would mean we are not using react-router-dom, so we use window's history
+        if (props.history === undefined) {
+            return WindowHandlerReference.getReferenceOrThrow().windowHandler.getWindowUnsafe().history.back();
+        }
+        // If we do have history and goBack function on it this means we are using react-router-dom v5 or lower
+        if (props.history.goBack !== undefined) {
+            return props.history.goBack();
+        }
+        // If we reach this code this means we are using react-router-dom v6
+        return props.history(-1);
+    }, [props.history]);
+
+    if (mfaInfo === undefined || mfaClaimValue.loading) {
         return <Fragment />;
     }
 
-    const childProps = {
-        config: props.recipe.config,
-    };
     const availableFactors = props.recipe
         .getSecondaryFactors()
-        .filter(({ id }) => mfaInfo.isAllowedToSetup.includes(id) || mfaInfo.isAlreadySetup.includes(id));
+        .filter(({ id }) => mfaInfo.isAllowedToSetup.includes(id) || mfaInfo.isAlreadySetup.includes(id))
+        .filter(({ id }) => mfaClaimValue.value?.n.length === 0 || mfaClaimValue.value?.n.includes(id));
+
+    const childProps = {
+        config: props.recipe.config,
+        onBackButtonClicked,
+        showBackButton: mfaClaimValue.value?.n.length === 0,
+        mfaInfo: mfaInfo,
+        availableFactors: availableFactors,
+        logout: signOut,
+        navigateToFactor: navigateToFactor,
+    };
+
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
@@ -109,15 +138,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
                 defaultStore={defaultTranslationsMultiFactorAuth}>
                 <Fragment>
                     {/* No custom theme, use default. */}
-                    {props.children === undefined && (
-                        <FactorChooserTheme
-                            {...childProps}
-                            mfaInfo={mfaInfo}
-                            availableFactors={availableFactors}
-                            logout={signOut}
-                            navigateToFactor={navigateToFactor}
-                        />
-                    )}
+                    {props.children === undefined && <FactorChooserTheme {...childProps} />}
                     {/* Otherwise, custom theme is provided, propagate props. */}
                     {props.children &&
                         React.Children.map(props.children, (child) => {
