@@ -16,18 +16,32 @@ import { Fragment } from "react";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import BackButton from "../../../../emailpassword/components/library/backButton";
 
 import type { TOTPMFACommonProps } from "../../../types";
 
 export const CodeVerificationHeader = withOverride(
     "TOTPCodeVerificationHeader",
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    function TOTPCodeVerificationHeader(_props: TOTPMFACommonProps): JSX.Element {
+    function TOTPCodeVerificationHeader(
+        props: TOTPMFACommonProps & { showBackButton: boolean; onBackButtonClicked: () => void }
+    ): JSX.Element {
         const t = useTranslation();
 
         return (
             <Fragment>
-                <div data-supertokens="headerTitle">{t("TOTP_CODE_VERIFICATION_HEADER_TITLE")}</div>
+                <div data-supertokens="headerTitle withBackButton">
+                    {props.showBackButton ? (
+                        <BackButton onClick={props.onBackButtonClicked} />
+                    ) : (
+                        <span data-supertokens="backButtonPlaceholder backButtonCommon">
+                            {/* empty span for spacing the back button */}
+                        </span>
+                    )}
+                    {t("TOTP_CODE_VERIFICATION_HEADER_TITLE")}
+                    <span data-supertokens="backButtonPlaceholder backButtonCommon">
+                        {/* empty span for spacing the back button */}
+                    </span>
+                </div>
                 <div data-supertokens="headerSubtitle secondaryText">{t("TOTP_CODE_VERIFICATION_HEADER_SUBTITLE")}</div>
                 <div data-supertokens="divider"></div>
             </Fragment>

@@ -76,7 +76,7 @@ export const CodeForm = withOverride(
                             });
                         }
 
-                        // We can redirect these statuses, since they all cause a redirection
+                        // We can return these statuses, since they all cause a redirection
                         // and we don't really want to show anything
                         if (
                             response.status === "OK" ||
@@ -87,7 +87,10 @@ export const CodeForm = withOverride(
                         }
 
                         if (response.status === "INVALID_TOTP_ERROR") {
-                            throw new STGeneralError("GENERAL_ERROR_OTP_INVALID");
+                            return {
+                                status: "FIELD_ERROR",
+                                formFields: [{ id: "totp", error: "INVALID_TOTP_ERROR" }],
+                            };
                         }
 
                         throw new STGeneralError("SOMETHING_WENT_WRONG_ERROR");

@@ -16,18 +16,32 @@ import { Fragment } from "react";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import BackButton from "../../../../emailpassword/components/library/backButton";
 
 import type { TOTPMFACommonProps } from "../../../types";
 
 export const DeviceSetupHeader = withOverride(
     "TOTPDeviceSetupHeader",
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    function TOTPDeviceSetupHeader(_props: TOTPMFACommonProps): JSX.Element {
+    function TOTPDeviceSetupHeader(
+        props: TOTPMFACommonProps & { showBackButton: boolean; onBackButtonClicked: () => void }
+    ): JSX.Element {
         const t = useTranslation();
 
         return (
             <Fragment>
-                <div data-supertokens="headerTitle">{t("TOTP_DEVICE_SETUP_HEADER_TITLE")}</div>
+                <div data-supertokens="headerTitle withBackButton">
+                    {props.showBackButton ? (
+                        <BackButton onClick={props.onBackButtonClicked} />
+                    ) : (
+                        <span data-supertokens="backButtonPlaceholder backButtonCommon">
+                            {/* empty span for spacing the back button */}
+                        </span>
+                    )}
+                    {t("TOTP_DEVICE_SETUP_HEADER_TITLE")}
+                    <span data-supertokens="backButtonPlaceholder backButtonCommon">
+                        {/* empty span for spacing the back button */}
+                    </span>
+                </div>
                 <div data-supertokens="headerSubtitle secondaryText">{t("TOTP_DEVICE_SETUP_HEADER_SUBTITLE")}</div>
                 <div data-supertokens="divider"></div>
             </Fragment>

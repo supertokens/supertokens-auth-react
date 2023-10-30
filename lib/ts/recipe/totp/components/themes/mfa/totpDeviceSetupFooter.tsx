@@ -13,6 +13,7 @@
  * under the License.
  */
 
+import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 
@@ -20,13 +21,15 @@ import type { TOTPMFACommonProps } from "../../../types";
 
 export const DeviceSetupFooter = withOverride(
     "TOTPDeviceSetupFooter",
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    function TOTPDeviceSetupFooter(_props: TOTPMFACommonProps): JSX.Element | null {
+    function TOTPDeviceSetupFooter({
+        onSignOutClicked,
+    }: TOTPMFACommonProps & { onSignOutClicked: () => void }): JSX.Element | null {
         const t = useTranslation();
 
         return (
-            <div data-supertokens="secondaryText privacyPolicyAndTermsAndConditions">
-                {t("TOTP_DEVICE_SETUP_FOOTER")}
+            <div data-supertokens="secondaryText secondaryLinkWithLeftArrow" onClick={onSignOutClicked}>
+                <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
+                {t("TOTP_MFA_LOGOUT")}
             </div>
         );
     }

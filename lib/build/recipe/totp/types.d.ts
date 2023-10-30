@@ -20,6 +20,7 @@ export declare type TOTPDeviceInfo = {
 export declare type TOTPMFAAction =
     | {
           type: "load";
+          showBackButton: boolean;
           deviceInfo: TOTPDeviceInfo | undefined;
           error: string | undefined;
       }
@@ -51,6 +52,7 @@ export declare type TOTPMFAState = {
     showSecret: boolean;
     nextRetryAt?: number;
     isBlocked: boolean;
+    showBackButton: boolean;
     loaded: boolean;
     error: string | undefined;
 };
@@ -67,6 +69,7 @@ export declare type TOTPMFAProps = {
     onShowSecretClick: () => void;
     onBackButtonClicked: () => void;
     onRetryClicked: () => void;
+    onSignOutClicked: () => void;
     dispatch: Dispatch<TOTPMFAAction>;
     featureState: TOTPMFAState;
     userContext?: any;

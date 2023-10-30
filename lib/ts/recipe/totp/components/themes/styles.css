@@ -21,6 +21,8 @@
     border-radius: 12px;
     border: 1px solid rgb(var(--palette-inputBorder));
     padding: 16px;
+    max-width: 100px;
+    max-height: 100px;
 }
 
 [data-supertokens~="showTOTPSecret"] {
@@ -33,5 +35,17 @@
 [data-supertokens~="totpSecret"] {
     display: block;
     border-radius: 6px;
+    padding: 12px;
+    color: rgb(var(--palette-textLink));
+    font-size: var(--font-size-1);
+    font-weight: 600;
+    letter-spacing: 3.36px;
     background: rgba(var(--palette-textLink), 0.08);
+}
+
+[data-supertokens~="retryCodeBtn"]:disabled {
+    border: 0;
+    border-radius: 6px;
+    color: rgb(var(--palette-error));
+    background: rgb(var(--palette-errorBackground));
 }

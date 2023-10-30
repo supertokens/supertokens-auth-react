@@ -12,36 +12,24 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { Fragment } from "react";
-
 import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
-import { useUserContext } from "../../../../../usercontext";
 
 import type { TOTPMFACommonProps } from "../../../types";
 
 export const CodeVerificationFooter = withOverride(
     "TOTPCodeVerificationFooter",
-    function TOTPCodeVerificationFooter({ featureState, recipeImplementation }: TOTPMFACommonProps): JSX.Element {
+    function TOTPCodeVerificationFooter({
+        onSignOutClicked,
+    }: TOTPMFACommonProps & { onSignOutClicked: () => void }): JSX.Element {
         const t = useTranslation();
-        const userContext = useUserContext();
 
         return (
-            <Fragment>
-                <div
-                    data-supertokens="secondaryText secondaryLinkWithLeftArrow"
-                    onClick={() =>
-                        // TODO: onChooseAnotherFactor
-                        recipeImplementation.removeDevice({
-                            deviceName: featureState.deviceInfo!.deviceName,
-                            userContext,
-                        })
-                    }>
-                    <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
-                    {t("TOTP_REMOVE_DEVICE_LINK")}
-                </div>
-            </Fragment>
+            <div data-supertokens="secondaryText secondaryLinkWithLeftArrow" onClick={onSignOutClicked}>
+                <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
+                {t("TOTP_MFA_LOGOUT")}
+            </div>
         );
     }
 );

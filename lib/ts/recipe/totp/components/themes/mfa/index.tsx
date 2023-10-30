@@ -58,7 +58,7 @@ const SignInUpTheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> =
     };
 
     return activeScreen === TOTPMFAScreens.Blocked ? (
-        <BlockedScreen />
+        <BlockedScreen nextRetryAt={featureState.nextRetryAt!} onRetry={props.onRetryClicked} />
     ) : activeScreen === TOTPMFAScreens.Loading ? (
         <LoadingScreen />
     ) : (
@@ -67,11 +67,18 @@ const SignInUpTheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> =
                 {featureState.loaded && (
                     <React.Fragment>
                         {activeScreen === TOTPMFAScreens.DeviceSetup ? (
-                            <DeviceSetupHeader {...commonProps} />
+                            <DeviceSetupHeader
+                                {...commonProps}
+                                showBackButton={featureState.showBackButton}
+                                onBackButtonClicked={props.onBackButtonClicked}
+                            />
                         ) : (
-                            <CodeVerificationHeader {...commonProps} />
+                            <CodeVerificationHeader
+                                {...commonProps}
+                                showBackButton={featureState.showBackButton}
+                                onBackButtonClicked={props.onBackButtonClicked}
+                            />
                         )}
-                        {featureState.error !== undefined && <GeneralError error={featureState.error} />}
                         {activeScreen === TOTPMFAScreens.DeviceSetup && (
                             <DeviceInfoSection
                                 {...commonProps}
@@ -80,14 +87,18 @@ const SignInUpTheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> =
                                 onShowSecretClick={props.onShowSecretClick}
                             />
                         )}
+                        {featureState.error !== undefined && <GeneralError error={featureState.error} />}
                         <CodeForm
                             {...commonProps}
                             onSuccess={props.onSuccess}
                             footer={
                                 activeScreen === TOTPMFAScreens.DeviceSetup ? (
-                                    <DeviceSetupFooter {...commonProps} />
+                                    <DeviceSetupFooter {...commonProps} onSignOutClicked={props.onSignOutClicked} />
                                 ) : (
-                                    <CodeVerificationFooter {...commonProps} />
+                                    <CodeVerificationFooter
+                                        {...commonProps}
+                                        onSignOutClicked={props.onSignOutClicked}
+                                    />
                                 )
                             }
                         />

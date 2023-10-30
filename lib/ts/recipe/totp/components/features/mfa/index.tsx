@@ -20,10 +20,12 @@ import { Fragment } from "react";
 import { useMemo } from "react";
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
+import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, getRedirectToPathFromURL, useOnMountAPICall } from "../../../../../utils";
+import { MultiFactorAuthClaim } from "../../../../multifactorauth";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
 import SessionRecipe from "../../../../session/recipe";
 import MFATOTPThemeWrapper from "../../themes/mfa";
@@ -50,14 +52,16 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
                         loaded: true,
                         error: action.error,
                         deviceInfo: action.deviceInfo,
+                        showBackButton: action.showBackButton,
                         isBlocked: false,
                         showSecret: false,
                     };
                 case "setBlocked":
                     return {
                         ...oldState,
+                        isBlocked: true,
+                        nextRetryAt: action.nextRetryAt,
                         error: action.error,
-                        deviceInfo: undefined,
                     };
                 case "setError":
                     return {
@@ -96,6 +100,7 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
             deviceInfo: undefined,
             showSecret: false,
             isBlocked: false,
+            showBackButton: false,
         },
         (initArg) => {
             let error: string | undefined = undefined;
@@ -152,6 +157,7 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                 return;
             }
             if (doSetup && !isAllowedToSetup) {
+                // TODO: redirect to access denied
                 dispatch({ type: "setError", error: "Setup not allowed" });
                 return;
             }
@@ -166,9 +172,15 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                 };
                 delete (deviceInfo as any).status;
             }
+            const mfaClaim = await SessionRecipe.getInstanceOrThrow().getClaimValue({
+                claim: MultiFactorAuthClaim,
+                userContext,
+            });
+            const nextLength = mfaClaim?.n.length ?? 0;
+            const showBackButton = nextLength !== 1; // If we have finished logging in or if the factorChooser is available
 
             // No need to check if the component is unmounting, since this has no effect then.
-            dispatch({ type: "load", deviceInfo, error });
+            dispatch({ type: "load", deviceInfo, error, showBackButton });
         },
         [dispatch, recipeImpl, userContext]
     );
@@ -207,8 +219,15 @@ export function useChildProps(
                 // If we reach this code this means we are using react-router-dom v6
                 return history(-1);
             },
-            onRetryClicked() {
+            onRetryClicked: () => {
                 dispatch({ type: "restartFlow", error: undefined });
+            },
+            onSignOutClicked: async () => {
+                await SessionRecipe.getInstanceOrThrow().signOut({ userContext });
+                if (state.deviceInfo) {
+                    await recipeImplementation.removeDevice({ deviceName: state.deviceInfo.deviceName, userContext });
+                }
+                await redirectToAuth({ redirectBack: false, history: history });
             },
             onSuccess: () => {
                 const redirectToPath = getRedirectToPathFromURL();
@@ -335,8 +354,6 @@ function getModifiedRecipeImplementation(
                     error: "ERROR_TOTP_MFA_VERIFY_DEVICE_BLOCKED",
                     nextRetryAt: Date.now() + res.retryAfterMs,
                 });
-            } else if (res.status === "INVALID_TOTP_ERROR") {
-                dispatch({ type: "setError", error: "ERROR_TOTP_MFA_VERIFY_DEVICE_INVALID_TOTP" });
             } else if (res.status === "UNKNOWN_DEVICE_ERROR") {
                 await originalImpl.clearDeviceInfo({ userContext: input.userContext });
                 dispatch({ type: "restartFlow", error: "ERROR_TOTP_MFA_VERIFY_DEVICE_UNKNOWN_DEVICE" });
