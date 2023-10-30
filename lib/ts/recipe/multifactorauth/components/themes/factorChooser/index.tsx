@@ -16,7 +16,6 @@
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { hasFontDefined } from "../../../../../styles/styles";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
-import { useSessionContext } from "../../../../session";
 import { ThemeBase } from "../themeBase";
 
 import { FactorChooserFooter } from "./factorChooserFooter";
@@ -26,25 +25,21 @@ import { FactorList } from "./factorList";
 import type { FactorChooserThemeProps } from "../../../types";
 
 export function FactorChooserTheme(props: FactorChooserThemeProps): JSX.Element {
-    const sessionContext = useSessionContext();
-
-    if (sessionContext.loading === false && sessionContext.doesSessionExist === true) {
-        return (
-            <div data-supertokens="container">
-                <FactorChooserHeader />
-                <FactorList
-                    availableFactors={props.availableFactors}
-                    mfaInfo={props.mfaInfo}
-                    navigateToFactor={props.navigateToFactor}
-                />
-                <FactorChooserFooter logout={props.logout} />
-                <SuperTokensBranding />
-            </div>
-        );
-    }
-
-    // Otherwise, return an empty screen, waiting for the feature component redirection to complete.
-    return <></>;
+    return (
+        <div data-supertokens="container">
+            <FactorChooserHeader
+                onBackButtonClicked={props.onBackButtonClicked}
+                showBackButton={props.showBackButton}
+            />
+            <FactorList
+                availableFactors={props.availableFactors}
+                mfaInfo={props.mfaInfo}
+                navigateToFactor={props.navigateToFactor}
+            />
+            <FactorChooserFooter logout={props.logout} />
+            <SuperTokensBranding />
+        </div>
+    );
 }
 
 function FactorChooserThemeWrapper(props: FactorChooserThemeProps): JSX.Element {

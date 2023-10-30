@@ -14,15 +14,31 @@
  */
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import BackButton from "../../../../emailpassword/components/library/backButton";
 
 export const FactorChooserHeader = withOverride(
     "MultiFactorAuthFactorChooserHeader",
-    function MultiFactorAuthFactorChooserHeader(): JSX.Element {
+    function MultiFactorAuthFactorChooserHeader(props: {
+        showBackButton: boolean;
+        onBackButtonClicked: () => void;
+    }): JSX.Element {
         const t = useTranslation();
 
         return (
             <div data-supertokens="row factorChooserHeader">
-                <div data-supertokens="headerTitle">{t("MULTI_FACTOR_CHOOSER_HEADER_TITLE")}</div>
+                <div data-supertokens="headerTitle withBackButton">
+                    {props.showBackButton ? (
+                        <BackButton onClick={props.onBackButtonClicked} />
+                    ) : (
+                        <span data-supertokens="backButtonPlaceholder backButtonCommon">
+                            {/* empty span for spacing the back button */}
+                        </span>
+                    )}
+                    {t("MULTI_FACTOR_CHOOSER_HEADER_TITLE")}
+                    <span data-supertokens="backButtonPlaceholder backButtonCommon">
+                        {/* empty span for spacing the back button */}
+                    </span>
+                </div>
             </div>
         );
     }
