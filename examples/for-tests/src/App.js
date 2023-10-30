@@ -165,7 +165,6 @@ const formFields = [
         label: "Your Country",
         placeholder: "Where do you live?",
         optional: true,
-        getDefaultValue: "India",
     },
 ];
 
@@ -201,12 +200,12 @@ const incorrectFormFields = [
         label: "Your Country",
         placeholder: "Where do you live?",
         optional: true,
-        getDefaultValue: () => 23,
+        getDefaultValue: () => 23, // return should be a string
     },
     {
         id: "ratings",
         label: "Ratings",
-        getDefaultValue: "best",
+        getDefaultValue: "best", // should be function
         inputComponent: ({ value, name, onChange }) => (
             <select value={value} name={name} onChange={(e) => onChange(e.target.value)} placeholder="Add Ratings">
                 <option value="" disabled hidden>

@@ -489,6 +489,46 @@ describe("SuperTokens SignUp", function () {
             assert.strictEqual(defaultRating, updatedFields["ratings"]);
         });
     });
+
+    describe("Signup with Incorrect fields config", function () {
+        beforeEach(async function () {
+            // set cookie and reload which loads the form fields with incorrect field values
+            await page.evaluate(() => window.localStorage.setItem("SHOW_INCORRECT_FIELDS", "YES"));
+
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+            await toggleSignInSignUp(page);
+        });
+
+        it("Check if throws an error in console log", async function () {
+            // based on incorrect fields config, should get following console.error
+            const expectedErrors = [
+                "getDefaultValue for ratings must be a function",
+                "getDefaultValue for country must return a string",
+            ];
+            const consoleErrorMessages = [];
+
+            page.on("console", async (msg) => {
+                // serialize the args, returns error text
+                const args = await Promise.all(
+                    msg.args().map((arg) =>
+                        arg.executionContext().evaluate((arg) => {
+                            if (arg instanceof Error) {
+                                return arg.message;
+                            }
+                            return null;
+                        }, arg)
+                    )
+                );
+
+                consoleErrorMessages = [...args.filter(Boolean(msg))];
+                const isSubset = expectedErrors.every((err) => consoleErrorMessages.includes(err));
+
+                assert(isSubset, "Throwing errors for incorrect field config");
+            });
+        });
+    });
 });
 
 describe("SuperTokens SignUp => Server Error", function () {
