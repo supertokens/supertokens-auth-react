@@ -1,5 +1,4 @@
 /// <reference types="react" />
-import type { APIFormField } from "../../../../types";
 export declare type InputProps = {
     type: string;
     name: string;
@@ -9,8 +8,8 @@ export declare type InputProps = {
     hasError: boolean;
     placeholder: string;
     value: string;
-    onInputBlur?: (field: APIFormField) => void;
-    onInputFocus?: (field: APIFormField) => void;
+    onInputBlur?: (value: string) => void;
+    onInputFocus?: (value: string) => void;
     onChange?: (value: string) => void;
 };
 declare const Input: React.FC<InputProps>;

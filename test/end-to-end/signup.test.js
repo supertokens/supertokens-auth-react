@@ -489,64 +489,6 @@ describe("SuperTokens SignUp", function () {
             assert.strictEqual(defaultRating, updatedFields["ratings"]);
         });
     });
-
-    describe("Signup with Incorrect fields config", function () {
-        beforeEach(async function () {
-            // set cookie and reload which loads the form fields with incorrect field values
-            await page.evaluate(() => window.localStorage.setItem("SHOW_INCORRECT_FIELDS", "YES"));
-
-            await page.reload({
-                waitUntil: "domcontentloaded",
-            });
-            await toggleSignInSignUp(page);
-        });
-
-        it("Check if throws an error in console log", async function () {
-            // based on incorrect fields config, should get following console.error
-            const expectedErrors = [
-                "getDefaultValue for ratings must be a function",
-                "getDefaultValue for country must return a string",
-            ];
-            let consoleErrorMessages = [];
-
-            page.on("console", async (msg) => {
-                // serialize the args, returns error text
-                const args = await Promise.all(
-                    msg.args().map((arg) =>
-                        arg.executionContext().evaluate((arg) => {
-                            if (arg instanceof Error) {
-                                return arg.message;
-                            }
-                            return null;
-                        }, arg)
-                    )
-                );
-                consoleErrorMessages.push(...args.filter(Boolean));
-            });
-
-            await page.reload({
-                waitUntil: "domcontentloaded",
-            });
-            await toggleSignInSignUp(page);
-
-            // Some delay  so that console messages have been processed
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            let isSubset = expectedErrors.every((err) => consoleErrorMessages.includes(err));
-            assert(isSubset, "Throwing errors for incorrect field config - getDefaultValue prop");
-
-            // Supply NON-STRING value to onChange function should throw error
-            const expectedOnChangeError = ["terms value must be a string"];
-            // check terms and condition checkbox
-
-            let termsCheckbox = await waitForSTElement(page, '[name="terms"]');
-            await page.evaluate((e) => e.click(), termsCheckbox);
-            isSubset = false;
-
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            isSubset = expectedOnChangeError.every((err) => consoleErrorMessages.includes(err));
-            assert(isSubset, "Throwing errors for incorrect field config - onChange func.");
-        });
-    });
 });
 
 describe("SuperTokens SignUp => Server Error", function () {

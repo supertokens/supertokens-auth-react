@@ -20,7 +20,6 @@ import CheckedIcon from "../../../../components/assets/checkedIcon";
 import ErrorIcon from "../../../../components/assets/errorIcon";
 import ShowPasswordIcon from "../../../../components/assets/showPasswordIcon";
 
-import type { APIFormField } from "../../../../types";
 import type { ChangeEvent } from "react";
 
 export type InputProps = {
@@ -32,8 +31,8 @@ export type InputProps = {
     hasError: boolean;
     placeholder: string;
     value: string;
-    onInputBlur?: (field: APIFormField) => void;
-    onInputFocus?: (field: APIFormField) => void;
+    onInputBlur?: (value: string) => void;
+    onInputFocus?: (value: string) => void;
     onChange?: (value: string) => void;
 };
 
@@ -59,19 +58,13 @@ const Input: React.FC<InputProps> = ({
 
     function handleFocus() {
         if (onInputFocus !== undefined) {
-            onInputFocus({
-                id: name,
-                value: value,
-            });
+            onInputFocus(value);
         }
     }
 
     function handleBlur() {
         if (onInputBlur !== undefined) {
-            onInputBlur({
-                id: name,
-                value,
-            });
+            onInputBlur(value);
         }
     }
 

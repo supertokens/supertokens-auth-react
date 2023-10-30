@@ -38,23 +38,87 @@ type FieldState = {
 };
 
 const fetchDefaultValue = (field: FormFieldThemeProps): string => {
-    if (field && field.getDefaultValue) {
-        try {
-            if (typeof field.getDefaultValue !== "function") {
-                throw new Error(`getDefaultValue for ${field.id} must be a function`);
-            }
-            const defaultValue = field.getDefaultValue();
-            if (typeof defaultValue !== "string") {
-                throw new Error(`getDefaultValue for ${field.id} must return a string`);
-            } else {
-                return defaultValue;
-            }
-        } catch (error) {
-            console.error(error);
+    if (field.getDefaultValue !== undefined) {
+        const defaultValue = field.getDefaultValue();
+        if (typeof defaultValue !== "string") {
+            throw new Error(`getDefaultValue for ${field.id} must return a string`);
+        } else {
+            return defaultValue;
         }
     }
     return "";
 };
+
+function InputComponentWrapper(props: {
+    field: FormFieldThemeProps;
+    type: string;
+    fstate: FieldState;
+    onInputFocus: (field: APIFormField) => void;
+    onInputBlur: (field: APIFormField) => void;
+    onInputChange: (field: APIFormField) => void;
+}) {
+    const { field, type, fstate, onInputFocus, onInputBlur, onInputChange } = props;
+
+    const useCallbackOnInputFocus = useCallback<(value: string) => void>(
+        (value) => {
+            onInputFocus({
+                id: field.id,
+                value,
+            });
+        },
+        [onInputFocus, field]
+    );
+
+    const useCallbackOnInputBlur = useCallback<(value: string) => void>(
+        (value) => {
+            onInputBlur({
+                id: field.id,
+                value,
+            });
+        },
+        [onInputBlur, field]
+    );
+
+    const useCallbackOnInputChange = useCallback(
+        (value) => {
+            onInputChange({
+                id: field.id,
+                value,
+            });
+        },
+        [onInputChange, field]
+    );
+
+    return field.inputComponent !== undefined ? (
+        <field.inputComponent
+            type={type}
+            name={field.id}
+            validated={fstate.validated === true}
+            placeholder={field.placeholder}
+            value={fstate.value}
+            autoComplete={field.autoComplete}
+            autofocus={field.autofocus}
+            onInputFocus={useCallbackOnInputFocus}
+            onInputBlur={useCallbackOnInputBlur}
+            onChange={useCallbackOnInputChange}
+            hasError={fstate.error !== undefined}
+        />
+    ) : (
+        <Input
+            type={type}
+            name={field.id}
+            validated={fstate.validated === true}
+            placeholder={field.placeholder}
+            value={fstate.value}
+            autoComplete={field.autoComplete}
+            onInputFocus={useCallbackOnInputFocus}
+            onInputBlur={useCallbackOnInputBlur}
+            onChange={useCallbackOnInputChange}
+            autofocus={field.autofocus}
+            hasError={fstate.error !== undefined}
+        />
+    );
+}
 
 export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
     const { footer, buttonLabel, showLabels, validateOnBlur, formFields } = props;
@@ -114,13 +178,8 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
 
     const onInputChange = useCallback(
         (field: APIFormField) => {
-            try {
-                if (typeof field.value !== "string") {
-                    throw new Error(`${field.id} value must be a string`);
-                }
-            } catch (error) {
-                console.error(error);
-                return props.onError("SOMETHING_WENT_WRONG_ERROR");
+            if (typeof field.value !== "string") {
+                throw new Error(`${field.id} value must be a string`);
             }
             updateFieldState(field.id, (os) => ({ ...os, value: field.value, error: undefined }));
             props.clearError();
@@ -218,12 +277,11 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                 if (field.id === "confirm-password") {
                     type = "password";
                 }
-                const fstate: FieldState = fieldStates.find((s) => s.id === field.id) || {
-                    id: field.id,
-                    validated: false,
-                    error: undefined,
-                    value: "",
-                };
+
+                const fstate: FieldState | undefined = fieldStates.find((s) => s.id === field.id);
+                if (fstate === undefined) {
+                    throw new Error("Should never come here");
+                }
 
                 return (
                     <FormRow key={field.id} hasError={fstate.error !== undefined}>
@@ -235,36 +293,14 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                                     <Label value={field.label} showIsRequired={field.showIsRequired} />
                                 ))}
 
-                            {field.inputComponent !== undefined ? (
-                                <field.inputComponent
-                                    type={type}
-                                    name={field.id}
-                                    validated={fstate.validated === true}
-                                    placeholder={field.placeholder}
-                                    value={fstate.value}
-                                    autoComplete={field.autoComplete}
-                                    autofocus={field.autofocus}
-                                    onInputFocus={onInputFocus}
-                                    onInputBlur={onInputBlur}
-                                    onChange={(value) => onInputChange({ id: field.id, value: value })}
-                                    hasError={fstate.error !== undefined}
-                                />
-                            ) : (
-                                <Input
-                                    type={type}
-                                    name={field.id}
-                                    validated={fstate.validated === true}
-                                    placeholder={field.placeholder}
-                                    value={fstate.value}
-                                    autoComplete={field.autoComplete}
-                                    onInputFocus={onInputFocus}
-                                    onInputBlur={onInputBlur}
-                                    onChange={(value) => onInputChange({ id: field.id, value: value })}
-                                    autofocus={field.autofocus}
-                                    hasError={fstate.error !== undefined}
-                                />
-                            )}
-
+                            <InputComponentWrapper
+                                type={type}
+                                field={field}
+                                fstate={fstate}
+                                onInputFocus={onInputFocus}
+                                onInputBlur={onInputBlur}
+                                onInputChange={onInputChange}
+                            />
                             {fstate.error && <InputError error={fstate.error} />}
                         </Fragment>
                     </FormRow>

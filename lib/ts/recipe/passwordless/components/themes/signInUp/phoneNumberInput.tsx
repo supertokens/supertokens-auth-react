@@ -45,19 +45,13 @@ function PhoneNumberInput({
 }: InputProps & PhoneNumberInputProps): JSX.Element {
     function handleFocus() {
         if (onInputFocus !== undefined) {
-            onInputFocus({
-                id: name,
-                value: value,
-            });
+            onInputFocus(value);
         }
     }
 
     function handleBlur() {
         if (onInputBlur !== undefined) {
-            onInputBlur({
-                id: name,
-                value: value,
-            });
+            onInputBlur(value);
         }
     }
 
