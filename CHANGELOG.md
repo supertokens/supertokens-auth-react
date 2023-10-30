@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [0.35.7] - 2023-10-30
+
+### Added
+
+-   Introduced the capability to utilize custom components in the Email-Password signup form fields by exposing inputComponent types.
+-   Implemented the functionality to assign default values to the form fields in the Email-Password Sign Up process.
+-   Enhanced the onChange function to operate independently without requiring an id field.
+-   Accompanied the new features with comprehensive tests to ensure their proper functionality and reliability.
+
+Following is an example of how to use above features.
+
+```tsx
+EmailPassword.init({
+      signInAndUpFeature: {
+        signUpForm: {
+          formFields: [
+              {
+        id: "ratings",
+        label: "Ratings",
+        getDefaultValue: () => "best",
+        inputComponent: ({ value, name, onChange }) => (
+            <select value={value} name={name} onChange={(e) => onChange(e.target.value)} placeholder="Add Ratings">
+                <option value="" disabled hidden>
+                    Select an option
+                </option>
+                <option value="good">Good</option>
+                <option value="better">Better</option>
+                <option value="best">Best</option>
+            </select>
+        )}
+...
+```
+
 ## [0.35.6] - 2023-10-16
 
 ### Test changes
