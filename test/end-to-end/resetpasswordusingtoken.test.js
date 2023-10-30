@@ -49,7 +49,7 @@ import {
     defaultSignUp,
     screenshotOnFailure,
     getAuthPageHeaderText,
-    getResetPasswordFormBackButton,
+    getTitleBackButton,
     waitForSTElement,
     getResetPasswordSuccessBackToSignInButton,
     backendBeforeEach,
@@ -117,7 +117,7 @@ describe("SuperTokens Reset password", function () {
         });
 
         it("Should redirect to Sign In screen when back button is clicked", async function () {
-            const backButton = await getResetPasswordFormBackButton(page);
+            const backButton = await getTitleBackButton(page);
 
             await backButton.click();
 

@@ -194,7 +194,7 @@
     margin: 0 auto;
 }
 
-[data-supertokens~="resetPasswordHeaderTitle"] {
+[data-supertokens~="withBackButton"] {
     position: relative;
     display: flex;
     justify-content: space-between;

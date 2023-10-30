@@ -88,6 +88,8 @@ export type OnHandleEventContext = {
 export type FactorChooserThemeProps = {
     mfaInfo: MFAFactorInfo;
     availableFactors: SecondaryFactorRedirectionInfo[];
+    showBackButton: boolean;
+    onBackButtonClicked: () => void;
     navigateToFactor: (factorId: string) => void;
     logout: () => void;
     config: NormalisedConfig;
