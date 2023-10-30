@@ -666,6 +666,17 @@ function getEmailVerificationConfigs({ disableDefaultUI }) {
     });
 }
 
+function getFormFields() {
+    if (localStorage.getItem("SHOW_INCORRECT_FIELDS") === "YES") {
+        return incorrectFormFields;
+    } else if (localStorage.getItem("SHOW_DEFAULT_FIELDS") === "YES") {
+        return formFieldsWithDefault;
+    } else if (localStorage.getItem("SHOW_CUSTOM_FIELDS") === "YES") {
+        return customFields;
+    }
+    return formFields;
+}
+
 function getEmailPasswordConfigs({ disableDefaultUI }) {
     return EmailPassword.init({
         style: `          
@@ -751,14 +762,7 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
                 style: theme,
                 privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
-                formFields:
-                    localStorage.getItem("SHOW_INCORRECT_FIELDS") === "YES"
-                        ? incorrectFormFields
-                        : localStorage.getItem("SHOW_DEFAULT_FIELDS") === "YES"
-                        ? formFieldsWithDefault
-                        : localStorage.getItem("SHOW_CUSTOM_FIELDS") === "YES"
-                        ? customFields
-                        : formFields,
+                formFields: getFormFields(),
             },
         },
     });
