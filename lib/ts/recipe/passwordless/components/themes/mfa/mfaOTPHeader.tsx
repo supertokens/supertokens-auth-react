@@ -34,7 +34,7 @@ export const MFAOTPHeader = withOverride(
 
         return (
             <Fragment>
-                <div data-supertokens="headerTitle resetPasswordHeaderTitle">
+                <div data-supertokens="headerTitle withBackButton">
                     {claim.loading === false && claim.value?.n.length === 0 && isSetupAllowed === false ? (
                         <BackButton onClick={onBackButtonClicked} />
                     ) : (
