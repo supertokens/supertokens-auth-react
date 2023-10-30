@@ -216,6 +216,7 @@ let passwordlessConfig = {};
 let accountLinkingConfig = {};
 let enabledProviders = undefined;
 let enabledRecipes = undefined;
+let mfaInfo = {};
 
 initST();
 
@@ -382,14 +383,30 @@ app.post(
     }
 );
 
-let mfaInfo = {};
-app.post("/setMFAInfo", verifySession(), async (req, res) => {
-    let session = req.session;
-
-    mfaInfo = req.body.mfaInfo;
-    await session.mergeIntoAccessTokenPayload(req.body.payload);
+app.post("/setMFAInfo", async (req, res) => {
+    mfaInfo = { mfaInfo, ...req.body };
 
     res.send({ status: "OK" });
+});
+
+app.post("/completeFactor", verifySession(), async (req, res) => {
+    let session = req.session;
+    const mfaClaim = payload["st-mfa"];
+    const c = {
+        ...mfaClaim.c,
+        [req.payload.id]: Date.now(),
+    };
+    if (req.payload.id === "totp") {
+        mfaInfo.hasTOTP = true;
+    }
+
+    await session.mergeIntoAccessTokenPayload({
+        "st-mfa": {
+            ...mfaClaim,
+            c,
+            n: getNextArray(c),
+        },
+    });
 });
 
 app.post("/mergeIntoAccessTokenPayload", verifySession(), async (req, res) => {
@@ -413,15 +430,47 @@ app.get("/auth/mfa/info", verifySession(), async (req, res) => {
     if (user.emails.length > 0) {
         isAlreadySetup.push("otp-email");
     }
-    if (payload.hasTOTP) {
-        isAlreadySetup.push("totp");
+
+    if (mfaInfo.hasTOTP) {
+        isAllowedToSetup.push("totp");
     }
+
     const mfaClaim = payload["st-mfa"];
-    if (mfaClaim === undefined) {
+    console.log(mfaInfo, mfaClaim);
+    if (mfaInfo?.claimValue) {
+        await session.mergeIntoAccessTokenPayload({
+            "st-mfa": mfaInfo.claimValue,
+        });
+    } else if (mfaInfo?.requirements) {
+        let c;
+        if (mfaClaim) {
+            c = mfaClaim.c;
+        } else {
+            const recipeUser = user.loginMethods.find(
+                (u) => u.recipeUserId.toString() === session.getRecipeUserId().toString()
+            );
+            if (recipeUser.recipeId !== "passwordless") {
+                c = { [recipeUser.recipeUserId]: Date.now() };
+            } else if (recipeUser.email) {
+                // This isn't correct, but will do for testing
+                c = { "otp-email": Date.now() };
+            } else {
+                c = { "otp-phone": Date.now() };
+            }
+        }
+
+        let n = getNextArray(c);
+        await session.mergeIntoAccessTokenPayload({
+            "st-mfa": {
+                c: c,
+                n: n,
+            },
+        });
+    } else if (mfaClaim === undefined) {
         await session.mergeIntoAccessTokenPayload({
             "st-mfa": {
                 c: {}, // Technically the first factor should be in there... but it isn't necessary
-                n: ["otp-phone", "otp-email"],
+                n: [],
             },
         });
     }
@@ -440,7 +489,7 @@ app.get("/auth/mfa/info", verifySession(), async (req, res) => {
             isAllowedToSetup,
             isAlreadySetup,
         },
-        ...mfaInfo,
+        ...mfaInfo.resp,
     });
 });
 
@@ -600,8 +649,35 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
     }
 })(process.env.START === "true");
 
+function getNextArray(c) {
+    let n = [];
+    for (const step of mfaInfo.requirements) {
+        if (typeof step === "string") {
+            if (c[step] === undefined) {
+                n = [step];
+                break;
+            }
+        } else if (step.oneOf !== undefined) {
+            if (step.oneOf.every((id) => c[id] === undefined)) {
+                n = step.oneOf;
+                break;
+            }
+        } else if (step.allOf !== undefined) {
+            const missing = step.allOf.filter((id) => c[id] === undefined);
+            if (missing.length > 0) {
+                n = missing;
+                break;
+            }
+        } else {
+            throw new Error("Bad requirement" + JSON.stringify(step));
+        }
+    }
+    return n;
+}
+
 function initST() {
     if (process.env.TEST_MODE) {
+        mfaInfo = {};
         if (userRolesSupported) {
             UserRolesRaw.reset();
         }

@@ -9,6 +9,7 @@ export function getTestContext() {
         thirdPartyRedirectURL: localStorage.getItem("thirdPartyRedirectURL"),
         authRecipe: window.localStorage.getItem("authRecipe") || "emailpassword",
         usesDynamicLoginMethods: localStorage.getItem("usesDynamicLoginMethods") === "true",
+        enableAllRecipes: localStorage.getItem("enableAllRecipes") === "true",
         clientRecipeListForDynamicLogin: localStorage.getItem("clientRecipeListForDynamicLogin"),
         mockLoginMethodsForDynamicLogin: localStorage.getItem("mockLoginMethodsForDynamicLogin"),
         staticProviderList: localStorage.getItem("staticProviderList"),
@@ -23,7 +24,15 @@ export function getEnabledRecipes() {
 
     let enabledRecipes = [];
 
-    if (true) {
+    if (testContext.enableAllRecipes) {
+        enabledRecipes = [
+            "emailpassword",
+            "thirdparty",
+            "thirdpartyemailpassword",
+            "passwordless",
+            "thirdpartypasswordless",
+        ];
+    } else if (testContext.usesDynamicLoginMethods) {
         if (testContext.clientRecipeListForDynamicLogin) {
             enabledRecipes = JSON.parse(testContext.clientRecipeListForDynamicLogin);
         } else {

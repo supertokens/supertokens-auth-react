@@ -174,7 +174,8 @@ const testContext = getTestContext();
 
 let totpDevices = [];
 let tryCount = 0;
-setInterval(() => (tryCount = tryCount > 0 ? tryCount - 1 : 0), 30);
+
+setInterval(() => (tryCount = tryCount > 0 ? tryCount - 1 : 0), 30000);
 window.resetTOTP = () => {
     totpDevices = [];
     tryCount = 0;
@@ -207,6 +208,11 @@ let recipeList = [
                 verifyCode: async ({ totp }) => {
                     const dev = totpDevices.find((d) => d.deviceName.endsWith(totp) && d.verified);
                     if (dev) {
+                        await fetch("http://localhost:8082/completeFactor", {
+                            method: "POST",
+                            body: JSON.stringify({ id: "totp" }),
+                            headers: new Headers([["Content-Type", "application/json"]]),
+                        });
                         return { status: "OK" };
                     }
 
@@ -223,9 +229,9 @@ let recipeList = [
                     if (deviceName.endsWith(totp)) {
                         const wasAlreadyVerified = dev.verified;
                         dev.verified = true;
-                        await fetch("http://localhost:8082/mergeIntoAccessTokenPayload", {
+                        await fetch("http://localhost:8082/completeFactor", {
                             method: "POST",
-                            body: JSON.stringify({ hasTOTP: true }),
+                            body: JSON.stringify({ id: "totp" }),
                             headers: new Headers([["Content-Type", "application/json"]]),
                         });
                         return { status: "OK", wasAlreadyVerified };
