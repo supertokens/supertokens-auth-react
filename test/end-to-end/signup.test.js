@@ -444,7 +444,7 @@ describe("SuperTokens SignUp", function () {
     describe("Signup default value for fields test", function () {
         beforeEach(async function () {
             // set cookie and reload which loads the form fields with default values
-            await page.evaluate(() => window.localStorage.setItem("SHOW_DEFAULT_FIELDS", "YES"));
+            await page.evaluate(() => window.localStorage.setItem("SHOW_CUSTOM_FIELDS_WITH_DEFAULT_VALUES", "YES"));
 
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -480,14 +480,35 @@ describe("SuperTokens SignUp", function () {
 
             // input field default value
             const countryInput = await getInputField(page, "country");
-            const defaultCountry = await countryInput.evaluate((f) => f.value);
-            assert.strictEqual(defaultCountry, updatedFields["country"]);
+            const updatedCountry = await countryInput.evaluate((f) => f.value);
+            assert.strictEqual(updatedCountry, updatedFields["country"]);
 
             // dropdown default value is also getting set correctly
             const ratingsDropdown = await waitForSTElement(page, "select");
-            const defaultRating = await ratingsDropdown.evaluate((f) => f.value);
-            assert.strictEqual(defaultRating, updatedFields["ratings"]);
+            const updatedRating = await ratingsDropdown.evaluate((f) => f.value);
+            assert.strictEqual(updatedRating, updatedFields["ratings"]);
         });
+
+        // TODO
+        // it("Check if default values are getting sent in signup-payload", async function () {
+        //     const updatedFields = {
+        //         country: "USA",
+        //         ratings: "good",
+        //     };
+
+        //     await setInputValues(page, [{ name: "country", value: updatedFields["country"] }]);
+        //     await setSelectDropdownValue(page, 'select[name="ratings"]', updatedFields["ratings"]);
+
+        //     // input field default value
+        //     const countryInput = await getInputField(page, "country");
+        //     const updatedCountry = await countryInput.evaluate((f) => f.value);
+        //     assert.strictEqual(updatedCountry, updatedFields["country"]);
+
+        //     // dropdown default value is also getting set correctly
+        //     const ratingsDropdown = await waitForSTElement(page, "select");
+        //     const updatedRating = await ratingsDropdown.evaluate((f) => f.value);
+        //     assert.strictEqual(updatedRating, updatedFields["ratings"]);
+        // });
     });
 });
 

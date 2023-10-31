@@ -669,7 +669,7 @@ function getEmailVerificationConfigs({ disableDefaultUI }) {
 function getFormFields() {
     if (localStorage.getItem("SHOW_INCORRECT_FIELDS") === "YES") {
         return incorrectFormFields;
-    } else if (localStorage.getItem("SHOW_DEFAULT_FIELDS") === "YES") {
+    } else if (localStorage.getItem("SHOW_CUSTOM_FIELDS_WITH_DEFAULT_VALUES") === "YES") {
         return formFieldsWithDefault;
     } else if (localStorage.getItem("SHOW_CUSTOM_FIELDS") === "YES") {
         return customFields;
