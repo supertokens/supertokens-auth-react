@@ -28,7 +28,7 @@ export const MFAFooter = withOverride(
         const claim = useClaimValue(MultiFactorAuthClaim);
 
         return (
-            <>
+            <div data-supertokens="footerLinkGroup pwlessMFAFooter">
                 {claim.loading === false && (claim.value?.n.length ?? 0) > 1 && (
                     <div
                         data-supertokens="secondaryText secondaryLinkWithLeftArrow"
@@ -40,7 +40,7 @@ export const MFAFooter = withOverride(
                     <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
                     {t("PWLESS_MFA_FOOTER_LOGOUT")}
                 </div>
-            </>
+            </div>
         );
     }
 );

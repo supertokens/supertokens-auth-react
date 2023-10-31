@@ -328,10 +328,10 @@ function useOnLoad(
         [userContext]
     );
     const handleLoadError = React.useCallback(
-        // Test this, it may show an empty screen in many cases
-        () => dispatch({ type: "setError", error: "Getting mfaInfo failed!" }),
+        // TODO: Test this, it may show an empty screen in many cases
+        () => dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" }),
         [dispatch]
-    ); // TODO: translation/proper error handling)
+    );
     const onLoad = React.useCallback(
         async (mfaInfo: { factors: MFAFactorInfo; email?: string; phoneNumber?: string }) => {
             let error: string | undefined = undefined;
@@ -370,7 +370,12 @@ function useOnLoad(
                             userContext,
                         });
                     } else if (!mfaInfo.factors.isAllowedToSetup.includes("otp-email")) {
-                        dispatch({ type: "setError", error: "Factor not enabled" }); // TODO: translation
+                        dispatch({
+                            type: "load",
+                            loginAttemptInfo,
+                            isAllowedToSetup: false,
+                            error: "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP",
+                        });
                     } else {
                         dispatch({ type: "load", loginAttemptInfo, error, isAllowedToSetup: true }); // since loginAttemptInfo is undefined, this will ask the user for the email
                     }
@@ -382,7 +387,12 @@ function useOnLoad(
                             userContext,
                         });
                     } else if (!mfaInfo.factors.isAllowedToSetup.includes("otp-phone")) {
-                        dispatch({ type: "setError", error: "Factor not enabled" }); // TODO: translation
+                        dispatch({
+                            type: "load",
+                            loginAttemptInfo,
+                            isAllowedToSetup: false,
+                            error: "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP",
+                        });
                     } else {
                         dispatch({ type: "load", loginAttemptInfo, error, isAllowedToSetup: true }); // since loginAttemptInfo is undefined, this will ask the user for the phone number
                     }

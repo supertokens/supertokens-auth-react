@@ -436,7 +436,6 @@ app.get("/auth/mfa/info", verifySession(), async (req, res) => {
     }
 
     const mfaClaim = payload["st-mfa"];
-    console.log(mfaInfo, mfaClaim);
     if (mfaInfo?.claimValue) {
         await session.mergeIntoAccessTokenPayload({
             "st-mfa": mfaInfo.claimValue,

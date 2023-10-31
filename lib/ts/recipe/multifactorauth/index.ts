@@ -46,17 +46,29 @@ export default class Wrapper {
         });
     }
 
+    static redirectToFactor(factorId: string, redirectBack = true, history?: any) {
+        return MultiFactorAuthRecipe.getInstanceOrThrow().redirectToFactor(factorId, redirectBack, history);
+    }
+
+    static redirectToFactorChooser(redirectBack = true, history?: any) {
+        return MultiFactorAuthRecipe.getInstanceOrThrow().redirectToFactorChooser(redirectBack, history);
+    }
+
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
 const init = Wrapper.init;
 const getMFAInfo = Wrapper.getMFAInfo;
+const redirectToFactor = Wrapper.redirectToFactor;
+const redirectToFactorChooser = Wrapper.redirectToFactorChooser;
 const MultiFactorAuthComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 const MultiFactorAuthClaim = MultiFactorAuthRecipe.MultiFactorAuthClaim;
 
 export {
     init,
     getMFAInfo,
+    redirectToFactor,
+    redirectToFactorChooser,
     MultiFactorAuthComponentsOverrideProvider,
     GetRedirectionURLContext,
     PreAPIHookContext as PreAPIHookContext,

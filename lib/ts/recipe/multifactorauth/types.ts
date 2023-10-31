@@ -22,6 +22,7 @@ import type {
 } from "../recipeModule/types";
 import type { FC } from "react";
 import type { OverrideableBuilder } from "supertokens-js-override";
+import type NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import type { RecipeInterface } from "supertokens-web-js/recipe/multifactorauth";
 import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 
@@ -91,7 +92,7 @@ export type FactorChooserThemeProps = {
     showBackButton: boolean;
     onBackButtonClicked: () => void;
     navigateToFactor: (factorId: string) => void;
-    logout: () => void;
+    onLogoutClicked: () => void;
     config: NormalisedConfig;
     userContext?: any;
 };
@@ -101,5 +102,5 @@ export type SecondaryFactorRedirectionInfo = {
     name: string;
     description: string;
     logo: FC;
-    path: string;
+    path: NormalisedURLPath;
 };

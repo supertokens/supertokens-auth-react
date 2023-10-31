@@ -12,7 +12,7 @@ export const defaultTranslationsTOTP = {
         TOTP_DEVICE_SETUP_HEADER_TITLE: "Enable TOTP",
         TOTP_DEVICE_SETUP_HEADER_SUBTITLE:
             "Please scan the given QR code from a phone app like Google Authenticator or Authy.",
-        TOTP_CODE_INPUT_LABEL: "Please enter TOTP from the app",
+        TOTP_CODE_INPUT_LABEL: "Please enter TOTP",
         TOTP_CODE_CONTINUE_BUTTON: "Continue",
         TOTP_BLOCKED_TITLE: "Account locked",
         TOTP_BLOCKED_SUBTITLE: "Account locked due to multiple failed login attempts.",
@@ -21,6 +21,8 @@ export const defaultTranslationsTOTP = {
         TOTP_MFA_BLOCKED_RETRY: "Try again",
         TOTP_MFA_LOGOUT: "Logout",
 
-        INVALID_TOTP_ERROR: "Invalid TOTP.",
+        INVALID_TOTP_ERROR: "Invalid TOTP. Please try again",
+        GENERAL_ERROR_OTP_UNDEFINED: "Please fill your TOTP",
+        TOTP_MFA_NOT_ALLOWED_TO_SETUP: "You are not allowed to set up TOTP.",
     },
 };
