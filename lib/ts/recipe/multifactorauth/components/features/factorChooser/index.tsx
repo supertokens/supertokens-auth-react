@@ -67,8 +67,15 @@ export const FactorChooser: React.FC<Prop> = (props) => {
                         mfaInfo.factors.isAllowedToSetup.includes(id) || mfaInfo.factors.isAlreadySetup.includes(id)
                 )
                 .filter(({ id }) => mfaClaimValue.value!.n.length === 0 || mfaClaimValue.value!.n.includes(id));
-            if (availableFactors.length === 1) {
-                return MultiFactorAuth.getInstanceOrThrow().redirectToFactor(availableFactors[0].id, props.history);
+
+            // If we got here when the next array is not empty, that means that the user redirected here intentionally
+            // In this case we do not want to automatically redirect away but show the chooser screen.
+            if (mfaClaimValue.value!.n.length !== 0 && availableFactors.length === 1) {
+                return MultiFactorAuth.getInstanceOrThrow().redirectToFactor(
+                    availableFactors[0].id,
+                    false,
+                    props.history
+                );
             } else {
                 setMFAInfo(mfaInfo.factors);
             }
@@ -127,7 +134,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
         showBackButton: mfaClaimValue.value?.n.length === 0,
         mfaInfo: mfaInfo,
         availableFactors: availableFactors,
-        logout: signOut,
+        onLogoutClicked: signOut,
         navigateToFactor: navigateToFactor,
     };
 

@@ -14,6 +14,8 @@ const AccessDeniedScreen: React.FC<
     FeatureBaseProps & {
         recipe: Recipe;
         useComponentOverrides: () => ComponentOverrideMap;
+        useShadowDom?: boolean;
+        error?: string;
     }
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
@@ -21,8 +23,15 @@ const AccessDeniedScreen: React.FC<
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
-            <FeatureWrapper defaultStore={defaultTranslationsSession}>
-                <AccessDeniedScreenTheme config={props.recipe.config} history={history} recipe={props.recipe} />
+            <FeatureWrapper
+                defaultStore={defaultTranslationsSession}
+                useShadowDom={props.useShadowDom ?? props.recipe.config.useShadowDom}>
+                <AccessDeniedScreenTheme
+                    config={props.recipe.config}
+                    history={history}
+                    recipe={props.recipe}
+                    error={props.error}
+                />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );

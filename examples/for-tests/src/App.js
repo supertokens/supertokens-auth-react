@@ -173,7 +173,7 @@ const testContext = getTestContext();
 
 let recipeList = [
     MultiFactorAuth.init({
-        firstFactors: ["emailpassword", "thirdparty"],
+        firstFactors: testContext.firstFactors,
     }),
     Multitenancy.init({
         override: {
@@ -484,6 +484,10 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
             </div>
             <div className="session-context-userId">session context userID: {sessionContext.userId}</div>
             <pre className="invalidClaims">{JSON.stringify(sessionContext.invalidClaims, undefined, 2)}</pre>
+            <a onClick={() => MultiFactorAuth.redirectToFactorChooser(true, props.history)}>MFA chooser</a>
+            <a onClick={() => MultiFactorAuth.redirectToFactor("totp", true, props.history)}>TOTP</a>
+            <a onClick={() => MultiFactorAuth.redirectToFactor("otp-email", true, props.history)}>OTP-Email</a>
+            <a onClick={() => MultiFactorAuth.redirectToFactor("otp-phone", true, props.history)}>OTP-Phone</a>
         </div>
     );
 }
