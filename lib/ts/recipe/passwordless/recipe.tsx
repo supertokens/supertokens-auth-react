@@ -18,9 +18,9 @@
  */
 
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
-// import { LinkIcon } from "../../components/assets/linkIcon";
 import { OTPIcon } from "../../components/assets/otpIcon";
 import { SSR_ERROR } from "../../constants";
 import { isTest } from "../../utils";
@@ -41,9 +41,21 @@ import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRec
 import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
 
-/*
- * Class.
- */
+export const otpPhoneFactor = {
+    id: "otp-phone",
+    name: "SMS based OTP",
+    description: "Get an OTP code on your phone to complete the authentication request",
+    path: new NormalisedURLPath("/mfa/otp-phone"),
+    logo: OTPIcon,
+};
+export const otpEmailFactor = {
+    id: "otp-email",
+    name: "Email based OTP",
+    description: "Get an OTP code on your email address to complete the authentication request",
+    path: new NormalisedURLPath("/mfa/otp-email"),
+    logo: OTPIcon,
+};
+
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -60,6 +72,16 @@ export default class Passwordless extends AuthRecipe<
         public readonly webJSRecipe: WebJSRecipeInterface<typeof PasswordlessWebJS> = PasswordlessWebJS
     ) {
         super(config);
+
+        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
+            const mfa = MultiFactorAuth.getInstance();
+            if (mfa !== undefined) {
+                mfa.addMFAFactors(
+                    ["otp-phone", "otp-email", "link-phone", "link-email"],
+                    [otpPhoneFactor, otpEmailFactor]
+                );
+            }
+        });
     }
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
@@ -70,46 +92,6 @@ export default class Passwordless extends AuthRecipe<
         config: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normalisePasswordlessConfig(config);
-
-        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
-            const mfa = MultiFactorAuth.getInstance();
-            if (mfa !== undefined) {
-                mfa.addMFAFactors(
-                    ["otp-phone", "otp-email", "link-phone", "link-email"],
-                    [
-                        {
-                            id: "otp-phone",
-                            name: "SMS based OTP",
-                            description: "Get an OTP code on your phone to complete the authentication request",
-                            path: "/auth/mfa/otp-phone", // TODO: websitebasepath
-                            logo: OTPIcon,
-                        },
-                        // {
-                        //     id: "link-phone",
-                        //     name: "SMS based Magic link",
-                        //     description: "Get a magic link on your phone to complete the authentication request",
-                        //     path: "/auth/mfa/link-phone",
-                        //     logo: LinkIcon,
-                        // },
-                        {
-                            id: "otp-email",
-                            name: "Email based OTP",
-                            description: "Get an OTP code on your email address to complete the authentication request",
-                            path: "/auth/mfa/otp-email", // TODO: websitebasepath
-                            logo: OTPIcon,
-                        },
-                        // {
-                        //     id: "link-email",
-                        //     name: "SMS based Magic link",
-                        //     description:
-                        //         "Get a magic link on your email address to complete the authentication request",
-                        //     path: "/auth/mfa/link-email",
-                        //     logo: LinkIcon,
-                        // },
-                    ]
-                );
-            }
-        });
 
         return {
             recipeID: Passwordless.RECIPE_ID,

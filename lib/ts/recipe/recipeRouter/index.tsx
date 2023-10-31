@@ -8,6 +8,7 @@ import type RecipeModule from "../recipeModule";
 import type NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 
 // The related ADR: https://supertokens.com/docs/contribute/decisions/multitenancy/0006
+// TODO: This could be by the recipes registering what factors they provide (at least partially)
 const priorityOrder: {
     rid: string;
     includes: ("thirdparty" | "emailpassword" | "passwordless")[];
@@ -52,15 +53,19 @@ function chooseComponentBasedOnFirstFactors(
     let maxProvided = 0;
     let component = undefined;
     // We find the component that provides the most factors
-    for (const { rid, factorsProvided } of priorityOrder.reverse()) {
+    for (const { rid, factorsProvided } of priorityOrder) {
         const providedByCurrent = factorsProvided.filter((id) => firstFactors.includes(id)).length;
-        if (providedByCurrent >= maxProvided) {
+        if (providedByCurrent > maxProvided) {
             const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
             if (matchingComp) {
                 maxProvided = providedByCurrent;
                 component = matchingComp;
             }
         }
+    }
+
+    if (component === undefined) {
+        throw new Error("No enabled recipes overlap with the requested firstFactors: " + firstFactors);
     }
 
     return component;

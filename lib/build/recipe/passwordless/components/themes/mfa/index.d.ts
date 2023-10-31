@@ -5,6 +5,7 @@ export declare enum MFAScreens {
     EmailForm = 1,
     PhoneForm = 2,
     UserInputCodeForm = 3,
+    AccessDenied = 4,
 }
 declare function MFAThemeWrapper(props: MFAProps): JSX.Element;
 export default MFAThemeWrapper;

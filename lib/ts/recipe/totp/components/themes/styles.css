@@ -43,6 +43,10 @@
     background: rgba(var(--palette-textLink), 0.08);
 }
 
+[data-supertokens~="showTOTPSecretBtn"]:hover {
+    text-decoration: underline;
+}
+
 [data-supertokens~="retryCodeBtn"]:disabled {
     border: 0;
     border-radius: 6px;

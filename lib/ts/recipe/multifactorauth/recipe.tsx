@@ -58,8 +58,8 @@ export default class MultiFactorAuth extends RecipeModule<
     );
 
     public recipeID = MultiFactorAuth.RECIPE_ID;
-    private readonly firstFactors: string[] = [];
-    private readonly secondaryFactors: SecondaryFactorRedirectionInfo[] = [];
+    private readonly firstFactors: Set<string> = new Set();
+    private secondaryFactors: SecondaryFactorRedirectionInfo[] = [];
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
@@ -131,30 +131,32 @@ export default class MultiFactorAuth extends RecipeModule<
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "FACTOR_CHOOSER") {
             const chooserPath = new NormalisedURLPath(DEFAULT_FACTOR_CHOOSER_PATH);
-            return `${this.config.appInfo.websiteBasePath.appendPath(chooserPath).getAsStringDangerous()}`;
+            return this.config.appInfo.websiteBasePath.appendPath(chooserPath).getAsStringDangerous();
         } else if (context.action === "GO_TO_FACTOR") {
             const redirectInfo = this.getSecondaryFactors().find((f) => f.id === context.factorId);
             if (redirectInfo !== undefined) {
-                return redirectInfo.path;
+                return this.config.appInfo.websiteBasePath.appendPath(redirectInfo.path).getAsStringDangerous();
             }
-            // TODO: access denied screen if not defined?
-            return "/";
+            throw new Error("Requested redirect to unknown factor id");
         } else {
             return "/";
         }
     };
 
-    getDefaultFirstFactors(): string[] {
-        return this.firstFactors;
-    }
-
     addMFAFactors(firstFactors: string[], secondaryFactors: SecondaryFactorRedirectionInfo[]) {
-        this.firstFactors.push(...firstFactors);
-        this.secondaryFactors.push(...secondaryFactors);
+        for (const fact of firstFactors) {
+            this.firstFactors.add(fact);
+        }
+        this.secondaryFactors = [
+            ...this.secondaryFactors.filter((factor) =>
+                secondaryFactors.every((newFactor) => factor.id !== newFactor.id)
+            ),
+            ...secondaryFactors,
+        ];
     }
 
     getFirstFactors() {
-        return this.config.firstFactors ?? this.firstFactors;
+        return this.config.firstFactors ?? Array.from(this.firstFactors);
     }
 
     getSecondaryFactors() {

@@ -101,8 +101,8 @@ export type TOTPMFAScreenConfig = {
     disableDefaultUI: boolean;
     setupScreenStyle: string;
     verificationScreenStyle: string;
-    blockedScreenStyle: string; // TODO: ??
-    loadingScreenStyle: string; // TODO: ??
+    blockedScreenStyle: string;
+    loadingScreenStyle: string;
 };
 
 // Config is what does in the constructor of the recipe.
