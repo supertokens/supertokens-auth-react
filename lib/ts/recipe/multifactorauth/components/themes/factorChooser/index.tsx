@@ -15,7 +15,9 @@
 
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { hasFontDefined } from "../../../../../styles/styles";
+import { useTranslation } from "../../../../../translation/translationContext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
+import { AccessDeniedScreen } from "../../../../session/prebuiltui";
 import { ThemeBase } from "../themeBase";
 
 import { FactorChooserFooter } from "./factorChooserFooter";
@@ -25,6 +27,15 @@ import { FactorList } from "./factorList";
 import type { FactorChooserThemeProps } from "../../../types";
 
 export function FactorChooserTheme(props: FactorChooserThemeProps): JSX.Element {
+    const t = useTranslation();
+    if (props.availableFactors.length === 0) {
+        return (
+            <AccessDeniedScreen
+                useShadowDom={props.config.useShadowDom}
+                error={props.showBackButton ? t("MFA_NO_AVAILABLE_OPTIONS") : t("MFA_NO_AVAILABLE_OPTIONS_LOGIN")}
+            />
+        );
+    }
     return (
         <div data-supertokens="container">
             <FactorChooserHeader
@@ -36,7 +47,7 @@ export function FactorChooserTheme(props: FactorChooserThemeProps): JSX.Element 
                 mfaInfo={props.mfaInfo}
                 navigateToFactor={props.navigateToFactor}
             />
-            <FactorChooserFooter logout={props.logout} />
+            <FactorChooserFooter logout={props.onLogoutClicked} />
             <SuperTokensBranding />
         </div>
     );

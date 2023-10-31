@@ -22,7 +22,7 @@ export default class MultiFactorAuth extends RecipeModule<
     static MultiFactorAuthClaim: MultiFactorAuthClaimClass;
     recipeID: string;
     private readonly firstFactors;
-    private readonly secondaryFactors;
+    private secondaryFactors;
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         webJSRecipe?: WebJSRecipeInterface<typeof MultiFactorAuthWebJS>
@@ -33,10 +33,9 @@ export default class MultiFactorAuth extends RecipeModule<
     static getInstance(): MultiFactorAuth | undefined;
     static getInstanceOrThrow(): MultiFactorAuth;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
-    getDefaultFirstFactors(): string[];
     addMFAFactors(firstFactors: string[], secondaryFactors: SecondaryFactorRedirectionInfo[]): void;
     getFirstFactors(): string[];
     getSecondaryFactors(): SecondaryFactorRedirectionInfo[];
-    redirectToFactor(factorId: string, history?: any): Promise<void>;
-    redirectToFactorChooser(history?: any): Promise<void>;
+    redirectToFactor(factorId: string, redirectBack?: boolean, history?: any): Promise<void>;
+    redirectToFactorChooser(redirectBack?: boolean, history?: any): Promise<void>;
 }
