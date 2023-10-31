@@ -12,12 +12,12 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { Fragment } from "react";
-
 import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { useUserContext } from "../../../../../usercontext";
+import { MultiFactorAuthClaim } from "../../../../multifactorauth";
+import { useClaimValue } from "../../../../session";
 
 import type { MFAOTPFooterProps } from "../../../types";
 
@@ -27,14 +27,16 @@ export const MFAOTPFooter = withOverride(
         loginAttemptInfo,
         recipeImplementation,
         onSignOutClicked,
+        onFactorChooserButtonClicked,
         isSetupAllowed,
     }: MFAOTPFooterProps): JSX.Element {
         const t = useTranslation();
+        const claim = useClaimValue(MultiFactorAuthClaim);
         const userContext = useUserContext();
 
         return (
-            <Fragment>
-                {(isSetupAllowed && (
+            <div data-supertokens="footerLinkGroup pwlessMFAOTPFooter">
+                {isSetupAllowed ? (
                     <div
                         data-supertokens="secondaryText secondaryLinkWithLeftArrow"
                         onClick={() =>
@@ -47,13 +49,21 @@ export const MFAOTPFooter = withOverride(
                             ? t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL")
                             : t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE")}
                     </div>
-                )) || (
-                    <div data-supertokens="secondaryText secondaryLinkWithLeftArrow" onClick={onSignOutClicked}>
-                        <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
-                        {t("PWLESS_MFA_LOGOUT")}
-                    </div>
+                ) : (
+                    claim.loading === false &&
+                    (claim.value?.n.length ?? 0) > 1 && (
+                        <div
+                            data-supertokens="secondaryText secondaryLinkWithLeftArrow"
+                            onClick={() => onFactorChooserButtonClicked}>
+                            {t("PWLESS_MFA_FOOTER_CHOOSER_ANOTHER")}
+                        </div>
+                    )
                 )}
-            </Fragment>
+                <div data-supertokens="secondaryText secondaryLinkWithLeftArrow" onClick={onSignOutClicked}>
+                    <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
+                    {t("PWLESS_MFA_LOGOUT")}
+                </div>
+            </div>
         );
     }
 );

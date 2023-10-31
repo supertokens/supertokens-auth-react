@@ -76,6 +76,8 @@ export const defaultTranslationsPasswordless = {
         PWLESS_MFA_HEADER_TITLE_EMAIL: "Email based OTP",
         PWLESS_MFA_FOOTER_CHOOSER_ANOTHER: "Choose another factor",
         PWLESS_MFA_FOOTER_LOGOUT: "Logout",
+
+        PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP: "You are not allowed to set up OTP.",
         /*
          * The following are error messages from our backend SDK.
          * These are returned as full messages to preserver compatibilty, but they work just like the keys above.

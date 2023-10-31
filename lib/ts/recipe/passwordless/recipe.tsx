@@ -41,9 +41,21 @@ import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRec
 import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
 
-/*
- * Class.
- */
+export const otpPhoneFactor = {
+    id: "otp-phone",
+    name: "SMS based OTP",
+    description: "Get an OTP code on your phone to complete the authentication request",
+    path: new NormalisedURLPath("/mfa/otp-phone"),
+    logo: OTPIcon,
+};
+export const otpEmailFactor = {
+    id: "otp-email",
+    name: "Email based OTP",
+    description: "Get an OTP code on your email address to complete the authentication request",
+    path: new NormalisedURLPath("/mfa/otp-email"),
+    logo: OTPIcon,
+};
+
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -60,6 +72,16 @@ export default class Passwordless extends AuthRecipe<
         public readonly webJSRecipe: WebJSRecipeInterface<typeof PasswordlessWebJS> = PasswordlessWebJS
     ) {
         super(config);
+
+        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
+            const mfa = MultiFactorAuth.getInstance();
+            if (mfa !== undefined) {
+                mfa.addMFAFactors(
+                    ["otp-phone", "otp-email", "link-phone", "link-email"],
+                    [otpPhoneFactor, otpEmailFactor]
+                );
+            }
+        });
     }
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
@@ -70,31 +92,6 @@ export default class Passwordless extends AuthRecipe<
         config: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normalisePasswordlessConfig(config);
-
-        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
-            const mfa = MultiFactorAuth.getInstance();
-            if (mfa !== undefined) {
-                mfa.addMFAFactors(
-                    ["otp-phone", "otp-email", "link-phone", "link-email"],
-                    [
-                        {
-                            id: "otp-phone",
-                            name: "SMS based OTP",
-                            description: "Get an OTP code on your phone to complete the authentication request",
-                            path: new NormalisedURLPath("/check-auth/otp-phone"),
-                            logo: OTPIcon,
-                        },
-                        {
-                            id: "otp-email",
-                            name: "Email based OTP",
-                            description: "Get an OTP code on your email address to complete the authentication request",
-                            path: new NormalisedURLPath("/check-auth/otp-email"),
-                            logo: OTPIcon,
-                        },
-                    ]
-                );
-            }
-        });
 
         return {
             recipeID: Passwordless.RECIPE_ID,

@@ -19,8 +19,10 @@ import React from "react";
 
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { hasFontDefined } from "../../../../../styles/styles";
+import { useTranslation } from "../../../../../translation/translationContext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
+import { AccessDeniedScreen } from "../../../../session/prebuiltui";
 import { CloseTabScreen } from "../signInUp/closeTabScreen";
 import { EmailForm } from "../signInUp/emailForm";
 import { PhoneForm } from "../signInUp/phoneForm";
@@ -39,6 +41,7 @@ export enum MFAScreens {
     EmailForm,
     PhoneForm,
     UserInputCodeForm,
+    AccessDenied,
 }
 
 /*
@@ -50,6 +53,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
     onBackButtonClicked,
     ...props
 }) => {
+    const t = useTranslation();
     const commonProps = {
         recipeImplementation: props.recipeImplementation,
         config: props.config,
@@ -60,73 +64,73 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
 
     return activeScreen === MFAScreens.CloseTab ? (
         <CloseTabScreen {...commonProps} />
+    ) : activeScreen === MFAScreens.AccessDenied ? (
+        <AccessDeniedScreen useShadowDom={props.config.useShadowDom} error={t(featureState.error!)} />
     ) : (
         <div data-supertokens="container">
             <div data-supertokens="row">
-                {featureState.loaded &&
-                    /* TODO: this doesn't feel great */ (featureState.isSetupAllowed === true ||
-                        featureState.loginAttemptInfo !== undefined) && (
-                        <React.Fragment>
-                            {activeScreen === MFAScreens.UserInputCodeForm ? (
-                                <MFAOTPHeader
-                                    {...commonProps}
-                                    loginAttemptInfo={featureState.loginAttemptInfo!}
-                                    isSetupAllowed={featureState.isSetupAllowed}
-                                    onBackButtonClicked={() =>
-                                        props.recipeImplementation.clearLoginAttemptInfo({
-                                            userContext: props.userContext,
-                                        })
-                                    }
-                                />
-                            ) : (
-                                <MFAHeader
-                                    onBackButtonClicked={onBackButtonClicked}
-                                    contactMethod={activeScreen === MFAScreens.EmailForm ? "EMAIL" : "PHONE"}
-                                />
-                            )}
-                            {featureState.error !== undefined && <GeneralError error={featureState.error} />}
-                            {activeScreen === MFAScreens.EmailForm ? (
-                                <EmailForm
-                                    {...commonProps}
-                                    footer={
-                                        <MFAFooter
-                                            {...commonProps}
-                                            onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
-                                            onSignOutClicked={props.onSignOutClicked}
-                                            isSetupAllowed={featureState.isSetupAllowed}
-                                        />
-                                    }
-                                />
-                            ) : activeScreen === MFAScreens.PhoneForm ? (
-                                <PhoneForm
-                                    {...commonProps}
-                                    footer={
-                                        <MFAFooter
-                                            {...commonProps}
-                                            onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
-                                            onSignOutClicked={props.onSignOutClicked}
-                                            isSetupAllowed={featureState.isSetupAllowed}
-                                        />
-                                    }
-                                />
-                            ) : activeScreen === MFAScreens.UserInputCodeForm ? (
-                                <UserInputCodeForm
-                                    {...commonProps}
-                                    loginAttemptInfo={featureState.loginAttemptInfo!}
-                                    onSuccess={props.onSuccess}
-                                    footer={
-                                        <MFAOTPFooter
-                                            {...commonProps}
-                                            onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
-                                            onSignOutClicked={props.onSignOutClicked}
-                                            isSetupAllowed={featureState.isSetupAllowed}
-                                            loginAttemptInfo={featureState.loginAttemptInfo!}
-                                        />
-                                    }
-                                />
-                            ) : null}
-                        </React.Fragment>
-                    )}
+                {featureState.loaded && (
+                    <React.Fragment>
+                        {activeScreen === MFAScreens.UserInputCodeForm ? (
+                            <MFAOTPHeader
+                                {...commonProps}
+                                loginAttemptInfo={featureState.loginAttemptInfo!}
+                                isSetupAllowed={featureState.isSetupAllowed}
+                                onBackButtonClicked={() =>
+                                    props.recipeImplementation.clearLoginAttemptInfo({
+                                        userContext: props.userContext,
+                                    })
+                                }
+                            />
+                        ) : (
+                            <MFAHeader
+                                onBackButtonClicked={onBackButtonClicked}
+                                contactMethod={activeScreen === MFAScreens.EmailForm ? "EMAIL" : "PHONE"}
+                            />
+                        )}
+                        {featureState.error !== undefined && <GeneralError error={featureState.error} />}
+                        {activeScreen === MFAScreens.EmailForm ? (
+                            <EmailForm
+                                {...commonProps}
+                                footer={
+                                    <MFAFooter
+                                        {...commonProps}
+                                        onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
+                                        onSignOutClicked={props.onSignOutClicked}
+                                        isSetupAllowed={featureState.isSetupAllowed}
+                                    />
+                                }
+                            />
+                        ) : activeScreen === MFAScreens.PhoneForm ? (
+                            <PhoneForm
+                                {...commonProps}
+                                footer={
+                                    <MFAFooter
+                                        {...commonProps}
+                                        onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
+                                        onSignOutClicked={props.onSignOutClicked}
+                                        isSetupAllowed={featureState.isSetupAllowed}
+                                    />
+                                }
+                            />
+                        ) : activeScreen === MFAScreens.UserInputCodeForm ? (
+                            <UserInputCodeForm
+                                {...commonProps}
+                                loginAttemptInfo={featureState.loginAttemptInfo!}
+                                onSuccess={props.onSuccess}
+                                footer={
+                                    <MFAOTPFooter
+                                        {...commonProps}
+                                        onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
+                                        onSignOutClicked={props.onSignOutClicked}
+                                        isSetupAllowed={featureState.isSetupAllowed}
+                                        loginAttemptInfo={featureState.loginAttemptInfo!}
+                                    />
+                                }
+                            />
+                        ) : null}
+                    </React.Fragment>
+                )}
             </div>
             <SuperTokensBranding />
         </div>
@@ -147,6 +151,9 @@ function MFAThemeWrapper(props: MFAProps): JSX.Element {
         activeStyle = props.config.signInUpFeature.emailOrPhoneFormStyle;
     } else if (activeScreen === MFAScreens.PhoneForm) {
         activeStyle = props.config.signInUpFeature.emailOrPhoneFormStyle;
+    } else {
+        // TODO: test
+        activeStyle = ""; // styling the access denied screen is handled through the session recipe
     }
 
     return (
@@ -163,7 +170,13 @@ export default MFAThemeWrapper;
 export function getActiveScreen(props: Pick<MFAProps, "featureState" | "contactMethod">) {
     if (props.featureState.successInAnotherTab) {
         return MFAScreens.CloseTab;
-    } else if (props.featureState.loginAttemptInfo) {
+    } else if (
+        props.featureState.error === "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP" ||
+        (props.featureState.isSetupAllowed === false && props.featureState.loginAttemptInfo === undefined)
+        // The first condition should always be true if the second one is true, this is here as a "fallback"
+    ) {
+        return MFAScreens.AccessDenied;
+    } else if (props.featureState.isSetupAllowed !== true && props.featureState.loginAttemptInfo) {
         return MFAScreens.UserInputCodeForm;
     } else if (props.contactMethod === "EMAIL") {
         return MFAScreens.EmailForm;
