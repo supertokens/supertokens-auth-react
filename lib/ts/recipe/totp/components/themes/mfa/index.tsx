@@ -19,8 +19,10 @@ import React from "react";
 
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { hasFontDefined } from "../../../../../styles/styles";
+import { useTranslation } from "../../../../../translation/translationContext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
+import { AccessDeniedScreen } from "../../../../session/prebuiltui";
 import { ThemeBase } from "../themeBase";
 
 import { BlockedScreen } from "./blockedScreen";
@@ -39,6 +41,7 @@ export enum TOTPMFAScreens {
     CodeVerification,
     Loading,
     Blocked,
+    AccessDenied,
 }
 
 /*
@@ -49,6 +52,7 @@ const SignInUpTheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> =
     featureState,
     ...props
 }) => {
+    const t = useTranslation();
     const commonProps = {
         featureState,
         recipeImplementation: props.recipeImplementation,
@@ -59,6 +63,8 @@ const SignInUpTheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> =
 
     return activeScreen === TOTPMFAScreens.Blocked ? (
         <BlockedScreen nextRetryAt={featureState.nextRetryAt!} onRetry={props.onRetryClicked} />
+    ) : activeScreen === TOTPMFAScreens.AccessDenied ? (
+        <AccessDeniedScreen error={t(featureState.error!)} useShadowDom={props.config.useShadowDom} />
     ) : activeScreen === TOTPMFAScreens.Loading ? (
         <LoadingScreen />
     ) : (
@@ -142,6 +148,8 @@ export function getActiveScreen(props: Pick<TOTPMFAProps, "featureState" | "conf
         return TOTPMFAScreens.Blocked;
     } else if (props.featureState.loaded === false) {
         return TOTPMFAScreens.Loading;
+    } else if (props.featureState.error === "TOTP_MFA_NOT_ALLOWED_TO_SETUP") {
+        return TOTPMFAScreens.AccessDenied;
     } else if (props.featureState.deviceInfo) {
         return TOTPMFAScreens.DeviceSetup;
     } else {

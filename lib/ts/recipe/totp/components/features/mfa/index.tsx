@@ -130,10 +130,10 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
     );
 
     const handleLoadError = React.useCallback(
-        // Test this, it may show an empty screen in many cases
-        () => dispatch({ type: "setError", error: "Getting mfaInfo failed!" }),
+        // TODO: Test this, it may show an empty screen in many cases
+        () => dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" }),
         [dispatch]
-    ); // TODO: translation/proper error handling)
+    );
     const onLoad = React.useCallback(
         async (mfaInfo: { factors: MFAFactorInfo; email?: string; phoneNumber?: string }) => {
             let error: string | undefined = undefined;
@@ -152,13 +152,21 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
             const isAllowedToSetup = mfaInfo.factors.isAllowedToSetup.includes("totp");
             const isAlreadySetup = mfaInfo.factors.isAlreadySetup.includes("totp");
             if (!isAllowedToSetup && !isAlreadySetup) {
-                // TODO: redirect to access denied
-                dispatch({ type: "setError", error: "Setup and completion not allowed" });
+                dispatch({
+                    type: "load",
+                    deviceInfo: undefined,
+                    showBackButton: true,
+                    error: "TOTP_MFA_NOT_ALLOWED_TO_SETUP",
+                });
                 return;
             }
             if (doSetup && !isAllowedToSetup) {
-                // TODO: redirect to access denied
-                dispatch({ type: "setError", error: "Setup not allowed" });
+                dispatch({
+                    type: "load",
+                    deviceInfo: undefined,
+                    showBackButton: true,
+                    error: "TOTP_MFA_NOT_ALLOWED_TO_SETUP",
+                });
                 return;
             }
             let deviceInfo: TOTPDeviceInfo | undefined;
@@ -317,9 +325,6 @@ function getModifiedRecipeImplementation(
                 userContext: { ...input.userContext, additionalDeviceInfo },
             });
             if (res.status === "OK") {
-                // const deviceInfo = (await originalImpl.getDeviceInfo<AdditionalDeviceInfoProperties>({
-                //     userContext: input.userContext,
-                // }))!;
                 const deviceInfo = {
                     ...res,
                 };

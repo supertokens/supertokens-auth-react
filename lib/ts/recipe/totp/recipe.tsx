@@ -41,6 +41,14 @@ import type {
 import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
 import type { NormalisedAppInfo } from "../../types";
 
+export const totpFactor = {
+    id: "totp",
+    name: "TOTP",
+    description: "Use an authenticator app to complete the authentication request",
+    path: new NormalisedURLPath("/mfa/totp"), // TODO: re-check this with separate domains
+    logo: OTPIcon,
+};
+
 export default class TOTP extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -61,18 +69,7 @@ export default class TOTP extends RecipeModule<
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
             const mfa = MultiFactorAuth.getInstance();
             if (mfa !== undefined) {
-                mfa.addMFAFactors(
-                    [],
-                    [
-                        {
-                            id: "totp",
-                            name: "TOTP",
-                            description: "Use an authenticator app to complete the authentication request",
-                            path: new NormalisedURLPath("/auth/mfa/totp"),
-                            logo: OTPIcon,
-                        },
-                    ]
-                );
+                mfa.addMFAFactors([], [totpFactor]);
             }
             const session = Session.getInstance();
             if (session !== undefined) {

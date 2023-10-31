@@ -1,4 +1,6 @@
+/// <reference types="react" />
 import TOTPWebJS from "supertokens-web-js/recipe/totp";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import RecipeModule from "../recipeModule";
 import type {
     UserInput,
@@ -8,6 +10,13 @@ import type {
     PreAndPostAPIHookAction,
 } from "./types";
 import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
+export declare const totpFactor: {
+    id: string;
+    name: string;
+    description: string;
+    path: NormalisedURLPath;
+    logo: () => JSX.Element;
+};
 export default class TOTP extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
