@@ -177,20 +177,58 @@ const formFieldsWithDefault = [
         getDefaultValue: () => "India",
     },
     {
-        id: "ratings",
-        label: "Ratings",
-        getDefaultValue: () => "best",
+        id: "select-dropdown",
+        label: "Select Option",
+        getDefaultValue: () => "option 2",
         inputComponent: ({ value, name, onChange }) => (
-            <select value={value} name={name} onChange={(e) => onChange(e.target.value)} placeholder="Add Ratings">
+            <select value={value} name={name} onChange={(e) => onChange(e.target.value)}>
                 <option value="" disabled hidden>
                     Select an option
                 </option>
-                <option value="good">Good</option>
-                <option value="better">Better</option>
-                <option value="best">Best</option>
+                <option value="option 1">Option 1</option>
+                <option value="option 2">Option 2</option>
+                <option value="option 3">Option 3</option>
             </select>
         ),
         optional: true,
+    },
+    {
+        id: "terms",
+        label: "",
+        optional: false,
+        getDefaultValue: () => "true",
+        inputComponent: ({ name, onChange, value }) => (
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "left",
+                }}>
+                <input
+                    value={value}
+                    checked={value === "true"}
+                    name={name}
+                    type="checkbox"
+                    onChange={(e) => onChange(e.target.checked.toString())}></input>
+                <span style={{ marginLeft: 5 }}>I agree to the terms and conditions</span>
+            </div>
+        ),
+        validate: async (value) => {
+            if (value === "true") {
+                return undefined;
+            }
+            return "Please check Terms and conditions";
+        },
+    },
+    {
+        id: "email",
+        label: "Email",
+        getDefaultValue: () => "test@one.com",
+    },
+    {
+        id: "password",
+        label: "Password",
+        getDefaultValue: () => "fakepassword123",
     },
 ];
 
@@ -203,22 +241,23 @@ const incorrectFormFields = [
         getDefaultValue: () => 23, // return should be a string
     },
     {
-        id: "ratings",
-        label: "Ratings",
-        getDefaultValue: "best", // should be function
+        id: "select-dropdown",
+        label: "Select Dropdown",
+        getDefaultValue: "option 2", // should be function
         inputComponent: ({ value, name, onChange }) => (
-            <select value={value} name={name} onChange={(e) => onChange(e.target.value)} placeholder="Add Ratings">
+            <select value={value} name={name} onChange={(e) => onChange(e.target.value)}>
                 <option value="" disabled hidden>
                     Select an option
                 </option>
-                <option value="good">Good</option>
-                <option value="better">Better</option>
-                <option value="best">Best</option>
+                <option value="option 1">Option 1</option>
+                <option value="option 2">Option 2</option>
+                <option value="option 3">Option 3</option>
             </select>
         ),
         optional: true,
     },
     {
+        // onChange accepts only string value, here we pass boolean
         id: "terms",
         label: "",
         optional: false,
@@ -244,16 +283,16 @@ const incorrectFormFields = [
 
 const customFields = [
     {
-        id: "ratings",
-        label: "Ratings",
+        id: "select-dropdown",
+        label: "Select Dropdown",
         inputComponent: ({ value, name, onChange }) => (
-            <select value={value} name={name} onChange={(e) => onChange(e.target.value)} placeholder="Add Ratings">
+            <select value={value} name={name} onChange={(e) => onChange(e.target.value)}>
                 <option value="" disabled hidden>
                     Select an option
                 </option>
-                <option value="good">Good</option>
-                <option value="better">Better</option>
-                <option value="best">Best</option>
+                <option value="option 1">Option 1</option>
+                <option value="option 2">Option 2</option>
+                <option value="option 3">Option 3</option>
             </select>
         ),
         optional: true,
@@ -668,6 +707,11 @@ function getEmailVerificationConfigs({ disableDefaultUI }) {
 
 function getFormFields() {
     if (localStorage.getItem("SHOW_INCORRECT_FIELDS") === "YES") {
+        if (localStorage.getItem("INCORRECT_ONCHANGE") === "YES") {
+            // since page-error blocks all the other errors
+            // use this filter to test specific error
+            return incorrectFormFields.filter(({ id }) => id === "terms");
+        }
         return incorrectFormFields;
     } else if (localStorage.getItem("SHOW_CUSTOM_FIELDS_WITH_DEFAULT_VALUES") === "YES") {
         return formFieldsWithDefault;

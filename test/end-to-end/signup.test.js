@@ -403,20 +403,39 @@ describe("SuperTokens SignUp", function () {
             assert.deepStrictEqual(formFieldErrors, ["Please check Terms and conditions"]);
         });
 
-        it("Check if custom values are part of the signup payload", async function () {
+        it.only("Check if custom values are part of the signup payload", async function () {
             const customFields = {
-                terms: true, // checked
-                ratings: "best",
+                terms: "true",
+                "select-dropdown": "option 3",
             };
-            const requestHandler = (request) => {
-                if (request.url().includes(SIGN_UP_API) && request.method() === "POST") {
-                    Object.keys(customFields).every((key) => {
-                        assert.strictEqual(data[key], customFields[key]);
-                    });
-                }
-                return request.continue();
-            };
+            let assertionError = null;
+            let interceptionPassed = false;
             await page.setRequestInterception(true);
+            const requestHandler = async (request) => {
+                console.log("REQUEST", request.method());
+                if (request.url().includes(SIGN_UP_API) && request.method() === "POST") {
+                    try {
+                        console.log("TEdkjfhskjdfhsST", interceptionPassed);
+                        const postData = JSON.parse(request.postData());
+                        Object.keys(customFields).forEach((key) => {
+                            let findFormData = postData.formFields.find((inputData) => inputData.id === key);
+                            if (findFormData) {
+                                assert.strictEqual(
+                                    findFormData["value"],
+                                    customFields[key],
+                                    `Mismatch in payload for key: ${key}`
+                                );
+                            } else {
+                                throw new Error("Field not found in req.data");
+                            }
+                        });
+                        interceptionPassed = true;
+                    } catch (error) {
+                        console.log("VALUER ADDED FOR ASSERTION");
+                        assertionError = error; // Store the error
+                    }
+                }
+            };
             page.on("request", requestHandler);
 
             // Fill and submit the form with custom fields
@@ -426,16 +445,28 @@ describe("SuperTokens SignUp", function () {
                     { name: "password", value: "Str0ngP@assw0rd" },
                 ]);
 
-                await setSelectDropdownValue(page, 'select[name="ratings"]', customFields["ratings"]);
+                await setSelectDropdownValue(page, "select", customFields["select-dropdown"]);
 
                 // Check terms and condition checkbox
                 let termsCheckbox = await waitForSTElement(page, '[name="terms"]');
                 await page.evaluate((e) => e.click(), termsCheckbox);
 
+                // Perform the button click and wait for all network activity to finish
                 await submitForm(page);
+                await new Promise((r) => setTimeout(r, 5000));
+                // await page.waitForNavigation({ waitUntil: "networkidle0" });
+                // await page.waitForResponse();
             } finally {
                 page.off("request", requestHandler);
                 await page.setRequestInterception(false);
+            }
+
+            if (assertionError) {
+                throw assertionError;
+            }
+
+            if (!interceptionPassed) {
+                throw new Error("test failed");
             }
         });
     });
@@ -455,7 +486,8 @@ describe("SuperTokens SignUp", function () {
         it("Check if default values are set already", async function () {
             const fieldsWithDefault = {
                 country: "India",
-                ratings: "best",
+                "select-dropdown": "option 2",
+                terms: true,
             };
 
             // regular input field default value
@@ -464,19 +496,28 @@ describe("SuperTokens SignUp", function () {
             assert.strictEqual(defaultCountry, fieldsWithDefault["country"]);
 
             // custom dropdown default value is also getting set correctly
-            const ratingsDropdown = await waitForSTElement(page, "select");
-            const defaultRating = await ratingsDropdown.evaluate((f) => f.value);
-            assert.strictEqual(defaultRating, fieldsWithDefault["ratings"]);
+            const selectDropdown = await waitForSTElement(page, "select");
+            const defaultOption = await selectDropdown.evaluate((f) => f.value);
+            assert.strictEqual(defaultOption, fieldsWithDefault["select-dropdown"]);
+
+            // custom dropdown default value is also getting set correctly
+            const termsCheckbox = await waitForSTElement(page, '[name="terms"]');
+            // checkbox is checked
+            const defaultChecked = await termsCheckbox.evaluate((f) => f.checked);
+            assert.strictEqual(defaultChecked, fieldsWithDefault["terms"]);
+            // also the value = string
+            const defaultValue = await termsCheckbox.evaluate((f) => f.value);
+            assert.strictEqual(defaultValue, fieldsWithDefault["terms"].toString());
         });
 
         it("Check if changing the field value actually overwrites the default value", async function () {
             const updatedFields = {
                 country: "USA",
-                ratings: "good",
+                "select-dropdown": "option 3",
             };
 
             await setInputValues(page, [{ name: "country", value: updatedFields["country"] }]);
-            await setSelectDropdownValue(page, 'select[name="ratings"]', updatedFields["ratings"]);
+            await setSelectDropdownValue(page, 'select[name="select-dropdown"]', updatedFields["select-dropdown"]);
 
             // input field default value
             const countryInput = await getInputField(page, "country");
@@ -484,9 +525,106 @@ describe("SuperTokens SignUp", function () {
             assert.strictEqual(updatedCountry, updatedFields["country"]);
 
             // dropdown default value is also getting set correctly
-            const ratingsDropdown = await waitForSTElement(page, "select");
-            const updatedRating = await ratingsDropdown.evaluate((f) => f.value);
-            assert.strictEqual(updatedRating, updatedFields["ratings"]);
+            const selectDropdown = await waitForSTElement(page, "select");
+            const updatedOption = await selectDropdown.evaluate((f) => f.value);
+            assert.strictEqual(updatedOption, updatedFields["select-dropdown"]);
+        });
+
+        it("Check if default values are getting sent in signup-payload", async function () {
+            // directly submit the form and test the payload
+            const expectedDefautlValues = [
+                { id: "email", value: "test@one.com" },
+                { id: "password", value: "test@one.com" },
+                { id: "terms", value: "true" },
+                { id: "select-dropdown", value: "option 2" },
+                { id: "country", value: "India" },
+            ];
+
+            let assertionError = null;
+            const requestHandler = async (request) => {
+                if (request.url().includes(SIGN_UP_API) && request.method() === "POST") {
+                    try {
+                        const postData = JSON.parse(request.postData());
+                        Object.keys(customFields).forEach((key) => {
+                            let findFormData = postData.formFields.find((inputData) => inputData.id === key);
+                            if (findFormData) {
+                                assert.strictEqual(
+                                    findFormData["value"],
+                                    customFields[key],
+                                    `Mismatch in payload for key: ${key}`
+                                );
+                            } else {
+                                assert.fail("Field not found in req.data");
+                            }
+                        });
+                    } catch (error) {
+                        console.log("VALUER ADDED FOR ASSERTION");
+                        assertionError = error; // Store the error
+                    }
+                }
+                return request.continue();
+            };
+            await page.setRequestInterception(true);
+            page.on("request", requestHandler);
+
+            await submitForm(page);
+            await new Promise((resolve) => setTimeout(resolve, 3000));
+
+            if (assertionError) {
+                throw assertionError;
+            }
+        });
+    });
+
+    describe("Incorrect field config test", function () {
+        beforeEach(async function () {
+            // set cookie and reload which loads the form fields with default values
+            await page.evaluate(() => window.localStorage.setItem("SHOW_INCORRECT_FIELDS", "YES"));
+
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+        });
+
+        it("Check if incorrect getDefaultValue throws error", async function () {
+            let pageErrorMessage = "";
+            page.on("pageerror", (err) => {
+                pageErrorMessage = err.message;
+            });
+
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+            await toggleSignInSignUp(page);
+
+            const expectedErrorMessage = "getDefaultValue for country must return a string";
+            assert(
+                pageErrorMessage.includes(expectedErrorMessage),
+                `Expected "${expectedErrorMessage}" to be included in page-error`
+            );
+        });
+
+        it("Check if non-string params to onChange throws error", async function () {
+            await page.evaluate(() => window.localStorage.setItem("INCORRECT_ONCHANGE", "YES"));
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+            await toggleSignInSignUp(page);
+
+            let pageErrorMessage = "";
+            page.on("pageerror", (err) => {
+                pageErrorMessage = err.message;
+            });
+
+            // check terms and condition checkbox since it emits non-string value => boolean
+            let termsCheckbox = await waitForSTElement(page, '[name="terms"]');
+            await page.evaluate((e) => e.click(), termsCheckbox);
+
+            const expectedErrorMessage = "terms value must be a string";
+            assert(
+                pageErrorMessage.includes(expectedErrorMessage),
+                `Expected "${expectedErrorMessage}" to be included in page-error`
+            );
         });
 
         // TODO

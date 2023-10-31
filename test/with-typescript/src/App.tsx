@@ -377,6 +377,7 @@ function getEmailPasswordConfigs() {
                         id: "terms",
                         label: "",
                         optional: false,
+                        getDefaultValue: () => "true",
                         inputComponent: (inputProps) => (
                             <div
                                 style={{
@@ -387,6 +388,8 @@ function getEmailPasswordConfigs() {
                                 <input
                                     name={inputProps.name}
                                     type="checkbox"
+                                    value={inputProps.value}
+                                    checked={inputProps.value === "true"}
                                     onChange={(e) => {
                                         if (inputProps.onChange) {
                                             inputProps.onChange(e.target.checked.toString());
@@ -424,8 +427,7 @@ function getEmailPasswordConfigs() {
                                     if (inputProps.onChange) {
                                         inputProps.onChange(e.target.value);
                                     }
-                                }}
-                                placeholder="Select option">
+                                }}>
                                 <option value="" disabled hidden>
                                     Select an option
                                 </option>
