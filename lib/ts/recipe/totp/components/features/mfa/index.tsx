@@ -355,26 +355,15 @@ function getModifiedRecipeImplementation(
                     nextRetryAt: Date.now() + res.retryAfterMs,
                 });
             } else if (res.status === "UNKNOWN_DEVICE_ERROR") {
-                await originalImpl.clearDeviceInfo({ userContext: input.userContext });
                 dispatch({ type: "restartFlow", error: "ERROR_TOTP_MFA_VERIFY_DEVICE_UNKNOWN_DEVICE" });
             }
 
             return res;
         },
 
-        clearDeviceInfo: async (input) => {
-            await originalImpl.clearDeviceInfo({
-                userContext: input.userContext,
-            });
-            dispatch({ type: "restartFlow", error: undefined });
-        },
-
         removeDevice: async (input) => {
             const res = await originalImpl.removeDevice(input);
 
-            await originalImpl.clearDeviceInfo({
-                userContext: input.userContext,
-            });
             dispatch({ type: "restartFlow", error: undefined });
             return res;
         },

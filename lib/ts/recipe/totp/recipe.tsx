@@ -68,7 +68,7 @@ export default class TOTP extends RecipeModule<
                             id: "totp",
                             name: "TOTP",
                             description: "Use an authenticator app to complete the authentication request",
-                            path: "/auth/mfa/totp", // TODO: websitebasepath
+                            path: new NormalisedURLPath("/auth/mfa/totp"),
                             logo: OTPIcon,
                         },
                     ]

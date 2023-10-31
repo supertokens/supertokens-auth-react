@@ -47,6 +47,7 @@ const AccessDeniedScreen: FC<AccessDeniedThemeProps> = (props) => {
                     <ErrorRoundIcon />
                     <div data-supertokens="headerTitle">{t("ACCESS_DENIED")}</div>
                     <div data-supertokens="divider"></div>
+                    {props.error && <div data-supertokens="primaryText accessDeniedError"> {props.error}</div>}
                     <div data-supertokens="buttonsGroup">
                         <LogoutButton onClick={onLogout} />
                         <BackButton onClick={onBackButtonClicked} />

@@ -26,12 +26,14 @@ import type { UserInput as WebJSInputType, RecipeEvent } from "supertokens-web-j
 export type RecipeEventWithSessionContext = RecipeEvent & { sessionContext: SessionContextUpdate };
 
 export type InputType = WebJSInputType & {
+    useShadowDom?: boolean;
     style?: string;
     accessDeniedScreen?: SessionFeatureBaseConfig;
     onHandleEvent?: (event: RecipeEventWithSessionContext) => void;
 };
 
 export type NormalisedSessionConfig = NormalisedConfig<unknown, any, any> & {
+    useShadowDom: boolean;
     accessDeniedScreen: NormalisedBaseConfig;
     override: {
         functions: (
@@ -64,6 +66,7 @@ export type SessionContextType =
 export type AccessDeniedThemeProps = {
     recipe: Session;
     history: any;
+    error?: string;
     config: NormalisedSessionConfig;
 };
 

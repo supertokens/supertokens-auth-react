@@ -20,18 +20,22 @@ export default class Wrapper {
               secret: string;
               userIdentifier?: string | undefined;
               qrCodeString: string;
+              fetchResponse: Response;
           }
         | {
               status: "DEVICE_ALREADY_EXISTS_ERROR";
+              fetchResponse: Response;
           }
     >;
     static verifyCode(input: { totp: string; options?: RecipeFunctionOptions; userContext?: any }): Promise<
         | {
               status: "OK" | "INVALID_TOTP_ERROR";
+              fetchResponse: Response;
           }
         | {
               status: "LIMIT_REACHED_ERROR";
               retryAfterMs: number;
+              fetchResponse: Response;
           }
     >;
     static verifyDevice(input: {
@@ -43,18 +47,22 @@ export default class Wrapper {
         | {
               status: "OK";
               wasAlreadyVerified: boolean;
+              fetchResponse: Response;
           }
         | {
               status: "INVALID_TOTP_ERROR" | "UNKNOWN_DEVICE_ERROR";
+              fetchResponse: Response;
           }
         | {
               status: "LIMIT_REACHED_ERROR";
               retryAfterMs: number;
+              fetchResponse: Response;
           }
     >;
     static removeDevice(input: { deviceName: string; options?: RecipeFunctionOptions; userContext?: any }): Promise<{
         status: "OK";
         didDeviceExist: boolean;
+        fetchResponse: Response;
     }>;
     static listDevices(input: { options?: RecipeFunctionOptions; userContext?: any }): Promise<{
         status: "OK";
@@ -64,6 +72,7 @@ export default class Wrapper {
             skew: number;
             verified: boolean;
         }[];
+        fetchResponse: Response;
     }>;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{

@@ -19,6 +19,8 @@ export default class Wrapper {
         factors: MFAFactorInfo;
         fetchResponse: Response;
     }>;
+    static redirectToFactor(factorId: string, redirectBack?: boolean, history?: any): Promise<void>;
+    static redirectToFactorChooser(redirectBack?: boolean, history?: any): Promise<void>;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
@@ -27,6 +29,8 @@ export default class Wrapper {
 }
 declare const init: typeof Wrapper.init;
 declare const getMFAInfo: typeof Wrapper.getMFAInfo;
+declare const redirectToFactor: typeof Wrapper.redirectToFactor;
+declare const redirectToFactorChooser: typeof Wrapper.redirectToFactorChooser;
 declare const MultiFactorAuthComponentsOverrideProvider: import("react").FC<
     import("react").PropsWithChildren<{
         components: import("./types").ComponentOverrideMap;
@@ -36,6 +40,8 @@ declare const MultiFactorAuthClaim: import("./multiFactorAuthClaim").MultiFactor
 export {
     init,
     getMFAInfo,
+    redirectToFactor,
+    redirectToFactorChooser,
     MultiFactorAuthComponentsOverrideProvider,
     GetRedirectionURLContext,
     PreAPIHookContext as PreAPIHookContext,
