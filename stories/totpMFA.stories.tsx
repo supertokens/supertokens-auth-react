@@ -1,0 +1,254 @@
+import type { Meta, StoryObj } from "@storybook/react";
+import { action, actions } from "@storybook/addon-actions";
+
+import Page from "../lib/ts/recipe/totp/components/themes/mfa";
+import React from "react";
+import { defaultTranslationsTOTP } from "../lib/ts/recipe/totp/components/themes/translations";
+import { TranslationContextProvider } from "../lib/ts/translation/translationContext";
+import { ComponentOverrideContext } from "../lib/ts/components/componentOverride/componentOverrideContext";
+import { userEvent, within, waitFor } from "@storybook/testing-library";
+import { resetAndInitST, withFetchResponse } from "./utils";
+
+function noop() {}
+
+const defaultState = {
+    isBlocked: false,
+    error: undefined,
+    loaded: true,
+    showBackButton: true,
+    showSecret: false,
+    deviceInfo: undefined,
+    nextRetryAt: undefined,
+};
+
+const exampleDeviceInfo = {
+    qrCodeString: "otpauth://totp/SuperTokens:alice@supertokens.com?secret=JBSWY3DPEHPK3PXP&issuer=SuperTokens",
+    secret: "JBSWY3DPEHPK3PXP",
+    deviceName: "unnamed-1",
+    issuerName: "supertokens",
+    userIdentifier: "alice",
+};
+
+const meta: Meta<typeof Page> = {
+    title: "TOTP/MFA",
+    decorators: [
+        (Story) => (
+            <ComponentOverrideContext.Provider value={{}}>
+                <TranslationContextProvider
+                    translationControlEventSource={{ on: noop, off: noop }}
+                    defaultLanguage="en"
+                    defaultStore={defaultTranslationsTOTP}>
+                    {" "}
+                    <Story />{" "}
+                </TranslationContextProvider>{" "}
+            </ComponentOverrideContext.Provider>
+        ),
+    ],
+    component: Page,
+    render: (args, { loaded: { featureState } }) => {
+        resetAndInitST();
+
+        return <Page {...args} featureState={{ ...args.featureState, ...featureState }} />;
+    },
+    args: {
+        featureState: defaultState,
+        config: {
+            rootStyle: "",
+            totpMFAScreen: {
+                disableDefaultUI: false,
+                blockedScreenStyle: "",
+                loadingScreenStyle: "",
+                setupScreenStyle: "",
+                verificationScreenStyle: "",
+            },
+            useShadowDom: false,
+        } as any, // We are not using any other config values
+        recipeImplementation: {
+            createDevice: async () => {
+                action("called verifyCode");
+                return withFetchResponse({ status: "OK", ...exampleDeviceInfo });
+            },
+            listDevices: async () => {
+                action("called verifyCode");
+                return withFetchResponse({ status: "OK", devices: [] });
+            },
+            removeDevice: async () => {
+                action("called verifyCode");
+                return withFetchResponse({ status: "OK", didDeviceExist: true });
+            },
+            verifyCode: async () => {
+                action("called verifyCode");
+                return withFetchResponse({ status: "OK" });
+            },
+            verifyDevice: async () => {
+                action("called verifyDevice");
+                return withFetchResponse({ status: "OK", wasAlreadyVerified: false });
+            },
+        }, // the impl only uses those two functions
+        dispatch: (event) => {
+            action("dispatching " + JSON.stringify(event));
+        },
+        onSuccess: () => {
+            action("called onSuccess");
+        },
+        onBackButtonClicked: () => {
+            action("called onBackButtonClicked");
+        },
+        onRetryClicked: () => {
+            action("called onRetryClicked");
+        },
+        onShowSecretClick: () => {
+            action("called onShowSecretClick");
+        },
+        onSignOutClicked: () => {
+            action("called onSignOutClicked");
+        },
+    },
+};
+
+export default meta;
+type Story = StoryObj<typeof Page>;
+
+export const DeviceSetup: Story = {
+    args: {
+        featureState: {
+            ...defaultState,
+            loaded: true,
+            deviceInfo: exampleDeviceInfo,
+        },
+    },
+};
+
+export const DeviceSetupAccessDenied: Story = {
+    args: {
+        featureState: {
+            ...defaultState,
+            loaded: true,
+            error: "TOTP_MFA_NOT_ALLOWED_TO_SETUP",
+            deviceInfo: undefined,
+        },
+    },
+};
+
+export const DeviceSetupWithSecret: Story = {
+    args: {
+        featureState: {
+            ...defaultState,
+            loaded: true,
+            deviceInfo: exampleDeviceInfo,
+            showSecret: true,
+        },
+    },
+};
+
+export const DeviceSetupEmptySubmit: Story = {
+    args: {
+        featureState: {
+            ...defaultState,
+            error: "GENERAL_ERROR_OTP_UNDEFINED",
+            loaded: true,
+            deviceInfo: exampleDeviceInfo,
+        },
+    },
+};
+
+export const DeviceSetupInvalidTOTP: Story = {
+    args: {
+        featureState: {
+            ...defaultState,
+            loaded: true,
+            deviceInfo: exampleDeviceInfo,
+        },
+        recipeImplementation: {
+            ...meta.args?.recipeImplementation!,
+            verifyDevice: async () => withFetchResponse({ status: "INVALID_TOTP_ERROR" }),
+        },
+    },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+
+        await waitFor(() => userEvent.type(canvasElement.querySelector("[data-supertokens~=input]")!, "123456"));
+
+        const submitButton = canvas.getByText("Continue");
+
+        await userEvent.click(submitButton, { delay: 100 });
+    },
+};
+
+export const Verification: Story = {
+    args: {
+        featureState: {
+            ...defaultState,
+            loaded: true,
+            deviceInfo: undefined,
+        },
+    },
+};
+
+export const VerificationEmptySubmit: Story = {
+    args: {
+        featureState: {
+            ...defaultState,
+            error: "GENERAL_ERROR_OTP_UNDEFINED",
+            loaded: true,
+            deviceInfo: undefined,
+        },
+    },
+};
+
+export const VerificationGeneralError: Story = {
+    args: {
+        featureState: {
+            ...defaultState,
+            error: "SOMETHING_WENT_WRONG_ERROR",
+            loaded: true,
+            deviceInfo: undefined,
+        },
+    },
+};
+
+export const VerificationInvalidTOTP: Story = {
+    args: {
+        featureState: {
+            ...defaultState,
+            loaded: true,
+            deviceInfo: undefined,
+        },
+        recipeImplementation: {
+            ...meta.args?.recipeImplementation!,
+            verifyCode: async () => withFetchResponse({ status: "INVALID_TOTP_ERROR" }),
+        },
+    },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+
+        await waitFor(() => userEvent.type(canvasElement.querySelector("[data-supertokens~=input]")!, "123456"));
+
+        const submitButton = canvas.getByText("Continue");
+
+        await userEvent.click(submitButton, { delay: 100 });
+    },
+};
+
+export const Blocked: Story = {
+    loaders: [
+        async () => ({
+            featureState: {
+                ...defaultState,
+                loaded: true,
+                deviceInfo: undefined,
+                isBlocked: true,
+                nextRetryAt: Date.now() + 300000,
+            },
+        }),
+    ],
+};
+
+export const Loading: Story = {
+    args: {
+        featureState: {
+            ...defaultState,
+            loaded: false,
+        },
+    },
+};

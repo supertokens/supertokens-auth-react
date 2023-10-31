@@ -8,7 +8,7 @@ import { getCurrentNormalisedUrlPath } from "../utils";
 
 import type { PreBuiltRecipes, ReactRouterDomWithCustomHistory } from "./types";
 
-export default class UI {
+class UI {
     private static reactRouterDom: ReactRouterDomWithCustomHistory;
     private static reactRouterDomIsV6?: boolean;
 
@@ -104,4 +104,5 @@ const getSuperTokensRoutesForReactRouterDom = UI.getSuperTokensRoutesForReactRou
 const canHandleRoute = UI.canHandleRoute;
 const getRoutingComponent = UI.getRoutingComponent;
 
+export default UI;
 export { getSuperTokensRoutesForReactRouterDom, canHandleRoute, getRoutingComponent };
