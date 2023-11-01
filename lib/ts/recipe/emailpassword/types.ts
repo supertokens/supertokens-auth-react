@@ -136,7 +136,6 @@ export type SignUpFormFeatureUserInput = FeatureBaseConfig & {
      */
     formFields?: (FormField & {
         inputComponent?: (props: InputProps) => JSX.Element;
-        getDefaultValue?: () => string;
     })[];
 
     /*
@@ -156,7 +155,6 @@ export type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
      */
     formFields: (NormalisedFormField & {
         inputComponent?: (props: InputProps) => JSX.Element;
-        getDefaultValue?: () => string;
     })[];
 
     /*
@@ -289,11 +287,6 @@ export type FormFieldThemeProps = NormalisedFormField & {
      * Ability to add custom components
      */
     inputComponent?: (props: InputProps) => JSX.Element;
-
-    /*
-     * Ability to add custom components
-     */
-    getDefaultValue?: () => string;
 };
 
 export type FormFieldError = {

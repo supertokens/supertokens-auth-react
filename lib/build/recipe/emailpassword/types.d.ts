@@ -79,7 +79,6 @@ export declare type NormalisedSignInAndUpFeatureConfig = {
 export declare type SignUpFormFeatureUserInput = FeatureBaseConfig & {
     formFields?: (FormField & {
         inputComponent?: (props: InputProps) => JSX.Element;
-        getDefaultValue?: () => string;
     })[];
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
@@ -87,7 +86,6 @@ export declare type SignUpFormFeatureUserInput = FeatureBaseConfig & {
 export declare type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
     formFields: (NormalisedFormField & {
         inputComponent?: (props: InputProps) => JSX.Element;
-        getDefaultValue?: () => string;
     })[];
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
@@ -153,7 +151,6 @@ export declare type FormFieldThemeProps = NormalisedFormField & {
     showIsRequired?: boolean;
     clearOnSubmit?: boolean;
     inputComponent?: (props: InputProps) => JSX.Element;
-    getDefaultValue?: () => string;
 };
 export declare type FormFieldError = {
     id: string;
