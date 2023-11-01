@@ -651,27 +651,6 @@ describe("SuperTokens SignUp", function () {
                 `Expected "${expectedErrorMessage}" to be included in page-error`
             );
         });
-
-        // TODO
-        // it("Check if default values are getting sent in signup-payload", async function () {
-        //     const updatedFields = {
-        //         country: "USA",
-        //         ratings: "good",
-        //     };
-
-        //     await setInputValues(page, [{ name: "country", value: updatedFields["country"] }]);
-        //     await setSelectDropdownValue(page, 'select[name="ratings"]', updatedFields["ratings"]);
-
-        //     // input field default value
-        //     const countryInput = await getInputField(page, "country");
-        //     const updatedCountry = await countryInput.evaluate((f) => f.value);
-        //     assert.strictEqual(updatedCountry, updatedFields["country"]);
-
-        //     // dropdown default value is also getting set correctly
-        //     const ratingsDropdown = await waitForSTElement(page, "select");
-        //     const updatedRating = await ratingsDropdown.evaluate((f) => f.value);
-        //     assert.strictEqual(updatedRating, updatedFields["ratings"]);
-        // });
     });
 });
 
