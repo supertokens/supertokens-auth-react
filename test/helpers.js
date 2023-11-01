@@ -418,17 +418,16 @@ export async function setInputValues(page, fields) {
 }
 
 export async function setSelectDropdownValue(page, selector, optionValue) {
+    const shadowRootHandle = await getShadowRootHandle(page);
     return await page.evaluate(
-        (selector, optionValue, ST_ROOT_SELECTOR) => {
-            const dropdownElement = document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector(selector);
-            if (dropdownElement) {
-                dropdownElement.value = optionValue;
-                dropdownElement.dispatchEvent(new Event("change", { bubbles: false }));
-            }
+        (root, selector, optionValue) => {
+            const select = root.querySelector(selector);
+            select.value = optionValue;
+            select.dispatchEvent(new Event("change", { bubbles: true }));
         },
+        shadowRootHandle,
         selector,
-        optionValue,
-        ST_ROOT_SELECTOR
+        optionValue
     );
 }
 
@@ -1020,4 +1019,9 @@ export async function backendBeforeEach() {
             method: "POST",
         }).catch(console.error);
     }
+}
+
+export async function getShadowRootHandle(page) {
+    const hostElement = await page.$(ST_ROOT_SELECTOR);
+    return await page.evaluateHandle((el) => el.shadowRoot, hostElement);
 }

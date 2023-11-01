@@ -403,19 +403,17 @@ describe("SuperTokens SignUp", function () {
             assert.deepStrictEqual(formFieldErrors, ["Please check Terms and conditions"]);
         });
 
-        it.only("Check if custom values are part of the signup payload", async function () {
+        it("Check if custom values are part of the signup payload", async function () {
             const customFields = {
                 terms: "true",
                 "select-dropdown": "option 3",
             };
             let assertionError = null;
             let interceptionPassed = false;
-            await page.setRequestInterception(true);
+
             const requestHandler = async (request) => {
-                console.log("REQUEST", request.method());
                 if (request.url().includes(SIGN_UP_API) && request.method() === "POST") {
                     try {
-                        console.log("TEdkjfhskjdfhsST", interceptionPassed);
                         const postData = JSON.parse(request.postData());
                         Object.keys(customFields).forEach((key) => {
                             let findFormData = postData.formFields.find((inputData) => inputData.id === key);
@@ -430,16 +428,28 @@ describe("SuperTokens SignUp", function () {
                             }
                         });
                         interceptionPassed = true;
+                        return request.respond({
+                            status: 200,
+                            headers: {
+                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                "access-control-allow-credentials": "true",
+                            },
+                            body: JSON.stringify({
+                                status: "OK",
+                            }),
+                        });
                     } catch (error) {
-                        console.log("VALUER ADDED FOR ASSERTION");
                         assertionError = error; // Store the error
                     }
                 }
+                return request.continue();
             };
+
+            await page.setRequestInterception(true);
             page.on("request", requestHandler);
 
-            // Fill and submit the form with custom fields
             try {
+                // Fill and submit the form with custom fields
                 await setInputValues(page, [
                     { name: "email", value: "john.doe@supertokens.io" },
                     { name: "password", value: "Str0ngP@assw0rd" },
@@ -452,10 +462,7 @@ describe("SuperTokens SignUp", function () {
                 await page.evaluate((e) => e.click(), termsCheckbox);
 
                 // Perform the button click and wait for all network activity to finish
-                await submitForm(page);
-                await new Promise((r) => setTimeout(r, 5000));
-                // await page.waitForNavigation({ waitUntil: "networkidle0" });
-                // await page.waitForResponse();
+                await Promise.all([page.waitForNetworkIdle(), submitForm(page)]);
             } finally {
                 page.off("request", requestHandler);
                 await page.setRequestInterception(false);
@@ -517,7 +524,7 @@ describe("SuperTokens SignUp", function () {
             };
 
             await setInputValues(page, [{ name: "country", value: updatedFields["country"] }]);
-            await setSelectDropdownValue(page, 'select[name="select-dropdown"]', updatedFields["select-dropdown"]);
+            await setSelectDropdownValue(page, "select", updatedFields["select-dropdown"]);
 
             // input field default value
             const countryInput = await getInputField(page, "country");
@@ -534,44 +541,62 @@ describe("SuperTokens SignUp", function () {
             // directly submit the form and test the payload
             const expectedDefautlValues = [
                 { id: "email", value: "test@one.com" },
-                { id: "password", value: "test@one.com" },
+                { id: "password", value: "fakepassword123" },
                 { id: "terms", value: "true" },
                 { id: "select-dropdown", value: "option 2" },
                 { id: "country", value: "India" },
             ];
 
             let assertionError = null;
+            let interceptionPassed = false;
+
             const requestHandler = async (request) => {
                 if (request.url().includes(SIGN_UP_API) && request.method() === "POST") {
                     try {
                         const postData = JSON.parse(request.postData());
-                        Object.keys(customFields).forEach((key) => {
-                            let findFormData = postData.formFields.find((inputData) => inputData.id === key);
+                        expectedDefautlValues.forEach(({ id, value }) => {
+                            let findFormData = postData.formFields.find((inputData) => inputData.id === id);
                             if (findFormData) {
-                                assert.strictEqual(
-                                    findFormData["value"],
-                                    customFields[key],
-                                    `Mismatch in payload for key: ${key}`
-                                );
+                                assert.strictEqual(findFormData["value"], value, `Mismatch in payload for key: ${id}`);
                             } else {
-                                assert.fail("Field not found in req.data");
+                                throw new Error("Field not found in req.data");
                             }
                         });
+                        interceptionPassed = true;
+                        return request.respond({
+                            status: 200,
+                            headers: {
+                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                "access-control-allow-credentials": "true",
+                            },
+                            body: JSON.stringify({
+                                status: "OK",
+                            }),
+                        });
                     } catch (error) {
-                        console.log("VALUER ADDED FOR ASSERTION");
                         assertionError = error; // Store the error
                     }
                 }
                 return request.continue();
             };
+
             await page.setRequestInterception(true);
             page.on("request", requestHandler);
 
-            await submitForm(page);
-            await new Promise((resolve) => setTimeout(resolve, 3000));
+            try {
+                // Perform the button click and wait for all network activity to finish
+                await Promise.all([page.waitForNetworkIdle(), submitForm(page)]);
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            }
 
             if (assertionError) {
                 throw assertionError;
+            }
+
+            if (!interceptionPassed) {
+                throw new Error("test failed");
             }
         });
     });
@@ -658,7 +683,7 @@ describe("SuperTokens SignUp => Server Error", function () {
     before(async function () {
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
+            headless: false,
         });
     });
 
