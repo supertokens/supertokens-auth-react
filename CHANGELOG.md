@@ -31,9 +31,9 @@ EmailPassword.init({
                             onChange={(e) => onChange(e.target.value)}
                             placeholder="Select Option"
                         >
-                            <option value="" disabled hidden> Select an option </option>
-                            <option value="option 1"> Option 1</option>
-                            <option value="option 2"> Option 2</option>
+                            <option value="" disabled hidden>Select an option</option>
+                            <option value="option 1">Option 1</option>
+                            <option value="option 2">Option 2</option>
                             <option value="option 3">Option 3</option>
                         </select>
                     )
