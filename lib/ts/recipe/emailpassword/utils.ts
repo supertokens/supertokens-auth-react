@@ -343,6 +343,9 @@ export function getFormattedFormField(field: NormalisedFormField): NormalisedFor
         validate: async (value: any): Promise<string | undefined> => {
             // Absent or not optional empty field
             if (value === "" && field.optional === false) {
+                if (field.nonOptionalErrorMsg !== undefined && field.nonOptionalErrorMsg !== "") {
+                    return field.nonOptionalErrorMsg;
+                }
                 return "ERROR_NON_OPTIONAL";
             }
 

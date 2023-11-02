@@ -301,6 +301,7 @@ const customFields = [
         id: "terms",
         label: "",
         optional: false,
+        nonOptionalErrorMsg: "Terms and conditions is required",
         inputComponent: ({ name, onChange }) => (
             <div
                 style={{
