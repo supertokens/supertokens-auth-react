@@ -285,6 +285,7 @@ const customFields = [
     {
         id: "select-dropdown",
         label: "Select Dropdown",
+        nonOptionalErrorMsg: "Select dropdown is not an optional",
         inputComponent: ({ value, name, onChange }) => (
             <select value={value} name={name} onChange={(e) => onChange(e.target.value)}>
                 <option value="" disabled hidden>
@@ -301,7 +302,7 @@ const customFields = [
         id: "terms",
         label: "",
         optional: false,
-        nonOptionalErrorMsg: "Terms and conditions is required",
+        nonOptionalErrorMsg: "You must accept the terms and conditions",
         inputComponent: ({ name, onChange }) => (
             <div
                 style={{
