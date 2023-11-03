@@ -725,6 +725,7 @@ function getFormFields() {
 
 function getSignInFormFields() {
     let showDefaultFields = localStorage.getItem("SHOW_SIGNIN_DEFAULT_FIELDS");
+    let showFieldsWithNonOptionalErrMsg = localStorage.getItem("SHOW_SIGNIN_WITH_NON_OPTIONAL_ERROR_MESSAGE");
     if (showDefaultFields === "YES") {
         return {
             formFields: [
@@ -735,6 +736,15 @@ function getSignInFormFields() {
                 {
                     id: "password",
                     getDefaultValue: () => "fakepassword123",
+                },
+            ],
+        };
+    } else if (showFieldsWithNonOptionalErrMsg === "YES") {
+        return {
+            formFields: [
+                {
+                    id: "email",
+                    nonOptionalErrorMsg: "Please add email",
                 },
             ],
         };
