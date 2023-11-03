@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Introduced the capability to utilize custom components in the Email-Password based recipes' signup form fields by exposing inputComponent types.
 -   Implemented the functionality to assign default values to the form fields in the Email-Password based recipes.
--   Enhanced the onChange function to operate independently without requiring an id field.
+-   Simplified onChange prop usage in inputComponent - id attribute removed.
 
 Following is an example of how to use above features.
 
@@ -29,20 +29,20 @@ EmailPassword.init({
                             value={value}
                             name={name}
                             onChange={(e) => onChange(e.target.value)}
-                            placeholder="Select Option"
-                        >
-                            <option value="" disabled hidden>Select an option</option>
+                            placeholder="Select Option">
+                            <option value="" disabled hidden>
+                                Select an option
+                            </option>
                             <option value="option 1">Option 1</option>
                             <option value="option 2">Option 2</option>
                             <option value="option 3">Option 3</option>
                         </select>
-                    )
-                }
-            ]
-        }
-    }
+                    ),
+                },
+            ],
+        },
+    },
 });
-...
 ```
 
 ## [0.35.6] - 2023-10-16
