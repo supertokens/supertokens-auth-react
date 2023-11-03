@@ -374,11 +374,11 @@ describe("SuperTokens SignUp", function () {
             let formFieldErrors = await getFieldErrors(page);
 
             // 2 regular form field errors +
-            // 1 required custom field => terms checkbox
+            // 1 required custom field => terms checkbox with nonOptionalErrorMsg
             assert.deepStrictEqual(formFieldErrors, [
                 "Field is not optional",
                 "Field is not optional",
-                "Field is not optional",
+                "You must accept the terms and conditions",
             ]);
 
             // supply values for regular-required fields only
@@ -389,7 +389,7 @@ describe("SuperTokens SignUp", function () {
 
             await submitForm(page);
             formFieldErrors = await getFieldErrors(page);
-            assert.deepStrictEqual(formFieldErrors, ["Field is not optional"]);
+            assert.deepStrictEqual(formFieldErrors, ["You must accept the terms and conditions"]);
 
             // check terms and condition checkbox
             let termsCheckbox = await waitForSTElement(page, '[name="terms"]');
@@ -474,6 +474,75 @@ describe("SuperTokens SignUp", function () {
 
             if (!interceptionPassed) {
                 throw new Error("test failed");
+            }
+        });
+
+        it("Check on blank form submit nonOptionalErrorMsg gets displayed as expected", async function () {
+            await submitForm(page);
+            let formFieldErrors = await getFieldErrors(page);
+            // Also standard non-optional-error is displayed if nonOptionalErrorMsg is not provided
+            assert.deepStrictEqual(formFieldErrors, [
+                "Field is not optional",
+                "Field is not optional",
+                "You must accept the terms and conditions",
+            ]);
+        });
+
+        it("Check if nonOptionalErrorMsg overwrites server error message for non-optional fields", async function () {
+            const requestHandler = (request) => {
+                if (request.method() === "POST" && request.url() === SIGN_UP_API) {
+                    request.respond({
+                        status: 200,
+                        contentType: "application/json",
+                        headers: {
+                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                            "access-control-allow-credentials": "true",
+                        },
+                        body: JSON.stringify({
+                            status: "FIELD_ERROR",
+                            formFields: [
+                                {
+                                    id: "select-dropdown",
+                                    error: "Field is not optional",
+                                },
+                                {
+                                    id: "email",
+                                    error: "Field is not optional",
+                                },
+                            ],
+                        }),
+                    });
+                } else {
+                    request.continue();
+                }
+            };
+
+            try {
+                await page.setRequestInterception(true);
+                page.on("request", requestHandler);
+
+                // Fill and submit the form with custom fields
+                await setInputValues(page, [
+                    { name: "email", value: "john.doe@supertokens.io" },
+                    { name: "password", value: "Str0ngP@assw0rd" },
+                ]);
+                // Check terms and condition checkbox
+                let termsCheckbox = await waitForSTElement(page, '[name="terms"]');
+                await page.evaluate((e) => e.click(), termsCheckbox);
+
+                // Perform the button click and wait for all network activity to finish
+                await Promise.all([page.waitForNetworkIdle(), submitForm(page)]);
+
+                await waitForSTElement(page, "[data-supertokens~='inputErrorMessage']");
+                // should also show the server error message if nonOptionalErrorMsg is not provided
+                let formFieldsErrors = await getFieldErrors(page);
+                assert.deepStrictEqual(formFieldsErrors, [
+                    "Field is not optional",
+                    "Select dropdown is not an optional",
+                ]);
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
             }
         });
     });
@@ -653,80 +722,86 @@ describe("SuperTokens SignUp", function () {
         });
     });
 
-    describe("Check if nonOptionalErrorMsg works as expected", function () {
-        beforeEach(async function () {
-            // set cookie and reload which loads the form with custom field
-            await page.evaluate(() => window.localStorage.setItem("SHOW_CUSTOM_FIELDS", "YES"));
+    // describe("Check if nonOptionalErrorMsg works as expected", function () {
+    //     beforeEach(async function () {
+    //         // set cookie and reload which loads the form with custom field
+    //         await page.evaluate(() => window.localStorage.setItem("SHOW_CUSTOM_FIELDS", "YES"));
 
-            await page.reload({
-                waitUntil: "domcontentloaded",
-            });
-            await toggleSignInSignUp(page);
-        });
+    //         await page.reload({
+    //             waitUntil: "domcontentloaded",
+    //         });
+    //         await toggleSignInSignUp(page);
+    //     });
 
-        it("Check on blank form submit nonOptionalErrorMsg gets displayed as expected", async function () {
-            await submitForm(page);
-            let formFieldErrors = await getFieldErrors(page);
-            // Also standard non-optional-error is displayed if nonOptionalErrorMsg is not provided
-            assert.deepStrictEqual(formFieldErrors, [
-                "Field is not optional",
-                "Field is not optional",
-                "You must accept the terms and conditions",
-            ]);
-        });
+    //     it("Check on blank form submit nonOptionalErrorMsg gets displayed as expected", async function () {
+    //         await submitForm(page);
+    //         let formFieldErrors = await getFieldErrors(page);
+    //         // Also standard non-optional-error is displayed if nonOptionalErrorMsg is not provided
+    //         assert.deepStrictEqual(formFieldErrors, [
+    //             "Field is not optional",
+    //             "Field is not optional",
+    //             "You must accept the terms and conditions",
+    //         ]);
+    //     });
 
-        it("Check if nonOptionalErrorMsg overwrites server error message for non-optional fields", async function () {
-            const requestHandler = (request) => {
-                if (request.method() === "POST" && request.url() === SIGN_UP_API) {
-                    request.respond({
-                        status: 200,
-                        contentType: "application/json",
-                        headers: {
-                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
-                            "access-control-allow-credentials": "true",
-                        },
-                        body: JSON.stringify({
-                            status: "FIELD_ERROR",
-                            formFields: [
-                                {
-                                    id: "select-dropdown",
-                                    error: "Field is not optional",
-                                },
-                                {
-                                    id: "email",
-                                    error: "Field is not optional",
-                                },
-                            ],
-                        }),
-                    });
-                    page.off("request", requestHandler);
-                    page.setRequestInterception(false);
-                } else {
-                    request.continue();
-                }
-            };
+    //     it("Check if nonOptionalErrorMsg overwrites server error message for non-optional fields", async function () {
+    //         const requestHandler = (request) => {
+    //             if (request.method() === "POST" && request.url() === SIGN_UP_API) {
+    //                 request.respond({
+    //                     status: 200,
+    //                     contentType: "application/json",
+    //                     headers: {
+    //                         "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+    //                         "access-control-allow-credentials": "true",
+    //                     },
+    //                     body: JSON.stringify({
+    //                         status: "FIELD_ERROR",
+    //                         formFields: [
+    //                             {
+    //                                 id: "select-dropdown",
+    //                                 error: "Field is not optional",
+    //                             },
+    //                             {
+    //                                 id: "email",
+    //                                 error: "Field is not optional",
+    //                             },
+    //                         ],
+    //                     }),
+    //                 });
+    //             } else {
+    //                 request.continue();
+    //             }
+    //         };
 
-            await page.setRequestInterception(true);
-            page.on("request", requestHandler);
+    //         try {
+    //             await page.setRequestInterception(true);
+    //             page.on("request", requestHandler);
 
-            // Fill and submit the form with custom fields
-            await setInputValues(page, [
-                { name: "email", value: "john.doe@supertokens.io" },
-                { name: "password", value: "Str0ngP@assw0rd" },
-            ]);
-            // Check terms and condition checkbox
-            let termsCheckbox = await waitForSTElement(page, '[name="terms"]');
-            await page.evaluate((e) => e.click(), termsCheckbox);
+    //             // Fill and submit the form with custom fields
+    //             await setInputValues(page, [
+    //                 { name: "email", value: "john.doe@supertokens.io" },
+    //                 { name: "password", value: "Str0ngP@assw0rd" },
+    //             ]);
+    //             // Check terms and condition checkbox
+    //             let termsCheckbox = await waitForSTElement(page, '[name="terms"]');
+    //             await page.evaluate((e) => e.click(), termsCheckbox);
 
-            // Perform the button click and wait for all network activity to finish
-            await Promise.all([page.waitForNetworkIdle(), submitForm(page)]);
+    //             // Perform the button click and wait for all network activity to finish
+    //             await Promise.all([page.waitForNetworkIdle(), submitForm(page)]);
 
-            await waitForSTElement(page, "[data-supertokens~='inputErrorMessage']");
-            // should also show the server error message if nonOptionalErrorMsg is not provided
-            let formFieldsErrors = await getFieldErrors(page);
-            assert.deepStrictEqual(formFieldsErrors, ["Field is not optional", "Select dropdown is not an optional"]);
-        });
-    });
+    //             await waitForSTElement(page, "[data-supertokens~='inputErrorMessage']");
+    //             // should also show the server error message if nonOptionalErrorMsg is not provided
+    //             let formFieldsErrors = await getFieldErrors(page);
+    //             assert.deepStrictEqual(formFieldsErrors, [
+    //                 "Field is not optional",
+    //                 "Select dropdown is not an optional",
+    //             ]);
+    //         } finally {
+    //             page.off("request", requestHandler);
+    //             await page.setRequestInterception(false);
+    //         }
+    //     });
+    // });
 });
 
 describe("SuperTokens SignUp => Server Error", function () {
