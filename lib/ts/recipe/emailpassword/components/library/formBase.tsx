@@ -251,10 +251,21 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                     // If field error.
                     if (result.status === "FIELD_ERROR") {
                         const errorFields = result.formFields;
-
-                        setFieldStates((os) =>
-                            os.map((fs) => ({ ...fs, error: errorFields.find((ef: any) => ef.id === fs.id)?.error }))
-                        );
+                        const getErrorMessage = (fs: FieldState) => {
+                            const errorMessage = errorFields.find((ef: any) => ef.id === fs.id)?.error;
+                            if (errorMessage === "Field is not optional") {
+                                const fieldConfigData = props.formFields.find((f) => f.id === fs.id);
+                                // set non-optional error message from nonOptionalErrorMsg
+                                if (
+                                    fieldConfigData?.nonOptionalErrorMsg !== undefined &&
+                                    fieldConfigData?.nonOptionalErrorMsg !== ""
+                                ) {
+                                    return fieldConfigData?.nonOptionalErrorMsg;
+                                }
+                            }
+                            return errorMessage;
+                        };
+                        setFieldStates((os) => os.map((fs) => ({ ...fs, error: getErrorMessage(fs) })));
                     }
                 }
             } catch (e) {
