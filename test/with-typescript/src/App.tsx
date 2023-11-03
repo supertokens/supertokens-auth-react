@@ -373,6 +373,71 @@ function getEmailPasswordConfigs() {
                         placeholder: "Where do you live?",
                         optional: true,
                     },
+                    {
+                        id: "terms",
+                        label: "",
+                        optional: false,
+                        getDefaultValue: () => "true",
+                        inputComponent: (inputProps) => (
+                            <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "left",
+                                }}>
+                                <input
+                                    name={inputProps.name}
+                                    type="checkbox"
+                                    value={inputProps.value}
+                                    checked={inputProps.value === "true"}
+                                    onChange={(e) => {
+                                        if (inputProps.onChange) {
+                                            inputProps.onChange(e.target.checked.toString());
+                                        }
+                                    }}></input>
+                                <span style={{ marginLeft: 5 }}>I agree to the terms and conditions</span>
+                            </div>
+                        ),
+                        validate: async (value) => {
+                            if (value === "true") {
+                                return undefined;
+                            }
+                            return "Please check Terms and conditions";
+                        },
+                    },
+                    {
+                        id: "select",
+                        label: "Select",
+                        getDefaultValue: () => "option 2",
+                        inputComponent: (inputProps) => (
+                            <select
+                                onBlur={(e) => {
+                                    if (inputProps.onInputBlur) {
+                                        inputProps.onInputBlur(e.target.value);
+                                    }
+                                }}
+                                onFocus={(e) => {
+                                    if (inputProps.onInputFocus) {
+                                        inputProps.onInputFocus(e.target.value);
+                                    }
+                                }}
+                                value={inputProps.value}
+                                name={inputProps.name}
+                                onChange={(e) => {
+                                    if (inputProps.onChange) {
+                                        inputProps.onChange(e.target.value);
+                                    }
+                                }}>
+                                <option value="" disabled hidden>
+                                    Select an option
+                                </option>
+                                <option value="option 1">Option 1</option>
+                                <option value="option 2">Option 2</option>
+                                <option value="option 3">Option 3</option>
+                            </select>
+                        ),
+                        optional: true,
+                    },
                 ],
             },
         },

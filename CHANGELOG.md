@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [0.36.0] - 2023-10-30
+
+### Added
+
+-   Introduced the capability to utilize custom components in the Email-Password based recipes' signup form fields by exposing inputComponent types.
+-   Implemented the functionality to assign default values to the form fields in the Email-Password based recipes.
+-   Simplified onChange prop usage in inputComponent - id attribute removed.
+
+Following is an example of how to use above features.
+
+```tsx
+EmailPassword.init({
+    signInAndUpFeature: {
+        signUpForm: {
+            formFields: [
+                {
+                    id: "select-dropdown",
+                    label: "Select Option",
+                    getDefaultValue: () => "option 2",
+                    inputComponent: ({ value, name, onChange }) => (
+                        <select
+                            value={value}
+                            name={name}
+                            onChange={(e) => onChange(e.target.value)}
+                            placeholder="Select Option">
+                            <option value="" disabled hidden>
+                                Select an option
+                            </option>
+                            <option value="option 1">Option 1</option>
+                            <option value="option 2">Option 2</option>
+                            <option value="option 3">Option 3</option>
+                        </select>
+                    ),
+                },
+            ],
+        },
+    },
+});
+```
+
 ## [0.35.6] - 2023-10-16
 
 ### Test changes
