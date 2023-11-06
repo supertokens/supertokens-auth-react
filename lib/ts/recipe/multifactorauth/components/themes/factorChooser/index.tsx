@@ -31,7 +31,7 @@ export function FactorChooserTheme(props: FactorChooserThemeProps): JSX.Element 
     if (props.availableFactors.length === 0) {
         return (
             <AccessDeniedScreen
-                useShadowDom={props.config.useShadowDom}
+                useShadowDom={false}
                 error={props.showBackButton ? t("MFA_NO_AVAILABLE_OPTIONS") : t("MFA_NO_AVAILABLE_OPTIONS_LOGIN")}
             />
         );

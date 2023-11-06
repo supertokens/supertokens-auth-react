@@ -23,18 +23,20 @@ export const FactorOption = withOverride(
     "MultiFactorAuthFactorOption",
     function MultiFactorAuthFactorOption({
         onClick,
+        id,
         name,
         description,
         logo,
     }: {
         onClick: (() => void) | undefined;
+        id: string;
         name: string;
         description: string;
         logo: FC;
     }): JSX.Element {
         const t = useTranslation();
         return (
-            <a data-supertokens="factorChooserOption" onClick={onClick}>
+            <a data-supertokens={`factorChooserOption ${id}`} onClick={onClick}>
                 <div data-supertokens="factorLogo"> {logo({})}</div>
                 <div data-supertokens="factorOptionText">
                     <h6 data-supertokens="factorName">{t(name)}</h6>
