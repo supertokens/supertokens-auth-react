@@ -222,6 +222,11 @@ export type FormFieldBaseConfig = {
      * placeholder of the input field.
      */
     placeholder?: string;
+
+    /*
+     *Ability to provide default value to input field.
+     */
+    getDefaultValue?: () => string;
 };
 
 export type FormField = FormFieldBaseConfig & {
@@ -283,6 +288,11 @@ export type NormalisedFormField = {
      * Moves focus to the input element when it mounts
      */
     autofocus?: boolean;
+
+    /*
+     *Ability to provide default value to input field.
+     */
+    getDefaultValue?: () => string;
 };
 
 export type ReactComponentClass<P = any> = ComponentClass<P, any> | ((props: P) => JSX.Element);
