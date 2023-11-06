@@ -54,7 +54,7 @@ export const MFAOTPFooter = withOverride(
                     (claim.value?.n.length ?? 0) > 1 && (
                         <div
                             data-supertokens="secondaryText secondaryLinkWithLeftArrow"
-                            onClick={() => onFactorChooserButtonClicked}>
+                            onClick={onFactorChooserButtonClicked}>
                             {t("PWLESS_MFA_FOOTER_CHOOSER_ANOTHER")}
                         </div>
                     )
