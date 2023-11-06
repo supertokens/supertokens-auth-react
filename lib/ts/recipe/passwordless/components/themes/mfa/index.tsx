@@ -62,25 +62,25 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
         error: featureState.error,
     };
 
+    if (!featureState.loaded) {
+        return null;
+    }
+
     return activeScreen === MFAScreens.CloseTab ? (
         <CloseTabScreen {...commonProps} />
     ) : activeScreen === MFAScreens.AccessDenied ? (
-        <AccessDeniedScreen useShadowDom={props.config.useShadowDom} error={t(featureState.error!)} />
+        <AccessDeniedScreen useShadowDom={false} error={t(featureState.error!)} />
     ) : (
         <div data-supertokens="container">
             <div data-supertokens="row">
-                {featureState.loaded && (
+                {
                     <React.Fragment>
                         {activeScreen === MFAScreens.UserInputCodeForm ? (
                             <MFAOTPHeader
                                 {...commonProps}
                                 loginAttemptInfo={featureState.loginAttemptInfo!}
                                 isSetupAllowed={featureState.isSetupAllowed}
-                                onBackButtonClicked={() =>
-                                    props.recipeImplementation.clearLoginAttemptInfo({
-                                        userContext: props.userContext,
-                                    })
-                                }
+                                onBackButtonClicked={onBackButtonClicked}
                             />
                         ) : (
                             <MFAHeader
@@ -130,7 +130,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
                             />
                         ) : null}
                     </React.Fragment>
-                )}
+                }
             </div>
             <SuperTokensBranding />
         </div>
@@ -173,10 +173,9 @@ export function getActiveScreen(props: Pick<MFAProps, "featureState" | "contactM
     } else if (
         props.featureState.error === "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP" ||
         (props.featureState.isSetupAllowed === false && props.featureState.loginAttemptInfo === undefined)
-        // The first condition should always be true if the second one is true, this is here as a "fallback"
     ) {
         return MFAScreens.AccessDenied;
-    } else if (props.featureState.isSetupAllowed !== true && props.featureState.loginAttemptInfo) {
+    } else if (props.featureState.loginAttemptInfo) {
         return MFAScreens.UserInputCodeForm;
     } else if (props.contactMethod === "EMAIL") {
         return MFAScreens.EmailForm;

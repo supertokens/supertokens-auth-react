@@ -110,6 +110,7 @@ export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
                 case "setError":
                     return {
                         ...oldState,
+                        loaded: true,
                         error: action.error,
                     };
                 case "startLogin":
@@ -259,12 +260,6 @@ export const MFAFeature: React.FC<
     )!;
     useSuccessInAnotherTabChecker(callingConsumeCodeRef, recipeImplementation, state, dispatch, userContext);
 
-    useEffect(() => {
-        if (state.loaded && state.isSetupAllowed === false && state.loginAttemptInfo === undefined) {
-            void MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser();
-        }
-    }, [state.loaded, state.isSetupAllowed, state.loginAttemptInfo]);
-
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
@@ -314,7 +309,6 @@ function useOnLoad(
         [props.recipe, userContext]
     );
     const handleLoadError = React.useCallback(
-        // TODO: Test this, it may show an empty screen in many cases
         () => dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" }),
         [dispatch]
     );
@@ -350,11 +344,15 @@ function useOnLoad(
             if (!loginAttemptInfo) {
                 if (props.contactMethod === "EMAIL") {
                     if (isAlreadySetup && doSetup !== "true") {
-                        // createCode also dispatches the necessary events
-                        await recipeImplementation!.createCode({
-                            email: mfaInfo.email!, // We can assume this is set here, since the mfaInfo states that otp-email has been set up
-                            userContext,
-                        });
+                        try {
+                            // createCode also dispatches the necessary events
+                            await recipeImplementation!.createCode({
+                                email: mfaInfo.email!, // We can assume this is set here, since the mfaInfo states that otp-email has been set up
+                                userContext,
+                            });
+                        } catch (err) {
+                            dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
+                        }
                     } else if (!mfaInfo.factors.isAllowedToSetup.includes("otp-email")) {
                         dispatch({
                             type: "load",
@@ -367,11 +365,15 @@ function useOnLoad(
                     }
                 } else {
                     if (isAlreadySetup && doSetup !== "true") {
-                        // createCode also dispatches the necessary events
-                        await recipeImplementation!.createCode({
-                            phoneNumber: mfaInfo.phoneNumber!, // We can assume this is set here, since the mfaInfo states that otp-phone has been set up
-                            userContext,
-                        });
+                        try {
+                            // createCode also dispatches the necessary events
+                            await recipeImplementation!.createCode({
+                                phoneNumber: mfaInfo.phoneNumber!, // We can assume this is set here, since the mfaInfo states that otp-phone has been set up
+                                userContext,
+                            });
+                        } catch (err) {
+                            dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
+                        }
                     } else if (!mfaInfo.factors.isAllowedToSetup.includes("otp-phone")) {
                         dispatch({
                             type: "load",
