@@ -48,11 +48,11 @@ import {
     toggleSignInSignUp,
     defaultSignUp,
     screenshotOnFailure,
-    getAuthPageHeaderText,
     getResetPasswordFormBackButton,
     waitForSTElement,
     getResetPasswordSuccessBackToSignInButton,
     backendBeforeEach,
+    getInputField,
 } from "../helpers";
 
 /*
@@ -231,6 +231,21 @@ describe("SuperTokens Reset password", function () {
             // check if redirected to sign in form
             const buttonLabel = await getSubmitFormButtonLabel(page);
             assert.deepStrictEqual(buttonLabel, "SIGN IN");
+        });
+
+        it("Should show default values for email field", async function () {
+            await page.evaluate(() => window.localStorage.setItem("SHOW_DEFAULT_EMAIL_FOR_RESET_PASSWORD", "YES"));
+
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+
+            const expectedDefaultEmail = "company@email.com";
+
+            const emailInput = await getInputField(page, "email");
+            const defaultEmail = await emailInput.evaluate((f) => f.value);
+
+            assert.strictEqual(defaultEmail, expectedDefaultEmail);
         });
     });
 
