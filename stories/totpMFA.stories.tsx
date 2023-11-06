@@ -8,6 +8,7 @@ import { TranslationContextProvider } from "../lib/ts/translation/translationCon
 import { ComponentOverrideContext } from "../lib/ts/components/componentOverride/componentOverrideContext";
 import { userEvent, within, waitFor } from "@storybook/testing-library";
 import { resetAndInitST, withFetchResponse } from "./utils";
+import { SessionContext } from "../lib/ts/recipe/session";
 
 function noop() {}
 
@@ -29,19 +30,28 @@ const exampleDeviceInfo = {
     userIdentifier: "alice",
 };
 
+const defaultSessionContext = {
+    loading: false,
+    doesSessionExist: true,
+    invalidClaims: [],
+    accessTokenPayload: {},
+    userId: "test-user",
+};
+
 const meta: Meta<typeof Page> = {
     title: "TOTP/MFA",
     decorators: [
-        (Story) => (
-            <ComponentOverrideContext.Provider value={{}}>
-                <TranslationContextProvider
-                    translationControlEventSource={{ on: noop, off: noop }}
-                    defaultLanguage="en"
-                    defaultStore={defaultTranslationsTOTP}>
-                    {" "}
-                    <Story />{" "}
-                </TranslationContextProvider>{" "}
-            </ComponentOverrideContext.Provider>
+        (Story, context) => (
+            <SessionContext.Provider value={context.loaded.session ?? defaultSessionContext}>
+                <ComponentOverrideContext.Provider value={{}}>
+                    <TranslationContextProvider
+                        translationControlEventSource={{ on: noop, off: noop }}
+                        defaultLanguage="en"
+                        defaultStore={defaultTranslationsTOTP}>
+                        <Story />
+                    </TranslationContextProvider>
+                </ComponentOverrideContext.Provider>
+            </SessionContext.Provider>
         ),
     ],
     component: Page,

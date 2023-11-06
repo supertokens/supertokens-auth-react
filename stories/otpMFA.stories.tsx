@@ -38,6 +38,7 @@ const defaultSessionContext = {
     accessTokenPayload: {},
     userId: "test-user",
 };
+
 const meta: Meta<typeof Page> = {
     title: "Passwordless/MFA",
     decorators: [
