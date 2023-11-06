@@ -761,6 +761,8 @@ describe("SuperTokens SignIn", function () {
 
     describe("Check if nonOptionalErrorMsg works as expected", function () {
         it("Check on blank form submit nonOptionalErrorMsg gets displayed as expected", async function () {
+            await page.evaluate(() => localStorage.removeItem("SHOW_SIGNIN_DEFAULT_FIELDS"));
+
             // set cookie and reload which loads the form with custom field
             await page.evaluate(() =>
                 window.localStorage.setItem("SHOW_SIGNIN_WITH_NON_OPTIONAL_ERROR_MESSAGE", "YES")
@@ -771,7 +773,6 @@ describe("SuperTokens SignIn", function () {
 
             await submitForm(page);
             let formFieldErrors = await getFieldErrors(page);
-
             // Also standard non-optional-error is displayed if nonOptionalErrorMsg is not provided
             assert.deepStrictEqual(formFieldErrors, ["Please add email", "Field is not optional"]);
         });

@@ -343,6 +343,7 @@ function getEmailPasswordConfigs() {
                     {
                         id: "email",
                         label: "Email",
+                        nonOptionalErrorMsg: "Please add your email",
                         getDefaultValue: () => "abc@xyz.com",
                     },
                 ],

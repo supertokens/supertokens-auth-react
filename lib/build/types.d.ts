@@ -90,11 +90,11 @@ export declare type FormFieldBaseConfig = {
     label: string;
     placeholder?: string;
     getDefaultValue?: () => string;
+    nonOptionalErrorMsg?: string;
 };
 export declare type FormField = FormFieldBaseConfig & {
     validate?: (value: any) => Promise<string | undefined>;
     optional?: boolean;
-    nonOptionalErrorMsg?: string;
 };
 export declare type APIFormField = {
     id: string;
