@@ -266,6 +266,7 @@ export function normaliseResetPasswordUsingTokenFeature(
                 validate: signUpEmailField.validate,
                 placeholder: "",
                 autofocus: true,
+                getDefaultValue: config.enterEmailForm?.getDefaultValue,
             },
         ],
     };

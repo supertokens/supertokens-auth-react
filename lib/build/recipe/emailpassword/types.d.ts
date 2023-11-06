@@ -100,7 +100,9 @@ export declare type FormFieldSignInConfig = FormFieldBaseConfig;
 export declare type ResetPasswordUsingTokenUserInput = {
     disableDefaultUI?: boolean;
     submitNewPasswordForm?: FeatureBaseConfig;
-    enterEmailForm?: FeatureBaseConfig;
+    enterEmailForm?: FeatureBaseConfig & {
+        getDefaultValue?: () => string;
+    };
 };
 export declare type NormalisedResetPasswordUsingTokenFeatureConfig = {
     disableDefaultUI: boolean;
