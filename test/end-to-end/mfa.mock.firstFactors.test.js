@@ -65,7 +65,7 @@ import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_U
 /*
  * Tests.
  */
-describe("SuperTokens SignIn", function () {
+describe("SuperTokens MFA firstFactors support", function () {
     let browser;
     let page;
     let consoleLogs = [];
@@ -183,18 +183,20 @@ describe("SuperTokens SignIn", function () {
                 window.localStorage.setItem("firstFactors", "unknown");
             });
 
-            let hitErrorBoundary = false;
+            let onErrorBoundaryHit;
+            let hitErrorBoundary = new Promise((res) => {
+                onErrorBoundaryHit = res;
+            });
             page.on("console", (ev) => {
                 if (ev.text() === "ST_THROWN_ERROR") {
-                    hitErrorBoundary = true;
+                    onErrorBoundaryHit(true);
                 }
             });
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            await waitFor(500);
-            assert(hitErrorBoundary);
+            assert(await hitErrorBoundary);
         });
     });
 
@@ -281,10 +283,13 @@ describe("SuperTokens SignIn", function () {
                 window.localStorage.setItem("mockLoginMethodsForDynamicLogin", dynLoginMethods);
             }, getDynLoginMethods(["unknown"]));
 
-            let hitErrorBoundary = false;
+            let onErrorBoundaryHit;
+            let hitErrorBoundary = new Promise((res) => {
+                onErrorBoundaryHit = res;
+            });
             page.on("console", (ev) => {
                 if (ev.text() === "ST_THROWN_ERROR") {
-                    hitErrorBoundary = true;
+                    onErrorBoundaryHit(true);
                 }
             });
             await Promise.all([
@@ -292,7 +297,7 @@ describe("SuperTokens SignIn", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await waitFor(500);
-            assert(hitErrorBoundary);
+            assert(await hitErrorBoundary);
         });
     });
 });

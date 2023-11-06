@@ -15,7 +15,10 @@ export function getTestContext() {
         staticProviderList: localStorage.getItem("staticProviderList"),
         mockTenantId: localStorage.getItem("mockTenantId"),
         clientType: localStorage.getItem("clientType") || undefined,
-        firstFactors: localStorage.getItem("firstFactors")?.split(", "),
+        firstFactors:
+            localStorage.getItem("firstFactors") !== null
+                ? localStorage.getItem("firstFactors").split(", ")
+                : undefined,
     };
     return ret;
 }
@@ -33,18 +36,16 @@ export function getEnabledRecipes() {
             "passwordless",
             "thirdpartypasswordless",
         ];
+    } else if (testContext.clientRecipeListForDynamicLogin) {
+        enabledRecipes = JSON.parse(testContext.clientRecipeListForDynamicLogin);
     } else if (testContext.usesDynamicLoginMethods) {
-        if (testContext.clientRecipeListForDynamicLogin) {
-            enabledRecipes = JSON.parse(testContext.clientRecipeListForDynamicLogin);
-        } else {
-            enabledRecipes = [
-                "emailpassword",
-                "thirdparty",
-                "thirdpartyemailpassword",
-                "passwordless",
-                "thirdpartypasswordless",
-            ];
-        }
+        enabledRecipes = [
+            "emailpassword",
+            "thirdparty",
+            "thirdpartyemailpassword",
+            "passwordless",
+            "thirdpartypasswordless",
+        ];
     } else {
         if (testContext.authRecipe === "both") {
             enabledRecipes.push("emailpassword", "thirdparty");

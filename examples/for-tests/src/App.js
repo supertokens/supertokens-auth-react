@@ -172,12 +172,38 @@ const formFields = [
 
 const testContext = getTestContext();
 
-let totpDevices = [];
+let storedTOTPDevices = window.localStorage.getItem("totpDevices");
+let totpDevices = storedTOTPDevices ? JSON.parse(storedTOTPDevices) : [];
+
+function removeTOTPDevice(deviceName) {
+    const origLength = totpDevices.length;
+    totpDevices = totpDevices.filter((d) => d.deviceName !== deviceName);
+    window.localStorage.setItem("totpDevices", JSON.stringify(totpDevices));
+    return totpDevices.length !== origLength;
+}
+
+function addTOTPDevice(deviceName) {
+    totpDevices.push({
+        deviceName,
+        verified: false,
+    });
+    window.localStorage.setItem("totpDevices", JSON.stringify(totpDevices));
+}
+
+function verifyTOTPDevice(deviceName) {
+    totpDevices = totpDevices.filter((d) => d.deviceName !== deviceName);
+    totpDevices.push({
+        deviceName,
+        verified: true,
+    });
+    window.localStorage.setItem("totpDevices", JSON.stringify(totpDevices));
+}
 let tryCount = 0;
 
 setInterval(() => (tryCount = tryCount > 0 ? tryCount - 1 : 0), 30000);
 window.resetTOTP = () => {
     totpDevices = [];
+    window.localStorage.setItem("totpDevices", JSON.stringify(totpDevices));
     tryCount = 0;
 };
 let recipeList = [
@@ -187,16 +213,11 @@ let recipeList = [
                 ...oI,
                 listDevices: async () => ({ devices: totpDevices, status: "OK" }),
                 removeDevice: async ({ deviceName }) => {
-                    const origLength = totpDevices.length;
-                    totpDevices = totpDevices.filter((d) => d.deviceName !== deviceName);
-                    return { status: "OK", didDeviceExist: origLength !== totpDevices.length };
+                    return { status: "OK", didDeviceExist: removeTOTPDevice(deviceName) };
                 },
                 createDevice: async ({ deviceName }) => {
                     deviceName = deviceName ?? `totp-${Date.now()}`;
-                    totpDevices.push({
-                        deviceName,
-                        verified: false,
-                    });
+                    addTOTPDevice(deviceName);
                     return {
                         status: "OK",
                         deviceName: deviceName,
@@ -228,7 +249,7 @@ let recipeList = [
                     }
                     if (deviceName.endsWith(totp)) {
                         const wasAlreadyVerified = dev.verified;
-                        dev.verified = true;
+                        verifyTOTPDevice(deviceName);
                         await fetch("http://localhost:8082/completeFactor", {
                             method: "POST",
                             body: JSON.stringify({ id: "totp" }),
@@ -557,10 +578,13 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
             </div>
             <div className="session-context-userId">session context userID: {sessionContext.userId}</div>
             <pre className="invalidClaims">{JSON.stringify(sessionContext.invalidClaims, undefined, 2)}</pre>
-            <a onClick={() => MultiFactorAuth.redirectToFactorChooser(true, props.history)}>MFA chooser</a>
-            <a onClick={() => MultiFactorAuth.redirectToFactor("totp", true, props.history)}>TOTP</a>
-            <a onClick={() => MultiFactorAuth.redirectToFactor("otp-email", true, props.history)}>OTP-Email</a>
-            <a onClick={() => MultiFactorAuth.redirectToFactor("otp-phone", true, props.history)}>OTP-Phone</a>
+            <a
+                className="goToFactorChooser"
+                onClick={() => {
+                    return MultiFactorAuth.redirectToFactorChooser(true, props.history);
+                }}>
+                MFA chooser
+            </a>
         </div>
     );
 }

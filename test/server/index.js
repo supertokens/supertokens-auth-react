@@ -162,7 +162,7 @@ morgan.token("body", function (req, res) {
 });
 
 morgan.token("res-body", function (req, res) {
-    return typeof res.__custombody__ ? res.__custombody__ : JSON.stringify(res.__custombody__);
+    return typeof res.__custombody__ === "string" ? res.__custombody__ : JSON.stringify(res.__custombody__);
 });
 
 app.use(urlencodedParser);
@@ -262,6 +262,7 @@ app.post("/startst", async (req, res) => {
 app.post("/beforeeach", async (req, res) => {
     deviceStore = new Map();
 
+    mfaInfo = {};
     accountLinkingConfig = {};
     passwordlessConfig = {};
     enabledProviders = undefined;
@@ -384,19 +385,20 @@ app.post(
 );
 
 app.post("/setMFAInfo", async (req, res) => {
-    mfaInfo = { mfaInfo, ...req.body };
+    mfaInfo = req.body;
 
     res.send({ status: "OK" });
 });
 
 app.post("/completeFactor", verifySession(), async (req, res) => {
     let session = req.session;
+    const payload = session.getAccessTokenPayload();
     const mfaClaim = payload["st-mfa"];
     const c = {
         ...mfaClaim.c,
-        [req.payload.id]: Date.now(),
+        [req.body.id]: Date.now(),
     };
-    if (req.payload.id === "totp") {
+    if (req.body.id === "totp") {
         mfaInfo.hasTOTP = true;
     }
 
@@ -407,6 +409,8 @@ app.post("/completeFactor", verifySession(), async (req, res) => {
             n: getNextArray(c),
         },
     });
+
+    res.send({ status: "OK" });
 });
 
 app.post("/mergeIntoAccessTokenPayload", verifySession(), async (req, res) => {
@@ -432,30 +436,30 @@ app.get("/auth/mfa/info", verifySession(), async (req, res) => {
     }
 
     if (mfaInfo.hasTOTP) {
-        isAllowedToSetup.push("totp");
+        isAlreadySetup.push("totp");
     }
 
+    let c;
+
+    const recipeUser = user.loginMethods.find(
+        (u) => u.recipeUserId.toString() === session.getRecipeUserId().toString()
+    );
+    if (recipeUser.recipeId !== "passwordless") {
+        c = { [recipeUser.recipeId]: Date.now() };
+    } else if (recipeUser.email) {
+        // This isn't correct, but will do for testing
+        c = { "otp-email": Date.now() };
+    } else {
+        c = { "otp-phone": Date.now() };
+    }
     const mfaClaim = payload["st-mfa"];
     if (mfaInfo?.claimValue) {
         await session.mergeIntoAccessTokenPayload({
             "st-mfa": mfaInfo.claimValue,
         });
     } else if (mfaInfo?.requirements) {
-        let c;
         if (mfaClaim) {
             c = mfaClaim.c;
-        } else {
-            const recipeUser = user.loginMethods.find(
-                (u) => u.recipeUserId.toString() === session.getRecipeUserId().toString()
-            );
-            if (recipeUser.recipeId !== "passwordless") {
-                c = { [recipeUser.recipeUserId]: Date.now() };
-            } else if (recipeUser.email) {
-                // This isn't correct, but will do for testing
-                c = { "otp-email": Date.now() };
-            } else {
-                c = { "otp-phone": Date.now() };
-            }
         }
 
         let n = getNextArray(c);
@@ -468,8 +472,8 @@ app.get("/auth/mfa/info", verifySession(), async (req, res) => {
     } else if (mfaClaim === undefined) {
         await session.mergeIntoAccessTokenPayload({
             "st-mfa": {
-                c: {}, // Technically the first factor should be in there... but it isn't necessary
-                n: [],
+                c: c,
+                n: !mfaInfo.hasTOTP ? [] : getNextArray(c, [{ oneOf: ["totp", "otp-phone", "otp-email"] }]),
             },
         });
     }
@@ -485,8 +489,8 @@ app.get("/auth/mfa/info", verifySession(), async (req, res) => {
         email: user.emails[0],
         phoneNumber: user.phoneNumbers[0],
         factors: {
-            isAllowedToSetup,
-            isAlreadySetup,
+            isAllowedToSetup: mfaInfo.isAllowedToSetup ?? isAllowedToSetup,
+            isAlreadySetup: mfaInfo.isAlreadySetup ?? isAlreadySetup,
         },
         ...mfaInfo.resp,
     });
@@ -648,9 +652,9 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
     }
 })(process.env.START === "true");
 
-function getNextArray(c) {
+function getNextArray(c, requirements) {
     let n = [];
-    for (const step of mfaInfo.requirements) {
+    for (const step of requirements ?? mfaInfo.requirements ?? []) {
         if (typeof step === "string") {
             if (c[step] === undefined) {
                 n = [step];
@@ -671,6 +675,7 @@ function getNextArray(c) {
             throw new Error("Bad requirement" + JSON.stringify(step));
         }
     }
+
     return n;
 }
 
@@ -1057,11 +1062,20 @@ function initST() {
                                         message: "general error from API consume code",
                                     };
                                 }
+
+                                const deviceInfo = await input.options.recipeImplementation.listCodesByPreAuthSessionId(
+                                    {
+                                        tenantId: input.tenantId,
+                                        preAuthSessionId: input.preAuthSessionId,
+                                        userContext: input.userContext,
+                                    }
+                                );
                                 const resp = await originalImplementation.consumeCodePOST(input);
 
                                 if (resp.status === "OK") {
                                     let session = await Session.getSession(input.options.req, input.options.res, {
                                         overrideGlobalClaimValidators: () => [],
+                                        sessionRequired: false,
                                     });
 
                                     if (session) {
@@ -1070,26 +1084,24 @@ function initST() {
                                             resp.session.getRecipeUserId(),
                                             session.getUserId()
                                         );
+
                                         const mfaClaim = session.getAccessTokenPayload()["st-mfa"];
 
                                         let factorId;
-                                        const loginMethod = resp.user.loginMethods.find(
-                                            (lm) =>
-                                                lm.recipeUserId.getAsString() ===
-                                                resp.session.getRecipeUserId().getAsString()
-                                        );
-                                        if (loginMethod.email !== undefined) {
+                                        if (deviceInfo.email !== undefined) {
                                             factorId = "otp-email";
                                         } else {
                                             factorId = "otp-phone";
                                         }
+
+                                        const c = {
+                                            ...mfaClaim?.c,
+                                            [factorId]: new Date() / 1000,
+                                        };
                                         await session.mergeIntoAccessTokenPayload({
                                             "st-mfa": {
-                                                c: {
-                                                    ...mfaClaim?.c,
-                                                    [factorId]: new Date() / 1000,
-                                                },
-                                                n: [],
+                                                c,
+                                                n: getNextArray(c),
                                             },
                                         });
                                     }
