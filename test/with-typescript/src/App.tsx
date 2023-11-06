@@ -384,6 +384,7 @@ function getEmailPasswordConfigs() {
                         id: "terms",
                         label: "",
                         optional: false,
+                        nonOptionalErrorMsg: "Please check Terms and conditions",
                         getDefaultValue: () => "true",
                         inputComponent: (inputProps) => (
                             <div

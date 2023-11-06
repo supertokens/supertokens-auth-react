@@ -285,6 +285,7 @@ const customFields = [
     {
         id: "select-dropdown",
         label: "Select Dropdown",
+        nonOptionalErrorMsg: "Select dropdown is not an optional",
         inputComponent: ({ value, name, onChange }) => (
             <select value={value} name={name} onChange={(e) => onChange(e.target.value)}>
                 <option value="" disabled hidden>
@@ -301,6 +302,7 @@ const customFields = [
         id: "terms",
         label: "",
         optional: false,
+        nonOptionalErrorMsg: "You must accept the terms and conditions",
         inputComponent: ({ name, onChange }) => (
             <div
                 style={{
@@ -723,6 +725,7 @@ function getFormFields() {
 
 function getSignInFormFields() {
     let showDefaultFields = localStorage.getItem("SHOW_SIGNIN_DEFAULT_FIELDS");
+    let showFieldsWithNonOptionalErrMsg = localStorage.getItem("SHOW_SIGNIN_WITH_NON_OPTIONAL_ERROR_MESSAGE");
     if (showDefaultFields === "YES") {
         return {
             formFields: [
@@ -733,6 +736,15 @@ function getSignInFormFields() {
                 {
                     id: "password",
                     getDefaultValue: () => "fakepassword123",
+                },
+            ],
+        };
+    } else if (showFieldsWithNonOptionalErrMsg === "YES") {
+        return {
+            formFields: [
+                {
+                    id: "email",
+                    nonOptionalErrorMsg: "Please add email",
                 },
             ],
         };
