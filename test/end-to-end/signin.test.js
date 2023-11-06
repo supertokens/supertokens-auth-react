@@ -53,6 +53,7 @@ import {
     getInvalidClaimsJSON as getInvalidClaims,
     waitForText,
     backendBeforeEach,
+    getInputField,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
