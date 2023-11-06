@@ -32,11 +32,11 @@ export const MFAFooter = withOverride(
                 {claim.loading === false && (claim.value?.n.length ?? 0) > 1 && (
                     <div
                         data-supertokens="secondaryText secondaryLinkWithLeftArrow"
-                        onClick={() => props.onFactorChooserButtonClicked}>
+                        onClick={props.onFactorChooserButtonClicked}>
                         {t("PWLESS_MFA_FOOTER_CHOOSER_ANOTHER")}
                     </div>
                 )}
-                <div data-supertokens="secondaryText secondaryLinkWithLeftArrow" onClick={() => props.onSignOutClicked}>
+                <div data-supertokens="secondaryText secondaryLinkWithLeftArrow" onClick={props.onSignOutClicked}>
                     <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
                     {t("PWLESS_MFA_FOOTER_LOGOUT")}
                 </div>

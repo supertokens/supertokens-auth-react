@@ -16,6 +16,8 @@
 import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import { MultiFactorAuthClaim } from "../../../../multifactorauth";
+import { useClaimValue } from "../../../../session";
 
 import type { TOTPMFACommonProps } from "../../../types";
 
@@ -23,13 +25,27 @@ export const DeviceSetupFooter = withOverride(
     "TOTPDeviceSetupFooter",
     function TOTPDeviceSetupFooter({
         onSignOutClicked,
-    }: TOTPMFACommonProps & { onSignOutClicked: () => void }): JSX.Element | null {
+        onFactorChooserButtonClicked,
+    }: TOTPMFACommonProps & {
+        onFactorChooserButtonClicked: () => void;
+        onSignOutClicked: () => void;
+    }): JSX.Element | null {
+        const claim = useClaimValue(MultiFactorAuthClaim);
         const t = useTranslation();
 
         return (
-            <div data-supertokens="secondaryText secondaryLinkWithLeftArrow" onClick={onSignOutClicked}>
-                <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
-                {t("TOTP_MFA_LOGOUT")}
+            <div data-supertokens="footerLinkGroup totpMFASetupFooter">
+                {claim.loading === false && (claim.value?.n.length ?? 0) > 1 && (
+                    <div
+                        data-supertokens="secondaryText secondaryLinkWithLeftArrow"
+                        onClick={onFactorChooserButtonClicked}>
+                        {t("TOTP_MFA_FOOTER_CHOOSER_ANOTHER")}
+                    </div>
+                )}
+                <div data-supertokens="secondaryText secondaryLinkWithLeftArrow" onClick={onSignOutClicked}>
+                    <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
+                    {t("TOTP_MFA_LOGOUT")}
+                </div>
             </div>
         );
     }
