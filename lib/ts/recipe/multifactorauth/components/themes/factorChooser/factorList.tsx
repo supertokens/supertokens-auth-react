@@ -35,6 +35,7 @@ export const FactorList = withOverride(
                 {availableFactors.map((factor) => (
                     <FactorOption
                         key={factor.id}
+                        id={factor.id}
                         name={factor.name}
                         description={factor.description}
                         logo={factor.logo}

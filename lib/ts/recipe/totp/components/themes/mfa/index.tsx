@@ -64,7 +64,7 @@ const SignInUpTheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> =
     return activeScreen === TOTPMFAScreens.Blocked ? (
         <BlockedScreen nextRetryAt={featureState.nextRetryAt!} onRetry={props.onRetryClicked} />
     ) : activeScreen === TOTPMFAScreens.AccessDenied ? (
-        <AccessDeniedScreen error={t(featureState.error!)} useShadowDom={props.config.useShadowDom} />
+        <AccessDeniedScreen error={t(featureState.error!)} useShadowDom={false} />
     ) : activeScreen === TOTPMFAScreens.Loading ? (
         <LoadingScreen />
     ) : (
@@ -99,10 +99,15 @@ const SignInUpTheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> =
                             onSuccess={props.onSuccess}
                             footer={
                                 activeScreen === TOTPMFAScreens.DeviceSetup ? (
-                                    <DeviceSetupFooter {...commonProps} onSignOutClicked={props.onSignOutClicked} />
+                                    <DeviceSetupFooter
+                                        {...commonProps}
+                                        onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
+                                        onSignOutClicked={props.onSignOutClicked}
+                                    />
                                 ) : (
                                     <CodeVerificationFooter
                                         {...commonProps}
+                                        onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
                                         onSignOutClicked={props.onSignOutClicked}
                                     />
                                 )

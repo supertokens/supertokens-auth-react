@@ -284,3 +284,28 @@
         opacity: 1;
     }
 }
+
+[data-supertokens~="footerLinkGroup"] {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 8px;
+}
+
+[data-supertokens~="footerLinkGroup"] > div {
+    margin: 0;
+}
+
+@media (max-width: 360px) {
+    [data-supertokens~="footerLinkGroup"] {
+        flex-direction: column;
+    }
+    [data-supertokens~="footerLinkGroup"] > div {
+        margin: 0 auto;
+    }
+}
+
+[data-supertokens~="footerLinkGroup"] div:only-child {
+    margin-left: auto;
+    margin-right: auto;
+}

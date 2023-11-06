@@ -69,6 +69,7 @@ export declare type TOTPMFAProps = {
     onShowSecretClick: () => void;
     onBackButtonClicked: () => void;
     onRetryClicked: () => void;
+    onFactorChooserButtonClicked: () => void;
     onSignOutClicked: () => void;
     dispatch: Dispatch<TOTPMFAAction>;
     featureState: TOTPMFAState;
