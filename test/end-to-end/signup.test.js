@@ -478,14 +478,42 @@ describe("SuperTokens SignUp", function () {
         });
 
         it("Check on blank form submit nonOptionalErrorMsg gets displayed as expected", async function () {
-            await submitForm(page);
-            let formFieldErrors = await getFieldErrors(page);
-            // Also standard non-optional-error is displayed if nonOptionalErrorMsg is not provided
-            assert.deepStrictEqual(formFieldErrors, [
-                "Field is not optional",
-                "Field is not optional",
-                "You must accept the terms and conditions",
-            ]);
+            let apiCallMade = false;
+
+            const requestHandler = (request) => {
+                const url = request.url();
+                if (url === SIGN_UP_API) {
+                    apiCallMade = true;
+                    request.continue();
+                } else {
+                    request.continue();
+                }
+            };
+
+            await page.setRequestInterception(true);
+            page.on("request", requestHandler);
+
+            // Listen for all network requests
+            page.on("request", (request) => {});
+
+            try {
+                // Fill and submit the form with custom fields
+                await submitForm(page);
+                let formFieldErrors = await getFieldErrors(page);
+                // Also standard non-optional-error is displayed if nonOptionalErrorMsg is not provided
+                assert.deepStrictEqual(formFieldErrors, [
+                    "Field is not optional",
+                    "Field is not optional",
+                    "You must accept the terms and conditions",
+                ]);
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            }
+
+            if (apiCallMade) {
+                throw new Error("Empty form making API request to sign-up");
+            }
         });
 
         it("Check if nonOptionalErrorMsg overwrites server error message for non-optional fields", async function () {

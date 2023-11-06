@@ -771,10 +771,35 @@ describe("SuperTokens SignIn", function () {
                 waitUntil: "domcontentloaded",
             });
 
-            await submitForm(page);
-            let formFieldErrors = await getFieldErrors(page);
-            // Also standard non-optional-error is displayed if nonOptionalErrorMsg is not provided
-            assert.deepStrictEqual(formFieldErrors, ["Please add email", "Field is not optional"]);
+            let apiCallMade = false;
+
+            const requestHandler = (request) => {
+                const url = request.url();
+                if (url === SIGN_IN_API) {
+                    apiCallMade = true;
+                    request.continue();
+                } else {
+                    request.continue();
+                }
+            };
+
+            await page.setRequestInterception(true);
+            page.on("request", requestHandler);
+
+            try {
+                await submitForm(page);
+                let formFieldErrors = await getFieldErrors(page);
+
+                // Also standard non-optional-error is displayed if nonOptionalErrorMsg is not provided
+                assert.deepStrictEqual(formFieldErrors, ["Please add email", "Field is not optional"]);
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            }
+
+            if (apiCallMade) {
+                throw new Error("Empty form making API request to signin");
+            }
         });
     });
 });
