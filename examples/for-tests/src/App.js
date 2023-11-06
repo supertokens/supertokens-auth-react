@@ -721,6 +721,25 @@ function getFormFields() {
     return formFields;
 }
 
+function getSignInFormFields() {
+    let showDefaultFields = localStorage.getItem("SHOW_SIGNIN_DEFAULT_FIELDS");
+    if (showDefaultFields === "YES") {
+        return {
+            formFields: [
+                {
+                    id: "email",
+                    getDefaultValue: () => "abc@xyz.com",
+                },
+                {
+                    id: "password",
+                    getDefaultValue: () => "fakepassword123",
+                },
+            ],
+        };
+    }
+    return {};
+}
+
 function getEmailPasswordConfigs({ disableDefaultUI }) {
     return EmailPassword.init({
         style: `          
@@ -801,6 +820,7 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
             defaultToSignUp,
             signInForm: {
                 style: theme,
+                ...getSignInFormFields(),
             },
             signUpForm: {
                 style: theme,
