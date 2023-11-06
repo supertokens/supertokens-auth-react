@@ -94,6 +94,7 @@ export declare type FormFieldBaseConfig = {
 export declare type FormField = FormFieldBaseConfig & {
     validate?: (value: any) => Promise<string | undefined>;
     optional?: boolean;
+    nonOptionalErrorMsg?: string;
 };
 export declare type APIFormField = {
     id: string;
@@ -105,6 +106,7 @@ export declare type NormalisedFormField = {
     placeholder: string;
     validate: (value: any) => Promise<string | undefined> | string | undefined;
     optional: boolean;
+    nonOptionalErrorMsg?: string;
     autoComplete?: string;
     autofocus?: boolean;
     getDefaultValue?: () => string;

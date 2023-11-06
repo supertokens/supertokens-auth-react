@@ -239,6 +239,11 @@ export type FormField = FormFieldBaseConfig & {
      * Whether the field is optional or not.
      */
     optional?: boolean;
+
+    /*
+     * Error message for non optional field.
+     */
+    nonOptionalErrorMsg?: string;
 };
 
 export type APIFormField = {
@@ -278,6 +283,11 @@ export type NormalisedFormField = {
      * Whether the field is optional or not.
      */
     optional: boolean;
+
+    /*
+     * Error message for non optional field.
+     */
+    nonOptionalErrorMsg?: string;
 
     /*
      * Autocomplete input.
