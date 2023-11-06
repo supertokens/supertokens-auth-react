@@ -19,10 +19,12 @@
 
 import EmailPasswordWebJS from "supertokens-web-js/recipe/emailpassword";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
 import { SSR_ERROR } from "../../constants";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
+import MultiFactorAuth from "../multifactorauth/recipe";
 
 import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
 import { getFunctionOverrides } from "./functionOverrides";
@@ -58,6 +60,13 @@ export default class EmailPassword extends AuthRecipe<
         public readonly webJSRecipe: WebJSRecipeInterface<typeof EmailPasswordWebJS> = EmailPasswordWebJS
     ) {
         super(config);
+
+        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
+            const mfa = MultiFactorAuth.getInstance();
+            if (mfa !== undefined) {
+                mfa.addMFAFactors(["emailpassword"], []);
+            }
+        });
     }
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {

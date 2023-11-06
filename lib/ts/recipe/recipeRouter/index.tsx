@@ -124,7 +124,8 @@ export abstract class RecipeRouter {
                 return componentMatchingRid;
             }
 
-            if (mfaRecipe) {
+            // TODO: check if we need this whole defaultFirstFactors thing.
+            if (mfaRecipe && mfaRecipe.config.firstFactors !== undefined) {
                 return chooseComponentBasedOnFirstFactors(mfaRecipe.getFirstFactors(), routeComponents);
             } else {
                 return defaultComp;
