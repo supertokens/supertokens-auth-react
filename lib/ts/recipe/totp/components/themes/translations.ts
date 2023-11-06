@@ -20,6 +20,7 @@ export const defaultTranslationsTOTP = {
         TOTP_MFA_BLOCKED_TIMER_END: "",
         TOTP_MFA_BLOCKED_RETRY: "Try again",
         TOTP_MFA_LOGOUT: "Logout",
+        TOTP_MFA_FOOTER_CHOOSER_ANOTHER: "Choose another factor",
 
         INVALID_TOTP_ERROR: "Invalid TOTP. Please try again",
         GENERAL_ERROR_OTP_UNDEFINED: "Please fill your TOTP",
