@@ -330,7 +330,6 @@ function getEmailPasswordConfigs() {
     return EmailPassword.init({
         resetPasswordUsingTokenFeature: {
             enterEmailForm: {
-                getDefaultValue: () => "company@email.com",
                 style: theme.style,
             },
             submitNewPasswordForm: {

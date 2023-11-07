@@ -740,17 +740,6 @@ function getSignInFormFields() {
     return {};
 }
 
-function emailFormForResetPassword() {
-    let showDefaultFields = localStorage.getItem("SHOW_DEFAULT_EMAIL_FOR_RESET_PASSWORD");
-    if (showDefaultFields === "YES") {
-        return {
-            getDefaultValue: () => "company@email.com",
-            style: theme,
-        };
-    }
-    return { style: theme };
-}
-
 function getEmailPasswordConfigs({ disableDefaultUI }) {
     return EmailPassword.init({
         style: `          
@@ -819,7 +808,9 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
         useShadowDom,
         resetPasswordUsingTokenFeature: {
             disableDefaultUI,
-            enterEmailForm: emailFormForResetPassword(),
+            enterEmailForm: {
+                style: theme,
+            },
             submitNewPasswordForm: {
                 style: theme,
             },
