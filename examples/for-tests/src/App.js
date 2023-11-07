@@ -279,6 +279,12 @@ const incorrectFormFields = [
             return "Please check Terms and conditions";
         },
     },
+    {
+        id: "city",
+        label: "Your city",
+        optional: false,
+        nonOptionalErrorMsg: "", // empty string should throw error
+    },
 ];
 
 const customFields = [
@@ -713,6 +719,10 @@ function getFormFields() {
             // since page-error blocks all the other errors
             // use this filter to test specific error
             return incorrectFormFields.filter(({ id }) => id === "terms");
+        } else if (localStorage.getItem("INCORRECT_NON_OPTIONAL_ERROR_MSG") === "YES") {
+            return incorrectFormFields.filter(({ id }) => id === "city");
+        } else if (localStorage.getItem("INCORRECT_GETDEFAULT") === "YES") {
+            return incorrectFormFields.filter(({ id }) => id === "country");
         }
         return incorrectFormFields;
     } else if (localStorage.getItem("SHOW_CUSTOM_FIELDS_WITH_DEFAULT_VALUES") === "YES") {

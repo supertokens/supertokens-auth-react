@@ -706,6 +706,7 @@ describe("SuperTokens SignUp", function () {
         });
 
         it("Check if incorrect getDefaultValue throws error", async function () {
+            await page.evaluate(() => window.localStorage.setItem("INCORRECT_GETDEFAULT", "YES"));
             let pageErrorMessage = "";
             page.on("pageerror", (err) => {
                 pageErrorMessage = err.message;
@@ -724,6 +725,7 @@ describe("SuperTokens SignUp", function () {
         });
 
         it("Check if non-string params to onChange throws error", async function () {
+            await page.evaluate(() => window.localStorage.removeItem("INCORRECT_GETDEFAULT"));
             await page.evaluate(() => window.localStorage.setItem("INCORRECT_ONCHANGE", "YES"));
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -744,6 +746,30 @@ describe("SuperTokens SignUp", function () {
                 pageErrorMessage.includes(expectedErrorMessage),
                 `Expected "${expectedErrorMessage}" to be included in page-error`
             );
+        });
+
+        it("Check if empty string for nonOptionalErrorMsg throws error", async function () {
+            const expectedErrorMessage = "nonOptionalErrorMsg for field city cannot be empty";
+            let pageErrorMessage = "";
+            page.on("pageerror", (err) => {
+                pageErrorMessage = err.message;
+            });
+
+            await page.evaluate(() => window.localStorage.removeItem("INCORRECT_GETDEFAULT"));
+            await page.evaluate(() => window.localStorage.removeItem("INCORRECT_ONCHANGE"));
+            await page.evaluate(() => window.localStorage.setItem("INCORRECT_NON_OPTIONAL_ERROR_MSG", "YES"));
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+
+            if (pageErrorMessage !== "") {
+                assert(
+                    pageErrorMessage.includes(expectedErrorMessage),
+                    `Expected "${expectedErrorMessage}" to be included in page-error`
+                );
+            } else {
+                throw "Empty nonOptionalErrorMsg should throw error";
+            }
         });
     });
 });
