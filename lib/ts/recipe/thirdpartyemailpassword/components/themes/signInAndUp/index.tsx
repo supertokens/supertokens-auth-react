@@ -28,19 +28,21 @@ import { SignInFooter } from "../../../../emailpassword/components/themes/signIn
 import { SignInForm } from "../../../../emailpassword/components/themes/signInAndUp/signInForm";
 import { SignUpFooter } from "../../../../emailpassword/components/themes/signInAndUp/signUpFooter";
 import { SignUpForm } from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
+import MultiFactorAuth from "../../../../multifactorauth/recipe";
 import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 import { ThemeBase } from "../themeBase";
 
 import { Header } from "./header";
 
+import type { GetLoginMethodsResponseNormalized } from "../../../../multitenancy/types";
 import type { ThirdPartyEmailPasswordSignInAndUpThemeProps } from "../../../types";
 
 const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> = (props) => {
     const t = useTranslation();
     const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods;
     const dynamicLoginMethods = useDynamicLoginMethods();
-    let loginMethods;
+    let loginMethods: GetLoginMethodsResponseNormalized | undefined;
     if (usesDynamicLoginMethods) {
         if (dynamicLoginMethods.loaded === false) {
             throw new Error("Component requiring dynamicLoginMethods rendered without FeatureWrapper.");
@@ -49,11 +51,23 @@ const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> =
         }
     }
     const hasProviders = props.tpChildProps?.providers !== undefined && props.tpChildProps.providers.length > 0;
-    const thirdPartyEnabled =
-        (usesDynamicLoginMethods === false && hasProviders) || (loginMethods?.thirdparty.enabled && hasProviders);
-    const emailPasswordEnabled =
-        (props.emailPasswordRecipe !== undefined && usesDynamicLoginMethods === false) ||
-        loginMethods?.emailpassword.enabled;
+    const mfa = MultiFactorAuth.getInstance();
+    let thirdPartyEnabled: boolean = hasProviders;
+    let emailPasswordEnabled: boolean = props.emailPasswordRecipe !== undefined;
+
+    if (usesDynamicLoginMethods) {
+        thirdPartyEnabled = thirdPartyEnabled && loginMethods!.firstFactors.includes("thirdparty") && hasProviders;
+        emailPasswordEnabled =
+            emailPasswordEnabled &&
+            loginMethods!.firstFactors.includes("emailpassword") &&
+            props.emailPasswordRecipe !== undefined;
+    } else if (mfa !== undefined) {
+        thirdPartyEnabled = thirdPartyEnabled && mfa.isFirstFactorEnabledOnClient("thirdparty") && hasProviders;
+        emailPasswordEnabled =
+            emailPasswordEnabled &&
+            mfa.isFirstFactorEnabledOnClient("emailpassword") &&
+            props.emailPasswordRecipe !== undefined;
+    }
 
     if (thirdPartyEnabled === false && emailPasswordEnabled === false) {
         return null;
