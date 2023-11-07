@@ -493,9 +493,6 @@ describe("SuperTokens SignUp", function () {
             await page.setRequestInterception(true);
             page.on("request", requestHandler);
 
-            // Listen for all network requests
-            page.on("request", (request) => {});
-
             try {
                 // Fill and submit the form with custom fields
                 await submitForm(page);
