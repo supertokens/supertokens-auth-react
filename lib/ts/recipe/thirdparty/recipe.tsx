@@ -18,13 +18,11 @@
  */
 
 import ThirdpartyWebJS from "supertokens-web-js/recipe/thirdparty";
-import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
 import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
-import MultiFactorAuth from "../multifactorauth/recipe";
 
 import { getFunctionOverrides } from "./functionOverrides";
 import { normaliseThirdPartyConfig } from "./utils";
@@ -60,13 +58,6 @@ export default class ThirdParty extends AuthRecipe<
         if (SuperTokens.usesDynamicLoginMethods === false && config.signInAndUpFeature.providers.length === 0) {
             throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
         }
-
-        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
-            const mfa = MultiFactorAuth.getInstance();
-            if (mfa !== undefined) {
-                mfa.addMFAFactors(["thirdparty"], []);
-            }
-        });
 
         super(config);
     }
