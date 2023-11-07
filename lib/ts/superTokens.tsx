@@ -22,6 +22,7 @@ import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuper
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
 import { SSR_ERROR } from "./constants";
+import { disableLogging, enableLogging } from "./logging";
 import Multitenancy from "./recipe/multitenancy/recipe";
 import { saveCurrentLanguage, TranslationController } from "./translation/translationHelpers";
 import {
@@ -93,6 +94,11 @@ export default class SuperTokens {
         let enableDebugLogs = false;
         if (config.enableDebugLogs !== undefined) {
             enableDebugLogs = config.enableDebugLogs;
+        }
+        if (enableDebugLogs) {
+            enableLogging();
+        } else {
+            disableLogging();
         }
 
         this.userGetRedirectionURL = config.getRedirectionURL;
