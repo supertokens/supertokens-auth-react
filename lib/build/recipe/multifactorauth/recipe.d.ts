@@ -21,7 +21,6 @@ export default class MultiFactorAuth extends RecipeModule<
     static RECIPE_ID: string;
     static MultiFactorAuthClaim: MultiFactorAuthClaimClass;
     recipeID: string;
-    private readonly firstFactors;
     private secondaryFactors;
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
@@ -33,8 +32,8 @@ export default class MultiFactorAuth extends RecipeModule<
     static getInstance(): MultiFactorAuth | undefined;
     static getInstanceOrThrow(): MultiFactorAuth;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
-    addMFAFactors(firstFactors: string[], secondaryFactors: SecondaryFactorRedirectionInfo[]): void;
-    getFirstFactors(): string[];
+    addMFAFactors(secondaryFactors: SecondaryFactorRedirectionInfo[]): void;
+    isFirstFactorEnabledOnClient(factorId: string): boolean;
     getSecondaryFactors(): SecondaryFactorRedirectionInfo[];
     redirectToFactor(factorId: string, redirectBack?: boolean, history?: any): Promise<void>;
     redirectToFactorChooser(redirectBack?: boolean, history?: any): Promise<void>;

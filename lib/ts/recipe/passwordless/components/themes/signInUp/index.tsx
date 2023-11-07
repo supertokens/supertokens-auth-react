@@ -144,7 +144,7 @@ export function getActiveScreen(
     if (currentDynamicLoginMethods.loaded && currentDynamicLoginMethods.loginMethods.firstFactors) {
         firstFactors = currentDynamicLoginMethods.loginMethods.firstFactors;
     } else {
-        firstFactors = MultiFactorAuth.getInstance()?.getFirstFactors();
+        firstFactors = MultiFactorAuth.getInstance()?.config.firstFactors;
     }
 
     if (firstFactors !== undefined) {

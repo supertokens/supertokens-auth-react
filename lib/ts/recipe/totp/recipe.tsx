@@ -69,7 +69,7 @@ export default class TOTP extends RecipeModule<
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
             const mfa = MultiFactorAuth.getInstance();
             if (mfa !== undefined) {
-                mfa.addMFAFactors([], [totpFactor]);
+                mfa.addMFAFactors([totpFactor]);
             }
             const session = Session.getInstance();
             if (session !== undefined) {

@@ -56,6 +56,8 @@ export const otpEmailFactor = {
     logo: OTPIcon,
 };
 
+export const passwordlessFirstFactors = ["otp-phone", "otp-email", "link-phone", "link-email"] as const;
+
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -76,10 +78,7 @@ export default class Passwordless extends AuthRecipe<
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
             const mfa = MultiFactorAuth.getInstance();
             if (mfa !== undefined) {
-                mfa.addMFAFactors(
-                    ["otp-phone", "otp-email", "link-phone", "link-email"],
-                    [otpPhoneFactor, otpEmailFactor]
-                );
+                mfa.addMFAFactors([otpPhoneFactor, otpEmailFactor]);
             }
         });
     }
