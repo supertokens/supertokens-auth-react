@@ -59,7 +59,6 @@ export default class MultiFactorAuth extends RecipeModule<
     );
 
     public recipeID = MultiFactorAuth.RECIPE_ID;
-    private readonly firstFactors: Set<string> = new Set();
     private secondaryFactors: SecondaryFactorRedirectionInfo[] = [];
 
     constructor(
@@ -144,10 +143,7 @@ export default class MultiFactorAuth extends RecipeModule<
         }
     };
 
-    addMFAFactors(firstFactors: string[], secondaryFactors: SecondaryFactorRedirectionInfo[]) {
-        for (const fact of firstFactors) {
-            this.firstFactors.add(fact);
-        }
+    addMFAFactors(secondaryFactors: SecondaryFactorRedirectionInfo[]) {
         this.secondaryFactors = [
             ...this.secondaryFactors.filter((factor) =>
                 secondaryFactors.every((newFactor) => factor.id !== newFactor.id)
@@ -156,8 +152,8 @@ export default class MultiFactorAuth extends RecipeModule<
         ];
     }
 
-    getFirstFactors() {
-        return this.config.firstFactors ?? Array.from(this.firstFactors);
+    isFirstFactorEnabledOnClient(factorId: string) {
+        return this.config.firstFactors === undefined || this.config.firstFactors.includes(factorId);
     }
 
     getSecondaryFactors() {

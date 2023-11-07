@@ -1,3 +1,4 @@
+import { logDebugMessage } from "../../logging";
 import SuperTokens from "../../superTokens";
 import MultiFactorAuth from "../multifactorauth/recipe";
 
@@ -37,38 +38,31 @@ function chooseComponentBasedOnFirstFactors(
     firstFactors: string[],
     routeComponents: ComponentWithRecipeAndMatchingMethod[]
 ) {
-    // We first try to find an exact match
+    let fallbackRid;
+    let fallbackComponent;
+    // We first try to find an exact match, and fall back on something that covers all factors (but maybe more)
     for (const { rid, factorsProvided } of priorityOrder) {
-        if (
-            firstFactors.length === factorsProvided.length &&
-            factorsProvided.every((factor) => firstFactors.includes(factor))
-        ) {
+        if (firstFactors.every((factor) => factorsProvided.includes(factor))) {
             const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
             if (matchingComp) {
-                return matchingComp;
+                // This means that this gets overwritten by items lower in the prios list.
+                // This is intentional since this way we end up with the most specific recipe that covers all required factrors (pwless instead of tppwless)
+                fallbackRid = rid;
+                fallbackComponent = matchingComp;
+                if (firstFactors.length === factorsProvided.length) {
+                    logDebugMessage(`Rendering ${rid} because it matches factors: ${firstFactors} exactly`);
+                    return matchingComp;
+                }
             }
         }
     }
 
-    let maxProvided = 0;
-    let component = undefined;
-    // We find the component that provides the most factors
-    for (const { rid, factorsProvided } of priorityOrder) {
-        const providedByCurrent = factorsProvided.filter((id) => firstFactors.includes(id)).length;
-        if (providedByCurrent > maxProvided) {
-            const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
-            if (matchingComp) {
-                maxProvided = providedByCurrent;
-                component = matchingComp;
-            }
-        }
-    }
-
-    if (component === undefined) {
+    if (fallbackComponent === undefined) {
         throw new Error("No enabled recipes overlap with the requested firstFactors: " + firstFactors);
     }
 
-    return component;
+    logDebugMessage(`Rendering ${fallbackRid} to cover ${firstFactors}`);
+    return fallbackComponent;
 }
 
 export abstract class RecipeRouter {
@@ -124,9 +118,8 @@ export abstract class RecipeRouter {
                 return componentMatchingRid;
             }
 
-            // TODO: check if we need this whole defaultFirstFactors thing.
             if (mfaRecipe && mfaRecipe.config.firstFactors !== undefined) {
-                return chooseComponentBasedOnFirstFactors(mfaRecipe.getFirstFactors(), routeComponents);
+                return chooseComponentBasedOnFirstFactors(mfaRecipe.config.firstFactors, routeComponents);
             } else {
                 return defaultComp;
             }

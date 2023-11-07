@@ -41,6 +41,8 @@ import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRec
 import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
 
+export const passwordlessFirstFactors = ["otp-phone", "otp-email", "link-phone", "link-email"] as const;
+
 /*
  * Class.
  */
@@ -74,25 +76,22 @@ export default class Passwordless extends AuthRecipe<
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
             const mfa = MultiFactorAuth.getInstance();
             if (mfa !== undefined) {
-                mfa.addMFAFactors(
-                    ["otp-phone", "otp-email", "link-phone", "link-email"],
-                    [
-                        {
-                            id: "otp-phone",
-                            name: "SMS based OTP",
-                            description: "Get an OTP code on your phone to complete the authentication request",
-                            path: new NormalisedURLPath("/check-auth/otp-phone"),
-                            logo: OTPIcon,
-                        },
-                        {
-                            id: "otp-email",
-                            name: "SMS based OTP",
-                            description: "Get an OTP code on your email address to complete the authentication request",
-                            path: new NormalisedURLPath("/check-auth/otp-email"),
-                            logo: OTPIcon,
-                        },
-                    ]
-                );
+                mfa.addMFAFactors([
+                    {
+                        id: "otp-phone",
+                        name: "SMS based OTP",
+                        description: "Get an OTP code on your phone to complete the authentication request",
+                        path: new NormalisedURLPath("/check-auth/otp-phone"),
+                        logo: OTPIcon,
+                    },
+                    {
+                        id: "otp-email",
+                        name: "SMS based OTP",
+                        description: "Get an OTP code on your email address to complete the authentication request",
+                        path: new NormalisedURLPath("/check-auth/otp-email"),
+                        logo: OTPIcon,
+                    },
+                ]);
             }
         });
 

@@ -23,6 +23,7 @@ import { SuperTokensBranding } from "../../../../../components/SuperTokensBrandi
 import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
+import MultiFactorAuth from "../../../../multifactorauth/recipe";
 import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import { getActiveScreen, SignInUpScreens } from "../../../../passwordless/components/themes/signInUp";
 import { CloseTabScreen } from "../../../../passwordless/components/themes/signInUp/closeTabScreen";
@@ -32,11 +33,13 @@ import { LinkSent } from "../../../../passwordless/components/themes/signInUp/li
 import { PhoneForm } from "../../../../passwordless/components/themes/signInUp/phoneForm";
 import { UserInputCodeForm } from "../../../../passwordless/components/themes/signInUp/userInputCodeForm";
 import { UserInputCodeFormHeader } from "../../../../passwordless/components/themes/signInUp/userInputCodeFormHeader";
+import { passwordlessFirstFactors } from "../../../../passwordless/recipe";
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 import { ThemeBase } from "../themeBase";
 
 import { Header } from "./header";
 
+import type { GetLoginMethodsResponseNormalized } from "../../../../multitenancy/types";
 import type { SignInUpChildProps as PwlessSignInUpChildProps } from "../../../../passwordless/types";
 import type {
     ThirdPartyPasswordlessSignInAndUpThemeProps,
@@ -47,7 +50,7 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
     const t = useTranslation();
     const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods;
     const dynamicLoginMethods = useDynamicLoginMethods();
-    let loginMethods;
+    let loginMethods: GetLoginMethodsResponseNormalized | undefined;
     if (usesDynamicLoginMethods) {
         if (dynamicLoginMethods.loaded === false) {
             throw new Error("Component requiring dynamicLoginMethods rendered without FeatureWrapper.");
@@ -57,11 +60,19 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
     }
 
     const hasProviders = props.tpChildProps?.providers !== undefined && props.tpChildProps.providers.length > 0;
-    const thirdPartyEnabled =
-        (usesDynamicLoginMethods === false && hasProviders) || (loginMethods?.thirdparty.enabled && hasProviders);
-    const passwordlessEnabled =
-        (props.passwordlessRecipe !== undefined && usesDynamicLoginMethods === false) ||
-        loginMethods?.passwordless.enabled;
+    const mfa = MultiFactorAuth.getInstance();
+    let thirdPartyEnabled: boolean = hasProviders;
+    let passwordlessEnabled: boolean = props.passwordlessRecipe !== undefined;
+
+    if (usesDynamicLoginMethods) {
+        thirdPartyEnabled = thirdPartyEnabled && loginMethods!.firstFactors.includes("thirdparty") && hasProviders;
+        passwordlessEnabled =
+            passwordlessEnabled && passwordlessFirstFactors.some((id) => loginMethods!.firstFactors.includes(id));
+    } else if (mfa !== undefined) {
+        thirdPartyEnabled = thirdPartyEnabled && mfa.isFirstFactorEnabledOnClient("thirdparty");
+        passwordlessEnabled =
+            passwordlessEnabled && passwordlessFirstFactors.some((id) => mfa.isFirstFactorEnabledOnClient(id));
+    }
 
     if (thirdPartyEnabled === false && passwordlessEnabled === false) {
         return null;
