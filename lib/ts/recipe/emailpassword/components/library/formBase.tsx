@@ -256,10 +256,7 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                             if (errorMessage === "Field is not optional") {
                                 const fieldConfigData = props.formFields.find((f) => f.id === fs.id);
                                 // replace non-optional server error message from nonOptionalErrorMsg
-                                if (
-                                    fieldConfigData?.nonOptionalErrorMsg !== undefined &&
-                                    fieldConfigData?.nonOptionalErrorMsg !== ""
-                                ) {
+                                if (fieldConfigData?.nonOptionalErrorMsg !== undefined) {
                                     return fieldConfigData?.nonOptionalErrorMsg;
                                 }
                             }

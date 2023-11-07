@@ -749,7 +749,7 @@ describe("SuperTokens SignUp", function () {
         });
 
         it("Check if empty string for nonOptionalErrorMsg throws error", async function () {
-            const expectedErrorMessage = "nonOptionalErrorMsg for field city cannot be empty";
+            const expectedErrorMessage = "nonOptionalErrorMsg for field city cannot be an empty string";
             let pageErrorMessage = "";
             page.on("pageerror", (err) => {
                 pageErrorMessage = err.message;

@@ -340,7 +340,7 @@ export function mergeFormFields(
 export function getFormattedFormField(field: NormalisedFormField): NormalisedFormField {
     // Fields with the 'nonOptionalErrorMsg' property must have a valid message defined
     if (field.optional === false && field.nonOptionalErrorMsg === "") {
-        throw new Error(`nonOptionalErrorMsg for field ${field.id} cannot be empty`);
+        throw new Error(`nonOptionalErrorMsg for field ${field.id} cannot be an empty string`);
     }
     return {
         ...field,
