@@ -198,9 +198,7 @@ export type ResetPasswordUsingTokenUserInput = {
     /*
      * enterEmailForm config.
      */
-    enterEmailForm?: FeatureBaseConfig & {
-        getDefaultValue?: () => string;
-    };
+    enterEmailForm?: FeatureBaseConfig;
 };
 
 export type NormalisedResetPasswordUsingTokenFeatureConfig = {
