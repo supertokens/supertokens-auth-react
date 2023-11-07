@@ -53,6 +53,7 @@ import {
     getInvalidClaimsJSON as getInvalidClaims,
     waitForText,
     backendBeforeEach,
+    getInputField,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -667,6 +668,94 @@ describe("SuperTokens SignIn", function () {
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/dashboard");
             });
+        });
+    });
+
+    describe("SignIn default field tests", function () {
+        it("Should contain email and password fields prefilled", async function () {
+            await page.evaluate(() => window.localStorage.setItem("SHOW_SIGNIN_DEFAULT_FIELDS", "YES"));
+
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+
+            const expectedDefaultValues = {
+                email: "abc@xyz.com",
+                password: "fakepassword123",
+            };
+
+            const emailInput = await getInputField(page, "email");
+            const defaultEmail = await emailInput.evaluate((f) => f.value);
+            assert.strictEqual(defaultEmail, expectedDefaultValues["email"]);
+
+            const passwordInput = await getInputField(page, "password");
+            const defaultPassword = await passwordInput.evaluate((f) => f.value);
+            assert.strictEqual(defaultPassword, expectedDefaultValues["password"]);
+        });
+
+        it("Should have default values in the signin request payload", async function () {
+            await page.evaluate(() => window.localStorage.setItem("SHOW_SIGNIN_DEFAULT_FIELDS", "YES"));
+
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+
+            const expectedDefautlValues = [
+                { id: "email", value: "abc@xyz.com" },
+                { id: "password", value: "fakepassword123" },
+            ];
+
+            let assertionError = null;
+            let interceptionPassed = false;
+
+            const requestHandler = async (request) => {
+                if (request.url().includes(SIGN_IN_API) && request.method() === "POST") {
+                    try {
+                        const postData = JSON.parse(request.postData());
+                        expectedDefautlValues.forEach(({ id, value }) => {
+                            let findFormData = postData.formFields.find((inputData) => inputData.id === id);
+                            if (findFormData) {
+                                assert.strictEqual(findFormData["value"], value, `Mismatch in payload for key: ${id}`);
+                            } else {
+                                throw new Error("Field not found in req.data");
+                            }
+                        });
+                        interceptionPassed = true;
+                        return request.respond({
+                            status: 200,
+                            headers: {
+                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                "access-control-allow-credentials": "true",
+                            },
+                            body: JSON.stringify({
+                                status: "OK",
+                            }),
+                        });
+                    } catch (error) {
+                        assertionError = error; // Store the error
+                    }
+                }
+                return request.continue();
+            };
+
+            await page.setRequestInterception(true);
+            page.on("request", requestHandler);
+
+            try {
+                // Perform the button click and wait for all network activity to finish
+                await Promise.all([page.waitForNetworkIdle(), submitForm(page)]);
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            }
+
+            if (assertionError) {
+                throw assertionError;
+            }
+
+            if (!interceptionPassed) {
+                throw new Error("test failed");
+            }
         });
     });
 });

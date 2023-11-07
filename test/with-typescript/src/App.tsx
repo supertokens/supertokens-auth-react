@@ -339,6 +339,13 @@ function getEmailPasswordConfigs() {
         signInAndUpFeature: {
             signInForm: {
                 style: theme.style,
+                formFields: [
+                    {
+                        id: "email",
+                        label: "Email",
+                        getDefaultValue: () => "abc@xyz.com",
+                    },
+                ],
             },
             signUpForm: {
                 style: theme.style,
