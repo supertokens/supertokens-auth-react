@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.35.5",
+    "version": "0.36.0",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -199,6 +199,10 @@
         {
             "path": "recipe/multifactorauth/index.js",
             "limit": "10kb"
+        },
+        {
+            "path": "recipe/multifactorauth/prebuiltui.js",
+            "limit": "30kb"
         }
     ],
     "browserslist": {
@@ -236,10 +240,5 @@
     "bugs": {
         "url": "https://github.com/supertokens/supertokens-auth-react/issues"
     },
-    "homepage": "https://github.com/supertokens/supertokens-auth-react#readme",
-    "eslintConfig": {
-        "extends": [
-            "plugin:storybook/recommended"
-        ]
-    }
+    "homepage": "https://github.com/supertokens/supertokens-auth-react#readme"
 }

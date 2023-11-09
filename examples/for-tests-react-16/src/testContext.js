@@ -14,6 +14,7 @@ export function getTestContext() {
         staticProviderList: localStorage.getItem("staticProviderList"),
         mockTenantId: localStorage.getItem("mockTenantId"),
         clientType: localStorage.getItem("clientType") || undefined,
+        firstFactors: localStorage.getItem("firstFactors")?.split(", "),
     };
     return ret;
 }

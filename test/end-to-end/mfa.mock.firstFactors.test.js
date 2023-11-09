@@ -21,46 +21,14 @@ import assert from "assert";
 import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
-    clickForgotPasswordLink,
-    getFieldErrors,
-    getGeneralError,
-    getInputNames,
-    getInputTypes,
-    getLogoutButton,
-    getLabelsText,
-    getPlaceholders,
-    getUserIdWithAxios,
-    getSessionHandleWithAxios,
-    getUserIdWithFetch,
-    getSessionHandleWithFetch,
-    getShowPasswordIcon,
-    getSubmitFormButtonLabel,
-    getInputAdornmentsSuccess,
-    hasMethodBeenCalled,
-    setInputValues,
-    submitForm,
-    submitFormReturnRequestAndResponse,
-    toggleShowPasswordIcon,
-    toggleSignInSignUp,
-    getInputAdornmentsError,
-    defaultSignUp,
-    getUserIdFromSessionContext,
-    getTextInDashboardNoAuth,
     waitForSTElement,
     screenshotOnFailure,
-    isGeneralErrorSupported,
-    setGeneralErrorToLocalStorage,
-    getInvalidClaimsJSON as getInvalidClaims,
-    waitForText,
     backendBeforeEach,
-    getTestEmail,
-    getPasswordlessDevice,
     waitFor,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
-import { SOMETHING_WENT_WRONG_ERROR, TEST_APPLICATION_SERVER_BASE_URL } from "../constants";
 
-import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_OUT_API } from "../constants";
+import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 
 /*
  * Tests.
