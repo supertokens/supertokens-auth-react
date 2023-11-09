@@ -25,7 +25,7 @@ import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClai
 
 import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
-import { getCurrentNormalisedUrlPath, getRedirectToPathFromURL } from "../../utils";
+import { getCurrentNormalisedUrlPath, getRedirectToPathFromURL, isTest } from "../../utils";
 import RecipeModule from "../recipeModule";
 
 import { DEFAULT_FACTOR_CHOOSER_PATH } from "./constants";
@@ -192,5 +192,17 @@ export default class MultiFactorAuth extends RecipeModule<
         }
 
         return SuperTokens.getInstanceOrThrow().redirectToUrl(url, history);
+    }
+
+    /*
+     * Tests methods.
+     */
+    static reset(): void {
+        if (!isTest()) {
+            return;
+        }
+
+        MultiFactorAuth.instance = undefined;
+        return;
     }
 }
