@@ -35,7 +35,12 @@ const defaultSessionContext = {
     loading: false,
     doesSessionExist: true,
     invalidClaims: [],
-    accessTokenPayload: {},
+    accessTokenPayload: {
+        "st-mfa": {
+            c: {},
+            n: [],
+        },
+    },
     userId: "test-user",
 };
 
@@ -119,6 +124,16 @@ export const SetupPhone: Story = {
     },
 };
 
+const loadSessionContextWithSingleNextOption = async () => ({
+    session: {
+        ...defaultSessionContext,
+        accessTokenPayload: {
+            ...defaultSessionContext.accessTokenPayload,
+            "st-mfa": { c: {}, n: ["otp-email"] },
+        },
+    },
+});
+
 const loadSessionContextWithMultipleNextOptions = async () => ({
     session: {
         ...defaultSessionContext,
@@ -129,7 +144,18 @@ const loadSessionContextWithMultipleNextOptions = async () => ({
     },
 });
 
-export const SetupEmailWithBack: Story = {
+export const SetupSingleNextOption: Story = {
+    args: {
+        featureState: {
+            ...defaultState,
+            loaded: true,
+            loginAttemptInfo: undefined,
+            isSetupAllowed: true,
+        },
+    },
+    loaders: [loadSessionContextWithSingleNextOption],
+};
+export const SetupWithMultipleNextOptions: Story = {
     args: {
         featureState: {
             ...defaultState,
@@ -164,18 +190,6 @@ export const SetupVerification: Story = {
     },
 };
 
-export const SetupVerificationWithBack: Story = {
-    args: {
-        featureState: {
-            ...defaultState,
-            loaded: true,
-            loginAttemptInfo: exampleLoginAttemptInfo,
-            isSetupAllowed: true,
-        },
-    },
-    loaders: [loadSessionContextWithMultipleNextOptions],
-};
-
 export const Verification: Story = {
     args: {
         featureState: {
@@ -186,7 +200,19 @@ export const Verification: Story = {
     },
 };
 
-export const VerificationWithBack: Story = {
+export const VerificationWithSingleNextOption: Story = {
+    args: {
+        featureState: {
+            ...defaultState,
+            loaded: true,
+            loginAttemptInfo: exampleLoginAttemptInfo,
+            isSetupAllowed: false,
+        },
+    },
+    loaders: [loadSessionContextWithSingleNextOption],
+};
+
+export const VerificationWithMultipleNextOptions: Story = {
     args: {
         featureState: {
             ...defaultState,

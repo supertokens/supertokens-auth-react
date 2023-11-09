@@ -34,7 +34,12 @@ const defaultSessionContext = {
     loading: false,
     doesSessionExist: true,
     invalidClaims: [],
-    accessTokenPayload: {},
+    accessTokenPayload: {
+        "st-mfa": {
+            c: {},
+            n: [],
+        },
+    },
     userId: "test-user",
 };
 
@@ -168,20 +173,10 @@ export const DeviceSetupInvalidTOTP: Story = {
             ...defaultState,
             loaded: true,
             deviceInfo: exampleDeviceInfo,
+            error: "ERROR_TOTP_INVALID_CODE",
+            maxAttemptCount: 5,
+            currAttemptCount: 1,
         },
-        recipeImplementation: {
-            ...meta.args?.recipeImplementation!,
-            verifyDevice: async () => withFetchResponse({ status: "INVALID_TOTP_ERROR" }),
-        },
-    },
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement);
-
-        await waitFor(() => userEvent.type(canvasElement.querySelector("[data-supertokens~=input]")!, "123456"));
-
-        const submitButton = canvas.getByText("Continue");
-
-        await userEvent.click(submitButton, { delay: 100 });
     },
 };
 
@@ -223,20 +218,10 @@ export const VerificationInvalidTOTP: Story = {
             ...defaultState,
             loaded: true,
             deviceInfo: undefined,
+            error: "ERROR_TOTP_INVALID_CODE",
+            maxAttemptCount: 5,
+            currAttemptCount: 1,
         },
-        recipeImplementation: {
-            ...meta.args?.recipeImplementation!,
-            verifyCode: async () => withFetchResponse({ status: "INVALID_TOTP_ERROR" }),
-        },
-    },
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement);
-
-        await waitFor(() => userEvent.type(canvasElement.querySelector("[data-supertokens~=input]")!, "123456"));
-
-        const submitButton = canvas.getByText("Continue");
-
-        await userEvent.click(submitButton, { delay: 100 });
     },
 };
 

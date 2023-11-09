@@ -17,5 +17,9 @@ const config: StorybookConfig = {
     docs: {
         autodocs: false,
     },
+    env: {
+        REACT_APP_TEST_MODE: "testing",
+        TEST_MODE: "testing",
+    },
 };
 export default config;
