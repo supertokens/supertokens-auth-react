@@ -1,6 +1,5 @@
 /// <reference types="react" />
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import AuthRecipe from "../authRecipe";
 import type {
     GetRedirectionURLContext,
@@ -14,14 +13,14 @@ export declare const otpPhoneFactor: {
     id: string;
     name: string;
     description: string;
-    path: NormalisedURLPath;
+    path: string;
     logo: () => JSX.Element;
 };
 export declare const otpEmailFactor: {
     id: string;
     name: string;
     description: string;
-    path: NormalisedURLPath;
+    path: string;
     logo: () => JSX.Element;
 };
 export declare const passwordlessFactors: readonly ["otp-phone", "otp-email", "link-phone", "link-email"];

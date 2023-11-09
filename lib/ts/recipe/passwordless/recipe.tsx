@@ -18,7 +18,6 @@
  */
 
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
 import { OTPIcon } from "../../components/assets/otpIcon";
@@ -45,14 +44,14 @@ export const otpPhoneFactor = {
     id: "otp-phone",
     name: "SMS based OTP",
     description: "Get an OTP code on your phone to complete the authentication request",
-    path: new NormalisedURLPath("/mfa/otp-phone"),
+    path: "/mfa/otp-phone",
     logo: OTPIcon,
 };
 export const otpEmailFactor = {
     id: "otp-email",
     name: "Email based OTP",
     description: "Get an OTP code on your email address to complete the authentication request",
-    path: new NormalisedURLPath("/mfa/otp-email"),
+    path: "/mfa/otp-email",
     logo: OTPIcon,
 };
 

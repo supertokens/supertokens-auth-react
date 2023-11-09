@@ -45,7 +45,7 @@ export const totpFactor = {
     id: "totp",
     name: "TOTP",
     description: "Use an authenticator app to complete the authentication request",
-    path: new NormalisedURLPath("/mfa/totp"), // TODO: re-check this with separate domains
+    path: "/mfa/totp",
     logo: OTPIcon,
 };
 

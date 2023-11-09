@@ -144,7 +144,7 @@ export abstract class RecipeRouter {
             return chooseComponentBasedOnFirstFactors(dynamicLoginMethods.firstFactors, routeComponents);
         }
 
-        // TODO: do we even need the else branch? (maybe for backwards comp.)
+        // We may get here if the app is using an older BE that doesn't support MFA
         const enabledRecipeCount = Object.keys(dynamicLoginMethods).filter(
             (key) => (dynamicLoginMethods as any)[key].enabled
         ).length;

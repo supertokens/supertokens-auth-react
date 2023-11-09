@@ -22,7 +22,6 @@ import type {
 } from "../recipeModule/types";
 import type { FC } from "react";
 import type { OverrideableBuilder } from "supertokens-js-override";
-import type NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import type { RecipeInterface } from "supertokens-web-js/recipe/multifactorauth";
 import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 
@@ -81,10 +80,7 @@ export type PreAPIHookContext = {
     userContext: any;
 };
 
-export type OnHandleEventContext = {
-    action: "FACTOR_CHOSEN";
-    userContext: any;
-};
+export type OnHandleEventContext = never;
 
 export type FactorChooserThemeProps = {
     mfaInfo: MFAFactorInfo;
@@ -102,5 +98,5 @@ export type SecondaryFactorRedirectionInfo = {
     name: string;
     description: string;
     logo: FC;
-    path: NormalisedURLPath;
+    path: string;
 };
