@@ -24,7 +24,7 @@ export declare const otpEmailFactor: {
     path: NormalisedURLPath;
     logo: () => JSX.Element;
 };
-export declare const passwordlessFirstFactors: readonly ["otp-phone", "otp-email", "link-phone", "link-email"];
+export declare const passwordlessFactors: readonly ["otp-phone", "otp-email", "link-phone", "link-email"];
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,

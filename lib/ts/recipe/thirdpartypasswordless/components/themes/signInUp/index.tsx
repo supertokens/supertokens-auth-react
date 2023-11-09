@@ -33,7 +33,7 @@ import { LinkSent } from "../../../../passwordless/components/themes/signInUp/li
 import { PhoneForm } from "../../../../passwordless/components/themes/signInUp/phoneForm";
 import { UserInputCodeForm } from "../../../../passwordless/components/themes/signInUp/userInputCodeForm";
 import { UserInputCodeFormHeader } from "../../../../passwordless/components/themes/signInUp/userInputCodeFormHeader";
-import { passwordlessFirstFactors } from "../../../../passwordless/recipe";
+import { passwordlessFactors } from "../../../../passwordless/recipe";
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 import { ThemeBase } from "../themeBase";
 
@@ -67,11 +67,11 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
     if (usesDynamicLoginMethods) {
         thirdPartyEnabled = thirdPartyEnabled && loginMethods!.firstFactors.includes("thirdparty") && hasProviders;
         passwordlessEnabled =
-            passwordlessEnabled && passwordlessFirstFactors.some((id) => loginMethods!.firstFactors.includes(id));
+            passwordlessEnabled && passwordlessFactors.some((id) => loginMethods!.firstFactors.includes(id));
     } else if (mfa !== undefined) {
         thirdPartyEnabled = thirdPartyEnabled && mfa.isFirstFactorEnabledOnClient("thirdparty");
         passwordlessEnabled =
-            passwordlessEnabled && passwordlessFirstFactors.some((id) => mfa.isFirstFactorEnabledOnClient(id));
+            passwordlessEnabled && passwordlessFactors.some((id) => mfa.isFirstFactorEnabledOnClient(id));
     }
 
     if (thirdPartyEnabled === false && passwordlessEnabled === false) {
