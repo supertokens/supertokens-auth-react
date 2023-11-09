@@ -41,7 +41,7 @@ export type GetLoginMethodsResponseNormalized = {
             name: string;
         }[];
     };
-    firstFactors: string[];
+    firstFactors?: string[];
 };
 
 export type ComponentOverrideMap = {

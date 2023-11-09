@@ -24,7 +24,7 @@ export function getEnabledRecipes() {
 
     let enabledRecipes = [];
 
-    if (true) {
+    if (testContext.usesDynamicLoginMethods) {
         if (testContext.clientRecipeListForDynamicLogin) {
             enabledRecipes = JSON.parse(testContext.clientRecipeListForDynamicLogin);
         } else {

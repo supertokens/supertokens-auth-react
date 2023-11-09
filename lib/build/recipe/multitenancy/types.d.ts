@@ -37,7 +37,7 @@ export declare type GetLoginMethodsResponseNormalized = {
             name: string;
         }[];
     };
-    firstFactors: string[];
+    firstFactors?: string[];
 };
 export declare type ComponentOverrideMap = {
     MultitenancyDynamicLoginMethodsSpinnerTheme_Override?: ComponentOverride<typeof DynamicLoginMethodsSpinnerTheme>;
