@@ -16,9 +16,9 @@
     align-items: center;
     padding: 2px 8px;
 
-    background-color: white;
+    background-color: white !important;
     border-color: rgb(221, 221, 221) !important;
-    color: black;
+    color: black !important;
 }
 
 [data-supertokens~="providerButton"]:hover {

@@ -85,7 +85,7 @@ export function getRedirectToPathFromURL(): string | undefined {
  */
 export function isTest(): boolean {
     try {
-        return process.env.TEST_MODE === "testing";
+        return process.env.TEST_MODE === "testing" || process.env.REACT_APP_TEST_MODE === "testing";
     } catch (err) {
         // can get Uncaught ReferenceError: process is not defined error
         return false;
