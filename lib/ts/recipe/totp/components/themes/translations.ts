@@ -22,7 +22,13 @@ export const defaultTranslationsTOTP = {
         TOTP_MFA_LOGOUT: "Logout",
         TOTP_MFA_FOOTER_CHOOSER_ANOTHER: "Choose another factor",
 
-        INVALID_TOTP_ERROR: "Invalid TOTP. Please try again",
+        ERROR_TOTP_INVALID_CODE: "Invalid TOTP. Please try again.",
+        ERROR_TOTP_INVALID_CODE_RETRY_START: "",
+        // \xA0 is non breaking space.
+        // We add it to make sure there is no line break between the number and the rest of the sentence
+        ERROR_TOTP_INVALID_CODE_RETRY_END: "\xA0attempt(s) remaining before account is temporarily locked.",
+        ERROR_TOTP_UNKNOWN_DEVICE: "The device was deleted before verification",
+
         GENERAL_ERROR_OTP_UNDEFINED: "Please fill your TOTP",
         TOTP_MFA_NOT_ALLOWED_TO_SETUP: "You are not allowed to set up TOTP.",
     },

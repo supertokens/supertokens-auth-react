@@ -36,6 +36,8 @@ export declare type TOTPMFAAction =
     | {
           type: "setError";
           error: string | undefined;
+          maxAttemptCount?: number;
+          currAttemptCount?: number;
       }
     | {
           type: "restartFlow";
@@ -55,6 +57,8 @@ export declare type TOTPMFAState = {
     showBackButton: boolean;
     loaded: boolean;
     error: string | undefined;
+    maxAttemptCount?: number;
+    currAttemptCount?: number;
 };
 export declare type TOTPMFACommonProps = {
     featureState: TOTPMFAState;
