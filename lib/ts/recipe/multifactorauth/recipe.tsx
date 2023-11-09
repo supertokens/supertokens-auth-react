@@ -134,7 +134,9 @@ export default class MultiFactorAuth extends RecipeModule<
         } else if (context.action === "GO_TO_FACTOR") {
             const redirectInfo = this.getSecondaryFactors().find((f) => f.id === context.factorId);
             if (redirectInfo !== undefined) {
-                return this.config.appInfo.websiteBasePath.appendPath(redirectInfo.path).getAsStringDangerous();
+                return this.config.appInfo.websiteBasePath
+                    .appendPath(new NormalisedURLPath(redirectInfo.path))
+                    .getAsStringDangerous();
             }
             throw new Error("Requested redirect to unknown factor id");
         } else {
