@@ -18,14 +18,10 @@
  */
 
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
-import { OTPIcon } from "../../components/assets/otpIcon";
 import { SSR_ERROR } from "../../constants";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
-import MultiFactorAuth from "../multifactorauth/recipe";
 
 import { getFunctionOverrides } from "./functionOverrides";
 import { normalisePasswordlessConfig } from "./utils";
@@ -72,28 +68,6 @@ export default class Passwordless extends AuthRecipe<
         config: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normalisePasswordlessConfig(config);
-
-        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
-            const mfa = MultiFactorAuth.getInstance();
-            if (mfa !== undefined) {
-                mfa.addMFAFactors([
-                    {
-                        id: "otp-phone",
-                        name: "SMS based OTP",
-                        description: "Get an OTP code on your phone to complete the authentication request",
-                        path: new NormalisedURLPath("/check-auth/otp-phone"),
-                        logo: OTPIcon,
-                    },
-                    {
-                        id: "otp-email",
-                        name: "SMS based OTP",
-                        description: "Get an OTP code on your email address to complete the authentication request",
-                        path: new NormalisedURLPath("/check-auth/otp-email"),
-                        logo: OTPIcon,
-                    },
-                ]);
-            }
-        });
 
         return {
             recipeID: Passwordless.RECIPE_ID,

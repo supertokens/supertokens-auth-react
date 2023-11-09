@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Introducing MFA
 
-With this release, we are introducing MultiFactorAuthentication and TOTP, this will let you:
+With this release, we are introducing MultiFactorAuth and TOTP, this will let you:
 
 -   require (2FA or MFA) during sign in
 -   make use of our TOTP
