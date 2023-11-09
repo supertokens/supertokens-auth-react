@@ -86,13 +86,6 @@ export const CodeForm = withOverride(
                             return response;
                         }
 
-                        if (response.status === "INVALID_TOTP_ERROR") {
-                            return {
-                                status: "FIELD_ERROR",
-                                formFields: [{ id: "totp", error: "INVALID_TOTP_ERROR" }],
-                            };
-                        }
-
                         throw new STGeneralError("SOMETHING_WENT_WRONG_ERROR");
                     }}
                     validateOnBlur={false}

@@ -222,5 +222,10 @@
     "bugs": {
         "url": "https://github.com/supertokens/supertokens-auth-react/issues"
     },
-    "homepage": "https://github.com/supertokens/supertokens-auth-react#readme"
+    "homepage": "https://github.com/supertokens/supertokens-auth-react#readme",
+    "eslintConfig": {
+        "extends": [
+            "plugin:storybook/recommended"
+        ]
+    }
 }

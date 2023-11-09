@@ -34,7 +34,8 @@ import { DeviceInfoSection } from "./totpDeviceInfoSection";
 import { DeviceSetupFooter } from "./totpDeviceSetupFooter";
 import { DeviceSetupHeader } from "./totpDeviceSetupHeader";
 
-import type { TOTPMFAProps } from "../../../types";
+import type { TranslationFunc } from "../../../../../translation/translationHelpers";
+import type { TOTPMFAProps, TOTPMFAState } from "../../../types";
 
 export enum TOTPMFAScreens {
     DeviceSetup,
@@ -93,7 +94,9 @@ const SignInUpTheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> =
                                 onShowSecretClick={props.onShowSecretClick}
                             />
                         )}
-                        {featureState.error !== undefined && <GeneralError error={featureState.error} />}
+                        {featureState.error !== undefined && (
+                            <GeneralError error={getErrorString(featureState.error, featureState, t)} />
+                        )}
                         <CodeForm
                             {...commonProps}
                             onSuccess={props.onSuccess}
@@ -160,4 +163,18 @@ export function getActiveScreen(props: Pick<TOTPMFAProps, "featureState" | "conf
     } else {
         return TOTPMFAScreens.CodeVerification;
     }
+}
+
+function getErrorString(error: string, state: TOTPMFAState, t: TranslationFunc) {
+    if (error !== "ERROR_TOTP_INVALID_CODE") {
+        return error;
+    }
+
+    return (
+        t(error) +
+        " " +
+        t("ERROR_TOTP_INVALID_CODE_RETRY_START") +
+        (state.maxAttemptCount! - state.currAttemptCount!) +
+        t("ERROR_TOTP_INVALID_CODE_RETRY_END")
+    );
 }
