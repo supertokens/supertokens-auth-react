@@ -184,6 +184,10 @@
         {
             "path": "recipe/multifactorauth/index.js",
             "limit": "10kb"
+        },
+        {
+            "path": "recipe/multifactorauth/prebuiltui.js",
+            "limit": "30kb"
         }
     ],
     "browserslist": {
