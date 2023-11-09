@@ -16,7 +16,10 @@ export declare const defaultTranslationsTOTP: {
         TOTP_MFA_BLOCKED_RETRY: string;
         TOTP_MFA_LOGOUT: string;
         TOTP_MFA_FOOTER_CHOOSER_ANOTHER: string;
-        INVALID_TOTP_ERROR: string;
+        ERROR_TOTP_INVALID_CODE: string;
+        ERROR_TOTP_INVALID_CODE_RETRY_START: string;
+        ERROR_TOTP_INVALID_CODE_RETRY_END: string;
+        ERROR_TOTP_UNKNOWN_DEVICE: string;
         GENERAL_ERROR_OTP_UNDEFINED: string;
         TOTP_MFA_NOT_ALLOWED_TO_SETUP: string;
         BRANDING_POWERED_BY_START: string;

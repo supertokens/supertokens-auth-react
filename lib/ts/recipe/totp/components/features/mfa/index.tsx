@@ -347,7 +347,12 @@ function getModifiedRecipeImplementation(
                     nextRetryAt: Date.now() + res.retryAfterMs,
                 });
             } else if (res.status === "INVALID_TOTP_ERROR") {
-                dispatch({ type: "setError", error: "ERROR_SIGN_IN_UP_CODE_VERIFY_INVALID_TOTP" });
+                dispatch({
+                    type: "setError",
+                    error: "ERROR_TOTP_INVALID_CODE",
+                    maxAttemptCount: res.maximumTOTPAttemptCount,
+                    currAttemptCount: res.failedTOTPAttemptCount,
+                });
             }
 
             return res;
@@ -363,7 +368,14 @@ function getModifiedRecipeImplementation(
                     nextRetryAt: Date.now() + res.retryAfterMs,
                 });
             } else if (res.status === "UNKNOWN_DEVICE_ERROR") {
-                dispatch({ type: "restartFlow", error: "ERROR_TOTP_MFA_VERIFY_DEVICE_UNKNOWN_DEVICE" });
+                dispatch({ type: "restartFlow", error: "ERROR_TOTP_UNKNOWN_DEVICE" });
+            } else if (res.status === "INVALID_TOTP_ERROR") {
+                dispatch({
+                    type: "setError",
+                    error: "ERROR_TOTP_INVALID_CODE",
+                    maxAttemptCount: res.maximumTOTPAttemptCount,
+                    currAttemptCount: res.failedTOTPAttemptCount,
+                });
             }
 
             return res;

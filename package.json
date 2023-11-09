@@ -239,7 +239,6 @@
     "homepage": "https://github.com/supertokens/supertokens-auth-react#readme",
     "eslintConfig": {
         "extends": [
-            "plugin:storybook/recommended",
             "plugin:storybook/recommended"
         ]
     }
