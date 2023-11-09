@@ -15,6 +15,7 @@ import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/email
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { MultiFactorAuthPreBuiltUI } from "supertokens-auth-react/recipe/multifactorauth/prebuiltui";
 import { AccessDeniedScreen } from "supertokens-auth-react/recipe/session/prebuiltui";
 import { getEnabledRecipes } from "./testContext";
 
@@ -22,7 +23,7 @@ function AppWithReactDomRouter(props) {
     const enabledRecipes = getEnabledRecipes();
     const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
 
-    let recipePreBuiltUIList = [];
+    let recipePreBuiltUIList = [MultiFactorAuthPreBuiltUI];
     if (enabledRecipes.includes("emailpassword")) {
         recipePreBuiltUIList.push(EmailPasswordPreBuiltUI);
     }
