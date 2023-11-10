@@ -326,10 +326,10 @@ export function mergeFormFields(
         // If new field, push to mergeFormFields.
         if (isNewField) {
             mergedFormFields.push({
-                optional: false,
                 placeholder: userField.label,
                 validate: defaultValidate,
                 ...userField,
+                optional: Boolean(userField.optional),
             });
         }
     }
