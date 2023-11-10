@@ -37,7 +37,7 @@ const meta: Meta<{
     render: (args, { loaded: { featureState } }) => {
         const { prebuiltUIs, key } = useMemo(() => {
             const { prebuiltUIs, recipeList } = buildInit(unflattenArgs(args));
-            resetAndInitST(recipeList);
+            resetAndInitST(recipeList, args.usesDynamicLoginMethods);
             return { prebuiltUIs, key: JSON.stringify(args) };
         }, [args]);
 

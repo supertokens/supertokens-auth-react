@@ -37,7 +37,7 @@ export function withFetchResponse<T>(resp: T): T & { fetchResponse: Response } {
     return resp as any;
 }
 
-export function resetAndInitST(recipeList?: any[]) {
+export function resetAndInitST(recipeList?: any[], usesDynamicLoginMethods?: boolean) {
     SessionRecipe.reset();
     PasswordlessRecipe.reset();
     EmailPasswordRecipe.reset();
@@ -59,6 +59,7 @@ export function resetAndInitST(recipeList?: any[]) {
     SuperTokensWebJS.reset();
 
     SuperTokens.init({
+        usesDynamicLoginMethods,
         appInfo: {
             apiDomain: "http://localhost:3000",
             appName: "Storybook test",
