@@ -279,12 +279,19 @@ const incorrectFormFields = [
             return "Please check Terms and conditions";
         },
     },
+    {
+        id: "city",
+        label: "Your city",
+        optional: false,
+        nonOptionalErrorMsg: "", // empty string should throw error
+    },
 ];
 
 const customFields = [
     {
         id: "select-dropdown",
         label: "Select Dropdown",
+        nonOptionalErrorMsg: "Select dropdown is not an optional",
         inputComponent: ({ value, name, onChange }) => (
             <select value={value} name={name} onChange={(e) => onChange(e.target.value)}>
                 <option value="" disabled hidden>
@@ -301,6 +308,7 @@ const customFields = [
         id: "terms",
         label: "",
         optional: false,
+        nonOptionalErrorMsg: "You must accept the terms and conditions",
         inputComponent: ({ name, onChange }) => (
             <div
                 style={{
@@ -711,6 +719,10 @@ function getFormFields() {
             // since page-error blocks all the other errors
             // use this filter to test specific error
             return incorrectFormFields.filter(({ id }) => id === "terms");
+        } else if (localStorage.getItem("INCORRECT_NON_OPTIONAL_ERROR_MSG") === "YES") {
+            return incorrectFormFields.filter(({ id }) => id === "city");
+        } else if (localStorage.getItem("INCORRECT_GETDEFAULT") === "YES") {
+            return incorrectFormFields.filter(({ id }) => id === "country");
         }
         return incorrectFormFields;
     } else if (localStorage.getItem("SHOW_CUSTOM_FIELDS_WITH_DEFAULT_VALUES") === "YES") {
@@ -723,6 +735,7 @@ function getFormFields() {
 
 function getSignInFormFields() {
     let showDefaultFields = localStorage.getItem("SHOW_SIGNIN_DEFAULT_FIELDS");
+    let showFieldsWithNonOptionalErrMsg = localStorage.getItem("SHOW_SIGNIN_WITH_NON_OPTIONAL_ERROR_MESSAGE");
     if (showDefaultFields === "YES") {
         return {
             formFields: [
@@ -733,6 +746,15 @@ function getSignInFormFields() {
                 {
                     id: "password",
                     getDefaultValue: () => "fakepassword123",
+                },
+            ],
+        };
+    } else if (showFieldsWithNonOptionalErrMsg === "YES") {
+        return {
+            formFields: [
+                {
+                    id: "email",
+                    nonOptionalErrorMsg: "Please add email",
                 },
             ],
         };

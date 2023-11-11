@@ -90,6 +90,7 @@ export declare type FormFieldBaseConfig = {
     label: string;
     placeholder?: string;
     getDefaultValue?: () => string;
+    nonOptionalErrorMsg?: string;
 };
 export declare type FormField = FormFieldBaseConfig & {
     validate?: (value: any) => Promise<string | undefined>;
@@ -105,6 +106,7 @@ export declare type NormalisedFormField = {
     placeholder: string;
     validate: (value: any) => Promise<string | undefined> | string | undefined;
     optional: boolean;
+    nonOptionalErrorMsg?: string;
     autoComplete?: string;
     autofocus?: boolean;
     getDefaultValue?: () => string;

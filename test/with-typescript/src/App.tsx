@@ -343,6 +343,7 @@ function getEmailPasswordConfigs() {
                     {
                         id: "email",
                         label: "Email",
+                        nonOptionalErrorMsg: "Please add your email",
                         getDefaultValue: () => "abc@xyz.com",
                     },
                 ],
@@ -384,6 +385,7 @@ function getEmailPasswordConfigs() {
                         id: "terms",
                         label: "",
                         optional: false,
+                        nonOptionalErrorMsg: "Please check Terms and conditions",
                         getDefaultValue: () => "true",
                         inputComponent: (inputProps) => (
                             <div

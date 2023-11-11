@@ -227,6 +227,11 @@ export type FormFieldBaseConfig = {
      *Ability to provide default value to input field.
      */
     getDefaultValue?: () => string;
+
+    /*
+     * Error message for non optional field.
+     */
+    nonOptionalErrorMsg?: string;
 };
 
 export type FormField = FormFieldBaseConfig & {
@@ -278,6 +283,11 @@ export type NormalisedFormField = {
      * Whether the field is optional or not.
      */
     optional: boolean;
+
+    /*
+     * Error message for non optional field.
+     */
+    nonOptionalErrorMsg?: string;
 
     /*
      * Autocomplete input.
