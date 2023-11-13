@@ -16,8 +16,8 @@ export class ErrorBoundary extends React.Component<unknown, { hasError: boolean;
             // You can render any custom fallback UI
             return (
                 <div>
-                    <h1>Something went wrong.</h1>
-                    <pre>{JSON.stringify(this.state.error, null, 2)}</pre>
+                    <h1>User error boundary hit with error:</h1>
+                    <pre>{this.state.error.message ?? JSON.stringify(this.state.error, null, 2)}</pre>
                 </div>
             );
         }
