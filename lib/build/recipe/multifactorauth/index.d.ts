@@ -11,7 +11,7 @@ export default class Wrapper {
     ): import("../../types").RecipeInitResult<
         GetRedirectionURLContext,
         "GET_MFA_INFO",
-        OnHandleEventContext,
+        never,
         import("./types").NormalisedConfig
     >;
     static getMFAInfo(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
