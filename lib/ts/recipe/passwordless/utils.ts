@@ -14,6 +14,7 @@
  */
 
 import { normaliseAuthRecipe } from "../authRecipe/utils";
+import MultiFactorAuth from "../multifactorauth/recipe";
 
 import {
     defaultPhoneNumberValidator,
@@ -25,6 +26,7 @@ import {
 
 import type { Config, NormalisedConfig, SignInUpFeatureConfigInput } from "./types";
 import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import type { DynamicLoginMethodsContextValue } from "../multitenancy/dynamicLoginMethodsContext";
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
@@ -136,4 +138,46 @@ function normalisePasswordlessBaseConfig<T>(config?: T & FeatureBaseConfig): T &
         ...(config as T),
         style,
     };
+}
+
+export function getEnabledContactMethods(
+    contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE",
+    currentDynamicLoginMethods: DynamicLoginMethodsContextValue
+) {
+    let enabledContactMethods = contactMethod === "EMAIL_OR_PHONE" ? ["EMAIL", "PHONE"] : [contactMethod];
+
+    let firstFactors;
+    if (currentDynamicLoginMethods.loaded && currentDynamicLoginMethods.loginMethods.firstFactors) {
+        firstFactors = currentDynamicLoginMethods.loginMethods.firstFactors;
+    } else {
+        firstFactors = MultiFactorAuth.getInstance()?.config.firstFactors;
+    }
+
+    if (firstFactors !== undefined) {
+        if (enabledContactMethods.includes("PHONE")) {
+            if (!firstFactors.includes("otp-phone") && !firstFactors.includes("link-phone")) {
+                enabledContactMethods = enabledContactMethods.filter((c) => c !== "PHONE");
+            }
+        } else {
+            if (firstFactors.includes("otp-phone") || firstFactors.includes("link-phone")) {
+                throw new Error("The enabled contact method is not a superset of the requested first factors");
+            }
+        }
+
+        if (enabledContactMethods.includes("EMAIL")) {
+            if (!firstFactors.includes("otp-email") && !firstFactors.includes("link-email")) {
+                enabledContactMethods = enabledContactMethods.filter((c) => c !== "EMAIL");
+            }
+        } else {
+            if (firstFactors.includes("otp-email") || firstFactors.includes("link-email")) {
+                throw new Error("The enabled contact method is not a superset of the requested first factors");
+            }
+        }
+    }
+
+    if (enabledContactMethods.length === 0) {
+        // It should never get here, but as a sanity check this is fine
+        throw new Error("The enabled contact method is not a superset of the requested first factors");
+    }
+    return enabledContactMethods;
 }

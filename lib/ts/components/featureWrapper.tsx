@@ -29,8 +29,6 @@ import { TranslationContextProvider } from "../translation/translationContext";
 import { useUserContext } from "../usercontext";
 import { mergeObjects } from "../utils";
 
-import ErrorBoundary from "./errorBoundary";
-
 import type { GetLoginMethodsResponseNormalized } from "../recipe/multitenancy/types";
 import type { TranslationStore } from "../translation/translationHelpers";
 import type { PropsWithChildren } from "react";
@@ -74,15 +72,13 @@ export default function FeatureWrapper({
 
     return (
         <DynamicLoginMethodsProvider value={loadedDynamicLoginMethods}>
-            <ErrorBoundary>
-                <TranslationContextProvider
-                    defaultLanguage={st.languageTranslations.defaultLanguage}
-                    defaultStore={mergeObjects(defaultStore, st.languageTranslations.userTranslationStore)}
-                    translationControlEventSource={st.languageTranslations.translationEventSource}
-                    userTranslationFunc={st.languageTranslations.userTranslationFunc}>
-                    <WithOrWithoutShadowDom useShadowDom={useShadowDom}>{children}</WithOrWithoutShadowDom>
-                </TranslationContextProvider>
-            </ErrorBoundary>
+            <TranslationContextProvider
+                defaultLanguage={st.languageTranslations.defaultLanguage}
+                defaultStore={mergeObjects(defaultStore, st.languageTranslations.userTranslationStore)}
+                translationControlEventSource={st.languageTranslations.translationEventSource}
+                userTranslationFunc={st.languageTranslations.userTranslationFunc}>
+                <WithOrWithoutShadowDom useShadowDom={useShadowDom}>{children}</WithOrWithoutShadowDom>
+            </TranslationContextProvider>
         </DynamicLoginMethodsProvider>
     );
 }
