@@ -1373,7 +1373,7 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
             disableDefaultUI,
             signInForm: {},
             signUpForm: {
-                formFields,
+                formFields: getFormFields(),
                 privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
             },
