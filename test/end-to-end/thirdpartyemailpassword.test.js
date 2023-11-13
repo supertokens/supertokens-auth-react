@@ -443,6 +443,73 @@ describe("SuperTokens Third Party Email Password", function () {
         });
     });
 
+    describe("SignIn default field tests", function () {
+        it("Should contain email and password fields prefilled", async function () {
+            await page.evaluate(() => window.localStorage.setItem("SHOW_SIGNIN_DEFAULT_FIELDS", "YES"));
+
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+
+            const expectedDefaultValues = {
+                email: "abc@xyz.com",
+                password: "fakepassword123",
+            };
+
+            const emailInput = await getInputField(page, "email");
+            const defaultEmail = await emailInput.evaluate((f) => f.value);
+            assert.strictEqual(defaultEmail, expectedDefaultValues["email"]);
+
+            const passwordInput = await getInputField(page, "password");
+            const defaultPassword = await passwordInput.evaluate((f) => f.value);
+            assert.strictEqual(defaultPassword, expectedDefaultValues["password"]);
+        });
+
+        it("Check on blank form submit nonOptionalErrorMsg gets displayed as expected", async function () {
+            await page.evaluate(() => window.localStorage.removeItem("SHOW_SIGNIN_DEFAULT_FIELDS"));
+
+            // set cookie and reload which loads the form with custom field
+            await page.evaluate(() =>
+                window.localStorage.setItem("SHOW_SIGNIN_WITH_NON_OPTIONAL_ERROR_MESSAGE", "YES")
+            );
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+
+            await waitForSTElement(page);
+            let apiCallMade = false;
+
+            await page.setRequestInterception(true);
+
+            const requestHandler = (request) => {
+                const url = request.url();
+                if (url === SIGN_IN_API) {
+                    apiCallMade = true;
+                    request.continue();
+                } else {
+                    request.continue();
+                }
+            };
+
+            page.on("request", requestHandler);
+
+            try {
+                await submitForm(page);
+                let formFieldErrors = await getFieldErrors(page);
+
+                // Also standard non-optional-error is displayed if nonOptionalErrorMsg is not provided
+                assert.deepStrictEqual(formFieldErrors, ["Please add email", "Field is not optional"]);
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            }
+
+            if (apiCallMade) {
+                throw new Error("Empty form making API request to signin");
+            }
+        });
+    });
+
     describe("Third Party signup config supports custom fields tests", function () {
         beforeEach(async function () {
             await page.evaluate(() => window.localStorage.setItem("SHOW_CUSTOM_FIELDS", "YES"));

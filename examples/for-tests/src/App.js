@@ -1371,7 +1371,9 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
         },
         signInAndUpFeature: {
             disableDefaultUI,
-            signInForm: {},
+            signInForm: {
+                ...getSignInFormFields(),
+            },
             signUpForm: {
                 formFields: getFormFields(),
                 privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
