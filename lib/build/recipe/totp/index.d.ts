@@ -29,7 +29,13 @@ export default class Wrapper {
     >;
     static verifyCode(input: { totp: string; options?: RecipeFunctionOptions; userContext?: any }): Promise<
         | {
-              status: "OK" | "INVALID_TOTP_ERROR";
+              status: "OK";
+              fetchResponse: Response;
+          }
+        | {
+              status: "INVALID_TOTP_ERROR";
+              failedTOTPAttemptCount: number;
+              maximumTOTPAttemptCount: number;
               fetchResponse: Response;
           }
         | {
@@ -50,7 +56,13 @@ export default class Wrapper {
               fetchResponse: Response;
           }
         | {
-              status: "INVALID_TOTP_ERROR" | "UNKNOWN_DEVICE_ERROR";
+              status: "INVALID_TOTP_ERROR";
+              failedTOTPAttemptCount: number;
+              maximumTOTPAttemptCount: number;
+              fetchResponse: Response;
+          }
+        | {
+              status: "UNKNOWN_DEVICE_ERROR";
               fetchResponse: Response;
           }
         | {

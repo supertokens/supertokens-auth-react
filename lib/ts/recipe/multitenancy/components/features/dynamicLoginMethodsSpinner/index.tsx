@@ -13,7 +13,6 @@
  * under the License.
  */
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import ErrorBoundary from "../../../../../components/errorBoundary";
 import { WithOrWithoutShadowDom } from "../../../../../components/featureWrapper";
 import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 import Multitenancy from "../../../recipe";
@@ -28,11 +27,9 @@ const DynamicLoginMethodsSpinner: React.FC = () => {
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
-            <ErrorBoundary>
-                <WithOrWithoutShadowDom useShadowDom={recipe.config.useShadowDom}>
-                    <DynamicLoginMethodsSpinnerTheme config={recipe.config} />
-                </WithOrWithoutShadowDom>
-            </ErrorBoundary>
+            <WithOrWithoutShadowDom useShadowDom={recipe.config.useShadowDom}>
+                <DynamicLoginMethodsSpinnerTheme config={recipe.config} />
+            </WithOrWithoutShadowDom>
         </ComponentOverrideContext.Provider>
     );
 };
