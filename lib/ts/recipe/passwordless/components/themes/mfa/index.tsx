@@ -71,7 +71,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
     ) : activeScreen === MFAScreens.AccessDenied ? (
         <AccessDeniedScreen useShadowDom={false} error={t(featureState.error!)} />
     ) : (
-        <div data-supertokens="container">
+        <div data-supertokens="container pwlessMFA">
             <div data-supertokens="row">
                 {
                     <React.Fragment>
