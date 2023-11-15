@@ -41,7 +41,7 @@ const AccessDeniedScreen: FC<AccessDeniedThemeProps> = (props) => {
     };
 
     return (
-        <div data-supertokens="center">
+        <div data-supertokens="center accessDenied">
             <div data-supertokens="container">
                 <div data-supertokens="row">
                     <ErrorRoundIcon />
@@ -49,8 +49,8 @@ const AccessDeniedScreen: FC<AccessDeniedThemeProps> = (props) => {
                     <div data-supertokens="divider"></div>
                     {props.error && <div data-supertokens="primaryText accessDeniedError"> {props.error}</div>}
                     <div data-supertokens="buttonsGroup">
-                        <LogoutButton onClick={onLogout} />
                         <BackButton onClick={onBackButtonClicked} />
+                        <LogoutButton onClick={onLogout} />
                     </div>
                 </div>
             </div>

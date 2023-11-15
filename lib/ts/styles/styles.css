@@ -86,7 +86,7 @@
     width: fit-content;
     border-radius: 6px 6px 0 0;
     padding: 4px 9px;
-    font-weight: 300;
+    font-weight: 400;
     font-size: var(--font-size-0);
     letter-spacing: 0.4px;
 }
@@ -110,13 +110,18 @@
     font-size: var(--font-size-4);
     line-height: 40px;
     letter-spacing: 0.58px;
-    font-weight: 800;
+    font-weight: 600;
     margin-bottom: 2px;
     color: rgb(var(--palette-textTitle));
 }
 
 [data-supertokens~="headerSubtitle"] {
+    font-weight: 400;
     margin-bottom: 21px;
+}
+
+[data-supertokens~="headerSubtitle"][data-supertokens~="secondaryText"] {
+    font-weight: 400;
 }
 
 [data-supertokens~="privacyPolicyAndTermsAndConditions"] {
@@ -205,11 +210,13 @@
 }
 
 [data-supertokens~="linkButton"] {
+    font-family: "Rubik", sans-serif;
     background-color: transparent;
     border: 0;
 }
 
 [data-supertokens~="secondaryLinkWithLeftArrow"] {
+    font-weight: 500;
     margin-top: 10px;
     margin-bottom: 40px;
     cursor: pointer;
@@ -223,6 +230,7 @@
 }
 
 [data-supertokens~="button"] {
+    font-family: "Rubik", sans-serif;
     background-color: rgb(var(--palette-primary));
     color: rgb(var(--palette-buttonText));
     width: 100%;
@@ -285,27 +293,38 @@
     }
 }
 
-[data-supertokens~="footerLinkGroup"] {
+[data-supertokens~="footerLinkGroupVert"] {
     display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    gap: 8px;
+    flex-direction: column;
+    margin-top: 10px;
+    gap: 24px;
 }
 
-[data-supertokens~="footerLinkGroup"] > div {
+[data-supertokens~="footerLinkGroupVert"] > div {
     margin: 0;
 }
 
+[data-supertokens~="footerLinkGroupVert"] [data-supertokens~="secondaryText"] {
+    font-weight: 400;
+}
+
+[data-supertokens~="footerLinkGroupVert"] [data-supertokens~="secondaryLinkWithLeftArrow"] {
+    font-weight: 500;
+    position: relative;
+    left: -6px; /* half the width of the left arrow */
+}
+
 @media (max-width: 360px) {
-    [data-supertokens~="footerLinkGroup"] {
+    [data-supertokens~="footerLinkGroupVert"] {
         flex-direction: column;
     }
-    [data-supertokens~="footerLinkGroup"] > div {
+    [data-supertokens~="footerLinkGroupVert"] > div {
         margin: 0 auto;
     }
 }
 
-[data-supertokens~="footerLinkGroup"] div:only-child {
+[data-supertokens~="footerLinkGroupVert"] div:only-child {
     margin-left: auto;
     margin-right: auto;
+    margin-top: 14px;
 }
