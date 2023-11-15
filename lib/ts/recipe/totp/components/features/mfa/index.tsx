@@ -350,8 +350,8 @@ function getModifiedRecipeImplementation(
                 dispatch({
                     type: "setError",
                     error: "ERROR_TOTP_INVALID_CODE",
-                    maxAttemptCount: res.maximumTOTPAttemptCount,
-                    currAttemptCount: res.failedTOTPAttemptCount,
+                    maxAttemptCount: res.maxNumberOfFailedAttempts,
+                    currAttemptCount: res.currentNumberOfFailedAttempts,
                 });
             }
 
@@ -373,8 +373,8 @@ function getModifiedRecipeImplementation(
                 dispatch({
                     type: "setError",
                     error: "ERROR_TOTP_INVALID_CODE",
-                    maxAttemptCount: res.maximumTOTPAttemptCount,
-                    currAttemptCount: res.failedTOTPAttemptCount,
+                    maxAttemptCount: res.maxNumberOfFailedAttempts,
+                    currAttemptCount: res.currentNumberOfFailedAttempts,
                 });
             }
 

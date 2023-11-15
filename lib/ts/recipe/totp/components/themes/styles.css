@@ -1,16 +1,16 @@
 @import "../../../../styles/styles.css";
 @import "../../../emailpassword/components/themes/styles.css";
 
-[data-supertokens~="container"] {
+[data-supertokens~="totp"] [data-supertokens~="container"] {
     padding-top: 24px;
 }
 
-[data-supertokens~="divider"] {
-    margin-top: 32px;
-    margin-bottom: 32px;
+[data-supertokens~="totp"] [data-supertokens~="divider"] {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
-[data-supertokens~="row"] {
+[data-supertokens~="totp"] [data-supertokens~="row"] {
     padding-top: 16px;
     padding-bottom: 8px;
     width: auto;
@@ -21,13 +21,13 @@
     border-radius: 12px;
     border: 1px solid rgb(var(--palette-inputBorder));
     padding: 16px;
-    max-width: 100px;
-    max-height: 100px;
+    max-width: 172px;
+    max-height: 172px;
 }
 
 [data-supertokens~="showTOTPSecret"] {
     display: block;
-    color: rgb(var(--palette-textSecondary));
+    color: rgb(var(--palette-textGray));
     font-size: var(--font-size-0);
     margin: 4px;
 }
@@ -35,7 +35,7 @@
 [data-supertokens~="totpSecret"] {
     display: block;
     border-radius: 6px;
-    padding: 12px;
+    padding: 7px 15px;
     color: rgb(var(--palette-textLink));
     font-size: var(--font-size-1);
     font-weight: 600;
