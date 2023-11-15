@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
 import { BlockedIcon } from "../../../../../components/assets/blockedIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
@@ -19,11 +20,13 @@ import { FormRow } from "../../../../emailpassword/components/library";
 
 import { RetryButton } from "./retryButton";
 
-const TOTPBlockedScreen: React.FC<{ nextRetryAt: number; onRetry: () => void }> = (props) => {
+const TOTPBlockedScreen: React.FC<{ nextRetryAt: number; onRetry: () => void; onSignOutClicked: () => void }> = (
+    props
+) => {
     const t = useTranslation();
 
     return (
-        <div data-supertokens="container">
+        <div data-supertokens="container totp">
             <div data-supertokens="row noFormRow">
                 <BlockedIcon />
                 <div data-supertokens="headerTitle">{t("TOTP_BLOCKED_TITLE")}</div>
@@ -32,6 +35,10 @@ const TOTPBlockedScreen: React.FC<{ nextRetryAt: number; onRetry: () => void }> 
                 <FormRow key="form-button">
                     <RetryButton nextRetryAt={props.nextRetryAt} onClick={props.onRetry} />
                 </FormRow>
+                <div data-supertokens="secondaryText secondaryLinkWithLeftArrow" onClick={props.onSignOutClicked}>
+                    <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
+                    {t("TOTP_MFA_LOGOUT")}
+                </div>
             </div>
         </div>
     );

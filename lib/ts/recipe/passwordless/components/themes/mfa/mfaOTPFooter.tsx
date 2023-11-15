@@ -35,16 +35,15 @@ export const MFAOTPFooter = withOverride(
         const userContext = useUserContext();
 
         return (
-            <div data-supertokens="footerLinkGroup pwlessMFAOTPFooter">
+            <div data-supertokens="footerLinkGroupVert pwlessMFAOTPFooter">
                 {isSetupAllowed ? (
                     <div
-                        data-supertokens="secondaryText secondaryLinkWithLeftArrow"
+                        data-supertokens="secondaryText"
                         onClick={() =>
                             recipeImplementation.clearLoginAttemptInfo({
                                 userContext,
                             })
                         }>
-                        <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
                         {loginAttemptInfo.contactMethod === "EMAIL"
                             ? t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL")
                             : t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE")}
@@ -52,9 +51,7 @@ export const MFAOTPFooter = withOverride(
                 ) : (
                     claim.loading === false &&
                     (claim.value?.n.length ?? 0) > 1 && (
-                        <div
-                            data-supertokens="secondaryText secondaryLinkWithLeftArrow"
-                            onClick={onFactorChooserButtonClicked}>
+                        <div data-supertokens="secondaryText" onClick={onFactorChooserButtonClicked}>
                             {t("PWLESS_MFA_FOOTER_CHOOSER_ANOTHER")}
                         </div>
                     )

@@ -63,13 +63,17 @@ const SignInUpTheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> =
     };
 
     return activeScreen === TOTPMFAScreens.Blocked ? (
-        <BlockedScreen nextRetryAt={featureState.nextRetryAt!} onRetry={props.onRetryClicked} />
+        <BlockedScreen
+            nextRetryAt={featureState.nextRetryAt!}
+            onRetry={props.onRetryClicked}
+            onSignOutClicked={props.onSignOutClicked}
+        />
     ) : activeScreen === TOTPMFAScreens.AccessDenied ? (
         <AccessDeniedScreen error={t(featureState.error!)} useShadowDom={false} />
     ) : activeScreen === TOTPMFAScreens.Loading ? (
         <LoadingScreen />
     ) : (
-        <div data-supertokens="container">
+        <div data-supertokens="container totp">
             <div data-supertokens="row">
                 {featureState.loaded && (
                     <React.Fragment>

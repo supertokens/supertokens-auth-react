@@ -21,7 +21,7 @@ import TOTPWebJS from "supertokens-web-js/recipe/totp";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
-import { OTPIcon } from "../../components/assets/otpIcon";
+import { TOTPIcon } from "../../components/assets/totpIcon";
 import { SSR_ERROR } from "../../constants";
 import MultiFactorAuth from "../multifactorauth/recipe";
 import RecipeModule from "../recipeModule";
@@ -46,7 +46,7 @@ export const totpFactor = {
     name: "TOTP",
     description: "Use an authenticator app to complete the authentication request",
     path: "/mfa/totp",
-    logo: OTPIcon,
+    logo: TOTPIcon,
 };
 
 export default class TOTP extends RecipeModule<

@@ -17,7 +17,7 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 
 const TOTPLoadingScreen: React.FC = () => {
     return (
-        <div data-supertokens="container delayedRender">
+        <div data-supertokens="container delayedRender totp">
             <div data-supertokens="row">
                 <div data-supertokens="spinner delayedRender">
                     <SpinnerIcon />
