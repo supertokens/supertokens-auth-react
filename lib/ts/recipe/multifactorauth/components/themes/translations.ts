@@ -3,8 +3,8 @@ import { defaultTranslationsCommon } from "../../../../translation/translations"
 export const defaultTranslationsMultiFactorAuth = {
     en: {
         ...defaultTranslationsCommon.en,
-        MULTI_FACTOR_CHOOSER_HEADER_TITLE: "Please select a second factor",
-        MULTI_FACTOR_AUTH_LOGOUT: "Logout",
+        MULTI_FACTOR_CHOOSER_HEADER_TITLE: "Please select another factor",
+        MULTI_FACTOR_AUTH_LOGOUT: "Log out",
 
         MFA_NO_AVAILABLE_OPTIONS: "You have no available secondary factors.",
         MFA_NO_AVAILABLE_OPTIONS_LOGIN:
