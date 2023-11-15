@@ -37,7 +37,7 @@ export function FactorChooserTheme(props: FactorChooserThemeProps): JSX.Element 
         );
     }
     return (
-        <div data-supertokens="container">
+        <div data-supertokens="container mfa">
             <FactorChooserHeader
                 onBackButtonClicked={props.onBackButtonClicked}
                 showBackButton={props.showBackButton}
