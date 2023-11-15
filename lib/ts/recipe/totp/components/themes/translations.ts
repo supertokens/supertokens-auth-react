@@ -3,7 +3,7 @@ import { defaultTranslationsCommon } from "../../../../translation/translations"
 export const defaultTranslationsTOTP = {
     en: {
         ...defaultTranslationsCommon.en,
-        TOTP_SHOW_SECRET_START: "Unable to scan? Use a secret key",
+        TOTP_SHOW_SECRET_START: "Unable to scan? Use a",
         TOTP_SHOW_SECRET_LINK: "secret key",
         TOTP_SHOW_SECRET_END: "",
         TOTP_CODE_VERIFICATION_HEADER_TITLE: "Enter TOTP",
