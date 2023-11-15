@@ -121,6 +121,26 @@ const meta: Meta<typeof Page> = {
     },
 };
 
+const loadSessionContextWithSingleNextOption = async () => ({
+    session: {
+        ...defaultSessionContext,
+        accessTokenPayload: {
+            ...defaultSessionContext.accessTokenPayload,
+            "st-mfa": { c: {}, n: ["totp"] },
+        },
+    },
+});
+
+const loadSessionContextWithMultipleNextOptions = async () => ({
+    session: {
+        ...defaultSessionContext,
+        accessTokenPayload: {
+            ...defaultSessionContext.accessTokenPayload,
+            "st-mfa": { c: {}, n: ["totp", "otp-phone", "otp-email"] },
+        },
+    },
+});
+
 export default meta;
 type Story = StoryObj<typeof Page>;
 
@@ -132,6 +152,30 @@ export const DeviceSetup: Story = {
             deviceInfo: exampleDeviceInfo,
         },
     },
+};
+
+export const DeviceSetupWithSingleNextOption: Story = {
+    args: {
+        featureState: {
+            ...defaultState,
+            loaded: true,
+            deviceInfo: exampleDeviceInfo,
+            showBackButton: false,
+        },
+    },
+    loaders: [loadSessionContextWithSingleNextOption],
+};
+
+export const DeviceSetupMultipleNextOptions: Story = {
+    args: {
+        featureState: {
+            ...defaultState,
+            loaded: true,
+            deviceInfo: exampleDeviceInfo,
+            showBackButton: false,
+        },
+    },
+    loaders: [loadSessionContextWithMultipleNextOptions],
 };
 
 export const DeviceSetupAccessDenied: Story = {
@@ -190,6 +234,29 @@ export const Verification: Story = {
     },
 };
 
+export const VerificationWithSingleNextOption: Story = {
+    args: {
+        featureState: {
+            ...defaultState,
+            loaded: true,
+            deviceInfo: undefined,
+            showBackButton: false,
+        },
+    },
+    loaders: [loadSessionContextWithSingleNextOption],
+};
+
+export const VerificationWithMultipleNextOption: Story = {
+    args: {
+        featureState: {
+            ...defaultState,
+            loaded: true,
+            deviceInfo: undefined,
+            showBackButton: false,
+        },
+    },
+    loaders: [loadSessionContextWithMultipleNextOptions],
+};
 export const VerificationEmptySubmit: Story = {
     args: {
         featureState: {

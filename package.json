@@ -130,7 +130,8 @@
         "size": "size-limit",
         "check-circular-dependencies": "npx madge --circular --extensions js ./lib/build/",
         "storybook": "TEST_MODE=testing storybook dev -p 6006",
-        "build-storybook": "TEST_MODE=testing storybook build"
+        "build-storybook": "TEST_MODE=testing storybook build",
+        "chromatic": "npx chromatic --project-token=chpt_ca6c16f6b3fac1f"
     },
     "size-limit": [
         {
