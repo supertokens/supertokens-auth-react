@@ -367,6 +367,12 @@ describe("SuperTokens SignUp", function () {
             // check if checbox is loaded
             const checkboxExists = await waitForSTElement(page, 'input[type="checkbox"]');
             assert.ok(checkboxExists, "Checkbox exists");
+
+            // check if labels are loaded correctly
+            // non-optional field with empty labels should'nt show * sign
+            const expectedLabels = ["Email *", "Password *", "Select Dropdown", ""];
+            const labelNames = await getLabelsText(page);
+            assert.deepStrictEqual(labelNames, expectedLabels);
         });
 
         it("Should show error messages, based on optional flag", async function () {
