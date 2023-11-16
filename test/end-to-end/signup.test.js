@@ -488,7 +488,6 @@ describe("SuperTokens SignUp", function () {
                 }
             };
 
-            await page.setRequestInterception(true);
             page.on("request", requestHandler);
 
             try {
@@ -503,7 +502,6 @@ describe("SuperTokens SignUp", function () {
                 ]);
             } finally {
                 page.off("request", requestHandler);
-                await page.setRequestInterception(false);
             }
 
             assert.ok(!apiCallMade, "Empty form making signup API request");

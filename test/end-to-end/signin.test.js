@@ -773,8 +773,6 @@ describe("SuperTokens SignIn", function () {
                     request.continue();
                 }
             };
-
-            await page.setRequestInterception(true);
             page.on("request", requestHandler);
 
             try {
@@ -785,7 +783,6 @@ describe("SuperTokens SignIn", function () {
                 assert.deepStrictEqual(formFieldErrors, ["Please add email", "Field is not optional"]);
             } finally {
                 page.off("request", requestHandler);
-                await page.setRequestInterception(false);
             }
 
             assert.ok(!apiCallMade, "Empty form making API request to signin");
