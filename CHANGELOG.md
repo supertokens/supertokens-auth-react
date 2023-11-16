@@ -5,13 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
-## [0.35.7] - 2023-10-30
+## [0.35.7] - 2023-11-16
 
 ### Added
 
--   Introduced the capability to utilize custom components in the Email-Password based recipes' signup form fields by exposing inputComponent types.
--   Implemented the functionality to assign default values to the form fields in the Email-Password based recipes.
--   Simplified onChange prop usage in inputComponent - id attribute removed.
+-   Email-Password and Third-Party Email Password Recipes Enhancements:
+    -   Introduced the capability to utilize custom components in the Email-Password by exposing inputComponent types.
+    -   Allow setting default values in signup/signin form fields.
+    -   Made onChange prop in inputComponent simpler by removing the need for an id attribute.
+    -   Added a feature to customize the "Field is not optional" error message for each form field with the nonOptionalErrorMsg prop.
 
 Following is an example of how to use above features.
 
@@ -24,6 +26,7 @@ EmailPassword.init({
                     id: "select-dropdown",
                     label: "Select Option",
                     getDefaultValue: () => "option 2",
+                    nonOptionalErrorMsg: "Select dropdown is required",
                     inputComponent: ({ value, name, onChange }) => (
                         <select
                             value={value}
@@ -37,6 +40,39 @@ EmailPassword.init({
                             <option value="option 2">Option 2</option>
                             <option value="option 3">Option 3</option>
                         </select>
+                    ),
+                },
+            ],
+        },
+    },
+});
+
+ThirdPartyEmailPassword.init({
+    signInAndUpFeature: {
+        signUpForm: {
+            formFields: [
+                {
+                    id: "terms",
+                    label: "",
+                    optional: false,
+                    getDefaultValue: () => "true",
+                    optional: false,
+                    nonOptionalErrorMsg: "You must accept the terms and conditions",
+                    inputComponent: ({ name, onChange, value }) => (
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "left",
+                            }}>
+                            <input
+                                value={value}
+                                checked={value === "true"}
+                                name={name}
+                                type="checkbox"
+                                onChange={(e) => onChange(e.target.checked.toString())}></input>
+                            <span style={{ marginLeft: 5 }}>I agree to the terms and conditions</span>
+                        </div>
                     ),
                 },
             ],
