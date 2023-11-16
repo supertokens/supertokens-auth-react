@@ -151,7 +151,9 @@ function MFAThemeWrapper(props: MFAProps): JSX.Element {
 
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase loadDefaultFont={!hasFont} userStyles={[props.config.rootStyle, activeStyle]}>
+            <ThemeBase
+                loadDefaultFont={!hasFont}
+                userStyles={[props.config.rootStyle, activeStyle, props.config.mfaFeature.style]}>
                 <MFATheme {...props} activeScreen={activeScreen!} />
             </ThemeBase>
         </UserContextWrapper>
