@@ -713,7 +713,7 @@ function getEmailVerificationConfigs({ disableDefaultUI }) {
     });
 }
 
-function getFormFields() {
+function getSignUpFormFields() {
     if (localStorage.getItem("SHOW_INCORRECT_FIELDS") === "YES") {
         if (localStorage.getItem("INCORRECT_ONCHANGE") === "YES") {
             // since page-error blocks all the other errors
@@ -737,29 +737,25 @@ function getSignInFormFields() {
     let showDefaultFields = localStorage.getItem("SHOW_SIGNIN_DEFAULT_FIELDS");
     let showFieldsWithNonOptionalErrMsg = localStorage.getItem("SHOW_SIGNIN_WITH_NON_OPTIONAL_ERROR_MESSAGE");
     if (showDefaultFields === "YES") {
-        return {
-            formFields: [
-                {
-                    id: "email",
-                    getDefaultValue: () => "abc@xyz.com",
-                },
-                {
-                    id: "password",
-                    getDefaultValue: () => "fakepassword123",
-                },
-            ],
-        };
+        return [
+            {
+                id: "email",
+                getDefaultValue: () => "abc@xyz.com",
+            },
+            {
+                id: "password",
+                getDefaultValue: () => "fakepassword123",
+            },
+        ];
     } else if (showFieldsWithNonOptionalErrMsg === "YES") {
-        return {
-            formFields: [
-                {
-                    id: "email",
-                    nonOptionalErrorMsg: "Please add email",
-                },
-            ],
-        };
+        return [
+            {
+                id: "email",
+                nonOptionalErrorMsg: "Please add email",
+            },
+        ];
     }
-    return {};
+    return [];
 }
 
 function getEmailPasswordConfigs({ disableDefaultUI }) {
@@ -842,13 +838,13 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
             defaultToSignUp,
             signInForm: {
                 style: theme,
-                ...getSignInFormFields(),
+                formFields: getSignInFormFields(),
             },
             signUpForm: {
                 style: theme,
                 privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
-                formFields: getFormFields(),
+                formFields: getSignUpFormFields(),
             },
         },
     });
@@ -1372,10 +1368,10 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
         signInAndUpFeature: {
             disableDefaultUI,
             signInForm: {
-                ...getSignInFormFields(),
+                formFields: getSignInFormFields(),
             },
             signUpForm: {
-                formFields: getFormFields(),
+                formFields: getSignUpFormFields(),
                 privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
             },
