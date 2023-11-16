@@ -167,7 +167,7 @@ export function useChildProps(
                     redirectToPath === undefined
                         ? undefined
                         : {
-                              rid: "totp",
+                              rid: "passwordless",
                               successRedirectContext: {
                                   action: "SUCCESS",
                                   isNewRecipeUser: false,

@@ -319,14 +319,7 @@ function getModifiedRecipeImplementation(
     return {
         ...originalImpl,
         createDevice: async (input) => {
-            const additionalDeviceInfo = {
-                redirectToPath: getRedirectToPathFromURL(),
-            };
-
-            const res = await originalImpl.createDevice({
-                ...input,
-                userContext: { ...input.userContext, additionalDeviceInfo },
-            });
+            const res = await originalImpl.createDevice(input);
             if (res.status === "OK") {
                 const deviceInfo = {
                     ...res,
