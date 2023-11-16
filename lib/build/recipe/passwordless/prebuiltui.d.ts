@@ -11,7 +11,7 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     static getInstanceOrInitAndGetInstance(): PasswordlessPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
-        componentName: "signInUp" | "linkClickedScreen",
+        componentName: "signInUp" | "linkClickedScreen" | "otp-phone" | "otp-email",
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
@@ -35,6 +35,8 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
         }>
     ) => JSX.Element;
     static LinkClicked: (prop?: any) => JSX.Element;
+    static MfaOtpPhone: (prop?: any) => JSX.Element;
+    static MfaOtpEmail: (prop?: any) => JSX.Element;
     static SignInUpTheme: typeof SignInUpTheme;
 }
 declare const SignInUp: (
@@ -44,4 +46,6 @@ declare const SignInUp: (
     }>
 ) => JSX.Element;
 declare const LinkClicked: (prop?: any) => JSX.Element;
-export { SignInUp, LinkClicked, SignInUpTheme };
+declare const MfaOtpPhone: (prop?: any) => JSX.Element;
+declare const MfaOtpEmail: (prop?: any) => JSX.Element;
+export { SignInUp, LinkClicked, SignInUpTheme, MfaOtpPhone, MfaOtpEmail };

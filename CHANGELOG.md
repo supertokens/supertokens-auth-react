@@ -35,6 +35,25 @@ To use this you'll need compatible versions:
 -   Refactored/renamed some styling options (`resetPasswordHeaderTitle` -> `headerTitle withBackButton`)
 -   Added a `useShadowDom` prop to the `AccessDeniedScreen`
 -   Added an `error` prop to the `AccessDeniedScreen` that can be used to describe the reason access is denied.
+-   Added new MFA related components to Passwordless
+    -   Added new prop `mfaFeature` to recipe config
+        -   `disableDefaultUI`: can be used to disable paths: `${websiteBasePath}/mfa/otp-phone`, `${websiteBasePath}/mfa/otp-email`
+        -   `style`: is applied on top of normal sign in/up styles on the MFA paths
+    -   New embeddable components:
+        -   `MfaOtpPhone` (by default handling path `${websiteBasePath}/mfa/otp-phone`)
+        -   `MfaOtpEmail` (by default handling path `${websiteBasePath}/mfa/otp-email`)
+    -   New overrideable components:
+        -   `PasswordlessMFAHeader_Override`
+        -   `PasswordlessMFAFooter_Override`
+        -   `PasswordlessMFAOTPHeader_Override`
+        -   `PasswordlessMFAOTPFooter_Override`
+    -   Please note, that during MFA we re-use the existing overrideable comps for the form section:
+        -   `PasswordlessEmailForm_Override`
+        -   `PasswordlessPhoneForm_Override`
+        -   `PasswordlessEmailOrPhoneForm_Override`
+-   Removed an `ErrorBoundary` wrapping all our feature components to make sure all errors are properly catchable by the app
+-   Added a `footer` prop to `EmailOrPhoneForm`, `EmailForm` and `PhoneForm` which is used to override the default sign in/up footers in case the component is for MFA
+-   The passwordless and thirdpartypasswordless sign in/up screens now respect the first configuration (defined in the `MultiFactorAuth` recipe or in the tenant information) when selecting the available contact methods.
 
 ## [0.35.5] - 2023-10-06
 

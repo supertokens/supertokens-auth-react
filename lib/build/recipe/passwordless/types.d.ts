@@ -1,4 +1,8 @@
 import type { LinkClickedScreen } from "./components/themes/linkClickedScreen";
+import type { MFAFooter } from "./components/themes/mfa/mfaFooter";
+import type { MFAHeader } from "./components/themes/mfa/mfaHeader";
+import type { MFAOTPFooter } from "./components/themes/mfa/mfaOTPFooter";
+import type { MFAOTPHeader } from "./components/themes/mfa/mfaOTPHeader";
 import type { CloseTabScreen } from "./components/themes/signInUp/closeTabScreen";
 import type { EmailForm } from "./components/themes/signInUp/emailForm";
 import type { EmailOrPhoneForm } from "./components/themes/signInUp/emailOrPhoneForm";
@@ -260,7 +264,7 @@ export declare type MFAAction =
           error: string | undefined;
       }
     | {
-          type: "startLogin";
+          type: "startVerify";
           loginAttemptInfo: LoginAttemptInfo;
       }
     | {
@@ -339,4 +343,8 @@ export declare type ComponentOverrideMap = {
     PasswordlessLinkSent_Override?: ComponentOverride<typeof LinkSent>;
     PasswordlessLinkClickedScreen_Override?: ComponentOverride<typeof LinkClickedScreen>;
     PasswordlessCloseTabScreen_Override?: ComponentOverride<typeof CloseTabScreen>;
+    PasswordlessMFAHeader_Override?: ComponentOverride<typeof MFAHeader>;
+    PasswordlessMFAFooter_Override?: ComponentOverride<typeof MFAFooter>;
+    PasswordlessMFAOTPHeader_Override?: ComponentOverride<typeof MFAOTPHeader>;
+    PasswordlessMFAOTPFooter_Override?: ComponentOverride<typeof MFAOTPFooter>;
 };
