@@ -200,7 +200,7 @@ export function useChildProps(
                 return history(-1);
             },
             onFactorChooserButtonClicked: () => {
-                return MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser(history);
+                return MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser(false, history);
             },
             recipeImplementation: recipeImplementation,
             config: recipe.config,
@@ -292,7 +292,7 @@ function useOnLoad(
 ) {
     const fetchMFAInfo = React.useCallback(
         async () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe.getMFAInfo({ userContext }),
-        [props.recipe, userContext]
+        [userContext]
     );
     const handleLoadError = React.useCallback(
         () => dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" }),
