@@ -345,7 +345,7 @@ describe("SuperTokens SignUp", function () {
         });
     });
 
-    describe("Signup custom fields test", function () {
+    describe("Custom fields tests", function () {
         beforeEach(async function () {
             // set cookie and reload which loads the form with custom field
             await page.evaluate(() => window.localStorage.setItem("SHOW_CUSTOM_FIELDS", "YES"));
@@ -356,7 +356,7 @@ describe("SuperTokens SignUp", function () {
             await toggleSignInSignUp(page);
         });
 
-        it("Check if the custom fields are loaded", async function () {
+        it("Should load the custom fields", async function () {
             let text = await getAuthPageHeaderText(page);
             assert.deepStrictEqual(text, "Sign Up");
 
@@ -409,7 +409,7 @@ describe("SuperTokens SignUp", function () {
             assert.deepStrictEqual(formFieldErrors, ["Please check Terms and conditions"]);
         });
 
-        it("Check if custom values are part of the signup payload", async function () {
+        it("Should be part of the signup payload", async function () {
             const customFields = {
                 terms: "true",
                 "select-dropdown": "option 3",
@@ -475,7 +475,7 @@ describe("SuperTokens SignUp", function () {
             assert.ok(interceptionPassed, "Test Failed");
         });
 
-        it("Check on blank form submit nonOptionalErrorMsg gets displayed as expected", async function () {
+        it("Should display nonOptionalErrorMsg on blank form submit", async function () {
             let apiCallMade = false;
 
             const requestHandler = (request) => {
@@ -509,7 +509,7 @@ describe("SuperTokens SignUp", function () {
             assert.ok(!apiCallMade, "Empty form making signup API request");
         });
 
-        it("Check if nonOptionalErrorMsg overwrites server error message for non-optional fields", async function () {
+        it("Should overwrite server error message for non-optional fields with nonOptionalErrorMsg", async function () {
             const requestHandler = (request) => {
                 if (request.method() === "POST" && request.url() === SIGN_UP_API) {
                     request.respond({
@@ -569,7 +569,7 @@ describe("SuperTokens SignUp", function () {
     });
 
     // Default values test
-    describe("Signup default value for fields test", function () {
+    describe("Default fields tests", function () {
         beforeEach(async function () {
             // set cookie and reload which loads the form fields with default values
             await page.evaluate(() => window.localStorage.setItem("SHOW_CUSTOM_FIELDS_WITH_DEFAULT_VALUES", "YES"));
@@ -580,7 +580,7 @@ describe("SuperTokens SignUp", function () {
             await toggleSignInSignUp(page);
         });
 
-        it("Check if default values are set already", async function () {
+        it("Should prefill the fields with default values", async function () {
             const fieldsWithDefault = {
                 country: "India",
                 "select-dropdown": "option 2",
@@ -607,7 +607,7 @@ describe("SuperTokens SignUp", function () {
             assert.strictEqual(defaultValue, fieldsWithDefault["terms"].toString());
         });
 
-        it("Check if changing the field value actually overwrites the default value", async function () {
+        it("Should be able to overwrite the default values", async function () {
             const updatedFields = {
                 country: "USA",
                 "select-dropdown": "option 3",
@@ -627,7 +627,7 @@ describe("SuperTokens SignUp", function () {
             assert.strictEqual(updatedOption, updatedFields["select-dropdown"]);
         });
 
-        it("Check if default values are getting sent in signup-payload", async function () {
+        it("Should ensure signup-payload contains default values", async function () {
             // directly submit the form and test the payload
             const expectedDefautlValues = [
                 { id: "email", value: "test@one.com" },
@@ -693,7 +693,7 @@ describe("SuperTokens SignUp", function () {
             });
         });
 
-        it("Check if incorrect getDefaultValue throws error", async function () {
+        it("Should throw error for incorrect getDefaultValue func call", async function () {
             await page.evaluate(() => window.localStorage.setItem("INCORRECT_GETDEFAULT", "YES"));
             let pageErrorMessage = "";
             page.on("pageerror", (err) => {
@@ -712,7 +712,7 @@ describe("SuperTokens SignUp", function () {
             );
         });
 
-        it("Check if non-string params to onChange throws error", async function () {
+        it("Should throw error for non-string params to onChange", async function () {
             await page.evaluate(() => window.localStorage.removeItem("INCORRECT_GETDEFAULT"));
             await page.evaluate(() => window.localStorage.setItem("INCORRECT_ONCHANGE", "YES"));
             await page.reload({
@@ -736,7 +736,7 @@ describe("SuperTokens SignUp", function () {
             );
         });
 
-        it("Check if empty string for nonOptionalErrorMsg throws error", async function () {
+        it("Should throw error for empty string for nonOptionalErrorMsg", async function () {
             const expectedErrorMessage = "nonOptionalErrorMsg for field city cannot be an empty string";
             let pageErrorMessage = "";
             page.on("pageerror", (err) => {

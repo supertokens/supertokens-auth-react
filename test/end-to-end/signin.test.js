@@ -671,7 +671,7 @@ describe("SuperTokens SignIn", function () {
         });
     });
 
-    describe("SignIn default field tests", function () {
+    describe("Default fields", function () {
         it("Should contain email and password fields prefilled", async function () {
             await page.evaluate(() => window.localStorage.setItem("SHOW_SIGNIN_DEFAULT_FIELDS", "YES"));
 
@@ -750,8 +750,8 @@ describe("SuperTokens SignIn", function () {
         });
     });
 
-    describe("Check if nonOptionalErrorMsg works as expected", function () {
-        it("Check on blank form submit nonOptionalErrorMsg gets displayed as expected", async function () {
+    describe("nonOptionalErrorMsg", function () {
+        it("Should be displayed on a blank form submit", async function () {
             await page.evaluate(() => localStorage.removeItem("SHOW_SIGNIN_DEFAULT_FIELDS"));
 
             // set cookie and reload which loads the form with custom field
