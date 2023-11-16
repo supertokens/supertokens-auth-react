@@ -423,15 +423,12 @@ describe("SuperTokens SignUp", function () {
                         const postData = JSON.parse(request.postData());
                         Object.keys(customFields).forEach((key) => {
                             let findFormData = postData.formFields.find((inputData) => inputData.id === key);
-                            if (findFormData) {
-                                assert.strictEqual(
-                                    findFormData["value"],
-                                    customFields[key],
-                                    `Mismatch in payload for key: ${key}`
-                                );
-                            } else {
-                                throw new Error("Field not found in req.data");
-                            }
+                            assert.ok(findFormData, "Field not found in req.data");
+                            assert.strictEqual(
+                                findFormData["value"],
+                                customFields[key],
+                                `Mismatch in payload for key: ${key}`
+                            );
                         });
                         interceptionPassed = true;
                         return request.respond({
@@ -474,13 +471,8 @@ describe("SuperTokens SignUp", function () {
                 await page.setRequestInterception(false);
             }
 
-            if (assertionError) {
-                throw assertionError;
-            }
-
-            if (!interceptionPassed) {
-                throw new Error("test failed");
-            }
+            assert.ok(!assertionError, assertionError?.message);
+            assert.ok(interceptionPassed, "Test Failed");
         });
 
         it("Check on blank form submit nonOptionalErrorMsg gets displayed as expected", async function () {
@@ -514,9 +506,7 @@ describe("SuperTokens SignUp", function () {
                 await page.setRequestInterception(false);
             }
 
-            if (apiCallMade) {
-                throw new Error("Empty form making API request to sign-up");
-            }
+            assert.ok(!apiCallMade, "Empty form making signup API request");
         });
 
         it("Check if nonOptionalErrorMsg overwrites server error message for non-optional fields", async function () {
@@ -656,11 +646,8 @@ describe("SuperTokens SignUp", function () {
                         const postData = JSON.parse(request.postData());
                         expectedDefautlValues.forEach(({ id, value }) => {
                             let findFormData = postData.formFields.find((inputData) => inputData.id === id);
-                            if (findFormData) {
-                                assert.strictEqual(findFormData["value"], value, `Mismatch in payload for key: ${id}`);
-                            } else {
-                                throw new Error("Field not found in req.data");
-                            }
+                            assert.ok(findFormData, "Field not found in req.data");
+                            assert.strictEqual(findFormData["value"], value, `Mismatch in payload for key: ${id}`);
                         });
                         interceptionPassed = true;
                         return request.respond({
@@ -691,13 +678,8 @@ describe("SuperTokens SignUp", function () {
                 await page.setRequestInterception(false);
             }
 
-            if (assertionError) {
-                throw assertionError;
-            }
-
-            if (!interceptionPassed) {
-                throw new Error("test failed");
-            }
+            assert.ok(!assertionError, assertionError?.message);
+            assert.ok(interceptionPassed, "Test Failed");
         });
     });
 
@@ -768,14 +750,11 @@ describe("SuperTokens SignUp", function () {
                 waitUntil: "domcontentloaded",
             });
 
-            if (pageErrorMessage !== "") {
-                assert(
-                    pageErrorMessage.includes(expectedErrorMessage),
-                    `Expected "${expectedErrorMessage}" to be included in page-error`
-                );
-            } else {
-                throw "Empty nonOptionalErrorMsg should throw error";
-            }
+            assert.ok(pageErrorMessage !== "", "Empty nonOptionalErrorMsg should throw error");
+            assert(
+                pageErrorMessage.includes(expectedErrorMessage),
+                `Expected "${expectedErrorMessage}" to be included in page-error`
+            );
         });
     });
 });

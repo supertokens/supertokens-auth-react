@@ -714,11 +714,8 @@ describe("SuperTokens SignIn", function () {
                         const postData = JSON.parse(request.postData());
                         expectedDefautlValues.forEach(({ id, value }) => {
                             let findFormData = postData.formFields.find((inputData) => inputData.id === id);
-                            if (findFormData) {
-                                assert.strictEqual(findFormData["value"], value, `Mismatch in payload for key: ${id}`);
-                            } else {
-                                throw new Error("Field not found in req.data");
-                            }
+                            assert.ok(findFormData, "Field not found in req.data");
+                            assert.strictEqual(findFormData["value"], value, `Mismatch in payload for key: ${id}`);
                         });
                         interceptionPassed = true;
                         return request.respond({
@@ -748,14 +745,8 @@ describe("SuperTokens SignIn", function () {
                 page.off("request", requestHandler);
                 await page.setRequestInterception(false);
             }
-
-            if (assertionError) {
-                throw assertionError;
-            }
-
-            if (!interceptionPassed) {
-                throw new Error("test failed");
-            }
+            assert.ok(!assertionError, assertionError?.message);
+            assert.ok(interceptionPassed, "Test Failed");
         });
     });
 
@@ -797,9 +788,7 @@ describe("SuperTokens SignIn", function () {
                 await page.setRequestInterception(false);
             }
 
-            if (apiCallMade) {
-                throw new Error("Empty form making API request to signin");
-            }
+            assert.ok(!apiCallMade, "Empty form making API request to signin");
         });
     });
 });
