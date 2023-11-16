@@ -260,7 +260,7 @@ export declare type MFAAction =
           error: string | undefined;
       }
     | {
-          type: "startLogin";
+          type: "startVerify";
           loginAttemptInfo: LoginAttemptInfo;
       }
     | {

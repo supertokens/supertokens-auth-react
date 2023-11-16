@@ -12,9 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-/*
- * Imports.
- */
 import React from "react";
 
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
@@ -44,9 +41,6 @@ export enum MFAScreens {
     AccessDenied,
 }
 
-/*
- * Component.
- */
 const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
     activeScreen,
     featureState,
@@ -152,7 +146,6 @@ function MFAThemeWrapper(props: MFAProps): JSX.Element {
     } else if (activeScreen === MFAScreens.PhoneForm) {
         activeStyle = props.config.signInUpFeature.emailOrPhoneFormStyle;
     } else {
-        // TODO: test
         activeStyle = ""; // styling the access denied screen is handled through the session recipe
     }
 

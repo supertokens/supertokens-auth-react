@@ -113,7 +113,7 @@ export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
                         loaded: true,
                         error: action.error,
                     };
-                case "startLogin":
+                case "startVerify":
                     return {
                         ...oldState,
                         loaded: true,
@@ -140,15 +140,8 @@ export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
         (initArg) => {
             let error: string | undefined = undefined;
             const errorQueryParam = getQueryParams("error");
-            const messageQueryParam = getQueryParams("message");
             if (errorQueryParam !== null) {
-                if (errorQueryParam === "signin") {
-                    error = "SOMETHING_WENT_WRONG_ERROR";
-                } else if (errorQueryParam === "restart_link") {
-                    error = "ERROR_SIGN_IN_UP_LINK";
-                } else if (errorQueryParam === "custom" && messageQueryParam !== null) {
-                    error = messageQueryParam;
-                }
+                error = "SOMETHING_WENT_WRONG_ERROR";
             }
             return {
                 ...initArg,
@@ -158,7 +151,6 @@ export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
     );
 };
 
-// We are overloading to explicitly state that if recipe is defined then the return value is defined as well.
 export function useChildProps(
     recipe: Recipe,
     recipeImplementation: RecipeInterface,
@@ -166,28 +158,8 @@ export function useChildProps(
     contactMethod: "PHONE" | "EMAIL",
     userContext: any,
     history: any
-): MFAChildProps;
-export function useChildProps(
-    recipe: Recipe | undefined,
-    recipeImplementation: RecipeInterface,
-    state: MFAState,
-    contactMethod: "PHONE" | "EMAIL",
-    userContext: any,
-    history: any
-): MFAChildProps | undefined;
-
-export function useChildProps(
-    recipe: Recipe | undefined,
-    recipeImplementation: RecipeInterface,
-    state: MFAState,
-    contactMethod: "PHONE" | "EMAIL",
-    userContext: any,
-    history: any
-): MFAChildProps | undefined {
+): MFAChildProps {
     return useMemo(() => {
-        if (!recipe || !recipeImplementation) {
-            return undefined;
-        }
         return {
             onSuccess: () => {
                 return SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
@@ -316,16 +288,9 @@ function useOnLoad(
         async (mfaInfo: { factors: MFAFactorInfo; email?: string; phoneNumber?: string }) => {
             let error: string | undefined = undefined;
             const errorQueryParam = getQueryParams("error");
-            const messageQueryParam = getQueryParams("message");
             const doSetup = getQueryParams("setup");
             if (errorQueryParam !== null) {
-                if (errorQueryParam === "signin") {
-                    error = "SOMETHING_WENT_WRONG_ERROR";
-                } else if (errorQueryParam === "restart_link") {
-                    error = "ERROR_SIGN_IN_UP_LINK";
-                } else if (errorQueryParam === "custom" && messageQueryParam !== null) {
-                    error = messageQueryParam;
-                }
+                error = "SOMETHING_WENT_WRONG_ERROR";
             }
             const loginAttemptInfo =
                 await recipeImplementation.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
@@ -418,7 +383,6 @@ function getModifiedRecipeImplementation(
             }
 
             // This contactMethod refers to the one that was used to deliver the login info
-            // This can be an important distinction in case both email and phone are allowed
             const contactMethod: "EMAIL" | "PHONE" = "email" in input ? "EMAIL" : "PHONE";
             const additionalAttemptInfo = {
                 lastResend: Date.now(),
@@ -436,7 +400,7 @@ function getModifiedRecipeImplementation(
                 const loginAttemptInfo = (await originalImpl.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
                     userContext: input.userContext,
                 }))!;
-                dispatch({ type: "startLogin", loginAttemptInfo });
+                dispatch({ type: "startVerify", loginAttemptInfo });
             }
             return res;
         },
@@ -475,8 +439,9 @@ function getModifiedRecipeImplementation(
         },
 
         consumeCode: async (input) => {
-            // We need to call consume code while callingConsume, so we don't detect
-            // the session creation too early and go to successInAnotherTab too early
+            // We need to set call callingConsumeCodeRef to true while consumeCode is running,
+            // so we don't detect the login attempt disappearing too early and
+            // go to successInAnotherTab too early
             callingConsumeCodeRef.current = true;
 
             const res = await originalImpl.consumeCode(input);
@@ -488,6 +453,8 @@ function getModifiedRecipeImplementation(
 
                 dispatch({ type: "restartFlow", error: "ERROR_SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW" });
             } else if (res.status === "SIGN_IN_UP_NOT_ALLOWED") {
+                // This should never happen, but technically possible based on the API specs
+                // so we keep this here to cover all cases
                 await originalImpl.clearLoginAttemptInfo({
                     userContext: input.userContext,
                 });
@@ -497,6 +464,7 @@ function getModifiedRecipeImplementation(
                 await originalImpl.clearLoginAttemptInfo({
                     userContext: input.userContext,
                 });
+                // we wait for the redirection to happen in this case.
             }
 
             callingConsumeCodeRef.current = false;
