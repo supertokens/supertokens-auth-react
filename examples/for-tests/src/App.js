@@ -713,29 +713,36 @@ function getEmailVerificationConfigs({ disableDefaultUI }) {
     });
 }
 
-function getSignUpFormFields() {
-    if (localStorage.getItem("SHOW_INCORRECT_FIELDS") === "YES") {
-        if (localStorage.getItem("INCORRECT_ONCHANGE") === "YES") {
+function getSignUpFormFields(formFieldConfig) {
+    const {
+        showIncorrectFields,
+        incorrectOnChange,
+        incorrectNonOptionalErrorMsg,
+        incorrectGetDefault,
+        customFieldsWithDefault,
+        showCustomFields,
+    } = formFieldConfig;
+    if (showIncorrectFields === "YES") {
+        if (incorrectOnChange === "YES") {
             // since page-error blocks all the other errors
             // use this filter to test specific error
             return incorrectFormFields.filter(({ id }) => id === "terms");
-        } else if (localStorage.getItem("INCORRECT_NON_OPTIONAL_ERROR_MSG") === "YES") {
+        } else if (incorrectNonOptionalErrorMsg === "YES") {
             return incorrectFormFields.filter(({ id }) => id === "city");
-        } else if (localStorage.getItem("INCORRECT_GETDEFAULT") === "YES") {
+        } else if (incorrectGetDefault === "YES") {
             return incorrectFormFields.filter(({ id }) => id === "country");
         }
         return incorrectFormFields;
-    } else if (localStorage.getItem("SHOW_CUSTOM_FIELDS_WITH_DEFAULT_VALUES") === "YES") {
+    } else if (customFieldsWithDefault === "YES") {
         return formFieldsWithDefault;
-    } else if (localStorage.getItem("SHOW_CUSTOM_FIELDS") === "YES") {
+    } else if (showCustomFields === "YES") {
         return customFields;
     }
     return formFields;
 }
 
-function getSignInFormFields() {
-    let showDefaultFields = localStorage.getItem("SHOW_SIGNIN_DEFAULT_FIELDS");
-    let showFieldsWithNonOptionalErrMsg = localStorage.getItem("SHOW_SIGNIN_WITH_NON_OPTIONAL_ERROR_MESSAGE");
+function getSignInFormFields(signInFormFieldConfig) {
+    const { showDefaultFields, showFieldsWithNonOptionalErrMsg } = signInFormFieldConfig;
     if (showDefaultFields === "YES") {
         return [
             {
@@ -758,7 +765,7 @@ function getSignInFormFields() {
     return [];
 }
 
-function getEmailPasswordConfigs({ disableDefaultUI }) {
+function getEmailPasswordConfigs({ disableDefaultUI, signUpFormFieldConfig, signInFormFieldConfig }) {
     return EmailPassword.init({
         style: `          
             [data-supertokens~=container] {
@@ -838,13 +845,13 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
             defaultToSignUp,
             signInForm: {
                 style: theme,
-                formFields: getSignInFormFields(),
+                formFields: getSignInFormFields(signInFormFieldConfig),
             },
             signUpForm: {
                 style: theme,
                 privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
-                formFields: getSignUpFormFields(),
+                formFields: getSignUpFormFields(signUpFormFieldConfig),
             },
         },
     });
@@ -1188,7 +1195,13 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
     });
 }
 
-function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultUI, thirdPartyRedirectURL }) {
+function getThirdPartyEmailPasswordConfigs({
+    staticProviderList,
+    disableDefaultUI,
+    thirdPartyRedirectURL,
+    signUpFormFieldConfig,
+    signInFormFieldConfig,
+}) {
     let providers = [
         ThirdParty.Github.init(),
         ThirdParty.Google.init(),
@@ -1368,10 +1381,10 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
         signInAndUpFeature: {
             disableDefaultUI,
             signInForm: {
-                formFields: getSignInFormFields(),
+                formFields: getSignInFormFields(signInFormFieldConfig),
             },
             signUpForm: {
-                formFields: getSignUpFormFields(),
+                formFields: getSignUpFormFields(signUpFormFieldConfig),
                 privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
             },
