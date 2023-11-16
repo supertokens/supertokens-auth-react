@@ -162,8 +162,22 @@ export function useChildProps(
     return useMemo(() => {
         return {
             onSuccess: () => {
+                const redirectToPath = getRedirectToPathFromURL();
+                const redirectInfo =
+                    redirectToPath === undefined
+                        ? undefined
+                        : {
+                              rid: "passwordless",
+                              successRedirectContext: {
+                                  action: "SUCCESS",
+                                  isNewRecipeUser: false,
+                                  user: undefined,
+                                  redirectToPath,
+                              },
+                          };
+
                 return SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                    undefined,
+                    redirectInfo,
                     userContext,
                     history
                 );
