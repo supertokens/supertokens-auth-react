@@ -12,9 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-/*
- * Imports.
- */
 import React from "react";
 
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
@@ -45,10 +42,7 @@ export enum TOTPMFAScreens {
     AccessDenied,
 }
 
-/*
- * Component.
- */
-const SignInUpTheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> = ({
+const TOTPMFATheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> = ({
     activeScreen,
     featureState,
     ...props
@@ -147,7 +141,7 @@ function TOTPMFAThemeWrapper(props: TOTPMFAProps): JSX.Element {
     return (
         <UserContextWrapper userContext={props.userContext}>
             <ThemeBase loadDefaultFont={!hasFont} userStyles={[props.config.rootStyle, activeStyle]}>
-                <SignInUpTheme {...props} activeScreen={activeScreen!} />
+                <TOTPMFATheme {...props} activeScreen={activeScreen!} />
             </ThemeBase>
         </UserContextWrapper>
     );
