@@ -21,14 +21,6 @@ export declare function useChildProps(
     userContext: any,
     history: any
 ): MFAChildProps;
-export declare function useChildProps(
-    recipe: Recipe | undefined,
-    recipeImplementation: RecipeInterface,
-    state: MFAState,
-    contactMethod: "PHONE" | "EMAIL",
-    userContext: any,
-    history: any
-): MFAChildProps | undefined;
 export declare const MFAFeature: React.FC<
     FeatureBaseProps & {
         contactMethod: "PHONE" | "EMAIL";
