@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   Email-Password and Third-Party Email Password Recipes Enhancements:
-    -   Introduced the capability to utilize custom components in the Email-Password by exposing inputComponent types.
+-   Email-Password and Third-Party Email Password Recipes Enhancements as follows:
+    -   Introduced the capability to utilize custom components by exposing inputComponent types.
     -   Allow setting default values in signup/signin form fields.
     -   Made onChange prop in inputComponent simpler by removing the need for an id attribute.
     -   Added a feature to customize the "Field is not optional" error message for each form field with the nonOptionalErrorMsg prop.
