@@ -753,7 +753,7 @@ function getSignInFormFields(formType) {
                 },
             ];
         default:
-            return [];
+            return;
     }
 }
 
