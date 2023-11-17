@@ -26,7 +26,7 @@ export default function Label({ value, showIsRequired }: LabelProps): JSX.Elemen
     return (
         <div data-supertokens="label">
             {t(value)}
-            {showIsRequired && value.trim() !== "" && " *"}
+            {showIsRequired && value && value.trim() !== "" && " *"}
         </div>
     );
 }
