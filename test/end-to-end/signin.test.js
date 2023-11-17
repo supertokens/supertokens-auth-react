@@ -673,7 +673,7 @@ describe("SuperTokens SignIn", function () {
 
     describe("Default fields", function () {
         it("Should contain email and password fields prefilled", async function () {
-            await page.evaluate(() => window.localStorage.setItem("SHOW_SIGNIN_DEFAULT_FIELDS", "YES"));
+            await page.evaluate(() => window.localStorage.setItem("SIGNIN_SETTING_TYPE", "DEFAULT_FIELDS"));
 
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -694,7 +694,7 @@ describe("SuperTokens SignIn", function () {
         });
 
         it("Should have default values in the signin request payload", async function () {
-            await page.evaluate(() => window.localStorage.setItem("SHOW_SIGNIN_DEFAULT_FIELDS", "YES"));
+            await page.evaluate(() => window.localStorage.setItem("SIGNIN_SETTING_TYPE", "DEFAULT_FIELDS"));
 
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -752,11 +752,11 @@ describe("SuperTokens SignIn", function () {
 
     describe("nonOptionalErrorMsg", function () {
         it("Should be displayed on a blank form submit", async function () {
-            await page.evaluate(() => localStorage.removeItem("SHOW_SIGNIN_DEFAULT_FIELDS"));
+            // await page.evaluate(() => localStorage.removeItem("SHOW_SIGNIN_DEFAULT_FIELDS"));
 
             // set cookie and reload which loads the form with custom field
             await page.evaluate(() =>
-                window.localStorage.setItem("SHOW_SIGNIN_WITH_NON_OPTIONAL_ERROR_MESSAGE", "YES")
+                window.localStorage.setItem("SIGNIN_SETTING_TYPE", "FIELDS_WITH_NON_OPTIONAL_ERROR_MESSAGE")
             );
             await page.reload({
                 waitUntil: "domcontentloaded",

@@ -14,17 +14,9 @@ export function getTestContext() {
         staticProviderList: localStorage.getItem("staticProviderList"),
         mockTenantId: localStorage.getItem("mockTenantId"),
         clientType: localStorage.getItem("clientType") || undefined,
-        signUpFormFieldConfig: {
-            showIncorrectFields: localStorage.getItem("SHOW_INCORRECT_FIELDS"),
-            incorrectOnChange: localStorage.getItem("INCORRECT_ONCHANGE"),
-            incorrectNonOptionalErrorMsg: localStorage.getItem("INCORRECT_NON_OPTIONAL_ERROR_MSG"),
-            incorrectGetDefault: localStorage.getItem("INCORRECT_GETDEFAULT"),
-            customFieldsWithDefault: localStorage.getItem("SHOW_CUSTOM_FIELDS_WITH_DEFAULT_VALUES"),
-            showCustomFields: localStorage.getItem("SHOW_CUSTOM_FIELDS"),
-        },
-        signInFormFieldConfig: {
-            showDefaultFields: localStorage.getItem("SHOW_SIGNIN_DEFAULT_FIELDS"),
-            showFieldsWithNonOptionalErrMsg: localStorage.getItem("SHOW_SIGNIN_WITH_NON_OPTIONAL_ERROR_MESSAGE"),
+        formFieldType: {
+            signIn: localStorage.getItem("SIGNIN_SETTING_TYPE"),
+            signUp: localStorage.getItem("SIGNUP_SETTING_TYPE"),
         },
     };
     return ret;

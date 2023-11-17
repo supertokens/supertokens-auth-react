@@ -348,7 +348,7 @@ describe("SuperTokens SignUp", function () {
     describe("Custom fields tests", function () {
         beforeEach(async function () {
             // set cookie and reload which loads the form with custom field
-            await page.evaluate(() => window.localStorage.setItem("SHOW_CUSTOM_FIELDS", "YES"));
+            await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "CUSTOM_FIELDS"));
 
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -570,7 +570,9 @@ describe("SuperTokens SignUp", function () {
     describe("Default fields tests", function () {
         beforeEach(async function () {
             // set cookie and reload which loads the form fields with default values
-            await page.evaluate(() => window.localStorage.setItem("SHOW_CUSTOM_FIELDS_WITH_DEFAULT_VALUES", "YES"));
+            await page.evaluate(() =>
+                window.localStorage.setItem("SIGNUP_SETTING_TYPE", "CUSTOM_FIELDS_WITH_DEFAULT_VALUES")
+            );
 
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -684,7 +686,7 @@ describe("SuperTokens SignUp", function () {
     describe("Incorrect field config test", function () {
         beforeEach(async function () {
             // set cookie and reload which loads the form fields with default values
-            await page.evaluate(() => window.localStorage.setItem("SHOW_INCORRECT_FIELDS", "YES"));
+            await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_FIELDS"));
 
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -692,7 +694,7 @@ describe("SuperTokens SignUp", function () {
         });
 
         it("Should throw error for incorrect getDefaultValue func call", async function () {
-            await page.evaluate(() => window.localStorage.setItem("INCORRECT_GETDEFAULT", "YES"));
+            await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_GETDEFAULT"));
             let pageErrorMessage = "";
             page.on("pageerror", (err) => {
                 pageErrorMessage = err.message;
@@ -711,8 +713,7 @@ describe("SuperTokens SignUp", function () {
         });
 
         it("Should throw error for non-string params to onChange", async function () {
-            await page.evaluate(() => window.localStorage.removeItem("INCORRECT_GETDEFAULT"));
-            await page.evaluate(() => window.localStorage.setItem("INCORRECT_ONCHANGE", "YES"));
+            await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_ONCHANGE"));
             await page.reload({
                 waitUntil: "domcontentloaded",
             });
@@ -741,9 +742,11 @@ describe("SuperTokens SignUp", function () {
                 pageErrorMessage = err.message;
             });
 
-            await page.evaluate(() => window.localStorage.removeItem("INCORRECT_GETDEFAULT"));
-            await page.evaluate(() => window.localStorage.removeItem("INCORRECT_ONCHANGE"));
-            await page.evaluate(() => window.localStorage.setItem("INCORRECT_NON_OPTIONAL_ERROR_MSG", "YES"));
+            // await page.evaluate(() => window.localStorage.removeItem("INCORRECT_GETDEFAULT"));
+            // await page.evaluate(() => window.localStorage.removeItem("INCORRECT_ONCHANGE"));
+            await page.evaluate(() =>
+                window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_NON_OPTIONAL_ERROR_MSG")
+            );
             await page.reload({
                 waitUntil: "domcontentloaded",
             });
