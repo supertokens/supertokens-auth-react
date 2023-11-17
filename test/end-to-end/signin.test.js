@@ -752,8 +752,6 @@ describe("SuperTokens SignIn", function () {
 
     describe("nonOptionalErrorMsg", function () {
         it("Should be displayed on a blank form submit", async function () {
-            // await page.evaluate(() => localStorage.removeItem("SHOW_SIGNIN_DEFAULT_FIELDS"));
-
             // set cookie and reload which loads the form with custom field
             await page.evaluate(() =>
                 window.localStorage.setItem("SIGNIN_SETTING_TYPE", "FIELDS_WITH_NON_OPTIONAL_ERROR_MESSAGE")

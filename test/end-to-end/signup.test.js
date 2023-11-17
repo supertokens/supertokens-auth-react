@@ -742,8 +742,6 @@ describe("SuperTokens SignUp", function () {
                 pageErrorMessage = err.message;
             });
 
-            // await page.evaluate(() => window.localStorage.removeItem("INCORRECT_GETDEFAULT"));
-            // await page.evaluate(() => window.localStorage.removeItem("INCORRECT_ONCHANGE"));
             await page.evaluate(() =>
                 window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_NON_OPTIONAL_ERROR_MSG")
             );

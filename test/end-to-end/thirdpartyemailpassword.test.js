@@ -467,8 +467,6 @@ describe("SuperTokens Third Party Email Password", function () {
         });
 
         it("Check on blank form submit nonOptionalErrorMsg gets displayed as expected", async function () {
-            // await page.evaluate(() => window.localStorage.removeItem("SHOW_SIGNIN_DEFAULT_FIELDS"));
-
             // set cookie and reload which loads the form with custom field
             await page.evaluate(() =>
                 window.localStorage.setItem("SIGNIN_SETTING_TYPE", "FIELDS_WITH_NON_OPTIONAL_ERROR_MESSAGE")
@@ -898,7 +896,6 @@ describe("SuperTokens Third Party Email Password", function () {
         });
 
         it("Check if non-string params to onChange throws error", async function () {
-            // await page.evaluate(() => window.localStorage.removeItem("INCORRECT_GETDEFAULT"));
             await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_ONCHANGE"));
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -928,8 +925,6 @@ describe("SuperTokens Third Party Email Password", function () {
                 pageErrorMessage = err.message;
             });
 
-            // await page.evaluate(() => window.localStorage.removeItem("INCORRECT_GETDEFAULT"));
-            // await page.evaluate(() => window.localStorage.removeItem("INCORRECT_ONCHANGE"));
             await page.evaluate(() =>
                 window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_NON_OPTIONAL_ERROR_MSG")
             );
