@@ -418,14 +418,8 @@ export async function setInputValues(page, fields) {
 }
 
 export async function setSelectDropdownValue(page, selector, optionValue) {
-    return await page.evaluate(
-        ({ selector, ST_ROOT_SELECTOR, optionValue }) => {
-            const select = document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector(selector);
-            select.value = optionValue;
-            select.dispatchEvent(new Event("change", { bubbles: true }));
-        },
-        { selector, ST_ROOT_SELECTOR, optionValue }
-    );
+    const dropdownEle = await waitForSTElement(page, selector);
+    return dropdownEle.select(selector, optionValue);
 }
 
 export async function clearBrowserCookiesWithoutAffectingConsole(page, console) {
