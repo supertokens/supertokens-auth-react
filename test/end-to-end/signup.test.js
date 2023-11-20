@@ -345,10 +345,10 @@ describe("SuperTokens SignUp", function () {
         });
     });
 
-    describe("Signup custom fields test", function () {
+    describe("Custom fields tests", function () {
         beforeEach(async function () {
             // set cookie and reload which loads the form with custom field
-            await page.evaluate(() => window.localStorage.setItem("SHOW_CUSTOM_FIELDS", "YES"));
+            await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "CUSTOM_FIELDS"));
 
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -356,7 +356,7 @@ describe("SuperTokens SignUp", function () {
             await toggleSignInSignUp(page);
         });
 
-        it("Check if the custom fields are loaded", async function () {
+        it("Should load the custom fields", async function () {
             let text = await getAuthPageHeaderText(page);
             assert.deepStrictEqual(text, "Sign Up");
 
@@ -367,6 +367,12 @@ describe("SuperTokens SignUp", function () {
             // check if checbox is loaded
             const checkboxExists = await waitForSTElement(page, 'input[type="checkbox"]');
             assert.ok(checkboxExists, "Checkbox exists");
+
+            // check if labels are loaded correctly
+            // non-optional field with empty labels should'nt show * sign
+            const expectedLabels = ["Email *", "Password *", "Select Dropdown", ""];
+            const labelNames = await getLabelsText(page);
+            assert.deepStrictEqual(labelNames, expectedLabels);
         });
 
         it("Should show error messages, based on optional flag", async function () {
@@ -403,7 +409,7 @@ describe("SuperTokens SignUp", function () {
             assert.deepStrictEqual(formFieldErrors, ["Please check Terms and conditions"]);
         });
 
-        it("Check if custom values are part of the signup payload", async function () {
+        it("Should be part of the signup payload", async function () {
             const customFields = {
                 terms: "true",
                 "select-dropdown": "option 3",
@@ -417,15 +423,12 @@ describe("SuperTokens SignUp", function () {
                         const postData = JSON.parse(request.postData());
                         Object.keys(customFields).forEach((key) => {
                             let findFormData = postData.formFields.find((inputData) => inputData.id === key);
-                            if (findFormData) {
-                                assert.strictEqual(
-                                    findFormData["value"],
-                                    customFields[key],
-                                    `Mismatch in payload for key: ${key}`
-                                );
-                            } else {
-                                throw new Error("Field not found in req.data");
-                            }
+                            assert.ok(findFormData, "Field not found in req.data");
+                            assert.strictEqual(
+                                findFormData["value"],
+                                customFields[key],
+                                `Mismatch in payload for key: ${key}`
+                            );
                         });
                         interceptionPassed = true;
                         return request.respond({
@@ -468,16 +471,11 @@ describe("SuperTokens SignUp", function () {
                 await page.setRequestInterception(false);
             }
 
-            if (assertionError) {
-                throw assertionError;
-            }
-
-            if (!interceptionPassed) {
-                throw new Error("test failed");
-            }
+            assert.ok(!assertionError, assertionError?.message);
+            assert.ok(interceptionPassed, "Test Failed");
         });
 
-        it("Check on blank form submit nonOptionalErrorMsg gets displayed as expected", async function () {
+        it("Should display nonOptionalErrorMsg on blank form submit", async function () {
             let apiCallMade = false;
 
             const requestHandler = (request) => {
@@ -490,7 +488,6 @@ describe("SuperTokens SignUp", function () {
                 }
             };
 
-            await page.setRequestInterception(true);
             page.on("request", requestHandler);
 
             try {
@@ -505,15 +502,12 @@ describe("SuperTokens SignUp", function () {
                 ]);
             } finally {
                 page.off("request", requestHandler);
-                await page.setRequestInterception(false);
             }
 
-            if (apiCallMade) {
-                throw new Error("Empty form making API request to sign-up");
-            }
+            assert.ok(!apiCallMade, "Empty form making signup API request");
         });
 
-        it("Check if nonOptionalErrorMsg overwrites server error message for non-optional fields", async function () {
+        it("Should overwrite server error message for non-optional fields with nonOptionalErrorMsg", async function () {
             const requestHandler = (request) => {
                 if (request.method() === "POST" && request.url() === SIGN_UP_API) {
                     request.respond({
@@ -573,10 +567,12 @@ describe("SuperTokens SignUp", function () {
     });
 
     // Default values test
-    describe("Signup default value for fields test", function () {
+    describe("Default fields tests", function () {
         beforeEach(async function () {
             // set cookie and reload which loads the form fields with default values
-            await page.evaluate(() => window.localStorage.setItem("SHOW_CUSTOM_FIELDS_WITH_DEFAULT_VALUES", "YES"));
+            await page.evaluate(() =>
+                window.localStorage.setItem("SIGNUP_SETTING_TYPE", "CUSTOM_FIELDS_WITH_DEFAULT_VALUES")
+            );
 
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -584,7 +580,7 @@ describe("SuperTokens SignUp", function () {
             await toggleSignInSignUp(page);
         });
 
-        it("Check if default values are set already", async function () {
+        it("Should prefill the fields with default values", async function () {
             const fieldsWithDefault = {
                 country: "India",
                 "select-dropdown": "option 2",
@@ -611,7 +607,7 @@ describe("SuperTokens SignUp", function () {
             assert.strictEqual(defaultValue, fieldsWithDefault["terms"].toString());
         });
 
-        it("Check if changing the field value actually overwrites the default value", async function () {
+        it("Should be able to overwrite the default values", async function () {
             const updatedFields = {
                 country: "USA",
                 "select-dropdown": "option 3",
@@ -631,7 +627,7 @@ describe("SuperTokens SignUp", function () {
             assert.strictEqual(updatedOption, updatedFields["select-dropdown"]);
         });
 
-        it("Check if default values are getting sent in signup-payload", async function () {
+        it("Should ensure signup-payload contains default values", async function () {
             // directly submit the form and test the payload
             const expectedDefautlValues = [
                 { id: "email", value: "test@one.com" },
@@ -650,11 +646,8 @@ describe("SuperTokens SignUp", function () {
                         const postData = JSON.parse(request.postData());
                         expectedDefautlValues.forEach(({ id, value }) => {
                             let findFormData = postData.formFields.find((inputData) => inputData.id === id);
-                            if (findFormData) {
-                                assert.strictEqual(findFormData["value"], value, `Mismatch in payload for key: ${id}`);
-                            } else {
-                                throw new Error("Field not found in req.data");
-                            }
+                            assert.ok(findFormData, "Field not found in req.data");
+                            assert.strictEqual(findFormData["value"], value, `Mismatch in payload for key: ${id}`);
                         });
                         interceptionPassed = true;
                         return request.respond({
@@ -685,28 +678,23 @@ describe("SuperTokens SignUp", function () {
                 await page.setRequestInterception(false);
             }
 
-            if (assertionError) {
-                throw assertionError;
-            }
-
-            if (!interceptionPassed) {
-                throw new Error("test failed");
-            }
+            assert.ok(!assertionError, assertionError?.message);
+            assert.ok(interceptionPassed, "Test Failed");
         });
     });
 
     describe("Incorrect field config test", function () {
         beforeEach(async function () {
             // set cookie and reload which loads the form fields with default values
-            await page.evaluate(() => window.localStorage.setItem("SHOW_INCORRECT_FIELDS", "YES"));
+            await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_FIELDS"));
 
             await page.reload({
                 waitUntil: "domcontentloaded",
             });
         });
 
-        it("Check if incorrect getDefaultValue throws error", async function () {
-            await page.evaluate(() => window.localStorage.setItem("INCORRECT_GETDEFAULT", "YES"));
+        it("Should throw error for incorrect getDefaultValue func call", async function () {
+            await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_GETDEFAULT"));
             let pageErrorMessage = "";
             page.on("pageerror", (err) => {
                 pageErrorMessage = err.message;
@@ -724,9 +712,8 @@ describe("SuperTokens SignUp", function () {
             );
         });
 
-        it("Check if non-string params to onChange throws error", async function () {
-            await page.evaluate(() => window.localStorage.removeItem("INCORRECT_GETDEFAULT"));
-            await page.evaluate(() => window.localStorage.setItem("INCORRECT_ONCHANGE", "YES"));
+        it("Should throw error for non-string params to onChange", async function () {
+            await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_ONCHANGE"));
             await page.reload({
                 waitUntil: "domcontentloaded",
             });
@@ -748,28 +735,25 @@ describe("SuperTokens SignUp", function () {
             );
         });
 
-        it("Check if empty string for nonOptionalErrorMsg throws error", async function () {
+        it("Should throw error for empty string for nonOptionalErrorMsg", async function () {
             const expectedErrorMessage = "nonOptionalErrorMsg for field city cannot be an empty string";
             let pageErrorMessage = "";
             page.on("pageerror", (err) => {
                 pageErrorMessage = err.message;
             });
 
-            await page.evaluate(() => window.localStorage.removeItem("INCORRECT_GETDEFAULT"));
-            await page.evaluate(() => window.localStorage.removeItem("INCORRECT_ONCHANGE"));
-            await page.evaluate(() => window.localStorage.setItem("INCORRECT_NON_OPTIONAL_ERROR_MSG", "YES"));
+            await page.evaluate(() =>
+                window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_NON_OPTIONAL_ERROR_MSG")
+            );
             await page.reload({
                 waitUntil: "domcontentloaded",
             });
 
-            if (pageErrorMessage !== "") {
-                assert(
-                    pageErrorMessage.includes(expectedErrorMessage),
-                    `Expected "${expectedErrorMessage}" to be included in page-error`
-                );
-            } else {
-                throw "Empty nonOptionalErrorMsg should throw error";
-            }
+            assert.ok(pageErrorMessage !== "", "Empty nonOptionalErrorMsg should throw error");
+            assert(
+                pageErrorMessage.includes(expectedErrorMessage),
+                `Expected "${expectedErrorMessage}" to be included in page-error`
+            );
         });
     });
 });

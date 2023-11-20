@@ -306,7 +306,7 @@ const customFields = [
     },
     {
         id: "terms",
-        label: "",
+        label: "   ",
         optional: false,
         nonOptionalErrorMsg: "You must accept the terms and conditions",
         inputComponent: ({ name, onChange }) => (
@@ -713,32 +713,29 @@ function getEmailVerificationConfigs({ disableDefaultUI }) {
     });
 }
 
-function getFormFields() {
-    if (localStorage.getItem("SHOW_INCORRECT_FIELDS") === "YES") {
-        if (localStorage.getItem("INCORRECT_ONCHANGE") === "YES") {
-            // since page-error blocks all the other errors
-            // use this filter to test specific error
+function getSignUpFormFields(formType) {
+    switch (formType) {
+        case "INCORRECT_FIELDS":
+            return incorrectFormFields;
+        case "INCORRECT_ONCHANGE":
             return incorrectFormFields.filter(({ id }) => id === "terms");
-        } else if (localStorage.getItem("INCORRECT_NON_OPTIONAL_ERROR_MSG") === "YES") {
+        case "INCORRECT_NON_OPTIONAL_ERROR_MSG":
             return incorrectFormFields.filter(({ id }) => id === "city");
-        } else if (localStorage.getItem("INCORRECT_GETDEFAULT") === "YES") {
+        case "INCORRECT_GETDEFAULT":
             return incorrectFormFields.filter(({ id }) => id === "country");
-        }
-        return incorrectFormFields;
-    } else if (localStorage.getItem("SHOW_CUSTOM_FIELDS_WITH_DEFAULT_VALUES") === "YES") {
-        return formFieldsWithDefault;
-    } else if (localStorage.getItem("SHOW_CUSTOM_FIELDS") === "YES") {
-        return customFields;
+        case "CUSTOM_FIELDS_WITH_DEFAULT_VALUES":
+            return formFieldsWithDefault;
+        case "CUSTOM_FIELDS":
+            return customFields;
+        default:
+            return formFields;
     }
-    return formFields;
 }
 
-function getSignInFormFields() {
-    let showDefaultFields = localStorage.getItem("SHOW_SIGNIN_DEFAULT_FIELDS");
-    let showFieldsWithNonOptionalErrMsg = localStorage.getItem("SHOW_SIGNIN_WITH_NON_OPTIONAL_ERROR_MESSAGE");
-    if (showDefaultFields === "YES") {
-        return {
-            formFields: [
+function getSignInFormFields(formType) {
+    switch (formType) {
+        case "DEFAULT_FIELDS":
+            return [
                 {
                     id: "email",
                     getDefaultValue: () => "abc@xyz.com",
@@ -747,22 +744,20 @@ function getSignInFormFields() {
                     id: "password",
                     getDefaultValue: () => "fakepassword123",
                 },
-            ],
-        };
-    } else if (showFieldsWithNonOptionalErrMsg === "YES") {
-        return {
-            formFields: [
+            ];
+        case "FIELDS_WITH_NON_OPTIONAL_ERROR_MESSAGE":
+            return [
                 {
                     id: "email",
                     nonOptionalErrorMsg: "Please add email",
                 },
-            ],
-        };
+            ];
+        default:
+            return;
     }
-    return {};
 }
 
-function getEmailPasswordConfigs({ disableDefaultUI }) {
+function getEmailPasswordConfigs({ disableDefaultUI, formFieldType }) {
     return EmailPassword.init({
         style: `          
             [data-supertokens~=container] {
@@ -842,13 +837,13 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
             defaultToSignUp,
             signInForm: {
                 style: theme,
-                ...getSignInFormFields(),
+                formFields: getSignInFormFields(formFieldType.signIn),
             },
             signUpForm: {
                 style: theme,
                 privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
-                formFields: getFormFields(),
+                formFields: getSignUpFormFields(formFieldType.signUp),
             },
         },
     });
@@ -1192,7 +1187,12 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
     });
 }
 
-function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultUI, thirdPartyRedirectURL }) {
+function getThirdPartyEmailPasswordConfigs({
+    staticProviderList,
+    disableDefaultUI,
+    thirdPartyRedirectURL,
+    formFieldType,
+}) {
     let providers = [
         ThirdParty.Github.init(),
         ThirdParty.Google.init(),
@@ -1372,10 +1372,10 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
         signInAndUpFeature: {
             disableDefaultUI,
             signInForm: {
-                ...getSignInFormFields(),
+                formFields: getSignInFormFields(formFieldType.signIn),
             },
             signUpForm: {
-                formFields: getFormFields(),
+                formFields: getSignUpFormFields(formFieldType.signUp),
                 privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
             },

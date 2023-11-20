@@ -671,9 +671,9 @@ describe("SuperTokens SignIn", function () {
         });
     });
 
-    describe("SignIn default field tests", function () {
+    describe("Default fields", function () {
         it("Should contain email and password fields prefilled", async function () {
-            await page.evaluate(() => window.localStorage.setItem("SHOW_SIGNIN_DEFAULT_FIELDS", "YES"));
+            await page.evaluate(() => window.localStorage.setItem("SIGNIN_SETTING_TYPE", "DEFAULT_FIELDS"));
 
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -694,7 +694,7 @@ describe("SuperTokens SignIn", function () {
         });
 
         it("Should have default values in the signin request payload", async function () {
-            await page.evaluate(() => window.localStorage.setItem("SHOW_SIGNIN_DEFAULT_FIELDS", "YES"));
+            await page.evaluate(() => window.localStorage.setItem("SIGNIN_SETTING_TYPE", "DEFAULT_FIELDS"));
 
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -714,11 +714,8 @@ describe("SuperTokens SignIn", function () {
                         const postData = JSON.parse(request.postData());
                         expectedDefautlValues.forEach(({ id, value }) => {
                             let findFormData = postData.formFields.find((inputData) => inputData.id === id);
-                            if (findFormData) {
-                                assert.strictEqual(findFormData["value"], value, `Mismatch in payload for key: ${id}`);
-                            } else {
-                                throw new Error("Field not found in req.data");
-                            }
+                            assert.ok(findFormData, "Field not found in req.data");
+                            assert.strictEqual(findFormData["value"], value, `Mismatch in payload for key: ${id}`);
                         });
                         interceptionPassed = true;
                         return request.respond({
@@ -748,24 +745,16 @@ describe("SuperTokens SignIn", function () {
                 page.off("request", requestHandler);
                 await page.setRequestInterception(false);
             }
-
-            if (assertionError) {
-                throw assertionError;
-            }
-
-            if (!interceptionPassed) {
-                throw new Error("test failed");
-            }
+            assert.ok(!assertionError, assertionError?.message);
+            assert.ok(interceptionPassed, "Test Failed");
         });
     });
 
-    describe("Check if nonOptionalErrorMsg works as expected", function () {
-        it("Check on blank form submit nonOptionalErrorMsg gets displayed as expected", async function () {
-            await page.evaluate(() => localStorage.removeItem("SHOW_SIGNIN_DEFAULT_FIELDS"));
-
+    describe("nonOptionalErrorMsg", function () {
+        it("Should be displayed on a blank form submit", async function () {
             // set cookie and reload which loads the form with custom field
             await page.evaluate(() =>
-                window.localStorage.setItem("SHOW_SIGNIN_WITH_NON_OPTIONAL_ERROR_MESSAGE", "YES")
+                window.localStorage.setItem("SIGNIN_SETTING_TYPE", "FIELDS_WITH_NON_OPTIONAL_ERROR_MESSAGE")
             );
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -782,8 +771,6 @@ describe("SuperTokens SignIn", function () {
                     request.continue();
                 }
             };
-
-            await page.setRequestInterception(true);
             page.on("request", requestHandler);
 
             try {
@@ -794,12 +781,9 @@ describe("SuperTokens SignIn", function () {
                 assert.deepStrictEqual(formFieldErrors, ["Please add email", "Field is not optional"]);
             } finally {
                 page.off("request", requestHandler);
-                await page.setRequestInterception(false);
             }
 
-            if (apiCallMade) {
-                throw new Error("Empty form making API request to signin");
-            }
+            assert.ok(!apiCallMade, "Empty form making API request to signin");
         });
     });
 });

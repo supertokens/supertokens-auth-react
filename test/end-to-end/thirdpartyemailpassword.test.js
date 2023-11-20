@@ -46,6 +46,7 @@ import {
     backendBeforeEach,
     setSelectDropdownValue,
     getInputField,
+    getLabelsText,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -445,7 +446,7 @@ describe("SuperTokens Third Party Email Password", function () {
 
     describe("SignIn default field tests", function () {
         it("Should contain email and password fields prefilled", async function () {
-            await page.evaluate(() => window.localStorage.setItem("SHOW_SIGNIN_DEFAULT_FIELDS", "YES"));
+            await page.evaluate(() => window.localStorage.setItem("SIGNIN_SETTING_TYPE", "DEFAULT_FIELDS"));
 
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -466,11 +467,9 @@ describe("SuperTokens Third Party Email Password", function () {
         });
 
         it("Check on blank form submit nonOptionalErrorMsg gets displayed as expected", async function () {
-            await page.evaluate(() => window.localStorage.removeItem("SHOW_SIGNIN_DEFAULT_FIELDS"));
-
             // set cookie and reload which loads the form with custom field
             await page.evaluate(() =>
-                window.localStorage.setItem("SHOW_SIGNIN_WITH_NON_OPTIONAL_ERROR_MESSAGE", "YES")
+                window.localStorage.setItem("SIGNIN_SETTING_TYPE", "FIELDS_WITH_NON_OPTIONAL_ERROR_MESSAGE")
             );
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -512,7 +511,7 @@ describe("SuperTokens Third Party Email Password", function () {
 
     describe("Third Party signup config supports custom fields tests", function () {
         beforeEach(async function () {
-            await page.evaluate(() => window.localStorage.setItem("SHOW_CUSTOM_FIELDS", "YES"));
+            await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "CUSTOM_FIELDS"));
 
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -531,6 +530,12 @@ describe("SuperTokens Third Party Email Password", function () {
             // check if checbox is loaded
             const checkboxExists = await waitForSTElement(page, 'input[type="checkbox"]');
             assert.ok(checkboxExists, "Checkbox exists");
+
+            // check if labels are loaded correctly
+            // non-optional field with empty labels should'nt show * sign
+            const expectedLabels = ["Email *", "Password *", "Select Dropdown", ""];
+            const labelNames = await getLabelsText(page);
+            assert.deepStrictEqual(labelNames, expectedLabels);
         });
 
         it("Should show error messages, based on optional flag", async function () {
@@ -740,7 +745,9 @@ describe("SuperTokens Third Party Email Password", function () {
     describe("Third Party signup default value for fields test", function () {
         beforeEach(async function () {
             // set cookie and reload which loads the form fields with default values
-            await page.evaluate(() => window.localStorage.setItem("SHOW_CUSTOM_FIELDS_WITH_DEFAULT_VALUES", "YES"));
+            await page.evaluate(() =>
+                window.localStorage.setItem("SIGNUP_SETTING_TYPE", "CUSTOM_FIELDS_WITH_DEFAULT_VALUES")
+            );
 
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -862,7 +869,7 @@ describe("SuperTokens Third Party Email Password", function () {
     describe("Third Party signup config Incorrect field message test", function () {
         beforeEach(async function () {
             // set cookie and reload which loads the form fields with default values
-            await page.evaluate(() => window.localStorage.setItem("SHOW_INCORRECT_FIELDS", "YES"));
+            await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_FIELDS"));
 
             await page.reload({
                 waitUntil: "domcontentloaded",
@@ -870,7 +877,7 @@ describe("SuperTokens Third Party Email Password", function () {
         });
 
         it("Check if incorrect getDefaultValue throws error", async function () {
-            await page.evaluate(() => window.localStorage.setItem("INCORRECT_GETDEFAULT", "YES"));
+            await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_GETDEFAULT"));
             let pageErrorMessage = "";
             page.on("pageerror", (err) => {
                 pageErrorMessage = err.message;
@@ -889,8 +896,7 @@ describe("SuperTokens Third Party Email Password", function () {
         });
 
         it("Check if non-string params to onChange throws error", async function () {
-            await page.evaluate(() => window.localStorage.removeItem("INCORRECT_GETDEFAULT"));
-            await page.evaluate(() => window.localStorage.setItem("INCORRECT_ONCHANGE", "YES"));
+            await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_ONCHANGE"));
             await page.reload({
                 waitUntil: "domcontentloaded",
             });
@@ -919,9 +925,9 @@ describe("SuperTokens Third Party Email Password", function () {
                 pageErrorMessage = err.message;
             });
 
-            await page.evaluate(() => window.localStorage.removeItem("INCORRECT_GETDEFAULT"));
-            await page.evaluate(() => window.localStorage.removeItem("INCORRECT_ONCHANGE"));
-            await page.evaluate(() => window.localStorage.setItem("INCORRECT_NON_OPTIONAL_ERROR_MSG", "YES"));
+            await page.evaluate(() =>
+                window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_NON_OPTIONAL_ERROR_MSG")
+            );
             await page.reload({
                 waitUntil: "domcontentloaded",
             });
