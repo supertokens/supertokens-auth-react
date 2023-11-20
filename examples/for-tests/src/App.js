@@ -306,7 +306,7 @@ const customFields = [
     },
     {
         id: "terms",
-        label: "",
+        label: "   ",
         optional: false,
         nonOptionalErrorMsg: "You must accept the terms and conditions",
         inputComponent: ({ name, onChange }) => (
