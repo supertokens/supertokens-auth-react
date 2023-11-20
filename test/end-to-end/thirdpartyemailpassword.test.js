@@ -47,6 +47,7 @@ import {
     setSelectDropdownValue,
     getInputField,
     getLabelsText,
+    isReact16,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -445,6 +446,13 @@ describe("SuperTokens Third Party Email Password", function () {
     });
 
     describe("SignIn default field tests", function () {
+        before(function () {
+            const isReact16App = isReact16();
+            if (isReact16App) {
+                this.skip();
+            }
+        });
+
         it("Should contain email and password fields prefilled", async function () {
             await page.evaluate(() => window.localStorage.setItem("SIGNIN_SETTING_TYPE", "DEFAULT_FIELDS"));
 
@@ -510,6 +518,13 @@ describe("SuperTokens Third Party Email Password", function () {
     });
 
     describe("Third Party signup config supports custom fields tests", function () {
+        before(function () {
+            const isReact16App = isReact16();
+            if (isReact16App) {
+                this.skip();
+            }
+        });
+
         beforeEach(async function () {
             await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "CUSTOM_FIELDS"));
 
@@ -743,6 +758,13 @@ describe("SuperTokens Third Party Email Password", function () {
 
     // Default values test
     describe("Third Party signup default value for fields test", function () {
+        before(function () {
+            const isReact16App = isReact16();
+            if (isReact16App) {
+                this.skip();
+            }
+        });
+
         beforeEach(async function () {
             // set cookie and reload which loads the form fields with default values
             await page.evaluate(() =>
@@ -867,6 +889,13 @@ describe("SuperTokens Third Party Email Password", function () {
     });
 
     describe("Third Party signup config Incorrect field message test", function () {
+        before(function () {
+            const isReact16App = isReact16();
+            if (isReact16App) {
+                this.skip();
+            }
+        });
+
         beforeEach(async function () {
             // set cookie and reload which loads the form fields with default values
             await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_FIELDS"));

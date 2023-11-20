@@ -54,6 +54,7 @@ import {
     waitForText,
     backendBeforeEach,
     getInputField,
+    isReact16,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -672,6 +673,13 @@ describe("SuperTokens SignIn", function () {
     });
 
     describe("Default fields", function () {
+        before(function () {
+            const isReact16App = isReact16();
+            if (isReact16App) {
+                this.skip();
+            }
+        });
+
         it("Should contain email and password fields prefilled", async function () {
             await page.evaluate(() => window.localStorage.setItem("SIGNIN_SETTING_TYPE", "DEFAULT_FIELDS"));
 
@@ -751,6 +759,13 @@ describe("SuperTokens SignIn", function () {
     });
 
     describe("nonOptionalErrorMsg", function () {
+        before(function () {
+            const isReact16App = isReact16();
+            if (isReact16App) {
+                this.skip();
+            }
+        });
+
         it("Should be displayed on a blank form submit", async function () {
             // set cookie and reload which loads the form with custom field
             await page.evaluate(() =>

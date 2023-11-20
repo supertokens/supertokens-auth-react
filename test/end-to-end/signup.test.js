@@ -41,6 +41,7 @@ import {
     backendBeforeEach,
     setSelectDropdownValue,
     getInputField,
+    isReact16,
 } from "../helpers";
 
 import {
@@ -346,6 +347,12 @@ describe("SuperTokens SignUp", function () {
     });
 
     describe("Custom fields tests", function () {
+        before(function () {
+            const isReact16App = isReact16();
+            if (isReact16App) {
+                this.skip();
+            }
+        });
         beforeEach(async function () {
             // set cookie and reload which loads the form with custom field
             await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "CUSTOM_FIELDS"));
@@ -568,6 +575,13 @@ describe("SuperTokens SignUp", function () {
 
     // Default values test
     describe("Default fields tests", function () {
+        before(function () {
+            const isReact16App = isReact16();
+            if (isReact16App) {
+                this.skip();
+            }
+        });
+
         beforeEach(async function () {
             // set cookie and reload which loads the form fields with default values
             await page.evaluate(() =>
@@ -684,6 +698,13 @@ describe("SuperTokens SignUp", function () {
     });
 
     describe("Incorrect field config test", function () {
+        before(function () {
+            const isReact16App = isReact16();
+            if (isReact16App) {
+                this.skip();
+            }
+        });
+
         beforeEach(async function () {
             // set cookie and reload which loads the form fields with default values
             await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_FIELDS"));
