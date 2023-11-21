@@ -20,8 +20,8 @@ import { useTranslation } from "../../../../../translation/translationContext";
 import type { FC } from "react";
 
 export const FactorOption = withOverride(
-    "MultiFactorAuthFactorOption",
-    function MultiFactorAuthFactorOption({
+    "MFAFactorOption",
+    function MFAFactorOption({
         onClick,
         id,
         name,
@@ -42,9 +42,6 @@ export const FactorOption = withOverride(
                     <h6 data-supertokens="factorName">{t(name)}</h6>
                     <p data-supertokens="factorDescription">{t(description)}</p>
                 </div>
-                {/* <span data-supertokens="factorArrow">
-                    <ArrowRightIcon color="rgb(var(--palette-textPrimary))" />
-                </span> */}
             </a>
         );
     }

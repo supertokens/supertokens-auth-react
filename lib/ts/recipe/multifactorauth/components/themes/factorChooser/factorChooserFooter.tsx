@@ -17,8 +17,8 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import { useTranslation } from "../../../../../translation/translationContext";
 
 export const FactorChooserFooter = withOverride(
-    "MultiFactorAuthFactorChooserFooter",
-    function MultiFactorAuthFactorChooserFooter({ logout }: { logout: (() => void) | undefined }): JSX.Element {
+    "MFAFactorChooserFooter",
+    function MFAChooserFooter({ logout }: { logout: (() => void) | undefined }): JSX.Element {
         const t = useTranslation();
 
         return (
