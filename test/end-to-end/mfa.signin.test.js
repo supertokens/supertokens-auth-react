@@ -42,7 +42,7 @@ import { getTestPhoneNumber } from "../exampleTestHelpers";
 /*
  * Tests.
  */
-describe.skip("SuperTokens SignIn w/ MFA", function () {
+describe("SuperTokens SignIn w/ MFA", function () {
     let browser;
     let page;
     let consoleLogs = [];
@@ -56,7 +56,7 @@ describe.skip("SuperTokens SignIn w/ MFA", function () {
 
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
+            headless: false,
         });
     });
 
@@ -1162,7 +1162,7 @@ async function setupUserWithAllFactors(page) {
 }
 
 async function setMFAInfo(mfaInfo) {
-    let resp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/setMockMFAInfo`, {
+    let resp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/setMFAInfo`, {
         method: "POST",
         headers: new Headers([["content-type", "application/json"]]),
         body: JSON.stringify(mfaInfo),

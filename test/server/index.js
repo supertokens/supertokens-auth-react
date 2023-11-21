@@ -99,6 +99,28 @@ try {
     accountLinkingSupported = false;
 }
 
+/** @type {import("supertokens-node/recipe/usermetadata").default | undefined} */
+let UserMetadata;
+let UserMetadataRaw, userMetadataSupported;
+try {
+    UserMetadataRaw = require("supertokens-node/lib/build/recipe/usermetadata/recipe").default;
+    UserMetadata = require("supertokens-node/recipe/usermetadata");
+    userMetadataSupported = true;
+} catch (ex) {
+    userMetadataSupported = false;
+}
+
+/** @type {import("supertokens-node/recipe/multifactorauth").default | undefined} */
+let MultiFactorAuth;
+let MultiFactorAuthRaw, multiFactorAuthSupported;
+try {
+    MultiFactorAuthRaw = require("supertokens-node/lib/build/recipe/multifactorauth/recipe").default;
+    MultiFactorAuth = require("supertokens-node/recipe/multifactorauth");
+    multiFactorAuthSupported = true;
+} catch (ex) {
+    multiFactorAuthSupported = false;
+}
+
 let generalErrorSupported;
 
 if (maxVersion(nodeSDKVersion, "9.9.9") === "9.9.9") {
@@ -392,23 +414,24 @@ app.post("/setMFAInfo", async (req, res) => {
 
 app.post("/completeFactor", verifySession(), async (req, res) => {
     let session = req.session;
-    const payload = session.getAccessTokenPayload();
-    const mfaClaim = payload["st-mfa"];
-    const c = {
-        ...mfaClaim.c,
-        [req.body.id]: Date.now(),
-    };
-    if (req.body.id === "totp") {
-        mfaInfo.hasTOTP = true;
-    }
+    // const payload = session.getAccessTokenPayload();
+    // const mfaClaim = payload["st-mfa"];
+    // const c = {
+    //     ...mfaClaim.c,
+    //     [req.body.id]: Date.now(),
+    // };
+    // if (req.body.id === "totp") {
+    //     mfaInfo.hasTOTP = true;
+    // }
 
-    await session.mergeIntoAccessTokenPayload({
-        "st-mfa": {
-            ...mfaClaim,
-            c,
-            n: getNextArray(c),
-        },
-    });
+    // await session.mergeIntoAccessTokenPayload({
+    //     "st-mfa": {
+    //         ...mfaClaim,
+    //         c,
+    //         n: getNextArray(c),
+    //     },
+    // });
+    await MultiFactorAuth.markFactorAsCompleteInSession(session, req.body.id);
 
     res.send({ status: "OK" });
 });
@@ -422,79 +445,79 @@ app.post("/mergeIntoAccessTokenPayload", verifySession(), async (req, res) => {
 });
 
 // TODO: remove this after we get backend SDK support
-app.get("/auth/mfa/info", verifySession(), async (req, res) => {
-    let session = req.session;
-    const user = await SuperTokens.getUser(session.getUserId());
-    const payload = session.getAccessTokenPayload();
-    let isAllowedToSetup = [];
-    let isAlreadySetup = [];
-    if (user.phoneNumbers.length > 0) {
-        isAlreadySetup.push("otp-phone");
-    }
-    if (user.emails.length > 0) {
-        isAlreadySetup.push("otp-email");
-    }
+// app.get("/auth/mfa/info", verifySession(), async (req, res) => {
+//     let session = req.session;
+//     const user = await SuperTokens.getUser(session.getUserId());
+//     const payload = session.getAccessTokenPayload();
+//     let isAllowedToSetup = [];
+//     let isAlreadySetup = [];
+//     if (user.phoneNumbers.length > 0) {
+//         isAlreadySetup.push("otp-phone");
+//     }
+//     if (user.emails.length > 0) {
+//         isAlreadySetup.push("otp-email");
+//     }
 
-    if (mfaInfo.hasTOTP) {
-        isAlreadySetup.push("totp");
-    }
+//     if (mfaInfo.hasTOTP) {
+//         isAlreadySetup.push("totp");
+//     }
 
-    let c;
+//     let c;
 
-    const recipeUser = user.loginMethods.find(
-        (u) => u.recipeUserId.toString() === session.getRecipeUserId().toString()
-    );
-    if (recipeUser.recipeId !== "passwordless") {
-        c = { [recipeUser.recipeId]: Date.now() };
-    } else if (recipeUser.email) {
-        // This isn't correct, but will do for testing
-        c = { "otp-email": Date.now() };
-    } else {
-        c = { "otp-phone": Date.now() };
-    }
-    const mfaClaim = payload["st-mfa"];
-    if (mfaInfo?.claimValue) {
-        await session.mergeIntoAccessTokenPayload({
-            "st-mfa": mfaInfo.claimValue,
-        });
-    } else if (mfaInfo?.requirements) {
-        if (mfaClaim) {
-            c = mfaClaim.c;
-        }
+//     const recipeUser = user.loginMethods.find(
+//         (u) => u.recipeUserId.toString() === session.getRecipeUserId().toString()
+//     );
+//     if (recipeUser.recipeId !== "passwordless") {
+//         c = { [recipeUser.recipeId]: Date.now() };
+//     } else if (recipeUser.email) {
+//         // This isn't correct, but will do for testing
+//         c = { "otp-email": Date.now() };
+//     } else {
+//         c = { "otp-phone": Date.now() };
+//     }
+//     const mfaClaim = payload["st-mfa"];
+//     if (mfaInfo?.claimValue) {
+//         await session.mergeIntoAccessTokenPayload({
+//             "st-mfa": mfaInfo.claimValue,
+//         });
+//     } else if (mfaInfo?.requirements) {
+//         if (mfaClaim) {
+//             c = mfaClaim.c;
+//         }
 
-        let n = getNextArray(c);
-        await session.mergeIntoAccessTokenPayload({
-            "st-mfa": {
-                c: c,
-                n: n,
-            },
-        });
-    } else if (mfaClaim === undefined) {
-        await session.mergeIntoAccessTokenPayload({
-            "st-mfa": {
-                c: c,
-                n: !mfaInfo.hasTOTP ? [] : getNextArray(c, [{ oneOf: ["totp", "otp-phone", "otp-email"] }]),
-            },
-        });
-    }
-    if (
-        isAlreadySetup.length === 0 ||
-        (mfaClaim !== undefined && isAlreadySetup.some((id) => mfaClaim.c[id] !== undefined))
-    ) {
-        isAllowedToSetup = ["otp-phone", "otp-email", "totp"].filter((id) => !isAlreadySetup.includes(id));
-    }
+//         let n = getNextArray(c);
+//         await session.mergeIntoAccessTokenPayload({
+//             "st-mfa": {
+//                 c: c,
+//                 n: n,
+//             },
+//         });
+//     } else if (mfaClaim === undefined) {
+//         await session.mergeIntoAccessTokenPayload({
+//             "st-mfa": {
+//                 c: c,
+//                 n: !mfaInfo.hasTOTP ? [] : getNextArray(c, [{ oneOf: ["totp", "otp-phone", "otp-email"] }]),
+//             },
+//         });
+//     }
+//     if (
+//         isAlreadySetup.length === 0 ||
+//         (mfaClaim !== undefined && isAlreadySetup.some((id) => mfaClaim.c[id] !== undefined))
+//     ) {
+//         isAllowedToSetup = ["otp-phone", "otp-email", "totp"].filter((id) => !isAlreadySetup.includes(id));
+//     }
 
-    res.send({
-        status: "OK",
-        email: user.emails[0],
-        phoneNumber: user.phoneNumbers[0],
-        factors: {
-            isAllowedToSetup: mfaInfo.isAllowedToSetup ?? isAllowedToSetup,
-            isAlreadySetup: mfaInfo.isAlreadySetup ?? isAlreadySetup,
-        },
-        ...mfaInfo.resp,
-    });
-});
+//     res.send({
+//         status: "OK",
+//         email: user.emails[0],
+//         phoneNumber: user.phoneNumbers[0],
+//         factors: {
+//             isAllowedToSetup: mfaInfo.isAllowedToSetup ?? isAllowedToSetup,
+//             isAlreadySetup: mfaInfo.isAlreadySetup ?? isAlreadySetup,
+//         },
+//         ...mfaInfo.resp,
+//     });
+// });
 
 app.get("/token", async (_, res) => {
     res.send({
@@ -700,6 +723,14 @@ function initST() {
 
         if (accountLinkingSupported) {
             AccountLinkingRaw.reset();
+        }
+
+        if (userMetadataSupported) {
+            UserMetadataRaw.reset();
+        }
+
+        if (multiFactorAuthSupported) {
+            MultiFactorAuthRaw.reset();
         }
 
         EmailVerificationRaw.reset();
@@ -1063,49 +1094,49 @@ function initST() {
                                     };
                                 }
 
-                                const deviceInfo = await input.options.recipeImplementation.listCodesByPreAuthSessionId(
-                                    {
-                                        tenantId: input.tenantId,
-                                        preAuthSessionId: input.preAuthSessionId,
-                                        userContext: input.userContext,
-                                    }
-                                );
+                                // const deviceInfo = await input.options.recipeImplementation.listCodesByPreAuthSessionId(
+                                //     {
+                                //         tenantId: input.tenantId,
+                                //         preAuthSessionId: input.preAuthSessionId,
+                                //         userContext: input.userContext,
+                                //     }
+                                // );
                                 const resp = await originalImplementation.consumeCodePOST(input);
 
-                                if (resp.status === "OK") {
-                                    let session = await Session.getSession(input.options.req, input.options.res, {
-                                        overrideGlobalClaimValidators: () => [],
-                                        sessionRequired: false,
-                                    });
+                                // if (resp.status === "OK") {
+                                //     let session = await Session.getSession(input.options.req, input.options.res, {
+                                //         overrideGlobalClaimValidators: () => [],
+                                //         sessionRequired: false,
+                                //     });
 
-                                    if (session) {
-                                        await AccountLinking.createPrimaryUser(session.getRecipeUserId());
-                                        await AccountLinking.linkAccounts(
-                                            resp.session.getRecipeUserId(),
-                                            session.getUserId()
-                                        );
+                                //     // if (session) {
+                                //     //     await AccountLinking.createPrimaryUser(session.getRecipeUserId());
+                                //     //     await AccountLinking.linkAccounts(
+                                //     //         resp.session.getRecipeUserId(),
+                                //     //         session.getUserId()
+                                //     //     );
 
-                                        const mfaClaim = session.getAccessTokenPayload()["st-mfa"];
+                                //     //     const mfaClaim = session.getAccessTokenPayload()["st-mfa"];
 
-                                        let factorId;
-                                        if (deviceInfo.email !== undefined) {
-                                            factorId = "otp-email";
-                                        } else {
-                                            factorId = "otp-phone";
-                                        }
+                                //     //     let factorId;
+                                //     //     if (deviceInfo.email !== undefined) {
+                                //     //         factorId = "otp-email";
+                                //     //     } else {
+                                //     //         factorId = "otp-phone";
+                                //     //     }
 
-                                        const c = {
-                                            ...mfaClaim?.c,
-                                            [factorId]: new Date() / 1000,
-                                        };
-                                        await session.mergeIntoAccessTokenPayload({
-                                            "st-mfa": {
-                                                c,
-                                                n: getNextArray(c),
-                                            },
-                                        });
-                                    }
-                                }
+                                //     //     const c = {
+                                //     //         ...mfaClaim?.c,
+                                //     //         [factorId]: new Date() / 1000,
+                                //     //     };
+                                //     //     await session.mergeIntoAccessTokenPayload({
+                                //     //         "st-mfa": {
+                                //     //             c,
+                                //     //             n: getNextArray(c),
+                                //     //         },
+                                //     //     });
+                                //     // }
+                                // }
                                 return resp;
                             },
                         };
@@ -1223,6 +1254,44 @@ function initST() {
                 }),
             ]);
         }
+    }
+    if (multiFactorAuthSupported) {
+        recipeList.push([
+            "multifactorauth",
+            MultiFactorAuth.init({
+                firstFactors: mfaInfo.firstFactors,
+                override: {
+                    functions: (oI) => ({
+                        ...oI,
+                        getFactorsSetupForUser: async (input) => {
+                            const res = await oI.getFactorsSetupForUser(input);
+                            return mfaInfo?.isAllowedToSetup ?? res;
+                        },
+                        getAllAvailableFactorIds: async (input) => {
+                            const res = await oI.getAllAvailableFactorIds(input);
+                            if (mfaInfo?.isAllowedToSetup || mfaInfo?.isAlreadySetup) {
+                                return [...mfaInfo.isAllowedToSetup, ...mfaInfo.isAlreadySetup];
+                            }
+                            return res;
+                        },
+                        isAllowedToSetupFactor: async (input) => {
+                            const res = await oI.isAllowedToSetupFactor(input);
+                            if (mfaInfo?.isAllowedToSetup) {
+                                return mfaInfo.isAllowedToSetup.includes(input.factorId);
+                            }
+                            return res;
+                        },
+                        getMFARequirementsForAuth: async (input) => {
+                            const res = await oI.getMFARequirementsForAuth(input);
+                            if (mfaInfo?.requirements) {
+                                return mfaInfo.requirements;
+                            }
+                            return res;
+                        },
+                    }),
+                },
+            }),
+        ]);
     }
 
     SuperTokens.init({
