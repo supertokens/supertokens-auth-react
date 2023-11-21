@@ -17,11 +17,8 @@ import { useTranslation } from "../../../../../translation/translationContext";
 import BackButton from "../../../../emailpassword/components/library/backButton";
 
 export const FactorChooserHeader = withOverride(
-    "MultiFactorAuthFactorChooserHeader",
-    function MultiFactorAuthFactorChooserHeader(props: {
-        showBackButton: boolean;
-        onBackButtonClicked: () => void;
-    }): JSX.Element {
+    "MFAFactorChooserHeader",
+    function MFAFactorChooserHeader(props: { showBackButton: boolean; onBackButtonClicked: () => void }): JSX.Element {
         const t = useTranslation();
 
         return (

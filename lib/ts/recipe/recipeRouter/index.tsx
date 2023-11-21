@@ -146,7 +146,7 @@ export abstract class RecipeRouter {
 
         // We may get here if the app is using an older BE that doesn't support MFA
         const enabledRecipeCount = Object.keys(dynamicLoginMethods).filter(
-            (key) => (dynamicLoginMethods as any)[key].enabled
+            (key) => (dynamicLoginMethods as any)[key]?.enabled === true
         ).length;
         // We first try to find an exact match
         for (const { rid, includes } of priorityOrder) {
