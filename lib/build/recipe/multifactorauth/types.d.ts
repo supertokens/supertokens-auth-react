@@ -1,3 +1,7 @@
+import type { FactorChooserFooter } from "./components/themes/factorChooser/factorChooserFooter";
+import type { FactorChooserHeader } from "./components/themes/factorChooser/factorChooserHeader";
+import type { FactorList } from "./components/themes/factorChooser/factorList";
+import type { FactorOption } from "./components/themes/factorChooser/factorOption";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type { FeatureBaseConfig } from "../../types";
 import type {
@@ -10,7 +14,10 @@ import type { OverrideableBuilder } from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/multifactorauth";
 import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 export declare type ComponentOverrideMap = {
-    FactorChooser_Override?: ComponentOverride<any>;
+    MFAFactorChooserFooter_Override?: ComponentOverride<typeof FactorChooserFooter>;
+    MFAFactorChooserHeader_Override?: ComponentOverride<typeof FactorChooserHeader>;
+    MFAFactorList_Override?: ComponentOverride<typeof FactorList>;
+    MFAFactorOption_Override?: ComponentOverride<typeof FactorOption>;
 };
 export declare type UserInput = {
     firstFactors?: string[];

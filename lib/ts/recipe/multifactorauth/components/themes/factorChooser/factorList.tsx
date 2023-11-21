@@ -21,8 +21,8 @@ import type { SecondaryFactorRedirectionInfo } from "../../../types";
 import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 
 export const FactorList = withOverride(
-    "MultiFactorAuthFactorList",
-    function MultiFactorAuthFactorList({
+    "MFAFactorList",
+    function MFAFactorList({
         availableFactors,
         navigateToFactor,
     }: {
