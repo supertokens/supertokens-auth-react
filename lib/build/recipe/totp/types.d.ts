@@ -1,3 +1,11 @@
+import type { BlockedScreen } from "./components/themes/mfa/blockedScreen";
+import type { LoadingScreen } from "./components/themes/mfa/loadingScreen";
+import type { CodeForm } from "./components/themes/mfa/totpCodeForm";
+import type { CodeVerificationFooter } from "./components/themes/mfa/totpCodeVerificationFooter";
+import type { CodeVerificationHeader } from "./components/themes/mfa/totpCodeVerificationHeader";
+import type { DeviceInfoSection } from "./components/themes/mfa/totpDeviceInfoSection";
+import type { DeviceSetupFooter } from "./components/themes/mfa/totpDeviceSetupFooter";
+import type { DeviceSetupHeader } from "./components/themes/mfa/totpDeviceSetupHeader";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type {
     Config as RecipeModuleConfig,
@@ -8,7 +16,14 @@ import type { Dispatch } from "react";
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/totp";
 export declare type ComponentOverrideMap = {
-    TOTPMFAScreen_Override?: ComponentOverride<any>;
+    TOTPBlockedScreen_Override?: ComponentOverride<typeof BlockedScreen>;
+    TOTPLoadingScreen_Override?: ComponentOverride<typeof LoadingScreen>;
+    TOTPCodeForm_Override?: ComponentOverride<typeof CodeForm>;
+    TOTPCodeVerificationFooter_Override?: ComponentOverride<typeof CodeVerificationFooter>;
+    TOTPCodeVerificationHeader_Override?: ComponentOverride<typeof CodeVerificationHeader>;
+    TOTPDeviceSetupFooter_Override?: ComponentOverride<typeof DeviceSetupFooter>;
+    TOTPDeviceSetupHeader_Override?: ComponentOverride<typeof DeviceSetupHeader>;
+    TOTPDeviceInfoSection_Override?: ComponentOverride<typeof DeviceInfoSection>;
 };
 export declare type TOTPDeviceInfo = {
     issuerName: string;
@@ -129,7 +144,4 @@ export declare type PreAPIHookContext = {
     url: string;
     userContext: any;
 };
-export declare type OnHandleEventContext = {
-    action: "FACTOR_CHOSEN";
-    userContext: any;
-};
+export declare type OnHandleEventContext = never;

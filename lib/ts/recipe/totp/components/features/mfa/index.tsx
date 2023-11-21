@@ -105,15 +105,8 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
         (initArg) => {
             let error: string | undefined = undefined;
             const errorQueryParam = getQueryParams("error");
-            const messageQueryParam = getQueryParams("message");
             if (errorQueryParam !== null) {
-                if (errorQueryParam === "signin") {
-                    error = "SOMETHING_WENT_WRONG_ERROR";
-                } else if (errorQueryParam === "restart_link") {
-                    error = "ERROR_SIGN_IN_UP_LINK";
-                } else if (errorQueryParam === "custom" && messageQueryParam !== null) {
-                    error = messageQueryParam;
-                }
+                error = "SOMETHING_WENT_WRONG_ERROR";
             }
             return {
                 ...initArg,
@@ -130,7 +123,6 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
     );
 
     const handleLoadError = React.useCallback(
-        // TODO: Test this, it may show an empty screen in many cases
         () => dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" }),
         [dispatch]
     );
@@ -138,16 +130,9 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
         async (mfaInfo: { factors: MFAFactorInfo; email?: string; phoneNumber?: string }) => {
             let error: string | undefined = undefined;
             const errorQueryParam = getQueryParams("error");
-            const messageQueryParam = getQueryParams("message");
             const doSetup = getQueryParams("setup");
             if (errorQueryParam !== null) {
-                if (errorQueryParam === "signin") {
-                    error = "SOMETHING_WENT_WRONG_ERROR";
-                } else if (errorQueryParam === "restart_link") {
-                    error = "ERROR_SIGN_IN_UP_LINK";
-                } else if (errorQueryParam === "custom" && messageQueryParam !== null) {
-                    error = messageQueryParam;
-                }
+                error = "SOMETHING_WENT_WRONG_ERROR";
             }
             const isAllowedToSetup = mfaInfo.factors.isAllowedToSetup.includes("totp");
             const isAlreadySetup = mfaInfo.factors.isAlreadySetup.includes("totp");
@@ -185,7 +170,9 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                 userContext,
             });
             const nextLength = mfaClaim?.n.length ?? 0;
-            const showBackButton = nextLength !== 1; // If we have finished logging in or if the factorChooser is available
+            // If we have finished logging in and the user was redirected here
+            // otherwise the user can use the "choose another factor" button
+            const showBackButton = nextLength === 0;
 
             // No need to check if the component is unmounting, since this has no effect then.
             dispatch({ type: "load", deviceInfo, error, showBackButton });
@@ -319,14 +306,7 @@ function getModifiedRecipeImplementation(
     return {
         ...originalImpl,
         createDevice: async (input) => {
-            const additionalDeviceInfo = {
-                redirectToPath: getRedirectToPathFromURL(),
-            };
-
-            const res = await originalImpl.createDevice({
-                ...input,
-                userContext: { ...input.userContext, additionalDeviceInfo },
-            });
+            const res = await originalImpl.createDevice(input);
             if (res.status === "OK") {
                 const deviceInfo = {
                     ...res,
