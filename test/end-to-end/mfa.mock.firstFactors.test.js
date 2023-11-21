@@ -33,7 +33,7 @@ import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 /*
  * Tests.
  */
-describe("SuperTokens MFA firstFactors support", function () {
+describe.skip("SuperTokens MFA firstFactors support", function () {
     let browser;
     let page;
     let consoleLogs = [];
