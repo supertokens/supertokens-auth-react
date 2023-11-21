@@ -9,6 +9,8 @@ import { ComponentOverrideMap as EmailVerificationOverrideMap } from "../../lib/
 import { ComponentOverrideMap as ThirdPartyEmailPasswordOverrideMap } from "../../lib/ts/recipe/thirdpartyemailpassword/types";
 import { ComponentOverrideMap as PasswordlessOverrideMap } from "../../lib/ts/recipe/passwordless/types";
 import { ComponentOverrideMap as ThirdPartyPasswordlessOverrideMap } from "../../lib/ts/recipe/thirdpartypasswordless/types";
+import { ComponentOverrideMap as TOTPOverrideMap } from "../../lib/ts/recipe/totp/types";
+import { ComponentOverrideMap as MFAOverrideMap } from "../../lib/ts/recipe/multifactorauth/types";
 
 import "@testing-library/jest-dom";
 import EmailPassword from "../../lib/ts/recipe/emailpassword/recipe";
@@ -57,13 +59,31 @@ import { EmailOrPhoneForm } from "../../lib/ts/recipe/passwordless/components/th
 import ThirdParty from "../../lib/ts/recipe/thirdparty/recipe";
 import { Google, ThirdpartyComponentsOverrideProvider } from "../../lib/ts/recipe/thirdparty";
 import { SignInAndUpCallback } from "../../lib/ts/recipe/thirdparty/prebuiltui";
+import { MFAFooter } from "../../lib/ts/recipe/passwordless/components/themes/mfa/mfaFooter";
+import { MFAHeader } from "../../lib/ts/recipe/passwordless/components/themes/mfa/mfaHeader";
+import { MFAOTPFooter } from "../../lib/ts/recipe/passwordless/components/themes/mfa/mfaOTPFooter";
+import { MFAOTPHeader } from "../../lib/ts/recipe/passwordless/components/themes/mfa/mfaOTPHeader";
+import { BlockedScreen } from "../../lib/ts/recipe/totp/components/themes/mfa/blockedScreen";
+import { CodeForm } from "../../lib/ts/recipe/totp/components/themes/mfa/totpCodeForm";
+import { CodeVerificationFooter } from "../../lib/ts/recipe/totp/components/themes/mfa/totpCodeVerificationFooter";
+import { CodeVerificationHeader } from "../../lib/ts/recipe/totp/components/themes/mfa/totpCodeVerificationHeader";
+import { DeviceInfoSection } from "../../lib/ts/recipe/totp/components/themes/mfa/totpDeviceInfoSection";
+import { DeviceSetupFooter } from "../../lib/ts/recipe/totp/components/themes/mfa/totpDeviceSetupFooter";
+import { DeviceSetupHeader } from "../../lib/ts/recipe/totp/components/themes/mfa/totpDeviceSetupHeader";
+import { LoadingScreen } from "../../lib/ts/recipe/totp/components/themes/mfa/loadingScreen";
+import { FactorChooserFooter } from "../../lib/ts/recipe/multifactorauth/components/themes/factorChooser/factorChooserFooter";
+import { FactorChooserHeader } from "../../lib/ts/recipe/multifactorauth/components/themes/factorChooser/factorChooserHeader";
+import { FactorList } from "../../lib/ts/recipe/multifactorauth/components/themes/factorChooser/factorList";
+import { FactorOption } from "../../lib/ts/recipe/multifactorauth/components/themes/factorChooser/factorOption";
 
 type AllComponentsOverrideMap = EmailPasswordOverrideMap &
     ThirdPartyOverrideMap &
     EmailVerificationOverrideMap &
     ThirdPartyEmailPasswordOverrideMap &
     PasswordlessOverrideMap &
-    ThirdPartyPasswordlessOverrideMap;
+    ThirdPartyPasswordlessOverrideMap &
+    TOTPOverrideMap &
+    MFAOverrideMap;
 
 const makeOverride = () => () => <h1 data-testid="override">Override</h1>;
 const WithProvider: React.FC<any> = ({ overrideMap, children }) => {
@@ -103,7 +123,23 @@ describe("Theme component overrides", () => {
         PasswordlessLinkSent_Override: LinkSent,
         PasswordlessCloseTabScreen_Override: CloseTabScreen,
         PasswordlessLinkClickedScreen_Override: LinkClickedScreen,
+        PasswordlessMFAFooter_Override: MFAFooter,
+        PasswordlessMFAHeader_Override: MFAHeader,
+        PasswordlessMFAOTPFooter_Override: MFAOTPFooter,
+        PasswordlessMFAOTPHeader_Override: MFAOTPHeader,
         ThirdPartyPasswordlessHeader_Override: ThirdPartyPasswordlessHeader,
+        TOTPBlockedScreen_Override: BlockedScreen,
+        TOTPCodeForm_Override: CodeForm,
+        TOTPCodeVerificationFooter_Override: CodeVerificationFooter,
+        TOTPCodeVerificationHeader_Override: CodeVerificationHeader,
+        TOTPDeviceInfoSection_Override: DeviceInfoSection,
+        TOTPDeviceSetupFooter_Override: DeviceSetupFooter,
+        TOTPDeviceSetupHeader_Override: DeviceSetupHeader,
+        TOTPLoadingScreen_Override: LoadingScreen,
+        MFAFactorChooserFooter_Override: FactorChooserFooter,
+        MFAFactorChooserHeader_Override: FactorChooserHeader,
+        MFAFactorList_Override: [FactorList, { availableFactors: [] }],
+        MFAFactorOption_Override: [FactorOption, { logo: () => <p>!</p> }],
     };
 
     Object.entries(overrides).forEach(([key, comp]) => {
