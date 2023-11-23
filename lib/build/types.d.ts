@@ -13,7 +13,13 @@ export declare type GetRedirectionURLContext = {
     showSignIn?: boolean;
 };
 export declare type ValidationFailureCallback =
-    | (({ userContext, reason }: { userContext: any; reason: any }) => Promise<string | undefined> | string | undefined)
+    | (({
+          userContext,
+          reason,
+      }: {
+          userContext: any;
+          reason: any;
+      }) => Promise<string | undefined | null> | string | undefined | null)
     | undefined;
 export declare type SessionClaimValidator = SessionClaimValidatorWebJS & {
     showAccessDeniedOnFailure?: boolean;
@@ -40,7 +46,7 @@ export declare type SuperTokensConfig = {
         translationFunc?: TranslationFunc;
     };
     enableDebugLogs?: boolean;
-    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
+    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined | null>;
 };
 export declare type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "signOut">;
 export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (

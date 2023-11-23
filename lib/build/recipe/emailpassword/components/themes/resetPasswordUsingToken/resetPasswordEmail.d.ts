@@ -1,7 +1,7 @@
 /// <reference types="react" />
 export declare const ResetPasswordEmail: import("react").ComponentType<
     import("../../../../../types").ThemeBaseProps & {
-        formFields: Omit<import("../../../types").FormFieldThemeProps, "inputComponent">[];
+        formFields: import("../../../types").FormFieldThemeProps[];
         error: string | undefined;
     } & {
         recipeImplementation: import("supertokens-web-js/recipe/emailpassword").RecipeInterface;

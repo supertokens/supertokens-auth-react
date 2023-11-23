@@ -13,6 +13,6 @@ export declare const getFailureRedirectionInfo: ({
         | undefined;
     userContext: any;
 }) => Promise<{
-    redirectPath?: string | undefined;
+    redirectPath?: string | null | undefined;
     failedClaim?: ClaimValidationError | undefined;
 }>;

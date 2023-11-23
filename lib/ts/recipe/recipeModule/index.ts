@@ -13,6 +13,7 @@
  * under the License.
  */
 
+import { logDebugMessage } from "../../logger";
 import SuperTokens from "../../superTokens";
 import { appendQueryParamsToURL } from "../../utils";
 
@@ -32,12 +33,24 @@ export default abstract class RecipeModule<
         queryParams?: Record<string, string>
     ): Promise<void> => {
         let redirectUrl = await this.getRedirectUrl(context);
+
+        if (redirectUrl === null) {
+            logDebugMessage(
+                `Skipping redirection because the user override returned null for context ${JSON.stringify(
+                    context,
+                    null,
+                    2
+                )}`
+            );
+            return;
+        }
+
         redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
         return SuperTokens.getInstanceOrThrow().redirectToUrl(redirectUrl, history);
     };
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    getRedirectUrl = async (context: GetRedirectionURLContextType): Promise<string> => {
+    getRedirectUrl = async (context: GetRedirectionURLContextType): Promise<string | null> => {
         // If getRedirectionURL provided by user.
         const redirectUrl = await this.config.getRedirectionURL(context);
         if (redirectUrl !== undefined) {

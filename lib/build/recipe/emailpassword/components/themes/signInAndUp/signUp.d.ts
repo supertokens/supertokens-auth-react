@@ -9,6 +9,6 @@ export declare const SignUp: import("react").ComponentType<
         onError: (error: string) => void;
         config: import("../../../types").NormalisedConfig;
         signInClicked?: (() => void) | undefined;
-        onSuccess: () => void;
+        onSuccess: (result: { user: import("supertokens-web-js/types").User }) => void;
     }
 >;

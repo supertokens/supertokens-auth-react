@@ -1460,3 +1460,44 @@ Multitenancy.init({
         }),
     },
 });
+
+// Testing that 'null' is allowed to be returned from getRedirectionURL
+SuperTokens.init({
+    appInfo: {
+        appName: "",
+        apiDomain: "",
+        websiteDomain: "",
+    },
+
+    async getRedirectionURL(context) {
+        return null;
+    },
+    recipeList: [
+        EmailPassword.init({
+            async getRedirectionURL(context) {
+                return null;
+            },
+        }),
+        ThirdParty.init({
+            async getRedirectionURL(context) {
+                return null;
+            },
+        }),
+        ThirdPartyEmailPassword.init({
+            async getRedirectionURL(context) {
+                return null;
+            },
+        }),
+        EmailVerification.init({
+            async getRedirectionURL(context) {
+                return null;
+            },
+        }),
+        Passwordless.init({
+            contactMethod: "EMAIL",
+            async getRedirectionURL(context) {
+                return null;
+            },
+        }),
+    ],
+});

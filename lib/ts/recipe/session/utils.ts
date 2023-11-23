@@ -57,7 +57,7 @@ export const getFailureRedirectionInfo = async ({
         userContext: any
     ) => SessionClaimValidator[];
     userContext: any;
-}): Promise<{ redirectPath?: string; failedClaim?: ClaimValidationError }> => {
+}): Promise<{ redirectPath?: string | null; failedClaim?: ClaimValidationError }> => {
     const globalValidators = getGlobalClaimValidators({
         overrideGlobalClaimValidators,
         userContext,

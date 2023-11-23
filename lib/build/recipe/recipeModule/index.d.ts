@@ -11,6 +11,6 @@ export default abstract class RecipeModule<
         history?: any,
         queryParams?: Record<string, string>
     ) => Promise<void>;
-    getRedirectUrl: (context: GetRedirectionURLContextType) => Promise<string>;
+    getRedirectUrl: (context: GetRedirectionURLContextType) => Promise<string | null>;
     getDefaultRedirectionURL(_: GetRedirectionURLContextType): Promise<string>;
 }

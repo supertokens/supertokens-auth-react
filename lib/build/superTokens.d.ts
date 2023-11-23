@@ -25,7 +25,7 @@ export default class SuperTokens {
     ): RecipeModule<T, S, R, N>;
     changeLanguage: (lang: string) => Promise<void>;
     loadTranslation(store: TranslationStore): void;
-    getRedirectUrl(context: GetRedirectionURLContext): Promise<string>;
+    getRedirectUrl(context: GetRedirectionURLContext): Promise<string | null>;
     redirectToAuth: (options: {
         show?: "signin" | "signup" | undefined;
         history?: any;

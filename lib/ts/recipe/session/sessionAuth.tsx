@@ -18,6 +18,7 @@
  */
 import React, { useEffect, useState, useRef, useCallback } from "react";
 
+import { logDebugMessage } from "../../logger";
 import SuperTokens from "../../superTokens";
 import UI from "../../ui";
 import { useUserContext } from "../../usercontext";
@@ -185,6 +186,19 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                         overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
                         userContext,
                     });
+
+                    if (failureRedirectInfo.redirectPath === null) {
+                        setContext(toSetContext);
+                        logDebugMessage(
+                            `Skipping redirection because the user override returned null for validator ${JSON.stringify(
+                                failureRedirectInfo.failedClaim,
+                                null,
+                                2
+                            )}`
+                        );
+                        return;
+                    }
+
                     if (failureRedirectInfo.redirectPath !== undefined) {
                         setContext(toSetContext);
                         return await SuperTokens.getInstanceOrThrow().redirectToUrl(

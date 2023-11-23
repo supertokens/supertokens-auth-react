@@ -19,6 +19,7 @@
 import SessionWebJS from "supertokens-web-js/recipe/session";
 import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
 
+import { logDebugMessage } from "../../logger";
 import SuperTokens from "../../superTokens";
 import { getLocalStorage, isTest, removeFromLocalStorage, setLocalStorage } from "../../utils";
 import RecipeModule from "../recipeModule";
@@ -144,6 +145,17 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                 invalidClaims,
                 userContext,
             });
+
+            if (failureRedirectInfo.redirectPath === null) {
+                logDebugMessage(
+                    `Skipping redirection because the user override returned null for validator ${JSON.stringify(
+                        failureRedirectInfo.failedClaim,
+                        null,
+                        2
+                    )}`
+                );
+                return;
+            }
 
             // if redirectPath is string that means failed claim had callback that returns path, we redirect there otherwise continue
             if (failureRedirectInfo.redirectPath !== undefined) {

@@ -22,6 +22,7 @@ import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuper
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
 import { SSR_ERROR } from "./constants";
+import { enableLogging, logDebugMessage } from "./logger";
 import Multitenancy from "./recipe/multitenancy/recipe";
 import { saveCurrentLanguage, TranslationController } from "./translation/translationHelpers";
 import {
@@ -90,9 +91,10 @@ export default class SuperTokens {
             userTranslationFunc: translationConfig.translationFunc,
         };
 
-        let enableDebugLogs = false;
-        if (config.enableDebugLogs !== undefined) {
-            enableDebugLogs = config.enableDebugLogs;
+        const enableDebugLogs = Boolean(config?.enableDebugLogs);
+
+        if (enableDebugLogs) {
+            enableLogging();
         }
 
         this.userGetRedirectionURL = config.getRedirectionURL;
@@ -165,7 +167,7 @@ export default class SuperTokens {
         this.languageTranslations.translationEventSource.emit("TranslationLoaded", store);
     }
 
-    async getRedirectUrl(context: GetRedirectionURLContext): Promise<string> {
+    async getRedirectUrl(context: GetRedirectionURLContext): Promise<string | null> {
         if (this.userGetRedirectionURL) {
             const userRes = await this.userGetRedirectionURL(context);
             if (userRes !== undefined) {
@@ -197,6 +199,11 @@ export default class SuperTokens {
             action: "TO_AUTH",
             showSignIn: options.show === "signin",
         });
+
+        if (redirectUrl === null) {
+            logDebugMessage("Skipping redirection because the user override returned null");
+            return;
+        }
         redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
         return this.redirectToUrl(redirectUrl, options.history);
     };

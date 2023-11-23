@@ -30,7 +30,13 @@ export type GetRedirectionURLContext = {
 };
 
 export type ValidationFailureCallback =
-    | (({ userContext, reason }: { userContext: any; reason: any }) => Promise<string | undefined> | string | undefined)
+    | (({
+          userContext,
+          reason,
+      }: {
+          userContext: any;
+          reason: any;
+      }) => Promise<string | undefined | null> | string | undefined | null)
     | undefined;
 
 export type SessionClaimValidator = SessionClaimValidatorWebJS & {
@@ -98,7 +104,7 @@ export type SuperTokensConfig = {
         translationFunc?: TranslationFunc;
     };
     enableDebugLogs?: boolean;
-    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
+    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined | null>;
 };
 
 export type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "signOut">;
