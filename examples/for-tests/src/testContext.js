@@ -14,6 +14,10 @@ export function getTestContext() {
         staticProviderList: localStorage.getItem("staticProviderList"),
         mockTenantId: localStorage.getItem("mockTenantId"),
         clientType: localStorage.getItem("clientType") || undefined,
+        formFieldType: {
+            signIn: localStorage.getItem("SIGNIN_SETTING_TYPE"),
+            signUp: localStorage.getItem("SIGNUP_SETTING_TYPE"),
+        },
     };
     return ret;
 }

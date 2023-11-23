@@ -45,19 +45,13 @@ function PhoneNumberInput({
 }: InputProps & PhoneNumberInputProps): JSX.Element {
     function handleFocus() {
         if (onInputFocus !== undefined) {
-            onInputFocus({
-                id: name,
-                value: value,
-            });
+            onInputFocus(value);
         }
     }
 
     function handleBlur() {
         if (onInputBlur !== undefined) {
-            onInputBlur({
-                id: name,
-                value: value,
-            });
+            onInputBlur(value);
         }
     }
 
@@ -71,10 +65,7 @@ function PhoneNumberInput({
     const handleChange = useCallback(
         (newValue: string) => {
             if (onChangeRef.current !== undefined) {
-                onChangeRef.current({
-                    id: name,
-                    value: newValue,
-                });
+                onChangeRef.current(newValue);
             }
         },
         [onChangeRef]
@@ -83,10 +74,7 @@ function PhoneNumberInput({
     const handleCountryChange = useCallback(
         (ev) => {
             if (onChangeRef.current !== undefined && phoneInputInstance !== undefined) {
-                onChangeRef.current({
-                    id: name,
-                    value: ev.target.value,
-                });
+                onChangeRef.current(ev.target.value);
             }
         },
         [onChangeRef]

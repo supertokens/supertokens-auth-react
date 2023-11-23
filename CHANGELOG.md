@@ -5,6 +5,81 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [0.35.7] - 2023-11-16
+
+### Added
+
+-   EmailPassword and ThirdPartyEmailPassword recipe enhancements:
+    -   Introduced the capability to utilize custom components by exposing `inputComponent` types.
+    -   Allow setting default values in signup/signin form fields.
+    -   Made the `onChange` prop in `inputComponent` simpler by removing the need for an `id` attribute.
+    -   Added a feature to customize the "Field is not optional" error message for each form field with the `nonOptionalErrorMsg` prop.
+
+Following is an example of how to use above features.
+
+```tsx
+EmailPassword.init({
+    signInAndUpFeature: {
+        signUpForm: {
+            formFields: [
+                {
+                    id: "select-dropdown",
+                    label: "Select Option",
+                    getDefaultValue: () => "option 2",
+                    nonOptionalErrorMsg: "Select dropdown is required",
+                    inputComponent: ({ value, name, onChange }) => (
+                        <select
+                            value={value}
+                            name={name}
+                            onChange={(e) => onChange(e.target.value)}
+                            placeholder="Select Option">
+                            <option value="" disabled hidden>
+                                Select an option
+                            </option>
+                            <option value="option 1">Option 1</option>
+                            <option value="option 2">Option 2</option>
+                            <option value="option 3">Option 3</option>
+                        </select>
+                    ),
+                },
+            ],
+        },
+    },
+});
+
+ThirdPartyEmailPassword.init({
+    signInAndUpFeature: {
+        signUpForm: {
+            formFields: [
+                {
+                    id: "terms",
+                    label: "",
+                    optional: false,
+                    getDefaultValue: () => "true",
+                    nonOptionalErrorMsg: "You must accept the terms and conditions",
+                    inputComponent: ({ name, onChange, value }) => (
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "left",
+                            }}>
+                            <input
+                                value={value}
+                                checked={value === "true"}
+                                name={name}
+                                type="checkbox"
+                                onChange={(e) => onChange(e.target.checked.toString())}></input>
+                            <span style={{ marginLeft: 5 }}>I agree to the terms and conditions</span>
+                        </div>
+                    ),
+                },
+            ],
+        },
+    },
+});
+```
+
 ## [0.35.6] - 2023-10-16
 
 ### Test changes
