@@ -816,6 +816,9 @@ function getEmailPasswordConfigs({ disableDefaultUI, formFieldType }) {
             console.log(`ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
                 setIsNewUserToStorage("emailpassword", context.isNewRecipeUser);
+                if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
+                    return null;
+                }
                 return context.redirectToPath || "/dashboard";
             }
         },
@@ -1049,6 +1052,9 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
             console.log(`ST_LOGS PASSWORDLESS GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
                 setIsNewUserToStorage("passwordless", context.isNewRecipeUser);
+                if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
+                    return null;
+                }
                 return context.redirectToPath || "/dashboard";
             }
         },

@@ -18,6 +18,8 @@ export function getTestContext() {
             signIn: localStorage.getItem("SIGNIN_SETTING_TYPE"),
             signUp: localStorage.getItem("SIGNUP_SETTING_TYPE"),
         },
+        disableRedirectionAfterSuccessfulSignInUp:
+            localStorage.getItem("disableRedirectionAfterSuccessfulSignInUp") === "true",
     };
     return ret;
 }

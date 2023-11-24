@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [0.35.8] - 2023-11-24
+
+### Changes
+
+-   `getRedirectionURL` now supports returning `null` to prevent automatic redirection, useful for customizing the behavior after successful sign-in or sign-up.
+
+Here's an example of how to use this:
+
+```tsx
+EmailPassword.init({
+    getRedirectionURL: async (context) => {
+        if (context.action === "SUCCESS") {
+            return null;
+        }
+        // Returning undefined falls back to the default redirection strategy
+        return undefined;
+    },
+});
+```
+
 ## [0.35.7] - 2023-11-16
 
 ### Added

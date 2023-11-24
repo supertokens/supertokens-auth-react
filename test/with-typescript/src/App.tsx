@@ -8,7 +8,7 @@ import EmailPassword, {
     OnHandleEventContext as EmailPasswordOnHandleEventContext,
     PreAPIHookContext as EmailPasswordPreAPIHookContext,
 } from "../../../recipe/emailpassword";
-import Session, { SessionAuth } from "../../../recipe/session";
+import Session, { BooleanClaim, SessionAuth } from "../../../recipe/session";
 import Multitenancy, { AllowedDomainsClaim } from "../../../recipe/multitenancy";
 import ThirdParty, {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
@@ -1500,4 +1500,12 @@ SuperTokens.init({
             },
         }),
     ],
+});
+
+export const PhoneVerifiedClaim = new BooleanClaim({
+    id: "phone-verified",
+    refresh: async () => {
+        // This is something we have no way of refreshing, so this is a no-op
+    },
+    onFailureRedirection: () => null,
 });
