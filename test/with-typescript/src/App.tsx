@@ -400,9 +400,7 @@ function getEmailPasswordConfigs() {
                                     value={inputProps.value}
                                     checked={inputProps.value === "true"}
                                     onChange={(e) => {
-                                        if (inputProps.onChange) {
-                                            inputProps.onChange(e.target.checked.toString());
-                                        }
+                                        inputProps.onChange(e.target.checked.toString());
                                     }}></input>
                                 <span style={{ marginLeft: 5 }}>I agree to the terms and conditions</span>
                             </div>
@@ -421,21 +419,15 @@ function getEmailPasswordConfigs() {
                         inputComponent: (inputProps) => (
                             <select
                                 onBlur={(e) => {
-                                    if (inputProps.onInputBlur) {
-                                        inputProps.onInputBlur(e.target.value);
-                                    }
+                                    inputProps.onInputBlur(e.target.value);
                                 }}
                                 onFocus={(e) => {
-                                    if (inputProps.onInputFocus) {
-                                        inputProps.onInputFocus(e.target.value);
-                                    }
+                                    inputProps.onInputFocus(e.target.value);
                                 }}
                                 value={inputProps.value}
                                 name={inputProps.name}
                                 onChange={(e) => {
-                                    if (inputProps.onChange) {
-                                        inputProps.onChange(e.target.value);
-                                    }
+                                    inputProps.onChange(e.target.value);
                                 }}>
                                 <option value="" disabled hidden>
                                     Select an option
