@@ -31,9 +31,9 @@ export type InputProps = {
     hasError: boolean;
     placeholder: string;
     value: string;
-    onInputBlur?: (value: string) => void;
-    onInputFocus?: (value: string) => void;
-    onChange?: (value: string) => void;
+    onInputBlur: (value: string) => void;
+    onInputFocus: (value: string) => void;
+    onChange: (value: string) => void;
 };
 
 const Input: React.FC<InputProps> = ({
