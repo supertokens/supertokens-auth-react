@@ -225,6 +225,7 @@ describe("User Roles in the frontend", function () {
                     }),
                 `${TEST_APPLICATION_SERVER_BASE_URL}/setRole`
             );
+            await waitFor(500);
             const consoleLogs = [];
             page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
@@ -246,7 +247,7 @@ describe("User Roles in the frontend", function () {
                     }),
                 `${TEST_APPLICATION_SERVER_BASE_URL}/checkRole`
             );
-            await waitFor(500);
+
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION ON_HANDLE_EVENT API_INVALID_CLAIM",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",

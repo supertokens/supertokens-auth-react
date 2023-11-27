@@ -805,14 +805,14 @@ export function isReact16() {
 }
 
 export async function getTitleBackButton(page) {
-    const backButtonSelector = "[data-supertokens='headerTitle'] > [data-supertokens='backButton backButtonCommon']";
+    const backButtonSelector = "[data-supertokens~='headerTitle'] > [data-supertokens~='backButton']";
 
     return await waitForSTElement(page, backButtonSelector);
 }
 
 export async function getResetPasswordSuccessBackToSignInButton(page) {
     const backToSignInSelector =
-        "[data-supertokens='container'] > [data-supertokens='row'] > [data-supertokens='secondaryText secondaryLinkWithLeftArrow']";
+        "[data-supertokens~='container'] > [data-supertokens~='row'] > [data-supertokens~='secondaryLinkWithLeftArrow']";
 
     return await waitForSTElement(page, backToSignInSelector);
 }

@@ -16,7 +16,7 @@ cd node_modules/supertokens-auth-react
 # install prod dependencies only
 npm i --production || exit $?
 
-rm -rf node_modules/react # TODO: check how the new dep works for apps using us
+rm -rf node_modules/react # We need this because we do local install instead which doesn't take the parent dir into account
 rm -rf node_modules/.cache
 rm -rf node_modules/supertokens-web-js || true
 rm -rf node_modules/supertokens-website || true
