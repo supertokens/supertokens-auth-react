@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
--   `getRedirectionURL` now supports returning `null` to prevent automatic redirection, useful for customizing the behavior after successful sign-in or sign-up.
+-   `getRedirectionURL` now supports returning `null` to prevent automatic redirection, useful for customizing the behavior after successful sign-in or sign-up. Typically, this is used if you want to embed the sign in / up component in a popup and want to just dismiss the popup post login.
 
 Here's an example of how to use this:
 
