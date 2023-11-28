@@ -200,6 +200,7 @@ describe("getRedirectionURL Tests", function () {
                 if (!_isPasswordlessSupported) {
                     didSkip = true;
                     this.skip();
+                    return;
                 }
 
                 await backendBeforeEach();
@@ -286,6 +287,7 @@ describe("getRedirectionURL Tests", function () {
                 if (!_isThirdPartyPasswordlessSupported) {
                     didSkip = true;
                     this.skip();
+                    return;
                 }
 
                 await backendBeforeEach();
@@ -444,6 +446,7 @@ describe("getRedirectionURL Tests", function () {
                     if (!_isPasswordlessSupported) {
                         didSkip = true;
                         this.skip();
+                        return;
                     }
 
                     await backendBeforeEach();
@@ -476,7 +479,7 @@ describe("getRedirectionURL Tests", function () {
                         ),
                         page.waitForNavigation({ waitUntil: "networkidle0" }),
                     ]);
-                    await setPasswordlessFlowType("EMAIL", "USER_INPUT_CODE");
+                    return setPasswordlessFlowType("EMAIL", "USER_INPUT_CODE");
                 });
 
                 after(async function () {

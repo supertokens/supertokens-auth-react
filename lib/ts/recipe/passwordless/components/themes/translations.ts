@@ -26,10 +26,6 @@ export const defaultTranslationsPasswordless = {
         ERROR_SIGN_IN_UP_RESEND_RESTART_FLOW: "Login timed out. Please try again.",
         ERROR_SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW: "Login unsuccessful. Please try again.",
 
-        PWLESS_CLOSE_TAB_TITLE: "Success!",
-        PWLESS_CLOSE_TAB_SUBTITLE_LINE1: "You have been successfully signed in.",
-        PWLESS_CLOSE_TAB_SUBTITLE_LINE2: "Please close this tab",
-
         PWLESS_SIGN_IN_UP_HEADER_TITLE: "Sign Up or Log In",
 
         PWLESS_SIGN_IN_UP_FOOTER_START: "By continuing, you agree to our ",

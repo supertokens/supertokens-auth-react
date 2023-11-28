@@ -4,9 +4,9 @@ import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps } from "../../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
-export declare const useSuccessInAnotherTabChecker: (
+export declare const useRedirectAfterSuccess: (
     state: SignInUpState,
-    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
+    recipeId: string,
     userContext: any
 ) => React.MutableRefObject<boolean>;
 export declare const useFeatureReducer: (

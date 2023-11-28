@@ -38,23 +38,28 @@ import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps, Nor
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import type { User } from "supertokens-web-js/types";
 
-export const useSuccessInAnotherTabChecker = (
-    state: SignInUpState,
-    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
-    userContext: any
-) => {
+export const useRedirectAfterSuccess = (state: SignInUpState, recipeId: string, userContext: any) => {
     const callingConsumeCodeRef = useRef(false);
 
     useEffect(() => {
         // We only need to start checking this if we have an active login attempt
-        if (state.loginAttemptInfo && !state.successInAnotherTab) {
+        if (state.loginAttemptInfo) {
             const checkSessionIntervalHandle = setInterval(async () => {
                 if (callingConsumeCodeRef.current === false) {
                     const hasSession = await Session.doesSessionExist({
                         userContext,
                     });
                     if (hasSession) {
-                        dispatch({ type: "successInAnotherTab" });
+                        clearInterval(checkSessionIntervalHandle);
+                        void SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection({
+                            rid: recipeId,
+                            successRedirectContext: {
+                                action: "SUCCESS",
+                                isNewRecipeUser: false,
+                                user: undefined,
+                                redirectToPath: getRedirectToPathFromURL(),
+                            },
+                        });
                     }
                 }
             }, 2000);
@@ -65,7 +70,7 @@ export const useSuccessInAnotherTabChecker = (
         }
         // Nothing to clean up
         return;
-    }, [state.loginAttemptInfo, state.successInAnotherTab]);
+    }, [state.loginAttemptInfo]);
 
     return callingConsumeCodeRef;
 };
@@ -82,7 +87,6 @@ export const useFeatureReducer = (
                         loaded: true,
                         error: action.error,
                         loginAttemptInfo: action.loginAttemptInfo,
-                        successInAnotherTab: false,
                     };
                 case "resendCode":
                     if (!oldState.loginAttemptInfo) {
@@ -113,11 +117,6 @@ export const useFeatureReducer = (
                         loginAttemptInfo: action.loginAttemptInfo,
                         error: undefined,
                     };
-                case "successInAnotherTab":
-                    return {
-                        ...oldState,
-                        successInAnotherTab: true,
-                    };
                 default:
                     return oldState;
             }
@@ -126,7 +125,6 @@ export const useFeatureReducer = (
             error: undefined,
             loaded: false,
             loginAttemptInfo: undefined,
-            successInAnotherTab: false,
         },
         (initArg) => {
             let error: string | undefined = undefined;
@@ -245,7 +243,7 @@ export const SignInUpFeature: React.FC<
     const recipeComponentOverrides = props.useComponentOverrides();
     const userContext = useUserContext();
     const [state, dispatch] = useFeatureReducer(props.recipe.webJSRecipe, userContext);
-    const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch, userContext);
+    const callingConsumeCodeRef = useRedirectAfterSuccess(state, props.recipe.config.recipeId, userContext);
     const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, userContext, props.history)!;
 
     return (
@@ -358,7 +356,7 @@ function getModifiedRecipeImplementation(
 
         consumeCode: async (input) => {
             // We need to call consume code while callingConsume, so we don't detect
-            // the session creation too early and go to successInAnotherTab too early
+            // the session creation and redirect too early
             callingConsumeCodeRef.current = true;
 
             const res = await originalImpl.consumeCode(input);
