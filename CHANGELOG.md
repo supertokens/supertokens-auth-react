@@ -51,6 +51,10 @@ EmailPassword.init({
     });
     ```
 
+## [0.35.8] - 2023-11-26
+
+-   Fixes `inputComponent` props to make them non optional. This is in the context of customizing the sign up form to add custom react components.
+
 ## [0.35.7] - 2023-11-24
 
 ### Added
