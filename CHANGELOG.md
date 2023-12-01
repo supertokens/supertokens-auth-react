@@ -34,22 +34,6 @@ EmailPassword.init({
     Changes:
 
     -   The need to manually set `props.featureState.successInAnotherTab` to `false` to avoid displaying the `CloseTabScreen` component has been eliminated.
-    -   In your custom validator's `onFailureRedirection`, ensure redirection occurs only once. For instance, in the custom validator for phone verification you can do something like this -
-
-    ```ts
-    const PhoneVerifiedClaim = new BooleanClaim({
-        id: "phone-verified",
-        // Redirect the user to the /auth/verify-phone page upon claim failure.
-        // SuperTokens defaults to redirection when a session exists, which could result in repetitive redirection to /auth/verify-phone in case of a failed claim.
-        // To avoid this, return null if already on the /auth/verify-phone page.
-        onFailureRedirection: () => {
-            if (window.location.pathname !== "/auth/verify-phone") {
-                return "/auth/verify-phone";
-            }
-            return null;
-        },
-    });
-    ```
 
 ## [0.35.8] - 2023-11-26
 

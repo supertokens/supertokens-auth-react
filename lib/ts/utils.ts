@@ -223,7 +223,15 @@ export function redirectWithFullPageReload(to: string): void {
     if (to.trim() === "") {
         to = "/";
     }
-    WindowHandlerReference.getReferenceOrThrow().windowHandler.location.setHref(to);
+
+    // In certain cases, we invoke `Session.validateGlobalClaimsAndHandleSuccessRedirection` within a setInterval (useRedirectAfterSuccess hook), potentially causing a loop of page reloads if the redirect URL remains unchanged.
+    // To mitigate this, we check whether the current URL matches the redirect URL before initiating redirection.
+    const currentURL = new URL(WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHref());
+    const destinationURL = new URL(to, currentURL);
+
+    if (destinationURL.href !== currentURL.href) {
+        WindowHandlerReference.getReferenceOrThrow().windowHandler.location.setHref(destinationURL.href);
+    }
 }
 
 export function redirectWithHistory(to: string, history: any): void {
