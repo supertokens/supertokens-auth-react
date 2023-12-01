@@ -524,6 +524,96 @@ describe("getRedirectionURL Tests", function () {
                     assert.equal(urlBeforeSignUp, urlAfterSignUp);
                 });
             });
+
+            describe("ThirdPartyPasswordless recipe", function () {
+                let browser;
+                let page;
+                const exampleEmail = "test@example.com";
+                // Mocha calls cleanup functions even if the test block is skipped, this helps skipping the after block
+                let didSkip = false;
+
+                before(async function () {
+                    let _isThirdPartyPasswordlessSupported = await isThirdPartyPasswordlessSupported();
+                    if (!_isThirdPartyPasswordlessSupported) {
+                        didSkip = true;
+                        this.skip();
+                        return;
+                    }
+
+                    await backendBeforeEach();
+
+                    await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+                        method: "POST",
+                        headers: [["content-type", "application/json"]],
+                        body: JSON.stringify({
+                            coreConfig: {
+                                passwordless_code_lifetime: 4000,
+                                passwordless_max_code_input_attempts: 3,
+                            },
+                        }),
+                    }).catch(console.error);
+
+                    browser = await puppeteer.launch({
+                        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+                        headless: true,
+                    });
+                    page = await browser.newPage();
+                    // We need to set the localStorage value before the page loads to ensure ST initialises with the correct value
+                    await page.evaluateOnNewDocument(() => {
+                        localStorage.setItem("disableRedirectionAfterSuccessfulSignInUp", "true");
+                        localStorage.removeItem("isNewUserCheck");
+                    });
+                    await Promise.all([
+                        page.goto(
+                            `${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartypasswordless&passwordlessContactMethodType=EMAIL`
+                        ),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+                    await setPasswordlessFlowType("EMAIL", "USER_INPUT_CODE");
+                });
+
+                after(async function () {
+                    // Dont cleanup if tests were skipped
+                    if (didSkip) {
+                        return;
+                    }
+                    await browser.close();
+                    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+                        method: "POST",
+                    }).catch(console.error);
+                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
+                        method: "POST",
+                    }).catch(console.error);
+
+                    return screenshotOnFailure(this, browser);
+                });
+
+                it("should not do any redirection after successful sign up", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+                    await setInputValues(page, [{ name: "email", value: exampleEmail }]);
+                    await submitForm(page);
+                    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+                    const urlBeforeSignUp = await page.url();
+
+                    const loginAttemptInfo = JSON.parse(
+                        await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                    );
+                    const device = await getPasswordlessDevice(loginAttemptInfo);
+                    await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                    await submitForm(page);
+                    // wait until network idle to ensure that the page has not been redirected
+                    await page.waitForNetworkIdle();
+
+                    const urlAfterSignUp = await page.url();
+                    const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
+                    assert.equal(newUserCheck, "thirdpartypasswordless-true");
+                    assert.equal(urlBeforeSignUp, urlAfterSignUp);
+                });
+            });
         });
     });
 });

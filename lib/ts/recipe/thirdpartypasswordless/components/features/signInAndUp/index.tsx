@@ -120,7 +120,12 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         [pwlessDispatch, dispatch]
     );
 
-    const callingConsumeCodeRef = useRedirectAfterSuccess(pwlessState, props.recipe.recipeID, userContext);
+    const callingConsumeCodeRef = useRedirectAfterSuccess(
+        pwlessState,
+        props.recipe.recipeID,
+        userContext,
+        props.history
+    );
 
     const pwlessChildProps = usePasswordlessChildProps(
         props.recipe.passwordlessRecipe,

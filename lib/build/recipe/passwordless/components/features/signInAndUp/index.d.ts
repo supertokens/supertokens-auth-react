@@ -7,7 +7,8 @@ import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 export declare const useRedirectAfterSuccess: (
     state: SignInUpState,
     recipeId: string,
-    userContext: any
+    userContext: any,
+    history: any
 ) => React.MutableRefObject<boolean>;
 export declare const useFeatureReducer: (
     recipeImpl: RecipeInterface | undefined,

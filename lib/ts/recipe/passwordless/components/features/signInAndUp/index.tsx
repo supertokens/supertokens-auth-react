@@ -38,7 +38,7 @@ import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps, Nor
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import type { User } from "supertokens-web-js/types";
 
-export const useRedirectAfterSuccess = (state: SignInUpState, recipeId: string, userContext: any) => {
+export const useRedirectAfterSuccess = (state: SignInUpState, recipeId: string, userContext: any, history: any) => {
     const callingConsumeCodeRef = useRef(false);
 
     useEffect(() => {
@@ -51,15 +51,20 @@ export const useRedirectAfterSuccess = (state: SignInUpState, recipeId: string, 
                     });
                     if (hasSession) {
                         clearInterval(checkSessionIntervalHandle);
-                        void SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection({
-                            rid: recipeId,
-                            successRedirectContext: {
-                                action: "SUCCESS",
-                                isNewRecipeUser: false,
-                                user: undefined,
-                                redirectToPath: getRedirectToPathFromURL(),
+                        void SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                            {
+                                rid: recipeId,
+                                successRedirectContext: {
+                                    action: "SUCCESS",
+                                    isNewRecipeUser: false,
+                                    user: undefined,
+                                    redirectToPath:
+                                        state.loginAttemptInfo?.redirectToPath ?? getRedirectToPathFromURL(),
+                                },
                             },
-                        });
+                            userContext,
+                            history
+                        );
                     }
                 }
             }, 2000);
@@ -243,7 +248,12 @@ export const SignInUpFeature: React.FC<
     const recipeComponentOverrides = props.useComponentOverrides();
     const userContext = useUserContext();
     const [state, dispatch] = useFeatureReducer(props.recipe.webJSRecipe, userContext);
-    const callingConsumeCodeRef = useRedirectAfterSuccess(state, props.recipe.config.recipeId, userContext);
+    const callingConsumeCodeRef = useRedirectAfterSuccess(
+        state,
+        props.recipe.config.recipeId,
+        userContext,
+        props.history
+    );
     const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, userContext, props.history)!;
 
     return (

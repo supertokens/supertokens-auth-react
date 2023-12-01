@@ -959,6 +959,9 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
             console.log(`ST_LOGS THIRDPARTYPASSWORDLESS GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
                 setIsNewUserToStorage("thirdpartypasswordless", context.isNewRecipeUser);
+                if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
+                    return null;
+                }
                 return context.redirectToPath || "/dashboard";
             }
         },

@@ -39,9 +39,6 @@ const CustomSignInUpTheme: typeof PasswordlessPreBuiltUI.SignInUpTheme = (props)
         };
     }, []);
 
-    // If this was active, we'd not show the OTP screen because it'd detect an active session.
-    props.featureState.successInAnotherTab = false;
-
     if (showDefaultUI) {
         return <PasswordlessPreBuiltUI.SignInUpTheme {...props} />;
     }
