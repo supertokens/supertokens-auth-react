@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
-## [0.35.8] - 2023-11-24
+## [0.36.0] - 2023-11-24
 
 ### Changes
 
@@ -24,6 +24,32 @@ EmailPassword.init({
     },
 });
 ```
+
+### Breaking changes
+
+-   The `CloseTabScreen` [component](https://supertokens.com/img/otp-magic-link-same-time.png), previously featured in the passwordless recipe visible when a user signs in from another tab using a magic link, has been removed. Instead, users will now be automatically redirected to the specified return value from the `getRedirectionURL` function if a session exists. In cases where `getRedirectionURL` is not provided, the default redirection path is set to `/`. If you were [overriding](https://supertokens.com/docs/passwordless/advanced-customizations/react-component-override/usage) this component using `PasswordlessCloseTabScreen_Override`, you no longer need to do so.
+
+-   If your workflow involves custom validation, such as Phone Number verification, after signing in, ensure your code aligns with the updated examples found in [with-phone-password](https://github.com/supertokens/supertokens-auth-react/tree/master/examples/with-phone-password) or [with-thirdpartyemailpassword-passwordless](https://github.com/supertokens/supertokens-auth-react/tree/master/examples/with-thirdpartyemailpassword-passwordless).
+
+    Changes:
+
+    -   The need to manually set `props.featureState.successInAnotherTab` to `false` to avoid displaying the `CloseTabScreen` component has been eliminated.
+    -   In your custom validator's `onFailureRedirection`, ensure redirection occurs only once. For instance, in the custom validator for phone verification you can do something like this -
+
+    ```ts
+    const PhoneVerifiedClaim = new BooleanClaim({
+        id: "phone-verified",
+        // Redirect the user to the /auth/verify-phone page upon claim failure.
+        // SuperTokens defaults to redirection when a session exists, which could result in repetitive redirection to /auth/verify-phone in case of a failed claim.
+        // To avoid this, return null if already on the /auth/verify-phone page.
+        onFailureRedirection: () => {
+            if (window.location.pathname !== "/auth/verify-phone") {
+                return "/auth/verify-phone";
+            }
+            return null;
+        },
+    });
+    ```
 
 ## [0.35.7] - 2023-11-16
 
