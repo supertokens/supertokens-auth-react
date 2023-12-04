@@ -19,7 +19,7 @@
 import React, { useEffect, useContext, useState } from "react";
 
 import { useUserContext } from "../../usercontext";
-import { getRedirectToPathFromURL } from "../../utils";
+import { getRedirectToPathFromURL, useRethrowInRender } from "../../utils";
 import { SessionAuth, SessionContext } from "../session";
 import Session from "../session/recipe";
 
@@ -60,6 +60,7 @@ const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLCon
 
     const [alwaysShow, updateAlwaysShow] = useState(false);
 
+    const rethrowInRender = useRethrowInRender();
     useEffect(() => {
         // we want to do this just once, so we supply it with only the loading state.
         // if we supply it with props, sessionContext, then once the user signs in, then this will route the
@@ -72,19 +73,21 @@ const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLCon
                     props.authRecipe.config.onHandleEvent({
                         action: "SESSION_ALREADY_EXISTS",
                     });
-                    void Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                        {
-                            rid: props.authRecipe.config.recipeId,
-                            successRedirectContext: {
-                                action: "SUCCESS",
-                                isNewRecipeUser: false,
-                                user: undefined,
-                                redirectToPath: getRedirectToPathFromURL(),
+                    Session.getInstanceOrThrow()
+                        .validateGlobalClaimsAndHandleSuccessRedirection(
+                            {
+                                rid: props.authRecipe.config.recipeId,
+                                successRedirectContext: {
+                                    action: "SUCCESS",
+                                    isNewRecipeUser: false,
+                                    user: undefined,
+                                    redirectToPath: getRedirectToPathFromURL(),
+                                },
                             },
-                        },
-                        userContext,
-                        props.history
-                    );
+                            userContext,
+                            props.history
+                        )
+                        .catch(rethrowInRender);
                 }
             } else {
                 // this means even if a session exists, we will still show the children

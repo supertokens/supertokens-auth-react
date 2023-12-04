@@ -14,7 +14,7 @@ const MockSession = {
     getAccessTokenPayloadSecurely: jest.fn(),
     doesSessionExist: jest.fn(),
     validateClaims: jest.fn(),
-    validateGlobalClaimsAndHandleSuccessRedirection: jest.fn(),
+    validateGlobalClaimsAndHandleSuccessRedirection: jest.fn().mockReturnValue(new Promise(() => {})),
 };
 
 const setMockResolvesSession = (ctx: SessionContextType) => {

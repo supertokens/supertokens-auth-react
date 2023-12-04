@@ -29,7 +29,7 @@ export const CodeVerificationHeader = withOverride(
 
         return (
             <Fragment>
-                <div data-supertokens="headerTitle withBackButton">
+                <div data-supertokens="headerTitle withBackButton totp-mfa codeVerificationHeader">
                     {props.showBackButton ? (
                         <BackButton onClick={props.onBackButtonClicked} />
                     ) : (

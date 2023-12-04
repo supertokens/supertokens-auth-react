@@ -22,7 +22,7 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
-import { useOnMountAPICall } from "../../../../../utils";
+import { useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
 import Session from "../../../../session/recipe";
 import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
@@ -35,6 +35,7 @@ type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () =
 
 const SignInAndUpCallback: React.FC<PropType> = (props) => {
     const userContext = useUserContext();
+    const rethrowInRender = useRethrowInRender();
 
     const verifyCode = useCallback(() => {
         return props.recipe.webJSRecipe.signInAndUp({
@@ -71,19 +72,21 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                 });
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
 
-                return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                    {
-                        rid: props.recipe.config.recipeId,
-                        successRedirectContext: {
-                            action: "SUCCESS",
-                            isNewRecipeUser: response.createdNewRecipeUser,
-                            user: response.user,
-                            redirectToPath,
+                return Session.getInstanceOrThrow()
+                    .validateGlobalClaimsAndHandleSuccessRedirection(
+                        {
+                            rid: props.recipe.config.recipeId,
+                            successRedirectContext: {
+                                action: "SUCCESS",
+                                isNewRecipeUser: response.createdNewRecipeUser,
+                                user: response.user,
+                                redirectToPath,
+                            },
                         },
-                    },
-                    userContext,
-                    props.history
-                );
+                        userContext,
+                        props.history
+                    )
+                    .catch(rethrowInRender);
             }
         },
         [props.recipe, props.history, userContext]

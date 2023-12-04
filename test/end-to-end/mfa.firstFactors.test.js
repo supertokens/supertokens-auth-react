@@ -25,10 +25,12 @@ import {
     screenshotOnFailure,
     backendBeforeEach,
     waitFor,
+    submitForm,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+import { getTestPhoneNumber } from "../exampleTestHelpers";
 
 /*
  * Tests.
@@ -75,12 +77,14 @@ describe("SuperTokens MFA firstFactors support", function () {
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
+            // console.log(log);
             if (log.startsWith("ST_LOGS")) {
                 consoleLogs.push(log);
             }
         });
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
         await page.evaluate(() => {
+            window.localStorage.removeItem("supertokens-passwordless-loginAttemptInfo");
             window.localStorage.setItem("enableAllRecipes", "true");
         });
     });
@@ -118,6 +122,34 @@ describe("SuperTokens MFA firstFactors support", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await checkPasswordlessLoginUI(page, "EMAIL_OR_PHONE");
+        });
+
+        it("should clear pwless login attempt if it doesn't match the current first factors - contact method mismatch", async () => {
+            await page.evaluate(() => {
+                window.localStorage.setItem("firstFactors", "otp-phone");
+            });
+
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            const inp = await checkPasswordlessLoginUI(page, "PHONE");
+            await inp.type(getTestPhoneNumber());
+            await submitForm(page);
+            await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+            await page.evaluate(() => {
+                window.localStorage.setItem("firstFactors", "otp-email");
+            });
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await checkPasswordlessLoginUI(page, "EMAIL");
         });
 
         it("should display tp-pwless w/ email for [thirdparty, otp-email]", async () => {
@@ -282,14 +314,11 @@ function getDynLoginMethods(firstFactors) {
 async function checkPasswordlessLoginUI(page, contactMethod) {
     switch (contactMethod) {
         case "EMAIL_OR_PHONE":
-            await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]");
-            break;
+            return await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]");
         case "EMAIL":
-            await waitForSTElement(page, "[data-supertokens~=input][name=email]");
-            break;
+            return await waitForSTElement(page, "[data-supertokens~=input][name=email]");
         case "PHONE":
-            await waitForSTElement(page, "[data-supertokens~=input][name=phoneNumber_text]");
-            break;
+            return await waitForSTElement(page, "[data-supertokens~=input][name=phoneNumber_text]");
         default:
             throw new Error("Unknown contact method " + contactMethod);
     }

@@ -24,7 +24,7 @@ import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
-import { getQueryParams, getRedirectToPathFromURL, useOnMountAPICall } from "../../../../../utils";
+import { getQueryParams, getRedirectToPathFromURL, useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
 import { MultiFactorAuthClaim } from "../../../../multifactorauth";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
 import SessionRecipe from "../../../../session/recipe";
@@ -53,6 +53,7 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
                         error: action.error,
                         deviceInfo: action.deviceInfo,
                         showBackButton: action.showBackButton,
+                        showAccessDenied: action.showAccessDenied,
                         isBlocked: false,
                         showSecret: false,
                     };
@@ -66,6 +67,8 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
                 case "setError":
                     return {
                         ...oldState,
+                        loaded: true,
+                        showAccessDenied: action.showAccessDenied,
                         error: action.error,
                     };
                 case "createDevice":
@@ -101,6 +104,7 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
             showSecret: false,
             isBlocked: false,
             showBackButton: false,
+            showAccessDenied: false,
         },
         (initArg) => {
             let error: string | undefined = undefined;
@@ -123,7 +127,7 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
     );
 
     const handleLoadError = React.useCallback(
-        () => dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" }),
+        () => dispatch({ type: "setError", showAccessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR" }),
         [dispatch]
     );
     const onLoad = React.useCallback(
@@ -141,6 +145,7 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                     type: "load",
                     deviceInfo: undefined,
                     showBackButton: true,
+                    showAccessDenied: true,
                     error: "TOTP_MFA_NOT_ALLOWED_TO_SETUP",
                 });
                 return;
@@ -150,15 +155,35 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                     type: "load",
                     deviceInfo: undefined,
                     showBackButton: true,
+                    showAccessDenied: true,
                     error: "TOTP_MFA_NOT_ALLOWED_TO_SETUP",
                 });
                 return;
             }
             let deviceInfo: TOTPDeviceInfo | undefined;
             if (isAllowedToSetup && (doSetup || !isAlreadySetup)) {
-                const createResp = await recipeImpl.createDevice({ userContext });
-                if (createResp?.status !== "OK") {
-                    throw new Error("TOTP device creation failed with duplicate name; should never happen");
+                let createResp;
+                try {
+                    createResp = await recipeImpl.createDevice({ userContext });
+                } catch {
+                    dispatch({
+                        type: "load",
+                        deviceInfo: undefined,
+                        showBackButton: true,
+                        showAccessDenied: true,
+                        error: "SOMETHING_WENT_WRONG_ERROR",
+                    });
+                    return;
+                }
+                if (createResp.status !== "OK") {
+                    dispatch({
+                        type: "load",
+                        deviceInfo: undefined,
+                        showBackButton: true,
+                        showAccessDenied: true,
+                        error: "SOMETHING_WENT_WRONG_ERROR",
+                    });
+                    return;
                 }
                 deviceInfo = {
                     ...createResp,
@@ -175,7 +200,7 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
             const showBackButton = nextLength === 0;
 
             // No need to check if the component is unmounting, since this has no effect then.
-            dispatch({ type: "load", deviceInfo, error, showBackButton });
+            dispatch({ type: "load", deviceInfo, error, showBackButton, showAccessDenied: false });
         },
         [dispatch, recipeImpl, userContext]
     );
@@ -191,6 +216,8 @@ export function useChildProps(
     userContext: any,
     history: any
 ): TOTPMFAChildProps | undefined {
+    const rethrowInRender = useRethrowInRender();
+
     return useMemo(() => {
         return {
             onShowSecretClick: () => {
@@ -218,10 +245,10 @@ export function useChildProps(
                 dispatch({ type: "restartFlow", error: undefined });
             },
             onSignOutClicked: async () => {
-                await SessionRecipe.getInstanceOrThrow().signOut({ userContext });
                 if (state.deviceInfo) {
                     await recipeImplementation.removeDevice({ deviceName: state.deviceInfo.deviceName, userContext });
                 }
+                await SessionRecipe.getInstanceOrThrow().signOut({ userContext });
                 await redirectToAuth({ redirectBack: false, history: history });
             },
             onFactorChooserButtonClicked: () => {
@@ -241,11 +268,9 @@ export function useChildProps(
                               },
                           };
 
-                return SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                    redirectInfo,
-                    userContext,
-                    history
-                );
+                return SessionRecipe.getInstanceOrThrow()
+                    .validateGlobalClaimsAndHandleSuccessRedirection(redirectInfo, userContext, history)
+                    .catch(rethrowInRender);
             },
             recipeImplementation: recipeImplementation,
             config: recipe.config,
@@ -330,6 +355,7 @@ function getModifiedRecipeImplementation(
                 dispatch({
                     type: "setError",
                     error: "ERROR_TOTP_INVALID_CODE",
+                    showAccessDenied: false,
                     maxAttemptCount: res.maxNumberOfFailedAttempts,
                     currAttemptCount: res.currentNumberOfFailedAttempts,
                 });
@@ -353,6 +379,7 @@ function getModifiedRecipeImplementation(
                 dispatch({
                     type: "setError",
                     error: "ERROR_TOTP_INVALID_CODE",
+                    showAccessDenied: false,
                     maxAttemptCount: res.maxNumberOfFailedAttempts,
                     currAttemptCount: res.currentNumberOfFailedAttempts,
                 });

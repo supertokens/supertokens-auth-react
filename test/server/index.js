@@ -121,6 +121,18 @@ try {
     multiFactorAuthSupported = false;
 }
 
+/** @type {import("supertokens-node/recipe/totp").default | undefined} */
+let TOTP;
+let TOTPRaw, totpSupported;
+try {
+    TOTPRaw = require("supertokens-node/lib/build/recipe/totp/recipe").default;
+    TOTP = require("supertokens-node/recipe/totp");
+    totpSupported = true;
+} catch (ex) {
+    totpSupported = false;
+}
+const OTPAuth = require("otpauth");
+
 let generalErrorSupported;
 
 if (maxVersion(nodeSDKVersion, "9.9.9") === "9.9.9") {
@@ -608,6 +620,10 @@ app.get("/test/getDevice", (req, res) => {
     res.send(deviceStore.get(req.query.preAuthSessionId));
 });
 
+app.post("/test/getTOTPCode", (req, res) => {
+    res.send(JSON.stringify({ totp: new OTPAuth.TOTP({ secret: req.body.secret, digits: 6, period: 1 }).generate() }));
+});
+
 app.get("/test/featureFlags", (req, res) => {
     const available = [];
 
@@ -634,6 +650,10 @@ app.get("/test/featureFlags", (req, res) => {
 
     if (accountLinkingSupported) {
         available.push("accountlinking");
+    }
+
+    if (multiFactorAuthSupported) {
+        available.push("mfa");
     }
 
     available.push("recipeConfig");
@@ -675,33 +695,6 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
     }
 })(process.env.START === "true");
 
-function getNextArray(c, requirements) {
-    let n = [];
-    for (const step of requirements ?? mfaInfo.requirements ?? []) {
-        if (typeof step === "string") {
-            if (c[step] === undefined) {
-                n = [step];
-                break;
-            }
-        } else if (step.oneOf !== undefined) {
-            if (step.oneOf.every((id) => c[id] === undefined)) {
-                n = step.oneOf;
-                break;
-            }
-        } else if (step.allOf !== undefined) {
-            const missing = step.allOf.filter((id) => c[id] === undefined);
-            if (missing.length > 0) {
-                n = missing;
-                break;
-            }
-        } else {
-            throw new Error("Bad requirement" + JSON.stringify(step));
-        }
-    }
-
-    return n;
-}
-
 function initST() {
     if (process.env.TEST_MODE) {
         mfaInfo = {};
@@ -731,6 +724,10 @@ function initST() {
 
         if (multiFactorAuthSupported) {
             MultiFactorAuthRaw.reset();
+        }
+
+        if (totpSupported) {
+            TOTPRaw.reset();
         }
 
         EmailVerificationRaw.reset();
@@ -1265,12 +1262,17 @@ function initST() {
                         ...oI,
                         getFactorsSetupForUser: async (input) => {
                             const res = await oI.getFactorsSetupForUser(input);
-                            return mfaInfo?.isAllowedToSetup ?? res;
+                            return mfaInfo?.isAlreadySetup ?? res;
                         },
                         getAllAvailableFactorIds: async (input) => {
                             const res = await oI.getAllAvailableFactorIds(input);
                             if (mfaInfo?.isAllowedToSetup || mfaInfo?.isAlreadySetup) {
-                                return [...mfaInfo.isAllowedToSetup, ...mfaInfo.isAlreadySetup];
+                                return [
+                                    ...(mfaInfo.isAllowedToSetup || []),
+                                    ...(mfaInfo.isAlreadySetup || []),
+                                    "emailpassword",
+                                    "thirdparty",
+                                ];
                             }
                             return res;
                         },
@@ -1290,6 +1292,16 @@ function initST() {
                         },
                     }),
                 },
+            }),
+        ]);
+    }
+
+    if (totpSupported) {
+        recipeList.push([
+            "totp",
+            TOTP.init({
+                defaultPeriod: 1,
+                defaultSkew: 30,
             }),
         ]);
     }

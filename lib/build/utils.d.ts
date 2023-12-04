@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import type { FormFieldError } from "./recipe/emailpassword/types";
@@ -51,3 +52,4 @@ export declare const useOnMountAPICall: <T>(
     handleError?: ((err: unknown, consumeResp: T | undefined) => void) | undefined,
     startLoading?: boolean
 ) => void;
+export declare function useRethrowInRender(): import("react").Dispatch<import("react").SetStateAction<undefined>>;

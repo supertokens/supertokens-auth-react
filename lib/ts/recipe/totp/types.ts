@@ -55,6 +55,7 @@ export type TOTPMFAAction =
           type: "load";
           showBackButton: boolean;
           deviceInfo: TOTPDeviceInfo | undefined;
+          showAccessDenied: boolean;
           error: string | undefined;
       }
     | {
@@ -68,6 +69,7 @@ export type TOTPMFAAction =
       }
     | {
           type: "setError";
+          showAccessDenied: boolean;
           error: string | undefined;
           maxAttemptCount?: number;
           currAttemptCount?: number;
@@ -93,6 +95,7 @@ export type TOTPMFAState = {
     error: string | undefined;
     maxAttemptCount?: number;
     currAttemptCount?: number;
+    showAccessDenied: boolean;
 };
 
 export type TOTPMFACommonProps = {

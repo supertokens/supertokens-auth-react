@@ -28,7 +28,7 @@ export const MFAFooter = withOverride(
         const claim = useClaimValue(MultiFactorAuthClaim);
 
         return (
-            <div data-supertokens="footerLinkGroupVert pwlessMFAFooter">
+            <div data-supertokens="footerLinkGroupVert pwless-mfa footer">
                 {claim.loading === false && (claim.value?.n.length ?? 0) > 1 && (
                     <div data-supertokens="secondaryText" onClick={props.onFactorChooserButtonClicked}>
                         {t("PWLESS_MFA_FOOTER_CHOOSER_ANOTHER")}

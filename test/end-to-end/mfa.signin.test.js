@@ -32,9 +32,10 @@ import {
     getPasswordlessDevice,
     waitFor,
     getFactorChooserOptions,
+    getLatestURLWithToken,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
-import { CREATE_CODE_API, TEST_APPLICATION_SERVER_BASE_URL } from "../constants";
+import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API, TEST_APPLICATION_SERVER_BASE_URL } from "../constants";
 
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 import { getTestPhoneNumber } from "../exampleTestHelpers";
@@ -56,7 +57,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: false,
+            headless: true,
         });
     });
 
@@ -92,6 +93,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
         await page.evaluate(() => window.localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
         await page.evaluate(() => window.localStorage.removeItem("clientRecipeListForDynamicLogin"));
+        await page.evaluate(() => window.localStorage.removeItem("mode"));
         await page.evaluate(() => window.localStorage.setItem("enableAllRecipes", "true"));
     });
 
@@ -179,23 +181,23 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await waitForDashboard(page);
 
-            const totp = await setupTOTP(page);
+            const secret = await setupTOTP(page);
 
             await logout(page);
 
             await tryEmailPasswordSignIn(page, email);
             await chooseFactor(page, "totp");
-            await completeTOTP(page, totp);
+            await completeTOTP(page, secret);
             await waitForDashboard(page);
         });
     });
 
     describe("chooser screen", () => {
         let email, phoneNumber;
-        let totp;
+        let totpSecret;
         before(async () => {
             page = await browser.newPage();
-            ({ email, phoneNumber, totp } = await setupUserWithAllFactors(page));
+            ({ email, phoneNumber, totpSecret } = await setupUserWithAllFactors(page));
             await page.close();
         });
 
@@ -212,7 +214,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await tryEmailPasswordSignIn(page, email);
 
-            await completeTOTP(page, totp);
+            await completeTOTP(page, totpSecret);
             await waitForDashboard(page);
         });
 
@@ -231,7 +233,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await tryEmailPasswordSignIn(page, email);
 
-            await completeTOTP(page, totp);
+            await completeTOTP(page, totpSecret);
             await waitForDashboard(page);
         });
         it("should redirect to the factor screen during sign in if only one factor is available (limited by next array)", async () => {
@@ -242,7 +244,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await tryEmailPasswordSignIn(page, email);
 
-            await completeTOTP(page, totp);
+            await completeTOTP(page, totpSecret);
             await waitForDashboard(page);
         });
 
@@ -261,17 +263,11 @@ describe("SuperTokens SignIn w/ MFA", function () {
         it("should show all factors the user can complete or set up if the next array is empty", async () => {
             await setMFAInfo({
                 requirements: [],
-                hasTOTP: false,
+                isAlreadySetup: ["otp-phone", "otp-email"],
+                isAllowedToSetup: ["totp"],
             });
 
             await tryEmailPasswordSignIn(page, email);
-            await goToFactorChooser(page);
-
-            const optionsBefore2FA = await getFactorChooserOptions(page);
-            assert.deepStrictEqual(new Set(optionsBefore2FA), new Set(["otp-phone", "otp-email"]));
-
-            await chooseFactor(page, "otp-phone");
-            await completeOTP(page);
             await goToFactorChooser(page);
 
             const optionsAfter2FA = await getFactorChooserOptions(page);
@@ -313,7 +309,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
         it("should show a back link only if visited after sign in", async () => {
             await setMFAInfo({
                 requirements: [{ oneOf: ["otp-email", "otp-phone"] }],
-                hasTOTP: false,
             });
 
             await tryEmailPasswordSignIn(page, email);
@@ -331,7 +326,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
         it("should show a logout link", async () => {
             await setMFAInfo({
                 requirements: [{ oneOf: ["otp-email", "otp-phone"] }],
-                hasTOTP: false,
             });
 
             await tryEmailPasswordSignIn(page, email);
@@ -346,7 +340,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
             await waitForSTElement(page, "[data-supertokens~=secondaryLinkWithLeftArrow]");
         });
     });
-    ``;
 
     describe("factor screens", () => {
         describe("otp", () => {
@@ -423,6 +416,67 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     await waitForAccessDenied(page);
                 });
 
+                it("should show loading screen", async () => {
+                    await setMFAInfo({
+                        requirements: [factorId],
+                        isAlreadySetup: [],
+                        isAllowedToSetup: [factorId],
+                    });
+
+                    await page.setRequestInterception(true);
+                    const requestHandler = (request) => {
+                        if (request.url() === MFA_INFO_API && request.method() === "GET") {
+                            setTimeout(() => request.continue(), 1500);
+                        } else {
+                            return request.continue();
+                        }
+                    };
+                    page.on("request", requestHandler);
+                    try {
+                        await tryEmailPasswordSignIn(page, email);
+
+                        await Promise.all([page.goto(`${TEST_CLIENT_BASE_URL}/auth/`), waitForLoadingScreen(page)]);
+                        await waitForSTElement(page, "[data-supertokens~=pwless-mfa][data-supertokens~=footer]");
+                    } finally {
+                        page.off("request", requestHandler);
+                        await page.setRequestInterception(false);
+                    }
+                });
+
+                it("should handle MFA info API failures gracefully", async () => {
+                    await setMFAInfo({
+                        requirements: [factorId],
+                        isAlreadySetup: [factorId],
+                        isAllowedToSetup: [],
+                    });
+
+                    await page.setRequestInterception(true);
+                    const requestHandler = (request) => {
+                        if (request.url() === MFA_INFO_API && request.method() === "GET") {
+                            return request.respond({
+                                status: 400,
+                                headers: {
+                                    "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                    "access-control-allow-credentials": "true",
+                                },
+                                body: JSON.stringify({
+                                    status: "BAD_INPUT",
+                                }),
+                            });
+                        }
+
+                        return request.continue();
+                    };
+                    page.on("request", requestHandler);
+                    try {
+                        await tryEmailPasswordSignIn(page, email);
+                        await waitForAccessDenied(page);
+                    } finally {
+                        page.off("request", requestHandler);
+                        await page.setRequestInterception(false);
+                    }
+                });
+
                 it("should handle createCode failures gracefully", async () => {
                     await setMFAInfo({
                         requirements: [factorId],
@@ -475,7 +529,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
                     const changeContact = await waitForSTElement(
                         page,
-                        "[data-supertokens~=pwlessMFAOTPFooter] [data-supertokens~=secondaryText]:nth-child(1)"
+                        "[data-supertokens~=pwless-mfa][data-supertokens~=otpFooter] [data-supertokens~=secondaryText]:nth-child(1)"
                     );
                     await changeContact.click();
 
@@ -546,7 +600,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                     const chooseAnotherFactor = await waitForSTElement(
                         page,
-                        "[data-supertokens~=pwlessMFAFooter] [data-supertokens~=secondaryText]:nth-child(1)"
+                        "[data-supertokens~=pwless-mfa][data-supertokens~=footer] [data-supertokens~=secondaryText]:nth-child(1)"
                     );
 
                     await chooseAnotherFactor.click();
@@ -568,7 +622,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                     const chooseAnotherFactor = await waitForSTElement(
                         page,
-                        "[data-supertokens~=pwlessMFAOTPFooter] [data-supertokens~=secondaryText]:nth-child(1)"
+                        "[data-supertokens~=pwless-mfa][data-supertokens~=otpFooter] [data-supertokens~=secondaryText]:nth-child(1)"
                     );
                     await chooseAnotherFactor.click();
                     await waitForSTElement(page, "[data-supertokens~=factorChooserList]");
@@ -589,7 +643,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                     const logoutButton = await waitForSTElement(
                         page,
-                        "[data-supertokens~=pwlessMFAFooter] [data-supertokens~=secondaryText]:nth-child(1)"
+                        "[data-supertokens~=pwless-mfa][data-supertokens~=footer] [data-supertokens~=secondaryText]:nth-child(1)"
                     );
                     await Promise.all([logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
                     await waitForSTElement(page, "[data-supertokens~=input][name=email]");
@@ -611,11 +665,18 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                     const logoutButton = await waitForSTElement(
                         page,
-                        "[data-supertokens~=pwlessMFAOTPFooter] [data-supertokens~=secondaryText]:nth-child(1)"
+                        "[data-supertokens~=pwless-mfa][data-supertokens~=otpFooter] [data-supertokens~=secondaryText]:nth-child(1)"
                     );
                     await Promise.all([logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
                     await waitForSTElement(page, "[data-supertokens~=input][name=email]");
                     assert.strictEqual(await page.url(), `${TEST_CLIENT_BASE_URL}/auth/`);
+
+                    // This part checks that the login attempt info has been cleared
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=passwordless`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+                    await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]");
                 });
             }
         });
@@ -687,8 +748,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 await waitForAccessDenied(page);
             });
 
-            // TODO: re-enable this
-            it.skip("should handle createDevice failures gracefully", async () => {
+            it("should show loading screen", async () => {
                 await setMFAInfo({
                     requirements: [factorId],
                     isAlreadySetup: [factorId],
@@ -697,7 +757,84 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                 await page.setRequestInterception(true);
                 const requestHandler = (request) => {
-                    if (request.url() === CREATE_DEVICE_API && request.method() === "POST") {
+                    if (request.url() === MFA_INFO_API && request.method() === "GET") {
+                        setTimeout(() => request.continue(), 500);
+                    } else {
+                        return request.continue();
+                    }
+                };
+                page.on("request", requestHandler);
+                try {
+                    await tryEmailPasswordSignIn(page, email);
+                    await Promise.all([page.goto(`${TEST_CLIENT_BASE_URL}/auth/`), waitForLoadingScreen(page)]);
+                    await waitForSTElement(
+                        page,
+                        "[data-supertokens~=totp-mfa][data-supertokens~=codeVerificationFooter]"
+                    );
+                } finally {
+                    page.off("request", requestHandler);
+                    await page.setRequestInterception(false);
+                }
+            });
+
+            it("should show blocked screen after too many retries", async () => {
+                await setMFAInfo({
+                    requirements: [factorId],
+                    isAlreadySetup: [factorId],
+                    isAllowedToSetup: [],
+                });
+
+                await tryEmailPasswordSignIn(page, email);
+                for (let i = 0; i < 6; ++i) {
+                    await completeTOTP(page, "asdf");
+                }
+                await waitForBlockedScreen(page);
+            });
+
+            it("should handle mfa info api failures gracefully", async () => {
+                await setMFAInfo({
+                    requirements: [factorId],
+                    isAlreadySetup: [factorId],
+                    isAllowedToSetup: [],
+                });
+
+                await page.setRequestInterception(true);
+                const requestHandler = (request) => {
+                    if (request.url() === MFA_INFO_API && request.method() === "GET") {
+                        return request.respond({
+                            status: 400,
+                            headers: {
+                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                "access-control-allow-credentials": "true",
+                            },
+                            body: JSON.stringify({
+                                status: "BAD_INPUT",
+                            }),
+                        });
+                    }
+
+                    return request.continue();
+                };
+                page.on("request", requestHandler);
+                try {
+                    await tryEmailPasswordSignIn(page, email);
+                    await waitForAccessDenied(page);
+                } finally {
+                    page.off("request", requestHandler);
+                    await page.setRequestInterception(false);
+                }
+            });
+
+            it("should handle createDevice failures gracefully", async () => {
+                await setMFAInfo({
+                    requirements: [factorId],
+                    isAlreadySetup: [],
+                    isAllowedToSetup: [factorId],
+                });
+
+                await page.setRequestInterception(true);
+                const requestHandler = (request) => {
+                    if (request.url() === CREATE_TOTP_DEVICE_API && request.method() === "POST") {
                         return request.respond({
                             status: 400,
                             headers: {
@@ -782,8 +919,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                 const chooseAnotherFactor = await waitForSTElement(
                     page,
-
-                    "[data-supertokens~=totpMFASetupFooter] [data-supertokens~=secondaryText]:nth-child(1)"
+                    "[data-supertokens~=totp-mfa][data-supertokens~=deviceSetupFooter] [data-supertokens~=secondaryText]:nth-child(1)"
                 );
 
                 await chooseAnotherFactor.click();
@@ -806,7 +942,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                 const chooseAnotherFactor = await waitForSTElement(
                     page,
-                    "[data-supertokens~=totpMFAVerificationFooter] [data-supertokens~=secondaryText]:nth-child(1)"
+                    "[data-supertokens~=totp-mfa][data-supertokens~=codeVerificationFooter] [data-supertokens~=secondaryText]:nth-child(1)"
                 );
                 await chooseAnotherFactor.click();
                 await waitForSTElement(page, "[data-supertokens~=factorChooserList]");
@@ -828,7 +964,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 const logoutButton = await waitForSTElement(
                     page,
 
-                    "[data-supertokens~=totpMFASetupFooter] [data-supertokens~=secondaryText]:nth-child(1)"
+                    "[data-supertokens~=totp-mfa][data-supertokens~=deviceSetupFooter] [data-supertokens~=secondaryText]:nth-child(1)"
                 );
                 await Promise.all([logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
                 await waitForSTElement(page, "[data-supertokens~=input][name=email]");
@@ -851,7 +987,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 const logoutButton = await waitForSTElement(
                     page,
 
-                    "[data-supertokens~=totpMFAVerificationFooter] [data-supertokens~=secondaryText]:nth-child(1)"
+                    "[data-supertokens~=totp-mfa][data-supertokens~=codeVerificationFooter] [data-supertokens~=secondaryText]:nth-child(1)"
                 );
                 await Promise.all([logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
                 await waitForSTElement(page, "[data-supertokens~=input][name=email]");
@@ -862,65 +998,42 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
     describe("default requirements", () => {
         let email, phoneNumber;
-        before(async () => {
+        beforeEach(async () => {
             await setMFAInfo({});
-            page = await browser.newPage();
+            const setupPage = await browser.newPage();
 
             email = await getTestEmail();
             phoneNumber = getTestPhoneNumber();
 
             await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=emailpassword`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
+                setupPage.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=emailpassword`),
+                setupPage.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            await page.evaluate(() => window.localStorage.setItem("enableAllRecipes", "true"));
+            await setupPage.evaluate(() => window.localStorage.setItem("enableAllRecipes", "true"));
 
-            await tryEmailPasswordSignUp(page, email);
-            await waitForDashboard(page);
+            await tryEmailPasswordSignUp(setupPage, email);
+            await waitForDashboard(setupPage);
 
-            await page.close();
-        });
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(setupPage, []);
 
-        beforeEach(async () => {
-            await setMFAInfo({});
+            await setupPage.evaluate(() => window.localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+            await setupPage.evaluate(() => window.localStorage.removeItem("clientRecipeListForDynamicLogin"));
+            await setupPage.evaluate(() => window.localStorage.setItem("enableAllRecipes", "true"));
+
+            await setupPage.close();
         });
 
         it("should not require any factors after sign up", async () => {
             await tryEmailPasswordSignIn(page, email);
 
             await waitForDashboard(page);
-        });
-
-        it("should not allow you to set up a secondary factor before completing 2FA", async () => {
-            await tryEmailPasswordSignIn(page, email);
-
-            await waitForDashboard(page);
-
             await goToFactorChooser(page);
-
-            const list = await getFactorChooserOptions(page);
-
-            assert.deepStrictEqual(list, ["otp-email"]);
-        });
-
-        it("should not allow you to set up all other factors after completing 2FA", async () => {
-            await tryEmailPasswordSignIn(page, email);
-
-            await waitForDashboard(page);
-
-            // TODO: validate
-            await goToFactorChooser(page);
-            await chooseFactor(page, "otp-email");
-            await completeOTP(page);
-
-            await goToFactorChooser(page);
-
             const list = await getFactorChooserOptions(page);
 
             assert.deepStrictEqual(new Set(list), new Set(["otp-email", "otp-phone", "totp"]));
         });
 
-        it("should require 2fa to sign in after setting up another factor", async () => {
+        it("should require 2fa to sign in after setting up a factor", async () => {
             await tryEmailPasswordSignIn(page, email);
 
             await waitForDashboard(page);
@@ -929,7 +1042,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
             await chooseFactor(page, "otp-email");
             await completeOTP(page);
 
-            const totp = await setupTOTP(page);
+            const secret = await setupTOTP(page);
             await logout(page);
 
             await tryEmailPasswordSignIn(page, email);
@@ -937,69 +1050,14 @@ describe("SuperTokens SignIn w/ MFA", function () {
             // TODO: validate this, maybe it should only be totp?
             assert.deepStrictEqual(new Set(list), new Set(["otp-email", "totp"]));
             await chooseFactor(page, "totp");
-            await completeTOTP(page, totp);
-            await waitForDashboard(page);
-        });
-        it("should not require any factors after sign up", async () => {
-            await tryEmailPasswordSignIn(page, email);
-
-            await waitForDashboard(page);
-        });
-
-        it("should not allow you to set up a secondary factor before completing 2FA", async () => {
-            await tryEmailPasswordSignIn(page, email);
-
-            await waitForDashboard(page);
-
-            await goToFactorChooser(page);
-
-            const list = await getFactorChooserOptions(page);
-
-            assert.deepStrictEqual(list, ["otp-email"]);
-        });
-
-        it("should not allow you to set up all other factors after completing 2FA", async () => {
-            await tryEmailPasswordSignIn(page, email);
-
-            await waitForDashboard(page);
-
-            // TODO: validate
-            await goToFactorChooser(page);
-            await chooseFactor(page, "otp-email");
-            await completeOTP(page);
-
-            await goToFactorChooser(page);
-
-            const list = await getFactorChooserOptions(page);
-
-            assert.deepStrictEqual(new Set(list), new Set(["otp-email", "otp-phone", "totp"]));
-        });
-
-        it("should require 2fa to sign in after setting up another factor", async () => {
-            await tryEmailPasswordSignIn(page, email);
-
-            await waitForDashboard(page);
-
-            await goToFactorChooser(page);
-            await chooseFactor(page, "otp-email");
-            await completeOTP(page);
-
-            const totp = await setupTOTP(page);
-            await logout(page);
-
-            await tryEmailPasswordSignIn(page, email);
-            const list = await getFactorChooserOptions(page);
-            // TODO: validate this, maybe it should only be totp?
-            assert.deepStrictEqual(new Set(list), new Set(["otp-email", "totp"]));
-            await chooseFactor(page, "totp");
-            await completeTOTP(page, totp);
+            await completeTOTP(page, secret);
             await waitForDashboard(page);
         });
     });
 
     describe("requirement handling", () => {
         let email, phoneNumber;
-        let totp;
+        let secret;
         before(async () => {
             await setMFAInfo({});
             page = await browser.newPage();
@@ -1025,7 +1083,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
             await chooseFactor(page, "otp-email");
             await completeOTP(page);
             await setupOTP(page, "PHONE", phoneNumber);
-            totp = await setupTOTP(page);
+            secret = await setupTOTP(page);
 
             await page.close();
         });
@@ -1042,7 +1100,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 assert.deepStrictEqual(new Set(factors1), new Set(["otp-phone", "totp"]));
                 await chooseFactor(page, "otp-phone");
                 await completeOTP(page);
-                await completeTOTP(page, totp);
+                await completeTOTP(page, secret);
                 await completeOTP(page);
                 await waitForDashboard(page);
             });
@@ -1061,7 +1119,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 const factors2 = await getFactorChooserOptions(page);
                 assert.deepStrictEqual(new Set(factors2), new Set(["otp-email", "totp"]));
                 await chooseFactor(page, "totp");
-                await completeTOTP(page, totp);
+                await completeTOTP(page, secret);
                 await completeOTP(page);
                 await waitForDashboard(page);
             });
@@ -1073,7 +1131,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                 await tryEmailPasswordSignIn(page, email);
                 await completeOTP(page, "PHONE");
-                await completeTOTP(page, totp);
+                await completeTOTP(page, secret);
                 await completeOTP(page, "EMAIL");
                 await waitForDashboard(page);
             });
@@ -1097,7 +1155,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 await chooseFactor(page, "otp-email");
                 await completeOTP(page);
 
-                await completeTOTP(page, totp);
+                await completeTOTP(page, secret);
                 await waitForDashboard(page);
             });
             it("should pass if the array is empty", async () => {
@@ -1110,6 +1168,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 await waitForDashboard(page);
             });
         });
+
         describe("oneOf", () => {
             it("should pass if one of the requirements are complete", async () => {
                 await setMFAInfo({
@@ -1157,8 +1216,8 @@ async function setupUserWithAllFactors(page) {
     await setupOTP(page, "PHONE", phoneNumber);
 
     await waitForDashboard(page);
-    const totp = await setupTOTP(page);
-    return { email, phoneNumber, totp };
+    const totpSecret = await setupTOTP(page);
+    return { email, phoneNumber, totpSecret };
 }
 
 async function setMFAInfo(mfaInfo) {
@@ -1200,6 +1259,16 @@ async function waitForAccessDenied(page) {
     return error.evaluate((e) => e.textContent);
 }
 
+async function waitForLoadingScreen(page) {
+    const error = await waitForSTElement(page, "[data-supertokens~=loadingScreen]");
+    return error.evaluate((e) => e.textContent);
+}
+
+async function waitForBlockedScreen(page) {
+    const error = await waitForSTElement(page, "[data-supertokens~=blockedScreen]");
+    return error.evaluate((e) => e.textContent);
+}
+
 async function setupOTP(page, contactMethod, phoneNumber) {
     await goToFactorChooser(page);
     await chooseFactor(page, contactMethod === "PHONE" ? "otp-phone" : "otp-email");
@@ -1221,13 +1290,21 @@ async function setupTOTP(page) {
     const secretDiv = await waitForSTElement(page, "[data-supertokens~=totpSecret]");
     const secret = await secretDiv.evaluate((e) => e.textContent);
 
-    const totp = secret.substring(secret.length - 4);
-
-    await completeTOTP(page, totp);
-    return totp;
+    await completeTOTP(page, secret);
+    await waitFor(1000);
+    return secret;
 }
 
-async function completeTOTP(page, totp) {
+async function completeTOTP(page, secret) {
+    let resp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/getTOTPCode`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({ secret }),
+    });
+
+    const respBody = await resp.json();
+
+    const { totp } = respBody;
     await setInputValues(page, [{ name: "totp", value: totp }]);
     await submitForm(page);
 }
@@ -1339,4 +1416,12 @@ async function chooseFactor(page, id) {
     await waitFor(100);
     await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), ele.click()]);
     await waitForSTElement(page);
+}
+
+async function doEmailVerification(page) {
+    await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+    await new Promise((res) => setTimeout(res, 250));
+    const latestURLWithToken = await getLatestURLWithToken();
+    await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
+    await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 }

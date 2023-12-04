@@ -9,7 +9,7 @@ export default class Wrapper {
     ): import("../../types").RecipeInitResult<
         GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
-        OnHandleEventContext,
+        never,
         import("./types").NormalisedConfig
     >;
     static createDevice(input: { deviceName?: string; options?: RecipeFunctionOptions; userContext?: any }): Promise<

@@ -31,10 +31,13 @@ import {
     getQueryParams,
     getRedirectToPathFromURL,
     useOnMountAPICall,
+    useRethrowInRender,
 } from "../../../../../utils";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
+import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import SessionRecipe from "../../../../session/recipe";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
+import { getEnabledContactMethods } from "../../../utils";
 import MFAThemeWrapper from "../../themes/mfa";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
@@ -159,6 +162,7 @@ export function useChildProps(
     userContext: any,
     history: any
 ): MFAChildProps {
+    const rethrowInRender = useRethrowInRender();
     return useMemo(() => {
         return {
             onSuccess: () => {
@@ -176,11 +180,9 @@ export function useChildProps(
                               },
                           };
 
-                return SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                    redirectInfo,
-                    userContext,
-                    history
-                );
+                return SessionRecipe.getInstanceOrThrow()
+                    .validateGlobalClaimsAndHandleSuccessRedirection(redirectInfo, userContext, history)
+                    .catch(rethrowInRender);
             },
             onSignOutClicked: async () => {
                 await SessionRecipe.getInstanceOrThrow().signOut({ userContext });
@@ -209,7 +211,7 @@ export function useChildProps(
     }, [contactMethod, state, recipeImplementation]);
 }
 
-export const MFAFeature: React.FC<
+const MFAFeatureInner: React.FC<
     FeatureBaseProps & {
         contactMethod: "PHONE" | "EMAIL";
         flowType: PasswordlessFlowType;
@@ -217,7 +219,6 @@ export const MFAFeature: React.FC<
         useComponentOverrides: () => ComponentOverrideMap;
     }
 > = (props) => {
-    const recipeComponentOverrides = props.useComponentOverrides();
     const userContext = useUserContext();
 
     const callingConsumeCodeRef = useRef(false);
@@ -247,29 +248,44 @@ export const MFAFeature: React.FC<
     useSuccessInAnotherTabChecker(callingConsumeCodeRef, recipeImplementation, state, dispatch, userContext);
 
     return (
+        <Fragment>
+            {/* No custom theme, use default. */}
+            {props.children === undefined && (
+                <MFAThemeWrapper {...childProps} featureState={state} dispatch={dispatch} />
+            )}
+
+            {/* Otherwise, custom theme is provided, propagate props. */}
+            {props.children &&
+                React.Children.map(props.children, (child) => {
+                    if (React.isValidElement(child)) {
+                        return React.cloneElement(child, {
+                            ...childProps,
+                            featureState: state,
+                            dispatch: dispatch,
+                        });
+                    }
+                    return child;
+                })}
+        </Fragment>
+    );
+};
+
+export const MFAFeature: React.FC<
+    FeatureBaseProps & {
+        contactMethod: "PHONE" | "EMAIL";
+        flowType: PasswordlessFlowType;
+        recipe: Recipe;
+        useComponentOverrides: () => ComponentOverrideMap;
+    }
+> = (props) => {
+    const recipeComponentOverrides = props.useComponentOverrides();
+
+    return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsPasswordless}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {props.children === undefined && (
-                        <MFAThemeWrapper {...childProps} featureState={state} dispatch={dispatch} />
-                    )}
-
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {props.children &&
-                        React.Children.map(props.children, (child) => {
-                            if (React.isValidElement(child)) {
-                                return React.cloneElement(child, {
-                                    ...childProps,
-                                    featureState: state,
-                                    dispatch: dispatch,
-                                });
-                            }
-                            return child;
-                        })}
-                </Fragment>
+                <MFAFeatureInner {...props} />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );
@@ -298,6 +314,7 @@ function useOnLoad(
         () => dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" }),
         [dispatch]
     );
+    const dynamicLoginMethods = useDynamicLoginMethods();
     const onLoad = React.useCallback(
         async (mfaInfo: { factors: MFAFactorInfo; email?: string; phoneNumber?: string }) => {
             let error: string | undefined = undefined;
@@ -306,10 +323,11 @@ function useOnLoad(
             if (errorQueryParam !== null) {
                 error = "SOMETHING_WENT_WRONG_ERROR";
             }
-            const loginAttemptInfo =
-                await recipeImplementation.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
+            let loginAttemptInfo = await recipeImplementation.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>(
+                {
                     userContext,
-                });
+                }
+            );
 
             const isAlreadySetup =
                 props.contactMethod === "EMAIL"
@@ -320,16 +338,30 @@ function useOnLoad(
                     ? mfaInfo.factors.isAllowedToSetup.includes("otp-email")
                     : mfaInfo.factors.isAllowedToSetup.includes("otp-phone");
 
+            const enabledContactMethods = getEnabledContactMethods(
+                props.recipe.config.contactMethod,
+                dynamicLoginMethods
+            );
+            if (loginAttemptInfo && !enabledContactMethods.includes(loginAttemptInfo.contactMethod)) {
+                await recipeImplementation?.clearLoginAttemptInfo({ userContext });
+                loginAttemptInfo = undefined;
+            }
+
             if (!loginAttemptInfo) {
                 if (props.contactMethod === "EMAIL") {
                     if (isAlreadySetup && doSetup !== "true") {
+                        let createResp;
                         try {
                             // createCode also dispatches the necessary events
-                            await recipeImplementation!.createCode({
+                            createResp = await recipeImplementation!.createCode({
                                 email: mfaInfo.email!, // We can assume this is set here, since the mfaInfo states that otp-email has been set up
                                 userContext,
                             });
                         } catch (err) {
+                            dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
+                            return;
+                        }
+                        if (createResp?.status !== "OK") {
                             dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
                         }
                     } else if (!mfaInfo.factors.isAllowedToSetup.includes("otp-email")) {

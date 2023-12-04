@@ -181,7 +181,7 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
     );
 
     return (
-        <form autoComplete="on" noValidate onSubmit={onFormSubmit}>
+        <form autoComplete="on" noValidate onSubmit={onFormSubmit} data-supertokens={props.formDataSupertokens}>
             {formFields.map((field) => {
                 let type = "text";
                 // If email or password, replace field type.

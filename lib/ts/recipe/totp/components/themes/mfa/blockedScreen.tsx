@@ -26,7 +26,7 @@ const TOTPBlockedScreen: React.FC<{ nextRetryAt: number; onRetry: () => void; on
     const t = useTranslation();
 
     return (
-        <div data-supertokens="container totp">
+        <div data-supertokens="container totp-mfa blockedScreen">
             <div data-supertokens="row noFormRow">
                 <BlockedIcon />
                 <div data-supertokens="headerTitle">{t("TOTP_BLOCKED_TITLE")}</div>

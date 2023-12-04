@@ -43,7 +43,7 @@ export class MultiFactorAuthClaimClass {
         this.id = this.webJSClaim.id;
 
         const defaultOnFailureRedirection = ({ reason, userContext }: any) => {
-            if (reason.nextFactorOptions) {
+            if (reason.nextFactorOptions !== undefined) {
                 if (reason.nextFactorOptions.length === 1) {
                     return getRedirectURL(
                         { action: "GO_TO_FACTOR", factorId: reason.nextFactorOptions[0] },
@@ -53,7 +53,12 @@ export class MultiFactorAuthClaimClass {
                     return getRedirectURL({ action: "FACTOR_CHOOSER" }, userContext);
                 }
             }
-            return getRedirectURL({ action: "GO_TO_FACTOR", factorId: reason.factorId }, userContext);
+            if (reason.factorId !== undefined) {
+                return getRedirectURL({ action: "GO_TO_FACTOR", factorId: reason.factorId }, userContext);
+            }
+
+            // This should basically never happen, but it will show the access denied screen
+            return undefined;
         };
 
         this.validators = {
