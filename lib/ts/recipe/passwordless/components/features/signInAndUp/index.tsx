@@ -24,10 +24,17 @@ import { useEffect } from "react";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
-import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
+import {
+    clearErrorQueryParam,
+    getQueryParams,
+    getRedirectToPathFromURL,
+    useRethrowInRender,
+} from "../../../../../utils";
+import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import Session from "../../../../session";
 import SessionRecipe from "../../../../session/recipe";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
+import { getEnabledContactMethods } from "../../../utils";
 import SignInUpThemeWrapper from "../../themes/signInUp";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
@@ -72,8 +79,10 @@ export const useSuccessInAnotherTabChecker = (
 
 export const useFeatureReducer = (
     recipeImpl: RecipeInterface | undefined,
+    contactMethod: NormalisedConfig["contactMethod"],
     userContext: any
 ): [SignInUpState, React.Dispatch<PasswordlessSignInUpAction>] => {
+    const dynamicLoginMethods = useDynamicLoginMethods();
     const [state, dispatch] = React.useReducer(
         (oldState: SignInUpState, action: PasswordlessSignInUpAction) => {
             switch (action.type) {
@@ -164,9 +173,14 @@ export const useFeatureReducer = (
                     error = messageQueryParam;
                 }
             }
-            const loginAttemptInfo = await recipeImpl?.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
+            let loginAttemptInfo = await recipeImpl?.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
                 userContext,
             });
+            const enabledContactMethods = getEnabledContactMethods(contactMethod, dynamicLoginMethods);
+            if (loginAttemptInfo && !enabledContactMethods.includes(loginAttemptInfo.contactMethod)) {
+                await recipeImpl?.clearLoginAttemptInfo({ userContext });
+                loginAttemptInfo = undefined;
+            }
             // No need to check if the component is unmounting, since this has no effect then.
             dispatch({ type: "load", loginAttemptInfo, error });
         }
@@ -209,6 +223,7 @@ export function useChildProps(
             getModifiedRecipeImplementation(recipe.webJSRecipe, recipe.config, dispatch, callingConsumeCodeRef),
         [recipe]
     );
+    const rethrowInRender = useRethrowInRender();
 
     return useMemo(() => {
         if (!recipe || !recipeImplementation) {
@@ -216,25 +231,65 @@ export function useChildProps(
         }
         return {
             onSuccess: (result: { createdNewRecipeUser: boolean; user: User }) => {
-                return SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                    {
-                        rid: recipe.config.recipeId,
-                        successRedirectContext: {
-                            action: "SUCCESS",
-                            isNewRecipeUser: result.createdNewRecipeUser,
-                            user: result.user,
-                            redirectToPath: getRedirectToPathFromURL(),
+                return SessionRecipe.getInstanceOrThrow()
+                    .validateGlobalClaimsAndHandleSuccessRedirection(
+                        {
+                            rid: recipe.config.recipeId,
+                            successRedirectContext: {
+                                action: "SUCCESS",
+                                isNewRecipeUser: result.createdNewRecipeUser,
+                                user: result.user,
+                                redirectToPath: getRedirectToPathFromURL(),
+                            },
                         },
-                    },
-                    userContext,
-                    history
-                );
+                        userContext,
+                        history
+                    )
+                    .catch(rethrowInRender);
             },
             recipeImplementation: recipeImplementation,
             config: recipe.config,
         };
     }, [state, recipeImplementation]);
 }
+
+const SignInUpFeatureInner: React.FC<
+    FeatureBaseProps & {
+        recipe: Recipe;
+        useComponentOverrides: () => ComponentOverrideMap;
+    }
+> = (props) => {
+    const userContext = useUserContext();
+    const [state, dispatch] = useFeatureReducer(
+        props.recipe.webJSRecipe,
+        props.recipe.config.contactMethod,
+        userContext
+    );
+    const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch, userContext);
+    const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, userContext, props.history)!;
+
+    return (
+        <Fragment>
+            {/* No custom theme, use default. */}
+            {props.children === undefined && (
+                <SignInUpThemeWrapper {...childProps} featureState={state} dispatch={dispatch} />
+            )}
+
+            {/* Otherwise, custom theme is provided, propagate props. */}
+            {props.children &&
+                React.Children.map(props.children, (child) => {
+                    if (React.isValidElement(child)) {
+                        return React.cloneElement(child, {
+                            ...childProps,
+                            featureState: state,
+                            dispatch: dispatch,
+                        });
+                    }
+                    return child;
+                })}
+        </Fragment>
+    );
+};
 
 export const SignInUpFeature: React.FC<
     FeatureBaseProps & {
@@ -243,35 +298,13 @@ export const SignInUpFeature: React.FC<
     }
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
-    const userContext = useUserContext();
-    const [state, dispatch] = useFeatureReducer(props.recipe.webJSRecipe, userContext);
-    const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch, userContext);
-    const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, userContext, props.history)!;
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsPasswordless}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {props.children === undefined && (
-                        <SignInUpThemeWrapper {...childProps} featureState={state} dispatch={dispatch} />
-                    )}
-
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {props.children &&
-                        React.Children.map(props.children, (child) => {
-                            if (React.isValidElement(child)) {
-                                return React.cloneElement(child, {
-                                    ...childProps,
-                                    featureState: state,
-                                    dispatch: dispatch,
-                                });
-                            }
-                            return child;
-                        })}
-                </Fragment>
+                <SignInUpFeatureInner {...props} />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );

@@ -26,6 +26,7 @@ import { PhoneForm } from "../signInUp/phoneForm";
 import { UserInputCodeForm } from "../signInUp/userInputCodeForm";
 import { ThemeBase } from "../themeBase";
 
+import { LoadingScreen } from "./loadingScreen";
 import { MFAFooter } from "./mfaFooter";
 import { MFAHeader } from "./mfaHeader";
 import { MFAOTPFooter } from "./mfaOTPFooter";
@@ -57,7 +58,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
     };
 
     if (!featureState.loaded) {
-        return null;
+        return <LoadingScreen />;
     }
 
     return activeScreen === MFAScreens.CloseTab ? (
@@ -65,7 +66,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
     ) : activeScreen === MFAScreens.AccessDenied ? (
         <AccessDeniedScreen useShadowDom={false} error={t(featureState.error!)} />
     ) : (
-        <div data-supertokens="container pwlessMFA">
+        <div data-supertokens="container pwless-mfa">
             <div data-supertokens="row">
                 {
                     <React.Fragment>

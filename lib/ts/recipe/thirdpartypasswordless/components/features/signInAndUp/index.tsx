@@ -49,6 +49,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
     const userContext = useUserContext();
     const [pwlessState, pwlessDispatch] = usePasswordlessFeatureReducer(
         props.recipe.passwordlessRecipe?.webJSRecipe,
+        props.recipe.config.passwordlessConfig.contactMethod,
         userContext
     );
 

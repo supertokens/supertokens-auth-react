@@ -34,7 +34,7 @@ export const DeviceInfoSection = withOverride(
 
         return (
             <>
-                <div data-supertokens="totpDeviceInfoWithQR">
+                <div data-supertokens="totpDeviceInfoWithQR totp-mfa deviceInfoSection">
                     <QRCode value={props.deviceInfo.qrCodeString} data-supertokens="totpDeviceQR" level="L" />
                     <span data-supertokens="showTOTPSecret">
                         {t("TOTP_SHOW_SECRET_START")}

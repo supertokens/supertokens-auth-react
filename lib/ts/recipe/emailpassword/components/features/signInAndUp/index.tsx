@@ -25,7 +25,7 @@ import STGeneralError from "supertokens-web-js/utils/error";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
-import { getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
+import { getQueryParams, getRedirectToPathFromURL, useRethrowInRender } from "../../../../../utils";
 import Session from "../../../../session/recipe";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
@@ -111,41 +111,46 @@ export function useChildProps(
 ): EmailPasswordSignInAndUpChildProps | undefined {
     const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe), [recipe]);
     const userContext = useUserContext();
+    const rethrowInRender = useRethrowInRender();
 
     const onSignInSuccess = useCallback(
         async (response: { user: User }): Promise<void> => {
-            return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                {
-                    rid: recipe!.config.recipeId,
-                    successRedirectContext: {
-                        action: "SUCCESS",
-                        isNewRecipeUser: false,
-                        user: response.user,
-                        redirectToPath: getRedirectToPathFromURL(),
+            return Session.getInstanceOrThrow()
+                .validateGlobalClaimsAndHandleSuccessRedirection(
+                    {
+                        rid: recipe!.config.recipeId,
+                        successRedirectContext: {
+                            action: "SUCCESS",
+                            isNewRecipeUser: false,
+                            user: response.user,
+                            redirectToPath: getRedirectToPathFromURL(),
+                        },
                     },
-                },
-                userContext,
-                history
-            );
+                    userContext,
+                    history
+                )
+                .catch(rethrowInRender);
         },
         [recipe, userContext, history]
     );
 
     const onSignUpSuccess = useCallback(
         async (response: { user: User }): Promise<void> => {
-            return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                {
-                    rid: recipe!.config.recipeId,
-                    successRedirectContext: {
-                        action: "SUCCESS",
-                        isNewRecipeUser: true,
-                        user: response.user,
-                        redirectToPath: getRedirectToPathFromURL(),
+            return Session.getInstanceOrThrow()
+                .validateGlobalClaimsAndHandleSuccessRedirection(
+                    {
+                        rid: recipe!.config.recipeId,
+                        successRedirectContext: {
+                            action: "SUCCESS",
+                            isNewRecipeUser: true,
+                            user: response.user,
+                            redirectToPath: getRedirectToPathFromURL(),
+                        },
                     },
-                },
-                userContext,
-                history
-            );
+                    userContext,
+                    history
+                )
+                .catch(rethrowInRender);
         },
         [recipe, userContext, history]
     );

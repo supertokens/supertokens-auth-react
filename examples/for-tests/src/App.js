@@ -208,63 +208,7 @@ window.resetTOTP = () => {
 };
 let recipeList = [
     TOTP.init({
-        override: {
-            functions: (oI) => ({
-                ...oI,
-                listDevices: async () => ({ devices: totpDevices, status: "OK" }),
-                removeDevice: async ({ deviceName }) => {
-                    return { status: "OK", didDeviceExist: removeTOTPDevice(deviceName) };
-                },
-                createDevice: async ({ deviceName }) => {
-                    deviceName = deviceName ?? `totp-${Date.now()}`;
-                    addTOTPDevice(deviceName);
-                    return {
-                        status: "OK",
-                        deviceName: deviceName,
-                        issuerName: "st",
-                        qrCodeString: deviceName,
-                        secret: `secret-${deviceName}`,
-                    };
-                },
-                verifyCode: async ({ totp }) => {
-                    const dev = totpDevices.find((d) => d.deviceName.endsWith(totp) && d.verified);
-                    if (dev) {
-                        await fetch("http://localhost:8082/completeFactor", {
-                            method: "POST",
-                            body: JSON.stringify({ id: "totp" }),
-                            headers: new Headers([["Content-Type", "application/json"]]),
-                        });
-                        return { status: "OK" };
-                    }
-
-                    if (++tryCount > 3) {
-                        return { status: "LIMIT_REACHED_ERROR", retryAfterMs: 30000 };
-                    }
-                    return { status: "INVALID_TOTP_ERROR" };
-                },
-                verifyDevice: async ({ deviceName, totp }) => {
-                    const dev = totpDevices.find((d) => d.deviceName === deviceName);
-                    if (!dev) {
-                        return { status: "UNKNOWN_DEVICE_ERROR" };
-                    }
-                    if (deviceName.endsWith(totp)) {
-                        const wasAlreadyVerified = dev.verified;
-                        verifyTOTPDevice(deviceName);
-                        await fetch("http://localhost:8082/completeFactor", {
-                            method: "POST",
-                            body: JSON.stringify({ id: "totp" }),
-                            headers: new Headers([["Content-Type", "application/json"]]),
-                        });
-                        return { status: "OK", wasAlreadyVerified };
-                    }
-
-                    if (++tryCount > 3) {
-                        return { status: "LIMIT_REACHED_ERROR", retryAfterMs: 30000 };
-                    }
-                    return { status: "INVALID_TOTP_ERROR" };
-                },
-            }),
-        },
+        override: {},
     }),
     MultiFactorAuth.init({
         firstFactors: testContext.firstFactors,

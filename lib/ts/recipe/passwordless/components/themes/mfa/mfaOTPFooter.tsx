@@ -35,7 +35,7 @@ export const MFAOTPFooter = withOverride(
         const userContext = useUserContext();
 
         return (
-            <div data-supertokens="footerLinkGroupVert pwlessMFAOTPFooter">
+            <div data-supertokens="footerLinkGroupVert pwless-mfa otpFooter">
                 {isSetupAllowed ? (
                     <div
                         data-supertokens="secondaryText"

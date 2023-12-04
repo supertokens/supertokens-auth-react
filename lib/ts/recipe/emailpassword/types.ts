@@ -391,6 +391,7 @@ export type EnterEmailStatus = "READY" | "SENT";
 export type SubmitNewPasswordStatus = "READY" | "SUCCESS";
 
 export type FormBaseProps<T> = {
+    formDataSupertokens?: string;
     footer?: JSX.Element;
 
     formFields: FormFieldThemeProps[];

@@ -31,7 +31,7 @@ export const MFAHeader = withOverride(
 
         return (
             <Fragment>
-                <div data-supertokens="headerTitle withBackButton">
+                <div data-supertokens="headerTitle withBackButton pwless-mfa header">
                     {claim.loading === false && claim.value?.n.length === 0 ? (
                         <BackButton onClick={props.onBackButtonClicked} />
                     ) : (

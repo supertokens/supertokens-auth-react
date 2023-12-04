@@ -34,7 +34,7 @@ export const DeviceSetupFooter = withOverride(
         const t = useTranslation();
 
         return (
-            <div data-supertokens="footerLinkGroupVert totpMFASetupFooter">
+            <div data-supertokens="footerLinkGroupVert totp-mfa deviceSetupFooter">
                 {claim.loading === false && (claim.value?.n.length ?? 0) > 1 && (
                     <div data-supertokens="secondaryText" onClick={onFactorChooserButtonClicked}>
                         {t("TOTP_MFA_FOOTER_CHOOSER_ANOTHER")}

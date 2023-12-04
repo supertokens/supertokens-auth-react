@@ -452,3 +452,13 @@ export const useOnMountAPICall = <T>(
         throw error;
     }
 };
+
+export function useRethrowInRender() {
+    const [error, setError] = useState(undefined);
+
+    if (error) {
+        throw error;
+    }
+
+    return setError;
+}

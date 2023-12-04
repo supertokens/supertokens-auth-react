@@ -39,6 +39,7 @@ export const CodeForm = withOverride(
         return (
             <React.Fragment>
                 <FormBase
+                    formDataSupertokens="totp-mfa codeForm"
                     clearError={props.clearError}
                     onError={props.onError}
                     formFields={[

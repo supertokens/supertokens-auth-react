@@ -52,8 +52,8 @@ const TOTPMFATheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> = 
         featureState,
         recipeImplementation: props.recipeImplementation,
         config: props.config,
-        clearError: () => props.dispatch({ type: "setError", error: undefined }),
-        onError: (error: string) => props.dispatch({ type: "setError", error }),
+        clearError: () => props.dispatch({ type: "setError", showAccessDenied: false, error: undefined }),
+        onError: (error: string) => props.dispatch({ type: "setError", showAccessDenied: false, error }),
     };
 
     return activeScreen === TOTPMFAScreens.Blocked ? (
@@ -67,7 +67,7 @@ const TOTPMFATheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> = 
     ) : activeScreen === TOTPMFAScreens.Loading ? (
         <LoadingScreen />
     ) : (
-        <div data-supertokens="container totp">
+        <div data-supertokens="container totp-mfa">
             <div data-supertokens="row">
                 {featureState.loaded && (
                     <React.Fragment>
@@ -154,7 +154,7 @@ export function getActiveScreen(props: Pick<TOTPMFAProps, "featureState" | "conf
         return TOTPMFAScreens.Blocked;
     } else if (props.featureState.loaded === false) {
         return TOTPMFAScreens.Loading;
-    } else if (props.featureState.error === "TOTP_MFA_NOT_ALLOWED_TO_SETUP") {
+    } else if (props.featureState.showAccessDenied) {
         return TOTPMFAScreens.AccessDenied;
     } else if (props.featureState.deviceInfo) {
         return TOTPMFAScreens.DeviceSetup;

@@ -30,7 +30,7 @@ export const CodeVerificationFooter = withOverride(
         const t = useTranslation();
 
         return (
-            <div data-supertokens="footerLinkGroupVert totpMFAVerificationFooter">
+            <div data-supertokens="footerLinkGroupVert totp-mfa codeVerificationFooter">
                 {claim.loading === false && (claim.value?.n.length ?? 0) > 1 && (
                     <div data-supertokens="secondaryText" onClick={onFactorChooserButtonClicked}>
                         {t("TOTP_MFA_FOOTER_CHOOSER_ANOTHER")}

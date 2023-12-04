@@ -15,9 +15,9 @@
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-const TOTPLoadingScreen: React.FC = () => {
+const OTPLoadingScreen: React.FC = () => {
     return (
-        <div data-supertokens="container delayedRender totp-mfa loadingScreen">
+        <div data-supertokens="container delayedRender pwless-mfa loadingScreen">
             <div data-supertokens="row">
                 <div data-supertokens="spinner delayedRender">
                     <SpinnerIcon />
@@ -27,4 +27,4 @@ const TOTPLoadingScreen: React.FC = () => {
     );
 };
 
-export const LoadingScreen = withOverride("TOTPLoadingScreen", TOTPLoadingScreen);
+export const LoadingScreen = withOverride("OTPLoadingScreen", OTPLoadingScreen);

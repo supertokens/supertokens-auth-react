@@ -23,7 +23,7 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
-import { getQueryParams, getURLHash, useOnMountAPICall } from "../../../../../utils";
+import { getQueryParams, getURLHash, useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
 import Session from "../../../../session/recipe";
 import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
@@ -37,6 +37,7 @@ type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () =
 
 const LinkClickedScreen: React.FC<PropType> = (props) => {
     const userContext = useUserContext();
+    const rethrowInRender = useRethrowInRender();
     const [requireUserInteraction, setRequireUserInteraction] = useState<boolean>(false);
 
     const consumeCodeAtMount = useCallback(async () => {
@@ -104,19 +105,21 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                 await props.recipe.webJSRecipe.clearLoginAttemptInfo({
                     userContext,
                 });
-                return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                    {
-                        rid: props.recipe.config.recipeId,
-                        successRedirectContext: {
-                            action: "SUCCESS",
-                            isNewRecipeUser: response.createdNewRecipeUser,
-                            user: response.user,
-                            redirectToPath: loginAttemptInfo?.redirectToPath,
+                return Session.getInstanceOrThrow()
+                    .validateGlobalClaimsAndHandleSuccessRedirection(
+                        {
+                            rid: props.recipe.config.recipeId,
+                            successRedirectContext: {
+                                action: "SUCCESS",
+                                isNewRecipeUser: response.createdNewRecipeUser,
+                                user: response.user,
+                                redirectToPath: loginAttemptInfo?.redirectToPath,
+                            },
                         },
-                    },
-                    userContext,
-                    props.history
-                );
+                        userContext,
+                        props.history
+                    )
+                    .catch(rethrowInRender);
             }
         },
         [props.history, props.recipe]
