@@ -24,7 +24,6 @@ import { useUserContext } from "../../../../../usercontext";
 import {
     useChildProps as usePasswordlessChildProps,
     useFeatureReducer as usePasswordlessFeatureReducer,
-    useRedirectAfterSuccess,
 } from "../../../../passwordless/components/features/signInAndUp";
 import {
     useChildProps as useThirdPartyChildProps,
@@ -120,18 +119,10 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         [pwlessDispatch, dispatch]
     );
 
-    const callingConsumeCodeRef = useRedirectAfterSuccess(
-        pwlessState,
-        props.recipe.recipeID,
-        userContext,
-        props.history
-    );
-
     const pwlessChildProps = usePasswordlessChildProps(
         props.recipe.passwordlessRecipe,
         combinedPwlessDispatch,
         pwlessState,
-        callingConsumeCodeRef,
         userContext,
         props.history
     )!;

@@ -49,7 +49,11 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     validateGlobalClaimsAndHandleSuccessRedirection: (
         redirectInfo?: {
             rid: string;
-            successRedirectContext: any;
+            successRedirectContext: {
+                action: "SUCCESS";
+                isNewRecipeUser: boolean;
+                redirectToPath?: string;
+            };
         },
         userContext?: any,
         history?: any

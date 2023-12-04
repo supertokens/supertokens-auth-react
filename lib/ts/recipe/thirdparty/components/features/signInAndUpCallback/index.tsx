@@ -77,7 +77,6 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                         successRedirectContext: {
                             action: "SUCCESS",
                             isNewRecipeUser: response.createdNewRecipeUser,
-                            user: response.user,
                             redirectToPath,
                         },
                     },

@@ -13,13 +13,7 @@ export declare type GetRedirectionURLContext = {
     showSignIn?: boolean;
 };
 export declare type ValidationFailureCallback =
-    | (({
-          userContext,
-          reason,
-      }: {
-          userContext: any;
-          reason: any;
-      }) => Promise<string | undefined | null> | string | undefined | null)
+    | (({ userContext, reason }: { userContext: any; reason: any }) => Promise<string | undefined> | string | undefined)
     | undefined;
 export declare type SessionClaimValidator = SessionClaimValidatorWebJS & {
     showAccessDeniedOnFailure?: boolean;

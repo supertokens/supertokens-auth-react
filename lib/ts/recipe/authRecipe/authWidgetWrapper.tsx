@@ -78,7 +78,6 @@ const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLCon
                             successRedirectContext: {
                                 action: "SUCCESS",
                                 isNewRecipeUser: false,
-                                user: undefined,
                                 redirectToPath: getRedirectToPathFromURL(),
                             },
                         },

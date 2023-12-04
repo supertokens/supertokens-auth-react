@@ -459,7 +459,7 @@ function getEmailPasswordConfigs() {
 
         async getRedirectionURL(context: EmailPasswordGetRedirectionURLContext) {
             if (context.action === "SUCCESS") {
-                if (context.isNewRecipeUser && context.user.loginMethods.length === 1) {
+                if (context.isNewRecipeUser) {
                     // new primary user
                 } else {
                     // only a recipe user was created
@@ -1499,5 +1499,6 @@ export const PhoneVerifiedClaim = new BooleanClaim({
     refresh: async () => {
         // This is something we have no way of refreshing, so this is a no-op
     },
+    // @ts-expect-error - Returning null from onFailureRedirection is not supported
     onFailureRedirection: () => null,
 });

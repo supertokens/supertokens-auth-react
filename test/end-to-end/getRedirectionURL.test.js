@@ -413,8 +413,10 @@ describe("getRedirectionURL Tests", function () {
                     await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                         method: "POST",
                     }).catch(console.error);
+                });
 
-                    await screenshotOnFailure(this, browser);
+                afterEach(function () {
+                    return screenshotOnFailure(this, browser);
                 });
 
                 it("should not do any redirection after successful sign up", async function () {
@@ -494,7 +496,9 @@ describe("getRedirectionURL Tests", function () {
                     await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                         method: "POST",
                     }).catch(console.error);
+                });
 
+                afterEach(function () {
                     return screenshotOnFailure(this, browser);
                 });
 
@@ -525,7 +529,7 @@ describe("getRedirectionURL Tests", function () {
                 });
             });
 
-            describe("ThirdPartyPasswordless recipe", function () {
+            describe("ThirdPartyPasswordless recipe: Magic Link", function () {
                 let browser;
                 let page;
                 const exampleEmail = "test@example.com";
@@ -569,7 +573,7 @@ describe("getRedirectionURL Tests", function () {
                         ),
                         page.waitForNavigation({ waitUntil: "networkidle0" }),
                     ]);
-                    await setPasswordlessFlowType("EMAIL", "USER_INPUT_CODE");
+                    await setPasswordlessFlowType("EMAIL", "MAGIC_LINK");
                 });
 
                 after(async function () {
@@ -584,7 +588,9 @@ describe("getRedirectionURL Tests", function () {
                     await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                         method: "POST",
                     }).catch(console.error);
+                });
 
+                afterEach(function () {
                     return screenshotOnFailure(this, browser);
                 });
 
@@ -595,23 +601,86 @@ describe("getRedirectionURL Tests", function () {
                     ]);
                     await setInputValues(page, [{ name: "email", value: exampleEmail }]);
                     await submitForm(page);
-                    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-
-                    const urlBeforeSignUp = await page.url();
+                    await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
 
                     const loginAttemptInfo = JSON.parse(
                         await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                     );
                     const device = await getPasswordlessDevice(loginAttemptInfo);
-                    await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
-                    await submitForm(page);
-                    // wait until network idle to ensure that the page has not been redirected
+
+                    const magicLink = device.codes[0].urlWithLinkCode;
+
+                    await page.goto(magicLink);
+
                     await page.waitForNetworkIdle();
 
                     const urlAfterSignUp = await page.url();
                     const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
                     assert.equal(newUserCheck, "thirdpartypasswordless-true");
-                    assert.equal(urlBeforeSignUp, urlAfterSignUp);
+                    assert.equal(magicLink, urlAfterSignUp);
+                });
+            });
+
+            describe("ThirdParty Recipe", function () {
+                let browser;
+                let page;
+
+                before(async function () {
+                    await backendBeforeEach();
+
+                    await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+                        method: "POST",
+                    }).catch(console.error);
+
+                    browser = await puppeteer.launch({
+                        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+                        headless: true,
+                    });
+
+                    page = await browser.newPage();
+                    // We need to set the localStorage value before the page loads to ensure ST initialises with the correct value
+                    await page.evaluateOnNewDocument(() => {
+                        localStorage.setItem("disableRedirectionAfterSuccessfulSignInUp", "true");
+                        localStorage.removeItem("isNewUserCheck");
+                    });
+
+                    await clearBrowserCookiesWithoutAffectingConsole(page, []);
+                });
+
+                after(async function () {
+                    await browser.close();
+                    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+                        method: "POST",
+                    }).catch(console.error);
+                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
+                        method: "POST",
+                    }).catch(console.error);
+                });
+
+                afterEach(function () {
+                    return screenshotOnFailure(this, browser);
+                });
+
+                it("should not do any redirection after successful sign up", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdparty`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await assertProviders(page);
+                    await clickOnProviderButton(page, "Auth0");
+
+                    await Promise.all([
+                        loginWithAuth0(page),
+                        page.waitForResponse(
+                            (response) => response.url() === SIGN_IN_UP_API && response.status() === 200
+                        ),
+                    ]);
+
+                    const urlAfterSignUp = await page.url();
+                    const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
+                    assert.equal(newUserCheck, "thirdparty-true");
+                    assert(urlAfterSignUp.includes("/auth/callback/auth0"));
                 });
             });
         });

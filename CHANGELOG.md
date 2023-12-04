@@ -27,7 +27,9 @@ EmailPassword.init({
 
 ### Breaking changes
 
--   The `CloseTabScreen` [component](https://supertokens.com/img/otp-magic-link-same-time.png), previously featured in the passwordless recipe visible when a user signs in from another tab using a magic link, has been removed. Instead, users will now be automatically redirected to the specified return value from the `getRedirectionURL` function if a session exists. In cases where `getRedirectionURL` is not provided, the default redirection path is set to `/`. If you were [overriding](https://supertokens.com/docs/passwordless/advanced-customizations/react-component-override/usage) this component using `PasswordlessCloseTabScreen_Override`, you no longer need to do so.
+-   `user` property has been removed from `GetRedirectionURLContext`.To get the `user` object from backend, you can follow hte instructions [here](https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/get-user-info).
+
+-   The `CloseTabScreen` [component](https://supertokens.com/img/otp-magic-link-same-time.png), previously featured in the passwordless recipe visible when a user signs in from another tab using a magic link, has been removed. Users will continue to see the 'Enter OTP' screen until they refresh. If you were [overriding](https://supertokens.com/docs/passwordless/advanced-customizations/react-component-override/usage) this component using `PasswordlessCloseTabScreen_Override`, you no longer need to do so.
 
 -   If your workflow involves custom validation, such as Phone Number verification, after signing in, ensure your code aligns with the updated examples found in [with-phone-password](https://github.com/supertokens/supertokens-auth-react/tree/master/examples/with-phone-password) or [with-thirdpartyemailpassword-passwordless](https://github.com/supertokens/supertokens-auth-react/tree/master/examples/with-thirdpartyemailpassword-passwordless).
 

@@ -1146,6 +1146,9 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
             console.log(`ST_LOGS THIRD_PARTY GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
                 setIsNewUserToStorage("thirdparty", context.isNewRecipeUser);
+                if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
+                    return null;
+                }
                 return context.redirectToPath || "/dashboard";
             }
         },

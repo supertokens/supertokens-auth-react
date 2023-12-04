@@ -30,13 +30,7 @@ export type GetRedirectionURLContext = {
 };
 
 export type ValidationFailureCallback =
-    | (({
-          userContext,
-          reason,
-      }: {
-          userContext: any;
-          reason: any;
-      }) => Promise<string | undefined | null> | string | undefined | null)
+    | (({ userContext, reason }: { userContext: any; reason: any }) => Promise<string | undefined> | string | undefined)
     | undefined;
 
 export type SessionClaimValidator = SessionClaimValidatorWebJS & {
