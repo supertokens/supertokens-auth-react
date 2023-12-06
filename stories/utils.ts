@@ -1,7 +1,7 @@
 import SuperTokens from "../lib/ts/superTokens";
 import SessionRecipe from "../lib/ts/recipe/session/recipe";
 import Session from "../lib/ts/recipe/session";
-import Passwordless from "../lib/ts/recipe/passwordless";
+import Passwordless, { getLoginAttemptInfo } from "../lib/ts/recipe/passwordless";
 import PasswordlessRecipe from "../lib/ts/recipe/passwordless/recipe";
 import EmailPassword from "../lib/ts/recipe/emailpassword";
 import EmailPasswordRecipe from "../lib/ts/recipe/emailpassword/recipe";
@@ -32,12 +32,19 @@ import { EmailPasswordPreBuiltUI } from "../lib/ts/recipe/emailpassword/prebuilt
 import { PasswordlessPreBuiltUI } from "../lib/ts/recipe/passwordless/prebuiltui";
 import { MultiFactorAuthPreBuiltUI } from "../lib/ts/recipe/multifactorauth/prebuiltui";
 import SuperTokensWebJS from "supertokens-web-js/lib/build/supertokens";
+import { AdditionalLoginAttemptInfoProperties, LoginAttemptInfo } from "../lib/ts/recipe/passwordless/types";
+import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
 export function withFetchResponse<T>(resp: T): T & { fetchResponse: Response } {
     return resp as any;
 }
 
-export function resetAndInitST(recipeList?: any[], usesDynamicLoginMethods?: boolean) {
+export function resetAndInitST(
+    recipeList?: any[],
+    usesDynamicLoginMethods?: boolean,
+    { path, query, hash } = { path: "/auth", query: "", hash: "" }
+) {
+    (WindowHandlerReference as any).instance = undefined;
     SessionRecipe.reset();
     PasswordlessRecipe.reset();
     EmailPasswordRecipe.reset();
@@ -66,6 +73,21 @@ export function resetAndInitST(recipeList?: any[], usesDynamicLoginMethods?: boo
             websiteDomain: "http://localhost:6006",
         },
         recipeList: recipeList ?? [Session.init()],
+        windowHandler: (oI) => ({
+            ...oI,
+            history: {
+                ...oI.history,
+                replaceState: console.warn,
+            },
+            location: {
+                ...oI.location,
+                assign: console.warn,
+                setHref: console.warn,
+                getHash: () => hash,
+                getSearch: () => query,
+                getPathName: () => path,
+            },
+        }),
     });
 }
 
@@ -77,6 +99,7 @@ export type AuthPageConf = {
     emailpassword: {
         initialized: boolean;
         disableDefaultUISignInUp: boolean;
+        defaultToSignUp: boolean;
     };
     thirdparty: {
         initialized: boolean;
@@ -113,7 +136,7 @@ export type AuthPageConf = {
     };
 };
 
-export function buildInit(args: AuthPageConf) {
+export function buildInit(args: AuthPageConf, funcOverrides: any) {
     const recipeList: RecipeInitResult<any, any, any, any>[] = [Session.init()];
     const prebuiltUIs: any[] = [];
     if (args.emailpassword.initialized) {
@@ -122,6 +145,10 @@ export function buildInit(args: AuthPageConf) {
                 useShadowDom: false,
                 signInAndUpFeature: {
                     disableDefaultUI: args.emailpassword.disableDefaultUISignInUp,
+                    defaultToSignUp: args.emailpassword.defaultToSignUp,
+                },
+                override: {
+                    functions: funcOverrides?.emailpassword || ((i) => i),
                 },
             })
         );
@@ -135,6 +162,9 @@ export function buildInit(args: AuthPageConf) {
                     providers: buildProviderArray(args.thirdparty.providers),
                     disableDefaultUI: args.thirdparty.disableDefaultUISignInUp,
                 },
+                override: {
+                    functions: funcOverrides?.thirdparty || ((i) => i),
+                },
             })
         );
         prebuiltUIs.push(ThirdPartyPreBuiltUI);
@@ -146,6 +176,9 @@ export function buildInit(args: AuthPageConf) {
                 contactMethod: args.passwordless.contactMethod,
                 signInUpFeature: {
                     disableDefaultUI: args.passwordless.disableDefaultUISignInUp,
+                },
+                override: {
+                    functions: funcOverrides?.passwordless || ((i) => i),
                 },
             })
         );
@@ -159,6 +192,9 @@ export function buildInit(args: AuthPageConf) {
                 signInAndUpFeature: {
                     providers: buildProviderArray(args.thirdpartyemailpassword.providers),
                     disableDefaultUI: args.thirdpartyemailpassword.disableDefaultUISignInUp,
+                },
+                override: {
+                    functions: funcOverrides?.thirdpartyemailpassword || ((i) => i),
                 },
             })
         );
@@ -174,6 +210,9 @@ export function buildInit(args: AuthPageConf) {
                     providers: buildProviderArray(args.thirdpartypasswordless.providers),
                     disableDefaultUI: args.thirdpartypasswordless.disableDefaultUISignInUp,
                 },
+                override: {
+                    functions: funcOverrides?.thirdpartypasswordless || ((i) => i),
+                },
             })
         );
         prebuiltUIs.push(ThirdPartyPasswordlessPreBuiltUI);
@@ -184,6 +223,9 @@ export function buildInit(args: AuthPageConf) {
                 useShadowDom: false,
                 firstFactors: args.multifactorauth.firstFactors,
                 disableDefaultUI: args.multifactorauth.disableDefaultUI,
+                override: {
+                    functions: funcOverrides?.multifactorauth || ((i) => i),
+                },
             })
         );
         prebuiltUIs.push(MultiFactorAuthPreBuiltUI);
@@ -216,6 +258,7 @@ export function buildInit(args: AuthPageConf) {
                                 fetchResponse: undefined as any,
                             };
                         },
+                        ...(funcOverrides?.multitenancy ? funcOverrides?.multitenancy(oI) : {}),
                     }),
                 },
             })
@@ -264,3 +307,9 @@ export function unflattenArgs(args: Record<string, any>): any {
     }
     return ret;
 }
+
+export const overridePWlessWithLoginAttempt =
+    (info: LoginAttemptInfo & AdditionalLoginAttemptInfoProperties) => (oI: any) => ({
+        ...oI,
+        getLoginAttemptInfo: () => info,
+    });

@@ -7,7 +7,7 @@ import { RoutingComponent } from "../lib/ts/components/routingComponent";
 import { passwordlessFactors } from "../lib/ts/recipe/passwordless/recipe";
 import { ErrorBoundary } from "./errorBoundary";
 
-const meta: Meta<{
+export type Args = {
     usesDynamicLoginMethods: boolean;
     "multifactorauth.initialized": boolean;
     "multifactorauth.firstFactors": FirstFactor[] | undefined;
@@ -17,6 +17,7 @@ const meta: Meta<{
     "multitenancy.providers": ProviderId[];
     "emailpassword.initialized": boolean;
     "emailpassword.disableDefaultUISignInUp": boolean;
+    "emailpassword.defaultToSignUp": boolean;
     "thirdparty.initialized": boolean;
     "thirdparty.disableDefaultUISignInUp": boolean;
     "thirdparty.providers": ProviderId[];
@@ -27,20 +28,30 @@ const meta: Meta<{
     "thirdpartyemailpassword.disableDefaultUISignInUp": boolean;
     "thirdpartyemailpassword.providers": ProviderId[] | undefined;
     "thirdpartyemailpassword.disableEmailPassword": boolean;
+    "thirdpartyemailpassword.defaultToSignUp": boolean;
     "thirdpartypasswordless.initialized": boolean;
     "thirdpartypasswordless.disableDefaultUISignInUp": boolean;
     "thirdpartypasswordless.providers": ProviderId[] | undefined;
     "thirdpartypasswordless.contactMethod": "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
     "thirdpartypasswordless.disablePasswordless": boolean;
-}> = {
+    path?: string;
+    query?: string;
+    hash?: string;
+};
+
+const meta: Meta<Args> = {
     title: "Auth page",
-    render: (args, { loaded: { featureState } }) => {
+    render: (args, { loaded: { path, funcOverrides } }) => {
         const { prebuiltUIs, key } = useMemo(() => {
-            const { prebuiltUIs, recipeList } = buildInit(unflattenArgs(args));
+            const { prebuiltUIs, recipeList } = buildInit(unflattenArgs(args), funcOverrides);
             for (const ui of prebuiltUIs) {
                 ui.reset();
             }
-            resetAndInitST(recipeList, args.usesDynamicLoginMethods);
+            resetAndInitST(recipeList, args.usesDynamicLoginMethods, {
+                path: args.path,
+                query: args.query,
+                hash: args.hash,
+            });
             return { prebuiltUIs, key: JSON.stringify(args) };
         }, [args]);
 
@@ -48,7 +59,7 @@ const meta: Meta<{
             <ErrorBoundary key={key}>
                 <RoutingComponent
                     key={key}
-                    path="/auth"
+                    path={args.path ?? path ?? "/auth"}
                     preBuiltUIList={prebuiltUIs.map((c) => c.getInstanceOrInitAndGetInstance())}
                     getReactRouterDomWithCustomHistory={() => undefined}
                 />
@@ -65,6 +76,7 @@ const meta: Meta<{
         "multitenancy.providers": ["github", "google"],
         "emailpassword.initialized": true,
         "emailpassword.disableDefaultUISignInUp": false,
+        "emailpassword.defaultToSignUp": false,
         "thirdparty.initialized": true,
         "thirdparty.disableDefaultUISignInUp": false,
         "thirdparty.providers": ["github", "google"],
@@ -73,6 +85,7 @@ const meta: Meta<{
         "passwordless.disableDefaultUISignInUp": false,
         "thirdpartyemailpassword.initialized": true,
         "thirdpartyemailpassword.disableDefaultUISignInUp": false,
+        "thirdpartyemailpassword.defaultToSignUp": false,
         "thirdpartyemailpassword.providers": ["github", "google"],
         "thirdpartyemailpassword.disableEmailPassword": false,
         "thirdpartypasswordless.initialized": true,
@@ -154,6 +167,15 @@ const meta: Meta<{
                 truthy: true,
             },
         },
+        "emailpassword.defaultToSignUp": {
+            table: {
+                category: "emailpassword",
+            },
+            if: {
+                arg: "emailpassword.initialized",
+                truthy: true,
+            },
+        },
         "thirdparty.initialized": {
             table: {
                 category: "thirdparty",
@@ -214,6 +236,15 @@ const meta: Meta<{
             },
         },
         "thirdpartyemailpassword.disableDefaultUISignInUp": {
+            table: {
+                category: "thirdpartyemailpassword",
+            },
+            if: {
+                arg: "thirdpartyemailpassword.initialized",
+                truthy: true,
+            },
+        },
+        "thirdpartyemailpassword.defaultToSignUp": {
             table: {
                 category: "thirdpartyemailpassword",
             },
@@ -289,6 +320,6 @@ const meta: Meta<{
 };
 
 export default meta;
-type Story = StoryObj<typeof Page>;
+type Story = StoryObj<Args>;
 
-export const AllRecipes: Story = {};
+export const Playground: Story = {};
