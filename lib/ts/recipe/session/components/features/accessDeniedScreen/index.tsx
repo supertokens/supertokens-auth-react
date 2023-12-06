@@ -17,12 +17,12 @@ const AccessDeniedScreen: React.FC<
     }>
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
-    const history = props.history ?? UI.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
+    const navigate = props.navigate ?? UI.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper defaultStore={defaultTranslationsSession}>
-                <AccessDeniedScreenTheme config={props.recipe.config} history={history} recipe={props.recipe} />
+                <AccessDeniedScreenTheme config={props.recipe.config} navigate={navigate} recipe={props.recipe} />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );

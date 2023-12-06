@@ -29,7 +29,7 @@ import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import SignInUpThemeWrapper from "../../themes/signInUp";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
-import type { CustomHistory, FeatureBaseProps } from "../../../../../types";
+import type { Navigate, FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap } from "../../../types";
 import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps, NormalisedConfig } from "../../../types";
@@ -142,14 +142,14 @@ export function useChildProps(
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
     userContext: any,
-    history?: CustomHistory
+    navigate?: Navigate
 ): SignInUpChildProps;
 export function useChildProps(
     recipe: Recipe | undefined,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
     userContext: any,
-    history?: CustomHistory
+    navigate?: Navigate
 ): SignInUpChildProps | undefined;
 
 export function useChildProps(
@@ -157,7 +157,7 @@ export function useChildProps(
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
     userContext: any,
-    history?: CustomHistory
+    navigate?: Navigate
 ): SignInUpChildProps | undefined {
     const recipeImplementation = React.useMemo(
         () => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe, recipe.config, dispatch),
@@ -180,7 +180,7 @@ export function useChildProps(
                         },
                     },
                     userContext,
-                    history
+                    navigate
                 );
             },
             recipeImplementation: recipeImplementation,
@@ -198,7 +198,7 @@ export const SignInUpFeature: React.FC<
     const recipeComponentOverrides = props.useComponentOverrides();
     const userContext = useUserContext();
     const [state, dispatch] = useFeatureReducer(props.recipe.webJSRecipe, userContext);
-    const childProps = useChildProps(props.recipe, dispatch, state, userContext, props.history)!;
+    const childProps = useChildProps(props.recipe, dispatch, state, userContext, props.navigate)!;
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>

@@ -332,7 +332,7 @@ export type ThemeBaseProps = {
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type FeatureBaseProps<T = {}> = PropsWithChildren<
     {
-        history?: CustomHistory;
+        navigate?: Navigate;
     } & T
 >;
 
@@ -346,14 +346,14 @@ export type Awaited<T> = T extends null | undefined
         : never // the argument to `then` was not callable
     : T; // non-object or non-thenable
 
-// This history interface is inspired by the signatures of react-router-dom v5 history and navigate in react-router-dom v6.
-// This also allows users to use any other history object with a matching signature.
+// This Navigate interface is inspired by the signatures of react-router-dom v5 history and navigate in react-router-dom v6.
+// This also allows users to use any other navigate object with a matching signature.
 interface NavigateFunction {
     (to: string): void;
     (delta: number): void;
 }
 
-export type CustomHistory =
+export type Navigate =
     | {
           push: (path: string) => void;
           goBack: () => void;

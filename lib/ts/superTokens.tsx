@@ -35,14 +35,14 @@ import {
     normaliseCookieScopeOrThrowError,
     normaliseInputAppInfoOrThrowError,
     redirectWithFullPageReload,
-    redirectWithHistory,
+    redirectWithNavigate,
 } from "./utils";
 
 import type RecipeModule from "./recipe/recipeModule";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import type { CustomHistory, GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } from "./types";
+import type { Navigate, GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } from "./types";
 
 /*
  * Class.
@@ -183,7 +183,7 @@ export default class SuperTokens {
 
     redirectToAuth = async (options: {
         show?: "signin" | "signup";
-        history?: CustomHistory;
+        navigate?: Navigate;
         queryParams?: any;
         redirectBack: boolean;
     }): Promise<void> => {
@@ -205,11 +205,11 @@ export default class SuperTokens {
             return;
         }
         redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
-        return this.redirectToUrl(redirectUrl, options.history);
+        return this.redirectToUrl(redirectUrl, options.navigate);
     };
 
-    redirectToUrl = async (redirectUrl: string, history?: CustomHistory): Promise<void> => {
-        doRedirection(this.appInfo, redirectUrl, history);
+    redirectToUrl = async (redirectUrl: string, navigate?: Navigate): Promise<void> => {
+        doRedirection(this.appInfo, redirectUrl, navigate);
     };
 
     /*
@@ -225,7 +225,7 @@ export default class SuperTokens {
     }
 }
 
-export function doRedirection(appInfo: NormalisedAppInfo, redirectUrl: string, history?: CustomHistory) {
+export function doRedirection(appInfo: NormalisedAppInfo, redirectUrl: string, navigate?: Navigate) {
     try {
         new URL(redirectUrl); // If full URL, no error thrown, skip in app redirection.
     } catch (e) {
@@ -237,9 +237,9 @@ export function doRedirection(appInfo: NormalisedAppInfo, redirectUrl: string, h
             return;
         }
 
-        // If history was provided, use to redirect without reloading.
-        if (history !== undefined) {
-            redirectWithHistory(redirectUrl, history);
+        // If navigate was provided, use to redirect without reloading.
+        if (navigate !== undefined) {
+            redirectWithNavigate(redirectUrl, navigate);
             return;
         }
     }

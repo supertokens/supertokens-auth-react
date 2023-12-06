@@ -43,10 +43,10 @@ const CustomSignInUpTheme: typeof SignInUpTheme = (props) => {
 };
 
 export default function PhoneVerification() {
-    const history = reactRouterDom.useNavigate();
+    const navigate = reactRouterDom.useNavigate();
 
     return (
-        <SignInUp redirectOnSessionExists={false} history={history}>
+        <SignInUp redirectOnSessionExists={false} navigate={navigate}>
             {
                 // @ts-ignore We ignore the error about missing props, since they'll be set by the feature component
                 <CustomSignInUpTheme />

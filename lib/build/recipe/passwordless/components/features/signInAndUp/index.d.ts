@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { CustomHistory, FeatureBaseProps } from "../../../../../types";
+import type { Navigate, FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps } from "../../../types";
@@ -13,14 +13,14 @@ export declare function useChildProps(
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
     userContext: any,
-    history?: CustomHistory
+    navigate?: Navigate
 ): SignInUpChildProps;
 export declare function useChildProps(
     recipe: Recipe | undefined,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
     userContext: any,
-    history?: CustomHistory
+    navigate?: Navigate
 ): SignInUpChildProps | undefined;
 export declare const SignInUpFeature: React.FC<
     FeatureBaseProps<{

@@ -3,7 +3,7 @@ import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
 import RecipeModule from "../recipeModule";
 import type { NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType } from "./types";
-import type { CustomHistory, NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult } from "../../types";
+import type { Navigate, NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult } from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import type { SessionClaim } from "supertokens-web-js/recipe/session";
 export default class Session extends RecipeModule<unknown, unknown, unknown, NormalisedSessionConfig> {
@@ -49,7 +49,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         rid: string,
         redirect: (
             context: any,
-            history?: CustomHistory,
+            navigate?: Navigate,
             queryParams?: Record<string, string>,
             userContext?: any
         ) => Promise<void>
@@ -64,7 +64,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
             };
         },
         userContext?: any,
-        history?: CustomHistory
+        navigate?: Navigate
     ) => Promise<void>;
     /**
      * This should only get called if validateGlobalClaimsAndHandleSuccessRedirection couldn't get a redirectInfo

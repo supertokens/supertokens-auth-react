@@ -1,5 +1,5 @@
 import React from "react";
-import type { CustomHistory, ReactComponentClass, SessionClaimValidator } from "../../types";
+import type { Navigate, ReactComponentClass, SessionClaimValidator } from "../../types";
 import type { PropsWithChildren } from "react";
 import type { ClaimValidationError } from "supertokens-web-js/recipe/session";
 export declare type SessionAuthProps = {
@@ -13,7 +13,7 @@ export declare type SessionAuthProps = {
     doRedirection?: boolean;
     accessDeniedScreen?: ReactComponentClass<{
         userContext?: any;
-        history?: CustomHistory;
+        navigate?: Navigate;
         validationError: ClaimValidationError;
     }>;
     onSessionExpired?: () => void;

@@ -90,14 +90,14 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         props.recipe.emailPasswordRecipe,
         epState,
         combinedEPDispatch,
-        props.history
+        props.navigate
     );
 
     const childProps = {
         emailPasswordRecipe: props.recipe.emailPasswordRecipe,
         thirdPartyRecipe: props.recipe.thirdPartyRecipe,
         config: props.recipe.config,
-        history: props.history,
+        navigate: props.navigate,
         commonState: combinedState,
         tpState,
         tpDispatch: combinedTPDispatch,

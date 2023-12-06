@@ -81,7 +81,7 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
                             NormalisedConfig
                         >
                             authRecipe={this.recipeInstance}
-                            history={props.history}>
+                            navigate={props.navigate}>
                             <SignInAndUpFeature
                                 recipe={this.recipeInstance}
                                 {...props}

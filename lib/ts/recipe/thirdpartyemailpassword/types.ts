@@ -19,7 +19,7 @@
 
 import type { Header } from "./components/themes/signInAndUp/header";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { CustomHistory, FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import type { Navigate, FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import type {
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
@@ -125,7 +125,7 @@ export type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswor
 
 export type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     config: NormalisedConfig;
-    history?: CustomHistory;
+    navigate?: Navigate;
     commonState: {
         error: string | undefined;
     };

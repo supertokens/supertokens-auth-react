@@ -45,7 +45,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
 
         if (preAuthSessionId === null || preAuthSessionId.length === 0 || linkCode.length === 0) {
             await SuperTokens.getInstanceOrThrow().redirectToAuth({
-                history: props.history,
+                navigate: props.navigate,
                 queryParams: {
                     error: "signin",
                 },
@@ -62,7 +62,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
         return props.recipe.webJSRecipe.consumeCode({
             userContext,
         });
-    }, [props.recipe, props.history]);
+    }, [props.recipe, props.navigate]);
 
     const handleConsumeResp = useCallback(
         async (response: Awaited<ReturnType<typeof consumeCodeAtMount>>): Promise<void> => {
@@ -78,7 +78,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
 
             if (response.status === "RESTART_FLOW_ERROR") {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                    history: props.history,
+                    navigate: props.navigate,
                     queryParams: {
                         error: "restart_link",
                     },
@@ -88,7 +88,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
 
             if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                    history: props.history,
+                    navigate: props.navigate,
                     queryParams: {
                         error: response.reason,
                     },
@@ -114,18 +114,18 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                         },
                     },
                     userContext,
-                    props.history
+                    props.navigate
                 );
             }
         },
-        [props.history, props.recipe]
+        [props.navigate, props.recipe]
     );
 
     const handleConsumeError = useCallback(
         (err) => {
             if (STGeneralError.isThisError(err)) {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                    history: props.history,
+                    navigate: props.navigate,
                     queryParams: {
                         error: "custom",
                         message: err.message,
@@ -134,7 +134,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                 });
             } else {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                    history: props.history,
+                    navigate: props.navigate,
                     queryParams: {
                         error: "signin",
                     },
@@ -142,7 +142,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                 });
             }
         },
-        [props.recipe, props.history]
+        [props.recipe, props.navigate]
     );
     useOnMountAPICall(consumeCodeAtMount, handleConsumeResp, handleConsumeError);
 

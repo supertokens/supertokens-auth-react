@@ -123,7 +123,7 @@ export declare type ThemeBaseProps = {
 };
 export declare type FeatureBaseProps<T = {}> = PropsWithChildren<
     {
-        history?: CustomHistory;
+        navigate?: Navigate;
     } & T
 >;
 export declare type Awaited<T> = T extends null | undefined
@@ -139,7 +139,7 @@ interface NavigateFunction {
     (to: string): void;
     (delta: number): void;
 }
-export declare type CustomHistory =
+export declare type Navigate =
     | {
           push: (path: string) => void;
           goBack: () => void;

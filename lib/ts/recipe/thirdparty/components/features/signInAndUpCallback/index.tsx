@@ -40,13 +40,13 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
         return props.recipe.webJSRecipe.signInAndUp({
             userContext,
         });
-    }, [props.recipe, props.history, userContext]);
+    }, [props.recipe, props.navigate, userContext]);
 
     const handleVerifyResponse = useCallback(
         async (response: Awaited<ReturnType<typeof verifyCode>>): Promise<void> => {
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                    history: props.history,
+                    navigate: props.navigate,
                     queryParams: {
                         error: "no_email_present",
                     },
@@ -56,7 +56,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
 
             if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                    history: props.history,
+                    navigate: props.navigate,
                     queryParams: {
                         error: response.status,
                         message: response.reason,
@@ -81,18 +81,18 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                         },
                     },
                     userContext,
-                    props.history
+                    props.navigate
                 );
             }
         },
-        [props.recipe, props.history, userContext]
+        [props.recipe, props.navigate, userContext]
     );
 
     const handleError = useCallback(
         (err) => {
             if (STGeneralError.isThisError(err)) {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                    history: props.history,
+                    navigate: props.navigate,
                     queryParams: {
                         error: "custom",
                         message: err.message,
@@ -102,14 +102,14 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
             }
 
             return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                history: props.history,
+                navigate: props.navigate,
                 queryParams: {
                     error: "signin",
                 },
                 redirectBack: false,
             });
         },
-        [props.recipe, props.history]
+        [props.recipe, props.navigate]
     );
 
     useOnMountAPICall(verifyCode, handleVerifyResponse, handleError);

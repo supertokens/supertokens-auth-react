@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { CustomHistory, FeatureBaseProps } from "../../../../../types";
+import type { Navigate, FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { SignInAndUpState } from "../../../types";
 import type {
@@ -15,13 +15,13 @@ export declare function useChildProps(
     recipe: Recipe,
     state: SignInAndUpState,
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
-    history?: CustomHistory
+    navigate?: Navigate
 ): EmailPasswordSignInAndUpChildProps;
 export declare function useChildProps(
     recipe: Recipe | undefined,
     state: SignInAndUpState,
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
-    history?: CustomHistory
+    navigate?: Navigate
 ): EmailPasswordSignInAndUpChildProps | undefined;
 export declare const SignInAndUpFeature: React.FC<
     FeatureBaseProps<{

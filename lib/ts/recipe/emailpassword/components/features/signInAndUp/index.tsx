@@ -30,7 +30,7 @@ import Session from "../../../../session/recipe";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
 
-import type { CustomHistory, FeatureBaseProps, NormalisedFormField } from "../../../../../types";
+import type { Navigate, FeatureBaseProps, NormalisedFormField } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { SignInAndUpState } from "../../../types";
 import type {
@@ -93,20 +93,20 @@ export function useChildProps(
     recipe: Recipe,
     state: SignInAndUpState,
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
-    history?: CustomHistory
+    navigate?: Navigate
 ): EmailPasswordSignInAndUpChildProps;
 export function useChildProps(
     recipe: Recipe | undefined,
     state: SignInAndUpState,
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
-    history?: CustomHistory
+    navigate?: Navigate
 ): EmailPasswordSignInAndUpChildProps | undefined;
 
 export function useChildProps(
     recipe: Recipe | undefined,
     state: SignInAndUpState,
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
-    history?: CustomHistory
+    navigate?: Navigate
 ): EmailPasswordSignInAndUpChildProps | undefined {
     const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe), [recipe]);
     const userContext = useUserContext();
@@ -122,9 +122,9 @@ export function useChildProps(
                 },
             },
             userContext,
-            history
+            navigate
         );
-    }, [recipe, userContext, history]);
+    }, [recipe, userContext, navigate]);
 
     const onSignUpSuccess = useCallback(async (): Promise<void> => {
         return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
@@ -137,9 +137,9 @@ export function useChildProps(
                 },
             },
             userContext,
-            history
+            navigate
         );
-    }, [recipe, userContext, history]);
+    }, [recipe, userContext, navigate]);
 
     return useMemo(() => {
         if (recipe === undefined || recipeImplementation === undefined) {
@@ -158,7 +158,7 @@ export function useChildProps(
             clearError: () => dispatch({ type: "setError", error: undefined }),
             onError: (error: string) => dispatch({ type: "setError", error }),
             onSuccess: onSignInSuccess,
-            forgotPasswordClick: () => recipe.redirect({ action: "RESET_PASSWORD" }, history, userContext),
+            forgotPasswordClick: () => recipe.redirect({ action: "RESET_PASSWORD" }, navigate, userContext),
         };
 
         const signUpForm = {
@@ -187,7 +187,7 @@ export const SignInAndUpFeature: React.FC<
     }>
 > = (props) => {
     const [state, dispatch] = useFeatureReducer(props.recipe);
-    const childProps = useChildProps(props.recipe, state, dispatch, props.history);
+    const childProps = useChildProps(props.recipe, state, dispatch, props.navigate);
     const recipeComponentOverrides = props.useComponentOverrides();
 
     return (

@@ -22,7 +22,7 @@ import { useTranslation } from "./translation/translationContext";
 import { useUserContext } from "./usercontext";
 
 import type { TranslationStore } from "./translation/translationHelpers";
-import type { CustomHistory, SuperTokensConfig } from "./types";
+import type { Navigate, SuperTokensConfig } from "./types";
 
 /*
  * API Wrapper exposed to user.
@@ -45,7 +45,7 @@ export default class SuperTokensAPIWrapper {
 
     static redirectToAuth = async (options?: {
         show?: "signin" | "signup";
-        history?: CustomHistory;
+        navigate?: Navigate;
         queryParams?: any;
         redirectBack?: boolean;
     }) => {

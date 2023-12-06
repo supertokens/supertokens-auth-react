@@ -30,7 +30,7 @@ import SessionContext from "./sessionContext";
 import { getFailureRedirectionInfo } from "./utils";
 
 import type { LoadedSessionContext, RecipeEventWithSessionContext, SessionContextType } from "./types";
-import type { CustomHistory, ReactComponentClass, SessionClaimValidator } from "../../types";
+import type { Navigate, ReactComponentClass, SessionClaimValidator } from "../../types";
 import type { PropsWithChildren } from "react";
 import type { ClaimValidationError } from "supertokens-web-js/recipe/session";
 
@@ -46,7 +46,7 @@ export type SessionAuthProps = {
 
     accessDeniedScreen?: ReactComponentClass<{
         userContext?: any;
-        history?: CustomHistory;
+        navigate?: Navigate;
         validationError: ClaimValidationError;
     }>;
     onSessionExpired?: () => void;
@@ -72,13 +72,13 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
     const session = useRef<Session>();
 
-    // We store this here, to prevent the list of called hooks changing even if a history hook is added later to SuperTokens.
-    const historyHookRef = useRef(UI.getReactRouterDomWithCustomHistory()?.useHistoryCustom);
+    // We store this here, to prevent the list of called hooks changing even if a navigate hook is added later to SuperTokens.
+    const navigateHookRef = useRef(UI.getReactRouterDomWithCustomHistory()?.useHistoryCustom);
 
-    let history: CustomHistory | undefined;
+    let navigate: Navigate | undefined;
     try {
-        if (historyHookRef.current) {
-            history = historyHookRef.current();
+        if (navigateHookRef.current) {
+            navigate = navigateHookRef.current();
         }
     } catch {
         // We catch and ignore errors here, because this is may throw if
@@ -88,7 +88,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
     const userContext = useUserContext();
 
     const redirectToLogin = useCallback(() => {
-        void SuperTokens.getInstanceOrThrow().redirectToAuth({ history, redirectBack: true });
+        void SuperTokens.getInstanceOrThrow().redirectToAuth({ navigate, redirectBack: true });
     }, []);
 
     const buildContext = useCallback(async (): Promise<LoadedSessionContext> => {
@@ -203,7 +203,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                         setContext(toSetContext);
                         return await SuperTokens.getInstanceOrThrow().redirectToUrl(
                             failureRedirectInfo.redirectPath,
-                            history
+                            navigate
                         );
                     }
                     if (props.accessDeniedScreen !== undefined && failureRedirectInfo.failedClaim !== undefined) {
@@ -229,7 +229,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             props.accessDeniedScreen,
             redirectToLogin,
             userContext,
-            history,
+            navigate,
         ]
     );
 
@@ -262,7 +262,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                             setContext({ ...event.sessionContext, loading: false, invalidClaims });
                             return await SuperTokens.getInstanceOrThrow().redirectToUrl(
                                 failureRedirectInfo.redirectPath,
-                                history
+                                navigate
                             );
                         }
                         if (props.accessDeniedScreen !== undefined && failureRedirectInfo.failedClaim !== undefined) {
@@ -307,7 +307,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             return session.current.addEventListener(onHandleEvent);
         }
         return undefined;
-    }, [props, setContext, context.loading, userContext, history, redirectToLogin]);
+    }, [props, setContext, context.loading, userContext, navigate, redirectToLogin]);
 
     if (props.requireAuth !== false && (context.loading || !context.doesSessionExist)) {
         return null;
@@ -317,7 +317,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         return (
             <props.accessDeniedScreen
                 userContext={userContext}
-                history={history}
+                navigate={navigate}
                 validationError={context.accessDeniedValidatorError}
             />
         );

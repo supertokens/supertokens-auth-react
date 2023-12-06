@@ -124,14 +124,14 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         combinedPwlessDispatch,
         pwlessState,
         userContext,
-        props.history
+        props.navigate
     )!;
 
     const childProps = {
         passwordlessRecipe: props.recipe.passwordlessRecipe,
         thirdPartyRecipe: props.recipe.thirdPartyRecipe,
         config: props.recipe.config,
-        history: props.history,
+        navigate: props.navigate,
         commonState: combinedState,
         tpState,
         tpDispatch: combinedTPDispatch,

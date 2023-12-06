@@ -29,7 +29,7 @@ import { getFailureRedirectionInfo, normaliseSessionConfig } from "./utils";
 import type { NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
 import type {
-    CustomHistory,
+    Navigate,
     NormalisedAppInfo,
     NormalisedConfigWithAppInfoAndRecipeID,
     RecipeInitResult,
@@ -47,7 +47,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
     private redirectionHandlersFromAuthRecipes = new Map<
         string,
-        (ctx: any, history?: CustomHistory, queryParams?: Record<string, string>, userContext?: any) => Promise<void>
+        (ctx: any, navigate?: Navigate, queryParams?: Record<string, string>, userContext?: any) => Promise<void>
     >();
 
     constructor(
@@ -118,7 +118,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         rid: string,
         redirect: (
             context: any,
-            history?: CustomHistory,
+            navigate?: Navigate,
             queryParams?: Record<string, string>,
             userContext?: any
         ) => Promise<void>
@@ -136,14 +136,14 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
             };
         },
         userContext?: any,
-        history?: CustomHistory
+        navigate?: Navigate
     ): Promise<void> => {
         // First we check if there is an active session
         if (!(await this.doesSessionExist({ userContext }))) {
             // If there is none, we have no way of checking claims, so we redirect to the auth page
             // This can happen e.g.: if the user clicked on the email verification link in a browser without an active session
             return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                history,
+                navigate,
                 redirectBack: false,
             });
         }
@@ -179,7 +179,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
 
             // if redirectPath is string that means failed claim had callback that returns path, we redirect there otherwise continue
             if (failureRedirectInfo.redirectPath !== undefined) {
-                return SuperTokens.getInstanceOrThrow().redirectToUrl(failureRedirectInfo.redirectPath, history);
+                return SuperTokens.getInstanceOrThrow().redirectToUrl(failureRedirectInfo.redirectPath, navigate);
             }
         }
 
@@ -211,13 +211,13 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         const authRecipeRedirectHandler = this.redirectionHandlersFromAuthRecipes.get(redirectInfo!.rid);
         if (authRecipeRedirectHandler !== undefined) {
             // and call it with the saved info
-            return authRecipeRedirectHandler(redirectInfo!.successRedirectContext, history, undefined, userContext);
+            return authRecipeRedirectHandler(redirectInfo!.successRedirectContext, navigate, undefined, userContext);
         }
 
         // This should only happen if the configuration changed between saving the context and finishing the sign in process
         // or if the user navigated to a page where they were expected to have a stored redirectInfo but didn't
         // (e.g.: pressed back after email verification)
-        return this.redirect(redirectInfo!.successRedirectContext!, history, undefined, userContext);
+        return this.redirect(redirectInfo!.successRedirectContext!, navigate, undefined, userContext);
     };
 
     /**

@@ -43,8 +43,8 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
 
     const redirectToAuthWithHistory = useCallback(async () => {
-        await redirectToAuth({ redirectBack: false, history: props.history });
-    }, [props.history]);
+        await redirectToAuth({ redirectBack: false, navigate: props.navigate });
+    }, [props.navigate]);
 
     const modifiedRecipeImplementation = useMemo<RecipeInterface>(
         () => ({
@@ -62,9 +62,9 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
             undefined,
             userContext,
-            props.history
+            props.navigate
         );
-    }, [props.recipe, props.history, userContext]);
+    }, [props.recipe, props.navigate, userContext]);
 
     const fetchIsEmailVerified = useCallback(async () => {
         if (sessionContext.loading === true) {

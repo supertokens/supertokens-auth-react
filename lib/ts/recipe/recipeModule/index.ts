@@ -20,7 +20,7 @@ import { appendQueryParamsToURL } from "../../utils";
 import { BaseRecipeModule } from "./baseRecipeModule";
 
 import type { NormalisedConfig } from "./types";
-import type { CustomHistory } from "../../types";
+import type { Navigate } from "../../types";
 
 export default abstract class RecipeModule<
     GetRedirectionURLContextType,
@@ -30,7 +30,7 @@ export default abstract class RecipeModule<
 > extends BaseRecipeModule<GetRedirectionURLContextType, Action, OnHandleEventContextType, N> {
     redirect = async (
         context: GetRedirectionURLContextType,
-        history?: CustomHistory,
+        navigate?: Navigate,
         queryParams?: Record<string, string>,
         userContext?: any
     ): Promise<void> => {
@@ -48,7 +48,7 @@ export default abstract class RecipeModule<
         }
 
         redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
-        return SuperTokens.getInstanceOrThrow().redirectToUrl(redirectUrl, history);
+        return SuperTokens.getInstanceOrThrow().redirectToUrl(redirectUrl, navigate);
     };
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

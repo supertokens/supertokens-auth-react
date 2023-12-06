@@ -2,7 +2,7 @@ import { RecipeRouter } from "../recipeRouter";
 import SignInUpTheme from "./components/themes/signInUp";
 import Passwordless from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap, FeatureBaseProps, CustomHistory } from "../../types";
+import type { RecipeFeatureComponentMap, FeatureBaseProps, Navigate } from "../../types";
 import type { PropsWithChildren } from "react";
 export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     readonly recipeInstance: Passwordless;
@@ -31,7 +31,7 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     static SignInUp: (
         prop?: PropsWithChildren<{
             redirectOnSessionExists?: boolean;
-            history?: CustomHistory;
+            navigate?: Navigate;
             userContext?: any;
         }>
     ) => JSX.Element;
@@ -45,7 +45,7 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
 declare const SignInUp: (
     prop?: PropsWithChildren<{
         redirectOnSessionExists?: boolean;
-        history?: CustomHistory;
+        navigate?: Navigate;
         userContext?: any;
     }>
 ) => JSX.Element;

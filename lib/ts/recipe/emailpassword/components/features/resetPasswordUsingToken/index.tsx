@@ -57,7 +57,7 @@ const ResetPasswordUsingToken: React.FC<PropType> = (props) => {
                   onSignInClicked: () => {
                       void SuperTokens.getInstanceOrThrow().redirectToAuth({
                           show: "signin",
-                          history: props.history,
+                          navigate: props.navigate,
                           redirectBack: false,
                       });
                   },
@@ -68,7 +68,7 @@ const ResetPasswordUsingToken: React.FC<PropType> = (props) => {
         onBackButtonClicked: () =>
             SuperTokens.getInstanceOrThrow().redirectToAuth({
                 show: "signin",
-                history: props.history,
+                navigate: props.navigate,
                 redirectBack: false,
             }),
         error: error,
