@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
-## [0.36.0] - 2023-12-01
+## [0.36.0] - 2023-12-07
 
 ### Changes
 
@@ -50,6 +50,11 @@ function CustomSignInUp() {
     Changes:
 
     -   The need to manually set `props.featureState.successInAnotherTab` to `false` to avoid displaying the `CloseTabScreen` component has been eliminated.
+
+## [0.35.9] - 2023-12-06
+
+-   Fixes ThirdPartyEmailPassword rendering sign in/up switcher even with disabled email password. Instead it'll now render `SignInAndUpHeader_Override` in this case (overrideable as `ThirdPartySignInAndUpHeader`). Overriding `ThirdPartyEmailPasswordHeader_Override` should still cover all cases.
+-   Added a new prop to `ThirdPartyEmailPasswordHeader_Override` you can use to check if email password is enabled.
 
 ## [0.35.8] - 2023-11-26
 

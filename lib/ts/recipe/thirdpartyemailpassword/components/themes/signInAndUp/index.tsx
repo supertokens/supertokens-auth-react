@@ -53,7 +53,7 @@ const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> =
         (usesDynamicLoginMethods === false && hasProviders) || (loginMethods?.thirdparty.enabled && hasProviders);
     const emailPasswordEnabled =
         (props.emailPasswordRecipe !== undefined && usesDynamicLoginMethods === false) ||
-        loginMethods?.emailpassword.enabled;
+        loginMethods?.emailpassword.enabled === true;
 
     if (thirdPartyEnabled === false && emailPasswordEnabled === false) {
         return null;
@@ -65,6 +65,7 @@ const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> =
                 <Header
                     isSignUp={props.epState.isSignUp}
                     setIsSignUp={(isSignUp) => props.epDispatch({ type: isSignUp ? "setSignUp" : "setSignIn" })}
+                    emailPasswordEnabled={emailPasswordEnabled}
                 />
                 {props.commonState.error && <GeneralError error={props.commonState.error} />}
                 {props.tpChildProps !== undefined && thirdPartyEnabled && (
