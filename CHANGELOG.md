@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.35.9] - 2023-12-06
 
--   Fixes ThirdPartyEmailPassword rendering sign in/up switcher even with disabled email password. Instead it'll now render `SignInAndUpHeader` in this case (overrideable as `ThirdPartySignInAndUpHeader`)
+-   Fixes ThirdPartyEmailPassword rendering sign in/up switcher even with disabled email password. Instead it'll now render `SignInAndUpHeader_Override` in this case (overrideable as `ThirdPartySignInAndUpHeader`). Overriding `ThirdPartyEmailPasswordHeader_Override` should still cover all cases.
+-   Added a new prop to `ThirdPartyEmailPasswordHeader_Override` you can use to check if email password is enabled.
 
 ## [0.35.8] - 2023-11-26
 
