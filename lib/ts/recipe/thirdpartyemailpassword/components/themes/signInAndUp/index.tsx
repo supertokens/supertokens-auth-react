@@ -30,6 +30,7 @@ import { SignUpFooter } from "../../../../emailpassword/components/themes/signIn
 import { SignUpForm } from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
 import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
+import { SignInAndUpHeader } from "../../../../thirdparty/components/themes/signInAndUp/signInAndUpHeader";
 import { ThemeBase } from "../themeBase";
 
 import { Header } from "./header";
@@ -62,10 +63,14 @@ const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> =
     return (
         <div data-supertokens="container">
             <div data-supertokens="row">
-                <Header
-                    isSignUp={props.epState.isSignUp}
-                    setIsSignUp={(isSignUp) => props.epDispatch({ type: isSignUp ? "setSignUp" : "setSignIn" })}
-                />
+                {emailPasswordEnabled ? (
+                    <Header
+                        isSignUp={props.epState.isSignUp}
+                        setIsSignUp={(isSignUp) => props.epDispatch({ type: isSignUp ? "setSignUp" : "setSignIn" })}
+                    />
+                ) : (
+                    <SignInAndUpHeader />
+                )}
                 {props.commonState.error && <GeneralError error={props.commonState.error} />}
                 {props.tpChildProps !== undefined && thirdPartyEnabled && (
                     <ProvidersForm {...props.tpChildProps} featureState={props.tpState} dispatch={props.tpDispatch} />
