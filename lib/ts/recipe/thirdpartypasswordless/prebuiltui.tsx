@@ -20,7 +20,6 @@ import type {
 } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
-import type { PropsWithChildren } from "react";
 
 export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     static instance?: ThirdPartyPasswordlessPreBuiltUI;
@@ -55,7 +54,7 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return ThirdPartyPasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
@@ -68,7 +67,7 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     // Instance methods
     getFeatureComponent = (
         componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signInUp") {
@@ -170,12 +169,14 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
+    static SignInAndUp = (prop: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         this.getFeatureComponent("signInUp", prop);
-    static ThirdPartySignInAndUpCallback = (prop?: any) => this.getFeatureComponent("signinupcallback", prop);
+    static ThirdPartySignInAndUpCallback = (prop: FeatureBaseProps<{ userContext?: any }>) =>
+        this.getFeatureComponent("signinupcallback", prop);
 
     static SignInUpTheme = SignInUpTheme;
-    static PasswordlessLinkClicked = (prop?: any) => this.getFeatureComponent("linkClickedScreen", prop);
+    static PasswordlessLinkClicked = (prop: FeatureBaseProps<{ userContext?: any }>) =>
+        this.getFeatureComponent("linkClickedScreen", prop);
 }
 
 const SignInAndUp = ThirdPartyPasswordlessPreBuiltUI.SignInAndUp;

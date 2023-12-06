@@ -30,7 +30,7 @@ import SessionContext from "./sessionContext";
 import { getFailureRedirectionInfo } from "./utils";
 
 import type { LoadedSessionContext, RecipeEventWithSessionContext, SessionContextType } from "./types";
-import type { ReactComponentClass, SessionClaimValidator } from "../../types";
+import type { CustomHistory, ReactComponentClass, SessionClaimValidator } from "../../types";
 import type { PropsWithChildren } from "react";
 import type { ClaimValidationError } from "supertokens-web-js/recipe/session";
 
@@ -46,7 +46,7 @@ export type SessionAuthProps = {
 
     accessDeniedScreen?: ReactComponentClass<{
         userContext?: any;
-        history?: any;
+        history?: CustomHistory;
         validationError: ClaimValidationError;
     }>;
     onSessionExpired?: () => void;
@@ -75,7 +75,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
     // We store this here, to prevent the list of called hooks changing even if a history hook is added later to SuperTokens.
     const historyHookRef = useRef(UI.getReactRouterDomWithCustomHistory()?.useHistoryCustom);
 
-    let history: any | undefined;
+    let history: CustomHistory | undefined;
     try {
         if (historyHookRef.current) {
             history = historyHookRef.current();

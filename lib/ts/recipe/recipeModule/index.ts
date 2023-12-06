@@ -20,6 +20,7 @@ import { appendQueryParamsToURL } from "../../utils";
 import { BaseRecipeModule } from "./baseRecipeModule";
 
 import type { NormalisedConfig } from "./types";
+import type { CustomHistory } from "../../types";
 
 export default abstract class RecipeModule<
     GetRedirectionURLContextType,
@@ -29,10 +30,11 @@ export default abstract class RecipeModule<
 > extends BaseRecipeModule<GetRedirectionURLContextType, Action, OnHandleEventContextType, N> {
     redirect = async (
         context: GetRedirectionURLContextType,
-        history?: any,
-        queryParams?: Record<string, string>
+        history?: CustomHistory,
+        queryParams?: Record<string, string>,
+        userContext?: any
     ): Promise<void> => {
-        let redirectUrl = await this.getRedirectUrl(context);
+        let redirectUrl = await this.getRedirectUrl(context, userContext);
 
         if (redirectUrl === null) {
             logDebugMessage(
@@ -50,9 +52,9 @@ export default abstract class RecipeModule<
     };
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    getRedirectUrl = async (context: GetRedirectionURLContextType): Promise<string | null> => {
+    getRedirectUrl = async (context: GetRedirectionURLContextType, userContext?: any): Promise<string | null> => {
         // If getRedirectionURL provided by user.
-        const redirectUrl = await this.config.getRedirectionURL(context);
+        const redirectUrl = await this.config.getRedirectionURL(context, userContext);
         if (redirectUrl !== undefined) {
             return redirectUrl;
         }

@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import type { TranslationStore } from "./translation/translationHelpers";
-import type { SuperTokensConfig } from "./types";
+import type { CustomHistory, SuperTokensConfig } from "./types";
 export default class SuperTokensAPIWrapper {
     static SuperTokensWrapper: import("react").FC<
         import("react").PropsWithChildren<{
@@ -12,7 +12,7 @@ export default class SuperTokensAPIWrapper {
     static loadTranslation(store: TranslationStore): void;
     static redirectToAuth: (options?: {
         show?: "signin" | "signup";
-        history?: any;
+        history?: CustomHistory;
         queryParams?: any;
         redirectBack?: boolean;
     }) => Promise<void>;
@@ -24,7 +24,7 @@ export declare const changeLanguage: typeof SuperTokensAPIWrapper.changeLanguage
 export declare const loadTranslation: typeof SuperTokensAPIWrapper.loadTranslation;
 export declare const redirectToAuth: (options?: {
     show?: "signin" | "signup";
-    history?: any;
+    history?: CustomHistory;
     queryParams?: any;
     redirectBack?: boolean;
 }) => Promise<void>;

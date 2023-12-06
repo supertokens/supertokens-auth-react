@@ -40,7 +40,7 @@ export declare type SuperTokensConfig = {
         translationFunc?: TranslationFunc;
     };
     enableDebugLogs?: boolean;
-    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined | null>;
+    getRedirectionURL?: (context: GetRedirectionURLContext, userContext?: any) => Promise<string | undefined | null>;
 };
 export declare type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "signOut">;
 export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
@@ -121,9 +121,11 @@ export declare type NormalisedBaseConfig = {
 export declare type ThemeBaseProps = {
     styleFromInit?: string;
 };
-export declare type FeatureBaseProps = PropsWithChildren<{
-    history?: any;
-}>;
+export declare type FeatureBaseProps<T = {}> = PropsWithChildren<
+    {
+        history?: CustomHistory;
+    } & T
+>;
 export declare type Awaited<T> = T extends null | undefined
     ? T
     : T extends object & {
@@ -133,3 +135,14 @@ export declare type Awaited<T> = T extends null | undefined
         ? V
         : never
     : T;
+interface NavigateFunction {
+    (to: string): void;
+    (delta: number): void;
+}
+export declare type CustomHistory =
+    | {
+          push: (path: string) => void;
+          goBack: () => void;
+      }
+    | NavigateFunction;
+export {};

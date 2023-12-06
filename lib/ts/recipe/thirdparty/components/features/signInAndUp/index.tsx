@@ -110,7 +110,7 @@ export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChi
     }, [recipe, recipeImplementation]);
 }
 
-type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap };
+type PropType = FeatureBaseProps<{ recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap }>;
 
 export const SignInAndUpFeature: React.FC<PropType> = (props) => {
     const [state, dispatch] = useFeatureReducer();

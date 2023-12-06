@@ -37,10 +37,10 @@ import type { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 
-type PropType = FeatureBaseProps & {
+type PropType = FeatureBaseProps<{
     recipe: Recipe;
     useComponentOverrides: () => ComponentOverrideMap;
-};
+}>;
 
 const SignInAndUp: React.FC<PropType> = (props) => {
     const [tpState, tpDispatch] = useThirdPartyFeatureReducer();

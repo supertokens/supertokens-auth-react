@@ -22,7 +22,6 @@ import type {
 } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
-import type { PropsWithChildren } from "react";
 
 export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     static instance?: ThirdPartyEmailPasswordPreBuiltUI;
@@ -57,7 +56,7 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "signinup" | "signinupcallback" | "resetpassword",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
@@ -102,7 +101,7 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     };
     getFeatureComponent = (
         componentName: "signinup" | "signinupcallback" | "resetpassword",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signinup") {
@@ -163,9 +162,11 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static ThirdPartySignInAndUpCallback = (prop?: any) => this.getFeatureComponent("signinupcallback", prop);
-    static ResetPasswordUsingToken = (prop?: any) => this.getFeatureComponent("resetpassword", prop);
-    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
+    static ThirdPartySignInAndUpCallback = (prop: FeatureBaseProps<{ userContext?: any }>) =>
+        this.getFeatureComponent("signinupcallback", prop);
+    static ResetPasswordUsingToken = (prop: FeatureBaseProps<{ userContext?: any }>) =>
+        this.getFeatureComponent("resetpassword", prop);
+    static SignInAndUp = (prop: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         this.getFeatureComponent("signinup", prop);
     static ThirdPartySignInAndUpCallbackTheme = ThirdPartySignInAndUpCallbackTheme;
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;

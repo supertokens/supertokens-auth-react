@@ -30,10 +30,10 @@ import type { FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 
-type PropType = FeatureBaseProps & {
+type PropType = FeatureBaseProps<{
     recipe: Recipe;
     useComponentOverrides: () => ComponentOverrideMap;
-};
+}>;
 
 const ResetPasswordUsingToken: React.FC<PropType> = (props) => {
     const token = getQueryParams("token");

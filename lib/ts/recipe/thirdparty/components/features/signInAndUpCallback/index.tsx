@@ -31,7 +31,7 @@ import type { Awaited, FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap, CustomStateProperties } from "../../../types";
 
-type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap };
+type PropType = FeatureBaseProps<{ recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap }>;
 
 const SignInAndUpCallback: React.FC<PropType> = (props) => {
     const userContext = useUserContext();

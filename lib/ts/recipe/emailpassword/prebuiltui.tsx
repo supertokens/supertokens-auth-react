@@ -21,7 +21,6 @@ import type {
 } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
-import type { PropsWithChildren } from "react";
 
 export class EmailPasswordPreBuiltUI extends RecipeRouter {
     static instance?: EmailPasswordPreBuiltUI;
@@ -46,7 +45,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "signinup" | "resetpassword",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
@@ -87,7 +86,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
     };
     getFeatureComponent = (
         componentName: "signinup" | "resetpassword",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signinup") {
@@ -146,9 +145,9 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
+    static SignInAndUp = (prop: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
         EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", prop);
-    static ResetPasswordUsingToken = (prop?: any) =>
+    static ResetPasswordUsingToken = (prop: FeatureBaseProps<{ userContext?: any }>) =>
         EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("resetpassword", prop);
 
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;

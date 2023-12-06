@@ -3,7 +3,7 @@ import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
 import RecipeModule from "../recipeModule";
 import type { NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType } from "./types";
-import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult } from "../../types";
+import type { CustomHistory, NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult } from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import type { SessionClaim } from "supertokens-web-js/recipe/session";
 export default class Session extends RecipeModule<unknown, unknown, unknown, NormalisedSessionConfig> {
@@ -45,7 +45,15 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
      * @returns Function to remove event listener
      */
     addEventListener: (listener: (ctx: RecipeEventWithSessionContext) => void) => () => void;
-    addAuthRecipeRedirectionHandler: (rid: string, redirect: (ctx: any, history: any) => Promise<void>) => void;
+    addAuthRecipeRedirectionHandler: (
+        rid: string,
+        redirect: (
+            context: any,
+            history?: CustomHistory,
+            queryParams?: Record<string, string>,
+            userContext?: any
+        ) => Promise<void>
+    ) => void;
     validateGlobalClaimsAndHandleSuccessRedirection: (
         redirectInfo?: {
             rid: string;
@@ -56,7 +64,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
             };
         },
         userContext?: any,
-        history?: any
+        history?: CustomHistory
     ) => Promise<void>;
     /**
      * This should only get called if validateGlobalClaimsAndHandleSuccessRedirection couldn't get a redirectInfo

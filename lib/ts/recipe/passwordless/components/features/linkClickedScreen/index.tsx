@@ -33,7 +33,7 @@ import type { FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap } from "../../../types";
 
-type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap };
+type PropType = FeatureBaseProps<{ recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap }>;
 
 const LinkClickedScreen: React.FC<PropType> = (props) => {
     const userContext = useUserContext();

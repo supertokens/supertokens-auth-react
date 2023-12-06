@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import Session, { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { SignInUp, SignInUpTheme } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
+import * as reactRouterDom from "react-router-dom";
 
 const CustomSignInUpTheme: typeof SignInUpTheme = (props) => {
     let [showDefaultUI, setShowDefaultUI] = useState(false);
@@ -42,8 +43,10 @@ const CustomSignInUpTheme: typeof SignInUpTheme = (props) => {
 };
 
 export default function PhoneVerification() {
+    const history = reactRouterDom.useNavigate();
+
     return (
-        <SignInUp redirectOnSessionExists={false}>
+        <SignInUp redirectOnSessionExists={false} history={history}>
             {
                 // @ts-ignore We ignore the error about missing props, since they'll be set by the feature component
                 <CustomSignInUpTheme />

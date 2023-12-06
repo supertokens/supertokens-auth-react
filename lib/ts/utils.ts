@@ -22,7 +22,7 @@ import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "./constants";
 
 import type { FormFieldError } from "./recipe/emailpassword/types";
-import type { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
+import type { APIFormField, AppInfoUserInput, CustomHistory, NormalisedAppInfo, NormalisedFormField } from "./types";
 
 /*
  * getRecipeIdFromPath
@@ -226,12 +226,12 @@ export function redirectWithFullPageReload(to: string): void {
     WindowHandlerReference.getReferenceOrThrow().windowHandler.location.setHref(to);
 }
 
-export function redirectWithHistory(to: string, history: any): void {
+export function redirectWithHistory(to: string, history: CustomHistory): void {
     if (to.trim() === "") {
         to = "/";
     }
 
-    if (history.push !== undefined) {
+    if ("push" in history) {
         // we are using react-router-dom that is before v6
         history.push(to);
     } else {

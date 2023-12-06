@@ -13,7 +13,7 @@ import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
 import EmailVerificationRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap } from "../../types";
+import type { FeatureBaseProps, RecipeFeatureComponentMap } from "../../types";
 
 export class EmailVerificationPreBuiltUI extends RecipeRouter {
     static instance?: EmailVerificationPreBuiltUI;
@@ -67,7 +67,7 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
     getFeatureComponent = (
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _: "emailverification",
-        props: any,
+        props: FeatureBaseProps<{ userContext?: any }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         return (
@@ -115,7 +115,7 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static EmailVerification = (props?: any) =>
+    static EmailVerification = (props: FeatureBaseProps<{ userContext?: any }>) =>
         EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("emailverification", props);
     static EmailVerificationTheme = EmailVerificationTheme;
 }

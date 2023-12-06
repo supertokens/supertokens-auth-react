@@ -1,11 +1,12 @@
 import React from "react";
 import type AuthRecipe from ".";
 import type { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
+import type { CustomHistory } from "../../types";
 import type { PropsWithChildren } from "react";
 declare type Props<T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, R | OnHandleEventContext>> = {
     onSessionAlreadyExists?: () => void;
     authRecipe: AuthRecipe<T, S, R, N>;
-    history: any;
+    history?: CustomHistory;
 };
 /**
  * AuthWidgetWrapper shows the children component only if no session exists,

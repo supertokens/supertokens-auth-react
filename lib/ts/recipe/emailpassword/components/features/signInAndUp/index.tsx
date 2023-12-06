@@ -30,7 +30,7 @@ import Session from "../../../../session/recipe";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
 
-import type { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
+import type { CustomHistory, FeatureBaseProps, NormalisedFormField } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { SignInAndUpState } from "../../../types";
 import type {
@@ -93,20 +93,20 @@ export function useChildProps(
     recipe: Recipe,
     state: SignInAndUpState,
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
-    history: any
+    history?: CustomHistory
 ): EmailPasswordSignInAndUpChildProps;
 export function useChildProps(
     recipe: Recipe | undefined,
     state: SignInAndUpState,
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
-    history: any
+    history?: CustomHistory
 ): EmailPasswordSignInAndUpChildProps | undefined;
 
 export function useChildProps(
     recipe: Recipe | undefined,
     state: SignInAndUpState,
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
-    history: any
+    history?: CustomHistory
 ): EmailPasswordSignInAndUpChildProps | undefined {
     const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe), [recipe]);
     const userContext = useUserContext();
@@ -158,7 +158,7 @@ export function useChildProps(
             clearError: () => dispatch({ type: "setError", error: undefined }),
             onError: (error: string) => dispatch({ type: "setError", error }),
             onSuccess: onSignInSuccess,
-            forgotPasswordClick: () => recipe.redirect({ action: "RESET_PASSWORD" }, history),
+            forgotPasswordClick: () => recipe.redirect({ action: "RESET_PASSWORD" }, history, userContext),
         };
 
         const signUpForm = {
@@ -181,10 +181,10 @@ export function useChildProps(
 }
 
 export const SignInAndUpFeature: React.FC<
-    FeatureBaseProps & {
+    FeatureBaseProps<{
         recipe: Recipe;
         useComponentOverrides: () => ComponentOverrideMap;
-    }
+    }>
 > = (props) => {
     const [state, dispatch] = useFeatureReducer(props.recipe);
     const childProps = useChildProps(props.recipe, state, dispatch, props.history);

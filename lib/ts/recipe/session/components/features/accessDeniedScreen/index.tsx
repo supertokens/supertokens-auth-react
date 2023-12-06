@@ -11,13 +11,13 @@ import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 
 const AccessDeniedScreen: React.FC<
-    FeatureBaseProps & {
+    FeatureBaseProps<{
         recipe: Recipe;
         useComponentOverrides: () => ComponentOverrideMap;
-    }
+    }>
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
-    const history = UI.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
+    const history = props.history ?? UI.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>

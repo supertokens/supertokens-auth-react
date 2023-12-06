@@ -1,7 +1,7 @@
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import type { FormFieldError } from "./recipe/emailpassword/types";
-import type { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
+import type { APIFormField, AppInfoUserInput, CustomHistory, NormalisedAppInfo, NormalisedFormField } from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
 export declare function clearQueryParams(paramNames: string[]): void;
 export declare function clearErrorQueryParam(): void;
@@ -19,7 +19,7 @@ export declare function appendQueryParamsToURL(stringUrl: string, queryParams?: 
 export declare function appendTrailingSlashToURL(stringUrl: string): string;
 export declare function matchRecipeIdUsingQueryParams(recipeId: string): () => boolean;
 export declare function redirectWithFullPageReload(to: string): void;
-export declare function redirectWithHistory(to: string, history: any): void;
+export declare function redirectWithHistory(to: string, history: CustomHistory): void;
 export declare function getOriginOfPage(): NormalisedURLDomain;
 export declare function getLocalStorage(key: string): Promise<string | null>;
 export declare function setLocalStorage(key: string, value: string): Promise<void>;

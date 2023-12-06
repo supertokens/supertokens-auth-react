@@ -29,7 +29,7 @@ import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import SignInUpThemeWrapper from "../../themes/signInUp";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
-import type { FeatureBaseProps } from "../../../../../types";
+import type { CustomHistory, FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap } from "../../../types";
 import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps, NormalisedConfig } from "../../../types";
@@ -142,14 +142,14 @@ export function useChildProps(
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
     userContext: any,
-    history: any
+    history?: CustomHistory
 ): SignInUpChildProps;
 export function useChildProps(
     recipe: Recipe | undefined,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
     userContext: any,
-    history: any
+    history?: CustomHistory
 ): SignInUpChildProps | undefined;
 
 export function useChildProps(
@@ -157,7 +157,7 @@ export function useChildProps(
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
     userContext: any,
-    history: any
+    history?: CustomHistory
 ): SignInUpChildProps | undefined {
     const recipeImplementation = React.useMemo(
         () => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe, recipe.config, dispatch),
@@ -190,10 +190,10 @@ export function useChildProps(
 }
 
 export const SignInUpFeature: React.FC<
-    FeatureBaseProps & {
+    FeatureBaseProps<{
         recipe: Recipe;
         useComponentOverrides: () => ComponentOverrideMap;
-    }
+    }>
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
     const userContext = useUserContext();

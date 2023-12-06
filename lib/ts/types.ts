@@ -98,7 +98,7 @@ export type SuperTokensConfig = {
         translationFunc?: TranslationFunc;
     };
     enableDebugLogs?: boolean;
-    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined | null>;
+    getRedirectionURL?: (context: GetRedirectionURLContext, userContext?: any) => Promise<string | undefined | null>;
 };
 
 export type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "signOut">;
@@ -329,12 +329,12 @@ export type ThemeBaseProps = {
     styleFromInit?: string;
 };
 
-export type FeatureBaseProps = PropsWithChildren<{
-    /*
-     * History provided by react-router
-     */
-    history?: any;
-}>;
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type FeatureBaseProps<T = {}> = PropsWithChildren<
+    {
+        history?: CustomHistory;
+    } & T
+>;
 
 // Built-in in later versions of TS
 export type Awaited<T> = T extends null | undefined
@@ -345,3 +345,17 @@ export type Awaited<T> = T extends null | undefined
         ? V // unwrap the value (this is recursive in the built-in version, but that needs features from a later version to work)
         : never // the argument to `then` was not callable
     : T; // non-object or non-thenable
+
+// This history interface is inspired by the signatures of react-router-dom v5 history and navigate in react-router-dom v6.
+// This also allows users to use any other history object with a matching signature.
+interface NavigateFunction {
+    (to: string): void;
+    (delta: number): void;
+}
+
+export type CustomHistory =
+    | {
+          push: (path: string) => void;
+          goBack: () => void;
+      }
+    | NavigateFunction;

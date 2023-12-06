@@ -42,7 +42,7 @@ import type RecipeModule from "./recipe/recipeModule";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import type { GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } from "./types";
+import type { CustomHistory, GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } from "./types";
 
 /*
  * Class.
@@ -167,9 +167,9 @@ export default class SuperTokens {
         this.languageTranslations.translationEventSource.emit("TranslationLoaded", store);
     }
 
-    async getRedirectUrl(context: GetRedirectionURLContext): Promise<string | null> {
+    async getRedirectUrl(context: GetRedirectionURLContext, userContext?: any): Promise<string | null> {
         if (this.userGetRedirectionURL) {
-            const userRes = await this.userGetRedirectionURL(context);
+            const userRes = await this.userGetRedirectionURL(context, userContext);
             if (userRes !== undefined) {
                 return userRes;
             }
@@ -183,7 +183,7 @@ export default class SuperTokens {
 
     redirectToAuth = async (options: {
         show?: "signin" | "signup";
-        history?: any;
+        history?: CustomHistory;
         queryParams?: any;
         redirectBack: boolean;
     }): Promise<void> => {
@@ -208,7 +208,7 @@ export default class SuperTokens {
         return this.redirectToUrl(redirectUrl, options.history);
     };
 
-    redirectToUrl = async (redirectUrl: string, history?: any): Promise<void> => {
+    redirectToUrl = async (redirectUrl: string, history?: CustomHistory): Promise<void> => {
         doRedirection(this.appInfo, redirectUrl, history);
     };
 
@@ -225,7 +225,7 @@ export default class SuperTokens {
     }
 }
 
-export function doRedirection(appInfo: NormalisedAppInfo, redirectUrl: string, history?: any) {
+export function doRedirection(appInfo: NormalisedAppInfo, redirectUrl: string, history?: CustomHistory) {
     try {
         new URL(redirectUrl); // If full URL, no error thrown, skip in app redirection.
     } catch (e) {
