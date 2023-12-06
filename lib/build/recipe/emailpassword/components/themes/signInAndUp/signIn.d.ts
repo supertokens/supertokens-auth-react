@@ -1,7 +1,7 @@
 /// <reference types="react" />
 export declare const SignIn: import("react").ComponentType<
     import("../../../../../types").ThemeBaseProps & {
-        formFields: Omit<import("../../../types").FormFieldThemeProps, "inputComponent">[];
+        formFields: import("../../../types").FormFieldThemeProps[];
         error: string | undefined;
     } & {
         recipeImplementation: import("supertokens-web-js/recipe/emailpassword").RecipeInterface;
@@ -10,6 +10,6 @@ export declare const SignIn: import("react").ComponentType<
         config: import("../../../types").NormalisedConfig;
         signUpClicked?: (() => void) | undefined;
         forgotPasswordClick: () => void;
-        onSuccess: (result: { user: import("supertokens-web-js/types").User }) => void;
+        onSuccess: () => void;
     }
 >;
