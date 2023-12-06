@@ -15,7 +15,7 @@ Here's an example of how to use this:
 
 ```tsx
 EmailPassword.init({
-    getRedirectionURL: async (context) => {
+    getRedirectionURL: async (context, userContext) => {
         if (context.action === "SUCCESS") {
             return null;
         }
@@ -23,6 +23,20 @@ EmailPassword.init({
         return undefined;
     },
 });
+```
+
+-   `getRedirectionURL` now receives `userContext` as the second argument.
+
+-   The `PreBuiltUI` components now accept a `navigate` prop, internally utilized by SuperTokens for redirection. This becomes handy when manually rendering the component and desiring client-side navigation instead of a full-page refresh for any redirection. Here's an example using `react-router-dom@v6`:
+
+```tsx
+import { SignInUp } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
+import { useNavigate } from "react-router-dom";
+
+function CustomSignInUp() {
+    const navigate = useNavigate();
+    return <SignInUp navigate={navigate} />;
+}
 ```
 
 ### Breaking changes
