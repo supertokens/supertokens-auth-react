@@ -36,17 +36,18 @@ const priorityOrder: {
 
 function chooseComponentBasedOnFirstFactors(
     firstFactors: string[],
-    routeComponents: ComponentWithRecipeAndMatchingMethod[]
+    routeComponents: ComponentWithRecipeAndMatchingMethod[],
+    allowSubRecipeComp: boolean
 ) {
     let fallbackRid;
     let fallbackComponent;
+    let subRecipeRid;
+    let subRecipeComponent;
     // We first try to find an exact match, and fall back on something that covers all factors (but maybe more)
     for (const { rid, factorsProvided } of priorityOrder) {
         if (firstFactors.every((factor) => factorsProvided.includes(factor))) {
             const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
             if (matchingComp) {
-                // This means that this gets overwritten by items lower in the prios list.
-                // This is intentional since this way we end up with the most specific recipe that covers all required factrors (pwless instead of tppwless)
                 fallbackRid = rid;
                 fallbackComponent = matchingComp;
                 if (firstFactors.length === factorsProvided.length) {
@@ -54,10 +55,23 @@ function chooseComponentBasedOnFirstFactors(
                     return matchingComp;
                 }
             }
+        } else if (allowSubRecipeComp && factorsProvided.some((factor) => firstFactors.includes(factor))) {
+            const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
+            if (matchingComp) {
+                subRecipeRid = rid;
+                subRecipeComponent = matchingComp;
+            }
         }
     }
 
     if (fallbackComponent === undefined) {
+        if (subRecipeComponent) {
+            logDebugMessage(
+                `Rendering ${subRecipeRid} because it overlaps factors: ${firstFactors} and we are not rendering the auth page`
+            );
+            return subRecipeComponent;
+        }
+
         throw new Error("No enabled recipes overlap with the requested firstFactors: " + firstFactors);
     }
 
@@ -75,6 +89,7 @@ export abstract class RecipeRouter {
         dynamicLoginMethods?: GetLoginMethodsResponseNormalized
     ): ComponentWithRecipeAndMatchingMethod | undefined {
         const path = normalisedUrl.getAsStringDangerous();
+        const isNonAuthPage = path !== SuperTokens.getInstanceOrThrow().appInfo.websiteBasePath.getAsStringDangerous();
 
         const routeComponents = preBuiltUIList.reduce((components, c) => {
             const routes = c.getPathsToFeatureComponentWithRecipeIdMap();
@@ -119,7 +134,11 @@ export abstract class RecipeRouter {
             }
 
             if (mfaRecipe && mfaRecipe.config.firstFactors !== undefined) {
-                return chooseComponentBasedOnFirstFactors(mfaRecipe.config.firstFactors, routeComponents);
+                return chooseComponentBasedOnFirstFactors(
+                    mfaRecipe.config.firstFactors,
+                    routeComponents,
+                    isNonAuthPage
+                );
             } else {
                 return defaultComp;
             }
@@ -141,7 +160,7 @@ export abstract class RecipeRouter {
         }
 
         if (dynamicLoginMethods.firstFactors !== undefined) {
-            return chooseComponentBasedOnFirstFactors(dynamicLoginMethods.firstFactors, routeComponents);
+            return chooseComponentBasedOnFirstFactors(dynamicLoginMethods.firstFactors, routeComponents, isNonAuthPage);
         }
 
         // We may get here if the app is using an older BE that doesn't support MFA
