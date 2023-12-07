@@ -30,7 +30,7 @@ import Session from "../../../../session/recipe";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
 
-import type { Navigate, FeatureBaseProps, NormalisedFormField } from "../../../../../types";
+import type { Navigate, FeatureBaseProps, NormalisedFormField, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { SignInAndUpState } from "../../../types";
 import type {
@@ -158,7 +158,7 @@ export function useChildProps(
             clearError: () => dispatch({ type: "setError", error: undefined }),
             onError: (error: string) => dispatch({ type: "setError", error }),
             onSuccess: onSignInSuccess,
-            forgotPasswordClick: () => recipe.redirect({ action: "RESET_PASSWORD" }, navigate, userContext),
+            forgotPasswordClick: () => recipe.redirect({ action: "RESET_PASSWORD" }, navigate, undefined, userContext),
         };
 
         const signUpForm = {
@@ -230,7 +230,7 @@ const getModifiedRecipeImplementation = (origImpl: RecipeInterface): RecipeInter
 function getThemeSignUpFeatureFormFields(
     formFields: NormalisedFormField[],
     recipe: Recipe,
-    userContext: any
+    userContext: UserContext
 ): FormFieldThemeProps[] {
     const emailPasswordOnly = formFields.length === 2;
     return formFields.map((field) => ({

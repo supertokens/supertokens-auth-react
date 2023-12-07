@@ -1,7 +1,7 @@
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { getNormalisedUserContext, isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { PasswordlessPreBuiltUI } from "../passwordless/prebuiltui";
 import { RecipeRouter } from "../recipeRouter";
@@ -19,7 +19,7 @@ import type {
     PreAndPostAPIHookAction,
 } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
 
 export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     static instance?: ThirdPartyPasswordlessPreBuiltUI;
@@ -54,7 +54,7 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
-        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }>,
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return ThirdPartyPasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
@@ -67,7 +67,7 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     // Instance methods
     getFeatureComponent = (
         componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
-        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }>,
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signInUp") {
@@ -169,14 +169,22 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static SignInAndUp = (prop: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
-        this.getFeatureComponent("signInUp", prop);
-    static ThirdPartySignInAndUpCallback = (prop: FeatureBaseProps<{ userContext?: any }>) =>
-        this.getFeatureComponent("signinupcallback", prop);
+    static SignInAndUp = (
+        prop: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }> = {}
+    ) => {
+        const userContext = getNormalisedUserContext(prop.userContext);
+        return this.getFeatureComponent("signInUp", { ...prop, userContext });
+    };
+    static ThirdPartySignInAndUpCallback = (prop: FeatureBaseProps<{ userContext?: UserContext }>) => {
+        const userContext = getNormalisedUserContext(prop.userContext);
+        return this.getFeatureComponent("signinupcallback", { ...prop, userContext });
+    };
 
     static SignInUpTheme = SignInUpTheme;
-    static PasswordlessLinkClicked = (prop: FeatureBaseProps<{ userContext?: any }>) =>
-        this.getFeatureComponent("linkClickedScreen", prop);
+    static PasswordlessLinkClicked = (prop: FeatureBaseProps<{ userContext?: UserContext }>) => {
+        const userContext = getNormalisedUserContext(prop.userContext);
+        return this.getFeatureComponent("linkClickedScreen", { ...prop, userContext });
+    };
 }
 
 const SignInAndUp = ThirdPartyPasswordlessPreBuiltUI.SignInAndUp;

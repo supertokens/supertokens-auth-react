@@ -5,7 +5,7 @@ import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ThirdPartyEmailPassword from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
 export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     readonly recipeInstance: ThirdPartyEmailPassword;
     static instance?: ThirdPartyEmailPasswordPreBuiltUI;
@@ -18,7 +18,7 @@ export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
         componentName: "signinup" | "signinupcallback" | "resetpassword",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext?: any;
+            userContext: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
@@ -27,25 +27,25 @@ export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
         componentName: "signinup" | "signinupcallback" | "resetpassword",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext?: any;
+            userContext: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static reset(): void;
     static ThirdPartySignInAndUpCallback: (
         prop: FeatureBaseProps<{
-            userContext?: any;
+            userContext?: UserContext | undefined;
         }>
     ) => JSX.Element;
     static ResetPasswordUsingToken: (
         prop: FeatureBaseProps<{
-            userContext?: any;
+            userContext?: UserContext | undefined;
         }>
     ) => JSX.Element;
     static SignInAndUp: (
         prop?: FeatureBaseProps<{
-            redirectOnSessionExists?: boolean;
-            userContext?: any;
+            redirectOnSessionExists?: boolean | undefined;
+            userContext?: UserContext | undefined;
         }>
     ) => JSX.Element;
     static ThirdPartySignInAndUpCallbackTheme: (props: {
@@ -56,18 +56,18 @@ export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
 }
 declare const ThirdPartySignInAndUpCallback: (
     prop: FeatureBaseProps<{
-        userContext?: any;
+        userContext?: UserContext | undefined;
     }>
 ) => JSX.Element;
 declare const ResetPasswordUsingToken: (
     prop: FeatureBaseProps<{
-        userContext?: any;
+        userContext?: UserContext | undefined;
     }>
 ) => JSX.Element;
 declare const SignInAndUp: (
     prop?: FeatureBaseProps<{
-        redirectOnSessionExists?: boolean;
-        userContext?: any;
+        redirectOnSessionExists?: boolean | undefined;
+        userContext?: UserContext | undefined;
     }>
 ) => JSX.Element;
 export {

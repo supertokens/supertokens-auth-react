@@ -4,7 +4,7 @@ import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsing
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import EmailPassword from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
 export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
     readonly recipeInstance: EmailPassword;
     static instance?: EmailPasswordPreBuiltUI;
@@ -15,7 +15,7 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
         componentName: "signinup" | "resetpassword",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext?: any;
+            userContext: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
@@ -24,20 +24,20 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
         componentName: "signinup" | "resetpassword",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext?: any;
+            userContext: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static reset(): void;
     static SignInAndUp: (
         prop?: FeatureBaseProps<{
-            redirectOnSessionExists?: boolean;
-            userContext?: any;
+            redirectOnSessionExists?: boolean | undefined;
+            userContext?: UserContext | undefined;
         }>
     ) => JSX.Element;
     static ResetPasswordUsingToken: (
         prop: FeatureBaseProps<{
-            userContext?: any;
+            userContext?: UserContext | undefined;
         }>
     ) => JSX.Element;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
@@ -45,13 +45,13 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
 }
 declare const SignInAndUp: (
     prop?: FeatureBaseProps<{
-        redirectOnSessionExists?: boolean;
-        userContext?: any;
+        redirectOnSessionExists?: boolean | undefined;
+        userContext?: UserContext | undefined;
     }>
 ) => JSX.Element;
 declare const ResetPasswordUsingToken: (
     prop: FeatureBaseProps<{
-        userContext?: any;
+        userContext?: UserContext | undefined;
     }>
 ) => JSX.Element;
 export { SignInAndUp, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme, SignInAndUpTheme };

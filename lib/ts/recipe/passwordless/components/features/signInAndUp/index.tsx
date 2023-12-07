@@ -29,7 +29,7 @@ import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import SignInUpThemeWrapper from "../../themes/signInUp";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
-import type { Navigate, FeatureBaseProps } from "../../../../../types";
+import type { Navigate, FeatureBaseProps, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap } from "../../../types";
 import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps, NormalisedConfig } from "../../../types";
@@ -38,7 +38,7 @@ import type { User } from "supertokens-web-js/types";
 
 export const useFeatureReducer = (
     recipeImpl: RecipeInterface | undefined,
-    userContext: any
+    userContext: UserContext
 ): [SignInUpState, React.Dispatch<PasswordlessSignInUpAction>] => {
     const [state, dispatch] = React.useReducer(
         (oldState: SignInUpState, action: PasswordlessSignInUpAction) => {
@@ -141,14 +141,14 @@ export function useChildProps(
     recipe: Recipe,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
-    userContext: any,
+    userContext: UserContext,
     navigate?: Navigate
 ): SignInUpChildProps;
 export function useChildProps(
     recipe: Recipe | undefined,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
-    userContext: any,
+    userContext: UserContext,
     navigate?: Navigate
 ): SignInUpChildProps | undefined;
 
@@ -156,7 +156,7 @@ export function useChildProps(
     recipe: Recipe | undefined,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
-    userContext: any,
+    userContext: UserContext,
     navigate?: Navigate
 ): SignInUpChildProps | undefined {
     const recipeImplementation = React.useMemo(

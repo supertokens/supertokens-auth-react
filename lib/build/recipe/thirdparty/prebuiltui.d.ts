@@ -5,7 +5,7 @@ import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallbac
 import ThirdParty from "./recipe";
 import type { NormalisedConfig } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
 export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
     readonly recipeInstance: ThirdParty;
     static instance?: ThirdPartyPreBuiltUI;
@@ -16,7 +16,7 @@ export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
         componentName: "signinup" | "signinupcallback",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext?: any;
+            userContext: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
@@ -25,38 +25,38 @@ export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
         componentName: "signinup" | "signinupcallback",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext?: any;
+            userContext: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static reset(): void;
     static SignInAndUp: (
         prop?: FeatureBaseProps<{
-            redirectOnSessionExists?: boolean;
-            userContext?: any;
+            redirectOnSessionExists?: boolean | undefined;
+            userContext?: UserContext | undefined;
         }>
     ) => JSX.Element;
     static SignInAndUpCallback: (
         prop: FeatureBaseProps<{
-            userContext?: any;
+            userContext?: UserContext | undefined;
         }>
     ) => JSX.Element;
     static SignInAndUpTheme: import("react").FC<
         import("./types").SignInAndUpThemeProps & {
-            userContext?: any;
+            userContext?: UserContext | undefined;
         }
     >;
     static SignInAndUpCallbackTheme: (props: { config: NormalisedConfig }) => JSX.Element;
 }
 declare const SignInAndUp: (
     prop?: FeatureBaseProps<{
-        redirectOnSessionExists?: boolean;
-        userContext?: any;
+        redirectOnSessionExists?: boolean | undefined;
+        userContext?: UserContext | undefined;
     }>
 ) => JSX.Element;
 declare const SignInAndUpCallback: (
     prop: FeatureBaseProps<{
-        userContext?: any;
+        userContext?: UserContext | undefined;
     }>
 ) => JSX.Element;
 export { SignInAndUp, SignInAndUpCallback, SignInAndUpCallbackTheme, SignInAndUpTheme };

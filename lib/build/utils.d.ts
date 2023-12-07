@@ -1,7 +1,14 @@
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import type { FormFieldError } from "./recipe/emailpassword/types";
-import type { APIFormField, AppInfoUserInput, Navigate, NormalisedAppInfo, NormalisedFormField } from "./types";
+import type {
+    APIFormField,
+    AppInfoUserInput,
+    Navigate,
+    NormalisedAppInfo,
+    NormalisedFormField,
+    UserContext,
+} from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
 export declare function clearQueryParams(paramNames: string[]): void;
 export declare function clearErrorQueryParam(): void;
@@ -33,7 +40,7 @@ export declare function setFrontendCookie(
     value: string | undefined,
     scope: string | undefined
 ): Promise<void>;
-export declare function getNormalisedUserContext(userContext?: any): any;
+export declare function getNormalisedUserContext(userContext?: UserContext): UserContext;
 /**
  * This function handles calling APIs that should only be called once during mount (mostly on mount of a route/feature component).
  * It's split into multiple callbacks (fetch + handleResponse/handleError) because we expect fetch to take longer and

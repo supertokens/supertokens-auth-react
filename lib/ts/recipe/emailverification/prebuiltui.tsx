@@ -2,7 +2,7 @@ import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import { UserContextContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { getNormalisedUserContext, isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { RecipeRouter } from "../recipeRouter";
 import { SessionAuth } from "../session";
 
@@ -13,7 +13,7 @@ import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
 import EmailVerificationRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { FeatureBaseProps, RecipeFeatureComponentMap } from "../../types";
+import type { FeatureBaseProps, RecipeFeatureComponentMap, UserContext } from "../../types";
 
 export class EmailVerificationPreBuiltUI extends RecipeRouter {
     static instance?: EmailVerificationPreBuiltUI;
@@ -67,7 +67,7 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
     getFeatureComponent = (
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _: "emailverification",
-        props: FeatureBaseProps<{ userContext?: any }>,
+        props: FeatureBaseProps<{ userContext: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         return (
@@ -115,8 +115,13 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static EmailVerification = (props: FeatureBaseProps<{ userContext?: any }>) =>
-        EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("emailverification", props);
+    static EmailVerification = (props: FeatureBaseProps<{ userContext?: UserContext }>) => {
+        const userContext = getNormalisedUserContext(props.userContext);
+        EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("emailverification", {
+            ...props,
+            userContext,
+        });
+    };
     static EmailVerificationTheme = EmailVerificationTheme;
 }
 

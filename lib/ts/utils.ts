@@ -22,7 +22,14 @@ import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "./constants";
 
 import type { FormFieldError } from "./recipe/emailpassword/types";
-import type { APIFormField, AppInfoUserInput, Navigate, NormalisedAppInfo, NormalisedFormField } from "./types";
+import type {
+    APIFormField,
+    AppInfoUserInput,
+    Navigate,
+    NormalisedAppInfo,
+    NormalisedFormField,
+    UserContext,
+} from "./types";
 
 /*
  * getRecipeIdFromPath
@@ -389,7 +396,7 @@ export async function setFrontendCookie(
     }
 }
 
-export function getNormalisedUserContext(userContext?: any): any {
+export function getNormalisedUserContext(userContext?: UserContext): UserContext {
     return userContext === undefined ? {} : userContext;
 }
 

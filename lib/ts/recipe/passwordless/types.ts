@@ -24,7 +24,7 @@ import type { UserInputCodeForm } from "./components/themes/signInUp/userInputCo
 import type { UserInputCodeFormFooter } from "./components/themes/signInUp/userInputCodeFormFooter";
 import type { UserInputCodeFormHeader } from "./components/themes/signInUp/userInputCodeFormHeader";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig, NormalisedBaseConfig, WebJSRecipeInterface } from "../../types";
+import type { FeatureBaseConfig, NormalisedBaseConfig, UserContext, WebJSRecipeInterface } from "../../types";
 import type {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -192,7 +192,7 @@ export type SignInUpProps = {
         loaded: boolean;
         error: string | undefined;
     };
-    userContext?: any;
+    userContext?: UserContext;
 };
 export type LoginAttemptInfo = {
     deviceId: string;

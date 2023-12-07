@@ -3,7 +3,7 @@ import { RecipeRouter } from "../recipeRouter";
 import { EmailVerificationTheme } from "./components/themes/emailVerification";
 import EmailVerificationRecipe from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { FeatureBaseProps, RecipeFeatureComponentMap } from "../../types";
+import type { FeatureBaseProps, RecipeFeatureComponentMap, UserContext } from "../../types";
 export declare class EmailVerificationPreBuiltUI extends RecipeRouter {
     readonly recipeInstance: EmailVerificationRecipe;
     static instance?: EmailVerificationPreBuiltUI;
@@ -19,21 +19,21 @@ export declare class EmailVerificationPreBuiltUI extends RecipeRouter {
     getFeatureComponent: (
         _: "emailverification",
         props: FeatureBaseProps<{
-            userContext?: any;
+            userContext: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static reset(): void;
     static EmailVerification: (
         props: FeatureBaseProps<{
-            userContext?: any;
+            userContext?: UserContext | undefined;
         }>
-    ) => JSX.Element;
+    ) => void;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
 }
 declare const EmailVerification: (
     props: FeatureBaseProps<{
-        userContext?: any;
+        userContext?: UserContext | undefined;
     }>
-) => JSX.Element;
+) => void;
 export { EmailVerification, EmailVerificationTheme };

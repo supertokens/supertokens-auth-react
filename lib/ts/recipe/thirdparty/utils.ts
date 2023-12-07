@@ -45,7 +45,7 @@ import type {
     Config,
     CustomStateProperties,
 } from "./types";
-import type { WebJSRecipeInterface } from "../../types";
+import type { UserContext, WebJSRecipeInterface } from "../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import type ThirdPartyWebJS from "supertokens-web-js/recipe/thirdparty";
 
@@ -119,7 +119,7 @@ export function normaliseSignInAndUpFeature(
     };
 }
 
-export function matchRecipeIdUsingState(recipe: Recipe, userContext: any): boolean {
+export function matchRecipeIdUsingState(recipe: Recipe, userContext: UserContext): boolean {
     const stateResponse = recipe.webJSRecipe.getStateAndOtherInfoFromStorage<CustomStateProperties>({
         userContext,
     });
@@ -135,7 +135,7 @@ export function matchRecipeIdUsingState(recipe: Recipe, userContext: any): boole
 export async function redirectToThirdPartyLogin(input: {
     thirdPartyId: string;
     config: NormalisedConfig;
-    userContext: any;
+    userContext: UserContext;
     recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;
 }): Promise<{ status: "OK" | "ERROR" }> {
     const loginMethods = await Multitenancy.getInstanceOrThrow().getCurrentDynamicLoginMethods({

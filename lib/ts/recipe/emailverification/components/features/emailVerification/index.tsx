@@ -29,12 +29,16 @@ import Session from "../../../../session/recipe";
 import EmailVerificationTheme from "../../themes/emailVerification";
 import { defaultTranslationsEmailVerification } from "../../themes/translations";
 
-import type { FeatureBaseProps } from "../../../../../types";
+import type { FeatureBaseProps, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
-type Prop = FeatureBaseProps<{ recipe: Recipe; userContext?: any; useComponentOverrides: () => ComponentOverrideMap }>;
+type Prop = FeatureBaseProps<{
+    recipe: Recipe;
+    userContext?: UserContext;
+    useComponentOverrides: () => ComponentOverrideMap;
+}>;
 
 export const EmailVerification: React.FC<Prop> = (props) => {
     const sessionContext = useContext(SessionContext);
@@ -110,7 +114,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
 
     const signOut = useCallback(async (): Promise<void> => {
         const session = Session.getInstanceOrThrow();
-        await session.signOut(props.userContext);
+        await session.signOut({ userContext: props.userContext ?? userContext });
         return redirectToAuthWithHistory();
     }, [props.recipe, redirectToAuthWithHistory]);
 

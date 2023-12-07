@@ -29,6 +29,8 @@ import { InputType, SessionContextType } from "./types";
 import { useClaimValue as useClaimValueFunc } from "./useClaimValue";
 import useSessionContextFunc from "./useSessionContext";
 
+import type { UserContext } from "../../types";
+
 export default class SessionAPIWrapper {
     static useSessionContext = useSessionContextFunc;
     static useClaimValue = useClaimValueFunc;
@@ -39,19 +41,19 @@ export default class SessionAPIWrapper {
         return Session.init(config);
     }
 
-    static async getUserId(input?: { userContext?: any }): Promise<string> {
+    static async getUserId(input?: { userContext?: UserContext }): Promise<string> {
         return Session.getInstanceOrThrow().getUserId({
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
-    static async getAccessToken(input?: { userContext?: any }): Promise<string | undefined> {
+    static async getAccessToken(input?: { userContext?: UserContext }): Promise<string | undefined> {
         return Session.getInstanceOrThrow().getAccessToken({
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
-    static async getAccessTokenPayloadSecurely(input?: { userContext?: any }): Promise<any> {
+    static async getAccessTokenPayloadSecurely(input?: { userContext?: UserContext }): Promise<any> {
         return Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -61,7 +63,7 @@ export default class SessionAPIWrapper {
         return Session.getInstanceOrThrow().attemptRefreshingSession();
     }
 
-    static async doesSessionExist(input?: { userContext?: any }): Promise<boolean> {
+    static async doesSessionExist(input?: { userContext?: UserContext }): Promise<boolean> {
         return Session.getInstanceOrThrow().doesSessionExist({
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -70,11 +72,11 @@ export default class SessionAPIWrapper {
     /**
      * @deprecated
      */
-    static addAxiosInterceptors(axiosInstance: any, userContext?: any): void {
+    static addAxiosInterceptors(axiosInstance: any, userContext?: UserContext): void {
         return Session.addAxiosInterceptors(axiosInstance, getNormalisedUserContext(userContext));
     }
 
-    static async signOut(input?: { userContext?: any }): Promise<void> {
+    static async signOut(input?: { userContext?: UserContext }): Promise<void> {
         return Session.getInstanceOrThrow().signOut({
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -83,9 +85,9 @@ export default class SessionAPIWrapper {
     static validateClaims(input?: {
         overrideGlobalClaimValidators?: (
             globalClaimValidators: SessionClaimValidator[],
-            userContext: any
+            userContext: UserContext
         ) => SessionClaimValidator[];
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<ClaimValidationError[]> | ClaimValidationError[] {
         return Session.getInstanceOrThrow().validateClaims({
             overrideGlobalClaimValidators: input?.overrideGlobalClaimValidators,
@@ -95,12 +97,12 @@ export default class SessionAPIWrapper {
 
     static getInvalidClaimsFromResponse(input: {
         response: { data: any } | Response;
-        userContext: any;
+        userContext: UserContext;
     }): Promise<ClaimValidationError[]> {
         return Session.getInstanceOrThrow().getInvalidClaimsFromResponse(input);
     }
 
-    static getClaimValue<T>(input: { claim: SessionClaim<T>; userContext?: any }): Promise<T | undefined> {
+    static getClaimValue<T>(input: { claim: SessionClaim<T>; userContext?: UserContext }): Promise<T | undefined> {
         return Session.getInstanceOrThrow().getClaimValue({
             claim: input.claim,
             userContext: getNormalisedUserContext(input?.userContext),

@@ -1,10 +1,10 @@
 import * as React from "react";
-import type { FeatureBaseProps } from "../../../../../types";
+import type { FeatureBaseProps, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 declare type Prop = FeatureBaseProps<{
     recipe: Recipe;
-    userContext?: any;
+    userContext?: UserContext;
     useComponentOverrides: () => ComponentOverrideMap;
 }>;
 export declare const EmailVerification: React.FC<Prop>;

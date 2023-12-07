@@ -33,6 +33,7 @@ import type {
     NormalisedBaseConfig,
     NormalisedFormField,
     ThemeBaseProps,
+    UserContext,
 } from "../../types";
 import type {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
@@ -264,7 +265,7 @@ export type SignInAndUpThemeProps = {
     };
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>;
     config: NormalisedConfig;
-    userContext?: any;
+    userContext?: UserContext;
 };
 
 export type FormFieldThemeProps = NormalisedFormField & {
@@ -323,7 +324,7 @@ export type PreAPIHookContext = {
      * URL
      */
     url: string;
-    userContext: any;
+    userContext: UserContext;
 };
 
 export type GetRedirectionURLContext =
@@ -343,27 +344,27 @@ export type OnHandleEventContext =
            */
           action: "RESET_PASSWORD_EMAIL_SENT";
           email: string;
-          userContext: any;
+          userContext: UserContext;
       }
     | {
           /*
            * On Handle Event actions
            */
           action: "PASSWORD_RESET_SUCCESSFUL";
-          userContext: any;
+          userContext: UserContext;
       }
     | {
           action: "SUCCESS";
           isNewRecipeUser: boolean;
           user: User;
-          userContext: any;
+          userContext: UserContext;
       };
 
 export type ResetPasswordUsingTokenThemeProps = {
     enterEmailForm: EnterEmailProps;
     submitNewPasswordForm: SubmitNewPasswordProps | undefined;
     config: NormalisedConfig;
-    userContext?: any;
+    userContext?: UserContext;
 };
 
 export type EnterEmailProps = NonSignUpFormThemeBaseProps & {

@@ -20,7 +20,7 @@ import type { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCa
 import type Provider from "./providers";
 import type { CustomProviderConfig } from "./providers/types";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig, NormalisedBaseConfig, WebJSRecipeInterface } from "../../types";
+import type { FeatureBaseConfig, NormalisedBaseConfig, UserContext, WebJSRecipeInterface } from "../../types";
 import type {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -117,7 +117,7 @@ export type PreAPIHookContext = {
     action: PreAndPostAPIHookAction;
     requestInit: RequestInit;
     url: string;
-    userContext: any;
+    userContext: UserContext;
 };
 
 export type OnHandleEventContext =
@@ -126,7 +126,7 @@ export type OnHandleEventContext =
           action: "SUCCESS";
           isNewRecipeUser: boolean;
           user: User;
-          userContext: any;
+          userContext: UserContext;
       };
 
 export type SignInAndUpThemeProps = {

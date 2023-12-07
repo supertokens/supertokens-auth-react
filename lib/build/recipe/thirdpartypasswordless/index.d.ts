@@ -16,6 +16,7 @@ import {
     Twitter,
 } from "../thirdparty/";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import type { UserContext } from "../../types";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { PasswordlessFlowType, RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartypasswordless";
 import type { User } from "supertokens-web-js/types";
@@ -28,11 +29,11 @@ export default class Wrapper {
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static signOut(input?: { userContext?: any }): Promise<void>;
-    static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: any }): Promise<{
+    static signOut(input?: { userContext?: UserContext }): Promise<void>;
+    static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: UserContext }): Promise<{
         status: "OK" | "ERROR";
     }>;
-    static thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
+    static thirdPartySignInAndUp(input?: { userContext?: UserContext; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
               user: User;
@@ -50,25 +51,25 @@ export default class Wrapper {
           }
     >;
     static getThirdPartyStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
-        userContext?: any;
+        userContext?: UserContext;
     }): (StateObject & CustomStateProperties) | undefined;
     static getThirdPartyAuthorisationURLWithQueryParamsAndSetState(input: {
         thirdPartyId: string;
         frontendRedirectURI: string;
         redirectURIOnProviderDashboard?: string;
-        userContext?: any;
+        userContext?: UserContext;
         options?: RecipeFunctionOptions;
     }): Promise<string>;
     static createPasswordlessCode(
         input:
             | {
                   email: string;
-                  userContext?: any;
+                  userContext?: UserContext;
                   options?: RecipeFunctionOptions;
               }
             | {
                   phoneNumber: string;
-                  userContext?: any;
+                  userContext?: UserContext;
                   options?: RecipeFunctionOptions;
               }
     ): Promise<
@@ -85,7 +86,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static resendPasswordlessCode(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static resendPasswordlessCode(input?: { userContext?: UserContext; options?: RecipeFunctionOptions }): Promise<{
         status: "OK" | "RESTART_FLOW_ERROR";
         fetchResponse: Response;
     }>;
@@ -93,11 +94,11 @@ export default class Wrapper {
         input?:
             | {
                   userInputCode: string;
-                  userContext?: any;
+                  userContext?: UserContext;
                   options?: RecipeFunctionOptions;
               }
             | {
-                  userContext?: any;
+                  userContext?: UserContext;
                   options?: RecipeFunctionOptions;
               }
     ): Promise<
@@ -123,11 +124,11 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static getPasswordlessLinkCodeFromURL(input?: { userContext?: any }): string;
-    static getPasswordlessPreAuthSessionIdFromURL(input?: { userContext?: any }): string;
+    static getPasswordlessLinkCodeFromURL(input?: { userContext?: UserContext }): string;
+    static getPasswordlessPreAuthSessionIdFromURL(input?: { userContext?: UserContext }): string;
     static doesPasswordlessUserEmailExist(input: {
         email: string;
-        userContext?: any;
+        userContext?: UserContext;
         options?: RecipeFunctionOptions;
     }): Promise<{
         status: "OK";
@@ -136,14 +137,16 @@ export default class Wrapper {
     }>;
     static doesPasswordlessUserPhoneNumberExist(input: {
         phoneNumber: string;
-        userContext?: any;
+        userContext?: UserContext;
         options?: RecipeFunctionOptions;
     }): Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;
     }>;
-    static getPasswordlessLoginAttemptInfo<CustomLoginAttemptInfoProperties>(input?: { userContext?: any }): Promise<
+    static getPasswordlessLoginAttemptInfo<CustomLoginAttemptInfoProperties>(input?: {
+        userContext?: UserContext;
+    }): Promise<
         | undefined
         | ({
               deviceId: string;
@@ -157,9 +160,9 @@ export default class Wrapper {
             preAuthSessionId: string;
             flowType: PasswordlessFlowType;
         } & CustomStateProperties;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<void>;
-    static clearPasswordlessLoginAttemptInfo(input?: { userContext?: any }): Promise<void>;
+    static clearPasswordlessLoginAttemptInfo(input?: { userContext?: UserContext }): Promise<void>;
     static Apple: typeof Apple;
     static Bitbucket: typeof Bitbucket;
     static Discord: typeof Discord;

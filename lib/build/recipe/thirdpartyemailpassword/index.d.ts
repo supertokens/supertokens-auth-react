@@ -16,6 +16,7 @@ import {
     Twitter,
 } from "../thirdparty/";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import type { UserContext } from "../../types";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import type { User } from "supertokens-web-js/types";
@@ -28,14 +29,14 @@ export default class Wrapper {
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static signOut(input?: { userContext?: any }): Promise<void>;
+    static signOut(input?: { userContext?: UserContext }): Promise<void>;
     static submitNewPassword(input: {
         formFields: {
             id: string;
             value: string;
         }[];
         options?: RecipeFunctionOptions;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK";
@@ -60,7 +61,7 @@ export default class Wrapper {
             value: string;
         }[];
         options?: RecipeFunctionOptions;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK" | "PASSWORD_RESET_NOT_ALLOWED";
@@ -81,7 +82,7 @@ export default class Wrapper {
             value: string;
         }[];
         options?: RecipeFunctionOptions;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK";
@@ -108,7 +109,7 @@ export default class Wrapper {
             value: string;
         }[];
         options?: RecipeFunctionOptions;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK";
@@ -133,16 +134,20 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static doesEmailExist(input: { email: string; options?: RecipeFunctionOptions; userContext?: any }): Promise<{
+    static doesEmailExist(input: {
+        email: string;
+        options?: RecipeFunctionOptions;
+        userContext?: UserContext;
+    }): Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;
     }>;
-    static getResetPasswordTokenFromURL(input?: { userContext?: any }): string;
-    static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: any }): Promise<{
+    static getResetPasswordTokenFromURL(input?: { userContext?: UserContext }): string;
+    static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: UserContext }): Promise<{
         status: "OK" | "ERROR";
     }>;
-    static thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
+    static thirdPartySignInAndUp(input?: { userContext?: UserContext; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
               user: User;
@@ -160,13 +165,13 @@ export default class Wrapper {
           }
     >;
     static getStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
-        userContext?: any;
+        userContext?: UserContext;
     }): (StateObject & CustomStateProperties) | undefined;
     static getAuthorisationURLWithQueryParamsAndSetState(input: {
         thirdPartyId: string;
         frontendRedirectURI: string;
         redirectURIOnProviderDashboard?: string;
-        userContext?: any;
+        userContext?: UserContext;
         options?: RecipeFunctionOptions;
     }): Promise<string>;
     static Google: typeof Google;

@@ -1,15 +1,16 @@
+import type { UserContext } from "../../types";
 export declare type RecipePreAPIHookContext<Action> = {
     requestInit: RequestInit;
     url: string;
     action: Action;
-    userContext: any;
+    userContext: UserContext;
 };
 export declare type RecipePostAPIHookContext<Action> = {
     action: Action;
     requestInit: RequestInit;
     url: string;
     fetchResponse: Response;
-    userContext: any;
+    userContext: UserContext;
 };
 export declare type RecipePreAPIHookFunction<Action> = (context: RecipePreAPIHookContext<Action>) => Promise<{
     url: string;
@@ -20,7 +21,7 @@ export declare type RecipeOnHandleEventFunction<EventType> = (context: EventType
 export declare type UserInput<GetRedirectionURLContextType, Action, OnHandleEventContextType> = {
     getRedirectionURL?: (
         context: GetRedirectionURLContextType,
-        userContext?: any
+        userContext: UserContext
     ) => Promise<string | undefined | null>;
     preAPIHook?: RecipePreAPIHookFunction<Action>;
     postAPIHook?: RecipePostAPIHookFunction<Action>;
@@ -34,7 +35,10 @@ export declare type Config<GetRedirectionURLContextType, Action, OnHandleEventCo
     OnHandleEventContextType
 >;
 export declare type NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType> = {
-    getRedirectionURL: (context: GetRedirectionURLContextType, userContext?: any) => Promise<string | undefined | null>;
+    getRedirectionURL: (
+        context: GetRedirectionURLContextType,
+        userContext: UserContext
+    ) => Promise<string | undefined | null>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContextType>;
     useShadowDom: boolean;
     rootStyle: string;

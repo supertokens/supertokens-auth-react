@@ -1,7 +1,7 @@
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { getNormalisedUserContext, isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeRouter } from "../recipeRouter";
 
@@ -20,7 +20,7 @@ import type {
     NormalisedConfig,
 } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
 
 export class EmailPasswordPreBuiltUI extends RecipeRouter {
     static instance?: EmailPasswordPreBuiltUI;
@@ -45,7 +45,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "signinup" | "resetpassword",
-        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }>,
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
@@ -86,7 +86,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
     };
     getFeatureComponent = (
         componentName: "signinup" | "resetpassword",
-        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }>,
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signinup") {
@@ -145,10 +145,22 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static SignInAndUp = (prop: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
-        EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", prop);
-    static ResetPasswordUsingToken = (prop: FeatureBaseProps<{ userContext?: any }>) =>
-        EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("resetpassword", prop);
+    static SignInAndUp = (
+        prop: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }> = {}
+    ) => {
+        const userContext = getNormalisedUserContext(prop.userContext);
+        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", {
+            ...prop,
+            userContext,
+        });
+    };
+    static ResetPasswordUsingToken = (prop: FeatureBaseProps<{ userContext?: UserContext }>) => {
+        const userContext = getNormalisedUserContext(prop.userContext);
+        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("resetpassword", {
+            ...prop,
+            userContext,
+        });
+    };
 
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
     static SignInAndUpTheme = SignInAndUpTheme;

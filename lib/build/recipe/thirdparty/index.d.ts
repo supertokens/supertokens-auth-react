@@ -14,6 +14,7 @@ import LinkedIn from "./providers/linkedIn";
 import Okta from "./providers/okta";
 import Twitter from "./providers/twitter";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import type { UserContext } from "../../types";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import type { User } from "supertokens-web-js/types";
@@ -26,21 +27,21 @@ export default class Wrapper {
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static signOut(input?: { userContext?: any }): Promise<void>;
-    static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: any }): Promise<{
+    static signOut(input?: { userContext?: UserContext }): Promise<void>;
+    static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: UserContext }): Promise<{
         status: "OK" | "ERROR";
     }>;
     static getStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
-        userContext?: any;
+        userContext?: UserContext;
     }): (StateObject & CustomStateProperties) | undefined;
     static getAuthorisationURLWithQueryParamsAndSetState(input: {
         thirdPartyId: string;
         frontendRedirectURI: string;
         redirectURIOnProviderDashboard?: string;
-        userContext?: any;
+        userContext?: UserContext;
         options?: RecipeFunctionOptions;
     }): Promise<string>;
-    static signInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
+    static signInAndUp(input?: { userContext?: UserContext; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
               user: User;

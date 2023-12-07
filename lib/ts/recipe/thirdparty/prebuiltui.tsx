@@ -1,7 +1,7 @@
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { getNormalisedUserContext, isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeRouter } from "../recipeRouter";
 
@@ -20,7 +20,7 @@ import type {
     OnHandleEventContext,
 } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
+import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
 
 export class ThirdPartyPreBuiltUI extends RecipeRouter {
     static instance?: ThirdPartyPreBuiltUI;
@@ -44,7 +44,7 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "signinup" | "signinupcallback",
-        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }>,
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
@@ -84,7 +84,7 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
     };
     getFeatureComponent = (
         componentName: "signinup" | "signinupcallback",
-        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }>,
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signinup") {
@@ -143,10 +143,22 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static SignInAndUp = (prop: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
-        ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", prop);
-    static SignInAndUpCallback = (prop: FeatureBaseProps<{ userContext?: any }>) =>
-        ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinupcallback", prop);
+    static SignInAndUp = (
+        prop: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }> = {}
+    ) => {
+        const userContext = getNormalisedUserContext(prop.userContext);
+        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", {
+            ...prop,
+            userContext,
+        });
+    };
+    static SignInAndUpCallback = (prop: FeatureBaseProps<{ userContext?: UserContext }>) => {
+        const userContext = getNormalisedUserContext(prop.userContext);
+        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinupcallback", {
+            ...prop,
+            userContext,
+        });
+    };
     static SignInAndUpTheme = SignInAndUpTheme;
     static SignInAndUpCallbackTheme = SignInAndUpCallbackTheme;
 }
