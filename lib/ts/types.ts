@@ -329,8 +329,7 @@ export type ThemeBaseProps = {
     styleFromInit?: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type FeatureBaseProps<T = {}> = PropsWithChildren<
+export type FeatureBaseProps<T = Record<string, unknown>> = PropsWithChildren<
     {
         navigate?: Navigate;
     } & T
