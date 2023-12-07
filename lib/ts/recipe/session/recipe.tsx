@@ -143,6 +143,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
             successRedirectContext: {
                 action: "SUCCESS";
                 isNewRecipeUser: boolean;
+                isNewPrimaryUser: boolean;
                 redirectToPath?: string;
             };
         },
@@ -202,6 +203,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                     rid: Session.RECIPE_ID,
                     successRedirectContext: {
                         action: "SUCCESS",
+                        isNewPrimaryUser: false,
                         isNewRecipeUser: false,
                     },
                 };

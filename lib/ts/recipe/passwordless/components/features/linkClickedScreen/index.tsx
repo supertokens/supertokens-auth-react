@@ -109,6 +109,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                         rid: props.recipe.config.recipeId,
                         successRedirectContext: {
                             action: "SUCCESS",
+                            isNewPrimaryUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
                             isNewRecipeUser: response.createdNewRecipeUser,
                             redirectToPath: loginAttemptInfo?.redirectToPath,
                         },

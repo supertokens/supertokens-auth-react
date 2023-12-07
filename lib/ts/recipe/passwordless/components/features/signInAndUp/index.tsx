@@ -175,6 +175,7 @@ export function useChildProps(
                         rid: recipe.config.recipeId,
                         successRedirectContext: {
                             action: "SUCCESS",
+                            isNewPrimaryUser: result.createdNewRecipeUser && result.user.loginMethods.length === 1,
                             isNewRecipeUser: result.createdNewRecipeUser,
                             redirectToPath: getRedirectToPathFromURL(),
                         },

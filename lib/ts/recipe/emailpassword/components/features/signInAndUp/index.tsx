@@ -117,6 +117,7 @@ export function useChildProps(
                 rid: recipe!.config.recipeId,
                 successRedirectContext: {
                     action: "SUCCESS",
+                    isNewPrimaryUser: false,
                     isNewRecipeUser: false,
                     redirectToPath: getRedirectToPathFromURL(),
                 },
@@ -132,6 +133,7 @@ export function useChildProps(
                 rid: recipe!.config.recipeId,
                 successRedirectContext: {
                     action: "SUCCESS",
+                    isNewPrimaryUser: true,
                     isNewRecipeUser: true,
                     redirectToPath: getRedirectToPathFromURL(),
                 },

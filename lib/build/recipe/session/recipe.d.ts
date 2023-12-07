@@ -60,6 +60,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
             successRedirectContext: {
                 action: "SUCCESS";
                 isNewRecipeUser: boolean;
+                isNewPrimaryUser: boolean;
                 redirectToPath?: string;
             };
         },
