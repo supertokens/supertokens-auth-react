@@ -24,7 +24,7 @@ export type RecipeOnHandleEventFunction<EventType> = (context: EventType) => voi
 export type UserInput<GetRedirectionURLContextType, Action, OnHandleEventContextType> = {
     getRedirectionURL?: (
         context: GetRedirectionURLContextType,
-        userContext?: any
+        userContext: any
     ) => Promise<string | undefined | null>;
     preAPIHook?: RecipePreAPIHookFunction<Action>;
     postAPIHook?: RecipePostAPIHookFunction<Action>;
