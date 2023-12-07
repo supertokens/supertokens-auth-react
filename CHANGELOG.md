@@ -27,6 +27,10 @@ EmailPassword.init({
 
 -   `getRedirectionURL` now receives `userContext` as the second argument.
 
+-   `isNewPrimaryUser` boolean property has been added to `GetRedirectionURLContext`. It can be used to check if a new primary user was created particularly in scenarios involving account linking.
+
+-   `UserContext` type has been changed to `Record<string, unknown>` from `any`.
+
 -   The `PreBuiltUI` components now accept a `navigate` prop, internally utilized by SuperTokens for redirection. This becomes handy when manually rendering the component and desiring client-side navigation instead of a full-page refresh for any redirection. Here's an example using `react-router-dom@v6`:
 
 ```tsx
