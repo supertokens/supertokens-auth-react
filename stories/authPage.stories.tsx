@@ -48,9 +48,9 @@ const meta: Meta<Args> = {
                 ui.reset();
             }
             resetAndInitST(recipeList, args.usesDynamicLoginMethods, {
-                path: args.path,
-                query: args.query,
-                hash: args.hash,
+                path: args.path ?? path ?? "/auth",
+                query: args.query ?? "",
+                hash: args.hash ?? "",
             });
             return { prebuiltUIs, key: JSON.stringify(args) };
         }, [args]);

@@ -1,5 +1,6 @@
 import type { EmailPasswordPreBuiltUI } from "../recipe/emailpassword/prebuiltui";
 import type { EmailVerificationPreBuiltUI } from "../recipe/emailverification/prebuiltui";
+import type { MultiFactorAuthPreBuiltUI } from "../recipe/multifactorauth/prebuiltui";
 import type { PasswordlessPreBuiltUI } from "../recipe/passwordless/prebuiltui";
 import type { ThirdPartyPreBuiltUI } from "../recipe/thirdparty/prebuiltui";
 import type { ThirdPartyEmailPasswordPreBuiltUI } from "../recipe/thirdpartyemailpassword/prebuiltui";
@@ -18,4 +19,5 @@ export declare type PreBuiltRecipes = (
     | typeof EmailPasswordPreBuiltUI
     | typeof PasswordlessPreBuiltUI
     | typeof EmailVerificationPreBuiltUI
+    | typeof MultiFactorAuthPreBuiltUI
 )[];

@@ -102,6 +102,12 @@ export default meta;
 type Story = StoryObj<typeof Page>;
 
 export const SetupEmail: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4445%3A325&mode=design&t=xmFo6EAIGYXc84iG-1",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -113,6 +119,12 @@ export const SetupEmail: Story = {
 };
 
 export const SetupPhone: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4445%3A347&mode=dev",
+        },
+    },
     args: {
         contactMethod: "PHONE",
         featureState: {
@@ -145,6 +157,12 @@ const loadSessionContextWithMultipleNextOptions = async () => ({
 });
 
 export const SetupSingleNextOption: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A370&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -156,6 +174,12 @@ export const SetupSingleNextOption: Story = {
     loaders: [loadSessionContextWithSingleNextOption],
 };
 export const SetupWithMultipleNextOptions: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A390&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -168,6 +192,12 @@ export const SetupWithMultipleNextOptions: Story = {
 };
 
 export const SetupDenied: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A408&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -180,6 +210,12 @@ export const SetupDenied: Story = {
 };
 
 export const SetupVerification: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A426&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -191,6 +227,12 @@ export const SetupVerification: Story = {
 };
 
 export const Verification: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A447&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -201,6 +243,12 @@ export const Verification: Story = {
 };
 
 export const VerificationWithSingleNextOption: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A472&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -213,6 +261,12 @@ export const VerificationWithSingleNextOption: Story = {
 };
 
 export const VerificationWithMultipleNextOptions: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A496&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -225,6 +279,12 @@ export const VerificationWithMultipleNextOptions: Story = {
 };
 
 export const VerificationEmptySubmit: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A525&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -236,6 +296,12 @@ export const VerificationEmptySubmit: Story = {
 };
 
 export const VerificationInvalidOTP: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A553&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -247,6 +313,12 @@ export const VerificationInvalidOTP: Story = {
 };
 
 export const VerificationExpiredOTP: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A581&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -258,6 +330,12 @@ export const VerificationExpiredOTP: Story = {
 };
 
 export const SuccessInAnotherTab: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A840&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,

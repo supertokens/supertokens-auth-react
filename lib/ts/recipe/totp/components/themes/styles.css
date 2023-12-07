@@ -29,7 +29,7 @@
     display: block;
     color: rgb(var(--palette-textGray));
     font-size: var(--font-size-0);
-    margin: 4px;
+    margin: 16px 0 12px;
 }
 
 [data-supertokens~="totpSecret"] {
@@ -41,6 +41,8 @@
     font-weight: 600;
     letter-spacing: 3.36px;
     background: rgba(var(--palette-textLink), 0.08);
+    word-wrap: break-word;
+    overflow-y: hidden;
 }
 
 [data-supertokens~="showTOTPSecretBtn"]:hover {

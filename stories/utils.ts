@@ -15,6 +15,7 @@ import MultiFactorAuth from "../lib/ts/recipe/multifactorauth";
 import MultiFactorAuthRecipe from "../lib/ts/recipe/multifactorauth/recipe";
 import MultiTenancy from "../lib/ts/recipe/multitenancy";
 import MultiTenancyRecipe from "../lib/ts/recipe/multitenancy/recipe";
+import EmailVerificationRecipe from "../lib/ts/recipe/emailverification/recipe";
 import SessionRecipeWebJS from "supertokens-web-js/lib/build/recipe/session/recipe";
 import PasswordlessRecipeWebJS from "supertokens-web-js/lib/build/recipe/passwordless/recipe";
 import EmailPasswordRecipeWebJS from "supertokens-web-js/lib/build/recipe/emailpassword/recipe";
@@ -23,6 +24,7 @@ import ThirdPartyEmailPasswordRecipeWebJS from "supertokens-web-js/lib/build/rec
 import ThirdPartyPasswordlessRecipeWebJS from "supertokens-web-js/lib/build/recipe/thirdpartypasswordless/recipe";
 import MultiFactorAuthRecipeWebJS from "supertokens-web-js/lib/build/recipe/multifactorauth/recipe";
 import MultiTenancyRecipeWebJS from "supertokens-web-js/lib/build/recipe/multitenancy/recipe";
+import EmailVerificationRecipeWebJS from "supertokens-web-js/lib/build/recipe/emailverification/recipe";
 import { RecipeInitResult } from "../lib/ts/types";
 import Provider from "../lib/ts/recipe/thirdparty/providers";
 import { ThirdPartyPasswordlessPreBuiltUI } from "../lib/ts/recipe/thirdpartypasswordless/prebuiltui";
@@ -53,6 +55,7 @@ export function resetAndInitST(
     ThirdPartyPasswordlessRecipe.reset();
     MultiFactorAuthRecipe.reset();
     MultiTenancyRecipe.reset();
+    EmailVerificationRecipe.reset();
     SuperTokens.reset();
 
     SessionRecipeWebJS.reset();
@@ -63,7 +66,14 @@ export function resetAndInitST(
     ThirdPartyPasswordlessRecipeWebJS.reset();
     MultiFactorAuthRecipeWebJS.reset();
     MultiTenancyRecipeWebJS.reset();
+    EmailVerificationRecipeWebJS.reset();
     SuperTokensWebJS.reset();
+
+    // This resets supertokens-website
+    if ("__supertokensOriginalFetch" in window) {
+        (window as any).fetch = window.__supertokensOriginalFetch;
+        window.__supertokensOriginalFetch = undefined;
+    }
 
     SuperTokens.init({
         usesDynamicLoginMethods,
@@ -113,6 +123,7 @@ export type AuthPageConf = {
     };
     thirdpartyemailpassword: {
         initialized: boolean;
+        defaultToSignUp: boolean;
         disableDefaultUISignInUp: boolean;
         providers: ProviderId[] | undefined;
         disableEmailPassword: boolean;
@@ -192,6 +203,7 @@ export function buildInit(args: AuthPageConf, funcOverrides: any) {
                 signInAndUpFeature: {
                     providers: buildProviderArray(args.thirdpartyemailpassword.providers),
                     disableDefaultUI: args.thirdpartyemailpassword.disableDefaultUISignInUp,
+                    defaultToSignUp: args.thirdpartyemailpassword.defaultToSignUp,
                 },
                 override: {
                     functions: funcOverrides?.thirdpartyemailpassword || ((i) => i),
@@ -312,4 +324,5 @@ export const overridePWlessWithLoginAttempt =
     (info: LoginAttemptInfo & AdditionalLoginAttemptInfoProperties) => (oI: any) => ({
         ...oI,
         getLoginAttemptInfo: () => info,
+        getPasswordlessLoginAttemptInfo: () => info, // Technically it's not right to have them both... but it works
     });

@@ -113,8 +113,8 @@ export const LinkSentEmail: Story = {
         async () => ({
             funcOverrides: {
                 passwordless: overridePWlessWithLoginAttempt({
-                    contactInfo: "+36701234567",
-                    contactMethod: "PHONE",
+                    contactInfo: "test@supertokens.com",
+                    contactMethod: "EMAIL",
                     flowType: "MAGIC_LINK",
                     lastResend: Date.now(),
                     deviceId: "asdf",

@@ -79,7 +79,7 @@
 
 [data-supertokens~="superTokensBranding"] {
     display: block;
-    margin: 0 auto;
+    margin: 10px auto 0;
     background: rgb(var(--palette-superTokensBrandingBackground));
     color: rgb(var(--palette-superTokensBrandingText));
     text-decoration: none;
@@ -95,7 +95,8 @@
     background: rgb(var(--palette-errorBackground));
     padding-top: 10px;
     padding-bottom: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    margin-top: 24px;
     padding-left: 18px;
     padding-right: 18px;
     letter-spacing: 0.2px;
@@ -160,9 +161,13 @@
     color: rgb(var(--palette-textPrimary));
 }
 
+[data-supertokens~="secondaryText"] strong {
+    font-weight: 500;
+}
+
 [data-supertokens~="divider"] {
-    margin-top: 1em;
-    margin-bottom: 1em;
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
     border-bottom: 0.3px solid #dddddd;
     align-items: center;
     padding-bottom: 5px;

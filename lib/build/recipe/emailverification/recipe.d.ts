@@ -34,4 +34,5 @@ export default class EmailVerification extends RecipeModule<
         fetchResponse: Response;
     }>;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
+    static reset(): void;
 }

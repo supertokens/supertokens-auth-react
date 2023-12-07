@@ -18,6 +18,7 @@ const defaultState = {
     loaded: true,
     showBackButton: true,
     showSecret: false,
+    showAccessDenied: false,
     deviceInfo: undefined,
     nextRetryAt: undefined,
 };
@@ -145,6 +146,12 @@ export default meta;
 type Story = StoryObj<typeof Page>;
 
 export const DeviceSetup: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A866&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -155,6 +162,12 @@ export const DeviceSetup: Story = {
 };
 
 export const DeviceSetupWithSingleNextOption: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4461%3A1470&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -167,6 +180,12 @@ export const DeviceSetupWithSingleNextOption: Story = {
 };
 
 export const DeviceSetupMultipleNextOptions: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4461%3A1409&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -179,10 +198,17 @@ export const DeviceSetupMultipleNextOptions: Story = {
 };
 
 export const DeviceSetupAccessDenied: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A1079&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
             loaded: true,
+            showAccessDenied: true,
             error: "TOTP_MFA_NOT_ALLOWED_TO_SETUP",
             deviceInfo: undefined,
         },
@@ -190,6 +216,12 @@ export const DeviceSetupAccessDenied: Story = {
 };
 
 export const DeviceSetupWithSecret: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A941&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -201,6 +233,12 @@ export const DeviceSetupWithSecret: Story = {
 };
 
 export const DeviceSetupEmptySubmit: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A971&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -212,6 +250,12 @@ export const DeviceSetupEmptySubmit: Story = {
 };
 
 export const DeviceSetupInvalidTOTP: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A1002&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -225,6 +269,12 @@ export const DeviceSetupInvalidTOTP: Story = {
 };
 
 export const Verification: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A1035&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -235,6 +285,12 @@ export const Verification: Story = {
 };
 
 export const VerificationWithSingleNextOption: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4461%3A1496&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -247,6 +303,12 @@ export const VerificationWithSingleNextOption: Story = {
 };
 
 export const VerificationWithMultipleNextOption: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4461%3A1518&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -258,6 +320,12 @@ export const VerificationWithMultipleNextOption: Story = {
     loaders: [loadSessionContextWithMultipleNextOptions],
 };
 export const VerificationEmptySubmit: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A1094&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -269,6 +337,12 @@ export const VerificationEmptySubmit: Story = {
 };
 
 export const VerificationGeneralError: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A1168&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -280,6 +354,12 @@ export const VerificationGeneralError: Story = {
 };
 
 export const VerificationInvalidTOTP: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A1219&mode=dev",
+        },
+    },
     args: {
         featureState: {
             ...defaultState,
@@ -293,6 +373,12 @@ export const VerificationInvalidTOTP: Story = {
 };
 
 export const Blocked: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A1246&mode=dev",
+        },
+    },
     loaders: [
         async () => ({
             featureState: {

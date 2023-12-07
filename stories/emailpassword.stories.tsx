@@ -37,18 +37,8 @@ export const SignUpFieldErrors: Story = {
         const passwordInput = await canvas.findByPlaceholderText("Password");
 
         await userEvent.type(passwordInput, "pw");
-        // See https://storybook.js.org/docs/essentials/actions#automatically-matching-args to learn how to setup logging in the Actions panel
-        const submitButton = await waitFor(() => canvasElement.querySelector("button[type=submit]"))!;
 
         await userEvent.click(canvasElement, { delay: 200 });
-    },
-};
-export const SignUpGeneralErrors: Story = {
-    args: {
-        path: "/auth",
-        query: "error=asdf",
-        "multifactorauth.firstFactors": ["emailpassword"],
-        "emailpassword.defaultToSignUp": true,
     },
 };
 
