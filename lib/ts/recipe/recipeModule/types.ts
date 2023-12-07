@@ -40,7 +40,7 @@ export type Config<GetRedirectionURLContextType, Action, OnHandleEventContextTyp
 >;
 
 export type NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType> = {
-    getRedirectionURL: (context: GetRedirectionURLContextType, userContext?: any) => Promise<string | undefined | null>;
+    getRedirectionURL: (context: GetRedirectionURLContextType, userContext: any) => Promise<string | undefined | null>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContextType>;
     useShadowDom: boolean;
     rootStyle: string;
