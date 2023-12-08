@@ -115,7 +115,7 @@ export default class MultiFactorAuth extends RecipeModule<
 
     static getInstanceOrThrow(): MultiFactorAuth {
         if (MultiFactorAuth.instance === undefined) {
-            let error = "No instance of EmailVerification found. Make sure to call the EmailVerification.init method.";
+            let error = "No instance of MultiFactorAuth found. Make sure to call the MultiFactorAuth.init method.";
 
             // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
             if (typeof window === "undefined") {
