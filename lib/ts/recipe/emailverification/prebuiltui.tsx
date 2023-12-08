@@ -2,7 +2,7 @@ import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import { UserContextContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { getNormalisedUserContext, isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { RecipeRouter } from "../recipeRouter";
 import { SessionAuth } from "../session";
 
@@ -67,7 +67,7 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
     getFeatureComponent = (
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _: "emailverification",
-        props: FeatureBaseProps<{ userContext: UserContext }>,
+        props: FeatureBaseProps<{ userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         return (
@@ -115,13 +115,8 @@ export class EmailVerificationPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static EmailVerification = (props: FeatureBaseProps<{ userContext?: UserContext }>) => {
-        const userContext = getNormalisedUserContext(props.userContext);
-        EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("emailverification", {
-            ...props,
-            userContext,
-        });
-    };
+    static EmailVerification = (props: FeatureBaseProps<{ userContext?: UserContext }>) =>
+        EmailVerificationPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("emailverification", props);
     static EmailVerificationTheme = EmailVerificationTheme;
 }
 

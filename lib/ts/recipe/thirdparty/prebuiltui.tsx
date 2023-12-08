@@ -1,7 +1,7 @@
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { getNormalisedUserContext, isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeRouter } from "../recipeRouter";
 
@@ -84,7 +84,7 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
     };
     getFeatureComponent = (
         componentName: "signinup" | "signinupcallback",
-        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext: UserContext }>,
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signinup") {
@@ -145,20 +145,9 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
 
     static SignInAndUp = (
         prop: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }> = {}
-    ) => {
-        const userContext = getNormalisedUserContext(prop.userContext);
-        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", {
-            ...prop,
-            userContext,
-        });
-    };
-    static SignInAndUpCallback = (prop: FeatureBaseProps<{ userContext?: UserContext }>) => {
-        const userContext = getNormalisedUserContext(prop.userContext);
-        return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinupcallback", {
-            ...prop,
-            userContext,
-        });
-    };
+    ) => ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", prop);
+    static SignInAndUpCallback = (prop: FeatureBaseProps<{ userContext?: UserContext }>) =>
+        ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinupcallback", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
     static SignInAndUpCallbackTheme = SignInAndUpCallbackTheme;
 }

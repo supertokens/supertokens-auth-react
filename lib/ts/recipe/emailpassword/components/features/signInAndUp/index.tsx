@@ -41,6 +41,7 @@ import type {
 } from "../../../types";
 import type { Dispatch } from "react";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import type { User } from "supertokens-web-js/types";
 
 export const useFeatureReducer = (recipe: Recipe | undefined) => {
     return React.useReducer(
@@ -93,12 +94,14 @@ export function useChildProps(
     recipe: Recipe,
     state: SignInAndUpState,
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
+    userContext: UserContext,
     navigate?: Navigate
 ): EmailPasswordSignInAndUpChildProps;
 export function useChildProps(
     recipe: Recipe | undefined,
     state: SignInAndUpState,
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
+    userContext: UserContext,
     navigate?: Navigate
 ): EmailPasswordSignInAndUpChildProps | undefined;
 
@@ -106,10 +109,10 @@ export function useChildProps(
     recipe: Recipe | undefined,
     state: SignInAndUpState,
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
+    userContext: UserContext,
     navigate?: Navigate
 ): EmailPasswordSignInAndUpChildProps | undefined {
     const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe), [recipe]);
-    const userContext = useUserContext();
 
     const onSignInSuccess = useCallback(async (): Promise<void> => {
         return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
@@ -127,21 +130,24 @@ export function useChildProps(
         );
     }, [recipe, userContext, navigate]);
 
-    const onSignUpSuccess = useCallback(async (): Promise<void> => {
-        return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-            {
-                rid: recipe!.config.recipeId,
-                successRedirectContext: {
-                    action: "SUCCESS",
-                    isNewPrimaryUser: true,
-                    isNewRecipeUser: true,
-                    redirectToPath: getRedirectToPathFromURL(),
+    const onSignUpSuccess = useCallback(
+        async (result: { user: User }): Promise<void> => {
+            return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                {
+                    rid: recipe!.config.recipeId,
+                    successRedirectContext: {
+                        action: "SUCCESS",
+                        isNewPrimaryUser: result.user.loginMethods.length === 1,
+                        isNewRecipeUser: true,
+                        redirectToPath: getRedirectToPathFromURL(),
+                    },
                 },
-            },
-            userContext,
-            navigate
-        );
-    }, [recipe, userContext, navigate]);
+                userContext,
+                navigate
+            );
+        },
+        [recipe, userContext, navigate]
+    );
 
     return useMemo(() => {
         if (recipe === undefined || recipeImplementation === undefined) {
@@ -185,11 +191,16 @@ export function useChildProps(
 export const SignInAndUpFeature: React.FC<
     FeatureBaseProps<{
         recipe: Recipe;
+        userContext?: UserContext;
         useComponentOverrides: () => ComponentOverrideMap;
     }>
 > = (props) => {
+    let userContext = useUserContext();
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
     const [state, dispatch] = useFeatureReducer(props.recipe);
-    const childProps = useChildProps(props.recipe, state, dispatch, props.navigate);
+    const childProps = useChildProps(props.recipe, state, dispatch, userContext, props.navigate);
     const recipeComponentOverrides = props.useComponentOverrides();
 
     return (

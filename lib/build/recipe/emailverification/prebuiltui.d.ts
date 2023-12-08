@@ -19,21 +19,21 @@ export declare class EmailVerificationPreBuiltUI extends RecipeRouter {
     getFeatureComponent: (
         _: "emailverification",
         props: FeatureBaseProps<{
-            userContext: UserContext;
+            userContext?: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static reset(): void;
     static EmailVerification: (
         props: FeatureBaseProps<{
-            userContext?: UserContext | undefined;
+            userContext?: UserContext;
         }>
-    ) => void;
+    ) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
 }
 declare const EmailVerification: (
     props: FeatureBaseProps<{
-        userContext?: UserContext | undefined;
+        userContext?: UserContext;
     }>
-) => void;
+) => JSX.Element;
 export { EmailVerification, EmailVerificationTheme };

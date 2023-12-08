@@ -6,13 +6,14 @@ import UI from "../../../../../ui";
 import { AccessDeniedScreenTheme } from "../../themes/accessDeniedScreenTheme";
 import { defaultTranslationsSession } from "../../themes/translations";
 
-import type { FeatureBaseProps } from "../../../../../types";
+import type { FeatureBaseProps, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 
 const AccessDeniedScreen: React.FC<
     FeatureBaseProps<{
         recipe: Recipe;
+        userContext?: UserContext;
         useComponentOverrides: () => ComponentOverrideMap;
     }>
 > = (props) => {

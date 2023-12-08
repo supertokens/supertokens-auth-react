@@ -193,11 +193,15 @@ export function useChildProps(
 export const SignInUpFeature: React.FC<
     FeatureBaseProps<{
         recipe: Recipe;
+        userContext?: UserContext;
         useComponentOverrides: () => ComponentOverrideMap;
     }>
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
-    const userContext = useUserContext();
+    let userContext = useUserContext();
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
     const [state, dispatch] = useFeatureReducer(props.recipe.webJSRecipe, userContext);
     const childProps = useChildProps(props.recipe, dispatch, state, userContext, props.navigate)!;
 

@@ -43,8 +43,11 @@ type Prop = FeatureBaseProps<{
 export const EmailVerification: React.FC<Prop> = (props) => {
     const sessionContext = useContext(SessionContext);
     const [status, setStatus] = useState("LOADING");
-    const userContext = useUserContext();
     const recipeComponentOverrides = props.useComponentOverrides();
+    let userContext = useUserContext();
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
 
     const redirectToAuthWithHistory = useCallback(async () => {
         await redirectToAuth({ redirectBack: false, navigate: props.navigate });
@@ -114,9 +117,9 @@ export const EmailVerification: React.FC<Prop> = (props) => {
 
     const signOut = useCallback(async (): Promise<void> => {
         const session = Session.getInstanceOrThrow();
-        await session.signOut({ userContext: props.userContext ?? userContext });
+        await session.signOut({ userContext });
         return redirectToAuthWithHistory();
-    }, [props.recipe, redirectToAuthWithHistory]);
+    }, [redirectToAuthWithHistory, userContext]);
 
     if (status === "LOADING") {
         return <Fragment />;

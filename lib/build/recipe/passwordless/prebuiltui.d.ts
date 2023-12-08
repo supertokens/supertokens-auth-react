@@ -14,7 +14,7 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
         componentName: "signInUp" | "linkClickedScreen",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext: UserContext;
+            userContext?: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
@@ -23,35 +23,35 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
         componentName: "signInUp" | "linkClickedScreen",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext: UserContext;
+            userContext?: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static reset(): void;
     static SignInUp: (
         prop?: PropsWithChildren<{
-            redirectOnSessionExists?: boolean | undefined;
-            navigate?: Navigate | undefined;
-            userContext?: UserContext | undefined;
+            redirectOnSessionExists?: boolean;
+            navigate?: Navigate;
+            userContext?: UserContext;
         }>
     ) => JSX.Element;
     static LinkClicked: (
         prop: FeatureBaseProps<{
-            userContext?: UserContext | undefined;
+            userContext?: UserContext;
         }>
     ) => JSX.Element;
     static SignInUpTheme: typeof SignInUpTheme;
 }
 declare const SignInUp: (
     prop?: PropsWithChildren<{
-        redirectOnSessionExists?: boolean | undefined;
-        navigate?: Navigate | undefined;
-        userContext?: UserContext | undefined;
+        redirectOnSessionExists?: boolean;
+        navigate?: Navigate;
+        userContext?: UserContext;
     }>
 ) => JSX.Element;
 declare const LinkClicked: (
     prop: FeatureBaseProps<{
-        userContext?: UserContext | undefined;
+        userContext?: UserContext;
     }>
 ) => JSX.Element;
 export { SignInUp, LinkClicked, SignInUpTheme };

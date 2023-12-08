@@ -25,6 +25,7 @@ export declare function useChildProps(
 export declare const SignInUpFeature: React.FC<
     FeatureBaseProps<{
         recipe: Recipe;
+        userContext?: UserContext;
         useComponentOverrides: () => ComponentOverrideMap;
     }>
 >;

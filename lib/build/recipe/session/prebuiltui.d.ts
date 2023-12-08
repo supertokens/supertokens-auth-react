@@ -14,7 +14,7 @@ export declare class SessionPreBuiltUI extends RecipeRouter {
         componentName: "accessDenied",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext: UserContext;
+            userContext?: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
@@ -22,21 +22,21 @@ export declare class SessionPreBuiltUI extends RecipeRouter {
     getFeatureComponent: (
         componentName: "accessDenied",
         props: FeatureBaseProps<{
-            userContext: UserContext;
+            userContext?: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static reset(): void;
     static AccessDeniedScreen: (
         prop?: FeatureBaseProps<{
-            userContext?: UserContext | undefined;
+            userContext?: UserContext;
         }>
     ) => React.ReactElement;
     static AccessDeniedScreenTheme: import("react").FC<import("./types").AccessDeniedThemeProps>;
 }
 declare const AccessDeniedScreen: (
     prop?: FeatureBaseProps<{
-        userContext?: UserContext | undefined;
+        userContext?: UserContext;
     }>
 ) => React.ReactElement;
 export { AccessDeniedScreen, AccessDeniedScreenTheme };

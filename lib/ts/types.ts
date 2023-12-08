@@ -368,4 +368,4 @@ export type Navigate =
       }
     | NavigateFunction;
 
-export type UserContext = Record<string, unknown>;
+export type UserContext = Record<string, any>;

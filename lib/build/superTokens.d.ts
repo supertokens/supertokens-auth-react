@@ -31,6 +31,7 @@ export default class SuperTokens {
         navigate?: Navigate | undefined;
         queryParams?: any;
         redirectBack: boolean;
+        userContext: UserContext;
     }) => Promise<void>;
     redirectToUrl: (redirectUrl: string, navigate?: Navigate) => Promise<void>;
     static reset(): void;

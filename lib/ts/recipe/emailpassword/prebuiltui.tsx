@@ -1,7 +1,7 @@
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { getNormalisedUserContext, isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeRouter } from "../recipeRouter";
 
@@ -45,7 +45,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "signinup" | "resetpassword",
-        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext: UserContext }>,
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
@@ -86,7 +86,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
     };
     getFeatureComponent = (
         componentName: "signinup" | "resetpassword",
-        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext: UserContext }>,
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signinup") {
@@ -147,20 +147,9 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
 
     static SignInAndUp = (
         prop: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }> = {}
-    ) => {
-        const userContext = getNormalisedUserContext(prop.userContext);
-        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", {
-            ...prop,
-            userContext,
-        });
-    };
-    static ResetPasswordUsingToken = (prop: FeatureBaseProps<{ userContext?: UserContext }>) => {
-        const userContext = getNormalisedUserContext(prop.userContext);
-        return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("resetpassword", {
-            ...prop,
-            userContext,
-        });
-    };
+    ) => EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", prop);
+    static ResetPasswordUsingToken = (prop: FeatureBaseProps<{ userContext?: UserContext }>) =>
+        EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("resetpassword", prop);
 
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
     static SignInAndUpTheme = SignInAndUpTheme;

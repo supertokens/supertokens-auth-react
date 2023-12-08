@@ -158,6 +158,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
             return SuperTokens.getInstanceOrThrow().redirectToAuth({
                 navigate,
                 redirectBack: false,
+                userContext,
             });
         }
 

@@ -25,20 +25,20 @@ export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
         componentName: "signinup" | "signinupcallback",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext: UserContext;
+            userContext?: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static reset(): void;
     static SignInAndUp: (
         prop?: FeatureBaseProps<{
-            redirectOnSessionExists?: boolean | undefined;
-            userContext?: UserContext | undefined;
+            redirectOnSessionExists?: boolean;
+            userContext?: UserContext;
         }>
     ) => JSX.Element;
     static SignInAndUpCallback: (
         prop: FeatureBaseProps<{
-            userContext?: UserContext | undefined;
+            userContext?: UserContext;
         }>
     ) => JSX.Element;
     static SignInAndUpTheme: import("react").FC<
@@ -50,13 +50,13 @@ export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
 }
 declare const SignInAndUp: (
     prop?: FeatureBaseProps<{
-        redirectOnSessionExists?: boolean | undefined;
-        userContext?: UserContext | undefined;
+        redirectOnSessionExists?: boolean;
+        userContext?: UserContext;
     }>
 ) => JSX.Element;
 declare const SignInAndUpCallback: (
     prop: FeatureBaseProps<{
-        userContext?: UserContext | undefined;
+        userContext?: UserContext;
     }>
 ) => JSX.Element;
 export { SignInAndUp, SignInAndUpCallback, SignInAndUpCallbackTheme, SignInAndUpTheme };

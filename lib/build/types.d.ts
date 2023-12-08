@@ -154,5 +154,5 @@ export declare type Navigate =
           goBack: () => void;
       }
     | NavigateFunction;
-export declare type UserContext = Record<string, unknown>;
+export declare type UserContext = Record<string, any>;
 export {};

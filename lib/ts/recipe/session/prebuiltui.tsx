@@ -1,5 +1,5 @@
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { getNormalisedUserContext, isTest } from "../../utils";
+import { isTest } from "../../utils";
 import { RecipeRouter } from "../recipeRouter";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
@@ -32,7 +32,7 @@ export class SessionPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "accessDenied",
-        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext: UserContext }>,
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return SessionPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
@@ -51,7 +51,7 @@ export class SessionPreBuiltUI extends RecipeRouter {
     };
     getFeatureComponent = (
         componentName: "accessDenied",
-        props: FeatureBaseProps<{ userContext: UserContext }>,
+        props: FeatureBaseProps<{ userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "accessDenied") {
@@ -77,10 +77,8 @@ export class SessionPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static AccessDeniedScreen = (prop: FeatureBaseProps<{ userContext?: UserContext }> = {}): React.ReactElement => {
-        const userContext = getNormalisedUserContext(prop.userContext);
-        return this.getFeatureComponent("accessDenied", { ...prop, userContext });
-    };
+    static AccessDeniedScreen = (prop: FeatureBaseProps<{ userContext?: UserContext }> = {}): React.ReactElement =>
+        this.getFeatureComponent("accessDenied", prop);
 
     static AccessDeniedScreenTheme = AccessDeniedScreenTheme;
 }

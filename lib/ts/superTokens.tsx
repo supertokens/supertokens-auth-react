@@ -30,7 +30,6 @@ import {
     appendTrailingSlashToURL,
     getCurrentNormalisedUrlPath,
     getDefaultCookieScope,
-    getNormalisedUserContext,
     getOriginOfPage,
     isTest,
     normaliseCookieScopeOrThrowError,
@@ -187,6 +186,7 @@ export default class SuperTokens {
         navigate?: Navigate;
         queryParams?: any;
         redirectBack: boolean;
+        userContext: UserContext;
     }): Promise<void> => {
         const queryParams = options.queryParams === undefined ? {} : options.queryParams;
         if (options.show !== undefined) {
@@ -201,7 +201,7 @@ export default class SuperTokens {
                 action: "TO_AUTH",
                 showSignIn: options.show === "signin",
             },
-            getNormalisedUserContext(undefined)
+            options.userContext
         );
 
         if (redirectUrl === null) {

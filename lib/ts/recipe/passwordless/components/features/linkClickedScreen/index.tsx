@@ -28,15 +28,22 @@ import Session from "../../../../session/recipe";
 import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
-import type { Awaited } from "../../../../../types";
+import type { Awaited, UserContext } from "../../../../../types";
 import type { FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap } from "../../../types";
 
-type PropType = FeatureBaseProps<{ recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap }>;
+type PropType = FeatureBaseProps<{
+    recipe: Recipe;
+    userContext?: UserContext;
+    useComponentOverrides: () => ComponentOverrideMap;
+}>;
 
 const LinkClickedScreen: React.FC<PropType> = (props) => {
-    const userContext = useUserContext();
+    let userContext = useUserContext();
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
     const [requireUserInteraction, setRequireUserInteraction] = useState<boolean>(false);
 
     const consumeCodeAtMount = useCallback(async () => {
@@ -50,6 +57,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                     error: "signin",
                 },
                 redirectBack: false,
+                userContext,
             });
             return "REDIRECTING";
         }
@@ -62,7 +70,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
         return props.recipe.webJSRecipe.consumeCode({
             userContext,
         });
-    }, [props.recipe, props.navigate]);
+    }, [props.recipe, props.navigate, userContext]);
 
     const handleConsumeResp = useCallback(
         async (response: Awaited<ReturnType<typeof consumeCodeAtMount>>): Promise<void> => {
@@ -83,6 +91,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                         error: "restart_link",
                     },
                     redirectBack: false,
+                    userContext,
                 });
             }
 
@@ -93,6 +102,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                         error: response.reason,
                     },
                     redirectBack: false,
+                    userContext,
                 });
             }
 
@@ -119,7 +129,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                 );
             }
         },
-        [props.navigate, props.recipe]
+        [props.navigate, props.recipe, userContext]
     );
 
     const handleConsumeError = useCallback(
@@ -132,6 +142,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                         message: err.message,
                     },
                     redirectBack: false,
+                    userContext,
                 });
             } else {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
@@ -140,10 +151,11 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                         error: "signin",
                     },
                     redirectBack: false,
+                    userContext,
                 });
             }
         },
-        [props.recipe, props.navigate]
+        [props.navigate, userContext]
     );
     useOnMountAPICall(consumeCodeAtMount, handleConsumeResp, handleConsumeError);
 

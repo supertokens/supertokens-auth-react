@@ -87,7 +87,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
     const userContext = useUserContext();
 
     const redirectToLogin = useCallback(() => {
-        void SuperTokens.getInstanceOrThrow().redirectToAuth({ navigate, redirectBack: true });
+        void SuperTokens.getInstanceOrThrow().redirectToAuth({ navigate, userContext, redirectBack: true });
     }, []);
 
     const buildContext = useCallback(async (): Promise<LoadedSessionContext> => {

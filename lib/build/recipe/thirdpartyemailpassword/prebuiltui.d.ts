@@ -18,7 +18,7 @@ export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
         componentName: "signinup" | "signinupcallback" | "resetpassword",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext: UserContext;
+            userContext?: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
@@ -27,25 +27,25 @@ export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
         componentName: "signinup" | "signinupcallback" | "resetpassword",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext: UserContext;
+            userContext?: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static reset(): void;
     static ThirdPartySignInAndUpCallback: (
         prop: FeatureBaseProps<{
-            userContext?: UserContext | undefined;
+            userContext?: UserContext;
         }>
     ) => JSX.Element;
     static ResetPasswordUsingToken: (
         prop: FeatureBaseProps<{
-            userContext?: UserContext | undefined;
+            userContext?: UserContext;
         }>
     ) => JSX.Element;
     static SignInAndUp: (
         prop?: FeatureBaseProps<{
-            redirectOnSessionExists?: boolean | undefined;
-            userContext?: UserContext | undefined;
+            redirectOnSessionExists?: boolean;
+            userContext?: UserContext;
         }>
     ) => JSX.Element;
     static ThirdPartySignInAndUpCallbackTheme: (props: {
@@ -56,18 +56,18 @@ export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
 }
 declare const ThirdPartySignInAndUpCallback: (
     prop: FeatureBaseProps<{
-        userContext?: UserContext | undefined;
+        userContext?: UserContext;
     }>
 ) => JSX.Element;
 declare const ResetPasswordUsingToken: (
     prop: FeatureBaseProps<{
-        userContext?: UserContext | undefined;
+        userContext?: UserContext;
     }>
 ) => JSX.Element;
 declare const SignInAndUp: (
     prop?: FeatureBaseProps<{
-        redirectOnSessionExists?: boolean | undefined;
-        userContext?: UserContext | undefined;
+        redirectOnSessionExists?: boolean;
+        userContext?: UserContext;
     }>
 ) => JSX.Element;
 export {

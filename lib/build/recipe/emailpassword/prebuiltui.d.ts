@@ -15,7 +15,7 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
         componentName: "signinup" | "resetpassword",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext: UserContext;
+            userContext?: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
@@ -24,20 +24,20 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
         componentName: "signinup" | "resetpassword",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext: UserContext;
+            userContext?: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static reset(): void;
     static SignInAndUp: (
         prop?: FeatureBaseProps<{
-            redirectOnSessionExists?: boolean | undefined;
-            userContext?: UserContext | undefined;
+            redirectOnSessionExists?: boolean;
+            userContext?: UserContext;
         }>
     ) => JSX.Element;
     static ResetPasswordUsingToken: (
         prop: FeatureBaseProps<{
-            userContext?: UserContext | undefined;
+            userContext?: UserContext;
         }>
     ) => JSX.Element;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
@@ -45,13 +45,13 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
 }
 declare const SignInAndUp: (
     prop?: FeatureBaseProps<{
-        redirectOnSessionExists?: boolean | undefined;
-        userContext?: UserContext | undefined;
+        redirectOnSessionExists?: boolean;
+        userContext?: UserContext;
     }>
 ) => JSX.Element;
 declare const ResetPasswordUsingToken: (
     prop: FeatureBaseProps<{
-        userContext?: UserContext | undefined;
+        userContext?: UserContext;
     }>
 ) => JSX.Element;
 export { SignInAndUp, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme, SignInAndUpTheme };

@@ -1,7 +1,7 @@
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { getNormalisedUserContext, isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 import { EmailPasswordPreBuiltUI } from "../emailpassword/prebuiltui";
@@ -56,7 +56,7 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "signinup" | "signinupcallback" | "resetpassword",
-        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext: UserContext }>,
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return ThirdPartyEmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
@@ -101,7 +101,7 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     };
     getFeatureComponent = (
         componentName: "signinup" | "signinupcallback" | "resetpassword",
-        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext: UserContext }>,
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signinup") {
@@ -162,20 +162,13 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static ThirdPartySignInAndUpCallback = (prop: FeatureBaseProps<{ userContext?: UserContext }>) => {
-        const userContext = getNormalisedUserContext(prop.userContext);
-        return this.getFeatureComponent("signinupcallback", { ...prop, userContext });
-    };
-    static ResetPasswordUsingToken = (prop: FeatureBaseProps<{ userContext?: UserContext }>) => {
-        const userContext = getNormalisedUserContext(prop.userContext);
-        return this.getFeatureComponent("resetpassword", { ...prop, userContext });
-    };
+    static ThirdPartySignInAndUpCallback = (prop: FeatureBaseProps<{ userContext?: UserContext }>) =>
+        this.getFeatureComponent("signinupcallback", prop);
+    static ResetPasswordUsingToken = (prop: FeatureBaseProps<{ userContext?: UserContext }>) =>
+        this.getFeatureComponent("resetpassword", prop);
     static SignInAndUp = (
         prop: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }> = {}
-    ) => {
-        const userContext = getNormalisedUserContext(prop.userContext);
-        return this.getFeatureComponent("signinup", { ...prop, userContext });
-    };
+    ) => this.getFeatureComponent("signinup", prop);
     static ThirdPartySignInAndUpCallbackTheme = ThirdPartySignInAndUpCallbackTheme;
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
     static SignInAndUpTheme = SignInAndUpTheme;
