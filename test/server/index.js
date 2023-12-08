@@ -382,7 +382,7 @@ app.post("/changeEmail", async (req, res) => {
 app.get("/unverifyEmail", verifySession(), async (req, res) => {
     let session = req.session;
     await EmailVerification.unverifyEmail(accountLinkingSupported ? session.getRecipeUserId() : session.getUserId());
-    await session.fetchAndSetClaim(EmailVerification.EmailVerificationClaim);
+    await session.fetchAndSetClaim(EmailVerification.EmailVerificationClaim, {});
     res.send({ status: "OK" });
 });
 
@@ -390,8 +390,8 @@ app.post("/setRole", verifySession(), async (req, res) => {
     let session = req.session;
     await UserRoles.createNewRoleOrAddPermissions(req.body.role, req.body.permissions);
     await UserRoles.addRoleToUser(session.getTenantId(), session.getUserId(), req.body.role);
-    await session.fetchAndSetClaim(UserRoles.UserRoleClaim);
-    await session.fetchAndSetClaim(UserRoles.PermissionClaim);
+    await session.fetchAndSetClaim(UserRoles.UserRoleClaim, {});
+    await session.fetchAndSetClaim(UserRoles.PermissionClaim, {});
     res.send({ status: "OK" });
 });
 
@@ -1011,6 +1011,7 @@ function initST() {
         [
             "session",
             Session.init({
+                overwriteSessionDuringSignIn: true,
                 override: {
                     apis: function (originalImplementation) {
                         return {
