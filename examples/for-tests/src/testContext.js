@@ -19,6 +19,7 @@ export function getTestContext() {
             localStorage.getItem("firstFactors") !== null
                 ? localStorage.getItem("firstFactors").split(", ")
                 : undefined,
+        enableMFA: localStorage.getItem("enableMFA") === "true",
     };
     return ret;
 }

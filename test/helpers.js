@@ -445,6 +445,11 @@ export async function clearBrowserCookiesWithoutAffectingConsole(page, console) 
         page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
+
+    // TODO: think about moving this elsewhere and/or renaming this function
+    if (await isMFASupported()) {
+        await page.evaluate(() => window.localStorage.setItem("enableMFA", "true"));
+    }
     return toReturn;
 }
 
@@ -874,6 +879,15 @@ export async function isMultitenancyManagementEndpointsSupported() {
 export async function isAccountLinkingSupported() {
     const features = await getFeatureFlags();
     if (!features.includes("accountlinking")) {
+        return false;
+    }
+
+    return true;
+}
+
+export async function isMFASupported() {
+    const features = await getFeatureFlags();
+    if (!features.includes("mfa")) {
         return false;
     }
 

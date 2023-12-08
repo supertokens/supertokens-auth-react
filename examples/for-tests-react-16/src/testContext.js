@@ -15,6 +15,7 @@ export function getTestContext() {
         mockTenantId: localStorage.getItem("mockTenantId"),
         clientType: localStorage.getItem("clientType") || undefined,
         firstFactors: localStorage.getItem("firstFactors")?.split(", "),
+        enableMFA: localStorage.getItem("enableMFA") === "true",
     };
     return ret;
 }
