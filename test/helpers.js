@@ -449,6 +449,10 @@ export async function clearBrowserCookiesWithoutAffectingConsole(page, console) 
     // TODO: think about moving this elsewhere and/or renaming this function
     if (await isMFASupported()) {
         await page.evaluate(() => window.localStorage.setItem("enableMFA", "true"));
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
     }
     return toReturn;
 }

@@ -283,9 +283,11 @@ if (emailVerificationMode !== "OFF") {
 }
 
 if (testContext.enableMFA) {
-    MultiFactorAuth.init({
-        firstFactors: testContext.firstFactors,
-    });
+    recipeList.push(
+        MultiFactorAuth.init({
+            firstFactors: testContext.firstFactors,
+        })
+    );
 }
 
 SuperTokens.init({

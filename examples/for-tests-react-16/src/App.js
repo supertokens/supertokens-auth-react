@@ -275,9 +275,11 @@ if (emailVerificationMode !== "OFF") {
 }
 
 if (testContext.enableMFA) {
-    MultiFactorAuth.init({
-        firstFactors: testContext.firstFactors,
-    });
+    recipeList.push(
+        MultiFactorAuth.init({
+            firstFactors: testContext.firstFactors,
+        })
+    );
 }
 
 SuperTokens.init({
@@ -520,6 +522,7 @@ function SessionInfoTable({ sessionInfo }) {
 
 function getEmailVerificationConfigs({ disableDefaultUI }) {
     return EmailVerification.init({
+        useShadowDom,
         disableDefaultUI,
         sendVerifyEmailScreen: {
             style: theme,
