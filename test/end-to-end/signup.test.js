@@ -39,6 +39,9 @@ import {
     getGeneralError,
     waitForSTElement,
     backendBeforeEach,
+    setSelectDropdownValue,
+    getInputField,
+    isReact16,
 } from "../helpers";
 
 import {
@@ -340,6 +343,438 @@ describe("SuperTokens SignUp", function () {
 
             let [emailError] = await getFieldErrors(page);
             assert.deepStrictEqual(emailError, "This email already exists. Please sign in instead.");
+        });
+    });
+
+    describe("Custom fields tests", function () {
+        before(function () {
+            const isReact16App = isReact16();
+            if (isReact16App) {
+                this.skip();
+            }
+        });
+        beforeEach(async function () {
+            // set cookie and reload which loads the form with custom field
+            await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "CUSTOM_FIELDS"));
+
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+            await toggleSignInSignUp(page);
+        });
+
+        it("Should load the custom fields", async function () {
+            let text = await getAuthPageHeaderText(page);
+            assert.deepStrictEqual(text, "Sign Up");
+
+            // check if select dropdown is loaded
+            const selectDropdownExists = await waitForSTElement(page, "select");
+            assert.ok(selectDropdownExists, "Select dropdown exists");
+
+            // check if checbox is loaded
+            const checkboxExists = await waitForSTElement(page, 'input[type="checkbox"]');
+            assert.ok(checkboxExists, "Checkbox exists");
+
+            // check if labels are loaded correctly
+            // non-optional field with empty labels should'nt show * sign
+            const expectedLabels = ["Email *", "Password *", "Select Dropdown", ""];
+            const labelNames = await getLabelsText(page);
+            assert.deepStrictEqual(labelNames, expectedLabels);
+        });
+
+        it("Should show error messages, based on optional flag", async function () {
+            await submitForm(page);
+            let formFieldErrors = await getFieldErrors(page);
+
+            // 2 regular form field errors +
+            // 1 required custom field => terms checkbox
+            assert.deepStrictEqual(formFieldErrors, [
+                "Field is not optional",
+                "Field is not optional",
+                "You must accept the terms and conditions",
+            ]);
+
+            // supply values for regular-required fields only
+            await setInputValues(page, [
+                { name: "email", value: "jack.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+
+            await submitForm(page);
+            formFieldErrors = await getFieldErrors(page);
+            assert.deepStrictEqual(formFieldErrors, ["You must accept the terms and conditions"]);
+
+            // check terms and condition checkbox
+            let termsCheckbox = await waitForSTElement(page, '[name="terms"]');
+            await page.evaluate((e) => e.click(), termsCheckbox);
+
+            //un-checking the required checkbox should throw custom error message
+            await page.evaluate((e) => e.click(), termsCheckbox);
+
+            await submitForm(page);
+            formFieldErrors = await getFieldErrors(page);
+            assert.deepStrictEqual(formFieldErrors, ["Please check Terms and conditions"]);
+        });
+
+        it("Should be part of the signup payload", async function () {
+            const customFields = {
+                terms: "true",
+                "select-dropdown": "option 3",
+            };
+            let assertionError = null;
+            let interceptionPassed = false;
+
+            const requestHandler = async (request) => {
+                if (request.url().includes(SIGN_UP_API) && request.method() === "POST") {
+                    try {
+                        const postData = JSON.parse(request.postData());
+                        Object.keys(customFields).forEach((key) => {
+                            let findFormData = postData.formFields.find((inputData) => inputData.id === key);
+                            assert.ok(findFormData, "Field not found in req.data");
+                            assert.strictEqual(
+                                findFormData["value"],
+                                customFields[key],
+                                `Mismatch in payload for key: ${key}`
+                            );
+                        });
+                        interceptionPassed = true;
+                        return request.respond({
+                            status: 200,
+                            headers: {
+                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                "access-control-allow-credentials": "true",
+                            },
+                            body: JSON.stringify({
+                                status: "OK",
+                            }),
+                        });
+                    } catch (error) {
+                        assertionError = error; // Store the error
+                    }
+                }
+                return request.continue();
+            };
+
+            await page.setRequestInterception(true);
+            page.on("request", requestHandler);
+
+            try {
+                // Fill and submit the form with custom fields
+                await setInputValues(page, [
+                    { name: "email", value: "john.doe@supertokens.io" },
+                    { name: "password", value: "Str0ngP@assw0rd" },
+                ]);
+
+                await setSelectDropdownValue(page, "select", customFields["select-dropdown"]);
+
+                // Check terms and condition checkbox
+                let termsCheckbox = await waitForSTElement(page, '[name="terms"]');
+                await page.evaluate((e) => e.click(), termsCheckbox);
+
+                // Perform the button click and wait for all network activity to finish
+                await Promise.all([page.waitForNetworkIdle(), submitForm(page)]);
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            }
+
+            assert.ok(!assertionError, assertionError?.message);
+            assert.ok(interceptionPassed, "Test Failed");
+        });
+
+        it("Should display nonOptionalErrorMsg on blank form submit", async function () {
+            let apiCallMade = false;
+
+            const requestHandler = (request) => {
+                const url = request.url();
+                if (url === SIGN_UP_API) {
+                    apiCallMade = true;
+                    request.continue();
+                } else {
+                    request.continue();
+                }
+            };
+
+            page.on("request", requestHandler);
+
+            try {
+                // Fill and submit the form with custom fields
+                await submitForm(page);
+                let formFieldErrors = await getFieldErrors(page);
+                // Also standard non-optional-error is displayed if nonOptionalErrorMsg is not provided
+                assert.deepStrictEqual(formFieldErrors, [
+                    "Field is not optional",
+                    "Field is not optional",
+                    "You must accept the terms and conditions",
+                ]);
+            } finally {
+                page.off("request", requestHandler);
+            }
+
+            assert.ok(!apiCallMade, "Empty form making signup API request");
+        });
+
+        it("Should overwrite server error message for non-optional fields with nonOptionalErrorMsg", async function () {
+            const requestHandler = (request) => {
+                if (request.method() === "POST" && request.url() === SIGN_UP_API) {
+                    request.respond({
+                        status: 200,
+                        contentType: "application/json",
+                        headers: {
+                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                            "access-control-allow-credentials": "true",
+                        },
+                        body: JSON.stringify({
+                            status: "FIELD_ERROR",
+                            formFields: [
+                                {
+                                    id: "select-dropdown",
+                                    error: "Field is not optional",
+                                },
+                                {
+                                    id: "email",
+                                    error: "Field is not optional",
+                                },
+                            ],
+                        }),
+                    });
+                } else {
+                    request.continue();
+                }
+            };
+
+            try {
+                await page.setRequestInterception(true);
+                page.on("request", requestHandler);
+
+                // Fill and submit the form with custom fields
+                await setInputValues(page, [
+                    { name: "email", value: "john.doe@supertokens.io" },
+                    { name: "password", value: "Str0ngP@assw0rd" },
+                ]);
+                // Check terms and condition checkbox
+                let termsCheckbox = await waitForSTElement(page, '[name="terms"]');
+                await page.evaluate((e) => e.click(), termsCheckbox);
+
+                // Perform the button click and wait for all network activity to finish
+                await Promise.all([page.waitForNetworkIdle(), submitForm(page)]);
+
+                await waitForSTElement(page, "[data-supertokens~='inputErrorMessage']");
+                // should also show the server error message if nonOptionalErrorMsg is not provided
+                let formFieldsErrors = await getFieldErrors(page);
+                assert.deepStrictEqual(formFieldsErrors, [
+                    "Field is not optional",
+                    "Select dropdown is not an optional",
+                ]);
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            }
+        });
+    });
+
+    // Default values test
+    describe("Default fields tests", function () {
+        before(function () {
+            const isReact16App = isReact16();
+            if (isReact16App) {
+                this.skip();
+            }
+        });
+
+        beforeEach(async function () {
+            // set cookie and reload which loads the form fields with default values
+            await page.evaluate(() =>
+                window.localStorage.setItem("SIGNUP_SETTING_TYPE", "CUSTOM_FIELDS_WITH_DEFAULT_VALUES")
+            );
+
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+            await toggleSignInSignUp(page);
+        });
+
+        it("Should prefill the fields with default values", async function () {
+            const fieldsWithDefault = {
+                country: "India",
+                "select-dropdown": "option 2",
+                terms: true,
+            };
+
+            // regular input field default value
+            const countryInput = await getInputField(page, "country");
+            const defaultCountry = await countryInput.evaluate((f) => f.value);
+            assert.strictEqual(defaultCountry, fieldsWithDefault["country"]);
+
+            // custom dropdown default value is also getting set correctly
+            const selectDropdown = await waitForSTElement(page, "select");
+            const defaultOption = await selectDropdown.evaluate((f) => f.value);
+            assert.strictEqual(defaultOption, fieldsWithDefault["select-dropdown"]);
+
+            // custom dropdown default value is also getting set correctly
+            const termsCheckbox = await waitForSTElement(page, '[name="terms"]');
+            // checkbox is checked
+            const defaultChecked = await termsCheckbox.evaluate((f) => f.checked);
+            assert.strictEqual(defaultChecked, fieldsWithDefault["terms"]);
+            // also the value = string
+            const defaultValue = await termsCheckbox.evaluate((f) => f.value);
+            assert.strictEqual(defaultValue, fieldsWithDefault["terms"].toString());
+        });
+
+        it("Should be able to overwrite the default values", async function () {
+            const updatedFields = {
+                country: "USA",
+                "select-dropdown": "option 3",
+            };
+
+            await setInputValues(page, [{ name: "country", value: updatedFields["country"] }]);
+            await setSelectDropdownValue(page, "select", updatedFields["select-dropdown"]);
+
+            // input field default value
+            const countryInput = await getInputField(page, "country");
+            const updatedCountry = await countryInput.evaluate((f) => f.value);
+            assert.strictEqual(updatedCountry, updatedFields["country"]);
+
+            // dropdown default value is also getting set correctly
+            const selectDropdown = await waitForSTElement(page, "select");
+            const updatedOption = await selectDropdown.evaluate((f) => f.value);
+            assert.strictEqual(updatedOption, updatedFields["select-dropdown"]);
+        });
+
+        it("Should ensure signup-payload contains default values", async function () {
+            // directly submit the form and test the payload
+            const expectedDefautlValues = [
+                { id: "email", value: "test@one.com" },
+                { id: "password", value: "fakepassword123" },
+                { id: "terms", value: "true" },
+                { id: "select-dropdown", value: "option 2" },
+                { id: "country", value: "India" },
+            ];
+
+            let assertionError = null;
+            let interceptionPassed = false;
+
+            const requestHandler = async (request) => {
+                if (request.url().includes(SIGN_UP_API) && request.method() === "POST") {
+                    try {
+                        const postData = JSON.parse(request.postData());
+                        expectedDefautlValues.forEach(({ id, value }) => {
+                            let findFormData = postData.formFields.find((inputData) => inputData.id === id);
+                            assert.ok(findFormData, "Field not found in req.data");
+                            assert.strictEqual(findFormData["value"], value, `Mismatch in payload for key: ${id}`);
+                        });
+                        interceptionPassed = true;
+                        return request.respond({
+                            status: 200,
+                            headers: {
+                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                "access-control-allow-credentials": "true",
+                            },
+                            body: JSON.stringify({
+                                status: "OK",
+                            }),
+                        });
+                    } catch (error) {
+                        assertionError = error; // Store the error
+                    }
+                }
+                return request.continue();
+            };
+
+            await page.setRequestInterception(true);
+            page.on("request", requestHandler);
+
+            try {
+                // Perform the button click and wait for all network activity to finish
+                await Promise.all([page.waitForNetworkIdle(), submitForm(page)]);
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            }
+
+            assert.ok(!assertionError, assertionError?.message);
+            assert.ok(interceptionPassed, "Test Failed");
+        });
+    });
+
+    describe("Incorrect field config test", function () {
+        before(function () {
+            const isReact16App = isReact16();
+            if (isReact16App) {
+                this.skip();
+            }
+        });
+
+        beforeEach(async function () {
+            // set cookie and reload which loads the form fields with default values
+            await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_FIELDS"));
+
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+        });
+
+        it("Should throw error for incorrect getDefaultValue func call", async function () {
+            await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_GETDEFAULT"));
+            let pageErrorMessage = "";
+            page.on("pageerror", (err) => {
+                pageErrorMessage = err.message;
+            });
+
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+            await toggleSignInSignUp(page);
+
+            const expectedErrorMessage = "getDefaultValue for country must return a string";
+            assert(
+                pageErrorMessage.includes(expectedErrorMessage),
+                `Expected "${expectedErrorMessage}" to be included in page-error`
+            );
+        });
+
+        it("Should throw error for non-string params to onChange", async function () {
+            await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_ONCHANGE"));
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+            await toggleSignInSignUp(page);
+
+            let pageErrorMessage = "";
+            page.on("pageerror", (err) => {
+                pageErrorMessage = err.message;
+            });
+
+            // check terms and condition checkbox since it emits non-string value => boolean
+            let termsCheckbox = await waitForSTElement(page, '[name="terms"]');
+            await page.evaluate((e) => e.click(), termsCheckbox);
+
+            const expectedErrorMessage = "terms value must be a string";
+            assert(
+                pageErrorMessage.includes(expectedErrorMessage),
+                `Expected "${expectedErrorMessage}" to be included in page-error`
+            );
+        });
+
+        it("Should throw error for empty string for nonOptionalErrorMsg", async function () {
+            const expectedErrorMessage = "nonOptionalErrorMsg for field city cannot be an empty string";
+            let pageErrorMessage = "";
+            page.on("pageerror", (err) => {
+                pageErrorMessage = err.message;
+            });
+
+            await page.evaluate(() =>
+                window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_NON_OPTIONAL_ERROR_MSG")
+            );
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+
+            assert.ok(pageErrorMessage !== "", "Empty nonOptionalErrorMsg should throw error");
+            assert(
+                pageErrorMessage.includes(expectedErrorMessage),
+                `Expected "${expectedErrorMessage}" to be included in page-error`
+            );
         });
     });
 });

@@ -39,6 +39,7 @@ import {
     isMultitenancyManagementEndpointsSupported,
     setupTenant,
     backendBeforeEach,
+    getTextByDataSupertokens,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -530,6 +531,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         // Emailpassword
         const inputNames = await getInputNames(page);
         assert.deepStrictEqual(inputNames, []);
+        assert.strictEqual(await getTextByDataSupertokens(page, "headerTitle"), "Sign Up / Sign In");
     });
 
     it("should show thirdpartyemailpassword if FE has tpep and both emailpassword and thirdparty is enabled", async function () {

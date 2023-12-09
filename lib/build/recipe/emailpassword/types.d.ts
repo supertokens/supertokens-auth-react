@@ -26,7 +26,6 @@ import type {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipe/types";
-import type React from "react";
 import type { Dispatch } from "react";
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
@@ -78,12 +77,16 @@ export declare type NormalisedSignInAndUpFeatureConfig = {
     signInForm: NormalisedSignInFormFeatureConfig;
 };
 export declare type SignUpFormFeatureUserInput = FeatureBaseConfig & {
-    formFields?: FormFieldSignUpConfig[];
+    formFields?: (FormField & {
+        inputComponent?: (props: InputProps) => JSX.Element;
+    })[];
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
 };
 export declare type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
-    formFields: NormalisedFormField[];
+    formFields: (NormalisedFormField & {
+        inputComponent?: (props: InputProps) => JSX.Element;
+    })[];
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
 };
@@ -94,7 +97,6 @@ export declare type NormalisedSignInFormFeatureConfig = NormalisedBaseConfig & {
     formFields: NormalisedFormField[];
 };
 export declare type FormFieldSignInConfig = FormFieldBaseConfig;
-export declare type FormFieldSignUpConfig = FormField;
 export declare type ResetPasswordUsingTokenUserInput = {
     disableDefaultUI?: boolean;
     submitNewPasswordForm?: FeatureBaseConfig;
@@ -111,11 +113,11 @@ export declare type NormalisedSubmitNewPasswordForm = FeatureBaseConfig & {
 export declare type NormalisedEnterEmailForm = FeatureBaseConfig & {
     formFields: NormalisedFormField[];
 };
-declare type FormThemeBaseProps = ThemeBaseProps & {
-    formFields: FormFieldThemeProps[];
+declare type NonSignUpFormThemeBaseProps = ThemeBaseProps & {
+    formFields: Omit<FormFieldThemeProps, "inputComponent">[];
     error: string | undefined;
 };
-export declare type SignInThemeProps = FormThemeBaseProps & {
+export declare type SignInThemeProps = NonSignUpFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
@@ -124,13 +126,15 @@ export declare type SignInThemeProps = FormThemeBaseProps & {
     forgotPasswordClick: () => void;
     onSuccess: (result: { user: User }) => void;
 };
-export declare type SignUpThemeProps = FormThemeBaseProps & {
+export declare type SignUpThemeProps = ThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
     signInClicked?: () => void;
     onSuccess: (result: { user: User }) => void;
+    formFields: FormFieldThemeProps[];
+    error: string | undefined;
 };
 export declare type SignInAndUpThemeProps = {
     signInForm: SignInThemeProps;
@@ -144,9 +148,9 @@ export declare type SignInAndUpThemeProps = {
 };
 export declare type FormFieldThemeProps = NormalisedFormField & {
     labelComponent?: JSX.Element;
-    inputComponent?: React.FC<InputProps>;
     showIsRequired?: boolean;
     clearOnSubmit?: boolean;
+    inputComponent?: (props: InputProps) => JSX.Element;
 };
 export declare type FormFieldError = {
     id: string;
@@ -192,7 +196,7 @@ export declare type ResetPasswordUsingTokenThemeProps = {
     config: NormalisedConfig;
     userContext?: any;
 };
-export declare type EnterEmailProps = FormThemeBaseProps & {
+export declare type EnterEmailProps = NonSignUpFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     error: string | undefined;
     clearError: () => void;
@@ -200,7 +204,7 @@ export declare type EnterEmailProps = FormThemeBaseProps & {
     config: NormalisedConfig;
     onBackButtonClicked: () => void;
 };
-export declare type SubmitNewPasswordProps = FormThemeBaseProps & {
+export declare type SubmitNewPasswordProps = NonSignUpFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     error: string | undefined;
     clearError: () => void;
