@@ -33,7 +33,7 @@ export class SessionPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "accessDenied",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        props: FeatureBaseProps & { error?: string; userContext?: any },
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return SessionPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
@@ -52,7 +52,7 @@ export class SessionPreBuiltUI extends RecipeRouter {
     };
     getFeatureComponent = (
         componentName: "accessDenied",
-        props: FeatureBaseProps & { userContext?: any },
+        props: FeatureBaseProps & { useShadowDom?: boolean; error?: string; userContext?: any },
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "accessDenied") {
@@ -61,6 +61,8 @@ export class SessionPreBuiltUI extends RecipeRouter {
                     <AccessDeniedScreenFeature
                         recipe={this.recipeInstance}
                         useComponentOverrides={useComponentOverrides}
+                        error={props.error}
+                        useShadowDom={props.useShadowDom}
                     />
                 </UserContextWrapper>
             );
@@ -78,8 +80,9 @@ export class SessionPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static AccessDeniedScreen = (prop: PropsWithChildren<{ userContext?: any }> = {}): ReactElement =>
-        this.getFeatureComponent("accessDenied", prop);
+    static AccessDeniedScreen = (
+        prop: PropsWithChildren<{ useShadowDom?: boolean; error?: string; userContext?: any }> = {}
+    ): ReactElement => this.getFeatureComponent("accessDenied", prop);
 
     static AccessDeniedScreenTheme = AccessDeniedScreenTheme;
 }

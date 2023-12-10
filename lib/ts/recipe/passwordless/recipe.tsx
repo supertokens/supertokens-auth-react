@@ -37,6 +37,8 @@ import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRec
 import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
 
+export const passwordlessFirstFactors = ["otp-phone", "otp-email", "link-phone", "link-email"] as const;
+
 /*
  * Class.
  */

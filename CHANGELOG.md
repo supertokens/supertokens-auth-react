@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [0.36.0] - 2023-11-XX
+
+### Overview
+
+#### Introducing MFA
+
+With this release, we are introducing MultiFactorAuth and TOTP, this will let you:
+
+-   require (2FA or MFA) during sign in
+-   make use of our TOTP
+
+Check our [guide](https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/multi-factor-auth/overview) for more information.
+
+To use this you'll need compatible versions:
+
+-   Core>=8.0.0
+-   supertokens-node>=17.0.0 (support is pending in other backend SDKs)
+-   supertokens-website>=17.0.3
+-   supertokens-web-js>=0.9.0
+-   supertokens-auth-react>=0.36.0
+
+### Changes
+
+-   Added support for FDI 1.19 (Node SDK>= 17.0.0), but keeping support FDI version 1.17 and 1.18 (node >= 15.0.0, golang>=0.13, python>=0.15.0)
+-   Added `firstFactors` into the return type of `getLoginMethods`
+-   Added the `MultiFactorAuth` recipe
+-   Updated how we select which login UI to show to take the `firstFactors` config value into account (defined in the `MultiFactorAuth` recipe or in the tenant information)
+-   Refactored/renamed some styling options (`resetPasswordHeaderTitle` -> `headerTitle withBackButton`)
+-   Added a `useShadowDom` prop to the `AccessDeniedScreen`
+-   Added an `error` prop to the `AccessDeniedScreen` that can be used to describe the reason access is denied.
+-   Fixed a font loading issue, that caused apps using the default (Rubik) font to appear with the incorrect font weights
+-   Some default styling has changed related to how fonts/font-weights are applied
+
 ## [0.35.9] - 2023-12-06
 
 -   Fixes ThirdPartyEmailPassword rendering sign in/up switcher even with disabled email password. Instead it'll now render `SignInAndUpHeader_Override` in this case (overrideable as `ThirdPartySignInAndUpHeader`). Overriding `ThirdPartyEmailPasswordHeader_Override` should still cover all cases.

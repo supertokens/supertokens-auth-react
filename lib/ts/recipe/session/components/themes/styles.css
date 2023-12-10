@@ -16,18 +16,17 @@
 @import "../../../../styles/styles.css";
 
 /* Override */
-[data-supertokens~="row"] {
-    padding-top: 32px;
-    padding-bottom: 32px;
+[data-supertokens~="accessDenied"] [data-supertokens~="row"] {
+    padding-bottom: 24px;
 }
 
-[data-supertokens~="divider"] {
+[data-supertokens~="accessDenied"] [data-supertokens~="divider"] {
     padding: 0;
-    margin: 24px 0;
+    margin: 34px 0 18px 0;
 }
 
-[data-supertokens~="headerTitle"] {
-    padding-top: 24px;
+[data-supertokens~="accessDenied"] [data-supertokens~="headerTitle"] {
+    margin: 10px 0 0 0;
     font-style: normal;
     font-weight: 700;
     font-size: 20px;
@@ -45,12 +44,14 @@
 }
 
 [data-supertokens~="buttonsGroup"] {
+    margin-top: 34px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
 [data-supertokens~="buttonBase"] {
+    font-family: "Rubik", sans-serif;
     font-size: var(--font-size-1);
     line-height: 21px;
     font-weight: 500;
@@ -69,4 +70,8 @@
     align-items: center;
     gap: 6px;
     color: rgb(var(--palette-textGray));
+}
+
+[data-supertokens~="primaryText"][data-supertokens~="accessDeniedError"] {
+    font-weight: 400;
 }

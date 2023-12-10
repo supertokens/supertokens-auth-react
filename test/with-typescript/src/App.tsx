@@ -37,6 +37,7 @@ import { ThirdPartyEmailPasswordPreBuiltUI } from "../../../recipe/thirdpartyema
 import { EmailPasswordPreBuiltUI } from "../../../recipe/emailpassword/prebuiltui";
 import { AccessDeniedScreen } from "../../../recipe/session/prebuiltui";
 import EmailVerification from "../../../recipe/emailverification";
+import MultiFactorAuth from "../../../recipe/multifactorauth";
 
 /*
  * This application is used with the purpose of illustrating Supertokens with typescript.
@@ -1451,4 +1452,16 @@ Multitenancy.init({
             },
         }),
     },
+});
+
+MultiFactorAuth.init();
+MultiFactorAuth.init({
+    firstFactors: ["emailpassword", "unknown"],
+    factorChooserScreen: {
+        style: "[data-supertokens~=container] { background-color: red; }",
+    },
+    getFactorInfo: (factors) => [
+        ...factors,
+        { id: "asfd", logo: () => <div>A</div>, description: "test", name: "asdf", path: "/mfa/asdf" },
+    ],
 });

@@ -14,6 +14,7 @@ import Multitenancy from "supertokens-auth-react/recipe/multitenancy";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 import UserRoles from "supertokens-auth-react/recipe/userroles";
+import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
 
 import axios from "axios";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
@@ -332,6 +333,9 @@ const customFields = [
 const testContext = getTestContext();
 
 let recipeList = [
+    MultiFactorAuth.init({
+        firstFactors: testContext.firstFactors,
+    }),
     Multitenancy.init({
         override: {
             functions: (oI) => ({
@@ -641,6 +645,7 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
             </div>
             <div className="session-context-userId">session context userID: {sessionContext.userId}</div>
             <pre className="invalidClaims">{JSON.stringify(sessionContext.invalidClaims, undefined, 2)}</pre>
+            <a onClick={() => MultiFactorAuth.redirectToFactorChooser(true, props.history)}>MFA chooser</a>
         </div>
     );
 }

@@ -58,6 +58,7 @@ export default class ThirdParty extends AuthRecipe<
         if (SuperTokens.usesDynamicLoginMethods === false && config.signInAndUpFeature.providers.length === 0) {
             throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
         }
+
         super(config);
     }
 

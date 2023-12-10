@@ -10,6 +10,6 @@ export declare const SignIn: import("react").ComponentType<
         config: import("../../../types").NormalisedConfig;
         signUpClicked?: (() => void) | undefined;
         forgotPasswordClick: () => void;
-        onSuccess: () => void;
+        onSuccess: (result: { user: import("supertokens-web-js/types").User }) => void;
     }
 >;

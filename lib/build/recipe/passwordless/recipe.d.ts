@@ -8,6 +8,7 @@ import type {
     UserInput,
 } from "./types";
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
+export declare const passwordlessFirstFactors: readonly ["otp-phone", "otp-email", "link-phone", "link-email"];
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,

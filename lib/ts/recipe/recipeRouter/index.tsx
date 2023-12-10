@@ -1,10 +1,83 @@
+import { logDebugMessage } from "../../logging";
 import SuperTokens from "../../superTokens";
+import MultiFactorAuth from "../multifactorauth/recipe";
 
 import type { RecipeFeatureComponentMap } from "../../types";
 import type { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
 import type { GetLoginMethodsResponseNormalized } from "../multitenancy/types";
 import type RecipeModule from "../recipeModule";
 import type NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
+
+// The related ADR: https://supertokens.com/docs/contribute/decisions/multitenancy/0006
+// TODO: This could be by the recipes registering what factors they provide (at least partially)
+const priorityOrder: {
+    rid: string;
+    includes: ("thirdparty" | "emailpassword" | "passwordless")[];
+    factorsProvided: string[];
+}[] = [
+    {
+        rid: "thirdpartyemailpassword",
+        includes: ["thirdparty", "emailpassword"],
+        factorsProvided: ["thirdparty", "emailpassword"],
+    },
+    {
+        rid: "thirdpartypasswordless",
+        includes: ["thirdparty", "passwordless"],
+        factorsProvided: ["thirdparty", "otp-phone", "otp-email", "link-phone", "link-email"],
+    },
+    { rid: "emailpassword", includes: ["emailpassword"], factorsProvided: ["emailpassword"] },
+    {
+        rid: "passwordless",
+        includes: ["passwordless"],
+        factorsProvided: ["otp-phone", "otp-email", "link-phone", "link-email"],
+    },
+    { rid: "thirdparty", includes: ["thirdparty"], factorsProvided: ["thirdparty"] },
+];
+
+function chooseComponentBasedOnFirstFactors(
+    firstFactors: string[],
+    routeComponents: ComponentWithRecipeAndMatchingMethod[],
+    allowSubRecipeComp: boolean
+) {
+    let fallbackRid;
+    let fallbackComponent;
+    let subRecipeRid;
+    let subRecipeComponent;
+    // We first try to find an exact match, and fall back on something that covers all factors (but maybe more)
+    for (const { rid, factorsProvided } of priorityOrder) {
+        if (firstFactors.every((factor) => factorsProvided.includes(factor))) {
+            const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
+            if (matchingComp) {
+                fallbackRid = rid;
+                fallbackComponent = matchingComp;
+                if (firstFactors.length === factorsProvided.length) {
+                    logDebugMessage(`Rendering ${rid} because it matches factors: ${firstFactors} exactly`);
+                    return matchingComp;
+                }
+            }
+        } else if (allowSubRecipeComp && factorsProvided.some((factor) => firstFactors.includes(factor))) {
+            const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
+            if (matchingComp) {
+                subRecipeRid = rid;
+                subRecipeComponent = matchingComp;
+            }
+        }
+    }
+
+    if (fallbackComponent === undefined) {
+        if (subRecipeComponent) {
+            logDebugMessage(
+                `Rendering ${subRecipeRid} because it overlaps factors: ${firstFactors} and we are not rendering the auth page`
+            );
+            return subRecipeComponent;
+        }
+
+        throw new Error("No enabled recipes overlap with the requested firstFactors: " + firstFactors);
+    }
+
+    logDebugMessage(`Rendering ${fallbackRid} to cover ${firstFactors}`);
+    return fallbackComponent;
+}
 
 export abstract class RecipeRouter {
     private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;
@@ -16,6 +89,7 @@ export abstract class RecipeRouter {
         dynamicLoginMethods?: GetLoginMethodsResponseNormalized
     ): ComponentWithRecipeAndMatchingMethod | undefined {
         const path = normalisedUrl.getAsStringDangerous();
+        const isNonAuthPage = path !== SuperTokens.getInstanceOrThrow().appInfo.websiteBasePath.getAsStringDangerous();
 
         const routeComponents = preBuiltUIList.reduce((components, c) => {
             const routes = c.getPathsToFeatureComponentWithRecipeIdMap();
@@ -31,38 +105,14 @@ export abstract class RecipeRouter {
         }, [] as ComponentWithRecipeAndMatchingMethod[]);
 
         const componentMatchingRid = routeComponents.find((c) => c.matches());
-        if (SuperTokens.usesDynamicLoginMethods === false || defaultToStaticList) {
-            if (routeComponents.length === 0) {
-                return undefined;
-            } else if (componentMatchingRid !== undefined) {
-                return componentMatchingRid;
-            } else {
-                return routeComponents[0];
-            }
-        }
 
-        if (dynamicLoginMethods === undefined) {
-            throw new Error(
-                "Should never come here: dynamic login methods info has not been loaded but recipeRouter rendered"
-            );
-        }
-
-        // The related ADR: https://supertokens.com/docs/contribute/decisions/multitenancy/0006
-        const priorityOrder: { rid: string; includes: (keyof GetLoginMethodsResponseNormalized)[] }[] = [
-            { rid: "thirdpartyemailpassword", includes: ["thirdparty", "emailpassword"] },
-            { rid: "thirdpartypasswordless", includes: ["thirdparty", "passwordless"] },
-            { rid: "emailpassword", includes: ["emailpassword"] },
-            { rid: "passwordless", includes: ["passwordless"] },
-            { rid: "thirdparty", includes: ["thirdparty"] },
-        ];
-
-        if (
-            componentMatchingRid && // if we find a component matching by rid
-            (!priorityOrder.map((a) => a.rid).includes(componentMatchingRid.recipeID) || // from a non-auth recipe
-                dynamicLoginMethods[componentMatchingRid.recipeID as keyof GetLoginMethodsResponseNormalized]
-                    ?.enabled === true) // or an enabled auth recipe
-        ) {
-            return componentMatchingRid;
+        let defaultComp;
+        if (routeComponents.length === 0) {
+            defaultComp = undefined;
+        } else if (componentMatchingRid !== undefined) {
+            defaultComp = componentMatchingRid;
+        } else {
+            defaultComp = routeComponents[0];
         }
 
         const matchingNonAuthComponent = routeComponents.find(
@@ -73,8 +123,49 @@ export abstract class RecipeRouter {
             return matchingNonAuthComponent;
         }
 
+        if (defaultToStaticList) {
+            return defaultComp;
+        }
+
+        const mfaRecipe = MultiFactorAuth.getInstance();
+        if (SuperTokens.usesDynamicLoginMethods === false) {
+            if (componentMatchingRid) {
+                return componentMatchingRid;
+            }
+
+            if (mfaRecipe && mfaRecipe.config.firstFactors !== undefined) {
+                return chooseComponentBasedOnFirstFactors(
+                    mfaRecipe.config.firstFactors,
+                    routeComponents,
+                    isNonAuthPage
+                );
+            } else {
+                return defaultComp;
+            }
+        }
+
+        if (dynamicLoginMethods === undefined) {
+            throw new Error(
+                "Should never come here: dynamic login methods info has not been loaded but recipeRouter rendered"
+            );
+        }
+
+        if (
+            componentMatchingRid && // if we find a component matching by rid
+            (!priorityOrder.map((a) => a.rid).includes(componentMatchingRid.recipeID) || // from a non-auth recipe
+                dynamicLoginMethods[componentMatchingRid.recipeID as "passwordless" | "thirdparty" | "emailpassword"]
+                    ?.enabled === true) // or an enabled auth recipe
+        ) {
+            return componentMatchingRid;
+        }
+
+        if (dynamicLoginMethods.firstFactors !== undefined) {
+            return chooseComponentBasedOnFirstFactors(dynamicLoginMethods.firstFactors, routeComponents, isNonAuthPage);
+        }
+
+        // We may get here if the app is using an older BE that doesn't support MFA
         const enabledRecipeCount = Object.keys(dynamicLoginMethods).filter(
-            (key) => (dynamicLoginMethods as any)[key].enabled
+            (key) => (dynamicLoginMethods as any)[key]?.enabled === true
         ).length;
         // We first try to find an exact match
         for (const { rid, includes } of priorityOrder) {

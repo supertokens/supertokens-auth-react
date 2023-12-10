@@ -77,12 +77,15 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
     static async getDynamicLoginMethods(
         input: Parameters<typeof MultitenancyWebJS.getLoginMethods>[0]
     ): Promise<GetLoginMethodsResponseNormalized> {
-        const { emailPassword, passwordless, thirdParty } = await MultitenancyWebJS.getLoginMethods(input);
+        const { emailPassword, passwordless, thirdParty, firstFactors } = await MultitenancyWebJS.getLoginMethods(
+            input
+        );
 
         return {
             passwordless: passwordless,
             emailpassword: emailPassword,
             thirdparty: thirdParty,
+            firstFactors,
         };
     }
 

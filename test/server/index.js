@@ -382,6 +382,67 @@ app.post(
     }
 );
 
+let mfaInfo = {};
+app.post("/setMFAInfo", verifySession(), async (req, res) => {
+    let session = req.session;
+
+    mfaInfo = req.body.mfaInfo;
+    await session.mergeIntoAccessTokenPayload(req.body.payload);
+
+    res.send({ status: "OK" });
+});
+
+app.post("/mergeIntoAccessTokenPayload", verifySession(), async (req, res) => {
+    let session = req.session;
+
+    await session.mergeIntoAccessTokenPayload(req.body);
+
+    res.send({ status: "OK" });
+});
+
+// TODO: remove this after we get backend SDK support
+app.get("/auth/mfa/info", verifySession(), async (req, res) => {
+    let session = req.session;
+    const user = await SuperTokens.getUser(session.getUserId());
+    const payload = session.getAccessTokenPayload();
+    let isAllowedToSetup = [];
+    let isAlreadySetup = [];
+    if (user.phoneNumbers.length > 0) {
+        isAlreadySetup.push("otp-phone");
+    }
+    if (user.emails.length > 0) {
+        isAlreadySetup.push("otp-email");
+    }
+    const mfaClaim = payload["st-mfa"];
+    if (mfaClaim === undefined) {
+        await session.mergeIntoAccessTokenPayload({
+            "st-mfa": {
+                c: {}, // Technically the first factor should be in there... but it isn't necessary
+                n: ["otp-phone", "otp-email"],
+            },
+        });
+    }
+    if (
+        isAlreadySetup.length === 0 ||
+        (mfaClaim !== undefined && isAlreadySetup.some((id) => mfaClaim.c[id] !== undefined))
+    ) {
+        isAllowedToSetup = ["otp-phone", "otp-email"].filter((id) => !isAlreadySetup.includes(id));
+        // isAllowedToSetup = ["otp-phone", "otp-email"];
+    }
+    // isAllowedToSetup = ["otp-phone", "otp-email"];
+
+    res.send({
+        status: "OK",
+        email: user.emails[0],
+        phoneNumber: user.phoneNumbers[0],
+        factors: {
+            isAllowedToSetup,
+            isAlreadySetup,
+        },
+        ...mfaInfo,
+    });
+});
+
 app.get("/token", async (_, res) => {
     res.send({
         latestURLWithToken,
@@ -920,7 +981,44 @@ function initST() {
                                         message: "general error from API consume code",
                                     };
                                 }
-                                return originalImplementation.consumeCodePOST(input);
+                                const resp = await originalImplementation.consumeCodePOST(input);
+
+                                if (resp.status === "OK") {
+                                    let session = await Session.getSession(input.options.req, input.options.res, {
+                                        overrideGlobalClaimValidators: () => [],
+                                    });
+
+                                    if (session) {
+                                        await AccountLinking.createPrimaryUser(session.getRecipeUserId());
+                                        await AccountLinking.linkAccounts(
+                                            resp.session.getRecipeUserId(),
+                                            session.getUserId()
+                                        );
+                                        const mfaClaim = session.getAccessTokenPayload()["st-mfa"];
+
+                                        let factorId;
+                                        const loginMethod = resp.user.loginMethods.find(
+                                            (lm) =>
+                                                lm.recipeUserId.getAsString() ===
+                                                resp.session.getRecipeUserId().getAsString()
+                                        );
+                                        if (loginMethod.email !== undefined) {
+                                            factorId = "otp-email";
+                                        } else {
+                                            factorId = "otp-phone";
+                                        }
+                                        await session.mergeIntoAccessTokenPayload({
+                                            "st-mfa": {
+                                                c: {
+                                                    ...mfaClaim?.c,
+                                                    [factorId]: new Date() / 1000,
+                                                },
+                                                n: [],
+                                            },
+                                        });
+                                    }
+                                }
+                                return resp;
                             },
                         };
                     },

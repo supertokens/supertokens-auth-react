@@ -3,6 +3,8 @@ import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 import type { UserInput, NormalisedConfig, GetLoginMethodsResponseNormalized } from "./types";
 import type { BaseRecipeModule } from "../recipeModule/baseRecipeModule";
 
+const loginMethodTypes = ["emailpassword", "thirdparty", "passwordless"] as const;
+
 export function normaliseMultitenancyConfig(config?: UserInput): NormalisedConfig {
     return {
         ...normaliseRecipeModuleConfig(config),
@@ -17,9 +19,9 @@ export function hasIntersectingRecipes(
     tenantMethods: GetLoginMethodsResponseNormalized,
     recipeList: BaseRecipeModule<any, any, any, any>[]
 ): boolean {
-    for (const key in tenantMethods) {
+    for (const key of loginMethodTypes) {
         const hasIntersection = recipeList.some((recipe) => {
-            if (tenantMethods[key as keyof GetLoginMethodsResponseNormalized].enabled) {
+            if (tenantMethods[key].enabled) {
                 return recipe.recipeID === key || recipe.recipeID.includes(key);
             }
             return false;
