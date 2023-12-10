@@ -35,6 +35,8 @@ To use this you'll need compatible versions:
 -   Refactored/renamed some styling options (`resetPasswordHeaderTitle` -> `headerTitle withBackButton`)
 -   Added a `useShadowDom` prop to the `AccessDeniedScreen`
 -   Added an `error` prop to the `AccessDeniedScreen` that can be used to describe the reason access is denied.
+-   Fixed a font loading issue, that caused apps using the default (Rubik) font to appear with the incorrect font weights
+-   Some default styling has changed related to how fonts/font-weights are applied
 
 ## [0.35.9] - 2023-12-06
 
