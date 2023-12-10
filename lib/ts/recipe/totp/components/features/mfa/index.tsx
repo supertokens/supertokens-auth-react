@@ -193,7 +193,7 @@ export function useChildProps(
 ): TOTPMFAChildProps | undefined {
     return useMemo(() => {
         return {
-            onShowSecretClick: () => {
+            onShowSecretClicked: () => {
                 dispatch({ type: "showSecret" });
             },
             onBackButtonClicked: async () => {

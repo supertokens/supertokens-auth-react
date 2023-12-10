@@ -19,66 +19,59 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 
-import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 
-export const RetryButton = withOverride(
-    "TOTPRetryButton",
-    function TOTPRetryButton({
-        nextRetryAt,
-        onClick,
-    }: {
-        nextRetryAt: number;
-        onClick: () => void;
-    }): JSX.Element | null {
-        const t = useTranslation();
+export const RetryButton: React.FC<{
+    nextRetryAt: number;
+    onClick: () => void;
+}> = ({ nextRetryAt, onClick }) => {
+    const t = useTranslation();
 
-        const getTimeLeft = useCallback(() => {
-            const timeLeft = nextRetryAt - Date.now();
-            return timeLeft < 0 ? undefined : Math.ceil(timeLeft / 1000);
-        }, [nextRetryAt]);
+    const getTimeLeft = useCallback(() => {
+        const timeLeft = nextRetryAt - Date.now();
+        return timeLeft < 0 ? undefined : Math.ceil(timeLeft / 1000);
+    }, [nextRetryAt]);
 
-        const [secsUntilRetry, setSecsUntilRetry] = useState<number | undefined>(getTimeLeft());
+    const [secsUntilRetry, setSecsUntilRetry] = useState<number | undefined>(getTimeLeft());
 
-        useEffect(() => {
-            // This runs every time the loginAttemptInfo updates, so after every resend
-            const interval = setInterval(() => {
-                const timeLeft = getTimeLeft();
+    useEffect(() => {
+        // This runs every time the loginAttemptInfo updates, so after every resend
+        const interval = setInterval(() => {
+            const timeLeft = getTimeLeft();
 
-                if (timeLeft === undefined) {
-                    clearInterval(interval);
-                }
-
-                setSecsUntilRetry(timeLeft);
-            }, 500);
-
-            return () => {
-                // This can safely run twice
+            if (timeLeft === undefined) {
                 clearInterval(interval);
-            };
-        }, [getTimeLeft, setSecsUntilRetry]);
+            }
 
-        return (
-            <button
-                type="button"
-                disabled={secsUntilRetry !== undefined}
-                onClick={onClick}
-                data-supertokens="button retryCodeBtn">
-                {secsUntilRetry !== undefined ? (
-                    <React.Fragment>
-                        {t("TOTP_MFA_BLOCKED_TIMER_START")}
-                        <strong>
-                            {Math.floor(secsUntilRetry / 60)
-                                .toString()
-                                .padStart(2, "0")}
-                            :{(secsUntilRetry % 60).toString().padStart(2, "0")}
-                        </strong>
-                        {t("TOTP_MFA_BLOCKED_TIMER_END")}
-                    </React.Fragment>
-                ) : (
-                    t("TOTP_MFA_BLOCKED_RETRY")
-                )}
-            </button>
-        );
-    }
-);
+            setSecsUntilRetry(timeLeft);
+        }, 500);
+
+        return () => {
+            // This can safely run twice
+            clearInterval(interval);
+        };
+    }, [getTimeLeft, setSecsUntilRetry]);
+
+    return (
+        <button
+            type="button"
+            disabled={secsUntilRetry !== undefined}
+            onClick={onClick}
+            data-supertokens="button retryCodeBtn">
+            {secsUntilRetry !== undefined ? (
+                <React.Fragment>
+                    {t("TOTP_MFA_BLOCKED_TIMER_START")}
+                    <strong>
+                        {Math.floor(secsUntilRetry / 60)
+                            .toString()
+                            .padStart(2, "0")}
+                        :{(secsUntilRetry % 60).toString().padStart(2, "0")}
+                    </strong>
+                    {t("TOTP_MFA_BLOCKED_TIMER_END")}
+                </React.Fragment>
+            ) : (
+                t("TOTP_MFA_BLOCKED_RETRY")
+            )}
+        </button>
+    );
+};

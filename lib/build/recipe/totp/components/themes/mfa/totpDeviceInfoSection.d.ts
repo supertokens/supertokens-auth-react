@@ -5,6 +5,6 @@ export declare const DeviceInfoSection: import("react").ComponentType<
     TOTPMFACommonProps & {
         deviceInfo: DeviceInfo;
         showSecret: boolean;
-        onShowSecretClick: () => void;
+        onShowSecretClicked: () => void;
     }
 >;

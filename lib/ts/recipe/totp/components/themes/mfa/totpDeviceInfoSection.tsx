@@ -27,7 +27,7 @@ export const DeviceInfoSection = withOverride(
         props: TOTPMFACommonProps & {
             deviceInfo: DeviceInfo;
             showSecret: boolean;
-            onShowSecretClick: () => void;
+            onShowSecretClicked: () => void;
         }
     ): JSX.Element {
         const t = useTranslation();
@@ -40,7 +40,7 @@ export const DeviceInfoSection = withOverride(
                         {t("TOTP_SHOW_SECRET_START")}
                         <button
                             type="button"
-                            onClick={props.onShowSecretClick}
+                            onClick={props.onShowSecretClicked}
                             data-supertokens="link linkButton showTOTPSecretBtn">
                             {t("TOTP_SHOW_SECRET_LINK")}
                         </button>

@@ -89,7 +89,7 @@ const TOTPMFATheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> = 
                                 {...commonProps}
                                 deviceInfo={featureState.deviceInfo!}
                                 showSecret={featureState.showSecret}
-                                onShowSecretClick={props.onShowSecretClick}
+                                onShowSecretClicked={props.onShowSecretClicked}
                             />
                         )}
                         {featureState.error !== undefined && (
