@@ -1465,3 +1465,21 @@ MultiFactorAuth.init({
         { id: "asfd", logo: () => <div>A</div>, description: "test", name: "asdf", path: "/mfa/asdf" },
     ],
 });
+
+Passwordless.init({
+    contactMethod: "EMAIL",
+    mfaFeature: {
+        style: "",
+    },
+});
+
+ThirdPartyPasswordless.init({
+    contactMethod: "EMAIL",
+    mfaFeature: {
+        style: "",
+    },
+});
+
+ThirdPartyPasswordless.init({
+    contactMethod: "EMAIL",
+});

@@ -321,48 +321,31 @@ function useOnLoad(
                     : mfaInfo.factors.isAllowedToSetup.includes("otp-phone");
 
             if (!loginAttemptInfo) {
-                if (props.contactMethod === "EMAIL") {
-                    if (isAlreadySetup && doSetup !== "true") {
-                        try {
-                            // createCode also dispatches the necessary events
-                            await recipeImplementation!.createCode({
-                                email: mfaInfo.email!, // We can assume this is set here, since the mfaInfo states that otp-email has been set up
-                                userContext,
-                            });
-                        } catch (err) {
-                            dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
-                        }
-                    } else if (!mfaInfo.factors.isAllowedToSetup.includes("otp-email")) {
-                        dispatch({
-                            type: "load",
-                            loginAttemptInfo,
-                            isAllowedToSetup: false,
-                            error: "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP",
+                // We can assume these are defined if we use these, we check that the mfaInfo states that the related factor has been set up
+                const createCodeInfo =
+                    props.contactMethod === "EMAIL" ? { email: mfaInfo.email! } : { phoneNumber: mfaInfo.phoneNumber! };
+                const factorId = props.contactMethod === "EMAIL" ? "otp-email" : "otp-phone";
+
+                if (isAlreadySetup && doSetup !== "true") {
+                    try {
+                        // createCode also dispatches the necessary events
+                        await recipeImplementation!.createCode({
+                            ...createCodeInfo,
+                            userContext,
                         });
-                    } else {
-                        dispatch({ type: "load", loginAttemptInfo, error, isAllowedToSetup: true }); // since loginAttemptInfo is undefined, this will ask the user for the email
+                    } catch (err) {
+                        dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
                     }
+                } else if (!mfaInfo.factors.isAllowedToSetup.includes(factorId)) {
+                    dispatch({
+                        type: "load",
+                        loginAttemptInfo: undefined,
+                        isAllowedToSetup: false,
+                        error: "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP",
+                    });
                 } else {
-                    if (isAlreadySetup && doSetup !== "true") {
-                        try {
-                            // createCode also dispatches the necessary events
-                            await recipeImplementation!.createCode({
-                                phoneNumber: mfaInfo.phoneNumber!, // We can assume this is set here, since the mfaInfo states that otp-phone has been set up
-                                userContext,
-                            });
-                        } catch (err) {
-                            dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
-                        }
-                    } else if (!mfaInfo.factors.isAllowedToSetup.includes("otp-phone")) {
-                        dispatch({
-                            type: "load",
-                            loginAttemptInfo,
-                            isAllowedToSetup: false,
-                            error: "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP",
-                        });
-                    } else {
-                        dispatch({ type: "load", loginAttemptInfo, error, isAllowedToSetup: true }); // since loginAttemptInfo is undefined, this will ask the user for the phone number
-                    }
+                    // since loginAttemptInfo is undefined, this will ask the user for the email/phone
+                    dispatch({ type: "load", loginAttemptInfo, error, isAllowedToSetup: true });
                 }
             } else {
                 // No need to check if the component is unmounting, since this has no effect then.
