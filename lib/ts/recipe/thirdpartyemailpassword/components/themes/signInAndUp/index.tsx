@@ -80,6 +80,7 @@ const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> =
                 <Header
                     isSignUp={props.epState.isSignUp}
                     setIsSignUp={(isSignUp) => props.epDispatch({ type: isSignUp ? "setSignUp" : "setSignIn" })}
+                    emailPasswordEnabled={emailPasswordEnabled}
                 />
                 {props.commonState.error && <GeneralError error={props.commonState.error} />}
                 {props.tpChildProps !== undefined && thirdPartyEnabled && (
