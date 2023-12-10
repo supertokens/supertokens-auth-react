@@ -170,6 +170,167 @@ const formFields = [
     },
 ];
 
+const formFieldsWithDefault = [
+    {
+        id: "country",
+        label: "Your Country",
+        placeholder: "Where do you live?",
+        optional: true,
+        getDefaultValue: () => "India",
+    },
+    {
+        id: "select-dropdown",
+        label: "Select Option",
+        getDefaultValue: () => "option 2",
+        inputComponent: ({ value, name, onChange }) => (
+            <select value={value} name={name} onChange={(e) => onChange(e.target.value)}>
+                <option value="" disabled hidden>
+                    Select an option
+                </option>
+                <option value="option 1">Option 1</option>
+                <option value="option 2">Option 2</option>
+                <option value="option 3">Option 3</option>
+            </select>
+        ),
+        optional: true,
+    },
+    {
+        id: "terms",
+        label: "",
+        optional: false,
+        getDefaultValue: () => "true",
+        inputComponent: ({ name, onChange, value }) => (
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "left",
+                }}>
+                <input
+                    value={value}
+                    checked={value === "true"}
+                    name={name}
+                    type="checkbox"
+                    onChange={(e) => onChange(e.target.checked.toString())}></input>
+                <span style={{ marginLeft: 5 }}>I agree to the terms and conditions</span>
+            </div>
+        ),
+        validate: async (value) => {
+            if (value === "true") {
+                return undefined;
+            }
+            return "Please check Terms and conditions";
+        },
+    },
+    {
+        id: "email",
+        label: "Email",
+        getDefaultValue: () => "test@one.com",
+    },
+    {
+        id: "password",
+        label: "Password",
+        getDefaultValue: () => "fakepassword123",
+    },
+];
+
+const incorrectFormFields = [
+    {
+        id: "country",
+        label: "Your Country",
+        placeholder: "Where do you live?",
+        optional: true,
+        getDefaultValue: () => 23, // return should be a string
+    },
+    {
+        id: "select-dropdown",
+        label: "Select Dropdown",
+        getDefaultValue: "option 2", // should be function
+        inputComponent: ({ value, name, onChange }) => (
+            <select value={value} name={name} onChange={(e) => onChange(e.target.value)}>
+                <option value="" disabled hidden>
+                    Select an option
+                </option>
+                <option value="option 1">Option 1</option>
+                <option value="option 2">Option 2</option>
+                <option value="option 3">Option 3</option>
+            </select>
+        ),
+        optional: true,
+    },
+    {
+        // onChange accepts only string value, here we pass boolean
+        id: "terms",
+        label: "",
+        optional: false,
+        inputComponent: ({ name, onChange }) => (
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "left",
+                }}>
+                <input name={name} type="checkbox" onChange={(e) => onChange(e.target.checked)}></input>
+                <span style={{ marginLeft: 5 }}>I agree to the terms and conditions</span>
+            </div>
+        ),
+        validate: async (value) => {
+            if (value === "true") {
+                return undefined;
+            }
+            return "Please check Terms and conditions";
+        },
+    },
+    {
+        id: "city",
+        label: "Your city",
+        optional: false,
+        nonOptionalErrorMsg: "", // empty string should throw error
+    },
+];
+
+const customFields = [
+    {
+        id: "select-dropdown",
+        label: "Select Dropdown",
+        nonOptionalErrorMsg: "Select dropdown is not an optional",
+        inputComponent: ({ value, name, onChange }) => (
+            <select value={value} name={name} onChange={(e) => onChange(e.target.value)}>
+                <option value="" disabled hidden>
+                    Select an option
+                </option>
+                <option value="option 1">Option 1</option>
+                <option value="option 2">Option 2</option>
+                <option value="option 3">Option 3</option>
+            </select>
+        ),
+        optional: true,
+    },
+    {
+        id: "terms",
+        label: "   ",
+        optional: false,
+        nonOptionalErrorMsg: "You must accept the terms and conditions",
+        inputComponent: ({ name, onChange }) => (
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "left",
+                }}>
+                <input name={name} type="checkbox" onChange={(e) => onChange(e.target.checked.toString())}></input>
+                <span style={{ marginLeft: 5 }}>I agree to the terms and conditions</span>
+            </div>
+        ),
+        validate: async (value) => {
+            if (value === "true") {
+                return undefined;
+            }
+            return "Please check Terms and conditions";
+        },
+    },
+];
+
 const testContext = getTestContext();
 
 let storedTOTPDevices = window.localStorage.getItem("totpDevices");
@@ -601,7 +762,51 @@ function getEmailVerificationConfigs({ disableDefaultUI }) {
     });
 }
 
-function getEmailPasswordConfigs({ disableDefaultUI }) {
+function getSignUpFormFields(formType) {
+    switch (formType) {
+        case "INCORRECT_FIELDS":
+            return incorrectFormFields;
+        case "INCORRECT_ONCHANGE":
+            return incorrectFormFields.filter(({ id }) => id === "terms");
+        case "INCORRECT_NON_OPTIONAL_ERROR_MSG":
+            return incorrectFormFields.filter(({ id }) => id === "city");
+        case "INCORRECT_GETDEFAULT":
+            return incorrectFormFields.filter(({ id }) => id === "country");
+        case "CUSTOM_FIELDS_WITH_DEFAULT_VALUES":
+            return formFieldsWithDefault;
+        case "CUSTOM_FIELDS":
+            return customFields;
+        default:
+            return formFields;
+    }
+}
+
+function getSignInFormFields(formType) {
+    switch (formType) {
+        case "DEFAULT_FIELDS":
+            return [
+                {
+                    id: "email",
+                    getDefaultValue: () => "abc@xyz.com",
+                },
+                {
+                    id: "password",
+                    getDefaultValue: () => "fakepassword123",
+                },
+            ];
+        case "FIELDS_WITH_NON_OPTIONAL_ERROR_MESSAGE":
+            return [
+                {
+                    id: "email",
+                    nonOptionalErrorMsg: "Please add email",
+                },
+            ];
+        default:
+            return;
+    }
+}
+
+function getEmailPasswordConfigs({ disableDefaultUI, formFieldType }) {
     return EmailPassword.init({
         style: `          
             [data-supertokens~=container] {
@@ -681,12 +886,13 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
             defaultToSignUp,
             signInForm: {
                 style: theme,
+                formFields: getSignInFormFields(formFieldType.signIn),
             },
             signUpForm: {
                 style: theme,
                 privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
-                formFields,
+                formFields: getSignUpFormFields(formFieldType.signUp),
             },
         },
     });
@@ -829,6 +1035,10 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
             disableDefaultUI,
             style: theme,
         },
+        mfaFeature: {
+            disableDefaultUI,
+            style: theme,
+        },
     });
 }
 
@@ -916,7 +1126,7 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
             disableDefaultUI,
             style: theme,
         },
-        mfa: {
+        mfaFeature: {
             disableDefaultUI,
             style: theme,
         },
@@ -1034,7 +1244,12 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
     });
 }
 
-function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultUI, thirdPartyRedirectURL }) {
+function getThirdPartyEmailPasswordConfigs({
+    staticProviderList,
+    disableDefaultUI,
+    thirdPartyRedirectURL,
+    formFieldType,
+}) {
     let providers = [
         ThirdParty.Github.init(),
         ThirdParty.Google.init(),
@@ -1213,9 +1428,11 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
         },
         signInAndUpFeature: {
             disableDefaultUI,
-            signInForm: {},
+            signInForm: {
+                formFields: getSignInFormFields(formFieldType.signIn),
+            },
             signUpForm: {
-                formFields,
+                formFields: getSignUpFormFields(formFieldType.signUp),
                 privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
             },

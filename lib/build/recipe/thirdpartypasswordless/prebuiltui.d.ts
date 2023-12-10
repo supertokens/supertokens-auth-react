@@ -13,7 +13,7 @@ export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     static getInstanceOrInitAndGetInstance(): ThirdPartyPasswordlessPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
-        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
+        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback" | "otp-phone" | "otp-email",
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
@@ -21,7 +21,7 @@ export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
     getFeatureComponent: (
-        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
+        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback" | "otp-phone" | "otp-email",
         props: FeatureBaseProps & {
             redirectOnSessionExists?: boolean;
             userContext?: any;
@@ -39,6 +39,8 @@ export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
     static SignInUpTheme: typeof SignInUpTheme;
     static PasswordlessLinkClicked: (prop?: any) => JSX.Element;
+    static MfaOtpPhone: (prop?: any) => JSX.Element;
+    static MfaOtpEmail: (prop?: any) => JSX.Element;
 }
 declare const SignInAndUp: (
     prop?: PropsWithChildren<{
@@ -48,4 +50,6 @@ declare const SignInAndUp: (
 ) => JSX.Element;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const PasswordlessLinkClicked: (prop?: any) => JSX.Element;
-export { SignInAndUp, ThirdPartySignInAndUpCallback, PasswordlessLinkClicked, SignInUpTheme };
+declare const MfaOtpPhone: (prop?: any) => JSX.Element;
+declare const MfaOtpEmail: (prop?: any) => JSX.Element;
+export { SignInAndUp, ThirdPartySignInAndUpCallback, PasswordlessLinkClicked, SignInUpTheme, MfaOtpPhone, MfaOtpEmail };

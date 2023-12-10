@@ -41,7 +41,6 @@ import type {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipe/types";
-import type React from "react";
 import type { Dispatch } from "react";
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
@@ -135,7 +134,9 @@ export type SignUpFormFeatureUserInput = FeatureBaseConfig & {
     /*
      * Form fields for SignUp.
      */
-    formFields?: FormFieldSignUpConfig[];
+    formFields?: (FormField & {
+        inputComponent?: (props: InputProps) => JSX.Element;
+    })[];
 
     /*
      * Privacy policy link for sign up form.
@@ -152,7 +153,9 @@ export type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
     /*
      * Normalised form fields for SignUp.
      */
-    formFields: NormalisedFormField[];
+    formFields: (NormalisedFormField & {
+        inputComponent?: (props: InputProps) => JSX.Element;
+    })[];
 
     /*
      * Privacy policy link for sign up form.
@@ -180,8 +183,6 @@ export type NormalisedSignInFormFeatureConfig = NormalisedBaseConfig & {
 };
 
 export type FormFieldSignInConfig = FormFieldBaseConfig;
-
-export type FormFieldSignUpConfig = FormField;
 
 export type ResetPasswordUsingTokenUserInput = {
     /*
@@ -225,20 +226,16 @@ export type NormalisedEnterEmailForm = FeatureBaseConfig & {
     formFields: NormalisedFormField[];
 };
 
-/*
- * Props Types.
- */
-
-type FormThemeBaseProps = ThemeBaseProps & {
+type NonSignUpFormThemeBaseProps = ThemeBaseProps & {
     /*
-     * Form fields to use in the signin form.
+     * Omit since, custom inputComponent only part of signup
      */
-    formFields: FormFieldThemeProps[];
+    formFields: Omit<FormFieldThemeProps, "inputComponent">[];
 
     error: string | undefined;
 };
 
-export type SignInThemeProps = FormThemeBaseProps & {
+export type SignInThemeProps = NonSignUpFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
@@ -248,13 +245,15 @@ export type SignInThemeProps = FormThemeBaseProps & {
     onSuccess: (result: { user: User }) => void;
 };
 
-export type SignUpThemeProps = FormThemeBaseProps & {
+export type SignUpThemeProps = ThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
     signInClicked?: () => void;
     onSuccess: (result: { user: User }) => void;
+    formFields: FormFieldThemeProps[];
+    error: string | undefined;
 };
 
 export type SignInAndUpThemeProps = {
@@ -275,11 +274,6 @@ export type FormFieldThemeProps = NormalisedFormField & {
     labelComponent?: JSX.Element;
 
     /*
-     * Custom component that replaces the standard input component
-     */
-    inputComponent?: React.FC<InputProps>;
-
-    /*
      * Show Is required (*) next to label
      */
     showIsRequired?: boolean;
@@ -288,6 +282,11 @@ export type FormFieldThemeProps = NormalisedFormField & {
      * Clears the field after calling the API.
      */
     clearOnSubmit?: boolean;
+
+    /*
+     * Ability to add custom components
+     */
+    inputComponent?: (props: InputProps) => JSX.Element;
 };
 
 export type FormFieldError = {
@@ -367,7 +366,7 @@ export type ResetPasswordUsingTokenThemeProps = {
     userContext?: any;
 };
 
-export type EnterEmailProps = FormThemeBaseProps & {
+export type EnterEmailProps = NonSignUpFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     error: string | undefined;
     clearError: () => void;
@@ -376,7 +375,7 @@ export type EnterEmailProps = FormThemeBaseProps & {
     onBackButtonClicked: () => void;
 };
 
-export type SubmitNewPasswordProps = FormThemeBaseProps & {
+export type SubmitNewPasswordProps = NonSignUpFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     error: string | undefined;
     clearError: () => void;

@@ -773,6 +773,10 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
             disableDefaultUI,
             style: theme.style,
         },
+        mfaFeature: {
+            disableDefaultUI,
+            style: theme,
+        },
     });
 }
 
@@ -850,6 +854,10 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
         linkClickedScreenFeature: {
             disableDefaultUI,
             style: theme.style,
+        },
+        mfaFeature: {
+            disableDefaultUI,
+            style: theme,
         },
     });
 }

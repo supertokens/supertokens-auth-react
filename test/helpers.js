@@ -435,6 +435,11 @@ export async function setInputValues(page, fields) {
     return await new Promise((r) => setTimeout(r, 300));
 }
 
+export async function setSelectDropdownValue(page, selector, optionValue) {
+    const dropdownEle = await waitForSTElement(page, selector);
+    return dropdownEle.select(selector, optionValue);
+}
+
 export async function clearBrowserCookiesWithoutAffectingConsole(page, logs) {
     let toReturn = [...logs];
     const client = await page.target().createCDPSession();

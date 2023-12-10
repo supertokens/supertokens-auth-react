@@ -55,6 +55,98 @@ To use this you'll need compatible versions:
 -   Added a `footer` prop to `EmailOrPhoneForm`, `EmailForm` and `PhoneForm` which is used to override the default sign in/up footers in case the component is for MFA
 -   The passwordless and thirdpartypasswordless sign in/up screens now respect the first configuration (defined in the `MultiFactorAuth` recipe or in the tenant information) when selecting the available contact methods.
 -   Added TOTP recipe. For more details please check our guide [here](TODO)
+-   Fixed a font loading issue, that caused apps using the default (Rubik) font to appear with the incorrect font weights
+-   Some default styling has changed related to how fonts/font-weights are applied
+
+## [0.35.9] - 2023-12-06
+
+-   Fixes ThirdPartyEmailPassword rendering sign in/up switcher even with disabled email password. Instead it'll now render `SignInAndUpHeader_Override` in this case (overrideable as `ThirdPartySignInAndUpHeader`). Overriding `ThirdPartyEmailPasswordHeader_Override` should still cover all cases.
+-   Added a new prop to `ThirdPartyEmailPasswordHeader_Override` you can use to check if email password is enabled.
+
+## [0.35.8] - 2023-11-26
+
+-   Fixes `inputComponent` props to make them non optional. This is in the context of customizing the sign up form to add custom react components.
+
+## [0.35.7] - 2023-11-24
+
+### Added
+
+-   EmailPassword and ThirdPartyEmailPassword recipe enhancements:
+    -   Introduced the capability to utilize custom components by exposing `inputComponent` types.
+    -   Allow setting default values in signup/signin form fields.
+    -   Made the `onChange` prop in `inputComponent` simpler by removing the need for an `id` attribute.
+    -   Added a feature to customize the "Field is not optional" error message for each form field with the `nonOptionalErrorMsg` prop.
+
+Following is an example of how to use above features.
+
+```tsx
+EmailPassword.init({
+    signInAndUpFeature: {
+        signUpForm: {
+            formFields: [
+                {
+                    id: "select-dropdown",
+                    label: "Select Option",
+                    getDefaultValue: () => "option 2",
+                    nonOptionalErrorMsg: "Select dropdown is required",
+                    inputComponent: ({ value, name, onChange }) => (
+                        <select
+                            value={value}
+                            name={name}
+                            onChange={(e) => onChange(e.target.value)}
+                            placeholder="Select Option">
+                            <option value="" disabled hidden>
+                                Select an option
+                            </option>
+                            <option value="option 1">Option 1</option>
+                            <option value="option 2">Option 2</option>
+                            <option value="option 3">Option 3</option>
+                        </select>
+                    ),
+                },
+            ],
+        },
+    },
+});
+
+ThirdPartyEmailPassword.init({
+    signInAndUpFeature: {
+        signUpForm: {
+            formFields: [
+                {
+                    id: "terms",
+                    label: "",
+                    optional: false,
+                    getDefaultValue: () => "true",
+                    nonOptionalErrorMsg: "You must accept the terms and conditions",
+                    inputComponent: ({ name, onChange, value }) => (
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "left",
+                            }}>
+                            <input
+                                value={value}
+                                checked={value === "true"}
+                                name={name}
+                                type="checkbox"
+                                onChange={(e) => onChange(e.target.checked.toString())}></input>
+                            <span style={{ marginLeft: 5 }}>I agree to the terms and conditions</span>
+                        </div>
+                    ),
+                },
+            ],
+        },
+    },
+});
+```
+
+## [0.35.6] - 2023-10-16
+
+### Test changes
+
+-   Updated test expectations to match fix in the node behaviour of the emailVerifyGET endpoint
 
 ## [0.35.5] - 2023-10-06
 
