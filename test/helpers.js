@@ -435,8 +435,8 @@ export async function setInputValues(page, fields) {
     return await new Promise((r) => setTimeout(r, 300));
 }
 
-export async function clearBrowserCookiesWithoutAffectingConsole(page, console) {
-    let toReturn = [...console];
+export async function clearBrowserCookiesWithoutAffectingConsole(page, logs) {
+    let toReturn = [...logs];
     const client = await page.target().createCDPSession();
     await client.send("Network.clearBrowserCookies");
     await client.send("Network.clearBrowserCache");
@@ -445,6 +445,18 @@ export async function clearBrowserCookiesWithoutAffectingConsole(page, console) 
         page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
+
+    // TODO: think about moving this elsewhere and/or renaming this function
+    if (await isMFASupported()) {
+        await page.evaluate(() => window.localStorage.setItem("enableMFA", "true"));
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+    }
+    logs.length = 0;
+    logs.push(...toReturn);
+
     return toReturn;
 }
 
