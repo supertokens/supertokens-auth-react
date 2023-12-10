@@ -1,7 +1,7 @@
 /// <reference types="react" />
 export declare const SignIn: import("react").ComponentType<
     import("../../../../../types").ThemeBaseProps & {
-        formFields: import("../../../types").FormFieldThemeProps[];
+        formFields: Omit<import("../../../types").FormFieldThemeProps, "inputComponent">[];
         error: string | undefined;
     } & {
         recipeImplementation: import("supertokens-web-js/recipe/emailpassword").RecipeInterface;

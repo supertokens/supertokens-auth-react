@@ -338,11 +338,18 @@ export function mergeFormFields(
 }
 
 export function getFormattedFormField(field: NormalisedFormField): NormalisedFormField {
+    // Fields with the 'nonOptionalErrorMsg' property must have a valid message defined
+    if (field.optional === false && field.nonOptionalErrorMsg === "") {
+        throw new Error(`nonOptionalErrorMsg for field ${field.id} cannot be an empty string`);
+    }
     return {
         ...field,
         validate: async (value: any): Promise<string | undefined> => {
             // Absent or not optional empty field
             if (value === "" && field.optional === false) {
+                if (field.nonOptionalErrorMsg !== undefined) {
+                    return field.nonOptionalErrorMsg;
+                }
                 return "ERROR_NON_OPTIONAL";
             }
 
