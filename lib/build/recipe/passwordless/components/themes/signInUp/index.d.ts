@@ -1,4 +1,5 @@
 /// <reference types="react" />
+import type { DynamicLoginMethodsContextValue } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import type { SignInUpProps } from "../../../types";
 export declare enum SignInUpScreens {
     CloseTab = 0,
@@ -10,4 +11,7 @@ export declare enum SignInUpScreens {
 }
 declare function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element;
 export default SignInUpThemeWrapper;
-export declare function getActiveScreen(props: Pick<SignInUpProps, "featureState" | "config">): SignInUpScreens;
+export declare function getActiveScreen(
+    props: Pick<SignInUpProps, "featureState" | "config">,
+    currentDynamicLoginMethods: DynamicLoginMethodsContextValue
+): SignInUpScreens;

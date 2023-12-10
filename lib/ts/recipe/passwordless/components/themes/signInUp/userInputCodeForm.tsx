@@ -32,7 +32,6 @@ export const UserInputCodeForm = withOverride(
     "PasswordlessUserInputCodeForm",
     function PasswordlessUserInputCodeForm(
         props: SignInUpUserInputCodeFormProps & {
-            header?: JSX.Element;
             footer?: JSX.Element;
         }
     ): JSX.Element {
@@ -160,7 +159,9 @@ export const UserInputCodeForm = withOverride(
                     }}
                     validateOnBlur={false}
                     showLabels={true}
-                    footer={<UserInputCodeFormFooter {...props} loginAttemptInfo={props.loginAttemptInfo} />}
+                    footer={
+                        props.footer ?? <UserInputCodeFormFooter {...props} loginAttemptInfo={props.loginAttemptInfo} />
+                    }
                 />
             </React.Fragment>
         );

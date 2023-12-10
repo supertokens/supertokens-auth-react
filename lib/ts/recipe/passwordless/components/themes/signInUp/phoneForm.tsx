@@ -29,7 +29,11 @@ import type { SignInUpPhoneFormProps } from "../../../types";
 
 export const PhoneForm = withOverride(
     "PasswordlessPhoneForm",
-    function PasswordlessPhoneForm(props: SignInUpPhoneFormProps): JSX.Element {
+    function PasswordlessPhoneForm(
+        props: SignInUpPhoneFormProps & {
+            footer?: JSX.Element;
+        }
+    ): JSX.Element {
         const userContext = useUserContext();
 
         useEffect(() => {
@@ -87,10 +91,12 @@ export const PhoneForm = withOverride(
                 validateOnBlur={false}
                 showLabels={true}
                 footer={
-                    <SignInUpFooter
-                        privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
-                        termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
-                    />
+                    props.footer ?? (
+                        <SignInUpFooter
+                            privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
+                            termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
+                        />
+                    )
                 }
             />
         );

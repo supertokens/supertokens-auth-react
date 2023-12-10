@@ -991,6 +991,10 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
             disableDefaultUI,
             style: theme,
         },
+        mfaFeature: {
+            disableDefaultUI,
+            style: theme,
+        },
     });
 }
 
@@ -1075,6 +1079,10 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
             termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
         },
         linkClickedScreenFeature: {
+            disableDefaultUI,
+            style: theme,
+        },
+        mfaFeature: {
             disableDefaultUI,
             style: theme,
         },

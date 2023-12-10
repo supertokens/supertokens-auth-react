@@ -68,6 +68,7 @@ export function normaliseThirdPartyPasswordlessConfig(config?: Config): Normalis
                 emailOrPhoneFormStyle: thirdPartyProviderAndEmailOrPhoneFormStyle,
             },
             linkClickedScreenFeature: config.linkClickedScreenFeature,
+            mfaFeature: config.mfaFeature,
             override: {},
         }),
         disablePasswordless: config.disablePasswordless === true,

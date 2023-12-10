@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
 import AuthRecipe from "../authRecipe";
 import type {
@@ -8,6 +9,20 @@ import type {
     UserInput,
 } from "./types";
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
+export declare const otpPhoneFactor: {
+    id: string;
+    name: string;
+    description: string;
+    path: string;
+    logo: () => JSX.Element;
+};
+export declare const otpEmailFactor: {
+    id: string;
+    name: string;
+    description: string;
+    path: string;
+    logo: () => JSX.Element;
+};
 export declare const passwordlessFirstFactors: readonly ["otp-phone", "otp-email", "link-phone", "link-email"];
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,

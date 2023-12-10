@@ -260,3 +260,71 @@
 [data-supertokens~="button"]:focus {
     outline: none;
 }
+
+[data-supertokens~="backButtonCommon"] {
+    width: 16px;
+    height: 13px;
+}
+
+[data-supertokens~="backButton"] {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+}
+
+[data-supertokens~="backButtonPlaceholder"] {
+    display: block;
+}
+
+[data-supertokens~="delayedRender"] {
+    animation-duration: 0.1s;
+    animation-name: animate-fade;
+    animation-delay: 0.2s;
+    animation-fill-mode: backwards;
+}
+
+@keyframes animate-fade {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+[data-supertokens~="footerLinkGroupVert"] {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    gap: 24px;
+}
+
+[data-supertokens~="footerLinkGroupVert"] > div {
+    margin: 0;
+}
+
+[data-supertokens~="footerLinkGroupVert"] [data-supertokens~="secondaryText"] {
+    font-weight: 400;
+}
+
+[data-supertokens~="footerLinkGroupVert"] [data-supertokens~="secondaryLinkWithLeftArrow"] {
+    font-weight: 500;
+    position: relative;
+    left: -6px; /* half the width of the left arrow */
+}
+
+@media (max-width: 360px) {
+    [data-supertokens~="footerLinkGroupVert"] {
+        flex-direction: column;
+    }
+    [data-supertokens~="footerLinkGroupVert"] > div {
+        margin: 0 auto;
+    }
+}
+
+[data-supertokens~="footerLinkGroupVert"] div:only-child {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 14px;
+}

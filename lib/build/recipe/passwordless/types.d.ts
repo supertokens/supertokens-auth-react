@@ -1,4 +1,8 @@
 import type { LinkClickedScreen } from "./components/themes/linkClickedScreen";
+import type { MFAFooter } from "./components/themes/mfa/mfaFooter";
+import type { MFAHeader } from "./components/themes/mfa/mfaHeader";
+import type { MFAOTPFooter } from "./components/themes/mfa/mfaOTPFooter";
+import type { MFAOTPHeader } from "./components/themes/mfa/mfaOTPHeader";
 import type { CloseTabScreen } from "./components/themes/signInUp/closeTabScreen";
 import type { EmailForm } from "./components/themes/signInUp/emailForm";
 import type { EmailOrPhoneForm } from "./components/themes/signInUp/emailOrPhoneForm";
@@ -70,6 +74,7 @@ export declare type NormalisedConfig = {
         disableDefaultUI?: boolean;
     };
     linkClickedScreenFeature: PasswordlessNormalisedBaseConfig;
+    mfaFeature: PasswordlessNormalisedBaseConfig;
     contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
@@ -120,7 +125,26 @@ export declare type UserInput = (
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
     };
     linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
+    mfaFeature?: PasswordlessFeatureBaseConfig;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+export declare type MFAProps = {
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+    contactMethod: "EMAIL" | "PHONE";
+    onBackButtonClicked: () => void;
+    onSignOutClicked: () => void;
+    onFactorChooserButtonClicked: () => void;
+    onSuccess?: () => void;
+    dispatch: Dispatch<MFAAction>;
+    featureState: {
+        isSetupAllowed: boolean;
+        loginAttemptInfo?: LoginAttemptInfo;
+        loaded: boolean;
+        successInAnotherTab: boolean;
+        error: string | undefined;
+    };
+    userContext?: any;
+};
 export declare type SignInUpProps = {
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
@@ -232,7 +256,41 @@ export declare type SignInUpState = {
     loginAttemptInfo: LoginAttemptInfo | undefined;
     successInAnotherTab: boolean;
 };
+export declare type MFAAction =
+    | {
+          type: "load";
+          loginAttemptInfo: LoginAttemptInfo | undefined;
+          isAllowedToSetup: boolean;
+          error: string | undefined;
+      }
+    | {
+          type: "startVerify";
+          loginAttemptInfo: LoginAttemptInfo;
+      }
+    | {
+          type: "resendCode";
+          timestamp: number;
+      }
+    | {
+          type: "restartFlow";
+          error: string | undefined;
+      }
+    | {
+          type: "setError";
+          error: string | undefined;
+      }
+    | {
+          type: "successInAnotherTab";
+      };
+export declare type MFAState = {
+    error: string | undefined;
+    loaded: boolean;
+    loginAttemptInfo: LoginAttemptInfo | undefined;
+    isSetupAllowed: boolean;
+    successInAnotherTab: boolean;
+};
 export declare type SignInUpChildProps = Omit<SignInUpProps, "featureState" | "dispatch">;
+export declare type MFAChildProps = Omit<MFAProps, "featureState" | "dispatch">;
 export declare type LinkSentThemeProps = {
     clearError: () => void;
     onError: (error: string) => void;
@@ -251,6 +309,28 @@ export declare type UserInputCodeFormHeaderProps = {
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
 };
+export declare type MFAFooterProps = {
+    isSetupAllowed: boolean;
+    onSignOutClicked: () => void;
+    onFactorChooserButtonClicked: () => void;
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+};
+export declare type MFAOTPFooterProps = {
+    isSetupAllowed: boolean;
+    onSignOutClicked: () => void;
+    onFactorChooserButtonClicked: () => void;
+    loginAttemptInfo: LoginAttemptInfo;
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+};
+export declare type MFAOTPHeaderProps = {
+    isSetupAllowed: boolean;
+    onBackButtonClicked: () => void;
+    loginAttemptInfo: LoginAttemptInfo;
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+};
 export declare type ComponentOverrideMap = {
     PasswordlessSignInUpHeader_Override?: ComponentOverride<typeof SignInUpHeader>;
     PasswordlessSignInUpFooter_Override?: ComponentOverride<typeof SignInUpFooter>;
@@ -263,4 +343,8 @@ export declare type ComponentOverrideMap = {
     PasswordlessLinkSent_Override?: ComponentOverride<typeof LinkSent>;
     PasswordlessLinkClickedScreen_Override?: ComponentOverride<typeof LinkClickedScreen>;
     PasswordlessCloseTabScreen_Override?: ComponentOverride<typeof CloseTabScreen>;
+    PasswordlessMFAHeader_Override?: ComponentOverride<typeof MFAHeader>;
+    PasswordlessMFAFooter_Override?: ComponentOverride<typeof MFAFooter>;
+    PasswordlessMFAOTPHeader_Override?: ComponentOverride<typeof MFAOTPHeader>;
+    PasswordlessMFAOTPFooter_Override?: ComponentOverride<typeof MFAOTPFooter>;
 };

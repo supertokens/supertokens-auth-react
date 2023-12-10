@@ -71,6 +71,13 @@ export const defaultTranslationsPasswordless = {
         PWLESS_USER_INPUT_CODE_HEADER_SUBTITLE_LINK: "An OTP and a magic link was sent to you at",
         PWLESS_USER_INPUT_CODE_INPUT_LABEL: "OTP",
 
+        PWLESS_MFA_LOGOUT: "Logout",
+        PWLESS_MFA_HEADER_TITLE_PHONE: "SMS based OTP",
+        PWLESS_MFA_HEADER_TITLE_EMAIL: "Email based OTP",
+        PWLESS_MFA_FOOTER_CHOOSER_ANOTHER: "Choose another factor",
+        PWLESS_MFA_FOOTER_LOGOUT: "Logout",
+
+        PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP: "You are not allowed to set up OTP.",
         /*
          * The following are error messages from our backend SDK.
          * These are returned as full messages to preserver compatibilty, but they work just like the keys above.

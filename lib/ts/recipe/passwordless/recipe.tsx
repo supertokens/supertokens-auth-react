@@ -18,10 +18,14 @@
  */
 
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
+import { OTPEmailIcon } from "../../components/assets/otpEmailIcon";
+import { OTPSMSIcon } from "../../components/assets/otpSMSIcon";
 import { SSR_ERROR } from "../../constants";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
+import MultiFactorAuth from "../multifactorauth/recipe";
 
 import { getFunctionOverrides } from "./functionOverrides";
 import { normalisePasswordlessConfig } from "./utils";
@@ -36,6 +40,21 @@ import type {
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
 import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
+
+export const otpPhoneFactor = {
+    id: "otp-phone",
+    name: "SMS based OTP",
+    description: "Get an OTP code on your phone to complete the authentication request",
+    path: "/mfa/otp-phone",
+    logo: OTPSMSIcon,
+};
+export const otpEmailFactor = {
+    id: "otp-email",
+    name: "Email based OTP",
+    description: "Get an OTP code on your email address to complete the authentication request",
+    path: "/mfa/otp-email",
+    logo: OTPEmailIcon,
+};
 
 export const passwordlessFirstFactors = ["otp-phone", "otp-email", "link-phone", "link-email"] as const;
 
@@ -58,6 +77,13 @@ export default class Passwordless extends AuthRecipe<
         public readonly webJSRecipe: WebJSRecipeInterface<typeof PasswordlessWebJS> = PasswordlessWebJS
     ) {
         super(config);
+
+        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
+            const mfa = MultiFactorAuth.getInstance();
+            if (mfa !== undefined) {
+                mfa.addMFAFactors([otpPhoneFactor, otpEmailFactor]);
+            }
+        });
     }
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
