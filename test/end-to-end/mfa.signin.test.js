@@ -339,6 +339,40 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await waitForSTElement(page, "[data-supertokens~=secondaryLinkWithLeftArrow]");
         });
+
+        it("should handle MFA info API failures gracefully", async () => {
+            await setMFAInfo({
+                requirements: [],
+                isAlreadySetup: ["otp-phone", "otp-email"],
+                isAllowedToSetup: [],
+            });
+
+            await page.setRequestInterception(true);
+            const requestHandler = (request) => {
+                if (request.url() === MFA_INFO_API && request.method() === "GET") {
+                    return request.respond({
+                        status: 400,
+                        headers: {
+                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                            "access-control-allow-credentials": "true",
+                        },
+                        body: JSON.stringify({
+                            status: "BAD_INPUT",
+                        }),
+                    });
+                }
+
+                return request.continue();
+            };
+            page.on("request", requestHandler);
+            try {
+                await tryEmailPasswordSignIn(page, email);
+                await expectErrorThrown(page, () => goToFactorChooser(page, false));
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            }
+        });
     });
 
     describe("factor screens", () => {
