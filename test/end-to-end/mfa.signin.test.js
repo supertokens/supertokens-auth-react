@@ -29,7 +29,7 @@ import {
     getTestEmail,
     getPasswordlessDevice,
     waitFor,
-    getFactorChooserOptions,
+    isMFASupported,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API } from "../constants";
@@ -63,8 +63,14 @@ describe("SuperTokens SignIn w/ MFA", function () {
     let browser;
     let page;
     let consoleLogs = [];
+    let skipped = false;
 
     before(async function () {
+        if (!(await isMFASupported())) {
+            skipped = true;
+            this.skip();
+            return;
+        }
         await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
@@ -78,6 +84,9 @@ describe("SuperTokens SignIn w/ MFA", function () {
     });
 
     after(async function () {
+        if (skipped) {
+            return;
+        }
         await browser.close();
 
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {

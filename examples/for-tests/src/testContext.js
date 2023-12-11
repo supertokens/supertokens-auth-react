@@ -20,6 +20,7 @@ export function getTestContext() {
             signIn: localStorage.getItem("SIGNIN_SETTING_TYPE"),
             signUp: localStorage.getItem("SIGNUP_SETTING_TYPE"),
         },
+        enableMFA: localStorage.getItem("enableMFA") === "true",
     };
     return ret;
 }

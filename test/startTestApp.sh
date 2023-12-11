@@ -27,6 +27,13 @@ function startEndToEnd () {
         echo "Waiting for front end test application to start..."
         sleep 5
     done
+
+    while ! curl -s localhost:8082 > /dev/null 2>&1
+    do
+        echo "Waiting for backend test application to start..."
+        sleep 5
+    done
+
     sleep 2 # Because the server is responding does not mean the app is ready. Let's wait another 5secs to make sure the app is up.
     echo "Start mocha testing"
 

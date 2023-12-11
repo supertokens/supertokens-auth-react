@@ -16,14 +16,16 @@ import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpass
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
 import { MultiFactorAuthPreBuiltUI } from "supertokens-auth-react/recipe/multifactorauth/prebuiltui";
+import { TOTPPreBuiltUI } from "supertokens-auth-react/recipe/totp/prebuiltui";
 import { AccessDeniedScreen } from "supertokens-auth-react/recipe/session/prebuiltui";
-import { getEnabledRecipes } from "./testContext";
+import { getEnabledRecipes, getTestContext } from "./testContext";
 
 function AppWithReactDomRouter(props) {
+    const context = getTestContext();
     const enabledRecipes = getEnabledRecipes();
     const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
 
-    let recipePreBuiltUIList = [MultiFactorAuthPreBuiltUI];
+    let recipePreBuiltUIList = [TOTPPreBuiltUI];
     if (enabledRecipes.includes("emailpassword")) {
         recipePreBuiltUIList.push(EmailPasswordPreBuiltUI);
     }
@@ -43,6 +45,11 @@ function AppWithReactDomRouter(props) {
     if (emailVerificationMode !== "OFF") {
         recipePreBuiltUIList.push(EmailVerificationPreBuiltUI);
     }
+
+    if (context.enableMFA) {
+        recipePreBuiltUIList.push(MultiFactorAuthPreBuiltUI);
+    }
+
     /**
      * For user context tests we add this query param so the additional routes
      * dont interfere with other tests

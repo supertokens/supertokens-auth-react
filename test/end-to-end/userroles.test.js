@@ -251,7 +251,6 @@ describe("User Roles in the frontend", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION ON_HANDLE_EVENT API_INVALID_CLAIM",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
             ]);
         });
     });

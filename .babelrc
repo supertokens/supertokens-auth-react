@@ -1,11 +1,13 @@
 {
-    "presets": [["@babel/preset-env", {}, "@babel/preset-react"]],
-    "plugins": [
+    "presets": [
+        "@babel/preset-env",
         [
-            "@babel/plugin-transform-react-jsx",
+            "@babel/preset-typescript",
             {
-                "pragmaFrag": "React.Fragment"
+                "allExtensions": true,
+                "isTSX": true
             }
-        ]
+        ],
+        ["@babel/preset-react", { "runtime": "automatic" }]
     ]
 }

@@ -26,6 +26,7 @@ import {
     backendBeforeEach,
     waitFor,
     submitForm,
+    isMFASupported,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 
@@ -39,8 +40,14 @@ describe("SuperTokens MFA firstFactors support", function () {
     let browser;
     let page;
     let consoleLogs = [];
+    let skipped = false;
 
     before(async function () {
+        if (!(await isMFASupported())) {
+            skipped = true;
+            this.skip();
+            return;
+        }
         await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
@@ -54,6 +61,9 @@ describe("SuperTokens MFA firstFactors support", function () {
     });
 
     after(async function () {
+        if (skipped) {
+            return;
+        }
         await browser.close();
 
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {

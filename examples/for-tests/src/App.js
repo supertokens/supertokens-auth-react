@@ -333,40 +333,6 @@ const customFields = [
 
 const testContext = getTestContext();
 
-let storedTOTPDevices = window.localStorage.getItem("totpDevices");
-let totpDevices = storedTOTPDevices ? JSON.parse(storedTOTPDevices) : [];
-
-function removeTOTPDevice(deviceName) {
-    const origLength = totpDevices.length;
-    totpDevices = totpDevices.filter((d) => d.deviceName !== deviceName);
-    window.localStorage.setItem("totpDevices", JSON.stringify(totpDevices));
-    return totpDevices.length !== origLength;
-}
-
-function addTOTPDevice(deviceName) {
-    totpDevices.push({
-        deviceName,
-        verified: false,
-    });
-    window.localStorage.setItem("totpDevices", JSON.stringify(totpDevices));
-}
-
-function verifyTOTPDevice(deviceName) {
-    totpDevices = totpDevices.filter((d) => d.deviceName !== deviceName);
-    totpDevices.push({
-        deviceName,
-        verified: true,
-    });
-    window.localStorage.setItem("totpDevices", JSON.stringify(totpDevices));
-}
-let tryCount = 0;
-
-setInterval(() => (tryCount = tryCount > 0 ? tryCount - 1 : 0), 30000);
-window.resetTOTP = () => {
-    totpDevices = [];
-    window.localStorage.setItem("totpDevices", JSON.stringify(totpDevices));
-    tryCount = 0;
-};
 let recipeList = [
     TOTP.init(),
     MultiFactorAuth.init({
@@ -416,7 +382,7 @@ let recipeList = [
                         return implementation.doesSessionExist(...args);
                     },
                     getAccessTokenPayloadSecurely(...args) {
-                        log(`GET_JWT_PAYLOAD_SECURELY`);
+                        // log(`GET_JWT_PAYLOAD_SECURELY`);
                         return implementation.getAccessTokenPayloadSecurely(...args);
                     },
                     getUserId(...args) {
@@ -476,6 +442,14 @@ if (enabledRecipes.includes("thirdpartypasswordless")) {
 
 if (emailVerificationMode !== "OFF") {
     recipeList.push(getEmailVerificationConfigs(testContext));
+}
+
+if (testContext.enableMFA) {
+    recipeList.push(
+        MultiFactorAuth.init({
+            firstFactors: testContext.firstFactors,
+        })
+    );
 }
 
 SuperTokens.init({

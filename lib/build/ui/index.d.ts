@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import type { PreBuiltRecipes, ReactRouterDomWithCustomHistory } from "./types";
-export default class UI {
+declare class UI {
     private static reactRouterDom;
     private static reactRouterDomIsV6?;
     static getSuperTokensRoutesForReactRouterDom(
@@ -15,4 +15,5 @@ export default class UI {
 declare const getSuperTokensRoutesForReactRouterDom: typeof UI.getSuperTokensRoutesForReactRouterDom;
 declare const canHandleRoute: typeof UI.canHandleRoute;
 declare const getRoutingComponent: typeof UI.getRoutingComponent;
+export default UI;
 export { getSuperTokensRoutesForReactRouterDom, canHandleRoute, getRoutingComponent };

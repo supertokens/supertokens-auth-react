@@ -23,6 +23,7 @@ import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuper
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 
 import { SSR_ERROR } from "../../constants";
+import { isTest } from "../../utils";
 import RecipeModule from "../recipeModule";
 
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
@@ -137,4 +138,13 @@ export default class EmailVerification extends RecipeModule<
             return "/";
         }
     };
+
+    static reset(): void {
+        if (!isTest()) {
+            return;
+        }
+
+        EmailVerification.instance = undefined;
+        return;
+    }
 }

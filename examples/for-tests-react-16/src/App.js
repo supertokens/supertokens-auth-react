@@ -15,6 +15,8 @@ import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyema
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 import UserRoles from "supertokens-auth-react/recipe/userroles";
 import Multitenancy from "supertokens-auth-react/recipe/multitenancy";
+import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
+import TOTP from "supertokens-auth-react/recipe/totp";
 
 import axios from "axios";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
@@ -178,9 +180,7 @@ const formFields = [
 const testContext = getTestContext();
 
 let recipeList = [
-    MultiFactorAuth.init({
-        firstFactors: testContext.firstFactors,
-    }),
+    TOTP.init(),
     Multitenancy.init({
         override: {
             functions: (oI) => ({
@@ -224,7 +224,7 @@ let recipeList = [
                         return implementation.doesSessionExist(...args);
                     },
                     getAccessTokenPayloadSecurely(...args) {
-                        log(`GET_JWT_PAYLOAD_SECURELY`);
+                        // log(`GET_JWT_PAYLOAD_SECURELY`);
                         return implementation.getAccessTokenPayloadSecurely(...args);
                     },
                     getUserId(...args) {
@@ -273,6 +273,15 @@ if (enabledRecipes.includes("thirdpartypasswordless")) {
 if (emailVerificationMode !== "OFF") {
     recipeList.push(getEmailVerificationConfigs(testContext));
 }
+
+if (testContext.enableMFA) {
+    recipeList.push(
+        MultiFactorAuth.init({
+            firstFactors: testContext.firstFactors,
+        })
+    );
+}
+
 SuperTokens.init({
     usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
     clientType: testContext.clientType,
@@ -519,6 +528,7 @@ function SessionInfoTable({ sessionInfo }) {
 
 function getEmailVerificationConfigs({ disableDefaultUI }) {
     return EmailVerification.init({
+        useShadowDom,
         disableDefaultUI,
         sendVerifyEmailScreen: {
             style: theme,

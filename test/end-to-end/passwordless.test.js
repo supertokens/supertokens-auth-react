@@ -709,11 +709,10 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                     `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
                     `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                 ]);
             });
@@ -754,11 +753,10 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                     `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
                     `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                 ]);
             });
@@ -1194,11 +1192,11 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                     `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                 ]);
             });
@@ -1238,11 +1236,11 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                     `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                 ]);
             });
@@ -1595,14 +1593,12 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
                 await anotherTab.close();
@@ -1680,11 +1676,10 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                     `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
                     `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                 ]);
             });
@@ -1730,14 +1725,12 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
                 await anotherTab.close();

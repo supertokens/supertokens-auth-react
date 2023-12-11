@@ -897,6 +897,15 @@ export async function isAccountLinkingSupported() {
     return true;
 }
 
+export async function isMFASupported() {
+    const features = await getFeatureFlags();
+    if (!features.includes("mfa")) {
+        return false;
+    }
+
+    return true;
+}
+
 /**
  * For example setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "EMAIL_PASSWORD_SIGN_UP", page) to
  * set for signUp in email password

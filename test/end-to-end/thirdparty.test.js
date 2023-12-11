@@ -127,13 +127,12 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
                 `ST_LOGS ${logId} PRE_API_HOOKS THIRD_PARTY_SIGN_IN_UP`,
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                 `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
                 `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                 `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
         });
@@ -183,13 +182,12 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
                 `ST_LOGS ${logId} PRE_API_HOOKS THIRD_PARTY_SIGN_IN_UP`,
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                 `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
                 `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                 `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
         });
