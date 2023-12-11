@@ -140,7 +140,7 @@ describe("Passwordless", function () {
         assert.throws(() => Passwordless.getInstanceOrThrow().config.onHandleEvent({} as any), {
             message: "ON HANDLE EVENTS HOOK THROWS",
         });
-        assert.throws(() => Passwordless.getInstanceOrThrow().config.getRedirectionURL({} as any), {
+        assert.throws(() => Passwordless.getInstanceOrThrow().config.getRedirectionURL({} as any, {}), {
             message: "GET REDIRECTION HOOK THROWS",
         });
     });
