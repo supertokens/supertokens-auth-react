@@ -18,7 +18,7 @@ import { getGlobalClaimValidators } from "supertokens-web-js/utils";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 
 import type { InputType, NormalisedSessionConfig } from "./types";
-import type { NormalisedBaseConfig } from "../../types";
+import type { NormalisedBaseConfig, UserContext } from "../../types";
 import type { SessionClaimValidator } from "../../types";
 import type { ClaimValidationError } from "supertokens-web-js/recipe/session";
 import type { RecipeInterface } from "supertokens-web-js/recipe/session";
@@ -54,9 +54,9 @@ export const getFailureRedirectionInfo = async ({
     invalidClaims: ClaimValidationError[];
     overrideGlobalClaimValidators?: (
         globalClaimValidators: SessionClaimValidator[],
-        userContext: any
+        userContext: UserContext
     ) => SessionClaimValidator[];
-    userContext: any;
+    userContext: UserContext;
 }): Promise<{ redirectPath?: string; failedClaim?: ClaimValidationError }> => {
     const globalValidators = getGlobalClaimValidators({
         overrideGlobalClaimValidators,

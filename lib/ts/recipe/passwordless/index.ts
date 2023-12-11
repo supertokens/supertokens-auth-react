@@ -22,6 +22,7 @@ import Passwordless from "./recipe";
 import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 
+import type { UserContext } from "../../types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/passwordless";
 import type { PasswordlessFlowType } from "supertokens-web-js/recipe/passwordless/types";
 import type { User } from "supertokens-web-js/types";
@@ -31,7 +32,7 @@ export default class Wrapper {
         return Passwordless.init(config);
     }
 
-    static async signOut(input?: { userContext?: any }): Promise<void> {
+    static async signOut(input?: { userContext?: UserContext }): Promise<void> {
         return Passwordless.getInstanceOrThrow().signOut({
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -39,8 +40,8 @@ export default class Wrapper {
 
     static async createCode(
         input:
-            | { email: string; userContext?: any; options?: RecipeFunctionOptions }
-            | { phoneNumber: string; userContext?: any; options?: RecipeFunctionOptions }
+            | { email: string; userContext?: UserContext; options?: RecipeFunctionOptions }
+            | { phoneNumber: string; userContext?: UserContext; options?: RecipeFunctionOptions }
     ): Promise<
         | {
               status: "OK";
@@ -60,7 +61,7 @@ export default class Wrapper {
         });
     }
 
-    static async resendCode(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static async resendCode(input?: { userContext?: UserContext; options?: RecipeFunctionOptions }): Promise<{
         status: "OK" | "RESTART_FLOW_ERROR";
         fetchResponse: Response;
     }> {
@@ -74,11 +75,11 @@ export default class Wrapper {
         input?:
             | {
                   userInputCode: string;
-                  userContext?: any;
+                  userContext?: UserContext;
                   options?: RecipeFunctionOptions;
               }
             | {
-                  userContext?: any;
+                  userContext?: UserContext;
                   options?: RecipeFunctionOptions;
               }
     ): Promise<
@@ -103,21 +104,25 @@ export default class Wrapper {
         });
     }
 
-    static getLinkCodeFromURL(input?: { userContext?: any }): string {
+    static getLinkCodeFromURL(input?: { userContext?: UserContext }): string {
         return Passwordless.getInstanceOrThrow().webJSRecipe.getLinkCodeFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
-    static getPreAuthSessionIdFromURL(input?: { userContext?: any }): string {
+    static getPreAuthSessionIdFromURL(input?: { userContext?: UserContext }): string {
         return Passwordless.getInstanceOrThrow().webJSRecipe.getPreAuthSessionIdFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
-    static async doesEmailExist(input: { email: string; userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static async doesEmailExist(input: {
+        email: string;
+        userContext?: UserContext;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;
@@ -130,7 +135,7 @@ export default class Wrapper {
 
     static async doesPhoneNumberExist(input: {
         phoneNumber: string;
-        userContext?: any;
+        userContext?: UserContext;
         options?: RecipeFunctionOptions;
     }): Promise<{
         status: "OK";
@@ -143,7 +148,7 @@ export default class Wrapper {
         });
     }
 
-    static async getLoginAttemptInfo<CustomLoginAttemptInfoProperties>(input?: { userContext?: any }): Promise<
+    static async getLoginAttemptInfo<CustomLoginAttemptInfoProperties>(input?: { userContext?: UserContext }): Promise<
         | undefined
         | ({
               deviceId: string;
@@ -163,7 +168,7 @@ export default class Wrapper {
             preAuthSessionId: string;
             flowType: PasswordlessFlowType;
         } & CustomStateProperties;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<void> {
         return Passwordless.getInstanceOrThrow().webJSRecipe.setLoginAttemptInfo({
             ...input,
@@ -171,7 +176,7 @@ export default class Wrapper {
         });
     }
 
-    static async clearLoginAttemptInfo(input?: { userContext?: any }): Promise<void> {
+    static async clearLoginAttemptInfo(input?: { userContext?: UserContext }): Promise<void> {
         return Passwordless.getInstanceOrThrow().webJSRecipe.clearLoginAttemptInfo({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),

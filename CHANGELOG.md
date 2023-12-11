@@ -5,6 +5,56 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [0.36.0] - 2023-12-07
+
+### Changes
+
+-   `getRedirectionURL` now supports returning `null` to prevent automatic redirection, useful for customizing the behavior after successful sign-in or sign-up. Typically, this is used if you want to embed the sign in / up component in a popup and want to just dismiss the popup post login.
+
+Here's an example of how to use this:
+
+```tsx
+EmailPassword.init({
+    getRedirectionURL: async (context, userContext) => {
+        if (context.action === "SUCCESS") {
+            return null;
+        }
+        // Returning undefined falls back to the default redirection strategy
+        return undefined;
+    },
+});
+```
+
+-   `getRedirectionURL` now receives `userContext` as the second argument.
+
+-   `isNewPrimaryUser` boolean property has been added to `GetRedirectionURLContext`. It can be used to check if a new primary user was created particularly in scenarios involving account linking.
+
+-   `UserContext` type has been changed to `Record<string, unknown>` from `any`.
+
+-   The `PreBuiltUI` components now accept a `navigate` prop, internally utilized by SuperTokens for redirection. This becomes handy when manually rendering the component and desiring client-side navigation instead of a full-page refresh for any redirection. Here's an example using `react-router-dom@v6`:
+
+```tsx
+import { SignInUp } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
+import { useNavigate } from "react-router-dom";
+
+function CustomSignInUp() {
+    const navigate = useNavigate();
+    return <SignInUp navigate={navigate} />;
+}
+```
+
+### Breaking changes
+
+-   `user` property has been removed from `GetRedirectionURLContext`.To get the `user` object from backend, you can follow hte instructions [here](https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/get-user-info).
+
+-   The `CloseTabScreen` [component](https://supertokens.com/img/otp-magic-link-same-time.png), previously featured in the passwordless recipe visible when a user signs in from another tab using a magic link, has been removed. Users will continue to see the 'Enter OTP' screen until they refresh. If you were [overriding](https://supertokens.com/docs/passwordless/advanced-customizations/react-component-override/usage) this component using `PasswordlessCloseTabScreen_Override`, you no longer need to do so.
+
+-   If your workflow involves custom validation, such as Phone Number verification, after signing in, ensure your code aligns with the updated examples found in [with-phone-password](https://github.com/supertokens/supertokens-auth-react/tree/master/examples/with-phone-password) or [with-thirdpartyemailpassword-passwordless](https://github.com/supertokens/supertokens-auth-react/tree/master/examples/with-thirdpartyemailpassword-passwordless).
+
+    Changes:
+
+    -   The need to manually set `props.featureState.successInAnotherTab` to `false` to avoid displaying the `CloseTabScreen` component has been eliminated.
+
 ## [0.35.9] - 2023-12-06
 
 -   Fixes ThirdPartyEmailPassword rendering sign in/up switcher even with disabled email password. Instead it'll now render `SignInAndUpHeader_Override` in this case (overrideable as `ThirdPartySignInAndUpHeader`). Overriding `ThirdPartyEmailPasswordHeader_Override` should still cover all cases.

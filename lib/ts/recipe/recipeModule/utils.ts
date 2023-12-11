@@ -12,7 +12,7 @@ export function normaliseRecipeModuleConfig<T, S, R>(config?: Config<T, S, R>): 
 
     if (getRedirectionURL === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        getRedirectionURL = async (_: unknown): Promise<string | undefined> => undefined;
+        getRedirectionURL = async (_: unknown): Promise<string | undefined | null> => undefined;
     }
 
     if (preAPIHook === undefined) {

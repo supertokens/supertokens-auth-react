@@ -22,7 +22,14 @@ import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "./constants";
 
 import type { FormFieldError } from "./recipe/emailpassword/types";
-import type { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
+import type {
+    APIFormField,
+    AppInfoUserInput,
+    Navigate,
+    NormalisedAppInfo,
+    NormalisedFormField,
+    UserContext,
+} from "./types";
 
 /*
  * getRecipeIdFromPath
@@ -226,18 +233,17 @@ export function redirectWithFullPageReload(to: string): void {
     WindowHandlerReference.getReferenceOrThrow().windowHandler.location.setHref(to);
 }
 
-export function redirectWithHistory(to: string, history: any): void {
+export function redirectWithNavigate(to: string, navigate: Navigate): void {
     if (to.trim() === "") {
         to = "/";
     }
 
-    if (history.push !== undefined) {
+    if ("push" in navigate) {
         // we are using react-router-dom that is before v6
-        history.push(to);
+        navigate.push(to);
     } else {
-        // in react-router-dom v6, it is just navigate(to), and we are renaming
-        // naviagte to history, so it becomes history(to).
-        history(to);
+        // in react-router-dom v6, it is just navigate(to)
+        navigate(to);
     }
 }
 
@@ -390,7 +396,7 @@ export async function setFrontendCookie(
     }
 }
 
-export function getNormalisedUserContext(userContext?: any): any {
+export function getNormalisedUserContext(userContext?: UserContext): UserContext {
     return userContext === undefined ? {} : userContext;
 }
 

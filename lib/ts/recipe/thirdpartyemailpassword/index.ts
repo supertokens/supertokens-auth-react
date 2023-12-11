@@ -36,6 +36,7 @@ import { RecipeComponentsOverrideContextProvider } from "./componentOverrideCont
 import ThirdPartyEmailPassword from "./recipe";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 
+import type { UserContext } from "../../types";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import type { User } from "supertokens-web-js/types";
@@ -45,7 +46,7 @@ export default class Wrapper {
         return ThirdPartyEmailPassword.init(config);
     }
 
-    static async signOut(input?: { userContext?: any }): Promise<void> {
+    static async signOut(input?: { userContext?: UserContext }): Promise<void> {
         return ThirdPartyEmailPassword.getInstanceOrThrow().signOut({
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -57,7 +58,7 @@ export default class Wrapper {
             value: string;
         }[];
         options?: RecipeFunctionOptions;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK";
@@ -88,7 +89,7 @@ export default class Wrapper {
             value: string;
         }[];
         options?: RecipeFunctionOptions;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK" | "PASSWORD_RESET_NOT_ALLOWED";
@@ -115,7 +116,7 @@ export default class Wrapper {
             value: string;
         }[];
         options?: RecipeFunctionOptions;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK";
@@ -148,7 +149,7 @@ export default class Wrapper {
             value: string;
         }[];
         options?: RecipeFunctionOptions;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK";
@@ -179,7 +180,11 @@ export default class Wrapper {
         });
     }
 
-    static async doesEmailExist(input: { email: string; options?: RecipeFunctionOptions; userContext?: any }): Promise<{
+    static async doesEmailExist(input: {
+        email: string;
+        options?: RecipeFunctionOptions;
+        userContext?: UserContext;
+    }): Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;
@@ -190,7 +195,7 @@ export default class Wrapper {
         });
     }
 
-    static getResetPasswordTokenFromURL(input?: { userContext?: any }): string {
+    static getResetPasswordTokenFromURL(input?: { userContext?: UserContext }): string {
         return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.getResetPasswordTokenFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
@@ -199,7 +204,7 @@ export default class Wrapper {
 
     static async redirectToThirdPartyLogin(input: {
         thirdPartyId: string;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<{ status: "OK" | "ERROR" }> {
         const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
 
@@ -217,7 +222,7 @@ export default class Wrapper {
         });
     }
 
-    static async thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
+    static async thirdPartySignInAndUp(input?: { userContext?: UserContext; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
               user: User;
@@ -241,7 +246,7 @@ export default class Wrapper {
     }
 
     static getStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
-        userContext?: any;
+        userContext?: UserContext;
     }): (StateObject & CustomStateProperties) | undefined {
         return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.getStateAndOtherInfoFromStorage({
             ...input,
@@ -253,7 +258,7 @@ export default class Wrapper {
         thirdPartyId: string;
         frontendRedirectURI: string;
         redirectURIOnProviderDashboard?: string;
-        userContext?: any;
+        userContext?: UserContext;
         options?: RecipeFunctionOptions;
     }): Promise<string> {
         return ThirdPartyEmailPassword.getInstanceOrThrow().webJSRecipe.getAuthorisationURLWithQueryParamsAndSetState({

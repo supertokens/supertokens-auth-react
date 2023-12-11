@@ -22,6 +22,7 @@ import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuper
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
 import { SSR_ERROR } from "./constants";
+import { enableLogging, logDebugMessage } from "./logger";
 import Multitenancy from "./recipe/multitenancy/recipe";
 import { saveCurrentLanguage, TranslationController } from "./translation/translationHelpers";
 import {
@@ -34,14 +35,14 @@ import {
     normaliseCookieScopeOrThrowError,
     normaliseInputAppInfoOrThrowError,
     redirectWithFullPageReload,
-    redirectWithHistory,
+    redirectWithNavigate,
 } from "./utils";
 
 import type RecipeModule from "./recipe/recipeModule";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import type { GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } from "./types";
+import type { Navigate, GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig, UserContext } from "./types";
 
 /*
  * Class.
@@ -90,9 +91,10 @@ export default class SuperTokens {
             userTranslationFunc: translationConfig.translationFunc,
         };
 
-        let enableDebugLogs = false;
-        if (config.enableDebugLogs !== undefined) {
-            enableDebugLogs = config.enableDebugLogs;
+        const enableDebugLogs = Boolean(config?.enableDebugLogs);
+
+        if (enableDebugLogs) {
+            enableLogging();
         }
 
         this.userGetRedirectionURL = config.getRedirectionURL;
@@ -165,9 +167,9 @@ export default class SuperTokens {
         this.languageTranslations.translationEventSource.emit("TranslationLoaded", store);
     }
 
-    async getRedirectUrl(context: GetRedirectionURLContext): Promise<string> {
+    async getRedirectUrl(context: GetRedirectionURLContext, userContext: UserContext): Promise<string | null> {
         if (this.userGetRedirectionURL) {
-            const userRes = await this.userGetRedirectionURL(context);
+            const userRes = await this.userGetRedirectionURL(context, userContext);
             if (userRes !== undefined) {
                 return userRes;
             }
@@ -181,9 +183,10 @@ export default class SuperTokens {
 
     redirectToAuth = async (options: {
         show?: "signin" | "signup";
-        history?: any;
+        navigate?: Navigate;
         queryParams?: any;
         redirectBack: boolean;
+        userContext: UserContext;
     }): Promise<void> => {
         const queryParams = options.queryParams === undefined ? {} : options.queryParams;
         if (options.show !== undefined) {
@@ -193,16 +196,24 @@ export default class SuperTokens {
             queryParams.redirectToPath = getCurrentNormalisedUrlPath().getAsStringDangerous();
         }
 
-        let redirectUrl = await this.getRedirectUrl({
-            action: "TO_AUTH",
-            showSignIn: options.show === "signin",
-        });
+        let redirectUrl = await this.getRedirectUrl(
+            {
+                action: "TO_AUTH",
+                showSignIn: options.show === "signin",
+            },
+            options.userContext
+        );
+
+        if (redirectUrl === null) {
+            logDebugMessage("Skipping redirection because the user override returned null");
+            return;
+        }
         redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
-        return this.redirectToUrl(redirectUrl, options.history);
+        return this.redirectToUrl(redirectUrl, options.navigate);
     };
 
-    redirectToUrl = async (redirectUrl: string, history?: any): Promise<void> => {
-        doRedirection(this.appInfo, redirectUrl, history);
+    redirectToUrl = async (redirectUrl: string, navigate?: Navigate): Promise<void> => {
+        doRedirection(this.appInfo, redirectUrl, navigate);
     };
 
     /*
@@ -218,7 +229,7 @@ export default class SuperTokens {
     }
 }
 
-export function doRedirection(appInfo: NormalisedAppInfo, redirectUrl: string, history?: any) {
+export function doRedirection(appInfo: NormalisedAppInfo, redirectUrl: string, navigate?: Navigate) {
     try {
         new URL(redirectUrl); // If full URL, no error thrown, skip in app redirection.
     } catch (e) {
@@ -230,9 +241,9 @@ export function doRedirection(appInfo: NormalisedAppInfo, redirectUrl: string, h
             return;
         }
 
-        // If history was provided, use to redirect without reloading.
-        if (history !== undefined) {
-            redirectWithHistory(redirectUrl, history);
+        // If navigate was provided, use to redirect without reloading.
+        if (navigate !== undefined) {
+            redirectWithNavigate(redirectUrl, navigate);
             return;
         }
     }

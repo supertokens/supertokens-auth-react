@@ -22,6 +22,7 @@ import { ProvidersForm } from "./providersForm";
 import { SignInAndUpHeader } from "./signInAndUpHeader";
 import { SignUpFooter } from "./signUpFooter";
 
+import type { UserContext } from "../../../../../types";
 import type { SignInAndUpThemeProps } from "../../../types";
 
 const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
@@ -48,7 +49,7 @@ const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
 
 const SignInAndUpThemeWrapper: React.FC<
     SignInAndUpThemeProps & {
-        userContext?: any;
+        userContext?: UserContext;
     }
 > = (props) => {
     const hasFont = hasFontDefined(props.config.rootStyle);

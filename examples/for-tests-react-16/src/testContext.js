@@ -14,6 +14,8 @@ export function getTestContext() {
         staticProviderList: localStorage.getItem("staticProviderList"),
         mockTenantId: localStorage.getItem("mockTenantId"),
         clientType: localStorage.getItem("clientType") || undefined,
+        disableRedirectionAfterSuccessfulSignInUp:
+            localStorage.getItem("disableRedirectionAfterSuccessfulSignInUp") === "true",
     };
     return ret;
 }

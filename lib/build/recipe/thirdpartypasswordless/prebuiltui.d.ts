@@ -1,9 +1,9 @@
+/// <reference types="react" />
 import { RecipeRouter } from "../recipeRouter";
 import SignInUpTheme from "./components/themes/signInUp";
 import ThirdPartyPasswordless from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
-import type { PropsWithChildren } from "react";
+import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
 export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     readonly recipeInstance: ThirdPartyPasswordless;
     static instance?: ThirdPartyPasswordlessPreBuiltUI;
@@ -14,38 +14,54 @@ export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
         componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
-        props: FeatureBaseProps & {
+        props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext?: any;
-        },
+            userContext?: UserContext;
+        }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
     getFeatureComponent: (
         componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
-        props: FeatureBaseProps & {
+        props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext?: any;
-        },
+            userContext?: UserContext;
+        }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     static reset(): void;
     static SignInAndUp: (
-        prop?: PropsWithChildren<{
+        prop?: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
-            userContext?: any;
+            userContext?: UserContext;
         }>
     ) => JSX.Element;
-    static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
+    static ThirdPartySignInAndUpCallback: (
+        prop: FeatureBaseProps<{
+            userContext?: UserContext;
+        }>
+    ) => JSX.Element;
     static SignInUpTheme: typeof SignInUpTheme;
-    static PasswordlessLinkClicked: (prop?: any) => JSX.Element;
+    static PasswordlessLinkClicked: (
+        prop: FeatureBaseProps<{
+            userContext?: UserContext;
+        }>
+    ) => JSX.Element;
 }
 declare const SignInAndUp: (
-    prop?: PropsWithChildren<{
+    prop?: FeatureBaseProps<{
         redirectOnSessionExists?: boolean;
-        userContext?: any;
+        userContext?: UserContext;
     }>
 ) => JSX.Element;
-declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
-declare const PasswordlessLinkClicked: (prop?: any) => JSX.Element;
+declare const ThirdPartySignInAndUpCallback: (
+    prop: FeatureBaseProps<{
+        userContext?: UserContext;
+    }>
+) => JSX.Element;
+declare const PasswordlessLinkClicked: (
+    prop: FeatureBaseProps<{
+        userContext?: UserContext;
+    }>
+) => JSX.Element;
 export { SignInAndUp, ThirdPartySignInAndUpCallback, PasswordlessLinkClicked, SignInUpTheme };

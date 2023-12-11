@@ -19,9 +19,6 @@ export declare const defaultTranslationsThirdPartyPasswordless: {
         ERROR_SIGN_IN_UP_LINK: string;
         ERROR_SIGN_IN_UP_RESEND_RESTART_FLOW: string;
         ERROR_SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW: string;
-        PWLESS_CLOSE_TAB_TITLE: string;
-        PWLESS_CLOSE_TAB_SUBTITLE_LINE1: string;
-        PWLESS_CLOSE_TAB_SUBTITLE_LINE2: string;
         PWLESS_SIGN_IN_UP_HEADER_TITLE: string;
         PWLESS_SIGN_IN_UP_FOOTER_START: string;
         PWLESS_SIGN_IN_UP_FOOTER_TOS: string;
@@ -57,6 +54,8 @@ export declare const defaultTranslationsThirdPartyPasswordless: {
         "Failed to generate a one time code. Please try again": undefined;
         "Phone number is invalid": undefined;
         "Email is invalid": undefined;
+        "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_002)": undefined;
+        "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_003)": undefined;
         BRANDING_POWERED_BY_START: string;
         BRANDING_POWERED_BY_END: string;
         SOMETHING_WENT_WRONG_ERROR: string;
@@ -69,5 +68,8 @@ export declare const defaultTranslationsThirdPartyPasswordless: {
         THIRD_PARTY_PROVIDER_DEFAULT_BTN_START: string;
         THIRD_PARTY_PROVIDER_DEFAULT_BTN_END: string;
         THIRD_PARTY_ERROR_NO_EMAIL: string;
+        "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_004)": undefined;
+        "Cannot sign in / up because new email cannot be applied to existing account. Please contact support. (ERR_CODE_005)": undefined;
+        "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_006)": undefined;
     };
 };

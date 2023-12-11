@@ -626,4 +626,18 @@ describe("EmailPassword", function () {
             }
         }
     });
+
+    it("Initializing EmailPassword and return null from getRedirectionURL", async function () {
+        EmailPassword.init({
+            async getRedirectionURL() {
+                return null;
+            },
+        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
+
+        assert(
+            (await EmailPassword.getInstanceOrThrow().getRedirectUrl({ action: "SUCCESS", isNewRecipeUser: false })) ===
+                null
+        );
+        assert((await EmailPassword.getInstanceOrThrow().getRedirectUrl({ action: "RESET_PASSWORD" })) === null);
+    });
 });

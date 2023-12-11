@@ -28,7 +28,7 @@ import { mergeProviders } from "../../../utils";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 
-import type { FeatureBaseProps, WebJSRecipeInterface } from "../../../../../types";
+import type { FeatureBaseProps, UserContext, WebJSRecipeInterface } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type {
     ComponentOverrideMap,
@@ -110,7 +110,11 @@ export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChi
     }, [recipe, recipeImplementation]);
 }
 
-type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap };
+type PropType = FeatureBaseProps<{
+    recipe: Recipe;
+    userContext?: UserContext;
+    useComponentOverrides: () => ComponentOverrideMap;
+}>;
 
 export const SignInAndUpFeature: React.FC<PropType> = (props) => {
     const [state, dispatch] = useFeatureReducer();

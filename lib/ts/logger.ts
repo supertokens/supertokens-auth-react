@@ -12,4 +12,22 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export const package_version = "0.36.0";
+
+import { package_version as version } from "./version";
+
+const SUPERTOKENS_DEBUG_NAMESPACE = "com.supertokens.auth-react";
+
+let __debugLogsEnabled = false;
+
+export function enableLogging(): void {
+    __debugLogsEnabled = true;
+}
+
+export function logDebugMessage(message: string): void {
+    if (__debugLogsEnabled) {
+        // eslint-disable-next-line no-console
+        console.log(
+            `${SUPERTOKENS_DEBUG_NAMESPACE} {t: "${new Date().toISOString()}", message: "${message}", supertokens-auth-react-ver: "${version}"}`
+        );
+    }
+}

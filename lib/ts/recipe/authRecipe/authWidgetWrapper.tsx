@@ -25,12 +25,13 @@ import Session from "../session/recipe";
 
 import type AuthRecipe from ".";
 import type { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
+import type { Navigate } from "../../types";
 import type { PropsWithChildren } from "react";
 
 type Props<T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, R | OnHandleEventContext>> = {
     onSessionAlreadyExists?: () => void;
     authRecipe: AuthRecipe<T, S, R, N>;
-    history: any;
+    navigate?: Navigate;
 };
 
 /**
@@ -78,12 +79,12 @@ const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLCon
                             successRedirectContext: {
                                 action: "SUCCESS",
                                 isNewRecipeUser: false,
-                                user: undefined,
+                                isNewPrimaryUser: false,
                                 redirectToPath: getRedirectToPathFromURL(),
                             },
                         },
                         userContext,
-                        props.history
+                        props.navigate
                     );
                 }
             } else {

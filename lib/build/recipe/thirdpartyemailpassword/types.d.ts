@@ -1,6 +1,6 @@
 import type { Header } from "./components/themes/signInAndUp/header";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import type { Navigate, FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import type {
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
@@ -97,7 +97,7 @@ export declare type PreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPa
 export declare type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswordOnHandleEventContext;
 export declare type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     config: NormalisedConfig;
-    history?: any;
+    navigate?: Navigate;
     commonState: {
         error: string | undefined;
     };

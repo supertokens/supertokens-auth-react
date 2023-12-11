@@ -3,7 +3,7 @@ import type RecipeModule from "./recipe/recipeModule";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import type { GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } from "./types";
+import type { Navigate, GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig, UserContext } from "./types";
 export default class SuperTokens {
     private static instance?;
     static usesDynamicLoginMethods: boolean;
@@ -25,14 +25,15 @@ export default class SuperTokens {
     ): RecipeModule<T, S, R, N>;
     changeLanguage: (lang: string) => Promise<void>;
     loadTranslation(store: TranslationStore): void;
-    getRedirectUrl(context: GetRedirectionURLContext): Promise<string>;
+    getRedirectUrl(context: GetRedirectionURLContext, userContext: UserContext): Promise<string | null>;
     redirectToAuth: (options: {
         show?: "signin" | "signup" | undefined;
-        history?: any;
+        navigate?: Navigate | undefined;
         queryParams?: any;
         redirectBack: boolean;
+        userContext: UserContext;
     }) => Promise<void>;
-    redirectToUrl: (redirectUrl: string, history?: any) => Promise<void>;
+    redirectToUrl: (redirectUrl: string, navigate?: Navigate) => Promise<void>;
     static reset(): void;
 }
-export declare function doRedirection(appInfo: NormalisedAppInfo, redirectUrl: string, history?: any): void;
+export declare function doRedirection(appInfo: NormalisedAppInfo, redirectUrl: string, navigate?: Navigate): void;

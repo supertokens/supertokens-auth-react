@@ -20,7 +20,7 @@ export function RoutingComponent(props: {
     const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState<
         GetLoginMethodsResponseNormalized | undefined
     >(undefined);
-    const history = props.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
+    const navigate = props.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
     const path = props.path;
 
     const location = props.getReactRouterDomWithCustomHistory()?.useLocation();
@@ -37,7 +37,7 @@ export function RoutingComponent(props: {
                 loadedDynamicLoginMethods
             );
             if (result === undefined && SuperTokens.usesDynamicLoginMethods === true) {
-                void redirectToAuth({ history, redirectBack: false });
+                void redirectToAuth({ navigate, redirectBack: false });
             }
             return result;
         }
@@ -73,5 +73,5 @@ export function RoutingComponent(props: {
         return null;
     }
 
-    return <componentToRender.component history={history} />;
+    return <componentToRender.component navigate={navigate} />;
 }

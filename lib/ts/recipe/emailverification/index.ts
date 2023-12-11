@@ -25,6 +25,7 @@ import EmailVerificationRecipe from "./recipe";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { UserInput } from "./types";
 
+import type { UserContext } from "../../types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/emailverification";
 
 export default class Wrapper {
@@ -34,7 +35,7 @@ export default class Wrapper {
         return EmailVerificationRecipe.init(config);
     }
 
-    static async isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static async isEmailVerified(input?: { userContext?: UserContext; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         isVerified: boolean;
         fetchResponse: Response;
@@ -45,7 +46,7 @@ export default class Wrapper {
         });
     }
 
-    static async verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static async verifyEmail(input?: { userContext?: UserContext; options?: RecipeFunctionOptions }): Promise<{
         status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
         fetchResponse: Response;
     }> {
@@ -55,7 +56,10 @@ export default class Wrapper {
         });
     }
 
-    static async sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static async sendVerificationEmail(input?: {
+        userContext?: UserContext;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }> {
@@ -65,7 +69,7 @@ export default class Wrapper {
         });
     }
 
-    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string {
+    static getEmailVerificationTokenFromURL(input?: { userContext?: UserContext }): string {
         return EmailVerificationRecipe.getInstanceOrThrow().webJSRecipe.getEmailVerificationTokenFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),

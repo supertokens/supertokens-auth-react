@@ -3,7 +3,7 @@ import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
 import RecipeModule from "../recipeModule";
 import type { NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType } from "./types";
-import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult } from "../../types";
+import type { Navigate, NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, UserContext } from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import type { SessionClaim } from "supertokens-web-js/recipe/session";
 export default class Session extends RecipeModule<unknown, unknown, unknown, NormalisedSessionConfig> {
@@ -17,21 +17,21 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedSessionConfig>,
         webJSRecipe?: Omit<typeof WebJSSessionRecipe, "init" | "default">
     );
-    getUserId: (input: { userContext: any }) => Promise<string>;
-    getAccessToken: (input: { userContext: any }) => Promise<string | undefined>;
+    getUserId: (input: { userContext: UserContext }) => Promise<string>;
+    getAccessToken: (input: { userContext: UserContext }) => Promise<string | undefined>;
     getClaimValue: <T extends unknown>(input: {
         claim: SessionWebJS.SessionClaim<T>;
-        userContext: any;
+        userContext: UserContext;
     }) => Promise<T | undefined>;
-    getAccessTokenPayloadSecurely: (input: { userContext: any }) => Promise<any>;
-    doesSessionExist: (input: { userContext: any }) => Promise<boolean>;
-    signOut: (input: { userContext: any }) => Promise<void>;
+    getAccessTokenPayloadSecurely: (input: { userContext: UserContext }) => Promise<any>;
+    doesSessionExist: (input: { userContext: UserContext }) => Promise<boolean>;
+    signOut: (input: { userContext: UserContext }) => Promise<void>;
     attemptRefreshingSession: () => Promise<boolean>;
     validateClaims: (input: {
         overrideGlobalClaimValidators?:
-            | ((globalClaimValidators: SessionClaimValidator[], userContext: any) => SessionClaimValidator[])
+            | ((globalClaimValidators: SessionClaimValidator[], userContext: UserContext) => SessionClaimValidator[])
             | undefined;
-        userContext: any;
+        userContext: UserContext;
     }) => Promise<ClaimValidationError[]> | ClaimValidationError[];
     getInvalidClaimsFromResponse: (input: {
         response:
@@ -39,20 +39,33 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                   data: any;
               }
             | Response;
-        userContext: any;
+        userContext: UserContext;
     }) => Promise<ClaimValidationError[]>;
     /**
      * @returns Function to remove event listener
      */
     addEventListener: (listener: (ctx: RecipeEventWithSessionContext) => void) => () => void;
-    addAuthRecipeRedirectionHandler: (rid: string, redirect: (ctx: any, history: any) => Promise<void>) => void;
+    addAuthRecipeRedirectionHandler: (
+        rid: string,
+        redirect: (
+            context: any,
+            navigate?: Navigate,
+            queryParams?: Record<string, string>,
+            userContext?: UserContext
+        ) => Promise<void>
+    ) => void;
     validateGlobalClaimsAndHandleSuccessRedirection: (
         redirectInfo?: {
             rid: string;
-            successRedirectContext: any;
+            successRedirectContext: {
+                action: "SUCCESS";
+                isNewRecipeUser: boolean;
+                isNewPrimaryUser: boolean;
+                redirectToPath?: string;
+            };
         },
-        userContext?: any,
-        history?: any
+        userContext?: UserContext,
+        navigate?: Navigate
     ) => Promise<void>;
     /**
      * This should only get called if validateGlobalClaimsAndHandleSuccessRedirection couldn't get a redirectInfo
@@ -61,7 +74,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     getDefaultRedirectionURL: () => Promise<string>;
     private notifyListeners;
     private getSessionContext;
-    static addAxiosInterceptors(axiosInstance: any, userContext: any): void;
+    static addAxiosInterceptors(axiosInstance: any, userContext: UserContext): void;
     static init(config?: InputType): RecipeInitResult<unknown, unknown, unknown, any>;
     static getInstanceOrThrow(): Session;
     static getInstance(): Session | undefined;

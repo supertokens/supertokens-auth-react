@@ -20,9 +20,10 @@ import { SuperTokensWrapper } from "./components/supertokensWrapper";
 import SuperTokens from "./superTokens";
 import { useTranslation } from "./translation/translationContext";
 import { useUserContext } from "./usercontext";
+import { getNormalisedUserContext } from "./utils";
 
 import type { TranslationStore } from "./translation/translationHelpers";
-import type { SuperTokensConfig } from "./types";
+import type { Navigate, SuperTokensConfig, UserContext } from "./types";
 
 /*
  * API Wrapper exposed to user.
@@ -45,13 +46,15 @@ export default class SuperTokensAPIWrapper {
 
     static redirectToAuth = async (options?: {
         show?: "signin" | "signup";
-        history?: any;
+        navigate?: Navigate;
         queryParams?: any;
         redirectBack?: boolean;
+        userContext?: UserContext;
     }) => {
         return SuperTokens.getInstanceOrThrow().redirectToAuth({
             ...options,
             redirectBack: options?.redirectBack ?? true,
+            userContext: getNormalisedUserContext(options?.userContext),
         });
     };
 

@@ -30,7 +30,13 @@ export type GetRedirectionURLContext = {
 };
 
 export type ValidationFailureCallback =
-    | (({ userContext, reason }: { userContext: any; reason: any }) => Promise<string | undefined> | string | undefined)
+    | (({
+          userContext,
+          reason,
+      }: {
+          userContext: UserContext;
+          reason: any;
+      }) => Promise<string | undefined> | string | undefined)
     | undefined;
 
 export type SessionClaimValidator = SessionClaimValidatorWebJS & {
@@ -98,7 +104,10 @@ export type SuperTokensConfig = {
         translationFunc?: TranslationFunc;
     };
     enableDebugLogs?: boolean;
-    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
+    getRedirectionURL?: (
+        context: GetRedirectionURLContext,
+        userContext: UserContext
+    ) => Promise<string | undefined | null>;
 };
 
 export type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "signOut">;
@@ -329,12 +338,11 @@ export type ThemeBaseProps = {
     styleFromInit?: string;
 };
 
-export type FeatureBaseProps = PropsWithChildren<{
-    /*
-     * History provided by react-router
-     */
-    history?: any;
-}>;
+export type FeatureBaseProps<T = Record<string, unknown>> = PropsWithChildren<
+    {
+        navigate?: Navigate;
+    } & T
+>;
 
 // Built-in in later versions of TS
 export type Awaited<T> = T extends null | undefined
@@ -345,3 +353,19 @@ export type Awaited<T> = T extends null | undefined
         ? V // unwrap the value (this is recursive in the built-in version, but that needs features from a later version to work)
         : never // the argument to `then` was not callable
     : T; // non-object or non-thenable
+
+// This Navigate interface is inspired by the signatures of react-router-dom v5 history and navigate in react-router-dom v6.
+// This also allows users to use any other navigate object with a matching signature.
+interface NavigateFunction {
+    (to: string): void;
+    (delta: number): void;
+}
+
+export type Navigate =
+    | {
+          push: (path: string) => void;
+          goBack: () => void;
+      }
+    | NavigateFunction;
+
+export type UserContext = Record<string, any>;

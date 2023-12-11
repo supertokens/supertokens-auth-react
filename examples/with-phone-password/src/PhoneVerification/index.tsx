@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import Session, { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { SignInUp, SignInUpTheme } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
+import * as reactRouterDom from "react-router-dom";
 
 const CustomSignInUpTheme: typeof SignInUpTheme = (props) => {
     let [showDefaultUI, setShowDefaultUI] = useState(false);
@@ -35,9 +36,6 @@ const CustomSignInUpTheme: typeof SignInUpTheme = (props) => {
         };
     }, []);
 
-    // If this was active, we'd not show the OTP screen because it'd detect an active session.
-    props.featureState.successInAnotherTab = false;
-
     if (showDefaultUI) {
         return <SignInUpTheme {...props} />;
     }
@@ -45,8 +43,10 @@ const CustomSignInUpTheme: typeof SignInUpTheme = (props) => {
 };
 
 export default function PhoneVerification() {
+    const navigate = reactRouterDom.useNavigate();
+
     return (
-        <SignInUp redirectOnSessionExists={false}>
+        <SignInUp redirectOnSessionExists={false} navigate={navigate}>
             {
                 // @ts-ignore We ignore the error about missing props, since they'll be set by the feature component
                 <CustomSignInUpTheme />

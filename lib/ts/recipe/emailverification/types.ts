@@ -15,7 +15,7 @@
 import type { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
 import type { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig, ThemeBaseProps } from "../../types";
+import type { FeatureBaseConfig, ThemeBaseProps, UserContext } from "../../types";
 import type {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -71,19 +71,19 @@ export type PreAPIHookContext = {
     action: PreAndPostAPIHookAction;
     requestInit: RequestInit;
     url: string;
-    userContext: any;
+    userContext: UserContext;
 };
 
 export type OnHandleEventContext = {
     action: "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
-    userContext: any;
+    userContext: UserContext;
 };
 
 export type EmailVerificationThemeProps = {
     sendVerifyEmailScreen: SendVerifyEmailThemeProps;
     verifyEmailLinkClickedScreen?: VerifyEmailLinkClickedThemeProps;
     config: NormalisedConfig;
-    userContext?: any;
+    userContext?: UserContext;
 };
 
 export type SendVerifyEmailThemeProps = ThemeBaseProps & {

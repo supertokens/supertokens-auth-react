@@ -36,6 +36,7 @@ import { RecipeComponentsOverrideContextProvider } from "./componentOverrideCont
 import ThirdPartyPasswordless from "./recipe";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 
+import type { UserContext } from "../../types";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { PasswordlessFlowType, RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartypasswordless";
 import type { User } from "supertokens-web-js/types";
@@ -45,7 +46,7 @@ export default class Wrapper {
         return ThirdPartyPasswordless.init(config);
     }
 
-    static async signOut(input?: { userContext?: any }): Promise<void> {
+    static async signOut(input?: { userContext?: UserContext }): Promise<void> {
         return ThirdPartyPasswordless.getInstanceOrThrow().signOut({
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -53,7 +54,7 @@ export default class Wrapper {
 
     static async redirectToThirdPartyLogin(input: {
         thirdPartyId: string;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<{ status: "OK" | "ERROR" }> {
         const recipeInstance: ThirdPartyPasswordless = ThirdPartyPasswordless.getInstanceOrThrow();
 
@@ -71,7 +72,7 @@ export default class Wrapper {
         });
     }
 
-    static async thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
+    static async thirdPartySignInAndUp(input?: { userContext?: UserContext; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
               user: User;
@@ -95,7 +96,7 @@ export default class Wrapper {
     }
 
     static getThirdPartyStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
-        userContext?: any;
+        userContext?: UserContext;
     }): (StateObject & CustomStateProperties) | undefined {
         return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.getThirdPartyStateAndOtherInfoFromStorage({
             ...input,
@@ -107,7 +108,7 @@ export default class Wrapper {
         thirdPartyId: string;
         frontendRedirectURI: string;
         redirectURIOnProviderDashboard?: string;
-        userContext?: any;
+        userContext?: UserContext;
         options?: RecipeFunctionOptions;
     }): Promise<string> {
         return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.getThirdPartyAuthorisationURLWithQueryParamsAndSetState(
@@ -120,8 +121,8 @@ export default class Wrapper {
 
     static async createPasswordlessCode(
         input:
-            | { email: string; userContext?: any; options?: RecipeFunctionOptions }
-            | { phoneNumber: string; userContext?: any; options?: RecipeFunctionOptions }
+            | { email: string; userContext?: UserContext; options?: RecipeFunctionOptions }
+            | { phoneNumber: string; userContext?: UserContext; options?: RecipeFunctionOptions }
     ): Promise<
         | {
               status: "OK";
@@ -142,7 +143,10 @@ export default class Wrapper {
         });
     }
 
-    static async resendPasswordlessCode(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static async resendPasswordlessCode(input?: {
+        userContext?: UserContext;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
         status: "OK" | "RESTART_FLOW_ERROR";
         fetchResponse: Response;
     }> {
@@ -156,11 +160,11 @@ export default class Wrapper {
         input?:
             | {
                   userInputCode: string;
-                  userContext?: any;
+                  userContext?: UserContext;
                   options?: RecipeFunctionOptions;
               }
             | {
-                  userContext?: any;
+                  userContext?: UserContext;
                   options?: RecipeFunctionOptions;
               }
     ): Promise<
@@ -185,14 +189,14 @@ export default class Wrapper {
         });
     }
 
-    static getPasswordlessLinkCodeFromURL(input?: { userContext?: any }): string {
+    static getPasswordlessLinkCodeFromURL(input?: { userContext?: UserContext }): string {
         return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.getPasswordlessLinkCodeFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
-    static getPasswordlessPreAuthSessionIdFromURL(input?: { userContext?: any }): string {
+    static getPasswordlessPreAuthSessionIdFromURL(input?: { userContext?: UserContext }): string {
         return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.getPasswordlessPreAuthSessionIdFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
@@ -201,7 +205,7 @@ export default class Wrapper {
 
     static async doesPasswordlessUserEmailExist(input: {
         email: string;
-        userContext?: any;
+        userContext?: UserContext;
         options?: RecipeFunctionOptions;
     }): Promise<{
         status: "OK";
@@ -216,7 +220,7 @@ export default class Wrapper {
 
     static async doesPasswordlessUserPhoneNumberExist(input: {
         phoneNumber: string;
-        userContext?: any;
+        userContext?: UserContext;
         options?: RecipeFunctionOptions;
     }): Promise<{
         status: "OK";
@@ -230,7 +234,7 @@ export default class Wrapper {
     }
 
     static async getPasswordlessLoginAttemptInfo<CustomLoginAttemptInfoProperties>(input?: {
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | undefined
         | ({
@@ -251,7 +255,7 @@ export default class Wrapper {
             preAuthSessionId: string;
             flowType: PasswordlessFlowType;
         } & CustomStateProperties;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<void> {
         return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.setPasswordlessLoginAttemptInfo({
             ...input,
@@ -259,7 +263,7 @@ export default class Wrapper {
         });
     }
 
-    static async clearPasswordlessLoginAttemptInfo(input?: { userContext?: any }): Promise<void> {
+    static async clearPasswordlessLoginAttemptInfo(input?: { userContext?: UserContext }): Promise<void> {
         return ThirdPartyPasswordless.getInstanceOrThrow().webJSRecipe.clearPasswordlessLoginAttemptInfo({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),

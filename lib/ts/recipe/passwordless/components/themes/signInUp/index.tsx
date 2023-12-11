@@ -23,7 +23,6 @@ import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { ThemeBase } from "../themeBase";
 
-import { CloseTabScreen } from "./closeTabScreen";
 import { EmailForm } from "./emailForm";
 import { EmailOrPhoneForm } from "./emailOrPhoneForm";
 import { LinkSent } from "./linkSent";
@@ -35,7 +34,6 @@ import { UserInputCodeFormHeader } from "./userInputCodeFormHeader";
 import type { SignInUpProps } from "../../../types";
 
 export enum SignInUpScreens {
-    CloseTab,
     LinkSent,
     EmailForm,
     PhoneForm,
@@ -59,9 +57,7 @@ const SignInUpTheme: React.FC<SignInUpProps & { activeScreen: SignInUpScreens }>
         error: featureState.error,
     };
 
-    return activeScreen === SignInUpScreens.CloseTab ? (
-        <CloseTabScreen {...commonProps} />
-    ) : activeScreen === SignInUpScreens.LinkSent ? (
+    return activeScreen === SignInUpScreens.LinkSent ? (
         <LinkSent {...commonProps} loginAttemptInfo={featureState.loginAttemptInfo!} />
     ) : (
         <div data-supertokens="container">
@@ -104,9 +100,7 @@ function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element {
     const activeScreen = getActiveScreen(props);
 
     let activeStyle;
-    if (activeScreen === SignInUpScreens.CloseTab) {
-        activeStyle = props.config.signInUpFeature.closeTabScreenStyle;
-    } else if (activeScreen === SignInUpScreens.LinkSent) {
+    if (activeScreen === SignInUpScreens.LinkSent) {
         activeStyle = props.config.signInUpFeature.linkSentScreenStyle;
     } else if (activeScreen === SignInUpScreens.UserInputCodeForm) {
         activeStyle = props.config.signInUpFeature.userInputCodeFormStyle;
@@ -130,9 +124,7 @@ function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element {
 export default SignInUpThemeWrapper;
 
 export function getActiveScreen(props: Pick<SignInUpProps, "featureState" | "config">) {
-    if (props.featureState.successInAnotherTab) {
-        return SignInUpScreens.CloseTab;
-    } else if (props.featureState.loginAttemptInfo && props.featureState.loginAttemptInfo.flowType === "MAGIC_LINK") {
+    if (props.featureState.loginAttemptInfo && props.featureState.loginAttemptInfo.flowType === "MAGIC_LINK") {
         return SignInUpScreens.LinkSent;
     } else if (props.featureState.loginAttemptInfo) {
         return SignInUpScreens.UserInputCodeForm;

@@ -27,41 +27,50 @@ import Session from "../../../../session/recipe";
 import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 
-import type { Awaited, FeatureBaseProps } from "../../../../../types";
+import type { Awaited, FeatureBaseProps, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap, CustomStateProperties } from "../../../types";
 
-type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap };
+type PropType = FeatureBaseProps<{
+    recipe: Recipe;
+    userContext?: UserContext;
+    useComponentOverrides: () => ComponentOverrideMap;
+}>;
 
 const SignInAndUpCallback: React.FC<PropType> = (props) => {
-    const userContext = useUserContext();
+    let userContext = useUserContext();
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
 
     const verifyCode = useCallback(() => {
         return props.recipe.webJSRecipe.signInAndUp({
             userContext,
         });
-    }, [props.recipe, props.history, userContext]);
+    }, [props.recipe, userContext]);
 
     const handleVerifyResponse = useCallback(
         async (response: Awaited<ReturnType<typeof verifyCode>>): Promise<void> => {
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                    history: props.history,
+                    navigate: props.navigate,
                     queryParams: {
                         error: "no_email_present",
                     },
                     redirectBack: false,
+                    userContext,
                 });
             }
 
             if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                    history: props.history,
+                    navigate: props.navigate,
                     queryParams: {
                         error: response.status,
                         message: response.reason,
                     },
                     redirectBack: false,
+                    userContext,
                 });
             }
 
@@ -76,41 +85,43 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                         rid: props.recipe.config.recipeId,
                         successRedirectContext: {
                             action: "SUCCESS",
+                            isNewPrimaryUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
                             isNewRecipeUser: response.createdNewRecipeUser,
-                            user: response.user,
                             redirectToPath,
                         },
                     },
                     userContext,
-                    props.history
+                    props.navigate
                 );
             }
         },
-        [props.recipe, props.history, userContext]
+        [props.recipe, props.navigate, userContext]
     );
 
     const handleError = useCallback(
         (err) => {
             if (STGeneralError.isThisError(err)) {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                    history: props.history,
+                    navigate: props.navigate,
                     queryParams: {
                         error: "custom",
                         message: err.message,
                     },
                     redirectBack: false,
+                    userContext,
                 });
             }
 
             return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                history: props.history,
+                navigate: props.navigate,
                 queryParams: {
                     error: "signin",
                 },
                 redirectBack: false,
+                userContext,
             });
         },
-        [props.recipe, props.history]
+        [props.navigate, userContext]
     );
 
     useOnMountAPICall(verifyCode, handleVerifyResponse, handleError);

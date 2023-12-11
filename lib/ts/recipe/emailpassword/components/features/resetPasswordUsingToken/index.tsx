@@ -22,21 +22,27 @@ import { Fragment } from "react";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
+import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams } from "../../../../../utils";
 import ResetPasswordUsingTokenTheme from "../../themes/resetPasswordUsingToken";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
 
-import type { FeatureBaseProps } from "../../../../../types";
+import type { FeatureBaseProps, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 
-type PropType = FeatureBaseProps & {
+type PropType = FeatureBaseProps<{
     recipe: Recipe;
+    userContext?: UserContext;
     useComponentOverrides: () => ComponentOverrideMap;
-};
+}>;
 
 const ResetPasswordUsingToken: React.FC<PropType> = (props) => {
     const token = getQueryParams("token");
+    let userContext = useUserContext();
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
     const [error, setError] = React.useState<string>();
 
     const enterEmailFormFeature = props.recipe.config.resetPasswordUsingTokenFeature.enterEmailForm;
@@ -57,8 +63,9 @@ const ResetPasswordUsingToken: React.FC<PropType> = (props) => {
                   onSignInClicked: () => {
                       void SuperTokens.getInstanceOrThrow().redirectToAuth({
                           show: "signin",
-                          history: props.history,
+                          navigate: props.navigate,
                           redirectBack: false,
+                          userContext,
                       });
                   },
                   token: token,
@@ -68,8 +75,9 @@ const ResetPasswordUsingToken: React.FC<PropType> = (props) => {
         onBackButtonClicked: () =>
             SuperTokens.getInstanceOrThrow().redirectToAuth({
                 show: "signin",
-                history: props.history,
+                navigate: props.navigate,
                 redirectBack: false,
+                userContext,
             }),
         error: error,
         onError: (error: string) => setError(error),

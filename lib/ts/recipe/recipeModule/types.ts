@@ -1,8 +1,10 @@
+import type { UserContext } from "../../types";
+
 export type RecipePreAPIHookContext<Action> = {
     requestInit: RequestInit;
     url: string;
     action: Action;
-    userContext: any;
+    userContext: UserContext;
 };
 
 export type RecipePostAPIHookContext<Action> = {
@@ -10,7 +12,7 @@ export type RecipePostAPIHookContext<Action> = {
     requestInit: RequestInit;
     url: string;
     fetchResponse: Response;
-    userContext: any;
+    userContext: UserContext;
 };
 
 export type RecipePreAPIHookFunction<Action> = (
@@ -22,7 +24,10 @@ export type RecipePostAPIHookFunction<Action> = (context: RecipePostAPIHookConte
 export type RecipeOnHandleEventFunction<EventType> = (context: EventType) => void;
 
 export type UserInput<GetRedirectionURLContextType, Action, OnHandleEventContextType> = {
-    getRedirectionURL?: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
+    getRedirectionURL?: (
+        context: GetRedirectionURLContextType,
+        userContext: UserContext
+    ) => Promise<string | undefined | null>;
     preAPIHook?: RecipePreAPIHookFunction<Action>;
     postAPIHook?: RecipePostAPIHookFunction<Action>;
     onHandleEvent?: RecipeOnHandleEventFunction<OnHandleEventContextType>;
@@ -37,7 +42,10 @@ export type Config<GetRedirectionURLContextType, Action, OnHandleEventContextTyp
 >;
 
 export type NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType> = {
-    getRedirectionURL: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
+    getRedirectionURL: (
+        context: GetRedirectionURLContextType,
+        userContext: UserContext
+    ) => Promise<string | undefined | null>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContextType>;
     useShadowDom: boolean;
     rootStyle: string;

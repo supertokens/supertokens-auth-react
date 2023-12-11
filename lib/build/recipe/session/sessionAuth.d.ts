@@ -1,5 +1,5 @@
 import React from "react";
-import type { ReactComponentClass, SessionClaimValidator } from "../../types";
+import type { Navigate, ReactComponentClass, SessionClaimValidator, UserContext } from "../../types";
 import type { PropsWithChildren } from "react";
 import type { ClaimValidationError } from "supertokens-web-js/recipe/session";
 export declare type SessionAuthProps = {
@@ -12,20 +12,20 @@ export declare type SessionAuthProps = {
      */
     doRedirection?: boolean;
     accessDeniedScreen?: ReactComponentClass<{
-        userContext?: any;
-        history?: any;
+        userContext?: UserContext;
+        navigate?: Navigate;
         validationError: ClaimValidationError;
     }>;
     onSessionExpired?: () => void;
     overrideGlobalClaimValidators?: (
         globalClaimValidators: SessionClaimValidator[],
-        userContext: any
+        userContext: UserContext
     ) => SessionClaimValidator[];
 };
 declare const SessionAuthWrapper: React.FC<
     PropsWithChildren<
         SessionAuthProps & {
-            userContext?: any;
+            userContext?: UserContext;
         }
     >
 >;

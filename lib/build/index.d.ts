@@ -1,10 +1,10 @@
 /// <reference types="react" />
 import type { TranslationStore } from "./translation/translationHelpers";
-import type { SuperTokensConfig } from "./types";
+import type { Navigate, SuperTokensConfig, UserContext } from "./types";
 export default class SuperTokensAPIWrapper {
     static SuperTokensWrapper: import("react").FC<
         import("react").PropsWithChildren<{
-            userContext?: any;
+            userContext?: UserContext | undefined;
         }>
     >;
     static init(config: SuperTokensConfig): void;
@@ -12,21 +12,23 @@ export default class SuperTokensAPIWrapper {
     static loadTranslation(store: TranslationStore): void;
     static redirectToAuth: (options?: {
         show?: "signin" | "signup";
-        history?: any;
+        navigate?: Navigate;
         queryParams?: any;
         redirectBack?: boolean;
+        userContext?: UserContext;
     }) => Promise<void>;
     static useTranslation: () => import("./translation/translationHelpers").TranslationFunc;
-    static useUserContext: () => any;
+    static useUserContext: () => UserContext;
 }
 export declare const init: typeof SuperTokensAPIWrapper.init;
 export declare const changeLanguage: typeof SuperTokensAPIWrapper.changeLanguage;
 export declare const loadTranslation: typeof SuperTokensAPIWrapper.loadTranslation;
 export declare const redirectToAuth: (options?: {
     show?: "signin" | "signup";
-    history?: any;
+    navigate?: Navigate;
     queryParams?: any;
     redirectBack?: boolean;
+    userContext?: UserContext;
 }) => Promise<void>;
 export { SuperTokensWrapper } from "./components/supertokensWrapper";
 export { useTranslation } from "./translation/translationContext";

@@ -25,7 +25,6 @@ import SuperTokens from "../../../../../superTokens";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import { getActiveScreen, SignInUpScreens } from "../../../../passwordless/components/themes/signInUp";
-import { CloseTabScreen } from "../../../../passwordless/components/themes/signInUp/closeTabScreen";
 import { EmailForm } from "../../../../passwordless/components/themes/signInUp/emailForm";
 import { EmailOrPhoneForm } from "../../../../passwordless/components/themes/signInUp/emailOrPhoneForm";
 import { LinkSent } from "../../../../passwordless/components/themes/signInUp/linkSent";
@@ -67,9 +66,7 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
         return null;
     }
 
-    if (props.activeScreen === SignInUpScreens.CloseTab) {
-        return <CloseTabScreen {...props.pwlessChildProps} />;
-    } else if (props.activeScreen === SignInUpScreens.LinkSent) {
+    if (props.activeScreen === SignInUpScreens.LinkSent) {
         return (
             <LinkSent
                 {...getCommonPwlessProps(props.pwlessChildProps, props)}
@@ -156,9 +153,7 @@ function SignInUpThemeWrapper(props: ThirdPartyPasswordlessSignInAndUpThemeProps
               };
 
     let activeStyle;
-    if (childProps.activeScreen === SignInUpScreens.CloseTab) {
-        activeStyle = props.passwordlessRecipe!.config.signInUpFeature.closeTabScreenStyle;
-    } else if (childProps.activeScreen === SignInUpScreens.LinkSent) {
+    if (childProps.activeScreen === SignInUpScreens.LinkSent) {
         activeStyle = props.passwordlessRecipe!.config.signInUpFeature.linkSentScreenStyle;
     } else if (childProps.activeScreen === SignInUpScreens.UserInputCodeForm) {
         activeStyle = props.passwordlessRecipe!.config.signInUpFeature.userInputCodeFormStyle;

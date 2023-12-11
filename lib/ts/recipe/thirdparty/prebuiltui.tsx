@@ -20,8 +20,7 @@ import type {
     OnHandleEventContext,
 } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
-import type { PropsWithChildren } from "react";
+import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
 
 export class ThirdPartyPreBuiltUI extends RecipeRouter {
     static instance?: ThirdPartyPreBuiltUI;
@@ -45,7 +44,7 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "signinup" | "signinupcallback",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
@@ -85,7 +84,7 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
     };
     getFeatureComponent = (
         componentName: "signinup" | "signinupcallback",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signinup") {
@@ -99,7 +98,7 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
                             NormalisedConfig
                         >
                             authRecipe={this.recipeInstance}
-                            history={props.history}>
+                            navigate={props.navigate}>
                             <SignInAndUpFeature
                                 recipe={this.recipeInstance}
                                 {...props}
@@ -144,9 +143,10 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static SignInAndUp = (prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; userContext?: any }> = {}) =>
-        ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", prop);
-    static SignInAndUpCallback = (prop?: any) =>
+    static SignInAndUp = (
+        prop: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }> = {}
+    ) => ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", prop);
+    static SignInAndUpCallback = (prop: FeatureBaseProps<{ userContext?: UserContext }>) =>
         ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinupcallback", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
     static SignInAndUpCallbackTheme = SignInAndUpCallbackTheme;

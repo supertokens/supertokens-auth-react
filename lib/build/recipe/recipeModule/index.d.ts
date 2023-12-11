@@ -1,5 +1,6 @@
 import { BaseRecipeModule } from "./baseRecipeModule";
 import type { NormalisedConfig } from "./types";
+import type { Navigate, UserContext } from "../../types";
 export default abstract class RecipeModule<
     GetRedirectionURLContextType,
     Action,
@@ -8,9 +9,10 @@ export default abstract class RecipeModule<
 > extends BaseRecipeModule<GetRedirectionURLContextType, Action, OnHandleEventContextType, N> {
     redirect: (
         context: GetRedirectionURLContextType,
-        history?: any,
-        queryParams?: Record<string, string>
+        navigate?: Navigate,
+        queryParams?: Record<string, string>,
+        userContext?: UserContext
     ) => Promise<void>;
-    getRedirectUrl: (context: GetRedirectionURLContextType) => Promise<string>;
+    getRedirectUrl: (context: GetRedirectionURLContextType, userContext: UserContext) => Promise<string | null>;
     getDefaultRedirectionURL(_: GetRedirectionURLContextType): Promise<string>;
 }

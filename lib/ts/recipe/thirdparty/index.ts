@@ -40,6 +40,7 @@ import ThirdParty from "./recipe";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./utils";
 
+import type { UserContext } from "../../types";
 import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import type { User } from "supertokens-web-js/types";
@@ -53,7 +54,7 @@ export default class Wrapper {
         return ThirdParty.init(config);
     }
 
-    static async signOut(input?: { userContext?: any }): Promise<void> {
+    static async signOut(input?: { userContext?: UserContext }): Promise<void> {
         return ThirdParty.getInstanceOrThrow().signOut({
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -61,7 +62,7 @@ export default class Wrapper {
 
     static async redirectToThirdPartyLogin(input: {
         thirdPartyId: string;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<{ status: "OK" | "ERROR" }> {
         const recipeInstance: ThirdParty = ThirdParty.getInstanceOrThrow();
 
@@ -74,7 +75,7 @@ export default class Wrapper {
     }
 
     static getStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
-        userContext?: any;
+        userContext?: UserContext;
     }): (StateObject & CustomStateProperties) | undefined {
         return ThirdParty.getInstanceOrThrow().webJSRecipe.getStateAndOtherInfoFromStorage({
             ...input,
@@ -86,7 +87,7 @@ export default class Wrapper {
         thirdPartyId: string;
         frontendRedirectURI: string;
         redirectURIOnProviderDashboard?: string;
-        userContext?: any;
+        userContext?: UserContext;
         options?: RecipeFunctionOptions;
     }): Promise<string> {
         return ThirdParty.getInstanceOrThrow().webJSRecipe.getAuthorisationURLWithQueryParamsAndSetState({
@@ -95,7 +96,7 @@ export default class Wrapper {
         });
     }
 
-    static async signInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
+    static async signInAndUp(input?: { userContext?: UserContext; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
               user: User;
