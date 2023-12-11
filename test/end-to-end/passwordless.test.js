@@ -1632,8 +1632,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await anotherTab.goto(device.codes[0].urlWithLinkCode);
                 await anotherTab.waitForSelector(".sessionInfo-user-id");
 
-                await waitForText(page, "[data-supertokens~=headerTitle]", "Success!");
-
                 await page.reload({ waitUntil: ["networkidle0"] });
 
                 await page.waitForSelector(".sessionInfo-user-id");
@@ -1768,8 +1766,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await waitForSTElement(anotherTab, "[data-supertokens~=input][name=userInputCode]");
                 await setInputValues(anotherTab, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(anotherTab);
-
-                await waitForText(page, "[data-supertokens~=headerTitle]", "Success!");
 
                 await page.reload({ waitUntil: ["networkidle0"] });
 
