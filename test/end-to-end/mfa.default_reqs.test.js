@@ -32,7 +32,7 @@ import {
     getFactorChooserOptions,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
-import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API } from "../constants";
+import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API, TEST_APPLICATION_SERVER_BASE_URL } from "../constants";
 
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 import { getTestPhoneNumber } from "../exampleTestHelpers";
@@ -54,6 +54,7 @@ import {
     expectErrorThrown,
     waitForLoadingScreen,
     waitForBlockedScreen,
+    addToDefaultRequiredFactorsForUser,
 } from "./mfa.helpers";
 
 /*
@@ -150,24 +151,49 @@ describe("SuperTokens SignIn w/ MFA", function () {
             assert.deepStrictEqual(new Set(list), new Set(["otp-email", "otp-phone", "totp"]));
         });
 
-        it("should require 2fa to sign in after setting up a factor", async () => {
+        it("should require 2fa to sign in after setting up a factor - totp", async () => {
             await tryEmailPasswordSignIn(page, email);
 
             await waitForDashboard(page);
-
-            await goToFactorChooser(page);
-            await chooseFactor(page, "otp-email");
-            await completeOTP(page);
 
             const secret = await setupTOTP(page);
             await logout(page);
 
             await tryEmailPasswordSignIn(page, email);
-            const list = await getFactorChooserOptions(page);
-            // TODO: validate this, maybe it should only be totp?
-            assert.deepStrictEqual(new Set(list), new Set(["otp-email", "totp"]));
-            await chooseFactor(page, "totp");
+            await waitForDashboard(page);
+            await addToDefaultRequiredFactorsForUser(page, "totp");
+            await logout(page);
+
+            await tryEmailPasswordSignIn(page, email);
             await completeTOTP(page, secret);
+            await waitForDashboard(page);
+        });
+
+        it("should require 2fa to sign in after setting up a factor - otp-email", async () => {
+            await tryEmailPasswordSignIn(page, email);
+            await addToDefaultRequiredFactorsForUser(page, "otp-email");
+            await logout(page);
+
+            await tryEmailPasswordSignIn(page, email);
+            await completeOTP(page, "EMAIL");
+            await waitForDashboard(page);
+        });
+
+        it("should require 2fa to sign in after setting up a factor - otp-phone", async () => {
+            await tryEmailPasswordSignIn(page, email);
+
+            await waitForDashboard(page);
+
+            await setupOTP(page, "PHONE", getTestPhoneNumber());
+            await logout(page);
+
+            await tryEmailPasswordSignIn(page, email);
+            await waitForDashboard(page);
+            await addToDefaultRequiredFactorsForUser(page, "otp-phone");
+            await logout(page);
+
+            await tryEmailPasswordSignIn(page, email);
+            await completeOTP(page, "PHONE");
             await waitForDashboard(page);
         });
     });

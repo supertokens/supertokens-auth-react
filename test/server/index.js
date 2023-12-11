@@ -448,6 +448,14 @@ app.post("/completeFactor", verifySession(), async (req, res) => {
     res.send({ status: "OK" });
 });
 
+app.post("/addRequiredFactor", verifySession(), async (req, res) => {
+    let session = req.session;
+
+    await MultiFactorAuth.addToDefaultRequiredFactorsForUser(session.getUserId(), req.body.factorId);
+
+    res.send({ status: "OK" });
+});
+
 app.post("/mergeIntoAccessTokenPayload", verifySession(), async (req, res) => {
     let session = req.session;
 
@@ -1261,22 +1269,6 @@ function initST() {
                 override: {
                     functions: (oI) => ({
                         ...oI,
-                        getFactorsSetupForUser: async (input) => {
-                            const res = await oI.getFactorsSetupForUser(input);
-                            return mfaInfo?.isAlreadySetup ?? res;
-                        },
-                        getAllAvailableFactorIds: async (input) => {
-                            const res = await oI.getAllAvailableFactorIds(input);
-                            if (mfaInfo?.isAllowedToSetup || mfaInfo?.isAlreadySetup) {
-                                return [
-                                    ...(mfaInfo.isAllowedToSetup || []),
-                                    ...(mfaInfo.isAlreadySetup || []),
-                                    "emailpassword",
-                                    "thirdparty",
-                                ];
-                            }
-                            return res;
-                        },
                         isAllowedToSetupFactor: async (input) => {
                             const res = await oI.isAllowedToSetupFactor(input);
                             if (mfaInfo?.isAllowedToSetup) {
@@ -1288,6 +1280,19 @@ function initST() {
                             const res = await oI.getMFARequirementsForAuth(input);
                             if (mfaInfo?.requirements) {
                                 return mfaInfo.requirements;
+                            }
+                            return res;
+                        },
+                    }),
+                    apis: (oI) => ({
+                        ...oI,
+                        mfaInfoGET: async (input) => {
+                            const res = await oI.mfaInfoGET(input);
+
+                            if (res.status === "OK") {
+                                if (mfaInfo.isAlreadySetup) {
+                                    res.factors.isAlreadySetup = [...mfaInfo.isAlreadySetup];
+                                }
                             }
                             return res;
                         },

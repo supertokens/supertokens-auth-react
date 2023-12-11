@@ -45,6 +45,22 @@ export async function setMFAInfo(mfaInfo) {
     });
     assert.strictEqual(resp.status, 200);
 }
+
+export async function addToDefaultRequiredFactorsForUser(page, factorId) {
+    await page.evaluate(
+        (baseUrl, factorId) =>
+            window.fetch(`${baseUrl}/addRequiredFactor`, {
+                method: "POST",
+                headers: new Headers([["content-type", "application/json"]]),
+                body: JSON.stringify({
+                    factorId,
+                }),
+            }),
+        TEST_APPLICATION_SERVER_BASE_URL,
+        factorId
+    );
+}
+
 export async function completeOTP(page, contactMethod) {
     await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
