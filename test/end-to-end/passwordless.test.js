@@ -1767,6 +1767,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await setInputValues(anotherTab, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(anotherTab);
 
+                await anotherTab.waitForSelector(".sessionInfo-user-id");
+
                 await page.reload({ waitUntil: ["networkidle0"] });
 
                 await page.waitForSelector(".sessionInfo-user-id");
