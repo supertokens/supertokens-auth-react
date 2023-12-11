@@ -34,10 +34,8 @@ import {
     useRethrowInRender,
 } from "../../../../../utils";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
-import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import SessionRecipe from "../../../../session/recipe";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
-import { getEnabledContactMethods } from "../../../utils";
 import MFAThemeWrapper from "../../themes/mfa";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
@@ -317,7 +315,7 @@ function useOnLoad(
         () => dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" }),
         [dispatch]
     );
-    const dynamicLoginMethods = useDynamicLoginMethods();
+
     const onLoad = React.useCallback(
         async (mfaInfo: { factors: MFAFactorInfo; email?: string; phoneNumber?: string }) => {
             let error: string | undefined = undefined;
@@ -341,12 +339,7 @@ function useOnLoad(
                     ? mfaInfo.factors.isAllowedToSetup.includes("otp-email")
                     : mfaInfo.factors.isAllowedToSetup.includes("otp-phone");
 
-            const enabledContactMethods = getEnabledContactMethods(
-                props.recipe.config.contactMethod,
-                dynamicLoginMethods
-            );
-
-            if (loginAttemptInfo && !enabledContactMethods.includes(loginAttemptInfo.contactMethod)) {
+            if (loginAttemptInfo && props.contactMethod !== loginAttemptInfo.contactMethod) {
                 await recipeImplementation?.clearLoginAttemptInfo({ userContext });
                 loginAttemptInfo = undefined;
             }
