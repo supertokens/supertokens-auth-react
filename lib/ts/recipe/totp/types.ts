@@ -109,7 +109,7 @@ export type TOTPMFAProps = {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onSuccess: () => void;
-    onShowSecretClick: () => void;
+    onShowSecretClicked: () => void;
     onBackButtonClicked: () => void;
     onRetryClicked: () => void;
     onFactorChooserButtonClicked: () => void;

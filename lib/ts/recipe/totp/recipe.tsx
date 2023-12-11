@@ -120,7 +120,7 @@ export default class TOTP extends RecipeModule<
 
     static getInstanceOrThrow(): TOTP {
         if (TOTP.instance === undefined) {
-            let error = "No instance of EmailVerification found. Make sure to call the EmailVerification.init method.";
+            let error = "No instance of TOTP found. Make sure to call the TOTP.init method.";
 
             // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
             if (typeof window === "undefined") {

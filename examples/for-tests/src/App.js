@@ -368,9 +368,7 @@ window.resetTOTP = () => {
     tryCount = 0;
 };
 let recipeList = [
-    TOTP.init({
-        override: {},
-    }),
+    TOTP.init(),
     MultiFactorAuth.init({
         firstFactors: testContext.firstFactors,
     }),
