@@ -50,6 +50,7 @@ import {
     waitForText,
     waitForSTElement,
     backendBeforeEach,
+    setEnabledRecipes,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -660,6 +661,7 @@ describe("SuperTokens SignIn => Server Error", function () {
     let consoleLogs;
 
     before(async function () {
+        await setEnabledRecipes(["emailpassword"], []);
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
             headless: true,

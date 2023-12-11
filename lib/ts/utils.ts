@@ -408,7 +408,7 @@ export function getNormalisedUserContext(userContext?: any): any {
 export const useOnMountAPICall = <T>(
     fetch: () => Promise<T>,
     handleResponse: (consumeResp: T) => Promise<void>,
-    handleError?: (err: unknown, consumeResp: T | undefined) => void,
+    handleError?: (err: unknown, consumeResp: T | undefined) => void | Promise<void>,
     startLoading = true
 ) => {
     const consumeReq = useRef<Promise<T>>();
@@ -430,7 +430,11 @@ export const useOnMountAPICall = <T>(
             } catch (err) {
                 if (!signal.aborted) {
                     if (handleError !== undefined) {
-                        handleError(err, resp);
+                        try {
+                            await handleError(err, resp);
+                        } catch (err) {
+                            setError(err);
+                        }
                     } else {
                         setError(err);
                     }

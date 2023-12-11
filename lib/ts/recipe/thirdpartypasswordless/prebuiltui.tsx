@@ -54,7 +54,7 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
         return ThirdPartyPasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
     }
     static getFeatureComponent(
-        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
+        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback" | "otp-phone" | "otp-email",
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
@@ -67,7 +67,7 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
 
     // Instance methods
     getFeatureComponent = (
-        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
+        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback" | "otp-phone" | "otp-email",
         props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: any },
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
@@ -102,7 +102,11 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
                     </UserContextWrapper>
                 );
             }
-        } else if (componentName === "linkClickedScreen") {
+        } else if (
+            "linkClickedScreen" === componentName ||
+            "otp-phone" === componentName ||
+            "otp-email" === componentName
+        ) {
             if (this.passwordlessPreBuiltUI === undefined) {
                 throw new Error(
                     "Embedding this component requires the passwordless recipe to be enabled. Please check the value of disablePasswordless in the configuration."
@@ -176,10 +180,14 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
 
     static SignInUpTheme = SignInUpTheme;
     static PasswordlessLinkClicked = (prop?: any) => this.getFeatureComponent("linkClickedScreen", prop);
+    static MfaOtpPhone = (prop?: any) => this.getFeatureComponent("otp-phone", prop);
+    static MfaOtpEmail = (prop?: any) => this.getFeatureComponent("otp-email", prop);
 }
 
 const SignInAndUp = ThirdPartyPasswordlessPreBuiltUI.SignInAndUp;
 const ThirdPartySignInAndUpCallback = ThirdPartyPasswordlessPreBuiltUI.ThirdPartySignInAndUpCallback;
 const PasswordlessLinkClicked = ThirdPartyPasswordlessPreBuiltUI.PasswordlessLinkClicked;
+const MfaOtpPhone = PasswordlessPreBuiltUI.MfaOtpPhone;
+const MfaOtpEmail = PasswordlessPreBuiltUI.MfaOtpEmail;
 
-export { SignInAndUp, ThirdPartySignInAndUpCallback, PasswordlessLinkClicked, SignInUpTheme };
+export { SignInAndUp, ThirdPartySignInAndUpCallback, PasswordlessLinkClicked, SignInUpTheme, MfaOtpPhone, MfaOtpEmail };

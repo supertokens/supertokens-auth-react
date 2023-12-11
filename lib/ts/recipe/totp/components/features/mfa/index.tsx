@@ -220,7 +220,7 @@ export function useChildProps(
 
     return useMemo(() => {
         return {
-            onShowSecretClick: () => {
+            onShowSecretClicked: () => {
                 dispatch({ type: "showSecret" });
             },
             onBackButtonClicked: async () => {

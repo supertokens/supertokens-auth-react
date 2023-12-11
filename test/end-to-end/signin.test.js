@@ -53,6 +53,8 @@ import {
     getInvalidClaimsJSON as getInvalidClaims,
     waitForText,
     backendBeforeEach,
+    getInputField,
+    isReact16,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -672,6 +674,136 @@ describe("SuperTokens SignIn", function () {
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/dashboard");
             });
+        });
+    });
+
+    describe("Default fields", function () {
+        before(function () {
+            const isReact16App = isReact16();
+            if (isReact16App) {
+                this.skip();
+            }
+        });
+
+        it("Should contain email and password fields prefilled", async function () {
+            await page.evaluate(() => window.localStorage.setItem("SIGNIN_SETTING_TYPE", "DEFAULT_FIELDS"));
+
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+
+            const expectedDefaultValues = {
+                email: "abc@xyz.com",
+                password: "fakepassword123",
+            };
+
+            const emailInput = await getInputField(page, "email");
+            const defaultEmail = await emailInput.evaluate((f) => f.value);
+            assert.strictEqual(defaultEmail, expectedDefaultValues["email"]);
+
+            const passwordInput = await getInputField(page, "password");
+            const defaultPassword = await passwordInput.evaluate((f) => f.value);
+            assert.strictEqual(defaultPassword, expectedDefaultValues["password"]);
+        });
+
+        it("Should have default values in the signin request payload", async function () {
+            await page.evaluate(() => window.localStorage.setItem("SIGNIN_SETTING_TYPE", "DEFAULT_FIELDS"));
+
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+
+            const expectedDefautlValues = [
+                { id: "email", value: "abc@xyz.com" },
+                { id: "password", value: "fakepassword123" },
+            ];
+
+            let assertionError = null;
+            let interceptionPassed = false;
+
+            const requestHandler = async (request) => {
+                if (request.url().includes(SIGN_IN_API) && request.method() === "POST") {
+                    try {
+                        const postData = JSON.parse(request.postData());
+                        expectedDefautlValues.forEach(({ id, value }) => {
+                            let findFormData = postData.formFields.find((inputData) => inputData.id === id);
+                            assert.ok(findFormData, "Field not found in req.data");
+                            assert.strictEqual(findFormData["value"], value, `Mismatch in payload for key: ${id}`);
+                        });
+                        interceptionPassed = true;
+                        return request.respond({
+                            status: 200,
+                            headers: {
+                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                "access-control-allow-credentials": "true",
+                            },
+                            body: JSON.stringify({
+                                status: "OK",
+                            }),
+                        });
+                    } catch (error) {
+                        assertionError = error; // Store the error
+                    }
+                }
+                return request.continue();
+            };
+
+            await page.setRequestInterception(true);
+            page.on("request", requestHandler);
+
+            try {
+                // Perform the button click and wait for all network activity to finish
+                await Promise.all([page.waitForNetworkIdle(), submitForm(page)]);
+            } finally {
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            }
+            assert.ok(!assertionError, assertionError?.message);
+            assert.ok(interceptionPassed, "Test Failed");
+        });
+    });
+
+    describe("nonOptionalErrorMsg", function () {
+        before(function () {
+            const isReact16App = isReact16();
+            if (isReact16App) {
+                this.skip();
+            }
+        });
+
+        it("Should be displayed on a blank form submit", async function () {
+            // set cookie and reload which loads the form with custom field
+            await page.evaluate(() =>
+                window.localStorage.setItem("SIGNIN_SETTING_TYPE", "FIELDS_WITH_NON_OPTIONAL_ERROR_MESSAGE")
+            );
+            await page.reload({
+                waitUntil: "domcontentloaded",
+            });
+
+            let apiCallMade = false;
+
+            const requestHandler = (request) => {
+                const url = request.url();
+                if (url === SIGN_IN_API) {
+                    apiCallMade = true;
+                    request.continue();
+                } else {
+                    request.continue();
+                }
+            };
+            page.on("request", requestHandler);
+
+            try {
+                await submitForm(page);
+                let formFieldErrors = await getFieldErrors(page);
+
+                // Also standard non-optional-error is displayed if nonOptionalErrorMsg is not provided
+                assert.deepStrictEqual(formFieldErrors, ["Please add email", "Field is not optional"]);
+            } finally {
+                page.off("request", requestHandler);
+            }
+
+            assert.ok(!apiCallMade, "Empty form making API request to signin");
         });
     });
 });

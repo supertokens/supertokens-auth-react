@@ -435,8 +435,13 @@ export async function setInputValues(page, fields) {
     return await new Promise((r) => setTimeout(r, 300));
 }
 
-export async function clearBrowserCookiesWithoutAffectingConsole(page, console) {
-    let toReturn = [...console];
+export async function setSelectDropdownValue(page, selector, optionValue) {
+    const dropdownEle = await waitForSTElement(page, selector);
+    return dropdownEle.select(selector, optionValue);
+}
+
+export async function clearBrowserCookiesWithoutAffectingConsole(page, logs) {
+    let toReturn = [...logs];
     const client = await page.target().createCDPSession();
     await client.send("Network.clearBrowserCookies");
     await client.send("Network.clearBrowserCache");
@@ -454,6 +459,9 @@ export async function clearBrowserCookiesWithoutAffectingConsole(page, console) 
             page.waitForNavigation({ waitUntil: "networkidle0" }),
         ]);
     }
+    logs.length = 0;
+    logs.push(...toReturn);
+
     return toReturn;
 }
 

@@ -56,8 +56,11 @@ export const otpEmailFactor = {
     logo: OTPEmailIcon,
 };
 
-export const passwordlessFactors = ["otp-phone", "otp-email", "link-phone", "link-email"] as const;
+export const passwordlessFirstFactors = ["otp-phone", "otp-email", "link-phone", "link-email"] as const;
 
+/*
+ * Class.
+ */
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,

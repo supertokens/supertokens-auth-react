@@ -12,28 +12,26 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-/*
- * Imports.
- */
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { SignInHeader } from "../../../../emailpassword/components/themes/signInAndUp/signInHeader";
 import { SignUpHeader } from "../../../../emailpassword/components/themes/signInAndUp/signUpHeader";
+import { SignInAndUpHeader } from "../../../../thirdparty/components/themes/signInAndUp/signInAndUpHeader";
 
-/*
- * Component.
- */
 export const Header = withOverride(
     "ThirdPartyEmailPasswordHeader",
     function ThirdPartyEmailPasswordHeader({
         isSignUp,
         setIsSignUp,
+        emailPasswordEnabled,
     }: {
+        emailPasswordEnabled: boolean;
         isSignUp: boolean;
         setIsSignUp: (isSignUp: boolean) => void;
     }): JSX.Element {
-        /*
-         * Render.
-         */
+        if (emailPasswordEnabled !== true) {
+            return <SignInAndUpHeader />;
+        }
+
         if (isSignUp === true) {
             return <SignUpHeader onClick={() => setIsSignUp(false)} />;
         } else {

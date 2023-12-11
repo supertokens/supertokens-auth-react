@@ -29,7 +29,7 @@ import {
     getTestEmail,
     getPasswordlessDevice,
     waitFor,
-    isMFASupported,
+    getFactorChooserOptions,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API } from "../constants";
@@ -63,14 +63,8 @@ describe("SuperTokens SignIn w/ MFA", function () {
     let browser;
     let page;
     let consoleLogs = [];
-    let skipped = false;
 
     before(async function () {
-        if (!(await isMFASupported())) {
-            skipped = true;
-            this.skip();
-            return;
-        }
         await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
@@ -84,9 +78,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
     });
 
     after(async function () {
-        if (skipped) {
-            return;
-        }
         await browser.close();
 
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
@@ -122,95 +113,59 @@ describe("SuperTokens SignIn w/ MFA", function () {
         await page.evaluate(() => window.localStorage.setItem("enableAllRecipes", "true"));
     });
 
-    it("sign in with email-otp (auto-setup)", async function () {
-        const email = await getTestEmail();
+    describe("default requirements", () => {
+        let email, phoneNumber;
+        beforeEach(async () => {
+            await setMFAInfo({});
+            const setupPage = await browser.newPage();
 
-        await setMFAInfo({
-            requirements: ["otp-email"],
+            email = await getTestEmail();
+            phoneNumber = getTestPhoneNumber();
+
+            await Promise.all([
+                setupPage.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=emailpassword`),
+                setupPage.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await setupPage.evaluate(() => window.localStorage.setItem("enableAllRecipes", "true"));
+
+            await tryEmailPasswordSignUp(setupPage, email);
+            await waitForDashboard(setupPage);
+
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(setupPage, []);
+
+            await setupPage.evaluate(() => window.localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+            await setupPage.evaluate(() => window.localStorage.removeItem("clientRecipeListForDynamicLogin"));
+            await setupPage.evaluate(() => window.localStorage.setItem("enableAllRecipes", "true"));
+
+            await setupPage.close();
         });
 
-        await tryEmailPasswordSignUp(page, email);
-
-        await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-
-        const loginAttemptInfo = JSON.parse(
-            await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-        );
-        const device = await getPasswordlessDevice(loginAttemptInfo);
-        await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
-        await submitForm(page);
-
-        await waitForDashboard(page);
-    });
-
-    describe("sign in + setup + sign in with chooser flow", () => {
-        it("set up otp-phone and sign-in", async function () {
-            const email = await getTestEmail();
-            const phoneNumber = getTestPhoneNumber();
-
-            await setMFAInfo({
-                requirements: [{ oneOf: ["otp-email", "otp-phone"] }],
-            });
-
-            await tryEmailPasswordSignUp(page, email);
-
-            await completeOTP(page);
-
-            await waitForDashboard(page);
-            await setupOTP(page, "PHONE", phoneNumber);
-
-            await logout(page);
+        it("should not require any factors after sign up", async () => {
             await tryEmailPasswordSignIn(page, email);
-            await chooseFactor(page, "otp-phone");
-            await completeOTP(page);
+
             await waitForDashboard(page);
+            await goToFactorChooser(page);
+            const list = await getFactorChooserOptions(page);
+
+            assert.deepStrictEqual(new Set(list), new Set(["otp-email", "otp-phone", "totp"]));
         });
 
-        it("set up otp-email and sign-in", async function () {
-            await setMFAInfo({
-                requirements: [],
-            });
-            const email = await getTestEmail();
-            const phoneNumber = getTestPhoneNumber();
-
-            await tryPasswordlessSignInUp(page, phoneNumber);
+        it("should require 2fa to sign in after setting up a factor", async () => {
+            await tryEmailPasswordSignIn(page, email);
 
             await waitForDashboard(page);
-            await setupOTP(page, "EMAIL", email);
 
-            await logout(page);
-
-            await setMFAInfo({
-                requirements: [{ oneOf: ["otp-email"] }],
-            });
-
-            await tryPasswordlessSignInUp(page, phoneNumber);
-
-            await waitFor(500);
+            await goToFactorChooser(page);
+            await chooseFactor(page, "otp-email");
             await completeOTP(page);
-            await waitForDashboard(page);
-        });
-
-        it("set up totp and sign-in", async function () {
-            await setMFAInfo({
-                requirements: [],
-            });
-            const email = await getTestEmail();
-
-            await setMFAInfo({
-                requirements: [{ oneOf: ["otp-email", "totp"] }],
-            });
-
-            await tryEmailPasswordSignUp(page, email);
-            await completeOTP(page);
-
-            await waitForDashboard(page);
 
             const secret = await setupTOTP(page);
-
             await logout(page);
 
             await tryEmailPasswordSignIn(page, email);
+            const list = await getFactorChooserOptions(page);
+            // TODO: validate this, maybe it should only be totp?
+            assert.deepStrictEqual(new Set(list), new Set(["otp-email", "totp"]));
             await chooseFactor(page, "totp");
             await completeTOTP(page, secret);
             await waitForDashboard(page);
