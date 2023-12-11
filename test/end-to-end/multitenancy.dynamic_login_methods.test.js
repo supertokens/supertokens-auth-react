@@ -44,10 +44,10 @@ import {
 import {
     TEST_CLIENT_BASE_URL,
     DEFAULT_WEBSITE_BASE_PATH,
-    ST_ROOT_SELECTOR,
     TEST_SERVER_BASE_URL,
     SIGN_IN_UP_API,
     SOMETHING_WENT_WRONG_ERROR,
+    LOGIN_METHODS_API,
 } from "../constants";
 
 let connectionURI;
@@ -200,6 +200,16 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     it("should postpone render with react-router-dom", async function () {
+        await page.setRequestInterception(true);
+        const requestHandler = (request) => {
+            if (request.url().startsWith(LOGIN_METHODS_API)) {
+                setTimeout(() => request.continue(), 500);
+            } else {
+                request.continue();
+            }
+        };
+        page.on("request", requestHandler);
+
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: false },
             passwordless: { enabled: false },
@@ -208,7 +218,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
                 providers: [{ id: "apple", name: "Apple" }],
             },
         });
-        await Promise.all([page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`)]);
+        await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`);
 
         const spinner = await waitForSTElement(page, "[data-supertokens~=delayedRender]");
         assert.ok(spinner);
@@ -218,6 +228,15 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     it("should postpone render with no react-router-dom", async function () {
+        await page.setRequestInterception(true);
+        const requestHandler = (request) => {
+            if (request.url().startsWith(LOGIN_METHODS_API)) {
+                setTimeout(() => request.continue(), 500);
+            } else {
+                request.continue();
+            }
+        };
+        page.on("request", requestHandler);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: false },
             passwordless: { enabled: false },
@@ -226,7 +245,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
                 providers: [{ id: "apple", name: "Apple" }],
             },
         });
-        await Promise.all([page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?router=no-router`)]);
+        await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?router=no-router`);
 
         const spinner = await waitForSTElement(page, "[data-supertokens~=delayedRender]");
         assert.ok(spinner);

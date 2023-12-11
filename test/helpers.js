@@ -261,6 +261,24 @@ export async function getInputAdornmentsError(page) {
     );
 }
 
+export async function getFactorChooserOptions(page) {
+    await waitForSTElement(page, "[data-supertokens~='factorChooserList']");
+    return await page.evaluate(
+        ({ ST_ROOT_SELECTOR }) =>
+            Array.from(
+                document
+                    .querySelector(ST_ROOT_SELECTOR)
+                    .shadowRoot.querySelectorAll("[data-supertokens~='factorChooserOption']"),
+                (i) =>
+                    i.dataset["supertokens"]
+                        ?.split(" ")
+                        .filter((x) => x !== "factorChooserOption")
+                        .join(" ")
+            ),
+        { ST_ROOT_SELECTOR }
+    );
+}
+
 export async function getInputTypes(page) {
     await waitForSTElement(page);
     return await page.evaluate(
@@ -878,8 +896,8 @@ export async function setGeneralErrorToLocalStorage(recipeName, action, page) {
     });
 }
 
-export async function getTestEmail() {
-    return `john.doe+${Date.now()}@supertokens.io`;
+export async function getTestEmail(post) {
+    return `john.doe+${Date.now()}-${post ?? "0"}@supertokens.io`;
 }
 
 export async function setupTenant(tenantId, loginMethods) {

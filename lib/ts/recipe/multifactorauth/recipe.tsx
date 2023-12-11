@@ -18,14 +18,13 @@
  */
 
 import MultiFactorAuthWebJS from "supertokens-web-js/recipe/multifactorauth";
-import { appendQueryParamsToURL } from "supertokens-web-js/utils";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 
 import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
-import { getCurrentNormalisedUrlPath, getRedirectToPathFromURL, isTest } from "../../utils";
+import { appendQueryParamsToURL, getCurrentNormalisedUrlPath, getRedirectToPathFromURL, isTest } from "../../utils";
 import RecipeModule from "../recipeModule";
 
 import { DEFAULT_FACTOR_CHOOSER_PATH } from "./constants";
@@ -116,7 +115,7 @@ export default class MultiFactorAuth extends RecipeModule<
 
     static getInstanceOrThrow(): MultiFactorAuth {
         if (MultiFactorAuth.instance === undefined) {
-            let error = "No instance of EmailVerification found. Make sure to call the EmailVerification.init method.";
+            let error = "No instance of MultiFactorAuth found. Make sure to call the MultiFactorAuth.init method.";
 
             // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
             if (typeof window === "undefined") {
@@ -164,7 +163,6 @@ export default class MultiFactorAuth extends RecipeModule<
 
     async redirectToFactor(factorId: string, redirectBack = false, history?: any) {
         let url = await this.getRedirectUrl({ action: "GO_TO_FACTOR", factorId });
-
         if (redirectBack) {
             const redirectUrl = getCurrentNormalisedUrlPath().getAsStringDangerous();
             url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
@@ -174,13 +172,11 @@ export default class MultiFactorAuth extends RecipeModule<
                 url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
             }
         }
-
         return SuperTokens.getInstanceOrThrow().redirectToUrl(url, history);
     }
 
     async redirectToFactorChooser(redirectBack = false, history?: any) {
         let url = await this.getRedirectUrl({ action: "FACTOR_CHOOSER" });
-
         if (redirectBack) {
             const redirectUrl = getCurrentNormalisedUrlPath().getAsStringDangerous();
             url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
@@ -190,7 +186,6 @@ export default class MultiFactorAuth extends RecipeModule<
                 url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
             }
         }
-
         return SuperTokens.getInstanceOrThrow().redirectToUrl(url, history);
     }
 

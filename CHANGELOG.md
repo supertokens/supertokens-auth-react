@@ -54,6 +54,7 @@ To use this you'll need compatible versions:
 -   Removed an `ErrorBoundary` wrapping all our feature components to make sure all errors are properly catchable by the app
 -   Added a `footer` prop to `EmailOrPhoneForm`, `EmailForm` and `PhoneForm` which is used to override the default sign in/up footers in case the component is for MFA
 -   The passwordless and thirdpartypasswordless sign in/up screens now respect the first configuration (defined in the `MultiFactorAuth` recipe or in the tenant information) when selecting the available contact methods.
+-   Added TOTP recipe. For more details please check our guide [here](TODO)
 -   Fixed a font loading issue, that caused apps using the default (Rubik) font to appear with the incorrect font weights
 -   Some default styling has changed related to how fonts/font-weights are applied
 

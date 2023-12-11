@@ -32,7 +32,10 @@ export const RESET_PASSWORD_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/user
 export const SEND_VERIFY_EMAIL_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/user/email/verify/token`;
 export const VERIFY_EMAIL_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/user/email/verify`;
 export const SIGN_IN_UP_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/signinup`;
+export const CREATE_CODE_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/signinup/code`;
+export const CREATE_DEVICE_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/signinup/code`;
 export const GET_AUTH_URL_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/authorisationurl`;
+export const LOGIN_METHODS_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/loginmethods`;
 export const ST_ROOT_SELECTOR = `#${ST_ROOT_ID}`;
 
 export const SOMETHING_WENT_WRONG_ERROR = "Something went wrong. Please try again.";
