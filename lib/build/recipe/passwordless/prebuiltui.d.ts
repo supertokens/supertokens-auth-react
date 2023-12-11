@@ -1,4 +1,5 @@
 import { RecipeRouter } from "../recipeRouter";
+import MFAOTPTheme from "./components/themes/mfa";
 import SignInUpTheme from "./components/themes/signInUp";
 import Passwordless from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
@@ -37,6 +38,7 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     static LinkClicked: (prop?: any) => JSX.Element;
     static MfaOtpPhone: (prop?: any) => JSX.Element;
     static MfaOtpEmail: (prop?: any) => JSX.Element;
+    static MFAOTPTheme: typeof MFAOTPTheme;
     static SignInUpTheme: typeof SignInUpTheme;
 }
 declare const SignInUp: (
@@ -48,4 +50,4 @@ declare const SignInUp: (
 declare const LinkClicked: (prop?: any) => JSX.Element;
 declare const MfaOtpPhone: (prop?: any) => JSX.Element;
 declare const MfaOtpEmail: (prop?: any) => JSX.Element;
-export { SignInUp, LinkClicked, SignInUpTheme, MfaOtpPhone, MfaOtpEmail };
+export { SignInUp, LinkClicked, SignInUpTheme, MfaOtpPhone, MfaOtpEmail, MFAOTPTheme };

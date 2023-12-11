@@ -189,7 +189,10 @@ export function useChildProps(
                 await recipeImplementation.clearLoginAttemptInfo({ userContext });
                 await redirectToAuth({ redirectBack: false, history: history });
             },
-            onBackButtonClicked: () => {
+            onBackButtonClicked: async () => {
+                if (state.loginAttemptInfo) {
+                    await recipeImplementation.clearLoginAttemptInfo({ userContext });
+                }
                 // If we don't have history available this would mean we are not using react-router-dom, so we use window's history
                 if (history === undefined) {
                     return WindowHandlerReference.getReferenceOrThrow().windowHandler.getWindowUnsafe().history.back();
@@ -342,6 +345,7 @@ function useOnLoad(
                 props.recipe.config.contactMethod,
                 dynamicLoginMethods
             );
+
             if (loginAttemptInfo && !enabledContactMethods.includes(loginAttemptInfo.contactMethod)) {
                 await recipeImplementation?.clearLoginAttemptInfo({ userContext });
                 loginAttemptInfo = undefined;

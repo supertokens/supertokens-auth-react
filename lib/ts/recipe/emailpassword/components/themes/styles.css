@@ -194,13 +194,6 @@
     margin: 0 auto;
 }
 
-[data-supertokens~="withBackButton"] {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 [data-supertokens~="resendEmailLink"] {
     display: inline-block;
 }

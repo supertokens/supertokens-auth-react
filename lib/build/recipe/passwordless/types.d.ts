@@ -1,9 +1,9 @@
 import type { LinkClickedScreen } from "./components/themes/linkClickedScreen";
+import type { LoadingScreen } from "./components/themes/mfa/loadingScreen";
 import type { MFAFooter } from "./components/themes/mfa/mfaFooter";
 import type { MFAHeader } from "./components/themes/mfa/mfaHeader";
 import type { MFAOTPFooter } from "./components/themes/mfa/mfaOTPFooter";
 import type { MFAOTPHeader } from "./components/themes/mfa/mfaOTPHeader";
-import type { LoadingScreen } from "./components/themes/mfa/loadingScreen";
 import type { CloseTabScreen } from "./components/themes/signInUp/closeTabScreen";
 import type { EmailForm } from "./components/themes/signInUp/emailForm";
 import type { EmailOrPhoneForm } from "./components/themes/signInUp/emailOrPhoneForm";

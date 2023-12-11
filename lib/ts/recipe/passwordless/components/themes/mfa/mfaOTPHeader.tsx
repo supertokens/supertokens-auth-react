@@ -35,7 +35,9 @@ export const MFAOTPHeader = withOverride(
         return (
             <Fragment>
                 <div data-supertokens="headerTitle withBackButton pwless-mfa otpHeader">
-                    {claim.loading === false && claim.value?.n.length === 0 && isSetupAllowed === false ? (
+                    {claim.loading === false &&
+                    (claim.value === undefined || claim.value.n.length === 0) &&
+                    isSetupAllowed === false ? (
                         <BackButton onClick={onBackButtonClicked} />
                     ) : (
                         <span data-supertokens="backButtonPlaceholder backButtonCommon">

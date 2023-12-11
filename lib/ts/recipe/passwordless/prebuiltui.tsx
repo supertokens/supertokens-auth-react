@@ -10,6 +10,7 @@ import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import LinkClickedScreen from "./components/features/linkClickedScreen";
 import MFAFeature from "./components/features/mfa";
 import SignInUpFeature from "./components/features/signInAndUp";
+import MFAOTPTheme from "./components/themes/mfa";
 import SignInUpTheme from "./components/themes/signInUp";
 import Passwordless from "./recipe";
 
@@ -199,6 +200,7 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
     static LinkClicked = (prop?: any) => this.getFeatureComponent("linkClickedScreen", prop);
     static MfaOtpPhone = (prop?: any) => this.getFeatureComponent("otp-phone", prop);
     static MfaOtpEmail = (prop?: any) => this.getFeatureComponent("otp-email", prop);
+    static MFAOTPTheme = MFAOTPTheme;
 
     static SignInUpTheme = SignInUpTheme;
 }
@@ -208,4 +210,4 @@ const LinkClicked = PasswordlessPreBuiltUI.LinkClicked;
 const MfaOtpPhone = PasswordlessPreBuiltUI.MfaOtpPhone;
 const MfaOtpEmail = PasswordlessPreBuiltUI.MfaOtpEmail;
 
-export { SignInUp, LinkClicked, SignInUpTheme, MfaOtpPhone, MfaOtpEmail };
+export { SignInUp, LinkClicked, SignInUpTheme, MfaOtpPhone, MfaOtpEmail, MFAOTPTheme };

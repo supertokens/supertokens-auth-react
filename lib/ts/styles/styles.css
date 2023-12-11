@@ -333,3 +333,10 @@
     margin-right: auto;
     margin-top: 14px;
 }
+
+[data-supertokens~="withBackButton"] {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
