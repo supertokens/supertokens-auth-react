@@ -20,6 +20,7 @@ import { Fragment } from "react";
 
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
+import { useUserContext } from "../../../../../usercontext";
 import {
     useChildProps as useEmailPasswordChildProps,
     useFeatureReducer as useEmailPasswordFeatureReducer,
@@ -31,7 +32,7 @@ import {
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsThirdPartyEmailPassword } from "../../themes/translations";
 
-import type { FeatureBaseProps } from "../../../../../types";
+import type { FeatureBaseProps, UserContext } from "../../../../../types";
 import type { EmailPasswordSignInAndUpAction } from "../../../../emailpassword/types";
 import type { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
 import type Recipe from "../../../recipe";
@@ -39,10 +40,15 @@ import type { ComponentOverrideMap } from "../../../types";
 
 type PropType = FeatureBaseProps<{
     recipe: Recipe;
+    userContext?: UserContext;
     useComponentOverrides: () => ComponentOverrideMap;
 }>;
 
 const SignInAndUp: React.FC<PropType> = (props) => {
+    let userContext = useUserContext();
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
     const [tpState, tpDispatch] = useThirdPartyFeatureReducer();
     const [epState, epDispatch] = useEmailPasswordFeatureReducer(props.recipe.emailPasswordRecipe);
     const [combinedState, dispatch] = React.useReducer(
@@ -90,6 +96,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         props.recipe.emailPasswordRecipe,
         epState,
         combinedEPDispatch,
+        userContext,
         props.navigate
     );
 

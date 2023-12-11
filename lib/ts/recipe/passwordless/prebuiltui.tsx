@@ -18,7 +18,7 @@ import type {
     NormalisedConfig,
 } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap, FeatureBaseProps, Navigate } from "../../types";
+import type { RecipeFeatureComponentMap, FeatureBaseProps, Navigate, UserContext } from "../../types";
 import type { PropsWithChildren } from "react";
 
 export class PasswordlessPreBuiltUI extends RecipeRouter {
@@ -43,7 +43,7 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "signInUp" | "linkClickedScreen",
-        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }>,
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
@@ -84,7 +84,7 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
     };
     getFeatureComponent = (
         componentName: "signInUp" | "linkClickedScreen",
-        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: any }>,
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signInUp") {
@@ -145,10 +145,14 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
     }
 
     static SignInUp = (
-        prop: PropsWithChildren<{ redirectOnSessionExists?: boolean; navigate?: Navigate; userContext?: any }> = {}
+        prop: PropsWithChildren<{
+            redirectOnSessionExists?: boolean;
+            navigate?: Navigate;
+            userContext?: UserContext;
+        }> = {}
     ) => this.getFeatureComponent("signInUp", prop);
 
-    static LinkClicked = (prop: FeatureBaseProps<{ userContext?: any }>) =>
+    static LinkClicked = (prop: FeatureBaseProps<{ userContext?: UserContext }>) =>
         this.getFeatureComponent("linkClickedScreen", prop);
 
     static SignInUpTheme = SignInUpTheme;

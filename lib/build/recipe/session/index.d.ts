@@ -6,6 +6,7 @@ import { PrimitiveArrayClaim } from "../../claims/primitiveArrayClaim";
 import { PrimitiveClaim } from "../../claims/primitiveClaim";
 import SessionContext from "./sessionContext";
 import { InputType, SessionContextType } from "./types";
+import type { UserContext } from "../../types";
 export default class SessionAPIWrapper {
     static useSessionContext: () => SessionContextType;
     static useClaimValue: <T>(claim: SessionClaim<T>) =>
@@ -20,27 +21,27 @@ export default class SessionAPIWrapper {
     static SessionAuth: import("react").FC<
         import("react").PropsWithChildren<
             import("./sessionAuth").SessionAuthProps & {
-                userContext?: any;
+                userContext?: UserContext | undefined;
             }
         >
     >;
     static init(config?: InputType): import("../../types").RecipeInitResult<unknown, unknown, unknown, any>;
-    static getUserId(input?: { userContext?: any }): Promise<string>;
-    static getAccessToken(input?: { userContext?: any }): Promise<string | undefined>;
-    static getAccessTokenPayloadSecurely(input?: { userContext?: any }): Promise<any>;
+    static getUserId(input?: { userContext?: UserContext }): Promise<string>;
+    static getAccessToken(input?: { userContext?: UserContext }): Promise<string | undefined>;
+    static getAccessTokenPayloadSecurely(input?: { userContext?: UserContext }): Promise<any>;
     static attemptRefreshingSession(): Promise<boolean>;
-    static doesSessionExist(input?: { userContext?: any }): Promise<boolean>;
+    static doesSessionExist(input?: { userContext?: UserContext }): Promise<boolean>;
     /**
      * @deprecated
      */
-    static addAxiosInterceptors(axiosInstance: any, userContext?: any): void;
-    static signOut(input?: { userContext?: any }): Promise<void>;
+    static addAxiosInterceptors(axiosInstance: any, userContext?: UserContext): void;
+    static signOut(input?: { userContext?: UserContext }): Promise<void>;
     static validateClaims(input?: {
         overrideGlobalClaimValidators?: (
             globalClaimValidators: SessionClaimValidator[],
-            userContext: any
+            userContext: UserContext
         ) => SessionClaimValidator[];
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<ClaimValidationError[]> | ClaimValidationError[];
     static getInvalidClaimsFromResponse(input: {
         response:
@@ -48,9 +49,9 @@ export default class SessionAPIWrapper {
                   data: any;
               }
             | Response;
-        userContext: any;
+        userContext: UserContext;
     }): Promise<ClaimValidationError[]>;
-    static getClaimValue<T>(input: { claim: SessionClaim<T>; userContext?: any }): Promise<T | undefined>;
+    static getClaimValue<T>(input: { claim: SessionClaim<T>; userContext?: UserContext }): Promise<T | undefined>;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
@@ -70,7 +71,7 @@ declare const useClaimValue: <T>(claim: SessionClaim<T>) =>
 declare const SessionAuth: import("react").FC<
     import("react").PropsWithChildren<
         import("./sessionAuth").SessionAuthProps & {
-            userContext?: any;
+            userContext?: UserContext | undefined;
         }
     >
 >;

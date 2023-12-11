@@ -9,6 +9,7 @@ export declare type NormalisedConfig<T, Action, R> = NormalisedRecipeModuleConfi
 export declare type GetRedirectionURLContext = {
     action: "SUCCESS";
     isNewRecipeUser: boolean;
+    isNewPrimaryUser: boolean;
     redirectToPath?: string;
 };
 export declare type OnHandleEventContext = {

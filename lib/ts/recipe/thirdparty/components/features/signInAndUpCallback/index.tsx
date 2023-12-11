@@ -27,20 +27,27 @@ import Session from "../../../../session/recipe";
 import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 
-import type { Awaited, FeatureBaseProps } from "../../../../../types";
+import type { Awaited, FeatureBaseProps, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap, CustomStateProperties } from "../../../types";
 
-type PropType = FeatureBaseProps<{ recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap }>;
+type PropType = FeatureBaseProps<{
+    recipe: Recipe;
+    userContext?: UserContext;
+    useComponentOverrides: () => ComponentOverrideMap;
+}>;
 
 const SignInAndUpCallback: React.FC<PropType> = (props) => {
-    const userContext = useUserContext();
+    let userContext = useUserContext();
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
 
     const verifyCode = useCallback(() => {
         return props.recipe.webJSRecipe.signInAndUp({
             userContext,
         });
-    }, [props.recipe, props.navigate, userContext]);
+    }, [props.recipe, userContext]);
 
     const handleVerifyResponse = useCallback(
         async (response: Awaited<ReturnType<typeof verifyCode>>): Promise<void> => {
@@ -51,6 +58,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                         error: "no_email_present",
                     },
                     redirectBack: false,
+                    userContext,
                 });
             }
 
@@ -62,6 +70,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                         message: response.reason,
                     },
                     redirectBack: false,
+                    userContext,
                 });
             }
 
@@ -76,6 +85,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                         rid: props.recipe.config.recipeId,
                         successRedirectContext: {
                             action: "SUCCESS",
+                            isNewPrimaryUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
                             isNewRecipeUser: response.createdNewRecipeUser,
                             redirectToPath,
                         },
@@ -98,6 +108,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                         message: err.message,
                     },
                     redirectBack: false,
+                    userContext,
                 });
             }
 
@@ -107,9 +118,10 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                     error: "signin",
                 },
                 redirectBack: false,
+                userContext,
             });
         },
-        [props.recipe, props.navigate]
+        [props.navigate, userContext]
     );
 
     useOnMountAPICall(verifyCode, handleVerifyResponse, handleError);

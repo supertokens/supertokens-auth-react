@@ -2,6 +2,7 @@
 import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import type { UserContext } from "../../types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/passwordless";
 import type { PasswordlessFlowType } from "supertokens-web-js/recipe/passwordless/types";
 import type { User } from "supertokens-web-js/types";
@@ -14,17 +15,17 @@ export default class Wrapper {
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static signOut(input?: { userContext?: any }): Promise<void>;
+    static signOut(input?: { userContext?: UserContext }): Promise<void>;
     static createCode(
         input:
             | {
                   email: string;
-                  userContext?: any;
+                  userContext?: UserContext;
                   options?: RecipeFunctionOptions;
               }
             | {
                   phoneNumber: string;
-                  userContext?: any;
+                  userContext?: UserContext;
                   options?: RecipeFunctionOptions;
               }
     ): Promise<
@@ -40,7 +41,7 @@ export default class Wrapper {
               reason: string;
           }
     >;
-    static resendCode(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static resendCode(input?: { userContext?: UserContext; options?: RecipeFunctionOptions }): Promise<{
         status: "OK" | "RESTART_FLOW_ERROR";
         fetchResponse: Response;
     }>;
@@ -48,11 +49,11 @@ export default class Wrapper {
         input?:
             | {
                   userInputCode: string;
-                  userContext?: any;
+                  userContext?: UserContext;
                   options?: RecipeFunctionOptions;
               }
             | {
-                  userContext?: any;
+                  userContext?: UserContext;
                   options?: RecipeFunctionOptions;
               }
     ): Promise<
@@ -78,23 +79,27 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static getLinkCodeFromURL(input?: { userContext?: any }): string;
-    static getPreAuthSessionIdFromURL(input?: { userContext?: any }): string;
-    static doesEmailExist(input: { email: string; userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK";
-        doesExist: boolean;
-        fetchResponse: Response;
-    }>;
-    static doesPhoneNumberExist(input: {
-        phoneNumber: string;
-        userContext?: any;
+    static getLinkCodeFromURL(input?: { userContext?: UserContext }): string;
+    static getPreAuthSessionIdFromURL(input?: { userContext?: UserContext }): string;
+    static doesEmailExist(input: {
+        email: string;
+        userContext?: UserContext;
         options?: RecipeFunctionOptions;
     }): Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;
     }>;
-    static getLoginAttemptInfo<CustomLoginAttemptInfoProperties>(input?: { userContext?: any }): Promise<
+    static doesPhoneNumberExist(input: {
+        phoneNumber: string;
+        userContext?: UserContext;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
+        status: "OK";
+        doesExist: boolean;
+        fetchResponse: Response;
+    }>;
+    static getLoginAttemptInfo<CustomLoginAttemptInfoProperties>(input?: { userContext?: UserContext }): Promise<
         | undefined
         | ({
               deviceId: string;
@@ -108,9 +113,9 @@ export default class Wrapper {
             preAuthSessionId: string;
             flowType: PasswordlessFlowType;
         } & CustomStateProperties;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<void>;
-    static clearLoginAttemptInfo(input?: { userContext?: any }): Promise<void>;
+    static clearLoginAttemptInfo(input?: { userContext?: UserContext }): Promise<void>;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;

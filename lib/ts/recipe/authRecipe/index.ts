@@ -25,7 +25,7 @@ import Session from "../session/recipe";
 import SessionRecipe from "../session/recipe";
 
 import type { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
-import type { NormalisedConfigWithAppInfoAndRecipeID } from "../../types";
+import type { NormalisedConfigWithAppInfoAndRecipeID, UserContext } from "../../types";
 
 export default abstract class AuthRecipe<
     T,
@@ -51,13 +51,13 @@ export default abstract class AuthRecipe<
         }
     };
 
-    signOut = async (input?: { userContext?: any }): Promise<void> => {
+    signOut = async (input?: { userContext?: UserContext }): Promise<void> => {
         return await Session.getInstanceOrThrow().signOut({
             userContext: getNormalisedUserContext(input?.userContext),
         });
     };
 
-    doesSessionExist = async (input?: { userContext?: any }): Promise<boolean> => {
+    doesSessionExist = async (input?: { userContext?: UserContext }): Promise<boolean> => {
         return await Session.getInstanceOrThrow().doesSessionExist({
             userContext: getNormalisedUserContext(input?.userContext),
         });

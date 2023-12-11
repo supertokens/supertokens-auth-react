@@ -2,7 +2,7 @@ import { EmailVerificationClaimClass as EmailVerificationClaimClassWebJS } from 
 
 import EmailVerification from "../recipe/emailverification/recipe";
 
-import type { ValidationFailureCallback } from "../types";
+import type { UserContext, ValidationFailureCallback } from "../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
 export class EmailVerificationClaimClass extends EmailVerificationClaimClassWebJS {
@@ -18,13 +18,13 @@ export class EmailVerificationClaimClass extends EmailVerificationClaimClassWebJ
             ) => {
                 return {
                     ...validator(...args),
-                    onFailureRedirection: (args: { userContext: any; reason: any }) => {
+                    onFailureRedirection: (args: { userContext: UserContext; reason: any }) => {
                         if (onFailureRedirection !== undefined) {
                             return onFailureRedirection(args);
                         }
                         const recipe = EmailVerification.getInstanceOrThrow();
                         if (recipe.config.mode === "REQUIRED") {
-                            return recipe.getRedirectUrl({ action: "VERIFY_EMAIL" });
+                            return recipe.getRedirectUrl({ action: "VERIFY_EMAIL" }, args.userContext);
                         }
                         return undefined;
                     },

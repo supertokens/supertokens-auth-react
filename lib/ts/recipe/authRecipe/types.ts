@@ -28,6 +28,7 @@ export type NormalisedConfig<T, Action, R> = NormalisedRecipeModuleConfig<T, Act
 export type GetRedirectionURLContext = {
     action: "SUCCESS";
     isNewRecipeUser: boolean;
+    isNewPrimaryUser: boolean;
     redirectToPath?: string;
 };
 

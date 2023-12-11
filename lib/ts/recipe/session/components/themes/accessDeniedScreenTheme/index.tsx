@@ -24,6 +24,7 @@ const AccessDeniedScreen: FC<AccessDeniedThemeProps> = (props) => {
         await SuperTokens.getInstanceOrThrow().redirectToAuth({
             show: "signin",
             redirectBack: false,
+            userContext,
         });
     };
 

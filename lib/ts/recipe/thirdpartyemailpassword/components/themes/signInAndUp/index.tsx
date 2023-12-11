@@ -34,6 +34,7 @@ import { ThemeBase } from "../themeBase";
 
 import { Header } from "./header";
 
+import type { UserContext } from "../../../../../types";
 import type { ThirdPartyEmailPasswordSignInAndUpThemeProps } from "../../../types";
 
 const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> = (props) => {
@@ -110,7 +111,7 @@ const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> =
 
 export default function SignInAndUpThemeWrapper(
     props: ThirdPartyEmailPasswordSignInAndUpThemeProps & {
-        userContext?: any;
+        userContext?: UserContext;
     }
 ): JSX.Element {
     const hasFont = hasFontDefined(props.config.rootStyle);

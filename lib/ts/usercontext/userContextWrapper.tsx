@@ -14,9 +14,14 @@
  */
 import React from "react";
 
+import type { UserContext } from "../types";
+
 import { UserContextContext, UserContextProvider } from ".";
 
-export default function UserContextWrapper(props: { children: React.ReactNode; userContext?: any }): JSX.Element {
+export default function UserContextWrapper(props: {
+    children: React.ReactNode;
+    userContext?: UserContext;
+}): JSX.Element {
     /**
      * If we receive a userContext as a props we should assume that the user
      * is either trying to use a theme component as standalone or that they

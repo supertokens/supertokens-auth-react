@@ -32,7 +32,7 @@ import {
 import SignInUpTheme from "../../themes/signInUp";
 import { defaultTranslationsThirdPartyPasswordless } from "../../themes/translations";
 
-import type { FeatureBaseProps } from "../../../../../types";
+import type { FeatureBaseProps, UserContext } from "../../../../../types";
 import type { PasswordlessSignInUpAction } from "../../../../passwordless/types";
 import type { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
 import type Recipe from "../../../recipe";
@@ -40,6 +40,7 @@ import type { ComponentOverrideMap } from "../../../types";
 
 type PropType = FeatureBaseProps<{
     recipe: Recipe;
+    userContext?: UserContext;
     useComponentOverrides: () => ComponentOverrideMap;
 }>;
 

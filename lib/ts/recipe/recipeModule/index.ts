@@ -15,12 +15,12 @@
 
 import { logDebugMessage } from "../../logger";
 import SuperTokens from "../../superTokens";
-import { appendQueryParamsToURL } from "../../utils";
+import { appendQueryParamsToURL, getNormalisedUserContext } from "../../utils";
 
 import { BaseRecipeModule } from "./baseRecipeModule";
 
 import type { NormalisedConfig } from "./types";
-import type { Navigate } from "../../types";
+import type { Navigate, UserContext } from "../../types";
 
 export default abstract class RecipeModule<
     GetRedirectionURLContextType,
@@ -32,9 +32,10 @@ export default abstract class RecipeModule<
         context: GetRedirectionURLContextType,
         navigate?: Navigate,
         queryParams?: Record<string, string>,
-        userContext?: any
+        userContext?: UserContext
     ): Promise<void> => {
-        let redirectUrl = await this.getRedirectUrl(context, userContext);
+        // NOTE: We cannot make userContext required in args because it follows optional parameters. Instead we will normalise it if it wasn't passed in.
+        let redirectUrl = await this.getRedirectUrl(context, getNormalisedUserContext(userContext));
 
         if (redirectUrl === null) {
             logDebugMessage(
@@ -52,7 +53,10 @@ export default abstract class RecipeModule<
     };
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    getRedirectUrl = async (context: GetRedirectionURLContextType, userContext?: any): Promise<string | null> => {
+    getRedirectUrl = async (
+        context: GetRedirectionURLContextType,
+        userContext: UserContext
+    ): Promise<string | null> => {
         // If getRedirectionURL provided by user.
         const redirectUrl = await this.config.getRedirectionURL(context, userContext);
         if (redirectUrl !== undefined) {

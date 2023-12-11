@@ -20,7 +20,13 @@ import SessionWebJS from "supertokens-web-js/recipe/session";
 import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
 
 import SuperTokens from "../../superTokens";
-import { getLocalStorage, isTest, removeFromLocalStorage, setLocalStorage } from "../../utils";
+import {
+    getLocalStorage,
+    getNormalisedUserContext,
+    isTest,
+    removeFromLocalStorage,
+    setLocalStorage,
+} from "../../utils";
 import RecipeModule from "../recipeModule";
 
 import { getFailureRedirectionInfo, normaliseSessionConfig } from "./utils";
@@ -32,6 +38,7 @@ import type {
     NormalisedAppInfo,
     NormalisedConfigWithAppInfoAndRecipeID,
     RecipeInitResult,
+    UserContext,
 } from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import type { SessionClaim } from "supertokens-web-js/recipe/session";
@@ -46,7 +53,12 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
     private redirectionHandlersFromAuthRecipes = new Map<
         string,
-        (ctx: any, navigate?: Navigate, queryParams?: Record<string, string>, userContext?: any) => Promise<void>
+        (
+            ctx: any,
+            navigate?: Navigate,
+            queryParams?: Record<string, string>,
+            userContext?: UserContext
+        ) => Promise<void>
     >();
 
     constructor(
@@ -56,30 +68,30 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         super(config);
     }
 
-    getUserId = (input: { userContext: any }): Promise<string> => {
+    getUserId = (input: { userContext: UserContext }): Promise<string> => {
         return this.webJSRecipe.getUserId(input);
     };
 
-    getAccessToken = (input: { userContext: any }): Promise<string | undefined> => {
+    getAccessToken = (input: { userContext: UserContext }): Promise<string | undefined> => {
         return this.webJSRecipe.getAccessToken(input);
     };
 
     getClaimValue = <T extends unknown>(input: {
         claim: SessionClaim<T>;
-        userContext: any;
+        userContext: UserContext;
     }): Promise<T | undefined> => {
         return this.webJSRecipe.getClaimValue(input);
     };
 
-    getAccessTokenPayloadSecurely = async (input: { userContext: any }): Promise<any> => {
+    getAccessTokenPayloadSecurely = async (input: { userContext: UserContext }): Promise<any> => {
         return this.webJSRecipe.getAccessTokenPayloadSecurely(input);
     };
 
-    doesSessionExist = (input: { userContext: any }): Promise<boolean> => {
+    doesSessionExist = (input: { userContext: UserContext }): Promise<boolean> => {
         return this.webJSRecipe.doesSessionExist(input);
     };
 
-    signOut = (input: { userContext: any }): Promise<void> => {
+    signOut = (input: { userContext: UserContext }): Promise<void> => {
         return this.webJSRecipe.signOut(input);
     };
 
@@ -90,16 +102,16 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     validateClaims = (input: {
         overrideGlobalClaimValidators?: (
             globalClaimValidators: SessionClaimValidator[],
-            userContext: any
+            userContext: UserContext
         ) => SessionClaimValidator[];
-        userContext: any;
+        userContext: UserContext;
     }): Promise<ClaimValidationError[]> | ClaimValidationError[] => {
         return this.webJSRecipe.validateClaims(input);
     };
 
     getInvalidClaimsFromResponse = (input: {
         response: { data: any } | Response;
-        userContext: any;
+        userContext: UserContext;
     }): Promise<ClaimValidationError[]> => {
         return this.webJSRecipe.getInvalidClaimsFromResponse(input);
     };
@@ -119,7 +131,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
             context: any,
             navigate?: Navigate,
             queryParams?: Record<string, string>,
-            userContext?: any
+            userContext?: UserContext
         ) => Promise<void>
     ) => {
         this.redirectionHandlersFromAuthRecipes.set(rid, redirect);
@@ -131,12 +143,14 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
             successRedirectContext: {
                 action: "SUCCESS";
                 isNewRecipeUser: boolean;
+                isNewPrimaryUser: boolean;
                 redirectToPath?: string;
             };
         },
-        userContext?: any,
+        userContext?: UserContext,
         navigate?: Navigate
     ): Promise<void> => {
+        userContext = getNormalisedUserContext(userContext);
         // First we check if there is an active session
         if (!(await this.doesSessionExist({ userContext }))) {
             // If there is none, we have no way of checking claims, so we redirect to the auth page
@@ -144,6 +158,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
             return SuperTokens.getInstanceOrThrow().redirectToAuth({
                 navigate,
                 redirectBack: false,
+                userContext,
             });
         }
 
@@ -189,6 +204,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                     rid: Session.RECIPE_ID,
                     successRedirectContext: {
                         action: "SUCCESS",
+                        isNewPrimaryUser: false,
                         isNewRecipeUser: false,
                     },
                 };
@@ -264,7 +280,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    static addAxiosInterceptors(axiosInstance: any, userContext: any): void {
+    static addAxiosInterceptors(axiosInstance: any, userContext: UserContext): void {
         return WebJSSessionRecipe.addAxiosInterceptors(axiosInstance, userContext);
     }
 

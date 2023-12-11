@@ -29,7 +29,7 @@ import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import SignInUpThemeWrapper from "../../themes/signInUp";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
-import type { Navigate, FeatureBaseProps } from "../../../../../types";
+import type { Navigate, FeatureBaseProps, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap } from "../../../types";
 import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps, NormalisedConfig } from "../../../types";
@@ -38,7 +38,7 @@ import type { User } from "supertokens-web-js/types";
 
 export const useFeatureReducer = (
     recipeImpl: RecipeInterface | undefined,
-    userContext: any
+    userContext: UserContext
 ): [SignInUpState, React.Dispatch<PasswordlessSignInUpAction>] => {
     const [state, dispatch] = React.useReducer(
         (oldState: SignInUpState, action: PasswordlessSignInUpAction) => {
@@ -141,14 +141,14 @@ export function useChildProps(
     recipe: Recipe,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
-    userContext: any,
+    userContext: UserContext,
     navigate?: Navigate
 ): SignInUpChildProps;
 export function useChildProps(
     recipe: Recipe | undefined,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
-    userContext: any,
+    userContext: UserContext,
     navigate?: Navigate
 ): SignInUpChildProps | undefined;
 
@@ -156,7 +156,7 @@ export function useChildProps(
     recipe: Recipe | undefined,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
-    userContext: any,
+    userContext: UserContext,
     navigate?: Navigate
 ): SignInUpChildProps | undefined {
     const recipeImplementation = React.useMemo(
@@ -175,6 +175,7 @@ export function useChildProps(
                         rid: recipe.config.recipeId,
                         successRedirectContext: {
                             action: "SUCCESS",
+                            isNewPrimaryUser: result.createdNewRecipeUser && result.user.loginMethods.length === 1,
                             isNewRecipeUser: result.createdNewRecipeUser,
                             redirectToPath: getRedirectToPathFromURL(),
                         },
@@ -192,11 +193,15 @@ export function useChildProps(
 export const SignInUpFeature: React.FC<
     FeatureBaseProps<{
         recipe: Recipe;
+        userContext?: UserContext;
         useComponentOverrides: () => ComponentOverrideMap;
     }>
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
-    const userContext = useUserContext();
+    let userContext = useUserContext();
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
     const [state, dispatch] = useFeatureReducer(props.recipe.webJSRecipe, userContext);
     const childProps = useChildProps(props.recipe, dispatch, state, userContext, props.navigate)!;
 

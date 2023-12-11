@@ -42,7 +42,7 @@ import type RecipeModule from "./recipe/recipeModule";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import type { Navigate, GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig } from "./types";
+import type { Navigate, GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig, UserContext } from "./types";
 
 /*
  * Class.
@@ -167,7 +167,7 @@ export default class SuperTokens {
         this.languageTranslations.translationEventSource.emit("TranslationLoaded", store);
     }
 
-    async getRedirectUrl(context: GetRedirectionURLContext, userContext?: any): Promise<string | null> {
+    async getRedirectUrl(context: GetRedirectionURLContext, userContext: UserContext): Promise<string | null> {
         if (this.userGetRedirectionURL) {
             const userRes = await this.userGetRedirectionURL(context, userContext);
             if (userRes !== undefined) {
@@ -186,6 +186,7 @@ export default class SuperTokens {
         navigate?: Navigate;
         queryParams?: any;
         redirectBack: boolean;
+        userContext: UserContext;
     }): Promise<void> => {
         const queryParams = options.queryParams === undefined ? {} : options.queryParams;
         if (options.show !== undefined) {
@@ -195,10 +196,13 @@ export default class SuperTokens {
             queryParams.redirectToPath = getCurrentNormalisedUrlPath().getAsStringDangerous();
         }
 
-        let redirectUrl = await this.getRedirectUrl({
-            action: "TO_AUTH",
-            showSignIn: options.show === "signin",
-        });
+        let redirectUrl = await this.getRedirectUrl(
+            {
+                action: "TO_AUTH",
+                showSignIn: options.show === "signin",
+            },
+            options.userContext
+        );
 
         if (redirectUrl === null) {
             logDebugMessage("Skipping redirection because the user override returned null");

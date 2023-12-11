@@ -29,7 +29,7 @@ import SessionContext from "./sessionContext";
 import { getFailureRedirectionInfo } from "./utils";
 
 import type { LoadedSessionContext, RecipeEventWithSessionContext, SessionContextType } from "./types";
-import type { Navigate, ReactComponentClass, SessionClaimValidator } from "../../types";
+import type { Navigate, ReactComponentClass, SessionClaimValidator, UserContext } from "../../types";
 import type { PropsWithChildren } from "react";
 import type { ClaimValidationError } from "supertokens-web-js/recipe/session";
 
@@ -44,14 +44,14 @@ export type SessionAuthProps = {
     doRedirection?: boolean;
 
     accessDeniedScreen?: ReactComponentClass<{
-        userContext?: any;
+        userContext?: UserContext;
         navigate?: Navigate;
         validationError: ClaimValidationError;
     }>;
     onSessionExpired?: () => void;
     overrideGlobalClaimValidators?: (
         globalClaimValidators: SessionClaimValidator[],
-        userContext: any
+        userContext: UserContext
     ) => SessionClaimValidator[];
 };
 
@@ -87,7 +87,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
     const userContext = useUserContext();
 
     const redirectToLogin = useCallback(() => {
-        void SuperTokens.getInstanceOrThrow().redirectToAuth({ navigate, redirectBack: true });
+        void SuperTokens.getInstanceOrThrow().redirectToAuth({ navigate, userContext, redirectBack: true });
     }, []);
 
     const buildContext = useCallback(async (): Promise<LoadedSessionContext> => {
@@ -316,7 +316,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 const SessionAuthWrapper: React.FC<
     PropsWithChildren<
         SessionAuthProps & {
-            userContext?: any;
+            userContext?: UserContext;
         }
     >
 > = (props) => {

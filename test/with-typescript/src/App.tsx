@@ -32,10 +32,30 @@ import Passwordless from "../../../recipe/passwordless";
 import { PasswordlessFlowType } from "supertokens-web-js/recipe/passwordless/types";
 import ThirdPartyPasswordless from "../../../recipe/thirdpartypasswordless";
 import { PermissionClaim, UserRoleClaim } from "../../../recipe/userroles";
-import { ThirdPartyPreBuiltUI } from "../../../recipe/thirdparty/prebuiltui";
-import { ThirdPartyEmailPasswordPreBuiltUI } from "../../../recipe/thirdpartyemailpassword/prebuiltui";
-import { EmailPasswordPreBuiltUI } from "../../../recipe/emailpassword/prebuiltui";
+import {
+    ThirdPartyPreBuiltUI,
+    SignInAndUp as TPSignInAndUp,
+    SignInAndUpCallback as TPSignInAndUpCallback,
+} from "../../../recipe/thirdparty/prebuiltui";
+import {
+    ThirdPartyEmailPasswordPreBuiltUI,
+    SignInAndUp as TPEmailPasswordSignInAndUp,
+    ResetPasswordUsingToken as TPEmailPasswordResetPasswordUsingToken,
+} from "../../../recipe/thirdpartyemailpassword/prebuiltui";
+import {
+    EmailPasswordPreBuiltUI,
+    SignInAndUp as EmailPasswordSignInAndUp,
+    ResetPasswordUsingToken as EmailPasswordResetPasswordUsingToken,
+} from "../../../recipe/emailpassword/prebuiltui";
 import { AccessDeniedScreen } from "../../../recipe/session/prebuiltui";
+import {
+    SignInUp as PasswordlessSignInUp,
+    LinkClicked as PasswordlessLinkClicked,
+} from "../../../recipe/passwordless/prebuiltui";
+import {
+    SignInAndUp as TPPasswordlessSignInAndUp,
+    PasswordlessLinkClicked as TPPasswordlessPasswordlessLinkClicked,
+} from "../../../recipe/thirdpartypasswordless/prebuiltui";
 import EmailVerification from "../../../recipe/emailverification";
 
 /*
@@ -1461,33 +1481,42 @@ SuperTokens.init({
         websiteDomain: "",
     },
 
-    async getRedirectionURL(context) {
+    async getRedirectionURL(context, userContext) {
         return null;
     },
     recipeList: [
         EmailPassword.init({
-            async getRedirectionURL(context) {
+            async getRedirectionURL(context, userContext) {
+                if (context.action === "SUCCESS") {
+                    if (context.isNewPrimaryUser) {
+                        // New primary user
+                    } else if (context.isNewRecipeUser) {
+                        // New recipe user
+                    } else {
+                        // Existing user
+                    }
+                }
                 return null;
             },
         }),
         ThirdParty.init({
-            async getRedirectionURL(context) {
+            async getRedirectionURL(context, userContext) {
                 return null;
             },
         }),
         ThirdPartyEmailPassword.init({
-            async getRedirectionURL(context) {
+            async getRedirectionURL(context, userContext) {
                 return null;
             },
         }),
         EmailVerification.init({
-            async getRedirectionURL(context) {
+            async getRedirectionURL(context, userContext) {
                 return null;
             },
         }),
         Passwordless.init({
             contactMethod: "EMAIL",
-            async getRedirectionURL(context) {
+            async getRedirectionURL(context, userContext) {
                 return null;
             },
         }),
@@ -1502,3 +1531,20 @@ export const PhoneVerifiedClaim = new BooleanClaim({
     // @ts-expect-error - Returning null from onFailureRedirection is not supported
     onFailureRedirection: () => null,
 });
+
+function TestIfUserContextCanBePassedToPreBuiltComponets() {
+    const userContext = {};
+    return [
+        <TPSignInAndUp userContext={userContext} />,
+        <TPSignInAndUpCallback userContext={userContext} />,
+        <TPEmailPasswordSignInAndUp userContext={userContext} />,
+        <TPEmailPasswordResetPasswordUsingToken userContext={userContext} />,
+        <EmailPasswordSignInAndUp userContext={userContext} />,
+        <EmailPasswordResetPasswordUsingToken userContext={userContext} />,
+        <AccessDeniedScreen userContext={userContext} />,
+        <PasswordlessSignInUp userContext={userContext} />,
+        <PasswordlessLinkClicked userContext={userContext} />,
+        <TPPasswordlessSignInAndUp userContext={userContext} />,
+        <TPPasswordlessPasswordlessLinkClicked userContext={userContext} />,
+    ];
+}
