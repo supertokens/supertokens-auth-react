@@ -1,13 +1,12 @@
-"use strict";
 let supertokens = require("supertokens-node");
 let { verifySession } = require("supertokens-node/recipe/session/framework/awsLambda");
 let middy = require("@middy/core");
 let cors = require("@middy/http-cors");
-let { getBackendConfig } = require("./config");
+let { getBackendConfig } = require("./config.mjs");
 
 supertokens.init(getBackendConfig());
 
-const handler = async (event, _) => {
+const userHandler = async (event, _) => {
     return {
         statusCode: 200,
         headers: {
@@ -21,7 +20,7 @@ const handler = async (event, _) => {
     };
 };
 
-module.exports.handler = middy(verifySession(handler))
+export const handler = middy(verifySession(userHandler))
     .use(
         cors({
             origin: getBackendConfig().appInfo.websiteDomain,

@@ -1,8 +1,8 @@
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
-import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
-import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
+import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
@@ -17,7 +17,7 @@ export function getDomain() {
     return host;
 }
 export function getAPIDomain() {
-    return "https://0ktsu4mmb6.execute-api.us-east-1.amazonaws.com";
+    return "<YOUR_API_GATEWAY_ENDPOINT>";
 }
 
 SuperTokens.init({
@@ -28,7 +28,18 @@ SuperTokens.init({
         apiBasePath: "/auth",
         apiGatewayPath: "/dev",
     },
-    recipeList: [EmailPassword.init(), Session.init()],
+    recipeList: [
+        ThirdPartyEmailPassword.init({
+            signInAndUpFeature: {
+                providers: [
+                    ThirdPartyEmailPassword.Google.init(),
+                    ThirdPartyEmailPassword.Github.init(),
+                    ThirdPartyEmailPassword.Apple.init(),
+                ],
+            },
+        }),
+        Session.init(),
+    ],
 });
 
 function App() {
@@ -39,7 +50,7 @@ function App() {
                     <div className="fill">
                         <Routes>
                             {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
-                                EmailPasswordPreBuiltUI,
+                                ThirdPartyEmailPasswordPreBuiltUI,
                             ])}
                             <Route
                                 path="/"
