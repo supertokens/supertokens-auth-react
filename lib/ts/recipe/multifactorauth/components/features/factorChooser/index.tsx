@@ -100,7 +100,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     useOnMountAPICall(fetchMFAInfo, checkMFAInfo, handleError, sessionContext.loading === false);
 
     const navigateToFactor = useCallback(
-        (factorId) => props.recipe.redirectToFactor(factorId, false, props.history),
+        (factorId) => props.recipe.redirectToFactor(factorId, false, false, props.history),
         [props.recipe]
     );
     const signOut = useCallback(async (): Promise<void> => {
