@@ -4,7 +4,7 @@ import Page from "../lib/ts/recipe/totp/components/themes/mfa";
 import React, { useMemo, useState } from "react";
 import { AuthPageConf, resetAndInitST, buildInit, ProviderId, FirstFactor, unflattenArgs } from "./utils";
 import { RoutingComponent } from "../lib/ts/components/routingComponent";
-import { passwordlessFactors } from "../lib/ts/recipe/passwordless/recipe";
+import { passwordlessFirstFactors } from "../lib/ts/recipe/passwordless/recipe";
 import { ErrorBoundary } from "./errorBoundary";
 
 export type Args = {
@@ -101,7 +101,7 @@ const meta: Meta<Args> = {
             },
         },
         "multifactorauth.firstFactors": {
-            options: [...passwordlessFactors, "emailpassword", "thirdparty"],
+            options: [...passwordlessFirstFactors, "emailpassword", "thirdparty"],
             control: {
                 type: "check",
             },
@@ -128,7 +128,7 @@ const meta: Meta<Args> = {
             },
         },
         "multitenancy.firstFactors": {
-            options: [...passwordlessFactors, "emailpassword", "thirdparty"],
+            options: [...passwordlessFirstFactors, "emailpassword", "thirdparty"],
             control: {
                 type: "check",
             },

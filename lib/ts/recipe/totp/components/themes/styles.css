@@ -45,6 +45,10 @@
     overflow-y: hidden;
 }
 
+button[data-supertokens~="showTOTPSecretBtn"] {
+    font-size: 12px;
+}
+
 [data-supertokens~="showTOTPSecretBtn"]:hover {
     text-decoration: underline;
 }

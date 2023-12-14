@@ -54,7 +54,7 @@ export default class MultiFactorAuth extends RecipeModule<
 
     static MultiFactorAuthClaim = new MultiFactorAuthClaimClass(
         () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe,
-        (context) => this.getInstanceOrThrow().getDefaultRedirectionURL(context)
+        (context) => this.getInstanceOrThrow().getRedirectUrl(context)
     );
 
     public recipeID = MultiFactorAuth.RECIPE_ID;
@@ -130,13 +130,21 @@ export default class MultiFactorAuth extends RecipeModule<
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "FACTOR_CHOOSER") {
             const chooserPath = new NormalisedURLPath(DEFAULT_FACTOR_CHOOSER_PATH);
-            return this.config.appInfo.websiteBasePath.appendPath(chooserPath).getAsStringDangerous();
+            let url = this.config.appInfo.websiteBasePath.appendPath(chooserPath).getAsStringDangerous();
+            if (context.nextFactorOptions && context.nextFactorOptions.length > 0) {
+                url += `?n=${context.nextFactorOptions.join(",")}`;
+            }
+            return url;
         } else if (context.action === "GO_TO_FACTOR") {
             const redirectInfo = this.getSecondaryFactors().find((f) => f.id === context.factorId);
             if (redirectInfo !== undefined) {
-                return this.config.appInfo.websiteBasePath
+                let url = this.config.appInfo.websiteBasePath
                     .appendPath(new NormalisedURLPath(redirectInfo.path))
                     .getAsStringDangerous();
+                if (context.forceSetup) {
+                    url += "?setup=true";
+                }
+                return url;
             }
             throw new Error("Requested redirect to unknown factor id");
         } else {
@@ -161,8 +169,8 @@ export default class MultiFactorAuth extends RecipeModule<
         return this.config.getFactorInfo(this.secondaryFactors);
     }
 
-    async redirectToFactor(factorId: string, redirectBack = false, history?: any) {
-        let url = await this.getRedirectUrl({ action: "GO_TO_FACTOR", factorId });
+    async redirectToFactor(factorId: string, forceSetup = false, redirectBack = false, history?: any) {
+        let url = await this.getRedirectUrl({ action: "GO_TO_FACTOR", forceSetup, factorId });
         if (redirectBack) {
             const redirectUrl = getCurrentNormalisedUrlPath().getAsStringDangerous();
             url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
@@ -175,8 +183,8 @@ export default class MultiFactorAuth extends RecipeModule<
         return SuperTokens.getInstanceOrThrow().redirectToUrl(url, history);
     }
 
-    async redirectToFactorChooser(redirectBack = false, history?: any) {
-        let url = await this.getRedirectUrl({ action: "FACTOR_CHOOSER" });
+    async redirectToFactorChooser(redirectBack = false, nextFactorOptions: string[] = [], history?: any) {
+        let url = await this.getRedirectUrl({ action: "FACTOR_CHOOSER", nextFactorOptions });
         if (redirectBack) {
             const redirectUrl = getCurrentNormalisedUrlPath().getAsStringDangerous();
             url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });

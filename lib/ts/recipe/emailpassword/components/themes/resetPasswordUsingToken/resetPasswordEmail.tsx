@@ -74,9 +74,7 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                         {/* empty span for spacing the back button */}
                     </span>
                 </div>
-                <div data-supertokens="headerSubtitle">
-                    <div data-supertokens="secondaryText">{t("EMAIL_PASSWORD_RESET_HEADER_SUBTITLE")}</div>
-                </div>
+                <div data-supertokens="headerSubtitle secondaryText">{t("EMAIL_PASSWORD_RESET_HEADER_SUBTITLE")}</div>
                 {props.error !== undefined && <GeneralError error={props.error} />}
                 <FormBase
                     clearError={props.clearError}

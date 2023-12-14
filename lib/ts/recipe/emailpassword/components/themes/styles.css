@@ -127,7 +127,7 @@
 
 [data-supertokens~="label"] {
     text-align: left;
-    font-weight: 600;
+    font-weight: 500;
     font-size: var(--font-size-1);
     line-height: 24px;
     color: rgb(var(--palette-textLabel));

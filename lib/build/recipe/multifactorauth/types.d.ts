@@ -48,10 +48,12 @@ export declare type NormalisedConfig = {
 export declare type GetRedirectionURLContext =
     | {
           action: "FACTOR_CHOOSER";
+          nextFactorOptions?: string[];
       }
     | {
           action: "GO_TO_FACTOR";
           factorId: string;
+          forceSetup?: boolean;
       };
 export declare type PreAndPostAPIHookAction = "GET_MFA_INFO";
 export declare type PreAPIHookContext = {

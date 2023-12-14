@@ -31,7 +31,9 @@ export class MultiFactorAuthClaimClass {
     constructor(
         getRecipeImpl: () => RecipeInterface,
         getRedirectURL: (
-            context: { action: "GO_TO_FACTOR"; factorId: string } | { action: "FACTOR_CHOOSER" },
+            context:
+                | { action: "GO_TO_FACTOR"; factorId: string; forceSetup?: boolean }
+                | { action: "FACTOR_CHOOSER"; nextFactorOptions?: string[] },
             userContext: any
         ) => Promise<string>,
         onFailureRedirection?: ValidationFailureCallback
@@ -43,18 +45,13 @@ export class MultiFactorAuthClaimClass {
         this.id = this.webJSClaim.id;
 
         const defaultOnFailureRedirection = ({ reason, userContext }: any) => {
-            if (reason.nextFactorOptions !== undefined) {
-                if (reason.nextFactorOptions.length === 1) {
-                    return getRedirectURL(
-                        { action: "GO_TO_FACTOR", factorId: reason.nextFactorOptions[0] },
-                        userContext
-                    );
+            const nextFactorOptions = reason.nextFactorOptions || reason.oneOf || reason.allOf || [reason.factorId];
+            if (nextFactorOptions !== undefined) {
+                if (nextFactorOptions.length === 1) {
+                    return getRedirectURL({ action: "GO_TO_FACTOR", factorId: nextFactorOptions[0] }, userContext);
                 } else {
-                    return getRedirectURL({ action: "FACTOR_CHOOSER" }, userContext);
+                    return getRedirectURL({ action: "FACTOR_CHOOSER", nextFactorOptions }, userContext);
                 }
-            }
-            if (reason.factorId !== undefined) {
-                return getRedirectURL({ action: "GO_TO_FACTOR", factorId: reason.factorId }, userContext);
             }
 
             // This should basically never happen, but it will show the access denied screen

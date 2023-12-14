@@ -25,14 +25,12 @@ export const SignInHeader = withOverride(
         return (
             <Fragment>
                 <div data-supertokens="headerTitle">{t("EMAIL_PASSWORD_SIGN_IN_HEADER_TITLE")}</div>
-                <div data-supertokens="headerSubtitle">
-                    <div data-supertokens="secondaryText">
-                        {t("EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_START")}
-                        <span data-supertokens="link" onClick={onClick}>
-                            {t("EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_SIGN_UP_LINK")}
-                        </span>
-                        {t("EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_END")}
-                    </div>
+                <div data-supertokens="headerSubtitle secondaryText">
+                    {t("EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_START")}
+                    <span data-supertokens="link" onClick={onClick}>
+                        {t("EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_SIGN_UP_LINK")}
+                    </span>
+                    {t("EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_END")}
                 </div>
                 <div data-supertokens="divider"></div>
             </Fragment>

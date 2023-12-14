@@ -111,17 +111,19 @@
     font-size: var(--font-size-4);
     line-height: 40px;
     letter-spacing: 0.58px;
-    font-weight: 600;
+    font-weight: 500;
     margin-bottom: 2px;
     color: rgb(var(--palette-textTitle));
 }
 
 [data-supertokens~="headerSubtitle"] {
     font-weight: 400;
+    color: rgb(var(--palette-textGray));
     margin-bottom: 21px;
 }
 
 [data-supertokens~="headerSubtitle"][data-supertokens~="secondaryText"] {
+    color: rgb(var(--palette-textGray));
     font-weight: 400;
 }
 
@@ -221,6 +223,7 @@
 }
 
 [data-supertokens~="secondaryLinkWithLeftArrow"] {
+    color: rgb(var(--palette-textGray));
     font-weight: 500;
     margin-top: 10px;
     margin-bottom: 40px;
@@ -306,6 +309,7 @@
 }
 
 [data-supertokens~="footerLinkGroupVert"] > div {
+    cursor: pointer;
     margin: 0;
 }
 

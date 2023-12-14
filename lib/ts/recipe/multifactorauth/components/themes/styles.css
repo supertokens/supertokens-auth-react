@@ -11,7 +11,7 @@
 
 [data-supertokens~="mfa"] [data-supertokens~="headerTitle"] {
     font-size: var(--font-size-3);
-    font-weight: 600;
+    font-weight: 500;
     line-height: 30px;
 }
 

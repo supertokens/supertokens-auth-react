@@ -46,8 +46,8 @@ export default class Wrapper {
         });
     }
 
-    static redirectToFactor(factorId: string, redirectBack = true, history?: any) {
-        return MultiFactorAuthRecipe.getInstanceOrThrow().redirectToFactor(factorId, redirectBack, history);
+    static redirectToFactor(factorId: string, forceSetup = false, redirectBack = true, history?: any) {
+        return MultiFactorAuthRecipe.getInstanceOrThrow().redirectToFactor(factorId, forceSetup, redirectBack, history);
     }
 
     static redirectToFactorChooser(redirectBack = true, history?: any) {

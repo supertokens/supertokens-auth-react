@@ -25,7 +25,7 @@ import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
-import { useOnMountAPICall } from "../../../../../utils";
+import { getQueryParams, useOnMountAPICall } from "../../../../../utils";
 import { SessionContext, useClaimValue } from "../../../../session";
 import Session from "../../../../session/recipe";
 import MultiFactorAuth from "../../../recipe";
@@ -45,6 +45,8 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     const mfaClaimValue = useClaimValue(MultiFactorAuthClaim);
     const userContext = useUserContext();
     const recipeComponentOverrides = props.useComponentOverrides();
+
+    const nextOpts = getQueryParams("n") ?? undefined;
 
     const redirectToAuthWithHistory = useCallback(async () => {
         await redirectToAuth({ redirectBack: false, history: props.history });
@@ -66,7 +68,8 @@ export const FactorChooser: React.FC<Prop> = (props) => {
                     ({ id }) =>
                         mfaInfo.factors.isAllowedToSetup.includes(id) || mfaInfo.factors.isAlreadySetup.includes(id)
                 )
-                .filter(({ id }) => mfaClaimValue.value!.n.length === 0 || mfaClaimValue.value!.n.includes(id));
+                .filter(({ id }) => mfaClaimValue.value!.n.length === 0 || mfaClaimValue.value!.n.includes(id))
+                .filter(({ id }) => nextOpts === undefined || nextOpts.length === 0 || nextOpts.includes(id));
 
             // If we got here when the next array is not empty, that means that the user redirected here intentionally
             // In this case we do not want to automatically redirect away but show the chooser screen.
@@ -80,7 +83,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
                 setMFAInfo(mfaInfo.factors);
             }
         },
-        [setMFAInfo]
+        [setMFAInfo, nextOpts]
     );
 
     const handleError = useCallback(
@@ -126,7 +129,8 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     const availableFactors = props.recipe
         .getSecondaryFactors()
         .filter(({ id }) => mfaInfo.isAllowedToSetup.includes(id) || mfaInfo.isAlreadySetup.includes(id))
-        .filter(({ id }) => mfaClaimValue.value?.n.length === 0 || mfaClaimValue.value?.n.includes(id));
+        .filter(({ id }) => mfaClaimValue.value?.n.length === 0 || mfaClaimValue.value?.n.includes(id))
+        .filter(({ id }) => nextOpts === undefined || nextOpts.length === 0 || nextOpts.includes(id));
 
     const childProps = {
         config: props.recipe.config,

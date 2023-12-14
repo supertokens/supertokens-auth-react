@@ -19,7 +19,12 @@ export default class Wrapper {
         factors: MFAFactorInfo;
         fetchResponse: Response;
     }>;
-    static redirectToFactor(factorId: string, redirectBack?: boolean, history?: any): Promise<void>;
+    static redirectToFactor(
+        factorId: string,
+        forceSetup?: boolean,
+        redirectBack?: boolean,
+        history?: any
+    ): Promise<void>;
     static redirectToFactorChooser(redirectBack?: boolean, history?: any): Promise<void>;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{

@@ -35,7 +35,7 @@ export default class MultiFactorAuth extends RecipeModule<
     addMFAFactors(secondaryFactors: SecondaryFactorRedirectionInfo[]): void;
     isFirstFactorEnabledOnClient(factorId: string): boolean;
     getSecondaryFactors(): SecondaryFactorRedirectionInfo[];
-    redirectToFactor(factorId: string, redirectBack?: boolean, history?: any): Promise<void>;
-    redirectToFactorChooser(redirectBack?: boolean, history?: any): Promise<void>;
+    redirectToFactor(factorId: string, forceSetup?: boolean, redirectBack?: boolean, history?: any): Promise<void>;
+    redirectToFactorChooser(redirectBack?: boolean, nextFactorOptions?: string[], history?: any): Promise<void>;
     static reset(): void;
 }
