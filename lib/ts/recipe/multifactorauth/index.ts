@@ -50,8 +50,12 @@ export default class Wrapper {
         return MultiFactorAuthRecipe.getInstanceOrThrow().redirectToFactor(factorId, forceSetup, redirectBack, history);
     }
 
-    static redirectToFactorChooser(redirectBack = true, history?: any) {
-        return MultiFactorAuthRecipe.getInstanceOrThrow().redirectToFactorChooser(redirectBack, history);
+    static redirectToFactorChooser(redirectBack = true, nextFactorOptions: string[] = [], history?: any) {
+        return MultiFactorAuthRecipe.getInstanceOrThrow().redirectToFactorChooser(
+            redirectBack,
+            nextFactorOptions,
+            history
+        );
     }
 
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;

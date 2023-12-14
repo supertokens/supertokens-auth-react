@@ -25,7 +25,7 @@ export default class Wrapper {
         redirectBack?: boolean,
         history?: any
     ): Promise<void>;
-    static redirectToFactorChooser(redirectBack?: boolean, history?: any): Promise<void>;
+    static redirectToFactorChooser(redirectBack?: boolean, nextFactorOptions?: string[], history?: any): Promise<void>;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;
