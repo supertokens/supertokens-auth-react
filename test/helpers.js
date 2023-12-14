@@ -171,10 +171,7 @@ export async function getLogoutButton(page) {
 }
 
 export async function getSignInOrSignUpSwitchLink(page) {
-    return waitForSTElement(
-        page,
-        "div > div > [data-supertokens~='headerSubtitle'] > div > [data-supertokens~='link']"
-    );
+    return waitForSTElement(page, "div > div > [data-supertokens~='headerSubtitle'] > [data-supertokens~='link']");
 }
 
 export async function getForgotPasswordLink(page) {

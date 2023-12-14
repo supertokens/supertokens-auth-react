@@ -203,7 +203,7 @@ export function useChildProps(
                 return history(-1);
             },
             onFactorChooserButtonClicked: () => {
-                return MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser(false, history);
+                return MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser(false, undefined, history);
             },
             recipeImplementation: recipeImplementation,
             config: recipe.config,

@@ -658,7 +658,7 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
             <a
                 className="goToFactorChooser"
                 onClick={() => {
-                    return MultiFactorAuth.redirectToFactorChooser(true, props.history);
+                    return MultiFactorAuth.redirectToFactorChooser(true, undefined, props.history);
                 }}>
                 MFA chooser
             </a>

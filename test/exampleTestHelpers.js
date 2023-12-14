@@ -125,16 +125,20 @@ function getTestPhoneNumber() {
 }
 
 async function getSignInOrSignUpSwitchLink(page) {
-    return waitForSTElement(
-        page,
-        "div > div > [data-supertokens~='headerSubtitle'] > div > [data-supertokens~='link']"
-    );
+    return waitForSTElement(page, "div > div > [data-supertokens~='headerSubtitle'] > [data-supertokens~='link']");
 }
 
 async function toggleSignInSignUp(page) {
     // Click on Sign Up.
     const signUpLink = await getSignInOrSignUpSwitchLink(page);
     await signUpLink.click();
+}
+
+async function chooseFactor(page, id) {
+    const ele = await waitForSTElement(page, `[data-supertokens~=factorChooserOption][data-supertokens~=${id}]`);
+    await new Promise((res) => setTimeout(res, 100));
+    await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), ele.click()]);
+    await waitForSTElement(page);
 }
 
 module.exports = {
@@ -149,4 +153,5 @@ module.exports = {
     getTestPhoneNumber,
     getSignInOrSignUpSwitchLink,
     toggleSignInSignUp,
+    chooseFactor,
 };

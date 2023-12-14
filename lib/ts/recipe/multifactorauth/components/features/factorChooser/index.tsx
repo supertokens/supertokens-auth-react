@@ -77,6 +77,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
                 return MultiFactorAuth.getInstanceOrThrow().redirectToFactor(
                     availableFactors[0].id,
                     false,
+                    false,
                     props.history
                 );
             } else {
