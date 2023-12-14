@@ -4,17 +4,16 @@ import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless, { PasswordlessComponentsOverrideProvider } from "supertokens-auth-react/recipe/passwordless";
+import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
+import { MultiFactorAuthPreBuiltUI } from "supertokens-auth-react/recipe/multifactorauth/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import * as reactRouterDom from "react-router-dom";
 import Home from "./Home";
 import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
-import PhoneVerification from "./PhoneVerification";
-import PhoneNumberVerificationFooter from "./PhoneVerification/Footer";
-import { PhoneVerifiedClaim } from "./phoneVerifiedClaim";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -77,15 +76,9 @@ SuperTokens.init({
                 },
             },
         }),
-        Session.init({
-            override: {
-                functions: (oI) => ({
-                    ...oI,
-                    getGlobalClaimValidators: ({ claimValidatorsAddedByOtherRecipes }) => {
-                        return [...claimValidatorsAddedByOtherRecipes, PhoneVerifiedClaim.validators.isTrue()];
-                    },
-                }),
-            },
+        Session.init(),
+        MultiFactorAuth.init({
+            firstFactors: ["emailpassword"],
         }),
     ],
 });
@@ -105,48 +98,34 @@ function App() {
 
     return (
         <SuperTokensWrapper key={key}>
-            <PasswordlessComponentsOverrideProvider
-                components={{
-                    PasswordlessUserInputCodeFormFooter_Override: ({ ...props }) => {
-                        return <PhoneNumberVerificationFooter recipeImplementation={props.recipeImplementation} />;
-                    },
-                }}>
-                <div className="App">
-                    <div className="fill">
-                        <Routes>
-                            <Route
-                                path="/auth/verify-phone"
-                                element={
-                                    <SessionAuth>
-                                        <PhoneVerification />
-                                    </SessionAuth>
-                                }
-                            />
-                            {/* This shows the login UI on "/auth" route */}
-                            {getSuperTokensRoutesForReactRouterDom(reactRouterDom, [
-                                PasswordlessPreBuiltUI,
-                                EmailPasswordPreBuiltUI,
-                            ])}
-                            <Route
-                                path="/"
-                                element={
-                                    /* This protects the "/" route so that it shows
-                                <Home /> only if the user is logged in.
-                                Else it redirects the user to "/auth" */
-                                    <SessionAuth
-                                        onSessionExpired={() => {
-                                            updateShowSessionExpiredPopup(true);
-                                        }}>
-                                        <Home />
-                                        {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </SessionAuth>
-                                }
-                            />
-                        </Routes>
-                    </div>
-                    <Footer />
+            <div className="App">
+                <div className="fill">
+                    <Routes>
+                        {/* This shows the login UI on "/auth" route */}
+                        {getSuperTokensRoutesForReactRouterDom(reactRouterDom, [
+                            PasswordlessPreBuiltUI,
+                            EmailPasswordPreBuiltUI,
+                            MultiFactorAuthPreBuiltUI,
+                        ])}
+                        <Route
+                            path="/"
+                            element={
+                                /* This protects the "/" route so that it shows
+                            <Home /> only if the user is logged in.
+                            Else it redirects the user to "/auth" */
+                                <SessionAuth
+                                    onSessionExpired={() => {
+                                        updateShowSessionExpiredPopup(true);
+                                    }}>
+                                    <Home />
+                                    {showSessionExpiredPopup && <SessionExpiredPopup />}
+                                </SessionAuth>
+                            }
+                        />
+                    </Routes>
                 </div>
-            </PasswordlessComponentsOverrideProvider>
+                <Footer />
+            </div>
         </SuperTokensWrapper>
     );
 }

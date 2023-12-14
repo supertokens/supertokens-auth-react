@@ -4,7 +4,6 @@ import SuccessView from "./SuccessView";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "supertokens-auth-react/recipe/emailpassword";
-import { PhoneVerifiedClaim } from "../phoneVerifiedClaim";
 
 export default function Home() {
     const session = useSessionContext();
