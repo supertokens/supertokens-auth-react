@@ -27,4 +27,4 @@ const OTPLoadingScreen: React.FC = () => {
     );
 };
 
-export const LoadingScreen = withOverride("PasswordlessMFAOTPLoadingScreen_Override", OTPLoadingScreen);
+export const LoadingScreen = withOverride("PasswordlessMFAOTPLoadingScreen", OTPLoadingScreen);

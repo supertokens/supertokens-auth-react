@@ -63,6 +63,7 @@ import { MFAFooter } from "../../lib/ts/recipe/passwordless/components/themes/mf
 import { MFAHeader } from "../../lib/ts/recipe/passwordless/components/themes/mfa/mfaHeader";
 import { MFAOTPFooter } from "../../lib/ts/recipe/passwordless/components/themes/mfa/mfaOTPFooter";
 import { MFAOTPHeader } from "../../lib/ts/recipe/passwordless/components/themes/mfa/mfaOTPHeader";
+import { LoadingScreen as MFAOTPLoadingScreen } from "../../lib/ts/recipe/passwordless/components/themes/mfa/loadingScreen";
 import { BlockedScreen } from "../../lib/ts/recipe/totp/components/themes/mfa/blockedScreen";
 import { CodeForm } from "../../lib/ts/recipe/totp/components/themes/mfa/totpCodeForm";
 import { CodeVerificationFooter } from "../../lib/ts/recipe/totp/components/themes/mfa/totpCodeVerificationFooter";
@@ -127,6 +128,7 @@ describe("Theme component overrides", () => {
         PasswordlessMFAHeader_Override: MFAHeader,
         PasswordlessMFAOTPFooter_Override: MFAOTPFooter,
         PasswordlessMFAOTPHeader_Override: MFAOTPHeader,
+        PasswordlessMFAOTPLoadingScreen_Override: MFAOTPLoadingScreen,
         ThirdPartyPasswordlessHeader_Override: ThirdPartyPasswordlessHeader,
         TOTPBlockedScreen_Override: BlockedScreen,
         TOTPCodeForm_Override: CodeForm,
