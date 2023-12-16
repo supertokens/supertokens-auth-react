@@ -120,8 +120,8 @@ function getTestEmail() {
     return `john.doe+${Date.now()}@supertokens.io`;
 }
 
-function getTestPhoneNumber() {
-    return `+3670${Date.now().toString().substring(6)}`;
+function getTestPhoneNumber(index = 0) {
+    return `+3670${Date.now().toString().substring(7)}${index}`;
 }
 
 async function getSignInOrSignUpSwitchLink(page) {

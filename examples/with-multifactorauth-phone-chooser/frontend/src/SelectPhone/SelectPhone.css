@@ -1,0 +1,70 @@
+@font-face {
+    font-family: Menlo;
+    src: url("../assets/fonts/MenloRegular.ttf");
+}
+
+.app-container {
+    font-family: Rubik, sans-serif;
+}
+
+.app-container * {
+    box-sizing: border-box;
+}
+
+.bold-400 {
+    font-variation-settings: "wght" 400;
+}
+
+.bold-500 {
+    font-variation-settings: "wght" 500;
+}
+
+.bold-600 {
+    font-variation-settings: "wght" 600;
+}
+
+#home-container {
+    align-items: center;
+    min-height: 100vh;
+    background: url("../assets/images/background.png");
+    background-size: cover;
+}
+
+.app-container .main-container {
+    box-shadow: 0px 0px 60px 0px rgba(0, 0, 0, 0.16);
+    width: min(635px, calc(100% - 24px));
+    border-radius: 16px;
+    margin-block-end: 159px;
+    background-color: #ffffff;
+}
+
+@media screen and (max-width: 480px) {
+    #home-container {
+        justify-content: start;
+        padding-block-start: 25px;
+    }
+
+    .app-container .main-container {
+        margin-block-end: 90px;
+    }
+}
+
+.phoneNumberList {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 0;
+}
+
+.phoneNumberCard {
+    list-style: none;
+    padding: 0.5em;
+    border: solid 1px #808080;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+}
+
+.phoneNumberCard::after {
+    content: " \2794";
+}

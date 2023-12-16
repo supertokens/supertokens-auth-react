@@ -35,8 +35,6 @@ const EmailVerification = require("../backend/node_modules/supertokens-node/reci
 const EmailPassword = require("../backend/node_modules/supertokens-node/recipe/emailpassword");
 const Passwordless = require("../backend/node_modules/supertokens-node/recipe/passwordless");
 
-const OTPAuth = require("otpauth");
-
 // Run the tests in a DOM environment.
 require("jsdom-global")();
 
@@ -68,7 +66,8 @@ describe("SuperTokens Example Basic tests", function () {
     let browser;
     let page;
     const email = getTestEmail();
-    const phoneNumber = getTestPhoneNumber();
+    const phoneNumber = getTestPhoneNumber(0);
+    const phoneNumber2 = getTestPhoneNumber(1);
     const testPW = "Str0ngP@ssw0rd";
 
     before(async function () {
@@ -113,15 +112,18 @@ describe("SuperTokens Example Basic tests", function () {
 
             await submitForm(page);
 
-            const origTOTPSecret = await getTOTPSecret(page);
-            await completeTOTP(page, origTOTPSecret);
+            await setInputValues(page, [{ name: "phoneNumber_text", value: phoneNumber }]);
+            await submitForm(page);
+            await completeOTP(page);
 
-            const addRecoveryCode = await page.waitForSelector(".createRecoveryCode");
-            await addRecoveryCode.click();
+            const addPhoneBtn = await page.waitForSelector(".call-api div:nth-of-type(2)");
+            await addPhoneBtn.click();
 
-            const recoveryCodeDiv = await page.waitForSelector(".recovery-code", { visible: true });
-            const recoveryCode = await recoveryCodeDiv.evaluate((e) => e.textContent);
+            await setInputValues(page, [{ name: "phoneNumber_text", value: phoneNumber2 }]);
+            await submitForm(page);
+            await completeOTP(page);
 
+            await page.waitForSelector(".sessionButton");
             // Log out
             await page.click("div.bottom-links-container > div:nth-child(3) > div");
             await setInputValues(page, [
@@ -130,51 +132,57 @@ describe("SuperTokens Example Basic tests", function () {
             ]);
             await submitForm(page);
 
-            const recoveryLink = await waitForSTElement(page, ["[data-supertokens~=lostDevice]"]);
-            await recoveryLink.click();
+            await page.waitForSelector(".phoneNumberList");
 
-            const recoveryCodeInput = await page.waitForSelector("input[name=recoveryCode]");
-            await recoveryCodeInput.type(recoveryCode);
-            await page.click(".recoveryForm .sessionButton");
+            const phoneNumbers = await page.evaluate(() =>
+                Array.from(document.querySelectorAll(".phoneNumberCard"), (i) => i.textContent)
+            );
 
-            const newTOTPSecret = await getTOTPSecret(page);
-            await completeTOTP(page, newTOTPSecret);
-            await page.waitForSelector(".createRecoveryCode");
+            assert.deepStrictEqual(new Set(phoneNumbers), new Set([phoneNumber, phoneNumber2]));
 
-            await page.click("div.bottom-links-container > div:nth-child(3) > div");
-            await setInputValues(page, [
-                { name: "email", value: email },
-                { name: "password", value: testPW },
-            ]);
-            await submitForm(page);
-            await completeTOTP(page, newTOTPSecret, 1);
-            await page.waitForSelector(".createRecoveryCode");
+            {
+                await page.click(".phoneNumberCard:nth-of-type(1)");
+                const phoneNumberOnScreen = await waitForSTElement(
+                    page,
+                    "[data-supertokens~=pwless-mfa] [data-supertokens~=headerSubtitle] strong"
+                );
+                assert.strictEqual(await phoneNumberOnScreen.evaluate((e) => e.textContent), phoneNumbers[0]);
+            }
 
-            await page.click("div.bottom-links-container > div:nth-child(3) > div");
-            await setInputValues(page, [
-                { name: "email", value: email },
-                { name: "password", value: testPW },
-            ]);
-            await submitForm(page);
-            await completeTOTP(page, origTOTPSecret, 1);
-            await page.waitForSelector(".createRecoveryCode");
+            const changePhoneBtn = await waitForSTElement(page, "[data-supertokens~=changePhoneNumber]");
+            await changePhoneBtn.click();
+            await page.waitForSelector(".phoneNumberList");
+
+            {
+                await page.click(".phoneNumberCard:nth-of-type(2)");
+                const phoneNumberOnScreen = await waitForSTElement(
+                    page,
+                    "[data-supertokens~=pwless-mfa] [data-supertokens~=headerSubtitle] strong"
+                );
+                assert.strictEqual(await phoneNumberOnScreen.evaluate((e) => e.textContent), phoneNumbers[1]);
+            }
+
+            await completeOTP(page);
+            await page.waitForSelector(".sessionButton");
         });
     });
 });
 
-async function getTOTPSecret(page) {
-    const showSecret = await waitForSTElement(page, "[data-supertokens~=showTOTPSecretBtn]");
-    await showSecret.click();
+async function completeOTP(page) {
+    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+    await new Promise((res) => setTimeout(res, 500));
 
-    const secretDiv = await waitForSTElement(page, "[data-supertokens~=totpSecret]");
-    const secret = await secretDiv.evaluate((e) => e.textContent);
-    return secret;
-}
+    const loginAttemptInfo = JSON.parse(
+        await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+    );
 
-async function completeTOTP(page, secret, offset = 0) {
-    const totp = new OTPAuth.TOTP({ secret });
-    const currCode = totp.generate({ timestamp: Date.now() + offset * 30000 });
+    const resend = await Passwordless.createNewCodeForDevice({
+        deviceId: loginAttemptInfo.deviceId,
+        tenantId: loginAttemptInfo.tenantId ?? "public",
+    });
 
-    await setInputValues(page, [{ name: "totp", value: currCode }]);
+    assert.strictEqual(resend.status, "OK");
+
+    await setInputValues(page, [{ name: "userInputCode", value: resend.userInputCode }]);
     await submitForm(page);
 }
