@@ -80,7 +80,18 @@ export function getRedirectToPathFromURL(): string | undefined {
         try {
             const normalisedURLPath = new NormalisedURLPath(param).getAsStringDangerous();
             const pathQueryParams = param.split("?")[1] !== undefined ? `?${param.split("?")[1]}` : "";
-            return normalisedURLPath + pathQueryParams;
+            const pathWithQueryParams = normalisedURLPath + pathQueryParams;
+
+            // Ensure a leading "/" if `normalisedUrlPath` is empty but `pathWithQueryParams` is not to ensure proper redirection.
+            // Example: "?test=1" will not redirect the user to `/?test=1` if we don't add a leading "/".
+            if (
+                normalisedURLPath.length === 0 &&
+                pathWithQueryParams.length > 0 &&
+                !pathWithQueryParams.startsWith("/")
+            ) {
+                return "/" + pathWithQueryParams;
+            }
+            return pathWithQueryParams;
         } catch {
             return undefined;
         }
@@ -187,6 +198,11 @@ export async function validateForm(
  */
 export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
     return new NormalisedURLPath(WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getPathName());
+}
+
+export function getCurrentNormalisedUrlPathWithQueryParams(): string {
+    const normalisedUrlPath = getCurrentNormalisedUrlPath().getAsStringDangerous();
+    return normalisedUrlPath + WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getSearch();
 }
 
 export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<string, string>): string {

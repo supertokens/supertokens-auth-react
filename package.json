@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.36.0",
+    "version": "0.36.1",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -105,6 +105,7 @@
         "build": "rm -rf lib/build && npx rollup -c",
         "watch": "npx rollup -cw",
         "watch-mac": "chokidar lib/ts/* -c 'npx rollup -c'",
+        "watch-mac-2": "chokidar lib/ts/* -c 'npx rollup -c && cp -r lib recipe ui index.d.ts index.js package.json rollup.config.mjs webJsInterfaceSupported.json ../../supertokens-demo/frontend/node_modules/supertokens-auth-react/ && rm -rf ../../supertokens-demo/frontend/node_modules/.cache'",
         "pretty": "npx pretty-quick .",
         "build-pretty": "npm run build && npm run pretty && npm run pretty",
         "lint": "node other/checkTranslationKeys.js && cd lib && eslint ./ts --ext .ts,.tsx",

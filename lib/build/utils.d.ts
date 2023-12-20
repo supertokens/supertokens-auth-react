@@ -22,6 +22,7 @@ export declare function validateForm(
     configFormFields: NormalisedFormField[]
 ): Promise<FormFieldError[]>;
 export declare function getCurrentNormalisedUrlPath(): NormalisedURLPath;
+export declare function getCurrentNormalisedUrlPathWithQueryParams(): string;
 export declare function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<string, string>): string;
 export declare function appendTrailingSlashToURL(stringUrl: string): string;
 export declare function matchRecipeIdUsingQueryParams(recipeId: string): () => boolean;
