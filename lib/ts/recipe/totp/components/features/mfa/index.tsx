@@ -40,7 +40,6 @@ import type {
     TOTPMFAChildProps,
     TOTPMFAState,
 } from "../../../types";
-import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/totp";
 
 export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction>] => {
@@ -131,7 +130,7 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
         [dispatch]
     );
     const onLoad = React.useCallback(
-        async (mfaInfo: { factors: MFAFactorInfo; email?: string; phoneNumber?: string }) => {
+        async (mfaInfo: Awaited<ReturnType<typeof fetchMFAInfo>>) => {
             let error: string | undefined = undefined;
             const errorQueryParam = getQueryParams("error");
             const doSetup = getQueryParams("setup");

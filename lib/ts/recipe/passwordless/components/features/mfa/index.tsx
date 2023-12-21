@@ -41,7 +41,6 @@ import type { FeatureBaseProps, Navigate } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap, MFAChildProps } from "../../../types";
 import type { MFAAction, MFAState, NormalisedConfig } from "../../../types";
-import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import type { PasswordlessFlowType } from "supertokens-web-js/recipe/thirdpartypasswordless";
 
@@ -268,7 +267,7 @@ function useOnLoad(
     );
 
     const onLoad = React.useCallback(
-        async (mfaInfo: { factors: MFAFactorInfo; email?: string; phoneNumber?: string }) => {
+        async (mfaInfo: Awaited<ReturnType<typeof fetchMFAInfo>>) => {
             let error: string | undefined = undefined;
             const errorQueryParam = getQueryParams("error");
             const doSetup = getQueryParams("setup");
@@ -290,12 +289,32 @@ function useOnLoad(
                 loginAttemptInfo = undefined;
             }
 
-            if (!loginAttemptInfo) {
-                // We can assume these are defined if we use these, since we check that the mfaInfo states that the related factor has been set up
-                const createCodeInfo =
-                    props.contactMethod === "EMAIL" ? { email: mfaInfo.email! } : { phoneNumber: mfaInfo.phoneNumber! };
+            if (!isAlreadySetup && !isAllowedToSetup) {
+                dispatch({
+                    type: "load",
+                    loginAttemptInfo: undefined,
+                    isAllowedToSetup: false,
+                    error: "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP",
+                });
+                return;
+            }
 
-                if (isAlreadySetup && doSetup !== "true") {
+            if (!loginAttemptInfo) {
+                const contactInfoList =
+                    (props.contactMethod === "EMAIL" ? mfaInfo.emails[factorId] : mfaInfo.phoneNumbers[factorId]) || [];
+
+                if (contactInfoList.length > 0 && doSetup !== "true") {
+                    // In this branch we are either:
+                    // 1. Completing an already set up factor.
+                    // 2. Setting up based on pre-existing info.
+                    // We know this is allowed, since the contactInfoList coming from the backend
+                    //   is supposed to only contain email addresses/phone numbers that we can use at this point
+                    //   and we checked that at least one of these options are valid
+                    // Devs can force us to ask for the email address using the forceSetup param when redirecting here
+                    const createCodeInfo =
+                        props.contactMethod === "EMAIL"
+                            ? { email: contactInfoList[0] }
+                            : { phoneNumber: contactInfoList[0] };
                     try {
                         // createCode also dispatches the necessary events
 
@@ -316,15 +335,18 @@ function useOnLoad(
                     } catch (err) {
                         dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
                     }
-                } else if (!mfaInfo.factors.isAllowedToSetup.includes(factorId)) {
+                } else if (!isAllowedToSetup) {
+                    // If we got here we know that this must be a setup, so we check if it's allowed
+                    // before asking for an email
                     dispatch({
                         type: "load",
                         loginAttemptInfo: undefined,
                         isAllowedToSetup: false,
                         error: "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP",
                     });
+                    return;
                 } else {
-                    // since loginAttemptInfo is undefined, this will ask the user for the email/phone
+                    // this will ask the user for the email/phone
                     dispatch({ type: "load", loginAttemptInfo, error, isAllowedToSetup: true });
                 }
             } else {
