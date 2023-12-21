@@ -15,11 +15,11 @@ export declare function useChildProps(
     navigate?: Navigate
 ): MFAChildProps;
 export declare const MFAFeature: React.FC<
-    FeatureBaseProps & {
+    FeatureBaseProps<{
         contactMethod: "PHONE" | "EMAIL";
         flowType: PasswordlessFlowType;
         recipe: Recipe;
         useComponentOverrides: () => ComponentOverrideMap;
-    }
+    }>
 >;
 export default MFAFeature;

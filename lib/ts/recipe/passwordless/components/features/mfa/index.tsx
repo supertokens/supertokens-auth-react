@@ -173,12 +173,12 @@ export function useChildProps(
 }
 
 const MFAFeatureInner: React.FC<
-    FeatureBaseProps & {
+    FeatureBaseProps<{
         contactMethod: "PHONE" | "EMAIL";
         flowType: PasswordlessFlowType;
         recipe: Recipe;
         useComponentOverrides: () => ComponentOverrideMap;
-    }
+    }>
 > = (props) => {
     const userContext = useUserContext();
 
@@ -223,12 +223,12 @@ const MFAFeatureInner: React.FC<
 };
 
 export const MFAFeature: React.FC<
-    FeatureBaseProps & {
+    FeatureBaseProps<{
         contactMethod: "PHONE" | "EMAIL";
         flowType: PasswordlessFlowType;
         recipe: Recipe;
         useComponentOverrides: () => ComponentOverrideMap;
-    }
+    }>
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
 

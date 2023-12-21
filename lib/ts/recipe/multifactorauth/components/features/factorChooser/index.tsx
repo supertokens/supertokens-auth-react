@@ -37,7 +37,7 @@ import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 import type { MFAFactorInfo } from "supertokens-web-js/lib/build/recipe/multifactorauth/types";
 
-type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any; useComponentOverrides: () => ComponentOverrideMap };
+type Prop = FeatureBaseProps<{ recipe: Recipe; userContext?: any; useComponentOverrides: () => ComponentOverrideMap }>;
 
 export const FactorChooser: React.FC<Prop> = (props) => {
     const sessionContext = useContext(SessionContext);

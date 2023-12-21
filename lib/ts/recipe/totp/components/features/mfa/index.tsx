@@ -281,10 +281,10 @@ export function useChildProps(
 }
 
 export const SignInUpFeature: React.FC<
-    FeatureBaseProps & {
+    FeatureBaseProps<{
         recipe: Recipe;
         useComponentOverrides: () => ComponentOverrideMap;
-    }
+    }>
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
     const [state, dispatch] = useFeatureReducer();

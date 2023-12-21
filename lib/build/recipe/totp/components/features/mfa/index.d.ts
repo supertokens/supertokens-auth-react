@@ -13,9 +13,9 @@ export declare function useChildProps(
     navigate?: Navigate
 ): TOTPMFAChildProps | undefined;
 export declare const SignInUpFeature: React.FC<
-    FeatureBaseProps & {
+    FeatureBaseProps<{
         recipe: Recipe;
         useComponentOverrides: () => ComponentOverrideMap;
-    }
+    }>
 >;
 export default SignInUpFeature;

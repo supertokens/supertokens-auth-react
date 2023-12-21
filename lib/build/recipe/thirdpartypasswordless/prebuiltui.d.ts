@@ -14,18 +14,18 @@ export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
         componentName: "signInUp" | "linkClickedScreen" | "signinupcallback" | "otp-phone" | "otp-email",
-        props: FeatureBaseProps & {
+        props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
             userContext?: UserContext;
-        },
+        }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
     getFeatureComponent: (
         componentName: "signInUp" | "linkClickedScreen" | "signinupcallback" | "otp-phone" | "otp-email",
-        props: FeatureBaseProps & {
+        props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
             userContext?: UserContext;
-        },
+        }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;

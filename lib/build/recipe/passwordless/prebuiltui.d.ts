@@ -13,19 +13,19 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
         componentName: "signInUp" | "linkClickedScreen" | "otp-phone" | "otp-email",
-        props: FeatureBaseProps & {
+        props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
             userContext?: UserContext;
-        },
+        }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "signInUp" | "linkClickedScreen" | "otp-phone" | "otp-email",
-        props: FeatureBaseProps & {
+        props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
             userContext?: UserContext;
-        },
+        }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static reset(): void;

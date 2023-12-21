@@ -54,7 +54,7 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "signInUp" | "linkClickedScreen" | "signinupcallback" | "otp-phone" | "otp-email",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: UserContext },
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return ThirdPartyPasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
@@ -67,7 +67,7 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     // Instance methods
     getFeatureComponent = (
         componentName: "signInUp" | "linkClickedScreen" | "signinupcallback" | "otp-phone" | "otp-email",
-        props: FeatureBaseProps & { redirectOnSessionExists?: boolean; userContext?: UserContext },
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "signInUp") {

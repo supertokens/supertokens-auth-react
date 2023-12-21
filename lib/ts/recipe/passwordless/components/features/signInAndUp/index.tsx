@@ -208,11 +208,11 @@ export function useChildProps(
 }
 
 const SignInUpFeatureInner: React.FC<
-    FeatureBaseProps & {
+    FeatureBaseProps<{
         recipe: Recipe;
         useComponentOverrides: () => ComponentOverrideMap;
         userContext?: UserContext;
-    }
+    }>
 > = (props) => {
     let userContext = useUserContext();
     if (props.userContext !== undefined) {

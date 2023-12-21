@@ -52,7 +52,7 @@ export class SessionPreBuiltUI extends RecipeRouter {
     };
     getFeatureComponent = (
         componentName: "accessDenied",
-        props: FeatureBaseProps & { useShadowDom?: boolean; error?: string; userContext?: UserContext },
+        props: FeatureBaseProps<{ useShadowDom?: boolean; error?: string; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "accessDenied") {
