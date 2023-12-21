@@ -281,14 +281,9 @@ function useOnLoad(
                 }
             );
 
-            const isAlreadySetup =
-                props.contactMethod === "EMAIL"
-                    ? mfaInfo.factors.isAlreadySetup.includes("otp-email")
-                    : mfaInfo.factors.isAlreadySetup.includes("otp-phone");
-            const isAllowedToSetup =
-                props.contactMethod === "EMAIL"
-                    ? mfaInfo.factors.isAllowedToSetup.includes("otp-email")
-                    : mfaInfo.factors.isAllowedToSetup.includes("otp-phone");
+            const factorId = props.contactMethod === "EMAIL" ? "otp-email" : "otp-phone";
+            const isAlreadySetup = mfaInfo.factors.isAlreadySetup.includes(factorId);
+            const isAllowedToSetup = mfaInfo.factors.isAllowedToSetup.includes(factorId);
 
             if (loginAttemptInfo && props.contactMethod !== loginAttemptInfo.contactMethod) {
                 await recipeImplementation?.clearLoginAttemptInfo({ userContext });
@@ -296,10 +291,9 @@ function useOnLoad(
             }
 
             if (!loginAttemptInfo) {
-                // We can assume these are defined if we use these, we check that the mfaInfo states that the related factor has been set up
+                // We can assume these are defined if we use these, since we check that the mfaInfo states that the related factor has been set up
                 const createCodeInfo =
                     props.contactMethod === "EMAIL" ? { email: mfaInfo.email! } : { phoneNumber: mfaInfo.phoneNumber! };
-                const factorId = props.contactMethod === "EMAIL" ? "otp-email" : "otp-phone";
 
                 if (isAlreadySetup && doSetup !== "true") {
                     try {
