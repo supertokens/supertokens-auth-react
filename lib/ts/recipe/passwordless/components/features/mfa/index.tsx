@@ -53,7 +53,8 @@ export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
                         loaded: true,
                         error: action.error,
                         loginAttemptInfo: action.loginAttemptInfo,
-                        isSetupAllowed: action.isAllowedToSetup,
+                        canChangeEmail: action.canChangeEmail,
+                        showAccessDenied: action.showAccessDenied,
                     };
                 case "resendCode":
                     if (!oldState.loginAttemptInfo) {
@@ -78,6 +79,7 @@ export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
                         ...oldState,
                         loaded: true,
                         error: action.error,
+                        showAccessDenied: action.showAccessDenied,
                     };
                 case "startVerify":
                     return {
@@ -91,10 +93,11 @@ export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
             }
         },
         {
+            showAccessDenied: false,
             error: undefined,
             loaded: false,
             loginAttemptInfo: undefined,
-            isSetupAllowed: false,
+            canChangeEmail: false,
         },
         (initArg) => {
             let error: string | undefined = undefined;
@@ -262,7 +265,7 @@ function useOnLoad(
         [userContext]
     );
     const handleLoadError = React.useCallback(
-        () => dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" }),
+        () => dispatch({ type: "setError", showAccessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR" }),
         [dispatch]
     );
 
@@ -293,16 +296,17 @@ function useOnLoad(
                 dispatch({
                     type: "load",
                     loginAttemptInfo: undefined,
-                    isAllowedToSetup: false,
+                    canChangeEmail: false,
+                    showAccessDenied: true,
                     error: "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP",
                 });
                 return;
             }
 
-            if (!loginAttemptInfo) {
-                const contactInfoList =
-                    (props.contactMethod === "EMAIL" ? mfaInfo.emails[factorId] : mfaInfo.phoneNumbers[factorId]) || [];
+            const contactInfoList =
+                (props.contactMethod === "EMAIL" ? mfaInfo.emails[factorId] : mfaInfo.phoneNumbers[factorId]) || [];
 
+            if (!loginAttemptInfo) {
                 if (contactInfoList.length > 0 && doSetup !== "true") {
                     // In this branch we are either:
                     // 1. Completing an already set up factor.
@@ -326,14 +330,14 @@ function useOnLoad(
                                 userContext,
                             });
                         } catch (err) {
-                            dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
+                            dispatch({ type: "setError", showAccessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR" });
                             return;
                         }
                         if (createResp?.status !== "OK") {
-                            dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
+                            dispatch({ type: "setError", showAccessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR" });
                         }
                     } catch (err) {
-                        dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
+                        dispatch({ type: "setError", showAccessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR" });
                     }
                 } else if (!isAllowedToSetup) {
                     // If we got here we know that this must be a setup, so we check if it's allowed
@@ -341,17 +345,24 @@ function useOnLoad(
                     dispatch({
                         type: "load",
                         loginAttemptInfo: undefined,
-                        isAllowedToSetup: false,
+                        canChangeEmail: false,
+                        showAccessDenied: true,
                         error: "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP",
                     });
                     return;
                 } else {
                     // this will ask the user for the email/phone
-                    dispatch({ type: "load", loginAttemptInfo, error, isAllowedToSetup: true });
+                    dispatch({ type: "load", showAccessDenied: false, loginAttemptInfo, error, canChangeEmail: true });
                 }
             } else {
-                // No need to check if the component is unmounting, since this has no effect then.
-                dispatch({ type: "load", loginAttemptInfo, error, isAllowedToSetup });
+                // In this branch we already have a valid login attempt so we show the OTP screen
+                dispatch({
+                    type: "load",
+                    showAccessDenied: false,
+                    loginAttemptInfo,
+                    error,
+                    canChangeEmail: contactInfoList.length > 0 && doSetup !== "true",
+                });
             }
         },
         [dispatch, recipeImplementation, props.contactMethod, userContext]

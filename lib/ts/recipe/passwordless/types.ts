@@ -199,9 +199,10 @@ export type MFAProps = {
     onSuccess?: () => void;
     dispatch: Dispatch<MFAAction>;
     featureState: {
-        isSetupAllowed: boolean;
+        canChangeEmail: boolean;
         loginAttemptInfo?: LoginAttemptInfo;
         loaded: boolean;
+        showAccessDenied: boolean;
         error: string | undefined;
     };
     userContext?: any;
@@ -322,7 +323,8 @@ export type MFAAction =
     | {
           type: "load";
           loginAttemptInfo: LoginAttemptInfo | undefined;
-          isAllowedToSetup: boolean;
+          canChangeEmail: boolean;
+          showAccessDenied: boolean;
           error: string | undefined;
       }
     | {
@@ -339,14 +341,16 @@ export type MFAAction =
       }
     | {
           type: "setError";
+          showAccessDenied: boolean;
           error: string | undefined;
       };
 
 export type MFAState = {
+    showAccessDenied: boolean;
     error: string | undefined;
     loaded: boolean;
     loginAttemptInfo: LoginAttemptInfo | undefined;
-    isSetupAllowed: boolean;
+    canChangeEmail: boolean;
 };
 
 export type SignInUpChildProps = Omit<SignInUpProps, "featureState" | "dispatch">;
@@ -374,7 +378,7 @@ export type UserInputCodeFormHeaderProps = {
 };
 
 export type MFAFooterProps = {
-    isSetupAllowed: boolean;
+    canChangeEmail: boolean;
     onSignOutClicked: () => void;
     onFactorChooserButtonClicked: () => void;
     recipeImplementation: RecipeImplementation;
@@ -382,7 +386,7 @@ export type MFAFooterProps = {
 };
 
 export type MFAOTPFooterProps = {
-    isSetupAllowed: boolean;
+    canChangeEmail: boolean;
     onSignOutClicked: () => void;
     onFactorChooserButtonClicked: () => void;
     loginAttemptInfo: LoginAttemptInfo;
@@ -398,7 +402,7 @@ export type MFAHeaderProps = {
 };
 
 export type MFAOTPHeaderProps = {
-    isSetupAllowed: boolean;
+    canChangeEmail: boolean;
     onBackButtonClicked: () => void;
     loginAttemptInfo: LoginAttemptInfo;
     recipeImplementation: RecipeImplementation;

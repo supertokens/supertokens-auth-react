@@ -51,8 +51,8 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
     const commonProps = {
         recipeImplementation: props.recipeImplementation,
         config: props.config,
-        clearError: () => props.dispatch({ type: "setError", error: undefined }),
-        onError: (error: string) => props.dispatch({ type: "setError", error }),
+        clearError: () => props.dispatch({ type: "setError", showAccessDenied: false, error: undefined }),
+        onError: (error: string) => props.dispatch({ type: "setError", showAccessDenied: false, error }),
         error: featureState.error,
     };
 
@@ -71,7 +71,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
                             <MFAOTPHeader
                                 {...commonProps}
                                 loginAttemptInfo={featureState.loginAttemptInfo!}
-                                isSetupAllowed={featureState.isSetupAllowed}
+                                canChangeEmail={featureState.canChangeEmail}
                                 onBackButtonClicked={onBackButtonClicked}
                             />
                         ) : (
@@ -90,7 +90,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
                                         {...commonProps}
                                         onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
                                         onSignOutClicked={props.onSignOutClicked}
-                                        isSetupAllowed={featureState.isSetupAllowed}
+                                        canChangeEmail={featureState.canChangeEmail}
                                     />
                                 }
                             />
@@ -102,7 +102,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
                                         {...commonProps}
                                         onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
                                         onSignOutClicked={props.onSignOutClicked}
-                                        isSetupAllowed={featureState.isSetupAllowed}
+                                        canChangeEmail={featureState.canChangeEmail}
                                     />
                                 }
                             />
@@ -116,7 +116,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
                                         {...commonProps}
                                         onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
                                         onSignOutClicked={props.onSignOutClicked}
-                                        isSetupAllowed={featureState.isSetupAllowed}
+                                        canChangeEmail={featureState.canChangeEmail}
                                         loginAttemptInfo={featureState.loginAttemptInfo!}
                                     />
                                 }
@@ -160,10 +160,7 @@ function MFAThemeWrapper(props: MFAProps): JSX.Element {
 export default MFAThemeWrapper;
 
 export function getActiveScreen(props: Pick<MFAProps, "featureState" | "contactMethod">) {
-    if (
-        props.featureState.error === "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP" ||
-        (props.featureState.isSetupAllowed === false && props.featureState.loginAttemptInfo === undefined)
-    ) {
+    if (props.featureState.showAccessDenied) {
         return MFAScreens.AccessDenied;
     } else if (props.featureState.loginAttemptInfo) {
         return MFAScreens.UserInputCodeForm;
