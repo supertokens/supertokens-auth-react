@@ -55,7 +55,6 @@ export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
                         error: action.error,
                         loginAttemptInfo: action.loginAttemptInfo,
                         isSetupAllowed: action.isAllowedToSetup,
-                        successInAnotherTab: false,
                     };
                 case "resendCode":
                     if (!oldState.loginAttemptInfo) {
@@ -87,12 +86,6 @@ export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
                         loaded: true,
                         loginAttemptInfo: action.loginAttemptInfo,
                         error: undefined,
-                        successInAnotherTab: false,
-                    };
-                case "successInAnotherTab":
-                    return {
-                        ...oldState,
-                        successInAnotherTab: true,
                     };
                 default:
                     return oldState;
@@ -103,7 +96,6 @@ export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
             loaded: false,
             loginAttemptInfo: undefined,
             isSetupAllowed: false,
-            successInAnotherTab: false,
         },
         (initArg) => {
             let error: string | undefined = undefined;

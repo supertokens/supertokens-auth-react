@@ -18,7 +18,6 @@ const defaultState = {
     isSetupAllowed: false,
     loginAttemptInfo: undefined,
     loaded: true,
-    successInAnotherTab: false,
     error: undefined,
 };
 
@@ -325,23 +324,6 @@ export const VerificationExpiredOTP: Story = {
             loaded: true,
             loginAttemptInfo: exampleLoginAttemptInfo,
             error: "GENERAL_ERROR_OTP_EXPIRED",
-        },
-    },
-};
-
-export const SuccessInAnotherTab: Story = {
-    parameters: {
-        design: {
-            type: "figma",
-            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A840&mode=dev",
-        },
-    },
-    args: {
-        featureState: {
-            ...defaultState,
-            loaded: true,
-            loginAttemptInfo: exampleLoginAttemptInfo,
-            successInAnotherTab: true,
         },
     },
 };

@@ -202,7 +202,6 @@ export type MFAProps = {
         isSetupAllowed: boolean;
         loginAttemptInfo?: LoginAttemptInfo;
         loaded: boolean;
-        successInAnotherTab: boolean;
         error: string | undefined;
     };
     userContext?: any;
@@ -341,16 +340,13 @@ export type MFAAction =
     | {
           type: "setError";
           error: string | undefined;
-      }
-    | {
-          type: "successInAnotherTab";
       };
+
 export type MFAState = {
     error: string | undefined;
     loaded: boolean;
     loginAttemptInfo: LoginAttemptInfo | undefined;
     isSetupAllowed: boolean;
-    successInAnotherTab: boolean;
 };
 
 export type SignInUpChildProps = Omit<SignInUpProps, "featureState" | "dispatch">;
