@@ -20,12 +20,11 @@ import BackButton from "../../../../emailpassword/components/library/backButton"
 import { MultiFactorAuthClaim } from "../../../../multifactorauth";
 import { useClaimValue } from "../../../../session";
 
+import type { MFAHeaderProps } from "../../../types";
+
 export const MFAHeader = withOverride(
     "PasswordlessMFAHeader",
-    function PasswordlessMFAHeader(props: {
-        contactMethod: "EMAIL" | "PHONE";
-        onBackButtonClicked: () => void;
-    }): JSX.Element {
+    function PasswordlessMFAHeader(props: MFAHeaderProps): JSX.Element {
         const t = useTranslation();
         const claim = useClaimValue(MultiFactorAuthClaim);
 

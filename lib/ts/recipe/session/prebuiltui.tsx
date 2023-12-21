@@ -9,7 +9,6 @@ import Session from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
-import type { ReactElement } from "react";
 
 export class SessionPreBuiltUI extends RecipeRouter {
     static instance?: SessionPreBuiltUI;
@@ -82,7 +81,7 @@ export class SessionPreBuiltUI extends RecipeRouter {
 
     static AccessDeniedScreen = (
         prop: FeatureBaseProps<{ useShadowDom?: boolean; error?: string; userContext?: UserContext }> = {}
-    ): ReactElement => this.getFeatureComponent("accessDenied", prop);
+    ): React.ReactElement => this.getFeatureComponent("accessDenied", prop);
 
     static AccessDeniedScreenTheme = AccessDeniedScreenTheme;
 }

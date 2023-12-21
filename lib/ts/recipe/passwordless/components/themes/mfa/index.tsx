@@ -76,6 +76,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
                             />
                         ) : (
                             <MFAHeader
+                                {...commonProps}
                                 onBackButtonClicked={onBackButtonClicked}
                                 contactMethod={activeScreen === MFAScreens.EmailForm ? "EMAIL" : "PHONE"}
                             />

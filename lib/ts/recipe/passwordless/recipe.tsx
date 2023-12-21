@@ -43,15 +43,15 @@ import type RecipeModule from "../recipeModule";
 
 export const otpPhoneFactor = {
     id: "otp-phone",
-    name: "SMS based OTP",
-    description: "Get an OTP code on your phone to complete the authentication request",
+    name: "PWLESS_MFA_OTP_PHONE_NAME",
+    description: "PWLESS_MFA_OTP_PHONE_DESCRIPTION",
     path: "/mfa/otp-phone",
     logo: OTPSMSIcon,
 };
 export const otpEmailFactor = {
     id: "otp-email",
-    name: "Email based OTP",
-    description: "Get an OTP code on your email address to complete the authentication request",
+    name: "PWLESS_MFA_OTP_EMAIL_NAME",
+    description: "PWLESS_MFA_OTP_EMAIL_DESCRIPTION",
     path: "/mfa/otp-email",
     logo: OTPEmailIcon,
 };

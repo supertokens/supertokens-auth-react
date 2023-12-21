@@ -1,5 +1,3 @@
 /// <reference types="react" />
-export declare const MFAHeader: import("react").ComponentType<{
-    contactMethod: "EMAIL" | "PHONE";
-    onBackButtonClicked: () => void;
-}>;
+import type { MFAHeaderProps } from "../../../types";
+export declare const MFAHeader: import("react").ComponentType<MFAHeaderProps>;

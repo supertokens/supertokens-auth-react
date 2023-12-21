@@ -43,8 +43,8 @@ import type { NormalisedAppInfo } from "../../types";
 
 export const totpFactor = {
     id: "totp",
-    name: "TOTP",
-    description: "Use an authenticator app to complete the authentication request",
+    name: "TOTP_MFA_NAME",
+    description: "TOTP_MFA_DESCRIPTION",
     path: "/mfa/totp",
     logo: TOTPIcon,
 };

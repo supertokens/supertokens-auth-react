@@ -308,6 +308,12 @@ export declare type MFAOTPFooterProps = {
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
 };
+export declare type MFAHeaderProps = {
+    contactMethod: "EMAIL" | "PHONE";
+    onBackButtonClicked: () => void;
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+};
 export declare type MFAOTPHeaderProps = {
     isSetupAllowed: boolean;
     onBackButtonClicked: () => void;

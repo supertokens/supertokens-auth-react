@@ -1,9 +1,9 @@
+/// <reference types="react" />
 import { RecipeRouter } from "../recipeRouter";
 import { AccessDeniedScreenTheme } from "./components/themes/accessDeniedScreenTheme";
 import Session from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
-import type { ReactElement } from "react";
 export declare class SessionPreBuiltUI extends RecipeRouter {
     readonly recipeInstance: Session;
     static instance?: SessionPreBuiltUI;
@@ -36,7 +36,7 @@ export declare class SessionPreBuiltUI extends RecipeRouter {
             error?: string;
             userContext?: UserContext;
         }>
-    ) => ReactElement;
+    ) => React.ReactElement;
     static AccessDeniedScreenTheme: import("react").FC<import("./types").AccessDeniedThemeProps>;
 }
 declare const AccessDeniedScreen: (
@@ -45,5 +45,5 @@ declare const AccessDeniedScreen: (
         error?: string;
         userContext?: UserContext;
     }>
-) => ReactElement;
+) => React.ReactElement;
 export { AccessDeniedScreen, AccessDeniedScreenTheme };

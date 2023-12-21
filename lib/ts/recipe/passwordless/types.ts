@@ -390,6 +390,13 @@ export type MFAOTPFooterProps = {
     config: NormalisedConfig;
 };
 
+export type MFAHeaderProps = {
+    contactMethod: "EMAIL" | "PHONE";
+    onBackButtonClicked: () => void;
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+};
+
 export type MFAOTPHeaderProps = {
     isSetupAllowed: boolean;
     onBackButtonClicked: () => void;
