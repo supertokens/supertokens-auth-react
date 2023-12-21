@@ -28,7 +28,7 @@ import { saveCurrentLanguage, TranslationController } from "./translation/transl
 import {
     appendQueryParamsToURL,
     appendTrailingSlashToURL,
-    getCurrentNormalisedUrlPath,
+    getCurrentNormalisedUrlPathWithQueryParams,
     getDefaultCookieScope,
     getOriginOfPage,
     isTest,
@@ -193,7 +193,7 @@ export default class SuperTokens {
             queryParams.show = options.show;
         }
         if (options.redirectBack === true) {
-            queryParams.redirectToPath = getCurrentNormalisedUrlPath().getAsStringDangerous();
+            queryParams.redirectToPath = getCurrentNormalisedUrlPathWithQueryParams();
         }
 
         let redirectUrl = await this.getRedirectUrl(

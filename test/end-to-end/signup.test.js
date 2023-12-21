@@ -42,6 +42,7 @@ import {
     setSelectDropdownValue,
     getInputField,
     isReact16,
+    getDefaultSignUpFieldValues,
 } from "../helpers";
 
 import {
@@ -126,18 +127,48 @@ describe("SuperTokens SignUp", function () {
             assert.deepStrictEqual(text, "Sign Up");
         });
 
-        it("should redirect to sign in w/ first auth recipe", async function () {
+        it("should redirect to sign in w/ first auth recipe and set redirectToPath", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}?authRecipe=both`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            await page.evaluate(() => window.SuperTokens.redirectToAuth());
+            await page.evaluate(() => window.SuperTokens.redirectToAuth({ redirectBack: true }));
             await page.waitForNavigation({ waitUntil: "networkidle0" });
             let text = await getAuthPageHeaderText(page);
-            let { pathname: pathAfterRedirectToAuth } = await page.evaluate(() => window.location);
+            let { pathname: pathAfterRedirectToAuth, href: hrefAfterRedirectToAuth } = await page.evaluate(
+                () => window.location
+            );
+
+            const url = new URL(hrefAfterRedirectToAuth);
+            const redirectToPath = url.searchParams.get("redirectToPath");
+
             assert.equal(pathAfterRedirectToAuth, "/auth/");
             // Only the EmailPassword recipe has this header on the sign in page
             assert.deepStrictEqual(text, "Sign In");
+            // Test that redirecToPath contains query params
+            assert.equal(redirectToPath, "?authRecipe=both");
+        });
+
+        it("should redirect to sign in w/ first auth recipe without setting redirectToPath", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}?authRecipe=both`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await page.evaluate(() => window.SuperTokens.redirectToAuth({ redirectBack: false }));
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            let text = await getAuthPageHeaderText(page);
+            let { pathname: pathAfterRedirectToAuth, href: hrefAfterRedirectToAuth } = await page.evaluate(
+                () => window.location
+            );
+
+            const url = new URL(hrefAfterRedirectToAuth);
+            const redirectToPath = url.searchParams.get("redirectToPath");
+
+            assert.equal(pathAfterRedirectToAuth, "/auth/");
+            // Only the EmailPassword recipe has this header on the sign in page
+            assert.deepStrictEqual(text, "Sign In");
+            // Test that redirecToPath is null
+            assert.equal(redirectToPath, null);
         });
     });
 
@@ -286,23 +317,34 @@ describe("SuperTokens SignUp", function () {
             ]);
         });
 
-        it("Successful signup with query params kept", async function () {
+        it("Successful signup with redirectToPath (w/ leading slash) keeping query params", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here%3Ffoo%3Dbar`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await toggleSignInSignUp(page);
-            await setInputValues(page, [
-                { name: "email", value: "jack.doe@supertokens.io" },
-                { name: "password", value: "Str0ngP@ssw0rd" },
-                { name: "name", value: "John Doe" },
-                { name: "age", value: "20" },
-            ]);
+            const { fieldValues } = getDefaultSignUpFieldValues({ email: "jack.doe@supertokens.io" });
+            await setInputValues(page, fieldValues);
 
             await submitForm(page);
             await page.waitForNavigation({ waitUntil: "networkidle0" });
             let { pathname, search } = await page.evaluate(() => window.location);
             assert.deepStrictEqual(pathname + search, "/redirect-here?foo=bar");
+        });
+
+        it("Successful signup with redirectToPath (w/ leading slash) keeping query params", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%3Ffoo%3Dbar`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await toggleSignInSignUp(page);
+            const { fieldValues } = getDefaultSignUpFieldValues({ email: "jack.doe2@supertokens.io" });
+            await setInputValues(page, fieldValues);
+
+            await submitForm(page);
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            let { pathname, search } = await page.evaluate(() => window.location);
+            assert.deepStrictEqual(pathname + search, "/?foo=bar");
         });
 
         it("should show error message on sign up with duplicate email", async function () {
