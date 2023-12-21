@@ -164,6 +164,16 @@ describe("SuperTokens SignIn w/ MFA", function () {
             await chooseFactor(page, "otp-phone");
             await completeOTP(page);
             await waitForDashboard(page);
+
+            await logout(page);
+            await tryEmailPasswordSignIn(page, email, "&redirectToPath=%2Fredirect-here");
+            await chooseFactor(page, "otp-phone");
+            await completeOTP(page);
+
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/redirect-here");
         });
 
         it("set up otp-email and sign-in", async function () {
@@ -189,6 +199,16 @@ describe("SuperTokens SignIn w/ MFA", function () {
             await waitFor(500);
             await completeOTP(page);
             await waitForDashboard(page);
+
+            await logout(page);
+            await tryPasswordlessSignInUp(page, phoneNumber, "&redirectToPath=%2Fredirect-here");
+            await waitFor(500);
+            await completeOTP(page);
+
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/redirect-here");
         });
 
         it("set up totp and sign-in", async function () {
@@ -214,6 +234,16 @@ describe("SuperTokens SignIn w/ MFA", function () {
             await chooseFactor(page, "totp");
             await completeTOTP(page, secret);
             await waitForDashboard(page);
+
+            await logout(page);
+            await tryEmailPasswordSignIn(page, email, "&redirectToPath=%2Fredirect-here");
+            await chooseFactor(page, "totp");
+            await completeTOTP(page, secret);
+
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/redirect-here");
         });
     });
 });

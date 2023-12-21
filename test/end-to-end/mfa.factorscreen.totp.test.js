@@ -47,6 +47,7 @@ import {
     chooseFactor,
     tryPasswordlessSignInUp,
     setupTOTP,
+    getTOTPSecret,
     completeTOTP,
     setupUserWithAllFactors,
     goToFactorChooser,
@@ -142,6 +143,34 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 await waitForDashboard(page);
 
                 await page.close();
+            });
+
+            it("should respect redirectToPath", async () => {
+                await setMFAInfo({
+                    requirements: [],
+                    isAlreadySetup: [factorId],
+                    isAllowedToSetup: [factorId],
+                    resp: {
+                        email,
+                        phoneNumber,
+                    },
+                });
+
+                await tryEmailPasswordSignIn(page, email);
+
+                await Promise.all([
+                    page.goto(
+                        `${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}?setup=true&redirectToPath=%2Fredirect-here`
+                    ),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                const secret = await getTOTPSecret(page);
+                await completeTOTP(page, secret);
+                await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+                const pathname = await page.evaluate(() => window.location.pathname);
+                assert.deepStrictEqual(pathname, "/redirect-here");
             });
 
             it("should show access denied if the app navigates to the setup page but the user it is not allowed to set up the factor", async () => {

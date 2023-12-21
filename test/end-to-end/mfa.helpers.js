@@ -109,16 +109,21 @@ export async function setupOTP(page, contactMethod, phoneNumber) {
 export async function setupTOTP(page) {
     await goToFactorChooser(page);
     await chooseFactor(page, "totp");
-    const showSecret = await waitForSTElement(page, "[data-supertokens~=showTOTPSecretBtn]");
-    await showSecret.click();
-
-    const secretDiv = await waitForSTElement(page, "[data-supertokens~=totpSecret]");
-    const secret = await secretDiv.evaluate((e) => e.textContent);
+    const secret = await getTOTPSecret(page);
 
     await completeTOTP(page, secret);
     await waitFor(1000);
     return secret;
 }
+export async function getTOTPSecret(page) {
+    const showSecret = await waitForSTElement(page, "[data-supertokens~=showTOTPSecretBtn]");
+    await showSecret.click();
+
+    const secretDiv = await waitForSTElement(page, "[data-supertokens~=totpSecret]");
+    const secret = await secretDiv.evaluate((e) => e.textContent);
+    return secret;
+}
+
 export async function completeTOTP(page, secret) {
     let resp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/getTOTPCode`, {
         method: "POST",
@@ -150,9 +155,9 @@ export async function tryEmailPasswordSignUp(page, email) {
     await submitForm(page);
     await new Promise((res) => setTimeout(res, 1000));
 }
-export async function tryEmailPasswordSignIn(page, email) {
+export async function tryEmailPasswordSignIn(page, email, queryParams) {
     await Promise.all([
-        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=emailpassword`),
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=emailpassword${queryParams}`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 
@@ -164,10 +169,10 @@ export async function tryEmailPasswordSignIn(page, email) {
     await submitForm(page);
     await new Promise((res) => setTimeout(res, 1000));
 }
-export async function tryPasswordlessSignInUp(page, contactInfo) {
+export async function tryPasswordlessSignInUp(page, contactInfo, queryParams) {
     await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
     await Promise.all([
-        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=passwordless`),
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=passwordless${queryParams}`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 
