@@ -21,6 +21,5 @@ export declare type PreBuiltRecipes = (
     | typeof PasswordlessPreBuiltUI
     | typeof EmailVerificationPreBuiltUI
     | typeof MultiFactorAuthPreBuiltUI
-    | typeof MultiFactorAuthPreBuiltUI
     | typeof TOTPPreBuiltUI
 )[];
