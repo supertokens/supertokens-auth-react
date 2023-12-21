@@ -8,7 +8,7 @@ import EmailPassword, {
     OnHandleEventContext as EmailPasswordOnHandleEventContext,
     PreAPIHookContext as EmailPasswordPreAPIHookContext,
 } from "../../../recipe/emailpassword";
-import Session, { SessionAuth } from "../../../recipe/session";
+import Session, { BooleanClaim, SessionAuth } from "../../../recipe/session";
 import Multitenancy, { AllowedDomainsClaim } from "../../../recipe/multitenancy";
 import ThirdParty, {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
@@ -32,10 +32,30 @@ import Passwordless from "../../../recipe/passwordless";
 import { PasswordlessFlowType } from "supertokens-web-js/recipe/passwordless/types";
 import ThirdPartyPasswordless from "../../../recipe/thirdpartypasswordless";
 import { PermissionClaim, UserRoleClaim } from "../../../recipe/userroles";
-import { ThirdPartyPreBuiltUI } from "../../../recipe/thirdparty/prebuiltui";
-import { ThirdPartyEmailPasswordPreBuiltUI } from "../../../recipe/thirdpartyemailpassword/prebuiltui";
-import { EmailPasswordPreBuiltUI } from "../../../recipe/emailpassword/prebuiltui";
+import {
+    ThirdPartyPreBuiltUI,
+    SignInAndUp as TPSignInAndUp,
+    SignInAndUpCallback as TPSignInAndUpCallback,
+} from "../../../recipe/thirdparty/prebuiltui";
+import {
+    ThirdPartyEmailPasswordPreBuiltUI,
+    SignInAndUp as TPEmailPasswordSignInAndUp,
+    ResetPasswordUsingToken as TPEmailPasswordResetPasswordUsingToken,
+} from "../../../recipe/thirdpartyemailpassword/prebuiltui";
+import {
+    EmailPasswordPreBuiltUI,
+    SignInAndUp as EmailPasswordSignInAndUp,
+    ResetPasswordUsingToken as EmailPasswordResetPasswordUsingToken,
+} from "../../../recipe/emailpassword/prebuiltui";
 import { AccessDeniedScreen } from "../../../recipe/session/prebuiltui";
+import {
+    SignInUp as PasswordlessSignInUp,
+    LinkClicked as PasswordlessLinkClicked,
+} from "../../../recipe/passwordless/prebuiltui";
+import {
+    SignInAndUp as TPPasswordlessSignInAndUp,
+    PasswordlessLinkClicked as TPPasswordlessPasswordlessLinkClicked,
+} from "../../../recipe/thirdpartypasswordless/prebuiltui";
 import EmailVerification from "../../../recipe/emailverification";
 import MultiFactorAuth from "../../../recipe/multifactorauth";
 
@@ -460,7 +480,7 @@ function getEmailPasswordConfigs() {
 
         async getRedirectionURL(context: EmailPasswordGetRedirectionURLContext) {
             if (context.action === "SUCCESS") {
-                if (context.isNewRecipeUser && context.user.loginMethods.length === 1) {
+                if (context.isNewRecipeUser) {
                     // new primary user
                 } else {
                     // only a recipe user was created
@@ -1483,3 +1503,78 @@ ThirdPartyPasswordless.init({
 ThirdPartyPasswordless.init({
     contactMethod: "EMAIL",
 });
+// Testing that 'null' is allowed to be returned from getRedirectionURL
+SuperTokens.init({
+    appInfo: {
+        appName: "",
+        apiDomain: "",
+        websiteDomain: "",
+    },
+
+    async getRedirectionURL(context, userContext) {
+        return null;
+    },
+    recipeList: [
+        EmailPassword.init({
+            async getRedirectionURL(context, userContext) {
+                if (context.action === "SUCCESS") {
+                    if (context.isNewPrimaryUser) {
+                        // New primary user
+                    } else if (context.isNewRecipeUser) {
+                        // New recipe user
+                    } else {
+                        // Existing user
+                    }
+                }
+                return null;
+            },
+        }),
+        ThirdParty.init({
+            async getRedirectionURL(context, userContext) {
+                return null;
+            },
+        }),
+        ThirdPartyEmailPassword.init({
+            async getRedirectionURL(context, userContext) {
+                return null;
+            },
+        }),
+        EmailVerification.init({
+            async getRedirectionURL(context, userContext) {
+                return null;
+            },
+        }),
+        Passwordless.init({
+            contactMethod: "EMAIL",
+            async getRedirectionURL(context, userContext) {
+                return null;
+            },
+        }),
+    ],
+});
+
+export const PhoneVerifiedClaim = new BooleanClaim({
+    id: "phone-verified",
+    refresh: async () => {
+        // This is something we have no way of refreshing, so this is a no-op
+    },
+    // @ts-expect-error - Returning null from onFailureRedirection is not supported
+    onFailureRedirection: () => null,
+});
+
+function TestIfUserContextCanBePassedToPreBuiltComponets() {
+    const userContext = {};
+    return [
+        <TPSignInAndUp userContext={userContext} />,
+        <TPSignInAndUpCallback userContext={userContext} />,
+        <TPEmailPasswordSignInAndUp userContext={userContext} />,
+        <TPEmailPasswordResetPasswordUsingToken userContext={userContext} />,
+        <EmailPasswordSignInAndUp userContext={userContext} />,
+        <EmailPasswordResetPasswordUsingToken userContext={userContext} />,
+        <AccessDeniedScreen userContext={userContext} />,
+        <PasswordlessSignInUp userContext={userContext} />,
+        <PasswordlessLinkClicked userContext={userContext} />,
+        <TPPasswordlessSignInAndUp userContext={userContext} />,
+        <TPPasswordlessPasswordlessLinkClicked userContext={userContext} />,
+    ];
+}

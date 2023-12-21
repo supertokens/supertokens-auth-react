@@ -19,7 +19,7 @@
 
 import type { Header } from "./components/themes/signInUp/header";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig } from "../../types";
+import type { Navigate, FeatureBaseConfig } from "../../types";
 import type {
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
@@ -155,7 +155,7 @@ export type OnHandleEventContext = PasswordlessOnHandleEventContext | ThirdParty
 
 export type ThirdPartyPasswordlessSignInAndUpThemeProps = {
     config: NormalisedConfig;
-    history?: any;
+    navigate?: Navigate;
     commonState: {
         error: string | undefined;
     };
@@ -173,7 +173,7 @@ export type ThirdPartyPasswordlessSignInAndUpThemeProps = {
 
 export type ThirdPartyPasswordlessSignInAndUpThemePropsWithActiveScreen = {
     config: NormalisedConfig;
-    history?: any;
+    navigate?: Navigate;
     commonState: {
         error: string | undefined;
     };

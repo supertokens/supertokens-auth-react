@@ -2,6 +2,7 @@
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { UserInput } from "./types";
+import type { UserContext } from "../../types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/emailverification";
 export default class Wrapper {
     static EmailVerificationClaim: import("./emailVerificationClaim").EmailVerificationClaimClass;
@@ -13,20 +14,20 @@ export default class Wrapper {
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static isEmailVerified(input?: { userContext?: UserContext; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         isVerified: boolean;
         fetchResponse: Response;
     }>;
-    static verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static verifyEmail(input?: { userContext?: UserContext; options?: RecipeFunctionOptions }): Promise<{
         status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
         fetchResponse: Response;
     }>;
-    static sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static sendVerificationEmail(input?: { userContext?: UserContext; options?: RecipeFunctionOptions }): Promise<{
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }>;
-    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string;
+    static getEmailVerificationTokenFromURL(input?: { userContext?: UserContext }): string;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;

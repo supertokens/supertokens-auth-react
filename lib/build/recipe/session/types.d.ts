@@ -1,7 +1,7 @@
 import type { AccessDeniedScreenTheme } from "./components/themes/accessDeniedScreenTheme";
 import type Session from "./recipe";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import type { Navigate, FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import type { NormalisedConfig } from "../recipeModule/types";
 import type OverrideableBuilder from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/session";
@@ -44,8 +44,8 @@ export declare type SessionContextType =
       };
 export declare type AccessDeniedThemeProps = {
     recipe: Session;
-    history: any;
     error?: string;
+    navigate: Navigate;
     config: NormalisedSessionConfig;
 };
 export declare type ComponentOverrideMap = {

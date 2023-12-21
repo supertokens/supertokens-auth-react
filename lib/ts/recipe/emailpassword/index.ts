@@ -22,6 +22,7 @@ import EmailPassword from "./recipe";
 import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 
+import type { UserContext } from "../../types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/emailpassword";
 import type { User } from "supertokens-web-js/types";
 
@@ -30,7 +31,7 @@ export default class Wrapper {
         return EmailPassword.init(config);
     }
 
-    static async signOut(input?: { userContext?: any }): Promise<void> {
+    static async signOut(input?: { userContext?: UserContext }): Promise<void> {
         return EmailPassword.getInstanceOrThrow().signOut({
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -42,7 +43,7 @@ export default class Wrapper {
             value: string;
         }[];
         options?: RecipeFunctionOptions;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK";
@@ -73,7 +74,7 @@ export default class Wrapper {
             value: string;
         }[];
         options?: RecipeFunctionOptions;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK" | "PASSWORD_RESET_NOT_ALLOWED";
@@ -100,7 +101,7 @@ export default class Wrapper {
             value: string;
         }[];
         options?: RecipeFunctionOptions;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK";
@@ -133,7 +134,7 @@ export default class Wrapper {
             value: string;
         }[];
         options?: RecipeFunctionOptions;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK";
@@ -164,7 +165,11 @@ export default class Wrapper {
         });
     }
 
-    static async doesEmailExist(input: { email: string; options?: RecipeFunctionOptions; userContext?: any }): Promise<{
+    static async doesEmailExist(input: {
+        email: string;
+        options?: RecipeFunctionOptions;
+        userContext?: UserContext;
+    }): Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;
@@ -175,7 +180,7 @@ export default class Wrapper {
         });
     }
 
-    static getResetPasswordTokenFromURL(input?: { userContext?: any }): string {
+    static getResetPasswordTokenFromURL(input?: { userContext?: UserContext }): string {
         return EmailPassword.getInstanceOrThrow().webJSRecipe.getResetPasswordTokenFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),

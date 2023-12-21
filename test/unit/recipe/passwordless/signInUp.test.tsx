@@ -74,7 +74,12 @@ describe("Passwordless.SingInUp", () => {
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledWith(
                 {
                     rid: "passwordless",
-                    successRedirectContext: { action: "SUCCESS", isNewRecipeUser: false, redirectToPath: undefined },
+                    successRedirectContext: {
+                        action: "SUCCESS",
+                        isNewRecipeUser: false,
+                        isNewPrimaryUser: false,
+                        redirectToPath: undefined,
+                    },
                 },
                 {},
                 undefined

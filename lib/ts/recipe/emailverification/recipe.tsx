@@ -38,7 +38,12 @@ import type {
     OnHandleEventContext,
     PreAndPostAPIHookAction,
 } from "./types";
-import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
+import type {
+    NormalisedConfigWithAppInfoAndRecipeID,
+    RecipeInitResult,
+    UserContext,
+    WebJSRecipeInterface,
+} from "../../types";
 import type { NormalisedAppInfo } from "../../types";
 
 export default class EmailVerification extends RecipeModule<
@@ -118,7 +123,7 @@ export default class EmailVerification extends RecipeModule<
         return EmailVerification.instance;
     }
 
-    async isEmailVerified(userContext: any): Promise<{
+    async isEmailVerified(userContext: UserContext): Promise<{
         status: "OK";
         isVerified: boolean;
         fetchResponse: Response;

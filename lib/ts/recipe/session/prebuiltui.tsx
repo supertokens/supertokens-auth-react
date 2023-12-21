@@ -8,8 +8,8 @@ import { AccessDeniedScreenTheme } from "./components/themes/accessDeniedScreenT
 import Session from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap, FeatureBaseProps } from "../../types";
-import type { PropsWithChildren, ReactElement } from "react";
+import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
+import type { ReactElement } from "react";
 
 export class SessionPreBuiltUI extends RecipeRouter {
     static instance?: SessionPreBuiltUI;
@@ -33,7 +33,7 @@ export class SessionPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "accessDenied",
-        props: FeatureBaseProps & { error?: string; userContext?: any },
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; error?: string; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return SessionPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
@@ -52,7 +52,7 @@ export class SessionPreBuiltUI extends RecipeRouter {
     };
     getFeatureComponent = (
         componentName: "accessDenied",
-        props: FeatureBaseProps & { useShadowDom?: boolean; error?: string; userContext?: any },
+        props: FeatureBaseProps & { useShadowDom?: boolean; error?: string; userContext?: UserContext },
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "accessDenied") {
@@ -81,7 +81,7 @@ export class SessionPreBuiltUI extends RecipeRouter {
     }
 
     static AccessDeniedScreen = (
-        prop: PropsWithChildren<{ useShadowDom?: boolean; error?: string; userContext?: any }> = {}
+        prop: FeatureBaseProps<{ useShadowDom?: boolean; error?: string; userContext?: UserContext }> = {}
     ): ReactElement => this.getFeatureComponent("accessDenied", prop);
 
     static AccessDeniedScreenTheme = AccessDeniedScreenTheme;

@@ -49,8 +49,8 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     const nextOpts = getQueryParams("n") ?? undefined;
 
     const redirectToAuthWithHistory = useCallback(async () => {
-        await redirectToAuth({ redirectBack: false, history: props.history });
-    }, [props.history]);
+        await redirectToAuth({ redirectBack: false, navigate: props.navigate });
+    }, [props.navigate]);
 
     const fetchMFAInfo = useCallback(
         async () => props.recipe.webJSRecipe.getMFAInfo({ userContext }),
@@ -78,7 +78,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
                     availableFactors[0].id,
                     false,
                     false,
-                    props.history
+                    props.navigate
                 );
             } else {
                 setMFAInfo(mfaInfo.factors);
@@ -101,7 +101,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     useOnMountAPICall(fetchMFAInfo, checkMFAInfo, handleError, sessionContext.loading === false);
 
     const navigateToFactor = useCallback(
-        (factorId) => props.recipe.redirectToFactor(factorId, false, false, props.history),
+        (factorId) => props.recipe.redirectToFactor(factorId, false, false, props.navigate),
         [props.recipe]
     );
     const signOut = useCallback(async (): Promise<void> => {
@@ -111,17 +111,17 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     }, [props.recipe, redirectToAuthWithHistory]);
 
     const onBackButtonClicked = useCallback(() => {
-        // If we don't have history available this would mean we are not using react-router-dom, so we use window's history
-        if (props.history === undefined) {
+        // If we don't have navigate available this would mean we are not using react-router-dom, so we use window's history
+        if (props.navigate === undefined) {
             return WindowHandlerReference.getReferenceOrThrow().windowHandler.getWindowUnsafe().history.back();
         }
-        // If we do have history and goBack function on it this means we are using react-router-dom v5 or lower
-        if (props.history.goBack !== undefined) {
-            return props.history.goBack();
+        // If we do have navigate and goBack function on it this means we are using react-router-dom v5 or lower
+        if ("goBack" in props.navigate) {
+            return props.navigate.goBack();
         }
         // If we reach this code this means we are using react-router-dom v6
-        return props.history(-1);
-    }, [props.history]);
+        return props.navigate(-1);
+    }, [props.navigate]);
 
     if (mfaInfo === undefined || mfaClaimValue.loading) {
         return <Fragment />;

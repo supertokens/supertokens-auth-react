@@ -35,7 +35,7 @@ export class MultiFactorAuthClaimClass {
                 | { action: "GO_TO_FACTOR"; factorId: string; forceSetup?: boolean }
                 | { action: "FACTOR_CHOOSER"; nextFactorOptions?: string[] },
             userContext: any
-        ) => Promise<string>,
+        ) => Promise<string | undefined>,
         onFailureRedirection?: ValidationFailureCallback
     ) {
         this.webJSClaim = new MultiFactorAuthClaimClassWebJS(getRecipeImpl);

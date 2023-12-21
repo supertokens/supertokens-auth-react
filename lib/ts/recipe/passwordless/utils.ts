@@ -112,7 +112,6 @@ function normalizeSignInUpFeatureConfig(
         linkSentScreenStyle: signInUpInput?.linkSentScreenStyle !== undefined ? signInUpInput.linkSentScreenStyle : "",
         userInputCodeFormStyle:
             signInUpInput?.userInputCodeFormStyle !== undefined ? signInUpInput.userInputCodeFormStyle : "",
-        closeTabScreenStyle: signInUpInput?.closeTabScreenStyle !== undefined ? signInUpInput.closeTabScreenStyle : "",
         defaultCountry:
             ["PHONE", "EMAIL_OR_PHONE"].includes(config.contactMethod) &&
             signInUpInput !== undefined &&

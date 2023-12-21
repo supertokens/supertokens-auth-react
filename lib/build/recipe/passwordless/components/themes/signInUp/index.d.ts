@@ -2,12 +2,11 @@
 import type { DynamicLoginMethodsContextValue } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import type { SignInUpProps } from "../../../types";
 export declare enum SignInUpScreens {
-    CloseTab = 0,
-    LinkSent = 1,
-    EmailForm = 2,
-    PhoneForm = 3,
-    EmailOrPhoneForm = 4,
-    UserInputCodeForm = 5,
+    LinkSent = 0,
+    EmailForm = 1,
+    PhoneForm = 2,
+    EmailOrPhoneForm = 3,
+    UserInputCodeForm = 4,
 }
 declare function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element;
 export default SignInUpThemeWrapper;

@@ -1,4 +1,4 @@
-import { logDebugMessage } from "../../logging";
+import { logDebugMessage } from "../../logger";
 import SuperTokens from "../../superTokens";
 import MultiFactorAuth from "../multifactorauth/recipe";
 

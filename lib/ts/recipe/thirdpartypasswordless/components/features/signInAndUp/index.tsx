@@ -24,7 +24,6 @@ import { useUserContext } from "../../../../../usercontext";
 import {
     useChildProps as usePasswordlessChildProps,
     useFeatureReducer as usePasswordlessFeatureReducer,
-    useSuccessInAnotherTabChecker,
 } from "../../../../passwordless/components/features/signInAndUp";
 import {
     useChildProps as useThirdPartyChildProps,
@@ -33,16 +32,17 @@ import {
 import SignInUpTheme from "../../themes/signInUp";
 import { defaultTranslationsThirdPartyPasswordless } from "../../themes/translations";
 
-import type { FeatureBaseProps } from "../../../../../types";
+import type { FeatureBaseProps, UserContext } from "../../../../../types";
 import type { PasswordlessSignInUpAction } from "../../../../passwordless/types";
 import type { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 
-type PropType = FeatureBaseProps & {
+type PropType = FeatureBaseProps<{
     recipe: Recipe;
+    userContext?: UserContext;
     useComponentOverrides: () => ComponentOverrideMap;
-};
+}>;
 
 const SignInAndUp: React.FC<PropType> = (props) => {
     const [tpState, tpDispatch] = useThirdPartyFeatureReducer();
@@ -121,22 +121,19 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         [pwlessDispatch, dispatch]
     );
 
-    const callingConsumeCodeRef = useSuccessInAnotherTabChecker(pwlessState, combinedPwlessDispatch, userContext);
-
     const pwlessChildProps = usePasswordlessChildProps(
         props.recipe.passwordlessRecipe,
         combinedPwlessDispatch,
         pwlessState,
-        callingConsumeCodeRef,
         userContext,
-        props.history
+        props.navigate
     )!;
 
     const childProps = {
         passwordlessRecipe: props.recipe.passwordlessRecipe,
         thirdPartyRecipe: props.recipe.thirdPartyRecipe,
         config: props.recipe.config,
-        history: props.history,
+        navigate: props.navigate,
         commonState: combinedState,
         tpState,
         tpDispatch: combinedTPDispatch,

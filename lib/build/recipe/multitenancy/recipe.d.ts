@@ -1,7 +1,12 @@
 import MultitenancyWebJS from "supertokens-web-js/recipe/multitenancy";
 import { BaseRecipeModule } from "../recipeModule/baseRecipeModule";
 import type { NormalisedConfig, UserInput, GetLoginMethodsResponseNormalized } from "./types";
-import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
+import type {
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipeInterface,
+    UserContext,
+} from "../../types";
 export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
     readonly webJSRecipe: WebJSRecipeInterface<typeof MultitenancyWebJS>;
     static instance?: Multitenancy;
@@ -12,7 +17,9 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         webJSRecipe?: WebJSRecipeInterface<typeof MultitenancyWebJS>
     );
-    getCurrentDynamicLoginMethods(input: { userContext?: any }): Promise<GetLoginMethodsResponseNormalized | undefined>;
+    getCurrentDynamicLoginMethods(input: {
+        userContext: UserContext;
+    }): Promise<GetLoginMethodsResponseNormalized | undefined>;
     static getDynamicLoginMethods(
         input: Parameters<typeof MultitenancyWebJS.getLoginMethods>[0]
     ): Promise<GetLoginMethodsResponseNormalized>;

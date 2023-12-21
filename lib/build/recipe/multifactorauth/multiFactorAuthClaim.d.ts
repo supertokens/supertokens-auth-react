@@ -44,7 +44,7 @@ export declare class MultiFactorAuthClaimClass {
                       nextFactorOptions?: string[];
                   },
             userContext: any
-        ) => Promise<string>,
+        ) => Promise<string | undefined>,
         onFailureRedirection?: ValidationFailureCallback
     );
 }

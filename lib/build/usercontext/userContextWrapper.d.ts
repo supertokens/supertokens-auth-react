@@ -1,2 +1,6 @@
 import React from "react";
-export default function UserContextWrapper(props: { children: React.ReactNode; userContext?: any }): JSX.Element;
+import type { UserContext } from "../types";
+export default function UserContextWrapper(props: {
+    children: React.ReactNode;
+    userContext?: UserContext;
+}): JSX.Element;

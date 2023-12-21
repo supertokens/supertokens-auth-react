@@ -1,6 +1,6 @@
 import RecipeModule from "../recipeModule";
 import type { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
-import type { NormalisedConfigWithAppInfoAndRecipeID } from "../../types";
+import type { NormalisedConfigWithAppInfoAndRecipeID, UserContext } from "../../types";
 export default abstract class AuthRecipe<
     T,
     Action,
@@ -9,6 +9,6 @@ export default abstract class AuthRecipe<
 > extends RecipeModule<T | GetRedirectionURLContext, Action, R | OnHandleEventContext, N> {
     constructor(config: NormalisedConfigWithAppInfoAndRecipeID<N>);
     getAuthRecipeDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
-    signOut: (input?: { userContext?: any }) => Promise<void>;
-    doesSessionExist: (input?: { userContext?: any }) => Promise<boolean>;
+    signOut: (input?: { userContext?: UserContext }) => Promise<void>;
+    doesSessionExist: (input?: { userContext?: UserContext }) => Promise<boolean>;
 }

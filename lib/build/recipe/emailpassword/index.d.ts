@@ -2,6 +2,7 @@
 import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import { UserInput } from "./types";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import type { UserContext } from "../../types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/emailpassword";
 import type { User } from "supertokens-web-js/types";
 export default class Wrapper {
@@ -13,14 +14,14 @@ export default class Wrapper {
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static signOut(input?: { userContext?: any }): Promise<void>;
+    static signOut(input?: { userContext?: UserContext }): Promise<void>;
     static submitNewPassword(input: {
         formFields: {
             id: string;
             value: string;
         }[];
         options?: RecipeFunctionOptions;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK";
@@ -45,7 +46,7 @@ export default class Wrapper {
             value: string;
         }[];
         options?: RecipeFunctionOptions;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK" | "PASSWORD_RESET_NOT_ALLOWED";
@@ -66,7 +67,7 @@ export default class Wrapper {
             value: string;
         }[];
         options?: RecipeFunctionOptions;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK";
@@ -93,7 +94,7 @@ export default class Wrapper {
             value: string;
         }[];
         options?: RecipeFunctionOptions;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK";
@@ -118,12 +119,16 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static doesEmailExist(input: { email: string; options?: RecipeFunctionOptions; userContext?: any }): Promise<{
+    static doesEmailExist(input: {
+        email: string;
+        options?: RecipeFunctionOptions;
+        userContext?: UserContext;
+    }): Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;
     }>;
-    static getResetPasswordTokenFromURL(input?: { userContext?: any }): string;
+    static getResetPasswordTokenFromURL(input?: { userContext?: UserContext }): string;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;

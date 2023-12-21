@@ -1,39 +1,33 @@
 import * as React from "react";
-import type { FeatureBaseProps } from "../../../../../types";
+import type { Navigate, FeatureBaseProps, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps, NormalisedConfig } from "../../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
-export declare const useSuccessInAnotherTabChecker: (
-    state: SignInUpState,
-    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
-    userContext: any
-) => React.MutableRefObject<boolean>;
 export declare const useFeatureReducer: (
     recipeImpl: RecipeInterface | undefined,
     contactMethod: NormalisedConfig["contactMethod"],
-    userContext: any
+    userContext: UserContext
 ) => [SignInUpState, React.Dispatch<PasswordlessSignInUpAction>];
 export declare function useChildProps(
     recipe: Recipe,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
-    callingConsumeCodeRef: React.MutableRefObject<boolean>,
-    userContext: any,
-    history: any
+    userContext: UserContext,
+    navigate?: Navigate
 ): SignInUpChildProps;
 export declare function useChildProps(
     recipe: Recipe | undefined,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
-    callingConsumeCodeRef: React.MutableRefObject<boolean>,
-    userContext: any,
-    history: any
+    userContext: UserContext,
+    navigate?: Navigate
 ): SignInUpChildProps | undefined;
 export declare const SignInUpFeature: React.FC<
-    FeatureBaseProps & {
+    FeatureBaseProps<{
         recipe: Recipe;
+        userContext?: UserContext;
         useComponentOverrides: () => ComponentOverrideMap;
-    }
+    }>
 >;
 export default SignInUpFeature;

@@ -53,6 +53,8 @@ import {
     isAccountLinkingSupported,
     backendBeforeEach,
     isMFASupported,
+    getDefaultSignUpFieldValues,
+    getTestEmail,
 } from "../helpers";
 
 describe("SuperTokens Email Verification", function () {
@@ -117,14 +119,11 @@ describe("SuperTokens Email Verification", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await toggleSignInSignUp(page);
-            const email = `john.doe${Date.now()}@supertokens.io`;
-            await signUp(page, [
-                { name: "email", value: email },
-                { name: "password", value: "Str0ngP@ssw0rd" },
-                { name: "name", value: "John Doe" },
-                { name: "age", value: "20" },
-                { name: "country", value: "" },
-            ]);
+
+            const email = getTestEmail();
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email });
+            await signUp(page, fieldValues, postValues, "emailpassword");
+
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
 
             await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/deleteUser`, {
@@ -170,14 +169,10 @@ describe("SuperTokens Email Verification", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await toggleSignInSignUp(page);
-            const email = `john.doe${Date.now()}@supertokens.io`;
-            await signUp(page, [
-                { name: "email", value: email },
-                { name: "password", value: "Str0ngP@ssw0rd" },
-                { name: "name", value: "John Doe" },
-                { name: "age", value: "20" },
-                { name: "country", value: "" },
-            ]);
+            const email = getTestEmail();
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email });
+            await signUp(page, fieldValues, postValues, "emailpassword");
+
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
             let pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
@@ -259,24 +254,15 @@ describe("SuperTokens Email Verification", function () {
             ]);
         });
 
-        it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified and then post verification should redirect with original redirectPath and newUser", async function () {
+        it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified and then post verification should redirect with original redirectPath (w/ leading slash) and newUser", async function () {
             await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here`),
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here%3Ffoo%3Dbar`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await toggleSignInSignUp(page);
-            const rid = "emailpassword";
-            await signUp(
-                page,
-                [
-                    { name: "email", value: "john.doe2@supertokens.io" },
-                    { name: "password", value: "Str0ngP@ssw0rd" },
-                    { name: "name", value: "John Doe" },
-                    { name: "age", value: "20" },
-                ],
-                '{"formFields":[{"id":"email","value":"john.doe2@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
-                rid
-            );
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: "john.doe2@supertokens.io" });
+            await signUp(page, fieldValues, postValues, "emailpassword");
+
             let pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
 
@@ -290,9 +276,36 @@ describe("SuperTokens Email Verification", function () {
             // click on the continue button
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-            // check that we are in /redirect-here
-            pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/redirect-here");
+            // check that we are in /redirect-here?foo=bar
+            const urlWithQP = await page.evaluate(() => window.location.pathname + window.location.search);
+            assert.deepStrictEqual(urlWithQP, "/redirect-here?foo=bar");
+        });
+
+        it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified and then post verification should redirect with original redirectPath (w/o leading slash) and newUser", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%3Ffoo%3Dbar`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await toggleSignInSignUp(page);
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: getTestEmail() });
+            await signUp(page, fieldValues, postValues, "emailpassword");
+
+            let pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth/verify-email");
+
+            // we wait for email to be created
+            await new Promise((r) => setTimeout(r, 1000));
+
+            // we fetch the email verification link and go to that
+            const latestURLWithToken = await getLatestURLWithToken();
+            await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
+
+            // click on the continue button
+            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+            // check that we are in /?foo=bar
+            const urlWithQP = await page.evaluate(() => window.location.pathname + window.location.search);
+            assert.deepStrictEqual(urlWithQP, "/?foo=bar");
         });
 
         it("Should redirect to verify email screen on successful sign in when mode is REQUIRED and email is not verified", async function () {
@@ -441,17 +454,8 @@ describe("SuperTokens Email Verification", function () {
 
         it('Should show "Email Verification successful" screen when token is valid with an active session', async function () {
             await toggleSignInSignUp(page);
-            await signUp(
-                page,
-                [
-                    { name: "email", value: "john.doe3@supertokens.io" },
-                    { name: "password", value: "Str0ngP@ssw0rd" },
-                    { name: "name", value: "John Doe" },
-                    { name: "age", value: "20" },
-                ],
-                '{"formFields":[{"id":"email","value":"john.doe3@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
-                "emailpassword"
-            );
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: "john.doe3@supertokens.io" });
+            await signUp(page, fieldValues, postValues, "emailpassword");
 
             const latestURLWithToken = await getLatestURLWithToken();
             await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
@@ -498,17 +502,8 @@ describe("SuperTokens Email Verification", function () {
             ]);
             await toggleSignInSignUp(page);
 
-            await signUp(
-                page,
-                [
-                    { name: "email", value: "john.doe4@supertokens.io" },
-                    { name: "password", value: "Str0ngP@ssw0rd" },
-                    { name: "name", value: "John Doe" },
-                    { name: "age", value: "20" },
-                ],
-                '{"formFields":[{"id":"email","value":"john.doe4@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
-                "emailpassword"
-            );
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: "john.doe4@supertokens.io" });
+            await signUp(page, fieldValues, postValues, "emailpassword");
 
             const latestURLWithToken = await getLatestURLWithToken();
             await Promise.all([
@@ -688,17 +683,8 @@ describe("SuperTokens Email Verification general errors", function () {
 
         it('Should show "General Error" when API returns "GENERAL_ERROR"', async function () {
             await toggleSignInSignUp(page);
-            await signUp(
-                page,
-                [
-                    { name: "email", value: "john.doe3@supertokens.io" },
-                    { name: "password", value: "Str0ngP@ssw0rd" },
-                    { name: "name", value: "John Doe" },
-                    { name: "age", value: "20" },
-                ],
-                '{"formFields":[{"id":"email","value":"john.doe3@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
-                "emailpassword"
-            );
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: "john.doe3@supertokens.io" });
+            await signUp(page, fieldValues, postValues, "emailpassword");
 
             const latestURLWithToken = await getLatestURLWithToken();
             await page.goto(latestURLWithToken);
@@ -882,18 +868,8 @@ describe("Email verification signOut errors", function () {
         await toggleSignInSignUp(page);
         await page.evaluate(() => localStorage.setItem("SHOW_GENERAL_ERROR", "SESSION SIGN_OUT"));
 
-        const rid = "emailpassword";
-        await signUp(
-            page,
-            [
-                { name: "email", value: "john.doe2@supertokens.io" },
-                { name: "password", value: "Str0ngP@ssw0rd" },
-                { name: "name", value: "John Doe" },
-                { name: "age", value: "20" },
-            ],
-            '{"formFields":[{"id":"email","value":"john.doe2@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
-            rid
-        );
+        const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: "john.doe2@supertokens.io" });
+        await signUp(page, fieldValues, postValues, "emailpassword");
 
         let pathname = await page.evaluate(() => window.location.pathname);
         assert.deepStrictEqual(pathname, "/auth/verify-email");

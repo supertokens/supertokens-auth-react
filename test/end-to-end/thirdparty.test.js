@@ -137,7 +137,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
             ]);
         });
 
-        it("Successful sign in with Auth0 with query params kept", async function () {
+        it("Successful sign in with Auth0 with redirectToPath (w/ leading slash) keeping query params", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here%3Ffoo%3Dbar`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -150,6 +150,21 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
             ]);
             const { pathname, search } = await page.evaluate(() => window.location);
             assert.deepStrictEqual(pathname + search, "/redirect-here?foo=bar");
+        });
+
+        it("Successful sign in with Auth0 with redirectToPath (w/o leading slash) keeping query params", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%3Ffoo%3Dbar`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await assertProviders(page);
+            await clickOnProviderButton(page, "Auth0");
+            await Promise.all([
+                loginWithAuth0(page),
+                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
+            ]);
+            const { pathname, search } = await page.evaluate(() => window.location);
+            assert.deepStrictEqual(pathname + search, "/?foo=bar");
         });
 
         it("Successful signin with Auth0 and email verification", async function () {

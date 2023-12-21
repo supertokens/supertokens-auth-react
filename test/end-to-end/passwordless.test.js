@@ -717,7 +717,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 ]);
             });
 
-            it("Successful signin w/ redirectToPath and email verification", async function () {
+            it("Successful signin w/ redirectToPath (w/ leading slash) and email verification", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here%3Ffoo%3Dbar&mode=REQUIRED`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -759,6 +759,30 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                 ]);
+            });
+
+            it("Successful signin w/ redirectPath (w/o leading slash) and email verification", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%3Ffoo%3Dbar&mode=REQUIRED`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getPasswordlessDevice(loginAttemptInfo);
+                await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                await submitForm(page);
+
+                await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+                const { pathname, search } = await page.evaluate(() => window.location);
+                assert.deepStrictEqual(pathname + search, "/?foo=bar");
             });
 
             it("Submitting empty id", async function () {
@@ -1576,8 +1600,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await anotherTab.goto(device.codes[0].urlWithLinkCode);
                 await anotherTab.waitForSelector(".sessionInfo-user-id");
 
-                await waitForText(page, "[data-supertokens~=headerTitle]", "Success!");
-
                 await page.reload({ waitUntil: ["networkidle0"] });
 
                 await page.waitForSelector(".sessionInfo-user-id");
@@ -1708,7 +1730,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await setInputValues(anotherTab, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(anotherTab);
 
-                await waitForText(page, "[data-supertokens~=headerTitle]", "Success!");
+                await anotherTab.waitForSelector(".sessionInfo-user-id");
 
                 await page.reload({ waitUntil: ["networkidle0"] });
 

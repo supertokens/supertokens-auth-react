@@ -19,9 +19,6 @@ export declare const defaultTranslationsThirdPartyPasswordless: {
         ERROR_SIGN_IN_UP_LINK: string;
         ERROR_SIGN_IN_UP_RESEND_RESTART_FLOW: string;
         ERROR_SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW: string;
-        PWLESS_CLOSE_TAB_TITLE: string;
-        PWLESS_CLOSE_TAB_SUBTITLE_LINE1: string;
-        PWLESS_CLOSE_TAB_SUBTITLE_LINE2: string;
         PWLESS_SIGN_IN_UP_HEADER_TITLE: string;
         PWLESS_SIGN_IN_UP_FOOTER_START: string;
         PWLESS_SIGN_IN_UP_FOOTER_TOS: string;

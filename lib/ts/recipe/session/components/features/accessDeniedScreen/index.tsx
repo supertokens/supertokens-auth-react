@@ -6,20 +6,21 @@ import UI from "../../../../../ui";
 import { AccessDeniedScreenTheme } from "../../themes/accessDeniedScreenTheme";
 import { defaultTranslationsSession } from "../../themes/translations";
 
-import type { FeatureBaseProps } from "../../../../../types";
+import type { FeatureBaseProps, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 
 const AccessDeniedScreen: React.FC<
-    FeatureBaseProps & {
+    FeatureBaseProps<{
         recipe: Recipe;
+        userContext?: UserContext;
         useComponentOverrides: () => ComponentOverrideMap;
         useShadowDom?: boolean;
         error?: string;
-    }
+    }>
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
-    const history = UI.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
+    const navigate = props.navigate ?? UI.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
@@ -28,7 +29,7 @@ const AccessDeniedScreen: React.FC<
                 useShadowDom={props.useShadowDom ?? props.recipe.config.useShadowDom}>
                 <AccessDeniedScreenTheme
                     config={props.recipe.config}
-                    history={history}
+                    navigate={navigate}
                     recipe={props.recipe}
                     error={props.error}
                 />

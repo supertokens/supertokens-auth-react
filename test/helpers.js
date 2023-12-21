@@ -627,6 +627,24 @@ export async function defaultSignUp(page, rid = "emailpassword") {
         rid
     );
 }
+
+export function getDefaultSignUpFieldValues({
+    name = "John Doe",
+    email = "john.doe@supertokens.io",
+    password = "Str0ngP@ssw0rd",
+    age = "20",
+} = {}) {
+    const fieldValues = [
+        { name: "email", value: email },
+        { name: "password", value: password },
+        { name: "name", value: name },
+        { name: "age", value: age },
+    ];
+    const postValues = `{"formFields":[{"id":"email","value":"${email}"},{"id":"password","value":"${password}"},{"id":"name","value":"${name}"},{"id":"age","value":"${age}"},{"id":"country","value":""}]}`;
+
+    return { fieldValues, postValues };
+}
+
 export async function signUp(page, fields, postValues = undefined, rid = "emailpassword") {
     // Set values.
     await setInputValues(page, fields);

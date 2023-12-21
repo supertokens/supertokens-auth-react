@@ -30,7 +30,7 @@ import Session from "../../../../session/recipe";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
 
-import type { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
+import type { Navigate, FeatureBaseProps, NormalisedFormField, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { SignInAndUpState } from "../../../types";
 import type {
@@ -94,65 +94,64 @@ export function useChildProps(
     recipe: Recipe,
     state: SignInAndUpState,
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
-    history: any
+    userContext: UserContext,
+    navigate?: Navigate
 ): EmailPasswordSignInAndUpChildProps;
 export function useChildProps(
     recipe: Recipe | undefined,
     state: SignInAndUpState,
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
-    history: any
+    userContext: UserContext,
+    navigate?: Navigate
 ): EmailPasswordSignInAndUpChildProps | undefined;
 
 export function useChildProps(
     recipe: Recipe | undefined,
     state: SignInAndUpState,
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
-    history: any
+    userContext: UserContext,
+    navigate?: Navigate
 ): EmailPasswordSignInAndUpChildProps | undefined {
     const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe), [recipe]);
-    const userContext = useUserContext();
     const rethrowInRender = useRethrowInRender();
 
-    const onSignInSuccess = useCallback(
-        async (response: { user: User }): Promise<void> => {
-            return Session.getInstanceOrThrow()
-                .validateGlobalClaimsAndHandleSuccessRedirection(
-                    {
-                        rid: recipe!.config.recipeId,
-                        successRedirectContext: {
-                            action: "SUCCESS",
-                            isNewRecipeUser: false,
-                            user: response.user,
-                            redirectToPath: getRedirectToPathFromURL(),
-                        },
+    const onSignInSuccess = useCallback(async (): Promise<void> => {
+        return Session.getInstanceOrThrow()
+            .validateGlobalClaimsAndHandleSuccessRedirection(
+                {
+                    rid: recipe!.config.recipeId,
+                    successRedirectContext: {
+                        action: "SUCCESS",
+                        isNewPrimaryUser: false,
+                        isNewRecipeUser: false,
+                        redirectToPath: getRedirectToPathFromURL(),
                     },
-                    userContext,
-                    history
-                )
-                .catch(rethrowInRender);
-        },
-        [recipe, userContext, history]
-    );
+                },
+                userContext,
+                navigate
+            )
+            .catch(rethrowInRender);
+    }, [recipe, userContext, navigate]);
 
     const onSignUpSuccess = useCallback(
-        async (response: { user: User }): Promise<void> => {
+        async (result: { user: User }): Promise<void> => {
             return Session.getInstanceOrThrow()
                 .validateGlobalClaimsAndHandleSuccessRedirection(
                     {
                         rid: recipe!.config.recipeId,
                         successRedirectContext: {
                             action: "SUCCESS",
+                            isNewPrimaryUser: result.user.loginMethods.length === 1,
                             isNewRecipeUser: true,
-                            user: response.user,
                             redirectToPath: getRedirectToPathFromURL(),
                         },
                     },
                     userContext,
-                    history
+                    navigate
                 )
                 .catch(rethrowInRender);
         },
-        [recipe, userContext, history]
+        [recipe, userContext, navigate]
     );
 
     return useMemo(() => {
@@ -172,7 +171,7 @@ export function useChildProps(
             clearError: () => dispatch({ type: "setError", error: undefined }),
             onError: (error: string) => dispatch({ type: "setError", error }),
             onSuccess: onSignInSuccess,
-            forgotPasswordClick: () => recipe.redirect({ action: "RESET_PASSWORD" }, history),
+            forgotPasswordClick: () => recipe.redirect({ action: "RESET_PASSWORD" }, navigate, undefined, userContext),
         };
 
         const signUpForm = {
@@ -195,13 +194,18 @@ export function useChildProps(
 }
 
 export const SignInAndUpFeature: React.FC<
-    FeatureBaseProps & {
+    FeatureBaseProps<{
         recipe: Recipe;
+        userContext?: UserContext;
         useComponentOverrides: () => ComponentOverrideMap;
-    }
+    }>
 > = (props) => {
+    let userContext = useUserContext();
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
     const [state, dispatch] = useFeatureReducer(props.recipe);
-    const childProps = useChildProps(props.recipe, state, dispatch, props.history);
+    const childProps = useChildProps(props.recipe, state, dispatch, userContext, props.navigate);
     const recipeComponentOverrides = props.useComponentOverrides();
 
     return (
@@ -244,7 +248,7 @@ const getModifiedRecipeImplementation = (origImpl: RecipeInterface): RecipeInter
 function getThemeSignUpFeatureFormFields(
     formFields: NormalisedFormField[],
     recipe: Recipe,
-    userContext: any
+    userContext: UserContext
 ): FormFieldThemeProps[] {
     const emailPasswordOnly = formFields.length === 2;
     return formFields.map((field) => ({

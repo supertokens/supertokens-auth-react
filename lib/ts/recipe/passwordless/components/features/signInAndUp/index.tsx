@@ -18,7 +18,6 @@
 import * as React from "react";
 import { Fragment } from "react";
 import { useMemo } from "react";
-import { useRef } from "react";
 import { useEffect } from "react";
 
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
@@ -31,56 +30,23 @@ import {
     useRethrowInRender,
 } from "../../../../../utils";
 import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
-import Session from "../../../../session";
 import SessionRecipe from "../../../../session/recipe";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import { getEnabledContactMethods } from "../../../utils";
 import SignInUpThemeWrapper from "../../themes/signInUp";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
-import type { FeatureBaseProps } from "../../../../../types";
+import type { Navigate, FeatureBaseProps, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap } from "../../../types";
 import type { PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps, NormalisedConfig } from "../../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import type { User } from "supertokens-web-js/types";
 
-export const useSuccessInAnotherTabChecker = (
-    state: SignInUpState,
-    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
-    userContext: any
-) => {
-    const callingConsumeCodeRef = useRef(false);
-
-    useEffect(() => {
-        // We only need to start checking this if we have an active login attempt
-        if (state.loginAttemptInfo && !state.successInAnotherTab) {
-            const checkSessionIntervalHandle = setInterval(async () => {
-                if (callingConsumeCodeRef.current === false) {
-                    const hasSession = await Session.doesSessionExist({
-                        userContext,
-                    });
-                    if (hasSession) {
-                        dispatch({ type: "successInAnotherTab" });
-                    }
-                }
-            }, 2000);
-
-            return () => {
-                clearInterval(checkSessionIntervalHandle);
-            };
-        }
-        // Nothing to clean up
-        return;
-    }, [state.loginAttemptInfo, state.successInAnotherTab]);
-
-    return callingConsumeCodeRef;
-};
-
 export const useFeatureReducer = (
     recipeImpl: RecipeInterface | undefined,
     contactMethod: NormalisedConfig["contactMethod"],
-    userContext: any
+    userContext: UserContext
 ): [SignInUpState, React.Dispatch<PasswordlessSignInUpAction>] => {
     const dynamicLoginMethods = useDynamicLoginMethods();
     const [state, dispatch] = React.useReducer(
@@ -91,7 +57,6 @@ export const useFeatureReducer = (
                         loaded: true,
                         error: action.error,
                         loginAttemptInfo: action.loginAttemptInfo,
-                        successInAnotherTab: false,
                     };
                 case "resendCode":
                     if (!oldState.loginAttemptInfo) {
@@ -122,11 +87,6 @@ export const useFeatureReducer = (
                         loginAttemptInfo: action.loginAttemptInfo,
                         error: undefined,
                     };
-                case "successInAnotherTab":
-                    return {
-                        ...oldState,
-                        successInAnotherTab: true,
-                    };
                 default:
                     return oldState;
             }
@@ -135,7 +95,6 @@ export const useFeatureReducer = (
             error: undefined,
             loaded: false,
             loginAttemptInfo: undefined,
-            successInAnotherTab: false,
         },
         (initArg) => {
             let error: string | undefined = undefined;
@@ -196,31 +155,26 @@ export function useChildProps(
     recipe: Recipe,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
-    callingConsumeCodeRef: React.MutableRefObject<boolean>,
-    userContext: any,
-    history: any
+    userContext: UserContext,
+    navigate?: Navigate
 ): SignInUpChildProps;
 export function useChildProps(
     recipe: Recipe | undefined,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
-    callingConsumeCodeRef: React.MutableRefObject<boolean>,
-    userContext: any,
-    history: any
+    userContext: UserContext,
+    navigate?: Navigate
 ): SignInUpChildProps | undefined;
 
 export function useChildProps(
     recipe: Recipe | undefined,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
-    callingConsumeCodeRef: React.MutableRefObject<boolean>,
-    userContext: any,
-    history: any
+    userContext: UserContext,
+    navigate?: Navigate
 ): SignInUpChildProps | undefined {
     const recipeImplementation = React.useMemo(
-        () =>
-            recipe &&
-            getModifiedRecipeImplementation(recipe.webJSRecipe, recipe.config, dispatch, callingConsumeCodeRef),
+        () => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe, recipe.config, dispatch),
         [recipe]
     );
     const rethrowInRender = useRethrowInRender();
@@ -237,13 +191,13 @@ export function useChildProps(
                             rid: recipe.config.recipeId,
                             successRedirectContext: {
                                 action: "SUCCESS",
+                                isNewPrimaryUser: result.createdNewRecipeUser && result.user.loginMethods.length === 1,
                                 isNewRecipeUser: result.createdNewRecipeUser,
-                                user: result.user,
                                 redirectToPath: getRedirectToPathFromURL(),
                             },
                         },
                         userContext,
-                        history
+                        navigate
                     )
                     .catch(rethrowInRender);
             },
@@ -257,16 +211,19 @@ const SignInUpFeatureInner: React.FC<
     FeatureBaseProps & {
         recipe: Recipe;
         useComponentOverrides: () => ComponentOverrideMap;
+        userContext?: UserContext;
     }
 > = (props) => {
-    const userContext = useUserContext();
+    let userContext = useUserContext();
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
     const [state, dispatch] = useFeatureReducer(
         props.recipe.webJSRecipe,
         props.recipe.config.contactMethod,
         userContext
     );
-    const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch, userContext);
-    const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, userContext, props.history)!;
+    const childProps = useChildProps(props.recipe, dispatch, state, userContext, props.navigate)!;
 
     return (
         <Fragment>
@@ -292,10 +249,11 @@ const SignInUpFeatureInner: React.FC<
 };
 
 export const SignInUpFeature: React.FC<
-    FeatureBaseProps & {
+    FeatureBaseProps<{
         recipe: Recipe;
+        userContext?: UserContext;
         useComponentOverrides: () => ComponentOverrideMap;
-    }
+    }>
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
 
@@ -315,8 +273,7 @@ export default SignInUpFeature;
 function getModifiedRecipeImplementation(
     originalImpl: RecipeInterface,
     config: NormalisedConfig,
-    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
-    callingConsumeCodeRef: React.MutableRefObject<boolean>
+    dispatch: React.Dispatch<PasswordlessSignInUpAction>
 ): RecipeInterface {
     return {
         ...originalImpl,
@@ -390,10 +347,6 @@ function getModifiedRecipeImplementation(
         },
 
         consumeCode: async (input) => {
-            // We need to call consume code while callingConsume, so we don't detect
-            // the session creation too early and go to successInAnotherTab too early
-            callingConsumeCodeRef.current = true;
-
             const res = await originalImpl.consumeCode(input);
 
             if (res.status === "RESTART_FLOW_ERROR") {
@@ -413,8 +366,6 @@ function getModifiedRecipeImplementation(
                     userContext: input.userContext,
                 });
             }
-
-            callingConsumeCodeRef.current = false;
 
             return res;
         },

@@ -31,7 +31,7 @@ import SessionRecipe from "../../../../session/recipe";
 import MFATOTPThemeWrapper from "../../themes/mfa";
 import { defaultTranslationsTOTP } from "../../themes/translations";
 
-import type { FeatureBaseProps } from "../../../../../types";
+import type { FeatureBaseProps, Navigate } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type {
     ComponentOverrideMap,
@@ -214,7 +214,7 @@ export function useChildProps(
     state: TOTPMFAState,
     dispatch: React.Dispatch<TOTPMFAAction>,
     userContext: any,
-    history: any
+    navigate?: Navigate
 ): TOTPMFAChildProps | undefined {
     const rethrowInRender = useRethrowInRender();
 
@@ -230,16 +230,16 @@ export function useChildProps(
                         userContext,
                     });
                 }
-                // If we don't have history available this would mean we are not using react-router-dom, so we use window's history
-                if (history === undefined) {
+                // If we don't have navigate available this would mean we are not using react-router-dom, so we use window's history
+                if (navigate === undefined) {
                     return WindowHandlerReference.getReferenceOrThrow().windowHandler.getWindowUnsafe().history.back();
                 }
-                // If we do have history and goBack function on it this means we are using react-router-dom v5 or lower
-                if (history.goBack !== undefined) {
-                    return history.goBack();
+                // If we do have navigate and goBack function on it this means we are using react-router-dom v5 or lower
+                if ("goBack" in navigate) {
+                    return navigate.goBack();
                 }
                 // If we reach this code this means we are using react-router-dom v6
-                return history(-1);
+                return navigate(-1);
             },
             onRetryClicked: () => {
                 dispatch({ type: "restartFlow", error: undefined });
@@ -249,7 +249,7 @@ export function useChildProps(
                     await recipeImplementation.removeDevice({ deviceName: state.deviceInfo.deviceName, userContext });
                 }
                 await SessionRecipe.getInstanceOrThrow().signOut({ userContext });
-                await redirectToAuth({ redirectBack: false, history: history });
+                await redirectToAuth({ redirectBack: false, navigate: navigate });
             },
             onFactorChooserButtonClicked: () => {
                 return MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser(false, undefined, history);
@@ -262,14 +262,16 @@ export function useChildProps(
                         : {
                               rid: "totp",
                               successRedirectContext: {
-                                  action: "SUCCESS",
+                                  action: "SUCCESS" as const,
+                                  isNewRecipeUser: false,
+                                  isNewPrimaryUser: false,
                                   redirectToPath,
                                   userContext,
                               },
                           };
 
                 return SessionRecipe.getInstanceOrThrow()
-                    .validateGlobalClaimsAndHandleSuccessRedirection(redirectInfo, userContext, history)
+                    .validateGlobalClaimsAndHandleSuccessRedirection(redirectInfo, userContext, navigate)
                     .catch(rethrowInRender);
             },
             recipeImplementation: recipeImplementation,
@@ -292,7 +294,7 @@ export const SignInUpFeature: React.FC<
         () => getModifiedRecipeImplementation(props.recipe.webJSRecipe, dispatch),
         [props.recipe]
     );
-    const childProps = useChildProps(props.recipe, recipeImplementation, state, dispatch, userContext, props.history)!;
+    const childProps = useChildProps(props.recipe, recipeImplementation, state, dispatch, userContext, props.navigate)!;
     useOnLoad(recipeImplementation, dispatch, userContext);
 
     return (

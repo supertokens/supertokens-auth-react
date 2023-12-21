@@ -363,7 +363,7 @@ describe("ThirdParty", function () {
         assert.throws(() => ThirdParty.getInstanceOrThrow().config.onHandleEvent({} as any), {
             message: "ON HANDLE EVENTS HOOK THROWS",
         });
-        assert.throws(() => ThirdParty.getInstanceOrThrow().config.getRedirectionURL({} as any), {
+        assert.throws(() => ThirdParty.getInstanceOrThrow().config.getRedirectionURL({} as any, {}), {
             message: "GET REDIRECTION HOOK THROWS",
         });
     });

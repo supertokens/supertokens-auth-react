@@ -20,7 +20,6 @@ import { useTranslation } from "../../../../../translation/translationContext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { AccessDeniedScreen } from "../../../../session/prebuiltui";
-import { CloseTabScreen } from "../signInUp/closeTabScreen";
 import { EmailForm } from "../signInUp/emailForm";
 import { PhoneForm } from "../signInUp/phoneForm";
 import { UserInputCodeForm } from "../signInUp/userInputCodeForm";
@@ -61,9 +60,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
         return <LoadingScreen />;
     }
 
-    return activeScreen === MFAScreens.CloseTab ? (
-        <CloseTabScreen {...commonProps} />
-    ) : activeScreen === MFAScreens.AccessDenied ? (
+    return activeScreen === MFAScreens.AccessDenied ? (
         <AccessDeniedScreen useShadowDom={false} error={t(featureState.error!)} />
     ) : (
         <div data-supertokens="container pwless-mfa">
@@ -138,9 +135,7 @@ function MFAThemeWrapper(props: MFAProps): JSX.Element {
     const activeScreen = getActiveScreen(props);
 
     let activeStyle;
-    if (activeScreen === MFAScreens.CloseTab) {
-        activeStyle = props.config.signInUpFeature.closeTabScreenStyle;
-    } else if (activeScreen === MFAScreens.UserInputCodeForm) {
+    if (activeScreen === MFAScreens.UserInputCodeForm) {
         activeStyle = props.config.signInUpFeature.userInputCodeFormStyle;
     } else if (activeScreen === MFAScreens.EmailForm) {
         activeStyle = props.config.signInUpFeature.emailOrPhoneFormStyle;
@@ -164,9 +159,7 @@ function MFAThemeWrapper(props: MFAProps): JSX.Element {
 export default MFAThemeWrapper;
 
 export function getActiveScreen(props: Pick<MFAProps, "featureState" | "contactMethod">) {
-    if (props.featureState.successInAnotherTab) {
-        return MFAScreens.CloseTab;
-    } else if (
+    if (
         props.featureState.error === "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP" ||
         (props.featureState.isSetupAllowed === false && props.featureState.loginAttemptInfo === undefined)
     ) {

@@ -17,15 +17,17 @@ import React, { useState } from "react";
 
 import { getNormalisedUserContext } from "../utils";
 
+import type { UserContext } from "../types";
+
 export const UserContextContext = React.createContext<any>(undefined);
 
-export const useUserContext = (): any => {
+export const useUserContext = (): UserContext => {
     return React.useContext(UserContextContext);
 };
 
 export const UserContextProvider: React.FC<{
     children: React.ReactNode;
-    userContext?: any;
+    userContext?: UserContext;
 }> = ({ children, userContext }) => {
     const [currentUserContext] = useState(getNormalisedUserContext(userContext));
 

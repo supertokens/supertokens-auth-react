@@ -13,7 +13,13 @@ export declare type GetRedirectionURLContext = {
     showSignIn?: boolean;
 };
 export declare type ValidationFailureCallback =
-    | (({ userContext, reason }: { userContext: any; reason: any }) => Promise<string | undefined> | string | undefined)
+    | (({
+          userContext,
+          reason,
+      }: {
+          userContext: UserContext;
+          reason: any;
+      }) => Promise<string | undefined> | string | undefined)
     | undefined;
 export declare type SessionClaimValidator = SessionClaimValidatorWebJS & {
     showAccessDeniedOnFailure?: boolean;
@@ -40,7 +46,10 @@ export declare type SuperTokensConfig = {
         translationFunc?: TranslationFunc;
     };
     enableDebugLogs?: boolean;
-    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
+    getRedirectionURL?: (
+        context: GetRedirectionURLContext,
+        userContext: UserContext
+    ) => Promise<string | undefined | null>;
 };
 export declare type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "signOut">;
 export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
@@ -121,9 +130,11 @@ export declare type NormalisedBaseConfig = {
 export declare type ThemeBaseProps = {
     styleFromInit?: string;
 };
-export declare type FeatureBaseProps = PropsWithChildren<{
-    history?: any;
-}>;
+export declare type FeatureBaseProps<T = Record<string, unknown>> = PropsWithChildren<
+    {
+        navigate?: Navigate;
+    } & T
+>;
 export declare type Awaited<T> = T extends null | undefined
     ? T
     : T extends object & {
@@ -133,3 +144,15 @@ export declare type Awaited<T> = T extends null | undefined
         ? V
         : never
     : T;
+interface NavigateFunction {
+    (to: string): void;
+    (delta: number): void;
+}
+export declare type Navigate =
+    | {
+          push: (path: string) => void;
+          goBack: () => void;
+      }
+    | NavigateFunction;
+export declare type UserContext = Record<string, any>;
+export {};

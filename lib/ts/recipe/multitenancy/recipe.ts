@@ -29,7 +29,12 @@ import { hasIntersectingRecipes } from "./utils";
 import { normaliseMultitenancyConfig } from "./utils";
 
 import type { NormalisedConfig, UserInput, GetLoginMethodsResponseNormalized } from "./types";
-import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
+import type {
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipeInterface,
+    UserContext,
+} from "../../types";
 import type { NormalisedAppInfo } from "../../types";
 
 /*
@@ -51,7 +56,7 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
     }
 
     public async getCurrentDynamicLoginMethods(input: {
-        userContext?: any;
+        userContext: UserContext;
     }): Promise<GetLoginMethodsResponseNormalized | undefined> {
         if (SuperTokens.usesDynamicLoginMethods === false) {
             return undefined;

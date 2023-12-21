@@ -19,7 +19,6 @@ import type { MFAFooter } from "./components/themes/mfa/mfaFooter";
 import type { MFAHeader } from "./components/themes/mfa/mfaHeader";
 import type { MFAOTPFooter } from "./components/themes/mfa/mfaOTPFooter";
 import type { MFAOTPHeader } from "./components/themes/mfa/mfaOTPHeader";
-import type { CloseTabScreen } from "./components/themes/signInUp/closeTabScreen";
 import type { EmailForm } from "./components/themes/signInUp/emailForm";
 import type { EmailOrPhoneForm } from "./components/themes/signInUp/emailOrPhoneForm";
 import type { LinkSent } from "./components/themes/signInUp/linkSent";
@@ -30,7 +29,7 @@ import type { UserInputCodeForm } from "./components/themes/signInUp/userInputCo
 import type { UserInputCodeFormFooter } from "./components/themes/signInUp/userInputCodeFormFooter";
 import type { UserInputCodeFormHeader } from "./components/themes/signInUp/userInputCodeFormHeader";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig, NormalisedBaseConfig, WebJSRecipeInterface } from "../../types";
+import type { FeatureBaseConfig, NormalisedBaseConfig, UserContext, WebJSRecipeInterface } from "../../types";
 import type {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -106,7 +105,6 @@ export type NormalisedConfig = {
         emailOrPhoneFormStyle: string;
         userInputCodeFormStyle: string;
         linkSentScreenStyle: string;
-        closeTabScreenStyle: string;
 
         disableDefaultUI?: boolean;
     };
@@ -143,7 +141,6 @@ export type SignInUpFeatureConfigInput = {
     emailOrPhoneFormStyle?: string;
     userInputCodeFormStyle?: string;
     linkSentScreenStyle?: string;
-    closeTabScreenStyle?: string;
 };
 
 export type UserInput = (
@@ -218,10 +215,9 @@ export type SignInUpProps = {
     featureState: {
         loginAttemptInfo?: LoginAttemptInfo;
         loaded: boolean;
-        successInAnotherTab: boolean;
         error: string | undefined;
     };
-    userContext?: any;
+    userContext?: UserContext;
 };
 export type LoginAttemptInfo = {
     deviceId: string;
@@ -294,11 +290,6 @@ export type LinkClickedScreenProps = {
     onSuccess?: () => void;
 };
 
-export type CloseTabScreenProps = {
-    recipeImplementation: RecipeImplementation;
-    config: NormalisedConfig;
-};
-
 export type PasswordlessSignInUpAction =
     | {
           type: "load";
@@ -320,16 +311,12 @@ export type PasswordlessSignInUpAction =
     | {
           type: "setError";
           error: string | undefined;
-      }
-    | {
-          type: "successInAnotherTab";
       };
 
 export type SignInUpState = {
     error: string | undefined;
     loaded: boolean;
     loginAttemptInfo: LoginAttemptInfo | undefined;
-    successInAnotherTab: boolean;
 };
 
 export type MFAAction =
@@ -429,7 +416,6 @@ export type ComponentOverrideMap = {
     PasswordlessLinkSent_Override?: ComponentOverride<typeof LinkSent>;
 
     PasswordlessLinkClickedScreen_Override?: ComponentOverride<typeof LinkClickedScreen>;
-    PasswordlessCloseTabScreen_Override?: ComponentOverride<typeof CloseTabScreen>;
 
     PasswordlessMFAHeader_Override?: ComponentOverride<typeof MFAHeader>;
     PasswordlessMFAFooter_Override?: ComponentOverride<typeof MFAFooter>;

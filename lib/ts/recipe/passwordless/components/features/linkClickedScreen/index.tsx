@@ -28,16 +28,23 @@ import Session from "../../../../session/recipe";
 import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
-import type { Awaited } from "../../../../../types";
+import type { Awaited, UserContext } from "../../../../../types";
 import type { FeatureBaseProps } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap } from "../../../types";
 
-type PropType = FeatureBaseProps & { recipe: Recipe; useComponentOverrides: () => ComponentOverrideMap };
+type PropType = FeatureBaseProps<{
+    recipe: Recipe;
+    userContext?: UserContext;
+    useComponentOverrides: () => ComponentOverrideMap;
+}>;
 
 const LinkClickedScreen: React.FC<PropType> = (props) => {
-    const userContext = useUserContext();
     const rethrowInRender = useRethrowInRender();
+    let userContext = useUserContext();
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
     const [requireUserInteraction, setRequireUserInteraction] = useState<boolean>(false);
 
     const consumeCodeAtMount = useCallback(async () => {
@@ -46,11 +53,12 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
 
         if (preAuthSessionId === null || preAuthSessionId.length === 0 || linkCode.length === 0) {
             await SuperTokens.getInstanceOrThrow().redirectToAuth({
-                history: props.history,
+                navigate: props.navigate,
                 queryParams: {
                     error: "signin",
                 },
                 redirectBack: false,
+                userContext,
             });
             return "REDIRECTING";
         }
@@ -63,7 +71,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
         return props.recipe.webJSRecipe.consumeCode({
             userContext,
         });
-    }, [props.recipe, props.history]);
+    }, [props.recipe, props.navigate, userContext]);
 
     const handleConsumeResp = useCallback(
         async (response: Awaited<ReturnType<typeof consumeCodeAtMount>>): Promise<void> => {
@@ -79,21 +87,23 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
 
             if (response.status === "RESTART_FLOW_ERROR") {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                    history: props.history,
+                    navigate: props.navigate,
                     queryParams: {
                         error: "restart_link",
                     },
                     redirectBack: false,
+                    userContext,
                 });
             }
 
             if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                    history: props.history,
+                    navigate: props.navigate,
                     queryParams: {
                         error: response.reason,
                     },
                     redirectBack: false,
+                    userContext,
                 });
             }
 
@@ -111,42 +121,45 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                             rid: props.recipe.config.recipeId,
                             successRedirectContext: {
                                 action: "SUCCESS",
+                                isNewPrimaryUser:
+                                    response.createdNewRecipeUser && response.user.loginMethods.length === 1,
                                 isNewRecipeUser: response.createdNewRecipeUser,
-                                user: response.user,
                                 redirectToPath: loginAttemptInfo?.redirectToPath,
                             },
                         },
                         userContext,
-                        props.history
+                        props.navigate
                     )
                     .catch(rethrowInRender);
             }
         },
-        [props.history, props.recipe]
+        [props.navigate, props.recipe, userContext]
     );
 
     const handleConsumeError = useCallback(
         (err) => {
             if (STGeneralError.isThisError(err)) {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                    history: props.history,
+                    navigate: props.navigate,
                     queryParams: {
                         error: "custom",
                         message: err.message,
                     },
                     redirectBack: false,
+                    userContext,
                 });
             } else {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                    history: props.history,
+                    navigate: props.navigate,
                     queryParams: {
                         error: "signin",
                     },
                     redirectBack: false,
+                    userContext,
                 });
             }
         },
-        [props.recipe, props.history]
+        [props.navigate, userContext]
     );
     useOnMountAPICall(consumeCodeAtMount, handleConsumeResp, handleConsumeError);
 

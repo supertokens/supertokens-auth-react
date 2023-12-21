@@ -13,12 +13,14 @@
  * under the License.
  */
 
+import { logDebugMessage } from "../../logger";
 import SuperTokens from "../../superTokens";
-import { appendQueryParamsToURL } from "../../utils";
+import { appendQueryParamsToURL, getNormalisedUserContext } from "../../utils";
 
 import { BaseRecipeModule } from "./baseRecipeModule";
 
 import type { NormalisedConfig } from "./types";
+import type { Navigate, UserContext } from "../../types";
 
 export default abstract class RecipeModule<
     GetRedirectionURLContextType,
@@ -28,18 +30,35 @@ export default abstract class RecipeModule<
 > extends BaseRecipeModule<GetRedirectionURLContextType, Action, OnHandleEventContextType, N> {
     redirect = async (
         context: GetRedirectionURLContextType,
-        history?: any,
-        queryParams?: Record<string, string>
+        navigate?: Navigate,
+        queryParams?: Record<string, string>,
+        userContext?: UserContext
     ): Promise<void> => {
-        let redirectUrl = await this.getRedirectUrl(context);
+        // NOTE: We cannot make userContext required in args because it follows optional parameters. Instead we will normalise it if it wasn't passed in.
+        let redirectUrl = await this.getRedirectUrl(context, getNormalisedUserContext(userContext));
+
+        if (redirectUrl === null) {
+            logDebugMessage(
+                `Skipping redirection because the user override returned null for context ${JSON.stringify(
+                    context,
+                    null,
+                    2
+                )}`
+            );
+            return;
+        }
+
         redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
-        return SuperTokens.getInstanceOrThrow().redirectToUrl(redirectUrl, history);
+        return SuperTokens.getInstanceOrThrow().redirectToUrl(redirectUrl, navigate);
     };
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    getRedirectUrl = async (context: GetRedirectionURLContextType): Promise<string> => {
+    getRedirectUrl = async (
+        context: GetRedirectionURLContextType,
+        userContext: UserContext
+    ): Promise<string | null> => {
         // If getRedirectionURL provided by user.
-        const redirectUrl = await this.config.getRedirectionURL(context);
+        const redirectUrl = await this.config.getRedirectionURL(context, userContext);
         if (redirectUrl !== undefined) {
             return redirectUrl;
         }

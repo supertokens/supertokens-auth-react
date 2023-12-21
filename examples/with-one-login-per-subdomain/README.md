@@ -11,6 +11,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 127.0.0.1   tenant1.example.com
 127.0.0.1   tenant2.example.com
 127.0.0.1   tenant3.example.com
+127.0.0.1   example.com
 ```
 
 ## Available Scripts

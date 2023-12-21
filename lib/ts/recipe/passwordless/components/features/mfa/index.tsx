@@ -18,8 +18,6 @@
 import * as React from "react";
 import { Fragment } from "react";
 import { useMemo } from "react";
-import { useRef } from "react";
-import { useEffect } from "react";
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
 import { redirectToAuth } from "../../../../..";
@@ -39,44 +37,13 @@ import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import MFAThemeWrapper from "../../themes/mfa";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
-import type { FeatureBaseProps } from "../../../../../types";
+import type { FeatureBaseProps, Navigate } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap, MFAChildProps } from "../../../types";
 import type { MFAAction, MFAState, NormalisedConfig } from "../../../types";
 import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import type { PasswordlessFlowType } from "supertokens-web-js/recipe/thirdpartypasswordless";
-
-export const useSuccessInAnotherTabChecker = (
-    callingConsumeCodeRef: React.MutableRefObject<boolean>,
-    recipeImpl: RecipeInterface,
-    state: MFAState,
-    dispatch: React.Dispatch<MFAAction>,
-    userContext: any
-) => {
-    useEffect(() => {
-        // We only need to start checking this if we have an active login attempt
-        if (state.loginAttemptInfo && !state.successInAnotherTab) {
-            const checkSessionIntervalHandle = setInterval(async () => {
-                if (callingConsumeCodeRef.current === false) {
-                    const currLoginAttempt = await recipeImpl.getLoginAttemptInfo({ userContext });
-                    if (
-                        currLoginAttempt === undefined ||
-                        currLoginAttempt.deviceId !== state.loginAttemptInfo?.deviceId
-                    ) {
-                        dispatch({ type: "successInAnotherTab" });
-                    }
-                }
-            }, 2000);
-
-            return () => {
-                clearInterval(checkSessionIntervalHandle);
-            };
-        }
-        // Nothing to clean up
-        return;
-    }, [state.loginAttemptInfo, state.successInAnotherTab]);
-};
 
 export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
     return React.useReducer(
@@ -158,7 +125,7 @@ export function useChildProps(
     state: MFAState,
     contactMethod: "PHONE" | "EMAIL",
     userContext: any,
-    history: any
+    navigate?: Navigate
 ): MFAChildProps {
     const rethrowInRender = useRethrowInRender();
     return useMemo(() => {
@@ -171,36 +138,37 @@ export function useChildProps(
                         : {
                               rid: "passwordless",
                               successRedirectContext: {
-                                  action: "SUCCESS",
+                                  action: "SUCCESS" as const,
                                   isNewRecipeUser: false,
+                                  isNewPrimaryUser: false,
                                   user: undefined,
                                   redirectToPath,
                               },
                           };
 
                 return SessionRecipe.getInstanceOrThrow()
-                    .validateGlobalClaimsAndHandleSuccessRedirection(redirectInfo, userContext, history)
+                    .validateGlobalClaimsAndHandleSuccessRedirection(redirectInfo, userContext, navigate)
                     .catch(rethrowInRender);
             },
             onSignOutClicked: async () => {
                 await SessionRecipe.getInstanceOrThrow().signOut({ userContext });
                 await recipeImplementation.clearLoginAttemptInfo({ userContext });
-                await redirectToAuth({ redirectBack: false, history: history });
+                await redirectToAuth({ redirectBack: false, navigate: navigate });
             },
             onBackButtonClicked: async () => {
                 if (state.loginAttemptInfo) {
                     await recipeImplementation.clearLoginAttemptInfo({ userContext });
                 }
-                // If we don't have history available this would mean we are not using react-router-dom, so we use window's history
-                if (history === undefined) {
+                // If we don't have navigate available this would mean we are not using react-router-dom, so we use window's history
+                if (navigate === undefined) {
                     return WindowHandlerReference.getReferenceOrThrow().windowHandler.getWindowUnsafe().history.back();
                 }
-                // If we do have history and goBack function on it this means we are using react-router-dom v5 or lower
-                if (history.goBack !== undefined) {
-                    return history.goBack();
+                // If we do have navigate and goBack function on it this means we are using react-router-dom v5 or lower
+                if ("goBack" in navigate) {
+                    return navigate.goBack();
                 }
                 // If we reach this code this means we are using react-router-dom v6
-                return history(-1);
+                return navigate(-1);
             },
             onFactorChooserButtonClicked: () => {
                 return MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser(false, undefined, history);
@@ -222,17 +190,9 @@ const MFAFeatureInner: React.FC<
 > = (props) => {
     const userContext = useUserContext();
 
-    const callingConsumeCodeRef = useRef(false);
     const [state, dispatch] = useFeatureReducer();
     const recipeImplementation = React.useMemo(
-        () =>
-            props.recipe &&
-            getModifiedRecipeImplementation(
-                props.recipe.webJSRecipe,
-                props.recipe.config,
-                dispatch,
-                callingConsumeCodeRef
-            ),
+        () => props.recipe && getModifiedRecipeImplementation(props.recipe.webJSRecipe, props.recipe.config, dispatch),
         [props.recipe]
     );
 
@@ -244,9 +204,8 @@ const MFAFeatureInner: React.FC<
         state,
         props.contactMethod,
         userContext,
-        props.history
+        props.navigate
     )!;
-    useSuccessInAnotherTabChecker(callingConsumeCodeRef, recipeImplementation, state, dispatch, userContext);
 
     return (
         <Fragment>
@@ -396,8 +355,7 @@ function useOnLoad(
 function getModifiedRecipeImplementation(
     originalImpl: RecipeInterface,
     config: NormalisedConfig,
-    dispatch: React.Dispatch<MFAAction>,
-    callingConsumeCodeRef: React.MutableRefObject<boolean>
+    dispatch: React.Dispatch<MFAAction>
 ): RecipeInterface {
     return {
         ...originalImpl,
@@ -471,11 +429,6 @@ function getModifiedRecipeImplementation(
         },
 
         consumeCode: async (input) => {
-            // We need to set call callingConsumeCodeRef to true while consumeCode is running,
-            // so we don't detect the login attempt disappearing too early and
-            // go to successInAnotherTab too early
-            callingConsumeCodeRef.current = true;
-
             const res = await originalImpl.consumeCode(input);
 
             if (res.status === "RESTART_FLOW_ERROR") {
@@ -498,8 +451,6 @@ function getModifiedRecipeImplementation(
                 });
                 // we wait for the redirection to happen in this case.
             }
-
-            callingConsumeCodeRef.current = false;
 
             return res;
         },

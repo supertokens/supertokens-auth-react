@@ -9,4 +9,6 @@ export declare enum MFAScreens {
 }
 declare function MFAThemeWrapper(props: MFAProps): JSX.Element;
 export default MFAThemeWrapper;
-export declare function getActiveScreen(props: Pick<MFAProps, "featureState" | "contactMethod">): MFAScreens;
+export declare function getActiveScreen(
+    props: Pick<MFAProps, "featureState" | "contactMethod">
+): MFAScreens.EmailForm | MFAScreens.PhoneForm | MFAScreens.UserInputCodeForm | MFAScreens.AccessDenied;

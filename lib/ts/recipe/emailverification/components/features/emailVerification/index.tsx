@@ -29,23 +29,30 @@ import Session from "../../../../session/recipe";
 import EmailVerificationTheme from "../../themes/emailVerification";
 import { defaultTranslationsEmailVerification } from "../../themes/translations";
 
-import type { FeatureBaseProps } from "../../../../../types";
+import type { FeatureBaseProps, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
-type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any; useComponentOverrides: () => ComponentOverrideMap };
+type Prop = FeatureBaseProps<{
+    recipe: Recipe;
+    userContext?: UserContext;
+    useComponentOverrides: () => ComponentOverrideMap;
+}>;
 
 export const EmailVerification: React.FC<Prop> = (props) => {
     const sessionContext = useContext(SessionContext);
     const [status, setStatus] = useState("LOADING");
-    const userContext = useUserContext();
     const rethrowInRender = useRethrowInRender();
     const recipeComponentOverrides = props.useComponentOverrides();
+    let userContext = useUserContext();
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
 
     const redirectToAuthWithHistory = useCallback(async () => {
-        await redirectToAuth({ redirectBack: false, history: props.history });
-    }, [props.history]);
+        await redirectToAuth({ redirectBack: false, navigate: props.navigate });
+    }, [props.navigate]);
 
     const modifiedRecipeImplementation = useMemo<RecipeInterface>(
         () => ({
@@ -61,9 +68,9 @@ export const EmailVerification: React.FC<Prop> = (props) => {
 
     const onSuccess = useCallback(async () => {
         return Session.getInstanceOrThrow()
-            .validateGlobalClaimsAndHandleSuccessRedirection(undefined, userContext, props.history)
+            .validateGlobalClaimsAndHandleSuccessRedirection(undefined, userContext, props.navigate)
             .catch(rethrowInRender);
-    }, [props.recipe, props.history, userContext]);
+    }, [props.recipe, props.navigate, userContext]);
 
     const fetchIsEmailVerified = useCallback(async () => {
         if (sessionContext.loading === true) {
@@ -109,9 +116,9 @@ export const EmailVerification: React.FC<Prop> = (props) => {
 
     const signOut = useCallback(async (): Promise<void> => {
         const session = Session.getInstanceOrThrow();
-        await session.signOut(props.userContext);
+        await session.signOut({ userContext });
         return redirectToAuthWithHistory();
-    }, [props.recipe, redirectToAuthWithHistory]);
+    }, [redirectToAuthWithHistory, userContext]);
 
     if (status === "LOADING") {
         return <Fragment />;

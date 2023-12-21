@@ -18,6 +18,7 @@
  */
 
 import MultiFactorAuthWebJS from "supertokens-web-js/recipe/multifactorauth";
+import { getNormalisedUserContext } from "supertokens-web-js/utils";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
@@ -40,7 +41,12 @@ import type {
     PreAndPostAPIHookAction,
     SecondaryFactorRedirectionInfo,
 } from "./types";
-import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
+import type {
+    NormalisedConfigWithAppInfoAndRecipeID,
+    RecipeInitResult,
+    UserContext,
+    WebJSRecipeInterface,
+} from "../../types";
 import type { NormalisedAppInfo } from "../../types";
 
 export default class MultiFactorAuth extends RecipeModule<
@@ -54,7 +60,8 @@ export default class MultiFactorAuth extends RecipeModule<
 
     static MultiFactorAuthClaim = new MultiFactorAuthClaimClass(
         () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe,
-        (context) => this.getInstanceOrThrow().getRedirectUrl(context)
+        async (context, userContext) =>
+            (await this.getInstanceOrThrow().getRedirectUrl(context, userContext)) || undefined
     );
 
     public recipeID = MultiFactorAuth.RECIPE_ID;
@@ -169,8 +176,20 @@ export default class MultiFactorAuth extends RecipeModule<
         return this.config.getFactorInfo(this.secondaryFactors);
     }
 
-    async redirectToFactor(factorId: string, forceSetup = false, redirectBack = false, history?: any) {
-        let url = await this.getRedirectUrl({ action: "GO_TO_FACTOR", forceSetup, factorId });
+    async redirectToFactor(
+        factorId: string,
+        forceSetup = false,
+        redirectBack = false,
+        history?: any,
+        userContext?: UserContext
+    ) {
+        let url = await this.getRedirectUrl(
+            { action: "GO_TO_FACTOR", forceSetup, factorId },
+            getNormalisedUserContext(userContext)
+        );
+        if (url === null) {
+            return;
+        }
         if (redirectBack) {
             const redirectUrl = getCurrentNormalisedUrlPath().getAsStringDangerous();
             url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
@@ -183,8 +202,20 @@ export default class MultiFactorAuth extends RecipeModule<
         return SuperTokens.getInstanceOrThrow().redirectToUrl(url, history);
     }
 
-    async redirectToFactorChooser(redirectBack = false, nextFactorOptions: string[] = [], history?: any) {
-        let url = await this.getRedirectUrl({ action: "FACTOR_CHOOSER", nextFactorOptions });
+    async redirectToFactorChooser(
+        redirectBack = false,
+        nextFactorOptions: string[] = [],
+        history?: any,
+        userContext?: UserContext
+    ) {
+        let url = await this.getRedirectUrl(
+            { action: "FACTOR_CHOOSER", nextFactorOptions },
+            getNormalisedUserContext(userContext)
+        );
+
+        if (url === null) {
+            return;
+        }
         if (redirectBack) {
             const redirectUrl = getCurrentNormalisedUrlPath().getAsStringDangerous();
             url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });

@@ -21,6 +21,8 @@ export function getTestContext() {
             signUp: localStorage.getItem("SIGNUP_SETTING_TYPE"),
         },
         enableMFA: localStorage.getItem("enableMFA") === "true",
+        disableRedirectionAfterSuccessfulSignInUp:
+            localStorage.getItem("disableRedirectionAfterSuccessfulSignInUp") === "true",
     };
     return ret;
 }

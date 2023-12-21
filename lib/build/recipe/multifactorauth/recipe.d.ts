@@ -9,7 +9,12 @@ import type {
     PreAndPostAPIHookAction,
     SecondaryFactorRedirectionInfo,
 } from "./types";
-import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
+import type {
+    NormalisedConfigWithAppInfoAndRecipeID,
+    RecipeInitResult,
+    UserContext,
+    WebJSRecipeInterface,
+} from "../../types";
 export default class MultiFactorAuth extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -35,7 +40,18 @@ export default class MultiFactorAuth extends RecipeModule<
     addMFAFactors(secondaryFactors: SecondaryFactorRedirectionInfo[]): void;
     isFirstFactorEnabledOnClient(factorId: string): boolean;
     getSecondaryFactors(): SecondaryFactorRedirectionInfo[];
-    redirectToFactor(factorId: string, forceSetup?: boolean, redirectBack?: boolean, history?: any): Promise<void>;
-    redirectToFactorChooser(redirectBack?: boolean, nextFactorOptions?: string[], history?: any): Promise<void>;
+    redirectToFactor(
+        factorId: string,
+        forceSetup?: boolean,
+        redirectBack?: boolean,
+        history?: any,
+        userContext?: UserContext
+    ): Promise<void>;
+    redirectToFactorChooser(
+        redirectBack?: boolean,
+        nextFactorOptions?: string[],
+        history?: any,
+        userContext?: UserContext
+    ): Promise<void>;
     static reset(): void;
 }

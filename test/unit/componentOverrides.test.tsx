@@ -44,7 +44,6 @@ import { SendVerifyEmail } from "../../lib/ts/recipe/emailverification/component
 import { VerifyEmailLinkClicked } from "../../lib/ts/recipe/emailverification/components/themes/emailVerification/verifyEmailLinkClicked";
 import { Header as ThirdPartyEmailPasswordHeader } from "../../lib/ts/recipe/thirdpartyemailpassword/components/themes/signInAndUp/header";
 import { Header as ThirdPartyPasswordlessHeader } from "../../lib/ts/recipe/thirdpartypasswordless/components/themes/signInUp/header";
-import { CloseTabScreen } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/closeTabScreen";
 import { ComponentOverride } from "../../lib/ts/components/componentOverride/componentOverride";
 import { LinkClickedScreen } from "../../lib/ts/recipe/passwordless/components/themes/linkClickedScreen";
 import { LinkSent } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/linkSent";
@@ -122,7 +121,6 @@ describe("Theme component overrides", () => {
         PasswordlessUserInputCodeFormFooter_Override: UserInputCodeFormFooter,
         PasswordlessUserInputCodeFormHeader_Override: UserInputCodeFormHeader,
         PasswordlessLinkSent_Override: LinkSent,
-        PasswordlessCloseTabScreen_Override: CloseTabScreen,
         PasswordlessLinkClickedScreen_Override: LinkClickedScreen,
         PasswordlessMFAFooter_Override: MFAFooter,
         PasswordlessMFAHeader_Override: MFAHeader,

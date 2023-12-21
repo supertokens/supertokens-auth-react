@@ -8,7 +8,12 @@ import type {
     OnHandleEventContext,
     PreAndPostAPIHookAction,
 } from "./types";
-import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
+import type {
+    NormalisedConfigWithAppInfoAndRecipeID,
+    RecipeInitResult,
+    UserContext,
+    WebJSRecipeInterface,
+} from "../../types";
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -28,7 +33,7 @@ export default class EmailVerification extends RecipeModule<
         config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): EmailVerification;
-    isEmailVerified(userContext: any): Promise<{
+    isEmailVerified(userContext: UserContext): Promise<{
         status: "OK";
         isVerified: boolean;
         fetchResponse: Response;

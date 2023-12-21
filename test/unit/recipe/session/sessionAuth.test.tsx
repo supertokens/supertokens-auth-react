@@ -585,7 +585,11 @@ describe("SessionAuth", () => {
             ]);
 
             // then
-            expect(mockRedirectToAuth).toHaveBeenLastCalledWith({ redirectBack: true, history: undefined });
+            expect(mockRedirectToAuth).toHaveBeenLastCalledWith({
+                redirectBack: true,
+                navigate: undefined,
+                userContext: {},
+            });
         });
 
         test("not redirect on UNAUTHORISED if doRedirection=false", async () => {
@@ -643,7 +647,11 @@ describe("SessionAuth", () => {
 
             // then
             expect(child).not.toBeInTheDocument();
-            expect(mockRedirectToAuth).toHaveBeenLastCalledWith({ redirectBack: true, history: undefined });
+            expect(mockRedirectToAuth).toHaveBeenLastCalledWith({
+                redirectBack: true,
+                navigate: undefined,
+                userContext: {},
+            });
         });
 
         test("not redirect on session load if doRedirection=false", async () => {
