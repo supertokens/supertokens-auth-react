@@ -426,23 +426,7 @@ app.post("/setMFAInfo", async (req, res) => {
 
 app.post("/completeFactor", verifySession(), async (req, res) => {
     let session = req.session;
-    // const payload = session.getAccessTokenPayload();
-    // const mfaClaim = payload["st-mfa"];
-    // const c = {
-    //     ...mfaClaim.c,
-    //     [req.body.id]: Date.now(),
-    // };
-    // if (req.body.id === "totp") {
-    //     mfaInfo.hasTOTP = true;
-    // }
 
-    // await session.mergeIntoAccessTokenPayload({
-    //     "st-mfa": {
-    //         ...mfaClaim,
-    //         c,
-    //         n: getNextArray(c),
-    //     },
-    // });
     await MultiFactorAuth.markFactorAsCompleteInSession(session, req.body.id);
 
     res.send({ status: "OK" });
@@ -463,81 +447,6 @@ app.post("/mergeIntoAccessTokenPayload", verifySession(), async (req, res) => {
 
     res.send({ status: "OK" });
 });
-
-// TODO: remove this after we get backend SDK support
-// app.get("/auth/mfa/info", verifySession(), async (req, res) => {
-//     let session = req.session;
-//     const user = await SuperTokens.getUser(session.getUserId());
-//     const payload = session.getAccessTokenPayload();
-//     let isAllowedToSetup = [];
-//     let isAlreadySetup = [];
-//     if (user.phoneNumbers.length > 0) {
-//         isAlreadySetup.push("otp-phone");
-//     }
-//     if (user.emails.length > 0) {
-//         isAlreadySetup.push("otp-email");
-//     }
-
-//     if (mfaInfo.hasTOTP) {
-//         isAlreadySetup.push("totp");
-//     }
-
-//     let c;
-
-//     const recipeUser = user.loginMethods.find(
-//         (u) => u.recipeUserId.toString() === session.getRecipeUserId().toString()
-//     );
-//     if (recipeUser.recipeId !== "passwordless") {
-//         c = { [recipeUser.recipeId]: Date.now() };
-//     } else if (recipeUser.email) {
-//         // This isn't correct, but will do for testing
-//         c = { "otp-email": Date.now() };
-//     } else {
-//         c = { "otp-phone": Date.now() };
-//     }
-//     const mfaClaim = payload["st-mfa"];
-//     if (mfaInfo?.claimValue) {
-//         await session.mergeIntoAccessTokenPayload({
-//             "st-mfa": mfaInfo.claimValue,
-//         });
-//     } else if (mfaInfo?.requirements) {
-//         if (mfaClaim) {
-//             c = mfaClaim.c;
-//         }
-
-//         let n = getNextArray(c);
-//         await session.mergeIntoAccessTokenPayload({
-//             "st-mfa": {
-//                 c: c,
-//                 n: n,
-//             },
-//         });
-//     } else if (mfaClaim === undefined) {
-//         await session.mergeIntoAccessTokenPayload({
-//             "st-mfa": {
-//                 c: c,
-//                 n: !mfaInfo.hasTOTP ? [] : getNextArray(c, [{ oneOf: ["totp", "otp-phone", "otp-email"] }]),
-//             },
-//         });
-//     }
-//     if (
-//         isAlreadySetup.length === 0 ||
-//         (mfaClaim !== undefined && isAlreadySetup.some((id) => mfaClaim.c[id] !== undefined))
-//     ) {
-//         isAllowedToSetup = ["otp-phone", "otp-email", "totp"].filter((id) => !isAlreadySetup.includes(id));
-//     }
-
-//     res.send({
-//         status: "OK",
-//         email: user.emails[0],
-//         phoneNumber: user.phoneNumbers[0],
-//         factors: {
-//             isAllowedToSetup: mfaInfo.isAllowedToSetup ?? isAllowedToSetup,
-//             isAlreadySetup: mfaInfo.isAlreadySetup ?? isAlreadySetup,
-//         },
-//         ...mfaInfo.resp,
-//     });
-// });
 
 app.get("/token", async (_, res) => {
     res.send({
@@ -1100,49 +1009,8 @@ function initST() {
                                     };
                                 }
 
-                                // const deviceInfo = await input.options.recipeImplementation.listCodesByPreAuthSessionId(
-                                //     {
-                                //         tenantId: input.tenantId,
-                                //         preAuthSessionId: input.preAuthSessionId,
-                                //         userContext: input.userContext,
-                                //     }
-                                // );
                                 const resp = await originalImplementation.consumeCodePOST(input);
 
-                                // if (resp.status === "OK") {
-                                //     let session = await Session.getSession(input.options.req, input.options.res, {
-                                //         overrideGlobalClaimValidators: () => [],
-                                //         sessionRequired: false,
-                                //     });
-
-                                //     // if (session) {
-                                //     //     await AccountLinking.createPrimaryUser(session.getRecipeUserId());
-                                //     //     await AccountLinking.linkAccounts(
-                                //     //         resp.session.getRecipeUserId(),
-                                //     //         session.getUserId()
-                                //     //     );
-
-                                //     //     const mfaClaim = session.getAccessTokenPayload()["st-mfa"];
-
-                                //     //     let factorId;
-                                //     //     if (deviceInfo.email !== undefined) {
-                                //     //         factorId = "otp-email";
-                                //     //     } else {
-                                //     //         factorId = "otp-phone";
-                                //     //     }
-
-                                //     //     const c = {
-                                //     //         ...mfaClaim?.c,
-                                //     //         [factorId]: new Date() / 1000,
-                                //     //     };
-                                //     //     await session.mergeIntoAccessTokenPayload({
-                                //     //         "st-mfa": {
-                                //     //             c,
-                                //     //             n: getNextArray(c),
-                                //     //         },
-                                //     //     });
-                                //     // }
-                                // }
                                 return resp;
                             },
                         };
