@@ -251,7 +251,12 @@ export function useChildProps(
                 await redirectToAuth({ redirectBack: false, navigate: navigate });
             },
             onFactorChooserButtonClicked: () => {
-                return MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser(false, undefined, history);
+                return MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser(
+                    false,
+                    undefined,
+                    navigate,
+                    userContext
+                );
             },
             onSuccess: () => {
                 const redirectToPath = getRedirectToPathFromURL();

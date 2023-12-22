@@ -165,7 +165,12 @@ export function useChildProps(
                 return navigate(-1);
             },
             onFactorChooserButtonClicked: () => {
-                return MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser(false, undefined, history);
+                return MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser(
+                    false,
+                    undefined,
+                    navigate,
+                    userContext
+                );
             },
             recipeImplementation: recipeImplementation,
             config: recipe.config,

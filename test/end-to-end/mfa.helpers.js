@@ -46,7 +46,7 @@ export async function setMFAInfo(mfaInfo) {
     assert.strictEqual(resp.status, 200);
 }
 
-export async function addToDefaultRequiredFactorsForUser(page, factorId) {
+export async function addToRequiredSecondaryFactorsForUser(page, factorId) {
     await page.evaluate(
         (baseUrl, factorId) =>
             window.fetch(`${baseUrl}/addRequiredFactor`, {

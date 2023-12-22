@@ -150,10 +150,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     requirements: [],
                     isAlreadySetup: [factorId],
                     isAllowedToSetup: [factorId],
-                    resp: {
-                        email,
-                        phoneNumber,
-                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -178,10 +174,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     requirements: [],
                     isAlreadySetup: [factorId],
                     isAllowedToSetup: [],
-                    resp: {
-                        email,
-                        phoneNumber,
-                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -219,7 +211,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                 await page.setRequestInterception(true);
                 const requestHandler = (request) => {
-                    if (request.url() === MFA_INFO_API && request.method() === "GET") {
+                    if (request.url() === MFA_INFO_API && request.method() === "PUT") {
                         setTimeout(() => request.continue(), 500);
                     } else {
                         return request.continue();
@@ -262,7 +254,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                 await page.setRequestInterception(true);
                 const requestHandler = (request) => {
-                    if (request.url() === MFA_INFO_API && request.method() === "GET") {
+                    if (request.url() === MFA_INFO_API && request.method() === "PUT") {
                         return request.respond({
                             status: 400,
                             headers: {
@@ -326,10 +318,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     requirements: [],
                     isAlreadySetup: [factorId],
                     isAllowedToSetup: [],
-                    resp: {
-                        email,
-                        phoneNumber,
-                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -348,10 +336,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     requirements: [],
                     isAlreadySetup: [],
                     isAllowedToSetup: [factorId],
-                    resp: {
-                        email,
-                        phoneNumber,
-                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -370,10 +354,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     requirements: [{ oneOf: [factorId, "otp-email"] }],
                     isAlreadySetup: ["otp-email"],
                     isAllowedToSetup: [factorId],
-                    resp: {
-                        email,
-                        phoneNumber,
-                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -393,10 +373,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     requirements: [{ oneOf: [factorId, "otp-email"] }],
                     isAlreadySetup: [factorId, "otp-email"],
                     isAllowedToSetup: [],
-                    resp: {
-                        email,
-                        phoneNumber,
-                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -415,10 +391,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     requirements: [factorId],
                     isAlreadySetup: [],
                     isAllowedToSetup: [factorId],
-                    resp: {
-                        email,
-                        phoneNumber,
-                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -438,10 +410,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     requirements: [factorId],
                     isAlreadySetup: [factorId],
                     isAllowedToSetup: [],
-                    resp: {
-                        email,
-                        phoneNumber,
-                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);

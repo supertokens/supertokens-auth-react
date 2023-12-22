@@ -113,7 +113,7 @@ supertokens.init({
                         if (resp.status === "OK") {
                             // We can this here without any additional checks, since we know that this is only used as a secondary factor
                             // with exactly this (phone + otp) config
-                            await MultiFactorAuth.addToDefaultRequiredFactorsForUser(resp.user.id, "otp-phone");
+                            await MultiFactorAuth.addToRequiredSecondaryFactorsForUser(resp.user.id, "otp-phone");
                         }
                         return resp;
                     },

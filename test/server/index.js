@@ -435,7 +435,7 @@ app.post("/completeFactor", verifySession(), async (req, res) => {
 app.post("/addRequiredFactor", verifySession(), async (req, res) => {
     let session = req.session;
 
-    await MultiFactorAuth.addToDefaultRequiredFactorsForUser(session.getUserId(), req.body.factorId);
+    await MultiFactorAuth.addToRequiredSecondaryFactorsForUser(session.getUserId(), req.body.factorId);
 
     res.send({ status: "OK" });
 });
@@ -1154,13 +1154,17 @@ function initST() {
                     }),
                     apis: (oI) => ({
                         ...oI,
-                        mfaInfoGET: async (input) => {
-                            const res = await oI.mfaInfoGET(input);
-
+                        updateSessionAndFetchMfaInfoPUT: async (input) => {
+                            const res = await oI.updateSessionAndFetchMfaInfoPUT(input);
+                            console.log(res, mfaInfo);
                             if (res.status === "OK") {
                                 if (mfaInfo.isAlreadySetup) {
                                     res.factors.isAlreadySetup = [...mfaInfo.isAlreadySetup];
                                 }
+                            }
+                            if (mfaInfo.noContacts) {
+                                res.emails = {};
+                                res.phoneNumbers = {};
                             }
                             return res;
                         },

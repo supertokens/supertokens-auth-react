@@ -54,7 +54,7 @@ import {
     expectErrorThrown,
     waitForLoadingScreen,
     waitForBlockedScreen,
-    addToDefaultRequiredFactorsForUser,
+    addToRequiredSecondaryFactorsForUser,
 } from "./mfa.helpers";
 
 /*
@@ -161,7 +161,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await tryEmailPasswordSignIn(page, email);
             await waitForDashboard(page);
-            await addToDefaultRequiredFactorsForUser(page, "totp");
+            await addToRequiredSecondaryFactorsForUser(page, "totp");
             await logout(page);
 
             await tryEmailPasswordSignIn(page, email);
@@ -171,7 +171,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
         it("should require 2fa to sign in after setting up a factor - otp-email", async () => {
             await tryEmailPasswordSignIn(page, email);
-            await addToDefaultRequiredFactorsForUser(page, "otp-email");
+            await addToRequiredSecondaryFactorsForUser(page, "otp-email");
             await logout(page);
 
             await tryEmailPasswordSignIn(page, email);
@@ -189,7 +189,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await tryEmailPasswordSignIn(page, email);
             await waitForDashboard(page);
-            await addToDefaultRequiredFactorsForUser(page, "otp-phone");
+            await addToRequiredSecondaryFactorsForUser(page, "otp-phone");
             await logout(page);
 
             await tryEmailPasswordSignIn(page, email);

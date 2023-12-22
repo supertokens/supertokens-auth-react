@@ -16,8 +16,6 @@ export declare const defaultTranslationsTOTP: {
         TOTP_MFA_BLOCKED_RETRY: string;
         TOTP_MFA_LOGOUT: string;
         TOTP_MFA_FOOTER_CHOOSER_ANOTHER: string;
-        TOTP_MFA_NAME: string;
-        TOTP_MFA_DESCRIPTION: string;
         ERROR_TOTP_INVALID_CODE: string;
         ERROR_TOTP_INVALID_CODE_RETRY_START: string;
         ERROR_TOTP_INVALID_CODE_RETRY_END: string;

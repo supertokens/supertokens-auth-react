@@ -10,6 +10,7 @@ import type {
     SecondaryFactorRedirectionInfo,
 } from "./types";
 import type {
+    Navigate,
     NormalisedConfigWithAppInfoAndRecipeID,
     RecipeInitResult,
     UserContext,
@@ -44,13 +45,13 @@ export default class MultiFactorAuth extends RecipeModule<
         factorId: string,
         forceSetup?: boolean,
         redirectBack?: boolean,
-        history?: any,
+        navigate?: Navigate,
         userContext?: UserContext
     ): Promise<void>;
     redirectToFactorChooser(
         redirectBack?: boolean,
         nextFactorOptions?: string[],
-        history?: any,
+        navigate?: Navigate,
         userContext?: UserContext
     ): Promise<void>;
     static reset(): void;
