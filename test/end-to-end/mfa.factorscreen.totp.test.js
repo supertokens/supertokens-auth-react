@@ -47,6 +47,7 @@ import {
     chooseFactor,
     tryPasswordlessSignInUp,
     setupTOTP,
+    getTOTPSecret,
     completeTOTP,
     setupUserWithAllFactors,
     goToFactorChooser,
@@ -144,15 +145,35 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 await page.close();
             });
 
+            it("should respect redirectToPath", async () => {
+                await setMFAInfo({
+                    requirements: [],
+                    isAlreadySetup: [factorId],
+                    isAllowedToSetup: [factorId],
+                });
+
+                await tryEmailPasswordSignIn(page, email);
+
+                await Promise.all([
+                    page.goto(
+                        `${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}?setup=true&redirectToPath=%2Fredirect-here`
+                    ),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                const secret = await getTOTPSecret(page);
+                await completeTOTP(page, secret);
+                await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+                const pathname = await page.evaluate(() => window.location.pathname);
+                assert.deepStrictEqual(pathname, "/redirect-here");
+            });
+
             it("should show access denied if the app navigates to the setup page but the user it is not allowed to set up the factor", async () => {
                 await setMFAInfo({
                     requirements: [],
                     isAlreadySetup: [factorId],
                     isAllowedToSetup: [],
-                    resp: {
-                        email,
-                        phoneNumber,
-                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -190,7 +211,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                 await page.setRequestInterception(true);
                 const requestHandler = (request) => {
-                    if (request.url() === MFA_INFO_API && request.method() === "GET") {
+                    if (request.url() === MFA_INFO_API && request.method() === "PUT") {
                         setTimeout(() => request.continue(), 500);
                     } else {
                         return request.continue();
@@ -233,7 +254,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                 await page.setRequestInterception(true);
                 const requestHandler = (request) => {
-                    if (request.url() === MFA_INFO_API && request.method() === "GET") {
+                    if (request.url() === MFA_INFO_API && request.method() === "PUT") {
                         return request.respond({
                             status: 400,
                             headers: {
@@ -297,10 +318,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     requirements: [],
                     isAlreadySetup: [factorId],
                     isAllowedToSetup: [],
-                    resp: {
-                        email,
-                        phoneNumber,
-                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -319,10 +336,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     requirements: [],
                     isAlreadySetup: [],
                     isAllowedToSetup: [factorId],
-                    resp: {
-                        email,
-                        phoneNumber,
-                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -341,10 +354,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     requirements: [{ oneOf: [factorId, "otp-email"] }],
                     isAlreadySetup: ["otp-email"],
                     isAllowedToSetup: [factorId],
-                    resp: {
-                        email,
-                        phoneNumber,
-                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -364,10 +373,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     requirements: [{ oneOf: [factorId, "otp-email"] }],
                     isAlreadySetup: [factorId, "otp-email"],
                     isAllowedToSetup: [],
-                    resp: {
-                        email,
-                        phoneNumber,
-                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -386,10 +391,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     requirements: [factorId],
                     isAlreadySetup: [],
                     isAllowedToSetup: [factorId],
-                    resp: {
-                        email,
-                        phoneNumber,
-                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -409,10 +410,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     requirements: [factorId],
                     isAlreadySetup: [factorId],
                     isAllowedToSetup: [],
-                    resp: {
-                        email,
-                        phoneNumber,
-                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);

@@ -120,7 +120,7 @@ describe("SuperTokens Email Verification", function () {
             ]);
             await toggleSignInSignUp(page);
 
-            const email = getTestEmail();
+            const email = await getTestEmail();
             const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email });
             await signUp(page, fieldValues, postValues, "emailpassword");
 
@@ -169,7 +169,7 @@ describe("SuperTokens Email Verification", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await toggleSignInSignUp(page);
-            const email = getTestEmail();
+            const email = await getTestEmail();
             const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email });
             await signUp(page, fieldValues, postValues, "emailpassword");
 
@@ -287,7 +287,7 @@ describe("SuperTokens Email Verification", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await toggleSignInSignUp(page);
-            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: getTestEmail() });
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: await getTestEmail() });
             await signUp(page, fieldValues, postValues, "emailpassword");
 
             let pathname = await page.evaluate(() => window.location.pathname);

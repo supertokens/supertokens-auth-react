@@ -28,6 +28,7 @@ export async function setupUserWithAllFactors(page) {
 
     await tryEmailPasswordSignUp(page, email);
 
+    await chooseFactor(page, "otp-email");
     await completeOTP(page);
 
     await waitForDashboard(page);
@@ -46,7 +47,7 @@ export async function setMFAInfo(mfaInfo) {
     assert.strictEqual(resp.status, 200);
 }
 
-export async function addToDefaultRequiredFactorsForUser(page, factorId) {
+export async function addToRequiredSecondaryFactorsForUser(page, factorId) {
     await page.evaluate(
         (baseUrl, factorId) =>
             window.fetch(`${baseUrl}/addRequiredFactor`, {
@@ -95,9 +96,11 @@ export async function waitForBlockedScreen(page) {
     const error = await waitForSTElement(page, "[data-supertokens~=blockedScreen]");
     return error.evaluate((e) => e.textContent);
 }
-export async function setupOTP(page, contactMethod, phoneNumber) {
-    await goToFactorChooser(page);
-    await chooseFactor(page, contactMethod === "PHONE" ? "otp-phone" : "otp-email");
+export async function setupOTP(page, contactMethod, phoneNumber, goToChooser = true) {
+    if (goToChooser) {
+        await goToFactorChooser(page);
+        await chooseFactor(page, contactMethod === "PHONE" ? "otp-phone" : "otp-email");
+    }
 
     await setInputValues(page, [
         { name: contactMethod === "PHONE" ? "phoneNumber_text" : "email", value: phoneNumber },
@@ -109,16 +112,21 @@ export async function setupOTP(page, contactMethod, phoneNumber) {
 export async function setupTOTP(page) {
     await goToFactorChooser(page);
     await chooseFactor(page, "totp");
-    const showSecret = await waitForSTElement(page, "[data-supertokens~=showTOTPSecretBtn]");
-    await showSecret.click();
-
-    const secretDiv = await waitForSTElement(page, "[data-supertokens~=totpSecret]");
-    const secret = await secretDiv.evaluate((e) => e.textContent);
+    const secret = await getTOTPSecret(page);
 
     await completeTOTP(page, secret);
     await waitFor(1000);
     return secret;
 }
+export async function getTOTPSecret(page) {
+    const showSecret = await waitForSTElement(page, "[data-supertokens~=showTOTPSecretBtn]");
+    await showSecret.click();
+
+    const secretDiv = await waitForSTElement(page, "[data-supertokens~=totpSecret]");
+    const secret = await secretDiv.evaluate((e) => e.textContent);
+    return secret;
+}
+
 export async function completeTOTP(page, secret) {
     let resp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/getTOTPCode`, {
         method: "POST",
@@ -150,9 +158,9 @@ export async function tryEmailPasswordSignUp(page, email) {
     await submitForm(page);
     await new Promise((res) => setTimeout(res, 1000));
 }
-export async function tryEmailPasswordSignIn(page, email) {
+export async function tryEmailPasswordSignIn(page, email, queryParams) {
     await Promise.all([
-        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=emailpassword`),
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=emailpassword${queryParams ?? ""}`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 
@@ -164,10 +172,10 @@ export async function tryEmailPasswordSignIn(page, email) {
     await submitForm(page);
     await new Promise((res) => setTimeout(res, 1000));
 }
-export async function tryPasswordlessSignInUp(page, contactInfo) {
+export async function tryPasswordlessSignInUp(page, contactInfo, queryParams) {
     await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
     await Promise.all([
-        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=passwordless`),
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=passwordless${queryParams ?? ""}`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 

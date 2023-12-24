@@ -27,7 +27,7 @@ export const MFAOTPHeader = withOverride(
     function PasswordlessMFAOTPHeader({
         loginAttemptInfo,
         onBackButtonClicked,
-        isSetupAllowed,
+        canChangeEmail,
     }: MFAOTPHeaderProps): JSX.Element {
         const t = useTranslation();
         const claim = useClaimValue(MultiFactorAuthClaim);
@@ -37,7 +37,7 @@ export const MFAOTPHeader = withOverride(
                 <div data-supertokens="headerTitle withBackButton pwless-mfa otpHeader">
                     {claim.loading === false &&
                     (claim.value === undefined || claim.value.n.length === 0) &&
-                    isSetupAllowed === false ? (
+                    canChangeEmail === false ? (
                         <BackButton onClick={onBackButtonClicked} />
                     ) : (
                         <span data-supertokens="backButtonPlaceholder backButtonCommon">

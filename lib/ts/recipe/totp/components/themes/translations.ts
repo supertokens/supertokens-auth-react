@@ -22,9 +22,6 @@ export const defaultTranslationsTOTP = {
         TOTP_MFA_LOGOUT: "Logout",
         TOTP_MFA_FOOTER_CHOOSER_ANOTHER: "Choose another factor",
 
-        TOTP_MFA_NAME: "TOTP",
-        TOTP_MFA_DESCRIPTION: "Use an authenticator app to complete the authentication request",
-
         ERROR_TOTP_INVALID_CODE: "Invalid TOTP. Please try again.",
         ERROR_TOTP_INVALID_CODE_RETRY_START: "",
         // \xA0 is non breaking space.

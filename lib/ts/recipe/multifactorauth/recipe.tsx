@@ -42,6 +42,7 @@ import type {
     SecondaryFactorRedirectionInfo,
 } from "./types";
 import type {
+    Navigate,
     NormalisedConfigWithAppInfoAndRecipeID,
     RecipeInitResult,
     UserContext,
@@ -180,7 +181,7 @@ export default class MultiFactorAuth extends RecipeModule<
         factorId: string,
         forceSetup = false,
         redirectBack = false,
-        history?: any,
+        navigate?: Navigate,
         userContext?: UserContext
     ) {
         let url = await this.getRedirectUrl(
@@ -199,13 +200,13 @@ export default class MultiFactorAuth extends RecipeModule<
                 url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
             }
         }
-        return SuperTokens.getInstanceOrThrow().redirectToUrl(url, history);
+        return SuperTokens.getInstanceOrThrow().redirectToUrl(url, navigate);
     }
 
     async redirectToFactorChooser(
         redirectBack = false,
         nextFactorOptions: string[] = [],
-        history?: any,
+        navigate?: Navigate,
         userContext?: UserContext
     ) {
         let url = await this.getRedirectUrl(
@@ -225,7 +226,7 @@ export default class MultiFactorAuth extends RecipeModule<
                 url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
             }
         }
-        return SuperTokens.getInstanceOrThrow().redirectToUrl(url, history);
+        return SuperTokens.getInstanceOrThrow().redirectToUrl(url, navigate);
     }
 
     /*

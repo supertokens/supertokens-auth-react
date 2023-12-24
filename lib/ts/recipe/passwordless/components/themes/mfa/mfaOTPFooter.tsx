@@ -28,7 +28,7 @@ export const MFAOTPFooter = withOverride(
         recipeImplementation,
         onSignOutClicked,
         onFactorChooserButtonClicked,
-        isSetupAllowed,
+        canChangeEmail,
     }: MFAOTPFooterProps): JSX.Element {
         const t = useTranslation();
         const claim = useClaimValue(MultiFactorAuthClaim);
@@ -36,7 +36,7 @@ export const MFAOTPFooter = withOverride(
 
         return (
             <div data-supertokens="footerLinkGroupVert pwless-mfa otpFooter">
-                {isSetupAllowed ? (
+                {canChangeEmail ? (
                     <div
                         data-supertokens="secondaryText"
                         onClick={() =>

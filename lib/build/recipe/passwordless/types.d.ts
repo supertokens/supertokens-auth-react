@@ -135,9 +135,10 @@ export declare type MFAProps = {
     onSuccess?: () => void;
     dispatch: Dispatch<MFAAction>;
     featureState: {
-        isSetupAllowed: boolean;
+        canChangeEmail: boolean;
         loginAttemptInfo?: LoginAttemptInfo;
         loaded: boolean;
+        showAccessDenied: boolean;
         error: string | undefined;
     };
     userContext?: any;
@@ -248,7 +249,8 @@ export declare type MFAAction =
     | {
           type: "load";
           loginAttemptInfo: LoginAttemptInfo | undefined;
-          isAllowedToSetup: boolean;
+          canChangeEmail: boolean;
+          showAccessDenied: boolean;
           error: string | undefined;
       }
     | {
@@ -265,13 +267,15 @@ export declare type MFAAction =
       }
     | {
           type: "setError";
+          showAccessDenied: boolean;
           error: string | undefined;
       };
 export declare type MFAState = {
+    showAccessDenied: boolean;
     error: string | undefined;
     loaded: boolean;
     loginAttemptInfo: LoginAttemptInfo | undefined;
-    isSetupAllowed: boolean;
+    canChangeEmail: boolean;
 };
 export declare type SignInUpChildProps = Omit<SignInUpProps, "featureState" | "dispatch">;
 export declare type MFAChildProps = Omit<MFAProps, "featureState" | "dispatch">;
@@ -294,14 +298,14 @@ export declare type UserInputCodeFormHeaderProps = {
     config: NormalisedConfig;
 };
 export declare type MFAFooterProps = {
-    isSetupAllowed: boolean;
+    canChangeEmail: boolean;
     onSignOutClicked: () => void;
     onFactorChooserButtonClicked: () => void;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
 };
 export declare type MFAOTPFooterProps = {
-    isSetupAllowed: boolean;
+    canChangeEmail: boolean;
     onSignOutClicked: () => void;
     onFactorChooserButtonClicked: () => void;
     loginAttemptInfo: LoginAttemptInfo;
@@ -315,7 +319,7 @@ export declare type MFAHeaderProps = {
     config: NormalisedConfig;
 };
 export declare type MFAOTPHeaderProps = {
-    isSetupAllowed: boolean;
+    canChangeEmail: boolean;
     onBackButtonClicked: () => void;
     loginAttemptInfo: LoginAttemptInfo;
     recipeImplementation: RecipeImplementation;

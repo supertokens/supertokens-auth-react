@@ -15,9 +15,10 @@ function noop() {}
 WindowHandlerReference.init((oI) => ({ ...oI }));
 
 const defaultState = {
-    isSetupAllowed: false,
+    canChangeEmail: false,
     loginAttemptInfo: undefined,
     loaded: true,
+    showAccessDenied: false,
     error: undefined,
 };
 
@@ -112,7 +113,7 @@ export const SetupEmail: Story = {
             ...defaultState,
             loaded: true,
             loginAttemptInfo: undefined,
-            isSetupAllowed: true,
+            canChangeEmail: true,
         },
     },
 };
@@ -130,7 +131,7 @@ export const SetupPhone: Story = {
             ...defaultState,
             loaded: true,
             loginAttemptInfo: undefined,
-            isSetupAllowed: true,
+            canChangeEmail: true,
         },
     },
 };
@@ -167,7 +168,7 @@ export const SetupSingleNextOption: Story = {
             ...defaultState,
             loaded: true,
             loginAttemptInfo: undefined,
-            isSetupAllowed: true,
+            canChangeEmail: true,
         },
     },
     loaders: [loadSessionContextWithSingleNextOption],
@@ -184,7 +185,7 @@ export const SetupWithMultipleNextOptions: Story = {
             ...defaultState,
             loaded: true,
             loginAttemptInfo: undefined,
-            isSetupAllowed: true,
+            canChangeEmail: true,
         },
     },
     loaders: [loadSessionContextWithMultipleNextOptions],
@@ -202,7 +203,8 @@ export const SetupDenied: Story = {
             ...defaultState,
             loaded: true,
             loginAttemptInfo: undefined,
-            isSetupAllowed: false,
+            canChangeEmail: false,
+            showAccessDenied: true,
             error: "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP",
         },
     },
@@ -220,7 +222,7 @@ export const SetupVerification: Story = {
             ...defaultState,
             loaded: true,
             loginAttemptInfo: exampleLoginAttemptInfo,
-            isSetupAllowed: true,
+            canChangeEmail: true,
         },
     },
 };
@@ -253,7 +255,7 @@ export const VerificationWithSingleNextOption: Story = {
             ...defaultState,
             loaded: true,
             loginAttemptInfo: exampleLoginAttemptInfo,
-            isSetupAllowed: false,
+            canChangeEmail: false,
         },
     },
     loaders: [loadSessionContextWithSingleNextOption],
@@ -271,7 +273,7 @@ export const VerificationWithMultipleNextOptions: Story = {
             ...defaultState,
             loaded: true,
             loginAttemptInfo: exampleLoginAttemptInfo,
-            isSetupAllowed: false,
+            canChangeEmail: false,
         },
     },
     loaders: [loadSessionContextWithMultipleNextOptions],

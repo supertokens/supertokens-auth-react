@@ -143,7 +143,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
         await waitForDashboard(page);
     });
 
-    describe("sign in + setup + sign in with chooser flow", () => {
+    describe("sign in flows", () => {
         it("set up otp-phone and sign-in", async function () {
             const email = await getTestEmail();
             const phoneNumber = getTestPhoneNumber();
@@ -153,17 +153,20 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             await tryEmailPasswordSignUp(page, email);
+            await chooseFactor(page, "otp-phone");
 
-            await completeOTP(page);
+            await setupOTP(page, "PHONE", phoneNumber, false);
 
             await waitForDashboard(page);
-            await setupOTP(page, "PHONE", phoneNumber);
 
             await logout(page);
-            await tryEmailPasswordSignIn(page, email);
-            await chooseFactor(page, "otp-phone");
-            await completeOTP(page);
-            await waitForDashboard(page);
+            await tryEmailPasswordSignIn(page, email, "&redirectToPath=%2Fredirect-here");
+            await completeOTP(page, "PHONE");
+
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/redirect-here");
         });
 
         it("set up otp-email and sign-in", async function () {
@@ -189,6 +192,16 @@ describe("SuperTokens SignIn w/ MFA", function () {
             await waitFor(500);
             await completeOTP(page);
             await waitForDashboard(page);
+
+            await logout(page);
+            await tryPasswordlessSignInUp(page, phoneNumber, "&redirectToPath=%2Fredirect-here");
+            await waitFor(500);
+            await completeOTP(page);
+
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/redirect-here");
         });
 
         it("set up totp and sign-in", async function () {
@@ -202,6 +215,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             await tryEmailPasswordSignUp(page, email);
+            await chooseFactor(page, "otp-email");
             await completeOTP(page);
 
             await waitForDashboard(page);
@@ -214,6 +228,16 @@ describe("SuperTokens SignIn w/ MFA", function () {
             await chooseFactor(page, "totp");
             await completeTOTP(page, secret);
             await waitForDashboard(page);
+
+            await logout(page);
+            await tryEmailPasswordSignIn(page, email, "&redirectToPath=%2Fredirect-here");
+            await chooseFactor(page, "totp");
+            await completeTOTP(page, secret);
+
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/redirect-here");
         });
     });
 });
