@@ -19,8 +19,8 @@
         "react-dom": "^18.1.0",
         "react-router-dom": "^6.3.0",
         "react-scripts": "^5.0.1",
-        "supertokens-auth-react": "github:supertokens/supertokens-auth-react#feat/mfa/base",
-        "supertokens-node": "github:supertokens/supertokens-node#feat/mfa/base",
+        "supertokens-auth-react": "latest",
+        "supertokens-node": "latest",
         "ts-node": "^10.8.0",
         "typescript": "^4.7.2",
         "web-vitals": "^2.1.4"
