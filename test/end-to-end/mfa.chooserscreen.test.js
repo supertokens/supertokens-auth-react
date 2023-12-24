@@ -270,7 +270,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await page.setRequestInterception(true);
             const requestHandler = (request) => {
-                if (request.url() === MFA_INFO_API && request.method() === "GET") {
+                if (request.url() === MFA_INFO_API && request.method() === "PUT") {
                     return request.respond({
                         status: 400,
                         headers: {

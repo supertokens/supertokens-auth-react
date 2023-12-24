@@ -143,7 +143,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
         await waitForDashboard(page);
     });
 
-    describe("sign in + setup + sign in with chooser flow", () => {
+    describe("sign in flows", () => {
         it("set up otp-phone and sign-in", async function () {
             const email = await getTestEmail();
             const phoneNumber = getTestPhoneNumber();
@@ -153,22 +153,15 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             await tryEmailPasswordSignUp(page, email);
-
-            await completeOTP(page);
-
-            await waitForDashboard(page);
-            await setupOTP(page, "PHONE", phoneNumber);
-
-            await logout(page);
-            await tryEmailPasswordSignIn(page, email);
             await chooseFactor(page, "otp-phone");
-            await completeOTP(page);
+
+            await setupOTP(page, "PHONE", phoneNumber, false);
+
             await waitForDashboard(page);
 
             await logout(page);
             await tryEmailPasswordSignIn(page, email, "&redirectToPath=%2Fredirect-here");
-            await chooseFactor(page, "otp-phone");
-            await completeOTP(page);
+            await completeOTP(page, "PHONE");
 
             await page.waitForNavigation({ waitUntil: "networkidle0" });
 
@@ -222,6 +215,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             await tryEmailPasswordSignUp(page, email);
+            await chooseFactor(page, "otp-email");
             await completeOTP(page);
 
             await waitForDashboard(page);
