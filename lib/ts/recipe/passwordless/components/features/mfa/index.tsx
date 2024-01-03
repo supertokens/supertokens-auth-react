@@ -55,6 +55,8 @@ export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
                         loginAttemptInfo: action.loginAttemptInfo,
                         canChangeEmail: action.canChangeEmail,
                         showAccessDenied: action.showAccessDenied,
+                        showBackButton: action.showBackButton,
+                        showFactorChooserButton: action.showFactorChooserButton,
                     };
                 case "resendCode":
                     if (!oldState.loginAttemptInfo) {
@@ -98,6 +100,8 @@ export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
             loaded: false,
             loginAttemptInfo: undefined,
             canChangeEmail: false,
+            showBackButton: false,
+            showFactorChooserButton: false,
         },
         (initArg) => {
             let error: string | undefined = undefined;
@@ -266,7 +270,7 @@ function useOnLoad(
     userContext: any
 ) {
     const fetchMFAInfo = React.useCallback(
-        async () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe.getMFAInfo({ userContext }),
+        async () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe.resyncSessionAndFetchMFAInfo({ userContext }),
         [userContext]
     );
     const handleLoadError = React.useCallback(
@@ -299,9 +303,7 @@ function useOnLoad(
 
             if (!isAlreadySetup && !isAllowedToSetup) {
                 dispatch({
-                    type: "load",
-                    loginAttemptInfo: undefined,
-                    canChangeEmail: false,
+                    type: "setError",
                     showAccessDenied: true,
                     error: "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP",
                 });
@@ -348,16 +350,22 @@ function useOnLoad(
                     // If we got here we know that this must be a setup, so we check if it's allowed
                     // before asking for an email
                     dispatch({
-                        type: "load",
-                        loginAttemptInfo: undefined,
-                        canChangeEmail: false,
+                        type: "setError",
                         showAccessDenied: true,
                         error: "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP",
                     });
                     return;
                 } else {
                     // this will ask the user for the email/phone
-                    dispatch({ type: "load", showAccessDenied: false, loginAttemptInfo, error, canChangeEmail: true });
+                    dispatch({
+                        type: "load",
+                        showAccessDenied: false,
+                        loginAttemptInfo,
+                        error,
+                        canChangeEmail: true,
+                        showBackButton: mfaInfo.nextFactors.length === 0,
+                        showFactorChooserButton: mfaInfo.nextFactors.length > 1,
+                    });
                 }
             } else {
                 // In this branch we already have a valid login attempt so we show the OTP screen
@@ -367,6 +375,8 @@ function useOnLoad(
                     loginAttemptInfo,
                     error,
                     canChangeEmail: contactInfoList.length > 0 && doSetup !== "true",
+                    showBackButton: mfaInfo.nextFactors.length === 0,
+                    showFactorChooserButton: mfaInfo.nextFactors.length > 1,
                 });
             }
         },

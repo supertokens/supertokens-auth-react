@@ -2,8 +2,8 @@
 import { RecipeInterface } from "supertokens-web-js/recipe/multifactorauth";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { UserInput } from "./types";
+import type { UserContext } from "../../types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/multifactorauth";
-import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 export default class Wrapper {
     static MultiFactorAuthClaim: import("./multiFactorAuthClaim").MultiFactorAuthClaimClass;
     static init(
@@ -14,9 +14,14 @@ export default class Wrapper {
         never,
         import("./types").NormalisedConfig
     >;
-    static getMFAInfo(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static resyncSessionAndFetchMFAInfo(input?: {
+        userContext?: UserContext;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
         status: "OK";
-        factors: MFAFactorInfo;
+        nextFactors: string[];
+        emails: Record<string, string[] | undefined>;
+        phoneNumbers: Record<string, string[] | undefined>;
         fetchResponse: Response;
     }>;
     static redirectToFactor(
@@ -33,7 +38,7 @@ export default class Wrapper {
     >;
 }
 declare const init: typeof Wrapper.init;
-declare const getMFAInfo: typeof Wrapper.getMFAInfo;
+declare const resyncSessionAndFetchMFAInfo: typeof Wrapper.resyncSessionAndFetchMFAInfo;
 declare const redirectToFactor: typeof Wrapper.redirectToFactor;
 declare const redirectToFactorChooser: typeof Wrapper.redirectToFactorChooser;
 declare const MultiFactorAuthComponentsOverrideProvider: import("react").FC<
@@ -44,7 +49,7 @@ declare const MultiFactorAuthComponentsOverrideProvider: import("react").FC<
 declare const MultiFactorAuthClaim: import("./multiFactorAuthClaim").MultiFactorAuthClaimClass;
 export {
     init,
-    getMFAInfo,
+    resyncSessionAndFetchMFAInfo,
     redirectToFactor,
     redirectToFactorChooser,
     MultiFactorAuthComponentsOverrideProvider,

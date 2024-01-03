@@ -32,18 +32,25 @@ import MultiFactorAuth from "../../../recipe";
 import FactorChooserTheme from "../../themes/factorChooser";
 import { defaultTranslationsMultiFactorAuth } from "../../themes/translations";
 
-import type { FeatureBaseProps } from "../../../../../types";
+import type { FeatureBaseProps, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
-import type { ComponentOverrideMap } from "../../../types";
-import type { MFAFactorInfo } from "supertokens-web-js/lib/build/recipe/multifactorauth/types";
+import type { ComponentOverrideMap, LoadedMFAInfo } from "../../../types";
 
-type Prop = FeatureBaseProps<{ recipe: Recipe; userContext?: any; useComponentOverrides: () => ComponentOverrideMap }>;
+type Prop = FeatureBaseProps<{
+    recipe: Recipe;
+    userContext?: UserContext;
+    useComponentOverrides: () => ComponentOverrideMap;
+}>;
 
 export const FactorChooser: React.FC<Prop> = (props) => {
     const sessionContext = useContext(SessionContext);
-    const [mfaInfo, setMFAInfo] = useState<MFAFactorInfo | undefined>(undefined);
+
+    const [mfaInfo, setMFAInfo] = useState<LoadedMFAInfo | undefined>(undefined);
     const mfaClaimValue = useClaimValue(MultiFactorAuthClaim);
-    const userContext = useUserContext();
+    let userContext = useUserContext();
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
     const recipeComponentOverrides = props.useComponentOverrides();
 
     const nextOpts = getQueryParams("n") ?? undefined;
@@ -53,27 +60,24 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     }, [props.navigate]);
 
     const fetchMFAInfo = useCallback(
-        async () => props.recipe.webJSRecipe.getMFAInfo({ userContext }),
+        async () => props.recipe.webJSRecipe.resyncSessionAndFetchMFAInfo({ userContext }),
         [props.recipe, userContext]
     );
 
     const checkMFAInfo = useCallback(
-        async (mfaInfo: { factors: MFAFactorInfo }): Promise<void> => {
+        async (mfaInfo: Awaited<ReturnType<typeof fetchMFAInfo>>): Promise<void> => {
             if (mfaClaimValue.loading === true) {
                 throw new Error("This should never happen: session context loaded but claim value loading");
             }
             const availableFactors = props.recipe
                 .getSecondaryFactors()
-                .filter(
-                    ({ id }) =>
-                        mfaInfo.factors.isAllowedToSetup.includes(id) || mfaInfo.factors.isAlreadySetup.includes(id)
-                )
-                .filter(({ id }) => mfaClaimValue.value!.n.length === 0 || mfaClaimValue.value!.n.includes(id))
+                .filter(({ id }) => mfaInfo.nextFactors.length === 0 || mfaInfo.nextFactors.includes(id))
+                .filter(({ id }) => mfaInfo.nextFactors.length === 0 || mfaInfo.nextFactors.includes(id))
                 .filter(({ id }) => nextOpts === undefined || nextOpts.length === 0 || nextOpts.includes(id));
 
             // If we got here when the next array is not empty, that means that the user redirected here intentionally
             // In this case we do not want to automatically redirect away but show the chooser screen.
-            if (mfaClaimValue.value!.n.length !== 0 && availableFactors.length === 1) {
+            if (mfaInfo.nextFactors.length !== 0 && availableFactors.length === 1) {
                 return MultiFactorAuth.getInstanceOrThrow().redirectToFactor(
                     availableFactors[0].id,
                     false,
@@ -81,7 +85,12 @@ export const FactorChooser: React.FC<Prop> = (props) => {
                     props.navigate
                 );
             } else {
-                setMFAInfo(mfaInfo.factors);
+                setMFAInfo({
+                    factors: mfaInfo.factors,
+                    nextFactors: mfaInfo.nextFactors,
+                    phoneNumbers: mfaInfo.phoneNumbers,
+                    emails: mfaInfo.emails,
+                });
             }
         },
         [setMFAInfo, nextOpts]
@@ -106,7 +115,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     );
     const signOut = useCallback(async (): Promise<void> => {
         const session = Session.getInstanceOrThrow();
-        await session.signOut(props.userContext);
+        await session.signOut({ userContext });
         return redirectToAuthWithHistory();
     }, [props.recipe, redirectToAuthWithHistory]);
 
@@ -129,14 +138,16 @@ export const FactorChooser: React.FC<Prop> = (props) => {
 
     const availableFactors = props.recipe
         .getSecondaryFactors()
-        .filter(({ id }) => mfaInfo.isAllowedToSetup.includes(id) || mfaInfo.isAlreadySetup.includes(id))
-        .filter(({ id }) => mfaClaimValue.value?.n.length === 0 || mfaClaimValue.value?.n.includes(id))
+        .filter(
+            ({ id }) => mfaInfo.factors.isAllowedToSetup.includes(id) || mfaInfo.factors.isAlreadySetup.includes(id)
+        )
+        .filter(({ id }) => mfaInfo.nextFactors.length === 0 || mfaInfo.nextFactors.includes(id))
         .filter(({ id }) => nextOpts === undefined || nextOpts.length === 0 || nextOpts.includes(id));
 
     const childProps = {
         config: props.recipe.config,
         onBackButtonClicked,
-        showBackButton: mfaClaimValue.value?.n.length === 0,
+        showBackButton: mfaInfo.nextFactors.length === 0,
         mfaInfo: mfaInfo,
         availableFactors: availableFactors,
         onLogoutClicked: signOut,

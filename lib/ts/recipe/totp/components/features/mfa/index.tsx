@@ -25,7 +25,6 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, getRedirectToPathFromURL, useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
-import { MultiFactorAuthClaim } from "../../../../multifactorauth";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
 import SessionRecipe from "../../../../session/recipe";
 import MFATOTPThemeWrapper from "../../themes/mfa";
@@ -51,6 +50,7 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
                         loaded: true,
                         error: action.error,
                         deviceInfo: action.deviceInfo,
+                        showFactorChooserButton: action.showFactorChooserButton,
                         showBackButton: action.showBackButton,
                         showAccessDenied: action.showAccessDenied,
                         isBlocked: false,
@@ -102,6 +102,7 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
             deviceInfo: undefined,
             showSecret: false,
             isBlocked: false,
+            showFactorChooserButton: false,
             showBackButton: false,
             showAccessDenied: false,
         },
@@ -121,7 +122,7 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
 
 function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFAAction>, userContext: any) {
     const fetchMFAInfo = React.useCallback(
-        async () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe.getMFAInfo({ userContext }),
+        async () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe.resyncSessionAndFetchMFAInfo({ userContext }),
         [userContext]
     );
 
@@ -141,9 +142,7 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
             const isAlreadySetup = mfaInfo.factors.isAlreadySetup.includes("totp");
             if (!isAllowedToSetup && !isAlreadySetup) {
                 dispatch({
-                    type: "load",
-                    deviceInfo: undefined,
-                    showBackButton: true,
+                    type: "setError",
                     showAccessDenied: true,
                     error: "TOTP_MFA_NOT_ALLOWED_TO_SETUP",
                 });
@@ -151,9 +150,7 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
             }
             if (doSetup && !isAllowedToSetup) {
                 dispatch({
-                    type: "load",
-                    deviceInfo: undefined,
-                    showBackButton: true,
+                    type: "setError",
                     showAccessDenied: true,
                     error: "TOTP_MFA_NOT_ALLOWED_TO_SETUP",
                 });
@@ -166,9 +163,7 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                     createResp = await recipeImpl.createDevice({ userContext });
                 } catch {
                     dispatch({
-                        type: "load",
-                        deviceInfo: undefined,
-                        showBackButton: true,
+                        type: "setError",
                         showAccessDenied: true,
                         error: "SOMETHING_WENT_WRONG_ERROR",
                     });
@@ -176,9 +171,7 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                 }
                 if (createResp.status !== "OK") {
                     dispatch({
-                        type: "load",
-                        deviceInfo: undefined,
-                        showBackButton: true,
+                        type: "setError",
                         showAccessDenied: true,
                         error: "SOMETHING_WENT_WRONG_ERROR",
                     });
@@ -189,17 +182,20 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                 };
                 delete (deviceInfo as any).status;
             }
-            const mfaClaim = await SessionRecipe.getInstanceOrThrow().getClaimValue({
-                claim: MultiFactorAuthClaim,
-                userContext,
-            });
-            const nextLength = mfaClaim?.n.length ?? 0;
             // If we have finished logging in and the user was redirected here
             // otherwise the user can use the "choose another factor" button
-            const showBackButton = nextLength === 0;
+            const showBackButton = mfaInfo.nextFactors.length === 0;
+            const showFactorChooserButton = mfaInfo.nextFactors.length > 1;
 
             // No need to check if the component is unmounting, since this has no effect then.
-            dispatch({ type: "load", deviceInfo, error, showBackButton, showAccessDenied: false });
+            dispatch({
+                type: "load",
+                deviceInfo,
+                error,
+                showBackButton,
+                showFactorChooserButton,
+                showAccessDenied: false,
+            });
         },
         [dispatch, recipeImpl, userContext]
     );

@@ -18,7 +18,6 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import { FactorOption } from "./factorOption";
 
 import type { SecondaryFactorRedirectionInfo } from "../../../types";
-import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 
 export const FactorList = withOverride(
     "MFAFactorList",
@@ -27,7 +26,6 @@ export const FactorList = withOverride(
         navigateToFactor,
     }: {
         availableFactors: SecondaryFactorRedirectionInfo[];
-        mfaInfo: MFAFactorInfo;
         navigateToFactor: (factorId: string) => void;
     }): JSX.Element {
         return (

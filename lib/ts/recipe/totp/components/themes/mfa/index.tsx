@@ -102,12 +102,14 @@ const TOTPMFATheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> = 
                                 activeScreen === TOTPMFAScreens.DeviceSetup ? (
                                     <DeviceSetupFooter
                                         {...commonProps}
+                                        showFactorChooserButton={featureState.showFactorChooserButton}
                                         onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
                                         onSignOutClicked={props.onSignOutClicked}
                                     />
                                 ) : (
                                     <CodeVerificationFooter
                                         {...commonProps}
+                                        showFactorChooserButton={featureState.showFactorChooserButton}
                                         onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
                                         onSignOutClicked={props.onSignOutClicked}
                                     />

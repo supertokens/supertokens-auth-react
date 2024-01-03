@@ -15,23 +15,25 @@
 import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
-import { MultiFactorAuthClaim } from "../../../../multifactorauth";
-import { useClaimValue } from "../../../../session";
 
 import type { TOTPMFACommonProps } from "../../../types";
 
 export const CodeVerificationFooter = withOverride(
     "TOTPCodeVerificationFooter",
     function TOTPCodeVerificationFooter({
+        showFactorChooserButton,
         onSignOutClicked,
         onFactorChooserButtonClicked,
-    }: TOTPMFACommonProps & { onFactorChooserButtonClicked: () => void; onSignOutClicked: () => void }): JSX.Element {
-        const claim = useClaimValue(MultiFactorAuthClaim);
+    }: TOTPMFACommonProps & {
+        showFactorChooserButton: boolean;
+        onFactorChooserButtonClicked: () => void;
+        onSignOutClicked: () => void;
+    }): JSX.Element {
         const t = useTranslation();
 
         return (
             <div data-supertokens="footerLinkGroupVert totp-mfa codeVerificationFooter">
-                {claim.loading === false && (claim.value?.n.length ?? 0) > 1 && (
+                {showFactorChooserButton && (
                     <div data-supertokens="secondaryText" onClick={onFactorChooserButtonClicked}>
                         {t("TOTP_MFA_FOOTER_CHOOSER_ANOTHER")}
                     </div>

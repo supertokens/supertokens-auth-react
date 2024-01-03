@@ -70,6 +70,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
                         {activeScreen === MFAScreens.UserInputCodeForm ? (
                             <MFAOTPHeader
                                 {...commonProps}
+                                showBackButton={featureState.showBackButton}
                                 loginAttemptInfo={featureState.loginAttemptInfo!}
                                 canChangeEmail={featureState.canChangeEmail}
                                 onBackButtonClicked={onBackButtonClicked}
@@ -77,6 +78,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
                         ) : (
                             <MFAHeader
                                 {...commonProps}
+                                showBackButton={featureState.showBackButton}
                                 onBackButtonClicked={onBackButtonClicked}
                                 contactMethod={activeScreen === MFAScreens.EmailForm ? "EMAIL" : "PHONE"}
                             />
@@ -88,6 +90,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
                                 footer={
                                     <MFAFooter
                                         {...commonProps}
+                                        showFactorChooserButton={featureState.showFactorChooserButton}
                                         onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
                                         onSignOutClicked={props.onSignOutClicked}
                                         canChangeEmail={featureState.canChangeEmail}
@@ -100,6 +103,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
                                 footer={
                                     <MFAFooter
                                         {...commonProps}
+                                        showFactorChooserButton={featureState.showFactorChooserButton}
                                         onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
                                         onSignOutClicked={props.onSignOutClicked}
                                         canChangeEmail={featureState.canChangeEmail}
@@ -114,6 +118,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
                                 footer={
                                     <MFAOTPFooter
                                         {...commonProps}
+                                        showFactorChooserButton={featureState.showFactorChooserButton}
                                         onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
                                         onSignOutClicked={props.onSignOutClicked}
                                         canChangeEmail={featureState.canChangeEmail}

@@ -7,6 +7,7 @@ import type { DeviceInfoSection } from "./components/themes/mfa/totpDeviceInfoSe
 import type { DeviceSetupFooter } from "./components/themes/mfa/totpDeviceSetupFooter";
 import type { DeviceSetupHeader } from "./components/themes/mfa/totpDeviceSetupHeader";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import type { UserContext } from "../../types";
 import type {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -35,6 +36,7 @@ export declare type TOTPDeviceInfo = {
 export declare type TOTPMFAAction =
     | {
           type: "load";
+          showFactorChooserButton: boolean;
           showBackButton: boolean;
           deviceInfo: TOTPDeviceInfo | undefined;
           showAccessDenied: boolean;
@@ -71,6 +73,7 @@ export declare type TOTPMFAState = {
     showSecret: boolean;
     nextRetryAt?: number;
     isBlocked: boolean;
+    showFactorChooserButton: boolean;
     showBackButton: boolean;
     loaded: boolean;
     error: string | undefined;
@@ -82,7 +85,7 @@ export declare type TOTPMFACommonProps = {
     featureState: TOTPMFAState;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
-    userContext?: any;
+    userContext?: UserContext;
 };
 export declare type TOTPMFAProps = {
     recipeImplementation: RecipeInterface;
@@ -95,7 +98,7 @@ export declare type TOTPMFAProps = {
     onSignOutClicked: () => void;
     dispatch: Dispatch<TOTPMFAAction>;
     featureState: TOTPMFAState;
-    userContext?: any;
+    userContext?: UserContext;
 };
 export declare type TOTPMFAChildProps = Omit<TOTPMFAProps, "featureState" | "dispatch">;
 export declare type TOTPMFAScreenConfig = {

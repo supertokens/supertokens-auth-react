@@ -202,10 +202,12 @@ export type MFAProps = {
         canChangeEmail: boolean;
         loginAttemptInfo?: LoginAttemptInfo;
         loaded: boolean;
+        showBackButton: boolean;
+        showFactorChooserButton: boolean;
         showAccessDenied: boolean;
         error: string | undefined;
     };
-    userContext?: any;
+    userContext?: UserContext;
 };
 export type SignInUpProps = {
     recipeImplementation: RecipeImplementation;
@@ -325,6 +327,8 @@ export type MFAAction =
           loginAttemptInfo: LoginAttemptInfo | undefined;
           canChangeEmail: boolean;
           showAccessDenied: boolean;
+          showBackButton: boolean;
+          showFactorChooserButton: boolean;
           error: string | undefined;
       }
     | {
@@ -349,6 +353,8 @@ export type MFAState = {
     showAccessDenied: boolean;
     error: string | undefined;
     loaded: boolean;
+    showBackButton: boolean;
+    showFactorChooserButton: boolean;
     loginAttemptInfo: LoginAttemptInfo | undefined;
     canChangeEmail: boolean;
 };
@@ -380,6 +386,7 @@ export type UserInputCodeFormHeaderProps = {
 export type MFAFooterProps = {
     canChangeEmail: boolean;
     onSignOutClicked: () => void;
+    showFactorChooserButton: boolean;
     onFactorChooserButtonClicked: () => void;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
@@ -388,6 +395,7 @@ export type MFAFooterProps = {
 export type MFAOTPFooterProps = {
     canChangeEmail: boolean;
     onSignOutClicked: () => void;
+    showFactorChooserButton: boolean;
     onFactorChooserButtonClicked: () => void;
     loginAttemptInfo: LoginAttemptInfo;
     recipeImplementation: RecipeImplementation;
@@ -396,6 +404,7 @@ export type MFAOTPFooterProps = {
 
 export type MFAHeaderProps = {
     contactMethod: "EMAIL" | "PHONE";
+    showBackButton: boolean;
     onBackButtonClicked: () => void;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
@@ -403,6 +412,7 @@ export type MFAHeaderProps = {
 
 export type MFAOTPHeaderProps = {
     canChangeEmail: boolean;
+    showBackButton: boolean;
     onBackButtonClicked: () => void;
     loginAttemptInfo: LoginAttemptInfo;
     recipeImplementation: RecipeImplementation;
