@@ -50,7 +50,8 @@ export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
             switch (action.type) {
                 case "load":
                     return {
-                        loaded: true,
+                        // We want to wait for createCode to finish before marking the page fully loaded
+                        loaded: !action.callingCreateCode,
                         error: action.error,
                         loginAttemptInfo: action.loginAttemptInfo,
                         canChangeEmail: action.canChangeEmail,
@@ -293,21 +294,10 @@ function useOnLoad(
             );
 
             const factorId = props.contactMethod === "EMAIL" ? "otp-email" : "otp-phone";
-            const isAlreadySetup = mfaInfo.factors.isAlreadySetup.includes(factorId);
-            const isAllowedToSetup = mfaInfo.factors.isAllowedToSetup.includes(factorId);
 
             if (loginAttemptInfo && props.contactMethod !== loginAttemptInfo.contactMethod) {
                 await recipeImplementation?.clearLoginAttemptInfo({ userContext });
                 loginAttemptInfo = undefined;
-            }
-
-            if (!isAlreadySetup && !isAllowedToSetup) {
-                dispatch({
-                    type: "setError",
-                    showAccessDenied: true,
-                    error: "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP",
-                });
-                return;
             }
 
             const contactInfoList =
@@ -326,35 +316,38 @@ function useOnLoad(
                         props.contactMethod === "EMAIL"
                             ? { email: contactInfoList[0] }
                             : { phoneNumber: contactInfoList[0] };
-                    try {
-                        // createCode also dispatches the necessary events
 
-                        let createResp;
-                        try {
-                            // createCode also dispatches the necessary events
-                            createResp = await recipeImplementation!.createCode({
-                                ...createCodeInfo,
-                                userContext,
-                            });
-                        } catch (err) {
-                            dispatch({ type: "setError", showAccessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR" });
-                            return;
-                        }
-                        if (createResp?.status !== "OK") {
-                            dispatch({ type: "setError", showAccessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR" });
-                        }
+                    let createResp;
+                    try {
+                        dispatch({
+                            type: "load",
+                            showAccessDenied: false,
+                            loginAttemptInfo: undefined,
+                            error,
+                            canChangeEmail: contactInfoList.length === 0,
+                            showBackButton: mfaInfo.factors.next.length === 0,
+                            showFactorChooserButton: mfaInfo.factors.next.length > 1,
+                            callingCreateCode: true,
+                        });
+                        // createCode also dispatches the event that marks this page fully loaded
+                        createResp = await recipeImplementation!.createCode({
+                            ...createCodeInfo,
+                            userContext,
+                        });
                     } catch (err) {
                         dispatch({ type: "setError", showAccessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR" });
+                        return;
                     }
-                } else if (!isAllowedToSetup) {
-                    // If we got here we know that this must be a setup, so we check if it's allowed
-                    // before asking for an email
-                    dispatch({
-                        type: "setError",
-                        showAccessDenied: true,
-                        error: "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP",
-                    });
-                    return;
+                    if (createResp?.status !== "OK") {
+                        dispatch({
+                            type: "setError",
+                            showAccessDenied: true,
+                            error:
+                                createResp.status === "SIGN_IN_UP_NOT_ALLOWED"
+                                    ? createResp.reason
+                                    : "SOMETHING_WENT_WRONG_ERROR",
+                        });
+                    }
                 } else {
                     // this will ask the user for the email/phone
                     dispatch({
@@ -363,8 +356,9 @@ function useOnLoad(
                         loginAttemptInfo,
                         error,
                         canChangeEmail: true,
-                        showBackButton: mfaInfo.nextFactors.length === 0,
-                        showFactorChooserButton: mfaInfo.nextFactors.length > 1,
+                        showBackButton: mfaInfo.factors.next.length === 0,
+                        showFactorChooserButton: mfaInfo.factors.next.length > 1,
+                        callingCreateCode: false,
                     });
                 }
             } else {
@@ -374,9 +368,10 @@ function useOnLoad(
                     showAccessDenied: false,
                     loginAttemptInfo,
                     error,
-                    canChangeEmail: contactInfoList.length > 0 && doSetup !== "true",
-                    showBackButton: mfaInfo.nextFactors.length === 0,
-                    showFactorChooserButton: mfaInfo.nextFactors.length > 1,
+                    canChangeEmail: contactInfoList.length === 0,
+                    showBackButton: mfaInfo.factors.next.length === 0,
+                    showFactorChooserButton: mfaInfo.factors.next.length > 1,
+                    callingCreateCode: false,
                 });
             }
         },

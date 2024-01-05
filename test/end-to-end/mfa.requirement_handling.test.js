@@ -147,9 +147,9 @@ describe("SuperTokens SignIn w/ MFA", function () {
         });
 
         describe("multistep requirement list", () => {
-            it("multistep requirements should happen in order (allOf -> oneOf)", async () => {
+            it("multistep requirements should happen in order (allOfInAnyOrder -> oneOf)", async () => {
                 await setMFAInfo({
-                    requirements: [{ allOf: ["otp-phone", "totp"] }, { oneOf: ["otp-email"] }],
+                    requirements: [{ allOfInAnyOrder: ["otp-phone", "totp"] }, { oneOf: ["otp-email"] }],
                     hasTOTP: true,
                 });
 
@@ -163,9 +163,9 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 await waitForDashboard(page);
             });
 
-            it("multistep requirements should happen in order (oneOf -> allOf)", async () => {
+            it("multistep requirements should happen in order (oneOf -> allOfInAnyOrder)", async () => {
                 await setMFAInfo({
-                    requirements: [{ oneOf: ["otp-phone", "totp"] }, { allOf: ["totp", "otp-email"] }],
+                    requirements: [{ oneOf: ["otp-phone", "totp"] }, { allOfInAnyOrder: ["totp", "otp-email"] }],
                     hasTOTP: true,
                 });
 
@@ -195,10 +195,10 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
         });
 
-        describe("allOf", () => {
+        describe("allOfInAnyOrder", () => {
             it("should pass if all requirements are complete", async () => {
                 await setMFAInfo({
-                    requirements: [{ allOf: ["otp-phone", "totp", "otp-email"] }],
+                    requirements: [{ allOfInAnyOrder: ["otp-phone", "totp", "otp-email"] }],
                     hasTOTP: true,
                 });
 
@@ -218,7 +218,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
             it("should pass if the array is empty", async () => {
                 await setMFAInfo({
-                    requirements: [{ allOf: [] }],
+                    requirements: [{ allOfInAnyOrder: [] }],
                     hasTOTP: true,
                 });
 

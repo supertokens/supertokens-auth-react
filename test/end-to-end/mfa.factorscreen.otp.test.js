@@ -30,9 +30,10 @@ import {
     getPasswordlessDevice,
     waitFor,
     getFactorChooserOptions,
+    getGeneralError,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
-import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API } from "../constants";
+import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API, SOMETHING_WENT_WRONG_ERROR } from "../constants";
 
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 import { getTestPhoneNumber } from "../exampleTestHelpers";
@@ -182,7 +183,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     assert.deepStrictEqual(pathname, "/redirect-here");
                 });
 
-                it("should show access denied if the app navigates to the setup page but the user it is not allowed to set up the factor", async () => {
+                it("should show general error if the app navigates to the setup page but the user it is not allowed to set up the factor", async () => {
                     await setMFAInfo({
                         requirements: [],
                         isAlreadySetup: [factorId],
@@ -191,28 +192,22 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                     await tryEmailPasswordSignIn(page, email);
 
+                    const otherEmail = await getTestEmail(1);
+                    const otherPhone = await getTestPhoneNumber(1);
                     await Promise.all([
                         page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}?setup=true`),
                         page.waitForNavigation({ waitUntil: "networkidle0" }),
                     ]);
 
-                    await waitForAccessDenied(page);
-                });
-
-                it("should show access denied if setup is not allowed but the factor is not set up", async () => {
-                    await setMFAInfo({
-                        requirements: [factorId],
-                        isAlreadySetup: [],
-                        isAllowedToSetup: [],
-                    });
-
-                    await tryEmailPasswordSignIn(page, email);
-
-                    await Promise.all([
-                        page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}`),
-                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    await setInputValues(page, [
+                        {
+                            name: contactMethod === "PHONE" ? "phoneNumber_text" : "email",
+                            value: contactMethod === "PHONE" ? otherPhone : otherEmail,
+                        },
                     ]);
-                    await waitForAccessDenied(page);
+                    await submitForm(page);
+                    const err = await getGeneralError(page);
+                    assert.strictEqual(err, SOMETHING_WENT_WRONG_ERROR);
                 });
 
                 it("should show loading screen", async () => {
@@ -221,6 +216,9 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         isAlreadySetup: [],
                         isAllowedToSetup: [factorId],
                     });
+
+                    await tryEmailPasswordSignIn(page, email);
+                    await new Promise((res) => setTimeout(res, 1500));
 
                     await page.setRequestInterception(true);
                     const requestHandler = (request) => {
@@ -232,9 +230,10 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     };
                     page.on("request", requestHandler);
                     try {
-                        await tryEmailPasswordSignIn(page, email);
-
-                        await Promise.all([page.goto(`${TEST_CLIENT_BASE_URL}/auth/`), waitForLoadingScreen(page)]);
+                        await Promise.all([
+                            page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}`),
+                            waitForLoadingScreen(page),
+                        ]);
                         await waitForSTElement(
                             page,
                             "[data-supertokens~=pwless-mfa][data-supertokens~=footerLinkGroupVert]"
@@ -251,6 +250,9 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         isAlreadySetup: [factorId],
                         isAllowedToSetup: [],
                     });
+
+                    await tryEmailPasswordSignIn(page, email);
+                    await new Promise((res) => setTimeout(res, 1500));
 
                     await page.setRequestInterception(true);
                     const requestHandler = (request) => {
@@ -271,8 +273,10 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     };
                     page.on("request", requestHandler);
                     try {
-                        await tryEmailPasswordSignIn(page, email);
-                        await waitForAccessDenied(page);
+                        await Promise.all([
+                            page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}`),
+                            waitForAccessDenied(page),
+                        ]);
                     } finally {
                         page.off("request", requestHandler);
                         await page.setRequestInterception(false);

@@ -6,6 +6,7 @@ import DynamicLoginMethodsSpinner from "../recipe/multitenancy/components/featur
 import Multitenancy from "../recipe/multitenancy/recipe";
 import { RecipeRouter } from "../recipe/recipeRouter";
 import SuperTokens from "../superTokens";
+import { useRethrowInRender } from "../utils";
 
 import type { GetLoginMethodsResponseNormalized } from "../recipe/multitenancy/types";
 import type { ReactRouterDomWithCustomHistory } from "../ui/types";
@@ -16,7 +17,7 @@ export function RoutingComponent(props: {
     path: string;
 }): JSX.Element | null {
     const userContext = useUserContext();
-    const [error, setError] = useState<any>(undefined);
+    const rethrowInRender = useRethrowInRender();
     const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState<
         GetLoginMethodsResponseNormalized | undefined
     >(undefined);
@@ -54,13 +55,9 @@ export function RoutingComponent(props: {
             .getCurrentDynamicLoginMethods({ userContext })
             .then(
                 (loginMethods) => setLoadedDynamicLoginMethods(loginMethods),
-                (err) => setError(err)
+                (err) => rethrowInRender(err)
             );
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
-
-    if (error) {
-        throw error;
-    }
 
     if (SuperTokens.usesDynamicLoginMethods && loadedDynamicLoginMethods === undefined) {
         return <DynamicLoginMethodsSpinner />;

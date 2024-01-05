@@ -65,7 +65,6 @@ export declare type PreAPIHookContext = {
 export declare type OnHandleEventContext = never;
 export declare type LoadedMFAInfo = {
     factors: MFAFactorInfo;
-    nextFactors: string[];
     emails: Record<string, string[] | undefined>;
     phoneNumbers: Record<string, string[] | undefined>;
 };

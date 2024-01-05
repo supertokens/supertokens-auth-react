@@ -59,6 +59,7 @@ export type TOTPMFAAction =
           deviceInfo: TOTPDeviceInfo | undefined;
           showAccessDenied: boolean;
           error: string | undefined;
+          callingCreateDevice: boolean;
       }
     | {
           type: "createDevice";

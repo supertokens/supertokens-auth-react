@@ -93,7 +93,6 @@ export type OnHandleEventContext = never;
 
 export type LoadedMFAInfo = {
     factors: MFAFactorInfo;
-    nextFactors: string[];
     emails: Record<string, string[] | undefined>;
     phoneNumbers: Record<string, string[] | undefined>;
 };

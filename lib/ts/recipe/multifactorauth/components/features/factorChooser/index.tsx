@@ -35,6 +35,9 @@ import { defaultTranslationsMultiFactorAuth } from "../../themes/translations";
 import type { FeatureBaseProps, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap, LoadedMFAInfo } from "../../../types";
+// for some reason tslint thinks MFAClaimValue is unused
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { MFAFactorInfo, MFAClaimValue } from "supertokens-web-js/recipe/multifactorauth/types";
 
 type Prop = FeatureBaseProps<{
     recipe: Recipe;
@@ -53,7 +56,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     }
     const recipeComponentOverrides = props.useComponentOverrides();
 
-    const nextOpts = getQueryParams("n") ?? undefined;
+    const nextQueryParam = getQueryParams("n") ?? undefined;
 
     const redirectToAuthWithHistory = useCallback(async () => {
         await redirectToAuth({ redirectBack: false, navigate: props.navigate });
@@ -66,34 +69,27 @@ export const FactorChooser: React.FC<Prop> = (props) => {
 
     const checkMFAInfo = useCallback(
         async (mfaInfo: Awaited<ReturnType<typeof fetchMFAInfo>>): Promise<void> => {
-            if (mfaClaimValue.loading === true) {
-                throw new Error("This should never happen: session context loaded but claim value loading");
-            }
-            const availableFactors = props.recipe
-                .getSecondaryFactors()
-                .filter(({ id }) => mfaInfo.nextFactors.length === 0 || mfaInfo.nextFactors.includes(id))
-                .filter(({ id }) => mfaInfo.nextFactors.length === 0 || mfaInfo.nextFactors.includes(id))
-                .filter(({ id }) => nextOpts === undefined || nextOpts.length === 0 || nextOpts.includes(id));
+            const availableFactors = getAvailableFactors(mfaClaimValue, nextQueryParam, mfaInfo.factors, props);
 
             // If we got here when the next array is not empty, that means that the user redirected here intentionally
             // In this case we do not want to automatically redirect away but show the chooser screen.
-            if (mfaInfo.nextFactors.length !== 0 && availableFactors.length === 1) {
+            if (mfaInfo.factors.next.length !== 0 && availableFactors.length === 1) {
                 return MultiFactorAuth.getInstanceOrThrow().redirectToFactor(
                     availableFactors[0].id,
                     false,
                     false,
-                    props.navigate
+                    props.navigate,
+                    userContext
                 );
             } else {
                 setMFAInfo({
                     factors: mfaInfo.factors,
-                    nextFactors: mfaInfo.nextFactors,
                     phoneNumbers: mfaInfo.phoneNumbers,
                     emails: mfaInfo.emails,
                 });
             }
         },
-        [setMFAInfo, nextOpts]
+        [setMFAInfo, nextQueryParam, mfaClaimValue, userContext]
     );
 
     const handleError = useCallback(
@@ -132,22 +128,16 @@ export const FactorChooser: React.FC<Prop> = (props) => {
         return props.navigate(-1);
     }, [props.navigate]);
 
-    if (mfaInfo === undefined || mfaClaimValue.loading) {
-        return <Fragment />;
+    if (mfaInfo === undefined) {
+        return null;
     }
 
-    const availableFactors = props.recipe
-        .getSecondaryFactors()
-        .filter(
-            ({ id }) => mfaInfo.factors.isAllowedToSetup.includes(id) || mfaInfo.factors.isAlreadySetup.includes(id)
-        )
-        .filter(({ id }) => mfaInfo.nextFactors.length === 0 || mfaInfo.nextFactors.includes(id))
-        .filter(({ id }) => nextOpts === undefined || nextOpts.length === 0 || nextOpts.includes(id));
+    const availableFactors = getAvailableFactors(mfaClaimValue, nextQueryParam, mfaInfo.factors, props);
 
     const childProps = {
         config: props.recipe.config,
         onBackButtonClicked,
-        showBackButton: mfaInfo.nextFactors.length === 0,
+        showBackButton: mfaInfo.factors.next.length === 0,
         mfaInfo: mfaInfo,
         availableFactors: availableFactors,
         onLogoutClicked: signOut,
@@ -178,3 +168,24 @@ export const FactorChooser: React.FC<Prop> = (props) => {
 };
 
 export default FactorChooser;
+
+function getAvailableFactors(
+    mfaClaimValue: ReturnType<typeof useClaimValue<MFAClaimValue>>,
+    nextQueryParam: string | undefined,
+    factors: MFAFactorInfo,
+    props: React.PropsWithChildren<Prop>
+) {
+    if (mfaClaimValue.loading) {
+        throw new Error("Should never happen: mfa claim value not loaded after resyncSessionAndFetchMFAInfo finished");
+    }
+    const isValid = mfaClaimValue.value?.v === true;
+    const nextArr = nextQueryParam !== undefined ? nextQueryParam.split(",") : factors.next;
+    const availableFactors = props.recipe
+        .getSecondaryFactors()
+        .filter(({ id }) =>
+            isValid
+                ? factors.isAllowedToSetup.includes(id) || factors.isAlreadySetup.includes(id)
+                : nextArr.includes(id)
+        );
+    return availableFactors;
+}

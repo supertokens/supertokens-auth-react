@@ -30,6 +30,5 @@ export const defaultTranslationsTOTP = {
         ERROR_TOTP_UNKNOWN_DEVICE: "The device was deleted before verification",
 
         GENERAL_ERROR_OTP_UNDEFINED: "Please fill your TOTP",
-        TOTP_MFA_NOT_ALLOWED_TO_SETUP: "You are not allowed to set up TOTP.",
     },
 };

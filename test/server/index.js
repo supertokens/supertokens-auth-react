@@ -1137,12 +1137,35 @@ function initST() {
                 override: {
                     functions: (oI) => ({
                         ...oI,
-                        isAllowedToSetupFactor: async (input) => {
-                            const res = await oI.isAllowedToSetupFactor(input);
-                            if (mfaInfo?.isAllowedToSetup) {
-                                return mfaInfo.isAllowedToSetup.includes(input.factorId);
+                        getFactorsSetupForUser: async (input) => {
+                            const res = await oI.getFactorsSetupForUser(input);
+                            if (mfaInfo?.isAlreadySetup) {
+                                return mfaInfo.isAlreadySetup;
                             }
                             return res;
+                        },
+                        checkAllowedToSetupFactorElseThrowInvalidClaimError: async (input) => {
+                            if (mfaInfo?.isAllowedToSetup) {
+                                if (!mfaInfo.isAllowedToSetup.includes(input.factorId)) {
+                                    console.log(
+                                        "checkAllowedToSetupFactorElseThrowInvalidClaimError failed" + input.factorId,
+                                        mfaInfo
+                                    );
+                                    throw new Session.Error({
+                                        type: "INVALID_CLAIMS",
+                                        message: "INVALID_CLAIMS",
+                                        payload: [
+                                            {
+                                                id: "test",
+                                                reason: "test override",
+                                            },
+                                        ],
+                                    });
+                                }
+                                console.log("checkAllowedToSetupFactorElseThrowInvalidClaimError passed");
+                            } else {
+                                await oI.checkAllowedToSetupFactorElseThrowInvalidClaimError(input);
+                            }
                         },
                         getMFARequirementsForAuth: async (input) => {
                             const res = await oI.getMFARequirementsForAuth(input);
@@ -1154,8 +1177,8 @@ function initST() {
                     }),
                     apis: (oI) => ({
                         ...oI,
-                        updateSessionAndFetchMfaInfoPUT: async (input) => {
-                            const res = await oI.updateSessionAndFetchMfaInfoPUT(input);
+                        resyncSessionAndFetchMFAInfoPUT: async (input) => {
+                            const res = await oI.resyncSessionAndFetchMFAInfoPUT(input);
                             console.log(res, mfaInfo);
                             if (res.status === "OK") {
                                 if (mfaInfo.isAlreadySetup) {

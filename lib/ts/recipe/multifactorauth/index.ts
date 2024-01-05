@@ -27,6 +27,7 @@ import { UserInput } from "./types";
 
 import type { UserContext } from "../../types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/multifactorauth";
+import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 
 export default class Wrapper {
     static MultiFactorAuthClaim = MultiFactorAuthRecipe.MultiFactorAuthClaim;
@@ -40,7 +41,7 @@ export default class Wrapper {
         options?: RecipeFunctionOptions;
     }): Promise<{
         status: "OK";
-        nextFactors: string[];
+        factors: MFAFactorInfo;
         emails: Record<string, string[] | undefined>;
         phoneNumbers: Record<string, string[] | undefined>;
         fetchResponse: Response;

@@ -54,7 +54,6 @@ export declare const defaultTranslationsPasswordless: {
         PWLESS_MFA_HEADER_TITLE_EMAIL: string;
         PWLESS_MFA_FOOTER_CHOOSER_ANOTHER: string;
         PWLESS_MFA_FOOTER_LOGOUT: string;
-        PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP: string;
         "Failed to generate a one time code. Please try again": undefined;
         "Phone number is invalid": undefined;
         "Email is invalid": undefined;

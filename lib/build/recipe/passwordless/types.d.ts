@@ -256,6 +256,7 @@ export declare type MFAAction =
           showBackButton: boolean;
           showFactorChooserButton: boolean;
           error: string | undefined;
+          callingCreateCode: boolean;
       }
     | {
           type: "startVerify";

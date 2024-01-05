@@ -22,13 +22,15 @@ import { getNormalisedUserContext } from "supertokens-web-js/utils";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
+import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
 import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
 import { appendQueryParamsToURL, getCurrentNormalisedUrlPath, getRedirectToPathFromURL, isTest } from "../../utils";
 import RecipeModule from "../recipeModule";
+import Session from "../session/recipe";
 
-import { DEFAULT_FACTOR_CHOOSER_PATH } from "./constants";
+import { DEFAULT_FACTOR_CHOOSER_PATH, MFA_INFO_CACHE_KEY } from "./constants";
 import { getFunctionOverrides } from "./functionOverrides";
 import { MultiFactorAuthClaimClass } from "./multiFactorAuthClaim";
 import { normaliseMultiFactorAuthFeature } from "./utils";
@@ -78,6 +80,11 @@ export default class MultiFactorAuth extends RecipeModule<
             const defaultFactorsValidator =
                 MultiFactorAuth.MultiFactorAuthClaim.validators.hasCompletedDefaultFactors();
             SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(defaultFactorsValidator);
+            Session.getInstanceOrThrow().addEventListener(() => {
+                // We clear the cache if the session updated, since that may mean that the MFA info has changed
+                const stWindow = WindowHandlerReference.getReferenceOrThrow();
+                stWindow.windowHandler.sessionStorage.removeItemSync(MFA_INFO_CACHE_KEY);
+            });
         });
     }
 

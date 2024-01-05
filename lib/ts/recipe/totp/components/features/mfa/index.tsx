@@ -47,7 +47,8 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
             switch (action.type) {
                 case "load":
                     return {
-                        loaded: true,
+                        // We want to wait for createDevice to finish before marking the page fully loaded
+                        loaded: !action.callingCreateDevice,
                         error: action.error,
                         deviceInfo: action.deviceInfo,
                         showFactorChooserButton: action.showFactorChooserButton,
@@ -138,28 +139,26 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
             if (errorQueryParam !== null) {
                 error = "SOMETHING_WENT_WRONG_ERROR";
             }
-            const isAllowedToSetup = mfaInfo.factors.isAllowedToSetup.includes("totp");
             const isAlreadySetup = mfaInfo.factors.isAlreadySetup.includes("totp");
-            if (!isAllowedToSetup && !isAlreadySetup) {
-                dispatch({
-                    type: "setError",
-                    showAccessDenied: true,
-                    error: "TOTP_MFA_NOT_ALLOWED_TO_SETUP",
-                });
-                return;
-            }
-            if (doSetup && !isAllowedToSetup) {
-                dispatch({
-                    type: "setError",
-                    showAccessDenied: true,
-                    error: "TOTP_MFA_NOT_ALLOWED_TO_SETUP",
-                });
-                return;
-            }
+
+            // If we have finished logging in and the user was redirected here
+            // otherwise the user can use the "choose another factor" button
+            const showBackButton = mfaInfo.factors.next.length === 0;
+            const showFactorChooserButton = mfaInfo.factors.next.length > 1;
+
             let deviceInfo: TOTPDeviceInfo | undefined;
-            if (isAllowedToSetup && (doSetup || !isAlreadySetup)) {
+            if (doSetup || !isAlreadySetup) {
                 let createResp;
                 try {
+                    dispatch({
+                        type: "load",
+                        deviceInfo: undefined,
+                        error,
+                        showBackButton,
+                        showFactorChooserButton,
+                        showAccessDenied: false,
+                        callingCreateDevice: true,
+                    });
                     createResp = await recipeImpl.createDevice({ userContext });
                 } catch {
                     dispatch({
@@ -182,10 +181,6 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                 };
                 delete (deviceInfo as any).status;
             }
-            // If we have finished logging in and the user was redirected here
-            // otherwise the user can use the "choose another factor" button
-            const showBackButton = mfaInfo.nextFactors.length === 0;
-            const showFactorChooserButton = mfaInfo.nextFactors.length > 1;
 
             // No need to check if the component is unmounting, since this has no effect then.
             dispatch({
@@ -195,6 +190,7 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                 showBackButton,
                 showFactorChooserButton,
                 showAccessDenied: false,
+                callingCreateDevice: false,
             });
         },
         [dispatch, recipeImpl, userContext]

@@ -1,5 +1,7 @@
 import { MultiFactorAuthClaimClass as MultiFactorAuthClaimClassWebJS } from "supertokens-web-js/recipe/multifactorauth";
 
+import { logDebugMessage } from "../../logger";
+
 import type { SessionClaimValidator, UserContext, ValidationFailureCallback } from "../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/multifactorauth";
 import type { MFARequirementList } from "supertokens-web-js/recipe/multifactorauth/types";
@@ -44,17 +46,44 @@ export class MultiFactorAuthClaimClass {
         this.getValueFromPayload = this.webJSClaim.getValueFromPayload;
         this.id = this.webJSClaim.id;
 
-        const defaultOnFailureRedirection = ({ reason, userContext }: any) => {
-            const nextFactorOptions = reason.nextFactorOptions || reason.oneOf || reason.allOf || [reason.factorId];
+        const defaultOnFailureRedirection = async ({ reason, userContext }: any) => {
+            const nextFactorOptions =
+                reason.nextFactorOptions ||
+                reason.oneOf ||
+                reason.allOfInAnyOrder ||
+                (reason.factorId !== undefined ? [reason.factorId] : undefined);
+
             if (nextFactorOptions !== undefined) {
+                logDebugMessage(
+                    "Redirecting to MFA on next array from validation failure: " + nextFactorOptions.join(", ")
+                );
+                // In this case we got here from a validator that defined the list of validators
                 if (nextFactorOptions.length === 1) {
                     return getRedirectURL({ action: "GO_TO_FACTOR", factorId: nextFactorOptions[0] }, userContext);
                 } else {
                     return getRedirectURL({ action: "FACTOR_CHOOSER", nextFactorOptions }, userContext);
                 }
+            } else {
+                // If we got here, it means that the default validator failed
+                const mfaInfo = await getRecipeImpl().resyncSessionAndFetchMFAInfo({ userContext });
+
+                if (mfaInfo.factors.next.length !== 0) {
+                    logDebugMessage(
+                        "Redirecting to MFA on next array from backend: " + mfaInfo.factors.next.join(", ")
+                    );
+                    if (mfaInfo.factors.next.length === 1) {
+                        return getRedirectURL(
+                            { action: "GO_TO_FACTOR", factorId: mfaInfo.factors.next[0] },
+                            userContext
+                        );
+                    } else {
+                        return getRedirectURL({ action: "FACTOR_CHOOSER" }, userContext);
+                    }
+                }
             }
 
-            // This should basically never happen, but it will show the access denied screen
+            // If this happens the user can't complete sign-in (the claim validator fails, but there is no valid next factor for us)
+            // Returning undefined here will make SessionAuth render an access denied screen.
             return undefined;
         };
 

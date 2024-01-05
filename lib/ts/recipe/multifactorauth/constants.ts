@@ -13,3 +13,5 @@
  * under the License.
  */
 export const DEFAULT_FACTOR_CHOOSER_PATH = "/mfa";
+
+export const MFA_INFO_CACHE_KEY = "st-mfa-info-cache";

@@ -209,6 +209,9 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     isAllowedToSetup: [],
                 });
 
+                await tryEmailPasswordSignIn(page, email);
+                await waitFor(1500);
+
                 await page.setRequestInterception(true);
                 const requestHandler = (request) => {
                     if (request.url() === MFA_INFO_API && request.method() === "PUT") {
@@ -219,8 +222,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 };
                 page.on("request", requestHandler);
                 try {
-                    await tryEmailPasswordSignIn(page, email);
-                    await Promise.all([page.goto(`${TEST_CLIENT_BASE_URL}/auth/`), waitForLoadingScreen(page)]);
+                    await Promise.all([page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/totp`), waitForLoadingScreen(page)]);
                     await waitForSTElement(
                         page,
                         "[data-supertokens~=totp-mfa][data-supertokens~=codeVerificationFooter]"
@@ -252,6 +254,9 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     isAllowedToSetup: [],
                 });
 
+                await tryEmailPasswordSignIn(page, email);
+                await waitFor(1500);
+
                 await page.setRequestInterception(true);
                 const requestHandler = (request) => {
                     if (request.url() === MFA_INFO_API && request.method() === "PUT") {
@@ -271,8 +276,10 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 };
                 page.on("request", requestHandler);
                 try {
-                    await tryEmailPasswordSignIn(page, email);
-                    await waitForAccessDenied(page);
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}`),
+                        waitForAccessDenied(page),
+                    ]);
                 } finally {
                     page.off("request", requestHandler);
                     await page.setRequestInterception(false);
