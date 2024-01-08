@@ -74,7 +74,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: false,
+            headless: true,
         });
     });
 
