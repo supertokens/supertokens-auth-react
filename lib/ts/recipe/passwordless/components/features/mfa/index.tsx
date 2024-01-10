@@ -76,6 +76,7 @@ export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
                         ...oldState,
                         error: action.error,
                         loginAttemptInfo: undefined,
+                        showAccessDenied: !oldState.canChangeEmail,
                     };
                 case "setError":
                     return {

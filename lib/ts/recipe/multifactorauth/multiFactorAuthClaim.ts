@@ -14,7 +14,7 @@ export class MultiFactorAuthClaimClass {
     public readonly getValueFromPayload: (
         payload: any,
         _userContext?: UserContext
-    ) => { c: Record<string, number>; v: boolean } | undefined;
+    ) => { c: Record<string, number | undefined>; v: boolean } | undefined;
     public validators: Omit<
         MultiFactorAuthClaimClassWebJS["validators"],
         "hasCompletedDefaultFactors" | "hasCompletedFactors"

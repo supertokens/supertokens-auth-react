@@ -12,7 +12,7 @@ export declare class MultiFactorAuthClaimClass {
         _userContext?: UserContext
     ) =>
         | {
-              c: Record<string, number>;
+              c: Record<string, number | undefined>;
               v: boolean;
           }
         | undefined;

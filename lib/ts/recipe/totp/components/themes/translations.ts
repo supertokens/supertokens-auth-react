@@ -27,7 +27,7 @@ export const defaultTranslationsTOTP = {
         // \xA0 is non breaking space.
         // We add it to make sure there is no line break between the number and the rest of the sentence
         ERROR_TOTP_INVALID_CODE_RETRY_END: "\xA0attempt(s) remaining before account is temporarily locked.",
-        ERROR_TOTP_UNKNOWN_DEVICE: "The device was deleted before verification",
+        ERROR_TOTP_UNKNOWN_DEVICE: "The device was deleted before verification. Please refresh the page to try again.",
 
         GENERAL_ERROR_OTP_UNDEFINED: "Please fill your TOTP",
     },

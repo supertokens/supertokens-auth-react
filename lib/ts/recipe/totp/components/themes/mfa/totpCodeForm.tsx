@@ -77,12 +77,13 @@ export const CodeForm = withOverride(
                             });
                         }
 
-                        // We can return these statuses, since they all cause a redirection
-                        // and we don't really want to show anything
+                        // We can return these statuses, since they all cause a redirection or are handled elsewhere
+                        // so we don't really want to show anything
                         if (
                             response.status === "OK" ||
                             response.status === "UNKNOWN_DEVICE_ERROR" ||
-                            response.status === "LIMIT_REACHED_ERROR"
+                            response.status === "LIMIT_REACHED_ERROR" ||
+                            response.status === "INVALID_TOTP_ERROR"
                         ) {
                             return response;
                         }

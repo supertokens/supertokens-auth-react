@@ -68,6 +68,8 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
                     return {
                         ...oldState,
                         loaded: true,
+                        maxAttemptCount: action.maxAttemptCount ?? oldState.maxAttemptCount,
+                        currAttemptCount: action.currAttemptCount ?? oldState.currAttemptCount,
                         showAccessDenied: action.showAccessDenied,
                         error: action.error,
                     };
@@ -372,7 +374,7 @@ function getModifiedRecipeImplementation(
                     nextRetryAt: Date.now() + res.retryAfterMs,
                 });
             } else if (res.status === "UNKNOWN_DEVICE_ERROR") {
-                dispatch({ type: "restartFlow", error: "ERROR_TOTP_UNKNOWN_DEVICE" });
+                dispatch({ type: "setError", error: "ERROR_TOTP_UNKNOWN_DEVICE", showAccessDenied: true });
             } else if (res.status === "INVALID_TOTP_ERROR") {
                 dispatch({
                     type: "setError",

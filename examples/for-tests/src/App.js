@@ -622,7 +622,7 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
             const sessionInfoUsingFetch = await fetchSessionInfoUsingFetch();
             setSessionInfoUsingFetch(sessionInfoUsingFetch);
         }
-        fetchData();
+        fetchData().catch(console.error);
     }, []);
 
     let sessionContext = useSessionContext();
@@ -1149,11 +1149,6 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
         providers = ids.map((id) => providers.find((p) => p.id === id) || { id, name: id });
     }
     return ThirdParty.init({
-        style: `          
-            [data-supertokens~=container] {
-                font-family: cursive;
-            }
-        `,
         preAPIHook: async (context) => {
             if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `THIRD_PARTY ${context.action}`) {
                 if (context.action === "GET_AUTHORISATION_URL") {
