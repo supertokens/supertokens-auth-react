@@ -1,4 +1,4 @@
-/* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
+/* Copyright (c) 2024, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
  * "License") as published by the Apache Software Foundation.
@@ -12,4 +12,13 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export const package_version = "0.36.2";
+export * from "../../lib/build/dateProvider";
+/**
+ * 'export *' does not re-export a default.
+ * import DateProvider from "supertokens-auth-react/utils/dateProvider";
+ * the above import statement won't be possible unless either
+ * - user add "esModuleInterop": true in their tsconfig.json file
+ * - we do the following change:
+ */
+import * as _default from "../../lib/build/dateProvider";
+export default _default;

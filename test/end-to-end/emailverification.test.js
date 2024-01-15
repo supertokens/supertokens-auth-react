@@ -925,3 +925,81 @@ describe("Email verification signOut errors", function () {
         assert.strictEqual(await error.evaluate((e) => e.textContent), SOMETHING_WENT_WRONG_ERROR);
     });
 });
+
+describe("Email verification claim refresh with clock skew", function () {
+    let browser;
+    let page;
+    before(async function () {
+        await backendBeforeEach();
+
+        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+                coreConfig: {
+                    access_token_validity: 2 * 60 * 60, // 2 hours
+                },
+            }),
+        }).catch(console.error);
+
+        browser = await puppeteer.launch({
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            headless: true,
+        });
+    });
+
+    after(async function () {
+        await browser.close();
+        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+            method: "POST",
+        }).catch(console.error);
+        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
+            method: "POST",
+        }).catch(console.error);
+    });
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
+    });
+
+    beforeEach(async function () {
+        page = await browser.newPage();
+        await clearBrowserCookiesWithoutAffectingConsole(page, []);
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+    });
+
+    it("should not go into an infinite loop during claim refresh with adjusted clock skew", async function () {
+        await toggleSignInSignUp(page);
+
+        // Override Date.now() to simulate a clock skew of 1 hour
+        await page.evaluate(() => {
+            globalThis.originalNow = Date.now;
+            Date.now = function () {
+                return originalNow() + 60 * 60 * 1000;
+            };
+        });
+
+        let claimRefreshCalledCount = 0;
+
+        await page.setRequestInterception(true);
+
+        page.on("request", (req) => {
+            if (req.url() === `${TEST_APPLICATION_SERVER_BASE_URL}/auth/user/email/verify` && req.method() === "GET") {
+                // Simulate a failure after 5 claim refresh API calls to avoid an infinite loop
+                if (claimRefreshCalledCount >= 5) {
+                    return req.respond({ status: 500, contentType: "text/plain", body: "Something went wrong" });
+                } else {
+                    claimRefreshCalledCount++;
+                }
+            }
+            req.continue();
+        });
+
+        const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: getTestEmail() });
+        await signUp(page, fieldValues, postValues, "emailpassword");
+        assert(claimRefreshCalledCount < 2);
+    });
+});
