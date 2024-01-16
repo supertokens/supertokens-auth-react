@@ -19,7 +19,7 @@ import STGeneralError from "supertokens-web-js/utils/error";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useUserContext } from "../../../../../usercontext";
 import FormBase from "../../../../emailpassword/components/library/formBase";
-import { userInputCodeValidate } from "../../../../passwordless/validators"; // TODO: fix
+import { totpCodeValidate } from "../../../utils";
 
 import type { TOTPMFACommonProps } from "../../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/totp";
@@ -51,7 +51,7 @@ export const CodeForm = withOverride(
                             clearOnSubmit: true,
                             autoComplete: "one-time-code",
                             placeholder: "",
-                            validate: userInputCodeValidate,
+                            validate: totpCodeValidate,
                         },
                     ]}
                     onSuccess={props.onSuccess}
@@ -59,7 +59,7 @@ export const CodeForm = withOverride(
                     callAPI={async (formFields) => {
                         const totp = formFields.find((field) => field.id === "totp")?.value;
                         if (totp === undefined || totp.length === 0) {
-                            throw new STGeneralError("GENERAL_ERROR_OTP_UNDEFINED");
+                            throw new STGeneralError("GENERAL_ERROR_TOTP_UNDEFINED");
                         }
                         let response: Awaited<
                             ReturnType<RecipeInterface["verifyCode"]> | ReturnType<RecipeInterface["verifyDevice"]>

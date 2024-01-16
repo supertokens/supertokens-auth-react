@@ -9,7 +9,6 @@ import type RecipeModule from "../recipeModule";
 import type NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 
 // The related ADR: https://supertokens.com/docs/contribute/decisions/multitenancy/0006
-// TODO: This could be by the recipes registering what factors they provide (at least partially)
 const priorityOrder: {
     rid: string;
     includes: ("thirdparty" | "emailpassword" | "passwordless")[];

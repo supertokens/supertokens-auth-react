@@ -96,9 +96,8 @@ export class MultiFactorAuthClaimClass {
                     showAccessDeniedOnFailure,
                     onFailureRedirection:
                         onFailureRedirection ??
-                        ((
-                            { reason, userContext } // TODO: feels brittle to rely on reason
-                        ) => (doRedirection ? defaultOnFailureRedirection({ reason, userContext }) : undefined)),
+                        (({ reason, userContext }) =>
+                            doRedirection ? defaultOnFailureRedirection({ reason, userContext }) : undefined),
                 };
             },
 
@@ -113,9 +112,8 @@ export class MultiFactorAuthClaimClass {
                     showAccessDeniedOnFailure,
                     onFailureRedirection:
                         onFailureRedirection ??
-                        ((
-                            { reason, userContext } // TODO: feels brittle to rely on reason
-                        ) => (doRedirection ? defaultOnFailureRedirection({ reason, userContext }) : undefined)),
+                        (({ reason, userContext }) =>
+                            doRedirection ? defaultOnFailureRedirection({ reason, userContext }) : undefined),
                 };
             },
         };

@@ -41,3 +41,15 @@ export function normaliseMultiFactorAuthFeature(config?: Config): NormalisedConf
         override,
     };
 }
+
+export async function totpCodeValidate(value: any): Promise<string | undefined> {
+    if (typeof value !== "string") {
+        return "GENERAL_ERROR_TOTP_NON_STRING";
+    }
+
+    if (value.length === 0) {
+        return "GENERAL_ERROR_TOTP_EMPTY";
+    }
+
+    return undefined;
+}
