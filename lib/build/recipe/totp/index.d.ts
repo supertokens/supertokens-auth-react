@@ -10,10 +10,10 @@ export default class Wrapper {
     ): import("../../types").RecipeInitResult<
         GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
-        never,
+        OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static createDevice(input: {
+    static createDevice(input?: {
         deviceName?: string;
         options?: RecipeFunctionOptions;
         userContext?: UserContext;
@@ -85,7 +85,7 @@ export default class Wrapper {
         didDeviceExist: boolean;
         fetchResponse: Response;
     }>;
-    static listDevices(input: { options?: RecipeFunctionOptions; userContext?: UserContext }): Promise<{
+    static listDevices(input?: { options?: RecipeFunctionOptions; userContext?: UserContext }): Promise<{
         status: "OK";
         devices: {
             name: string;

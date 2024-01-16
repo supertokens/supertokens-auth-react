@@ -32,7 +32,7 @@ export default class Wrapper {
     static init(config?: UserInput) {
         return TOTPRecipe.init(config);
     }
-    static createDevice(input: { deviceName?: string; options?: RecipeFunctionOptions; userContext?: UserContext }) {
+    static createDevice(input?: { deviceName?: string; options?: RecipeFunctionOptions; userContext?: UserContext }) {
         return TOTPRecipe.getInstanceOrThrow().webJSRecipe.createDevice({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
@@ -61,7 +61,7 @@ export default class Wrapper {
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
-    static listDevices(input: { options?: RecipeFunctionOptions; userContext?: UserContext }) {
+    static listDevices(input?: { options?: RecipeFunctionOptions; userContext?: UserContext }) {
         return TOTPRecipe.getInstanceOrThrow().webJSRecipe.listDevices({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),

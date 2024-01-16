@@ -182,4 +182,19 @@ export type PreAPIHookContext = {
     userContext: any;
 };
 
-export type OnHandleEventContext = never;
+export type OnHandleEventContext =
+    | {
+          action: "TOTP_CODE_VERIFIED";
+          userContext: UserContext;
+      }
+    | {
+          action: "TOTP_DEVICE_VERIFIED";
+          deviceName: string;
+          wasAlreadyVerified: boolean;
+          userContext: UserContext;
+      }
+    | {
+          action: "TOTP_DEVICE_CREATED";
+          deviceName: string;
+          userContext: UserContext;
+      };
