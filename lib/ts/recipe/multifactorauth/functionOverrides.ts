@@ -21,7 +21,9 @@ export const getFunctionOverrides =
                 if (parsed.t > Date.now() - 1000) {
                     return {
                         ...parsed.v,
-                        fetchResponse: new Response(null, { status: 304 }), // TODO: check this
+                        // Adding a fake response is not great, but we do want to add something and this way it's detectable by the app
+                        // so they could even add specific handling for it if they preferred.
+                        fetchResponse: new Response(null, { status: 304 }),
                     };
                 }
             }
