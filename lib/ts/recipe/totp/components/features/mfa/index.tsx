@@ -25,7 +25,6 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, getRedirectToPathFromURL, useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
-import { MultiFactorAuthClaim } from "../../../../multifactorauth";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
 import SessionRecipe from "../../../../session/recipe";
 import MFATOTPThemeWrapper from "../../themes/mfa";
@@ -48,9 +47,11 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
             switch (action.type) {
                 case "load":
                     return {
-                        loaded: true,
+                        // We want to wait for createDevice to finish before marking the page fully loaded
+                        loaded: !action.callingCreateDevice,
                         error: action.error,
                         deviceInfo: action.deviceInfo,
+                        showFactorChooserButton: action.showFactorChooserButton,
                         showBackButton: action.showBackButton,
                         showAccessDenied: action.showAccessDenied,
                         isBlocked: false,
@@ -67,6 +68,8 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
                     return {
                         ...oldState,
                         loaded: true,
+                        maxAttemptCount: action.maxAttemptCount ?? oldState.maxAttemptCount,
+                        currAttemptCount: action.currAttemptCount ?? oldState.currAttemptCount,
                         showAccessDenied: action.showAccessDenied,
                         error: action.error,
                     };
@@ -102,6 +105,7 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
             deviceInfo: undefined,
             showSecret: false,
             isBlocked: false,
+            showFactorChooserButton: false,
             showBackButton: false,
             showAccessDenied: false,
         },
@@ -121,7 +125,7 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
 
 function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFAAction>, userContext: any) {
     const fetchMFAInfo = React.useCallback(
-        async () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe.getMFAInfo({ userContext }),
+        async () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe.resyncSessionAndFetchMFAInfo({ userContext }),
         [userContext]
     );
 
@@ -137,38 +141,30 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
             if (errorQueryParam !== null) {
                 error = "SOMETHING_WENT_WRONG_ERROR";
             }
-            const isAllowedToSetup = mfaInfo.factors.isAllowedToSetup.includes("totp");
             const isAlreadySetup = mfaInfo.factors.isAlreadySetup.includes("totp");
-            if (!isAllowedToSetup && !isAlreadySetup) {
-                dispatch({
-                    type: "load",
-                    deviceInfo: undefined,
-                    showBackButton: true,
-                    showAccessDenied: true,
-                    error: "TOTP_MFA_NOT_ALLOWED_TO_SETUP",
-                });
-                return;
-            }
-            if (doSetup && !isAllowedToSetup) {
-                dispatch({
-                    type: "load",
-                    deviceInfo: undefined,
-                    showBackButton: true,
-                    showAccessDenied: true,
-                    error: "TOTP_MFA_NOT_ALLOWED_TO_SETUP",
-                });
-                return;
-            }
+
+            // If we have finished logging in and the user was redirected here
+            // otherwise the user can use the "choose another factor" button
+            const showBackButton = mfaInfo.factors.next.length === 0;
+            const showFactorChooserButton = mfaInfo.factors.next.length > 1;
+
             let deviceInfo: TOTPDeviceInfo | undefined;
-            if (isAllowedToSetup && (doSetup || !isAlreadySetup)) {
+            if (doSetup || !isAlreadySetup) {
                 let createResp;
                 try {
-                    createResp = await recipeImpl.createDevice({ userContext });
-                } catch {
                     dispatch({
                         type: "load",
                         deviceInfo: undefined,
-                        showBackButton: true,
+                        error,
+                        showBackButton,
+                        showFactorChooserButton,
+                        showAccessDenied: false,
+                        callingCreateDevice: true,
+                    });
+                    createResp = await recipeImpl.createDevice({ userContext });
+                } catch {
+                    dispatch({
+                        type: "setError",
                         showAccessDenied: true,
                         error: "SOMETHING_WENT_WRONG_ERROR",
                     });
@@ -176,9 +172,7 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                 }
                 if (createResp.status !== "OK") {
                     dispatch({
-                        type: "load",
-                        deviceInfo: undefined,
-                        showBackButton: true,
+                        type: "setError",
                         showAccessDenied: true,
                         error: "SOMETHING_WENT_WRONG_ERROR",
                     });
@@ -189,17 +183,17 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                 };
                 delete (deviceInfo as any).status;
             }
-            const mfaClaim = await SessionRecipe.getInstanceOrThrow().getClaimValue({
-                claim: MultiFactorAuthClaim,
-                userContext,
-            });
-            const nextLength = mfaClaim?.n.length ?? 0;
-            // If we have finished logging in and the user was redirected here
-            // otherwise the user can use the "choose another factor" button
-            const showBackButton = nextLength === 0;
 
             // No need to check if the component is unmounting, since this has no effect then.
-            dispatch({ type: "load", deviceInfo, error, showBackButton, showAccessDenied: false });
+            dispatch({
+                type: "load",
+                deviceInfo,
+                error,
+                showBackButton,
+                showFactorChooserButton,
+                showAccessDenied: false,
+                callingCreateDevice: false,
+            });
         },
         [dispatch, recipeImpl, userContext]
     );
@@ -380,7 +374,7 @@ function getModifiedRecipeImplementation(
                     nextRetryAt: Date.now() + res.retryAfterMs,
                 });
             } else if (res.status === "UNKNOWN_DEVICE_ERROR") {
-                dispatch({ type: "restartFlow", error: "ERROR_TOTP_UNKNOWN_DEVICE" });
+                dispatch({ type: "setError", error: "ERROR_TOTP_UNKNOWN_DEVICE", showAccessDenied: true });
             } else if (res.status === "INVALID_TOTP_ERROR") {
                 dispatch({
                     type: "setError",

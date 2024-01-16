@@ -27,9 +27,10 @@ export const defaultTranslationsTOTP = {
         // \xA0 is non breaking space.
         // We add it to make sure there is no line break between the number and the rest of the sentence
         ERROR_TOTP_INVALID_CODE_RETRY_END: "\xA0attempt(s) remaining before account is temporarily locked.",
-        ERROR_TOTP_UNKNOWN_DEVICE: "The device was deleted before verification",
+        ERROR_TOTP_UNKNOWN_DEVICE: "The device was deleted before verification. Please refresh the page to try again.",
 
-        GENERAL_ERROR_OTP_UNDEFINED: "Please fill your TOTP",
-        TOTP_MFA_NOT_ALLOWED_TO_SETUP: "You are not allowed to set up TOTP.",
+        GENERAL_ERROR_TOTP_NON_STRING: "TOTP code must be of type string",
+        GENERAL_ERROR_TOTP_EMPTY: "TOTP code cannot be empty",
+        GENERAL_ERROR_TOTP_UNDEFINED: "Please fill your TOTP code",
     },
 };

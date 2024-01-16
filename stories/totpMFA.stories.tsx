@@ -242,7 +242,7 @@ export const DeviceSetupEmptySubmit: Story = {
     args: {
         featureState: {
             ...defaultState,
-            error: "GENERAL_ERROR_OTP_UNDEFINED",
+            error: "GENERAL_ERROR_TOTP_UNDEFINED",
             loaded: true,
             deviceInfo: exampleDeviceInfo,
         },
@@ -329,7 +329,7 @@ export const VerificationEmptySubmit: Story = {
     args: {
         featureState: {
             ...defaultState,
-            error: "GENERAL_ERROR_OTP_UNDEFINED",
+            error: "GENERAL_ERROR_TOTP_UNDEFINED",
             loaded: true,
             deviceInfo: undefined,
         },

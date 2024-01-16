@@ -42,11 +42,7 @@ export function FactorChooserTheme(props: FactorChooserThemeProps): JSX.Element 
                 onBackButtonClicked={props.onBackButtonClicked}
                 showBackButton={props.showBackButton}
             />
-            <FactorList
-                availableFactors={props.availableFactors}
-                mfaInfo={props.mfaInfo}
-                navigateToFactor={props.navigateToFactor}
-            />
+            <FactorList availableFactors={props.availableFactors} navigateToFactor={props.navigateToFactor} />
             <FactorChooserFooter logout={props.onLogoutClicked} />
             <SuperTokensBranding />
         </div>

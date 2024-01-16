@@ -219,14 +219,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
             await waitForAccessDenied(page);
         });
 
-        it("should show throw if the only next option is an unknown factor id", async () => {
-            await setMFAInfo({
-                requirements: ["unknown"],
-            });
-
-            await expectErrorThrown(page, () => tryEmailPasswordSignIn(page, email));
-        });
-
         it("should show a back link only if visited after sign in", async () => {
             await setMFAInfo({
                 requirements: [{ oneOf: ["otp-email", "otp-phone"] }],

@@ -39,11 +39,11 @@ function startEndToEnd () {
 
     if ! [[ -z "${GREP}" ]]; then
         echo "$GREP"
-        APP_SERVER=$apiPort TEST_MODE=testing mocha --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config --grep "$GREP"
+        APP_SERVER=$apiPort TEST_MODE=testing mocha --bail=$BAIL --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config --grep "$GREP"
     elif ! [[ -z "${SPEC_FILES}" ]]; then
-        APP_SERVER=$apiPort TEST_MODE=testing mocha --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config $SPEC_FILES
+        APP_SERVER=$apiPort TEST_MODE=testing mocha --bail=$BAIL --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config $SPEC_FILES
     elif [[ -z "${MOCHA_FILE}" ]]; then
-        APP_SERVER=$apiPort TEST_MODE=testing mocha --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config test/end-to-end/**/*.test.js
+        APP_SERVER=$apiPort TEST_MODE=testing mocha --bail=$BAIL --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config test/end-to-end/**/*.test.js
     else
         if ! [[ -z "${CIRCLE_NODE_TOTAL}" ]]; then
             export SPEC_FILES=$(npx mocha-split-tests -r ./runtime.log -t $CIRCLE_NODE_TOTAL -g $CIRCLE_NODE_INDEX -f 'test/end-to-end/**/*.test.js' -f 'test/unit/**/*.test.js')
@@ -52,7 +52,7 @@ function startEndToEnd () {
             export SPEC_FILES="test/end-to-end/**/*.test.js"
         fi
 
-        APP_SERVER=$apiPort TEST_MODE=testing multi="spec=- mocha-junit-reporter=/dev/null" mocha --reporter mocha-multi --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config $SPEC_FILES
+        APP_SERVER=$apiPort TEST_MODE=testing multi="spec=- mocha-junit-reporter=/dev/null" mocha --reporter mocha-multi --bail=$BAIL --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config $SPEC_FILES
     fi
     testPassed=$?;
     if ! [[ -z "${CI}" ]]; then

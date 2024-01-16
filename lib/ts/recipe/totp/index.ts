@@ -25,19 +25,20 @@ import TOTPRecipe from "./recipe";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { UserInput } from "./types";
 
+import type { UserContext } from "../../types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/totp";
 
 export default class Wrapper {
     static init(config?: UserInput) {
         return TOTPRecipe.init(config);
     }
-    static createDevice(input: { deviceName?: string; options?: RecipeFunctionOptions; userContext?: any }) {
+    static createDevice(input?: { deviceName?: string; options?: RecipeFunctionOptions; userContext?: UserContext }) {
         return TOTPRecipe.getInstanceOrThrow().webJSRecipe.createDevice({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
-    static verifyCode(input: { totp: string; options?: RecipeFunctionOptions; userContext?: any }) {
+    static verifyCode(input: { totp: string; options?: RecipeFunctionOptions; userContext?: UserContext }) {
         return TOTPRecipe.getInstanceOrThrow().webJSRecipe.verifyCode({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
@@ -47,20 +48,20 @@ export default class Wrapper {
         deviceName: string;
         totp: string;
         options?: RecipeFunctionOptions | undefined;
-        userContext?: any;
+        userContext?: UserContext;
     }) {
         return TOTPRecipe.getInstanceOrThrow().webJSRecipe.verifyDevice({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
-    static removeDevice(input: { deviceName: string; options?: RecipeFunctionOptions; userContext?: any }) {
+    static removeDevice(input: { deviceName: string; options?: RecipeFunctionOptions; userContext?: UserContext }) {
         return TOTPRecipe.getInstanceOrThrow().webJSRecipe.removeDevice({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
-    static listDevices(input: { options?: RecipeFunctionOptions; userContext?: any }) {
+    static listDevices(input?: { options?: RecipeFunctionOptions; userContext?: UserContext }) {
         return TOTPRecipe.getInstanceOrThrow().webJSRecipe.listDevices({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),

@@ -108,7 +108,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     before(async () => {
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-web-security"],
-            headless: false,
+            headless: true,
         });
     });
 
@@ -887,7 +887,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
 
         let [_, error] = await Promise.all([submitForm(page), getGeneralError(page)]);
 
-        assert.strictEqual(error, "'emailpassword' is not a valid first factor");
+        assert.strictEqual(error, SOMETHING_WENT_WRONG_ERROR);
     });
 
     it("should show thirdparty if FE has tp and pwless and both emailpassword and thirdparty is enabled", async function () {

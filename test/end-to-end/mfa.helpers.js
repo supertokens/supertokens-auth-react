@@ -85,7 +85,7 @@ export async function waitForDashboard(page) {
     await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
 }
 export async function waitForAccessDenied(page) {
-    const error = await waitForSTElement(page, "[data-supertokens~=accessDeniedError]");
+    const error = await waitForSTElement(page, "[data-supertokens~=accessDenied]");
     return error.evaluate((e) => e.textContent);
 }
 export async function waitForLoadingScreen(page) {

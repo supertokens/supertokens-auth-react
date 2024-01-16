@@ -20,8 +20,9 @@ export declare const defaultTranslationsTOTP: {
         ERROR_TOTP_INVALID_CODE_RETRY_START: string;
         ERROR_TOTP_INVALID_CODE_RETRY_END: string;
         ERROR_TOTP_UNKNOWN_DEVICE: string;
-        GENERAL_ERROR_OTP_UNDEFINED: string;
-        TOTP_MFA_NOT_ALLOWED_TO_SETUP: string;
+        GENERAL_ERROR_TOTP_NON_STRING: string;
+        GENERAL_ERROR_TOTP_EMPTY: string;
+        GENERAL_ERROR_TOTP_UNDEFINED: string;
         BRANDING_POWERED_BY_START: string;
         BRANDING_POWERED_BY_END: string;
         SOMETHING_WENT_WRONG_ERROR: string;

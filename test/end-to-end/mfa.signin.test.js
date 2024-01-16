@@ -239,5 +239,25 @@ describe("SuperTokens SignIn w/ MFA", function () {
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/redirect-here");
         });
+
+        it("should throw if the only next option is an unknown factor id", async () => {
+            const email = await getTestEmail();
+            await setMFAInfo({
+                requirements: ["unknown"],
+                isAlreadySetup: ["unknown"],
+            });
+
+            await expectErrorThrown(page, () => tryEmailPasswordSignUp(page, email));
+        });
+
+        it("should show access denied if there are no valid next options", async () => {
+            await setMFAInfo({
+                requirements: ["unknown"],
+            });
+
+            const email = await getTestEmail();
+            await tryEmailPasswordSignUp(page, email);
+            await waitForAccessDenied(page);
+        });
     });
 });

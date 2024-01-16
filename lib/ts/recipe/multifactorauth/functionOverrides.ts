@@ -1,3 +1,7 @@
+import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
+
+import { MFA_INFO_CACHE_KEY } from "./constants";
+
 import type { OnHandleEventContext } from "./types";
 import type { RecipeOnHandleEventFunction } from "../recipeModule/types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/multifactorauth";
@@ -9,4 +13,38 @@ export const getFunctionOverrides =
     ) =>
     (originalImp: RecipeInterface): RecipeInterface => ({
         ...originalImp,
+        resyncSessionAndFetchMFAInfo: async function (input) {
+            const stWindow = WindowHandlerReference.getReferenceOrThrow();
+            const stored = await stWindow.windowHandler.sessionStorage.getItem(MFA_INFO_CACHE_KEY);
+            if (stored !== null) {
+                const parsed = JSON.parse(stored);
+                if (parsed.t > Date.now() - 1000) {
+                    return {
+                        ...parsed.v,
+                        // Adding a fake response is not great, but we do want to add something and this way it's detectable by the app
+                        // so they could even add specific handling for it if they preferred.
+                        fetchResponse: new Response(null, { status: 304 }),
+                    };
+                }
+            }
+
+            const val = await originalImp.resyncSessionAndFetchMFAInfo(input);
+
+            if (val.status === "OK") {
+                // We are explicitly not storing the fetchResponse
+                await stWindow.windowHandler.sessionStorage.setItem(
+                    MFA_INFO_CACHE_KEY,
+                    JSON.stringify({
+                        t: Date.now(),
+                        v: {
+                            emails: val.emails,
+                            phoneNumbers: val.phoneNumbers,
+                            factors: val.factors,
+                            status: val.status,
+                        },
+                    })
+                );
+            }
+            return val;
+        },
     });

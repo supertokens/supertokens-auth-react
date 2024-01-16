@@ -102,12 +102,14 @@ const TOTPMFATheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> = 
                                 activeScreen === TOTPMFAScreens.DeviceSetup ? (
                                     <DeviceSetupFooter
                                         {...commonProps}
+                                        showFactorChooserButton={featureState.showFactorChooserButton}
                                         onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
                                         onSignOutClicked={props.onSignOutClicked}
                                     />
                                 ) : (
                                     <CodeVerificationFooter
                                         {...commonProps}
+                                        showFactorChooserButton={featureState.showFactorChooserButton}
                                         onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
                                         onSignOutClicked={props.onSignOutClicked}
                                     />
@@ -172,7 +174,7 @@ function getErrorString(error: string, state: TOTPMFAState, t: TranslationFunc) 
         t(error) +
         " " +
         t("ERROR_TOTP_INVALID_CODE_RETRY_START") +
-        (state.maxAttemptCount! - state.currAttemptCount!) +
+        (state.maxAttemptCount! - state.currAttemptCount! + 1) +
         t("ERROR_TOTP_INVALID_CODE_RETRY_END")
     );
 }

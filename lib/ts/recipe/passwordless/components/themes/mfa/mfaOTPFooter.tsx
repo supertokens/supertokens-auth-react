@@ -16,8 +16,6 @@ import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { useUserContext } from "../../../../../usercontext";
-import { MultiFactorAuthClaim } from "../../../../multifactorauth";
-import { useClaimValue } from "../../../../session";
 
 import type { MFAOTPFooterProps } from "../../../types";
 
@@ -29,9 +27,9 @@ export const MFAOTPFooter = withOverride(
         onSignOutClicked,
         onFactorChooserButtonClicked,
         canChangeEmail,
+        showFactorChooserButton,
     }: MFAOTPFooterProps): JSX.Element {
         const t = useTranslation();
-        const claim = useClaimValue(MultiFactorAuthClaim);
         const userContext = useUserContext();
 
         return (
@@ -49,8 +47,7 @@ export const MFAOTPFooter = withOverride(
                             : t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE")}
                     </div>
                 ) : (
-                    claim.loading === false &&
-                    (claim.value?.n.length ?? 0) > 1 && (
+                    showFactorChooserButton && (
                         <div data-supertokens="secondaryText" onClick={onFactorChooserButtonClicked}>
                             {t("PWLESS_MFA_FOOTER_CHOOSER_ANOTHER")}
                         </div>

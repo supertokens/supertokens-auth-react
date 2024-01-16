@@ -17,27 +17,23 @@ import { Fragment } from "react";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 import BackButton from "../../../../emailpassword/components/library/backButton";
-import { MultiFactorAuthClaim } from "../../../../multifactorauth";
-import { useClaimValue } from "../../../../session";
 
 import type { MFAOTPHeaderProps } from "../../../types";
 
 export const MFAOTPHeader = withOverride(
     "PasswordlessMFAOTPHeader",
     function PasswordlessMFAOTPHeader({
+        showBackButton,
         loginAttemptInfo,
         onBackButtonClicked,
         canChangeEmail,
     }: MFAOTPHeaderProps): JSX.Element {
         const t = useTranslation();
-        const claim = useClaimValue(MultiFactorAuthClaim);
 
         return (
             <Fragment>
                 <div data-supertokens="headerTitle withBackButton pwless-mfa otpHeader">
-                    {claim.loading === false &&
-                    (claim.value === undefined || claim.value.n.length === 0) &&
-                    canChangeEmail === false ? (
+                    {showBackButton && canChangeEmail === false ? (
                         <BackButton onClick={onBackButtonClicked} />
                     ) : (
                         <span data-supertokens="backButtonPlaceholder backButtonCommon">

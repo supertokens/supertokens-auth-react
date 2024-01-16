@@ -3,7 +3,7 @@ import type { FactorChooserHeader } from "./components/themes/factorChooser/fact
 import type { FactorList } from "./components/themes/factorChooser/factorList";
 import type { FactorOption } from "./components/themes/factorChooser/factorOption";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig } from "../../types";
+import type { FeatureBaseConfig, UserContext } from "../../types";
 import type {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -63,15 +63,20 @@ export declare type PreAPIHookContext = {
     userContext: any;
 };
 export declare type OnHandleEventContext = never;
+export declare type LoadedMFAInfo = {
+    factors: MFAFactorInfo;
+    emails: Record<string, string[] | undefined>;
+    phoneNumbers: Record<string, string[] | undefined>;
+};
 export declare type FactorChooserThemeProps = {
-    mfaInfo: MFAFactorInfo;
+    mfaInfo: LoadedMFAInfo;
     availableFactors: SecondaryFactorRedirectionInfo[];
     showBackButton: boolean;
     onBackButtonClicked: () => void;
     navigateToFactor: (factorId: string) => void;
     onLogoutClicked: () => void;
     config: NormalisedConfig;
-    userContext?: any;
+    userContext?: UserContext;
 };
 export declare type SecondaryFactorRedirectionInfo = {
     id: string;

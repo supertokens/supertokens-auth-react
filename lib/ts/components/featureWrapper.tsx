@@ -27,7 +27,7 @@ import Multitenancy from "../recipe/multitenancy/recipe";
 import SuperTokens from "../superTokens";
 import { TranslationContextProvider } from "../translation/translationContext";
 import { useUserContext } from "../usercontext";
-import { mergeObjects } from "../utils";
+import { mergeObjects, useRethrowInRender } from "../utils";
 
 import type { GetLoginMethodsResponseNormalized } from "../recipe/multitenancy/types";
 import type { TranslationStore } from "../translation/translationHelpers";
@@ -44,7 +44,7 @@ export default function FeatureWrapper({
     defaultStore,
 }: PropsWithChildren<FeatureWrapperProps>): JSX.Element | null {
     const userContext = useUserContext();
-    const [error, setError] = useState<any>(undefined);
+    const rethrowInRender = useRethrowInRender();
     const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState<
         GetLoginMethodsResponseNormalized | undefined
     >(undefined);
@@ -58,13 +58,9 @@ export default function FeatureWrapper({
             .getCurrentDynamicLoginMethods({ userContext })
             .then(
                 (loginMethods) => setLoadedDynamicLoginMethods(loginMethods),
-                (err) => setError(err)
+                (err) => rethrowInRender(err)
             );
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
-
-    if (error) {
-        throw error;
-    }
 
     if (SuperTokens.usesDynamicLoginMethods && !loadedDynamicLoginMethods) {
         return <DynamicLoginMethodsSpinner />;

@@ -138,10 +138,12 @@ export declare type MFAProps = {
         canChangeEmail: boolean;
         loginAttemptInfo?: LoginAttemptInfo;
         loaded: boolean;
+        showBackButton: boolean;
+        showFactorChooserButton: boolean;
         showAccessDenied: boolean;
         error: string | undefined;
     };
-    userContext?: any;
+    userContext?: UserContext;
 };
 export declare type SignInUpProps = {
     recipeImplementation: RecipeImplementation;
@@ -251,7 +253,10 @@ export declare type MFAAction =
           loginAttemptInfo: LoginAttemptInfo | undefined;
           canChangeEmail: boolean;
           showAccessDenied: boolean;
+          showBackButton: boolean;
+          showFactorChooserButton: boolean;
           error: string | undefined;
+          callingCreateCode: boolean;
       }
     | {
           type: "startVerify";
@@ -274,6 +279,8 @@ export declare type MFAState = {
     showAccessDenied: boolean;
     error: string | undefined;
     loaded: boolean;
+    showBackButton: boolean;
+    showFactorChooserButton: boolean;
     loginAttemptInfo: LoginAttemptInfo | undefined;
     canChangeEmail: boolean;
 };
@@ -300,6 +307,7 @@ export declare type UserInputCodeFormHeaderProps = {
 export declare type MFAFooterProps = {
     canChangeEmail: boolean;
     onSignOutClicked: () => void;
+    showFactorChooserButton: boolean;
     onFactorChooserButtonClicked: () => void;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
@@ -307,6 +315,7 @@ export declare type MFAFooterProps = {
 export declare type MFAOTPFooterProps = {
     canChangeEmail: boolean;
     onSignOutClicked: () => void;
+    showFactorChooserButton: boolean;
     onFactorChooserButtonClicked: () => void;
     loginAttemptInfo: LoginAttemptInfo;
     recipeImplementation: RecipeImplementation;
@@ -314,12 +323,14 @@ export declare type MFAOTPFooterProps = {
 };
 export declare type MFAHeaderProps = {
     contactMethod: "EMAIL" | "PHONE";
+    showBackButton: boolean;
     onBackButtonClicked: () => void;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
 };
 export declare type MFAOTPHeaderProps = {
     canChangeEmail: boolean;
+    showBackButton: boolean;
     onBackButtonClicked: () => void;
     loginAttemptInfo: LoginAttemptInfo;
     recipeImplementation: RecipeImplementation;

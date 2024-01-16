@@ -19,7 +19,7 @@ import STGeneralError from "supertokens-web-js/utils/error";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useUserContext } from "../../../../../usercontext";
 import FormBase from "../../../../emailpassword/components/library/formBase";
-import { userInputCodeValidate } from "../../../../passwordless/validators"; // TODO: fix
+import { totpCodeValidate } from "../../../utils";
 
 import type { TOTPMFACommonProps } from "../../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/totp";
@@ -51,7 +51,7 @@ export const CodeForm = withOverride(
                             clearOnSubmit: true,
                             autoComplete: "one-time-code",
                             placeholder: "",
-                            validate: userInputCodeValidate,
+                            validate: totpCodeValidate,
                         },
                     ]}
                     onSuccess={props.onSuccess}
@@ -59,7 +59,7 @@ export const CodeForm = withOverride(
                     callAPI={async (formFields) => {
                         const totp = formFields.find((field) => field.id === "totp")?.value;
                         if (totp === undefined || totp.length === 0) {
-                            throw new STGeneralError("GENERAL_ERROR_OTP_UNDEFINED");
+                            throw new STGeneralError("GENERAL_ERROR_TOTP_UNDEFINED");
                         }
                         let response: Awaited<
                             ReturnType<RecipeInterface["verifyCode"]> | ReturnType<RecipeInterface["verifyDevice"]>
@@ -77,12 +77,13 @@ export const CodeForm = withOverride(
                             });
                         }
 
-                        // We can return these statuses, since they all cause a redirection
-                        // and we don't really want to show anything
+                        // We can return these statuses, since they all cause a redirection or are handled elsewhere
+                        // so we don't really want to show anything
                         if (
                             response.status === "OK" ||
                             response.status === "UNKNOWN_DEVICE_ERROR" ||
-                            response.status === "LIMIT_REACHED_ERROR"
+                            response.status === "LIMIT_REACHED_ERROR" ||
+                            response.status === "INVALID_TOTP_ERROR"
                         ) {
                             return response;
                         }

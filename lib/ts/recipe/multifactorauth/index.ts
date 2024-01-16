@@ -25,6 +25,7 @@ import MultiFactorAuthRecipe from "./recipe";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { UserInput } from "./types";
 
+import type { UserContext } from "../../types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/multifactorauth";
 import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 
@@ -35,12 +36,17 @@ export default class Wrapper {
         return MultiFactorAuthRecipe.init(config);
     }
 
-    static getMFAInfo(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static resyncSessionAndFetchMFAInfo(input?: {
+        userContext?: UserContext;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
         status: "OK";
         factors: MFAFactorInfo;
+        emails: Record<string, string[] | undefined>;
+        phoneNumbers: Record<string, string[] | undefined>;
         fetchResponse: Response;
     }> {
-        return MultiFactorAuthRecipe.getInstanceOrThrow().webJSRecipe.getMFAInfo({
+        return MultiFactorAuthRecipe.getInstanceOrThrow().webJSRecipe.resyncSessionAndFetchMFAInfo({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -62,7 +68,7 @@ export default class Wrapper {
 }
 
 const init = Wrapper.init;
-const getMFAInfo = Wrapper.getMFAInfo;
+const resyncSessionAndFetchMFAInfo = Wrapper.resyncSessionAndFetchMFAInfo;
 const redirectToFactor = Wrapper.redirectToFactor;
 const redirectToFactorChooser = Wrapper.redirectToFactorChooser;
 const MultiFactorAuthComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
@@ -70,7 +76,7 @@ const MultiFactorAuthClaim = MultiFactorAuthRecipe.MultiFactorAuthClaim;
 
 export {
     init,
-    getMFAInfo,
+    resyncSessionAndFetchMFAInfo,
     redirectToFactor,
     redirectToFactorChooser,
     MultiFactorAuthComponentsOverrideProvider,

@@ -16,8 +16,6 @@
 import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
-import { MultiFactorAuthClaim } from "../../../../multifactorauth";
-import { useClaimValue } from "../../../../session";
 
 import type { MFAFooterProps } from "../../../types";
 
@@ -25,11 +23,10 @@ export const MFAFooter = withOverride(
     "PasswordlessMFAFooter",
     function PasswordlessMFAFooter(props: MFAFooterProps): JSX.Element | null {
         const t = useTranslation();
-        const claim = useClaimValue(MultiFactorAuthClaim);
 
         return (
             <div data-supertokens="footerLinkGroupVert pwless-mfa footer">
-                {claim.loading === false && (claim.value?.n.length ?? 0) > 1 && (
+                {props.showFactorChooserButton && (
                     <div data-supertokens="secondaryText" onClick={props.onFactorChooserButtonClicked}>
                         {t("PWLESS_MFA_FOOTER_CHOOSER_ANOTHER")}
                     </div>

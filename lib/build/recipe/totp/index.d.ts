@@ -2,6 +2,7 @@
 import { RecipeInterface } from "supertokens-web-js/recipe/totp";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { UserInput } from "./types";
+import type { UserContext } from "../../types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/totp";
 export default class Wrapper {
     static init(
@@ -9,10 +10,14 @@ export default class Wrapper {
     ): import("../../types").RecipeInitResult<
         GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
-        never,
+        OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static createDevice(input: { deviceName?: string; options?: RecipeFunctionOptions; userContext?: any }): Promise<
+    static createDevice(input?: {
+        deviceName?: string;
+        options?: RecipeFunctionOptions;
+        userContext?: UserContext;
+    }): Promise<
         | {
               status: "OK";
               issuerName: string;
@@ -27,7 +32,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static verifyCode(input: { totp: string; options?: RecipeFunctionOptions; userContext?: any }): Promise<
+    static verifyCode(input: { totp: string; options?: RecipeFunctionOptions; userContext?: UserContext }): Promise<
         | {
               status: "OK";
               fetchResponse: Response;
@@ -48,7 +53,7 @@ export default class Wrapper {
         deviceName: string;
         totp: string;
         options?: RecipeFunctionOptions | undefined;
-        userContext?: any;
+        userContext?: UserContext;
     }): Promise<
         | {
               status: "OK";
@@ -71,12 +76,16 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static removeDevice(input: { deviceName: string; options?: RecipeFunctionOptions; userContext?: any }): Promise<{
+    static removeDevice(input: {
+        deviceName: string;
+        options?: RecipeFunctionOptions;
+        userContext?: UserContext;
+    }): Promise<{
         status: "OK";
         didDeviceExist: boolean;
         fetchResponse: Response;
     }>;
-    static listDevices(input: { options?: RecipeFunctionOptions; userContext?: any }): Promise<{
+    static listDevices(input?: { options?: RecipeFunctionOptions; userContext?: UserContext }): Promise<{
         status: "OK";
         devices: {
             name: string;

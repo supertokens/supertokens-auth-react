@@ -1,26 +1,26 @@
 import { MultiFactorAuthClaimClass as MultiFactorAuthClaimClassWebJS } from "supertokens-web-js/recipe/multifactorauth";
-import type { SessionClaimValidator, ValidationFailureCallback } from "../../types";
+import type { SessionClaimValidator, UserContext, ValidationFailureCallback } from "../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/multifactorauth";
 import type { MFARequirementList } from "supertokens-web-js/recipe/multifactorauth/types";
 export declare class MultiFactorAuthClaimClass {
     private webJSClaim;
     readonly id: string;
     readonly refresh: (userContext: any) => Promise<void>;
-    readonly getLastFetchedTime: (payload: any, _userContext?: any) => number | undefined;
+    readonly getLastFetchedTime: (payload: any, _userContext?: UserContext) => number | undefined;
     readonly getValueFromPayload: (
         payload: any,
-        _userContext?: any
+        _userContext?: UserContext
     ) =>
         | {
-              c: Record<string, number>;
-              n: string[];
+              c: Record<string, number | undefined>;
+              v: boolean;
           }
         | undefined;
     validators: Omit<
         MultiFactorAuthClaimClassWebJS["validators"],
-        "hasCompletedDefaultFactors" | "hasCompletedFactors"
+        "hasCompletedMFARequirementsForAuth" | "hasCompletedFactors"
     > & {
-        hasCompletedDefaultFactors: (
+        hasCompletedMFARequirementsForAuth: (
             doRedirection?: boolean,
             showAccessDeniedOnFailure?: boolean
         ) => SessionClaimValidator;
