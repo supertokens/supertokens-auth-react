@@ -18,9 +18,9 @@ export declare class MultiFactorAuthClaimClass {
         | undefined;
     validators: Omit<
         MultiFactorAuthClaimClassWebJS["validators"],
-        "hasCompletedDefaultFactors" | "hasCompletedFactors"
+        "hasCompletedMFARequirementsForAuth" | "hasCompletedFactors"
     > & {
-        hasCompletedDefaultFactors: (
+        hasCompletedMFARequirementsForAuth: (
             doRedirection?: boolean,
             showAccessDeniedOnFailure?: boolean
         ) => SessionClaimValidator;

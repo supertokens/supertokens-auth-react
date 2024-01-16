@@ -78,7 +78,7 @@ export default class MultiFactorAuth extends RecipeModule<
 
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
             const defaultFactorsValidator =
-                MultiFactorAuth.MultiFactorAuthClaim.validators.hasCompletedDefaultFactors();
+                MultiFactorAuth.MultiFactorAuthClaim.validators.hasCompletedMFARequirementsForAuth();
             SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(defaultFactorsValidator);
             Session.getInstanceOrThrow().addEventListener(() => {
                 // We clear the cache if the session updated, since that may mean that the MFA info has changed
