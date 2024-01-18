@@ -31,7 +31,6 @@ import type { UserInputCodeFormHeader } from "./components/themes/signInUp/userI
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type { FeatureBaseConfig, NormalisedBaseConfig, UserContext, WebJSRecipeInterface } from "../../types";
 import type {
-    GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
@@ -66,7 +65,7 @@ export type PreAPIHookContext = {
     url: string;
 };
 
-export type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
+export type GetRedirectionURLContext = any;
 
 export type OnHandleEventContext =
     | {
@@ -195,7 +194,6 @@ export type MFAProps = {
     contactMethod: "EMAIL" | "PHONE";
     onBackButtonClicked: () => void;
     onSignOutClicked: () => void;
-    onFactorChooserButtonClicked: () => void;
     onSuccess?: () => void;
     dispatch: Dispatch<MFAAction>;
     featureState: {
@@ -203,7 +201,6 @@ export type MFAProps = {
         loginAttemptInfo?: LoginAttemptInfo;
         loaded: boolean;
         showBackButton: boolean;
-        showFactorChooserButton: boolean;
         showAccessDenied: boolean;
         error: string | undefined;
     };
@@ -328,7 +325,6 @@ export type MFAAction =
           canChangeEmail: boolean;
           showAccessDenied: boolean;
           showBackButton: boolean;
-          showFactorChooserButton: boolean;
           error: string | undefined;
           callingCreateCode: boolean;
       }
@@ -355,7 +351,6 @@ export type MFAState = {
     error: string | undefined;
     loaded: boolean;
     showBackButton: boolean;
-    showFactorChooserButton: boolean;
     loginAttemptInfo: LoginAttemptInfo | undefined;
     canChangeEmail: boolean;
 };
@@ -387,8 +382,6 @@ export type UserInputCodeFormHeaderProps = {
 export type MFAFooterProps = {
     canChangeEmail: boolean;
     onSignOutClicked: () => void;
-    showFactorChooserButton: boolean;
-    onFactorChooserButtonClicked: () => void;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
 };
@@ -396,8 +389,6 @@ export type MFAFooterProps = {
 export type MFAOTPFooterProps = {
     canChangeEmail: boolean;
     onSignOutClicked: () => void;
-    showFactorChooserButton: boolean;
-    onFactorChooserButtonClicked: () => void;
     loginAttemptInfo: LoginAttemptInfo;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;

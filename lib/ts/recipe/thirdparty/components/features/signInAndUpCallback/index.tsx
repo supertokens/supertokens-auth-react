@@ -84,15 +84,14 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                 return Session.getInstanceOrThrow()
                     .validateGlobalClaimsAndHandleSuccessRedirection(
                         {
-                            rid: props.recipe.config.recipeId,
-                            successRedirectContext: {
-                                action: "SUCCESS",
-                                isNewPrimaryUser:
-                                    response.createdNewRecipeUser && response.user.loginMethods.length === 1,
-                                isNewRecipeUser: response.createdNewRecipeUser,
-                                redirectToPath,
-                            },
+                            action: "SUCCESS",
+                            isNewPrimaryUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
+                            isNewRecipeUser: response.createdNewRecipeUser,
+                            isFirstFactor: true,
+                            recipeId: props.recipe.recipeID,
                         },
+                        props.recipe.recipeID,
+                        redirectToPath,
                         userContext,
                         props.navigate
                     )

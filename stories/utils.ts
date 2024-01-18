@@ -1,7 +1,7 @@
 import SuperTokens from "../lib/ts/superTokens";
 import SessionRecipe from "../lib/ts/recipe/session/recipe";
 import Session from "../lib/ts/recipe/session";
-import Passwordless, { getLoginAttemptInfo } from "../lib/ts/recipe/passwordless";
+import Passwordless from "../lib/ts/recipe/passwordless";
 import PasswordlessRecipe from "../lib/ts/recipe/passwordless/recipe";
 import EmailPassword from "../lib/ts/recipe/emailpassword";
 import EmailPasswordRecipe from "../lib/ts/recipe/emailpassword/recipe";
@@ -36,6 +36,7 @@ import { MultiFactorAuthPreBuiltUI } from "../lib/ts/recipe/multifactorauth/preb
 import SuperTokensWebJS from "supertokens-web-js/lib/build/supertokens";
 import { AdditionalLoginAttemptInfoProperties, LoginAttemptInfo } from "../lib/ts/recipe/passwordless/types";
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
 export function withFetchResponse<T>(resp: T): T & { fetchResponse: Response } {
     return resp as any;
@@ -57,6 +58,7 @@ export function resetAndInitST(
     MultiTenancyRecipe.reset();
     EmailVerificationRecipe.reset();
     SuperTokens.reset();
+    PostSuperTokensInitCallbacks.postInitCallbacks = [];
 
     SessionRecipeWebJS.reset();
     PasswordlessRecipeWebJS.reset();

@@ -18,6 +18,7 @@ const defaultState = {
     canChangeEmail: false,
     loginAttemptInfo: undefined,
     loaded: true,
+    showBackButton: false,
     showAccessDenied: false,
     error: undefined,
 };
@@ -136,44 +137,7 @@ export const SetupPhone: Story = {
     },
 };
 
-const loadSessionContextWithSingleNextOption = async () => ({
-    session: {
-        ...defaultSessionContext,
-        accessTokenPayload: {
-            ...defaultSessionContext.accessTokenPayload,
-            "st-mfa": { c: {}, n: ["otp-email"] },
-        },
-    },
-});
-
-const loadSessionContextWithMultipleNextOptions = async () => ({
-    session: {
-        ...defaultSessionContext,
-        accessTokenPayload: {
-            ...defaultSessionContext.accessTokenPayload,
-            "st-mfa": { c: {}, n: ["otp-phone", "otp-email"] },
-        },
-    },
-});
-
-export const SetupSingleNextOption: Story = {
-    parameters: {
-        design: {
-            type: "figma",
-            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A370&mode=dev",
-        },
-    },
-    args: {
-        featureState: {
-            ...defaultState,
-            loaded: true,
-            loginAttemptInfo: undefined,
-            canChangeEmail: true,
-        },
-    },
-    loaders: [loadSessionContextWithSingleNextOption],
-};
-export const SetupWithMultipleNextOptions: Story = {
+export const SetupWithBackButton: Story = {
     parameters: {
         design: {
             type: "figma",
@@ -186,12 +150,12 @@ export const SetupWithMultipleNextOptions: Story = {
             loaded: true,
             loginAttemptInfo: undefined,
             canChangeEmail: true,
+            showBackButton: true,
         },
     },
-    loaders: [loadSessionContextWithMultipleNextOptions],
 };
 
-export const SetupDenied: Story = {
+export const SetupDeniedErrorCode: Story = {
     parameters: {
         design: {
             type: "figma",
@@ -205,11 +169,29 @@ export const SetupDenied: Story = {
             loginAttemptInfo: undefined,
             canChangeEmail: false,
             showAccessDenied: true,
-            error: "PWLESS_MFA_OTP_NOT_ALLOWED_TO_SETUP",
+            error: "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_003)",
         },
     },
 };
 
+export const SetupDeniedReload: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A408&mode=dev",
+        },
+    },
+    args: {
+        featureState: {
+            ...defaultState,
+            loaded: true,
+            loginAttemptInfo: undefined,
+            canChangeEmail: false,
+            showAccessDenied: true,
+            error: "SOMETHING_WENT_WRONG_ERROR_RELOAD",
+        },
+    },
+};
 export const SetupVerification: Story = {
     parameters: {
         design: {
@@ -243,25 +225,7 @@ export const Verification: Story = {
     },
 };
 
-export const VerificationWithSingleNextOption: Story = {
-    parameters: {
-        design: {
-            type: "figma",
-            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A472&mode=dev",
-        },
-    },
-    args: {
-        featureState: {
-            ...defaultState,
-            loaded: true,
-            loginAttemptInfo: exampleLoginAttemptInfo,
-            canChangeEmail: false,
-        },
-    },
-    loaders: [loadSessionContextWithSingleNextOption],
-};
-
-export const VerificationWithMultipleNextOptions: Story = {
+export const VerificationWithBackButton: Story = {
     parameters: {
         design: {
             type: "figma",
@@ -274,9 +238,9 @@ export const VerificationWithMultipleNextOptions: Story = {
             loaded: true,
             loginAttemptInfo: exampleLoginAttemptInfo,
             canChangeEmail: false,
+            showBackButton: true,
         },
     },
-    loaders: [loadSessionContextWithMultipleNextOptions],
 };
 
 export const VerificationEmptySubmit: Story = {

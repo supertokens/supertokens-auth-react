@@ -131,7 +131,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
                 `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
                 `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
 
-                `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`,
 
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
@@ -201,7 +201,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
                 `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
                 `ST_LOGS ${logId} OVERRIDE GET_OAUTH_STATE`,
 
-                `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`,
 
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
@@ -271,7 +271,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
         //         "ST_LOGS ${logId} PRE_API_HOOKS GET_AUTHORISATION_URL",
         //         "ST_LOGS ${logId} PRE_API_HOOKS SIGN_IN_UP",
         //         "ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS",
-        //         "ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS",
+        //         "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}",
         //     ]);
         // });
 
@@ -292,7 +292,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
         //         "ST_LOGS ${logId} PRE_API_HOOKS GET_AUTHORISATION_URL",
         //         "ST_LOGS ${logId} PRE_API_HOOKS SIGN_IN_UP",
         //         "ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS",
-        //         "ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS",
+        //         "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}",
         //     ]);
         // });
 

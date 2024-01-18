@@ -479,13 +479,6 @@ function getEmailPasswordConfigs() {
         },
 
         async getRedirectionURL(context: EmailPasswordGetRedirectionURLContext) {
-            if (context.action === "SUCCESS") {
-                if (context.isNewRecipeUser) {
-                    // new primary user
-                } else {
-                    // only a recipe user was created
-                }
-            }
             return undefined;
         },
         override: {
@@ -1512,23 +1505,20 @@ SuperTokens.init({
     },
 
     async getRedirectionURL(context, userContext) {
+        if (context.action === "SUCCESS") {
+            if (context.isNewPrimaryUser) {
+                const rid = context.recipeId;
+                // New primary user
+            } else if (context.isNewRecipeUser) {
+                // New recipe user
+            } else {
+                // Existing user
+            }
+        }
         return null;
     },
     recipeList: [
-        EmailPassword.init({
-            async getRedirectionURL(context, userContext) {
-                if (context.action === "SUCCESS") {
-                    if (context.isNewPrimaryUser) {
-                        // New primary user
-                    } else if (context.isNewRecipeUser) {
-                        // New recipe user
-                    } else {
-                        // Existing user
-                    }
-                }
-                return null;
-            },
-        }),
+        EmailPassword.init(),
         ThirdParty.init({
             async getRedirectionURL(context, userContext) {
                 return null;

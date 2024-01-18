@@ -141,7 +141,7 @@ supertokens.init({
                         if (resp.status === "OK") {
                             resp.phoneNumber = resp.email;
                             // We want to remove "otp-email" and add "otp-phone", but it's simpler to just replace the array
-                            resp.factors.isAlreadySetup = ["otp-phone"];
+                            resp.factors.alreadySetup = ["otp-phone"];
                         }
                         return resp;
                     },

@@ -472,7 +472,24 @@ SuperTokens.init({
         },
     },
     getRedirectionURL: (context) => {
-        console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
+        if (context.action === "SUCCESS") {
+            let logId = {
+                emailpassword: "EMAIL_PASSWORD",
+                thirdparty: "THIRD_PARTY",
+                passwordless: "PASSWORDLESS",
+                thirdpartypasswordless: "THIRDPARTYPASSWORDLESS",
+                thirdpartyemailpassword: "THIRD_PARTY_EMAIL_PASSWORD",
+            }[context.recipeId];
+
+            console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`);
+            setIsNewUserToStorage(context.recipeId, context.isNewRecipeUser);
+            if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
+                return null;
+            }
+            return context.redirectToPath || "/dashboard";
+        } else {
+            console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
+        }
     },
     recipeList,
 });
@@ -835,13 +852,6 @@ function getEmailPasswordConfigs({ disableDefaultUI, formFieldType }) {
         },
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
-            if (context.action === "SUCCESS") {
-                setIsNewUserToStorage("emailpassword", context.isNewRecipeUser);
-                if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
-                    return null;
-                }
-                return context.redirectToPath || "/dashboard";
-            }
         },
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
@@ -978,13 +988,6 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
         },
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRDPARTYPASSWORDLESS GET_REDIRECTION_URL ${context.action}`);
-            if (context.action === "SUCCESS") {
-                setIsNewUserToStorage("thirdpartypasswordless", context.isNewRecipeUser);
-                if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
-                    return null;
-                }
-                return context.redirectToPath || "/dashboard";
-            }
         },
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS THIRDPARTYPASSWORDLESS ON_HANDLE_EVENT ${context.action}`);
@@ -1078,13 +1081,6 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
         },
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS PASSWORDLESS GET_REDIRECTION_URL ${context.action}`);
-            if (context.action === "SUCCESS") {
-                setIsNewUserToStorage("passwordless", context.isNewRecipeUser);
-                if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
-                    return null;
-                }
-                return context.redirectToPath || "/dashboard";
-            }
         },
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS PASSWORDLESS ON_HANDLE_EVENT ${context.action}`);
@@ -1168,13 +1164,6 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
         },
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY GET_REDIRECTION_URL ${context.action}`);
-            if (context.action === "SUCCESS") {
-                setIsNewUserToStorage("thirdparty", context.isNewRecipeUser);
-                if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
-                    return null;
-                }
-                return context.redirectToPath || "/dashboard";
-            }
         },
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY ON_HANDLE_EVENT ${context.action}`);

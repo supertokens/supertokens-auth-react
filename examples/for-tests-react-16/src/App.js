@@ -302,7 +302,24 @@ SuperTokens.init({
         },
     },
     getRedirectionURL: (context) => {
-        console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
+        if (context.action === "SUCCESS") {
+            let logId = {
+                emailpassword: "EMAIL_PASSWORD",
+                thirdparty: "THIRD_PARTY",
+                passwordless: "PASSWORDLESS",
+                thirdpartypasswordless: "THIRDPARTYPASSWORDLESS",
+                thirdpartyemailpassword: "THIRD_PARTY_EMAIL_PASSWORD",
+            }[context.recipeId];
+
+            console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`);
+            setIsNewUserToStorage(context.recipeId, context.isNewRecipeUser);
+            if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
+                return null;
+            }
+            return context.redirectToPath || "/dashboard";
+        } else {
+            console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
+        }
     },
     recipeList,
 });

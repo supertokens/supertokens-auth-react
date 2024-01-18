@@ -16,7 +16,6 @@ import type { UserInputCodeFormHeader } from "./components/themes/signInUp/userI
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type { FeatureBaseConfig, NormalisedBaseConfig, UserContext, WebJSRecipeInterface } from "../../types";
 import type {
-    GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
@@ -37,7 +36,7 @@ export declare type PreAPIHookContext = {
     requestInit: RequestInit;
     url: string;
 };
-export declare type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
+export declare type GetRedirectionURLContext = any;
 export declare type OnHandleEventContext =
     | {
           action: "SUCCESS";
@@ -131,7 +130,6 @@ export declare type MFAProps = {
     contactMethod: "EMAIL" | "PHONE";
     onBackButtonClicked: () => void;
     onSignOutClicked: () => void;
-    onFactorChooserButtonClicked: () => void;
     onSuccess?: () => void;
     dispatch: Dispatch<MFAAction>;
     featureState: {
@@ -139,7 +137,6 @@ export declare type MFAProps = {
         loginAttemptInfo?: LoginAttemptInfo;
         loaded: boolean;
         showBackButton: boolean;
-        showFactorChooserButton: boolean;
         showAccessDenied: boolean;
         error: string | undefined;
     };
@@ -254,7 +251,6 @@ export declare type MFAAction =
           canChangeEmail: boolean;
           showAccessDenied: boolean;
           showBackButton: boolean;
-          showFactorChooserButton: boolean;
           error: string | undefined;
           callingCreateCode: boolean;
       }
@@ -280,7 +276,6 @@ export declare type MFAState = {
     error: string | undefined;
     loaded: boolean;
     showBackButton: boolean;
-    showFactorChooserButton: boolean;
     loginAttemptInfo: LoginAttemptInfo | undefined;
     canChangeEmail: boolean;
 };
@@ -307,16 +302,12 @@ export declare type UserInputCodeFormHeaderProps = {
 export declare type MFAFooterProps = {
     canChangeEmail: boolean;
     onSignOutClicked: () => void;
-    showFactorChooserButton: boolean;
-    onFactorChooserButtonClicked: () => void;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
 };
 export declare type MFAOTPFooterProps = {
     canChangeEmail: boolean;
     onSignOutClicked: () => void;
-    showFactorChooserButton: boolean;
-    onFactorChooserButtonClicked: () => void;
     loginAttemptInfo: LoginAttemptInfo;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;

@@ -119,14 +119,14 @@ export function useChildProps(
         return Session.getInstanceOrThrow()
             .validateGlobalClaimsAndHandleSuccessRedirection(
                 {
-                    rid: recipe!.config.recipeId,
-                    successRedirectContext: {
-                        action: "SUCCESS",
-                        isNewPrimaryUser: false,
-                        isNewRecipeUser: false,
-                        redirectToPath: getRedirectToPathFromURL(),
-                    },
+                    action: "SUCCESS",
+                    isNewPrimaryUser: false,
+                    isNewRecipeUser: false,
+                    isFirstFactor: true,
+                    recipeId: recipe!.recipeID,
                 },
+                recipe!.recipeID,
+                getRedirectToPathFromURL(),
                 userContext,
                 navigate
             )
@@ -138,14 +138,14 @@ export function useChildProps(
             return Session.getInstanceOrThrow()
                 .validateGlobalClaimsAndHandleSuccessRedirection(
                     {
-                        rid: recipe!.config.recipeId,
-                        successRedirectContext: {
-                            action: "SUCCESS",
-                            isNewPrimaryUser: result.user.loginMethods.length === 1,
-                            isNewRecipeUser: true,
-                            redirectToPath: getRedirectToPathFromURL(),
-                        },
+                        action: "SUCCESS",
+                        isNewPrimaryUser: result.user.loginMethods.length === 1,
+                        isNewRecipeUser: true,
+                        isFirstFactor: true,
+                        recipeId: recipe!.recipeID,
                     },
+                    recipe!.recipeID,
+                    getRedirectToPathFromURL(),
                     userContext,
                     navigate
                 )

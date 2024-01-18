@@ -35,7 +35,7 @@ export const RetryButton: React.FC<{
     const [secsUntilRetry, setSecsUntilRetry] = useState<number | undefined>(getTimeLeft());
 
     useEffect(() => {
-        // This runs every time the loginAttemptInfo updates, so after every resend
+        // This runs every time nextRetryAt updates
         const interval = setInterval(() => {
             const timeLeft = getTimeLeft();
 

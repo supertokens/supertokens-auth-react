@@ -171,20 +171,24 @@ export default FactorChooser;
 
 function getAvailableFactors(
     mfaClaimValue: ReturnType<typeof useClaimValue<MFAClaimValue>>,
-    nextQueryParam: string | undefined,
+    nextArrayQueryParam: string | undefined,
     factors: MFAFactorInfo,
     props: React.PropsWithChildren<Prop>
 ) {
     if (mfaClaimValue.loading) {
         throw new Error("Should never happen: mfa claim value not loaded after resyncSessionAndFetchMFAInfo finished");
     }
-    const isValid = mfaClaimValue.value?.v === true;
-    const nextArr = nextQueryParam !== undefined ? nextQueryParam.split(",") : factors.next;
+
+    // There are 3 cases here:
+    // 1. The app provided an array of factors to show (nextArrayQueryParam) -> we show whatever is in the array
+    // 2. no app provided list and validator passed -> we show all factors available to set up or complete
+    // 3. no app provided list and validator failing -> we show whatever the BE tells us to (this is already filtered by allowedToSetup&alreadySetup on the BE)
+    const nextArr = nextArrayQueryParam !== undefined ? nextArrayQueryParam.split(",") : factors.next;
     const availableFactors = props.recipe
         .getSecondaryFactors()
         .filter(({ id }) =>
-            isValid
-                ? factors.isAllowedToSetup.includes(id) || factors.isAlreadySetup.includes(id)
+            nextArr.length === 0
+                ? factors.allowedToSetup.includes(id) || factors.alreadySetup.includes(id)
                 : nextArr.includes(id)
         );
     return availableFactors;

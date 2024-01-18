@@ -24,11 +24,11 @@ import { SessionAuth, SessionContext } from "../session";
 import Session from "../session/recipe";
 
 import type AuthRecipe from ".";
-import type { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
+import type { NormalisedConfig, OnHandleEventContext } from "./types";
 import type { Navigate } from "../../types";
 import type { PropsWithChildren } from "react";
 
-type Props<T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, R | OnHandleEventContext>> = {
+type Props<T, S, R, N extends NormalisedConfig<T, S, R | OnHandleEventContext>> = {
     onSessionAlreadyExists?: () => void;
     authRecipe: AuthRecipe<T, S, R, N>;
     navigate?: Navigate;
@@ -38,12 +38,7 @@ type Props<T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, 
  * AuthWidgetWrapper shows the children component only if no session exists,
  * else it calls onSessionAlreadyExists
  */
-const AuthWidgetWrapper = <
-    T,
-    Action,
-    R,
-    N extends NormalisedConfig<T | GetRedirectionURLContext, Action, R | OnHandleEventContext>
->(
+const AuthWidgetWrapper = <T, Action, R, N extends NormalisedConfig<T, Action, R | OnHandleEventContext>>(
     props: PropsWithChildren<Props<T, Action, R, N>>
 ): React.ReactElement | null => {
     return (
@@ -53,7 +48,7 @@ const AuthWidgetWrapper = <
     );
 };
 
-const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, R | OnHandleEventContext>>(
+const Redirector = <T, S, R, N extends NormalisedConfig<T, S, R | OnHandleEventContext>>(
     props: PropsWithChildren<Props<T, S, R, N>>
 ): React.ReactElement | null => {
     const sessionContext = useContext(SessionContext);
@@ -77,14 +72,14 @@ const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLCon
                     void Session.getInstanceOrThrow()
                         .validateGlobalClaimsAndHandleSuccessRedirection(
                             {
-                                rid: props.authRecipe.config.recipeId,
-                                successRedirectContext: {
-                                    action: "SUCCESS",
-                                    isNewRecipeUser: false,
-                                    isNewPrimaryUser: false,
-                                    redirectToPath: getRedirectToPathFromURL(),
-                                },
+                                action: "SUCCESS",
+                                isNewRecipeUser: false,
+                                isNewPrimaryUser: false,
+                                isFirstFactor: true,
+                                recipeId: props.authRecipe.config.recipeId,
                             },
+                            props.authRecipe.config.recipeId,
+                            getRedirectToPathFromURL(),
                             userContext,
                             props.navigate
                         )

@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { FeatureBaseProps, Navigate } from "../../../../../types";
+import type { FeatureBaseProps, Navigate, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap, MFAChildProps } from "../../../types";
 import type { MFAAction, MFAState } from "../../../types";
@@ -11,7 +11,7 @@ export declare function useChildProps(
     recipeImplementation: RecipeInterface,
     state: MFAState,
     contactMethod: "PHONE" | "EMAIL",
-    userContext: any,
+    userContext: UserContext,
     navigate?: Navigate
 ): MFAChildProps;
 export declare const MFAFeature: React.FC<

@@ -52,7 +52,6 @@ export declare const defaultTranslationsPasswordless: {
         PWLESS_MFA_LOGOUT: string;
         PWLESS_MFA_HEADER_TITLE_PHONE: string;
         PWLESS_MFA_HEADER_TITLE_EMAIL: string;
-        PWLESS_MFA_FOOTER_CHOOSER_ANOTHER: string;
         PWLESS_MFA_FOOTER_LOGOUT: string;
         "Failed to generate a one time code. Please try again": undefined;
         "Phone number is invalid": undefined;
@@ -62,5 +61,6 @@ export declare const defaultTranslationsPasswordless: {
         BRANDING_POWERED_BY_START: string;
         BRANDING_POWERED_BY_END: string;
         SOMETHING_WENT_WRONG_ERROR: string;
+        SOMETHING_WENT_WRONG_ERROR_RELOAD: string;
     };
 };

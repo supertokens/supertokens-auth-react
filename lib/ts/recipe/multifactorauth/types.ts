@@ -86,7 +86,7 @@ export type PreAPIHookContext = {
     action: PreAndPostAPIHookAction;
     requestInit: RequestInit;
     url: string;
-    userContext: any;
+    userContext: UserContext;
 };
 
 export type OnHandleEventContext = never;

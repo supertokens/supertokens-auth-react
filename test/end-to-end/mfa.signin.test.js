@@ -109,7 +109,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
-            // console.log(log);
             if (log.startsWith("ST_LOGS")) {
                 consoleLogs.push(log);
             }
@@ -240,14 +239,15 @@ describe("SuperTokens SignIn w/ MFA", function () {
             assert.deepStrictEqual(pathname, "/redirect-here");
         });
 
-        it("should throw if the only next option is an unknown factor id", async () => {
+        it("should show access denied if the only next option is an unknown factor id", async () => {
             const email = await getTestEmail();
             await setMFAInfo({
                 requirements: ["unknown"],
-                isAlreadySetup: ["unknown"],
+                alreadySetup: ["unknown"],
             });
 
-            await expectErrorThrown(page, () => tryEmailPasswordSignUp(page, email));
+            await tryEmailPasswordSignUp(page, email);
+            await waitForAccessDenied(page);
         });
 
         it("should show access denied if there are no valid next options", async () => {

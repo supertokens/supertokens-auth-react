@@ -25,13 +25,6 @@ export type Config<T, S, R> = UserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
 
 export type NormalisedConfig<T, Action, R> = NormalisedRecipeModuleConfig<T, Action, R>;
 
-export type GetRedirectionURLContext = {
-    action: "SUCCESS";
-    isNewRecipeUser: boolean;
-    isNewPrimaryUser: boolean;
-    redirectToPath?: string;
-};
-
 export type OnHandleEventContext = {
     action: "SESSION_ALREADY_EXISTS";
 };

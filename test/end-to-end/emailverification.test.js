@@ -490,7 +490,7 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT EMAIL_VERIFIED_SUCCESSFUL",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS EMAIL_PASSWORD",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
         });
@@ -571,9 +571,9 @@ describe("SuperTokens Email Verification", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            // In this case we redirect to the default ("/")
+            // In this case we redirect to "/dashboard" (coming from the getRedirectURL config)
             const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/");
+            assert.deepStrictEqual(pathname, "/dashboard");
         });
     });
 });

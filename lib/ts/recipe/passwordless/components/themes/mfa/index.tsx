@@ -90,8 +90,6 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
                                 footer={
                                     <MFAFooter
                                         {...commonProps}
-                                        showFactorChooserButton={featureState.showFactorChooserButton}
-                                        onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
                                         onSignOutClicked={props.onSignOutClicked}
                                         canChangeEmail={featureState.canChangeEmail}
                                     />
@@ -103,8 +101,6 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
                                 footer={
                                     <MFAFooter
                                         {...commonProps}
-                                        showFactorChooserButton={featureState.showFactorChooserButton}
-                                        onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
                                         onSignOutClicked={props.onSignOutClicked}
                                         canChangeEmail={featureState.canChangeEmail}
                                     />
@@ -118,8 +114,6 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
                                 footer={
                                     <MFAOTPFooter
                                         {...commonProps}
-                                        showFactorChooserButton={featureState.showFactorChooserButton}
-                                        onFactorChooserButtonClicked={props.onFactorChooserButtonClicked}
                                         onSignOutClicked={props.onSignOutClicked}
                                         canChangeEmail={featureState.canChangeEmail}
                                         loginAttemptInfo={featureState.loginAttemptInfo!}

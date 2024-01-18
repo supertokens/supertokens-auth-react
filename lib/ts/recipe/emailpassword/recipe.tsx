@@ -58,6 +58,7 @@ export default class EmailPassword extends AuthRecipe<
         public readonly webJSRecipe: WebJSRecipeInterface<typeof EmailPasswordWebJS> = EmailPasswordWebJS
     ) {
         super(config);
+        this.recipeID = config.recipeId;
     }
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {

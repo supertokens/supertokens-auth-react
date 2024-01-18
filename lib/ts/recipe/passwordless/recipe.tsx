@@ -77,6 +77,7 @@ export default class Passwordless extends AuthRecipe<
         public readonly webJSRecipe: WebJSRecipeInterface<typeof PasswordlessWebJS> = PasswordlessWebJS
     ) {
         super(config);
+        this.recipeID = config.recipeId;
 
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
             const mfa = MultiFactorAuth.getInstance();

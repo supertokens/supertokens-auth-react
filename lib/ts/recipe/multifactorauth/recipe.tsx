@@ -62,7 +62,7 @@ export default class MultiFactorAuth extends RecipeModule<
     static RECIPE_ID = "multifactorauth";
 
     static MultiFactorAuthClaim = new MultiFactorAuthClaimClass(
-        () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe,
+        () => MultiFactorAuth.getInstanceOrThrow(),
         async (context, userContext) =>
             (await this.getInstanceOrThrow().getRedirectUrl(context, userContext)) || undefined
     );
@@ -161,7 +161,7 @@ export default class MultiFactorAuth extends RecipeModule<
                 }
                 return url;
             }
-            throw new Error("Requested redirect to unknown factor id");
+            throw new Error("Requested redirect to unknown factor id: " + context.factorId);
         } else {
             return "/";
         }
@@ -198,6 +198,17 @@ export default class MultiFactorAuth extends RecipeModule<
         if (url === null) {
             return;
         }
+        // If redirectBack was set to true we always set redirectToPath to that value
+        // otherwise we try and get it from the query params, finally falling back to not setting it.
+        // Example:
+        // 1. If the app calls this on pathX and with redirectBack=false, we redirect to /auth/mfa/factor-id
+        // 2. If the app calls this on pathX and with redirectBack=true, we redirect to /auth/mfa/factor-id?redirectToPath=pathX
+        // 3. If:
+        //      - the app redirects to the factor chooser with redirectBack=true from path=X, they end up on /auth/mfa?redirectToPath=pathX
+        //      - the factor chooser screen then calls this with redirectBack=false, then they end up on /auth/mfa/factor-id?redirectToPath=pathX
+        // 4. In the unlikely case that the app itself uses a `redirectToPath` query param internally
+        //    and is on a custom path that has a redirectToPath set to pathX when calling this function,
+        //    then we keep that in the query params if redirectBack is set to false.
         if (redirectBack) {
             const redirectUrl = getCurrentNormalisedUrlPath().getAsStringDangerous();
             url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });

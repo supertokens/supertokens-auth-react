@@ -15,7 +15,6 @@ export declare const defaultTranslationsTOTP: {
         TOTP_MFA_BLOCKED_TIMER_END: string;
         TOTP_MFA_BLOCKED_RETRY: string;
         TOTP_MFA_LOGOUT: string;
-        TOTP_MFA_FOOTER_CHOOSER_ANOTHER: string;
         ERROR_TOTP_INVALID_CODE: string;
         ERROR_TOTP_INVALID_CODE_RETRY_START: string;
         ERROR_TOTP_INVALID_CODE_RETRY_END: string;
@@ -26,5 +25,6 @@ export declare const defaultTranslationsTOTP: {
         BRANDING_POWERED_BY_START: string;
         BRANDING_POWERED_BY_END: string;
         SOMETHING_WENT_WRONG_ERROR: string;
+        SOMETHING_WENT_WRONG_ERROR_RELOAD: string;
     };
 };
