@@ -1,4 +1,4 @@
-/* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
+/* Copyright (c) 2024, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
  * "License") as published by the Apache Software Foundation.
@@ -141,8 +141,9 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
             }
             const alreadySetup = mfaInfo.factors.alreadySetup.includes("totp");
 
-            // If we have finished logging in and the user was redirected here
-            // otherwise the user can use the "choose another factor" button
+            // If the next array only has a single option, it means the we were redirected here
+            // automatically during the sign in process. In that case, anywhere the back button
+            // could go would redirect back here, making it useless.
             const showBackButton = mfaInfo.factors.next.length !== 1;
 
             let deviceInfo: TOTPDeviceInfo | undefined;

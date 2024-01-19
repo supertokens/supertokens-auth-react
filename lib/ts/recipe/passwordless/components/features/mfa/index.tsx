@@ -1,4 +1,4 @@
-/* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
+/* Copyright (c) 2024, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
  * "License") as published by the Apache Software Foundation.
@@ -284,6 +284,11 @@ function useOnLoad(
                 loginAttemptInfo = undefined;
             }
 
+            // If the next array only has a single option, it means the we were redirected here
+            // automatically during the sign in process. In that case, anywhere the back button
+            // could go would redirect back here, making it useless.
+            const showBackButton = mfaInfo.factors.next.length !== 1;
+
             const contactInfoList =
                 (props.contactMethod === "EMAIL" ? mfaInfo.emails[factorId] : mfaInfo.phoneNumbers[factorId]) || [];
 
@@ -309,7 +314,7 @@ function useOnLoad(
                             loginAttemptInfo: undefined,
                             error,
                             canChangeEmail: contactInfoList.length === 0,
-                            showBackButton: mfaInfo.factors.next.length !== 1,
+                            showBackButton,
                             callingCreateCode: true,
                         });
                         // createCode also dispatches the event that marks this page fully loaded
@@ -344,7 +349,7 @@ function useOnLoad(
                         loginAttemptInfo,
                         error,
                         canChangeEmail: true,
-                        showBackButton: mfaInfo.factors.next.length !== 1,
+                        showBackButton,
                         callingCreateCode: false,
                     });
                 }
@@ -356,7 +361,7 @@ function useOnLoad(
                     loginAttemptInfo,
                     error,
                     canChangeEmail: contactInfoList.length === 0,
-                    showBackButton: mfaInfo.factors.next.length !== 1,
+                    showBackButton,
                     callingCreateCode: false,
                 });
             }

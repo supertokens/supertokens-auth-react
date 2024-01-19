@@ -12,7 +12,7 @@ export default class Wrapper {
     ): import("../../types").RecipeInitResult<
         GetRedirectionURLContext,
         "GET_MFA_INFO",
-        never,
+        OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
     static resyncSessionAndFetchMFAInfo(input?: {
@@ -29,9 +29,15 @@ export default class Wrapper {
         factorId: string,
         forceSetup?: boolean,
         redirectBack?: boolean,
-        history?: any
+        history?: any,
+        userContext?: UserContext
     ): Promise<void>;
-    static redirectToFactorChooser(redirectBack?: boolean, nextFactorOptions?: string[], history?: any): Promise<void>;
+    static redirectToFactorChooser(
+        redirectBack?: boolean,
+        nextFactorOptions?: string[],
+        history?: any,
+        userContext?: UserContext
+    ): Promise<void>;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;

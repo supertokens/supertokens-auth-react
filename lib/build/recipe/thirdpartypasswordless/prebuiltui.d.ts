@@ -57,6 +57,7 @@ export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
             userContext?: UserContext;
         }>
     ) => JSX.Element;
+    static MFAOTPTheme: typeof import("../passwordless/components/themes/mfa").default;
 }
 declare const SignInAndUp: (
     prop?: FeatureBaseProps<{
@@ -86,4 +87,13 @@ declare const MfaOtpEmail: (
         userContext?: UserContext | undefined;
     }>
 ) => JSX.Element;
-export { SignInAndUp, ThirdPartySignInAndUpCallback, PasswordlessLinkClicked, SignInUpTheme, MfaOtpPhone, MfaOtpEmail };
+declare const MfaOtpTheme: typeof import("../passwordless/components/themes/mfa").default;
+export {
+    SignInAndUp,
+    ThirdPartySignInAndUpCallback,
+    PasswordlessLinkClicked,
+    SignInUpTheme,
+    MfaOtpPhone,
+    MfaOtpEmail,
+    MfaOtpTheme,
+};

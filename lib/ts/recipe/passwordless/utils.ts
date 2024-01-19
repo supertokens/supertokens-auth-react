@@ -13,6 +13,7 @@
  * under the License.
  */
 
+import SuperTokens from "../../superTokens";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
 import MultiFactorAuth from "../multifactorauth/recipe";
 
@@ -146,7 +147,12 @@ export function getEnabledContactMethods(
     let enabledContactMethods = contactMethod === "EMAIL_OR_PHONE" ? ["EMAIL", "PHONE"] : [contactMethod];
 
     let firstFactors;
-    if (currentDynamicLoginMethods.loaded && currentDynamicLoginMethods.loginMethods.firstFactors) {
+    if (SuperTokens.usesDynamicLoginMethods) {
+        if (!currentDynamicLoginMethods.loaded) {
+            throw new Error(
+                "This should never happen: dynamic login methods not loaded before passwordless UI rendered"
+            );
+        }
         firstFactors = currentDynamicLoginMethods.loginMethods.firstFactors;
     } else {
         firstFactors = MultiFactorAuth.getInstance()?.config.firstFactors;
@@ -159,7 +165,9 @@ export function getEnabledContactMethods(
             }
         } else {
             if (firstFactors.includes("otp-phone") || firstFactors.includes("link-phone")) {
-                throw new Error("The enabled contact method is not a superset of the requested first factors");
+                throw new Error(
+                    "The enabled contact method is not a superset of the requested first factors. Please make sure that Passwordless / ThirdPartyPasswordless init is configured correctly on the frontend to include PHONE or EMAIL_OR_PHONE."
+                );
             }
         }
 
@@ -169,7 +177,9 @@ export function getEnabledContactMethods(
             }
         } else {
             if (firstFactors.includes("otp-email") || firstFactors.includes("link-email")) {
-                throw new Error("The enabled contact method is not a superset of the requested first factors");
+                throw new Error(
+                    "The enabled contact method is not a superset of the requested first factors. Please make sure that Passwordless / ThirdPartyPasswordless init is configured correctly on the frontend to include EMAIL or EMAIL_OR_PHONE."
+                );
             }
         }
     }

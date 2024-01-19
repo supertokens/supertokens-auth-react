@@ -64,11 +64,11 @@ export default abstract class RecipeModule<
         }
 
         // Otherwise, use default.
-        return await this.getDefaultRedirectionURL(context);
+        return await this.getDefaultRedirectionURL(context, userContext);
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async getDefaultRedirectionURL(_: GetRedirectionURLContextType): Promise<string> {
+    async getDefaultRedirectionURL(_: GetRedirectionURLContextType, _userContext: UserContext): Promise<string> {
         throw new Error("getDefaultRedirectionURL is not implemented.");
     }
 }

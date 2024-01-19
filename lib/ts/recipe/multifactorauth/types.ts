@@ -1,4 +1,4 @@
-/* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
+/* Copyright (c) 2024, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
  * "License") as published by the Apache Software Foundation.
@@ -39,7 +39,10 @@ export type ComponentOverrideMap = {
 // Config is what does in the constructor of the recipe.
 export type UserInput = {
     firstFactors?: string[];
-    getFactorInfo?: (builtInFactors: SecondaryFactorRedirectionInfo[]) => SecondaryFactorRedirectionInfo[];
+    getSecondaryFactorInfo?: (
+        builtInFactors: SecondaryFactorRedirectionInfo[],
+        userContext: UserContext
+    ) => SecondaryFactorRedirectionInfo[];
     disableDefaultUI?: boolean;
     factorChooserScreen?: FeatureBaseConfig;
 
@@ -57,7 +60,10 @@ export type Config = UserInput &
 
 export type NormalisedConfig = {
     firstFactors?: string[];
-    getFactorInfo: (builtInFactors: SecondaryFactorRedirectionInfo[]) => SecondaryFactorRedirectionInfo[];
+    getSecondaryFactorInfo: (
+        builtInFactors: SecondaryFactorRedirectionInfo[],
+        userContext: UserContext
+    ) => SecondaryFactorRedirectionInfo[];
     disableDefaultUI: boolean;
     factorChooserScreen: FeatureBaseConfig;
 
@@ -89,7 +95,10 @@ export type PreAPIHookContext = {
     userContext: UserContext;
 };
 
-export type OnHandleEventContext = never;
+export type OnHandleEventContext = {
+    action: "FACTOR_CHOOSEN";
+    factorId: string;
+};
 
 export type LoadedMFAInfo = {
     factors: MFAFactorInfo;

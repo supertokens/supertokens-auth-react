@@ -1,4 +1,4 @@
-/* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
+/* Copyright (c) 2024, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
  * "License") as published by the Apache Software Foundation.
@@ -52,15 +52,33 @@ export default class Wrapper {
         });
     }
 
-    static redirectToFactor(factorId: string, forceSetup = false, redirectBack = true, history?: any) {
-        return MultiFactorAuthRecipe.getInstanceOrThrow().redirectToFactor(factorId, forceSetup, redirectBack, history);
+    static redirectToFactor(
+        factorId: string,
+        forceSetup = false,
+        redirectBack = true,
+        history?: any,
+        userContext?: UserContext
+    ) {
+        return MultiFactorAuthRecipe.getInstanceOrThrow().redirectToFactor(
+            factorId,
+            forceSetup,
+            redirectBack,
+            history,
+            userContext
+        );
     }
 
-    static redirectToFactorChooser(redirectBack = true, nextFactorOptions: string[] = [], history?: any) {
+    static redirectToFactorChooser(
+        redirectBack = true,
+        nextFactorOptions: string[] = [],
+        history?: any,
+        userContext?: UserContext
+    ) {
         return MultiFactorAuthRecipe.getInstanceOrThrow().redirectToFactorChooser(
             redirectBack,
             nextFactorOptions,
-            history
+            history,
+            userContext
         );
     }
 

@@ -186,6 +186,7 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
         this.getFeatureComponent("otp-phone", prop);
     static MfaOtpEmail = (prop: FeatureBaseProps<{ userContext?: UserContext }>) =>
         this.getFeatureComponent("otp-email", prop);
+    static MFAOTPTheme = PasswordlessPreBuiltUI.MFAOTPTheme;
 }
 
 const SignInAndUp = ThirdPartyPasswordlessPreBuiltUI.SignInAndUp;
@@ -193,5 +194,14 @@ const ThirdPartySignInAndUpCallback = ThirdPartyPasswordlessPreBuiltUI.ThirdPart
 const PasswordlessLinkClicked = ThirdPartyPasswordlessPreBuiltUI.PasswordlessLinkClicked;
 const MfaOtpPhone = PasswordlessPreBuiltUI.MfaOtpPhone;
 const MfaOtpEmail = PasswordlessPreBuiltUI.MfaOtpEmail;
+const MfaOtpTheme = PasswordlessPreBuiltUI.MFAOTPTheme;
 
-export { SignInAndUp, ThirdPartySignInAndUpCallback, PasswordlessLinkClicked, SignInUpTheme, MfaOtpPhone, MfaOtpEmail };
+export {
+    SignInAndUp,
+    ThirdPartySignInAndUpCallback,
+    PasswordlessLinkClicked,
+    SignInUpTheme,
+    MfaOtpPhone,
+    MfaOtpEmail,
+    MfaOtpTheme,
+};

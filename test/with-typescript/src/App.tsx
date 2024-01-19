@@ -1473,7 +1473,7 @@ MultiFactorAuth.init({
     factorChooserScreen: {
         style: "[data-supertokens~=container] { background-color: red; }",
     },
-    getFactorInfo: (factors) => [
+    getSecondaryFactorInfo: (factors) => [
         ...factors,
         { id: "asfd", logo: () => <div>A</div>, description: "test", name: "asdf", path: "/mfa/asdf" },
     ],

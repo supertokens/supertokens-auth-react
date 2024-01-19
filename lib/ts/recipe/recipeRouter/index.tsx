@@ -40,6 +40,31 @@ function chooseComponentBasedOnFirstFactors(
     let fallbackRid;
     let fallbackComponent;
     // We first try to find an exact match, and fall back on something that covers all factors (but maybe more)
+    /*
+        Examples:
+            1. firstFactors: emailpassword, route components from: thirdparty ->
+                - no matches found, throwing error
+
+            2. firstFactors: emailpassword, route components from: thirdpartyemailpassword ->
+                - we find thirdpartyemailpassword covers all first factors, save it as fallback
+                - we check all other recipes, bot nothing else has matching components
+                - return fallback from TPEP
+
+            3. firstFactors: emailpassword, route components from: thirdpartyemailpassword, emailpassword ->
+                - we find thirdpartyemailpassword covers all first factors, save it as fallback
+                - we find emailpassword as an exact match and return it
+
+            4. firstFactors: otp-phone, route components from: thirdpartypasswordless, passwordless, thirdparty ->
+                - we find thirdpartypasswordless covers all first factors (but more), save it as fallback
+                - we find passwordless that covers all factors (but more), saving it as a fallback.
+                  Keep in mind, that the passwordless and thirdpartypasswordless recipe provides 4 factors, so this is not an exact match.
+                - no other recipes have matching components, so we return the fallback from passwordless
+
+            5. firstFactors: thirdparty, otp-phone, route components from: thirdpartypasswordless, passwordless, thirdparty ->
+                - we find thirdpartypasswordless covers all first factors (but more), save it as fallback
+                  this is not an exact match, because thirdpartypasswordless provides multiple passwordless factors.
+                - no other recipes cover all factors, so we return the fallback from thirdpartypasswordless
+    */
     for (const { rid, factorsProvided } of priorityOrder) {
         if (firstFactors.every((factor) => factorsProvided.includes(factor))) {
             const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
@@ -72,8 +97,10 @@ export abstract class RecipeRouter {
         dynamicLoginMethods?: GetLoginMethodsResponseNormalized
     ): ComponentWithRecipeAndMatchingMethod | undefined {
         const path = normalisedUrl.getAsStringDangerous();
+        // We check if we are on the auth page to later see if we should take first factors into account.
         const isNonAuthPage = path !== SuperTokens.getInstanceOrThrow().appInfo.websiteBasePath.getAsStringDangerous();
 
+        // We get all components that can handle the current path
         const routeComponents = preBuiltUIList.reduce((components, c) => {
             const routes = c.getPathsToFeatureComponentWithRecipeIdMap();
             for (const [routePath, routeComps] of Object.entries(routes)) {
@@ -87,8 +114,11 @@ export abstract class RecipeRouter {
             return components;
         }, [] as ComponentWithRecipeAndMatchingMethod[]);
 
+        // We check the query params to see if any recipe was requested by id
         const componentMatchingRid = routeComponents.find((c) => c.matches());
 
+        // We default to to one requested by id or the first in the list
+        // i.e.: the first prebuilt ui in the list the user provided that can handle this route.
         let defaultComp;
         if (routeComponents.length === 0) {
             defaultComp = undefined;
@@ -98,6 +128,9 @@ export abstract class RecipeRouter {
             defaultComp = routeComponents[0];
         }
 
+        // We check if any non-auth recipe (emailverification, totp) can handle this
+        // There should be no overlap between the routes handled by those and the auth recipes
+        // so if there is a match we can return early
         const matchingNonAuthComponent = routeComponents.find(
             (comp) => !priorityOrder.map((a) => a.rid).includes(comp.recipeID)
         );
@@ -106,16 +139,22 @@ export abstract class RecipeRouter {
             return matchingNonAuthComponent;
         }
 
+        // We use this option in `canHandleRoute`, because it may be called by custom UIs before
+        // dynamic login methods are loaded.
         if (defaultToStaticList) {
             return defaultComp;
         }
 
         const mfaRecipe = MultiFactorAuth.getInstance();
         if (SuperTokens.usesDynamicLoginMethods === false) {
+            // If we are not using dynamic login methods, we can use the rid requested by the app
             if (componentMatchingRid) {
                 return componentMatchingRid;
             }
 
+            // if we have a static firstFactors config we take it into account on the auth page
+            // Other pages shouldn't care about this configuration.
+            // Embedded components are not affected, since this is only called by the routing component.
             if (!isNonAuthPage && mfaRecipe && mfaRecipe.config.firstFactors !== undefined) {
                 return chooseComponentBasedOnFirstFactors(mfaRecipe.config.firstFactors, routeComponents);
             } else {
@@ -129,6 +168,7 @@ export abstract class RecipeRouter {
             );
         }
 
+        // If we are using dynamic login methods, we check that the requested rid belongs to an enabled recipe
         if (
             componentMatchingRid && // if we find a component matching by rid
             (!priorityOrder.map((a) => a.rid).includes(componentMatchingRid.recipeID) || // from a non-auth recipe
@@ -138,15 +178,20 @@ export abstract class RecipeRouter {
             return componentMatchingRid;
         }
 
+        // if we have a firstFactors config for the tenant we take it into account on the auth page
+        // Other pages shouldn't care about this configuration.
+        // Embedded components are not affected, since this is only called by the routing component.
         if (!isNonAuthPage && dynamicLoginMethods.firstFactors !== undefined) {
             return chooseComponentBasedOnFirstFactors(dynamicLoginMethods.firstFactors, routeComponents);
         }
 
-        // We may get here if the app is using an older BE that doesn't support MFA
+        // We may get here if the app is using an older BE that doesn't support MFA or if the tenant
+        // has an older config that doesn't have the firstFactors array
         const enabledRecipeCount = Object.keys(dynamicLoginMethods).filter(
             (key) => (dynamicLoginMethods as any)[key]?.enabled === true
         ).length;
-        // We first try to find an exact match
+        // We try and choose which component to show based on the enabled login methods
+        // We first try to find an exact match (a recipe that covers all enabled login methods and nothing else)
         for (const { rid, includes } of priorityOrder) {
             if (
                 enabledRecipeCount === includes.length &&
@@ -158,7 +203,7 @@ export abstract class RecipeRouter {
                 }
             }
         }
-        // We try to find a partial match
+        // We try to find a partial match (so any recipe that overlaps with the enabled login methods)
         for (const { rid, includes } of priorityOrder) {
             if (includes.some((subRId) => dynamicLoginMethods[subRId].enabled)) {
                 const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);

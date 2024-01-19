@@ -1,4 +1,4 @@
-/* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
+/* Copyright (c) 2024, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
  * "License") as published by the Apache Software Foundation.
@@ -28,7 +28,6 @@ import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, useOnMountAPICall } from "../../../../../utils";
 import { SessionContext, useClaimValue } from "../../../../session";
 import Session from "../../../../session/recipe";
-import MultiFactorAuth from "../../../recipe";
 import FactorChooserTheme from "../../themes/factorChooser";
 import { defaultTranslationsMultiFactorAuth } from "../../themes/translations";
 
@@ -69,25 +68,11 @@ export const FactorChooser: React.FC<Prop> = (props) => {
 
     const checkMFAInfo = useCallback(
         async (mfaInfo: Awaited<ReturnType<typeof fetchMFAInfo>>): Promise<void> => {
-            const availableFactors = getAvailableFactors(mfaClaimValue, nextQueryParam, mfaInfo.factors, props);
-
-            // If we got here when the next array is not empty, that means that the user redirected here intentionally
-            // In this case we do not want to automatically redirect away but show the chooser screen.
-            if (mfaInfo.factors.next.length !== 0 && availableFactors.length === 1) {
-                return MultiFactorAuth.getInstanceOrThrow().redirectToFactor(
-                    availableFactors[0].id,
-                    false,
-                    false,
-                    props.navigate,
-                    userContext
-                );
-            } else {
-                setMFAInfo({
-                    factors: mfaInfo.factors,
-                    phoneNumbers: mfaInfo.phoneNumbers,
-                    emails: mfaInfo.emails,
-                });
-            }
+            setMFAInfo({
+                factors: mfaInfo.factors,
+                phoneNumbers: mfaInfo.phoneNumbers,
+                emails: mfaInfo.emails,
+            });
         },
         [setMFAInfo, nextQueryParam, mfaClaimValue, userContext]
     );
@@ -106,7 +91,13 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     useOnMountAPICall(fetchMFAInfo, checkMFAInfo, handleError, sessionContext.loading === false);
 
     const navigateToFactor = useCallback(
-        (factorId) => props.recipe.redirectToFactor(factorId, false, false, props.navigate),
+        (factorId) => {
+            props.recipe.config.onHandleEvent({
+                action: "FACTOR_CHOOSEN",
+                factorId,
+            });
+            return props.recipe.redirectToFactor(factorId, false, false, props.navigate);
+        },
         [props.recipe]
     );
     const signOut = useCallback(async (): Promise<void> => {
@@ -132,11 +123,14 @@ export const FactorChooser: React.FC<Prop> = (props) => {
         return null;
     }
 
-    const availableFactors = getAvailableFactors(mfaClaimValue, nextQueryParam, mfaInfo.factors, props);
+    const availableFactors = getAvailableFactors(mfaClaimValue, nextQueryParam, mfaInfo.factors, props, userContext);
 
     const childProps = {
         config: props.recipe.config,
         onBackButtonClicked,
+        // if the next array is empty, it means the user has logged in fully and has come here (from a settings page for example).
+        // So we show the back button. In case the next array is not empty, it means we are still signing in, and
+        // there is no where to go back to, other than logout, which is a different button in the UI.
         showBackButton: mfaInfo.factors.next.length === 0,
         mfaInfo: mfaInfo,
         availableFactors: availableFactors,
@@ -173,7 +167,8 @@ function getAvailableFactors(
     mfaClaimValue: ReturnType<typeof useClaimValue<MFAClaimValue>>,
     nextArrayQueryParam: string | undefined,
     factors: MFAFactorInfo,
-    props: React.PropsWithChildren<Prop>
+    props: React.PropsWithChildren<Prop>,
+    userContext: UserContext
 ) {
     if (mfaClaimValue.loading) {
         throw new Error("Should never happen: mfa claim value not loaded after resyncSessionAndFetchMFAInfo finished");
@@ -185,7 +180,7 @@ function getAvailableFactors(
     // 3. no app provided list and validator failing -> we show whatever the BE tells us to (this is already filtered by allowedToSetup&alreadySetup on the BE)
     const nextArr = nextArrayQueryParam !== undefined ? nextArrayQueryParam.split(",") : factors.next;
     const availableFactors = props.recipe
-        .getSecondaryFactors()
+        .getSecondaryFactors(userContext)
         .filter(({ id }) =>
             nextArr.length === 0
                 ? factors.allowedToSetup.includes(id) || factors.alreadySetup.includes(id)

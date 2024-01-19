@@ -65,6 +65,9 @@ export type SessionContextType =
 
 export type AccessDeniedThemeProps = {
     recipe: Session;
+    // In certain places, like when SessionAuth would render this screen for roles claim not passing,
+    // we do not pass an error message to the AccessDenied component.
+    // In this case, it just doesn't display any message below the main access denied text.
     error?: string;
     navigate: Navigate;
     config: NormalisedSessionConfig;

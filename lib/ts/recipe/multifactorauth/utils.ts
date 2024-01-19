@@ -1,4 +1,4 @@
-/* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
+/* Copyright (c) 2024, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
  * "License") as published by the Apache Software Foundation.
@@ -33,7 +33,7 @@ export function normaliseMultiFactorAuthFeature(config?: Config): NormalisedConf
         ...normaliseRecipeModuleConfig(config),
         disableDefaultUI,
         firstFactors: config?.firstFactors,
-        getFactorInfo: (orig) => orig,
+        getSecondaryFactorInfo: (orig) => orig,
         factorChooserScreen: config.factorChooserScreen ?? {},
         override,
     };

@@ -1,4 +1,4 @@
-/* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
+/* Copyright (c) 2024, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
  * "License") as published by the Apache Software Foundation.
@@ -142,7 +142,7 @@ export default class MultiFactorAuth extends RecipeModule<
         return MultiFactorAuth.instance;
     }
 
-    getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
+    getDefaultRedirectionURL = async (context: GetRedirectionURLContext, userContext: UserContext): Promise<string> => {
         if (context.action === "FACTOR_CHOOSER") {
             const chooserPath = new NormalisedURLPath(DEFAULT_FACTOR_CHOOSER_PATH);
             let url = this.config.appInfo.websiteBasePath.appendPath(chooserPath).getAsStringDangerous();
@@ -151,7 +151,7 @@ export default class MultiFactorAuth extends RecipeModule<
             }
             return url;
         } else if (context.action === "GO_TO_FACTOR") {
-            const redirectInfo = this.getSecondaryFactors().find((f) => f.id === context.factorId);
+            const redirectInfo = this.getSecondaryFactors(userContext).find((f) => f.id === context.factorId);
             if (redirectInfo !== undefined) {
                 let url = this.config.appInfo.websiteBasePath
                     .appendPath(new NormalisedURLPath(redirectInfo.path))
@@ -180,8 +180,8 @@ export default class MultiFactorAuth extends RecipeModule<
         return this.config.firstFactors === undefined || this.config.firstFactors.includes(factorId);
     }
 
-    getSecondaryFactors() {
-        return this.config.getFactorInfo(this.secondaryFactors);
+    getSecondaryFactors(userContext: UserContext) {
+        return this.config.getSecondaryFactorInfo(this.secondaryFactors, userContext);
     }
 
     async redirectToFactor(

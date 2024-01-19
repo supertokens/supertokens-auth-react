@@ -21,7 +21,10 @@ export declare type ComponentOverrideMap = {
 };
 export declare type UserInput = {
     firstFactors?: string[];
-    getFactorInfo?: (builtInFactors: SecondaryFactorRedirectionInfo[]) => SecondaryFactorRedirectionInfo[];
+    getSecondaryFactorInfo?: (
+        builtInFactors: SecondaryFactorRedirectionInfo[],
+        userContext: UserContext
+    ) => SecondaryFactorRedirectionInfo[];
     disableDefaultUI?: boolean;
     factorChooserScreen?: FeatureBaseConfig;
     override?: {
@@ -35,7 +38,10 @@ export declare type Config = UserInput &
     RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     firstFactors?: string[];
-    getFactorInfo: (builtInFactors: SecondaryFactorRedirectionInfo[]) => SecondaryFactorRedirectionInfo[];
+    getSecondaryFactorInfo: (
+        builtInFactors: SecondaryFactorRedirectionInfo[],
+        userContext: UserContext
+    ) => SecondaryFactorRedirectionInfo[];
     disableDefaultUI: boolean;
     factorChooserScreen: FeatureBaseConfig;
     override: {
@@ -62,7 +68,10 @@ export declare type PreAPIHookContext = {
     url: string;
     userContext: UserContext;
 };
-export declare type OnHandleEventContext = never;
+export declare type OnHandleEventContext = {
+    action: "FACTOR_CHOOSEN";
+    factorId: string;
+};
 export declare type LoadedMFAInfo = {
     factors: MFAFactorInfo;
     emails: Record<string, string[] | undefined>;

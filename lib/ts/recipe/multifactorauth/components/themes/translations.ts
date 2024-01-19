@@ -3,7 +3,7 @@ import { defaultTranslationsCommon } from "../../../../translation/translations"
 export const defaultTranslationsMultiFactorAuth = {
     en: {
         ...defaultTranslationsCommon.en,
-        MULTI_FACTOR_CHOOSER_HEADER_TITLE: "Please select another factor",
+        MULTI_FACTOR_CHOOSER_HEADER_TITLE: "Please select a factor",
         MULTI_FACTOR_AUTH_LOGOUT: "Log out",
 
         PWLESS_MFA_OTP_PHONE_NAME: "SMS based OTP",

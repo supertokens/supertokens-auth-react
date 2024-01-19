@@ -37,10 +37,10 @@ export default class MultiFactorAuth extends RecipeModule<
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstance(): MultiFactorAuth | undefined;
     static getInstanceOrThrow(): MultiFactorAuth;
-    getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
+    getDefaultRedirectionURL: (context: GetRedirectionURLContext, userContext: UserContext) => Promise<string>;
     addMFAFactors(secondaryFactors: SecondaryFactorRedirectionInfo[]): void;
     isFirstFactorEnabledOnClient(factorId: string): boolean;
-    getSecondaryFactors(): SecondaryFactorRedirectionInfo[];
+    getSecondaryFactors(userContext: UserContext): SecondaryFactorRedirectionInfo[];
     redirectToFactor(
         factorId: string,
         forceSetup?: boolean,
