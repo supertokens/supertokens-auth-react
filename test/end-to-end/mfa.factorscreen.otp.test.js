@@ -74,7 +74,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
+            headless: false,
         });
     });
 
@@ -383,7 +383,8 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     await backBtn.click();
                     await waitForDashboard(page);
                 });
-                it("should show a link redirecting to the chooser screen if other options are available during sign in - setup", async () => {
+
+                it("should show a back button redirecting to the chooser screen if other options are available during sign in - setup", async () => {
                     await setMFAInfo({
                         requirements: [{ oneOf: [factorId, "totp"] }],
                         alreadySetup: ["totp"],
@@ -394,15 +395,16 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     await tryEmailPasswordSignIn(page, email);
                     await chooseFactor(page, factorId);
 
-                    const chooseAnotherFactor = await waitForSTElement(
+                    const backButton = await waitForSTElement(
                         page,
-                        "[data-supertokens~=pwless-mfa][data-supertokens~=footerLinkGroupVert] [data-supertokens~=secondaryText]:nth-child(1)"
+                        "[data-supertokens~=pwless-mfa] [data-supertokens~=backButton]"
                     );
 
-                    await chooseAnotherFactor.click();
+                    await backButton.click();
                     await waitForSTElement(page, "[data-supertokens~=factorChooserList]");
                 });
-                it("should show a link redirecting to the chooser screen if other options are available during sign in - verification", async () => {
+
+                it("should show a back button redirecting to the chooser screen if other options are available during sign in - verification", async () => {
                     await setMFAInfo({
                         requirements: [{ oneOf: [factorId, "totp"] }],
                         alreadySetup: [factorId, "totp"],
@@ -414,7 +416,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                     const chooseAnotherFactor = await waitForSTElement(
                         page,
-                        "[data-supertokens~=pwless-mfa][data-supertokens~=footerLinkGroupVert] [data-supertokens~=secondaryText]:nth-child(1)"
+                        "[data-supertokens~=pwless-mfa] [data-supertokens~=backButton]"
                     );
                     await chooseAnotherFactor.click();
                     await waitForSTElement(page, "[data-supertokens~=factorChooserList]");

@@ -20,23 +20,20 @@ import * as React from "react";
 import { useContext, useState, useCallback, Fragment } from "react";
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
-import { MultiFactorAuthClaim } from "../../..";
 import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, useOnMountAPICall } from "../../../../../utils";
-import { SessionContext, useClaimValue } from "../../../../session";
+import { SessionContext } from "../../../../session";
 import Session from "../../../../session/recipe";
+import { getAvailableFactors } from "../../../utils";
 import FactorChooserTheme from "../../themes/factorChooser";
 import { defaultTranslationsMultiFactorAuth } from "../../themes/translations";
 
 import type { FeatureBaseProps, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap, LoadedMFAInfo } from "../../../types";
-// for some reason tslint thinks MFAClaimValue is unused
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { MFAFactorInfo, MFAClaimValue } from "supertokens-web-js/recipe/multifactorauth/types";
 
 type Prop = FeatureBaseProps<{
     recipe: Recipe;
@@ -48,7 +45,6 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     const sessionContext = useContext(SessionContext);
 
     const [mfaInfo, setMFAInfo] = useState<LoadedMFAInfo | undefined>(undefined);
-    const mfaClaimValue = useClaimValue(MultiFactorAuthClaim);
     let userContext = useUserContext();
     if (props.userContext !== undefined) {
         userContext = props.userContext;
@@ -74,7 +70,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
                 emails: mfaInfo.emails,
             });
         },
-        [setMFAInfo, nextQueryParam, mfaClaimValue, userContext]
+        [setMFAInfo, nextQueryParam, userContext]
     );
 
     const handleError = useCallback(
@@ -123,7 +119,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
         return null;
     }
 
-    const availableFactors = getAvailableFactors(mfaClaimValue, nextQueryParam, mfaInfo.factors, props, userContext);
+    const availableFactors = getAvailableFactors(mfaInfo.factors, nextQueryParam, props.recipe, userContext);
 
     const childProps = {
         config: props.recipe.config,
@@ -162,29 +158,3 @@ export const FactorChooser: React.FC<Prop> = (props) => {
 };
 
 export default FactorChooser;
-
-function getAvailableFactors(
-    mfaClaimValue: ReturnType<typeof useClaimValue<MFAClaimValue>>,
-    nextArrayQueryParam: string | undefined,
-    factors: MFAFactorInfo,
-    props: React.PropsWithChildren<Prop>,
-    userContext: UserContext
-) {
-    if (mfaClaimValue.loading) {
-        throw new Error("Should never happen: mfa claim value not loaded after resyncSessionAndFetchMFAInfo finished");
-    }
-
-    // There are 3 cases here:
-    // 1. The app provided an array of factors to show (nextArrayQueryParam) -> we show whatever is in the array
-    // 2. no app provided list and validator passed -> we show all factors available to set up or complete
-    // 3. no app provided list and validator failing -> we show whatever the BE tells us to (this is already filtered by allowedToSetup&alreadySetup on the BE)
-    const nextArr = nextArrayQueryParam !== undefined ? nextArrayQueryParam.split(",") : factors.next;
-    const availableFactors = props.recipe
-        .getSecondaryFactors(userContext)
-        .filter(({ id }) =>
-            nextArr.length === 0
-                ? factors.allowedToSetup.includes(id) || factors.alreadySetup.includes(id)
-                : nextArr.includes(id)
-        );
-    return availableFactors;
-}

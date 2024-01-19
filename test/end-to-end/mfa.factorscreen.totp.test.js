@@ -356,7 +356,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 await waitForDashboard(page);
             });
 
-            it("should show a link redirecting to the chooser screen if other options are available during sign in - setup", async () => {
+            it("should show a back button redirecting to the chooser screen if other options are available during sign in - setup", async () => {
                 await setMFAInfo({
                     requirements: [{ oneOf: [factorId, "otp-email"] }],
                     alreadySetup: ["otp-email"],
@@ -368,14 +368,14 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                 const chooseAnotherFactor = await waitForSTElement(
                     page,
-                    "[data-supertokens~=totp-mfa][data-supertokens~=deviceSetupFooter] [data-supertokens~=secondaryText]:nth-child(1)"
+                    "[data-supertokens~=totp-mfa] [data-supertokens~=backButton]"
                 );
 
                 await chooseAnotherFactor.click();
                 await waitForSTElement(page, "[data-supertokens~=factorChooserList]");
             });
 
-            it("should show a link redirecting to the chooser screen if other options are available during sign in - verification", async () => {
+            it("should show a back button redirecting to the chooser screen if other options are available during sign in - verification", async () => {
                 await setMFAInfo({
                     requirements: [{ oneOf: [factorId, "otp-email"] }],
                     alreadySetup: [factorId, "otp-email"],
@@ -387,7 +387,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                 const chooseAnotherFactor = await waitForSTElement(
                     page,
-                    "[data-supertokens~=totp-mfa][data-supertokens~=codeVerificationFooter] [data-supertokens~=secondaryText]:nth-child(1)"
+                    "[data-supertokens~=totp-mfa] [data-supertokens~=backButton]"
                 );
                 await chooseAnotherFactor.click();
                 await waitForSTElement(page, "[data-supertokens~=factorChooserList]");

@@ -26,6 +26,7 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, getRedirectToPathFromURL, useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
+import { getAvailableFactors } from "../../../../multifactorauth/utils";
 import SessionRecipe from "../../../../session/recipe";
 import MFATOTPThemeWrapper from "../../themes/mfa";
 import { defaultTranslationsTOTP } from "../../themes/translations";
@@ -144,7 +145,9 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
             // If the next array only has a single option, it means the we were redirected here
             // automatically during the sign in process. In that case, anywhere the back button
             // could go would redirect back here, making it useless.
-            const showBackButton = mfaInfo.factors.next.length !== 1;
+            const showBackButton =
+                getAvailableFactors(mfaInfo.factors, undefined, MultiFactorAuth.getInstanceOrThrow(), userContext)
+                    .length !== 1;
 
             let deviceInfo: TOTPDeviceInfo | undefined;
             if (doSetup || !alreadySetup) {

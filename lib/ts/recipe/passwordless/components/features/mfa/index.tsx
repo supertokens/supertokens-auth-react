@@ -32,6 +32,7 @@ import {
     useRethrowInRender,
 } from "../../../../../utils";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
+import { getAvailableFactors } from "../../../../multifactorauth/utils";
 import SessionRecipe from "../../../../session/recipe";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import MFAThemeWrapper from "../../themes/mfa";
@@ -287,8 +288,9 @@ function useOnLoad(
             // If the next array only has a single option, it means the we were redirected here
             // automatically during the sign in process. In that case, anywhere the back button
             // could go would redirect back here, making it useless.
-            const showBackButton = mfaInfo.factors.next.length !== 1;
-
+            const showBackButton =
+                getAvailableFactors(mfaInfo.factors, undefined, MultiFactorAuth.getInstanceOrThrow(), userContext)
+                    .length !== 1;
             const contactInfoList =
                 (props.contactMethod === "EMAIL" ? mfaInfo.emails[factorId] : mfaInfo.phoneNumbers[factorId]) || [];
 
