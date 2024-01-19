@@ -29,3 +29,5 @@ docs/
 init.sh
 supertokens-auth-react-*.tgz
 runExample.sh
+.storybook
+stories
