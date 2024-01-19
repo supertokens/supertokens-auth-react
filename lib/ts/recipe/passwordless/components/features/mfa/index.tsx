@@ -37,7 +37,7 @@ import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import MFAThemeWrapper from "../../themes/mfa";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
-import type { FeatureBaseProps, Navigate } from "../../../../../types";
+import type { FeatureBaseProps, Navigate, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap, MFAChildProps } from "../../../types";
 import type { MFAAction, MFAState, NormalisedConfig } from "../../../types";
@@ -57,7 +57,6 @@ export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
                         canChangeEmail: action.canChangeEmail,
                         showAccessDenied: action.showAccessDenied,
                         showBackButton: action.showBackButton,
-                        showFactorChooserButton: action.showFactorChooserButton,
                     };
                 case "resendCode":
                     if (!oldState.loginAttemptInfo) {
@@ -103,7 +102,6 @@ export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
             loginAttemptInfo: undefined,
             canChangeEmail: false,
             showBackButton: false,
-            showFactorChooserButton: false,
         },
         (initArg) => {
             let error: string | undefined = undefined;
@@ -124,7 +122,7 @@ export function useChildProps(
     recipeImplementation: RecipeInterface,
     state: MFAState,
     contactMethod: "PHONE" | "EMAIL",
-    userContext: any,
+    userContext: UserContext,
     navigate?: Navigate
 ): MFAChildProps {
     const rethrowInRender = useRethrowInRender();
@@ -132,22 +130,15 @@ export function useChildProps(
         return {
             onSuccess: () => {
                 const redirectToPath = getRedirectToPathFromURL();
-                const redirectInfo =
-                    redirectToPath === undefined
-                        ? undefined
-                        : {
-                              rid: "passwordless",
-                              successRedirectContext: {
-                                  action: "SUCCESS" as const,
-                                  isNewRecipeUser: false,
-                                  isNewPrimaryUser: false,
-                                  user: undefined,
-                                  redirectToPath,
-                              },
-                          };
 
                 return SessionRecipe.getInstanceOrThrow()
-                    .validateGlobalClaimsAndHandleSuccessRedirection(redirectInfo, userContext, navigate)
+                    .validateGlobalClaimsAndHandleSuccessRedirection(
+                        undefined,
+                        recipe.recipeID,
+                        redirectToPath,
+                        userContext,
+                        navigate
+                    )
                     .catch(rethrowInRender);
             },
             onSignOutClicked: async () => {
@@ -169,14 +160,6 @@ export function useChildProps(
                 }
                 // If we reach this code this means we are using react-router-dom v6
                 return navigate(-1);
-            },
-            onFactorChooserButtonClicked: () => {
-                return MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser(
-                    false,
-                    undefined,
-                    navigate,
-                    userContext
-                );
             },
             recipeImplementation: recipeImplementation,
             config: recipe.config,
@@ -269,14 +252,14 @@ function useOnLoad(
     >,
     recipeImplementation: RecipeInterface,
     dispatch: React.Dispatch<MFAAction>,
-    userContext: any
+    userContext: UserContext
 ) {
     const fetchMFAInfo = React.useCallback(
         async () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe.resyncSessionAndFetchMFAInfo({ userContext }),
         [userContext]
     );
     const handleLoadError = React.useCallback(
-        () => dispatch({ type: "setError", showAccessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR" }),
+        () => dispatch({ type: "setError", showAccessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR_RELOAD" }),
         [dispatch]
     );
 
@@ -326,17 +309,21 @@ function useOnLoad(
                             loginAttemptInfo: undefined,
                             error,
                             canChangeEmail: contactInfoList.length === 0,
-                            showBackButton: mfaInfo.factors.next.length === 0,
-                            showFactorChooserButton: mfaInfo.factors.next.length > 1,
+                            showBackButton: mfaInfo.factors.next.length !== 1,
                             callingCreateCode: true,
                         });
                         // createCode also dispatches the event that marks this page fully loaded
                         createResp = await recipeImplementation!.createCode({
                             ...createCodeInfo,
+                            factorIds: [factorId],
                             userContext,
                         });
                     } catch (err) {
-                        dispatch({ type: "setError", showAccessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR" });
+                        dispatch({
+                            type: "setError",
+                            showAccessDenied: true,
+                            error: "SOMETHING_WENT_WRONG_ERROR_RELOAD",
+                        });
                         return;
                     }
                     if (createResp?.status !== "OK") {
@@ -346,7 +333,7 @@ function useOnLoad(
                             error:
                                 createResp.status === "SIGN_IN_UP_NOT_ALLOWED"
                                     ? createResp.reason
-                                    : "SOMETHING_WENT_WRONG_ERROR",
+                                    : "SOMETHING_WENT_WRONG_ERROR_RELOAD",
                         });
                     }
                 } else {
@@ -357,8 +344,7 @@ function useOnLoad(
                         loginAttemptInfo,
                         error,
                         canChangeEmail: true,
-                        showBackButton: mfaInfo.factors.next.length === 0,
-                        showFactorChooserButton: mfaInfo.factors.next.length > 1,
+                        showBackButton: mfaInfo.factors.next.length !== 1,
                         callingCreateCode: false,
                     });
                 }
@@ -370,8 +356,7 @@ function useOnLoad(
                     loginAttemptInfo,
                     error,
                     canChangeEmail: contactInfoList.length === 0,
-                    showBackButton: mfaInfo.factors.next.length === 0,
-                    showFactorChooserButton: mfaInfo.factors.next.length > 1,
+                    showBackButton: mfaInfo.factors.next.length !== 1,
                     callingCreateCode: false,
                 });
             }
@@ -410,9 +395,11 @@ function getModifiedRecipeImplementation(
                 contactInfo,
                 redirectToPath: getRedirectToPathFromURL(),
             };
+            const factorId = "email" in input ? "otp-email" : "otp-phone";
 
             const res = await originalImpl.createCode({
                 ...input,
+                factorIds: [factorId],
                 userContext: { ...input.userContext, additionalAttemptInfo },
             });
 

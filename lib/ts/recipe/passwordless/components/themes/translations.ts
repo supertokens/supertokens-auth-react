@@ -70,7 +70,6 @@ export const defaultTranslationsPasswordless = {
         PWLESS_MFA_LOGOUT: "Logout",
         PWLESS_MFA_HEADER_TITLE_PHONE: "SMS based OTP",
         PWLESS_MFA_HEADER_TITLE_EMAIL: "Email based OTP",
-        PWLESS_MFA_FOOTER_CHOOSER_ANOTHER: "Choose another factor",
         PWLESS_MFA_FOOTER_LOGOUT: "Logout",
 
         /*

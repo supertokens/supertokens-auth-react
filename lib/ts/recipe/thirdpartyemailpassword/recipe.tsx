@@ -76,6 +76,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             throw new Error("You need to enable either email password or third party providers login.");
         }
         super(config);
+        this.recipeID = config.recipeId;
 
         this.emailPasswordRecipe =
             recipes.emailPasswordInstance !== undefined

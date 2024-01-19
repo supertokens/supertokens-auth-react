@@ -54,7 +54,6 @@ export type TOTPDeviceInfo = {
 export type TOTPMFAAction =
     | {
           type: "load";
-          showFactorChooserButton: boolean;
           showBackButton: boolean;
           deviceInfo: TOTPDeviceInfo | undefined;
           showAccessDenied: boolean;
@@ -93,7 +92,6 @@ export type TOTPMFAState = {
     showSecret: boolean;
     nextRetryAt?: number;
     isBlocked: boolean;
-    showFactorChooserButton: boolean;
     showBackButton: boolean;
     loaded: boolean;
     error: string | undefined;
@@ -116,7 +114,6 @@ export type TOTPMFAProps = {
     onShowSecretClicked: () => void;
     onBackButtonClicked: () => void;
     onRetryClicked: () => void;
-    onFactorChooserButtonClicked: () => void;
     onSignOutClicked: () => void;
     dispatch: Dispatch<TOTPMFAAction>;
     featureState: TOTPMFAState;
@@ -160,12 +157,12 @@ export type NormalisedConfig = {
 export type GetRedirectionURLContext =
     | {
           action: "MFA_TOTP";
-          userContext: any;
+          userContext: UserContext;
       }
     | {
           action: "SUCCESS";
           redirectToPath?: string;
-          userContext: any;
+          userContext: UserContext;
       };
 
 export type PreAndPostAPIHookAction =
@@ -179,7 +176,7 @@ export type PreAPIHookContext = {
     action: PreAndPostAPIHookAction;
     requestInit: RequestInit;
     url: string;
-    userContext: any;
+    userContext: UserContext;
 };
 
 export type OnHandleEventContext =

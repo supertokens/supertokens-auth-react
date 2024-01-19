@@ -122,26 +122,6 @@ const meta: Meta<typeof Page> = {
     },
 };
 
-const loadSessionContextWithSingleNextOption = async () => ({
-    session: {
-        ...defaultSessionContext,
-        accessTokenPayload: {
-            ...defaultSessionContext.accessTokenPayload,
-            "st-mfa": { c: {}, n: ["totp"] },
-        },
-    },
-});
-
-const loadSessionContextWithMultipleNextOptions = async () => ({
-    session: {
-        ...defaultSessionContext,
-        accessTokenPayload: {
-            ...defaultSessionContext.accessTokenPayload,
-            "st-mfa": { c: {}, n: ["totp", "otp-phone", "otp-email"] },
-        },
-    },
-});
-
 export default meta;
 type Story = StoryObj<typeof Page>;
 
@@ -157,29 +137,12 @@ export const DeviceSetup: Story = {
             ...defaultState,
             loaded: true,
             deviceInfo: exampleDeviceInfo,
-        },
-    },
-};
-
-export const DeviceSetupWithSingleNextOption: Story = {
-    parameters: {
-        design: {
-            type: "figma",
-            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4461%3A1470&mode=dev",
-        },
-    },
-    args: {
-        featureState: {
-            ...defaultState,
-            loaded: true,
-            deviceInfo: exampleDeviceInfo,
             showBackButton: false,
         },
     },
-    loaders: [loadSessionContextWithSingleNextOption],
 };
 
-export const DeviceSetupMultipleNextOptions: Story = {
+export const DeviceSetupWithBackButton: Story = {
     parameters: {
         design: {
             type: "figma",
@@ -191,13 +154,12 @@ export const DeviceSetupMultipleNextOptions: Story = {
             ...defaultState,
             loaded: true,
             deviceInfo: exampleDeviceInfo,
-            showBackButton: false,
+            showBackButton: true,
         },
     },
-    loaders: [loadSessionContextWithMultipleNextOptions],
 };
 
-export const DeviceSetupAccessDenied: Story = {
+export const DeviceSetupAccessDeniedErrorCode: Story = {
     parameters: {
         design: {
             type: "figma",
@@ -209,7 +171,24 @@ export const DeviceSetupAccessDenied: Story = {
             ...defaultState,
             loaded: true,
             showAccessDenied: true,
-            error: "TOTP_MFA_NOT_ALLOWED_TO_SETUP",
+            error: "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_003)",
+            deviceInfo: undefined,
+        },
+    },
+};
+export const DeviceSetupAccessDeniedReload: Story = {
+    parameters: {
+        design: {
+            type: "figma",
+            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4446%3A1079&mode=dev",
+        },
+    },
+    args: {
+        featureState: {
+            ...defaultState,
+            loaded: true,
+            showAccessDenied: true,
+            error: "SOMETHING_WENT_WRONG_ERROR_RELOAD",
             deviceInfo: undefined,
         },
     },
@@ -280,29 +259,12 @@ export const Verification: Story = {
             ...defaultState,
             loaded: true,
             deviceInfo: undefined,
-        },
-    },
-};
-
-export const VerificationWithSingleNextOption: Story = {
-    parameters: {
-        design: {
-            type: "figma",
-            url: "https://www.figma.com/file/FlU5eMznAw68y5XU3pRVyZ/Homepage-and-pricing-page?type=design&node-id=4461%3A1496&mode=dev",
-        },
-    },
-    args: {
-        featureState: {
-            ...defaultState,
-            loaded: true,
-            deviceInfo: undefined,
             showBackButton: false,
         },
     },
-    loaders: [loadSessionContextWithSingleNextOption],
 };
 
-export const VerificationWithMultipleNextOption: Story = {
+export const VerificationWithBackButton: Story = {
     parameters: {
         design: {
             type: "figma",
@@ -314,10 +276,9 @@ export const VerificationWithMultipleNextOption: Story = {
             ...defaultState,
             loaded: true,
             deviceInfo: undefined,
-            showBackButton: false,
+            showBackButton: true,
         },
     },
-    loaders: [loadSessionContextWithMultipleNextOptions],
 };
 export const VerificationEmptySubmit: Story = {
     parameters: {

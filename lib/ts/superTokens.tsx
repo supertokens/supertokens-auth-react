@@ -30,6 +30,7 @@ import {
     appendTrailingSlashToURL,
     getCurrentNormalisedUrlPathWithQueryParams,
     getDefaultCookieScope,
+    getNormalisedUserContext,
     getOriginOfPage,
     isTest,
     normaliseCookieScopeOrThrowError,
@@ -177,6 +178,8 @@ export default class SuperTokens {
         if (context.action === "TO_AUTH") {
             const redirectUrl = this.appInfo.websiteBasePath.getAsStringDangerous();
             return appendTrailingSlashToURL(redirectUrl);
+        } else if (context.action === "SUCCESS") {
+            return context.redirectToPath ?? "/";
         }
         throw new Error("Should never come here: unexpected redirection context");
     }
@@ -214,6 +217,30 @@ export default class SuperTokens {
 
     redirectToUrl = async (redirectUrl: string, navigate?: Navigate): Promise<void> => {
         doRedirection(this.appInfo, redirectUrl, navigate);
+    };
+
+    redirect = async (
+        context: GetRedirectionURLContext,
+        navigate?: Navigate,
+        queryParams?: Record<string, string>,
+        userContext?: UserContext
+    ): Promise<void> => {
+        // NOTE: We cannot make userContext required in args because it follows optional parameters. Instead we will normalise it if it wasn't passed in.
+        let redirectUrl = await this.getRedirectUrl(context, getNormalisedUserContext(userContext));
+
+        if (redirectUrl === null) {
+            logDebugMessage(
+                `Skipping redirection because the user override returned null for context ${JSON.stringify(
+                    context,
+                    null,
+                    2
+                )}`
+            );
+            return;
+        }
+
+        redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
+        return SuperTokens.getInstanceOrThrow().redirectToUrl(redirectUrl, navigate);
     };
 
     /*

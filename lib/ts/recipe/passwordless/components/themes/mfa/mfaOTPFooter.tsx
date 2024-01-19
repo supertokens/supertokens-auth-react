@@ -25,16 +25,14 @@ export const MFAOTPFooter = withOverride(
         loginAttemptInfo,
         recipeImplementation,
         onSignOutClicked,
-        onFactorChooserButtonClicked,
         canChangeEmail,
-        showFactorChooserButton,
     }: MFAOTPFooterProps): JSX.Element {
         const t = useTranslation();
         const userContext = useUserContext();
 
         return (
             <div data-supertokens="footerLinkGroupVert pwless-mfa otpFooter">
-                {canChangeEmail ? (
+                {canChangeEmail && (
                     <div
                         data-supertokens="secondaryText"
                         onClick={() =>
@@ -46,12 +44,6 @@ export const MFAOTPFooter = withOverride(
                             ? t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL")
                             : t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE")}
                     </div>
-                ) : (
-                    showFactorChooserButton && (
-                        <div data-supertokens="secondaryText" onClick={onFactorChooserButtonClicked}>
-                            {t("PWLESS_MFA_FOOTER_CHOOSER_ANOTHER")}
-                        </div>
-                    )
                 )}
                 <div data-supertokens="secondaryText secondaryLinkWithLeftArrow" onClick={onSignOutClicked}>
                     <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />

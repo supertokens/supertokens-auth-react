@@ -22,23 +22,14 @@ import type { TOTPMFACommonProps } from "../../../types";
 export const DeviceSetupFooter = withOverride(
     "TOTPDeviceSetupFooter",
     function TOTPDeviceSetupFooter({
-        showFactorChooserButton,
         onSignOutClicked,
-        onFactorChooserButtonClicked,
     }: TOTPMFACommonProps & {
-        showFactorChooserButton: boolean;
-        onFactorChooserButtonClicked: () => void;
         onSignOutClicked: () => void;
     }): JSX.Element | null {
         const t = useTranslation();
 
         return (
             <div data-supertokens="footerLinkGroupVert totp-mfa deviceSetupFooter">
-                {showFactorChooserButton && (
-                    <div data-supertokens="secondaryText" onClick={onFactorChooserButtonClicked}>
-                        {t("TOTP_MFA_FOOTER_CHOOSER_ANOTHER")}
-                    </div>
-                )}
                 <div data-supertokens="secondaryText secondaryLinkWithLeftArrow" onClick={onSignOutClicked}>
                     <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
                     {t("TOTP_MFA_LOGOUT")}

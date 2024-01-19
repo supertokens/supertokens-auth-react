@@ -3,7 +3,13 @@ import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
 import RecipeModule from "../recipeModule";
 import type { NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType } from "./types";
-import type { Navigate, NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, UserContext } from "../../types";
+import type {
+    Navigate,
+    NormalisedConfigWithAppInfoAndRecipeID,
+    RecipeInitResult,
+    SuccessRedirectContext,
+    UserContext,
+} from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import type { SessionClaim } from "supertokens-web-js/recipe/session";
 export default class Session extends RecipeModule<unknown, unknown, unknown, NormalisedSessionConfig> {
@@ -12,7 +18,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     static RECIPE_ID: string;
     recipeID: string;
     private eventListeners;
-    private redirectionHandlersFromAuthRecipes;
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedSessionConfig>,
         webJSRecipe?: Omit<typeof WebJSSessionRecipe, "init" | "default">
@@ -45,25 +50,14 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
      * @returns Function to remove event listener
      */
     addEventListener: (listener: (ctx: RecipeEventWithSessionContext) => void) => () => void;
-    addAuthRecipeRedirectionHandler: (
-        rid: string,
-        redirect: (
-            context: any,
-            navigate?: Navigate,
-            queryParams?: Record<string, string>,
-            userContext?: UserContext
-        ) => Promise<void>
-    ) => void;
     validateGlobalClaimsAndHandleSuccessRedirection: (
-        redirectInfo?: {
-            rid: string;
-            successRedirectContext: {
-                action: "SUCCESS";
-                isNewRecipeUser: boolean;
-                isNewPrimaryUser: boolean;
-                redirectToPath?: string;
-            };
-        },
+        successRedirectContext: // We redefine recipeId to be a string here, because everywhere in the app we
+        | (Omit<SuccessRedirectContext, "recipeId"> & {
+                  recipeId: string;
+              })
+            | undefined,
+        fallbackRecipeId: string,
+        redirectToPath?: string,
         userContext?: UserContext,
         navigate?: Navigate
     ) => Promise<void>;

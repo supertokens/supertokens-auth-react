@@ -60,7 +60,7 @@ export declare type PreAPIHookContext = {
     action: PreAndPostAPIHookAction;
     requestInit: RequestInit;
     url: string;
-    userContext: any;
+    userContext: UserContext;
 };
 export declare type OnHandleEventContext = never;
 export declare type LoadedMFAInfo = {

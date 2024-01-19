@@ -1,11 +1,12 @@
 import { MultiFactorAuthClaimClass as MultiFactorAuthClaimClassWebJS } from "supertokens-web-js/recipe/multifactorauth";
+import type { SecondaryFactorRedirectionInfo } from "./types";
 import type { SessionClaimValidator, UserContext, ValidationFailureCallback } from "../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/multifactorauth";
 import type { MFARequirementList } from "supertokens-web-js/recipe/multifactorauth/types";
 export declare class MultiFactorAuthClaimClass {
     private webJSClaim;
     readonly id: string;
-    readonly refresh: (userContext: any) => Promise<void>;
+    readonly refresh: (userContext: UserContext) => Promise<void>;
     readonly getLastFetchedTime: (payload: any, _userContext?: UserContext) => number | undefined;
     readonly getValueFromPayload: (
         payload: any,
@@ -31,7 +32,10 @@ export declare class MultiFactorAuthClaimClass {
         ) => SessionClaimValidator;
     };
     constructor(
-        getRecipeImpl: () => RecipeInterface,
+        getRecipe: () => {
+            webJSRecipe: RecipeInterface;
+            getSecondaryFactors: (ctx: UserContext) => SecondaryFactorRedirectionInfo[];
+        },
         getRedirectURL: (
             context:
                 | {
@@ -43,7 +47,7 @@ export declare class MultiFactorAuthClaimClass {
                       action: "FACTOR_CHOOSER";
                       nextFactorOptions?: string[];
                   },
-            userContext: any
+            userContext: UserContext
         ) => Promise<string | undefined>,
         onFailureRedirection?: ValidationFailureCallback
     );

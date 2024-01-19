@@ -60,6 +60,7 @@ export default class ThirdParty extends AuthRecipe<
         }
 
         super(config);
+        this.recipeID = config.recipeId;
     }
 
     /*

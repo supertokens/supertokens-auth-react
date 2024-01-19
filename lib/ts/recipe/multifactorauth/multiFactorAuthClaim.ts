@@ -2,6 +2,7 @@ import { MultiFactorAuthClaimClass as MultiFactorAuthClaimClassWebJS } from "sup
 
 import { logDebugMessage } from "../../logger";
 
+import type { SecondaryFactorRedirectionInfo } from "./types";
 import type { SessionClaimValidator, UserContext, ValidationFailureCallback } from "../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/multifactorauth";
 import type { MFARequirementList } from "supertokens-web-js/recipe/multifactorauth/types";
@@ -9,7 +10,7 @@ import type { MFARequirementList } from "supertokens-web-js/recipe/multifactorau
 export class MultiFactorAuthClaimClass {
     private webJSClaim: MultiFactorAuthClaimClassWebJS;
     public readonly id: string;
-    public readonly refresh: (userContext: any) => Promise<void>;
+    public readonly refresh: (userContext: UserContext) => Promise<void>;
     public readonly getLastFetchedTime: (payload: any, _userContext?: UserContext) => number | undefined;
     public readonly getValueFromPayload: (
         payload: any,
@@ -31,24 +32,27 @@ export class MultiFactorAuthClaimClass {
     };
 
     constructor(
-        getRecipeImpl: () => RecipeInterface,
+        getRecipe: () => {
+            webJSRecipe: RecipeInterface;
+            getSecondaryFactors: (ctx: UserContext) => SecondaryFactorRedirectionInfo[];
+        },
         getRedirectURL: (
             context:
                 | { action: "GO_TO_FACTOR"; factorId: string; forceSetup?: boolean }
                 | { action: "FACTOR_CHOOSER"; nextFactorOptions?: string[] },
-            userContext: any
+            userContext: UserContext
         ) => Promise<string | undefined>,
         onFailureRedirection?: ValidationFailureCallback
     ) {
-        this.webJSClaim = new MultiFactorAuthClaimClassWebJS(getRecipeImpl);
+        this.webJSClaim = new MultiFactorAuthClaimClassWebJS(() => getRecipe().webJSRecipe);
         this.refresh = this.webJSClaim.refresh;
         this.getLastFetchedTime = this.webJSClaim.getLastFetchedTime;
         this.getValueFromPayload = this.webJSClaim.getValueFromPayload;
         this.id = this.webJSClaim.id;
 
         const defaultOnFailureRedirection = async ({ reason, userContext }: any) => {
+            const recipe = getRecipe();
             const nextFactorOptions =
-                reason.nextFactorOptions ||
                 reason.oneOf ||
                 reason.allOfInAnyOrder ||
                 (reason.factorId !== undefined ? [reason.factorId] : undefined);
@@ -57,25 +61,28 @@ export class MultiFactorAuthClaimClass {
                 logDebugMessage(
                     "Redirecting to MFA on next array from validation failure: " + nextFactorOptions.join(", ")
                 );
+                const availableFactors = recipe
+                    .getSecondaryFactors(userContext)
+                    .filter((v) => nextFactorOptions.factors.next.includes(v.id))
+                    .map((v) => v.id);
                 // In this case we got here from a validator that defined the list of validators
-                if (nextFactorOptions.length === 1) {
-                    return getRedirectURL({ action: "GO_TO_FACTOR", factorId: nextFactorOptions[0] }, userContext);
+                if (availableFactors.length === 1) {
+                    return getRedirectURL({ action: "GO_TO_FACTOR", factorId: availableFactors[0] }, userContext);
                 } else {
                     return getRedirectURL({ action: "FACTOR_CHOOSER", nextFactorOptions }, userContext);
                 }
             } else {
                 // If we got here, it means that the default validator failed
-                const mfaInfo = await getRecipeImpl().resyncSessionAndFetchMFAInfo({ userContext });
+                const mfaInfo = await recipe.webJSRecipe.resyncSessionAndFetchMFAInfo({ userContext });
+                const availableFactors = recipe
+                    .getSecondaryFactors(userContext)
+                    .filter((v) => mfaInfo.factors.next.includes(v.id))
+                    .map((v) => v.id);
 
-                if (mfaInfo.factors.next.length !== 0) {
-                    logDebugMessage(
-                        "Redirecting to MFA on next array from backend: " + mfaInfo.factors.next.join(", ")
-                    );
-                    if (mfaInfo.factors.next.length === 1) {
-                        return getRedirectURL(
-                            { action: "GO_TO_FACTOR", factorId: mfaInfo.factors.next[0] },
-                            userContext
-                        );
+                if (availableFactors.length !== 0) {
+                    logDebugMessage("Redirecting to MFA on next array from backend: " + availableFactors.join(", "));
+                    if (availableFactors.length === 1) {
+                        return getRedirectURL({ action: "GO_TO_FACTOR", factorId: availableFactors[0] }, userContext);
                     } else {
                         return getRedirectURL({ action: "FACTOR_CHOOSER" }, userContext);
                     }

@@ -21,7 +21,6 @@ import type {
     UserContext,
 } from "../../types";
 import type {
-    GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
@@ -169,11 +168,9 @@ export declare type PreAPIHookContext = {
     url: string;
     userContext: UserContext;
 };
-export declare type GetRedirectionURLContext =
-    | AuthRecipeModuleGetRedirectionURLContext
-    | {
-          action: "RESET_PASSWORD";
-      };
+export declare type GetRedirectionURLContext = {
+    action: "RESET_PASSWORD";
+};
 export declare type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {

@@ -70,7 +70,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
         "ST_LOGS SESSION OVERRIDE GET_USER_ID",
         `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
         `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
-        `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+        `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`,
         "ST_LOGS SESSION OVERRIDE GET_USER_ID",
     ];
     const signinSuccessLogsLink = [
@@ -79,7 +79,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
         `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
         `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
         `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
-        `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+        `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`,
         "ST_LOGS SESSION OVERRIDE GET_USER_ID",
     ];
 
@@ -713,7 +713,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
                     `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
 
-                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                    `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`,
                 ]);
             });
 
@@ -757,7 +757,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
                     `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
 
-                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                    `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`,
                 ]);
             });
 
@@ -1221,7 +1221,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
 
-                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                    `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`,
                 ]);
             });
 
@@ -1265,7 +1265,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
 
-                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                    `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`,
                 ]);
             });
 
@@ -1619,7 +1619,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
 
-                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                    `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`,
 
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -1702,7 +1702,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
                     `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
 
-                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                    `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`,
                 ]);
             });
 
@@ -1751,7 +1751,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
 
-                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                    `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`,
 
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);

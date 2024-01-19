@@ -25,7 +25,6 @@ import { TOTPIcon } from "../../components/assets/totpIcon";
 import { SSR_ERROR } from "../../constants";
 import MultiFactorAuth from "../multifactorauth/recipe";
 import RecipeModule from "../recipeModule";
-import Session from "../session/recipe";
 
 import { DEFAULT_TOTP_PATH } from "./constants";
 import { getFunctionOverrides } from "./functionOverrides";
@@ -70,10 +69,6 @@ export default class TOTP extends RecipeModule<
             const mfa = MultiFactorAuth.getInstance();
             if (mfa !== undefined) {
                 mfa.addMFAFactors([totpFactor]);
-            }
-            const session = Session.getInstance();
-            if (session !== undefined) {
-                session.addAuthRecipeRedirectionHandler("totp", this.redirect.bind(this));
             }
         });
     }

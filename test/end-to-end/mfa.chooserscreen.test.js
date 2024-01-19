@@ -139,7 +139,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
             await waitForDashboard(page);
         });
 
-        it("should redirect to the factor screen during sign in if only one factor is available (limited by isAlreadySetup/isAllowedToSetup)", async () => {
+        it("should redirect to the factor screen during sign in if only one factor is available (limited by alreadySetup/allowedToSetup)", async () => {
             await page.evaluate(() => {
                 window.localStorage.setItem("enableAllRecipes", "false");
                 window.localStorage.setItem("clientRecipeListForDynamicLogin", JSON.stringify(["emailpassword"]));
@@ -148,8 +148,8 @@ describe("SuperTokens SignIn w/ MFA", function () {
             await setMFAInfo({
                 requirements: [{ oneOf: ["otp-email", "otp-phone", "totp"] }],
                 hasTOTP: true,
-                isAlreadySetup: ["totp"],
-                isAllowedToSetup: [],
+                alreadySetup: ["totp"],
+                allowedToSetup: [],
             });
 
             await tryEmailPasswordSignIn(page, email);
@@ -184,8 +184,8 @@ describe("SuperTokens SignIn w/ MFA", function () {
         it("should show all factors the user can complete or set up if the next array is empty", async () => {
             await setMFAInfo({
                 requirements: [],
-                isAlreadySetup: ["otp-phone", "otp-email"],
-                isAllowedToSetup: ["totp"],
+                alreadySetup: ["otp-phone", "otp-email"],
+                allowedToSetup: ["totp"],
             });
 
             await tryEmailPasswordSignIn(page, email);
@@ -198,8 +198,8 @@ describe("SuperTokens SignIn w/ MFA", function () {
         it("should show access denied if there are no available options during sign in", async () => {
             await setMFAInfo({
                 requirements: ["otp-phone"],
-                isAlreadySetup: ["otp-email"],
-                isAllowedToSetup: [],
+                alreadySetup: ["otp-email"],
+                allowedToSetup: [],
             });
 
             await tryEmailPasswordSignIn(page, email);
@@ -209,8 +209,8 @@ describe("SuperTokens SignIn w/ MFA", function () {
         it("should show access denied if there are no available options after sign in", async () => {
             await setMFAInfo({
                 requirements: [],
-                isAlreadySetup: [],
-                isAllowedToSetup: [],
+                alreadySetup: [],
+                allowedToSetup: [],
             });
 
             await tryEmailPasswordSignIn(page, email);
@@ -256,8 +256,8 @@ describe("SuperTokens SignIn w/ MFA", function () {
         it("should handle MFA info API failures gracefully", async () => {
             await setMFAInfo({
                 requirements: [],
-                isAlreadySetup: ["otp-phone", "otp-email"],
-                isAllowedToSetup: [],
+                alreadySetup: ["otp-phone", "otp-email"],
+                allowedToSetup: [],
             });
 
             await page.setRequestInterception(true);

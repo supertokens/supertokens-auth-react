@@ -30,7 +30,7 @@ import SessionRecipe from "../../../../session/recipe";
 import MFATOTPThemeWrapper from "../../themes/mfa";
 import { defaultTranslationsTOTP } from "../../themes/translations";
 
-import type { FeatureBaseProps, Navigate } from "../../../../../types";
+import type { FeatureBaseProps, Navigate, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type {
     ComponentOverrideMap,
@@ -51,7 +51,6 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
                         loaded: !action.callingCreateDevice,
                         error: action.error,
                         deviceInfo: action.deviceInfo,
-                        showFactorChooserButton: action.showFactorChooserButton,
                         showBackButton: action.showBackButton,
                         showAccessDenied: action.showAccessDenied,
                         isBlocked: false,
@@ -105,7 +104,6 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
             deviceInfo: undefined,
             showSecret: false,
             isBlocked: false,
-            showFactorChooserButton: false,
             showBackButton: false,
             showAccessDenied: false,
         },
@@ -123,14 +121,14 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
     );
 };
 
-function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFAAction>, userContext: any) {
+function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFAAction>, userContext: UserContext) {
     const fetchMFAInfo = React.useCallback(
         async () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe.resyncSessionAndFetchMFAInfo({ userContext }),
         [userContext]
     );
 
     const handleLoadError = React.useCallback(
-        () => dispatch({ type: "setError", showAccessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR" }),
+        () => dispatch({ type: "setError", showAccessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR_RELOAD" }),
         [dispatch]
     );
     const onLoad = React.useCallback(
@@ -141,15 +139,14 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
             if (errorQueryParam !== null) {
                 error = "SOMETHING_WENT_WRONG_ERROR";
             }
-            const isAlreadySetup = mfaInfo.factors.isAlreadySetup.includes("totp");
+            const alreadySetup = mfaInfo.factors.alreadySetup.includes("totp");
 
             // If we have finished logging in and the user was redirected here
             // otherwise the user can use the "choose another factor" button
-            const showBackButton = mfaInfo.factors.next.length === 0;
-            const showFactorChooserButton = mfaInfo.factors.next.length > 1;
+            const showBackButton = mfaInfo.factors.next.length !== 1;
 
             let deviceInfo: TOTPDeviceInfo | undefined;
-            if (doSetup || !isAlreadySetup) {
+            if (doSetup || !alreadySetup) {
                 let createResp;
                 try {
                     dispatch({
@@ -157,7 +154,6 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                         deviceInfo: undefined,
                         error,
                         showBackButton,
-                        showFactorChooserButton,
                         showAccessDenied: false,
                         callingCreateDevice: true,
                     });
@@ -166,7 +162,7 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                     dispatch({
                         type: "setError",
                         showAccessDenied: true,
-                        error: "SOMETHING_WENT_WRONG_ERROR",
+                        error: "SOMETHING_WENT_WRONG_ERROR_RELOAD",
                     });
                     return;
                 }
@@ -174,7 +170,7 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                     dispatch({
                         type: "setError",
                         showAccessDenied: true,
-                        error: "SOMETHING_WENT_WRONG_ERROR",
+                        error: "SOMETHING_WENT_WRONG_ERROR_RELOAD",
                     });
                     return;
                 }
@@ -190,7 +186,6 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
                 deviceInfo,
                 error,
                 showBackButton,
-                showFactorChooserButton,
                 showAccessDenied: false,
                 callingCreateDevice: false,
             });
@@ -206,7 +201,7 @@ export function useChildProps(
     recipeImplementation: RecipeInterface,
     state: TOTPMFAState,
     dispatch: React.Dispatch<TOTPMFAAction>,
-    userContext: any,
+    userContext: UserContext,
     navigate?: Navigate
 ): TOTPMFAChildProps | undefined {
     const rethrowInRender = useRethrowInRender();
@@ -244,32 +239,17 @@ export function useChildProps(
                 await SessionRecipe.getInstanceOrThrow().signOut({ userContext });
                 await redirectToAuth({ redirectBack: false, navigate: navigate });
             },
-            onFactorChooserButtonClicked: () => {
-                return MultiFactorAuth.getInstanceOrThrow().redirectToFactorChooser(
-                    false,
-                    undefined,
-                    navigate,
-                    userContext
-                );
-            },
             onSuccess: () => {
                 const redirectToPath = getRedirectToPathFromURL();
-                const redirectInfo =
-                    redirectToPath === undefined
-                        ? undefined
-                        : {
-                              rid: "totp",
-                              successRedirectContext: {
-                                  action: "SUCCESS" as const,
-                                  isNewRecipeUser: false,
-                                  isNewPrimaryUser: false,
-                                  redirectToPath,
-                                  userContext,
-                              },
-                          };
 
                 return SessionRecipe.getInstanceOrThrow()
-                    .validateGlobalClaimsAndHandleSuccessRedirection(redirectInfo, userContext, navigate)
+                    .validateGlobalClaimsAndHandleSuccessRedirection(
+                        undefined,
+                        recipe.recipeID,
+                        redirectToPath,
+                        userContext,
+                        navigate
+                    )
                     .catch(rethrowInRender);
             },
             recipeImplementation: recipeImplementation,

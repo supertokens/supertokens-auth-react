@@ -78,6 +78,8 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
             throw new Error("You need to enable either passwordless or third party providers login.");
         }
         super(config);
+        this.recipeID = config.recipeId;
+
         this.passwordlessRecipe =
             recipes.passwordlessInstance !== undefined
                 ? recipes.passwordlessInstance

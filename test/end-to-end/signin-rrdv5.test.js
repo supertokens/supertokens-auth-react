@@ -344,7 +344,7 @@ describe("SuperTokens SignIn with react router dom v5", function () {
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
 
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS EMAIL_PASSWORD",
 
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
@@ -357,7 +357,7 @@ describe("SuperTokens SignIn with react router dom v5", function () {
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
 
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS EMAIL_PASSWORD",
 
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
@@ -473,7 +473,7 @@ describe("SuperTokens SignIn with react router dom v5", function () {
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
 
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS EMAIL_PASSWORD",
 
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS SESSION OVERRIDE SIGN_OUT",
@@ -584,7 +584,7 @@ describe("SuperTokens SignIn with react router dom v5", function () {
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
 
                     "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                    "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS EMAIL_PASSWORD",
 
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -623,7 +623,7 @@ describe("SuperTokens SignIn with react router dom v5", function () {
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
 
                     "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                    "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS EMAIL_PASSWORD",
 
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);

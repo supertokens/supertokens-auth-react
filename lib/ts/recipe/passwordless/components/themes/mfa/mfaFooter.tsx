@@ -26,11 +26,6 @@ export const MFAFooter = withOverride(
 
         return (
             <div data-supertokens="footerLinkGroupVert pwless-mfa footer">
-                {props.showFactorChooserButton && (
-                    <div data-supertokens="secondaryText" onClick={props.onFactorChooserButtonClicked}>
-                        {t("PWLESS_MFA_FOOTER_CHOOSER_ANOTHER")}
-                    </div>
-                )}
                 <div data-supertokens="secondaryText secondaryLinkWithLeftArrow" onClick={props.onSignOutClicked}>
                     <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
                     {t("PWLESS_MFA_FOOTER_LOGOUT")}
