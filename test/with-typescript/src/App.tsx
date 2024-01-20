@@ -100,6 +100,7 @@ const rid = window.localStorage.getItem("rid") || "emailpassword";
 const recipeList = getRecipeList();
 
 const dateProviderImplementation: DateProviderInterface = {
+    getThresholdInSeconds: () => 0,
     getClientClockSkewInMillis: () => 0,
     setClientClockSkewInMillis: () => {},
     now: () => Date.now(),
