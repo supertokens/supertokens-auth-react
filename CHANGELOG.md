@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Exporting the `DateProvider` from supertokens-web-js, that both built-in and custom validators can use instead of `Date.now` to get an estimate of the server clock.
 -   Added the `dateProvider` prop to the configuration that can be used to customize the built-in `DateProvider`.
--   Added `getClockSkewInMillis` as an overrideable function to the Session recipe that estimates the time difference between the backend and the client.
+-   Added `calculateClockSkewInMillis` as an overrideable function to the Session recipe that estimates the time difference between the backend and the client.
 
 ## [0.36.1] - 2023-12-20
 
