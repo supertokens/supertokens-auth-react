@@ -101,6 +101,7 @@ const recipeList = getRecipeList();
 
 const dateProviderImplementation: DateProviderInterface = {
     getThresholdInSeconds: () => 0,
+    setThresholdInSeconds: () => {},
     getClientClockSkewInMillis: () => 0,
     setClientClockSkewInMillis: () => {},
     now: () => Date.now(),
@@ -350,8 +351,8 @@ function getRecipeList() {
                         shouldDoInterceptionBasedOnUrl: (...input) => {
                             return oI.shouldDoInterceptionBasedOnUrl(...input);
                         },
-                        getClockSkewInMillis: (...input) => {
-                            return oI.getClockSkewInMillis(...input);
+                        calculateClockSkewInMillis: (...input) => {
+                            return oI.calculateClockSkewInMillis(...input);
                         },
                     };
                 },

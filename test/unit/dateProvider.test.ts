@@ -46,6 +46,10 @@ describe("Date Provider test", function () {
                         storageLogs.push("ST_LOGS DATE_PROVIDER_GET_THRESHOLD");
                         return 7;
                     },
+                    setThresholdInSeconds() {
+                        storageLogs.push("ST_LOGS DATE_PROVIDER_SET_THRESHOLD");
+                        return;
+                    },
                     now() {
                         storageLogs.push("ST_LOGS DATE_PROVIDER_NOW");
                         return Date.now();
