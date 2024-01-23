@@ -1,8 +1,13 @@
 import React from "react";
+import type { SessionContextType } from "./types";
 import type { Navigate, ReactComponentClass, SessionClaimValidator, UserContext } from "../../types";
 import type { PropsWithChildren } from "react";
 import type { ClaimValidationError } from "supertokens-web-js/recipe/session";
 export declare type SessionAuthProps = {
+    /**
+     * Initial context that is rendered on a server side (SSR).
+     */
+    initialSessionAuthContext?: SessionContextType;
     /**
      * For a detailed explanation please see https://github.com/supertokens/supertokens-auth-react/issues/570
      */
