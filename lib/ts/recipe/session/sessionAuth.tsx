@@ -105,7 +105,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
         if (sessionExists === false) {
             return {
-                preloaded: false,
+                isContextFromSSR: false,
                 loading: false,
                 doesSessionExist: false,
                 accessTokenPayload: {},
@@ -133,7 +133,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 throw err;
             }
             return {
-                preloaded: false,
+                isContextFromSSR: false,
                 loading: false,
                 doesSessionExist: false,
                 accessTokenPayload: {},
@@ -144,7 +144,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
         try {
             return {
-                preloaded: false,
+                isContextFromSSR: false,
                 loading: false,
                 doesSessionExist: true,
                 invalidClaims,
@@ -166,7 +166,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             // This means that loading the access token or the userId failed
             // This may happen if the server cleared the error since the validation was done which should be extremely rare
             return {
-                preloaded: false,
+                isContextFromSSR: false,
                 loading: false,
                 doesSessionExist: false,
                 accessTokenPayload: {},
@@ -254,7 +254,12 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                             userContext,
                         });
                         if (failureRedirectInfo.redirectPath) {
-                            setContext({ ...event.sessionContext, preloaded: false, loading: false, invalidClaims });
+                            setContext({
+                                ...event.sessionContext,
+                                isContextFromSSR: false,
+                                loading: false,
+                                invalidClaims,
+                            });
                             return await SuperTokens.getInstanceOrThrow().redirectToUrl(
                                 failureRedirectInfo.redirectPath,
                                 navigate
@@ -267,22 +272,22 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                             });
                             return setContext({
                                 ...event.sessionContext,
-                                preloaded: false,
+                                isContextFromSSR: false,
                                 loading: false,
                                 invalidClaims,
                                 accessDeniedValidatorError: failureRedirectInfo.failedClaim,
                             });
                         }
                     }
-                    setContext({ ...event.sessionContext, preloaded: false, loading: false, invalidClaims });
+                    setContext({ ...event.sessionContext, isContextFromSSR: false, loading: false, invalidClaims });
 
                     return;
                 }
                 case "SIGN_OUT":
-                    setContext({ ...event.sessionContext, preloaded: false, loading: false, invalidClaims: [] });
+                    setContext({ ...event.sessionContext, isContextFromSSR: false, loading: false, invalidClaims: [] });
                     return;
                 case "UNAUTHORISED":
-                    setContext({ ...event.sessionContext, preloaded: false, loading: false, invalidClaims: [] });
+                    setContext({ ...event.sessionContext, isContextFromSSR: false, loading: false, invalidClaims: [] });
                     if (props.onSessionExpired !== undefined) {
                         props.onSessionExpired();
                     } else if (props.requireAuth !== false && props.doRedirection !== false) {

@@ -31,7 +31,7 @@ export declare type SessionContextUpdate = {
     accessTokenPayload: any;
 };
 export declare type LoadedSessionContext = {
-    preloaded: boolean;
+    isContextFromSSR: boolean;
     loading: false;
     invalidClaims: ClaimValidationError[];
     accessDeniedValidatorError?: ClaimValidationError;

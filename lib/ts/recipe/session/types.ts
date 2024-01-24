@@ -50,7 +50,7 @@ export type SessionContextUpdate = {
 };
 
 export type LoadedSessionContext = {
-    preloaded: boolean;
+    isContextFromSSR: boolean;
     loading: false;
     invalidClaims: ClaimValidationError[];
     accessDeniedValidatorError?: ClaimValidationError;

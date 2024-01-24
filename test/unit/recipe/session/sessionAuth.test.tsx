@@ -90,7 +90,7 @@ describe("SessionAuth", () => {
             doesSessionExist: true,
             invalidClaims: [],
             loading: false,
-            preloaded: false,
+            isContextFromSSR: false,
         });
     });
 
@@ -217,7 +217,7 @@ describe("SessionAuth", () => {
                     userId: "mock-id",
                     invalidClaims: [],
                     loading: false,
-                    preloaded: false,
+                    isContextFromSSR: false,
                 });
 
                 // when
@@ -510,7 +510,7 @@ describe("SessionAuth", () => {
                 userId: "mock-id",
                 invalidClaims: [{ validatorId: "st-test-claim", reason: "test-reason" }],
                 loading: false,
-                preloaded: false,
+                isContextFromSSR: false,
             });
 
             await act(() =>
@@ -667,7 +667,7 @@ describe("SessionAuth", () => {
                 userId: "",
                 invalidClaims: [],
                 loading: false,
-                preloaded: false,
+                isContextFromSSR: false,
             });
 
             // when
@@ -696,7 +696,7 @@ describe("SessionAuth", () => {
                 userId: "",
                 invalidClaims: [],
                 loading: false,
-                preloaded: false,
+                isContextFromSSR: false,
             });
 
             // when
