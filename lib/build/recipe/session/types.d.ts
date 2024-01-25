@@ -41,6 +41,7 @@ export declare type SessionContextType =
     | {
           loading: true;
       };
+export declare type SSRSessionContextType = Omit<LoadedSessionContext, "invalidClaims" | "accessDeniedValidatorError">;
 export declare type AccessDeniedThemeProps = {
     recipe: Session;
     navigate: Navigate;

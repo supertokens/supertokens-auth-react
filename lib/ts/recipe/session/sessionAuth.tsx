@@ -28,7 +28,12 @@ import Session from "./recipe";
 import SessionContext from "./sessionContext";
 import { getFailureRedirectionInfo } from "./utils";
 
-import type { LoadedSessionContext, RecipeEventWithSessionContext, SessionContextType } from "./types";
+import type {
+    LoadedSessionContext,
+    RecipeEventWithSessionContext,
+    SessionContextType,
+    SSRSessionContextType,
+} from "./types";
 import type { Navigate, ReactComponentClass, SessionClaimValidator, UserContext } from "../../types";
 import type { PropsWithChildren } from "react";
 import type { ClaimValidationError } from "supertokens-web-js/recipe/session";
@@ -37,7 +42,7 @@ export type SessionAuthProps = {
     /**
      * Initial context that is rendered on a server side (SSR).
      */
-    initialSessionAuthContext?: SessionContextType;
+    initialSessionAuthContext?: SSRSessionContextType;
     /**
      * For a detailed explanation please see https://github.com/supertokens/supertokens-auth-react/issues/570
      */
@@ -69,9 +74,16 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         );
     }
 
+    const initialContext: SessionContextType = props.initialSessionAuthContext
+        ? {
+              ...props.initialSessionAuthContext,
+              invalidClaims: [], // invalidClaims is currently unsupported on server (SSR)
+          }
+        : { loading: true };
+
     // Reusing the parent context was removed because it caused a redirect loop in an edge case
     // because it'd also reuse the invalid claims part until it loaded.
-    const [context, setContext] = useState<SessionContextType>(props.initialSessionAuthContext ?? { loading: true });
+    const [context, setContext] = useState<SessionContextType>(initialContext);
 
     const session = useRef<Session>();
 
