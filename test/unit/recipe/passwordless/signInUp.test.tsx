@@ -57,6 +57,7 @@ describe("Passwordless.SingInUp", () => {
         });
 
         setMockResolvesSession({
+            isContextFromSSR: false,
             userId: "mock-user-id",
             accessTokenPayload: {},
             invalidClaims: [],

@@ -25,7 +25,7 @@ import { RecipeComponentsOverrideContextProvider } from "./componentOverrideCont
 import Session from "./recipe";
 import SessionAuthWrapper from "./sessionAuth";
 import SessionContext from "./sessionContext";
-import { InputType, SessionContextType } from "./types";
+import { InputType, SessionContextType, SSRSessionContextType } from "./types";
 import { useClaimValue as useClaimValueFunc } from "./useClaimValue";
 import useSessionContextFunc from "./useSessionContext";
 
@@ -150,6 +150,7 @@ export {
     InputType,
     SessionContext,
     SessionContextType,
+    SSRSessionContextType,
     BooleanClaim,
     ClaimValidationError,
     ClaimValidationResult,

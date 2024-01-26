@@ -50,6 +50,7 @@ export type SessionContextUpdate = {
 };
 
 export type LoadedSessionContext = {
+    isContextFromSSR: boolean;
     loading: false;
     invalidClaims: ClaimValidationError[];
     accessDeniedValidatorError?: ClaimValidationError;
@@ -60,6 +61,8 @@ export type SessionContextType =
     | {
           loading: true;
       };
+
+export type SSRSessionContextType = Omit<LoadedSessionContext, "invalidClaims" | "accessDeniedValidatorError">;
 
 export type AccessDeniedThemeProps = {
     recipe: Session;

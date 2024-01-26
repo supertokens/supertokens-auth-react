@@ -5,7 +5,7 @@ import SuperTokens from "../../../../lib/ts/superTokens";
 import Session from "../../../../lib/ts/recipe/session/recipe";
 import SessionAuth from "../../../../lib/ts/recipe/session/sessionAuth";
 import SessionContext from "../../../../lib/ts/recipe/session/sessionContext";
-import { SessionContextType } from "../../../../lib/ts/recipe/session";
+import { SessionContextType, SSRSessionContextType } from "../../../../lib/ts/recipe/session";
 import { PrimitiveClaim, SessionClaim, useClaimValue } from "../../../../lib/ts/recipe/session";
 import * as utils from "supertokens-web-js/utils";
 
@@ -90,6 +90,7 @@ describe("SessionAuth", () => {
             doesSessionExist: true,
             invalidClaims: [],
             loading: false,
+            isContextFromSSR: false,
         });
     });
 
@@ -155,6 +156,34 @@ describe("SessionAuth", () => {
 
         result.unmount();
     });
+
+    test("set initial SSR context (initialSessionAuthContext)", async () => {
+        const initialSessionAuthContext: SSRSessionContextType = {
+            isContextFromSSR: true,
+            loading: false,
+            doesSessionExist: true,
+            accessTokenPayload: {
+                foo: "bar",
+            },
+            userId: "mock-ssr-user-id",
+        };
+
+        // when
+        const result = render(
+            <SessionAuth initialSessionAuthContext={initialSessionAuthContext}>
+                <MockSessionConsumer />
+            </SessionAuth>
+        );
+
+        // then
+        expect(await result.findByText(/^userId:/)).toHaveTextContent(`userId: mock-ssr-user-id`);
+        expect(await result.findByText(/^accessTokenPayload:/)).toHaveTextContent(
+            `accessTokenPayload: ${JSON.stringify({
+                foo: "bar",
+            })}`
+        );
+    });
+
     test("set initial context", async () => {
         // when
         const result = render(
@@ -216,6 +245,7 @@ describe("SessionAuth", () => {
                     userId: "mock-id",
                     invalidClaims: [],
                     loading: false,
+                    isContextFromSSR: false,
                 });
 
                 // when
@@ -508,6 +538,7 @@ describe("SessionAuth", () => {
                 userId: "mock-id",
                 invalidClaims: [{ validatorId: "st-test-claim", reason: "test-reason" }],
                 loading: false,
+                isContextFromSSR: false,
             });
 
             await act(() =>
@@ -664,6 +695,7 @@ describe("SessionAuth", () => {
                 userId: "",
                 invalidClaims: [],
                 loading: false,
+                isContextFromSSR: false,
             });
 
             // when
@@ -692,6 +724,7 @@ describe("SessionAuth", () => {
                 userId: "",
                 invalidClaims: [],
                 loading: false,
+                isContextFromSSR: false,
             });
 
             // when

@@ -214,6 +214,7 @@ describe("Components override per recipe provider", () => {
             ],
         });
         setMockResolvesSession({
+            isContextFromSSR: false,
             userId: "mock-user-id",
             accessTokenPayload: {},
             invalidClaims: [],

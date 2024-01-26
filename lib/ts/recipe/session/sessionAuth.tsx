@@ -28,12 +28,21 @@ import Session from "./recipe";
 import SessionContext from "./sessionContext";
 import { getFailureRedirectionInfo } from "./utils";
 
-import type { LoadedSessionContext, RecipeEventWithSessionContext, SessionContextType } from "./types";
+import type {
+    LoadedSessionContext,
+    RecipeEventWithSessionContext,
+    SessionContextType,
+    SSRSessionContextType,
+} from "./types";
 import type { Navigate, ReactComponentClass, SessionClaimValidator, UserContext } from "../../types";
 import type { PropsWithChildren } from "react";
 import type { ClaimValidationError } from "supertokens-web-js/recipe/session";
 
 export type SessionAuthProps = {
+    /**
+     * Initial context that is rendered on a server side (SSR).
+     */
+    initialSessionAuthContext?: SSRSessionContextType;
     /**
      * For a detailed explanation please see https://github.com/supertokens/supertokens-auth-react/issues/570
      */
@@ -65,9 +74,16 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         );
     }
 
+    const initialContext: SessionContextType = props.initialSessionAuthContext
+        ? {
+              ...props.initialSessionAuthContext,
+              invalidClaims: [], // invalidClaims is currently unsupported on server (SSR)
+          }
+        : { loading: true };
+
     // Reusing the parent context was removed because it caused a redirect loop in an edge case
     // because it'd also reuse the invalid claims part until it loaded.
-    const [context, setContext] = useState<SessionContextType>({ loading: true });
+    const [context, setContext] = useState<SessionContextType>(initialContext);
 
     const session = useRef<Session>();
 
@@ -101,6 +117,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
         if (sessionExists === false) {
             return {
+                isContextFromSSR: false,
                 loading: false,
                 doesSessionExist: false,
                 accessTokenPayload: {},
@@ -128,6 +145,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 throw err;
             }
             return {
+                isContextFromSSR: false,
                 loading: false,
                 doesSessionExist: false,
                 accessTokenPayload: {},
@@ -138,6 +156,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
         try {
             return {
+                isContextFromSSR: false,
                 loading: false,
                 doesSessionExist: true,
                 invalidClaims,
@@ -159,6 +178,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             // This means that loading the access token or the userId failed
             // This may happen if the server cleared the error since the validation was done which should be extremely rare
             return {
+                isContextFromSSR: false,
                 loading: false,
                 doesSessionExist: false,
                 accessTokenPayload: {},
@@ -246,7 +266,12 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                             userContext,
                         });
                         if (failureRedirectInfo.redirectPath) {
-                            setContext({ ...event.sessionContext, loading: false, invalidClaims });
+                            setContext({
+                                ...event.sessionContext,
+                                isContextFromSSR: false,
+                                loading: false,
+                                invalidClaims,
+                            });
                             return await SuperTokens.getInstanceOrThrow().redirectToUrl(
                                 failureRedirectInfo.redirectPath,
                                 navigate
@@ -259,21 +284,22 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                             });
                             return setContext({
                                 ...event.sessionContext,
+                                isContextFromSSR: false,
                                 loading: false,
                                 invalidClaims,
                                 accessDeniedValidatorError: failureRedirectInfo.failedClaim,
                             });
                         }
                     }
-                    setContext({ ...event.sessionContext, loading: false, invalidClaims });
+                    setContext({ ...event.sessionContext, isContextFromSSR: false, loading: false, invalidClaims });
 
                     return;
                 }
                 case "SIGN_OUT":
-                    setContext({ ...event.sessionContext, loading: false, invalidClaims: [] });
+                    setContext({ ...event.sessionContext, isContextFromSSR: false, loading: false, invalidClaims: [] });
                     return;
                 case "UNAUTHORISED":
-                    setContext({ ...event.sessionContext, loading: false, invalidClaims: [] });
+                    setContext({ ...event.sessionContext, isContextFromSSR: false, loading: false, invalidClaims: [] });
                     if (props.onSessionExpired !== undefined) {
                         props.onSessionExpired();
                     } else if (props.requireAuth !== false && props.doRedirection !== false) {
