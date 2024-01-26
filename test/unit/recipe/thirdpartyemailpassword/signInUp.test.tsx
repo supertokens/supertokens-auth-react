@@ -56,6 +56,7 @@ describe("ThirdPartyEmailPassword.SignInAndUp", () => {
         });
 
         setMockResolvesSession({
+            isContextFromSSR: false,
             userId: "mock-user-id",
             accessTokenPayload: {},
             invalidClaims: [],
