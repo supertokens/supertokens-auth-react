@@ -57,7 +57,8 @@ import {
     PasswordlessLinkClicked as TPPasswordlessPasswordlessLinkClicked,
 } from "../../../recipe/thirdpartypasswordless/prebuiltui";
 import EmailVerification from "../../../recipe/emailverification";
-
+import { DateProviderReference } from "../../../utils/dateProvider";
+import { DateProviderInput, DateProviderInterface } from "../../../utils/dateProvider/types";
 /*
  * This application is used with the purpose of illustrating Supertokens with typescript.
  * It is also used internally for deploy previews, hence a lot of code you will see
@@ -98,6 +99,16 @@ const rid = window.localStorage.getItem("rid") || "emailpassword";
 
 const recipeList = getRecipeList();
 
+const dateProviderImplementation: DateProviderInterface = {
+    getThresholdInSeconds: () => 0,
+    setThresholdInSeconds: () => {},
+    getClientClockSkewInMillis: () => 0,
+    setClientClockSkewInMillis: () => {},
+    now: () => Date.now(),
+};
+
+const dateProviderInput: DateProviderInput = () => dateProviderImplementation;
+
 SuperTokens.init({
     appInfo: {
         appName: "SuperTokens Demo App",
@@ -111,6 +122,7 @@ SuperTokens.init({
         return undefined;
     },
     recipeList,
+    dateProvider: dateProviderInput,
 });
 
 function App() {
@@ -338,6 +350,9 @@ function getRecipeList() {
                         },
                         shouldDoInterceptionBasedOnUrl: (...input) => {
                             return oI.shouldDoInterceptionBasedOnUrl(...input);
+                        },
+                        calculateClockSkewInMillis: (...input) => {
+                            return oI.calculateClockSkewInMillis(...input);
                         },
                     };
                 },
