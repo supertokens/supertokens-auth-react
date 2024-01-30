@@ -33,10 +33,10 @@
 }
 
 [data-supertokens~="providerButton"] {
-    margin: auto !important;
-    max-width: 240px !important;
+    margin: auto;
+    max-width: 240px;
 }
 
 [data-supertokens~="providerButtonLeft"] {
-    margin-left: 30px !important;
+    margin-left: 30px;
 }
