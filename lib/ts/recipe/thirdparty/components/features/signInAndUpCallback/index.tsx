@@ -24,6 +24,7 @@ import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import { useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
 import Session from "../../../../session/recipe";
+import useSessionContext from "../../../../session/useSessionContext";
 import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 
@@ -39,6 +40,7 @@ type PropType = FeatureBaseProps<{
 
 const SignInAndUpCallback: React.FC<PropType> = (props) => {
     let userContext = useUserContext();
+    const session = useSessionContext();
     if (props.userContext !== undefined) {
         userContext = props.userContext;
     }
@@ -76,6 +78,9 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
             }
 
             if (response.status === "OK") {
+                const payloadAfterSuccess = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                    userContext,
+                });
                 const stateResponse = props.recipe.webJSRecipe.getStateAndOtherInfoFromStorage<CustomStateProperties>({
                     userContext,
                 });
@@ -87,7 +92,10 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                             action: "SUCCESS",
                             isNewPrimaryUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
                             isNewRecipeUser: response.createdNewRecipeUser,
-                            isFirstFactor: true,
+                            newSessionCreated:
+                                session.loading ||
+                                !session.doesSessionExist ||
+                                session.accessTokenPayload.sessionHandle !== payloadAfterSuccess.sessionHandle,
                             recipeId: props.recipe.recipeID,
                         },
                         props.recipe.recipeID,
@@ -98,7 +106,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                     .catch(rethrowInRender);
             }
         },
-        [props.recipe, props.navigate, userContext]
+        [props.recipe, props.navigate, session, userContext]
     );
 
     const handleError = useCallback(

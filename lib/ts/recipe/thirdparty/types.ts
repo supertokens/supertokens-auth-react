@@ -108,7 +108,8 @@ export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
     providers: Provider[];
 };
 
-export type GetRedirectionURLContext = any;
+// The redirection callback will never be called for thirdparty
+export type GetRedirectionURLContext = never;
 
 export type PreAndPostAPIHookAction = "GET_AUTHORISATION_URL" | "THIRD_PARTY_SIGN_IN_UP";
 

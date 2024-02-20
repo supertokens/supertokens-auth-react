@@ -31,6 +31,7 @@ import {
 } from "../../../../../utils";
 import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import SessionRecipe from "../../../../session/recipe";
+import useSessionContext from "../../../../session/useSessionContext";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import { getEnabledContactMethods } from "../../../utils";
 import SignInUpThemeWrapper from "../../themes/signInUp";
@@ -173,6 +174,7 @@ export function useChildProps(
     userContext: UserContext,
     navigate?: Navigate
 ): SignInUpChildProps | undefined {
+    const session = useSessionContext();
     const recipeImplementation = React.useMemo(
         () => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe, recipe.config, dispatch),
         [recipe]
@@ -184,14 +186,20 @@ export function useChildProps(
             return undefined;
         }
         return {
-            onSuccess: (result: { createdNewRecipeUser: boolean; user: User }) => {
+            onSuccess: async (result: { createdNewRecipeUser: boolean; user: User }) => {
+                const payloadAfterSuccess = await SessionRecipe.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                    userContext,
+                });
                 return SessionRecipe.getInstanceOrThrow()
                     .validateGlobalClaimsAndHandleSuccessRedirection(
                         {
                             action: "SUCCESS",
                             isNewPrimaryUser: result.createdNewRecipeUser && result.user.loginMethods.length === 1,
                             isNewRecipeUser: result.createdNewRecipeUser,
-                            isFirstFactor: true,
+                            newSessionCreated:
+                                session.loading ||
+                                !session.doesSessionExist ||
+                                session.accessTokenPayload.sessionHandle !== payloadAfterSuccess.sessionHandle,
                             recipeId: recipe.recipeID,
                         },
                         recipe.recipeID,

@@ -65,7 +65,8 @@ export type PreAPIHookContext = {
     url: string;
 };
 
-export type GetRedirectionURLContext = any;
+// The redirection callback will never be called for passwordless
+export type GetRedirectionURLContext = never;
 
 export type OnHandleEventContext =
     | {

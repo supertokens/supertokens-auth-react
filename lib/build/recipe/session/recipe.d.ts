@@ -51,8 +51,8 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
      */
     addEventListener: (listener: (ctx: RecipeEventWithSessionContext) => void) => () => void;
     validateGlobalClaimsAndHandleSuccessRedirection: (
-        successRedirectContext: // We redefine recipeId to be a string here, because everywhere in the app we
-        | (Omit<SuccessRedirectContext, "recipeId"> & {
+        successRedirectContext:
+            | (Omit<SuccessRedirectContext, "recipeId"> & {
                   recipeId: string;
               })
             | undefined,

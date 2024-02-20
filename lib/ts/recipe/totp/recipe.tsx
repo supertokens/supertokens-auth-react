@@ -18,7 +18,6 @@
  */
 
 import TOTPWebJS from "supertokens-web-js/recipe/totp";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
 import { TOTPIcon } from "../../components/assets/totpIcon";
@@ -26,7 +25,6 @@ import { SSR_ERROR } from "../../constants";
 import MultiFactorAuth from "../multifactorauth/recipe";
 import RecipeModule from "../recipeModule";
 
-import { DEFAULT_TOTP_PATH } from "./constants";
 import { getFunctionOverrides } from "./functionOverrides";
 import { normaliseMultiFactorAuthFeature } from "./utils";
 
@@ -127,13 +125,8 @@ export default class TOTP extends RecipeModule<
         return TOTP.instance;
     }
 
-    getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
-        if (context.action === "MFA_TOTP") {
-            const chooserPath = new NormalisedURLPath(DEFAULT_TOTP_PATH);
-            return `${this.config.appInfo.websiteBasePath.appendPath(chooserPath).getAsStringDangerous()}`;
-        } else if (context.action === "SUCCESS") {
-            return context.redirectToPath === undefined ? "/" : context.redirectToPath;
-        }
-        return "/";
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getDefaultRedirectionURL = async (_context: GetRedirectionURLContext): Promise<string> => {
+        throw new Error("Should never come here");
     };
 }

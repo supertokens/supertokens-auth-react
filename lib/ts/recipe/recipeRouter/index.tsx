@@ -89,7 +89,7 @@ function chooseComponentBasedOnFirstFactors(
 
 export abstract class RecipeRouter {
     private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;
-    public abstract recipeInstance: RecipeModule<any, any, any, any>;
+    public abstract recipeInstance: RecipeModule<never, any, any, any>;
     static getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
         normalisedUrl: NormalisedURLPath,
         preBuiltUIList: RecipeRouter[],

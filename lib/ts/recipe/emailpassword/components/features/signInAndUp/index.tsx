@@ -27,6 +27,7 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, getRedirectToPathFromURL, useRethrowInRender } from "../../../../../utils";
 import Session from "../../../../session/recipe";
+import useSessionContext from "../../../../session/useSessionContext";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
 
@@ -112,17 +113,22 @@ export function useChildProps(
     userContext: UserContext,
     navigate?: Navigate
 ): EmailPasswordSignInAndUpChildProps | undefined {
+    const session = useSessionContext();
     const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe), [recipe]);
     const rethrowInRender = useRethrowInRender();
 
     const onSignInSuccess = useCallback(async (): Promise<void> => {
+        const payloadAfterSuccess = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({ userContext });
         return Session.getInstanceOrThrow()
             .validateGlobalClaimsAndHandleSuccessRedirection(
                 {
                     action: "SUCCESS",
                     isNewPrimaryUser: false,
                     isNewRecipeUser: false,
-                    isFirstFactor: true,
+                    newSessionCreated:
+                        session.loading ||
+                        !session.doesSessionExist ||
+                        session.accessTokenPayload.sessionHandle !== payloadAfterSuccess.sessionHandle,
                     recipeId: recipe!.recipeID,
                 },
                 recipe!.recipeID,
@@ -135,13 +141,19 @@ export function useChildProps(
 
     const onSignUpSuccess = useCallback(
         async (result: { user: User }): Promise<void> => {
+            const payloadAfterSuccess = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                userContext,
+            });
             return Session.getInstanceOrThrow()
                 .validateGlobalClaimsAndHandleSuccessRedirection(
                     {
                         action: "SUCCESS",
                         isNewPrimaryUser: result.user.loginMethods.length === 1,
                         isNewRecipeUser: true,
-                        isFirstFactor: true,
+                        newSessionCreated:
+                            session.loading ||
+                            !session.doesSessionExist ||
+                            session.accessTokenPayload.sessionHandle !== payloadAfterSuccess.sessionHandle,
                         recipeId: recipe!.recipeID,
                     },
                     recipe!.recipeID,

@@ -56,7 +56,7 @@ export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & 
     termsOfServiceLink?: string;
     providers: Provider[];
 };
-export declare type GetRedirectionURLContext = any;
+export declare type GetRedirectionURLContext = never;
 export declare type PreAndPostAPIHookAction = "GET_AUTHORISATION_URL" | "THIRD_PARTY_SIGN_IN_UP";
 export declare type PreAPIHookContext = {
     action: PreAndPostAPIHookAction;

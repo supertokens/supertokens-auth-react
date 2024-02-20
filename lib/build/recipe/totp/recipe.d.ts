@@ -35,5 +35,5 @@ export default class TOTP extends RecipeModule<
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstance(): TOTP | undefined;
     static getInstanceOrThrow(): TOTP;
-    getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
+    getDefaultRedirectionURL: (_context: GetRedirectionURLContext) => Promise<string>;
 }

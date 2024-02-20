@@ -25,6 +25,7 @@ import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, getURLHash, useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
 import Session from "../../../../session/recipe";
+import useSessionContext from "../../../../session/useSessionContext";
 import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
@@ -40,6 +41,7 @@ type PropType = FeatureBaseProps<{
 }>;
 
 const LinkClickedScreen: React.FC<PropType> = (props) => {
+    const session = useSessionContext();
     const rethrowInRender = useRethrowInRender();
     let userContext = useUserContext();
     if (props.userContext !== undefined) {
@@ -108,6 +110,9 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
             }
 
             if (response.status === "OK") {
+                const payloadAfterSuccess = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                    userContext,
+                });
                 const loginAttemptInfo =
                     await props.recipe.webJSRecipe.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
                         userContext,
@@ -121,7 +126,10 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                             action: "SUCCESS",
                             isNewPrimaryUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
                             isNewRecipeUser: response.createdNewRecipeUser,
-                            isFirstFactor: true,
+                            newSessionCreated:
+                                session.loading ||
+                                !session.doesSessionExist ||
+                                session.accessTokenPayload.sessionHandle !== payloadAfterSuccess.sessionHandle,
                             recipeId: props.recipe.recipeID,
                         },
                         props.recipe.recipeID,

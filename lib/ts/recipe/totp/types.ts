@@ -154,16 +154,7 @@ export type NormalisedConfig = {
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
-export type GetRedirectionURLContext =
-    | {
-          action: "MFA_TOTP";
-          userContext: UserContext;
-      }
-    | {
-          action: "SUCCESS";
-          redirectToPath?: string;
-          userContext: UserContext;
-      };
+export type GetRedirectionURLContext = never;
 
 export type PreAndPostAPIHookAction =
     | "CREATE_DEVICE"

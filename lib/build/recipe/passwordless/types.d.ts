@@ -36,7 +36,7 @@ export declare type PreAPIHookContext = {
     requestInit: RequestInit;
     url: string;
 };
-export declare type GetRedirectionURLContext = any;
+export declare type GetRedirectionURLContext = never;
 export declare type OnHandleEventContext =
     | {
           action: "SUCCESS";

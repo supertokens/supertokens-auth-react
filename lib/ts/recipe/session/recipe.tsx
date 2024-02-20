@@ -118,8 +118,11 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     };
 
     validateGlobalClaimsAndHandleSuccessRedirection = async (
-        successRedirectContext: // We redefine recipeId to be a string here, because everywhere in the app we
-        (Omit<SuccessRedirectContext, "recipeId"> & { recipeId: string }) | undefined,
+        // We redefine recipeId to be a string here, because everywhere in the SDK we treat
+        // it as a string (e.g.: when defining it in recipes), but we want to type it more
+        // strictly in the callbacks the app provides to help integrating our SDK.
+        // This is the "meeting point" between the two types, so we need to cast between them here.
+        successRedirectContext: (Omit<SuccessRedirectContext, "recipeId"> & { recipeId: string }) | undefined,
         fallbackRecipeId: string,
         redirectToPath?: string,
         userContext?: UserContext,
@@ -187,7 +190,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                     action: "SUCCESS",
                     isNewPrimaryUser: false,
                     isNewRecipeUser: false,
-                    isFirstFactor: false,
+                    newSessionCreated: false,
                 };
             }
         }

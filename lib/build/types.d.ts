@@ -20,7 +20,7 @@ export declare type SuccessRedirectContext = {
     action: "SUCCESS";
     isNewRecipeUser: boolean;
     isNewPrimaryUser: boolean;
-    isFirstFactor: boolean;
+    newSessionCreated: boolean;
     redirectToPath?: string;
 };
 export declare type GetRedirectionURLContext =
