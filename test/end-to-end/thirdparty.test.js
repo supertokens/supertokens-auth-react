@@ -138,7 +138,11 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
 
         it("Successful sign in with Auth0 with redirectToPath (w/ leading slash) keeping query params", async function () {
             await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here%3Ffoo%3Dbar`),
+                page.goto(
+                    `${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent(
+                        "/redirect-here?foo=bar#cell=4,1-6,2"
+                    )}`
+                ),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await assertProviders(page);
@@ -147,8 +151,23 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
                 loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
-            const { pathname, search } = await page.evaluate(() => window.location);
-            assert.deepStrictEqual(pathname + search, "/redirect-here?foo=bar");
+            const { pathname, search, hash } = await page.evaluate(() => window.location);
+            assert.deepStrictEqual(pathname + search + hash, "/redirect-here?foo=bar#cell=4,1-6,2");
+        });
+
+        it("Successful sign in with Auth0 with redirectToPath (only fragment)", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent("#cell=4,1-6,2")}`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await assertProviders(page);
+            await clickOnProviderButton(page, "Auth0");
+            await Promise.all([
+                loginWithAuth0(page),
+                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
+            ]);
+            const { pathname, search, hash } = await page.evaluate(() => window.location);
+            assert.deepStrictEqual(pathname + search + hash, "/#cell=4,1-6,2");
         });
 
         it("Successful sign in with Auth0 with redirectToPath (w/o leading slash) keeping query params", async function () {

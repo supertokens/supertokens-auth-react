@@ -129,7 +129,7 @@ describe("SuperTokens SignUp", function () {
 
         it("should redirect to sign in w/ first auth recipe and set redirectToPath", async function () {
             await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}?authRecipe=both`),
+                page.goto(`${TEST_CLIENT_BASE_URL}?authRecipe=both#cell=4,1-6,2`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await page.evaluate(() => window.SuperTokens.redirectToAuth({ redirectBack: true }));
@@ -145,8 +145,32 @@ describe("SuperTokens SignUp", function () {
             assert.equal(pathAfterRedirectToAuth, "/auth/");
             // Only the EmailPassword recipe has this header on the sign in page
             assert.deepStrictEqual(text, "Sign In");
-            // Test that redirecToPath contains query params
-            assert.equal(redirectToPath, "?authRecipe=both");
+            // Test that redirecToPath contains query params and the fragment
+            assert.equal(redirectToPath, "?authRecipe=both#cell=4,1-6,2");
+        });
+
+        it("should redirect to sign in w/ first auth recipe and set redirectToPath (only fragment)", async function () {
+            // Sets the authRecipe to both in localStorage
+            await page.goto(`${TEST_CLIENT_BASE_URL}?authRecipe=both`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}#cell=4,1-6,2`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await page.evaluate(() => window.SuperTokens.redirectToAuth({ redirectBack: true }));
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            let text = await getAuthPageHeaderText(page);
+            let { pathname: pathAfterRedirectToAuth, href: hrefAfterRedirectToAuth } = await page.evaluate(
+                () => window.location
+            );
+
+            const url = new URL(hrefAfterRedirectToAuth);
+            const redirectToPath = url.searchParams.get("redirectToPath");
+
+            assert.equal(pathAfterRedirectToAuth, "/auth/");
+            // Only the EmailPassword recipe has this header on the sign in page
+            assert.deepStrictEqual(text, "Sign In");
+            // Test that redirecToPath contains url fragment
+            assert.equal(redirectToPath, "#cell=4,1-6,2");
         });
 
         it("should redirect to sign in w/ first auth recipe without setting redirectToPath", async function () {

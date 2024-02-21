@@ -738,7 +738,11 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
             it("Successful signin w/ redirectToPath (w/ leading slash) and email verification", async function () {
                 await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here%3Ffoo%3Dbar&mode=REQUIRED`),
+                    page.goto(
+                        `${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED&redirectToPath=${encodeURIComponent(
+                            "/redirect-here?foo=bar#cell=4,1-6,2"
+                        )}`
+                    ),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
@@ -756,8 +760,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
                 await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-                const { pathname, search } = await page.evaluate(() => window.location);
-                assert.deepStrictEqual(pathname + search, "/redirect-here?foo=bar");
+                const { pathname, search, hash } = await page.evaluate(() => window.location);
+                assert.deepStrictEqual(pathname + search + hash, "/redirect-here?foo=bar#cell=4,1-6,2");
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -779,6 +783,30 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                 ]);
+            });
+
+            it("Successful signin w/ redirectPath (only fragment)", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent("#cell=4,1-6,2")}`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getPasswordlessDevice(loginAttemptInfo);
+                await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                await submitForm(page);
+
+                await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+                const { pathname, search, hash } = await page.evaluate(() => window.location);
+                assert.deepStrictEqual(pathname + search + hash, "/#cell=4,1-6,2");
             });
 
             it("Successful signin w/ redirectPath (w/o leading slash) and email verification", async function () {

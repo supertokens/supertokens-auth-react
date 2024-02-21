@@ -261,7 +261,11 @@ describe("SuperTokens Email Verification", function () {
 
         it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified and then post verification should redirect with original redirectPath (w/ leading slash) and newUser", async function () {
             await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here%3Ffoo%3Dbar`),
+                page.goto(
+                    `${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent(
+                        "/redirect-here?foo=bar#cell=4,1-6,2"
+                    )}`
+                ),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await toggleSignInSignUp(page);
@@ -281,14 +285,16 @@ describe("SuperTokens Email Verification", function () {
             // click on the continue button
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-            // check that we are in /redirect-here?foo=bar
-            const urlWithQP = await page.evaluate(() => window.location.pathname + window.location.search);
-            assert.deepStrictEqual(urlWithQP, "/redirect-here?foo=bar");
+            // check that we are in /redirect-here?foo=bar#cell=4,1-6,2
+            const urlWithQP = await page.evaluate(
+                () => window.location.pathname + window.location.search + window.location.hash
+            );
+            assert.deepStrictEqual(urlWithQP, "/redirect-here?foo=bar#cell=4,1-6,2");
         });
 
-        it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified and then post verification should redirect with original redirectPath (w/o leading slash) and newUser", async function () {
+        it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified and then post verification should redirect with original redirectPath (only fragment) and newUser", async function () {
             await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%3Ffoo%3Dbar`),
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent("#cell=4,1-6,2")}`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await toggleSignInSignUp(page);
@@ -308,9 +314,11 @@ describe("SuperTokens Email Verification", function () {
             // click on the continue button
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-            // check that we are in /?foo=bar
-            const urlWithQP = await page.evaluate(() => window.location.pathname + window.location.search);
-            assert.deepStrictEqual(urlWithQP, "/?foo=bar");
+            // check that we are in /#cell=4,1-6,2
+            const urlWithQP = await page.evaluate(
+                () => window.location.pathname + window.location.search + window.location.hash
+            );
+            assert.deepStrictEqual(urlWithQP, "/#cell=4,1-6,2");
         });
 
         it("Should redirect to verify email screen on successful sign in when mode is REQUIRED and email is not verified", async function () {
