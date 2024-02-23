@@ -52,7 +52,6 @@ import {
     setGeneralErrorToLocalStorage,
     isAccountLinkingSupported,
     backendBeforeEach,
-    isMFASupported,
     getDefaultSignUpFieldValues,
     getTestEmail,
 } from "../helpers";
@@ -62,7 +61,6 @@ describe("SuperTokens Email Verification", function () {
     let page;
     let consoleLogs;
     let accountLinkingSupported;
-    let mfaSupported;
 
     before(async function () {
         await backendBeforeEach();
@@ -74,7 +72,6 @@ describe("SuperTokens Email Verification", function () {
             headless: true,
         });
         accountLinkingSupported = await isAccountLinkingSupported();
-        mfaSupported = await isMFASupported();
 
         page = await browser.newPage();
         await Promise.all([

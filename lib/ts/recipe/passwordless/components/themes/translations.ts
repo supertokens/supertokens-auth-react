@@ -67,7 +67,6 @@ export const defaultTranslationsPasswordless = {
         PWLESS_USER_INPUT_CODE_HEADER_SUBTITLE_LINK: "An OTP and a magic link was sent to you at",
         PWLESS_USER_INPUT_CODE_INPUT_LABEL: "OTP",
 
-        PWLESS_MFA_LOGOUT: "Logout",
         PWLESS_MFA_HEADER_TITLE_PHONE: "SMS based OTP",
         PWLESS_MFA_HEADER_TITLE_EMAIL: "Email based OTP",
         PWLESS_MFA_FOOTER_LOGOUT: "Logout",

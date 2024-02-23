@@ -3,7 +3,7 @@ import { RecipeRouter } from "../recipeRouter";
 import MFATOTPTheme from "./components/themes/mfa";
 import TOTPRecipe from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap } from "../../types";
+import type { FeatureBaseProps, RecipeFeatureComponentMap, UserContext } from "../../types";
 export declare class TOTPPreBuiltUI extends RecipeRouter {
     readonly recipeInstance: TOTPRecipe;
     static instance?: TOTPPreBuiltUI;
@@ -22,8 +22,16 @@ export declare class TOTPPreBuiltUI extends RecipeRouter {
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static reset(): void;
-    static MFATOTP: (props?: any) => JSX.Element;
+    static MFATOTP: (
+        props: FeatureBaseProps<{
+            userContext?: UserContext;
+        }>
+    ) => JSX.Element;
     static MFATOTPTheme: typeof MFATOTPTheme;
 }
-declare const MFATOTP: (props?: any) => JSX.Element;
+declare const MFATOTP: (
+    props: FeatureBaseProps<{
+        userContext?: UserContext;
+    }>
+) => JSX.Element;
 export { MFATOTP, MFATOTPTheme };

@@ -30,6 +30,7 @@ import {
     getPasswordlessDevice,
     waitFor,
     isMFASupported,
+    setAccountLinkingConfig,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API } from "../constants";
@@ -76,6 +77,8 @@ describe("SuperTokens SignIn w/ MFA", function () {
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
         }).catch(console.error);
+
+        await setAccountLinkingConfig(true, true, false);
 
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],

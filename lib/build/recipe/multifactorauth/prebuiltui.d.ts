@@ -3,7 +3,7 @@ import { RecipeRouter } from "../recipeRouter";
 import FactorChooserTheme from "./components/themes/factorChooser";
 import MultiFactorAuthRecipe from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap } from "../../types";
+import type { FeatureBaseProps, RecipeFeatureComponentMap, UserContext } from "../../types";
 export declare class MultiFactorAuthPreBuiltUI extends RecipeRouter {
     readonly recipeInstance: MultiFactorAuthRecipe;
     static instance?: MultiFactorAuthPreBuiltUI;
@@ -22,8 +22,16 @@ export declare class MultiFactorAuthPreBuiltUI extends RecipeRouter {
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
     static reset(): void;
-    static FactorChooser: (props?: any) => JSX.Element;
+    static FactorChooser: (
+        props: FeatureBaseProps<{
+            userContext?: UserContext;
+        }>
+    ) => JSX.Element;
     static FactorChooserTheme: typeof FactorChooserTheme;
 }
-declare const FactorChooser: (props?: any) => JSX.Element;
+declare const FactorChooser: (
+    props: FeatureBaseProps<{
+        userContext?: UserContext;
+    }>
+) => JSX.Element;
 export { FactorChooser, FactorChooserTheme };

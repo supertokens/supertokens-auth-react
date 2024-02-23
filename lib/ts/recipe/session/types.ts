@@ -38,7 +38,7 @@ export type NormalisedSessionConfig = NormalisedConfig<unknown, any, any> & {
     override: {
         functions: (
             originalImplementation: RecipeInterface,
-            builder?: OverrideableBuilder<RecipeInterface>
+            builder: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
     };
 };

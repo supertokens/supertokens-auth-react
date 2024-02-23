@@ -4,6 +4,7 @@ import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeRouter } from "../recipeRouter";
+import { SessionAuth } from "../session";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import ResetPasswordUsingTokenFeature from "./components/features/resetPasswordUsingToken";
@@ -112,11 +113,13 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
             } else {
                 return (
                     <UserContextWrapper userContext={props.userContext}>
-                        <SignInAndUpFeature
-                            recipe={this.recipeInstance}
-                            {...props}
-                            useComponentOverrides={useComponentOverrides}
-                        />
+                        <SessionAuth requireAuth={false} doRedirection={false}>
+                            <SignInAndUpFeature
+                                recipe={this.recipeInstance}
+                                {...props}
+                                useComponentOverrides={useComponentOverrides}
+                            />
+                        </SessionAuth>
                     </UserContextWrapper>
                 );
             }

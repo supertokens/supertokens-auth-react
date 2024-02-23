@@ -47,7 +47,7 @@ export const MFAOTPFooter = withOverride(
                 )}
                 <div data-supertokens="secondaryText secondaryLinkWithLeftArrow" onClick={onSignOutClicked}>
                     <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
-                    {t("PWLESS_MFA_LOGOUT")}
+                    {t("PWLESS_MFA_FOOTER_LOGOUT")}
                 </div>
             </div>
         );

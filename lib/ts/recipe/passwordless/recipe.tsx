@@ -26,6 +26,7 @@ import { SSR_ERROR } from "../../constants";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
 import MultiFactorAuth from "../multifactorauth/recipe";
+import { FactorIds } from "../multifactorauth/types";
 
 import { getFunctionOverrides } from "./functionOverrides";
 import { normalisePasswordlessConfig } from "./utils";
@@ -42,21 +43,26 @@ import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
 
 export const otpPhoneFactor = {
-    id: "otp-phone",
+    id: FactorIds.OTP_PHONE,
     name: "PWLESS_MFA_OTP_PHONE_NAME",
     description: "PWLESS_MFA_OTP_PHONE_DESCRIPTION",
     path: "/mfa/otp-phone",
     logo: OTPSMSIcon,
 };
 export const otpEmailFactor = {
-    id: "otp-email",
+    id: FactorIds.OTP_EMAIL,
     name: "PWLESS_MFA_OTP_EMAIL_NAME",
     description: "PWLESS_MFA_OTP_EMAIL_DESCRIPTION",
     path: "/mfa/otp-email",
     logo: OTPEmailIcon,
 };
 
-export const passwordlessFirstFactors = ["otp-phone", "otp-email", "link-phone", "link-email"] as const;
+export const passwordlessFirstFactors = [
+    FactorIds.OTP_PHONE,
+    FactorIds.OTP_EMAIL,
+    FactorIds.LINK_PHONE,
+    FactorIds.LINK_EMAIL,
+] as const;
 
 /*
  * Class.

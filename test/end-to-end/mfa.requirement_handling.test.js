@@ -30,6 +30,7 @@ import {
     getPasswordlessDevice,
     waitFor,
     getFactorChooserOptions,
+    setAccountLinkingConfig,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API } from "../constants";
@@ -124,6 +125,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
             phoneNumber = getTestPhoneNumber();
 
             await setMFAInfo({});
+            await setAccountLinkingConfig(true, true, false);
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=emailpassword`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -150,7 +152,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
             it("multistep requirements should happen in order (allOfInAnyOrder -> oneOf)", async () => {
                 await setMFAInfo({
                     requirements: [{ allOfInAnyOrder: ["otp-phone", "totp"] }, { oneOf: ["otp-email"] }],
-                    hasTOTP: true,
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -166,7 +167,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
             it("multistep requirements should happen in order (oneOf -> allOfInAnyOrder)", async () => {
                 await setMFAInfo({
                     requirements: [{ oneOf: ["otp-phone", "totp"] }, { allOfInAnyOrder: ["totp", "otp-email"] }],
-                    hasTOTP: true,
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -184,7 +184,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
             it("string requirements strictly set the order of the factor screens", async () => {
                 await setMFAInfo({
                     requirements: ["otp-phone", "totp", "otp-email"],
-                    hasTOTP: true,
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -199,7 +198,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
             it("should pass if all requirements are complete", async () => {
                 await setMFAInfo({
                     requirements: [{ allOfInAnyOrder: ["otp-phone", "totp", "otp-email"] }],
-                    hasTOTP: true,
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -219,7 +217,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
             it("should pass if the array is empty", async () => {
                 await setMFAInfo({
                     requirements: [{ allOfInAnyOrder: [] }],
-                    hasTOTP: true,
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -231,7 +228,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
             it("should pass if one of the requirements are complete", async () => {
                 await setMFAInfo({
                     requirements: [{ oneOf: ["otp-phone", "totp", "otp-email"] }],
-                    hasTOTP: true,
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -245,7 +241,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
             it("should pass if the array is empty", async () => {
                 await setMFAInfo({
                     requirements: [{ oneOf: [] }],
-                    hasTOTP: true,
                 });
 
                 await tryEmailPasswordSignIn(page, email);

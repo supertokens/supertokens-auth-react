@@ -154,6 +154,7 @@ export type NormalisedConfig = {
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
+// The redirection callback will never be called for totp
 export type GetRedirectionURLContext = never;
 
 export type PreAndPostAPIHookAction =

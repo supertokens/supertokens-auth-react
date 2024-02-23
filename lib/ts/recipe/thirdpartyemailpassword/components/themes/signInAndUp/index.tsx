@@ -29,6 +29,7 @@ import { SignInForm } from "../../../../emailpassword/components/themes/signInAn
 import { SignUpFooter } from "../../../../emailpassword/components/themes/signInAndUp/signUpFooter";
 import { SignUpForm } from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
+import { FactorIds } from "../../../../multifactorauth/types";
 import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 import { ThemeBase } from "../themeBase";
@@ -60,15 +61,16 @@ const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> =
         thirdPartyEnabled =
             (loginMethods!.firstFactors === undefined
                 ? loginMethods!.thirdparty.enabled
-                : loginMethods!.firstFactors.includes("thirdparty")) && hasProviders;
+                : loginMethods!.firstFactors.includes(FactorIds.THIRDPARTY)) && hasProviders;
         emailPasswordEnabled =
             (loginMethods!.firstFactors === undefined
                 ? loginMethods!.emailpassword.enabled
-                : loginMethods!.firstFactors.includes("emailpassword")) && props.emailPasswordRecipe !== undefined;
+                : loginMethods!.firstFactors.includes(FactorIds.EMAILPASSWORD)) &&
+            props.emailPasswordRecipe !== undefined;
     } else if (mfa !== undefined) {
-        thirdPartyEnabled = mfa.isFirstFactorEnabledOnClient("thirdparty") && hasProviders;
+        thirdPartyEnabled = mfa.isFirstFactorEnabledOnClient(FactorIds.THIRDPARTY) && hasProviders;
         emailPasswordEnabled =
-            mfa.isFirstFactorEnabledOnClient("emailpassword") && props.emailPasswordRecipe !== undefined;
+            mfa.isFirstFactorEnabledOnClient(FactorIds.EMAILPASSWORD) && props.emailPasswordRecipe !== undefined;
     }
 
     if (thirdPartyEnabled === false && emailPasswordEnabled === false) {
@@ -135,7 +137,11 @@ export default function SignInAndUpThemeWrapper(
         <UserContextWrapper userContext={props.userContext}>
             <ThemeBase
                 loadDefaultFont={!hasFont}
-                userStyles={[props.config.rootStyle, props.config.signInAndUpFeature.style]}>
+                userStyles={[
+                    props.config.rootStyle,
+                    props.config.signInAndUpFeature.style,
+                    props.config.signInAndUpFeature.signInForm?.style,
+                ]}>
                 <SignInAndUpTheme {...props} />
             </ThemeBase>
         </UserContextWrapper>

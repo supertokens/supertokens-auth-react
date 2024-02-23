@@ -24,7 +24,7 @@ export default class Wrapper {
     static init(
         config?: UserInput
     ): import("../../types").RecipeInitResult<
-        any,
+        import("../emailpassword").GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
         import("./types").NormalisedConfig

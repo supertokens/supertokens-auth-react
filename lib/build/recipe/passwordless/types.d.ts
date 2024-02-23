@@ -41,6 +41,7 @@ export declare type OnHandleEventContext =
     | {
           action: "SUCCESS";
           isNewRecipeUser: boolean;
+          createdNewSession: boolean;
           user: User;
       }
     | {

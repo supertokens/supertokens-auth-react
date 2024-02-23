@@ -1,4 +1,5 @@
 import { getRedirectToPathFromURL } from "../../utils";
+import Session from "../session/recipe";
 
 import type { OnHandleEventContext } from "./types";
 import type { RecipeOnHandleEventFunction } from "../recipeModule/types";
@@ -9,12 +10,36 @@ export const getFunctionOverrides =
     (originalImp: RecipeInterface): RecipeInterface => ({
         ...originalImp,
         thirdPartySignInAndUp: async function (input) {
+            let payloadBeforeCall;
+            try {
+                payloadBeforeCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                    userContext: input.userContext,
+                });
+            } catch {
+                // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+                payloadBeforeCall = undefined;
+            }
+
             const response = await originalImp.thirdPartySignInAndUp(input);
 
             if (response.status === "OK") {
+                let payloadAfterCall;
+                try {
+                    payloadAfterCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                        userContext: input.userContext,
+                    });
+                } catch {
+                    // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+                    payloadAfterCall = undefined;
+                }
+
                 onHandleEvent({
                     action: "SUCCESS",
                     isNewRecipeUser: response.createdNewRecipeUser,
+                    createdNewSession:
+                        payloadAfterCall !== undefined &&
+                        (payloadBeforeCall === undefined ||
+                            payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
                     user: response.user,
                     userContext: input.userContext,
                 });
@@ -66,12 +91,36 @@ export const getFunctionOverrides =
         },
 
         emailPasswordSignUp: async function (input) {
+            let payloadBeforeCall;
+            try {
+                payloadBeforeCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                    userContext: input.userContext,
+                });
+            } catch {
+                // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+                payloadBeforeCall = undefined;
+            }
+
             const response = await originalImp.emailPasswordSignUp(input);
 
             if (response.status === "OK") {
+                let payloadAfterCall;
+                try {
+                    payloadAfterCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                        userContext: input.userContext,
+                    });
+                } catch {
+                    // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+                    payloadAfterCall = undefined;
+                }
+
                 onHandleEvent({
                     action: "SUCCESS",
                     isNewRecipeUser: true,
+                    createdNewSession:
+                        payloadAfterCall !== undefined &&
+                        (payloadBeforeCall === undefined ||
+                            payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
                     user: response.user,
                     userContext: input.userContext,
                 });
@@ -80,12 +129,36 @@ export const getFunctionOverrides =
             return response;
         },
         emailPasswordSignIn: async function (input) {
+            let payloadBeforeCall;
+            try {
+                payloadBeforeCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                    userContext: input.userContext,
+                });
+            } catch {
+                // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+                payloadBeforeCall = undefined;
+            }
+
             const response = await originalImp.emailPasswordSignIn(input);
 
             if (response.status === "OK") {
+                let payloadAfterCall;
+                try {
+                    payloadAfterCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                        userContext: input.userContext,
+                    });
+                } catch {
+                    // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+                    payloadAfterCall = undefined;
+                }
+
                 onHandleEvent({
                     action: "SUCCESS",
                     isNewRecipeUser: false,
+                    createdNewSession:
+                        payloadAfterCall !== undefined &&
+                        (payloadBeforeCall === undefined ||
+                            payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
                     user: response.user,
                     userContext: input.userContext,
                 });

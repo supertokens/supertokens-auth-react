@@ -23,6 +23,7 @@ import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuper
 import { TOTPIcon } from "../../components/assets/totpIcon";
 import { SSR_ERROR } from "../../constants";
 import MultiFactorAuth from "../multifactorauth/recipe";
+import { FactorIds } from "../multifactorauth/types";
 import RecipeModule from "../recipeModule";
 
 import { getFunctionOverrides } from "./functionOverrides";
@@ -39,7 +40,7 @@ import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRec
 import type { NormalisedAppInfo } from "../../types";
 
 export const totpFactor = {
-    id: "totp",
+    id: FactorIds.TOTP,
     name: "TOTP_MFA_NAME",
     description: "TOTP_MFA_DESCRIPTION",
     path: "/mfa/totp",

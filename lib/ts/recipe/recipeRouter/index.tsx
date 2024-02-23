@@ -1,6 +1,7 @@
 import { logDebugMessage } from "../../logger";
 import SuperTokens from "../../superTokens";
 import MultiFactorAuth from "../multifactorauth/recipe";
+import { FactorIds } from "../multifactorauth/types";
 
 import type { RecipeFeatureComponentMap } from "../../types";
 import type { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
@@ -17,20 +18,26 @@ const priorityOrder: {
     {
         rid: "thirdpartyemailpassword",
         includes: ["thirdparty", "emailpassword"],
-        factorsProvided: ["thirdparty", "emailpassword"],
+        factorsProvided: [FactorIds.THIRDPARTY, FactorIds.EMAILPASSWORD],
     },
     {
         rid: "thirdpartypasswordless",
         includes: ["thirdparty", "passwordless"],
-        factorsProvided: ["thirdparty", "otp-phone", "otp-email", "link-phone", "link-email"],
+        factorsProvided: [
+            FactorIds.THIRDPARTY,
+            FactorIds.OTP_PHONE,
+            FactorIds.OTP_EMAIL,
+            FactorIds.LINK_PHONE,
+            FactorIds.LINK_EMAIL,
+        ],
     },
-    { rid: "emailpassword", includes: ["emailpassword"], factorsProvided: ["emailpassword"] },
+    { rid: "emailpassword", includes: ["emailpassword"], factorsProvided: [FactorIds.EMAILPASSWORD] },
     {
         rid: "passwordless",
         includes: ["passwordless"],
-        factorsProvided: ["otp-phone", "otp-email", "link-phone", "link-email"],
+        factorsProvided: [FactorIds.OTP_PHONE, FactorIds.OTP_EMAIL, FactorIds.LINK_PHONE, FactorIds.LINK_EMAIL],
     },
-    { rid: "thirdparty", includes: ["thirdparty"], factorsProvided: ["thirdparty"] },
+    { rid: "thirdparty", includes: ["thirdparty"], factorsProvided: [FactorIds.THIRDPARTY] },
 ];
 
 function chooseComponentBasedOnFirstFactors(

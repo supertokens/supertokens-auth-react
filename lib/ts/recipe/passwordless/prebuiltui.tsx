@@ -131,11 +131,13 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
             } else {
                 return (
                     <UserContextWrapper userContext={props.userContext}>
-                        <SignInUpFeature
-                            recipe={this.recipeInstance}
-                            useComponentOverrides={useComponentOverrides}
-                            {...props}
-                        />
+                        <SessionAuth requireAuth={false} doRedirection={false}>
+                            <SignInUpFeature
+                                recipe={this.recipeInstance}
+                                useComponentOverrides={useComponentOverrides}
+                                {...props}
+                            />
+                        </SessionAuth>
                     </UserContextWrapper>
                 );
             }
@@ -143,11 +145,13 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
         if (componentName === "linkClickedScreen") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
-                    <LinkClickedScreen
-                        recipe={this.recipeInstance}
-                        {...props}
-                        useComponentOverrides={useComponentOverrides}
-                    />
+                    <SessionAuth requireAuth={false} doRedirection={false}>
+                        <LinkClickedScreen
+                            recipe={this.recipeInstance}
+                            {...props}
+                            useComponentOverrides={useComponentOverrides}
+                        />
+                    </SessionAuth>
                 </UserContextWrapper>
             );
         }

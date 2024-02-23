@@ -30,6 +30,8 @@ import {
     getPasswordlessDevice,
     waitFor,
     getFactorChooserOptions,
+    setAccountLinkingConfig,
+    isMFASupported,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API } from "../constants";
@@ -65,12 +67,18 @@ describe("SuperTokens SignIn w/ MFA", function () {
     let consoleLogs = [];
 
     before(async function () {
+        if (!(await isMFASupported())) {
+            skipped = true;
+            this.skip();
+            return;
+        }
         await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
         }).catch(console.error);
 
+        await setAccountLinkingConfig(true, true, false);
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
             headless: true,
@@ -130,7 +138,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await setMFAInfo({
                 requirements: [{ oneOf: ["otp-email", "otp-phone", "totp"] }],
-                hasTOTP: true,
             });
 
             await tryEmailPasswordSignIn(page, email);
@@ -147,7 +154,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await setMFAInfo({
                 requirements: [{ oneOf: ["otp-email", "otp-phone", "totp"] }],
-                hasTOTP: true,
+
                 alreadySetup: ["totp"],
                 allowedToSetup: [],
             });
@@ -160,7 +167,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
         it("should redirect to the factor screen during sign in if only one factor is available (limited by next array)", async () => {
             await setMFAInfo({
                 requirements: [{ oneOf: ["totp"] }],
-                hasTOTP: true,
             });
 
             await tryEmailPasswordSignIn(page, email);
@@ -172,7 +178,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
         it("should show all factors the user can complete or set up in the next array", async () => {
             await setMFAInfo({
                 requirements: [{ oneOf: ["totp", "otp-email"] }],
-                hasTOTP: true,
             });
 
             await tryEmailPasswordSignIn(page, email);

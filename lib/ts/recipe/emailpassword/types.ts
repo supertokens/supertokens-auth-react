@@ -353,6 +353,7 @@ export type OnHandleEventContext =
     | {
           action: "SUCCESS";
           isNewRecipeUser: boolean;
+          createdNewSession: boolean;
           user: User;
           userContext: UserContext;
       };

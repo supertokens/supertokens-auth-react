@@ -12,7 +12,7 @@ import { DEFAULT_TOTP_PATH } from "./constants";
 import TOTPRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap } from "../../types";
+import type { FeatureBaseProps, RecipeFeatureComponentMap, UserContext } from "../../types";
 
 export class TOTPPreBuiltUI extends RecipeRouter {
     static instance?: TOTPPreBuiltUI;
@@ -92,7 +92,7 @@ export class TOTPPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static MFATOTP = (props?: any): JSX.Element =>
+    static MFATOTP = (props: FeatureBaseProps<{ userContext?: UserContext }>): JSX.Element =>
         TOTPPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("mfaTOTP", props);
     static MFATOTPTheme = MFATOTPTheme;
 }

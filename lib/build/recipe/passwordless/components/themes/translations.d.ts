@@ -49,7 +49,6 @@ export declare const defaultTranslationsPasswordless: {
         PWLESS_USER_INPUT_CODE_HEADER_SUBTITLE: string;
         PWLESS_USER_INPUT_CODE_HEADER_SUBTITLE_LINK: string;
         PWLESS_USER_INPUT_CODE_INPUT_LABEL: string;
-        PWLESS_MFA_LOGOUT: string;
         PWLESS_MFA_HEADER_TITLE_PHONE: string;
         PWLESS_MFA_HEADER_TITLE_EMAIL: string;
         PWLESS_MFA_FOOTER_LOGOUT: string;

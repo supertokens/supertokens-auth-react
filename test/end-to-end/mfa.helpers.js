@@ -9,6 +9,7 @@ import {
     getTestEmail,
     getPasswordlessDevice,
     waitFor,
+    getLatestURLWithToken,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { TEST_APPLICATION_SERVER_BASE_URL } from "../constants";
@@ -21,12 +22,20 @@ export async function setupUserWithAllFactors(page) {
     const phoneNumber = getTestPhoneNumber();
     await clearBrowserCookiesWithoutAffectingConsole(page, []);
     await page.evaluate(() => window.localStorage.setItem("enableAllRecipes", "true"));
+    await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
 
     await setMFAInfo({
         requirements: [{ oneOf: ["otp-email", "otp-phone"] }],
     });
 
     await tryEmailPasswordSignUp(page, email);
+
+    await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+    const latestURLWithToken = await getLatestURLWithToken();
+    await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
+
+    // click on the continue button
+    await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
     await chooseFactor(page, "otp-email");
     await completeOTP(page);

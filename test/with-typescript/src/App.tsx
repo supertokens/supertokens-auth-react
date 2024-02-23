@@ -340,6 +340,9 @@ function getRecipeList() {
                         shouldDoInterceptionBasedOnUrl: (...input) => {
                             return oI.shouldDoInterceptionBasedOnUrl(...input);
                         },
+                        calculateClockSkewInMillis: (input) => {
+                            return oI.calculateClockSkewInMillis(input);
+                        },
                     };
                 },
             },

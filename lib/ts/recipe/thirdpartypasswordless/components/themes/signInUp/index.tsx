@@ -24,6 +24,7 @@ import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
+import { FactorIds } from "../../../../multifactorauth/types";
 import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import { getActiveScreen, SignInUpScreens } from "../../../../passwordless/components/themes/signInUp";
 import { EmailForm } from "../../../../passwordless/components/themes/signInUp/emailForm";
@@ -67,13 +68,13 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
         thirdPartyEnabled =
             (loginMethods!.firstFactors === undefined
                 ? loginMethods!.thirdparty.enabled
-                : loginMethods!.firstFactors.includes("thirdparty")) && hasProviders;
+                : loginMethods!.firstFactors.includes(FactorIds.THIRDPARTY)) && hasProviders;
         passwordlessEnabled =
             loginMethods!.firstFactors === undefined
                 ? loginMethods!.passwordless.enabled
                 : passwordlessFirstFactors.some((id) => loginMethods!.firstFactors!.includes(id));
     } else if (mfa !== undefined) {
-        thirdPartyEnabled = thirdPartyEnabled && mfa.isFirstFactorEnabledOnClient("thirdparty");
+        thirdPartyEnabled = thirdPartyEnabled && mfa.isFirstFactorEnabledOnClient(FactorIds.THIRDPARTY);
         passwordlessEnabled =
             passwordlessEnabled && passwordlessFirstFactors.some((id) => mfa.isFirstFactorEnabledOnClient(id));
     }

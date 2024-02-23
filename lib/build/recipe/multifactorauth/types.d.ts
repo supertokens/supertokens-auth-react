@@ -94,3 +94,12 @@ export declare type SecondaryFactorRedirectionInfo = {
     logo: FC;
     path: string;
 };
+export declare const FactorIds: {
+    EMAILPASSWORD: string;
+    OTP_EMAIL: string;
+    OTP_PHONE: string;
+    LINK_EMAIL: string;
+    LINK_PHONE: string;
+    THIRDPARTY: string;
+    TOTP: string;
+};

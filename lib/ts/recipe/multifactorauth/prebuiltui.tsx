@@ -12,7 +12,7 @@ import { DEFAULT_FACTOR_CHOOSER_PATH } from "./constants";
 import MultiFactorAuthRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap } from "../../types";
+import type { FeatureBaseProps, RecipeFeatureComponentMap, UserContext } from "../../types";
 
 export class MultiFactorAuthPreBuiltUI extends RecipeRouter {
     static instance?: MultiFactorAuthPreBuiltUI;
@@ -92,7 +92,7 @@ export class MultiFactorAuthPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static FactorChooser = (props?: any): JSX.Element =>
+    static FactorChooser = (props: FeatureBaseProps<{ userContext?: UserContext }>): JSX.Element =>
         MultiFactorAuthPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("factorchooser", props);
     static FactorChooserTheme = FactorChooserTheme;
 }

@@ -335,9 +335,6 @@ const testContext = getTestContext();
 
 let recipeList = [
     TOTP.init(),
-    MultiFactorAuth.init({
-        firstFactors: testContext.firstFactors,
-    }),
     Multitenancy.init({
         override: {
             functions: (oI) => ({

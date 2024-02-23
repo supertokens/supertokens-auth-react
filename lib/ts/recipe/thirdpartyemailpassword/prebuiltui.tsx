@@ -6,6 +6,7 @@ import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 import { EmailPasswordPreBuiltUI } from "../emailpassword/prebuiltui";
 import { RecipeRouter } from "../recipeRouter";
+import { SessionAuth } from "../session";
 import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
 import { ThirdPartyPreBuiltUI } from "../thirdparty/prebuiltui";
 
@@ -127,11 +128,13 @@ export class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
             } else {
                 return (
                     <UserContextWrapper userContext={props.userContext}>
-                        <SignInAndUpFeature
-                            recipe={this.recipeInstance}
-                            {...props}
-                            useComponentOverrides={useComponentOverrides}
-                        />
+                        <SessionAuth requireAuth={false} doRedirection={false}>
+                            <SignInAndUpFeature
+                                recipe={this.recipeInstance}
+                                {...props}
+                                useComponentOverrides={useComponentOverrides}
+                            />
+                        </SessionAuth>
                     </UserContextWrapper>
                 );
             }

@@ -32,6 +32,7 @@ import {
     useRethrowInRender,
 } from "../../../../../utils";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
+import { FactorIds } from "../../../../multifactorauth/types";
 import { getAvailableFactors } from "../../../../multifactorauth/utils";
 import SessionRecipe from "../../../../session/recipe";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
@@ -278,7 +279,7 @@ function useOnLoad(
                 }
             );
 
-            const factorId = props.contactMethod === "EMAIL" ? "otp-email" : "otp-phone";
+            const factorId = props.contactMethod === "EMAIL" ? FactorIds.OTP_EMAIL : FactorIds.OTP_PHONE;
 
             if (loginAttemptInfo && props.contactMethod !== loginAttemptInfo.contactMethod) {
                 await recipeImplementation?.clearLoginAttemptInfo({ userContext });
@@ -289,6 +290,7 @@ function useOnLoad(
             // automatically during the sign in process. In that case, anywhere the back button
             // could go would redirect back here, making it useless.
             const showBackButton =
+                mfaInfo.factors.next.length === 0 ||
                 getAvailableFactors(mfaInfo.factors, undefined, MultiFactorAuth.getInstanceOrThrow(), userContext)
                     .length !== 1;
             const contactInfoList =
@@ -322,7 +324,6 @@ function useOnLoad(
                         // createCode also dispatches the event that marks this page fully loaded
                         createResp = await recipeImplementation!.createCode({
                             ...createCodeInfo,
-                            factorIds: [factorId],
                             userContext,
                         });
                     } catch (err) {
@@ -402,11 +403,9 @@ function getModifiedRecipeImplementation(
                 contactInfo,
                 redirectToPath: getRedirectToPathFromURL(),
             };
-            const factorId = "email" in input ? "otp-email" : "otp-phone";
 
             const res = await originalImpl.createCode({
                 ...input,
-                factorIds: [factorId],
                 userContext: { ...input.userContext, additionalAttemptInfo },
             });
 
