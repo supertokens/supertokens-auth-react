@@ -20,6 +20,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     static instance?: ThirdPartyEmailPassword;
     static RECIPE_ID: string;
     recipeID: string;
+    firstFactorIds: string[];
     emailPasswordRecipe: EmailPassword | undefined;
     thirdPartyRecipe: ThirdParty | undefined;
     constructor(

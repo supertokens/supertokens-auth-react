@@ -34,6 +34,7 @@ export default class Passwordless extends AuthRecipe<
     static instance?: Passwordless;
     static RECIPE_ID: string;
     recipeID: string;
+    firstFactorIds: string[];
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         webJSRecipe?: WebJSRecipeInterface<typeof PasswordlessWebJS>

@@ -65,14 +65,8 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
     let passwordlessEnabled: boolean = props.passwordlessRecipe !== undefined;
 
     if (usesDynamicLoginMethods) {
-        thirdPartyEnabled =
-            (loginMethods!.firstFactors === undefined
-                ? loginMethods!.thirdparty.enabled
-                : loginMethods!.firstFactors.includes(FactorIds.THIRDPARTY)) && hasProviders;
-        passwordlessEnabled =
-            loginMethods!.firstFactors === undefined
-                ? loginMethods!.passwordless.enabled
-                : passwordlessFirstFactors.some((id) => loginMethods!.firstFactors!.includes(id));
+        thirdPartyEnabled = loginMethods!.firstFactors.includes(FactorIds.THIRDPARTY) && hasProviders;
+        passwordlessEnabled = passwordlessFirstFactors.some((id) => loginMethods!.firstFactors!.includes(id));
     } else if (mfa !== undefined) {
         thirdPartyEnabled = thirdPartyEnabled && mfa.isFirstFactorEnabledOnClient(FactorIds.THIRDPARTY);
         passwordlessEnabled =

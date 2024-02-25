@@ -28,20 +28,13 @@ export type NormalisedConfig = NormalisedRecipeModuleConfig<any, PreAndPostAPIHo
 };
 
 export type GetLoginMethodsResponseNormalized = {
-    passwordless: {
-        enabled: boolean;
-    };
-    emailpassword: {
-        enabled: boolean;
-    };
     thirdparty: {
-        enabled: boolean;
         providers: {
             id: string;
             name: string;
         }[];
     };
-    firstFactors?: string[];
+    firstFactors: string[];
 };
 
 export type ComponentOverrideMap = {

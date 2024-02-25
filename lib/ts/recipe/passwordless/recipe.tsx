@@ -77,6 +77,7 @@ export default class Passwordless extends AuthRecipe<
     static RECIPE_ID = "passwordless";
 
     recipeID = Passwordless.RECIPE_ID;
+    firstFactorIds = [FactorIds.OTP_EMAIL, FactorIds.OTP_PHONE, FactorIds.LINK_EMAIL, FactorIds.LINK_PHONE];
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,

@@ -58,15 +58,9 @@ const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> =
     let emailPasswordEnabled: boolean = props.emailPasswordRecipe !== undefined;
 
     if (usesDynamicLoginMethods) {
-        thirdPartyEnabled =
-            (loginMethods!.firstFactors === undefined
-                ? loginMethods!.thirdparty.enabled
-                : loginMethods!.firstFactors.includes(FactorIds.THIRDPARTY)) && hasProviders;
+        thirdPartyEnabled = loginMethods!.firstFactors.includes(FactorIds.THIRDPARTY) && hasProviders;
         emailPasswordEnabled =
-            (loginMethods!.firstFactors === undefined
-                ? loginMethods!.emailpassword.enabled
-                : loginMethods!.firstFactors.includes(FactorIds.EMAILPASSWORD)) &&
-            props.emailPasswordRecipe !== undefined;
+            loginMethods!.firstFactors.includes(FactorIds.EMAILPASSWORD) && props.emailPasswordRecipe !== undefined;
     } else if (mfa !== undefined) {
         thirdPartyEnabled = mfa.isFirstFactorEnabledOnClient(FactorIds.THIRDPARTY) && hasProviders;
         emailPasswordEnabled =

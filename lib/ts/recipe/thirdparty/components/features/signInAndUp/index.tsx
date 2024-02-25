@@ -23,6 +23,7 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
 import { getQueryParams } from "../../../../../utils";
+import { FactorIds } from "../../../../multifactorauth/types";
 import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import { mergeProviders } from "../../../utils";
 import SignInAndUpTheme from "../../themes/signInAndUp";
@@ -92,7 +93,7 @@ export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChi
             if (dynamicLoginMethods.loaded === false) {
                 throw new Error("Component requiring dynamicLoginMethods rendered without FeatureWrapper.");
             } else {
-                tenantProviders = dynamicLoginMethods.loginMethods.thirdparty.enabled
+                tenantProviders = dynamicLoginMethods.loginMethods.firstFactors.includes(FactorIds.THIRDPARTY)
                     ? dynamicLoginMethods.loginMethods.thirdparty.providers
                     : [];
             }

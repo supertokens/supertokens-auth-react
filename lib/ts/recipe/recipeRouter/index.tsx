@@ -179,8 +179,11 @@ export abstract class RecipeRouter {
         if (
             componentMatchingRid && // if we find a component matching by rid
             (!priorityOrder.map((a) => a.rid).includes(componentMatchingRid.recipeID) || // from a non-auth recipe
-                dynamicLoginMethods[componentMatchingRid.recipeID as "passwordless" | "thirdparty" | "emailpassword"]
-                    ?.enabled === true) // or an enabled auth recipe
+                priorityOrder.some(
+                    (a) =>
+                        a.rid === componentMatchingRid.recipeID &&
+                        a.factorsProvided.some((factorId) => dynamicLoginMethods.firstFactors.includes(factorId))
+                )) // or an enabled auth recipe
         ) {
             return componentMatchingRid;
         }
@@ -190,34 +193,6 @@ export abstract class RecipeRouter {
         // Embedded components are not affected, since this is only called by the routing component.
         if (!isNonAuthPage && dynamicLoginMethods.firstFactors !== undefined) {
             return chooseComponentBasedOnFirstFactors(dynamicLoginMethods.firstFactors, routeComponents);
-        }
-
-        // We may get here if the app is using an older BE that doesn't support MFA or if the tenant
-        // has an older config that doesn't have the firstFactors array
-        const enabledRecipeCount = Object.keys(dynamicLoginMethods).filter(
-            (key) => (dynamicLoginMethods as any)[key]?.enabled === true
-        ).length;
-        // We try and choose which component to show based on the enabled login methods
-        // We first try to find an exact match (a recipe that covers all enabled login methods and nothing else)
-        for (const { rid, includes } of priorityOrder) {
-            if (
-                enabledRecipeCount === includes.length &&
-                includes.every((subRId) => dynamicLoginMethods[subRId].enabled)
-            ) {
-                const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
-                if (matchingComp) {
-                    return matchingComp;
-                }
-            }
-        }
-        // We try to find a partial match (so any recipe that overlaps with the enabled login methods)
-        for (const { rid, includes } of priorityOrder) {
-            if (includes.some((subRId) => dynamicLoginMethods[subRId].enabled)) {
-                const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
-                if (matchingComp) {
-                    return matchingComp;
-                }
-            }
         }
 
         return undefined;
