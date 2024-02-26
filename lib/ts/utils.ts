@@ -81,14 +81,14 @@ export function getRedirectToPathFromURL(): string | undefined {
             try {
                 url = new URL(redirectToPath);
             } catch (error) {
-                const fakeDomain = redirectToPath.startsWith("/") ? "http:localhost" : "http://localhost/";
+                const fakeDomain = redirectToPath.startsWith("/") ? "http://localhost" : "http://localhost/";
                 url = new URL(`${fakeDomain}${redirectToPath}`);
             }
 
             // Prevent Open redirects by normalising path.
             const normalisedURLPath = new NormalisedURLPath(redirectToPath).getAsStringDangerous();
-            const pathQueryParams = url.search || "";
-            const pathHash = url.hash || "";
+            const pathQueryParams = url.search || ""; // url.search contains the leading ?
+            const pathHash = url.hash || ""; // url.hash contains the leading #
             const pathWithQueryParamsAndHash = normalisedURLPath + pathQueryParams + pathHash;
 
             // Ensure a leading "/" if `normalisedUrlPath` is empty but `pathWithQueryParamsAndHash` is not to ensure proper redirection.
@@ -230,7 +230,7 @@ export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<s
         });
         return url.href;
     } catch (e) {
-        const fakeDomain = stringUrl.startsWith("/") ? "http:localhost" : "http://localhost/";
+        const fakeDomain = stringUrl.startsWith("/") ? "http://localhost" : "http://localhost/";
         const url = new URL(`${fakeDomain}${stringUrl}`);
         Object.entries(queryParams).forEach(([key, value]) => {
             url.searchParams.set(key, value);

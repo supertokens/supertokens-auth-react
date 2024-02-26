@@ -129,6 +129,50 @@ describe("SuperTokens SignUp", function () {
 
         it("should redirect to sign in w/ first auth recipe and set redirectToPath", async function () {
             await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}?authRecipe=both`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await page.evaluate(() => window.SuperTokens.redirectToAuth({ redirectBack: true }));
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            let text = await getAuthPageHeaderText(page);
+            let { pathname: pathAfterRedirectToAuth, href: hrefAfterRedirectToAuth } = await page.evaluate(
+                () => window.location
+            );
+
+            const url = new URL(hrefAfterRedirectToAuth);
+            const redirectToPath = url.searchParams.get("redirectToPath");
+
+            assert.equal(pathAfterRedirectToAuth, "/auth/");
+            // Only the EmailPassword recipe has this header on the sign in page
+            assert.deepStrictEqual(text, "Sign In");
+            // Test that redirecToPath contains query params
+            assert.equal(redirectToPath, "?authRecipe=both");
+        });
+
+        it("should redirect to sign in w/ first auth recipe without setting redirectToPath", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}?authRecipe=both`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await page.evaluate(() => window.SuperTokens.redirectToAuth({ redirectBack: false }));
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            let text = await getAuthPageHeaderText(page);
+            let { pathname: pathAfterRedirectToAuth, href: hrefAfterRedirectToAuth } = await page.evaluate(
+                () => window.location
+            );
+
+            const url = new URL(hrefAfterRedirectToAuth);
+            const redirectToPath = url.searchParams.get("redirectToPath");
+
+            assert.equal(pathAfterRedirectToAuth, "/auth/");
+            // Only the EmailPassword recipe has this header on the sign in page
+            assert.deepStrictEqual(text, "Sign In");
+            // Test that redirecToPath is null
+            assert.equal(redirectToPath, null);
+        });
+
+        it("should redirect to sign in w/ first auth recipe and set redirectToPath (query params + fragment)", async function () {
+            await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}?authRecipe=both#cell=4,1-6,2`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
@@ -171,28 +215,6 @@ describe("SuperTokens SignUp", function () {
             assert.deepStrictEqual(text, "Sign In");
             // Test that redirecToPath contains url fragment
             assert.equal(redirectToPath, "#cell=4,1-6,2");
-        });
-
-        it("should redirect to sign in w/ first auth recipe without setting redirectToPath", async function () {
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}?authRecipe=both`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
-            await page.evaluate(() => window.SuperTokens.redirectToAuth({ redirectBack: false }));
-            await page.waitForNavigation({ waitUntil: "networkidle0" });
-            let text = await getAuthPageHeaderText(page);
-            let { pathname: pathAfterRedirectToAuth, href: hrefAfterRedirectToAuth } = await page.evaluate(
-                () => window.location
-            );
-
-            const url = new URL(hrefAfterRedirectToAuth);
-            const redirectToPath = url.searchParams.get("redirectToPath");
-
-            assert.equal(pathAfterRedirectToAuth, "/auth/");
-            // Only the EmailPassword recipe has this header on the sign in page
-            assert.deepStrictEqual(text, "Sign In");
-            // Test that redirecToPath is null
-            assert.equal(redirectToPath, null);
         });
     });
 

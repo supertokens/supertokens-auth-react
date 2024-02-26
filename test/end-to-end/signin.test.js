@@ -549,6 +549,48 @@ describe("SuperTokens SignIn", function () {
 
         it("Successful emailPassword Sign In with redirectToPath (w/ leading slash) keeping query params", async function () {
             await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here%3Ffoo%3Dbar`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+
+            // Submit.
+            await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            const { pathname, search } = await page.evaluate(() => window.location);
+            assert.deepStrictEqual(pathname + search, "/redirect-here?foo=bar");
+        });
+
+        it("Successful emailPassword Sign In with redirectToPath (w/o leading slash) keeping query params", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%3Ffoo%3Dbar`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+
+            // Submit.
+            await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            const { pathname, search } = await page.evaluate(() => window.location);
+            assert.deepStrictEqual(pathname + search, "/?foo=bar");
+        });
+
+        it("Successful emailPassword Sign In with redirectToPath (query params + fragment)", async function () {
+            await Promise.all([
                 page.goto(
                     `${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent(
                         "/redirect-here?foo=bar#cell=4,1-6,2"
@@ -591,27 +633,6 @@ describe("SuperTokens SignIn", function () {
             ]);
             const { pathname, search, hash } = await page.evaluate(() => window.location);
             assert.deepStrictEqual(pathname + search + hash, "/#cell=4,1-6,2");
-        });
-
-        it("Successful emailPassword Sign In with redirectToPath (w/o leading slash) keeping query params", async function () {
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%3Ffoo%3Dbar`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
-
-            // Set correct values.
-            await setInputValues(page, [
-                { name: "email", value: "john.doe@supertokens.io" },
-                { name: "password", value: "Str0ngP@ssw0rd" },
-            ]);
-
-            // Submit.
-            await Promise.all([
-                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
-            const { pathname, search } = await page.evaluate(() => window.location);
-            assert.deepStrictEqual(pathname + search, "/?foo=bar");
         });
 
         describe("Successful Sign In with redirect to, with EmailPasswordAuth", async function () {
