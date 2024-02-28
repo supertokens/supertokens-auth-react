@@ -1,12 +1,21 @@
 /// <reference types="react" />
 import { RecipeInterface } from "supertokens-web-js/recipe/multifactorauth";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import { UserInput } from "./types";
+import { UserInput, FactorIds } from "./types";
 import type { UserContext } from "../../types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/multifactorauth";
 import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 export default class Wrapper {
     static MultiFactorAuthClaim: import("./multiFactorAuthClaim").MultiFactorAuthClaimClass;
+    static FactorIds: {
+        EMAILPASSWORD: string;
+        OTP_EMAIL: string;
+        OTP_PHONE: string;
+        LINK_EMAIL: string;
+        LINK_PHONE: string;
+        THIRDPARTY: string;
+        TOTP: string;
+    };
     static init(
         config?: UserInput
     ): import("../../types").RecipeInitResult<
@@ -66,4 +75,5 @@ export {
     UserInput,
     RecipeInterface,
     MultiFactorAuthClaim,
+    FactorIds,
 };

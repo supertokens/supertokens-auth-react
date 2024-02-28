@@ -23,7 +23,7 @@ import { getNormalisedUserContext } from "../../utils";
 import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 import MultiFactorAuthRecipe from "./recipe";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import { UserInput } from "./types";
+import { UserInput, FactorIds } from "./types";
 
 import type { UserContext } from "../../types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/multifactorauth";
@@ -31,6 +31,7 @@ import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/ty
 
 export default class Wrapper {
     static MultiFactorAuthClaim = MultiFactorAuthRecipe.MultiFactorAuthClaim;
+    static FactorIds = FactorIds;
 
     static init(config?: UserInput) {
         return MultiFactorAuthRecipe.init(config);
@@ -104,4 +105,5 @@ export {
     UserInput,
     RecipeInterface,
     MultiFactorAuthClaim,
+    FactorIds,
 };
