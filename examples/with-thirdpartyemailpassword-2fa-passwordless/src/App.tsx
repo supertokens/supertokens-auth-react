@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { EmailVerificationClaim } from "supertokens-auth-react/recipe/emailverification";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
@@ -8,14 +7,13 @@ import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
+import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
+import { MultiFactorAuthPreBuiltUI } from "supertokens-auth-react/recipe/multifactorauth/prebuiltui";
 import Session, { SessionAuth, useSessionContext } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 import Passwordless, { PasswordlessComponentsOverrideProvider } from "supertokens-auth-react/recipe/passwordless";
-import SecondFactor from "./SecondFactor";
-import { SecondFactorClaim } from "./secondFactorClaim";
-import { useNavigate } from "react-router-dom";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -41,6 +39,7 @@ SuperTokens.init({
         }
     },
     recipeList: [
+        MultiFactorAuth.init(),
         EmailVerification.init({
             mode: "REQUIRED",
         }),
@@ -59,16 +58,7 @@ SuperTokens.init({
             },
             contactMethod: "PHONE",
         }),
-        Session.init({
-            override: {
-                functions: (oI) => ({
-                    ...oI,
-                    getGlobalClaimValidators: ({ claimValidatorsAddedByOtherRecipes }) => {
-                        return [SecondFactorClaim.validators.isTrue(), ...claimValidatorsAddedByOtherRecipes];
-                    },
-                }),
-            },
-        }),
+        Session.init(),
     ],
 });
 
@@ -114,20 +104,13 @@ function App() {
                                 ThirdPartyEmailPasswordPreBuiltUI,
                                 EmailVerificationPreBuiltUI,
                                 PasswordlessPreBuiltUI,
+                                MultiFactorAuthPreBuiltUI,
                             ])}
                             <Route
                                 path="/"
                                 element={
                                     <SessionAuth>
                                         <Home />
-                                    </SessionAuth>
-                                }
-                            />
-                            <Route
-                                path="/second-factor"
-                                element={
-                                    <SessionAuth>
-                                        <SecondFactor />
                                     </SessionAuth>
                                 }
                             />

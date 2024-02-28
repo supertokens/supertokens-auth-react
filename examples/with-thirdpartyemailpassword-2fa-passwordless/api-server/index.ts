@@ -1,14 +1,15 @@
 import express from "express";
 import cors from "cors";
-import supertokens from "supertokens-node";
+import supertokens, { getUser } from "supertokens-node";
 import Session from "supertokens-node/recipe/session";
 import { verifySession } from "supertokens-node/recipe/session/framework/express";
 import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
 import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
 import Passwordless from "supertokens-node/recipe/passwordless";
 import UserMetadata from "supertokens-node/recipe/usermetadata";
-import { SecondFactorClaim } from "./secondFactorClaim";
 import EmailVerification from "supertokens-node/recipe/emailverification";
+import AccountLinking from "supertokens-node/recipe/accountlinking";
+import MultiFactorAuth, { FactorIds, MultiFactorAuthClaim } from "supertokens-node/recipe/multifactorauth";
 import Dashboard from "supertokens-node/recipe/dashboard";
 
 require("dotenv").config();
@@ -22,7 +23,7 @@ supertokens.init({
     framework: "express",
     supertokens: {
         // TODO: This is a core hosted for demo purposes. You can use this, but make sure to change it to your core instance URI eventually.
-        connectionURI: "https://try.supertokens.com",
+        connectionURI: "http://localhost:3567",
         apiKey: "<REQUIRED FOR MANAGED SERVICE, ELSE YOU CAN REMOVE THIS FIELD>",
     },
     appInfo: {
@@ -78,6 +79,59 @@ supertokens.init({
                 },
             ],
         }),
+        MultiFactorAuth.init({
+            firstFactors: [FactorIds.EMAILPASSWORD, FactorIds.THIRDPARTY],
+            override: {
+                functions: (oI) => ({
+                    ...oI,
+                    getMFARequirementsForAuth: () => [FactorIds.OTP_PHONE],
+                }),
+                apis: (oI) => ({
+                    ...oI,
+                    resyncSessionAndFetchMFAInfoPUT: async (input) => {
+                        if (oI.resyncSessionAndFetchMFAInfoPUT === undefined) {
+                            throw new Error("This should never happen");
+                        }
+
+                        const user = await getUser(input.session.getUserId());
+                        if (!user) {
+                            throw new Error("This shouldn't happen");
+                        }
+                        const { metadata } = await UserMetadata.getUserMetadata(user.id);
+                        if (
+                            metadata.passwordlessUserId !== undefined &&
+                            !user.loginMethods.some(
+                                (lm) => lm.recipeUserId.getAsString() === metadata.passwordlessUserId
+                            )
+                        ) {
+                            if (!user.isPrimaryUser) {
+                                const res = await AccountLinking.createPrimaryUser(user.loginMethods[0].recipeUserId);
+                                if (res.status !== "OK") {
+                                    throw new Error(res.status);
+                                }
+                            }
+                            const linkRes = await AccountLinking.linkAccounts(
+                                supertokens.convertToRecipeUserId(metadata.passwordlessUserId),
+                                user.id
+                            );
+                            if (linkRes.status !== "OK") {
+                                throw new Error(linkRes.status);
+                            }
+                        }
+
+                        const accessTokenPayload = input.session.getAccessTokenPayload();
+                        const newClaimVal = await input.session.getClaimValue(MultiFactorAuthClaim);
+                        const oldClaimValue = accessTokenPayload["2fa-completed"]?.v ?? false;
+                        if (oldClaimValue && (newClaimVal === undefined || !newClaimVal.v)) {
+                            await input.session.fetchAndSetClaim(MultiFactorAuthClaim);
+                            await MultiFactorAuth.markFactorAsCompleteInSession(input.session, FactorIds.OTP_PHONE);
+                        }
+
+                        return oI.resyncSessionAndFetchMFAInfoPUT(input);
+                    },
+                }),
+            },
+        }),
         UserMetadata.init(),
         Passwordless.init({
             contactMethod: "PHONE",
@@ -92,123 +146,14 @@ supertokens.init({
                     };
                 },
             },
-            override: {
-                apis: (oI) => {
-                    return {
-                        ...oI,
-                        createCodePOST: async function (input) {
-                            if (oI.createCodePOST === undefined) {
-                                throw new Error("Should never come here");
-                            }
-                            /**
-                             *
-                             * We want to make sure that the OTP being generated is for the
-                             * same number that belongs to this user.
-                             */
-
-                            // We remove claim checking here, since this needs to be callable without the second factor completed
-                            let session = await Session.getSession(input.options.req, input.options.res, {
-                                overrideGlobalClaimValidators: () => [],
-                            });
-                            if (session === undefined) {
-                                throw new Error("Should never come here");
-                            }
-
-                            let phoneNumber: string = session.getAccessTokenPayload().phoneNumber;
-
-                            if (phoneNumber !== undefined) {
-                                if (!("phoneNumber" in input) || input.phoneNumber !== phoneNumber) {
-                                    throw new Error("Should never come here");
-                                }
-                            }
-
-                            return oI.createCodePOST(input);
-                        },
-
-                        consumeCodePOST: async function (input) {
-                            if (oI.consumeCodePOST === undefined) {
-                                throw new Error("Should never come here");
-                            }
-                            // we should already have a session here since this is called
-                            // after phone password login
-                            // We remove claim checking here, since this needs to be callable without the second factor completed
-                            let session = await Session.getSession(input.options.req, input.options.res, {
-                                overrideGlobalClaimValidators: () => [],
-                            });
-                            if (session === undefined) {
-                                throw new Error("Should never come here");
-                            }
-
-                            // we add the session to the user context so that the createNewSession
-                            // function doesn't create a new session
-                            input.userContext.session = session;
-                            let resp = await oI.consumeCodePOST(input);
-
-                            if (resp.status === "OK") {
-                                // OTP verification was successful. We can now mark the
-                                // session's payload as SecondFactorClaim: true so that
-                                // the user has access to API routes and the frontend UI
-                                await resp.session.setClaimValue(SecondFactorClaim, true);
-
-                                // we associate the passwordless user ID with the thirdpartyemailpassword
-                                // user ID, so that later on, we can fetch the phone number.
-                                await UserMetadata.updateUserMetadata(session.getUserId(), {
-                                    passwordlessUserId: resp.user.id,
-                                });
-                            }
-
-                            return resp;
-                        },
-                    };
-                },
-            },
         }),
-        Session.init({
-            override: {
-                functions: (originalImplementation) => {
-                    return {
-                        ...originalImplementation,
-                        getGlobalClaimValidators: (input) => [
-                            ...input.claimValidatorsAddedByOtherRecipes,
-                            SecondFactorClaim.validators.hasValue(true),
-                        ],
-                        createNewSession: async function (input) {
-                            if (input.userContext.session !== undefined) {
-                                /**
-                                 * This will be true for passwordless login.
-                                 */
-                                return input.userContext.session;
-                            }
-                            let userMetadata = await UserMetadata.getUserMetadata(input.userId);
-                            let phoneNumber: string | undefined = undefined;
-                            if (userMetadata.metadata.passwordlessUserId !== undefined) {
-                                // we alreay have a phone number associated with this user,
-                                // so we will add it to the access token payload so that
-                                // we can send an OTP to it without asking the end user.
-                                let passwordlessUserInfo = await supertokens.getUser(
-                                    userMetadata.metadata.passwordlessUserId as string,
-                                    input.userContext
-                                );
-                                phoneNumber = passwordlessUserInfo?.phoneNumbers[0];
-                            }
-                            return originalImplementation.createNewSession({
-                                ...input,
-                                accessTokenPayload: {
-                                    ...input.accessTokenPayload,
-                                    ...(await SecondFactorClaim.build(
-                                        input.userId,
-                                        input.recipeUserId,
-                                        input.tenantId,
-                                        input.userContext
-                                    )),
-                                    phoneNumber,
-                                },
-                            });
-                        },
-                    };
-                },
-            },
+        AccountLinking.init({
+            shouldDoAutomaticAccountLinking: async () => ({
+                shouldAutomaticallyLink: true,
+                shouldRequireVerification: true,
+            }),
         }),
+        Session.init(),
         Dashboard.init(),
     ],
 });
