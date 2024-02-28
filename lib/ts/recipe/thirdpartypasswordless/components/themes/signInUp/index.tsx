@@ -34,6 +34,7 @@ import { PhoneForm } from "../../../../passwordless/components/themes/signInUp/p
 import { UserInputCodeForm } from "../../../../passwordless/components/themes/signInUp/userInputCodeForm";
 import { UserInputCodeFormHeader } from "../../../../passwordless/components/themes/signInUp/userInputCodeFormHeader";
 import { passwordlessFirstFactors } from "../../../../passwordless/recipe";
+import { getEnabledContactMethods } from "../../../../passwordless/utils";
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 import { ThemeBase } from "../themeBase";
 
@@ -145,9 +146,18 @@ function SignInUpThemeWrapper(props: ThirdPartyPasswordlessSignInAndUpThemeProps
     const hasFont = hasFontDefined(props.config.rootStyle);
 
     const currentDynamicLoginMethods = useDynamicLoginMethods();
+
+    let validPwlessContactMethodExists;
+    try {
+        getEnabledContactMethods(props.config.passwordlessConfig.contactMethod, currentDynamicLoginMethods);
+        validPwlessContactMethodExists = true;
+    } catch {
+        validPwlessContactMethodExists = false;
+    }
+
     // By defining it in a single object here TSC can deduce the connection between props
     const childProps =
-        props.passwordlessRecipe !== undefined && props.pwlessChildProps !== undefined
+        validPwlessContactMethodExists && props.passwordlessRecipe !== undefined && props.pwlessChildProps !== undefined
             ? {
                   ...props,
                   activeScreen: getActiveScreen(

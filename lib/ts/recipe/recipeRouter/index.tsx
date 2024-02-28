@@ -86,12 +86,61 @@ function chooseComponentBasedOnFirstFactors(
         }
     }
 
-    if (fallbackComponent === undefined) {
-        throw new Error("No enabled recipes overlap with the requested firstFactors: " + firstFactors);
+    if (fallbackComponent !== undefined) {
+        logDebugMessage(`Rendering ${fallbackRid} to cover ${firstFactors} as a fallback`);
+        return fallbackComponent;
     }
 
-    logDebugMessage(`Rendering ${fallbackRid} to cover ${firstFactors}`);
-    return fallbackComponent;
+    // We may get here if:
+    // - The backend/tenantconfig is older and didn't have the firstFactors array defined
+    // - There is a configuration error
+    // We choose not to throw in the configuration error case because:
+    // - we can't tell these cases apart after the firstFactors array was made a requrired prop
+    // - we want to maintain backwards compatbility
+
+    // Here we replicate the old logic we had before the firstFactors array
+    const enabledLoginMethods: string[] = [];
+    if (firstFactors.includes(FactorIds.EMAILPASSWORD)) {
+        enabledLoginMethods.push("emailpassword");
+    }
+    if (firstFactors.includes(FactorIds.THIRDPARTY)) {
+        enabledLoginMethods.push("thirdparty");
+    }
+    if (
+        [FactorIds.OTP_PHONE, FactorIds.OTP_EMAIL, FactorIds.LINK_PHONE, FactorIds.LINK_EMAIL].some((pwlessFactorId) =>
+            firstFactors.includes(pwlessFactorId)
+        )
+    ) {
+        enabledLoginMethods.push("passwordless");
+    }
+    logDebugMessage(`Choosing component using fallback logic w/ ${enabledLoginMethods.join(", ")} enabled`);
+
+    const enabledRecipeCount = enabledLoginMethods.length;
+
+    // We try and choose which component to show based on the enabled login methods
+    // We first try to find an exact match (a recipe that covers all enabled login methods and nothing else)
+    for (const { rid, includes } of priorityOrder) {
+        if (
+            enabledRecipeCount === includes.length &&
+            includes.every((subRId) => enabledLoginMethods.includes(subRId))
+        ) {
+            const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
+            if (matchingComp) {
+                return matchingComp;
+            }
+        }
+    }
+    // We try to find a partial match (so any recipe that overlaps with the enabled login methods)
+    for (const { rid, includes } of priorityOrder) {
+        if (includes.some((subRId) => enabledLoginMethods.includes(subRId))) {
+            const matchingComp = routeComponents.find((comp) => comp.recipeID === rid);
+            if (matchingComp) {
+                return matchingComp;
+            }
+        }
+    }
+
+    throw new Error("No enabled recipes overlap with the requested firstFactors: " + firstFactors);
 }
 
 export abstract class RecipeRouter {
@@ -105,7 +154,7 @@ export abstract class RecipeRouter {
     ): ComponentWithRecipeAndMatchingMethod | undefined {
         const path = normalisedUrl.getAsStringDangerous();
         // We check if we are on the auth page to later see if we should take first factors into account.
-        const isNonAuthPage = path !== SuperTokens.getInstanceOrThrow().appInfo.websiteBasePath.getAsStringDangerous();
+        const isAuthPage = path === SuperTokens.getInstanceOrThrow().appInfo.websiteBasePath.getAsStringDangerous();
 
         // We get all components that can handle the current path
         const routeComponents = preBuiltUIList.reduce((components, c) => {
@@ -162,7 +211,7 @@ export abstract class RecipeRouter {
             // if we have a static firstFactors config we take it into account on the auth page
             // Other pages shouldn't care about this configuration.
             // Embedded components are not affected, since this is only called by the routing component.
-            if (!isNonAuthPage && mfaRecipe && mfaRecipe.config.firstFactors !== undefined) {
+            if (isAuthPage && mfaRecipe && mfaRecipe.config.firstFactors !== undefined) {
                 return chooseComponentBasedOnFirstFactors(mfaRecipe.config.firstFactors, routeComponents);
             } else {
                 return defaultComp;
@@ -191,7 +240,7 @@ export abstract class RecipeRouter {
         // if we have a firstFactors config for the tenant we take it into account on the auth page
         // Other pages shouldn't care about this configuration.
         // Embedded components are not affected, since this is only called by the routing component.
-        if (!isNonAuthPage && dynamicLoginMethods.firstFactors !== undefined) {
+        if (isAuthPage) {
             return chooseComponentBasedOnFirstFactors(dynamicLoginMethods.firstFactors, routeComponents);
         }
 

@@ -79,10 +79,10 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         page = await browser.newPage();
         pageCrashed = false;
         page.on("console", (c) => {
+            // console.log(c.text());
             if (c.text() === "ST_THROWN_ERROR") {
                 pageCrashed = true;
             }
-            // console.log(c.text());
         });
         await Promise.all([
             page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
@@ -743,11 +743,11 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.notStrictEqual(await getProviderLogoCount(page), 0);
 
         // Divider
-        await waitForSTElement(page, `[data-supertokens~='thirdPartyEmailPasswordDivider']`, false);
+        await waitForSTElement(page, `[data-supertokens~='thirdPartyPasswordlessDivider']`, false);
 
         // Emailpassword
         const inputNames = await getInputNames(page);
-        assert.deepStrictEqual(inputNames, ["email", "password"]);
+        assert.deepStrictEqual(inputNames, ["emailOrPhone"]);
     });
 
     it("should show thirdpartyemailpassword if FE has only tpep and thirdparty is disbled in core", async function () {

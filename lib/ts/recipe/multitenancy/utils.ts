@@ -17,7 +17,5 @@ export function hasIntersectingRecipes(
     tenantMethods: GetLoginMethodsResponseNormalized,
     recipeList: AuthRecipe<any, any, any, any>[]
 ): boolean {
-    return tenantMethods.firstFactors.some((factorId) =>
-        recipeList.some((recipe) => recipe.firstFactorIds.includes(factorId))
-    );
+    return tenantMethods.firstFactors.some((factorId) => recipeList.some((r) => r.firstFactorIds.includes(factorId)));
 }
