@@ -71,7 +71,7 @@ export function normaliseEmailPasswordConfig(config?: Config): NormalisedConfig 
     const override: {
         functions: (
             originalImplementation: RecipeInterface,
-            builder?: OverrideableBuilder<RecipeInterface>
+            builder: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
     } = {
         functions: (originalImplementation: RecipeInterface) => originalImplementation,

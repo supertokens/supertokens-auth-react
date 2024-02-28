@@ -21,7 +21,7 @@ export declare type UserInput = {
     override?: {
         functions?: (
             originalImplementation: RecipeInterface,
-            builder?: OverrideableBuilder<RecipeInterface>
+            builder: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
     };
 } & RecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
@@ -35,7 +35,7 @@ export declare type NormalisedConfig = {
     override: {
         functions: (
             originalImplementation: RecipeInterface,
-            builder?: OverrideableBuilder<RecipeInterface>
+            builder: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;

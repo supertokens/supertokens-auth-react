@@ -545,7 +545,9 @@ function getThirdPartyConfigs() {
                 ThirdParty.Github.init(),
                 ThirdParty.Google.init({
                     id: "some client ID",
-                    buttonComponent: ({ name }) => <span>ASDF {name}</span>,
+                    buttonComponent: ({ name }) => {
+                        return <div>ASDF {name}</div>;
+                    },
                 }),
                 ThirdParty.Facebook.init(),
                 ThirdParty.Apple.init(),

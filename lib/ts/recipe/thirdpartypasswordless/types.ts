@@ -119,7 +119,7 @@ export type UserInput = (
     override?: {
         functions?: (
             originalImplementation: RecipeInterface,
-            builder?: OverrideableBuilder<RecipeInterface>
+            builder: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
     };
     linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
@@ -139,7 +139,7 @@ export type NormalisedConfig = {
     override: {
         functions: (
             originalImplementation: RecipeInterface,
-            builder?: OverrideableBuilder<RecipeInterface>
+            builder: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
