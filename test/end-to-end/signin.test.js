@@ -589,6 +589,52 @@ describe("SuperTokens SignIn", function () {
             assert.deepStrictEqual(pathname + search, "/?foo=bar");
         });
 
+        it("Successful emailPassword Sign In with redirectToPath (query params + fragment)", async function () {
+            await Promise.all([
+                page.goto(
+                    `${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent(
+                        "/redirect-here?foo=bar#cell=4,1-6,2"
+                    )}`
+                ),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+
+            // Submit.
+            await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            const { pathname, search, hash } = await page.evaluate(() => window.location);
+            assert.deepStrictEqual(pathname + search + hash, "/redirect-here?foo=bar#cell=4,1-6,2");
+        });
+
+        it("Successful emailPassword Sign In with redirectToPath (only fragment)", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent("#cell=4,1-6,2")}`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+
+            // Submit.
+            await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            const { pathname, search, hash } = await page.evaluate(() => window.location);
+            assert.deepStrictEqual(pathname + search + hash, "/#cell=4,1-6,2");
+        });
+
         describe("Successful Sign In with redirect to, with EmailPasswordAuth", async function () {
             it("First sign in", async function () {
                 consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);

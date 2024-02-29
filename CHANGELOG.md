@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [0.38.0] - 2024-02-29
+
+## Breaking Changes
+
+-   Previously, when calling `redirectToAuth` with the `redirectBack` option, url fragments(hash) were stripped when redirecting back to the previous page after authentication. This issue has been fixed, and url fragments are preserved along with the query params. For users who employed the workaround of overriding the `windowHandler.location.getSearch` function to include fragments, it is essential to remove that override before upgrading to this version.
+
 ## [0.37.1] - 2024-02-26
 
 -   Fixes types argument in override functions to make `builder` non optional.
