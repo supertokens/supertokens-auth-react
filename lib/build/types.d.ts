@@ -1,3 +1,4 @@
+import type { DateProviderInput } from "./dateProvider/types";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
@@ -55,6 +56,7 @@ export declare type SuperTokensConfig = {
     }[];
     cookieHandler?: CookieHandlerInput;
     windowHandler?: WindowHandlerInput;
+    dateProvider?: DateProviderInput;
     usesDynamicLoginMethods?: boolean;
     languageTranslations?: {
         defaultLanguage?: string;

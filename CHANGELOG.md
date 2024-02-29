@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
-## [0.37.0] - 2023-12-XX
+## [0.38.0] - 2024-03-04
 
 ### Overview
 
@@ -59,6 +59,22 @@ To use this you'll need compatible versions:
 -   Fixed a font loading issue, that caused apps using the default (Rubik) font to appear with the incorrect font weights
 -   Some default styling has changed related to how fonts/font-weights are applied
 -   Changed how `headerSubtitle` is styled in components: `EmailPasswordResetPasswordEmail`, `EmailPasswordSubmitNewPassword`, `EmailPasswordSignInHeader`, `EmailPasswordSignUpHeader`
+
+## [0.37.1] - 2024-02-26
+
+-   Fixes types argument in override functions to make `builder` non optional.
+
+## [0.37.0] - 2024-01-15
+
+## Breaking Changes
+
+-   The default `DateProvider` implementation relies on `localStorage`. If your environment lacks support for `localStorage`, you must provide custom implementations for either the `DateProvider` or `localStorage`.
+
+### Changes
+
+-   Exporting the `DateProvider` from supertokens-web-js, that both built-in and custom validators can use instead of `Date.now` to get an estimate of the server clock.
+-   Added the `dateProvider` prop to the configuration that can be used to customize the built-in `DateProvider`.
+-   Added `calculateClockSkewInMillis` as an overrideable function to the Session recipe that estimates the time difference between the backend and the client.
 
 ## [0.36.1] - 2023-12-20
 
