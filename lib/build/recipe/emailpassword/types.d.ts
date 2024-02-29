@@ -183,6 +183,7 @@ export declare type OnHandleEventContext =
           userContext: UserContext;
       }
     | {
+          rid: "emailpassword";
           action: "SUCCESS";
           isNewRecipeUser: boolean;
           createdNewSession: boolean;

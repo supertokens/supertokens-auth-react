@@ -70,6 +70,7 @@ export type GetRedirectionURLContext = never;
 
 export type OnHandleEventContext =
     | {
+          rid: "passwordless";
           action: "SUCCESS";
           isNewRecipeUser: boolean;
           createdNewSession: boolean;

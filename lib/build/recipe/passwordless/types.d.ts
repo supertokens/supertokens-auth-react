@@ -39,6 +39,7 @@ export declare type PreAPIHookContext = {
 export declare type GetRedirectionURLContext = never;
 export declare type OnHandleEventContext =
     | {
+          rid: "passwordless";
           action: "SUCCESS";
           isNewRecipeUser: boolean;
           createdNewSession: boolean;

@@ -67,6 +67,7 @@ export declare type PreAPIHookContext = {
 export declare type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {
+          rid: "thirdparty";
           action: "SUCCESS";
           isNewRecipeUser: boolean;
           createdNewSession: boolean;
