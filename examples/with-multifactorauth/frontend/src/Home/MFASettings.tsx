@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { useAsyncCall } from "../useAsyncCallOnMount";
 import { getApiDomain } from "../config";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
 
 export default function MFASettings({ mfaRequirement }: { mfaRequirement: string }) {
@@ -69,12 +69,14 @@ export default function MFASettings({ mfaRequirement }: { mfaRequirement: string
                     Factor chooser
                 </div>
                 <div
-                    onClick={() => MultiFactorAuth.redirectToFactor("otp-phone", true, true, nav)}
+                    onClick={() =>
+                        MultiFactorAuth.redirectToFactor(MultiFactorAuth.FactorIds.OTP_PHONE, true, true, nav)
+                    }
                     className="sessionButton">
                     Add phone-based OTP
                 </div>
                 <div
-                    onClick={() => MultiFactorAuth.redirectToFactor("totp", true, true, nav)}
+                    onClick={() => MultiFactorAuth.redirectToFactor(MultiFactorAuth.FactorIds.TOTP, true, true, nav)}
                     className="sessionButton">
                     Add TOTP
                 </div>

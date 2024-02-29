@@ -40,7 +40,11 @@ export const SuperTokensConfig = {
                     return;
                 }
 
-                if (ctx.action === "GO_TO_FACTOR" && ctx.factorId === "otp-phone" && !ctx.forceSetup) {
+                if (
+                    ctx.action === "GO_TO_FACTOR" &&
+                    ctx.factorId === MultiFactorAuth.FactorIds.OTP_PHONE &&
+                    !ctx.forceSetup
+                ) {
                     return "/select-phone";
                 }
             },

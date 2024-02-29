@@ -5,7 +5,6 @@ import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./Home";
 import { PreBuiltUIList, SuperTokensConfig } from "./config";
-import { MultiFactorAuthClaim } from "supertokens-auth-react/recipe/multifactorauth";
 
 SuperTokens.init(SuperTokensConfig);
 

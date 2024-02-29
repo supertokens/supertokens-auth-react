@@ -6,7 +6,8 @@ import { verifySession } from "supertokens-node/recipe/session/framework/express
 import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
 import Passwordless from "supertokens-node/recipe/passwordless";
-import MultiFactorAuth from "supertokens-node/recipe/multifactorauth";
+import MultiFactorAuth, { FactorIds } from "supertokens-node/recipe/multifactorauth";
+import AccountLinking from "supertokens-node/recipe/accountlinking";
 import parsePhoneNumber from "libphonenumber-js/max";
 import Dashboard from "supertokens-node/recipe/dashboard";
 require("dotenv").config();
@@ -20,7 +21,7 @@ supertokens.init({
     framework: "express",
     supertokens: {
         // TODO: This is a core hosted for demo purposes. You can use this, but make sure to change it to your core instance URI eventually.
-        connectionURI: "http://localhost:3567",
+        connectionURI: "https://try.supertokens.com",
         apiKey: "<REQUIRED FOR MANAGED SERVICE, ELSE YOU CAN REMOVE THIS FIELD>",
     },
     appInfo: {
@@ -105,20 +106,6 @@ supertokens.init({
         Passwordless.init({
             contactMethod: "PHONE",
             flowType: "USER_INPUT_CODE",
-            override: {
-                apis: (oI) => ({
-                    ...oI,
-                    consumeCodePOST: async (input) => {
-                        const resp = await oI.consumeCodePOST!(input);
-                        if (resp.status === "OK") {
-                            // We can this here without any additional checks, since we know that this is only used as a secondary factor
-                            // with exactly this (phone + otp) config
-                            await MultiFactorAuth.addToRequiredSecondaryFactorsForUser(resp.user.id, "otp-phone");
-                        }
-                        return resp;
-                    },
-                }),
-            },
         }),
         Session.init(),
         MultiFactorAuth.init({
@@ -127,26 +114,40 @@ supertokens.init({
                 functions: (oI) => ({
                     ...oI,
                     getMFARequirementsForAuth(input) {
-                        if (!input.defaultRequiredFactorIdsForUser.includes("otp-phone")) {
-                            return ["otp-phone"];
+                        // By requiring
+                        if (!input.factorsSetUpForUser.includes(FactorIds.OTP_PHONE)) {
+                            return [FactorIds.OTP_PHONE];
                         }
                         return [];
                     },
                 }),
                 apis: (oI) => ({
                     ...oI,
-                    mfaInfoGET: async (input) => {
-                        const resp = await oI.mfaInfoGET(input);
+                    resyncSessionAndFetchMFAInfoPUT: async (input) => {
+                        const resp = await oI.resyncSessionAndFetchMFAInfoPUT!(input);
 
                         if (resp.status === "OK") {
-                            resp.phoneNumber = resp.email;
+                            resp.phoneNumbers = {
+                                [FactorIds.OTP_PHONE]: resp.emails[FactorIds.EMAILPASSWORD],
+                            };
                             // We want to remove "otp-email" and add "otp-phone", but it's simpler to just replace the array
-                            resp.factors.alreadySetup = ["otp-phone"];
+                            resp.factors.alreadySetup = [FactorIds.OTP_PHONE];
                         }
                         return resp;
                     },
                 }),
             },
+        }),
+        AccountLinking.init({
+            shouldDoAutomaticAccountLinking: async (_newAccountInfo, _user, session) =>
+                session
+                    ? {
+                          shouldAutomaticallyLink: true,
+                          shouldRequireVerification: false,
+                      }
+                    : {
+                          shouldAutomaticallyLink: false,
+                      },
         }),
         Dashboard.init(),
     ],

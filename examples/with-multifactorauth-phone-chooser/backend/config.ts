@@ -5,6 +5,7 @@ import UserMetadata from "supertokens-node/recipe/usermetadata";
 import EmailVerification from "supertokens-node/recipe/emailverification";
 import { TypeInput } from "supertokens-node/types";
 import MultiFactorAuth from "supertokens-node/recipe/multifactorauth";
+import AccountLinking from "supertokens-node/recipe/accountlinking";
 import Dashboard from "supertokens-node/recipe/dashboard";
 
 export function getApiDomain() {
@@ -20,10 +21,10 @@ export function getWebsiteDomain() {
 }
 
 export const SuperTokensConfig: TypeInput = {
+    // debug: true,
     supertokens: {
         // this is the location of the SuperTokens core.
-        // connectionURI: "https://try.supertokens.com",
-        connectionURI: "http://localhost:3567",
+        connectionURI: "https://try.supertokens.com",
     },
     appInfo: {
         appName: "SuperTokens Demo App",
@@ -42,9 +43,15 @@ export const SuperTokensConfig: TypeInput = {
             override: {
                 functions: (oI) => ({
                     ...oI,
-                    getMFARequirementsForAuth: async () => ["otp-phone"],
+                    getMFARequirementsForAuth: async () => [MultiFactorAuth.FactorIds.OTP_PHONE],
                 }),
             },
+        }),
+        AccountLinking.init({
+            shouldDoAutomaticAccountLinking: async () => ({
+                shouldAutomaticallyLink: true,
+                shouldRequireVerification: true,
+            }),
         }),
         ThirdPartyEmailPassword.init({
             providers: [

@@ -4,6 +4,7 @@ import Session from "supertokens-node/recipe/session";
 import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
 import EmailVerification from "supertokens-node/recipe/emailverification";
 import MultiFactorAuth from "supertokens-node/recipe/multifactorauth";
+import AccountLinking from "supertokens-node/recipe/accountlinking";
 import Passwordless from "supertokens-node/recipe/passwordless";
 import { middleware, errorHandler } from "supertokens-node/framework/express";
 import cors from "cors";
@@ -12,8 +13,6 @@ import Dashboard from "supertokens-node/recipe/dashboard";
 import dotenv from "dotenv";
 dotenv.config();
 
-let otpToTokenMapping = new Map<string, string>();
-
 const apiPort = 3001;
 const apiDomain = `http://localhost:${apiPort}`;
 const websitePort = 3000;
@@ -21,6 +20,7 @@ const websiteDomain = `http://localhost:${websitePort}`;
 
 supertokens.init({
     framework: "express",
+    // debug: true,
     supertokens: {
         // TODO: This is a core hosted for demo purposes. You can use this, but make sure to change it to your core instance URI eventually.
         connectionURI: "https://try.supertokens.com",
@@ -41,9 +41,20 @@ supertokens.init({
             override: {
                 functions: (oI) => ({
                     ...oI,
-                    getMFARequirementsForAuth: async () => ["otp-email"],
+                    getMFARequirementsForAuth: async ({ user }) => (user.loginMethods[0].verified ? [] : ["otp-email"]),
                 }),
             },
+        }),
+        AccountLinking.init({
+            shouldDoAutomaticAccountLinking: async (_newAccountInfo, _user, session) =>
+                session
+                    ? {
+                          shouldAutomaticallyLink: true,
+                          shouldRequireVerification: false,
+                      }
+                    : {
+                          shouldAutomaticallyLink: false,
+                      },
         }),
         Passwordless.init({
             contactMethod: "EMAIL",
@@ -91,10 +102,6 @@ app.use(
         credentials: true,
     })
 );
-
-app.get("/test/otps", (req, res) => {
-    res.json({ otps: Array.from(otpToTokenMapping.keys()) });
-});
 
 app.use(middleware());
 

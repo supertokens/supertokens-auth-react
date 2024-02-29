@@ -4,7 +4,8 @@ import Passwordless from "supertokens-node/recipe/passwordless";
 import UserMetadata from "supertokens-node/recipe/usermetadata";
 import EmailVerification from "supertokens-node/recipe/emailverification";
 import { TypeInput } from "supertokens-node/types";
-import MultiFactorAuth from "supertokens-node/recipe/multifactorauth";
+import MultiFactorAuth, { FactorIds } from "supertokens-node/recipe/multifactorauth";
+import AccountLinking from "supertokens-node/recipe/accountlinking";
 import TOTP from "supertokens-node/recipe/totp";
 import Dashboard from "supertokens-node/recipe/dashboard";
 
@@ -22,9 +23,9 @@ export function getWebsiteDomain() {
 
 export const SuperTokensConfig: TypeInput = {
     supertokens: {
-        // this is the location of the SuperTokens core.
-        // connectionURI: "https://try.supertokens.com",
-        connectionURI: "http://localhost:3567",
+        // TODO: This is a core hosted for demo purposes. You can use this, but make sure to change it to your core instance URI eventually.
+        connectionURI: "https://try.supertokens.com",
+        apiKey: "<REQUIRED FOR MANAGED SERVICE, ELSE YOU CAN REMOVE THIS FIELD>",
     },
     appInfo: {
         appName: "SuperTokens Demo App",
@@ -47,23 +48,24 @@ export const SuperTokensConfig: TypeInput = {
                     getMFARequirementsForAuth: async (input) => {
                         const userData = await UserMetadata.getUserMetadata(input.user.id);
                         if (userData.metadata.enable3FA) {
-                            let secondaryFactors = ["otp-email", "otp-phone", "totp"];
-                            let remainingFactors = secondaryFactors.filter((factor) => !input.completedFactors[factor]);
-                            if (secondaryFactors.length - remainingFactors.length < 2) {
-                                return [{ oneOf: remainingFactors }];
-                            } else {
-                                return [];
-                            }
+                            // We could choose conditions here based on completed factors, but this way we can avoid sending
+                            // unnecessary text messages
+                            return [FactorIds.TOTP, { oneOf: [FactorIds.OTP_PHONE, FactorIds.OTP_EMAIL] }];
                         }
 
                         if (userData.metadata.enable2FA) {
-                            // We can't directly return input.factorsSetUpForUser because that also contains the first factors
-                            return [{ oneOf: ["otp-email", "otp-phone", "totp"] }];
+                            return [{ oneOf: [FactorIds.OTP_PHONE, FactorIds.OTP_EMAIL, FactorIds.TOTP] }];
                         }
                         return [];
                     },
                 }),
             },
+        }),
+        AccountLinking.init({
+            shouldDoAutomaticAccountLinking: async () => ({
+                shouldAutomaticallyLink: true,
+                shouldRequireVerification: true,
+            }),
         }),
         ThirdPartyEmailPassword.init({
             providers: [

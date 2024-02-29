@@ -22,9 +22,9 @@ export function getWebsiteDomain() {
 
 export const SuperTokensConfig: TypeInput = {
     supertokens: {
-        // this is the location of the SuperTokens core.
-        // connectionURI: "https://try.supertokens.com",
-        connectionURI: "http://localhost:3567",
+        // TODO: This is a core hosted for demo purposes. You can use this, but make sure to change it to your core instance URI eventually.
+        connectionURI: "https://try.supertokens.com",
+        apiKey: "<REQUIRED FOR MANAGED SERVICE, ELSE YOU CAN REMOVE THIS FIELD>",
     },
     appInfo: {
         appName: "SuperTokens Demo App",
@@ -43,7 +43,7 @@ export const SuperTokensConfig: TypeInput = {
                 apis: (oI) => ({
                     ...oI,
                     verifyDevicePOST: async (input) => {
-                        const resp = await oI.verifyDevicePOST(input);
+                        const resp = await oI.verifyDevicePOST!(input);
                         if (resp.status === "OK") {
                             const payload = input.session.getAccessTokenPayload();
                             const recoveryCodeHash = payload.recoveryCodeHash;
@@ -65,18 +65,22 @@ export const SuperTokensConfig: TypeInput = {
                 functions: (oI) => ({
                     ...oI,
                     getMFARequirementsForAuth: async () => ["totp"],
-                    isAllowedToSetupFactor: async (input) => {
-                        const resp = await oI.isAllowedToSetupFactor(input);
-
-                        if (resp) {
-                            return resp;
+                    assertAllowedToSetupFactorElseThrowInvalidClaimError: async (input) => {
+                        try {
+                            await oI.assertAllowedToSetupFactorElseThrowInvalidClaimError(input);
+                        } catch {
+                            const payload = input.session.getAccessTokenPayload();
+                            const recoveryCodeHash = payload.recoveryCodeHash;
+                            const userId = input.session.getUserId();
+                            const { metadata } = await UserMetadata.getUserMetadata(userId);
+                            if (metadata.recoveryCodeHash !== recoveryCodeHash) {
+                                throw new Session.Error({
+                                    type: "INVALID_CLAIMS",
+                                    message: "recovery hash error",
+                                    payload: [],
+                                });
+                            }
                         }
-
-                        const payload = input.session.getAccessTokenPayload();
-                        const recoveryCodeHash = payload.recoveryCodeHash;
-                        const userId = input.session.getUserId();
-                        const { metadata } = await UserMetadata.getUserMetadata(userId);
-                        return metadata.recoveryCodeHash === recoveryCodeHash;
                     },
                 }),
             },

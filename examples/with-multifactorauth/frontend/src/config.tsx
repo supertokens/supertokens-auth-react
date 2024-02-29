@@ -1,4 +1,4 @@
-import ThirdPartyEmailPassword, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import ThirdPartyEmailPassword, { Google, Github } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";

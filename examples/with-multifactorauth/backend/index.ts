@@ -4,11 +4,8 @@ import supertokens, { getUser, listUsersByAccountInfo } from "supertokens-node";
 import { verifySession } from "supertokens-node/recipe/session/framework/express";
 import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
 import { getWebsiteDomain, SuperTokensConfig } from "./config";
-import EmailVerification from "supertokens-node/recipe/emailverification";
-import AccountLinking from "supertokens-node/recipe/accountlinking";
 import Session from "supertokens-node/recipe/session";
-import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
-import { MultiFactorAuthClaim } from "supertokens-node/recipe/multifactorauth";
+import { FactorIds, MultiFactorAuthClaim } from "supertokens-node/recipe/multifactorauth";
 import { getUserMetadata, updateUserMetadata } from "supertokens-node/recipe/usermetadata";
 
 supertokens.init(SuperTokensConfig);
@@ -43,7 +40,9 @@ app.get(
     verifySession({
         overrideGlobalClaimValidators: (gv) => [
             ...gv,
-            MultiFactorAuthClaim.validators.hasCompletedFactors([{ oneOf: ["otp-phone", "otp-email", "totp"] }]),
+            MultiFactorAuthClaim.validators.hasCompletedRequirementList([
+                { oneOf: [FactorIds.OTP_PHONE, FactorIds.OTP_EMAIL, FactorIds.TOTP] },
+            ]),
         ],
     }),
     async (req: SessionRequest, res) => {
@@ -61,7 +60,10 @@ app.get(
     verifySession({
         overrideGlobalClaimValidators: (gv) => [
             ...gv,
-            MultiFactorAuthClaim.validators.hasCompletedFactors(["totp", { oneOf: ["otp-phone", "otp-email"] }]),
+            MultiFactorAuthClaim.validators.hasCompletedRequirementList([
+                FactorIds.TOTP,
+                { oneOf: [FactorIds.OTP_PHONE, FactorIds.OTP_EMAIL] },
+            ]),
         ],
     }),
     async (req: SessionRequest, res) => {

@@ -32,7 +32,7 @@ export const useAsyncCall = <T>(
         );
 
         return () => abort.abort();
-    }, [handler, errorHandler, key]);
+    }, [handler, func, errorHandler, key]);
 
     return () => setKey(Date.now());
 };

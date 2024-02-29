@@ -16,10 +16,10 @@ export default function SelectPhone() {
             if (res.status === 200) {
                 const loadedInfo = await res.clone().json();
                 if (loadedInfo.user.phoneNumbers.length === 0) {
-                    await MultiFactorAuth.redirectToFactor("otp-phone", true, false, nav);
+                    await MultiFactorAuth.redirectToFactor(MultiFactorAuth.FactorIds.OTP_PHONE, true, false, nav);
                 } else if (loadedInfo.user.phoneNumbers.length === 1) {
                     await Passwordless.createCode({ phoneNumber: loadedInfo.user.phoneNumbers[0] });
-                    await MultiFactorAuth.redirectToFactor("otp-phone", false, false, nav);
+                    await MultiFactorAuth.redirectToFactor(MultiFactorAuth.FactorIds.OTP_PHONE, false, false, nav);
                 } else {
                     setUserInfo(loadedInfo);
                 }
@@ -65,7 +65,12 @@ export default function SelectPhone() {
                                                 hasOtherPhoneNumbers: true,
                                             },
                                         });
-                                        return MultiFactorAuth.redirectToFactor("otp-phone", false, false, nav);
+                                        return MultiFactorAuth.redirectToFactor(
+                                            MultiFactorAuth.FactorIds.OTP_PHONE,
+                                            false,
+                                            false,
+                                            nav
+                                        );
                                     }
                                 })
                                 .catch(setError);

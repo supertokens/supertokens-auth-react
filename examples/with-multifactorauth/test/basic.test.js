@@ -43,7 +43,7 @@ const websiteDomain = "http://localhost:3000";
 SuperTokensNode.init({
     supertokens: {
         // We are running these tests without running a local ST instance
-        connectionURI: "http://localhost:3567",
+        connectionURI: "https://try.supertokens.com",
     },
     appInfo: {
         // These largely shouldn't matter except for creating links which we can change anyway
