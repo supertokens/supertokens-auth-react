@@ -8,6 +8,7 @@ import { PreBuiltUIList, SuperTokensConfig } from "./config";
 import { MultiFactorAuthClaim } from "supertokens-auth-react/recipe/multifactorauth";
 import RecoveryCode from "./RecoveryCode";
 import { TOTPComponentsOverrideProvider } from "supertokens-auth-react/recipe/totp";
+import CreateRecoveryCode from "./CreateRecoveryCode";
 
 SuperTokens.init(SuperTokensConfig);
 
@@ -58,13 +59,24 @@ function App() {
                                     }
                                 />
                                 <Route
+                                    path="/create-recovery-code"
+                                    element={
+                                        /* This protects the "/" route so that it shows
+                                  <Home /> only if the user is logged in.
+                                  Else it redirects the user to "/auth" */
+                                        <SessionAuth key={"2fa"} overrideGlobalClaimValidators={() => []}>
+                                            <CreateRecoveryCode />
+                                        </SessionAuth>
+                                    }
+                                />
+                                <Route
                                     path="/"
                                     element={
                                         /* This protects the "/" route so that it shows
                                   <Home /> only if the user is logged in.
                                   Else it redirects the user to "/auth" */
                                         <SessionAuth>
-                                            <Home mfaRequirements="no MFA" />
+                                            <Home />
                                         </SessionAuth>
                                     }
                                 />

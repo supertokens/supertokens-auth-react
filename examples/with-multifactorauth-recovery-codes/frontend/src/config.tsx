@@ -9,6 +9,8 @@ import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
 import { MultiFactorAuthPreBuiltUI } from "supertokens-auth-react/recipe/multifactorauth/prebuiltui";
 import TOTP from "supertokens-auth-react/recipe/totp";
 import { TOTPPreBuiltUI } from "supertokens-auth-react/recipe/totp/prebuiltui";
+import SuperTokens from "supertokens-auth-react";
+import { RecoveryCodeExistsClaim } from "./recoveryCodeExistsClaim";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -38,30 +40,25 @@ export const SuperTokensConfig = {
         TOTP.init(),
         ThirdPartyEmailPassword.init({
             signInAndUpFeature: {
-                providers: [
-                    Github.init({
-                        getRedirectURL: (id) => {
-                            if (window.location.pathname.startsWith("/link")) {
-                                return `${getWebsiteDomain()}/link/tpcallback/${id}`;
-                            }
-                            return `${getWebsiteDomain()}/auth/callback/${id}`;
-                        },
-                    }),
-                    Google.init({
-                        getRedirectURL: (id) => {
-                            if (window.location.pathname.startsWith("/link")) {
-                                return `${getWebsiteDomain()}/link/tpcallback/${id}`;
-                            }
-                            return `${getWebsiteDomain()}/auth/callback/${id}`;
-                        },
-                    }),
-                ],
+                providers: [Github.init(), Google.init()],
             },
         }),
         Passwordless.init({
             contactMethod: "EMAIL_OR_PHONE",
         }),
-        Session.init(),
+        Session.init({
+            override: {
+                functions: (oI) => ({
+                    ...oI,
+                    getGlobalClaimValidators: (input) => {
+                        return [
+                            ...input.claimValidatorsAddedByOtherRecipes,
+                            RecoveryCodeExistsClaim.validators.isTrue(),
+                        ];
+                    },
+                }),
+            },
+        }),
     ],
 };
 

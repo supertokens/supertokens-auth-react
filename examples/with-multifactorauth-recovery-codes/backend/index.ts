@@ -7,6 +7,7 @@ import { middleware, errorHandler, SessionRequest } from "supertokens-node/frame
 import { getWebsiteDomain, SuperTokensConfig } from "./config";
 import Session from "supertokens-node/recipe/session";
 import { getUserMetadata, updateUserMetadata } from "supertokens-node/recipe/usermetadata";
+import { RecoveryCodeExistsClaim } from "./recoveryCodeExistsClaim";
 
 supertokens.init(SuperTokensConfig);
 
@@ -57,6 +58,7 @@ app.post("/createRecoveryCode", verifySession(), async (req: SessionRequest, res
     const updateRes = await updateUserMetadata(session.getUserId(), {
         recoveryCodeHash: hash(recoveryCode),
     });
+    await session.setClaimValue(RecoveryCodeExistsClaim, true);
 
     return res.json({ status: updateRes.status, recoveryCode });
 });

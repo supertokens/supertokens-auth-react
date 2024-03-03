@@ -7,6 +7,7 @@ import { TypeInput } from "supertokens-node/types";
 import MultiFactorAuth from "supertokens-node/recipe/multifactorauth";
 import TOTP from "supertokens-node/recipe/totp";
 import Dashboard from "supertokens-node/recipe/dashboard";
+import { RecoveryCodeExistsClaim } from "./recoveryCodeExistsClaim";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -48,8 +49,11 @@ export const SuperTokensConfig: TypeInput = {
                             const payload = input.session.getAccessTokenPayload();
                             const recoveryCodeHash = payload.recoveryCodeHash;
                             if (recoveryCodeHash) {
-                                // await input.session.mergeIntoAccessTokenPayload({ recoveryCodeHash: null });
                                 await UserMetadata.updateUserMetadata(input.session.getUserId(), {
+                                    recoveryCodeHash: null,
+                                });
+                                await input.session.setClaimValue(RecoveryCodeExistsClaim, false);
+                                await input.session.mergeIntoAccessTokenPayload({
                                     recoveryCodeHash: null,
                                 });
                             }
@@ -113,7 +117,27 @@ export const SuperTokensConfig: TypeInput = {
                 },
             ],
         }),
-        Session.init(),
+        Session.init({
+            override: {
+                functions: (oI) => ({
+                    ...oI,
+                    createNewSession: async function (input) {
+                        input.accessTokenPayload = {
+                            ...input.accessTokenPayload,
+                            ...(await RecoveryCodeExistsClaim.build(
+                                input.userId,
+                                input.recipeUserId,
+                                input.tenantId,
+                                input.accessTokenPayload,
+                                input.userContext
+                            )),
+                        };
+
+                        return oI.createNewSession(input);
+                    },
+                }),
+            },
+        }),
         Dashboard.init(),
     ],
 };
