@@ -37,7 +37,7 @@ export const SuperTokensConfig: TypeInput = {
             mode: "REQUIRED",
         }),
         AccountLinking.init({
-            shouldDoAutomaticAccountLinking: async (newAccountInfo, user, _tenantId, context) => {
+            shouldDoAutomaticAccountLinking: async (newAccountInfo, user, _session, _tenantId, context) => {
                 if (context.doNotLink === true) {
                     return {
                         shouldAutomaticallyLink: false,

@@ -135,7 +135,11 @@ export const LinkingPage: React.FC = () => {
                 </form>
             )}
             {thirdPartyLoginMethod?.length === 0 && (
-                <form>
+                <form
+                    onSubmit={(ev) => {
+                        ev.preventDefault();
+                        return false;
+                    }}>
                     <button onClick={() => redirectToThirdPartyLogin({ thirdPartyId: "google" })}>
                         Add Google account
                     </button>
