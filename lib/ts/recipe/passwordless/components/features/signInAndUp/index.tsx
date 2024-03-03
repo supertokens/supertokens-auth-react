@@ -29,8 +29,12 @@ import {
     getRedirectToPathFromURL,
     useRethrowInRender,
 } from "../../../../../utils";
+import { EmailVerificationClaim } from "../../../../emailverification";
+import EmailVerification from "../../../../emailverification/recipe";
 import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
+import { getInvalidClaimsFromResponse } from "../../../../session";
 import SessionRecipe from "../../../../session/recipe";
+import Session from "../../../../session/recipe";
 import useSessionContext from "../../../../session/useSessionContext";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import { getEnabledContactMethods } from "../../../utils";
@@ -186,6 +190,7 @@ export function useChildProps(
             return undefined;
         }
         return {
+            userContext,
             onSuccess: async (result: { createdNewRecipeUser: boolean; user: User }) => {
                 const payloadAfterSuccess = await SessionRecipe.getInstanceOrThrow().getAccessTokenPayloadSecurely({
                     userContext,
@@ -208,6 +213,28 @@ export function useChildProps(
                         navigate
                     )
                     .catch(rethrowInRender);
+            },
+            onFetchError: async (err: Response) => {
+                if (err.status === Session.getInstanceOrThrow().config.invalidClaimStatusCode) {
+                    const invalidClaims = await getInvalidClaimsFromResponse({ response: err, userContext });
+                    if (invalidClaims.some((i) => i.validatorId === EmailVerificationClaim.id)) {
+                        try {
+                            // it's OK if this throws,
+                            const evInstance = EmailVerification.getInstanceOrThrow();
+                            await evInstance.redirect(
+                                {
+                                    action: "VERIFY_EMAIL",
+                                },
+                                navigate,
+                                undefined,
+                                userContext
+                            );
+                            return;
+                        } catch {
+                            // If we couldn't redirect to EV we fall back to showing the something went wrong error
+                        }
+                    }
+                }
             },
             recipeImplementation: recipeImplementation,
             config: recipe.config,

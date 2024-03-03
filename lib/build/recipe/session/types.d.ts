@@ -17,6 +17,7 @@ export declare type InputType = WebJSInputType & {
     onHandleEvent?: (event: RecipeEventWithSessionContext) => void;
 };
 export declare type NormalisedSessionConfig = NormalisedConfig<unknown, any, any> & {
+    invalidClaimStatusCode: number;
     useShadowDom: boolean;
     accessDeniedScreen: NormalisedBaseConfig;
     override: {

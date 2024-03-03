@@ -211,11 +211,14 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
             try {
                 let result;
                 let generalError: STGeneralError | undefined;
+                let fetchError: Response | undefined;
                 try {
                     result = await props.callAPI(apiFields, (id, value) => fieldUpdates.push({ id, value }));
                 } catch (e) {
                     if (STGeneralError.isThisError(e)) {
                         generalError = e;
+                    } else if (e instanceof Response) {
+                        fetchError = e;
                     } else {
                         throw e;
                     }
@@ -234,6 +237,12 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
 
                 if (generalError !== undefined) {
                     props.onError(generalError.message);
+                } else if (fetchError !== undefined) {
+                    if (props.onFetchError) {
+                        props.onFetchError(fetchError);
+                    } else {
+                        throw fetchError;
+                    }
                 } else {
                     // If successful
                     if (result.status === "OK") {

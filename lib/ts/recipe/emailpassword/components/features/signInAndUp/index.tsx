@@ -26,6 +26,9 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, getRedirectToPathFromURL, useRethrowInRender } from "../../../../../utils";
+import { EmailVerificationClaim } from "../../../../emailverification";
+import EmailVerification from "../../../../emailverification/recipe";
+import { getInvalidClaimsFromResponse } from "../../../../session";
 import Session from "../../../../session/recipe";
 import useSessionContext from "../../../../session/useSessionContext";
 import SignInAndUpTheme from "../../themes/signInAndUp";
@@ -182,6 +185,28 @@ export function useChildProps(
             error: state.error,
             clearError: () => dispatch({ type: "setError", error: undefined }),
             onError: (error: string) => dispatch({ type: "setError", error }),
+            onFetchError: async (err: Response) => {
+                if (err.status === Session.getInstanceOrThrow().config.invalidClaimStatusCode) {
+                    const invalidClaims = await getInvalidClaimsFromResponse({ response: err, userContext });
+                    if (invalidClaims.some((i) => i.validatorId === EmailVerificationClaim.id)) {
+                        try {
+                            // it's OK if this throws,
+                            const evInstance = EmailVerification.getInstanceOrThrow();
+                            await evInstance.redirect(
+                                {
+                                    action: "VERIFY_EMAIL",
+                                },
+                                navigate,
+                                undefined,
+                                userContext
+                            );
+                            return;
+                        } catch {
+                            // If we couldn't redirect to EV we fall back to showing the something went wrong error
+                        }
+                    }
+                }
+            },
             onSuccess: onSignInSuccess,
             forgotPasswordClick: () => recipe.redirect({ action: "RESET_PASSWORD" }, navigate, undefined, userContext),
         };
@@ -194,6 +219,28 @@ export function useChildProps(
             error: state.error,
             clearError: () => dispatch({ type: "setError", error: undefined }),
             onError: (error: string) => dispatch({ type: "setError", error }),
+            onFetchError: async (err: Response) => {
+                if (err.status === Session.getInstanceOrThrow().config.invalidClaimStatusCode) {
+                    const invalidClaims = await getInvalidClaimsFromResponse({ response: err, userContext });
+                    if (invalidClaims.some((i) => i.validatorId === EmailVerificationClaim.id)) {
+                        try {
+                            // it's OK if this throws,
+                            const evInstance = EmailVerification.getInstanceOrThrow();
+                            await evInstance.redirect(
+                                {
+                                    action: "VERIFY_EMAIL",
+                                },
+                                navigate,
+                                undefined,
+                                userContext
+                            );
+                            return;
+                        } catch {
+                            // If we couldn't redirect to EV we fall back to showing the something went wrong error
+                        }
+                    }
+                }
+            },
             onSuccess: onSignUpSuccess,
         };
 

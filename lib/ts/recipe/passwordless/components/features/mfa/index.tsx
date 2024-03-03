@@ -31,10 +31,15 @@ import {
     useOnMountAPICall,
     useRethrowInRender,
 } from "../../../../../utils";
+import { EmailVerificationClaim } from "../../../../emailverification";
+import EmailVerificationRecipe from "../../../../emailverification/recipe";
+import EmailVerification from "../../../../emailverification/recipe";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
 import { FactorIds } from "../../../../multifactorauth/types";
 import { getAvailableFactors } from "../../../../multifactorauth/utils";
+import { getInvalidClaimsFromResponse } from "../../../../session";
 import SessionRecipe from "../../../../session/recipe";
+import Session from "../../../../session/recipe";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import MFAThemeWrapper from "../../themes/mfa";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
@@ -163,6 +168,28 @@ export function useChildProps(
                 // If we reach this code this means we are using react-router-dom v6
                 return navigate(-1);
             },
+            onFetchError: async (err: Response) => {
+                if (err.status === Session.getInstanceOrThrow().config.invalidClaimStatusCode) {
+                    const invalidClaims = await getInvalidClaimsFromResponse({ response: err, userContext });
+                    if (invalidClaims.some((i) => i.validatorId === EmailVerificationClaim.id)) {
+                        try {
+                            // it's OK if this throws,
+                            const evInstance = EmailVerification.getInstanceOrThrow();
+                            await evInstance.redirect(
+                                {
+                                    action: "VERIFY_EMAIL",
+                                },
+                                navigate,
+                                undefined,
+                                userContext
+                            );
+                            return;
+                        } catch {
+                            // If we couldn't redirect to EV we fall back to showing the something went wrong error
+                        }
+                    }
+                }
+            },
             recipeImplementation: recipeImplementation,
             config: recipe.config,
             contactMethod,
@@ -245,7 +272,7 @@ export default MFAFeature;
 
 function useOnLoad(
     props: React.PropsWithChildren<
-        { history?: any } & { children?: React.ReactNode } & {
+        { navigate?: Navigate } & { children?: React.ReactNode } & {
             contactMethod: "PHONE" | "EMAIL";
             flowType: PasswordlessFlowType;
             recipe: Recipe;
@@ -327,6 +354,30 @@ function useOnLoad(
                             userContext,
                         });
                     } catch (err) {
+                        if (
+                            err instanceof Response &&
+                            err.status === SessionRecipe.getInstanceOrThrow().config.invalidClaimStatusCode
+                        ) {
+                            const invalidClaims = await getInvalidClaimsFromResponse({ response: err, userContext });
+                            if (invalidClaims.some((i) => i.validatorId === EmailVerificationClaim.id)) {
+                                try {
+                                    // it's OK if this throws,
+                                    const evInstance = EmailVerificationRecipe.getInstanceOrThrow();
+                                    await evInstance.redirect(
+                                        {
+                                            action: "VERIFY_EMAIL",
+                                        },
+                                        props.navigate,
+                                        undefined,
+                                        userContext
+                                    );
+                                    return;
+                                } catch {
+                                    // If we couldn't redirect to EV we fall back to showing the something went wrong error
+                                }
+                            }
+                        }
+                        // If it isn't a 403 or if it is not an EV claim error, we show the error
                         dispatch({
                             type: "setError",
                             showAccessDenied: true,

@@ -33,6 +33,7 @@ export type InputType = WebJSInputType & {
 };
 
 export type NormalisedSessionConfig = NormalisedConfig<unknown, any, any> & {
+    invalidClaimStatusCode: number;
     useShadowDom: boolean;
     accessDeniedScreen: NormalisedBaseConfig;
     override: {

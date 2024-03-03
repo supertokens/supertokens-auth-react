@@ -198,6 +198,7 @@ export type MFAProps = {
     onBackButtonClicked: () => void;
     onSignOutClicked: () => void;
     onSuccess?: () => void;
+    onFetchError: (err: Response) => void;
     dispatch: Dispatch<MFAAction>;
     featureState: {
         canChangeEmail: boolean;
@@ -214,12 +215,13 @@ export type SignInUpProps = {
     config: NormalisedConfig;
     onSuccess?: (result: { createdNewRecipeUser: boolean; user: User }) => void;
     dispatch: Dispatch<PasswordlessSignInUpAction>;
+    onFetchError: (err: Response) => void;
     featureState: {
         loginAttemptInfo?: LoginAttemptInfo;
         loaded: boolean;
         error: string | undefined;
     };
-    userContext?: UserContext;
+    userContext: UserContext;
 };
 export type LoginAttemptInfo = {
     deviceId: string;
@@ -250,6 +252,7 @@ export type RecipeImplementation = WebJSRecipeInterface<typeof WebJSRecipe>;
 export type SignInUpEmailFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
+    onFetchError: (error: Response) => void;
     error: string | undefined;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
@@ -259,6 +262,7 @@ export type SignInUpEmailFormProps = {
 export type SignInUpPhoneFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
+    onFetchError: (error: Response) => void;
     error: string | undefined;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
@@ -268,6 +272,7 @@ export type SignInUpPhoneFormProps = {
 export type SignInUpEmailOrPhoneFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
+    onFetchError: (error: Response) => void;
     error: string | undefined;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
@@ -277,6 +282,7 @@ export type SignInUpEmailOrPhoneFormProps = {
 export type SignInUpUserInputCodeFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
+    onFetchError: (error: Response) => void;
     error: string | undefined;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;

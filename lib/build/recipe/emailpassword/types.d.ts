@@ -120,6 +120,7 @@ declare type NonSignUpFormThemeBaseProps = ThemeBaseProps & {
 export declare type SignInThemeProps = NonSignUpFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
+    onFetchError: (error: Response) => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
     signUpClicked?: () => void;
@@ -129,6 +130,7 @@ export declare type SignInThemeProps = NonSignUpFormThemeBaseProps & {
 export declare type SignUpThemeProps = ThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
+    onFetchError: (error: Response) => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
     signInClicked?: () => void;
@@ -224,6 +226,7 @@ export declare type FormBaseProps<T> = {
     validateOnBlur?: boolean;
     clearError: () => void;
     onError: (error: string) => void;
+    onFetchError?: (err: Response) => void;
     onSuccess?: (
         result: T & {
             status: "OK";

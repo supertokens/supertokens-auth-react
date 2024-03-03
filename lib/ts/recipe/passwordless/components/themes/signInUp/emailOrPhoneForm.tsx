@@ -54,6 +54,7 @@ export const EmailOrPhoneForm = withOverride(
         return (
             <FormBase
                 clearError={props.clearError}
+                onFetchError={props.onFetchError}
                 onError={props.onError}
                 formFields={[
                     {

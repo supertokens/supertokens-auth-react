@@ -23,6 +23,9 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import { useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
+import { EmailVerificationClaim } from "../../../../emailverification";
+import EmailVerification from "../../../../emailverification/recipe";
+import { getInvalidClaimsFromResponse } from "../../../../session";
 import Session from "../../../../session/recipe";
 import useSessionContext from "../../../../session/useSessionContext";
 import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
@@ -110,7 +113,28 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
     );
 
     const handleError = useCallback(
-        (err) => {
+        async (err) => {
+            if (err instanceof Response && err.status === Session.getInstanceOrThrow().config.invalidClaimStatusCode) {
+                const invalidClaims = await getInvalidClaimsFromResponse({ response: err, userContext });
+                if (invalidClaims.some((i) => i.validatorId === EmailVerificationClaim.id)) {
+                    try {
+                        // it's OK if this throws,
+                        const evInstance = EmailVerification.getInstanceOrThrow();
+                        await evInstance.redirect(
+                            {
+                                action: "VERIFY_EMAIL",
+                            },
+                            props.navigate,
+                            undefined,
+                            userContext
+                        );
+                        return;
+                    } catch {
+                        // If we couldn't redirect to EV we fall back to showing the something went wrong error
+                    }
+                }
+            }
+
             if (STGeneralError.isThisError(err)) {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
                     navigate: props.navigate,

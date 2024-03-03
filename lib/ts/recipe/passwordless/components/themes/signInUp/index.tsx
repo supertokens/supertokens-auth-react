@@ -57,6 +57,7 @@ const SignInUpTheme: React.FC<SignInUpProps & { activeScreen: SignInUpScreens }>
         config: props.config,
         clearError: () => props.dispatch({ type: "setError", error: undefined }),
         onError: (error: string) => props.dispatch({ type: "setError", error }),
+        onFetchError: props.onFetchError,
         error: featureState.error,
     };
 

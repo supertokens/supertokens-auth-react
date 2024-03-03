@@ -6,6 +6,7 @@ export declare const SignInForm: import("react").ComponentType<
     } & {
         recipeImplementation: import("supertokens-web-js/recipe/emailpassword").RecipeInterface;
         clearError: () => void;
+        onFetchError: (error: Response) => void;
         onError: (error: string) => void;
         config: import("../../../types").NormalisedConfig;
         signUpClicked?: (() => void) | undefined;

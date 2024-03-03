@@ -2,7 +2,7 @@
 import { RecipeInterface } from "supertokens-web-js/recipe/multifactorauth";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { UserInput, FactorIds } from "./types";
-import type { UserContext } from "../../types";
+import type { Navigate, UserContext } from "../../types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/multifactorauth";
 import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/types";
 export default class Wrapper {
@@ -38,13 +38,13 @@ export default class Wrapper {
         factorId: string,
         forceSetup?: boolean,
         redirectBack?: boolean,
-        history?: any,
+        navigate?: Navigate,
         userContext?: UserContext
     ): Promise<void>;
     static redirectToFactorChooser(
         redirectBack?: boolean,
         nextFactorOptions?: string[],
-        history?: any,
+        navigate?: Navigate,
         userContext?: UserContext
     ): Promise<void>;
     static ComponentsOverrideProvider: import("react").FC<

@@ -97,6 +97,7 @@ export const UserInputCodeForm = withOverride(
 
                 <FormBase
                     clearError={props.clearError}
+                    onFetchError={props.onFetchError}
                     onError={props.onError}
                     formFields={[
                         {

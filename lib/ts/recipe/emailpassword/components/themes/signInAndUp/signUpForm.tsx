@@ -43,6 +43,7 @@ export const SignUpForm = withOverride(
                 formFields={props.formFields}
                 clearError={props.clearError}
                 onError={props.onError}
+                onFetchError={props.onFetchError}
                 buttonLabel={"EMAIL_PASSWORD_SIGN_UP_SUBMIT_BTN"}
                 onSuccess={props.onSuccess}
                 callAPI={async (formFields) => {

@@ -238,6 +238,7 @@ type NonSignUpFormThemeBaseProps = ThemeBaseProps & {
 export type SignInThemeProps = NonSignUpFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
+    onFetchError: (error: Response) => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
     signUpClicked?: () => void;
@@ -248,6 +249,7 @@ export type SignInThemeProps = NonSignUpFormThemeBaseProps & {
 export type SignUpThemeProps = ThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
+    onFetchError: (error: Response) => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
     signInClicked?: () => void;
@@ -403,6 +405,7 @@ export type FormBaseProps<T> = {
 
     clearError: () => void;
     onError: (error: string) => void;
+    onFetchError?: (err: Response) => void;
     onSuccess?: (result: T & { status: "OK" }) => void;
 
     callAPI: (fields: APIFormField[], setValue: (id: string, value: string) => void) => Promise<FormBaseAPIResponse<T>>;

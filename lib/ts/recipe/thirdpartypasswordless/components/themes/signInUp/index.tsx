@@ -206,6 +206,7 @@ function getCommonPwlessProps(
         config: childProps.config,
         clearError: () => props.pwlessDispatch({ type: "setError", error: undefined }),
         onError: (error: string) => props.pwlessDispatch({ type: "setError", error }),
+        onFetchError: childProps.onFetchError,
         error: props.pwlessState.error,
     };
 }
