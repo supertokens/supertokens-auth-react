@@ -49,27 +49,9 @@ export const SuperTokensConfig = {
                 }
             },
         }),
-        TOTP.init(),
         ThirdPartyEmailPassword.init({
             signInAndUpFeature: {
-                providers: [
-                    Github.init({
-                        getRedirectURL: (id) => {
-                            if (window.location.pathname.startsWith("/link")) {
-                                return `${getWebsiteDomain()}/link/tpcallback/${id}`;
-                            }
-                            return `${getWebsiteDomain()}/auth/callback/${id}`;
-                        },
-                    }),
-                    Google.init({
-                        getRedirectURL: (id) => {
-                            if (window.location.pathname.startsWith("/link")) {
-                                return `${getWebsiteDomain()}/link/tpcallback/${id}`;
-                            }
-                            return `${getWebsiteDomain()}/auth/callback/${id}`;
-                        },
-                    }),
-                ],
+                providers: [Github.init(), Google.init()],
             },
         }),
         Passwordless.init({
@@ -88,5 +70,4 @@ export const PreBuiltUIList = [
     PasswordlessPreBuiltUI,
     EmailVerificationPreBuiltUI,
     MultiFactorAuthPreBuiltUI,
-    TOTPPreBuiltUI,
 ];

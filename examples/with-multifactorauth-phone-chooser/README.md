@@ -1,6 +1,6 @@
 ![SuperTokens banner](https://raw.githubusercontent.com/supertokens/supertokens-logo/master/images/Artboard%20%E2%80%93%2027%402x.png)
 
-# SuperTokens Google one tap Demo app
+# SuperTokens Multi-factor Auth with multiple phone numbers
 
 This demo app demonstrates the following use cases:
 
@@ -8,7 +8,7 @@ This demo app demonstrates the following use cases:
 -   Email Password Login / Sign-up
 -   Logout
 -   Session management & Calling APIs
--   Account linking
+-   MFA with multiple phone numbers
 
 ## Project setup
 
@@ -16,7 +16,7 @@ Clone the repo, enter the directory, and use `npm` to install the project depend
 
 ```bash
 git clone https://github.com/supertokens/supertokens-auth-react
-cd supertokens-auth-react/examples/with-account-linking
+cd supertokens-auth-react/examples/with-multifactorauth-phone-chooser
 npm install
 cd frontend && npm install && cd ../
 cd backend && npm install && cd ../
@@ -40,21 +40,18 @@ We are adding a new (`/link`) page where the user can add new login methods to t
 
 The demo uses the pre-built UI, but you can always build your own UI instead.
 
--   We do not need any extra configuration to enable account linking
--   To enable manual linking through a custom callback page, we add `getRedirectURL` to the configuration of the social login providers.
--   We add a custom page (`/link`) that will:
-    -   Get and show the login methods belonging to the current user
-    -   Show a password form (if available) that calls `/addPassword` to add an email+password login method to the current user.
-    -   Show a phone number form (if available) that calls `/addPhoneNumber` to associate a phone number with the current user.
-    -   Show an "Add Google account" that start a login process through Google
--   We add a custom page (`/link/tpcallback/:thirdPartyId`) that will:
-    -   Call `/addThirdPartyUser` through a customized `ThirdPartyEmailPassword.thirdPartySignInAndUp` call
+-   We override `getRedirectionURL` to redirect to the phone chooser screen instead if we are redirecting to the phone otp screen
+-   We add a custom `/select-phone` page:
+    -   That redirects directly to the factor screen if the user has no phone number associated for initial setup
+    -   That auto-creates a code and redirects to the factor screen if the user has exactly one phone number associated
+    -   That lists the phone numbers set up for the user and starts the MFA process if one is selected
+    -   Sets a custom `setLoginAttemptInfo` to make sure the override below can redirect back to the selection page
+-   Override `PasswordlessMFAOTPFooter_Override` to add a change phone number button if the user can select another phone number.
+-   Show a button on the Home screen that redirects users the the phone-based OTP setup screen
 
 ### On the backend
 
--   We enable account linking by initializing the recipe and providing a `shouldDoAutomaticAccountLinking` implementation
--   We add `/addPassword`, `/addPhoneNumber` and `/addThirdPartyUser` to enable manual linking from the frontend
--   We add `/userInfo` so the frontend can list/show the login methods belonging to the current user.
+-   We override `getMFARequirementsForAuth` to always require phone-based OTP.
 
 ## Author
 

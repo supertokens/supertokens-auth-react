@@ -1,6 +1,6 @@
 ![SuperTokens banner](https://raw.githubusercontent.com/supertokens/supertokens-logo/master/images/Artboard%20%E2%80%93%2027%402x.png)
 
-# SuperTokens Google one tap Demo app
+# SuperTokens Multi-factor Auth demo with Recovery codes
 
 This demo app demonstrates the following use cases:
 
@@ -8,7 +8,8 @@ This demo app demonstrates the following use cases:
 -   Email Password Login / Sign-up
 -   Logout
 -   Session management & Calling APIs
--   Account linking
+-   TOTP
+-   Using recovery codes if the user lost their TOTP device
 
 ## Project setup
 
@@ -34,27 +35,30 @@ The app will start on `http://localhost:3000`
 
 ## How it works
 
-We are adding a new (`/link`) page where the user can add new login methods to their current user, plus enabling automatic account linking.
+We add new (`/create-recovery-code` and `/recover`) page where the user can create and use recovery codes.
 
 ### On the frontend
 
 The demo uses the pre-built UI, but you can always build your own UI instead.
 
--   We do not need any extra configuration to enable account linking
--   To enable manual linking through a custom callback page, we add `getRedirectURL` to the configuration of the social login providers.
--   We add a custom page (`/link`) that will:
-    -   Get and show the login methods belonging to the current user
-    -   Show a password form (if available) that calls `/addPassword` to add an email+password login method to the current user.
-    -   Show a phone number form (if available) that calls `/addPhoneNumber` to associate a phone number with the current user.
-    -   Show an "Add Google account" that start a login process through Google
--   We add a custom page (`/link/tpcallback/:thirdPartyId`) that will:
-    -   Call `/addThirdPartyUser` through a customized `ThirdPartyEmailPassword.thirdPartySignInAndUp` call
+-   We add a custom claim that can be used to tell if the user has created a recovery code or not
+-   We override the footer in the TOTP entry screen to add a "Lost my device" button, redirecting to `/recover`
+-   We add a custom page (`/recover`) that will:
+    -   Allow the user to enter a recovery code
+    -   Call a custom API that validates the recovery code (checking the hash) and adds the hash to the access token payload if valid
+-   We use the custom claim mentioned above to redirect to `/create-recovery-code` if the user hasn't created (or just used) a recovery code
+-   We add a custom page (`/create-recovery-code`) that can create and display a recovery code
 
 ### On the backend
 
--   We enable account linking by initializing the recipe and providing a `shouldDoAutomaticAccountLinking` implementation
--   We add `/addPassword`, `/addPhoneNumber` and `/addThirdPartyUser` to enable manual linking from the frontend
--   We add `/userInfo` so the frontend can list/show the login methods belonging to the current user.
+-   We add a custom claim that can be used to tell if the user has created a recovery code or not
+-   We store the hash of the recovery code for each user in their user metadata
+-   We add `/createRecoveryCode` that a user with an active session can use to get a new recovery code
+-   We add `/useRecoveryCode` that validates the recovery code (checking the hash) and adds the hash to the access token payload if valid
+-   We override `assertAllowedToSetupFactorElseThrowInvalidClaimError` to allow setting up a TOTP device if a valid recovery code hash is present in the access token payload
+-   We override `getMFARequirementsForAuth` to always require TOTP
+-   We override `verifyDevicePOST` to clear the recovery code from the user metadata and reset the access token payload
+-   We override `createNewSession` to add a value for the custom claim to tell the frontend if the user has a recovery code or not
 
 ## Author
 

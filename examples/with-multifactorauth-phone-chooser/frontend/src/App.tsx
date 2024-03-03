@@ -5,7 +5,6 @@ import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./Home";
 import { PreBuiltUIList, SuperTokensConfig } from "./config";
-import { MultiFactorAuthClaim } from "supertokens-auth-react/recipe/multifactorauth";
 import SelectPhone from "./SelectPhone";
 import { PasswordlessComponentsOverrideProvider } from "supertokens-auth-react/recipe/passwordless";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
@@ -61,7 +60,7 @@ function App() {
                                     <Home /> only if the user is logged in.
                                     Else it redirects the user to "/auth" */
                                         <SessionAuth key="0fa">
-                                            <Home mfaRequirements="no MFA" />
+                                            <Home />
                                         </SessionAuth>
                                     }
                                 />
