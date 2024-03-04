@@ -126,7 +126,7 @@ export function useChildProps(
             .validateGlobalClaimsAndHandleSuccessRedirection(
                 {
                     action: "SUCCESS",
-                    isNewPrimaryUser: false,
+                    createdNewUser: false,
                     isNewRecipeUser: false,
                     newSessionCreated:
                         session.loading ||
@@ -151,7 +151,7 @@ export function useChildProps(
                 .validateGlobalClaimsAndHandleSuccessRedirection(
                     {
                         action: "SUCCESS",
-                        isNewPrimaryUser: result.user.loginMethods.length === 1,
+                        createdNewUser: result.user.loginMethods.length === 1,
                         isNewRecipeUser: true,
                         newSessionCreated:
                             session.loading ||

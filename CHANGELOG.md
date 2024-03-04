@@ -26,9 +26,10 @@ To use this you'll need compatible versions:
 -   supertokens-web-js>=0.9.0
 -   supertokens-auth-react>=0.36.0
 
-### Changes
+### Breaking changes
 
 -   `SUCCESS` redirections are now handled by the `getRedirectionURL` callback passed to the `SuperTokens.init` config, instead of the recipe level callbacks
+-   `isNewPrimaryUser` is renamed to `createdNewUser`
 -   Added support for FDI 1.19 (Node SDK>= 17.0.0), but keeping support FDI version 1.17 and 1.18 (node >= 15.0.0, golang>=0.13, python>=0.15.0)
 -   Added `firstFactors` into the return type of `getLoginMethods`
 -   Added the `MultiFactorAuth` recipe

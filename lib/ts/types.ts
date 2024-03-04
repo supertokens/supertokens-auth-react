@@ -36,7 +36,7 @@ export type SuccessRedirectContext = {
         | "totp";
     action: "SUCCESS";
     isNewRecipeUser: boolean;
-    isNewPrimaryUser: boolean;
+    createdNewUser: boolean;
     newSessionCreated: boolean;
     redirectToPath?: string;
 };

@@ -199,7 +199,7 @@ export function useChildProps(
                     .validateGlobalClaimsAndHandleSuccessRedirection(
                         {
                             action: "SUCCESS",
-                            isNewPrimaryUser: result.createdNewRecipeUser && result.user.loginMethods.length === 1,
+                            createdNewUser: result.createdNewRecipeUser && result.user.loginMethods.length === 1,
                             isNewRecipeUser: result.createdNewRecipeUser,
                             newSessionCreated:
                                 session.loading ||

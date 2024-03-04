@@ -76,7 +76,7 @@ describe("EmailPassword.SignInAndUp", () => {
                     successRedirectContext: {
                         action: "SUCCESS",
                         isNewRecipeUser: false,
-                        isNewPrimaryUser: false,
+                        createdNewUser: false,
                         redirectToPath: undefined,
                     },
                 },

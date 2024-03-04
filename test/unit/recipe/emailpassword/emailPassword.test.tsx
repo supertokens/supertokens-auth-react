@@ -636,7 +636,7 @@ describe("EmailPassword", function () {
 
         assert(
             (await EmailPassword.getInstanceOrThrow().getRedirectUrl(
-                { action: "SUCCESS", isNewRecipeUser: false, isNewPrimaryUser: false },
+                { action: "SUCCESS", isNewRecipeUser: false, createdNewUser: false },
                 {}
             )) === null
         );

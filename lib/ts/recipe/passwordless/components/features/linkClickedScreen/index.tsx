@@ -124,7 +124,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                     .validateGlobalClaimsAndHandleSuccessRedirection(
                         {
                             action: "SUCCESS",
-                            isNewPrimaryUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
+                            createdNewUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
                             isNewRecipeUser: response.createdNewRecipeUser,
                             newSessionCreated:
                                 session.loading ||

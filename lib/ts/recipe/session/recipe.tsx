@@ -188,7 +188,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                 successRedirectContext = {
                     recipeId: fallbackRecipeId!,
                     action: "SUCCESS",
-                    isNewPrimaryUser: false,
+                    createdNewUser: false,
                     isNewRecipeUser: false,
                     newSessionCreated: false,
                 };

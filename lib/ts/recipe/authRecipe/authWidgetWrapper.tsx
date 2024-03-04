@@ -74,7 +74,7 @@ const Redirector = <T, S, R, N extends NormalisedConfig<T, S, R | OnHandleEventC
                             {
                                 action: "SUCCESS",
                                 isNewRecipeUser: false,
-                                isNewPrimaryUser: false,
+                                createdNewUser: false,
                                 newSessionCreated: false,
                                 recipeId: props.authRecipe.config.recipeId,
                             },

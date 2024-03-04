@@ -1524,7 +1524,7 @@ SuperTokens.init({
 
     async getRedirectionURL(context, userContext) {
         if (context.action === "SUCCESS") {
-            if (context.isNewPrimaryUser) {
+            if (context.createdNewUser) {
                 const rid = context.recipeId;
                 // New primary user
             } else if (context.isNewRecipeUser) {
