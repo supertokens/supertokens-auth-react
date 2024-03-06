@@ -83,5 +83,9 @@ export const defaultTranslationsPasswordless = {
             undefined,
         "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_003)":
             undefined,
+
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_017)": undefined,
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_018)": undefined,
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_019)": undefined,
     },
 };

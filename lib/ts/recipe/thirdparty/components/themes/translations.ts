@@ -29,5 +29,9 @@ export const defaultTranslationsThirdParty = {
 
         "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_006)":
             undefined,
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_020)": undefined,
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_021)": undefined,
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_022)": undefined,
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_023)": undefined,
     },
 };

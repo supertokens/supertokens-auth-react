@@ -57,6 +57,9 @@ export declare const defaultTranslationsPasswordless: {
         "Email is invalid": undefined;
         "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_002)": undefined;
         "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_003)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_017)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_018)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_019)": undefined;
         BRANDING_POWERED_BY_START: string;
         BRANDING_POWERED_BY_END: string;
         SOMETHING_WENT_WRONG_ERROR: string;

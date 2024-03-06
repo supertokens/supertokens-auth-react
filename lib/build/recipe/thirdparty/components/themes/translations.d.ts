@@ -12,6 +12,10 @@ export declare const defaultTranslationsThirdParty: {
         "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_004)": undefined;
         "Cannot sign in / up because new email cannot be applied to existing account. Please contact support. (ERR_CODE_005)": undefined;
         "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_006)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_020)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_021)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_022)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_023)": undefined;
         BRANDING_POWERED_BY_START: string;
         BRANDING_POWERED_BY_END: string;
         SOMETHING_WENT_WRONG_ERROR: string;
