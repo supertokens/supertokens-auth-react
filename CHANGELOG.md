@@ -14,14 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 With this release, we are introducing MultiFactorAuth and TOTP, this will let you:
 
 -   require (2FA or MFA) during sign in
--   make use of our TOTP
+-   make use of TOTP (e.g.: Google authenticator) as an MFA challenge
 
-Check our [guide](https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/multi-factor-auth/overview) for more information.
+Check our [guide](https://supertokens.com/docs/mfa/introduction) for more information.
 
-To use this you'll need compatible versions:
+To start using MFA you'll need compatible versions:
 
 -   Core>=8.0.0
--   supertokens-node>=17.0.0 (support is pending in other backend SDKs)
+-   supertokens-node>=17.0.0
 -   supertokens-website>=17.0.3
 -   supertokens-web-js>=0.9.0
 -   supertokens-auth-react>=0.36.0
@@ -30,13 +30,90 @@ To use this you'll need compatible versions:
 
 -   `SUCCESS` redirections are now handled by the `getRedirectionURL` callback passed to the `SuperTokens.init` config, instead of the recipe level callbacks
 -   `isNewPrimaryUser` is renamed to `createdNewUser`
--   Added support for FDI 1.19 (Node SDK>= 17.0.0), but keeping support FDI version 1.17 and 1.18 (node >= 15.0.0, golang>=0.13, python>=0.15.0)
--   Added `firstFactors` into the return type of `getLoginMethods`
--   Added the `MultiFactorAuth` recipe
--   Updated how we select which login UI to show to take the `firstFactors` config value into account (defined in the `MultiFactorAuth` recipe or in the tenant information)
 -   Refactored/renamed some styling options (`resetPasswordHeaderTitle` -> `headerTitle withBackButton`)
--   Added a `useShadowDom` prop to the `AccessDeniedScreen`
--   Added an `error` prop to the `AccessDeniedScreen` that can be used to describe the reason access is denied.
+-   Some default styling has changed related to how fonts/font-weights are applied
+-   Changed how `headerSubtitle` is styled in components: `EmailPasswordResetPasswordEmail`, `EmailPasswordSubmitNewPassword`, `EmailPasswordSignInHeader`, `EmailPasswordSignUpHeader`
+
+#### Migration guide
+
+##### Success redirections & isNewPrimaryUser rename
+
+Before:
+
+```tsx
+import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
+
+SuperTokens.init({
+    appInfo: {
+        // appInfo
+    },
+    recipeList: [
+        Passwordless.init({
+            contactMethod: "EMAIL_OR_PHONE",
+
+            async getRedirectionURL(context) {
+                if (context.action === "SUCCESS") {
+                    if (context.isNewRecipeUser) {
+                        // new primary user
+                    } else {
+                        // only a recipe user was created
+                    }
+                }
+                return undefined;
+            },
+        }),
+        Session.init(),
+    ],
+});
+```
+
+After:
+
+```tsx
+import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
+
+SuperTokens.init({
+    appInfo: {
+        // appInfo
+    },
+    async getRedirectionURL(context, userContext) {
+        if (context.action === "SUCCESS") {
+            if (context.createdNewUser && context.recipeId === "passwordless") {
+                // custom logic
+            }
+        }
+        // Returning undefined means we use the default redirection
+        return undefined;
+    },
+    recipeList: [
+        Passwordless.init({
+            contactMethod: "EMAIL_OR_PHONE",
+        }),
+        Session.init(),
+    ],
+});
+```
+
+#### Styling changes
+
+There are 2 types of style changes in this release:
+
+1.  Refactored/renamed some styling options. If you didn't add custom styles for the following classes there is no action needed
+
+    -   `resetPasswordHeaderTitle`: should now be styled using `withBackButton`
+    -   `headerSubtitle`: now directly includes the text instead of a `div`, your styles may require an update to match this change
+
+2.  Some default styling has changed related to how fonts/font-weights are applied. This may interact with your own font/sizing settings,
+    if you didn't add font, font-size/weight and size changes to your custom styles, no action should be needed.
+
+Both of the above changes could have subtle interactions with custom styles, so we recommend a quick manual (visual) test to make sure everything
+still looks right.
+
+### Changes
+
+-   Added support for FDI 1.19 (Node SDK>= 17.0.0), but keeping support FDI version 1.17 and 1.18 (node >= 15.0.0, golang>=0.13, python>=0.15.0)
 -   Added new MFA related components to Passwordless
     -   Added new prop `mfaFeature` to recipe config
         -   `disableDefaultUI`: can be used to disable paths: `${websiteBasePath}/mfa/otp-phone`, `${websiteBasePath}/mfa/otp-email`
@@ -54,12 +131,14 @@ To use this you'll need compatible versions:
         -   `PasswordlessPhoneForm_Override`
         -   `PasswordlessEmailOrPhoneForm_Override`
 -   Removed an `ErrorBoundary` wrapping all our feature components to make sure all errors are properly catchable by the app
+-   Added a `useShadowDom` prop to the `AccessDeniedScreen`
+-   Added an `error` prop to the `AccessDeniedScreen` that can be used to describe the reason access is denied.
 -   Added a `footer` prop to `EmailOrPhoneForm`, `EmailForm` and `PhoneForm` which is used to override the default sign in/up footers in case the component is for MFA
--   The passwordless and thirdpartypasswordless sign in/up screens now respect the first configuration (defined in the `MultiFactorAuth` recipe or in the tenant information) when selecting the available contact methods.
--   Added TOTP recipe. For more details please check our guide [here](TODO)
+-   Added the `MultiFactorAuth` recipe
+-   Updated how we select which login UI to show to take the `firstFactors` config value into account (defined in the `MultiFactorAuth` recipe or in the tenant information)
+-   The passwordless and thirdpartypasswordless sign in/up screens now respect the firstFactors configuration (defined in the `MultiFactorAuth` recipe or in the tenant information) when selecting the available contact methods.
+-   Added TOTP recipe. For more details please check our guide MFA guide.
 -   Fixed a font loading issue, that caused apps using the default (Rubik) font to appear with the incorrect font weights
--   Some default styling has changed related to how fonts/font-weights are applied
--   Changed how `headerSubtitle` is styled in components: `EmailPasswordResetPasswordEmail`, `EmailPasswordSubmitNewPassword`, `EmailPasswordSignInHeader`, `EmailPasswordSignUpHeader`
 
 ## [0.38.0] - 2024-02-29
 

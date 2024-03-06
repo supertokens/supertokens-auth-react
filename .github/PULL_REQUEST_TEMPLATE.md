@@ -31,7 +31,7 @@
 -   [ ] If added a new recipe interface, then make sure that the implementation of it uses NON arrow functions only (like `someFunc: function () {..}`).
 -   [ ] If I added a new recipe, I also added the recipe entry point into the `size-limit` section of `package.json` with the size limit set to the current size rounded up.
 -   [ ] If I added a new recipe, I also added the recipe entry point into the `rollup.config.mjs`
--   [ ] If I added a new login method, I modified the list in `lib/ts/recipe/multitenancy/utils.ts`
+-   [ ] If I added a new login method, I modified the list in `lib/ts/types.ts`
 
 ## Remaining TODOs for this PR
 
