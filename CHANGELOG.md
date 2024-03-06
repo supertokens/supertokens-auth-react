@@ -18,14 +18,6 @@ With this release, we are introducing MultiFactorAuth and TOTP, this will let yo
 
 Check our [guide](https://supertokens.com/docs/mfa/introduction) for more information.
 
-To start using MFA you'll need compatible versions:
-
--   Core>=8.0.0
--   supertokens-node>=17.0.0
--   supertokens-website>=17.0.3
--   supertokens-web-js>=0.9.0
--   supertokens-auth-react>=0.36.0
-
 ### Breaking changes
 
 -   `SUCCESS` redirections are now handled by the `getRedirectionURL` callback passed to the `SuperTokens.init` config, instead of the recipe level callbacks
@@ -114,6 +106,12 @@ still looks right.
 ### Changes
 
 -   Added support for FDI 1.19 (Node SDK>= 17.0.0), but keeping support FDI version 1.17 and 1.18 (node >= 15.0.0, golang>=0.13, python>=0.15.0)
+-   Added the `MultiFactorAuth` and `TOTP` recipes. To start using them you'll need compatible versions:
+    -   Core>=8.0.0
+    -   supertokens-node>=17.0.0
+    -   supertokens-website>=18.0.0
+    -   supertokens-web-js>=0.10.0
+    -   supertokens-auth-react>=0.39.0
 -   Added new MFA related components to Passwordless
     -   Added new prop `mfaFeature` to recipe config
         -   `disableDefaultUI`: can be used to disable paths: `${websiteBasePath}/mfa/otp-phone`, `${websiteBasePath}/mfa/otp-email`
@@ -134,7 +132,6 @@ still looks right.
 -   Added a `useShadowDom` prop to the `AccessDeniedScreen`
 -   Added an `error` prop to the `AccessDeniedScreen` that can be used to describe the reason access is denied.
 -   Added a `footer` prop to `EmailOrPhoneForm`, `EmailForm` and `PhoneForm` which is used to override the default sign in/up footers in case the component is for MFA
--   Added the `MultiFactorAuth` recipe
 -   Updated how we select which login UI to show to take the `firstFactors` config value into account (defined in the `MultiFactorAuth` recipe or in the tenant information)
 -   The passwordless and thirdpartypasswordless sign in/up screens now respect the firstFactors configuration (defined in the `MultiFactorAuth` recipe or in the tenant information) when selecting the available contact methods.
 -   Added TOTP recipe. For more details please check our guide MFA guide.
