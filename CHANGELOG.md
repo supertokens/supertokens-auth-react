@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
-## [0.38.0] - 2024-03-04
+## [0.39.0] - 2024-03-07
 
 ### Overview
 
@@ -60,6 +60,12 @@ To use this you'll need compatible versions:
 -   Fixed a font loading issue, that caused apps using the default (Rubik) font to appear with the incorrect font weights
 -   Some default styling has changed related to how fonts/font-weights are applied
 -   Changed how `headerSubtitle` is styled in components: `EmailPasswordResetPasswordEmail`, `EmailPasswordSubmitNewPassword`, `EmailPasswordSignInHeader`, `EmailPasswordSignUpHeader`
+
+## [0.38.0] - 2024-02-29
+
+## Breaking Changes
+
+-   Previously, when calling `redirectToAuth` with the `redirectBack` option, url fragments(hash) were stripped when redirecting back to the previous page after authentication. This issue has been fixed, and url fragments are preserved along with the query params. For users who employed the workaround of overriding the `windowHandler.location.getSearch` function to include fragments, it is essential to remove that override before upgrading to this version.
 
 ## [0.37.1] - 2024-02-26
 

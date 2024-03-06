@@ -72,26 +72,35 @@ export function getURLHash(): string {
 }
 
 export function getRedirectToPathFromURL(): string | undefined {
-    const param = getQueryParams("redirectToPath");
-    if (param === null) {
+    const redirectToPath = getQueryParams("redirectToPath");
+    if (redirectToPath === null) {
         return undefined;
     } else {
-        // Prevent Open redirects by normalising path.
         try {
-            const normalisedURLPath = new NormalisedURLPath(param).getAsStringDangerous();
-            const pathQueryParams = param.split("?")[1] !== undefined ? `?${param.split("?")[1]}` : "";
-            const pathWithQueryParams = normalisedURLPath + pathQueryParams;
+            let url: URL;
+            try {
+                url = new URL(redirectToPath);
+            } catch (error) {
+                const fakeDomain = redirectToPath.startsWith("/") ? "http://localhost" : "http://localhost/";
+                url = new URL(`${fakeDomain}${redirectToPath}`);
+            }
 
-            // Ensure a leading "/" if `normalisedUrlPath` is empty but `pathWithQueryParams` is not to ensure proper redirection.
+            // Prevent Open redirects by normalising path.
+            const normalisedURLPath = new NormalisedURLPath(redirectToPath).getAsStringDangerous();
+            const pathQueryParams = url.search || ""; // url.search contains the leading ?
+            const pathHash = url.hash || ""; // url.hash contains the leading #
+            const pathWithQueryParamsAndHash = normalisedURLPath + pathQueryParams + pathHash;
+
+            // Ensure a leading "/" if `normalisedUrlPath` is empty but `pathWithQueryParamsAndHash` is not to ensure proper redirection.
             // Example: "?test=1" will not redirect the user to `/?test=1` if we don't add a leading "/".
             if (
                 normalisedURLPath.length === 0 &&
-                pathWithQueryParams.length > 0 &&
-                !pathWithQueryParams.startsWith("/")
+                pathWithQueryParamsAndHash.length > 0 &&
+                !pathWithQueryParamsAndHash.startsWith("/")
             ) {
-                return "/" + pathWithQueryParams;
+                return "/" + pathWithQueryParamsAndHash;
             }
-            return pathWithQueryParams;
+            return pathWithQueryParamsAndHash;
         } catch {
             return undefined;
         }
@@ -200,9 +209,13 @@ export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
     return new NormalisedURLPath(WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getPathName());
 }
 
-export function getCurrentNormalisedUrlPathWithQueryParams(): string {
+export function getCurrentNormalisedUrlPathWithQueryParamsAndFragments(): string {
     const normalisedUrlPath = getCurrentNormalisedUrlPath().getAsStringDangerous();
-    return normalisedUrlPath + WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getSearch();
+    return (
+        normalisedUrlPath +
+        WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getSearch() +
+        WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHash()
+    );
 }
 
 export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<string, string>): string {
@@ -217,7 +230,7 @@ export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<s
         });
         return url.href;
     } catch (e) {
-        const fakeDomain = stringUrl.startsWith("/") ? "http:localhost" : "http://localhost/";
+        const fakeDomain = stringUrl.startsWith("/") ? "http://localhost" : "http://localhost/";
         const url = new URL(`${fakeDomain}${stringUrl}`);
         Object.entries(queryParams).forEach(([key, value]) => {
             url.searchParams.set(key, value);

@@ -785,6 +785,58 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 assert.deepStrictEqual(pathname + search, "/?foo=bar");
             });
 
+            it("Successful signin w/ redirectPath (query params + fragment)", async function () {
+                await Promise.all([
+                    page.goto(
+                        `${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED&redirectToPath=${encodeURIComponent(
+                            "/redirect-here?foo=bar#cell=4,1-6,2"
+                        )}`
+                    ),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getPasswordlessDevice(loginAttemptInfo);
+                await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                await submitForm(page);
+
+                await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+                const { pathname, search, hash } = await page.evaluate(() => window.location);
+                assert.deepStrictEqual(pathname + search + hash, "/redirect-here?foo=bar#cell=4,1-6,2");
+            });
+
+            it("Successful signin w/ redirectPath (only fragment)", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent("#cell=4,1-6,2")}`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getPasswordlessDevice(loginAttemptInfo);
+                await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                await submitForm(page);
+
+                await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+                const { pathname, search, hash } = await page.evaluate(() => window.location);
+                assert.deepStrictEqual(pathname + search + hash, "/#cell=4,1-6,2");
+            });
+
             it("Submitting empty id", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
@@ -1267,6 +1319,29 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
                     `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`,
                 ]);
+            });
+
+            it("Successful signin w/ stored redirectToPath (only fragment) and email verification", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent("#cell=4,1-6,2")}`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getPasswordlessDevice(loginAttemptInfo);
+                await page.goto(device.codes[0].urlWithLinkCode);
+                await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+                const urlWithHash = await page.evaluate(
+                    () => window.location.pathname + window.location.search + window.location.hash
+                );
+                assert.deepStrictEqual(urlWithHash, "/#cell=4,1-6,2");
             });
 
             it("create code general error", async function () {

@@ -167,6 +167,40 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
             assert.deepStrictEqual(pathname + search, "/?foo=bar");
         });
 
+        it("Successful sign in with Auth0 with redirectToPath (query params + fragment)", async function () {
+            await Promise.all([
+                page.goto(
+                    `${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent(
+                        "/redirect-here?foo=bar#cell=4,1-6,2"
+                    )}`
+                ),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await assertProviders(page);
+            await clickOnProviderButton(page, "Auth0");
+            await Promise.all([
+                loginWithAuth0(page),
+                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
+            ]);
+            const { pathname, search, hash } = await page.evaluate(() => window.location);
+            assert.deepStrictEqual(pathname + search + hash, "/redirect-here?foo=bar#cell=4,1-6,2");
+        });
+
+        it("Successful sign in with Auth0 with redirectToPath (only fragment)", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent("#cell=4,1-6,2")}`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await assertProviders(page);
+            await clickOnProviderButton(page, "Auth0");
+            await Promise.all([
+                loginWithAuth0(page),
+                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
+            ]);
+            const { pathname, search, hash } = await page.evaluate(() => window.location);
+            assert.deepStrictEqual(pathname + search + hash, "/#cell=4,1-6,2");
+        });
+
         it("Successful signin with Auth0 and email verification", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
