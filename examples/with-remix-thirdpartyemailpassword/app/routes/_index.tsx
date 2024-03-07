@@ -1,6 +1,5 @@
 import { CelebrateIcon, SeparatorLine, BlogsIcon, GuideIcon, SignOutIcon } from "../../assets/images";
 import { useSessionContext } from "supertokens-auth-react/recipe/session/index.js";
-import { useEffect } from "react";
 import { signOut } from "supertokens-auth-react/recipe/thirdpartyemailpassword/index.js";
 import { recipeDetails } from "../config/frontend";
 import SuperTokens from "supertokens-auth-react";

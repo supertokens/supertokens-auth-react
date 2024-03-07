@@ -1,9 +1,6 @@
 import { json } from "@remix-run/node";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "react-router-dom";
-import { ensureSuperTokensInit } from "~/config/backend";
 import { getAppDirRequestHandler } from "supertokens-node/nextjs/index.js";
-
-ensureSuperTokensInit();
 
 const handleCall = getAppDirRequestHandler(Response);
 
