@@ -64,6 +64,10 @@ export declare const defaultTranslationsEmailPassword: {
         "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_010)": undefined;
         "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_011)": undefined;
         "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_012)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_013)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_014)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_015)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_016)": undefined;
         EMAIL_VERIFICATION_RESEND_SUCCESS: string;
         EMAIL_VERIFICATION_SEND_TITLE: string;
         EMAIL_VERIFICATION_SEND_DESC_START: string;
