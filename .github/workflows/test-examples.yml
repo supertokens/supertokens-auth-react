@@ -36,21 +36,15 @@ jobs:
       - run: npm run build || true
       - name: Run tests
         run: |
-          if [[ -n $(find . -name '*.js' -o -name '*.cjs') ]]; then
-            echo "=========== Running JavaScript tests ============"
-            (HOST= npm start & bash ../../test/waitForServerStartup.sh) && (
-              (echo "=========== Test attempt 1 ===========" && npx mocha --no-config --timeout 80000 test/**/*.test.js) ||
-              (echo "=========== Test attempt 2 ===========" && npx mocha --no-config --timeout 80000 test/**/*.test.js) ||
-              (echo "=========== Test attempt 3 ===========" && npx mocha --no-config --timeout 80000 test/**/*.test.js)
-            )
-          else
-            echo "=========== Running CJS tests ============"
-            (HOST= npm start & bash ../../test/waitForServerStartup.sh) && (
-              (echo "=========== Test attempt 1 ===========" && npx mocha --no-config --timeout 80000 test/**/*.test.cjs) ||
-              (echo "=========== Test attempt 2 ===========" && npx mocha --no-config --timeout 80000 test/**/*.test.cjs) ||
-              (echo "=========== Test attempt 3 ===========" && npx mocha --no-config --timeout 80000 test/**/*.test.cjs)
-            )
-          fi
+          HOST= npm start & bash ../../test/waitForServerStartup.sh
+          echo "=========== Running JavaScript tests ============"
+          (npx mocha --no-config --timeout 80000 test/**/*.test.js && exit 0) || \
+          (echo "=========== Test attempt 2 ===========" && npx mocha --no-config --timeout 80000 test/**/*.test.js && exit 0) || \
+          (echo "=========== Test attempt 3 ===========" && npx mocha --no-config --timeout 80000 test/**/*.test.js)
+          echo "=========== Running CommonJS tests ============"
+          (npx mocha --no-config --timeout 80000 test/**/*.test.cjs && exit 0) || \
+          (echo "=========== Test attempt 2 ===========" && npx mocha --no-config --timeout 80000 test/**/*.test.cjs && exit 0) || \
+          (echo "=========== Test attempt 3 ===========" && npx mocha --no-config --timeout 80000 test/**/*.test.cjs)
       - name: Upload screenshots on failure
         if: ${{ failure() }}
         uses: actions/upload-artifact@v3
