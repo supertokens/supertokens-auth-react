@@ -129,6 +129,7 @@ export function useChildProps(
     recipeImplementation: RecipeInterface,
     state: MFAState,
     contactMethod: "PHONE" | "EMAIL",
+    dispatch: React.Dispatch<MFAAction>,
     userContext: UserContext,
     navigate?: Navigate
 ): MFAChildProps {
@@ -189,6 +190,7 @@ export function useChildProps(
                         }
                     }
                 }
+                dispatch({ type: "setError", showAccessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR" });
             },
             recipeImplementation: recipeImplementation,
             config: recipe.config,
@@ -220,6 +222,7 @@ const MFAFeatureInner: React.FC<
         recipeImplementation,
         state,
         props.contactMethod,
+        dispatch,
         userContext,
         props.navigate
     )!;

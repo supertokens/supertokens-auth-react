@@ -235,6 +235,7 @@ export function useChildProps(
                         }
                     }
                 }
+                dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
             },
             recipeImplementation: recipeImplementation,
             config: recipe.config,

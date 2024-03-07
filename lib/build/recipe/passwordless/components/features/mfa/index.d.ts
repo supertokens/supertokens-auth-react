@@ -11,6 +11,7 @@ export declare function useChildProps(
     recipeImplementation: RecipeInterface,
     state: MFAState,
     contactMethod: "PHONE" | "EMAIL",
+    dispatch: React.Dispatch<MFAAction>,
     userContext: UserContext,
     navigate?: Navigate
 ): MFAChildProps;

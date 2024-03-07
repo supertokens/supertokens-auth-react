@@ -206,6 +206,7 @@ export function useChildProps(
                         }
                     }
                 }
+                dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
             },
             onSuccess: onSignInSuccess,
             forgotPasswordClick: () => recipe.redirect({ action: "RESET_PASSWORD" }, navigate, undefined, userContext),
@@ -240,6 +241,7 @@ export function useChildProps(
                         }
                     }
                 }
+                dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
             },
             onSuccess: onSignUpSuccess,
         };
