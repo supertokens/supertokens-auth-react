@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 
-A demo Remix app for the third-party email password recipe to the `examples` folder. Also included is a basic test file based on the with-emailpassword-vercel example.
+A demo Remix app for the third-party email password recipe to the `examples` folder. Also included is a basic test for the example app
 
 ## [0.38.0] - 2024-02-29
 
