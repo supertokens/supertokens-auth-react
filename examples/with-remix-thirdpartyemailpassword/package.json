@@ -21,8 +21,8 @@
     "puppeteer": "^22.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "supertokens-auth-react": "^0.38.0",
-    "supertokens-node": "^16.7.4"
+    "supertokens-auth-react": "latest",
+    "supertokens-node": "latest"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.8.0",
