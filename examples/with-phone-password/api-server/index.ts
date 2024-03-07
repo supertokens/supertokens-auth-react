@@ -139,15 +139,10 @@ supertokens.init({
             },
         }),
         AccountLinking.init({
-            shouldDoAutomaticAccountLinking: async (_newAccountInfo, _user, session) =>
-                session
-                    ? {
-                          shouldAutomaticallyLink: true,
-                          shouldRequireVerification: false,
-                      }
-                    : {
-                          shouldAutomaticallyLink: false,
-                      },
+            shouldDoAutomaticAccountLinking: async () => ({
+                shouldAutomaticallyLink: true,
+                shouldRequireVerification: true,
+            }),
         }),
         Dashboard.init(),
     ],
@@ -164,10 +159,10 @@ app.use(
     })
 );
 
-app.use((middleware as any)());
+app.use(middleware());
 
 // An example API that requires session verification
-app.get("/sessioninfo", (verifySession as any)(), async (req: any, res) => {
+app.get("/sessioninfo", verifySession(), async (req: any, res) => {
     let session = req.session!;
     res.send({
         sessionHandle: session.getHandle(),
@@ -176,7 +171,7 @@ app.get("/sessioninfo", (verifySession as any)(), async (req: any, res) => {
     });
 });
 
-app.use((errorHandler as any)());
+app.use(errorHandler());
 
 app.use((err: any, req: any, res: any, next: any) => {
     console.log(err);

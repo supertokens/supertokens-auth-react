@@ -46,15 +46,10 @@ supertokens.init({
             },
         }),
         AccountLinking.init({
-            shouldDoAutomaticAccountLinking: async (_newAccountInfo, _user, session) =>
-                session
-                    ? {
-                          shouldAutomaticallyLink: true,
-                          shouldRequireVerification: false,
-                      }
-                    : {
-                          shouldAutomaticallyLink: false,
-                      },
+            shouldDoAutomaticAccountLinking: async () => ({
+                shouldAutomaticallyLink: true,
+                shouldRequireVerification: true,
+            }),
         }),
         Passwordless.init({
             contactMethod: "EMAIL",

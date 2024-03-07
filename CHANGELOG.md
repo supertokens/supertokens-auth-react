@@ -25,6 +25,9 @@ Check our [guide](https://supertokens.com/docs/mfa/introduction) for more inform
 -   Refactored/renamed some styling options (`resetPasswordHeaderTitle` -> `headerTitle withBackButton`)
 -   Some default styling has changed related to how fonts/font-weights are applied
 -   Changed how `headerSubtitle` is styled in components: `EmailPasswordResetPasswordEmail`, `EmailPasswordSubmitNewPassword`, `EmailPasswordSignInHeader`, `EmailPasswordSignUpHeader`
+-   Removed an `ErrorBoundary` wrapping all our feature components to make sure all errors are properly catchable by the app
+-   In `supertokens-web-js` (which you may also be using), we added `firstFactors` into the return type of `getLoginMethods` and removed the enabled flags of different login methods.
+    -   For older FDI versions, the firstFactors array will be calculated based on those enabled flags.
 
 #### Migration guide
 
@@ -71,7 +74,7 @@ SuperTokens.init({
         // appInfo
     },
     async getRedirectionURL(context, userContext) {
-        if (context.action === "SUCCESS") {
+        if (context.action === "SUCCESS" && context.newSessionCreated) {
             if (context.createdNewUser && context.recipeId === "passwordless") {
                 // custom logic
             }
@@ -103,6 +106,113 @@ There are 2 types of style changes in this release:
 Both of the above changes could have subtle interactions with custom styles, so we recommend a quick manual (visual) test to make sure everything
 still looks right.
 
+#### getLoginMethods interface change in supertokens-web-js
+
+If you used to use the enabled flags in getLoginMethods:
+
+Before:
+
+```ts
+async function checkLoginMethods() {
+    const loginMethods = await Multitenancy.getLoginMethods();
+    if (loginMethods.thirdParty.enabled) {
+        // custom logic
+    }
+    if (loginMethods.emailPassword.enabled) {
+        // custom logic
+    }
+    if (loginMethods.passwordless.enabled) {
+        // custom logic
+    }
+}
+```
+
+After:
+
+```ts
+async function checkLoginMethods() {
+    const loginMethods = await Multitenancy.getLoginMethods();
+    if (loginMethods.firstFactors.includes("thirdparty")) {
+        // custom logic
+    }
+    if (loginMethods.firstFactors.includes("emailpassword")) {
+        // custom logic
+    }
+
+    if (
+        loginMethods.firstFactors.includes("otp-email") ||
+        loginMethods.firstFactors.includes("otp-phone") ||
+        loginMethods.firstFactors.includes("link-email") ||
+        loginMethods.firstFactors.includes("link-phone")
+    ) {
+        // custom logic
+    }
+}
+```
+
+#### Event handler changes
+
+Before:
+
+```tsx
+import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
+
+SuperTokens.init({
+    appInfo: {
+        // appInfo
+    },
+    recipeList: [
+        Passwordless.init({
+            contactMethod: "EMAIL_OR_PHONE",
+
+            onHandleEvent(context) {
+                if (context.action === "SUCCESS") {
+                    let user = context.user;
+                    if (context.isNewRecipeUser && context.user.loginMethods.length === 1) {
+                        // sign up success
+                    } else {
+                        // sign in success
+                    }
+                }
+            },
+        }),
+        Session.init(),
+    ],
+});
+```
+
+After:
+
+```tsx
+import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
+
+SuperTokens.init({
+    appInfo: {
+        // appInfo
+    },
+    recipeList: [
+        Passwordless.init({
+            contactMethod: "EMAIL_OR_PHONE",
+
+            onHandleEvent(context) {
+                if (context.action === "SUCCESS" && context.createdNewSession) {
+                    let user = context.user;
+                    let rid = context.rid;
+                    if (context.isNewRecipeUser && context.user.loginMethods.length === 1) {
+                        // sign up success
+                    } else {
+                        // sign in success
+                    }
+                }
+            },
+        }),
+        Session.init(),
+    ],
+});
+```
+
 ### Changes
 
 -   Added support for FDI 1.19 (Node SDK>= 17.0.0), but keeping support FDI version 1.17 and 1.18 (node >= 15.0.0, golang>=0.13, python>=0.15.0)
@@ -128,14 +238,16 @@ still looks right.
         -   `PasswordlessEmailForm_Override`
         -   `PasswordlessPhoneForm_Override`
         -   `PasswordlessEmailOrPhoneForm_Override`
--   Removed an `ErrorBoundary` wrapping all our feature components to make sure all errors are properly catchable by the app
 -   Added a `useShadowDom` prop to the `AccessDeniedScreen`
 -   Added an `error` prop to the `AccessDeniedScreen` that can be used to describe the reason access is denied.
 -   Added a `footer` prop to `EmailOrPhoneForm`, `EmailForm` and `PhoneForm` which is used to override the default sign in/up footers in case the component is for MFA
+-   Sign in/up functions can now return new (MFA related) error codes.
+-   New (MFA related) error codes have been added to the default translation files.
 -   Updated how we select which login UI to show to take the `firstFactors` config value into account (defined in the `MultiFactorAuth` recipe or in the tenant information)
 -   The passwordless and thirdpartypasswordless sign in/up screens now respect the firstFactors configuration (defined in the `MultiFactorAuth` recipe or in the tenant information) when selecting the available contact methods.
 -   Added TOTP recipe. For more details please check our guide MFA guide.
 -   Fixed a font loading issue, that caused apps using the default (Rubik) font to appear with the incorrect font weights
+-   Added `rid` and `createdNewSession` to events with `action: "SUCCESS"`
 
 ## [0.38.0] - 2024-02-29
 
