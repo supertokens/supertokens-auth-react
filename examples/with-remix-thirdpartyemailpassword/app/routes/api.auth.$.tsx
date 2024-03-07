@@ -53,10 +53,6 @@ export async function action({ request }: ActionFunctionArgs) {
     const res = await handleCall(partialRemixRequest);
     return res;
   } catch (error) {
-    console.error(
-      "The request made to the following url didn't work:",
-      request.url
-    );
     return json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -73,10 +69,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }
     return res;
   } catch (error) {
-    console.error(
-      "The request made to the following url didn't work:",
-      request.url
-    );
     return json({ error: "Internal server error" }, { status: 500 });
   }
 }
