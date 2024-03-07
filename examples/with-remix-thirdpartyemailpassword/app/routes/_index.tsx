@@ -11,10 +11,6 @@ export default function Home() {
     return <div>Loading...</div>;
   }
 
-  if (session.doesSessionExist === false) {
-    return <div>Session does not exist</div>;
-  }
-
   const data = {
     note: "Retrieve authenticated user-specific data from your application post-verification through the use of the verifySession middleware.",
     userId: session.userId,
