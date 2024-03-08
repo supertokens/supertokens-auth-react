@@ -6,6 +6,7 @@ import { verifySession } from "supertokens-node/recipe/session/framework/express
 import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
 import Passwordless from "supertokens-node/recipe/passwordless";
+import EmailVerification from "supertokens-node/recipe/emailverification";
 import MultiFactorAuth, { FactorIds } from "supertokens-node/recipe/multifactorauth";
 import AccountLinking from "supertokens-node/recipe/accountlinking";
 import parsePhoneNumber from "libphonenumber-js/max";
@@ -113,9 +114,9 @@ supertokens.init({
             override: {
                 functions: (oI) => ({
                     ...oI,
-                    getMFARequirementsForAuth(input) {
+                    async getMFARequirementsForAuth(input) {
                         // By requiring
-                        if (!input.factorsSetUpForUser.includes(FactorIds.OTP_PHONE)) {
+                        if (!(await input.factorsSetUpForUser).includes(FactorIds.OTP_PHONE)) {
                             return [FactorIds.OTP_PHONE];
                         }
                         return [];
@@ -143,6 +144,9 @@ supertokens.init({
                 shouldAutomaticallyLink: true,
                 shouldRequireVerification: true,
             }),
+        }),
+        EmailVerification.init({
+            mode: "REQUIRED",
         }),
         Dashboard.init(),
     ],

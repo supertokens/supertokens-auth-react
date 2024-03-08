@@ -41,7 +41,8 @@ supertokens.init({
             override: {
                 functions: (oI) => ({
                     ...oI,
-                    getMFARequirementsForAuth: async ({ user }) => (user.loginMethods[0].verified ? [] : ["otp-email"]),
+                    getMFARequirementsForAuth: async ({ user }) =>
+                        (await user).loginMethods[0].verified ? [] : ["otp-email"],
                 }),
             },
         }),
