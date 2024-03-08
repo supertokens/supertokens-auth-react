@@ -49,79 +49,9 @@ app.get("/userInfo", verifySession(), async (req: SessionRequest, res) => {
     });
 });
 
-app.post("/addPassword", verifySession(), async (req: SessionRequest, res) => {
-    const session = req.session!;
-    // First we check that the current session (and the user it belongs to) can have a user linked to it.
-    const user = await getUser(session.getRecipeUserId().getAsString());
-    if (!user) {
-        throw new Session.Error({ type: Session.Error.UNAUTHORISED, message: "user removed" });
-    }
-
-    const currentLoginMethod = user.loginMethods.find(
-        (m) => m.recipeUserId.getAsString() === session.getRecipeUserId().getAsString()
-    );
-    if (!currentLoginMethod) {
-        throw new Error("This should never happen");
-    }
-
-    if (currentLoginMethod.recipeId === "emailpassword") {
-        return res.json({
-            status: "GENERAL_ERROR",
-            message: "This user already logged in using a password",
-        });
-    }
-
-    if (!currentLoginMethod.verified) {
-        return res.json({
-            status: "GENERAL_ERROR",
-            message: "You can only add a password when logged in using a verified account",
-        });
-    }
-
-    if (currentLoginMethod.email === undefined) {
-        return res.json({
-            status: "GENERAL_ERROR",
-            message: "You can only add a password to accounts associated with email addresses",
-        });
-    }
-
-    // We then "add the password" by signing up with a new user
-    let password: string = req.body.password;
-    const signUpResp = await ThirdPartyEmailPassword.emailPasswordSignUp(
-        session.getTenantId(),
-        currentLoginMethod.email,
-        password
-    );
-
-    if (signUpResp.status === "EMAIL_ALREADY_EXISTS_ERROR") {
-        // In this case the current user has an email that has already signed up
-        // If they are not linked, the other user can be deleted on the dashboard
-        // (or merged here if you provide an app specific implementation, but that is a longer/separate topic)
-        return res.json({
-            status: "GENERAL_ERROR",
-            message: "This user has already signed up using a password.",
-        });
-    }
-
-    // Here we can assume the user in signUpResp is not a primary user since it was just created
-    // Plus the linkAccounts checks anyway
-    const newRecipeUserId = signUpResp.user.loginMethods[0].recipeUserId;
-
-    const linkResp = await AccountLinking.linkAccounts(newRecipeUserId, session.getUserId());
-    if (linkResp.status !== "OK") {
-        return res.json({
-            status: "GENERAL_ERROR",
-            message: `Account linking failed (${linkResp.status})`,
-        });
-    }
-    // if the access token payload contains any information that'd change based on the new account, we'd want to update it here.
-
-    return res.json({
-        status: "OK",
-        user: linkResp.user,
-    });
-});
-
+// We use a custom endpoint to add phone numbers, because otherwise we'd need to transfer the OTP to the browser in some other way
+// In a normal (non-demo) implementation the phone number would need to be verified.
+// This is best done through MFA, which is out of the scope of this example, plus this shows usage of the manual linking APIs.
 app.post("/addPhoneNumber", verifySession(), async (req: SessionRequest, res) => {
     const session = req.session!;
     // First we check that the current session (and the user it belongs to) can have a user linked to it.
