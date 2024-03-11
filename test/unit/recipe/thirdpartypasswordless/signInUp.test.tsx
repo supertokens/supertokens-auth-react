@@ -73,14 +73,14 @@ describe("ThirdPartyPasswordless.SignInAndUp", () => {
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledTimes(1);
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledWith(
                 {
-                    rid: "thirdpartypasswordless",
-                    successRedirectContext: {
-                        action: "SUCCESS",
-                        isNewRecipeUser: false,
-                        createdNewUser: false,
-                        redirectToPath: undefined,
-                    },
+                    action: "SUCCESS",
+                    recipeId: "thirdpartypasswordless",
+                    isNewRecipeUser: false,
+                    createdNewUser: false,
+                    newSessionCreated: false,
                 },
+                "thirdpartypasswordless",
+                undefined,
                 {},
                 undefined
             );

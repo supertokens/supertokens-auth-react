@@ -190,7 +190,7 @@ export function useChildProps(
                         }
                     }
                 }
-                dispatch({ type: "setError", showAccessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR" });
+                dispatch({ type: "setError", showAccessDenied: false, error: "SOMETHING_WENT_WRONG_ERROR" });
             },
             recipeImplementation: recipeImplementation,
             config: recipe.config,
@@ -356,9 +356,9 @@ function useOnLoad(
                             ...createCodeInfo,
                             userContext,
                         });
-                    } catch (err) {
+                    } catch (err: any) {
                         if (
-                            err instanceof Response &&
+                            "status" in err &&
                             err.status === SessionRecipe.getInstanceOrThrow().config.invalidClaimStatusCode
                         ) {
                             const invalidClaims = await getInvalidClaimsFromResponse({ response: err, userContext });

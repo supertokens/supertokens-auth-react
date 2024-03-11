@@ -235,7 +235,7 @@ export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<s
         Object.entries(queryParams).forEach(([key, value]) => {
             url.searchParams.set(key, value);
         });
-        return `${url.pathname}${url.search}`;
+        return `${url.pathname}${url.search}${url.hash}`;
     }
 }
 

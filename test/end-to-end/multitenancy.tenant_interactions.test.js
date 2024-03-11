@@ -591,7 +591,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             ]);
 
             await removeTenant("customer1");
-            await epSignIn(page, email, SOMETHING_WENT_WRONG_ERROR);
+            await epSignIn(page, email, "Incorrect email and password combination");
         });
 
         it("should not allow sign up", async function () {

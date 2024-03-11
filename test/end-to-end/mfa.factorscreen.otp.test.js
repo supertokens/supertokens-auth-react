@@ -191,7 +191,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     assert.deepStrictEqual(pathname, "/redirect-here");
                 });
 
-                it("should show general error if the app navigates to the setup page but the user it is not allowed to set up the factor", async () => {
+                it("should show general error if the app navigates to the setup page but the user is not allowed to set up the factor", async () => {
                     await setMFAInfo({
                         requirements: [],
                         alreadySetup: [factorId],

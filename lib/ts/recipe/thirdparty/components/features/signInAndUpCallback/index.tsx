@@ -113,8 +113,8 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
     );
 
     const handleError = useCallback(
-        async (err) => {
-            if (err instanceof Response && err.status === Session.getInstanceOrThrow().config.invalidClaimStatusCode) {
+        async (err: any) => {
+            if ("status" in err && err.status === Session.getInstanceOrThrow().config.invalidClaimStatusCode) {
                 const invalidClaims = await getInvalidClaimsFromResponse({ response: err, userContext });
                 if (invalidClaims.some((i) => i.validatorId === EmailVerificationClaim.id)) {
                     try {

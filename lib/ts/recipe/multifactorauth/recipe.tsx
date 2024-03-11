@@ -26,7 +26,12 @@ import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
 import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
-import { appendQueryParamsToURL, getCurrentNormalisedUrlPath, getRedirectToPathFromURL, isTest } from "../../utils";
+import {
+    appendQueryParamsToURL,
+    getCurrentNormalisedUrlPathWithQueryParamsAndFragments,
+    getRedirectToPathFromURL,
+    isTest,
+} from "../../utils";
 import RecipeModule from "../recipeModule";
 import Session from "../session/recipe";
 
@@ -210,7 +215,7 @@ export default class MultiFactorAuth extends RecipeModule<
         //    and is on a custom path that has a redirectToPath set to pathX when calling this function,
         //    then we keep that in the query params if redirectBack is set to false.
         if (redirectBack) {
-            const redirectUrl = getCurrentNormalisedUrlPath().getAsStringDangerous();
+            const redirectUrl = getCurrentNormalisedUrlPathWithQueryParamsAndFragments();
             url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
         } else {
             const redirectUrl = getRedirectToPathFromURL();
@@ -236,7 +241,7 @@ export default class MultiFactorAuth extends RecipeModule<
             return;
         }
         if (redirectBack) {
-            const redirectUrl = getCurrentNormalisedUrlPath().getAsStringDangerous();
+            const redirectUrl = getCurrentNormalisedUrlPathWithQueryParamsAndFragments();
             url = appendQueryParamsToURL(url, { redirectToPath: redirectUrl });
         } else {
             const redirectUrl = getRedirectToPathFromURL();

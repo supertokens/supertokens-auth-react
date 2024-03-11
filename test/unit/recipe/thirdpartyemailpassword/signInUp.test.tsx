@@ -72,14 +72,14 @@ describe("ThirdPartyEmailPassword.SignInAndUp", () => {
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledTimes(1);
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledWith(
                 {
-                    rid: "thirdpartyemailpassword",
-                    successRedirectContext: {
-                        action: "SUCCESS",
-                        isNewRecipeUser: false,
-                        createdNewUser: false,
-                        redirectToPath: undefined,
-                    },
+                    action: "SUCCESS",
+                    recipeId: "thirdpartyemailpassword",
+                    newSessionCreated: false,
+                    isNewRecipeUser: false,
+                    createdNewUser: false,
                 },
+                "thirdpartyemailpassword",
+                undefined,
                 {},
                 undefined
             );

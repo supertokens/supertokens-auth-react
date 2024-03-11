@@ -315,7 +315,7 @@ describe("SuperTokens Email Verification", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await toggleSignInSignUp(page);
-            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: getTestEmail() });
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: await getTestEmail() });
             await signUp(page, fieldValues, postValues, "emailpassword");
 
             let pathname = await page.evaluate(() => window.location.pathname);
@@ -343,7 +343,7 @@ describe("SuperTokens Email Verification", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await toggleSignInSignUp(page);
-            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: getTestEmail() });
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: await getTestEmail() });
             await signUp(page, fieldValues, postValues, "emailpassword");
 
             let pathname = await page.evaluate(() => window.location.pathname);
@@ -1035,7 +1035,7 @@ describe("Email verification claim refresh with clock skew", function () {
             req.continue();
         });
 
-        const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: getTestEmail() });
+        const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: await getTestEmail() });
         await signUp(page, fieldValues, postValues, "emailpassword");
         assert(claimRefreshCalledCount < 2);
     });

@@ -483,6 +483,7 @@ SuperTokens.init({
             if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
                 return null;
             }
+            console.log(JSON.stringify(context));
             return context.redirectToPath || "/dashboard";
         } else {
             console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);

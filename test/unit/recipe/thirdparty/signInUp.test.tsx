@@ -84,14 +84,14 @@ describe("ThirdParty.SignInAndUp", () => {
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledTimes(1);
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledWith(
                 {
-                    rid: "thirdparty",
-                    successRedirectContext: {
-                        action: "SUCCESS",
-                        isNewRecipeUser: false,
-                        createdNewUser: false,
-                        redirectToPath: undefined,
-                    },
+                    action: "SUCCESS",
+                    recipeId: "thirdparty",
+                    newSessionCreated: false,
+                    isNewRecipeUser: false,
+                    createdNewUser: false,
                 },
+                "thirdparty",
+                undefined,
                 {},
                 undefined
             );
