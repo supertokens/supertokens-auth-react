@@ -1,6 +1,6 @@
 import { json } from "@remix-run/node";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "react-router-dom";
-import { getAppDirRequestHandler } from "supertokens-node/nextjs/index.js";
+import getAppDirRequestHandler from '../lib/remixAuthAPIRequestHandler.js'; // Adjust the path accordingly
 
 const handleCall = getAppDirRequestHandler(Response);
 
