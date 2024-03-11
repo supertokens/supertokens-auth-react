@@ -48,6 +48,11 @@
     margin-top: 6px;
 }
 
+[data-supertokens~="totp"] [data-supertokens~="factorLogo"] {
+    margin-top: 3px;
+    margin-left: -1px;
+}
+
 [data-supertokens~="factorName"] {
     color: rgb(var(--palette-textPrimary));
     font-size: var(--font-size-1);
