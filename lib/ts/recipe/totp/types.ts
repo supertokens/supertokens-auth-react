@@ -44,7 +44,6 @@ export type ComponentOverrideMap = {
 };
 
 export type TOTPDeviceInfo = {
-    issuerName: string;
     deviceName: string;
     secret: string;
     qrCodeString: string;

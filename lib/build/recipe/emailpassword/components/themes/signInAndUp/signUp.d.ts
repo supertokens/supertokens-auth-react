@@ -3,6 +3,7 @@ export declare const SignUp: import("react").ComponentType<
     import("../../../../../types").ThemeBaseProps & {
         recipeImplementation: import("supertokens-web-js/recipe/emailpassword").RecipeInterface;
         clearError: () => void;
+        onFetchError: (error: Response) => void;
         onError: (error: string) => void;
         config: import("../../../types").NormalisedConfig;
         signInClicked?: (() => void) | undefined;

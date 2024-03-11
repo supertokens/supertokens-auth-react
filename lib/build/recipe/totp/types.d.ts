@@ -27,7 +27,6 @@ export declare type ComponentOverrideMap = {
     TOTPDeviceInfoSection_Override?: ComponentOverride<typeof DeviceInfoSection>;
 };
 export declare type TOTPDeviceInfo = {
-    issuerName: string;
     deviceName: string;
     secret: string;
     qrCodeString: string;
