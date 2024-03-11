@@ -18,6 +18,13 @@ SuperTokens.init({
         websiteDomain: getAuthDomain(),
         websiteBasePath: getWebsiteBasePath(),
     },
+    getRedirectionURL: async (context) => {
+        if (context.action === "SUCCESS") {
+            // redirect users to their associated subdomain e.g abc.example.com for user abc
+            const claimValue = await Session.getClaimValue({ claim: AllowedDomainsClaim });
+            return "http://" + claimValue[0] + ":3000";
+        }
+    },
     usesDynamicLoginMethods: true,
     recipeList: [
         EmailVerification.init({
@@ -31,24 +38,9 @@ SuperTokens.init({
                 }),
             },
         }),
-        ThirdPartyEmailPassword.init({
-            getRedirectionURL: async (context) => {
-                if (context.action === "SUCCESS") {
-                    // redirect users to their associated subdomain e.g abc.example.com for user abc
-                    const claimValue = await Session.getClaimValue({ claim: AllowedDomainsClaim });
-                    return "http://" + claimValue[0] + ":3000";
-                }
-            },
-        }),
+        ThirdPartyEmailPassword.init(),
         ThirdPartyPasswordless.init({
             contactMethod: "EMAIL",
-            getRedirectionURL: async (context) => {
-                if (context.action === "SUCCESS") {
-                    // redirect users to their associated subdomain e.g abc.example.com for user abc
-                    const claimValue = await Session.getClaimValue({ claim: AllowedDomainsClaim });
-                    return "http://" + claimValue[0] + ":3000";
-                }
-            },
         }),
         Session.init({
             sessionTokenFrontendDomain: ".example.com",

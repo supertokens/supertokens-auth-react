@@ -21,6 +21,17 @@ SuperTokens.init({
         apiDomain: "http://localhost:8000",
         websiteDomain: "http://localhost:3000",
     },
+    getRedirectionURL: async (context) => {
+        // This callback ensures that we redirect the logged in user to the dashboard page after login
+        if (context.action === "SUCCESS") {
+            if (context.redirectToPath !== undefined) {
+                // we are navigating back to where the user was before they authenticated
+                return context.redirectToPath;
+            }
+            return "/dashboard";
+        }
+        return undefined;
+    },
     recipeList: [
         ThirdParty.init({
             signInAndUpFeature: {
@@ -45,17 +56,6 @@ SuperTokens.init({
                         ),
                     },
                 ],
-            },
-            getRedirectionURL: async (context) => {
-                // This callback ensures that we redirect the logged in user to the dashboard page after login
-                if (context.action === "SUCCESS") {
-                    if (context.redirectToPath !== undefined) {
-                        // we are navigating back to where the user was before they authenticated
-                        return context.redirectToPath;
-                    }
-                    return "/dashboard";
-                }
-                return undefined;
             },
             preAPIHook: async (context) => {
                 // ref: https://supertokens.com/docs/thirdparty/advanced-customizations/frontend-hooks/pre-api
