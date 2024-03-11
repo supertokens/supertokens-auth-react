@@ -6,8 +6,10 @@ import { verifySession } from "supertokens-node/recipe/session/framework/express
 import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
 import Passwordless from "supertokens-node/recipe/passwordless";
+import EmailVerification from "supertokens-node/recipe/emailverification";
+import MultiFactorAuth, { FactorIds } from "supertokens-node/recipe/multifactorauth";
+import AccountLinking from "supertokens-node/recipe/accountlinking";
 import parsePhoneNumber from "libphonenumber-js/max";
-import { PhoneVerifiedClaim } from "./phoneVerifiedClaim";
 import Dashboard from "supertokens-node/recipe/dashboard";
 require("dotenv").config();
 
@@ -105,108 +107,46 @@ supertokens.init({
         Passwordless.init({
             contactMethod: "PHONE",
             flowType: "USER_INPUT_CODE",
+        }),
+        Session.init(),
+        MultiFactorAuth.init({
+            firstFactors: ["emailpassword"],
             override: {
-                apis: (oI) => {
-                    return {
-                        ...oI,
-                        createCodePOST: async function (input) {
-                            if (oI.createCodePOST === undefined) {
-                                throw new Error("Should never come here");
-                            }
-                            /**
-                             *
-                             * We want to make sure that the OTP being generated is for the
-                             * same number that was used in the first login challenge. Otherwise
-                             * someone could "hack" the frontend to change the phone number
-                             * being sent for the second login challenge.
-                             */
+                functions: (oI) => ({
+                    ...oI,
+                    async getMFARequirementsForAuth(input) {
+                        // By requiring
+                        if (!(await input.factorsSetUpForUser).includes(FactorIds.OTP_PHONE)) {
+                            return [FactorIds.OTP_PHONE];
+                        }
+                        return [];
+                    },
+                }),
+                apis: (oI) => ({
+                    ...oI,
+                    resyncSessionAndFetchMFAInfoPUT: async (input) => {
+                        const resp = await oI.resyncSessionAndFetchMFAInfoPUT!(input);
 
-                            let session = await Session.getSession(input.options.req, input.options.res, {
-                                overrideGlobalClaimValidators: () => [],
-                            });
-                            if (session === undefined) {
-                                throw new Error("Should never come here");
-                            }
-
-                            let phoneNumber: string = session.getAccessTokenPayload().phoneNumber;
-
-                            if (!("phoneNumber" in input) || input.phoneNumber !== phoneNumber) {
-                                throw new Error("Should never come here");
-                            }
-
-                            return oI.createCodePOST(input);
-                        },
-                        consumeCodePOST: async function (input) {
-                            if (oI.consumeCodePOST === undefined) {
-                                throw new Error("Should never come here");
-                            }
-                            // we should already have a session here since this is called
-                            // after phone password login
-                            let session = await Session.getSession(input.options.req, input.options.res, {
-                                overrideGlobalClaimValidators: () => [],
-                            });
-                            if (session === undefined) {
-                                throw new Error("Should never come here");
-                            }
-
-                            // we add the session to the user context so that the createNewSession
-                            // function doesn't create a new session
-                            input.userContext.session = session;
-                            let resp = await oI.consumeCodePOST(input);
-
-                            if (resp.status === "OK") {
-                                // OTP verification was successful. We can now mark the
-                                // session's payload as PhoneVerifiedClaim: true so that
-                                // the user has access to API routes and the frontend UI
-                                await session.setClaimValue(PhoneVerifiedClaim, true, input.userContext);
-                                resp.user = (await supertokens.getUser(session.getUserId()))!;
-                            }
-
-                            return resp;
-                        },
-                    };
-                },
+                        if (resp.status === "OK") {
+                            resp.phoneNumbers = {
+                                [FactorIds.OTP_PHONE]: resp.emails[FactorIds.EMAILPASSWORD],
+                            };
+                            // We want to remove "otp-email" and add "otp-phone", but it's simpler to just replace the array
+                            resp.factors.alreadySetup = [FactorIds.OTP_PHONE];
+                        }
+                        return resp;
+                    },
+                }),
             },
         }),
-        Session.init({
-            override: {
-                functions: (originalImplementation) => {
-                    return {
-                        ...originalImplementation,
-                        getGlobalClaimValidators: (input) => [
-                            ...input.claimValidatorsAddedByOtherRecipes,
-                            PhoneVerifiedClaim.validators.hasValue(true),
-                        ],
-                        createNewSession: async function (input) {
-                            if (input.userContext.session !== undefined) {
-                                // if it comes here, it means that we already have an
-                                // existing session
-                                return input.userContext.session;
-                            } else {
-                                // this is via phone number and password login. The user
-                                // still needs to verify the phone number via an OTP
-
-                                // we also get the phone number of the user and save it in the
-                                // session so that the OTP can be sent to it directly
-                                let userInfo = await supertokens.getUser(input.userId, input.userContext);
-                                return originalImplementation.createNewSession({
-                                    ...input,
-                                    accessTokenPayload: {
-                                        ...input.accessTokenPayload,
-                                        ...PhoneVerifiedClaim.build(
-                                            input.userId,
-                                            input.recipeUserId,
-                                            input.tenantId,
-                                            input.userContext
-                                        ),
-                                        phoneNumber: userInfo?.emails[0],
-                                    },
-                                });
-                            }
-                        },
-                    };
-                },
-            },
+        AccountLinking.init({
+            shouldDoAutomaticAccountLinking: async () => ({
+                shouldAutomaticallyLink: true,
+                shouldRequireVerification: true,
+            }),
+        }),
+        EmailVerification.init({
+            mode: "REQUIRED",
         }),
         Dashboard.init(),
     ],
@@ -226,7 +166,7 @@ app.use(
 app.use(middleware());
 
 // An example API that requires session verification
-app.get("/sessioninfo", verifySession(), async (req: SessionRequest, res) => {
+app.get("/sessioninfo", verifySession(), async (req: any, res) => {
     let session = req.session!;
     res.send({
         sessionHandle: session.getHandle(),
