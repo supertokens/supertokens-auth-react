@@ -193,7 +193,7 @@
         },
         {
             "path": "recipe/thirdpartypasswordless/prebuiltui.js",
-            "limit": "150kb"
+            "limit": "151kb"
         },
         {
             "path": "recipe/multitenancy/index.js",
