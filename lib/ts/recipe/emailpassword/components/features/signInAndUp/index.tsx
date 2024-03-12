@@ -121,7 +121,15 @@ export function useChildProps(
     const rethrowInRender = useRethrowInRender();
 
     const onSignInSuccess = useCallback(async (): Promise<void> => {
-        const payloadAfterSuccess = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({ userContext });
+        let payloadAfterCall;
+        try {
+            payloadAfterCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                userContext,
+            });
+        } catch {
+            payloadAfterCall = undefined;
+        }
+
         return Session.getInstanceOrThrow()
             .validateGlobalClaimsAndHandleSuccessRedirection(
                 {
@@ -131,7 +139,8 @@ export function useChildProps(
                     newSessionCreated:
                         session.loading ||
                         !session.doesSessionExist ||
-                        session.accessTokenPayload.sessionHandle !== payloadAfterSuccess.sessionHandle,
+                        (payloadAfterCall !== undefined &&
+                            session.accessTokenPayload.sessionHandle !== payloadAfterCall.sessionHandle),
                     recipeId: recipe!.recipeID,
                 },
                 recipe!.recipeID,
@@ -144,9 +153,14 @@ export function useChildProps(
 
     const onSignUpSuccess = useCallback(
         async (result: { user: User }): Promise<void> => {
-            const payloadAfterSuccess = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
-                userContext,
-            });
+            let payloadAfterCall;
+            try {
+                payloadAfterCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                    userContext,
+                });
+            } catch {
+                payloadAfterCall = undefined;
+            }
             return Session.getInstanceOrThrow()
                 .validateGlobalClaimsAndHandleSuccessRedirection(
                     {
@@ -156,7 +170,8 @@ export function useChildProps(
                         newSessionCreated:
                             session.loading ||
                             !session.doesSessionExist ||
-                            session.accessTokenPayload.sessionHandle !== payloadAfterSuccess.sessionHandle,
+                            (payloadAfterCall !== undefined &&
+                                session.accessTokenPayload.sessionHandle !== payloadAfterCall.sessionHandle),
                         recipeId: recipe!.recipeID,
                     },
                     recipe!.recipeID,

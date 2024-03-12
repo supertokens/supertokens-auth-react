@@ -81,9 +81,14 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
             }
 
             if (response.status === "OK") {
-                const payloadAfterSuccess = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
-                    userContext,
-                });
+                let payloadAfterCall;
+                try {
+                    payloadAfterCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                        userContext,
+                    });
+                } catch {
+                    payloadAfterCall = undefined;
+                }
                 const stateResponse = props.recipe.webJSRecipe.getStateAndOtherInfoFromStorage<CustomStateProperties>({
                     userContext,
                 });
@@ -98,7 +103,8 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                             newSessionCreated:
                                 session.loading ||
                                 !session.doesSessionExist ||
-                                session.accessTokenPayload.sessionHandle !== payloadAfterSuccess.sessionHandle,
+                                (payloadAfterCall !== undefined &&
+                                    session.accessTokenPayload.sessionHandle !== payloadAfterCall.sessionHandle),
                             recipeId: props.recipe.recipeID,
                         },
                         props.recipe.recipeID,
