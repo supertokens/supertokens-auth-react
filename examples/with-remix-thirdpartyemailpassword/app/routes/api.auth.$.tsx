@@ -21,7 +21,7 @@ export type PartialRemixRequest = {
 
 function createPartialRemixRequest(request: Request): PartialRemixRequest {
   const headers = new Headers();
-  request.headers.forEach((value, key) => {
+  request.headers.forEach((value: string, key: string) => { 
     headers.append(key, value);
   });
 
@@ -35,7 +35,7 @@ function createPartialRemixRequest(request: Request): PartialRemixRequest {
       getAll: () => {
         const cookieHeader = request.headers.get("Cookie");
         if (cookieHeader) {
-          return cookieHeader.split(";").map((cookieString) => {
+          return cookieHeader.split(";").map((cookieString: string) => {
             const [name, value] = cookieString.trim().split("=");
             return { name, value } as { name: string; value: string };
           });
