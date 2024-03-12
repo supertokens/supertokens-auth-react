@@ -14,6 +14,8 @@ import Multitenancy from "supertokens-auth-react/recipe/multitenancy";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 import UserRoles from "supertokens-auth-react/recipe/userroles";
+import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
+import TOTP from "supertokens-auth-react/recipe/totp";
 
 import axios from "axios";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
@@ -332,6 +334,7 @@ const customFields = [
 const testContext = getTestContext();
 
 let recipeList = [
+    TOTP.init(),
     Multitenancy.init({
         override: {
             functions: (oI) => ({
@@ -376,7 +379,7 @@ let recipeList = [
                         return implementation.doesSessionExist(...args);
                     },
                     getAccessTokenPayloadSecurely(...args) {
-                        log(`GET_JWT_PAYLOAD_SECURELY`);
+                        // log(`GET_JWT_PAYLOAD_SECURELY`);
                         return implementation.getAccessTokenPayloadSecurely(...args);
                     },
                     getUserId(...args) {
@@ -438,6 +441,14 @@ if (emailVerificationMode !== "OFF") {
     recipeList.push(getEmailVerificationConfigs(testContext));
 }
 
+if (testContext.enableMFA) {
+    recipeList.push(
+        MultiFactorAuth.init({
+            firstFactors: testContext.firstFactors,
+        })
+    );
+}
+
 SuperTokens.init({
     usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
     clientType: testContext.clientType,
@@ -458,7 +469,25 @@ SuperTokens.init({
         },
     },
     getRedirectionURL: (context) => {
-        console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
+        if (context.action === "SUCCESS") {
+            let logId = {
+                emailpassword: "EMAIL_PASSWORD",
+                thirdparty: "THIRD_PARTY",
+                passwordless: "PASSWORDLESS",
+                thirdpartypasswordless: "THIRDPARTYPASSWORDLESS",
+                thirdpartyemailpassword: "THIRD_PARTY_EMAIL_PASSWORD",
+            }[context.recipeId];
+
+            console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`);
+            setIsNewUserToStorage(context.recipeId, context.isNewRecipeUser);
+            if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
+                return null;
+            }
+            console.log(JSON.stringify(context));
+            return context.redirectToPath || "/dashboard";
+        } else {
+            console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
+        }
     },
     recipeList,
 });
@@ -608,7 +637,7 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
             const sessionInfoUsingFetch = await fetchSessionInfoUsingFetch();
             setSessionInfoUsingFetch(sessionInfoUsingFetch);
         }
-        fetchData();
+        fetchData().catch(console.error);
     }, []);
 
     let sessionContext = useSessionContext();
@@ -641,6 +670,13 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
             </div>
             <div className="session-context-userId">session context userID: {sessionContext.userId}</div>
             <pre className="invalidClaims">{JSON.stringify(sessionContext.invalidClaims, undefined, 2)}</pre>
+            <a
+                className="goToFactorChooser"
+                onClick={() => {
+                    return MultiFactorAuth.redirectToFactorChooser(true, undefined, props.history);
+                }}>
+                MFA chooser
+            </a>
         </div>
     );
 }
@@ -814,13 +850,6 @@ function getEmailPasswordConfigs({ disableDefaultUI, formFieldType }) {
         },
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
-            if (context.action === "SUCCESS") {
-                setIsNewUserToStorage("emailpassword", context.isNewRecipeUser);
-                if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
-                    return null;
-                }
-                return context.redirectToPath || "/dashboard";
-            }
         },
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
@@ -957,13 +986,6 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
         },
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRDPARTYPASSWORDLESS GET_REDIRECTION_URL ${context.action}`);
-            if (context.action === "SUCCESS") {
-                setIsNewUserToStorage("thirdpartypasswordless", context.isNewRecipeUser);
-                if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
-                    return null;
-                }
-                return context.redirectToPath || "/dashboard";
-            }
         },
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS THIRDPARTYPASSWORDLESS ON_HANDLE_EVENT ${context.action}`);
@@ -989,6 +1011,10 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
                 : undefined,
         },
         linkClickedScreenFeature: {
+            disableDefaultUI,
+            style: theme,
+        },
+        mfaFeature: {
             disableDefaultUI,
             style: theme,
         },
@@ -1053,13 +1079,6 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
         },
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS PASSWORDLESS GET_REDIRECTION_URL ${context.action}`);
-            if (context.action === "SUCCESS") {
-                setIsNewUserToStorage("passwordless", context.isNewRecipeUser);
-                if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
-                    return null;
-                }
-                return context.redirectToPath || "/dashboard";
-            }
         },
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS PASSWORDLESS ON_HANDLE_EVENT ${context.action}`);
@@ -1079,6 +1098,10 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
             termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
         },
         linkClickedScreenFeature: {
+            disableDefaultUI,
+            style: theme,
+        },
+        mfaFeature: {
             disableDefaultUI,
             style: theme,
         },
@@ -1120,11 +1143,6 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
         providers = ids.map((id) => providers.find((p) => p.id === id) || { id, name: id });
     }
     return ThirdParty.init({
-        style: `          
-            [data-supertokens~=container] {
-                font-family: cursive;
-            }
-        `,
         preAPIHook: async (context) => {
             if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `THIRD_PARTY ${context.action}`) {
                 if (context.action === "GET_AUTHORISATION_URL") {
@@ -1144,13 +1162,6 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
         },
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY GET_REDIRECTION_URL ${context.action}`);
-            if (context.action === "SUCCESS") {
-                setIsNewUserToStorage("thirdparty", context.isNewRecipeUser);
-                if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
-                    return null;
-                }
-                return context.redirectToPath || "/dashboard";
-            }
         },
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY ON_HANDLE_EVENT ${context.action}`);

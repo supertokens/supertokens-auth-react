@@ -286,10 +286,7 @@ describe("SessionAuth", () => {
         test("call onSessionExpired on UNAUTHORISED", async () => {
             // given
             const mockOnSessionExpired = jest.fn();
-            let listenerFn: (event: any) => void;
-            MockSession.addEventListener.mockImplementation((fn) => {
-                listenerFn = fn;
-            });
+            const listenerAdded = useMockEventListener();
 
             // when
             const result = render(
@@ -301,8 +298,9 @@ describe("SessionAuth", () => {
             // Wait for full rendering
             expect(await result.findByText(/^userId:/)).toBeInTheDocument();
 
+            const listenerFn = await listenerAdded;
             await act(() =>
-                listenerFn({
+                listenerFn!({
                     action: "UNAUTHORISED",
                     sessionContext: {
                         doesSessionExist: false,
@@ -320,10 +318,7 @@ describe("SessionAuth", () => {
 
         test("update context on SIGN_OUT", async () => {
             // given
-            let listenerFn: (event: any) => void;
-            MockSession.addEventListener.mockImplementation((fn) => {
-                listenerFn = fn;
-            });
+            const listenerAdded = useMockEventListener();
 
             // when
             const result = render(
@@ -335,8 +330,9 @@ describe("SessionAuth", () => {
             // Wait for full rendering
             expect(await result.findByText(/^userId:/)).toBeInTheDocument();
 
+            const listenerFn = await listenerAdded;
             await act(() =>
-                listenerFn({
+                listenerFn!({
                     action: "SIGN_OUT",
                     sessionContext: {
                         doesSessionExist: false,
@@ -351,10 +347,7 @@ describe("SessionAuth", () => {
 
         test("update context on SESSION_CREATED", async () => {
             // given
-            let listenerFn: (event: any) => void;
-            MockSession.addEventListener.mockImplementation((fn) => {
-                listenerFn = fn;
-            });
+            const listenerAdded = useMockEventListener();
 
             // when
             const result = render(
@@ -365,8 +358,9 @@ describe("SessionAuth", () => {
 
             expect(await result.findByText(/^userId:/)).toHaveTextContent(`userId: mock-user-id`);
 
+            const listenerFn = await listenerAdded;
             await act(() =>
-                listenerFn({
+                listenerFn!({
                     action: "SESSION_CREATED",
                     sessionContext: {
                         doesSessionExist: true,
@@ -387,12 +381,7 @@ describe("SessionAuth", () => {
 
         test("update context on SESSION_REFRESH", async () => {
             // given
-            let listenerFn: (event: any) => void;
-            MockSession.addEventListener.mockImplementationOnce((fn) => {
-                listenerFn = fn;
-
-                return () => {};
-            });
+            const listenerAdded = useMockEventListener();
 
             const result = render(
                 <SessionAuth>
@@ -408,9 +397,10 @@ describe("SessionAuth", () => {
                 afterRefreshKey: "afterRefreshValue",
             };
 
+            const listenerFn = await listenerAdded;
             // when
             await act(() =>
-                listenerFn({
+                listenerFn!({
                     action: "REFRESH_SESSION",
                     sessionContext: {
                         doesSessionExist: true,
@@ -428,12 +418,7 @@ describe("SessionAuth", () => {
 
     test("update context on ACCESS_TOKEN_PAYLOAD_UPDATED", async () => {
         // given
-        let listenerFn: (event: any) => void;
-        MockSession.addEventListener.mockImplementationOnce((fn) => {
-            listenerFn = fn;
-
-            return () => {};
-        });
+        const listenerAdded = useMockEventListener();
 
         const result = render(
             <SessionAuth>
@@ -455,9 +440,10 @@ describe("SessionAuth", () => {
             },
         };
 
+        const listenerFn = await listenerAdded;
         // when
         await act(() =>
-            listenerFn({
+            listenerFn!({
                 action: "ACCESS_TOKEN_PAYLOAD_UPDATED",
                 sessionContext: {
                     doesSessionExist: true,
@@ -476,12 +462,7 @@ describe("SessionAuth", () => {
     describe("redirections", () => {
         test("redirect on ACCESS_TOKEN_PAYLOAD_UPDATED for invalid claim", async () => {
             // given
-            let listenerFn: (event: any) => void;
-            MockSession.addEventListener.mockImplementationOnce((fn) => {
-                listenerFn = fn;
-
-                return () => {};
-            });
+            const listenerAdded = useMockEventListener();
 
             const result = render(
                 <SessionAuth>
@@ -510,8 +491,9 @@ describe("SessionAuth", () => {
                 loading: false,
             });
 
+            const listenerFn = await listenerAdded;
             await act(() =>
-                listenerFn({
+                listenerFn!({
                     action: "ACCESS_TOKEN_PAYLOAD_UPDATED",
                     sessionContext: {
                         doesSessionExist: true,
@@ -531,12 +513,7 @@ describe("SessionAuth", () => {
 
         test("not redirect on ACCESS_TOKEN_PAYLOAD_UPDATED for invalid claim if doRedirection=false", async () => {
             // given
-            let listenerFn: (event: any) => void;
-            MockSession.addEventListener.mockImplementationOnce((fn) => {
-                listenerFn = fn;
-
-                return () => {};
-            });
+            const listenerAdded = useMockEventListener();
 
             const result = render(
                 <SessionAuth doRedirection={false}>
@@ -557,8 +534,9 @@ describe("SessionAuth", () => {
                 },
             };
 
+            const listenerFn = await listenerAdded;
             await act(() =>
-                listenerFn({
+                listenerFn!({
                     action: "ACCESS_TOKEN_PAYLOAD_UPDATED",
                     sessionContext: {
                         doesSessionExist: true,
@@ -578,12 +556,7 @@ describe("SessionAuth", () => {
 
         test("redirect on UNAUTHORISED", async () => {
             // given
-            let listenerFn: (event: any) => void;
-            MockSession.addEventListener.mockImplementationOnce((fn) => {
-                listenerFn = fn;
-
-                return () => {};
-            });
+            const listenerAdded = useMockEventListener();
 
             const result = render(
                 <SessionAuth>
@@ -596,9 +569,10 @@ describe("SessionAuth", () => {
 
             expect(await result.findByText(/^testClaimValue:/)).toHaveTextContent(`testClaimValue: undefined`);
 
+            const listenerFn = await listenerAdded;
             await Promise.all([
                 act(() =>
-                    listenerFn({
+                    listenerFn!({
                         action: "UNAUTHORISED",
                         sessionContext: {
                             doesSessionExist: false,
@@ -620,12 +594,7 @@ describe("SessionAuth", () => {
 
         test("not redirect on UNAUTHORISED if doRedirection=false", async () => {
             // given
-            let listenerFn: (event: any) => void;
-            MockSession.addEventListener.mockImplementationOnce((fn) => {
-                listenerFn = fn;
-
-                return () => {};
-            });
+            const listenerAdded = useMockEventListener();
 
             const result = render(
                 <SessionAuth doRedirection={false}>
@@ -638,9 +607,10 @@ describe("SessionAuth", () => {
 
             expect(await result.findByText(/^testClaimValue:/)).toHaveTextContent(`testClaimValue: undefined`);
 
+            const listenerFn = await listenerAdded;
             await Promise.all([
                 act(() =>
-                    listenerFn({
+                    listenerFn!({
                         action: "UNAUTHORISED",
                         sessionContext: {
                             doesSessionExist: false,
@@ -709,3 +679,13 @@ describe("SessionAuth", () => {
         });
     });
 });
+function useMockEventListener(): Promise<(event: any) => void> {
+    let setListenerAdded;
+    const listenerAdded = new Promise<(event: any) => void>((res) => {
+        setListenerAdded = res;
+    });
+    MockSession.addEventListener.mockImplementation((fn) => {
+        setListenerAdded(fn);
+    });
+    return listenerAdded;
+}

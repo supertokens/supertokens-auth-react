@@ -171,10 +171,7 @@ export async function getLogoutButton(page) {
 }
 
 export async function getSignInOrSignUpSwitchLink(page) {
-    return waitForSTElement(
-        page,
-        "div > div > [data-supertokens~='headerSubtitle'] > div > [data-supertokens~='link']"
-    );
+    return waitForSTElement(page, "div > div > [data-supertokens~='headerSubtitle'] > [data-supertokens~='link']");
 }
 
 export async function getForgotPasswordLink(page) {
@@ -256,6 +253,24 @@ export async function getInputAdornmentsError(page) {
                     .querySelector(ST_ROOT_SELECTOR)
                     .shadowRoot.querySelectorAll("[data-supertokens~='inputAdornmentError']"),
                 (i) => i.textContent
+            ),
+        { ST_ROOT_SELECTOR }
+    );
+}
+
+export async function getFactorChooserOptions(page) {
+    await waitForSTElement(page, "[data-supertokens~='factorChooserList']");
+    return await page.evaluate(
+        ({ ST_ROOT_SELECTOR }) =>
+            Array.from(
+                document
+                    .querySelector(ST_ROOT_SELECTOR)
+                    .shadowRoot.querySelectorAll("[data-supertokens~='factorChooserOption']"),
+                (i) =>
+                    i.dataset["supertokens"]
+                        ?.split(" ")
+                        .filter((x) => x !== "factorChooserOption")
+                        .join(" ")
             ),
         { ST_ROOT_SELECTOR }
     );
@@ -422,8 +437,8 @@ export async function setSelectDropdownValue(page, selector, optionValue) {
     return dropdownEle.select(selector, optionValue);
 }
 
-export async function clearBrowserCookiesWithoutAffectingConsole(page, console) {
-    let toReturn = [...console];
+export async function clearBrowserCookiesWithoutAffectingConsole(page, logs) {
+    let toReturn = [...logs];
     const client = await page.target().createCDPSession();
     await client.send("Network.clearBrowserCookies");
     await client.send("Network.clearBrowserCache");
@@ -432,6 +447,18 @@ export async function clearBrowserCookiesWithoutAffectingConsole(page, console) 
         page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
+
+    // TODO: think about moving this elsewhere and/or renaming this function
+    if (await isMFASupported()) {
+        await page.evaluate(() => window.localStorage.setItem("enableMFA", "true"));
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+    }
+    logs.length = 0;
+    logs.push(...toReturn);
+
     return toReturn;
 }
 
@@ -809,16 +836,15 @@ export function isReact16() {
     return process.env.IS_REACT_16 === "true";
 }
 
-export async function getResetPasswordFormBackButton(page) {
-    const backButtonSelector =
-        "[data-supertokens='headerTitle resetPasswordHeaderTitle'] > [data-supertokens='backButton backButtonCommon']";
+export async function getTitleBackButton(page) {
+    const backButtonSelector = "[data-supertokens~='headerTitle'] > [data-supertokens~='backButton']";
 
     return await waitForSTElement(page, backButtonSelector);
 }
 
 export async function getResetPasswordSuccessBackToSignInButton(page) {
     const backToSignInSelector =
-        "[data-supertokens='container'] > [data-supertokens='row'] > [data-supertokens='secondaryText secondaryLinkWithLeftArrow']";
+        "[data-supertokens~='container'] > [data-supertokens~='row'] > [data-supertokens~='secondaryLinkWithLeftArrow']";
 
     return await waitForSTElement(page, backToSignInSelector);
 }
@@ -886,6 +912,15 @@ export async function isAccountLinkingSupported() {
     return true;
 }
 
+export async function isMFASupported() {
+    const features = await getFeatureFlags();
+    if (!features.includes("mfa")) {
+        return false;
+    }
+
+    return true;
+}
+
 /**
  * For example setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "EMAIL_PASSWORD_SIGN_UP", page) to
  * set for signUp in email password
@@ -897,8 +932,8 @@ export async function setGeneralErrorToLocalStorage(recipeName, action, page) {
     });
 }
 
-export function getTestEmail() {
-    return `john.doe+${Date.now()}@supertokens.io`;
+export async function getTestEmail(post) {
+    return `john.doe+${Date.now()}-${post ?? "0"}@supertokens.io`;
 }
 
 export async function setupTenant(tenantId, loginMethods) {

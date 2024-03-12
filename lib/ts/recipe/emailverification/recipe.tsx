@@ -22,11 +22,12 @@ import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 
-import { EmailVerificationClaimClass } from "../../claims/emailVerificationClaim";
 import { SSR_ERROR } from "../../constants";
+import { isTest } from "../../utils";
 import RecipeModule from "../recipeModule";
 
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
+import { EmailVerificationClaimClass } from "./emailVerificationClaim";
 import { getFunctionOverrides } from "./functionOverrides";
 import { normaliseEmailVerificationFeature } from "./utils";
 
@@ -142,4 +143,13 @@ export default class EmailVerification extends RecipeModule<
             return "/";
         }
     };
+
+    static reset(): void {
+        if (!isTest()) {
+            return;
+        }
+
+        EmailVerification.instance = undefined;
+        return;
+    }
 }

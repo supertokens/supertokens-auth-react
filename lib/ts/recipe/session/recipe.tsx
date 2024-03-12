@@ -38,6 +38,7 @@ import type {
     NormalisedAppInfo,
     NormalisedConfigWithAppInfoAndRecipeID,
     RecipeInitResult,
+    SuccessRedirectContext,
     UserContext,
 } from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
@@ -51,15 +52,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     public recipeID = Session.RECIPE_ID;
 
     private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
-    private redirectionHandlersFromAuthRecipes = new Map<
-        string,
-        (
-            ctx: any,
-            navigate?: Navigate,
-            queryParams?: Record<string, string>,
-            userContext?: UserContext
-        ) => Promise<void>
-    >();
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedSessionConfig>,
@@ -125,28 +117,14 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         return () => this.eventListeners.delete(listener);
     };
 
-    addAuthRecipeRedirectionHandler = (
-        rid: string,
-        redirect: (
-            context: any,
-            navigate?: Navigate,
-            queryParams?: Record<string, string>,
-            userContext?: UserContext
-        ) => Promise<void>
-    ) => {
-        this.redirectionHandlersFromAuthRecipes.set(rid, redirect);
-    };
-
     validateGlobalClaimsAndHandleSuccessRedirection = async (
-        redirectInfo?: {
-            rid: string;
-            successRedirectContext: {
-                action: "SUCCESS";
-                isNewRecipeUser: boolean;
-                isNewPrimaryUser: boolean;
-                redirectToPath?: string;
-            };
-        },
+        // We redefine recipeId to be a string here, because everywhere in the SDK we treat
+        // it as a string (e.g.: when defining it in recipes), but we want to type it more
+        // strictly in the callbacks the app provides to help integrating our SDK.
+        // This is the "meeting point" between the two types, so we need to cast between them here.
+        successRedirectContext: (Omit<SuccessRedirectContext, "recipeId"> & { recipeId: string }) | undefined,
+        fallbackRecipeId: string,
+        redirectToPath?: string,
         userContext?: UserContext,
         navigate?: Navigate
     ): Promise<void> => {
@@ -166,11 +144,11 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         const invalidClaims = await this.validateClaims({ userContext });
 
         if (invalidClaims.length > 0) {
-            if (redirectInfo !== undefined) {
+            if (successRedirectContext !== undefined) {
                 // if we have to redirect and we have success context we wanted to use we save it in localstorage
                 // this way after the other page did solved the validation error it can continue
                 // the sign in process by calling this function without passing the redirect info
-                const jsonContext = JSON.stringify(redirectInfo);
+                const jsonContext = JSON.stringify({ successRedirectContext, redirectToPath });
                 await setLocalStorage("supertokens-success-redirection-context", jsonContext);
             }
 
@@ -187,12 +165,19 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         }
 
         // If we don't need to redirect because of a claim, we try and execute the original redirection
-        if (redirectInfo === undefined) {
+        if (successRedirectContext === undefined) {
             // if this wasn't set directly we try and grab it from local storage
+            // generally this means this is a secondary factor completion or emailverification
             const successContextStr = await getLocalStorage("supertokens-success-redirection-context");
             if (successContextStr !== null) {
                 try {
-                    redirectInfo = JSON.parse(successContextStr);
+                    const storedContext = JSON.parse(successContextStr);
+                    successRedirectContext = storedContext.successRedirectContext;
+
+                    // if we have a redirectToPath set in the queryparams that takes priority over the stored value
+                    if (redirectToPath === undefined) {
+                        redirectToPath = storedContext.redirectToPath;
+                    }
                 } finally {
                     await removeFromLocalStorage("supertokens-success-redirection-context");
                 }
@@ -200,28 +185,30 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                 // If there was nothing in localstorage we set a default
                 // this can happen if the user visited email verification screen without an auth recipe redirecting them there
                 // but already had the email verified and an active session
-                redirectInfo = {
-                    rid: Session.RECIPE_ID,
-                    successRedirectContext: {
-                        action: "SUCCESS",
-                        isNewPrimaryUser: false,
-                        isNewRecipeUser: false,
-                    },
+                successRedirectContext = {
+                    recipeId: fallbackRecipeId!,
+                    action: "SUCCESS",
+                    createdNewUser: false,
+                    isNewRecipeUser: false,
+                    newSessionCreated: false,
                 };
             }
         }
 
-        // We get the redirection handler registered by the relevant auth recipe
-        const authRecipeRedirectHandler = this.redirectionHandlersFromAuthRecipes.get(redirectInfo!.rid);
-        if (authRecipeRedirectHandler !== undefined) {
-            // and call it with the saved info
-            return authRecipeRedirectHandler(redirectInfo!.successRedirectContext, navigate, undefined, userContext);
+        if (successRedirectContext === undefined) {
+            throw new Error("This should never happen: successRedirectContext undefined ");
         }
 
-        // This should only happen if the configuration changed between saving the context and finishing the sign in process
-        // or if the user navigated to a page where they were expected to have a stored redirectInfo but didn't
-        // (e.g.: pressed back after email verification)
-        return this.redirect(redirectInfo!.successRedirectContext!, navigate, undefined, userContext);
+        if (redirectToPath !== undefined) {
+            successRedirectContext.redirectToPath = redirectToPath;
+        }
+
+        return SuperTokens.getInstanceOrThrow().redirect(
+            successRedirectContext as SuccessRedirectContext,
+            navigate,
+            {},
+            userContext
+        );
     };
 
     /**

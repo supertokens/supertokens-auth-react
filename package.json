@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.38.0",
+    "version": "0.39.0",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -8,11 +8,12 @@
         "npm": ">=8"
     },
     "devDependencies": {
-        "@babel/core": "7.12.1",
-        "@babel/plugin-transform-react-jsx": "^7.16.0",
-        "@babel/preset-env": "7.12.1",
-        "@babel/preset-react": "7.12.1",
-        "@babel/register": "7.12.1",
+        "@babel/core": "^7.23.2",
+        "@babel/plugin-transform-react-jsx": "^7.22.15",
+        "@babel/preset-env": "^7.23.2",
+        "@babel/preset-react": "^7.22.15",
+        "@babel/preset-typescript": "^7.23.2",
+        "@babel/register": "^7.22.15",
         "@percy/cli": "^1.16.0",
         "@percy/puppeteer": "^2.0.2",
         "@rollup/plugin-commonjs": "^23.0.3",
@@ -21,6 +22,15 @@
         "@rollup/plugin-node-resolve": "^15.0.1",
         "@rollup/pluginutils": "^5.0.2",
         "@size-limit/preset-small-lib": "^8.1.0",
+        "@storybook/addon-designs": "^7.0.7",
+        "@storybook/addon-essentials": "^7.5.2",
+        "@storybook/addon-interactions": "^7.5.2",
+        "@storybook/addon-links": "^7.5.2",
+        "@storybook/addon-onboarding": "^1.0.8",
+        "@storybook/blocks": "^7.5.2",
+        "@storybook/react": "^7.5.2",
+        "@storybook/react-webpack5": "^7.5.2",
+        "@storybook/testing-library": "^0.2.2",
         "@testing-library/dom": "^8.19.0",
         "@testing-library/jest-dom": "^5.16.5",
         "@testing-library/react": "^13.4.0",
@@ -34,10 +44,12 @@
         "@typescript-eslint/parser": "4.6.0",
         "babel-jest": "^29.3.1",
         "chokidar-cli": "^3.0.0",
+        "css-loader": "^6.9.1",
         "eslint": "^6.8.0",
         "eslint-plugin-import": "^2.27.5",
         "eslint-plugin-react": "^7.28.0",
         "eslint-plugin-react-hooks": "4.2.0",
+        "eslint-plugin-storybook": "^0.6.15",
         "eslint-plugin-supertokens-auth-react": "file:eslint",
         "isomorphic-fetch": "^3.0.0",
         "jest": "^29.3.1",
@@ -69,6 +81,8 @@
         "rollup-plugin-visualizer": "^5.8.3",
         "rollup-pluginutils": "^2.8.2",
         "size-limit": "^8.1.0",
+        "storybook": "^7.5.2",
+        "to-string-loader": "^1.2.0",
         "ts-jest": "^29.0.3",
         "ts-prune": "^0.10.3",
         "tslib": "^2.4.0",
@@ -78,12 +92,13 @@
     "dependencies": {
         "intl-tel-input": "^17.0.19",
         "prop-types": "*",
+        "react-qr-code": "^2.0.12",
         "supertokens-js-override": "^0.0.4"
     },
     "peerDependencies": {
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0",
-        "supertokens-web-js": "^0.9.0"
+        "supertokens-web-js": "github:supertokens/supertokens-web-js#feat/mfa"
     },
     "scripts": {
         "init": "bash ./init.sh",
@@ -114,20 +129,23 @@
         "set-up-hooks": "cp hooks/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit",
         "build-docs": "rm -rf ./docs && npx typedoc --out ./docs --tsconfig ./lib/tsconfig.json ./lib/ts/index.ts ./lib/ts/**/index.ts ./lib/ts/**/*/index.ts",
         "size": "size-limit",
-        "check-circular-dependencies": "npx madge --circular --extensions js ./lib/build/"
+        "check-circular-dependencies": "npx madge --circular --extensions js ./lib/build/",
+        "storybook": "TEST_MODE=testing storybook dev -p 6006",
+        "build-storybook": "TEST_MODE=testing storybook build",
+        "chromatic": "npx chromatic --project-token=chpt_ca6c16f6b3fac1f"
     },
     "size-limit": [
         {
             "path": "lib/build/index.js",
-            "limit": "15kb"
+            "limit": "18kb"
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "16kb"
+            "limit": "19kb"
         },
         {
             "path": "recipe/session/prebuiltui.js",
-            "limit": "20kb"
+            "limit": "22kb"
         },
         {
             "path": "recipe/thirdpartyemailpassword/index.js",
@@ -155,31 +173,39 @@
         },
         {
             "path": "recipe/emailverification/prebuiltui.js",
-            "limit": "25kb"
-        },
-        {
-            "path": "recipe/thirdpartyemailpassword/prebuiltui.js",
-            "limit": "56kb"
-        },
-        {
-            "path": "recipe/thirdparty/prebuiltui.js",
-            "limit": "40kb"
-        },
-        {
-            "path": "recipe/emailpassword/prebuiltui.js",
             "limit": "30kb"
         },
         {
+            "path": "recipe/thirdpartyemailpassword/prebuiltui.js",
+            "limit": "67kb"
+        },
+        {
+            "path": "recipe/thirdparty/prebuiltui.js",
+            "limit": "45kb"
+        },
+        {
+            "path": "recipe/emailpassword/prebuiltui.js",
+            "limit": "35kb"
+        },
+        {
             "path": "recipe/passwordless/prebuiltui.js",
-            "limit": "107kb"
+            "limit": "120kb"
         },
         {
             "path": "recipe/thirdpartypasswordless/prebuiltui.js",
-            "limit": "135kb"
+            "limit": "150kb"
         },
         {
             "path": "recipe/multitenancy/index.js",
             "limit": "10kb"
+        },
+        {
+            "path": "recipe/multifactorauth/index.js",
+            "limit": "12kb"
+        },
+        {
+            "path": "recipe/multifactorauth/prebuiltui.js",
+            "limit": "30kb"
         }
     ],
     "browserslist": {

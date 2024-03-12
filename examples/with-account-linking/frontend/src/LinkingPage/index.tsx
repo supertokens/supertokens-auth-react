@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
-import { redirectToThirdPartyLogin } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import { redirectToThirdPartyLogin, emailPasswordSignUp } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
 
 import { getApiDomain } from "../config";
 import "./styles.css";
@@ -24,20 +25,16 @@ export const LinkingPage: React.FC = () => {
     }, [setUserInfo]);
 
     const addPassword = useCallback(async () => {
-        const resp = await fetch(`${getApiDomain()}/addPassword`, {
-            method: "POST",
-            headers: {
-                "content-type": "application/json",
-            },
-            body: JSON.stringify({
-                password,
-            }),
+        const resp = await emailPasswordSignUp({
+            formFields: [
+                { id: "email", value: userInfo.user.emails[0] },
+                { id: "password", value: password },
+            ],
         });
 
-        const respBody = await resp.json();
-        if (respBody.status !== "OK") {
+        if (resp.status !== "OK") {
             setSuccess(null);
-            setError(respBody.reason ?? respBody.message ?? respBody.status);
+            setError("reason" in resp ? resp.reason : resp.status);
         } else {
             setSuccess("Successfully added password");
             setError(null);
@@ -135,7 +132,11 @@ export const LinkingPage: React.FC = () => {
                 </form>
             )}
             {thirdPartyLoginMethod?.length === 0 && (
-                <form>
+                <form
+                    onSubmit={(ev) => {
+                        ev.preventDefault();
+                        return false;
+                    }}>
                     <button onClick={() => redirectToThirdPartyLogin({ thirdPartyId: "google" })}>
                         Add Google account
                     </button>

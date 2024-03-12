@@ -117,7 +117,7 @@ describe("SuperTokens Email Verification", function () {
             ]);
             await toggleSignInSignUp(page);
 
-            const email = getTestEmail();
+            const email = await getTestEmail();
             const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email });
             await signUp(page, fieldValues, postValues, "emailpassword");
 
@@ -152,12 +152,10 @@ describe("SuperTokens Email Verification", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
                 "ST_LOGS SESSION ON_HANDLE_EVENT UNAUTHORISED",
                 "ST_LOGS SESSION ON_HANDLE_EVENT UNAUTHORISED",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
             ]);
         });
@@ -168,7 +166,7 @@ describe("SuperTokens Email Verification", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await toggleSignInSignUp(page);
-            const email = getTestEmail();
+            const email = await getTestEmail();
             const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email });
             await signUp(page, fieldValues, postValues, "emailpassword");
 
@@ -204,7 +202,6 @@ describe("SuperTokens Email Verification", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
@@ -241,18 +238,13 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_UP",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_VERIFICATION GET_REDIRECTION_URL VERIFY_EMAIL",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
                 "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
@@ -292,7 +284,7 @@ describe("SuperTokens Email Verification", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await toggleSignInSignUp(page);
-            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: getTestEmail() });
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: await getTestEmail() });
             await signUp(page, fieldValues, postValues, "emailpassword");
 
             let pathname = await page.evaluate(() => window.location.pathname);
@@ -323,7 +315,7 @@ describe("SuperTokens Email Verification", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await toggleSignInSignUp(page);
-            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: getTestEmail() });
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: await getTestEmail() });
             await signUp(page, fieldValues, postValues, "emailpassword");
 
             let pathname = await page.evaluate(() => window.location.pathname);
@@ -351,7 +343,7 @@ describe("SuperTokens Email Verification", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await toggleSignInSignUp(page);
-            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: getTestEmail() });
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: await getTestEmail() });
             await signUp(page, fieldValues, postValues, "emailpassword");
 
             let pathname = await page.evaluate(() => window.location.pathname);
@@ -406,18 +398,13 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_VERIFICATION GET_REDIRECTION_URL VERIFY_EMAIL",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
                 "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
@@ -543,35 +530,25 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_UP",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_VERIFICATION GET_REDIRECTION_URL VERIFY_EMAIL",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
                 "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE VERIFY_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS VERIFY_EMAIL",
                 "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT EMAIL_VERIFIED_SUCCESSFUL",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS EMAIL_PASSWORD",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
         });
@@ -652,9 +629,9 @@ describe("SuperTokens Email Verification", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            // In this case we redirect to the default ("/")
+            // In this case we redirect to "/dashboard" (coming from the getRedirectURL config)
             const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/");
+            assert.deepStrictEqual(pathname, "/dashboard");
         });
     });
 });
@@ -897,7 +874,6 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
         //         "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
         //         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
         //         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-        //         "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
         //         "ST_LOGS SESSION OVERRIDE GET_USER_ID",
         //         "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
         //         "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
@@ -1059,7 +1035,7 @@ describe("Email verification claim refresh with clock skew", function () {
             req.continue();
         });
 
-        const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: getTestEmail() });
+        const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: await getTestEmail() });
         await signUp(page, fieldValues, postValues, "emailpassword");
         assert(claimRefreshCalledCount < 2);
     });

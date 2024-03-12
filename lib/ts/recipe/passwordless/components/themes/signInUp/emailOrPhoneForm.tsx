@@ -30,7 +30,11 @@ import type { SignInUpEmailOrPhoneFormProps } from "../../../types";
 
 export const EmailOrPhoneForm = withOverride(
     "PasswordlessEmailOrPhoneForm",
-    function PasswordlessEmailOrPhoneForm(props: SignInUpEmailOrPhoneFormProps): JSX.Element {
+    function PasswordlessEmailOrPhoneForm(
+        props: SignInUpEmailOrPhoneFormProps & {
+            footer?: JSX.Element;
+        }
+    ): JSX.Element {
         const [isPhoneNumber, setIsPhoneNumber] = useState<boolean>(false);
         const userContext = useUserContext();
 
@@ -50,6 +54,7 @@ export const EmailOrPhoneForm = withOverride(
         return (
             <FormBase
                 clearError={props.clearError}
+                onFetchError={props.onFetchError}
                 onError={props.onError}
                 formFields={[
                     {
@@ -149,10 +154,12 @@ export const EmailOrPhoneForm = withOverride(
                 validateOnBlur={false}
                 showLabels={true}
                 footer={
-                    <SignInUpFooter
-                        privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
-                        termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
-                    />
+                    props.footer ?? (
+                        <SignInUpFooter
+                            privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
+                            termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
+                        />
+                    )
                 }
             />
         );

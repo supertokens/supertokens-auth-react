@@ -16,39 +16,24 @@
 /*
  * Imports.
  */
-
-import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
-
 import { getNormalisedUserContext } from "../../utils";
 import RecipeModule from "../recipeModule";
 import Session from "../session/recipe";
-import SessionRecipe from "../session/recipe";
 
-import type { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
-import type { NormalisedConfigWithAppInfoAndRecipeID, UserContext } from "../../types";
+import type { NormalisedConfig, OnHandleEventContext } from "./types";
+import type { UserContext } from "../../types";
 
 export default abstract class AuthRecipe<
     T,
     Action,
     R,
-    N extends NormalisedConfig<T | GetRedirectionURLContext, Action, R | OnHandleEventContext>
-> extends RecipeModule<T | GetRedirectionURLContext, Action, R | OnHandleEventContext, N> {
-    constructor(config: NormalisedConfigWithAppInfoAndRecipeID<N>) {
-        super(config);
-        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
-            const session = SessionRecipe.getInstance();
-            if (session !== undefined) {
-                session.addAuthRecipeRedirectionHandler(this.config.recipeId, this.redirect.bind(this));
-            }
-        });
-    }
+    N extends NormalisedConfig<T, Action, R | OnHandleEventContext>
+> extends RecipeModule<T, Action, R | OnHandleEventContext, N> {
+    public abstract firstFactorIds: string[];
 
-    getAuthRecipeDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
-        if (context.action === "SUCCESS") {
-            return context.redirectToPath === undefined ? "/" : context.redirectToPath;
-        } else {
-            throw new Error("Should never come here");
-        }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getAuthRecipeDefaultRedirectionURL = async (_context: T): Promise<string> => {
+        throw new Error("Should never come here");
     };
 
     signOut = async (input?: { userContext?: UserContext }): Promise<void> => {

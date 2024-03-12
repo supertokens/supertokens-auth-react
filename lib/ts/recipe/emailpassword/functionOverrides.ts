@@ -1,3 +1,5 @@
+import Session from "../session/recipe";
+
 import type { OnHandleEventContext } from "./types";
 import type { RecipeOnHandleEventFunction } from "../recipeModule/types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
@@ -36,12 +38,37 @@ export const getFunctionOverrides =
         },
 
         signUp: async function (input) {
+            let payloadBeforeCall;
+            try {
+                payloadBeforeCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                    userContext: input.userContext,
+                });
+            } catch {
+                // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+                payloadBeforeCall = undefined;
+            }
+
             const response = await originalImp.signUp(input);
 
             if (response.status === "OK") {
+                let payloadAfterCall;
+                try {
+                    payloadAfterCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                        userContext: input.userContext,
+                    });
+                } catch {
+                    // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+                    payloadAfterCall = undefined;
+                }
+
                 onHandleEvent({
                     action: "SUCCESS",
+                    rid: "emailpassword",
                     isNewRecipeUser: true,
+                    createdNewSession:
+                        payloadAfterCall !== undefined &&
+                        (payloadBeforeCall === undefined ||
+                            payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
                     user: response.user,
                     userContext: input.userContext,
                 });
@@ -50,12 +77,37 @@ export const getFunctionOverrides =
             return response;
         },
         signIn: async function (input) {
+            let payloadBeforeCall;
+            try {
+                payloadBeforeCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                    userContext: input.userContext,
+                });
+            } catch {
+                // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+                payloadBeforeCall = undefined;
+            }
+
             const response = await originalImp.signIn(input);
 
             if (response.status === "OK") {
+                let payloadAfterCall;
+                try {
+                    payloadAfterCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                        userContext: input.userContext,
+                    });
+                } catch {
+                    // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+                    payloadAfterCall = undefined;
+                }
+
                 onHandleEvent({
                     action: "SUCCESS",
+                    rid: "emailpassword",
                     isNewRecipeUser: false,
+                    createdNewSession:
+                        payloadAfterCall !== undefined &&
+                        (payloadBeforeCall === undefined ||
+                            payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
                     user: response.user,
                     userContext: input.userContext,
                 });

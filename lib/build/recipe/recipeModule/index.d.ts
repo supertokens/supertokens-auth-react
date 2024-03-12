@@ -14,5 +14,5 @@ export default abstract class RecipeModule<
         userContext?: UserContext
     ) => Promise<void>;
     getRedirectUrl: (context: GetRedirectionURLContextType, userContext: UserContext) => Promise<string | null>;
-    getDefaultRedirectionURL(_: GetRedirectionURLContextType): Promise<string>;
+    getDefaultRedirectionURL(_: GetRedirectionURLContextType, _userContext: UserContext): Promise<string>;
 }

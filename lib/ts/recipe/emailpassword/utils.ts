@@ -49,17 +49,17 @@ export function normaliseEmailPasswordConfig(config?: Config): NormalisedConfig 
         config.signInAndUpFeature
     );
 
-    const signUpPasswordField: NormalisedFormField = <NormalisedFormField>signInAndUpFeature.signUpForm.formFields.find(
+    const signUpPasswordField: NormalisedFormField = signInAndUpFeature.signUpForm.formFields.find(
         (field: NormalisedFormField) => {
             return field.id === "password";
         }
-    );
+    )!;
 
-    const signUpEmailField: NormalisedFormField = <NormalisedFormField>signInAndUpFeature.signUpForm.formFields.find(
+    const signUpEmailField: NormalisedFormField = signInAndUpFeature.signUpForm.formFields.find(
         (field: NormalisedFormField) => {
             return field.id === "email";
         }
-    );
+    )!;
 
     const resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig =
         normaliseResetPasswordUsingTokenFeature(

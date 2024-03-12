@@ -120,21 +120,25 @@ function getTestEmail() {
     return `john.doe+${Date.now()}@supertokens.io`;
 }
 
-function getTestPhoneNumber() {
-    return `+3670${Date.now().toString().substring(6)}`;
+function getTestPhoneNumber(index = 0) {
+    return `+3670${Date.now().toString().substring(7)}${index}`;
 }
 
 async function getSignInOrSignUpSwitchLink(page) {
-    return waitForSTElement(
-        page,
-        "div > div > [data-supertokens~='headerSubtitle'] > div > [data-supertokens~='link']"
-    );
+    return waitForSTElement(page, "div > div > [data-supertokens~='headerSubtitle'] > [data-supertokens~='link']");
 }
 
 async function toggleSignInSignUp(page) {
     // Click on Sign Up.
     const signUpLink = await getSignInOrSignUpSwitchLink(page);
     await signUpLink.click();
+}
+
+async function chooseFactor(page, id) {
+    const ele = await waitForSTElement(page, `[data-supertokens~=factorChooserOption][data-supertokens~=${id}]`);
+    await new Promise((res) => setTimeout(res, 100));
+    await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), ele.click()]);
+    await waitForSTElement(page);
 }
 
 module.exports = {
@@ -149,4 +153,5 @@ module.exports = {
     getTestPhoneNumber,
     getSignInOrSignUpSwitchLink,
     toggleSignInSignUp,
+    chooseFactor,
 };

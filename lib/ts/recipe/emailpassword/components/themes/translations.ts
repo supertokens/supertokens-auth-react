@@ -86,5 +86,13 @@ export const defaultTranslationsEmailPassword = {
             undefined,
         "Cannot sign in due to security reasons. Please try resetting your password, use a different login method or contact support. (ERR_CODE_008)":
             undefined,
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_009)": undefined,
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_010)": undefined,
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_011)": undefined,
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_012)": undefined,
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_013)": undefined,
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_014)": undefined,
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_015)": undefined,
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_016)": undefined,
     },
 };

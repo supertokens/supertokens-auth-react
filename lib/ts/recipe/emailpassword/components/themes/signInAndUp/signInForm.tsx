@@ -41,6 +41,7 @@ export const SignInForm = withOverride(
                 formFields={props.formFields}
                 clearError={props.clearError}
                 onError={props.onError}
+                onFetchError={props.onFetchError}
                 buttonLabel={"EMAIL_PASSWORD_SIGN_IN_SUBMIT_BTN"}
                 onSuccess={props.onSuccess}
                 callAPI={async (formFields) => {

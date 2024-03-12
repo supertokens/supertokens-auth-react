@@ -1,15 +1,13 @@
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import ThirdPartyEmailpassword, { Github, Google } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
+import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
 import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
-import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
-import EmailVerification, {
-    EmailVerificationComponentsOverrideProvider,
-} from "supertokens-auth-react/recipe/emailverification";
 import "./App.css";
 import Home from "./Home";
-import OtpScreen from "./OtpScreen";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 
 export function getApiDomain() {
@@ -31,8 +29,9 @@ SuperTokens.init({
         websiteDomain: getWebsiteDomain(),
     },
     recipeList: [
-        EmailVerification.init({
-            mode: "REQUIRED",
+        MultiFactorAuth.init(),
+        Passwordless.init({
+            contactMethod: "EMAIL",
         }),
         ThirdPartyEmailpassword.init({
             signInAndUpFeature: {
@@ -46,32 +45,27 @@ SuperTokens.init({
 function App() {
     return (
         <SuperTokensWrapper>
-            <EmailVerificationComponentsOverrideProvider
-                components={{
-                    EmailVerificationSendVerifyEmail_Override: () => <OtpScreen />,
-                }}>
-                <div className="App">
-                    <Router>
-                        <Routes>
-                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
-                                ThirdPartyEmailPasswordPreBuiltUI,
-                                EmailVerificationPreBuiltUI,
-                            ])}
-                            <Route
-                                path="/"
-                                element={
-                                    /* This protects the "/" route so that it shows 
-                                <Home /> only if the user is logged in.
-                                Else it redirects the user to "/auth" */
-                                    <SessionAuth>
-                                        <Home />
-                                    </SessionAuth>
-                                }
-                            />
-                        </Routes>
-                    </Router>
-                </div>
-            </EmailVerificationComponentsOverrideProvider>
+            <div className="App">
+                <Router>
+                    <Routes>
+                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
+                            ThirdPartyEmailPasswordPreBuiltUI,
+                            PasswordlessPreBuiltUI,
+                        ])}
+                        <Route
+                            path="/"
+                            element={
+                                /* This protects the "/" route so that it shows 
+                            <Home /> only if the user is logged in.
+                            Else it redirects the user to "/auth" */
+                                <SessionAuth>
+                                    <Home />
+                                </SessionAuth>
+                            }
+                        />
+                    </Routes>
+                </Router>
+            </div>
         </SuperTokensWrapper>
     );
 }

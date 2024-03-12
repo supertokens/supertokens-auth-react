@@ -19,6 +19,7 @@
 import SuperTokens from "../../superTokens";
 import { redirectWithFullPageReload } from "../../utils";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
+import { FactorIds } from "../multifactorauth/types";
 import Multitenancy from "../multitenancy/recipe";
 
 import Provider from "./providers";
@@ -141,7 +142,9 @@ export async function redirectToThirdPartyLogin(input: {
     const loginMethods = await Multitenancy.getInstanceOrThrow().getCurrentDynamicLoginMethods({
         userContext: input.userContext,
     });
-    const tenantProviders = loginMethods?.thirdparty.enabled ? loginMethods.thirdparty.providers : [];
+    const tenantProviders = loginMethods?.firstFactors.includes(FactorIds.THIRDPARTY)
+        ? loginMethods.thirdparty.providers
+        : [];
     const providers = mergeProviders({
         tenantProviders,
         clientProviders: input.config.signInAndUpFeature.providers,

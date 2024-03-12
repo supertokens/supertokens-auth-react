@@ -34,6 +34,12 @@ export default class SuperTokens {
         userContext: UserContext;
     }) => Promise<void>;
     redirectToUrl: (redirectUrl: string, navigate?: Navigate) => Promise<void>;
+    redirect: (
+        context: GetRedirectionURLContext,
+        navigate?: Navigate,
+        queryParams?: Record<string, string>,
+        userContext?: UserContext
+    ) => Promise<void>;
     static reset(): void;
 }
 export declare function doRedirection(appInfo: NormalisedAppInfo, redirectUrl: string, navigate?: Navigate): void;

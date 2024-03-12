@@ -21,7 +21,6 @@ import type {
     UserContext,
 } from "../../types";
 import type {
-    GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
@@ -121,6 +120,7 @@ declare type NonSignUpFormThemeBaseProps = ThemeBaseProps & {
 export declare type SignInThemeProps = NonSignUpFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
+    onFetchError: (error: Response) => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
     signUpClicked?: () => void;
@@ -130,6 +130,7 @@ export declare type SignInThemeProps = NonSignUpFormThemeBaseProps & {
 export declare type SignUpThemeProps = ThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
+    onFetchError: (error: Response) => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
     signInClicked?: () => void;
@@ -169,11 +170,9 @@ export declare type PreAPIHookContext = {
     url: string;
     userContext: UserContext;
 };
-export declare type GetRedirectionURLContext =
-    | AuthRecipeModuleGetRedirectionURLContext
-    | {
-          action: "RESET_PASSWORD";
-      };
+export declare type GetRedirectionURLContext = {
+    action: "RESET_PASSWORD";
+};
 export declare type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {
@@ -186,8 +185,10 @@ export declare type OnHandleEventContext =
           userContext: UserContext;
       }
     | {
+          rid: "emailpassword";
           action: "SUCCESS";
           isNewRecipeUser: boolean;
+          createdNewSession: boolean;
           user: User;
           userContext: UserContext;
       };
@@ -217,6 +218,7 @@ export declare type SubmitNewPasswordProps = NonSignUpFormThemeBaseProps & {
 export declare type EnterEmailStatus = "READY" | "SENT";
 export declare type SubmitNewPasswordStatus = "READY" | "SUCCESS";
 export declare type FormBaseProps<T> = {
+    formDataSupertokens?: string;
     footer?: JSX.Element;
     formFields: FormFieldThemeProps[];
     showLabels: boolean;
@@ -224,6 +226,7 @@ export declare type FormBaseProps<T> = {
     validateOnBlur?: boolean;
     clearError: () => void;
     onError: (error: string) => void;
+    onFetchError?: (err: Response) => void;
     onSuccess?: (
         result: T & {
             status: "OK";

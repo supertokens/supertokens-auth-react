@@ -23,6 +23,7 @@ import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
+import { FactorIds } from "../multifactorauth/types";
 import Passwordless from "../passwordless/recipe";
 import ThirdParty from "../thirdparty/recipe";
 
@@ -56,6 +57,13 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
     static RECIPE_ID = "thirdpartypasswordless";
 
     recipeID = ThirdPartyPasswordless.RECIPE_ID;
+    firstFactorIds = [
+        FactorIds.THIRDPARTY,
+        FactorIds.OTP_EMAIL,
+        FactorIds.OTP_PHONE,
+        FactorIds.LINK_EMAIL,
+        FactorIds.LINK_PHONE,
+    ];
 
     passwordlessRecipe: Passwordless | undefined;
 
@@ -78,6 +86,8 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
             throw new Error("You need to enable either passwordless or third party providers login.");
         }
         super(config);
+        this.recipeID = config.recipeId;
+
         this.passwordlessRecipe =
             recipes.passwordlessInstance !== undefined
                 ? recipes.passwordlessInstance

@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import type { FormFieldError } from "./recipe/emailpassword/types";
@@ -56,6 +57,7 @@ export declare function getNormalisedUserContext(userContext?: UserContext): Use
 export declare const useOnMountAPICall: <T>(
     fetch: () => Promise<T>,
     handleResponse: (consumeResp: T) => Promise<void>,
-    handleError?: ((err: unknown, consumeResp: T | undefined) => void) | undefined,
+    handleError?: ((err: unknown, consumeResp: T | undefined) => void | Promise<void>) | undefined,
     startLoading?: boolean
 ) => void;
+export declare function useRethrowInRender(): import("react").Dispatch<import("react").SetStateAction<undefined>>;

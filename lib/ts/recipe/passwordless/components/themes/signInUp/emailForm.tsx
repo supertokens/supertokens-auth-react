@@ -26,12 +26,17 @@ import type { SignInUpEmailFormProps } from "../../../types";
 
 export const EmailForm = withOverride(
     "PasswordlessEmailForm",
-    function PasswordlessEmailForm(props: SignInUpEmailFormProps): JSX.Element {
+    function PasswordlessEmailForm(
+        props: SignInUpEmailFormProps & {
+            footer?: JSX.Element;
+        }
+    ): JSX.Element {
         const userContext = useUserContext();
 
         return (
             <FormBase
                 clearError={props.clearError}
+                onFetchError={props.onFetchError}
                 onError={props.onError}
                 formFields={[
                     {
@@ -71,10 +76,12 @@ export const EmailForm = withOverride(
                 validateOnBlur={false}
                 showLabels={true}
                 footer={
-                    <SignInUpFooter
-                        privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
-                        termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
-                    />
+                    props.footer ?? (
+                        <SignInUpFooter
+                            privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
+                            termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
+                        />
+                    )
                 }
             />
         );

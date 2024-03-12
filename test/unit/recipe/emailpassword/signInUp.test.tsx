@@ -13,7 +13,7 @@ const MockSession = {
     getAccessTokenPayloadSecurely: jest.fn(),
     doesSessionExist: jest.fn(),
     validateClaims: jest.fn(),
-    validateGlobalClaimsAndHandleSuccessRedirection: jest.fn(),
+    validateGlobalClaimsAndHandleSuccessRedirection: jest.fn().mockReturnValue(new Promise(() => {})),
 };
 
 const setMockResolvesSession = (ctx: SessionContextType) => {
@@ -72,14 +72,14 @@ describe("EmailPassword.SignInAndUp", () => {
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledTimes(1);
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledWith(
                 {
-                    rid: "emailpassword",
-                    successRedirectContext: {
-                        action: "SUCCESS",
-                        isNewRecipeUser: false,
-                        isNewPrimaryUser: false,
-                        redirectToPath: undefined,
-                    },
+                    action: "SUCCESS",
+                    recipeId: "emailpassword",
+                    newSessionCreated: false,
+                    isNewRecipeUser: false,
+                    createdNewUser: false,
                 },
+                "emailpassword",
+                undefined,
                 {},
                 undefined
             );

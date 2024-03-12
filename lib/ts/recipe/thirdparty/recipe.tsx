@@ -23,6 +23,7 @@ import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
+import { FactorIds } from "../multifactorauth/types";
 
 import { getFunctionOverrides } from "./functionOverrides";
 import { normaliseThirdPartyConfig } from "./utils";
@@ -50,6 +51,7 @@ export default class ThirdParty extends AuthRecipe<
     static instance?: ThirdParty;
     static RECIPE_ID = "thirdparty";
     recipeID = ThirdParty.RECIPE_ID;
+    firstFactorIds = [FactorIds.THIRDPARTY];
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
@@ -58,7 +60,9 @@ export default class ThirdParty extends AuthRecipe<
         if (SuperTokens.usesDynamicLoginMethods === false && config.signInAndUpFeature.providers.length === 0) {
             throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
         }
+
         super(config);
+        this.recipeID = config.recipeId;
     }
 
     /*

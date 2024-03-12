@@ -13,7 +13,7 @@ export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
     static getInstanceOrInitAndGetInstance(): ThirdPartyPasswordlessPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
-        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
+        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback" | "otp-phone" | "otp-email",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
             userContext?: UserContext;
@@ -21,7 +21,7 @@ export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
     getFeatureComponent: (
-        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback",
+        componentName: "signInUp" | "linkClickedScreen" | "signinupcallback" | "otp-phone" | "otp-email",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
             userContext?: UserContext;
@@ -47,6 +47,17 @@ export declare class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
             userContext?: UserContext;
         }>
     ) => JSX.Element;
+    static MfaOtpPhone: (
+        prop: FeatureBaseProps<{
+            userContext?: UserContext;
+        }>
+    ) => JSX.Element;
+    static MfaOtpEmail: (
+        prop: FeatureBaseProps<{
+            userContext?: UserContext;
+        }>
+    ) => JSX.Element;
+    static MFAOTPTheme: typeof import("../passwordless/components/themes/mfa").default;
 }
 declare const SignInAndUp: (
     prop?: FeatureBaseProps<{
@@ -64,4 +75,25 @@ declare const PasswordlessLinkClicked: (
         userContext?: UserContext;
     }>
 ) => JSX.Element;
-export { SignInAndUp, ThirdPartySignInAndUpCallback, PasswordlessLinkClicked, SignInUpTheme };
+declare const MfaOtpPhone: (
+    props: FeatureBaseProps<{
+        navigate?: import("../../types").Navigate | undefined;
+        userContext?: UserContext | undefined;
+    }>
+) => JSX.Element;
+declare const MfaOtpEmail: (
+    props: FeatureBaseProps<{
+        navigate?: import("../../types").Navigate | undefined;
+        userContext?: UserContext | undefined;
+    }>
+) => JSX.Element;
+declare const MfaOtpTheme: typeof import("../passwordless/components/themes/mfa").default;
+export {
+    SignInAndUp,
+    ThirdPartySignInAndUpCallback,
+    PasswordlessLinkClicked,
+    SignInUpTheme,
+    MfaOtpPhone,
+    MfaOtpEmail,
+    MfaOtpTheme,
+};

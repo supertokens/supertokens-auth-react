@@ -22,8 +22,12 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
-import { useOnMountAPICall } from "../../../../../utils";
+import { useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
+import { EmailVerificationClaim } from "../../../../emailverification";
+import EmailVerification from "../../../../emailverification/recipe";
+import { getInvalidClaimsFromResponse } from "../../../../session";
 import Session from "../../../../session/recipe";
+import useSessionContext from "../../../../session/useSessionContext";
 import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 
@@ -39,9 +43,11 @@ type PropType = FeatureBaseProps<{
 
 const SignInAndUpCallback: React.FC<PropType> = (props) => {
     let userContext = useUserContext();
+    const session = useSessionContext();
     if (props.userContext !== undefined) {
         userContext = props.userContext;
     }
+    const rethrowInRender = useRethrowInRender();
 
     const verifyCode = useCallback(() => {
         return props.recipe.webJSRecipe.signInAndUp({
@@ -75,31 +81,60 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
             }
 
             if (response.status === "OK") {
+                const payloadAfterSuccess = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                    userContext,
+                });
                 const stateResponse = props.recipe.webJSRecipe.getStateAndOtherInfoFromStorage<CustomStateProperties>({
                     userContext,
                 });
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
 
-                return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                    {
-                        rid: props.recipe.config.recipeId,
-                        successRedirectContext: {
+                return Session.getInstanceOrThrow()
+                    .validateGlobalClaimsAndHandleSuccessRedirection(
+                        {
                             action: "SUCCESS",
-                            isNewPrimaryUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
+                            createdNewUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
                             isNewRecipeUser: response.createdNewRecipeUser,
-                            redirectToPath,
+                            newSessionCreated:
+                                session.loading ||
+                                !session.doesSessionExist ||
+                                session.accessTokenPayload.sessionHandle !== payloadAfterSuccess.sessionHandle,
+                            recipeId: props.recipe.recipeID,
                         },
-                    },
-                    userContext,
-                    props.navigate
-                );
+                        props.recipe.recipeID,
+                        redirectToPath,
+                        userContext,
+                        props.navigate
+                    )
+                    .catch(rethrowInRender);
             }
         },
-        [props.recipe, props.navigate, userContext]
+        [props.recipe, props.navigate, session, userContext]
     );
 
     const handleError = useCallback(
-        (err) => {
+        async (err: any) => {
+            if ("status" in err && err.status === Session.getInstanceOrThrow().config.invalidClaimStatusCode) {
+                const invalidClaims = await getInvalidClaimsFromResponse({ response: err, userContext });
+                if (invalidClaims.some((i) => i.validatorId === EmailVerificationClaim.id)) {
+                    try {
+                        // it's OK if this throws,
+                        const evInstance = EmailVerification.getInstanceOrThrow();
+                        await evInstance.redirect(
+                            {
+                                action: "VERIFY_EMAIL",
+                            },
+                            props.navigate,
+                            undefined,
+                            userContext
+                        );
+                        return;
+                    } catch {
+                        // If we couldn't redirect to EV we fall back to showing the something went wrong error
+                    }
+                }
+            }
+
             if (STGeneralError.isThisError(err)) {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
                     navigate: props.navigate,

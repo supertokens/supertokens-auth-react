@@ -5,7 +5,7 @@ import { UserInput } from "./types";
 import type { UserContext } from "../../types";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/emailverification";
 export default class Wrapper {
-    static EmailVerificationClaim: import("../../claims/emailVerificationClaim").EmailVerificationClaimClass;
+    static EmailVerificationClaim: import("./emailVerificationClaim").EmailVerificationClaimClass;
     static init(
         config?: UserInput
     ): import("../../types").RecipeInitResult<
@@ -44,7 +44,7 @@ declare const EmailVerificationComponentsOverrideProvider: import("react").FC<
         components: import("./types").ComponentOverrideMap;
     }>
 >;
-declare const EmailVerificationClaim: import("../../claims/emailVerificationClaim").EmailVerificationClaimClass;
+declare const EmailVerificationClaim: import("./emailVerificationClaim").EmailVerificationClaimClass;
 export {
     init,
     isEmailVerified,

@@ -133,7 +133,7 @@ describe("Visual testing", function () {
             ]);
             await page.waitForSelector("[data-supertokens~='headerSubtitle']");
             // Switch to sign up
-            await page.click("[data-supertokens~='headerSubtitle'] > div > [data-supertokens~='link']");
+            await page.click("[data-supertokens~='headerSubtitle'] > [data-supertokens~='link']");
             await snapshot(page, "empty");
 
             await setInputValue(page, { name: "email", value: "john.doe+emailpassword@supertokens.io" });
@@ -170,7 +170,7 @@ describe("Visual testing", function () {
             ]);
             await page.waitForSelector("[data-supertokens~='headerSubtitle']");
             // Switch to sign up
-            await page.click("[data-supertokens~='headerSubtitle'] > div > [data-supertokens~='link']");
+            await page.click("[data-supertokens~='headerSubtitle'] > [data-supertokens~='link']");
 
             await setInputValue(page, { name: "email", value: "john.doe+emailpassword@supertokens.io" });
             await setInputValue(page, { name: "password", value: "weak" });
@@ -622,7 +622,7 @@ describe("Visual testing", function () {
             ]);
             await page.waitForSelector("[data-supertokens~='headerSubtitle']");
             // Switch to sign up
-            await page.click("[data-supertokens~='headerSubtitle'] > div > [data-supertokens~='link']");
+            await page.click("[data-supertokens~='headerSubtitle'] > [data-supertokens~='link']");
             await snapshot(page, "empty");
 
             await setInputValue(page, { name: "email", value: "john.doe+thirdpartyemailpassword@supertokens.io" });
@@ -659,7 +659,7 @@ describe("Visual testing", function () {
             ]);
             await page.waitForSelector("[data-supertokens~='headerSubtitle']");
             // Switch to sign up
-            await page.click("[data-supertokens~='headerSubtitle'] > div > [data-supertokens~='link']");
+            await page.click("[data-supertokens~='headerSubtitle'] > [data-supertokens~='link']");
 
             await setInputValue(page, { name: "email", value: "john.doe+thirdpartyemailpassword@supertokens.io" });
             await setInputValue(page, { name: "password", value: "weak" });

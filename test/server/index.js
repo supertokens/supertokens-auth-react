@@ -99,6 +99,40 @@ try {
     accountLinkingSupported = false;
 }
 
+/** @type {import("supertokens-node/recipe/usermetadata").default | undefined} */
+let UserMetadata;
+let UserMetadataRaw, userMetadataSupported;
+try {
+    UserMetadataRaw = require("supertokens-node/lib/build/recipe/usermetadata/recipe").default;
+    UserMetadata = require("supertokens-node/recipe/usermetadata");
+    userMetadataSupported = true;
+} catch (ex) {
+    userMetadataSupported = false;
+}
+
+/** @type {import("supertokens-node/recipe/multifactorauth").default | undefined} */
+let MultiFactorAuth;
+let MultiFactorAuthRaw, multiFactorAuthSupported;
+try {
+    MultiFactorAuthRaw = require("supertokens-node/lib/build/recipe/multifactorauth/recipe").default;
+    MultiFactorAuth = require("supertokens-node/recipe/multifactorauth");
+    multiFactorAuthSupported = true;
+} catch (ex) {
+    multiFactorAuthSupported = false;
+}
+
+/** @type {import("supertokens-node/recipe/totp").default | undefined} */
+let TOTP;
+let TOTPRaw, totpSupported;
+try {
+    TOTPRaw = require("supertokens-node/lib/build/recipe/totp/recipe").default;
+    TOTP = require("supertokens-node/recipe/totp");
+    totpSupported = true;
+} catch (ex) {
+    totpSupported = false;
+}
+const OTPAuth = require("otpauth");
+
 let generalErrorSupported;
 
 if (maxVersion(nodeSDKVersion, "9.9.9") === "9.9.9") {
@@ -162,7 +196,7 @@ morgan.token("body", function (req, res) {
 });
 
 morgan.token("res-body", function (req, res) {
-    return typeof res.__custombody__ ? res.__custombody__ : JSON.stringify(res.__custombody__);
+    return typeof res.__custombody__ === "string" ? res.__custombody__ : JSON.stringify(res.__custombody__);
 });
 
 app.use(urlencodedParser);
@@ -216,6 +250,7 @@ let passwordlessConfig = {};
 let accountLinkingConfig = {};
 let enabledProviders = undefined;
 let enabledRecipes = undefined;
+let mfaInfo = {};
 
 initST();
 
@@ -261,6 +296,7 @@ app.post("/startst", async (req, res) => {
 app.post("/beforeeach", async (req, res) => {
     deviceStore = new Map();
 
+    mfaInfo = {};
     accountLinkingConfig = {};
     passwordlessConfig = {};
     enabledProviders = undefined;
@@ -346,7 +382,7 @@ app.post("/changeEmail", async (req, res) => {
 app.get("/unverifyEmail", verifySession(), async (req, res) => {
     let session = req.session;
     await EmailVerification.unverifyEmail(accountLinkingSupported ? session.getRecipeUserId() : session.getUserId());
-    await session.fetchAndSetClaim(EmailVerification.EmailVerificationClaim);
+    await session.fetchAndSetClaim(EmailVerification.EmailVerificationClaim, {});
     res.send({ status: "OK" });
 });
 
@@ -354,8 +390,8 @@ app.post("/setRole", verifySession(), async (req, res) => {
     let session = req.session;
     await UserRoles.createNewRoleOrAddPermissions(req.body.role, req.body.permissions);
     await UserRoles.addRoleToUser(session.getTenantId(), session.getUserId(), req.body.role);
-    await session.fetchAndSetClaim(UserRoles.UserRoleClaim);
-    await session.fetchAndSetClaim(UserRoles.PermissionClaim);
+    await session.fetchAndSetClaim(UserRoles.UserRoleClaim, {});
+    await session.fetchAndSetClaim(UserRoles.PermissionClaim, {});
     res.send({ status: "OK" });
 });
 
@@ -381,6 +417,36 @@ app.post(
         res.send({ status: "OK" });
     }
 );
+
+app.post("/setMFAInfo", async (req, res) => {
+    mfaInfo = req.body;
+
+    res.send({ status: "OK" });
+});
+
+app.post("/completeFactor", verifySession(), async (req, res) => {
+    let session = req.session;
+
+    await MultiFactorAuth.markFactorAsCompleteInSession(session, req.body.id);
+
+    res.send({ status: "OK" });
+});
+
+app.post("/addRequiredFactor", verifySession(), async (req, res) => {
+    let session = req.session;
+
+    await MultiFactorAuth.addToRequiredSecondaryFactorsForUser(session.getUserId(), req.body.factorId);
+
+    res.send({ status: "OK" });
+});
+
+app.post("/mergeIntoAccessTokenPayload", verifySession(), async (req, res) => {
+    let session = req.session;
+
+    await session.mergeIntoAccessTokenPayload(req.body);
+
+    res.send({ status: "OK" });
+});
 
 app.get("/token", async (_, res) => {
     res.send({
@@ -471,6 +537,10 @@ app.get("/test/getDevice", (req, res) => {
     res.send(deviceStore.get(req.query.preAuthSessionId));
 });
 
+app.post("/test/getTOTPCode", (req, res) => {
+    res.send(JSON.stringify({ totp: new OTPAuth.TOTP({ secret: req.body.secret, digits: 6, period: 1 }).generate() }));
+});
+
 app.get("/test/featureFlags", (req, res) => {
     const available = [];
 
@@ -497,6 +567,10 @@ app.get("/test/featureFlags", (req, res) => {
 
     if (accountLinkingSupported) {
         available.push("accountlinking");
+    }
+
+    if (multiFactorAuthSupported) {
+        available.push("mfa");
     }
 
     available.push("recipeConfig");
@@ -540,6 +614,7 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
 
 function initST() {
     if (process.env.TEST_MODE) {
+        mfaInfo = {};
         if (userRolesSupported) {
             UserRolesRaw.reset();
         }
@@ -558,6 +633,18 @@ function initST() {
 
         if (accountLinkingSupported) {
             AccountLinkingRaw.reset();
+        }
+
+        if (userMetadataSupported) {
+            UserMetadataRaw.reset();
+        }
+
+        if (multiFactorAuthSupported) {
+            MultiFactorAuthRaw.reset();
+        }
+
+        if (totpSupported) {
+            TOTPRaw.reset();
         }
 
         EmailVerificationRaw.reset();
@@ -841,6 +928,7 @@ function initST() {
         [
             "session",
             Session.init({
+                overwriteSessionDuringSignIn: true,
                 override: {
                     apis: function (originalImplementation) {
                         return {
@@ -920,7 +1008,10 @@ function initST() {
                                         message: "general error from API consume code",
                                     };
                                 }
-                                return originalImplementation.consumeCodePOST(input);
+
+                                const resp = await originalImplementation.consumeCodePOST(input);
+
+                                return resp;
                             },
                         };
                     },
@@ -1037,6 +1128,78 @@ function initST() {
                 }),
             ]);
         }
+    }
+    if (multiFactorAuthSupported) {
+        recipeList.push([
+            "multifactorauth",
+            MultiFactorAuth.init({
+                firstFactors: mfaInfo.firstFactors,
+                override: {
+                    functions: (oI) => ({
+                        ...oI,
+                        getFactorsSetupForUser: async (input) => {
+                            const res = await oI.getFactorsSetupForUser(input);
+                            if (mfaInfo?.alreadySetup) {
+                                return mfaInfo.alreadySetup;
+                            }
+                            return res;
+                        },
+                        assertAllowedToSetupFactorElseThrowInvalidClaimError: async (input) => {
+                            if (mfaInfo?.allowedToSetup) {
+                                if (!mfaInfo.allowedToSetup.includes(input.factorId)) {
+                                    throw new Session.Error({
+                                        type: "INVALID_CLAIMS",
+                                        message: "INVALID_CLAIMS",
+                                        payload: [
+                                            {
+                                                id: "test",
+                                                reason: "test override",
+                                            },
+                                        ],
+                                    });
+                                }
+                            } else {
+                                await oI.assertAllowedToSetupFactorElseThrowInvalidClaimError(input);
+                            }
+                        },
+                        getMFARequirementsForAuth: async (input) => {
+                            const res = await oI.getMFARequirementsForAuth(input);
+                            if (mfaInfo?.requirements) {
+                                return mfaInfo.requirements;
+                            }
+                            return res;
+                        },
+                    }),
+                    apis: (oI) => ({
+                        ...oI,
+                        resyncSessionAndFetchMFAInfoPUT: async (input) => {
+                            const res = await oI.resyncSessionAndFetchMFAInfoPUT(input);
+
+                            if (res.status === "OK") {
+                                if (mfaInfo.alreadySetup) {
+                                    res.factors.alreadySetup = [...mfaInfo.alreadySetup];
+                                }
+                            }
+                            if (mfaInfo.noContacts) {
+                                res.emails = {};
+                                res.phoneNumbers = {};
+                            }
+                            return res;
+                        },
+                    }),
+                },
+            }),
+        ]);
+    }
+
+    if (totpSupported) {
+        recipeList.push([
+            "totp",
+            TOTP.init({
+                defaultPeriod: 1,
+                defaultSkew: 30,
+            }),
+        ]);
     }
 
     SuperTokens.init({

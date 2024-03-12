@@ -49,7 +49,7 @@ import {
     defaultSignUp,
     screenshotOnFailure,
     getAuthPageHeaderText,
-    getResetPasswordFormBackButton,
+    getTitleBackButton,
     waitForSTElement,
     getResetPasswordSuccessBackToSignInButton,
     backendBeforeEach,
@@ -113,11 +113,14 @@ describe("SuperTokens Reset password", function () {
                     consoleLogs.push(log);
                 }
             });
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
         });
 
         it("Should redirect to Sign In screen when back button is clicked", async function () {
-            const backButton = await getResetPasswordFormBackButton(page);
+            const backButton = await getTitleBackButton(page);
 
             await backButton.click();
 

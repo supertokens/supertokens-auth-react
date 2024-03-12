@@ -23,8 +23,9 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
-import { getQueryParams, getURLHash, useOnMountAPICall } from "../../../../../utils";
+import { getQueryParams, getURLHash, useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
 import Session from "../../../../session/recipe";
+import useSessionContext from "../../../../session/useSessionContext";
 import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
@@ -40,6 +41,8 @@ type PropType = FeatureBaseProps<{
 }>;
 
 const LinkClickedScreen: React.FC<PropType> = (props) => {
+    const session = useSessionContext();
+    const rethrowInRender = useRethrowInRender();
     let userContext = useUserContext();
     if (props.userContext !== undefined) {
         userContext = props.userContext;
@@ -107,6 +110,9 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
             }
 
             if (response.status === "OK") {
+                const payloadAfterSuccess = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                    userContext,
+                });
                 const loginAttemptInfo =
                     await props.recipe.webJSRecipe.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
                         userContext,
@@ -114,19 +120,24 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                 await props.recipe.webJSRecipe.clearLoginAttemptInfo({
                     userContext,
                 });
-                return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                    {
-                        rid: props.recipe.config.recipeId,
-                        successRedirectContext: {
+                return Session.getInstanceOrThrow()
+                    .validateGlobalClaimsAndHandleSuccessRedirection(
+                        {
                             action: "SUCCESS",
-                            isNewPrimaryUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
+                            createdNewUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
                             isNewRecipeUser: response.createdNewRecipeUser,
-                            redirectToPath: loginAttemptInfo?.redirectToPath,
+                            newSessionCreated:
+                                session.loading ||
+                                !session.doesSessionExist ||
+                                session.accessTokenPayload.sessionHandle !== payloadAfterSuccess.sessionHandle,
+                            recipeId: props.recipe.recipeID,
                         },
-                    },
-                    userContext,
-                    props.navigate
-                );
+                        props.recipe.recipeID,
+                        loginAttemptInfo?.redirectToPath,
+                        userContext,
+                        props.navigate
+                    )
+                    .catch(rethrowInRender);
             }
         },
         [props.navigate, props.recipe, userContext]

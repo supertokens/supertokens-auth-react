@@ -41,19 +41,16 @@ We are adding a new (`/link`) page where the user can add new login methods to t
 The demo uses the pre-built UI, but you can always build your own UI instead.
 
 -   We do not need any extra configuration to enable account linking
--   To enable manual linking through a custom callback page, we add `getRedirectURL` to the configuration of the social login providers.
 -   We add a custom page (`/link`) that will:
     -   Get and show the login methods belonging to the current user
     -   Show a password form (if available) that calls `/addPassword` to add an email+password login method to the current user.
     -   Show a phone number form (if available) that calls `/addPhoneNumber` to associate a phone number with the current user.
     -   Show an "Add Google account" that start a login process through Google
--   We add a custom page (`/link/tpcallback/:thirdPartyId`) that will:
-    -   Call `/addThirdPartyUser` through a customized `ThirdPartyEmailPassword.thirdPartySignInAndUp` call
 
 ### On the backend
 
 -   We enable account linking by initializing the recipe and providing a `shouldDoAutomaticAccountLinking` implementation
--   We add `/addPassword`, `/addPhoneNumber` and `/addThirdPartyUser` to enable manual linking from the frontend
+-   We add `/addPassword` and`/addPhoneNumber` to enable manual linking from the frontend. Linking thirdparty accounts are handled by the built-in sign-in/up endpoint.
 -   We add `/userInfo` so the frontend can list/show the login methods belonging to the current user.
 
 ## Author

@@ -13,7 +13,7 @@ const MockSession = {
     getAccessTokenPayloadSecurely: jest.fn(),
     doesSessionExist: jest.fn(),
     validateClaims: jest.fn(),
-    validateGlobalClaimsAndHandleSuccessRedirection: jest.fn(),
+    validateGlobalClaimsAndHandleSuccessRedirection: jest.fn().mockReturnValue(new Promise(() => {})),
 };
 
 const setMockResolvesSession = (ctx: SessionContextType) => {
@@ -73,14 +73,14 @@ describe("ThirdPartyPasswordless.SignInAndUp", () => {
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledTimes(1);
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledWith(
                 {
-                    rid: "thirdpartypasswordless",
-                    successRedirectContext: {
-                        action: "SUCCESS",
-                        isNewRecipeUser: false,
-                        isNewPrimaryUser: false,
-                        redirectToPath: undefined,
-                    },
+                    action: "SUCCESS",
+                    recipeId: "thirdpartypasswordless",
+                    isNewRecipeUser: false,
+                    createdNewUser: false,
+                    newSessionCreated: false,
                 },
+                "thirdpartypasswordless",
+                undefined,
                 {},
                 undefined
             );

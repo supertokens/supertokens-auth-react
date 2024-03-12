@@ -32,7 +32,7 @@ export class SessionPreBuiltUI extends RecipeRouter {
     }
     static getFeatureComponent(
         componentName: "accessDenied",
-        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }>,
+        props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; error?: string; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return SessionPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
@@ -51,7 +51,7 @@ export class SessionPreBuiltUI extends RecipeRouter {
     };
     getFeatureComponent = (
         componentName: "accessDenied",
-        props: FeatureBaseProps<{ userContext?: UserContext }>,
+        props: FeatureBaseProps<{ useShadowDom?: boolean; error?: string; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "accessDenied") {
@@ -60,6 +60,8 @@ export class SessionPreBuiltUI extends RecipeRouter {
                     <AccessDeniedScreenFeature
                         recipe={this.recipeInstance}
                         useComponentOverrides={useComponentOverrides}
+                        error={props.error}
+                        useShadowDom={props.useShadowDom}
                     />
                 </UserContextWrapper>
             );
@@ -77,8 +79,9 @@ export class SessionPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static AccessDeniedScreen = (prop: FeatureBaseProps<{ userContext?: UserContext }> = {}): React.ReactElement =>
-        this.getFeatureComponent("accessDenied", prop);
+    static AccessDeniedScreen = (
+        prop: FeatureBaseProps<{ useShadowDom?: boolean; error?: string; userContext?: UserContext }> = {}
+    ): React.ReactElement => this.getFeatureComponent("accessDenied", prop);
 
     static AccessDeniedScreenTheme = AccessDeniedScreenTheme;
 }

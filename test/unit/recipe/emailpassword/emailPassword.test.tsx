@@ -634,12 +634,6 @@ describe("EmailPassword", function () {
             },
         }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
 
-        assert(
-            (await EmailPassword.getInstanceOrThrow().getRedirectUrl(
-                { action: "SUCCESS", isNewRecipeUser: false, isNewPrimaryUser: false },
-                {}
-            )) === null
-        );
         assert((await EmailPassword.getInstanceOrThrow().getRedirectUrl({ action: "RESET_PASSWORD" }, {})) === null);
     });
 });

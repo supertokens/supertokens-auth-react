@@ -23,6 +23,7 @@ import SuperTokens from "../../superTokens";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
 import EmailPassword from "../emailpassword/recipe";
+import { FactorIds } from "../multifactorauth/types";
 import ThirdParty from "../thirdparty/recipe";
 
 import { getFunctionOverrides } from "./functionOverrides";
@@ -51,6 +52,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
     static RECIPE_ID = "thirdpartyemailpassword";
 
     recipeID = ThirdPartyEmailPassword.RECIPE_ID;
+    firstFactorIds = [FactorIds.EMAILPASSWORD, FactorIds.THIRDPARTY];
 
     emailPasswordRecipe: EmailPassword | undefined;
 
@@ -76,6 +78,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipe<
             throw new Error("You need to enable either email password or third party providers login.");
         }
         super(config);
+        this.recipeID = config.recipeId;
 
         this.emailPasswordRecipe =
             recipes.emailPasswordInstance !== undefined

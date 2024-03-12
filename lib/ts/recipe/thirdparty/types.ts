@@ -22,7 +22,6 @@ import type { CustomProviderConfig } from "./providers/types";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type { FeatureBaseConfig, NormalisedBaseConfig, UserContext, WebJSRecipeInterface } from "../../types";
 import type {
-    GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
@@ -109,7 +108,8 @@ export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
     providers: Provider[];
 };
 
-export type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
+// The redirection callback will never be called for thirdparty
+export type GetRedirectionURLContext = never;
 
 export type PreAndPostAPIHookAction = "GET_AUTHORISATION_URL" | "THIRD_PARTY_SIGN_IN_UP";
 
@@ -123,8 +123,10 @@ export type PreAPIHookContext = {
 export type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {
+          rid: "thirdparty";
           action: "SUCCESS";
           isNewRecipeUser: boolean;
+          createdNewSession: boolean;
           user: User;
           userContext: UserContext;
       };

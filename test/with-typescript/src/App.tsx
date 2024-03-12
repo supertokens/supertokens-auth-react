@@ -57,6 +57,8 @@ import {
     PasswordlessLinkClicked as TPPasswordlessPasswordlessLinkClicked,
 } from "../../../recipe/thirdpartypasswordless/prebuiltui";
 import EmailVerification from "../../../recipe/emailverification";
+import MultiFactorAuth from "../../../recipe/multifactorauth";
+
 import { DateProviderReference } from "../../../utils/dateProvider";
 import { DateProviderInput, DateProviderInterface } from "../../../utils/dateProvider/types";
 /*
@@ -493,13 +495,6 @@ function getEmailPasswordConfigs() {
         },
 
         async getRedirectionURL(context: EmailPasswordGetRedirectionURLContext) {
-            if (context.action === "SUCCESS") {
-                if (context.isNewRecipeUser) {
-                    // new primary user
-                } else {
-                    // only a recipe user was created
-                }
-            }
             return undefined;
         },
         override: {
@@ -1490,6 +1485,35 @@ Multitenancy.init({
     },
 });
 
+MultiFactorAuth.init();
+MultiFactorAuth.init({
+    firstFactors: ["emailpassword", "unknown"],
+    factorChooserScreen: {
+        style: "[data-supertokens~=container] { background-color: red; }",
+    },
+    getSecondaryFactorInfo: (factors) => [
+        ...factors,
+        { id: "asfd", logo: () => <div>A</div>, description: "test", name: "asdf", path: "/mfa/asdf" },
+    ],
+});
+
+Passwordless.init({
+    contactMethod: "EMAIL",
+    mfaFeature: {
+        style: "",
+    },
+});
+
+ThirdPartyPasswordless.init({
+    contactMethod: "EMAIL",
+    mfaFeature: {
+        style: "",
+    },
+});
+
+ThirdPartyPasswordless.init({
+    contactMethod: "EMAIL",
+});
 // Testing that 'null' is allowed to be returned from getRedirectionURL
 SuperTokens.init({
     appInfo: {
@@ -1499,23 +1523,20 @@ SuperTokens.init({
     },
 
     async getRedirectionURL(context, userContext) {
+        if (context.action === "SUCCESS") {
+            if (context.createdNewUser) {
+                const rid = context.recipeId;
+                // New primary user
+            } else if (context.isNewRecipeUser) {
+                // New recipe user
+            } else {
+                // Existing user
+            }
+        }
         return null;
     },
     recipeList: [
-        EmailPassword.init({
-            async getRedirectionURL(context, userContext) {
-                if (context.action === "SUCCESS") {
-                    if (context.isNewPrimaryUser) {
-                        // New primary user
-                    } else if (context.isNewRecipeUser) {
-                        // New recipe user
-                    } else {
-                        // Existing user
-                    }
-                }
-                return null;
-            },
-        }),
+        EmailPassword.init(),
         ThirdParty.init({
             async getRedirectionURL(context, userContext) {
                 return null;

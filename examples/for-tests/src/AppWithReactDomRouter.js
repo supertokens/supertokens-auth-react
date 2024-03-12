@@ -15,8 +15,10 @@ import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordle
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
 import { AccessDeniedScreen } from "supertokens-auth-react/recipe/session/prebuiltui";
+import { MultiFactorAuthPreBuiltUI } from "supertokens-auth-react/recipe/multifactorauth/prebuiltui";
+import { TOTPPreBuiltUI } from "supertokens-auth-react/recipe/totp/prebuiltui";
 import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from "./App";
-import { getEnabledRecipes } from "./testContext";
+import { getEnabledRecipes, getTestContext } from "./testContext";
 
 function AppWithReactDomRouter(props) {
     /**
@@ -30,11 +32,12 @@ function AppWithReactDomRouter(props) {
     const keyWithClaimValidators =
         claimValidators !== undefined ? claimValidators.map((a) => a.id).join("_") : undefined;
 
+    const context = getTestContext();
     const enabledRecipes = getEnabledRecipes();
     const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
     const websiteBasePath = window.localStorage.getItem("websiteBasePath") || undefined;
 
-    let recipePreBuiltUIList = [];
+    let recipePreBuiltUIList = [TOTPPreBuiltUI];
     if (enabledRecipes.includes("emailpassword")) {
         recipePreBuiltUIList.push(EmailPasswordPreBuiltUI);
     }
@@ -52,6 +55,10 @@ function AppWithReactDomRouter(props) {
     }
     if (emailVerificationMode !== "OFF") {
         recipePreBuiltUIList.push(EmailVerificationPreBuiltUI);
+    }
+
+    if (context.enableMFA) {
+        recipePreBuiltUIList.push(MultiFactorAuthPreBuiltUI);
     }
 
     return (

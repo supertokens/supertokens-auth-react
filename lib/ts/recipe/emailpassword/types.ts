@@ -36,7 +36,6 @@ import type {
     UserContext,
 } from "../../types";
 import type {
-    GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
@@ -239,6 +238,7 @@ type NonSignUpFormThemeBaseProps = ThemeBaseProps & {
 export type SignInThemeProps = NonSignUpFormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
+    onFetchError: (error: Response) => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
     signUpClicked?: () => void;
@@ -249,6 +249,7 @@ export type SignInThemeProps = NonSignUpFormThemeBaseProps & {
 export type SignUpThemeProps = ThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     clearError: () => void;
+    onFetchError: (error: Response) => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
     signInClicked?: () => void;
@@ -327,14 +328,12 @@ export type PreAPIHookContext = {
     userContext: UserContext;
 };
 
-export type GetRedirectionURLContext =
-    | AuthRecipeModuleGetRedirectionURLContext
-    | {
-          /*
-           * Get Redirection URL Context
-           */
-          action: "RESET_PASSWORD";
-      };
+export type GetRedirectionURLContext = {
+    /*
+     * Get Redirection URL Context
+     */
+    action: "RESET_PASSWORD";
+};
 
 export type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
@@ -354,8 +353,10 @@ export type OnHandleEventContext =
           userContext: UserContext;
       }
     | {
+          rid: "emailpassword";
           action: "SUCCESS";
           isNewRecipeUser: boolean;
+          createdNewSession: boolean;
           user: User;
           userContext: UserContext;
       };
@@ -391,6 +392,7 @@ export type EnterEmailStatus = "READY" | "SENT";
 export type SubmitNewPasswordStatus = "READY" | "SUCCESS";
 
 export type FormBaseProps<T> = {
+    formDataSupertokens?: string;
     footer?: JSX.Element;
 
     formFields: FormFieldThemeProps[];
@@ -403,6 +405,7 @@ export type FormBaseProps<T> = {
 
     clearError: () => void;
     onError: (error: string) => void;
+    onFetchError?: (err: Response) => void;
     onSuccess?: (result: T & { status: "OK" }) => void;
 
     callAPI: (fields: APIFormField[], setValue: (id: string, value: string) => void) => Promise<FormBaseAPIResponse<T>>;

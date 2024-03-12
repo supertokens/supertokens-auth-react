@@ -67,6 +67,10 @@ export const defaultTranslationsPasswordless = {
         PWLESS_USER_INPUT_CODE_HEADER_SUBTITLE_LINK: "An OTP and a magic link was sent to you at",
         PWLESS_USER_INPUT_CODE_INPUT_LABEL: "OTP",
 
+        PWLESS_MFA_HEADER_TITLE_PHONE: "SMS based OTP",
+        PWLESS_MFA_HEADER_TITLE_EMAIL: "Email based OTP",
+        PWLESS_MFA_FOOTER_LOGOUT: "Logout",
+
         /*
          * The following are error messages from our backend SDK.
          * These are returned as full messages to preserver compatibilty, but they work just like the keys above.
@@ -79,5 +83,9 @@ export const defaultTranslationsPasswordless = {
             undefined,
         "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_003)":
             undefined,
+
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_017)": undefined,
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_018)": undefined,
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_019)": undefined,
     },
 };

@@ -24,19 +24,13 @@ export declare type NormalisedConfig = NormalisedRecipeModuleConfig<any, PreAndP
     };
 };
 export declare type GetLoginMethodsResponseNormalized = {
-    passwordless: {
-        enabled: boolean;
-    };
-    emailpassword: {
-        enabled: boolean;
-    };
     thirdparty: {
-        enabled: boolean;
         providers: {
             id: string;
             name: string;
         }[];
     };
+    firstFactors: string[];
 };
 export declare type ComponentOverrideMap = {
     MultitenancyDynamicLoginMethodsSpinnerTheme_Override?: ComponentOverride<typeof DynamicLoginMethodsSpinnerTheme>;

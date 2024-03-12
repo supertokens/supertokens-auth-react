@@ -1,4 +1,5 @@
 import { getRedirectToPathFromURL } from "../../utils";
+import Session from "../session/recipe";
 
 import type { OnHandleEventContext } from "./types";
 import type { RecipeOnHandleEventFunction } from "../recipeModule/types";
@@ -9,12 +10,37 @@ export const getFunctionOverrides =
     (originalImp: RecipeInterface): RecipeInterface => ({
         ...originalImp,
         thirdPartySignInAndUp: async function (input) {
+            let payloadBeforeCall;
+            try {
+                payloadBeforeCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                    userContext: input.userContext,
+                });
+            } catch {
+                // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+                payloadBeforeCall = undefined;
+            }
+
             const response = await originalImp.thirdPartySignInAndUp(input);
 
             if (response.status === "OK") {
+                let payloadAfterCall;
+                try {
+                    payloadAfterCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                        userContext: input.userContext,
+                    });
+                } catch {
+                    // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+                    payloadAfterCall = undefined;
+                }
+
                 onHandleEvent({
                     action: "SUCCESS",
+                    rid: "thirdparty",
                     isNewRecipeUser: response.createdNewRecipeUser,
+                    createdNewSession:
+                        payloadAfterCall !== undefined &&
+                        (payloadBeforeCall === undefined ||
+                            payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
                     user: response.user,
                     userContext: input.userContext,
                 });
@@ -64,6 +90,16 @@ export const getFunctionOverrides =
             return response;
         },
         consumePasswordlessCode: async function (input) {
+            let payloadBeforeCall;
+            try {
+                payloadBeforeCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                    userContext: input.userContext,
+                });
+            } catch {
+                // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+                payloadBeforeCall = undefined;
+            }
+
             const response = await originalImp.consumePasswordlessCode(input);
 
             if (response.status === "RESTART_FLOW_ERROR") {
@@ -71,9 +107,24 @@ export const getFunctionOverrides =
                     action: "PASSWORDLESS_RESTART_FLOW",
                 });
             } else if (response.status === "OK") {
+                let payloadAfterCall;
+                try {
+                    payloadAfterCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                        userContext: input.userContext,
+                    });
+                } catch {
+                    // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+                    payloadAfterCall = undefined;
+                }
+
                 onHandleEvent({
                     action: "SUCCESS",
+                    rid: "passwordless",
                     isNewRecipeUser: response.createdNewRecipeUser,
+                    createdNewSession:
+                        payloadAfterCall !== undefined &&
+                        (payloadBeforeCall === undefined ||
+                            payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
                     user: response.user,
                 });
             }

@@ -17,12 +17,12 @@
     padding: 2px 8px;
 
     background-color: white;
-    border-color: rgb(221, 221, 221) !important;
+    border-color: rgb(221, 221, 221);
     color: black;
 }
 
 [data-supertokens~="providerButton"]:hover {
-    filter: none !important;
+    filter: none;
     background-color: #fafafa;
 }
 

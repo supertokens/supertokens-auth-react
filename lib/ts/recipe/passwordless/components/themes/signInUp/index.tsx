@@ -21,6 +21,8 @@ import { SuperTokensBranding } from "../../../../../components/SuperTokensBrandi
 import { hasFontDefined } from "../../../../../styles/styles";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
+import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
+import { getEnabledContactMethods } from "../../../utils";
 import { ThemeBase } from "../themeBase";
 
 import { EmailForm } from "./emailForm";
@@ -31,6 +33,7 @@ import { SignInUpHeader } from "./signInUpHeader";
 import { UserInputCodeForm } from "./userInputCodeForm";
 import { UserInputCodeFormHeader } from "./userInputCodeFormHeader";
 
+import type { DynamicLoginMethodsContextValue } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import type { SignInUpProps } from "../../../types";
 
 export enum SignInUpScreens {
@@ -54,6 +57,7 @@ const SignInUpTheme: React.FC<SignInUpProps & { activeScreen: SignInUpScreens }>
         config: props.config,
         clearError: () => props.dispatch({ type: "setError", error: undefined }),
         onError: (error: string) => props.dispatch({ type: "setError", error }),
+        onFetchError: props.onFetchError,
         error: featureState.error,
     };
 
@@ -97,7 +101,8 @@ const SignInUpTheme: React.FC<SignInUpProps & { activeScreen: SignInUpScreens }>
 function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element {
     const hasFont = hasFontDefined(props.config.rootStyle);
 
-    const activeScreen = getActiveScreen(props);
+    const currentDynamicLoginMethods = useDynamicLoginMethods();
+    const activeScreen = getActiveScreen(props, currentDynamicLoginMethods);
 
     let activeStyle;
     if (activeScreen === SignInUpScreens.LinkSent) {
@@ -123,17 +128,23 @@ function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element {
 
 export default SignInUpThemeWrapper;
 
-export function getActiveScreen(props: Pick<SignInUpProps, "featureState" | "config">) {
+export function getActiveScreen(
+    props: Pick<SignInUpProps, "featureState" | "config">,
+    currentDynamicLoginMethods: DynamicLoginMethodsContextValue
+) {
+    const enabledContactMethods = getEnabledContactMethods(props.config.contactMethod, currentDynamicLoginMethods);
+
     if (props.featureState.loginAttemptInfo && props.featureState.loginAttemptInfo.flowType === "MAGIC_LINK") {
         return SignInUpScreens.LinkSent;
     } else if (props.featureState.loginAttemptInfo) {
         return SignInUpScreens.UserInputCodeForm;
-    } else if (props.config.contactMethod === "EMAIL") {
-        return SignInUpScreens.EmailForm;
-    } else if (props.config.contactMethod === "PHONE") {
-        return SignInUpScreens.PhoneForm;
-    } else if (props.config.contactMethod === "EMAIL_OR_PHONE") {
+    } else if (enabledContactMethods.length > 1) {
         return SignInUpScreens.EmailOrPhoneForm;
+    } else if (enabledContactMethods[0] === "EMAIL") {
+        return SignInUpScreens.EmailForm;
+    } else if (enabledContactMethods[0] === "PHONE") {
+        return SignInUpScreens.PhoneForm;
     }
+
     throw new Error("Couldn't choose active screen; Should never happen");
 }

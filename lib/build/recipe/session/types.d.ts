@@ -11,11 +11,14 @@ export declare type RecipeEventWithSessionContext = RecipeEvent & {
     sessionContext: SessionContextUpdate;
 };
 export declare type InputType = WebJSInputType & {
+    useShadowDom?: boolean;
     style?: string;
     accessDeniedScreen?: SessionFeatureBaseConfig;
     onHandleEvent?: (event: RecipeEventWithSessionContext) => void;
 };
 export declare type NormalisedSessionConfig = NormalisedConfig<unknown, any, any> & {
+    invalidClaimStatusCode: number;
+    useShadowDom: boolean;
     accessDeniedScreen: NormalisedBaseConfig;
     override: {
         functions: (
@@ -42,6 +45,7 @@ export declare type SessionContextType =
       };
 export declare type AccessDeniedThemeProps = {
     recipe: Session;
+    error?: string;
     navigate: Navigate;
     config: NormalisedSessionConfig;
 };

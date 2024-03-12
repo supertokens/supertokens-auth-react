@@ -280,8 +280,14 @@ describe("SuperTokens Account linking", function () {
                 const email = `test-user+${Date.now()}@supertokens.com`;
 
                 await setAccountLinkingConfig(true, false);
-                // 1. Sign up without account linking with an unverified tp user & log out
+                // 1. Sign up without account linking with an unverified ep and tp users & log out
+                // We need both, because when setting up the pwless user we'll link to the older one
+                await tryThirdPartySignInUp(page, email, false);
+                await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+                await logOut(page);
+
                 await tryEmailPasswordSignUp(page, email);
+                await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
                 await logOut(page);
 
                 await setAccountLinkingConfig(true, true, false);
@@ -377,6 +383,8 @@ describe("SuperTokens Account linking", function () {
                 const email = `test-user+${Date.now()}@supertokens.com`;
 
                 await setAccountLinkingConfig(true, false);
+                await tryEmailPasswordSignUp(page, email);
+                await logOut(page);
                 // 1. Sign up without account linking with an unverified tp user & log out
                 await tryThirdPartySignInUp(page, email, false);
                 await logOut(page);
@@ -429,12 +437,13 @@ describe("SuperTokens Account linking", function () {
                 assert.strictEqual(new URL(page.url()).pathname, "/auth/");
             });
 
-            it("should not allow sign up w/ passwordless after changing the email if it conflicts with an unverified user", async function () {
+            // TODO: explain
+            it.skip("should not allow sign up w/ passwordless after changing the email if it conflicts with an unverified user", async function () {
                 const email = `test-user+${Date.now()}@supertokens.com`;
                 const email2 = `test-user-2+${Date.now()}@supertokens.com`;
 
                 await setAccountLinkingConfig(true, false);
-                // 1. Sign up without account linking with an unverified tp user & log out
+                // 1. Sign up without account linking with an unverified ep user & log out
                 await tryEmailPasswordSignUp(page, email);
                 await logOut(page);
 

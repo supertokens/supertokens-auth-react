@@ -23,6 +23,8 @@ import { SuperTokensBranding } from "../../../../../components/SuperTokensBrandi
 import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
+import MultiFactorAuth from "../../../../multifactorauth/recipe";
+import { FactorIds } from "../../../../multifactorauth/types";
 import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import { getActiveScreen, SignInUpScreens } from "../../../../passwordless/components/themes/signInUp";
 import { EmailForm } from "../../../../passwordless/components/themes/signInUp/emailForm";
@@ -31,11 +33,14 @@ import { LinkSent } from "../../../../passwordless/components/themes/signInUp/li
 import { PhoneForm } from "../../../../passwordless/components/themes/signInUp/phoneForm";
 import { UserInputCodeForm } from "../../../../passwordless/components/themes/signInUp/userInputCodeForm";
 import { UserInputCodeFormHeader } from "../../../../passwordless/components/themes/signInUp/userInputCodeFormHeader";
+import { passwordlessFirstFactors } from "../../../../passwordless/recipe";
+import { getEnabledContactMethods } from "../../../../passwordless/utils";
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 import { ThemeBase } from "../themeBase";
 
 import { Header } from "./header";
 
+import type { GetLoginMethodsResponseNormalized } from "../../../../multitenancy/types";
 import type { SignInUpChildProps as PwlessSignInUpChildProps } from "../../../../passwordless/types";
 import type {
     ThirdPartyPasswordlessSignInAndUpThemeProps,
@@ -46,7 +51,7 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
     const t = useTranslation();
     const usesDynamicLoginMethods = SuperTokens.usesDynamicLoginMethods;
     const dynamicLoginMethods = useDynamicLoginMethods();
-    let loginMethods;
+    let loginMethods: GetLoginMethodsResponseNormalized | undefined;
     if (usesDynamicLoginMethods) {
         if (dynamicLoginMethods.loaded === false) {
             throw new Error("Component requiring dynamicLoginMethods rendered without FeatureWrapper.");
@@ -56,11 +61,18 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
     }
 
     const hasProviders = props.tpChildProps?.providers !== undefined && props.tpChildProps.providers.length > 0;
-    const thirdPartyEnabled =
-        (usesDynamicLoginMethods === false && hasProviders) || (loginMethods?.thirdparty.enabled && hasProviders);
-    const passwordlessEnabled =
-        (props.passwordlessRecipe !== undefined && usesDynamicLoginMethods === false) ||
-        loginMethods?.passwordless.enabled;
+    const mfa = MultiFactorAuth.getInstance();
+    let thirdPartyEnabled: boolean = hasProviders;
+    let passwordlessEnabled: boolean = props.passwordlessRecipe !== undefined;
+
+    if (usesDynamicLoginMethods) {
+        thirdPartyEnabled = loginMethods!.firstFactors.includes(FactorIds.THIRDPARTY) && hasProviders;
+        passwordlessEnabled = passwordlessFirstFactors.some((id) => loginMethods!.firstFactors!.includes(id));
+    } else if (mfa !== undefined) {
+        thirdPartyEnabled = thirdPartyEnabled && mfa.isFirstFactorEnabledOnClient(FactorIds.THIRDPARTY);
+        passwordlessEnabled =
+            passwordlessEnabled && passwordlessFirstFactors.some((id) => mfa.isFirstFactorEnabledOnClient(id));
+    }
 
     if (thirdPartyEnabled === false && passwordlessEnabled === false) {
         return null;
@@ -133,15 +145,28 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
 function SignInUpThemeWrapper(props: ThirdPartyPasswordlessSignInAndUpThemeProps) {
     const hasFont = hasFontDefined(props.config.rootStyle);
 
+    const currentDynamicLoginMethods = useDynamicLoginMethods();
+
+    let validPwlessContactMethodExists;
+    try {
+        getEnabledContactMethods(props.config.passwordlessConfig.contactMethod, currentDynamicLoginMethods);
+        validPwlessContactMethodExists = true;
+    } catch {
+        validPwlessContactMethodExists = false;
+    }
+
     // By defining it in a single object here TSC can deduce the connection between props
     const childProps =
-        props.passwordlessRecipe !== undefined && props.pwlessChildProps !== undefined
+        validPwlessContactMethodExists && props.passwordlessRecipe !== undefined && props.pwlessChildProps !== undefined
             ? {
                   ...props,
-                  activeScreen: getActiveScreen({
-                      config: props.pwlessChildProps.config,
-                      featureState: props.pwlessState,
-                  }),
+                  activeScreen: getActiveScreen(
+                      {
+                          config: props.pwlessChildProps.config,
+                          featureState: props.pwlessState,
+                      },
+                      currentDynamicLoginMethods
+                  ),
                   pwlessChildProps: props.pwlessChildProps,
                   passwordlessRecipe: props.passwordlessRecipe,
               }
@@ -181,6 +206,7 @@ function getCommonPwlessProps(
         config: childProps.config,
         clearError: () => props.pwlessDispatch({ type: "setError", error: undefined }),
         onError: (error: string) => props.pwlessDispatch({ type: "setError", error }),
+        onFetchError: childProps.onFetchError,
         error: props.pwlessState.error,
     };
 }

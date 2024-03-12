@@ -29,6 +29,11 @@ SuperTokens.init({
         apiDomain: getApiDomain(), // TODO: Change to your app's API domain
         websiteDomain: getWebsiteDomain(), // TODO: Change to your app's website domain
     },
+    getRedirectionURL: async function (context) {
+        if (context.action === "SUCCESS") {
+            return "/auth/verify";
+        }
+    },
     recipeList: [
         ThirdPartyEmailPassword.init({
             signInAndUpFeature: {
@@ -37,11 +42,6 @@ SuperTokens.init({
                     ThirdPartyEmailPassword.Google.init(),
                     ThirdPartyEmailPassword.Apple.init(),
                 ],
-            },
-            getRedirectionURL: async function (context) {
-                if (context.action === "SUCCESS") {
-                    return "/auth/verify";
-                }
             },
         }),
         Session.init(),

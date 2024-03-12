@@ -36,6 +36,7 @@ import type {
     UserContext,
 } from "../../types";
 import type { NormalisedAppInfo } from "../../types";
+import type AuthRecipe from "../authRecipe";
 
 /*
  * Class.
@@ -73,7 +74,14 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
         }
         const tenantMethods = await this.dynamicLoginMethodsCache[tenantId]!;
 
-        if (!hasIntersectingRecipes(tenantMethods, SuperTokens.getInstanceOrThrow().recipeList)) {
+        if (
+            !hasIntersectingRecipes(
+                tenantMethods,
+                SuperTokens.getInstanceOrThrow().recipeList.filter(
+                    (recipe) => "firstFactorIds" in (recipe as AuthRecipe<any, any, any, any>)
+                ) as AuthRecipe<any, any, any, any>[]
+            )
+        ) {
             throw new Error("Initialized recipes have no overlap with core recipes or could not load login methods");
         }
         return tenantMethods;
@@ -82,12 +90,11 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
     static async getDynamicLoginMethods(
         input: Parameters<typeof MultitenancyWebJS.getLoginMethods>[0]
     ): Promise<GetLoginMethodsResponseNormalized> {
-        const { emailPassword, passwordless, thirdParty } = await MultitenancyWebJS.getLoginMethods(input);
+        const { thirdParty, firstFactors } = await MultitenancyWebJS.getLoginMethods(input);
 
         return {
-            passwordless: passwordless,
-            emailpassword: emailPassword,
             thirdparty: thirdParty,
+            firstFactors,
         };
     }
 

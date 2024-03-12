@@ -14,6 +14,11 @@
  */
 
 import type { LinkClickedScreen } from "./components/themes/linkClickedScreen";
+import type { LoadingScreen } from "./components/themes/mfa/loadingScreen";
+import type { MFAFooter } from "./components/themes/mfa/mfaFooter";
+import type { MFAHeader } from "./components/themes/mfa/mfaHeader";
+import type { MFAOTPFooter } from "./components/themes/mfa/mfaOTPFooter";
+import type { MFAOTPHeader } from "./components/themes/mfa/mfaOTPHeader";
 import type { EmailForm } from "./components/themes/signInUp/emailForm";
 import type { EmailOrPhoneForm } from "./components/themes/signInUp/emailOrPhoneForm";
 import type { LinkSent } from "./components/themes/signInUp/linkSent";
@@ -26,7 +31,6 @@ import type { UserInputCodeFormHeader } from "./components/themes/signInUp/userI
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type { FeatureBaseConfig, NormalisedBaseConfig, UserContext, WebJSRecipeInterface } from "../../types";
 import type {
-    GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
@@ -61,12 +65,15 @@ export type PreAPIHookContext = {
     url: string;
 };
 
-export type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
+// The redirection callback will never be called for passwordless
+export type GetRedirectionURLContext = never;
 
 export type OnHandleEventContext =
     | {
+          rid: "passwordless";
           action: "SUCCESS";
           isNewRecipeUser: boolean;
+          createdNewSession: boolean;
           user: User;
       }
     | {
@@ -104,6 +111,7 @@ export type NormalisedConfig = {
         disableDefaultUI?: boolean;
     };
     linkClickedScreenFeature: PasswordlessNormalisedBaseConfig;
+    mfaFeature: PasswordlessNormalisedBaseConfig;
 
     contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
 
@@ -180,19 +188,40 @@ export type UserInput = (
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
     };
     linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
+    mfaFeature?: PasswordlessFeatureBaseConfig;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
+export type MFAProps = {
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+    contactMethod: "EMAIL" | "PHONE";
+    onBackButtonClicked: () => void;
+    onSignOutClicked: () => void;
+    onSuccess?: () => void;
+    onFetchError: (err: Response) => void;
+    dispatch: Dispatch<MFAAction>;
+    featureState: {
+        canChangeEmail: boolean;
+        loginAttemptInfo?: LoginAttemptInfo;
+        loaded: boolean;
+        showBackButton: boolean;
+        showAccessDenied: boolean;
+        error: string | undefined;
+    };
+    userContext?: UserContext;
+};
 export type SignInUpProps = {
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: (result: { createdNewRecipeUser: boolean; user: User }) => void;
     dispatch: Dispatch<PasswordlessSignInUpAction>;
+    onFetchError: (err: Response) => void;
     featureState: {
         loginAttemptInfo?: LoginAttemptInfo;
         loaded: boolean;
         error: string | undefined;
     };
-    userContext?: UserContext;
+    userContext: UserContext;
 };
 export type LoginAttemptInfo = {
     deviceId: string;
@@ -223,6 +252,7 @@ export type RecipeImplementation = WebJSRecipeInterface<typeof WebJSRecipe>;
 export type SignInUpEmailFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
+    onFetchError: (error: Response) => void;
     error: string | undefined;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
@@ -232,6 +262,7 @@ export type SignInUpEmailFormProps = {
 export type SignInUpPhoneFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
+    onFetchError: (error: Response) => void;
     error: string | undefined;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
@@ -241,6 +272,7 @@ export type SignInUpPhoneFormProps = {
 export type SignInUpEmailOrPhoneFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
+    onFetchError: (error: Response) => void;
     error: string | undefined;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
@@ -250,6 +282,7 @@ export type SignInUpEmailOrPhoneFormProps = {
 export type SignInUpUserInputCodeFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
+    onFetchError: (error: Response) => void;
     error: string | undefined;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
@@ -294,7 +327,45 @@ export type SignInUpState = {
     loginAttemptInfo: LoginAttemptInfo | undefined;
 };
 
+export type MFAAction =
+    | {
+          type: "load";
+          loginAttemptInfo: LoginAttemptInfo | undefined;
+          canChangeEmail: boolean;
+          showAccessDenied: boolean;
+          showBackButton: boolean;
+          error: string | undefined;
+          callingCreateCode: boolean;
+      }
+    | {
+          type: "startVerify";
+          loginAttemptInfo: LoginAttemptInfo;
+      }
+    | {
+          type: "resendCode";
+          timestamp: number;
+      }
+    | {
+          type: "restartFlow";
+          error: string | undefined;
+      }
+    | {
+          type: "setError";
+          showAccessDenied: boolean;
+          error: string | undefined;
+      };
+
+export type MFAState = {
+    showAccessDenied: boolean;
+    error: string | undefined;
+    loaded: boolean;
+    showBackButton: boolean;
+    loginAttemptInfo: LoginAttemptInfo | undefined;
+    canChangeEmail: boolean;
+};
+
 export type SignInUpChildProps = Omit<SignInUpProps, "featureState" | "dispatch">;
+export type MFAChildProps = Omit<MFAProps, "featureState" | "dispatch">;
 
 export type LinkSentThemeProps = {
     clearError: () => void;
@@ -317,6 +388,38 @@ export type UserInputCodeFormHeaderProps = {
     config: NormalisedConfig;
 };
 
+export type MFAFooterProps = {
+    canChangeEmail: boolean;
+    onSignOutClicked: () => void;
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+};
+
+export type MFAOTPFooterProps = {
+    canChangeEmail: boolean;
+    onSignOutClicked: () => void;
+    loginAttemptInfo: LoginAttemptInfo;
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+};
+
+export type MFAHeaderProps = {
+    contactMethod: "EMAIL" | "PHONE";
+    showBackButton: boolean;
+    onBackButtonClicked: () => void;
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+};
+
+export type MFAOTPHeaderProps = {
+    canChangeEmail: boolean;
+    showBackButton: boolean;
+    onBackButtonClicked: () => void;
+    loginAttemptInfo: LoginAttemptInfo;
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+};
+
 export type ComponentOverrideMap = {
     PasswordlessSignInUpHeader_Override?: ComponentOverride<typeof SignInUpHeader>;
     PasswordlessSignInUpFooter_Override?: ComponentOverride<typeof SignInUpFooter>;
@@ -331,4 +434,10 @@ export type ComponentOverrideMap = {
     PasswordlessLinkSent_Override?: ComponentOverride<typeof LinkSent>;
 
     PasswordlessLinkClickedScreen_Override?: ComponentOverride<typeof LinkClickedScreen>;
+
+    PasswordlessMFAHeader_Override?: ComponentOverride<typeof MFAHeader>;
+    PasswordlessMFAFooter_Override?: ComponentOverride<typeof MFAFooter>;
+    PasswordlessMFAOTPHeader_Override?: ComponentOverride<typeof MFAOTPHeader>;
+    PasswordlessMFAOTPFooter_Override?: ComponentOverride<typeof MFAOTPFooter>;
+    PasswordlessMFAOTPLoadingScreen_Override?: ComponentOverride<typeof LoadingScreen>;
 };

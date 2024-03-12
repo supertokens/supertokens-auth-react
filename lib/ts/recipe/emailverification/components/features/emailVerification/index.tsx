@@ -23,7 +23,7 @@ import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
-import { clearQueryParams, getQueryParams, useOnMountAPICall } from "../../../../../utils";
+import { clearQueryParams, getQueryParams, useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
 import { SessionContext } from "../../../../session";
 import Session from "../../../../session/recipe";
 import EmailVerificationTheme from "../../themes/emailVerification";
@@ -43,6 +43,7 @@ type Prop = FeatureBaseProps<{
 export const EmailVerification: React.FC<Prop> = (props) => {
     const sessionContext = useContext(SessionContext);
     const [status, setStatus] = useState("LOADING");
+    const rethrowInRender = useRethrowInRender();
     const recipeComponentOverrides = props.useComponentOverrides();
     let userContext = useUserContext();
     if (props.userContext !== undefined) {
@@ -66,11 +67,15 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     );
 
     const onSuccess = useCallback(async () => {
-        return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-            undefined,
-            userContext,
-            props.navigate
-        );
+        return Session.getInstanceOrThrow()
+            .validateGlobalClaimsAndHandleSuccessRedirection(
+                undefined,
+                props.recipe.recipeID,
+                undefined,
+                userContext,
+                props.navigate
+            )
+            .catch(rethrowInRender);
     }, [props.recipe, props.navigate, userContext]);
 
     const fetchIsEmailVerified = useCallback(async () => {

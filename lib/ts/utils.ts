@@ -112,7 +112,7 @@ export function getRedirectToPathFromURL(): string | undefined {
  */
 export function isTest(): boolean {
     try {
-        return process.env.TEST_MODE === "testing";
+        return process.env.TEST_MODE === "testing" || process.env.REACT_APP_TEST_MODE === "testing";
     } catch (err) {
         // can get Uncaught ReferenceError: process is not defined error
         return false;
@@ -235,7 +235,7 @@ export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<s
         Object.entries(queryParams).forEach(([key, value]) => {
             url.searchParams.set(key, value);
         });
-        return `${url.pathname}${url.search}`;
+        return `${url.pathname}${url.search}${url.hash}`;
     }
 }
 
@@ -443,7 +443,7 @@ export function getNormalisedUserContext(userContext?: UserContext): UserContext
 export const useOnMountAPICall = <T>(
     fetch: () => Promise<T>,
     handleResponse: (consumeResp: T) => Promise<void>,
-    handleError?: (err: unknown, consumeResp: T | undefined) => void,
+    handleError?: (err: unknown, consumeResp: T | undefined) => void | Promise<void>,
     startLoading = true
 ) => {
     const consumeReq = useRef<Promise<T>>();
@@ -465,7 +465,11 @@ export const useOnMountAPICall = <T>(
             } catch (err) {
                 if (!signal.aborted) {
                     if (handleError !== undefined) {
-                        handleError(err, resp);
+                        try {
+                            await handleError(err, resp);
+                        } catch (err) {
+                            setError(err);
+                        }
                     } else {
                         setError(err);
                     }
@@ -487,3 +491,13 @@ export const useOnMountAPICall = <T>(
         throw error;
     }
 };
+
+export function useRethrowInRender() {
+    const [error, setError] = useState(undefined);
+
+    if (error) {
+        throw error;
+    }
+
+    return setError;
+}

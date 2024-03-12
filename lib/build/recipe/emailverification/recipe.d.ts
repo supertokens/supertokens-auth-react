@@ -1,6 +1,6 @@
 import EmailVerificationWebJS from "supertokens-web-js/recipe/emailverification";
-import { EmailVerificationClaimClass } from "../../claims/emailVerificationClaim";
 import RecipeModule from "../recipeModule";
+import { EmailVerificationClaimClass } from "./emailVerificationClaim";
 import type {
     UserInput,
     NormalisedConfig,
@@ -39,4 +39,5 @@ export default class EmailVerification extends RecipeModule<
         fetchResponse: Response;
     }>;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
+    static reset(): void;
 }

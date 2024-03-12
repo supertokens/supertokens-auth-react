@@ -20,6 +20,7 @@ export default class ThirdPartyPasswordless extends AuthRecipe<
     static instance?: ThirdPartyPasswordless;
     static RECIPE_ID: string;
     recipeID: string;
+    firstFactorIds: string[];
     passwordlessRecipe: Passwordless | undefined;
     thirdPartyRecipe: ThirdParty | undefined;
     constructor(

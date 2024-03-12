@@ -61,6 +61,14 @@ export declare const defaultTranslationsThirdPartyEmailPassword: {
         "Reset password link was not created because of account take over risk. Please contact support. (ERR_CODE_001)": undefined;
         "Cannot sign up due to security reasons. Please try logging in, use a different login method or contact support. (ERR_CODE_007)": undefined;
         "Cannot sign in due to security reasons. Please try resetting your password, use a different login method or contact support. (ERR_CODE_008)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_009)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_010)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_011)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_012)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_013)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_014)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_015)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_016)": undefined;
         EMAIL_VERIFICATION_RESEND_SUCCESS: string;
         EMAIL_VERIFICATION_SEND_TITLE: string;
         EMAIL_VERIFICATION_SEND_DESC_START: string;
@@ -80,6 +88,7 @@ export declare const defaultTranslationsThirdPartyEmailPassword: {
         BRANDING_POWERED_BY_START: string;
         BRANDING_POWERED_BY_END: string;
         SOMETHING_WENT_WRONG_ERROR: string;
+        SOMETHING_WENT_WRONG_ERROR_RELOAD: string;
         THIRD_PARTY_SIGN_IN_AND_UP_HEADER_TITLE: string;
         THIRD_PARTY_SIGN_IN_UP_FOOTER_START: string;
         THIRD_PARTY_SIGN_IN_UP_FOOTER_TOS: string;
@@ -92,5 +101,9 @@ export declare const defaultTranslationsThirdPartyEmailPassword: {
         "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_004)": undefined;
         "Cannot sign in / up because new email cannot be applied to existing account. Please contact support. (ERR_CODE_005)": undefined;
         "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_006)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_020)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_021)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_022)": undefined;
+        "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_023)": undefined;
     };
 };

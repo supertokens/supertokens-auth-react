@@ -68,8 +68,8 @@ const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props)
         <div data-supertokens="container">
             <div data-supertokens="row">
                 <div data-supertokens="headerTitle">{t("EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_TITLE")}</div>
-                <div data-supertokens="headerSubtitle">
-                    <div data-supertokens="secondaryText">{t("EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_SUBTITLE")}</div>
+                <div data-supertokens="headerSubtitle secondaryText">
+                    {t("EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_SUBTITLE")}
                 </div>
                 {props.error !== undefined && <GeneralError error={props.error} />}
                 <FormBase

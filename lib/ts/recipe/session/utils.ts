@@ -41,6 +41,8 @@ export function normaliseSessionConfig(config?: InputType): NormalisedSessionCon
 
     return {
         ...normaliseRecipeModuleConfig(config),
+        // TODO: ideally we'd get the default (or normalized) value from supertokens-website
+        invalidClaimStatusCode: config.invalidClaimStatusCode ?? 403,
         accessDeniedScreen,
         override,
     };

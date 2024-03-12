@@ -23,6 +23,7 @@ import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
+import { FactorIds } from "../multifactorauth/types";
 
 import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
 import { getFunctionOverrides } from "./functionOverrides";
@@ -52,12 +53,14 @@ export default class EmailPassword extends AuthRecipe<
     static RECIPE_ID = "emailpassword";
 
     recipeID = EmailPassword.RECIPE_ID;
+    firstFactorIds = [FactorIds.EMAILPASSWORD];
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         public readonly webJSRecipe: WebJSRecipeInterface<typeof EmailPasswordWebJS> = EmailPasswordWebJS
     ) {
         super(config);
+        this.recipeID = config.recipeId;
     }
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {

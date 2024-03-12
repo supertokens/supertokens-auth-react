@@ -1,3 +1,9 @@
-# For 2FA demo please refer to [this demo](https://github.com/supertokens/supertokens-auth-react/blob/master/examples/with-thirdpartyemailpassword-2fa-passwordless).
+![SuperTokens banner](https://raw.githubusercontent.com/supertokens/supertokens-logo/master/images/Artboard%20%E2%80%93%2027%402x.png)
 
-If you would like to specifically see this demo app, you can find the code in the commit history.
+# SuperTokens 2FA Auth Demo app
+
+To get this demo app, please run the following command:
+
+```bash
+npx create-supertokens-app@latest --recipe=multifactorauth
+```

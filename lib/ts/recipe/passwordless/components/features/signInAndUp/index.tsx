@@ -23,9 +23,21 @@ import { useEffect } from "react";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
-import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
+import {
+    clearErrorQueryParam,
+    getQueryParams,
+    getRedirectToPathFromURL,
+    useRethrowInRender,
+} from "../../../../../utils";
+import { EmailVerificationClaim } from "../../../../emailverification";
+import EmailVerification from "../../../../emailverification/recipe";
+import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
+import { getInvalidClaimsFromResponse } from "../../../../session";
 import SessionRecipe from "../../../../session/recipe";
+import Session from "../../../../session/recipe";
+import useSessionContext from "../../../../session/useSessionContext";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
+import { getEnabledContactMethods } from "../../../utils";
 import SignInUpThemeWrapper from "../../themes/signInUp";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
@@ -38,8 +50,10 @@ import type { User } from "supertokens-web-js/types";
 
 export const useFeatureReducer = (
     recipeImpl: RecipeInterface | undefined,
+    contactMethod: NormalisedConfig["contactMethod"],
     userContext: UserContext
 ): [SignInUpState, React.Dispatch<PasswordlessSignInUpAction>] => {
+    const dynamicLoginMethods = useDynamicLoginMethods();
     const [state, dispatch] = React.useReducer(
         (oldState: SignInUpState, action: PasswordlessSignInUpAction) => {
             switch (action.type) {
@@ -123,9 +137,14 @@ export const useFeatureReducer = (
                     error = messageQueryParam;
                 }
             }
-            const loginAttemptInfo = await recipeImpl?.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
+            let loginAttemptInfo = await recipeImpl?.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
                 userContext,
             });
+            const enabledContactMethods = getEnabledContactMethods(contactMethod, dynamicLoginMethods);
+            if (loginAttemptInfo && !enabledContactMethods.includes(loginAttemptInfo.contactMethod)) {
+                await recipeImpl?.clearLoginAttemptInfo({ userContext });
+                loginAttemptInfo = undefined;
+            }
             // No need to check if the component is unmounting, since this has no effect then.
             dispatch({ type: "load", loginAttemptInfo, error });
         }
@@ -159,36 +178,111 @@ export function useChildProps(
     userContext: UserContext,
     navigate?: Navigate
 ): SignInUpChildProps | undefined {
+    const session = useSessionContext();
     const recipeImplementation = React.useMemo(
         () => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe, recipe.config, dispatch),
         [recipe]
     );
+    const rethrowInRender = useRethrowInRender();
 
     return useMemo(() => {
         if (!recipe || !recipeImplementation) {
             return undefined;
         }
         return {
-            onSuccess: (result: { createdNewRecipeUser: boolean; user: User }) => {
-                return SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                    {
-                        rid: recipe.config.recipeId,
-                        successRedirectContext: {
-                            action: "SUCCESS",
-                            isNewPrimaryUser: result.createdNewRecipeUser && result.user.loginMethods.length === 1,
-                            isNewRecipeUser: result.createdNewRecipeUser,
-                            redirectToPath: getRedirectToPathFromURL(),
-                        },
-                    },
+            userContext,
+            onSuccess: async (result: { createdNewRecipeUser: boolean; user: User }) => {
+                const payloadAfterSuccess = await SessionRecipe.getInstanceOrThrow().getAccessTokenPayloadSecurely({
                     userContext,
-                    navigate
-                );
+                });
+                return SessionRecipe.getInstanceOrThrow()
+                    .validateGlobalClaimsAndHandleSuccessRedirection(
+                        {
+                            action: "SUCCESS",
+                            createdNewUser: result.createdNewRecipeUser && result.user.loginMethods.length === 1,
+                            isNewRecipeUser: result.createdNewRecipeUser,
+                            newSessionCreated:
+                                session.loading ||
+                                !session.doesSessionExist ||
+                                session.accessTokenPayload.sessionHandle !== payloadAfterSuccess.sessionHandle,
+                            recipeId: recipe.recipeID,
+                        },
+                        recipe.recipeID,
+                        getRedirectToPathFromURL(),
+                        userContext,
+                        navigate
+                    )
+                    .catch(rethrowInRender);
+            },
+            onFetchError: async (err: Response) => {
+                if (err.status === Session.getInstanceOrThrow().config.invalidClaimStatusCode) {
+                    const invalidClaims = await getInvalidClaimsFromResponse({ response: err, userContext });
+                    if (invalidClaims.some((i) => i.validatorId === EmailVerificationClaim.id)) {
+                        try {
+                            // it's OK if this throws,
+                            const evInstance = EmailVerification.getInstanceOrThrow();
+                            await evInstance.redirect(
+                                {
+                                    action: "VERIFY_EMAIL",
+                                },
+                                navigate,
+                                undefined,
+                                userContext
+                            );
+                            return;
+                        } catch {
+                            // If we couldn't redirect to EV we fall back to showing the something went wrong error
+                        }
+                    }
+                }
+                dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
             },
             recipeImplementation: recipeImplementation,
             config: recipe.config,
         };
     }, [state, recipeImplementation]);
 }
+
+const SignInUpFeatureInner: React.FC<
+    FeatureBaseProps<{
+        recipe: Recipe;
+        useComponentOverrides: () => ComponentOverrideMap;
+        userContext?: UserContext;
+    }>
+> = (props) => {
+    let userContext = useUserContext();
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
+    const [state, dispatch] = useFeatureReducer(
+        props.recipe.webJSRecipe,
+        props.recipe.config.contactMethod,
+        userContext
+    );
+    const childProps = useChildProps(props.recipe, dispatch, state, userContext, props.navigate)!;
+
+    return (
+        <Fragment>
+            {/* No custom theme, use default. */}
+            {props.children === undefined && (
+                <SignInUpThemeWrapper {...childProps} featureState={state} dispatch={dispatch} />
+            )}
+
+            {/* Otherwise, custom theme is provided, propagate props. */}
+            {props.children &&
+                React.Children.map(props.children, (child) => {
+                    if (React.isValidElement(child)) {
+                        return React.cloneElement(child, {
+                            ...childProps,
+                            featureState: state,
+                            dispatch: dispatch,
+                        });
+                    }
+                    return child;
+                })}
+        </Fragment>
+    );
+};
 
 export const SignInUpFeature: React.FC<
     FeatureBaseProps<{
@@ -198,37 +292,13 @@ export const SignInUpFeature: React.FC<
     }>
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
-    let userContext = useUserContext();
-    if (props.userContext !== undefined) {
-        userContext = props.userContext;
-    }
-    const [state, dispatch] = useFeatureReducer(props.recipe.webJSRecipe, userContext);
-    const childProps = useChildProps(props.recipe, dispatch, state, userContext, props.navigate)!;
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
                 defaultStore={defaultTranslationsPasswordless}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {props.children === undefined && (
-                        <SignInUpThemeWrapper {...childProps} featureState={state} dispatch={dispatch} />
-                    )}
-
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {props.children &&
-                        React.Children.map(props.children, (child) => {
-                            if (React.isValidElement(child)) {
-                                return React.cloneElement(child, {
-                                    ...childProps,
-                                    featureState: state,
-                                    dispatch: dispatch,
-                                });
-                            }
-                            return child;
-                        })}
-                </Fragment>
+                <SignInUpFeatureInner {...props} />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );

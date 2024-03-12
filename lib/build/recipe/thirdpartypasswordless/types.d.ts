@@ -89,6 +89,7 @@ export declare type UserInput = (
         ) => RecipeInterface;
     };
     linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
+    mfaFeature?: PasswordlessFeatureBaseConfig;
     oAuthCallbackScreen?: FeatureBaseConfig;
     disablePasswordless?: boolean;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;

@@ -6,7 +6,6 @@ import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./Home";
 import { PreBuiltUIList, SuperTokensConfig } from "./config";
 import { LinkingPage } from "./LinkingPage";
-import { LinkingCallbackPage } from "./LinkingCallbackPage";
 
 SuperTokens.init(SuperTokensConfig);
 
@@ -26,15 +25,6 @@ function App() {
                                     /* Showing the linking page only makes sense for logged in users */
                                     <SessionAuth>
                                         <LinkingPage />
-                                    </SessionAuth>
-                                }
-                            />
-                            <Route
-                                path="/link/tpcallback/:thirdPartyId"
-                                element={
-                                    /* Showing the linking page only makes sense for logged in users */
-                                    <SessionAuth>
-                                        <LinkingCallbackPage />
                                     </SessionAuth>
                                 }
                             />

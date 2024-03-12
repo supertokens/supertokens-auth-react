@@ -25,8 +25,12 @@ import STGeneralError from "supertokens-web-js/utils/error";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { useUserContext } from "../../../../../usercontext";
-import { getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
+import { getQueryParams, getRedirectToPathFromURL, useRethrowInRender } from "../../../../../utils";
+import { EmailVerificationClaim } from "../../../../emailverification";
+import EmailVerification from "../../../../emailverification/recipe";
+import { getInvalidClaimsFromResponse } from "../../../../session";
 import Session from "../../../../session/recipe";
+import useSessionContext from "../../../../session/useSessionContext";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
 
@@ -112,39 +116,55 @@ export function useChildProps(
     userContext: UserContext,
     navigate?: Navigate
 ): EmailPasswordSignInAndUpChildProps | undefined {
+    const session = useSessionContext();
     const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe), [recipe]);
+    const rethrowInRender = useRethrowInRender();
 
     const onSignInSuccess = useCallback(async (): Promise<void> => {
-        return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-            {
-                rid: recipe!.config.recipeId,
-                successRedirectContext: {
+        const payloadAfterSuccess = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({ userContext });
+        return Session.getInstanceOrThrow()
+            .validateGlobalClaimsAndHandleSuccessRedirection(
+                {
                     action: "SUCCESS",
-                    isNewPrimaryUser: false,
+                    createdNewUser: false,
                     isNewRecipeUser: false,
-                    redirectToPath: getRedirectToPathFromURL(),
+                    newSessionCreated:
+                        session.loading ||
+                        !session.doesSessionExist ||
+                        session.accessTokenPayload.sessionHandle !== payloadAfterSuccess.sessionHandle,
+                    recipeId: recipe!.recipeID,
                 },
-            },
-            userContext,
-            navigate
-        );
+                recipe!.recipeID,
+                getRedirectToPathFromURL(),
+                userContext,
+                navigate
+            )
+            .catch(rethrowInRender);
     }, [recipe, userContext, navigate]);
 
     const onSignUpSuccess = useCallback(
         async (result: { user: User }): Promise<void> => {
-            return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                {
-                    rid: recipe!.config.recipeId,
-                    successRedirectContext: {
-                        action: "SUCCESS",
-                        isNewPrimaryUser: result.user.loginMethods.length === 1,
-                        isNewRecipeUser: true,
-                        redirectToPath: getRedirectToPathFromURL(),
-                    },
-                },
+            const payloadAfterSuccess = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
                 userContext,
-                navigate
-            );
+            });
+            return Session.getInstanceOrThrow()
+                .validateGlobalClaimsAndHandleSuccessRedirection(
+                    {
+                        action: "SUCCESS",
+                        createdNewUser: result.user.loginMethods.length === 1,
+                        isNewRecipeUser: true,
+                        newSessionCreated:
+                            session.loading ||
+                            !session.doesSessionExist ||
+                            session.accessTokenPayload.sessionHandle !== payloadAfterSuccess.sessionHandle,
+                        recipeId: recipe!.recipeID,
+                    },
+                    recipe!.recipeID,
+                    getRedirectToPathFromURL(),
+                    userContext,
+                    navigate
+                )
+                .catch(rethrowInRender);
         },
         [recipe, userContext, navigate]
     );
@@ -165,6 +185,29 @@ export function useChildProps(
             error: state.error,
             clearError: () => dispatch({ type: "setError", error: undefined }),
             onError: (error: string) => dispatch({ type: "setError", error }),
+            onFetchError: async (err: Response) => {
+                if (err.status === Session.getInstanceOrThrow().config.invalidClaimStatusCode) {
+                    const invalidClaims = await getInvalidClaimsFromResponse({ response: err, userContext });
+                    if (invalidClaims.some((i) => i.validatorId === EmailVerificationClaim.id)) {
+                        try {
+                            // it's OK if this throws,
+                            const evInstance = EmailVerification.getInstanceOrThrow();
+                            await evInstance.redirect(
+                                {
+                                    action: "VERIFY_EMAIL",
+                                },
+                                navigate,
+                                undefined,
+                                userContext
+                            );
+                            return;
+                        } catch {
+                            // If we couldn't redirect to EV we fall back to showing the something went wrong error
+                        }
+                    }
+                }
+                dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
+            },
             onSuccess: onSignInSuccess,
             forgotPasswordClick: () => recipe.redirect({ action: "RESET_PASSWORD" }, navigate, undefined, userContext),
         };
@@ -177,6 +220,29 @@ export function useChildProps(
             error: state.error,
             clearError: () => dispatch({ type: "setError", error: undefined }),
             onError: (error: string) => dispatch({ type: "setError", error }),
+            onFetchError: async (err: Response) => {
+                if (err.status === Session.getInstanceOrThrow().config.invalidClaimStatusCode) {
+                    const invalidClaims = await getInvalidClaimsFromResponse({ response: err, userContext });
+                    if (invalidClaims.some((i) => i.validatorId === EmailVerificationClaim.id)) {
+                        try {
+                            // it's OK if this throws,
+                            const evInstance = EmailVerification.getInstanceOrThrow();
+                            await evInstance.redirect(
+                                {
+                                    action: "VERIFY_EMAIL",
+                                },
+                                navigate,
+                                undefined,
+                                userContext
+                            );
+                            return;
+                        } catch {
+                            // If we couldn't redirect to EV we fall back to showing the something went wrong error
+                        }
+                    }
+                }
+                dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
+            },
             onSuccess: onSignUpSuccess,
         };
 

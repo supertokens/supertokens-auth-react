@@ -7,6 +7,8 @@ declare const AccessDeniedScreen: React.FC<
         recipe: Recipe;
         userContext?: UserContext;
         useComponentOverrides: () => ComponentOverrideMap;
+        useShadowDom?: boolean;
+        error?: string;
     }>
 >;
 export default AccessDeniedScreen;

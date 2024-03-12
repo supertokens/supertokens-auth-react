@@ -4,6 +4,7 @@ import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeRouter } from "../recipeRouter";
+import { SessionAuth } from "../session";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import SignInAndUpFeature from "./components/features/signInAndUp";
@@ -121,11 +122,13 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
         } else if (componentName === "signinupcallback") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
-                    <SignInAndUpCallbackFeature
-                        recipe={this.recipeInstance}
-                        {...props}
-                        useComponentOverrides={useComponentOverrides}
-                    />
+                    <SessionAuth requireAuth={false} doRedirection={false}>
+                        <SignInAndUpCallbackFeature
+                            recipe={this.recipeInstance}
+                            {...props}
+                            useComponentOverrides={useComponentOverrides}
+                        />
+                    </SessionAuth>
                 </UserContextWrapper>
             );
         } else {

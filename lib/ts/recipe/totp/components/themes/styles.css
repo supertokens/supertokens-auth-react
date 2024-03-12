@@ -1,0 +1,61 @@
+@import "../../../../styles/styles.css";
+@import "../../../emailpassword/components/themes/styles.css";
+
+[data-supertokens~="totp"] [data-supertokens~="container"] {
+    padding-top: 24px;
+}
+
+[data-supertokens~="totp"] [data-supertokens~="divider"] {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+[data-supertokens~="totp"] [data-supertokens~="row"] {
+    padding-top: 16px;
+    padding-bottom: 8px;
+    width: auto;
+    margin: 0 50px;
+}
+
+[data-supertokens~="totpDeviceQR"] {
+    border-radius: 12px;
+    border: 1px solid rgb(var(--palette-inputBorder));
+    padding: 16px;
+    max-width: 172px;
+    max-height: 172px;
+}
+
+[data-supertokens~="showTOTPSecret"] {
+    display: block;
+    color: rgb(var(--palette-textGray));
+    font-size: var(--font-size-0);
+    margin: 16px 0 12px;
+}
+
+[data-supertokens~="totpSecret"] {
+    display: block;
+    border-radius: 6px;
+    padding: 7px 15px;
+    color: rgb(var(--palette-textLink));
+    font-size: var(--font-size-1);
+    font-weight: 600;
+    letter-spacing: 3.36px;
+    background: rgba(var(--palette-textLink), 0.08);
+    word-wrap: break-word;
+    overflow-y: hidden;
+}
+
+button[data-supertokens~="showTOTPSecretBtn"] {
+    font-size: 12px;
+}
+
+[data-supertokens~="showTOTPSecretBtn"]:hover {
+    text-decoration: underline;
+}
+
+[data-supertokens~="retryCodeBtn"]:disabled {
+    border: 0;
+    border-radius: 6px;
+    color: rgb(var(--palette-error));
+    background: rgb(var(--palette-errorBackground));
+}

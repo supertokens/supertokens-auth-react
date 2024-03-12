@@ -32,6 +32,10 @@ export default [
             thirdpartypasswordless: "lib/ts/recipe/thirdpartypasswordless/index.ts",
             thirdpartypasswordlessprebuiltui: "lib/ts/recipe/thirdpartypasswordless/prebuiltui.tsx",
             multitenancy: "lib/ts/recipe/multitenancy/index.ts",
+            multifactorauth: "lib/ts/recipe/multifactorauth/index.ts",
+            multifactorauthprebuiltui: "lib/ts/recipe/multifactorauth/prebuiltui.tsx",
+            totp: "lib/ts/recipe/totp/index.ts",
+            totpprebuiltui: "lib/ts/recipe/totp/prebuiltui.tsx",
             userroles: "lib/ts/recipe/userroles/index.ts",
         },
         plugins: [

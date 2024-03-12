@@ -18,10 +18,15 @@
  */
 
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
+import { OTPEmailIcon } from "../../components/assets/otpEmailIcon";
+import { OTPSMSIcon } from "../../components/assets/otpSMSIcon";
 import { SSR_ERROR } from "../../constants";
 import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
+import MultiFactorAuth from "../multifactorauth/recipe";
+import { FactorIds } from "../multifactorauth/types";
 
 import { getFunctionOverrides } from "./functionOverrides";
 import { normalisePasswordlessConfig } from "./utils";
@@ -37,6 +42,28 @@ import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRec
 import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
 
+export const otpPhoneFactor = {
+    id: FactorIds.OTP_PHONE,
+    name: "PWLESS_MFA_OTP_PHONE_NAME",
+    description: "PWLESS_MFA_OTP_PHONE_DESCRIPTION",
+    path: "/mfa/otp-phone",
+    logo: OTPSMSIcon,
+};
+export const otpEmailFactor = {
+    id: FactorIds.OTP_EMAIL,
+    name: "PWLESS_MFA_OTP_EMAIL_NAME",
+    description: "PWLESS_MFA_OTP_EMAIL_DESCRIPTION",
+    path: "/mfa/otp-email",
+    logo: OTPEmailIcon,
+};
+
+export const passwordlessFirstFactors = [
+    FactorIds.OTP_PHONE,
+    FactorIds.OTP_EMAIL,
+    FactorIds.LINK_PHONE,
+    FactorIds.LINK_EMAIL,
+] as const;
+
 /*
  * Class.
  */
@@ -50,12 +77,21 @@ export default class Passwordless extends AuthRecipe<
     static RECIPE_ID = "passwordless";
 
     recipeID = Passwordless.RECIPE_ID;
+    firstFactorIds = [FactorIds.OTP_EMAIL, FactorIds.OTP_PHONE, FactorIds.LINK_EMAIL, FactorIds.LINK_PHONE];
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         public readonly webJSRecipe: WebJSRecipeInterface<typeof PasswordlessWebJS> = PasswordlessWebJS
     ) {
         super(config);
+        this.recipeID = config.recipeId;
+
+        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
+            const mfa = MultiFactorAuth.getInstance();
+            if (mfa !== undefined) {
+                mfa.addMFAFactors([otpPhoneFactor, otpEmailFactor]);
+            }
+        });
     }
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {

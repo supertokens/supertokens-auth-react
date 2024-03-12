@@ -9,10 +9,27 @@ import type { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/
 import type NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import type NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import type { WindowHandlerInput } from "supertokens-web-js/utils/windowHandler/types";
-export declare type GetRedirectionURLContext = {
-    action: "TO_AUTH";
-    showSignIn?: boolean;
+export declare type SuccessRedirectContext = {
+    recipeId:
+        | "emailpassword"
+        | "thirdparty"
+        | "passwordless"
+        | "thirdpartypasswordless"
+        | "thirdpartyemailpassword"
+        | "emailverification"
+        | "totp";
+    action: "SUCCESS";
+    isNewRecipeUser: boolean;
+    createdNewUser: boolean;
+    newSessionCreated: boolean;
+    redirectToPath?: string;
 };
+export declare type GetRedirectionURLContext =
+    | {
+          action: "TO_AUTH";
+          showSignIn?: boolean;
+      }
+    | SuccessRedirectContext;
 export declare type ValidationFailureCallback =
     | (({
           userContext,
