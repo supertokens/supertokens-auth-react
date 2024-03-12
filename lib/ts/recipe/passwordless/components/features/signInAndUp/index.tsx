@@ -192,9 +192,14 @@ export function useChildProps(
         return {
             userContext,
             onSuccess: async (result: { createdNewRecipeUser: boolean; user: User }) => {
-                const payloadAfterSuccess = await SessionRecipe.getInstanceOrThrow().getAccessTokenPayloadSecurely({
-                    userContext,
-                });
+                let payloadAfterCall;
+                try {
+                    payloadAfterCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                        userContext,
+                    });
+                } catch {
+                    payloadAfterCall = undefined;
+                }
                 return SessionRecipe.getInstanceOrThrow()
                     .validateGlobalClaimsAndHandleSuccessRedirection(
                         {
@@ -204,7 +209,8 @@ export function useChildProps(
                             newSessionCreated:
                                 session.loading ||
                                 !session.doesSessionExist ||
-                                session.accessTokenPayload.sessionHandle !== payloadAfterSuccess.sessionHandle,
+                                (payloadAfterCall !== undefined &&
+                                    session.accessTokenPayload.sessionHandle !== payloadAfterCall.sessionHandle),
                             recipeId: recipe.recipeID,
                         },
                         recipe.recipeID,

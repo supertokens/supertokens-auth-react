@@ -98,7 +98,7 @@
     "peerDependencies": {
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0",
-        "supertokens-web-js": "github:supertokens/supertokens-web-js#feat/mfa"
+        "supertokens-web-js": "github:supertokens/supertokens-web-js#0.10"
     },
     "scripts": {
         "init": "bash ./init.sh",
@@ -193,7 +193,7 @@
         },
         {
             "path": "recipe/thirdpartypasswordless/prebuiltui.js",
-            "limit": "150kb"
+            "limit": "151kb"
         },
         {
             "path": "recipe/multitenancy/index.js",
