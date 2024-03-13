@@ -1,23 +1,9 @@
 import { json } from "@remix-run/node";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "react-router-dom";
-import getAppDirRequestHandler from '../lib/remixAuthAPIRequestHandler.js'; // Adjust the path accordingly
+import getAppDirRequestHandler from '../lib/remixAuthAPIRequestHandler.js';
+import { PartialRemixRequest } from "../lib/types"
 
 const handleCall = getAppDirRequestHandler(Response);
-
-// Type based on the PartialNextRequest type (same properties)
-
-export type PartialRemixRequest = {
-  method: string;
-  url: string;
-  headers: Headers;
-  formData: () => Promise<FormData>;
-  json: () => Promise<unknown>;
-  cookies: {
-    getAll: () => { name: string; value: string }[];
-  };
-};
-
-// In Remix, the request lacks the `cookies` property required by getAppDirRequestHandler, so a new object is created to include that property.
 
 function createPartialRemixRequest(request: Request): PartialRemixRequest {
   const headers = new Headers();

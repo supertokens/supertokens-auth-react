@@ -32,3 +32,14 @@ export interface SessionDataForUI {
   sessionHandle: string;
   accessTokenPayload: object;
 }
+
+export type PartialRemixRequest = {
+  method: string;
+  url: string;
+  headers: Headers;
+  formData: () => Promise<FormData>;
+  json: () => Promise<unknown>;
+  cookies: {
+    getAll: () => { name: string; value: string }[];
+  };
+};
