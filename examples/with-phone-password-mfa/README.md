@@ -54,6 +54,7 @@ This demo app uses the EmailPassword and Passwordless recipes to achieve the aut
 
 -   Change email validation logic on the backend (in emailpassword recipe) to validate phone number syntax.
 -   Change how password reset email is sent to instead send an SMS to the phone.
+-   We override consumeCodePOST to validate the phone number as if it was an email address to facilitate linking
 
 ## Future work:
 

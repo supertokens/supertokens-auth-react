@@ -49,13 +49,21 @@ export const SuperTokensConfig: TypeInput = {
                             const payload = input.session.getAccessTokenPayload();
                             const recoveryCodeHash = payload.recoveryCodeHash;
                             if (recoveryCodeHash) {
-                                await UserMetadata.updateUserMetadata(input.session.getUserId(), {
+                                const userId = input.session.getUserId();
+                                await UserMetadata.updateUserMetadata(userId, {
                                     recoveryCodeHash: null,
                                 });
                                 await input.session.setClaimValue(RecoveryCodeExistsClaim, false);
                                 await input.session.mergeIntoAccessTokenPayload({
                                     recoveryCodeHash: null,
                                 });
+
+                                const { devices } = await TOTP.listDevices(userId);
+                                for (const dev of devices) {
+                                    if (dev.name !== input.deviceName) {
+                                        await TOTP.removeDevice(userId, dev.name);
+                                    }
+                                }
                             }
                         }
                         return resp;
