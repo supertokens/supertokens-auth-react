@@ -214,6 +214,32 @@ SuperTokens.init({
 });
 ```
 
+#### Renamed validatorId
+
+If you used to use the `validatorId` prop of validationErrors, you should now use `id` instead.
+
+Before:
+
+```ts
+async function checkValidators() {
+    const validationErrors = await Session.validateClaims();
+    for (const error of validationErrors) {
+        console.log(error.validatorId, error.reason);
+    }
+}
+```
+
+After:
+
+```ts
+async function checkValidators() {
+    const validationErrors = await Session.validateClaims();
+    for (const error of validationErrors) {
+        console.log(error.id, error.reason);
+    }
+}
+```
+
 ### Changes
 
 -   Added support for FDI 1.19 (Node SDK>= 17.0.0), but keeping support FDI version 1.17 and 1.18 (node >= 15.0.0, golang>=0.13, python>=0.15.0)
