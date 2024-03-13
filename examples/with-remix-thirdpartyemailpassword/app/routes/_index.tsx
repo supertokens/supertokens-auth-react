@@ -1,12 +1,13 @@
 import { CelebrateIcon, SeparatorLine, BlogsIcon, GuideIcon, SignOutIcon } from "../../assets/images";
-import { useSessionContext } from "supertokens-auth-react/recipe/session/index.js";
+// import { useSessionContext } from "supertokens-auth-react/recipe/session/index.js";
 import { signOut } from "supertokens-auth-react/recipe/thirdpartyemailpassword/index.js";
 import { recipeDetails } from "../config/frontend";
 import SuperTokens from "supertokens-auth-react";
-import { LoaderFunctionArgs, json } from "@remix-run/node";
+import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { PreParsedRequest, CollectingResponse } from "supertokens-node/framework/custom/index.js";
 import Session from "supertokens-node/lib/build/recipe/session/index.js"
 import { HTTPMethod } from "supertokens-node/types";
+import { useLoaderData } from "@remix-run/react";
 
 function getCookieFromRequest(request: Request) {
   const cookies: Record<string, string> = {};
@@ -50,53 +51,78 @@ function createPreParsedRequest(request: Request): PreParsedRequest {
 
 // In a Remix application, the loader function is responsible for handling server-side logic. When a user accesses a specific route in your application, Remix calls the corresponding loader function to fetch data or perform any necessary server-side operations before rendering the page.
 
-// Check if window is defined to determine if code is running in the browser
-const isBrowser = typeof window !== 'undefined';
 
-// Use isBrowser to conditionally execute client-side code
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs): Promise<{ session: object | null; error: Error | null }> {
+  const preParsedRequest = createPreParsedRequest(request);
+  const baseResponse = new CollectingResponse();
+  const options = {};
+  const userContext = {};
+
   try {
-    const preParsedRequest = createPreParsedRequest(request);
-    // Use CollectingResponse only on the server-side
-    const baseResponse = isBrowser ? null : new CollectingResponse();
-    const options = {};
-    const userContext = {};
-    if (!isBrowser) {
-      try {
-        const session = await Session.getSession(preParsedRequest, baseResponse, options, userContext);
-        console.log("The session looks like:", session);
-      } catch (error) {
-        console.log('Failed to fetch session', error)
-      }
-    } else {
-      console.warn("Session.getSession called in browser environment. This should only be called on the server-side.");
-    }
-    return null;
+    const session = await Session.getSession(preParsedRequest, baseResponse, options, userContext);
+    console.log("the typeof session on the server is:", typeof session)
+    console.log("the session in the loader function looks like", session)
+    return { session, error: null };
   } catch (error) {
-    return json({ error: "Internal server error" }, { status: 500 });
+    console.error('Error retrieving session:', error);
+    return { session: null, error: error instanceof Error ? error : new Error(String(error)) };
   }
 }
 
-
-// sAccessToken, sFrontToken, st-last-access-token-update
-
 export default function Home() {
-  const session = useSessionContext();
-
-  if (session.loading) {
+  const loaderData = useLoaderData<typeof loader>();
+  if (!loaderData) {
     return <div>Loading...</div>;
   }
+  if (loaderData.error) {
+    return <div>Something went wrong while trying to get the session. Error - {loaderData.error.message}</div>;
+  }
 
-  const data = {
-    note: "Retrieve authenticated user-specific data from your application post-verification through the use of the verifySession middleware.",
-    userId: session.userId,
-    sessionHandle: session.accessTokenPayload.sessionHandle,
-    accessTokenPayload: session.accessTokenPayload,
-  };
+  if (!loaderData.session?.accessToken) {
+    return redirect("/auth");
+  }
 
-  const displaySessionInformationWindow = () => {
-    window.alert("Session Information: " + JSON.stringify(data));
-};
+  if (loaderData.session) {
+    console.log("the session in the home component looks like:", loaderData.session)
+    console.log("userId:", loaderData.session.userId)
+    console.log("sessionHandle:", loaderData.session.userDataInAccessToken.sessionHandle)
+    console.log("userDataInAccessToken:", loaderData.session.userDataInAccessToken)
+    console.log("userDataInAccessToken:", loaderData.session.accessToken);
+    return <div>Session found.</div>;
+  }
+
+
+
+    // if (!session) {
+    //     if (!session.accessToken) {
+    //         throw redirect("/auth", 302);
+    //     }
+
+    //     if (hasInvalidClaims) {
+    //         return <SessionAuthForNextJS />;
+    //     } else {
+    //         return <TryRefreshComponent />;
+    //     }
+    // }
+
+  console.log("the session in the home component looks like:", session)
+  // const session = useSessionContext();
+
+  // if (session.loading) {
+  //   return <div>Loading...</div>;
+  // }
+  // console.log("the type of session is:", typeof session)
+
+  // const data = {
+  //   note: "Retrieve authenticated user-specific data from your application post-verification through the use of the verifySession middleware.",
+  //   userId: session.userId,
+  //   sessionHandle: session.userDataInAccessToken.sessionHandle,
+  //   accessTokenPayload: session.userDataInAccessToken
+  // };
+
+//   const displaySessionInformationWindow = () => {
+//     window.alert("Session Information: " + JSON.stringify(data));
+// };
 
   const links: {
     name: string,
@@ -134,14 +160,14 @@ export default function Home() {
         <div className="innerContent">
           <div>Your userID is: </div>
 
-          <div className="truncate userId">{session.userId}</div>
+          {/* <div className="truncate userId">{session.userId}</div> */}
 
-          <button
+          {/* <button
             onClick={displaySessionInformationWindow}
             className="sessionButton"
           >
             Call API
-          </button>
+          </button> */}
 
         </div>
       </div>
