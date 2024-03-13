@@ -21,13 +21,13 @@ describe(`${getFailureRedirectionInfo.name} functionality`, () => {
     it("Failed claim has callback that returns string", async () => {
         expect(
             await getFailureRedirectionInfo({
-                invalidClaims: [{ validatorId: "with-onFailureRedirection-returning-path" }],
+                invalidClaims: [{ id: "with-onFailureRedirection-returning-path" }],
                 userContext: {},
             })
         ).toEqual({
             redirectPath: "/redirect-path",
             failedClaim: {
-                validatorId: "with-onFailureRedirection-returning-path",
+                id: "with-onFailureRedirection-returning-path",
             },
         });
     });
@@ -46,16 +46,13 @@ describe(`${getFailureRedirectionInfo.name} functionality`, () => {
 
         expect(
             await getFailureRedirectionInfo({
-                invalidClaims: [
-                    { validatorId: "second-in-globalClaims-array" },
-                    { validatorId: "first-in-globalClaims-array" },
-                ],
+                invalidClaims: [{ id: "second-in-globalClaims-array" }, { id: "first-in-globalClaims-array" }],
                 userContext: {},
             })
         ).toEqual({
             redirectPath: "/first",
             failedClaim: {
-                validatorId: "first-in-globalClaims-array",
+                id: "first-in-globalClaims-array",
             },
         });
     });
