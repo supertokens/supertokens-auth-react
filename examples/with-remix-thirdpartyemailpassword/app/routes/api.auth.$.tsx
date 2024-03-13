@@ -1,9 +1,9 @@
 import { json } from "@remix-run/node";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "react-router-dom";
-import getAppDirRequestHandler from '../lib/remixAuthAPIRequestHandler.js';
-import { PartialRemixRequest } from "../lib/types"
+import handleAuthAPIRequest from '../lib/authAPIRequestHandler.js';
+import { PartialRemixRequest } from "../lib/superTokensTypes.js"
 
-const handleCall = getAppDirRequestHandler(Response);
+const handleCall = handleAuthAPIRequest(Response);
 
 function createPartialRemixRequest(request: Request): PartialRemixRequest {
   const headers = new Headers();

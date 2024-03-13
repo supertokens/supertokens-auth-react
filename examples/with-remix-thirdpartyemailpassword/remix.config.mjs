@@ -8,9 +8,3 @@ export default {
     },
   }
 };
-
-export const routes = async (defineRoutes) => {
-  return defineRoutes((route) => {
-    route("/auth/", "api.auth.$.tsx");
-  });
-};

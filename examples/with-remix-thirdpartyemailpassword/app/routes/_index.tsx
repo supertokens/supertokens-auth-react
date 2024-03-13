@@ -16,7 +16,7 @@ import {
 import Session from "supertokens-node/lib/build/recipe/session/index.js";
 import { HTTPMethod } from "supertokens-node/types";
 import { useLoaderData } from "@remix-run/react";
-import { ExtendedSession, SessionDataForUI } from "../lib/types";
+import { ExtendedSession, SessionDataForUI } from "../lib/superTokensTypes";
 import { SessionContainerInterface } from "supertokens-node/lib/build/recipe/session/types";
 
 function getCookieFromRequest(request: Request) {
