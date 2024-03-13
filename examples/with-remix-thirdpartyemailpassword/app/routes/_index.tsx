@@ -9,54 +9,10 @@ import { signOut } from "supertokens-auth-react/recipe/thirdpartyemailpassword/i
 import { recipeDetails } from "../config/frontend";
 import SuperTokens from "supertokens-auth-react";
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
-import {
-  PreParsedRequest,
-  CollectingResponse,
-} from "supertokens-node/framework/custom/index.js";
-import Session from "supertokens-node/lib/build/recipe/session/index.js";
-import { HTTPMethod } from "supertokens-node/types";
 import { useLoaderData } from "@remix-run/react";
 import { ExtendedSession, SessionDataForUI } from "../lib/superTokensTypes";
 import { SessionContainerInterface } from "supertokens-node/lib/build/recipe/session/types";
-
-function getCookieFromRequest(request: Request) {
-  const cookies: Record<string, string> = {};
-  const cookieHeader = request.headers.get("Cookie");
-  if (cookieHeader) {
-    const cookieStrings = cookieHeader.split(";");
-    for (const cookieString of cookieStrings) {
-      const [name, value] = cookieString.trim().split("=");
-      cookies[name] = value;
-    }
-  }
-  return cookies;
-}
-
-function getQueryFromRequest(request: Request) {
-  const query: Record<string, string> = {};
-  const url = new URL(request.url);
-  const searchParams = url.searchParams;
-  searchParams.forEach((value, key) => {
-    query[key] = value;
-  });
-  return query;
-}
-
-function createPreParsedRequest(request: Request): PreParsedRequest {
-  return new PreParsedRequest({
-    cookies: getCookieFromRequest(request),
-    url: request.url as string,
-    method: request.method as HTTPMethod,
-    query: getQueryFromRequest(request),
-    headers: request.headers,
-    getFormBody: async () => {
-      return await request.formData();
-    },
-    getJSONBody: async () => {
-      return await request.json();
-    },
-  });
-}
+import { getSessionDetails } from '../lib/sessionUtils'
 
 export async function loader({
   request,
@@ -64,24 +20,12 @@ export async function loader({
   session: SessionContainerInterface | null;
   error: Error | null;
 }> {
-  const preParsedRequest = createPreParsedRequest(request);
-  const baseResponse = new CollectingResponse();
-  const options = {};
-  const userContext = {};
-
   try {
-    const session = await Session.getSession(
-      preParsedRequest,
-      baseResponse,
-      options,
-      userContext
-    );
-    return { session, error: null };
+    const { session, error } = await getSessionDetails(request);
+    return { session, error };
   } catch (error) {
-    return {
-      session: null,
-      error: error instanceof Error ? error : new Error(String(error)),
-    };
+    console.error('Error retrieving session:', error);
+    return { session: null, error: error instanceof Error ? error : new Error(String(error)) };
   }
 }
 
