@@ -4,48 +4,48 @@ import { signOut } from "supertokens-auth-react/recipe/thirdpartyemailpassword/i
 import { recipeDetails } from "../config/frontend";
 import SuperTokens from "supertokens-auth-react";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { CollectingResponse } from "supertokens-node/lib/build/framework/custom/index.js";
+import { PreParsedRequest, CollectingResponse } from "supertokens-node/framework/custom/index.js";
 import Session from "supertokens-node/lib/build/recipe/session/index.js"
+import { HTTPMethod } from "supertokens-node/types";
 
-export type BaseRequest = {
-  method: string;
-  url: string;
-  query: string;
-  headers: Headers;
-  formData: () => Promise<FormData>;
-  json: () => Promise<unknown>;
-  cookies: {
-    getAll: () => { name: string; value: string }[];
-  };
+function getCookieFromRequest(request: Request) {
+  const cookies: Record<string, string> = {};
+  const cookieHeader = request.headers.get("Cookie");
+  if (cookieHeader) {
+    const cookieStrings = cookieHeader.split(";");
+    for (const cookieString of cookieStrings) {
+      const [name, value] = cookieString.trim().split("=");
+      cookies[name] = value;
+    }
+  }
+  return cookies;
 }
 
-function createBaseRequest(request: Request): BaseRequest {
-  const headers = new Headers();
-  request.headers.forEach((value, key) => {
-    headers.append(key, value);
+function getQueryFromRequest(request: Request) {
+  const query: Record<string, string> = {};
+  const url = new URL(request.url);
+  const searchParams = url.searchParams;
+  searchParams.forEach((value, key) => {
+    query[key] = value;
   });
+  return query;
+}
 
-  return {
-    method: request.method as string,
+
+function createPreParsedRequest(request: Request): PreParsedRequest {
+  return new PreParsedRequest({
+    cookies: getCookieFromRequest(request),
     url: request.url as string,
-    query: new URL(request.url).searchParams.toString(),
-    headers: headers,
-    formData: async () => await request.formData(),
-    json: async () => await request.json(),
-    cookies: {
-      getAll: () => {
-        const cookieHeader = request.headers.get("Cookie");
-        if (cookieHeader) {
-          return cookieHeader.split(";").map((cookieString) => {
-            const [name, value] = cookieString.trim().split("=");
-            return { name, value } as { name: string; value: string };
-          });
-        } else {
-          return [];
-        }
-      },
+    method: request.method as HTTPMethod,
+    query: getQueryFromRequest(request),
+    headers: request.headers,
+    getFormBody: async () => {
+      return await request.formData();
     },
-  };
+    getJSONBody: async () => {
+      return await request.json();
+    },
+  });
 }
 
 // In a Remix application, the loader function is responsible for handling server-side logic. When a user accesses a specific route in your application, Remix calls the corresponding loader function to fetch data or perform any necessary server-side operations before rendering the page.
@@ -56,20 +56,18 @@ const isBrowser = typeof window !== 'undefined';
 // Use isBrowser to conditionally execute client-side code
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
-    const baseRequest = createBaseRequest(request);
-    console.log("The base request looks like:", baseRequest);
-
+    const preParsedRequest = createPreParsedRequest(request);
     // Use CollectingResponse only on the server-side
-    console.log("isBrowser is:", isBrowser)
     const baseResponse = isBrowser ? null : new CollectingResponse();
-    console.log("The baseRespons looks like:", baseResponse);
-
-    const options = undefined;
-    const userContext = null;
+    const options = {};
+    const userContext = {};
     if (!isBrowser) {
-      console.log("Running on server");
-      const session = await Session.getSession(baseRequest, baseResponse, options, userContext);
-      console.log("The session looks like:", session);
+      try {
+        const session = await Session.getSession(preParsedRequest, baseResponse, options, userContext);
+        console.log("The session looks like:", session);
+      } catch (error) {
+        console.log('Failed to fetch session', error)
+      }
     } else {
       console.warn("Session.getSession called in browser environment. This should only be called on the server-side.");
     }
