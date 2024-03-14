@@ -6,7 +6,7 @@ export default function handleAuthAPIRequest<T extends PartialRemixRequest>(Remi
     const stMiddleware = middleware<T>((req) => {
         const query = Object.fromEntries(new URL(req.url).searchParams.entries());
         const cookies: Record<string, string> = Object.fromEntries(
-            req.cookies.getAll().map((cookie) => [cookie.name, cookie.value])
+            (req.cookies.getAll() as { name: string, value: string }[]).map((cookie) => [cookie.name, cookie.value])
         );
 
         return new PreParsedRequest({
