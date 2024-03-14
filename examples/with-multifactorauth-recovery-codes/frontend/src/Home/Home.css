@@ -205,6 +205,10 @@
     .separator-line {
         max-width: 200px;
     }
+
+    .app-container .main-container {
+        margin-block-end: 60px;
+    }
 }
 
 @media screen and (max-width: 480px) {
@@ -214,6 +218,6 @@
     }
 
     .app-container .main-container {
-        margin-block-end: 90px;
+        margin-block-end: 45px;
     }
 }

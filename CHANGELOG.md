@@ -28,6 +28,7 @@ Check our [guide](https://supertokens.com/docs/mfa/introduction) for more inform
 -   Removed an `ErrorBoundary` wrapping all our feature components to make sure all errors are properly catchable by the app
 -   In `supertokens-web-js` (which you may also be using), we added `firstFactors` into the return type of `getLoginMethods` and removed the enabled flags of different login methods.
     -   For older FDI versions, the firstFactors array will be calculated based on those enabled flags.
+-   Renamed `validatorId` in claim validation errors to `id` to match the backend SDKs
 
 #### Migration guide
 
@@ -211,6 +212,32 @@ SuperTokens.init({
         Session.init(),
     ],
 });
+```
+
+#### Renamed validatorId
+
+If you used to use the `validatorId` prop of validationErrors, you should now use `id` instead.
+
+Before:
+
+```ts
+async function checkValidators() {
+    const validationErrors = await Session.validateClaims();
+    for (const error of validationErrors) {
+        console.log(error.validatorId, error.reason);
+    }
+}
+```
+
+After:
+
+```ts
+async function checkValidators() {
+    const validationErrors = await Session.validateClaims();
+    for (const error of validationErrors) {
+        console.log(error.id, error.reason);
+    }
+}
 ```
 
 ### Changes

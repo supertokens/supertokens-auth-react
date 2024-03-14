@@ -122,8 +122,12 @@ describe("SuperTokens Example Basic tests", function () {
             const recoveryCodeDiv = await page.waitForSelector(".recovery-code", { visible: true });
             const recoveryCode = await recoveryCodeDiv.evaluate((e) => e.textContent);
 
-            // Log out
-            await page.click("div.bottom-links-container > div:nth-child(3) > div");
+            await page.click(".homeButton");
+            await page.waitForSelector("#user-id");
+
+            let logoutLink = await page.waitForSelector("div.bottom-links-container > div:nth-child(3) > div");
+            await logoutLink.click();
+
             await setInputValues(page, [
                 { name: "email", value: email },
                 { name: "password", value: testPW },
@@ -140,24 +144,36 @@ describe("SuperTokens Example Basic tests", function () {
             const newTOTPSecret = await getTOTPSecret(page);
             await completeTOTP(page, newTOTPSecret);
             await page.waitForSelector(".createRecoveryCode");
+            await page.click(".createRecoveryCode");
+            await page.waitForSelector(".recovery-code", { visible: true });
+            await page.click(".homeButton");
+            await page.waitForSelector("#user-id");
 
-            await page.click("div.bottom-links-container > div:nth-child(3) > div");
+            logoutLink = await page.waitForSelector("div.bottom-links-container > div:nth-child(3) > div");
+            await logoutLink.click();
+
             await setInputValues(page, [
                 { name: "email", value: email },
                 { name: "password", value: testPW },
             ]);
             await submitForm(page);
             await completeTOTP(page, newTOTPSecret, 1);
-            await page.waitForSelector(".createRecoveryCode");
 
+            await page.waitForSelector("#user-id");
             await page.click("div.bottom-links-container > div:nth-child(3) > div");
+
             await setInputValues(page, [
                 { name: "email", value: email },
                 { name: "password", value: testPW },
             ]);
             await submitForm(page);
             await completeTOTP(page, origTOTPSecret, 1);
-            await page.waitForSelector(".createRecoveryCode");
+            const errorEle = await waitForSTElement(page, "[data-supertokens~=generalError");
+            const errorText = await errorEle.evaluate((e) => e.innerText);
+            assert.strictEqual(
+                errorText,
+                "Invalid TOTP. Please try again. 5 attempt(s) remaining before account is temporarily locked."
+            );
         });
     });
 });

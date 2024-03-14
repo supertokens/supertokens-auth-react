@@ -42,7 +42,7 @@ const MockSessionConsumer = () => {
         <>
             <span>userId: {session.userId}</span>
             <span>accessTokenPayload: {JSON.stringify(session.accessTokenPayload)}</span>
-            <span>invalidClaims: {session.invalidClaims.map((a) => a.validatorId).join(", ")}</span>
+            <span>invalidClaims: {session.invalidClaims.map((a) => a.id).join(", ")}</span>
             <span>testClaimValue: {claimValueCtx.value === undefined ? "undefined" : claimValueCtx.value}</span>
         </>
     );
@@ -487,7 +487,7 @@ describe("SessionAuth", () => {
                 doesSessionExist: true,
                 accessTokenPayload: {},
                 userId: "mock-id",
-                invalidClaims: [{ validatorId: "st-test-claim", reason: "test-reason" }],
+                invalidClaims: [{ id: "st-test-claim", reason: "test-reason" }],
                 loading: false,
             });
 

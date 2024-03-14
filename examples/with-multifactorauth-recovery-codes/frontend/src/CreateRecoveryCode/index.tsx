@@ -30,7 +30,7 @@ export default function CreateRecoveryCode() {
                 <div onClick={createRecoveryCode} className="sessionButton createRecoveryCode">
                     Create recovery code
                 </div>
-                <NavLink to="/" className="sessionButton">
+                <NavLink to="/" className="sessionButton homeButton">
                     Go to Home page
                 </NavLink>
             </div>

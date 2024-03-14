@@ -67,7 +67,7 @@ export const getFailureRedirectionInfo = async ({
 
     let failedClaim: ClaimValidationError | undefined = undefined;
     for (const validator of globalValidators) {
-        const claim = invalidClaims.find((c) => c.validatorId === validator.id);
+        const claim = invalidClaims.find((c) => c.id === validator.id);
         if (claim !== undefined) {
             const failureCallback = validator.onFailureRedirection;
             if (failureCallback) {

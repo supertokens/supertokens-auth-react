@@ -176,7 +176,7 @@ describe("Config tests", function () {
             appendQueryParamsToURL("/relative/path?blue=green#with-hash", {
                 foo: "bar",
             }),
-            "/relative/path?blue=green&foo=bar"
+            "/relative/path?blue=green&foo=bar#with-hash"
         );
         assert.strictEqual(appendQueryParamsToURL("?blue=green", { foo: "bar" }), "/?blue=green&foo=bar");
         assert.strictEqual(

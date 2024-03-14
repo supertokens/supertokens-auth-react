@@ -203,7 +203,7 @@ export function useChildProps(
             onFetchError: async (err: Response) => {
                 if (err.status === Session.getInstanceOrThrow().config.invalidClaimStatusCode) {
                     const invalidClaims = await getInvalidClaimsFromResponse({ response: err, userContext });
-                    if (invalidClaims.some((i) => i.validatorId === EmailVerificationClaim.id)) {
+                    if (invalidClaims.some((i) => i.id === EmailVerificationClaim.id)) {
                         try {
                             // it's OK if this throws,
                             const evInstance = EmailVerification.getInstanceOrThrow();
@@ -238,7 +238,7 @@ export function useChildProps(
             onFetchError: async (err: Response) => {
                 if (err.status === Session.getInstanceOrThrow().config.invalidClaimStatusCode) {
                     const invalidClaims = await getInvalidClaimsFromResponse({ response: err, userContext });
-                    if (invalidClaims.some((i) => i.validatorId === EmailVerificationClaim.id)) {
+                    if (invalidClaims.some((i) => i.id === EmailVerificationClaim.id)) {
                         try {
                             // it's OK if this throws,
                             const evInstance = EmailVerification.getInstanceOrThrow();

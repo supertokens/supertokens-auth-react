@@ -22,7 +22,7 @@ supertokens.init({
     framework: "express",
     supertokens: {
         // TODO: This is a core hosted for demo purposes. You can use this, but make sure to change it to your core instance URI eventually.
-        connectionURI: "https://try.supertokens.com",
+        connectionURI: "http://localhost:3567",
         apiKey: "<REQUIRED FOR MANAGED SERVICE, ELSE YOU CAN REMOVE THIS FIELD>",
     },
     appInfo: {
@@ -107,6 +107,38 @@ supertokens.init({
         Passwordless.init({
             contactMethod: "PHONE",
             flowType: "USER_INPUT_CODE",
+            override: {
+                apis: (oI) => ({
+                    ...oI,
+                    async consumeCodePOST(input) {
+                        // Here we try to verify the phone number as an email address before
+                        if (input.session !== undefined) {
+                            if (!("userInputCode" in input)) {
+                                throw new Error("We only enabled OTP");
+                            }
+                            const checkRes = await Passwordless.checkCode({
+                                deviceId: input.deviceId,
+                                userInputCode: input.userInputCode,
+                                preAuthSessionId: input.preAuthSessionId,
+                                tenantId: input.tenantId,
+                                userContext: input.userContext,
+                            });
+
+                            if (checkRes.status === "OK" && checkRes.consumedDevice.phoneNumber !== undefined) {
+                                const tokenRes = await EmailVerification.createEmailVerificationToken(
+                                    "public",
+                                    input.session.getRecipeUserId(),
+                                    checkRes.consumedDevice.phoneNumber
+                                );
+                                if (tokenRes.status === "OK") {
+                                    await EmailVerification.verifyEmailUsingToken("public", tokenRes.token, false);
+                                }
+                            }
+                        }
+                        return oI.consumeCodePOST!(input);
+                    },
+                }),
+            },
         }),
         Session.init(),
         MultiFactorAuth.init({
@@ -146,7 +178,7 @@ supertokens.init({
             }),
         }),
         EmailVerification.init({
-            mode: "REQUIRED",
+            mode: "OPTIONAL",
         }),
         Dashboard.init(),
     ],
