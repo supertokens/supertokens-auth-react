@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import PasswordlessWebJS from "supertokens-web-js/recipe/passwordless";
 import AuthRecipe from "../authRecipe";
 import type {
@@ -14,14 +13,14 @@ export declare const otpPhoneFactor: {
     name: string;
     description: string;
     path: string;
-    logo: () => JSX.Element;
+    logo: () => import("react/jsx-runtime").JSX.Element;
 };
 export declare const otpEmailFactor: {
     id: string;
     name: string;
     description: string;
     path: string;
-    logo: () => JSX.Element;
+    logo: () => import("react/jsx-runtime").JSX.Element;
 };
 export declare const passwordlessFirstFactors: readonly [string, string, string, string];
 export default class Passwordless extends AuthRecipe<
