@@ -57,8 +57,8 @@ export async function getSessionDetails(
   const baseRequest = createPreParsedRequest(request);
   const baseResponse = new CollectingResponse();
 
-  const recipe = SessionRecipe.getInstanceOrThrowError();
-
+  const recipe = (SessionRecipe as any).default.getInstanceOrThrowError();
+  
   const tokenTransferMethod = recipe.config.getTokenTransferMethod({
       req: baseRequest,
       forCreateNewSession: false,
