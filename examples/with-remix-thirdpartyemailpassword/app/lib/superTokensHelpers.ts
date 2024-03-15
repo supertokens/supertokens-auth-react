@@ -57,7 +57,7 @@ export async function getSessionDetails(
   const baseRequest = createPreParsedRequest(request);
   const baseResponse = new CollectingResponse();
 
-  const recipe = (SessionRecipe as any).default.getInstanceOrThrowError();
+  const recipe = (SessionRecipe as any).default.instance
   
   const tokenTransferMethod = recipe.config.getTokenTransferMethod({
       req: baseRequest,
@@ -100,27 +100,3 @@ export async function getSessionDetails(
       }
   }
 }
-
-
-// export async function temp () {
-//   const preParsedRequest = createPreParsedRequest(request);
-//   const baseResponse = new CollectingResponse();
-//   const options = {};
-//   const userContext = {};
-
-//   try {
-//     const session = await Session.getSession(
-//       preParsedRequest,
-//       baseResponse,
-//       options,
-//       userContext
-//     );
-//     return { session, error: null };
-//   } catch (error) {
-//     return {
-//       session: null,
-//       error: error instanceof Error ? error : new Error(String(error)),
-//     };
-//   }
-// }
-

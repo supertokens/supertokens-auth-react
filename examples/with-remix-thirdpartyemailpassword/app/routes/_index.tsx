@@ -63,6 +63,15 @@ export default function Home() {
     nextResponse: Response | null;
   }>();
 
+  if (loaderData.nextResponse) {
+    return (
+      <div>
+        Something went wrong while trying to get the session. Error - 
+        {loaderData.nextResponse.status} {loaderData.nextResponse.statusText}
+      </div>
+    );
+  }
+
   if (!loaderData.session) {
     if (!loaderData.hasToken) {
       return redirect("/auth");
