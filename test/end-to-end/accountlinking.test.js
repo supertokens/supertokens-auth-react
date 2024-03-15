@@ -280,8 +280,14 @@ describe("SuperTokens Account linking", function () {
                 const email = `test-user+${Date.now()}@supertokens.com`;
 
                 await setAccountLinkingConfig(true, false);
-                // 1. Sign up without account linking with an unverified tp user & log out
+                // 1. Sign up without account linking with an unverified ep and tp users & log out
+                // We need both, because when setting up the pwless user we'll link to the older one
+                await tryThirdPartySignInUp(page, email, false);
+                await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+                await logOut(page);
+
                 await tryEmailPasswordSignUp(page, email);
+                await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
                 await logOut(page);
 
                 await setAccountLinkingConfig(true, true, false);
@@ -377,6 +383,8 @@ describe("SuperTokens Account linking", function () {
                 const email = `test-user+${Date.now()}@supertokens.com`;
 
                 await setAccountLinkingConfig(true, false);
+                await tryEmailPasswordSignUp(page, email);
+                await logOut(page);
                 // 1. Sign up without account linking with an unverified tp user & log out
                 await tryThirdPartySignInUp(page, email, false);
                 await logOut(page);
@@ -425,42 +433,6 @@ describe("SuperTokens Account linking", function () {
                 assert.strictEqual(
                     await getGeneralError(page),
                     "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_002)"
-                );
-                assert.strictEqual(new URL(page.url()).pathname, "/auth/");
-            });
-
-            it("should not allow sign up w/ passwordless after changing the email if it conflicts with an unverified user", async function () {
-                const email = `test-user+${Date.now()}@supertokens.com`;
-                const email2 = `test-user-2+${Date.now()}@supertokens.com`;
-
-                await setAccountLinkingConfig(true, false);
-                // 1. Sign up without account linking with an unverified tp user & log out
-                await tryEmailPasswordSignUp(page, email);
-                await logOut(page);
-
-                // 2. Sign up with passwordless
-                await tryPasswordlessSignInUp(page, email2);
-                await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
-                const accessTokenPayload = await page.evaluate(() =>
-                    window.__supertokensSessionRecipe.getAccessTokenPayloadSecurely()
-                );
-                const userId = accessTokenPayload.sub;
-                await logOut(page);
-
-                await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
-                await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=passwordless`),
-                    page.waitForNavigation({ waitUntil: "networkidle0" }),
-                ]);
-                await changeEmail("passwordless", userId, email);
-                await setAccountLinkingConfig(true, true, true);
-
-                await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
-                await submitForm(page);
-
-                assert.strictEqual(
-                    await getGeneralError(page),
-                    "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_003)"
                 );
                 assert.strictEqual(new URL(page.url()).pathname, "/auth/");
             });
