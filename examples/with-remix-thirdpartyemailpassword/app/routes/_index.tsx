@@ -12,7 +12,7 @@ import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { SessionDataForUI } from "../lib/superTokensTypes";
 import { SessionContainerInterface } from "supertokens-node/lib/build/recipe/session/types";
-import { getSessionDetails } from "../lib/sessionUtils";
+import { getSessionDetails } from "../lib/superTokensHelpers";
 import { TryRefreshComponent } from "../components/tryRefreshClientComponent";
 import { SessionAuthForRemix } from "../components/sessionAuthForRemix";
 

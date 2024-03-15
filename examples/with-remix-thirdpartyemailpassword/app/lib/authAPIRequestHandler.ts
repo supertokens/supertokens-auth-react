@@ -1,23 +1,10 @@
 import { middleware, PreParsedRequest, CollectingResponse } from "supertokens-node/lib/build/framework/custom/index.js";
 import { serialize } from "cookie";
-import { HTTPMethod, PartialRemixRequest } from '../lib/superTokensTypes'
+// import { HTTPMethod, PartialRemixRequest } from '../lib/superTokensTypes'
 
-export default function handleAuthAPIRequest<T extends PartialRemixRequest>(RemixResponse: typeof Response) {
+export default function handleAuthAPIRequest<T extends PreParsedRequest>(NextResponse: typeof Response) {
     const stMiddleware = middleware<T>((req) => {
-        const query = Object.fromEntries(new URL(req.url).searchParams.entries());
-        const cookies: Record<string, string> = Object.fromEntries(
-            (req.cookies.getAll() as { name: string, value: string }[]).map((cookie) => [cookie.name, cookie.value])
-        );
-
-        return new PreParsedRequest({
-            method: req.method as HTTPMethod,
-            url: req.url,
-            query: query,
-            headers: req.headers,
-            cookies,
-            getFormBody: () => req.formData(),
-            getJSONBody: () => req.json(),
-        });
+        return req;
     });
 
     return async function handleCall(req: T) {
@@ -29,7 +16,7 @@ export default function handleAuthAPIRequest<T extends PartialRemixRequest>(Remi
             throw error;
         }
         if (!handled) {
-            return new RemixResponse("Not found", { status: 404 });
+            return new NextResponse("Not found", { status: 404 });
         }
 
         for (const respCookie of baseResponse.cookies) {
@@ -46,7 +33,7 @@ export default function handleAuthAPIRequest<T extends PartialRemixRequest>(Remi
             );
         }
 
-        return new RemixResponse(baseResponse.body, {
+        return new NextResponse(baseResponse.body, {
             headers: baseResponse.headers,
             status: baseResponse.statusCode,
         });
