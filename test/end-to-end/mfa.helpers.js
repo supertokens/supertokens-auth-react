@@ -17,7 +17,6 @@ import { TEST_CLIENT_BASE_URL } from "../constants";
 import { getTestPhoneNumber } from "../exampleTestHelpers";
 
 export async function setupUserWithAllFactors(page) {
-    // TODO: it'd be cleaner if this part was not done through the app
     const email = await getTestEmail();
     const phoneNumber = getTestPhoneNumber();
     await clearBrowserCookiesWithoutAffectingConsole(page, []);

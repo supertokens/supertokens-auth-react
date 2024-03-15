@@ -66,6 +66,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
     let browser;
     let page;
     let consoleLogs = [];
+    let skipped;
 
     before(async function () {
         if (!(await isMFASupported())) {
