@@ -27,7 +27,6 @@ import { EmailVerificationClaim } from "../../../../emailverification";
 import EmailVerification from "../../../../emailverification/recipe";
 import { getInvalidClaimsFromResponse } from "../../../../session";
 import Session from "../../../../session/recipe";
-import useSessionContext from "../../../../session/useSessionContext";
 import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 
@@ -43,20 +42,32 @@ type PropType = FeatureBaseProps<{
 
 const SignInAndUpCallback: React.FC<PropType> = (props) => {
     let userContext = useUserContext();
-    const session = useSessionContext();
     if (props.userContext !== undefined) {
         userContext = props.userContext;
     }
     const rethrowInRender = useRethrowInRender();
 
-    const verifyCode = useCallback(() => {
-        return props.recipe.webJSRecipe.signInAndUp({
-            userContext,
-        });
+    const verifyCode = useCallback(async () => {
+        let payloadBeforeCall;
+        try {
+            payloadBeforeCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                userContext: userContext,
+            });
+        } catch {
+            // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+            payloadBeforeCall = undefined;
+        }
+
+        return {
+            payloadBeforeCall,
+            response: await props.recipe.webJSRecipe.signInAndUp({
+                userContext,
+            }),
+        };
     }, [props.recipe, userContext]);
 
     const handleVerifyResponse = useCallback(
-        async (response: Awaited<ReturnType<typeof verifyCode>>): Promise<void> => {
+        async ({ response, payloadBeforeCall }: Awaited<ReturnType<typeof verifyCode>>): Promise<void> => {
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
                     navigate: props.navigate,
@@ -101,10 +112,9 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                             createdNewUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
                             isNewRecipeUser: response.createdNewRecipeUser,
                             newSessionCreated:
-                                session.loading ||
-                                !session.doesSessionExist ||
-                                (payloadAfterCall !== undefined &&
-                                    session.accessTokenPayload.sessionHandle !== payloadAfterCall.sessionHandle),
+                                payloadAfterCall !== undefined &&
+                                (payloadBeforeCall === undefined ||
+                                    payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
                             recipeId: props.recipe.recipeID,
                         },
                         props.recipe.recipeID,
@@ -115,7 +125,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                     .catch(rethrowInRender);
             }
         },
-        [props.recipe, props.navigate, session, userContext]
+        [props.recipe, props.navigate, userContext]
     );
 
     const handleError = useCallback(

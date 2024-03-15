@@ -25,7 +25,6 @@ import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, getURLHash, useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
 import Session from "../../../../session/recipe";
-import useSessionContext from "../../../../session/useSessionContext";
 import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
@@ -41,7 +40,6 @@ type PropType = FeatureBaseProps<{
 }>;
 
 const LinkClickedScreen: React.FC<PropType> = (props) => {
-    const session = useSessionContext();
     const rethrowInRender = useRethrowInRender();
     let userContext = useUserContext();
     if (props.userContext !== undefined) {
@@ -69,23 +67,36 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
         if (loginAttemptInfo?.preAuthSessionId !== preAuthSessionId) {
             return "REQUIRES_INTERACTION";
         }
+        let payloadBeforeCall;
+        try {
+            payloadBeforeCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                userContext: userContext,
+            });
+        } catch {
+            // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+            payloadBeforeCall = undefined;
+        }
 
-        return props.recipe.webJSRecipe.consumeCode({
-            userContext,
-        });
+        return {
+            payloadBeforeCall,
+            response: await props.recipe.webJSRecipe.consumeCode({
+                userContext,
+            }),
+        };
     }, [props.recipe, props.navigate, userContext]);
 
     const handleConsumeResp = useCallback(
-        async (response: Awaited<ReturnType<typeof consumeCodeAtMount>>): Promise<void> => {
-            if (response === "REQUIRES_INTERACTION") {
+        async (consumeRes: Awaited<ReturnType<typeof consumeCodeAtMount>>): Promise<void> => {
+            if (consumeRes === "REQUIRES_INTERACTION") {
                 // We set this here, to make sure it's set after a possible remount
                 setRequireUserInteraction(true);
             }
 
-            if (typeof response === "string") {
+            if (typeof consumeRes === "string") {
                 // In this case we are already redirecting or showing the continue button
                 return;
             }
+            const { response, payloadBeforeCall } = consumeRes;
 
             if (response.status === "RESTART_FLOW_ERROR") {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
@@ -133,10 +144,9 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                             createdNewUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
                             isNewRecipeUser: response.createdNewRecipeUser,
                             newSessionCreated:
-                                session.loading ||
-                                !session.doesSessionExist ||
-                                (payloadAfterCall !== undefined &&
-                                    session.accessTokenPayload.sessionHandle !== payloadAfterCall.sessionHandle),
+                                payloadAfterCall !== undefined &&
+                                (payloadBeforeCall === undefined ||
+                                    payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
                             recipeId: props.recipe.recipeID,
                         },
                         props.recipe.recipeID,
@@ -185,10 +195,20 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
         requireUserInteraction,
         consumeCode: async () => {
             try {
+                let payloadBeforeCall;
+                try {
+                    payloadBeforeCall = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+                        userContext: userContext,
+                    });
+                } catch {
+                    // If getAccessTokenPayloadSecurely threw, that generally means we have no active session
+                    payloadBeforeCall = undefined;
+                }
+
                 const consumeResp = await props.recipe.webJSRecipe.consumeCode({
                     userContext,
                 });
-                await handleConsumeResp(consumeResp);
+                await handleConsumeResp({ response: consumeResp, payloadBeforeCall });
             } catch (err) {
                 void handleConsumeError(err);
             }
