@@ -50,7 +50,7 @@ export declare class ThirdPartyEmailPasswordPreBuiltUI extends RecipeRouter {
     ) => JSX.Element;
     static ThirdPartySignInAndUpCallbackTheme: (props: {
         config: import("../thirdparty/types").NormalisedConfig;
-    }) => JSX.Element;
+    }) => import("react/jsx-runtime").JSX.Element;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
 }
