@@ -87,7 +87,9 @@ describe("SuperTokens SignIn w/ MFA", function () {
     });
 
     after(async function () {
-        await browser.close();
+        if (!skipped) {
+            await browser.close();
+        }
 
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
             method: "POST",
