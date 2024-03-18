@@ -22,7 +22,6 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<{
   hasToken: boolean;
   nextResponse: Response | null;
 }> {
-  debug();
   try {
     const { session, hasInvalidClaims, hasToken, nextResponse } =
       await getSessionDetails(request);

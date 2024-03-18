@@ -6,5 +6,8 @@ export default {
     globals: {
       Buffer: true,
     },
-  }
+  },
+  devServer: {
+    port: 3001,
+  },
 };
