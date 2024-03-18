@@ -54,49 +54,67 @@ export async function getSessionDetails(
   hasInvalidClaims: boolean;
   nextResponse?: Response;
 }> {
-  const baseRequest = createPreParsedRequest(request);
-  const baseResponse = new CollectingResponse();
+  console.log("Getting session details...");
 
-  const recipe = (SessionRecipe as any).default.instance
-  
+  const baseRequest = createPreParsedRequest(request);
+  console.log("Pre-parsed request created.");
+
+  const baseResponse = new CollectingResponse();
+  console.log("Collecting response object created.");
+
+  const recipe = (SessionRecipe as any).default.instance;
+  console.log("Session recipe instance obtained.");
+
   const tokenTransferMethod = recipe.config.getTokenTransferMethod({
-      req: baseRequest,
-      forCreateNewSession: false,
-      userContext,
+    req: baseRequest,
+    forCreateNewSession: false,
+    userContext,
   });
+  console.log("Token transfer method determined:", tokenTransferMethod);
+
   const transferMethods = tokenTransferMethod === "any" ? availableTokenTransferMethods : [tokenTransferMethod];
+  console.log("Available token transfer methods:", transferMethods);
+
   const hasToken = transferMethods.some((transferMethod) => {
-      const token = getToken(baseRequest, "access", transferMethod);
-      if (!token) {
-          return false;
-      }
-      try {
-          parseJWTWithoutSignatureVerification(token);
-          return true;
-      } catch {
-          return false;
-      }
+    const token = getToken(baseRequest, "access", transferMethod);
+    if (!token) {
+      console.log("Token not found for transfer method:", transferMethod);
+      return false;
+    }
+    try {
+      parseJWTWithoutSignatureVerification(token);
+      console.log("Token parsed successfully.");
+      return true;
+    } catch {
+      console.log("Failed to parse token:", token);
+      return false;
+    }
   });
+  console.log("Does the user have a token?", hasToken);
 
   try {
-      const session = await Session.getSession(baseRequest, baseResponse, options, userContext);
-      return {
-          session,
-          hasInvalidClaims: false,
-          hasToken,
-      };
+    const session = await Session.getSession(baseRequest, baseResponse, options, userContext);
+    console.log("Session obtained:", session);
+    return {
+      session,
+      hasInvalidClaims: false,
+      hasToken,
+    };
   } catch (err) {
-      if (Session.Error.isErrorFromSuperTokens(err)) {
-          return {
-              hasToken,
-              hasInvalidClaims: err.type === Session.Error.INVALID_CLAIMS,
-              session: undefined,
-              nextResponse: new Response("Authentication required", {
-                  status: err.type === Session.Error.INVALID_CLAIMS ? 403 : 401,
-              }),
-          };
-      } else {
-          throw err;
-      }
+    console.error("Error while getting session:", err);
+    if (Session.Error.isErrorFromSuperTokens(err)) {
+      console.log("SuperTokens error detected.");
+      return {
+        hasToken,
+        hasInvalidClaims: err.type === Session.Error.INVALID_CLAIMS,
+        session: undefined,
+        nextResponse: new Response("Authentication required", {
+          status: err.type === Session.Error.INVALID_CLAIMS ? 403 : 401,
+        }),
+      };
+    } else {
+      console.error("Unknown error occurred:", err);
+      throw err;
+    }
   }
 }

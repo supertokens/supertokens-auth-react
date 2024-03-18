@@ -15,6 +15,7 @@ import { SessionContainerInterface } from "supertokens-node/lib/build/recipe/ses
 import { getSessionDetails } from "../lib/superTokensHelpers";
 import { TryRefreshComponent } from "../components/tryRefreshClientComponent";
 import { SessionAuthForRemix } from "../components/sessionAuthForRemix";
+import { debug } from "../utils/debug";
 
 export async function loader({ request }: LoaderFunctionArgs): Promise<{
   session: SessionContainerInterface | undefined;
@@ -22,18 +23,20 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<{
   hasToken: boolean;
   nextResponse: Response | null;
 }> {
+  debug();
   try {
     const { session, hasInvalidClaims, hasToken, nextResponse } =
       await getSessionDetails(request);
     console.log("does the user have invalid claims?", hasInvalidClaims);
     console.log("does the user have an access token??", hasToken);
     if (session) {
-      console.log("there is an active session");;
+      console.log("there is an active session");
     }
     if (!session) {
       console.log("session does not exist or has expired");
     }
     if (nextResponse) {
+      console.log("nextResponse is:", nextResponse);
       return {
         session,
         hasInvalidClaims,
@@ -41,6 +44,7 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<{
         nextResponse,
       };
     } else {
+      console.log("nextResponse is null");
       return {
         session,
         hasInvalidClaims,
@@ -49,7 +53,6 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<{
       };
     }
   } catch (error) {
-    // throw new Error('');
     console.error("Error retrieving session:", error);
     throw error;
   }
@@ -74,11 +77,14 @@ export default function Home() {
 
   if (!loaderData.session) {
     if (!loaderData.hasToken) {
+      console.log("Redirecting to /auth");
       return redirect("/auth");
     }
     if (loaderData.hasInvalidClaims) {
+      console.log("Session has invalid claims");
       return <SessionAuthForRemix />;
     } else {
+      console.log("Trying to refresh session");
       return <TryRefreshComponent />;
     }
   }
