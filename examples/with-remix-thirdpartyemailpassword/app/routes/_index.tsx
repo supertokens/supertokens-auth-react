@@ -15,7 +15,6 @@ import { SessionContainerInterface } from "supertokens-node/lib/build/recipe/ses
 import { getSessionDetails } from "../lib/superTokensHelpers";
 import { TryRefreshComponent } from "../components/tryRefreshClientComponent";
 import { SessionAuthForRemix } from "../components/sessionAuthForRemix";
-import { debug } from "../utils/debug";
 
 export async function loader({ request }: LoaderFunctionArgs): Promise<{
   session: SessionContainerInterface | undefined;
