@@ -90,7 +90,11 @@ supertokens.init({
                                 let email = input.formFields.filter((f) => f.id === "email")[0].value;
                                 let password = input.formFields.filter((f) => f.id === "password")[0].value;
 
-                                let response = await input.options.recipeImplementation.signUp({ email, password });
+                                let response = await input.options.recipeImplementation.signUp({
+                                    email,
+                                    password,
+                                    userContext: input.userContext,
+                                });
                                 if (response.status === "EMAIL_ALREADY_EXISTS_ERROR") {
                                     // if the input password is the fake password, and that's
                                     // what's in the db too, then we shall treat this as a success,

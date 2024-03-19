@@ -30,12 +30,14 @@ const {
 
 const SuperTokensNode = require("supertokens-node");
 const Session = require("supertokens-node/recipe/session");
+const Passwordless = require("supertokens-node/recipe/passwordless");
 const EmailVerification = require("supertokens-node/recipe/emailverification");
 const ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
 
+const testOTP = "111111";
 const apiDomain = "http://localhost:3001";
 const websiteDomain = "http://localhost:3000";
 SuperTokensNode.init({
@@ -49,7 +51,12 @@ SuperTokensNode.init({
         websiteDomain: websiteDomain,
         appName: "testNode",
     },
-    recipeList: [EmailVerification.init({ mode: "OPTIONAL" }), ThirdPartyEmailPassword.init(), Session.init()],
+    recipeList: [
+        EmailVerification.init({ mode: "OPTIONAL" }),
+        Passwordless.init({ contactMethod: "EMAIL", flowType: "USER_INPUT_CODE" }),
+        ThirdPartyEmailPassword.init(),
+        Session.init(),
+    ],
 });
 
 describe("SuperTokens Example Basic tests", function () {
@@ -82,20 +89,22 @@ describe("SuperTokens Example Basic tests", function () {
             ]);
             await submitForm(page);
 
-            // Redirected to email verification screen
-            await waitForSTElement(page, "#otp");
-
+            // Redirected to "email verification screen"
+            await waitForSTElement(page, "[name=userInputCode]");
             const userId = await page.evaluate(() => window.__supertokensSessionRecipe.getUserId());
 
-            let otps = [];
-            while (otps.length === 0) {
-                const otpRes = await fetch("http://localhost:3001/test/otps");
-                const res = await otpRes.json();
-                otps = res.otps;
-            }
-            await setInputValues(page, [{ name: "otp", value: otps[0] }]);
-            const submitBtn = await waitForSTElement(page, "#submitOtp");
-            await submitBtn.click();
+            const loginAttemptInfo = JSON.parse(
+                await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+            );
+
+            await Passwordless.createNewCodeForDevice({
+                tenantId: "public",
+                deviceId: loginAttemptInfo.deviceId,
+                userInputCode: testOTP,
+            });
+
+            await setInputValues(page, [{ name: "userInputCode", value: testOTP }]);
+            await submitForm(page);
 
             const userIdElement = await page.waitForSelector("#userId");
             const userIdText = await page.evaluate((e) => e.innerText, userIdElement);

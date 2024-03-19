@@ -37,7 +37,7 @@ supertokens.init({
             mode: "REQUIRED",
         }),
         MultiFactorAuth.init({
-            firstFactors: ["thirdparty", "emailpassword"], // This is basically disallows using passwordless to sign in
+            firstFactors: ["thirdparty", "emailpassword"], // This basically disallows using passwordless to sign in
             override: {
                 functions: (oI) => ({
                     ...oI,
