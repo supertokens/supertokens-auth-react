@@ -197,6 +197,7 @@ supertokens.init({
                                             input.userId,
                                             input.recipeUserId,
                                             input.tenantId,
+                                            input.accessTokenPayload,
                                             input.userContext
                                         ),
                                         phoneNumber: userInfo?.emails[0],
