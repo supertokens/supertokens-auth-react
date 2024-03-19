@@ -13,7 +13,7 @@ export function getCookieFromRequest(request: Request) {
     const cookieStrings = cookieHeader.split(";");
     for (const cookieString of cookieStrings) {
       const [name, value] = cookieString.trim().split("=");
-      cookies[name] = value;
+      cookies[name] = decodeURIComponent(value);
     }
   }
   return cookies;
