@@ -6,11 +6,11 @@ This demo app demonstrates how to integrate SuperTokens into a Remix application
 
 This SuperTokens/Remix integration achieves the following:
 
-- Initializes SuperTokens with frontend and backend configurations
-- Creates a frontend route to handle authentication-related tasks
-- Integrates the SuperTokens' login UI for secure user authentication
-- Protects frontend routes to ensure only authenticated users can access certain areas of the application
-- Exposes the SuperTokens authentication APIs used by frontend widgets
+-   Initializes SuperTokens with frontend and backend configurations
+-   Creates a frontend route to handle authentication-related tasks
+-   Integrates the SuperTokens' pre-built login UI for secure user authentication
+-   Protects frontend routes to ensure only authenticated users can access certain areas of the application
+-   Exposes the SuperTokens authentication APIs used by frontend widgets
 
 ## Project structure & Parameters
 
@@ -66,21 +66,21 @@ Follow the steps outlined below to run the application locally:
 
 1. Change directory to the **with-remix-thirdpartyemailpassword** folder.
 
-   ```shell
-   cd supertokens-auth-react/examples/with-remix-thirdpartyemailpassword
-   ```
+    ```shell
+    cd supertokens-auth-react/examples/with-remix-thirdpartyemailpassword
+    ```
 
 2. Run the command below to install the project dependencies:
 
-   ```shell
-   npm install
-   ```
+    ```shell
+    npm install
+    ```
 
 3. Run the application with the command below:
 
-   ```shell
-   npm run dev
-   ```
+    ```shell
+    npm run dev
+    ```
 
 ## Author
 

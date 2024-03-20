@@ -7,23 +7,23 @@ import { SuperTokensConfig } from "supertokens-auth-react/lib/build/types";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification/index.js";
 
 export const frontendConfig = (): SuperTokensConfig => {
-  return {
-    appInfo,
-    recipeList: [
-      ThirdPartyEmailPasswordReact.init({
-        signInAndUpFeature: {
-          providers: [
-            ThirdPartyEmailPasswordReact.Google.init(),
-            ThirdPartyEmailPasswordReact.Github.init(),
-            ThirdPartyEmailPasswordReact.Apple.init(),
-          ],
-        },
-      }),
-      EmailVerification.init(),
-      Session.init(),
-    ],
-  };
+    return {
+        appInfo,
+        recipeList: [
+            ThirdPartyEmailPasswordReact.init({
+                signInAndUpFeature: {
+                    providers: [
+                        ThirdPartyEmailPasswordReact.Google.init(),
+                        ThirdPartyEmailPasswordReact.Github.init(),
+                        ThirdPartyEmailPasswordReact.Apple.init(),
+                    ],
+                },
+            }),
+            EmailVerification.init(),
+            Session.init(),
+        ],
+    };
 };
 export const recipeDetails = {
-  docsLink: "https://supertokens.com/docs/thirdpartyemailpassword/introduction",
+    docsLink: "https://supertokens.com/docs/thirdpartyemailpassword/introduction",
 };

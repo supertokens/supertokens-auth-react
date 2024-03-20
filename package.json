@@ -217,5 +217,13 @@
     "bugs": {
         "url": "https://github.com/supertokens/supertokens-auth-react/issues"
     },
-    "homepage": "https://github.com/supertokens/supertokens-auth-react#readme"
+    "homepage": "https://github.com/supertokens/supertokens-auth-react#readme",
+    "types": "./index.d.ts",
+    "directories": {
+        "doc": "docs",
+        "example": "examples",
+        "lib": "lib",
+        "test": "test"
+    },
+    "author": ""
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from '@remix-run/react';
+import { useNavigate } from "@remix-run/react";
 import Session from "supertokens-auth-react/recipe/session/index.js";
 import SuperTokens from "supertokens-auth-react";
 
