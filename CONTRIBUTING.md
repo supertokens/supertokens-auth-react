@@ -92,6 +92,13 @@ Note: To test different recipes you need to update the value of `authRecipe` in 
 
 Note: You need to restart the test app after code changes in the library to see their effects.
 
+### Linking supertokens-auth-react to a local demo
+
+You need to run the commands in [this script](https://github.com/rishabhpoddar/multi-tenancy-mfa/blob/main/frontend/link.sh). The command is supposed to be run from the demo app folder which contains the `node_modules` in which you want to link the library. You will have to modify the script to:
+
+-   Change the `../../../supertokens-auth-react` everywhere to point to where the `supertokens-auth-react` folder exists.
+-   Change `cd ../users/multi-tenancy-mfa/frontend/` to navigate from supertokens-auth-react to the example app folder on your machine.
+
 ## Pull Request
 
 1. Before submitting a pull request make sure all tests have passed
