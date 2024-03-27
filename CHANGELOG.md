@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.39.1] - 2024-03-27
+
+-   Fixes how we fetch the component to render based on the current path to take into account non auth recipes correctly.
 -   Adds Remix example reference.
 
 ## [0.39.0] - 2024-03-07

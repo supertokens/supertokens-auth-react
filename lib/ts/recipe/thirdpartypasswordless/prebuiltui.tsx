@@ -160,7 +160,6 @@ export class ThirdPartyPasswordlessPreBuiltUI extends RecipeRouter {
                 recipeID: ThirdPartyPasswordless.RECIPE_ID,
             };
         }
-
         return {
             ...features,
         };
