@@ -164,35 +164,43 @@ export abstract class RecipeRouter {
                     routePath === path ||
                     new RegExp("^" + routePath.replace(/:\w+/g, "[^/]+").replace(/\/\*/g, "/[^/]+") + "$").test(path)
                 ) {
-                    components = components.concat(routeComps);
+                    components = components.concat(
+                        routeComps.map((c) => {
+                            return { comp: c, route: routePath };
+                        })
+                    );
                 }
             }
             return components;
-        }, [] as ComponentWithRecipeAndMatchingMethod[]);
+        }, [] as { comp: ComponentWithRecipeAndMatchingMethod; route: string }[]);
 
         // We check the query params to see if any recipe was requested by id
-        const componentMatchingRid = routeComponents.find((c) => c.matches());
+        const componentMatchingRid = routeComponents.find((c) => c.comp.matches());
 
         // We default to to one requested by id or the first in the list
         // i.e.: the first prebuilt ui in the list the user provided that can handle this route.
-        let defaultComp;
+        let defaultComp: ComponentWithRecipeAndMatchingMethod | undefined;
         if (routeComponents.length === 0) {
             defaultComp = undefined;
         } else if (componentMatchingRid !== undefined) {
-            defaultComp = componentMatchingRid;
+            defaultComp = componentMatchingRid.comp;
         } else {
-            defaultComp = routeComponents[0];
+            defaultComp = routeComponents[0].comp;
         }
 
         // We check if any non-auth recipe (emailverification, totp) can handle this
         // There should be no overlap between the routes handled by those and the auth recipes
         // so if there is a match we can return early
-        const matchingNonAuthComponent = routeComponents.find(
-            (comp) => !priorityOrder.map((a) => a.rid).includes(comp.recipeID)
-        );
+        const matchingNonAuthComponent = routeComponents.find((comp) => {
+            const ridlist = priorityOrder.map((a) => a.rid);
+            return (
+                !ridlist.includes(comp.comp.recipeID) ||
+                comp.route !== SuperTokens.getInstanceOrThrow().appInfo.websiteBasePath.getAsStringDangerous()
+            );
+        });
 
         if (matchingNonAuthComponent) {
-            return matchingNonAuthComponent;
+            return matchingNonAuthComponent.comp;
         }
 
         // We use this option in `canHandleRoute`, because it may be called by custom UIs before
@@ -205,14 +213,17 @@ export abstract class RecipeRouter {
         if (SuperTokens.usesDynamicLoginMethods === false) {
             // If we are not using dynamic login methods, we can use the rid requested by the app
             if (componentMatchingRid) {
-                return componentMatchingRid;
+                return componentMatchingRid.comp;
             }
 
             // if we have a static firstFactors config we take it into account on the auth page
             // Other pages shouldn't care about this configuration.
             // Embedded components are not affected, since this is only called by the routing component.
             if (isAuthPage && mfaRecipe && mfaRecipe.config.firstFactors !== undefined) {
-                return chooseComponentBasedOnFirstFactors(mfaRecipe.config.firstFactors, routeComponents);
+                return chooseComponentBasedOnFirstFactors(
+                    mfaRecipe.config.firstFactors,
+                    routeComponents.map((c) => c.comp)
+                );
             } else {
                 return defaultComp;
             }
@@ -227,21 +238,24 @@ export abstract class RecipeRouter {
         // If we are using dynamic login methods, we check that the requested rid belongs to an enabled recipe
         if (
             componentMatchingRid && // if we find a component matching by rid
-            (!priorityOrder.map((a) => a.rid).includes(componentMatchingRid.recipeID) || // from a non-auth recipe
+            (!priorityOrder.map((a) => a.rid).includes(componentMatchingRid.comp.recipeID) || // from a non-auth recipe
                 priorityOrder.some(
                     (a) =>
-                        a.rid === componentMatchingRid.recipeID &&
+                        a.rid === componentMatchingRid.comp.recipeID &&
                         a.factorsProvided.some((factorId) => dynamicLoginMethods.firstFactors.includes(factorId))
                 )) // or an enabled auth recipe
         ) {
-            return componentMatchingRid;
+            return componentMatchingRid.comp;
         }
 
         // if we have a firstFactors config for the tenant we take it into account on the auth page
         // Other pages shouldn't care about this configuration.
         // Embedded components are not affected, since this is only called by the routing component.
         if (isAuthPage) {
-            return chooseComponentBasedOnFirstFactors(dynamicLoginMethods.firstFactors, routeComponents);
+            return chooseComponentBasedOnFirstFactors(
+                dynamicLoginMethods.firstFactors,
+                routeComponents.map((c) => c.comp)
+            );
         }
 
         return undefined;
