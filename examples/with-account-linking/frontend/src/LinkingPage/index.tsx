@@ -181,7 +181,7 @@ export const LinkingPage: React.FC = () => {
                     }}>
                     {showEnterOTPField ? (
                         <div>
-                            <input value={otp} onChange={(ev) => setOtp(ev.currentTarget.value)}></input>
+                            <input type="otp" value={otp} onChange={(ev) => setOtp(ev.currentTarget.value)}></input>
                             <button type="submit"> Submit OTP </button>
                         </div>
                     ) : (

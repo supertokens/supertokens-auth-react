@@ -7,7 +7,7 @@ import { getWebsiteDomain, SuperTokensConfig } from "./config";
 import EmailVerification from "supertokens-node/recipe/emailverification";
 import AccountLinking from "supertokens-node/recipe/accountlinking";
 import Session from "supertokens-node/recipe/session";
-import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
+import { getOtp } from "./config";
 import Passwordless from "supertokens-node/recipe/passwordless";
 
 supertokens.init(SuperTokensConfig);
@@ -100,6 +100,10 @@ app.post("/manual-account-linking-example", verifySession(), async (req: Session
         status: "OK",
         user: linkResp.user,
     });
+});
+
+app.get("/get-otp-for-testing", async (req, res) => {
+    return res.send(getOtp());
 });
 
 // In case of session related errors, this error handler

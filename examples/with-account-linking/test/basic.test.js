@@ -33,6 +33,7 @@ const Session = require("../backend/node_modules/supertokens-node/recipe/session
 const EmailVerification = require("../backend/node_modules/supertokens-node/recipe/emailverification");
 const EmailPassword = require("../backend/node_modules/supertokens-node/recipe/emailpassword");
 const Passwordless = require("../backend/node_modules/supertokens-node/recipe/passwordless");
+const axios = require("axios");
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -118,10 +119,20 @@ describe("SuperTokens Example Basic tests", function () {
             await page.waitForSelector(".emailpassword.login-method");
             await checkLoginMethods(page, [{ loginMethod: "emailpassword", email }]);
 
-            const input = await page.waitForSelector("[type=tel]");
-            await input.type(phoneNumber);
+            {
+                const input = await page.waitForSelector("[type=tel]");
+                await input.type(phoneNumber);
+                await page.click("[type=tel]+button");
+            }
 
-            await page.click("[type=tel]+button");
+            {
+                const otpInput = await page.waitForSelector("[type=otp]");
+                let otp = await axios("http://localhost:3001/get-otp-for-testing");
+                otp = otp.data;
+                await otpInput.type(otp + "");
+                await page.click("[type=otp]+button");
+            }
+
             await page.waitForSelector(".passwordless.login-method");
 
             await checkLoginMethods(page, [
