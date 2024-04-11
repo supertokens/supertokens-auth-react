@@ -19,6 +19,9 @@ export const LinkingPage: React.FC = () => {
     const [phoneNumber, setPhoneNumber] = useState<string>();
     const [password, setPassword] = useState<string>();
 
+    const [showEnterOTPField, setShowEnterOTPField] = useState<boolean>(false);
+    const [otp, setOtp] = useState<string>("");
+
     const loadUserInfo = useCallback(async () => {
         const res = await fetch(`${getApiDomain()}/userInfo`);
         setUserInfo(await res.json());
@@ -42,24 +45,69 @@ export const LinkingPage: React.FC = () => {
     }, [setError, setSuccess, password]);
 
     const addPhoneNumber = useCallback(async () => {
-        const resp = await fetch(`${getApiDomain()}/addPhoneNumber`, {
-            method: "POST",
-            headers: {
-                "content-type": "application/json",
-            },
-            body: JSON.stringify({
-                phoneNumber,
-            }),
-        });
-
-        const respBody = await resp.json();
-        if (respBody.status !== "OK") {
-            setError(respBody.reason ?? respBody.message ?? respBody.status);
-        } else {
-            setSuccess("Successfully added password");
+        if (phoneNumber === undefined) {
+            return;
         }
-        loadUserInfo();
-    }, [setError, setSuccess, loadUserInfo, phoneNumber]);
+        let cancel = false;
+        try {
+            let response = await Passwordless.createCode({
+                phoneNumber,
+            });
+
+            if (cancel) {
+                return;
+            }
+            if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
+                // the reason string is a user friendly message
+                // about what went wrong. It can also contain a support code which users
+                // can tell you so you know why their sign in / up was not allowed.
+                window.alert(response.reason);
+            } else {
+                setShowEnterOTPField(true);
+            }
+        } catch (err: any) {
+            setError(err.message);
+        }
+
+        return () => {
+            cancel = true;
+        };
+    }, [setError, phoneNumber]);
+
+    const verifyOtp = useCallback(async () => {
+        if (phoneNumber === undefined) {
+            return;
+        }
+        let cancel = false;
+        try {
+            let response = await Passwordless.consumeCode({
+                userInputCode: otp,
+            });
+
+            if (cancel) {
+                return;
+            }
+            if (response.status === "INCORRECT_USER_INPUT_CODE_ERROR") {
+                // the reason string is a user friendly message
+                // about what went wrong. It can also contain a support code which users
+                // can tell you so you know why their sign in / up was not allowed.
+                window.alert("Incorrect OTP. Please try again");
+            } else if (response.status !== "OK") {
+                window.alert("OTP expired. Please try again");
+                setShowEnterOTPField(false);
+            } else {
+                setSuccess("Successfully added phone number");
+                setShowEnterOTPField(false);
+                loadUserInfo();
+            }
+        } catch (err: any) {
+            setError(err.message);
+        }
+
+        return () => {
+            cancel = true;
+        };
+    }, [setError, setSuccess, otp, loadUserInfo]);
 
     useEffect(() => {
         loadUserInfo();
@@ -123,12 +171,28 @@ export const LinkingPage: React.FC = () => {
             {phoneLoginMethod?.length === 0 && (
                 <form
                     onSubmit={(ev) => {
-                        addPhoneNumber();
+                        if (showEnterOTPField) {
+                            verifyOtp();
+                        } else {
+                            addPhoneNumber();
+                        }
                         ev.preventDefault();
                         return false;
                     }}>
-                    <input type="tel" onChange={(ev) => setPhoneNumber(ev.currentTarget.value)}></input>
-                    <button type="submit"> Add phone number </button>
+                    {showEnterOTPField ? (
+                        <div>
+                            <input value={otp} onChange={(ev) => setOtp(ev.currentTarget.value)}></input>
+                            <button type="submit"> Submit OTP </button>
+                        </div>
+                    ) : (
+                        <div>
+                            <input
+                                type="tel"
+                                value={phoneNumber}
+                                onChange={(ev) => setPhoneNumber(ev.currentTarget.value)}></input>
+                            <button type="submit"> Add phone number </button>
+                        </div>
+                    )}
                 </form>
             )}
             {thirdPartyLoginMethod?.length === 0 && (

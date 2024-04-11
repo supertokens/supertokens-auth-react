@@ -49,10 +49,9 @@ app.get("/userInfo", verifySession(), async (req: SessionRequest, res) => {
     });
 });
 
-// We use a custom endpoint to add phone numbers, because otherwise we'd need to transfer the OTP to the browser in some other way
-// In a normal (non-demo) implementation the phone number would need to be verified.
-// This is best done through MFA, which is out of the scope of this example, plus this shows usage of the manual linking APIs.
-app.post("/addPhoneNumber", verifySession(), async (req: SessionRequest, res) => {
+// This is just an example api for how to do manual account linking, but is not
+// called by the frontend code of this example app.
+app.post("/manual-account-linking-example", verifySession(), async (req: SessionRequest, res) => {
     const session = req.session!;
     // First we check that the current session (and the user it belongs to) can have a user linked to it.
     const user = await getUser(session.getRecipeUserId().getAsString());
