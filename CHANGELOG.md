@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 -   We now redirect to the factor chooser screen if the MFA claim validator fails even if there is no available next factor. This will always show an access denied screen, which should help debugging.
+-   `clearOnSubmit` now only clears the field value if the request returned an error. This is because the form navigates on success, making clearing the field unnecessary (which can lead to confusing UX if the navigation takes too long).
+-   Fixed an issue where `SessionAuth` contents popped in before navigating away if a claim validator failed. Now `SessionAuth` does not set the context before navigation.
+-   Made the `name` property optional in custom provider configs for usage with `usesDynamicLoginMethods`, where the tenant configuration is expected to set the name dynamically.
+    -   Note, that not setting the name will make the UI crash if the `usesDynamicLoginMethods` is set to `false` or if the tenant configuration doesn't include a provider list.
 
 ## [0.39.1] - 2024-03-27
 
