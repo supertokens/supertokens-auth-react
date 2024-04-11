@@ -20,6 +20,12 @@ export function getWebsiteDomain() {
     return websiteUrl;
 }
 
+let otp = "";
+
+export function getOtp() {
+    return otp;
+}
+
 export const SuperTokensConfig: TypeInput = {
     supertokens: {
         // this is the location of the SuperTokens core.
@@ -42,18 +48,6 @@ export const SuperTokensConfig: TypeInput = {
                     return {
                         shouldAutomaticallyLink: false,
                     };
-                }
-
-                if (newAccountInfo.recipeUserId !== undefined && user !== undefined) {
-                    let userId = newAccountInfo.recipeUserId.getAsString();
-                    let hasInfoAssociatedWithUserId = false; // TODO: add your own implementation here.
-                    if (hasInfoAssociatedWithUserId) {
-                        return {
-                            // Alternatively, you can link users but then you should provide an `onAccountLinked` callback
-                            // that implements merging the user of the two users.
-                            shouldAutomaticallyLink: false,
-                        };
-                    }
                 }
 
                 return {
@@ -93,6 +87,17 @@ export const SuperTokensConfig: TypeInput = {
         Passwordless.init({
             contactMethod: "EMAIL_OR_PHONE",
             flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+            smsDelivery: {
+                override: (oI) => {
+                    return {
+                        ...oI,
+                        sendSms: async (input) => {
+                            console.log("OTP is:", input.userInputCode!);
+                            otp = input.userInputCode!;
+                        },
+                    };
+                },
+            },
         }),
         Session.init(),
         Dashboard.init(),
