@@ -1,7 +1,7 @@
 import type { FC } from "react";
 export declare type ProviderConfig = {
     id: string;
-    name: string;
+    name?: string;
     getRedirectURL?: (id: string) => string;
     buttonComponent?: BuiltInProviderConfig["buttonComponent"];
 };
@@ -20,7 +20,7 @@ export declare type BuiltInProviderConfig = {
 };
 export declare type CustomProviderConfig = {
     id: string;
-    name: string;
+    name?: string;
     /**
      * Provider Logo.
      */
