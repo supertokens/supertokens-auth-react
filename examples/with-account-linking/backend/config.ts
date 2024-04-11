@@ -44,18 +44,6 @@ export const SuperTokensConfig: TypeInput = {
                     };
                 }
 
-                if (newAccountInfo.recipeUserId !== undefined && user !== undefined) {
-                    let userId = newAccountInfo.recipeUserId.getAsString();
-                    let hasInfoAssociatedWithUserId = false; // TODO: add your own implementation here.
-                    if (hasInfoAssociatedWithUserId) {
-                        return {
-                            // Alternatively, you can link users but then you should provide an `onAccountLinked` callback
-                            // that implements merging the user of the two users.
-                            shouldAutomaticallyLink: false,
-                        };
-                    }
-                }
-
                 return {
                     shouldAutomaticallyLink: true,
                     shouldRequireVerification: true,
