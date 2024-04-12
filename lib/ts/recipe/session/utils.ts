@@ -14,7 +14,9 @@
  */
 
 import { getGlobalClaimValidators } from "supertokens-web-js/utils";
+import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
+import SuperTokens from "../../superTokens";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 
 import type { InputType, NormalisedSessionConfig } from "./types";
@@ -90,3 +92,19 @@ export const getFailureRedirectionInfo = async ({
         failedClaim,
     };
 };
+
+export function compareRedirectionURLToCurrentURL(redirectURL: string): boolean {
+    const currentUrl = WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHref();
+    let fullRedirectURL;
+    try {
+        new URL(redirectURL);
+        // if the url is a full, valid url, we can use that
+        fullRedirectURL = redirectURL;
+    } catch {
+        const appInfo = SuperTokens.getInstanceOrThrow().appInfo;
+        // otherwise we prepend the websiteDomain
+        fullRedirectURL = `${appInfo.websiteDomain.getAsStringDangerous()}${redirectURL}`;
+    }
+
+    return currentUrl === fullRedirectURL;
+}

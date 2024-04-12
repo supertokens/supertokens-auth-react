@@ -17,3 +17,4 @@ export declare const getFailureRedirectionInfo: ({
     redirectPath?: string | undefined;
     failedClaim?: ClaimValidationError | undefined;
 }>;
+export declare function compareRedirectionURLToCurrentURL(redirectURL: string): boolean;
