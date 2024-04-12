@@ -117,7 +117,7 @@ function App() {
                             <Route
                                 path="/auth/verify-phone"
                                 element={
-                                    <SessionAuth>
+                                    <SessionAuth overrideGlobalClaimValidators={() => []}>
                                         <PhoneVerification />
                                     </SessionAuth>
                                 }

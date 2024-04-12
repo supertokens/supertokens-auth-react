@@ -112,7 +112,7 @@ function App() {
                                 <Route
                                     path="/set-password"
                                     element={
-                                        <SessionAuth>
+                                        <SessionAuth overrideGlobalClaimValidators={() => []}>
                                             <SetPassword />
                                         </SessionAuth>
                                     }
