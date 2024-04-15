@@ -8,6 +8,7 @@ import SessionContext from "../../../../lib/ts/recipe/session/sessionContext";
 import { SessionContextType } from "../../../../lib/ts/recipe/session";
 import { PrimitiveClaim, SessionClaim, useClaimValue } from "../../../../lib/ts/recipe/session";
 import * as utils from "supertokens-web-js/utils";
+import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
 const TestClaim: SessionClaim<string> = new PrimitiveClaim({
     id: "st-test-claim",
@@ -71,6 +72,10 @@ jest.spyOn(SuperTokens, "getInstanceOrThrow").mockImplementation(
         ({
             redirectToAuth: (mockRedirectToAuth = jest.fn()),
             redirectToUrl: (mockRedirectToUrl = jest.fn()),
+            appInfo: {
+                websiteDomain: { getAsStringDangerous: () => "http://localhost:3000" },
+                apiDomain: { getAsStringDangerous: () => "http://localhost:3001" },
+            },
         } as any)
 );
 jest.spyOn(Session, "getInstanceOrThrow").mockImplementation(() => MockSession as any);
@@ -83,6 +88,7 @@ describe("SessionAuth", () => {
     beforeEach(() => {
         jest.clearAllMocks();
         SuperTokens.reset();
+        WindowHandlerReference.init();
 
         setMockResolves({
             userId: "mock-user-id",
@@ -504,10 +510,10 @@ describe("SessionAuth", () => {
             );
 
             // then
-            expect(await result.findByText(/^accessTokenPayload:/)).toHaveTextContent(
-                `accessTokenPayload: ${JSON.stringify(mockAccessTokenPayload)}`
-            );
+            // it shouldn't update the context
+            expect(accessTokenPayloadElement).toHaveTextContent(`accessTokenPayload: ${JSON.stringify({})}`);
 
+            // and call redirect
             expect(mockRedirectToUrl).toHaveBeenLastCalledWith("/test-redirect", undefined);
         });
 

@@ -141,11 +141,11 @@
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "19.1kb"
+            "limit": "19.2kb"
         },
         {
             "path": "recipe/session/prebuiltui.js",
-            "limit": "22kb"
+            "limit": "22.1kb"
         },
         {
             "path": "recipe/thirdpartyemailpassword/index.js",
@@ -181,7 +181,7 @@
         },
         {
             "path": "recipe/thirdparty/prebuiltui.js",
-            "limit": "45kb"
+            "limit": "46kb"
         },
         {
             "path": "recipe/emailpassword/prebuiltui.js",

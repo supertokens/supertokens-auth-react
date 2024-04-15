@@ -143,7 +143,7 @@ describe("ThirdParty", function () {
                         providers: [{} as any],
                     },
                 }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false),
-            { message: "Custom provider config should contain id and name attributes" }
+            { message: "Custom provider config should contain an id attribute" }
         );
     });
 
@@ -159,23 +159,7 @@ describe("ThirdParty", function () {
                         ],
                     },
                 }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false),
-            { message: "Custom provider config should contain id and name attributes" }
-        );
-    });
-
-    it("Initializing ThirdParty with Custom provider with empty config should throw", async function () {
-        assert.throws(
-            () =>
-                ThirdParty.init({
-                    signInAndUpFeature: {
-                        providers: [
-                            {
-                                id: "twitch",
-                            } as any,
-                        ],
-                    },
-                }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false),
-            { message: "Custom provider config should contain id and name attributes" }
+            { message: "Custom provider config should contain an id attribute" }
         );
     });
 
@@ -308,7 +292,7 @@ describe("ThirdParty", function () {
                         providers: [Google.init(), Github.init(), "facebook" as any],
                     },
                 }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false),
-            { message: "Custom provider config should contain id and name attributes" }
+            { message: "Custom provider config should contain an id attribute" }
         );
     });
 
