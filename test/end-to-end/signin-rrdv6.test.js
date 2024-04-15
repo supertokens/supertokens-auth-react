@@ -608,6 +608,36 @@ describe("SuperTokens SignIn with react router dom v6", function () {
             ]);
         });
 
+        it("Should redirect to onFailureRedirections result if it's a relative path", async function () {
+            await Promise.all([
+                page.goto(
+                    `${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent("/dashboard?test=value#asdf")}`
+                ),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+            await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            await page.evaluate(() => {
+                const validator = window.UserRoleClaim.validators.includes("admin");
+                validator.onFailureRedirection = () => "second-factor";
+                window.setClaimValidators([validator]);
+            });
+
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+            let href = await page.evaluate(() => window.location.pathname);
+            assert.strictEqual(href, "/dashboard/second-factor");
+        });
+
         it("Should redirect to onFailureRedirections result if it's on another domain", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),

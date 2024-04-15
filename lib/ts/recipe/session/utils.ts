@@ -101,6 +101,11 @@ export function compareRedirectionURLToCurrentURL(redirectURL: string): boolean 
         // if the url is a full, valid url, we can use that
         fullRedirectURL = redirectURL;
     } catch {
+        // If we get here, we know it's not full url
+        // We check if it's an absolute path, because if it's not we know the redirection should always result in a new URL
+        if (!redirectURL.startsWith("/")) {
+            return false;
+        }
         const appInfo = SuperTokens.getInstanceOrThrow().appInfo;
         // otherwise we prepend the websiteDomain
         fullRedirectURL = `${appInfo.websiteDomain.getAsStringDangerous()}${redirectURL}`;
