@@ -181,14 +181,15 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     return;
                 }
                 if (toSetContext.invalidClaims.length !== 0) {
-                    const failureRedirectInfo = await getFailureRedirectionInfo({
-                        invalidClaims: toSetContext.invalidClaims,
-                        overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
-                        userContext,
-                    });
+                    let failureRedirectInfo;
+                    try {
+                        failureRedirectInfo = await getFailureRedirectionInfo({
+                            invalidClaims: toSetContext.invalidClaims,
+                            overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
+                            userContext,
+                        });
 
-                    if (failureRedirectInfo.redirectPath !== undefined) {
-                        try {
+                        if (failureRedirectInfo.redirectPath !== undefined) {
                             if (validateAndCompareOnFailureRedirectionURLToCurrent(failureRedirectInfo.redirectPath)) {
                                 setContext(toSetContext);
                                 return;
@@ -198,9 +199,10 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                                     navigate
                                 );
                             }
-                        } catch (err: any) {
-                            rethrowInRender(err);
                         }
+                    } catch (err: any) {
+                        rethrowInRender(err);
+                        throw err;
                     }
                     if (props.accessDeniedScreen !== undefined && failureRedirectInfo.failedClaim !== undefined) {
                         console.warn({
@@ -249,13 +251,14 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     });
 
                     if (props.doRedirection !== false) {
-                        const failureRedirectInfo = await getFailureRedirectionInfo({
-                            invalidClaims,
-                            overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
-                            userContext,
-                        });
-                        if (failureRedirectInfo.redirectPath) {
-                            try {
+                        let failureRedirectInfo;
+                        try {
+                            failureRedirectInfo = await getFailureRedirectionInfo({
+                                invalidClaims,
+                                overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
+                                userContext,
+                            });
+                            if (failureRedirectInfo.redirectPath) {
                                 if (
                                     validateAndCompareOnFailureRedirectionURLToCurrent(failureRedirectInfo.redirectPath)
                                 ) {
@@ -266,9 +269,10 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                                         navigate
                                     );
                                 }
-                            } catch (err: any) {
-                                rethrowInRender(err);
                             }
+                        } catch (err: any) {
+                            rethrowInRender(err);
+                            throw err;
                         }
                         if (props.accessDeniedScreen !== undefined && failureRedirectInfo.failedClaim !== undefined) {
                             console.warn({

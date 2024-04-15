@@ -29,7 +29,11 @@ import {
 } from "../../utils";
 import RecipeModule from "../recipeModule";
 
-import { getFailureRedirectionInfo, normaliseSessionConfig } from "./utils";
+import {
+    getFailureRedirectionInfo,
+    normaliseSessionConfig,
+    validateAndCompareOnFailureRedirectionURLToCurrent,
+} from "./utils";
 
 import type { NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
@@ -160,6 +164,13 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
 
             // if redirectPath is string that means failed claim had callback that returns path, we redirect there otherwise continue
             if (failureRedirectInfo.redirectPath !== undefined) {
+                // the validation part can throw, but this is handled in all places where this is called,
+                // since getFailureRedirectionInfo can also throw
+                if (validateAndCompareOnFailureRedirectionURLToCurrent(failureRedirectInfo.redirectPath)) {
+                    throw new Error(
+                        `onFailureRedirectionURL returned the current URL (${failureRedirectInfo.redirectPath}) during success redirection. This indicates that the user is in a stuck state.`
+                    );
+                }
                 return SuperTokens.getInstanceOrThrow().redirectToUrl(failureRedirectInfo.redirectPath, navigate);
             }
         }
