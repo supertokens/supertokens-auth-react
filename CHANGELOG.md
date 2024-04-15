@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.40.0] - 2024-04-15
 
+### Breaking Changes
+
+-   `onFailureRedirection` is no longer allowed to return relative paths.
+
 ### Changes
 
 -   We now redirect to the factor chooser screen if the MFA claim validator fails even if there is no available next factor. This will always show an access denied screen, which should help debugging.

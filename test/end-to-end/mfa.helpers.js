@@ -200,20 +200,6 @@ export async function tryPasswordlessSignInUp(page, contactInfo, queryParams) {
     await submitForm(page);
     await new Promise((res) => setTimeout(res, 1000));
 }
-export async function expectErrorThrown(page, cb) {
-    let onErrorBoundaryHit;
-    let hitErrorBoundary = new Promise((res) => {
-        onErrorBoundaryHit = res;
-    });
-    page.on("console", (ev) => {
-        // console.log(ev.text());
-        if (ev.text() === "ST_THROWN_ERROR") {
-            onErrorBoundaryHit(true);
-        }
-    });
-    await Promise.all([hitErrorBoundary, cb()]);
-    assert(hitErrorBoundary);
-}
 export async function goToFactorChooser(page, waitForList = true) {
     const ele = await page.waitForSelector(".goToFactorChooser");
     await waitFor(100);

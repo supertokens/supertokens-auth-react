@@ -1064,3 +1064,18 @@ export async function backendBeforeEach() {
         }).catch(console.error);
     }
 }
+
+export async function expectErrorThrown(page, cb) {
+    let onErrorBoundaryHit;
+    let hitErrorBoundary = new Promise((res) => {
+        onErrorBoundaryHit = res;
+    });
+    page.on("console", (ev) => {
+        // console.log(ev.text());
+        if (ev.text() === "ST_THROWN_ERROR") {
+            onErrorBoundaryHit(true);
+        }
+    });
+    await Promise.all([hitErrorBoundary, cb()]);
+    assert(hitErrorBoundary);
+}

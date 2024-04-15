@@ -93,7 +93,7 @@ export const getFailureRedirectionInfo = async ({
     };
 };
 
-export function compareRedirectionURLToCurrentURL(redirectURL: string): boolean {
+export function validateAndCompareOnFailureRedirectionURLToCurrent(redirectURL: string): boolean {
     const currentUrl = WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHref();
     let fullRedirectURL;
     try {
@@ -102,9 +102,9 @@ export function compareRedirectionURLToCurrentURL(redirectURL: string): boolean 
         fullRedirectURL = redirectURL;
     } catch {
         // If we get here, we know it's not full url
-        // We check if it's an absolute path, because if it's not we know the redirection should always result in a new URL
+        // We check if it's an absolute path
         if (!redirectURL.startsWith("/")) {
-            return false;
+            throw new Error(`onFailureRedirectionURL returned a relative url: ${redirectURL}`);
         }
         const appInfo = SuperTokens.getInstanceOrThrow().appInfo;
         // otherwise we prepend the websiteDomain

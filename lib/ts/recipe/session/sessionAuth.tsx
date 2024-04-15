@@ -22,11 +22,11 @@ import SuperTokens from "../../superTokens";
 import UI from "../../ui";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { useOnMountAPICall } from "../../utils";
+import { useOnMountAPICall, useRethrowInRender } from "../../utils";
 
 import Session from "./recipe";
 import SessionContext from "./sessionContext";
-import { compareRedirectionURLToCurrentURL, getFailureRedirectionInfo } from "./utils";
+import { validateAndCompareOnFailureRedirectionURLToCurrent, getFailureRedirectionInfo } from "./utils";
 
 import type { LoadedSessionContext, RecipeEventWithSessionContext, SessionContextType } from "./types";
 import type { Navigate, ReactComponentClass, SessionClaimValidator, UserContext } from "../../types";
@@ -85,6 +85,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
     }
 
     const userContext = useUserContext();
+    const rethrowInRender = useRethrowInRender();
 
     const redirectToLogin = useCallback(() => {
         void SuperTokens.getInstanceOrThrow().redirectToAuth({ navigate, userContext, redirectBack: true });
@@ -187,14 +188,18 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     });
 
                     if (failureRedirectInfo.redirectPath !== undefined) {
-                        if (compareRedirectionURLToCurrentURL(failureRedirectInfo.redirectPath)) {
-                            setContext(toSetContext);
-                            return;
-                        } else {
-                            return await SuperTokens.getInstanceOrThrow().redirectToUrl(
-                                failureRedirectInfo.redirectPath,
-                                navigate
-                            );
+                        try {
+                            if (validateAndCompareOnFailureRedirectionURLToCurrent(failureRedirectInfo.redirectPath)) {
+                                setContext(toSetContext);
+                                return;
+                            } else {
+                                return await SuperTokens.getInstanceOrThrow().redirectToUrl(
+                                    failureRedirectInfo.redirectPath,
+                                    navigate
+                                );
+                            }
+                        } catch (err: any) {
+                            rethrowInRender(err);
                         }
                     }
                     if (props.accessDeniedScreen !== undefined && failureRedirectInfo.failedClaim !== undefined) {
@@ -250,13 +255,19 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                             userContext,
                         });
                         if (failureRedirectInfo.redirectPath) {
-                            if (compareRedirectionURLToCurrentURL(failureRedirectInfo.redirectPath)) {
-                                setContext({ ...event.sessionContext, loading: false, invalidClaims });
-                            } else {
-                                return await SuperTokens.getInstanceOrThrow().redirectToUrl(
-                                    failureRedirectInfo.redirectPath,
-                                    navigate
-                                );
+                            try {
+                                if (
+                                    validateAndCompareOnFailureRedirectionURLToCurrent(failureRedirectInfo.redirectPath)
+                                ) {
+                                    setContext({ ...event.sessionContext, loading: false, invalidClaims });
+                                } else {
+                                    return await SuperTokens.getInstanceOrThrow().redirectToUrl(
+                                        failureRedirectInfo.redirectPath,
+                                        navigate
+                                    );
+                                }
+                            } catch (err: any) {
+                                rethrowInRender(err);
                             }
                         }
                         if (props.accessDeniedScreen !== undefined && failureRedirectInfo.failedClaim !== undefined) {
