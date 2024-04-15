@@ -17,4 +17,4 @@ declare function PhoneNumberInput({
 export default PhoneNumberInput;
 export declare const phoneNumberInputWithInjectedProps: (
     injectedProps: Partial<PhoneNumberInputProps>
-) => (props: any) => JSX.Element;
+) => (props: any) => import("react/jsx-runtime").JSX.Element;
