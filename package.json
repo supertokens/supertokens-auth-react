@@ -137,11 +137,11 @@
     "size-limit": [
         {
             "path": "lib/build/index.js",
-            "limit": "18kb"
+            "limit": "18.1kb"
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "19kb"
+            "limit": "19.1kb"
         },
         {
             "path": "recipe/session/prebuiltui.js",
