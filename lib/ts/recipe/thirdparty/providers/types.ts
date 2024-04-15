@@ -23,7 +23,7 @@ export type ProviderConfig = {
     /*
      * Provider Name
      */
-    name: string;
+    name?: string;
 
     getRedirectURL?: (id: string) => string;
     buttonComponent?: BuiltInProviderConfig["buttonComponent"];
@@ -54,7 +54,7 @@ export type CustomProviderConfig = {
     /*
      * Provider Name
      */
-    name: string;
+    name?: string;
 
     /**
      * Provider Logo.

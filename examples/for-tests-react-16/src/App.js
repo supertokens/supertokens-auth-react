@@ -57,7 +57,8 @@ export function getApiDomain() {
 export function getWebsiteDomain() {
     const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3031;
     const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
-    return websiteUrl;
+
+    return getQueryParams("websiteDomain") ?? websiteUrl;
 }
 
 /*

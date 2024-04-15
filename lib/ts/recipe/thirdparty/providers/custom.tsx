@@ -40,8 +40,8 @@ export default class Custom extends Provider {
      * Static Methods
      */
     static init(config: CustomProviderConfig): Provider {
-        if (config === undefined || config.id === undefined || config.name === undefined) {
-            throw new Error("Custom provider config should contain id and name attributes");
+        if (config === undefined || config.id === undefined) {
+            throw new Error("Custom provider config should contain an id attribute");
         }
         return new Custom(config);
     }

@@ -253,14 +253,13 @@ describe("SuperTokens SignIn w/ MFA", function () {
             await waitForAccessDenied(page);
         });
 
-        it("should show access denied if there are no valid next options", async () => {
+        it("should throw error if there are no valid next options", async () => {
             await setMFAInfo({
                 requirements: ["unknown"],
             });
 
             const email = await getTestEmail();
-            await tryEmailPasswordSignUp(page, email);
-            await waitForAccessDenied(page);
+            await expectErrorThrown(page, () => tryEmailPasswordSignUp(page, email));
         });
     });
 });

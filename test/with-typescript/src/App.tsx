@@ -557,6 +557,11 @@ function getThirdPartyConfigs() {
                     logo: <svg></svg>,
                     buttonComponent: <span>ASDF Custom</span>,
                 },
+                {
+                    id: "with-dynamic-name",
+                    logo: <svg></svg>,
+                    buttonComponent: (name) => <span>{name}</span>,
+                },
             ],
         },
         oAuthCallbackScreen: {

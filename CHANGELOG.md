@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.40.0] - 2024-04-15
+
+### Breaking Changes
+
+-   `onFailureRedirection` is no longer allowed to return relative paths.
+-   We now throw an error if `onFailureRedirection` returns the current URL or path when:
+    -   redirecting away from the auth page (`websiteBasePath`, usually `/auth`) when a session already exists
+    -   redirecting after sign in/up
+    -   redirecting after successful email verification
+    -   redirecting after a successful MFA factor completion
+
+### Changes
+
+-   We now redirect to the factor chooser screen if the MFA claim validator fails even if there is no available next factor. This will always show an access denied screen, which should help debugging.
+-   `clearOnSubmit` now only clears the field value if the request returned an error. This is because the form navigates on success, making clearing the field unnecessary (which can lead to confusing UX if the navigation takes too long).
+-   Fixed an issue where `SessionAuth` contents popped in before navigating away if a claim validator failed:
+    -   Now we ony set the context if `onFailureRedirection` returned the current URL.
+    -   Now we ony call the navigation function if `onFailureRedirection` returned something different than the current URL.
+-   Made the `name` property optional in custom provider configs for usage with `usesDynamicLoginMethods`, where the tenant configuration is expected to set the name dynamically.
+    -   Note, that not setting the name will make the UI crash if the `usesDynamicLoginMethods` is set to `false` or if the tenant configuration doesn't include a provider list.
+
 ## [0.39.1] - 2024-03-27
 
 -   Fixes how we fetch the component to render based on the current path to take into account non auth recipes correctly.

@@ -281,7 +281,7 @@ export type FormFieldThemeProps = NormalisedFormField & {
     showIsRequired?: boolean;
 
     /*
-     * Clears the field after calling the API.
+     * Clears the field after calling the API if it errors out.
      */
     clearOnSubmit?: boolean;
 

@@ -26,6 +26,9 @@ export default abstract class Provider {
     }
 
     get name(): string {
+        if (this.config.name === undefined) {
+            throw new Error(`Name not defined for provider ${this.config.id}`);
+        }
         return this.config.name;
     }
 

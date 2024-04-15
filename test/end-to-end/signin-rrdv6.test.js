@@ -50,6 +50,8 @@ import {
     waitForText,
     waitForSTElement,
     backendBeforeEach,
+    getInvalidClaimsJSON,
+    expectErrorThrown,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -533,6 +535,167 @@ describe("SuperTokens SignIn with react router dom v6", function () {
             });
 
             assert.deepStrictEqual(redirectUrl, "/dashboard");
+        });
+
+        it("Should not redirect to onFailureRedirections result if it's the current url and set the context", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+            await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            await page.evaluate(() => {
+                const validator = window.UserRoleClaim.validators.includes("admin");
+                validator.onFailureRedirection = () => window.location.href;
+                window.setClaimValidators([validator]);
+            });
+
+            await page.waitForSelector(".invalidClaims");
+            assert.deepStrictEqual(await getInvalidClaimsJSON(page), [
+                {
+                    id: "st-role",
+                    reason: {
+                        actualValue: [],
+                        expectedToInclude: "admin",
+                        message: "wrong value",
+                    },
+                },
+            ]);
+        });
+
+        it("Should not redirect to onFailureRedirections result if it's the current path and set the context", async function () {
+            await Promise.all([
+                page.goto(
+                    `${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent("/dashboard?test=value#asdf")}`
+                ),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+            await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            await page.evaluate(() => {
+                const validator = window.UserRoleClaim.validators.includes("admin");
+                validator.onFailureRedirection = () => "/dashboard?test=value#asdf";
+                window.setClaimValidators([validator]);
+            });
+
+            await page.waitForSelector(".invalidClaims");
+            assert.deepStrictEqual(await getInvalidClaimsJSON(page), [
+                {
+                    id: "st-role",
+                    reason: {
+                        actualValue: [],
+                        expectedToInclude: "admin",
+                        message: "wrong value",
+                    },
+                },
+            ]);
+        });
+
+        it("Should throw if onFailureRedirections returns a relative path", async function () {
+            await Promise.all([
+                page.goto(
+                    `${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent("/dashboard?test=value#asdf")}`
+                ),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+            await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            await expectErrorThrown(page, async () => {
+                await page.evaluate(() => {
+                    const validator = window.UserRoleClaim.validators.includes("admin");
+                    validator.onFailureRedirection = () => "second-factor";
+                    window.setClaimValidators([validator]);
+                });
+            });
+        });
+
+        it("Should redirect to onFailureRedirections result if it's on another domain", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+            await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            await page.evaluate(() => {
+                const validator = window.UserRoleClaim.validators.includes("admin");
+                validator.onFailureRedirection = () => "https://supertokens.com";
+                window.setClaimValidators([validator]);
+            });
+
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+            let href = await page.evaluate(() => window.location.href);
+            assert.strictEqual(href, "https://supertokens.com/");
+        });
+
+        it("Should redirect to onFailureRedirections result if it's a path and we are not on the websiteDomain", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+
+            await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            await Promise.all([
+                page.goto(
+                    `${TEST_CLIENT_BASE_URL}/dashboard?websiteDomain=${encodeURIComponent("https://supertokens.com")}`
+                ),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            await page.evaluate(() => {
+                const validator = window.UserRoleClaim.validators.includes("admin");
+                validator.onFailureRedirection = () => "/test";
+                window.setClaimValidators([validator]);
+            });
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            let href = await page.evaluate(() => window.location.href);
+            assert.strictEqual(href, "https://supertokens.com/test");
         });
 
         describe("Successful Sign In with redirect to, with EmailPasswordAuth", async function () {

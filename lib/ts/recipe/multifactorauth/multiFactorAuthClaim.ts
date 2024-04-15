@@ -79,13 +79,11 @@ export class MultiFactorAuthClaimClass {
                     .filter((v) => mfaInfo.factors.next.includes(v.id))
                     .map((v) => v.id);
 
-                if (availableFactors.length !== 0) {
-                    logDebugMessage("Redirecting to MFA on next array from backend: " + availableFactors.join(", "));
-                    if (availableFactors.length === 1) {
-                        return getRedirectURL({ action: "GO_TO_FACTOR", factorId: availableFactors[0] }, userContext);
-                    } else {
-                        return getRedirectURL({ action: "FACTOR_CHOOSER" }, userContext);
-                    }
+                logDebugMessage("Redirecting to MFA on next array from backend: " + availableFactors.join(", "));
+                if (availableFactors.length === 1) {
+                    return getRedirectURL({ action: "GO_TO_FACTOR", factorId: availableFactors[0] }, userContext);
+                } else {
+                    return getRedirectURL({ action: "FACTOR_CHOOSER" }, userContext);
                 }
             }
 

@@ -204,15 +204,15 @@ describe("SuperTokens SignIn w/ MFA", function () {
             assert.deepStrictEqual(new Set(optionsAfter2FA), new Set(["otp-phone", "otp-email", "totp"]));
         });
 
-        it("should show access denied if there are no available options during sign in", async () => {
+        it("should throw error if there are no available options during sign in", async () => {
             await setMFAInfo({
                 requirements: ["otp-phone"],
                 alreadySetup: ["otp-email"],
                 allowedToSetup: [],
             });
 
-            await tryEmailPasswordSignIn(page, email);
-            await waitForAccessDenied(page);
+            await expectErrorThrown(page, () => tryEmailPasswordSignIn(page, email));
+            await expectErrorThrown(page, () => page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa`));
         });
 
         it("should show access denied if there are no available options after sign in", async () => {
