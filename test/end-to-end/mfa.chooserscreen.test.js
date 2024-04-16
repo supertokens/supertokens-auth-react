@@ -32,6 +32,7 @@ import {
     getFactorChooserOptions,
     setAccountLinkingConfig,
     isMFASupported,
+    expectErrorThrown,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API } from "../constants";
@@ -53,7 +54,6 @@ import {
     setupUserWithAllFactors,
     goToFactorChooser,
     waitForAccessDenied,
-    expectErrorThrown,
     waitForLoadingScreen,
     waitForBlockedScreen,
 } from "./mfa.helpers";
