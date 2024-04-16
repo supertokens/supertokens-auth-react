@@ -53,7 +53,6 @@ import {
     setupUserWithAllFactors,
     goToFactorChooser,
     waitForAccessDenied,
-    expectErrorThrown,
     waitForLoadingScreen,
     waitForBlockedScreen,
 } from "./mfa.helpers";
