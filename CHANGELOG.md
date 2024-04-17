@@ -13,9 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   `onFailureRedirection` is no longer allowed to return relative paths.
 -   We now throw an error if `onFailureRedirection` returns the current URL or path when:
-    -   redirecting away from the auth page (`websiteBasePath`, usually `/auth`) when a session already exists
-    -   redirecting after sign in/up
-    -   redirecting after successful email verification
+    -   redirecting away from the auth page (`websiteBasePath`, usually `/auth`) when a session already exists,
+    -   redirecting after sign in/up,
+    -   redirecting after successful email verification,
     -   redirecting after a successful MFA factor completion
 
 ### Changes
