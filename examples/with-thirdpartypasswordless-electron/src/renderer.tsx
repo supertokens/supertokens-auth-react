@@ -73,6 +73,20 @@ SuperTokens.init({
     windowHandler: getWindowHandler, // Refer to src/windowHandler.ts
     recipeList: [
         ThirdPartyPasswordless.init({
+            override: {
+                functions: (oI) => {
+                    return {
+                        ...oI,
+                        getAuthorisationURLFromBackend: async (input) => {
+                            input = {
+                                ...input,
+                                redirectURIOnProviderDashboard: getApiDomain() + "/auth/callback/" + input.thirdPartyId,
+                            };
+                            return oI.getAuthorisationURLFromBackend(input);
+                        },
+                    };
+                },
+            },
             signInUpFeature: {
                 providers: [
                     ThirdPartyPasswordless.Github.init(),
