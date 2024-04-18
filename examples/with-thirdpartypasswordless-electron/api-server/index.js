@@ -98,82 +98,30 @@ supertokens.init({
                             );
                         }
 
-                        let htmlBody = getEmailBody(
-                            APP_NAME,
-                            Math.ceil(input.codeLifetime / 1000),
-                            finalUrlWithLinkCode,
-                            input.userInputCode,
-                            input.email
-                        );
-
-                        /**
-                         * This will not work if you have not set up your email credentials in the .env file. Refer to .env.example
-                         * in this example app to know which environment variables you need to set.
-                         */
-                        await mailTransporter.sendMail({
-                            html: htmlBody,
-                            to: input.email,
-                            from: `Team Supertokens <${process.env.NODEMAILER_USER}>`,
-                            sender: process.env.NODEMAILER_USER,
-                            subject: `Login to ${APP_NAME}`,
-                        });
+                        console.log("OTP is: " + input.userInputCode);
+                        console.log("Magic link is: " + input.urlWithLinkCode);
                     },
                 },
             },
             smsDelivery: {
                 service: {
                     sendSms: async function (input) {
-                        /*
-                         * Following is an example of how SMS sending setup can
-                         * be done using Twilio. The actual API that is being called
-                         * in this function is doing exactly the same thing.
-                         */
-
-                        /*
-                        const accountSid = process.env.TWILIO_ACCOUNT_SID;
-                        const authToken = process.env.TWILIO_AUTH_TOKEN;
-                        const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
-                        let twilio = Twilio(accountSid, authToken);
-                        let message = "";
-                        if (input.urlWithLinkCode !== undefined && input.userInputCode !== undefined) {
-                            message = `Enter OTP: ${input.userInputCode} OR click this link: ${input.urlWithLinkCode} to login`;
-                        } else if (input.urlWithLinkCode !== undefined) {
-                            message = `Click this link: ${input.urlWithLinkCode} to login`;
-                        } else {
-                            message = `Enter OTP: ${input.userInputCode} to login`;
-                        }
-                        message += ` It will expire in ${input.codeLifetime} seconds.`;
-                        console.log(input.urlWithLinkCode)
-                        await twilio.messages.create({
-                            body: message,
-                            to: input.phoneNumber,
-                            from: twilioPhoneNumber
-                        });
-                        */
-                        try {
-                            await axios({
-                                method: "post",
-                                baseURL: "https://api.supertokens.com",
-                                url: "/0/st/twilio/message",
-                                headers: {
-                                    "api-version": "0",
-                                },
-                                data: {
-                                    to: input.phoneNumber,
-                                    appName: APP_NAME,
-                                    codeLifetime: Math.ceil(input.codeLifetime / 1000),
-                                    urlWithLinkCode: input.urlWithLinkCode,
-                                    userInputCode: input.userInputCode,
-                                },
-                            });
-                        } catch (err) {
-                            if (err.response.status !== 429) {
-                                throw err;
-                            }
-                            throw Error(
-                                "Too many requests made for passwordless sign-in/up with phone number. The number of requests are restricted for this demo app. Please try again after 24 hours."
+                        if (input.urlWithLinkCode !== undefined) {
+                            /**
+                             * Electron uses file protocol for production builds. SuperTokens does not currently support
+                             * file protocol URLs, as a workaround we add a `/auth/verify` route that redirects to the
+                             * eletron app using deeplinking.
+                             *
+                             * Here we modify the magic link to use the apiDomain instead of the websiteDomain
+                             */
+                            let currentUrlWithLinkCode = new URL(input.urlWithLinkCode);
+                            finalUrlWithLinkCode = input.urlWithLinkCode.replace(
+                                currentUrlWithLinkCode.origin,
+                                apiDomain
                             );
                         }
+                        console.log("OTP is: " + input.userInputCode);
+                        console.log("Magic link is: " + input.urlWithLinkCode);
                     },
                 },
             },
