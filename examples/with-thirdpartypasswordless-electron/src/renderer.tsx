@@ -77,12 +77,21 @@ SuperTokens.init({
                 functions: (oI) => {
                     return {
                         ...oI,
-                        getAuthorisationURLFromBackend: async (input) => {
+                        getThirdPartyAuthorisationURLWithQueryParamsAndSetState: async (input) => {
+                            /**
+                             *
+                             * We override the frontendRedirectURI here because
+                             * we have a custom API on the backend which will handle the callback
+                             * from the provider and redirect to the electronapp via a deep link.
+                             * So from the point of view of the provider, the frontend that it
+                             * needs to redirect to is that custom API, which is in the API layer.
+                             *
+                             */
                             input = {
                                 ...input,
-                                redirectURIOnProviderDashboard: getApiDomain() + "/auth/callback/" + input.thirdPartyId,
+                                frontendRedirectURI: getApiDomain() + "/auth/callback/" + input.thirdPartyId,
                             };
-                            return oI.getAuthorisationURLFromBackend(input);
+                            return oI.getThirdPartyAuthorisationURLWithQueryParamsAndSetState(input);
                         },
                     };
                 },
