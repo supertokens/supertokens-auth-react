@@ -19,20 +19,6 @@ cd supertokens-auth-react/examples/with-thirdpartypasswordless-electron
 npm install
 ```
 
-## Set environment variables
-
-The demo app contains code for seding emails to the user for passwordless auth. You need to set the following environment variables for the email user before running the demo app:
-
-```bash
-NODEMAILER_USER
-NODEMAILER_PASSWORD
-```
-
-You can do this by:
-
--   Editing the `.env.example` file
--   Rename the `.env.example` file to `.env`
-
 ## Run the demo app
 
 This compiles and serves the Electron app and starts the backend API server on port 3001.
