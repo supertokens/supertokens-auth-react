@@ -46,10 +46,11 @@ describe("SuperTokens Third Party", function () {
     });
 });
 
-export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoadLogs, thirdPartySignInUpLog }) {
+export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, thirdPartySignInUpLog }) {
     let browser;
     let page;
     let consoleLogs = [];
+    const logId = "THIRD_PARTY";
 
     before(async function () {
         await backendBeforeEach();
@@ -349,7 +350,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
                         },
                         body: JSON.stringify({
                             status: "FIELD_ERROR",
-                            error: "THIRD_PARTY_SIGN_IN_UP_FOOTER_TOS",
+                            error: "AUTH_PAGE_FOOTER_TOS",
                         }),
                     });
                     page.off("request", requestHandler);
@@ -362,7 +363,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
             await clickOnProviderButton(page, "Auth0");
             await loginWithAuth0(page);
             const error = await getGeneralError(page);
-            assert.deepStrictEqual(error, "Terms of Service");
+            assert.deepStrictEqual(error, "TOS");
         });
 
         it("field error on sign in up with non-translation key", async function () {

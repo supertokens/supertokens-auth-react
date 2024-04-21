@@ -93,7 +93,6 @@ export function normaliseSignInAndUpFeature(config?: SignInAndUpFeatureUserInput
 
     const disableDefaultUI = config.disableDefaultUI === true;
     const signUpForm: NormalisedSignUpFormFeatureConfig = normaliseSignUpFormFeatureConfig(config.signUpForm);
-    const defaultToSignUp = config.defaultToSignUp !== undefined ? config.defaultToSignUp : false;
 
     /*
      * Default Sign In corresponds to computed Sign Up fields filtered by email and password only.
@@ -128,7 +127,6 @@ export function normaliseSignInAndUpFeature(config?: SignInAndUpFeatureUserInput
     );
     return {
         disableDefaultUI,
-        defaultToSignUp,
         signUpForm,
         signInForm,
     };
@@ -148,15 +146,11 @@ export function normaliseSignUpFormFeatureConfig(
         userFormFields = config.formFields;
     }
     const formFields = mergeFormFields(defaultFormFields, userFormFields);
-    const privacyPolicyLink = config.privacyPolicyLink;
-    const termsOfServiceLink = config.termsOfServiceLink;
     const style = config.style !== undefined ? config.style : "";
 
     return {
         style,
         formFields,
-        privacyPolicyLink,
-        termsOfServiceLink,
     };
 }
 

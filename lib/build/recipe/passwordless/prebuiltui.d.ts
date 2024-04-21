@@ -1,10 +1,12 @@
+/// <reference types="react" />
 import { RecipeRouter } from "../recipeRouter";
 import MFAOTPTheme from "./components/themes/mfa";
 import SignInUpTheme from "./components/themes/signInUp";
 import Passwordless from "./recipe";
+import type { LoginAttemptInfo } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps, Navigate, UserContext } from "../../types";
-import type { PropsWithChildren } from "react";
+import type { AuthComponent } from "../../types";
 export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     readonly recipeInstance: Passwordless;
     static instance?: PasswordlessPreBuiltUI;
@@ -12,7 +14,7 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     static getInstanceOrInitAndGetInstance(): PasswordlessPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
-        componentName: "signInUp" | "linkClickedScreen" | "otp-phone" | "otp-email",
+        componentName: "linkClickedScreen" | "otp-phone" | "otp-email",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
             userContext?: UserContext;
@@ -21,21 +23,15 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     ): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
-        componentName: "signInUp" | "linkClickedScreen" | "otp-phone" | "otp-email",
+        componentName: "linkClickedScreen" | "otp-phone" | "otp-email",
         props: FeatureBaseProps<{
             redirectOnSessionExists?: boolean;
             userContext?: UserContext;
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
+    getAuthComponents(): AuthComponent<LoginAttemptInfo>[];
     static reset(): void;
-    static SignInUp: (
-        prop?: PropsWithChildren<{
-            redirectOnSessionExists?: boolean;
-            navigate?: Navigate;
-            userContext?: UserContext;
-        }>
-    ) => JSX.Element;
     static LinkClicked: (
         props: FeatureBaseProps<{
             navigate?: Navigate;
@@ -57,13 +53,6 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     static MFAOTPTheme: typeof MFAOTPTheme;
     static SignInUpTheme: typeof SignInUpTheme;
 }
-declare const SignInUp: (
-    prop?: PropsWithChildren<{
-        redirectOnSessionExists?: boolean;
-        navigate?: Navigate;
-        userContext?: UserContext;
-    }>
-) => JSX.Element;
 declare const LinkClicked: (
     props: FeatureBaseProps<{
         navigate?: Navigate;
@@ -82,4 +71,4 @@ declare const MfaOtpEmail: (
         userContext?: UserContext;
     }>
 ) => JSX.Element;
-export { SignInUp, LinkClicked, SignInUpTheme, MfaOtpPhone, MfaOtpEmail, MFAOTPTheme };
+export { LinkClicked, SignInUpTheme, MfaOtpPhone, MfaOtpEmail, MFAOTPTheme };

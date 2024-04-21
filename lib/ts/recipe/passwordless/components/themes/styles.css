@@ -21,12 +21,6 @@
     animation: swingIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) alternate 2 both;
 }
 
-[data-supertokens~="codeInputLabelWrapper"] {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 [data-supertokens~="headerSubtitle"] strong {
     max-width: 100%;
     display: inline-block;
@@ -48,21 +42,6 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-[data-supertokens~="resendCodeBtn"] {
-    width: auto;
-    margin-top: 0;
-    line-height: 24px;
-}
-
-[data-supertokens~="resendCodeBtn"]:hover {
-    text-decoration: underline;
-}
-[data-supertokens~="resendCodeBtn"]:disabled {
-    color: rgb(var(--palette-textPrimary));
-    cursor: default;
-    text-decoration: none;
 }
 
 [data-supertokens~="phoneInputLibRoot"] {

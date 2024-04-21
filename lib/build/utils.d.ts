@@ -12,6 +12,7 @@ import type {
 } from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
 export declare function clearQueryParams(paramNames: string[]): void;
+export declare function updateQueryParam(name: string, value: string): void;
 export declare function clearErrorQueryParam(): void;
 export declare function getQueryParams(param: string): string | null;
 export declare function getURLHash(): string;

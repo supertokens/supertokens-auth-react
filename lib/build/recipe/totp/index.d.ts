@@ -20,8 +20,10 @@ export default class Wrapper {
     }): Promise<
         | {
               status: "OK";
+              issuerName: string;
               deviceName: string;
               secret: string;
+              userIdentifier?: string | undefined;
               qrCodeString: string;
               fetchResponse: Response;
           }

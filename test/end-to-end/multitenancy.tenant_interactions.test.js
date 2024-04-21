@@ -645,7 +645,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
-                    enabled: true,
+                    enabled: false,
                     providers: [],
                 },
             });

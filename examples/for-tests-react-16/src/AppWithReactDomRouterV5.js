@@ -112,7 +112,7 @@ function AppWithReactDomRouter(props) {
                             <Contact />
                         </Route>
                         <Route path="/custom-supertokens-login">
-                            <SignInAndUp />
+                            <AuthPage preBuiltUIList={[EmailPasswordPreBuiltUI]} />
                         </Route>
                     </Switch>
                 </BaseComponent>

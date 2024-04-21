@@ -448,7 +448,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         "[data-supertokens~=pwless-mfa][data-supertokens~=footer] [data-supertokens~=secondaryText]:nth-child(1)"
                     );
                     await Promise.all([logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-                    await waitForSTElement(page, "[data-supertokens~=input][name=email]");
+                    await waitForSTElement(page, "[data-supertokens~=auth-page]");
                     assert.strictEqual(await page.url(), `${TEST_CLIENT_BASE_URL}/auth/`);
                 });
 
@@ -466,7 +466,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         "[data-supertokens~=pwless-mfa][data-supertokens~=otpFooter] [data-supertokens~=secondaryText]:nth-child(1)"
                     );
                     await Promise.all([logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-                    await waitForSTElement(page, "[data-supertokens~=input][name=email]");
+                    await waitForSTElement(page, "[data-supertokens~=auth-page]");
                     assert.strictEqual(await page.url(), `${TEST_CLIENT_BASE_URL}/auth/`);
 
                     // This part checks that the login attempt info has been cleared

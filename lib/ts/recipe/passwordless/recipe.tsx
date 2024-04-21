@@ -57,13 +57,6 @@ export const otpEmailFactor = {
     logo: OTPEmailIcon,
 };
 
-export const passwordlessFirstFactors = [
-    FactorIds.OTP_PHONE,
-    FactorIds.OTP_EMAIL,
-    FactorIds.LINK_PHONE,
-    FactorIds.LINK_EMAIL,
-] as const;
-
 /*
  * Class.
  */
@@ -78,6 +71,20 @@ export default class Passwordless extends AuthRecipe<
 
     recipeID = Passwordless.RECIPE_ID;
     firstFactorIds = [FactorIds.OTP_EMAIL, FactorIds.OTP_PHONE, FactorIds.LINK_EMAIL, FactorIds.LINK_PHONE];
+
+    // TODO: Maybe we can remove this (if hasIntersectingRecipes is removed, we can do this by having the constructor set firstFactorIds based on the config)
+    public getFirstFactorsForAuthPage(): string[] {
+        if (this.config.signInUpFeature.disableDefaultUI) {
+            return [];
+        }
+        if (this.config.contactMethod === "EMAIL") {
+            return [FactorIds.OTP_EMAIL, FactorIds.LINK_EMAIL];
+        }
+        if (this.config.contactMethod === "PHONE") {
+            return [FactorIds.OTP_PHONE, FactorIds.LINK_PHONE];
+        }
+        return this.firstFactorIds;
+    }
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,

@@ -27,7 +27,7 @@ i18next.init({
                 THIRD_PARTY_SIGN_IN_AND_UP_HEADER_TITLE: "Sign Up / Sign In",
 
                 THIRD_PARTY_SIGN_IN_UP_FOOTER_START: "By continuing, you agree to our ",
-                THIRD_PARTY_SIGN_IN_UP_FOOTER_TOS: "Terms of Service",
+                AUTH_PAGE_FOOTER_TOS: "Terms of Service",
                 THIRD_PARTY_SIGN_IN_UP_FOOTER_AND: " and ",
                 THIRD_PARTY_SIGN_IN_UP_FOOTER_PP: "Privacy Policy",
                 THIRD_PARTY_SIGN_IN_UP_FOOTER_END: "",
@@ -62,7 +62,7 @@ i18next.init({
                 EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_START: "Not registered yet?",
                 EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_SIGN_UP_LINK: "Sign Up",
                 EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_END: "",
-                EMAIL_PASSWORD_SIGN_IN_FOOTER_FORGOT_PW_LINK: "Forgot password?",
+                EMAIL_PASSWORD_SIGN_IN_FORGOT_PW_LINK: "Forgot password?",
                 EMAIL_PASSWORD_SIGN_IN_SUBMIT_BTN: "SIGN IN",
                 EMAIL_PASSWORD_SIGN_IN_WRONG_CREDENTIALS_ERROR: "Incorrect email and password combination",
 
@@ -71,7 +71,7 @@ i18next.init({
                 EMAIL_PASSWORD_SIGN_UP_HEADER_SUBTITLE_SIGN_IN_LINK: "Sign In",
                 EMAIL_PASSWORD_SIGN_UP_HEADER_SUBTITLE_END: "",
                 EMAIL_PASSWORD_SIGN_UP_FOOTER_START: "By continuing, you agree to our ",
-                EMAIL_PASSWORD_SIGN_UP_FOOTER_TOS: "Terms of Service",
+                AUTH_PAGE_FOOTER_TOS: "Terms of Service",
                 EMAIL_PASSWORD_SIGN_UP_FOOTER_AND: " and ",
                 EMAIL_PASSWORD_SIGN_UP_FOOTER_PP: "Privacy Policy",
                 EMAIL_PASSWORD_SIGN_UP_FOOTER_END: "",

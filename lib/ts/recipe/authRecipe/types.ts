@@ -13,6 +13,8 @@
  * under the License.
  */
 
+import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import type { AuthComponentProps, Navigate, PartialAuthComponentProps, UserContext } from "../../types";
 import type {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -25,6 +27,44 @@ export type Config<T, S, R> = UserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
 
 export type NormalisedConfig<T, Action, R> = NormalisedRecipeModuleConfig<T, Action, R>;
 
-export type OnHandleEventContext = {
-    action: "SESSION_ALREADY_EXISTS";
+export type OnHandleEventContext = never;
+
+export type ComponentOverrideMap = {
+    AuthPageHeader_Override: ComponentOverride<any>;
+    AuthPageFooter_Override: ComponentOverride<any>;
+    AuthPageLoginMethodList_Override: ComponentOverride<any>;
+};
+
+type ComponentWithPreloadInfo<T> = {
+    component: React.FC<
+        AuthComponentProps & {
+            preloadInfo: T;
+        }
+    >;
+    preloadInfo: T;
+};
+
+export type AuthPageThemeProps = {
+    showUseAnotherLink: boolean;
+    setFactorList: (factorIds: string[] | undefined) => void;
+
+    fullPageCompWithPreloadedInfo?: ComponentWithPreloadInfo<any>;
+    authComponents: React.FC<PartialAuthComponentProps>[];
+    factorIds: string[];
+
+    hasSeparateSignUpView: boolean;
+    isSignUp: boolean;
+    onSignInUpSwitcherClick: () => void;
+
+    error: string | undefined;
+    onError: (err: string) => void;
+    clearError: () => void;
+
+    rebuildAuthPage: () => void;
+
+    privacyPolicyLink: string | undefined;
+    termsOfServiceLink: string | undefined;
+
+    userContext: UserContext;
+    navigate: Navigate | undefined;
 };

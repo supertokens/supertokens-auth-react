@@ -4,6 +4,7 @@ import { AccessDeniedScreenTheme } from "./components/themes/accessDeniedScreenT
 import Session from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
+import type { AuthComponent } from "../../types";
 export declare class SessionPreBuiltUI extends RecipeRouter {
     readonly recipeInstance: Session;
     static instance?: SessionPreBuiltUI;
@@ -19,6 +20,7 @@ export declare class SessionPreBuiltUI extends RecipeRouter {
         }>,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ): JSX.Element;
+    getAuthComponents(): AuthComponent[];
     getFeatures: (_useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "accessDenied",

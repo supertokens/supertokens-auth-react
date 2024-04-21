@@ -1,11 +1,5 @@
 export declare const defaultTranslationsThirdParty: {
     en: {
-        THIRD_PARTY_SIGN_IN_AND_UP_HEADER_TITLE: string;
-        THIRD_PARTY_SIGN_IN_UP_FOOTER_START: string;
-        THIRD_PARTY_SIGN_IN_UP_FOOTER_TOS: string;
-        THIRD_PARTY_SIGN_IN_UP_FOOTER_AND: string;
-        THIRD_PARTY_SIGN_IN_UP_FOOTER_PP: string;
-        THIRD_PARTY_SIGN_IN_UP_FOOTER_END: string;
         THIRD_PARTY_PROVIDER_DEFAULT_BTN_START: string;
         THIRD_PARTY_PROVIDER_DEFAULT_BTN_END: string;
         THIRD_PARTY_ERROR_NO_EMAIL: string;
@@ -16,6 +10,21 @@ export declare const defaultTranslationsThirdParty: {
         "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_021)": undefined;
         "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_022)": undefined;
         "Cannot sign in / up due to security reasons. Please contact support. (ERR_CODE_023)": undefined;
+        AUTH_PAGE_HEADER_TITLE_SIGN_IN_AND_UP: string;
+        AUTH_PAGE_HEADER_TITLE_SIGN_IN: string;
+        AUTH_PAGE_HEADER_TITLE_SIGN_UP: string;
+        AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_START: string;
+        AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_SIGN_UP_LINK: string;
+        AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_END: string;
+        AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_START: string;
+        AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_SIGN_IN_LINK: string;
+        AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_END: string;
+        AUTH_PAGE_FOOTER_START: string;
+        AUTH_PAGE_FOOTER_TOS: string;
+        AUTH_PAGE_FOOTER_AND: string;
+        AUTH_PAGE_FOOTER_PP: string;
+        AUTH_PAGE_FOOTER_END: string;
+        DIVIDER_OR: string;
         BRANDING_POWERED_BY_START: string;
         BRANDING_POWERED_BY_END: string;
         SOMETHING_WENT_WRONG_ERROR: string;

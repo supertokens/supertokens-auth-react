@@ -69,6 +69,11 @@ export declare type SuperTokensConfig = {
         context: GetRedirectionURLContext,
         userContext: UserContext
     ) => Promise<string | undefined | null>;
+    style?: string;
+    useShadowDom?: boolean;
+    defaultToSignUp?: boolean;
+    privacyPolicyLink?: string;
+    termsOfServiceLink?: string;
 };
 export declare type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "signOut">;
 export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
@@ -138,6 +143,7 @@ export declare type NormalisedFormField = {
     autoComplete?: string;
     autofocus?: boolean;
     getDefaultValue?: () => string;
+    hidden?: boolean;
 };
 export declare type ReactComponentClass<P = any> = ComponentClass<P, any> | ((props: P) => JSX.Element);
 export declare type FeatureBaseConfig = {
@@ -174,4 +180,42 @@ export declare type Navigate =
       }
     | NavigateFunction;
 export declare type UserContext = Record<string, any>;
+export declare type AuthComponentProps = {
+    setFactorList: (factorIds: string[] | undefined) => void;
+    rebuildAuthPage: () => void;
+    navigate: Navigate | undefined;
+    userContext: UserContext;
+    error: string | undefined;
+    onError: (err: string) => void;
+    clearError: () => void;
+};
+export declare type PartialAuthComponentProps = AuthComponentProps & {};
+export declare type FullPageAuthComponent<T = any> = {
+    type: "FULL_PAGE";
+    preloadInfoAndRunChecks: (
+        firstFactors: string[],
+        userContext: UserContext
+    ) => Promise<
+        | {
+              shouldDisplay: true;
+              preloadInfo: T;
+          }
+        | {
+              shouldDisplay: false;
+          }
+    >;
+    component: React.FC<
+        AuthComponentProps & {
+            preloadInfo: T;
+        }
+    >;
+};
+export declare type PartialAuthComponent = {
+    type: "SIGN_IN_UP" | "SIGN_IN" | "SIGN_UP";
+    factorIds: string[];
+    displayOrder: number;
+    component: React.FC<PartialAuthComponentProps>;
+    translations: TranslationStore;
+};
+export declare type AuthComponent<T = any> = PartialAuthComponent | FullPageAuthComponent<T>;
 export {};

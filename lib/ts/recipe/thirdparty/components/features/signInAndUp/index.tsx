@@ -19,75 +19,32 @@ import * as React from "react";
 import { Fragment } from "react";
 import { useMemo } from "react";
 
-import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import FeatureWrapper from "../../../../../components/featureWrapper";
+import AuthComponentWrapper from "../../../../../components/authCompWrapper";
 import SuperTokens from "../../../../../superTokens";
-import { getQueryParams } from "../../../../../utils";
 import { FactorIds } from "../../../../multifactorauth/types";
 import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import { mergeProviders } from "../../../utils";
 import SignInAndUpTheme from "../../themes/signInAndUp";
-import { defaultTranslationsThirdParty } from "../../themes/translations";
 
-import type { FeatureBaseProps, UserContext, WebJSRecipeInterface } from "../../../../../types";
+import type { Navigate, PartialAuthComponentProps, UserContext, WebJSRecipeInterface } from "../../../../../types";
 import type Recipe from "../../../recipe";
-import type {
-    ComponentOverrideMap,
-    ThirdPartySignInAndUpState,
-    ThirdPartySignInUpActions,
-    ThirdPartySignInUpChildProps,
-} from "../../../types";
+import type { ComponentOverrideMap, SignInAndUpThemeProps } from "../../../types";
 import type ThirdPartyWebJS from "supertokens-web-js/recipe/thirdparty";
 
-export const useFeatureReducer = () => {
-    return React.useReducer(
-        (oldState: ThirdPartySignInAndUpState, action: ThirdPartySignInUpActions) => {
-            switch (action.type) {
-                case "setError":
-                    return {
-                        ...oldState,
-                        error: action.error,
-                    };
-                default:
-                    return oldState;
-            }
-        },
-        {},
-        () => {
-            let error: string | undefined = undefined;
-            const errorQueryParam = getQueryParams("error");
-            if (errorQueryParam !== null) {
-                if (errorQueryParam === "signin") {
-                    error = "SOMETHING_WENT_WRONG_ERROR";
-                } else if (errorQueryParam === "no_email_present") {
-                    error = "THIRD_PARTY_ERROR_NO_EMAIL";
-                } else {
-                    const customError = getQueryParams("message");
-                    if (customError === null) {
-                        error = "SOMETHING_WENT_WRONG_ERROR";
-                    } else {
-                        error = customError;
-                    }
-                }
-            }
-            return {
-                error,
-            };
-        }
-    );
-};
-
-// We are overloading to explicitly state that if recipe is defined then the return value is defined as well.
-export function useChildProps(recipe: Recipe): ThirdPartySignInUpChildProps;
-export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChildProps | undefined;
-export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChildProps | undefined {
+export function useChildProps(
+    recipe: Recipe,
+    error: string | undefined,
+    onError: (err: string) => void,
+    clearError: () => void,
+    rebuildAuthPage: () => void,
+    setFactorList: (factorIds: string[] | undefined) => void,
+    navigate: Navigate | undefined,
+    userContext: UserContext
+): SignInAndUpThemeProps {
     const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe), [recipe]);
     const dynamicLoginMethods = useDynamicLoginMethods();
 
     return useMemo(() => {
-        if (!recipe || !recipeImplementation) {
-            return undefined;
-        }
         let tenantProviders;
         if (SuperTokens.usesDynamicLoginMethods) {
             if (dynamicLoginMethods.loaded === false) {
@@ -100,6 +57,11 @@ export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChi
         }
 
         return {
+            error,
+            onError,
+            clearError,
+            rebuildAuthPage,
+            setFactorList,
             providers: mergeProviders({
                 tenantProviders,
                 clientProviders: recipe.config.signInAndUpFeature.providers,
@@ -107,28 +69,36 @@ export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChi
             recipeImplementation,
             config: recipe.config,
             recipe,
+            navigate,
+            userContext,
         };
     }, [recipe, recipeImplementation]);
 }
 
-type PropType = FeatureBaseProps<{
+type PropType = PartialAuthComponentProps & {
     recipe: Recipe;
     userContext?: UserContext;
     useComponentOverrides: () => ComponentOverrideMap;
-}>;
+};
 
 export const SignInAndUpFeature: React.FC<PropType> = (props) => {
-    const [state, dispatch] = useFeatureReducer();
-    const childProps = useChildProps(props.recipe);
+    const childProps = useChildProps(
+        props.recipe,
+        props.error,
+        props.onError,
+        props.clearError,
+        props.rebuildAuthPage,
+        props.setFactorList,
+        props.navigate,
+        props.userContext
+    );
 
     const themeProps = { ...childProps, providers: childProps.providers };
 
     return (
         <Fragment>
             {/* No custom theme, use default. */}
-            {props.children === undefined && (
-                <SignInAndUpTheme {...themeProps} featureState={state} dispatch={dispatch} />
-            )}
+            {props.children === undefined && <SignInAndUpTheme {...themeProps} />}
 
             {/* Otherwise, custom theme is provided, propagate props. */}
             {props.children &&
@@ -136,8 +106,6 @@ export const SignInAndUpFeature: React.FC<PropType> = (props) => {
                     if (React.isValidElement(child)) {
                         return React.cloneElement(child, {
                             ...childProps,
-                            featureState: state,
-                            dispatch,
                         });
                     }
 
@@ -150,13 +118,9 @@ export const SignInAndUpFeature: React.FC<PropType> = (props) => {
 const SignInAndUpFeatureWrapper: React.FC<PropType> = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
     return (
-        <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
-            <FeatureWrapper
-                useShadowDom={props.recipe.config.useShadowDom}
-                defaultStore={defaultTranslationsThirdParty}>
-                <SignInAndUpFeature {...props} />
-            </FeatureWrapper>
-        </ComponentOverrideContext.Provider>
+        <AuthComponentWrapper recipeComponentOverrides={recipeComponentOverrides}>
+            <SignInAndUpFeature {...props} />
+        </AuthComponentWrapper>
     );
 };
 

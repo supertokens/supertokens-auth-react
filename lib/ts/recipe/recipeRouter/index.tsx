@@ -3,7 +3,7 @@ import SuperTokens from "../../superTokens";
 import MultiFactorAuth from "../multifactorauth/recipe";
 import { FactorIds } from "../multifactorauth/types";
 
-import type { RecipeFeatureComponentMap } from "../../types";
+import type { AuthComponent, RecipeFeatureComponentMap } from "../../types";
 import type { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
 import type { GetLoginMethodsResponseNormalized } from "../multitenancy/types";
 import type RecipeModule from "../recipeModule";
@@ -284,4 +284,7 @@ export abstract class RecipeRouter {
     };
 
     abstract getFeatures(): RecipeFeatureComponentMap;
+
+    abstract getAuthComponents(): AuthComponent[];
+    public requiresSignUpPage = false;
 }

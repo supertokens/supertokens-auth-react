@@ -128,7 +128,10 @@ function AppWithReactDomRouter(props) {
                         />
 
                         <Route path="/contact" element={<Contact />} />
-                        <Route path="/custom-supertokens-login" element={<SignInAndUp />} />
+                        <Route
+                            path="/custom-supertokens-login"
+                            element={<AuthPage preBuiltUIList={[EmailPasswordPreBuiltUI]} />}
+                        />
 
                         {/* User context paths */}
                         {isForUserContext && (

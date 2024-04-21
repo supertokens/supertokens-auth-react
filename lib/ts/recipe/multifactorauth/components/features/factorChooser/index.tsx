@@ -23,6 +23,7 @@ import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
+import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, useOnMountAPICall } from "../../../../../utils";
 import { SessionContext } from "../../../../session";
@@ -137,7 +138,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
-                useShadowDom={props.recipe.config.useShadowDom}
+                useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}
                 defaultStore={defaultTranslationsMultiFactorAuth}>
                 <Fragment>
                     {/* No custom theme, use default. */}

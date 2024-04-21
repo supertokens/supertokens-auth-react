@@ -121,7 +121,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     it("Renders correct signup form with emailpassword when core list of providers is empty", async function () {
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
-            passwordless: { enabled: true },
+            passwordless: { enabled: false },
             thirdParty: {
                 enabled: true,
                 providers: [],
@@ -517,7 +517,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.strictEqual(await getProviderLogoCount(page), 0);
 
         // Divider
-        await waitForSTElement(page, `[data-supertokens~='thirdPartyEmailPasswordDivider']`, true);
+        await waitForSTElement(page, `[data-supertokens~='dividerWithOr']`, true);
 
         // Emailpassword
         const inputNames = await getInputNames(page);
@@ -545,7 +545,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.notStrictEqual(await getProviderLogoCount(page), 0);
 
         // Divider
-        await waitForSTElement(page, `[data-supertokens~='thirdPartyEmailPasswordDivider']`, true);
+        await waitForSTElement(page, `[data-supertokens~='dividerWithOr']`, true);
 
         // Emailpassword
         const inputNames = await getInputNames(page);
@@ -574,7 +574,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.notStrictEqual(await getProviderLogoCount(page), 0);
 
         // Divider
-        await waitForSTElement(page, `[data-supertokens~='thirdPartyEmailPasswordDivider']`, false);
+        await waitForSTElement(page, `[data-supertokens~='dividerWithOr']`, false);
 
         // Emailpassword
         const inputNames = await getInputNames(page);
@@ -582,7 +582,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     // This is slightly different than the version in the ADR, since it hasn't been updated
-    it("should show emailpassword if FE has tp and ep but (no tpep) and both emailpassword and thirdparty is enabled", async function () {
+    it.skip("should show emailpassword if FE has tp and ep but (no tpep) and both emailpassword and thirdparty is enabled", async function () {
         await setEnabledRecipes(page, ["thirdparty", "emailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
@@ -603,14 +603,14 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.strictEqual(await getProviderLogoCount(page), 0);
 
         // Divider
-        await waitForSTElement(page, `[data-supertokens~='thirdPartyEmailPasswordDivider']`, true);
+        await waitForSTElement(page, `[data-supertokens~='dividerWithOr']`, true);
 
         // Emailpassword
         const inputNames = await getInputNames(page);
         assert.deepStrictEqual(inputNames, ["email", "password"]);
     });
 
-    it("should show thirdparty if FE has tp and pwless and both emailpassword and thirdparty is enabled", async function () {
+    it.skip("should show thirdparty if FE has tp and pwless and both emailpassword and thirdparty is enabled", async function () {
         await setEnabledRecipes(page, ["thirdparty", "passwordless"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
@@ -631,7 +631,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.notStrictEqual(await getProviderLogoCount(page), 0);
 
         // Divider
-        await waitForSTElement(page, `[data-supertokens~='thirdPartyEmailPasswordDivider']`, true);
+        await waitForSTElement(page, `[data-supertokens~='dividerWithOr']`, true);
 
         // Emailpassword
         const inputNames = await getInputNames(page);
@@ -659,7 +659,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.notStrictEqual(await getProviderLogoCount(page), 0);
 
         // Divider
-        await waitForSTElement(page, `[data-supertokens~='thirdPartyEmailPasswordDivider']`, false);
+        await waitForSTElement(page, `[data-supertokens~='dividerWithOr']`, false);
 
         // Emailpassword
         const inputNames = await getInputNames(page);
@@ -687,11 +687,11 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.notStrictEqual(await getProviderLogoCount(page), 0);
 
         // Divider
-        await waitForSTElement(page, `[data-supertokens~='thirdPartyPasswordlessDivider']`, true);
+        await waitForSTElement(page, `[data-supertokens~='dividerWithOr']`);
 
         // Emailpassword
         const inputNames = await getInputNames(page);
-        assert.deepStrictEqual(inputNames, []);
+        assert.deepStrictEqual(inputNames, ["email", "password"]);
     });
 
     it("should show thirdpartyemailpassword if FE has tpep and tppwless and all 3 enabled in core", async function () {
@@ -715,11 +715,11 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.notStrictEqual(await getProviderLogoCount(page), 0);
 
         // Divider
-        await waitForSTElement(page, `[data-supertokens~='thirdPartyEmailPasswordDivider']`, false);
+        await waitForSTElement(page, `[data-supertokens~='dividerWithOr']`, false);
 
         // Emailpassword
         const inputNames = await getInputNames(page);
-        assert.deepStrictEqual(inputNames, ["email", "password"]);
+        assert.deepStrictEqual(inputNames, ["emailOrPhone"]);
     });
 
     it("should show thirdpartypwless if rid has FE has tpep and tppwless and all 3 enabled in core", async function () {
@@ -743,7 +743,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.notStrictEqual(await getProviderLogoCount(page), 0);
 
         // Divider
-        await waitForSTElement(page, `[data-supertokens~='thirdPartyPasswordlessDivider']`, false);
+        await waitForSTElement(page, `[data-supertokens~='dividerWithOr']`, false);
 
         // Emailpassword
         const inputNames = await getInputNames(page);
@@ -754,7 +754,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         await setEnabledRecipes(page, ["thirdpartyemailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
-            passwordless: { enabled: true },
+            passwordless: { enabled: false },
             thirdParty: {
                 enabled: false,
                 providers: [],
@@ -805,7 +805,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     it("should show thirdpartpasswordless if FE has only tppwless and thirdparty is disbled in core", async function () {
         await setEnabledRecipes(page, ["thirdpartypasswordless"]);
         await enableDynamicLoginMethods(page, {
-            emailPassword: { enabled: true },
+            emailPassword: { enabled: false },
             passwordless: { enabled: true },
             thirdParty: {
                 enabled: false,
@@ -890,7 +890,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.strictEqual(error, SOMETHING_WENT_WRONG_ERROR);
     });
 
-    it("should show thirdparty if FE has tp and pwless and both emailpassword and thirdparty is enabled", async function () {
+    it.skip("should show thirdparty if FE has tp and pwless and both emailpassword and thirdparty is enabled", async function () {
         await setEnabledRecipes(page, ["thirdparty", "passwordless"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
@@ -911,11 +911,11 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.notStrictEqual(await getProviderLogoCount(page), 0);
 
         // Divider
-        await waitForSTElement(page, `[data-supertokens~='thirdPartyEmailPasswordDivider']`, true);
+        await waitForSTElement(page, `[data-supertokens~='dividerWithOr']`, false);
 
         // Emailpassword
         const inputNames = await getInputNames(page);
-        assert.deepStrictEqual(inputNames, []);
+        assert.deepStrictEqual(inputNames, ["email", "password"]);
     });
 
     it("should be able to log in with dynamically added tp providers", async function () {

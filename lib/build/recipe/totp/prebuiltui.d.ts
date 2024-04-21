@@ -4,6 +4,7 @@ import MFATOTPTheme from "./components/themes/mfa";
 import TOTPRecipe from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { FeatureBaseProps, RecipeFeatureComponentMap, UserContext } from "../../types";
+import type { AuthComponent } from "../../types";
 export declare class TOTPPreBuiltUI extends RecipeRouter {
     readonly recipeInstance: TOTPRecipe;
     static instance?: TOTPPreBuiltUI;
@@ -21,6 +22,7 @@ export declare class TOTPPreBuiltUI extends RecipeRouter {
         props: any,
         useComponentOverrides?: () => GenericComponentOverrideMap<any>
     ) => JSX.Element;
+    getAuthComponents(): AuthComponent[];
     static reset(): void;
     static MFATOTP: (
         props: FeatureBaseProps<{

@@ -150,7 +150,7 @@ export async function completeTOTP(page, secret) {
 }
 export async function tryEmailPasswordSignUp(page, email) {
     await Promise.all([
-        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=emailpassword`),
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?factors=emailpassword`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 
@@ -168,7 +168,7 @@ export async function tryEmailPasswordSignUp(page, email) {
 }
 export async function tryEmailPasswordSignIn(page, email, queryParams) {
     await Promise.all([
-        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=emailpassword${queryParams ?? ""}`),
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?factors=emailpassword${queryParams ?? ""}`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 
@@ -183,7 +183,7 @@ export async function tryEmailPasswordSignIn(page, email, queryParams) {
 export async function tryPasswordlessSignInUp(page, contactInfo, queryParams) {
     await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
     await Promise.all([
-        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=passwordless${queryParams ?? ""}`),
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?factors=otp-phone,otp-email${queryParams ?? ""}`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 

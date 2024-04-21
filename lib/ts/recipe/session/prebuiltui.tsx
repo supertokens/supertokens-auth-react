@@ -9,6 +9,7 @@ import Session from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
+import type { AuthComponent } from "../../types";
 
 export class SessionPreBuiltUI extends RecipeRouter {
     static instance?: SessionPreBuiltUI;
@@ -40,6 +41,10 @@ export class SessionPreBuiltUI extends RecipeRouter {
             props,
             useComponentOverrides
         );
+    }
+
+    getAuthComponents(): AuthComponent[] {
+        return [];
     }
 
     // Instance methods

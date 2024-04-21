@@ -51,7 +51,19 @@ export function clearQueryParams(paramNames: string[]): void {
     WindowHandlerReference.getReferenceOrThrow().windowHandler.history.replaceState(
         WindowHandlerReference.getReferenceOrThrow().windowHandler.history.getState(),
         "",
-        WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHref()
+        newURL.toString()
+    );
+}
+
+export function updateQueryParam(name: string, value: string) {
+    const newURL = new URL(WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHref());
+
+    newURL.searchParams.set(name, value);
+
+    WindowHandlerReference.getReferenceOrThrow().windowHandler.history.replaceState(
+        WindowHandlerReference.getReferenceOrThrow().windowHandler.history.getState(),
+        "",
+        newURL.toString()
     );
 }
 

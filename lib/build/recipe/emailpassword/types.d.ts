@@ -1,14 +1,9 @@
+/// <reference types="react" />
 import type { InputProps } from "./components/library/input";
 import type { ResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/resetPasswordEmail";
 import type { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
-import type { SignIn } from "./components/themes/signInAndUp/signIn";
-import type { SignInFooter } from "./components/themes/signInAndUp/signInFooter";
-import type { SignInForm } from "./components/themes/signInAndUp/signInForm";
-import type { SignInHeader } from "./components/themes/signInAndUp/signInHeader";
-import type { SignUp } from "./components/themes/signInAndUp/signUp";
-import type { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
-import type { SignUpForm } from "./components/themes/signInAndUp/signUpForm";
-import type { SignUpHeader } from "./components/themes/signInAndUp/signUpHeader";
+import type { SignInForm } from "./components/themes/signIn";
+import type { SignUpForm } from "./components/themes/signUp";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type {
     APIFormField,
@@ -26,19 +21,12 @@ import type {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipe/types";
-import type { Dispatch } from "react";
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import type { User } from "supertokens-web-js/types";
 export declare type ComponentOverrideMap = {
-    EmailPasswordSignIn_Override?: ComponentOverride<typeof SignIn>;
-    EmailPasswordSignInFooter_Override?: ComponentOverride<typeof SignInFooter>;
     EmailPasswordSignInForm_Override?: ComponentOverride<typeof SignInForm>;
-    EmailPasswordSignInHeader_Override?: ComponentOverride<typeof SignInHeader>;
-    EmailPasswordSignUp_Override?: ComponentOverride<typeof SignUp>;
-    EmailPasswordSignUpFooter_Override?: ComponentOverride<typeof SignUpFooter>;
     EmailPasswordSignUpForm_Override?: ComponentOverride<typeof SignUpForm>;
-    EmailPasswordSignUpHeader_Override?: ComponentOverride<typeof SignUpHeader>;
     EmailPasswordResetPasswordEmail_Override?: ComponentOverride<typeof ResetPasswordEmail>;
     EmailPasswordSubmitNewPassword_Override?: ComponentOverride<typeof SubmitNewPassword>;
 };
@@ -66,13 +54,11 @@ export declare type NormalisedConfig = {
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = {
     disableDefaultUI?: boolean;
-    defaultToSignUp?: boolean;
     signUpForm?: SignUpFormFeatureUserInput;
     signInForm?: SignInFormFeatureUserInput;
 };
 export declare type NormalisedSignInAndUpFeatureConfig = {
     disableDefaultUI: boolean;
-    defaultToSignUp: boolean;
     signUpForm: NormalisedSignUpFormFeatureConfig;
     signInForm: NormalisedSignInFormFeatureConfig;
 };
@@ -80,15 +66,11 @@ export declare type SignUpFormFeatureUserInput = FeatureBaseConfig & {
     formFields?: (FormField & {
         inputComponent?: (props: InputProps) => JSX.Element;
     })[];
-    privacyPolicyLink?: string;
-    termsOfServiceLink?: string;
 };
 export declare type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
     formFields: (NormalisedFormField & {
         inputComponent?: (props: InputProps) => JSX.Element;
     })[];
-    privacyPolicyLink?: string;
-    termsOfServiceLink?: string;
 };
 export declare type SignInFormFeatureUserInput = FeatureBaseConfig & {
     formFields?: FormFieldSignInConfig[];
@@ -123,9 +105,9 @@ export declare type SignInThemeProps = NonSignUpFormThemeBaseProps & {
     onFetchError: (error: Response) => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
-    signUpClicked?: () => void;
-    forgotPasswordClick: () => void;
+    onForgotPasswordClick: () => void;
     onSuccess: (result: { user: User }) => void;
+    userContext: UserContext;
 };
 export declare type SignUpThemeProps = ThemeBaseProps & {
     recipeImplementation: RecipeInterface;
@@ -137,16 +119,7 @@ export declare type SignUpThemeProps = ThemeBaseProps & {
     onSuccess: (result: { user: User }) => void;
     formFields: FormFieldThemeProps[];
     error: string | undefined;
-};
-export declare type SignInAndUpThemeProps = {
-    signInForm: SignInThemeProps;
-    signUpForm: SignUpThemeProps;
-    featureState: {
-        isSignUp: boolean;
-    };
-    dispatch: Dispatch<EmailPasswordSignInAndUpAction>;
-    config: NormalisedConfig;
-    userContext?: UserContext;
+    userContext: UserContext;
 };
 export declare type FormFieldThemeProps = NormalisedFormField & {
     labelComponent?: JSX.Element;
@@ -247,21 +220,4 @@ declare global {
         documentMode?: any;
     }
 }
-export declare type SignInAndUpState = {
-    user: User | undefined;
-    error: string | undefined;
-    isSignUp: boolean;
-};
-export declare type EmailPasswordSignInAndUpAction =
-    | {
-          type: "setError";
-          error: string | undefined;
-      }
-    | {
-          type: "setSignUp";
-      }
-    | {
-          type: "setSignIn";
-      };
-export declare type EmailPasswordSignInAndUpChildProps = Omit<SignInAndUpThemeProps, "featureState" | "dispatch">;
 export {};

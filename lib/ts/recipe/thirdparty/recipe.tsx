@@ -52,6 +52,12 @@ export default class ThirdParty extends AuthRecipe<
     static RECIPE_ID = "thirdparty";
     recipeID = ThirdParty.RECIPE_ID;
     firstFactorIds = [FactorIds.THIRDPARTY];
+    public getFirstFactorsForAuthPage(): string[] {
+        if (this.config.signInAndUpFeature.disableDefaultUI) {
+            return [];
+        }
+        return this.firstFactorIds;
+    }
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,

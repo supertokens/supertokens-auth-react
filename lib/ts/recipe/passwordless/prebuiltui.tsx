@@ -2,27 +2,34 @@ import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
+import EmailPassword from "../emailpassword/recipe";
+import { FactorIds } from "../multifactorauth";
 import { RecipeRouter } from "../recipeRouter";
 import { SessionAuth } from "../session";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import ContinueWithPasswordlessFeature from "./components/features/continueWithPasswordless";
 import LinkClickedScreen from "./components/features/linkClickedScreen";
+import LinkSentFeature from "./components/features/linkSent";
 import MFAFeature from "./components/features/mfa";
 import SignInUpFeature from "./components/features/signInAndUp";
+import SignInUpEPComboFeature from "./components/features/signInAndUpEPCombo";
+import UserInputCodeFeature from "./components/features/userInputCode";
 import MFAOTPTheme from "./components/themes/mfa";
 import SignInUpTheme from "./components/themes/signInUp";
+import { defaultTranslationsPasswordless } from "./components/themes/translations";
 import Passwordless from "./recipe";
 
-import type {
-    GetRedirectionURLContext,
-    OnHandleEventContext,
-    PreAndPostAPIHookAction,
-    NormalisedConfig,
-} from "./types";
+import type { AdditionalLoginAttemptInfoProperties, LoginAttemptInfo } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { RecipeFeatureComponentMap, FeatureBaseProps, Navigate, UserContext } from "../../types";
-import type { PropsWithChildren } from "react";
+import type {
+    RecipeFeatureComponentMap,
+    FeatureBaseProps,
+    Navigate,
+    UserContext,
+    PartialAuthComponentProps,
+} from "../../types";
+import type { AuthComponent } from "../../types";
 
 export class PasswordlessPreBuiltUI extends RecipeRouter {
     static instance?: PasswordlessPreBuiltUI;
@@ -45,7 +52,7 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
         return PasswordlessPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
     }
     static getFeatureComponent(
-        componentName: "signInUp" | "linkClickedScreen" | "otp-phone" | "otp-email",
+        componentName: "linkClickedScreen" | "otp-phone" | "otp-email",
         props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
@@ -61,16 +68,6 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
-        if (this.recipeInstance.config.signInUpFeature.disableDefaultUI !== true) {
-            const normalisedFullPath = this.recipeInstance.config.appInfo.websiteBasePath.appendPath(
-                new NormalisedURLPath("/")
-            );
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
-                component: (props) => this.getFeatureComponent("signInUp", props as any, useComponentOverrides),
-                recipeID: Passwordless.RECIPE_ID,
-            };
-        }
         if (this.recipeInstance.config.linkClickedScreenFeature.disableDefaultUI !== true) {
             const normalisedFullPath = this.recipeInstance.config.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath("/verify")
@@ -104,44 +101,10 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
         return features;
     };
     getFeatureComponent = (
-        componentName: "signInUp" | "linkClickedScreen" | "otp-phone" | "otp-email",
+        componentName: "linkClickedScreen" | "otp-phone" | "otp-email",
         props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
-        if (componentName === "signInUp") {
-            if (props.redirectOnSessionExists !== false) {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <AuthWidgetWrapper<
-                            GetRedirectionURLContext,
-                            PreAndPostAPIHookAction,
-                            OnHandleEventContext,
-                            NormalisedConfig
-                        >
-                            authRecipe={this.recipeInstance}
-                            navigate={props.navigate}>
-                            <SignInUpFeature
-                                recipe={this.recipeInstance}
-                                useComponentOverrides={useComponentOverrides}
-                                {...props}
-                            />
-                        </AuthWidgetWrapper>
-                    </UserContextWrapper>
-                );
-            } else {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <SessionAuth requireAuth={false} doRedirection={false}>
-                            <SignInUpFeature
-                                recipe={this.recipeInstance}
-                                useComponentOverrides={useComponentOverrides}
-                                {...props}
-                            />
-                        </SessionAuth>
-                    </UserContextWrapper>
-                );
-            }
-        }
         if (componentName === "linkClickedScreen") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
@@ -188,6 +151,171 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
         throw new Error("Should never come here.");
     };
 
+    getAuthComponents(): AuthComponent<LoginAttemptInfo>[] {
+        const factorCombos = getAllFactorChoices([
+            FactorIds.LINK_EMAIL,
+            FactorIds.LINK_PHONE,
+            FactorIds.OTP_EMAIL,
+            FactorIds.OTP_PHONE,
+        ]);
+
+        const res: AuthComponent<LoginAttemptInfo>[] = [
+            {
+                type: "FULL_PAGE",
+                async preloadInfoAndRunChecks(firstFactors, userContext) {
+                    // This should be de-duplicated somehow, maybe creating a union of the two pages?
+                    let loginAttemptInfo =
+                        await Passwordless.getInstanceOrThrow().webJSRecipe.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>(
+                            {
+                                userContext,
+                            }
+                        );
+                    if (loginAttemptInfo !== undefined) {
+                        if (
+                            loginAttemptInfo.contactMethod === "PHONE" &&
+                            !firstFactors.includes(FactorIds.OTP_PHONE) &&
+                            !firstFactors.includes(FactorIds.LINK_PHONE)
+                        ) {
+                            await Passwordless.getInstanceOrThrow().webJSRecipe?.clearLoginAttemptInfo({ userContext });
+                            loginAttemptInfo = undefined;
+                        } else if (
+                            loginAttemptInfo.contactMethod === "EMAIL" &&
+                            !firstFactors.includes(FactorIds.OTP_EMAIL) &&
+                            !firstFactors.includes(FactorIds.LINK_EMAIL)
+                        ) {
+                            await Passwordless.getInstanceOrThrow().webJSRecipe?.clearLoginAttemptInfo({ userContext });
+                            loginAttemptInfo = undefined;
+                        }
+                    }
+
+                    if (loginAttemptInfo === undefined || loginAttemptInfo.flowType !== "MAGIC_LINK") {
+                        return {
+                            shouldDisplay: false,
+                        };
+                    }
+                    return {
+                        shouldDisplay: true,
+                        preloadInfo: loginAttemptInfo,
+                    };
+                },
+                component: ({ preloadInfo, ...props }) => (
+                    <LinkSentFeature
+                        key="linkSentFullPage"
+                        {...props}
+                        recipe={this.recipeInstance}
+                        useComponentOverrides={useRecipeComponentOverrideContext}
+                        loginAttemptInfo={preloadInfo}
+                    />
+                ),
+            },
+            {
+                type: "FULL_PAGE",
+                async preloadInfoAndRunChecks(firstFactors, userContext) {
+                    let loginAttemptInfo =
+                        await Passwordless.getInstanceOrThrow().webJSRecipe.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>(
+                            {
+                                userContext,
+                            }
+                        );
+                    if (loginAttemptInfo !== undefined) {
+                        if (
+                            loginAttemptInfo.contactMethod === "PHONE" &&
+                            !firstFactors.includes(FactorIds.OTP_PHONE) &&
+                            !firstFactors.includes(FactorIds.LINK_PHONE)
+                        ) {
+                            await Passwordless.getInstanceOrThrow().webJSRecipe?.clearLoginAttemptInfo({ userContext });
+                            loginAttemptInfo = undefined;
+                        } else if (
+                            loginAttemptInfo.contactMethod === "EMAIL" &&
+                            !firstFactors.includes(FactorIds.OTP_EMAIL) &&
+                            !firstFactors.includes(FactorIds.LINK_EMAIL)
+                        ) {
+                            await Passwordless.getInstanceOrThrow().webJSRecipe?.clearLoginAttemptInfo({ userContext });
+                            loginAttemptInfo = undefined;
+                        }
+                    }
+                    if (loginAttemptInfo === undefined || loginAttemptInfo.flowType === "MAGIC_LINK") {
+                        return {
+                            shouldDisplay: false,
+                        };
+                    }
+                    return {
+                        shouldDisplay: true,
+                        preloadInfo: loginAttemptInfo,
+                    };
+                },
+                component: ({ preloadInfo, ...props }) => (
+                    <UserInputCodeFeature
+                        key="userInputCodeFullPage"
+                        {...props}
+                        recipe={this.recipeInstance}
+                        useComponentOverrides={useRecipeComponentOverrideContext}
+                        loginAttemptInfo={preloadInfo}
+                    />
+                ),
+            },
+            ...factorCombos.map((factors) => ({
+                type: "SIGN_IN" as const,
+                factorIds: factors,
+                displayOrder: 3,
+                translations: defaultTranslationsPasswordless,
+                component: (props: PartialAuthComponentProps) => (
+                    <SignInUpFeature
+                        {...props}
+                        key={factors.join("|")}
+                        recipe={this.recipeInstance}
+                        useComponentOverrides={useRecipeComponentOverrideContext}
+                        factorIds={factors}
+                    />
+                ),
+            })),
+            ...factorCombos.map((factors) => ({
+                type: "SIGN_UP" as const,
+                factorIds: factors,
+                displayOrder: 3,
+                translations: defaultTranslationsPasswordless,
+                component: (props: PartialAuthComponentProps) => (
+                    <ContinueWithPasswordlessFeature
+                        key={factors.join("|")}
+                        {...props}
+                        recipe={this.recipeInstance}
+                        factorIds={factors}
+                        useComponentOverrides={useRecipeComponentOverrideContext}
+                    />
+                ),
+            })),
+        ];
+
+        // We only do this and check if we should add this component
+        // because it provides a better error message if EP is not initialized, but requested
+        try {
+            EmailPassword.getInstanceOrThrow();
+            res.push(
+                ...factorCombos
+                    .map((combo) => [FactorIds.EMAILPASSWORD, ...combo])
+                    .map((factors) => ({
+                        type: "SIGN_IN" as const,
+                        factorIds: factors,
+                        displayOrder: 3,
+                        translations: defaultTranslationsPasswordless,
+                        component: (props: PartialAuthComponentProps) => (
+                            <SignInUpEPComboFeature
+                                {...props}
+                                key={factors.join("|")}
+                                recipe={this.recipeInstance}
+                                useComponentOverrides={useRecipeComponentOverrideContext}
+                                factorIds={factors}
+                            />
+                        ),
+                    }))
+            );
+        } catch {
+            // EP was not initialized, so not adding the combo component is OK
+        }
+
+        return res;
+    }
+
     // For tests
     static reset(): void {
         if (!isTest()) {
@@ -197,14 +325,6 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
         PasswordlessPreBuiltUI.instance = undefined;
         return;
     }
-
-    static SignInUp = (
-        prop: PropsWithChildren<{
-            redirectOnSessionExists?: boolean;
-            navigate?: Navigate;
-            userContext?: UserContext;
-        }> = {}
-    ) => this.getFeatureComponent("signInUp", prop);
 
     static LinkClicked = (props: FeatureBaseProps<{ navigate?: Navigate; userContext?: UserContext }>) =>
         this.getFeatureComponent("linkClickedScreen", props);
@@ -217,9 +337,22 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
     static SignInUpTheme = SignInUpTheme;
 }
 
-const SignInUp = PasswordlessPreBuiltUI.SignInUp;
 const LinkClicked = PasswordlessPreBuiltUI.LinkClicked;
 const MfaOtpPhone = PasswordlessPreBuiltUI.MfaOtpPhone;
 const MfaOtpEmail = PasswordlessPreBuiltUI.MfaOtpEmail;
 
-export { SignInUp, LinkClicked, SignInUpTheme, MfaOtpPhone, MfaOtpEmail, MFAOTPTheme };
+export { LinkClicked, SignInUpTheme, MfaOtpPhone, MfaOtpEmail, MFAOTPTheme };
+
+function getAllChoices(choices: string[]): string[][] {
+    if (choices.length === 0) {
+        return [[]];
+    }
+    const subChoices = getAllChoices(choices.slice(1));
+    return [...subChoices, ...subChoices.map((a) => [choices[0], ...a])];
+}
+
+function getAllFactorChoices(factorIds: string[]) {
+    return getAllChoices(factorIds)
+        .sort((a, b) => a.length - b.length)
+        .slice(1);
+}

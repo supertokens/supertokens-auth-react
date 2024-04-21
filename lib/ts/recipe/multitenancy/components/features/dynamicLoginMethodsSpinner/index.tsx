@@ -14,10 +14,12 @@
  */
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { WithOrWithoutShadowDom } from "../../../../../components/featureWrapper";
+import SuperTokens from "../../../../../superTokens";
 import { useRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 import Multitenancy from "../../../recipe";
 import { DynamicLoginMethodsSpinnerTheme } from "../../themes/dynamicLoginMethodsSpinner";
 
+// TODO: move this to the root components dir and rename (incl. the override)
 // This is a special "feature" component:
 //  - it's used inside FeatureWrapper & RoutingComponent (meaning it can't use FeatureWrapper)
 //  - it's not used in any specific route (multitenancy doesn't have a pre-built UI)
@@ -27,7 +29,7 @@ const DynamicLoginMethodsSpinner: React.FC = () => {
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
-            <WithOrWithoutShadowDom useShadowDom={recipe.config.useShadowDom}>
+            <WithOrWithoutShadowDom useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}>
                 <DynamicLoginMethodsSpinnerTheme config={recipe.config} />
             </WithOrWithoutShadowDom>
         </ComponentOverrideContext.Provider>

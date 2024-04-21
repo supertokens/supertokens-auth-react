@@ -11,8 +11,6 @@ import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
 import Multitenancy from "supertokens-auth-react/recipe/multitenancy";
-import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 import UserRoles from "supertokens-auth-react/recipe/userroles";
 import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
 import TOTP from "supertokens-auth-react/recipe/totp";
@@ -399,7 +397,7 @@ let recipeList = [
                 console.log(`ST_LOGS SESSION PRE_API_HOOKS ${ctx.action}`);
             }
 
-            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `SESSION ${ctx.action}`) {
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`)?.includes(ctx.action)) {
                 let requestBody = ctx.requestInit.body === undefined ? "{}" : ctx.requestInit.body;
                 let jsonBody = JSON.parse(requestBody);
                 jsonBody = {
@@ -421,20 +419,18 @@ let recipeList = [
 
 let enabledRecipes = getEnabledRecipes();
 
-if (enabledRecipes.includes("thirdparty")) {
+if (
+    enabledRecipes.includes("thirdparty") ||
+    enabledRecipes.includes("thirdpartyemailpassword") ||
+    enabledRecipes.includes("thirdpartypasswordless")
+) {
     recipeList = [getThirdPartyConfigs(testContext), ...recipeList];
 }
-if (enabledRecipes.includes("emailpassword")) {
+if (enabledRecipes.includes("emailpassword") || enabledRecipes.includes("thirdpartyemailpassword")) {
     recipeList = [getEmailPasswordConfigs(testContext), ...recipeList];
 }
-if (enabledRecipes.includes("thirdpartyemailpassword")) {
-    recipeList = [getThirdPartyEmailPasswordConfigs(testContext), ...recipeList];
-}
-if (enabledRecipes.includes("passwordless")) {
+if (enabledRecipes.includes("passwordless") || enabledRecipes.includes("thirdpartypasswordless")) {
     recipeList = [getPasswordlessConfigs(testContext), ...recipeList];
-}
-if (enabledRecipes.includes("thirdpartypasswordless")) {
-    recipeList = [getThirdPartyPasswordlessConfigs(testContext), ...recipeList];
 }
 
 if (emailVerificationMode !== "OFF") {
@@ -461,10 +457,10 @@ SuperTokens.init({
     languageTranslations: {
         translations: {
             en: {
-                PWLESS_SIGN_IN_UP_FOOTER_TOS: "TOS",
+                AUTH_PAGE_FOOTER_TOS: "TOS",
             },
             hu: {
-                PWLESS_SIGN_IN_UP_FOOTER_TOS: "ÁSZF",
+                AUTH_PAGE_FOOTER_TOS: "ÁSZF",
             },
         },
     },
@@ -489,14 +485,18 @@ SuperTokens.init({
             console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
         }
     },
+    useShadowDom,
+    privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
+    termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
+    defaultToSignUp,
     recipeList,
 });
 
 /* App */
 function App() {
     useEffect(() => {
-        window.addEventListener("TPEP.getAuthorisationURLWithQueryParamsAndSetState", async () => {
-            ThirdPartyEmailPassword.getAuthorisationURLWithQueryParamsAndSetState({
+        window.addEventListener("TP.getAuthorisationURLWithQueryParamsAndSetState", async () => {
+            ThirdParty.getAuthorisationURLWithQueryParamsAndSetState({
                 providerId: "google",
                 authorisationURL: "",
                 userContext: {
@@ -695,7 +695,6 @@ function SessionInfoTable({ sessionInfo }) {
 
 function getEmailVerificationConfigs({ disableDefaultUI }) {
     return EmailVerification.init({
-        useShadowDom,
         disableDefaultUI,
         sendVerifyEmailScreen: {
             style: theme,
@@ -729,7 +728,7 @@ function getEmailVerificationConfigs({ disableDefaultUI }) {
             },
         },
         preAPIHook: async (context) => {
-            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `EMAIL_VERIFICATION ${context.action}`) {
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`)?.includes(context.action)) {
                 let errorFromStorage = localStorage.getItem("TRANSLATED_GENERAL_ERROR");
 
                 let jsonBody = JSON.parse(context.requestInit.body);
@@ -810,10 +809,6 @@ function getEmailPasswordConfigs({ disableDefaultUI, formFieldType }) {
                         log(`DOES_EMAIL_EXIST`);
                         return implementation.doesEmailExist(...args);
                     },
-                    sendPasswordResetEmail(...args) {
-                        log(`SEND_PASSWORD_RESET_EMAIL`);
-                        return implementation.sendPasswordResetEmail(...args);
-                    },
                     signIn(...args) {
                         log(`SIGN_IN`);
                         return implementation.signIn(...args);
@@ -822,15 +817,34 @@ function getEmailPasswordConfigs({ disableDefaultUI, formFieldType }) {
                         log(`SIGN_UP`);
                         return implementation.signUp(...args);
                     },
-                    submitNewPassword(...args) {
+                    sendPasswordResetEmail(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`SEND_PASSWORD_RESET_EMAIL RECEIVED_USER_CONTEXT`);
+                        }
+
+                        log(`SEND_PASSWORD_RESET_EMAIL`);
+                        return implementation.sendPasswordResetEmail(input);
+                    },
+                    getResetPasswordTokenFromURL(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`GET_RESET_TOKEN_FROM_URL RECEIVED_USER_CONTEXT`);
+                        }
+
+                        return implementation.getResetPasswordTokenFromURL(input);
+                    },
+                    submitNewPassword(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`SUBMIT_NEW_PASSWORD RECEIVED_USER_CONTEXT`);
+                        }
+
                         log(`SUBMIT_NEW_PASSWORD`);
-                        return implementation.submitNewPassword(...args);
+                        return implementation.submitNewPassword(input);
                     },
                 };
             },
         },
         preAPIHook: async (context) => {
-            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `EMAIL_PASSWORD ${context.action}`) {
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`)?.includes(context.action)) {
                 let errorFromStorage = localStorage.getItem("TRANSLATED_GENERAL_ERROR");
 
                 if (context.action === "EMAIL_EXISTS") {
@@ -854,7 +868,6 @@ function getEmailPasswordConfigs({ disableDefaultUI, formFieldType }) {
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
         },
-        useShadowDom,
         resetPasswordUsingTokenFeature: {
             disableDefaultUI,
             enterEmailForm: {
@@ -866,157 +879,14 @@ function getEmailPasswordConfigs({ disableDefaultUI, formFieldType }) {
         },
         signInAndUpFeature: {
             disableDefaultUI,
-            defaultToSignUp,
             signInForm: {
                 style: theme,
                 formFields: getSignInFormFields(formFieldType.signIn),
             },
             signUpForm: {
                 style: theme,
-                privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
-                termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
                 formFields: getSignUpFormFields(formFieldType.signUp),
             },
-        },
-    });
-}
-
-function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI, thirdPartyRedirectURL }) {
-    let providers = [
-        ThirdParty.Github.init(),
-        ThirdParty.Google.init(),
-        ThirdParty.Facebook.init(),
-        ThirdParty.Apple.init(),
-        {
-            id: "custom",
-            name: "Custom",
-        },
-        {
-            id: "auth0",
-            name: "Auth0",
-            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
-        },
-        {
-            id: "mock-provider",
-            name: "Mock Provider",
-        },
-    ];
-    if (staticProviderList) {
-        const ids = JSON.parse(staticProviderList);
-        providers = ids.map((id) => providers.find((p) => p.id === id) || { id, name: id });
-    }
-    return ThirdPartyPasswordless.init({
-        override: {
-            functions: (implementation) => {
-                const log = logWithPrefix(`ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE`);
-
-                return {
-                    ...implementation,
-                    doesPasswordlessUserEmailExist(...args) {
-                        log(`DOES_PASSWORDLESS_USER_EMAIL_EXIST`);
-                        return implementation.doesPasswordlessUserEmailExist(...args);
-                    },
-                    doesPasswordlessUserPhoneNumberExist(...args) {
-                        log(`DOES_PASSWORDLESS_USER_PHONE_NUMBER_EXIST`);
-                        return implementation.doesPasswordlessUserPhoneNumberExist(...args);
-                    },
-                    createPasswordlessCode(...args) {
-                        log(`CREATE_CODE`);
-                        return implementation.createPasswordlessCode(...args);
-                    },
-                    resendPasswordlessCode(...args) {
-                        log(`RESEND_CODE`);
-                        return implementation.resendPasswordlessCode(...args);
-                    },
-                    consumePasswordlessCode(...args) {
-                        log(`CONSUME_CODE`);
-                        return implementation.consumePasswordlessCode(...args);
-                    },
-                    getPasswordlessLoginAttemptInfo(...args) {
-                        log(`GET_LOGIN_ATTEMPT_INFO`);
-                        return implementation.getPasswordlessLoginAttemptInfo(...args);
-                    },
-                    setPasswordlessLoginAttemptInfo(...args) {
-                        log(`SET_LOGIN_ATTEMPT_INFO`);
-                        return implementation.setPasswordlessLoginAttemptInfo(...args);
-                    },
-                    clearPasswordlessLoginAttemptInfo(...args) {
-                        log(`CLEAR_LOGIN_ATTEMPT_INFO`);
-                        return implementation.clearPasswordlessLoginAttemptInfo(...args);
-                    },
-                    getAuthorisationURLFromBackend(...args) {
-                        log(`GET_OAUTH_AUTHORISATION_URL`);
-                        return implementation.getAuthorisationURLFromBackend(...args);
-                    },
-                    getThirdPartyStateAndOtherInfoFromStorage(...args) {
-                        log(`GET_OAUTH_STATE`);
-                        return implementation.getThirdPartyStateAndOtherInfoFromStorage(...args);
-                    },
-                    getThirdPartyAuthorisationURLWithQueryParamsAndSetState(...args) {
-                        log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
-                        return implementation.getThirdPartyAuthorisationURLWithQueryParamsAndSetState(...args);
-                    },
-                    setThirdPartyStateAndOtherInfoToStorage(...args) {
-                        log(`SET_OAUTH_STATE`);
-                        return implementation.setThirdPartyStateAndOtherInfoToStorage(...args);
-                    },
-                    thirdPartySignInAndUp(...args) {
-                        log(`THIRD_PARTY_SIGN_IN_AND_UP`);
-                        return implementation.thirdPartySignInAndUp(...args);
-                    },
-                };
-            },
-        },
-        preAPIHook: async (context) => {
-            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `THIRD_PARTY_PASSWORDLESS ${context.action}`) {
-                if (context.action === "GET_AUTHORISATION_URL") {
-                    context.url += "&generalError=true";
-                } else {
-                    let jsonBody = JSON.parse(context.requestInit.body);
-                    jsonBody = {
-                        ...jsonBody,
-                        generalError: true,
-                    };
-                    context.requestInit.body = JSON.stringify(jsonBody);
-                }
-            }
-
-            console.log(`ST_LOGS THIRDPARTYPASSWORDLESS PRE_API_HOOKS ${context.action}`);
-            return context;
-        },
-        getRedirectionURL: async (context) => {
-            console.log(`ST_LOGS THIRDPARTYPASSWORDLESS GET_REDIRECTION_URL ${context.action}`);
-        },
-        onHandleEvent: async (context) => {
-            console.log(`ST_LOGS THIRDPARTYPASSWORDLESS ON_HANDLE_EVENT ${context.action}`);
-        },
-        useShadowDom,
-        contactMethod: passwordlessContactMethodType,
-        disablePasswordless: false,
-        signInUpFeature: {
-            disableDefaultUI,
-            style: theme,
-            thirdPartyProviderAndEmailOrPhoneFormStyle: `
-                [data-supertokens~=providerCustom] {
-                    color: red;
-                },
-            `,
-            privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-            termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
-            providers,
-            defaultCountry: passwordlessDefaultCountry,
-            resendEmailOrSMSGapInSeconds: 2,
-            guessInternationPhoneNumberFromInputPhoneNumber: passwordlessDisablePhoneGuess
-                ? () => undefined
-                : undefined,
-        },
-        linkClickedScreenFeature: {
-            disableDefaultUI,
-            style: theme,
-        },
-        mfaFeature: {
-            disableDefaultUI,
-            style: theme,
         },
     });
 }
@@ -1065,7 +935,7 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
             },
         },
         preAPIHook: async (context) => {
-            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `PASSWORDLESS ${context.action}`) {
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`)?.includes(context.action)) {
                 let jsonBody = JSON.parse(context.requestInit.body);
                 jsonBody = {
                     ...jsonBody,
@@ -1083,7 +953,6 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS PASSWORDLESS ON_HANDLE_EVENT ${context.action}`);
         },
-        useShadowDom,
         contactMethod: passwordlessContactMethodType,
         signInUpFeature: {
             defaultCountry: passwordlessDefaultCountry,
@@ -1093,9 +962,6 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
             resendEmailOrSMSGapInSeconds: 2,
             disableDefaultUI,
             style: theme,
-
-            privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
-            termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
         },
         linkClickedScreenFeature: {
             disableDefaultUI,
@@ -1144,7 +1010,8 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
     }
     return ThirdParty.init({
         preAPIHook: async (context) => {
-            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `THIRD_PARTY ${context.action}`) {
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`)?.includes(context.action)) {
+                // TODO
                 if (context.action === "GET_AUTHORISATION_URL") {
                     context.url += "&generalError=true";
                 } else {
@@ -1172,153 +1039,20 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
 
                 return {
                     ...implementation,
-                    getAuthorisationURLWithQueryParamsAndSetState(...args) {
-                        log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
-                        return implementation.getAuthorisationURLWithQueryParamsAndSetState(...args);
-                    },
-                    getAuthorisationURLFromBackend(...args) {
-                        log(`GET_OAUTH_AUTHORISATION_URL`);
-                        return implementation.getAuthorisationURLFromBackend(...args);
-                    },
-                    getStateAndOtherInfoFromStorage(...args) {
-                        log(`GET_OAUTH_STATE`);
-                        return implementation.getStateAndOtherInfoFromStorage(...args);
-                    },
-                    setStateAndOtherInfoToStorage(...args) {
-                        log(`SET_OAUTH_STATE`);
-                        return implementation.setStateAndOtherInfoToStorage(...args);
-                    },
-                    signInAndUp(...args) {
-                        log(`SIGN_IN_AND_UP`);
-                        return implementation.signInAndUp(...args);
-                    },
-                };
-            },
-        },
-        useShadowDom,
-        signInAndUpFeature: {
-            disableDefaultUI,
-            style: theme,
-            privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
-            termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
-            providers,
-        },
 
-        oAuthCallbackScreen: {
-            style: theme,
-        },
-    });
-}
-
-function getThirdPartyEmailPasswordConfigs({
-    staticProviderList,
-    disableDefaultUI,
-    thirdPartyRedirectURL,
-    formFieldType,
-}) {
-    let providers = [
-        ThirdParty.Github.init(),
-        ThirdParty.Google.init(),
-        ThirdParty.Facebook.init(),
-        ThirdParty.Apple.init(),
-        {
-            id: "custom",
-            name: "Custom",
-        },
-        {
-            id: "auth0",
-            name: "Auth0",
-            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
-        },
-        {
-            id: "mock-provider",
-            name: "Mock Provider",
-        },
-    ];
-    if (staticProviderList) {
-        const ids = JSON.parse(staticProviderList);
-        providers = ids.map((id) => providers.find((p) => p.id === id) || { id, name: id });
-    }
-    return ThirdPartyEmailPassword.init({
-        preAPIHook: async (context) => {
-            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `THIRD_PARTY_EMAIL_PASSWORD ${context.action}`) {
-                if (context.action === "GET_AUTHORISATION_URL" || context.action === "EMAIL_EXISTS") {
-                    context.url += "&generalError=true";
-                } else {
-                    let jsonBody = JSON.parse(context.requestInit.body);
-                    jsonBody = {
-                        ...jsonBody,
-                        generalError: true,
-                    };
-                    context.requestInit.body = JSON.stringify(jsonBody);
-                }
-            }
-
-            console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
-            return context;
-        },
-        getRedirectionURL: async (context) => {
-            console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
-            if (context.action === "SUCCESS") {
-                setIsNewUserToStorage("thirdpartyemailpassword", context.isNewRecipeUser);
-                return context.redirectToPath || "/dashboard";
-            }
-        },
-        onHandleEvent: async (context) => {
-            console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
-        },
-        override: {
-            functions: (implementation) => {
-                const log = logWithPrefix(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE`);
-
-                return {
-                    ...implementation,
-                    getAuthorisationURLWithQueryParamsAndSetState(input) {
-                        if (input.userContext["key"] !== undefined) {
-                            log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE RECEIVED_USER_CONTEXT`);
-                        }
-
-                        log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
-                        return implementation.getAuthorisationURLWithQueryParamsAndSetState(input);
-                    },
                     generateStateToSendToOAuthProvider(input) {
                         if (input.userContext["key"] !== undefined) {
                             log(`GENERATE_STATE RECEIVED_USER_CONTEXT`);
                         }
-
+                        log(`GENERATE_STATE`);
                         return implementation.generateStateToSendToOAuthProvider(input);
                     },
-                    thirdPartySignInAndUp(input) {
+                    getAuthorisationURLWithQueryParamsAndSetState(input) {
                         if (input.userContext["key"] !== undefined) {
-                            log(`SIGN_IN_AND_UP RECEIVED_USER_CONTEXT`);
+                            log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE RECEIVED_USER_CONTEXT`);
                         }
-
-                        log(`SIGN_IN_AND_UP`);
-                        return implementation.thirdPartySignInAndUp(input);
-                    },
-                    emailPasswordSignIn(...args) {
-                        log(`SIGN_IN_AND_UP`);
-                        return implementation.emailPasswordSignIn(...args);
-                    },
-                    emailPasswordSignUp(...args) {
-                        log(`SIGN_IN_AND_UP`);
-                        return implementation.emailPasswordSignUp(...args);
-                    },
-                    setStateAndOtherInfoToStorage(input) {
-                        if (input.userContext["key"] !== undefined) {
-                            log(`SET_OAUTH_STATE RECEIVED_USER_CONTEXT`);
-                        }
-
-                        log(`SET_OAUTH_STATE`);
-                        return implementation.setStateAndOtherInfoToStorage(input);
-                    },
-                    getStateAndOtherInfoFromStorage(input) {
-                        if (input.userContext["key"] !== undefined) {
-                            log(`GET_OAUTH_STATE RECEIVED_USER_CONTEXT`);
-                        }
-
-                        log(`GET_OAUTH_STATE`);
-                        return implementation.getStateAndOtherInfoFromStorage(input);
+                        log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
+                        return implementation.getAuthorisationURLWithQueryParamsAndSetState(input);
                     },
                     getAuthorisationURLFromBackend(input) {
                         if (input.userContext["key"] !== undefined) {
@@ -1344,33 +1078,31 @@ function getThirdPartyEmailPasswordConfigs({
 
                         return implementation.getAuthorisationURLFromBackend(input);
                     },
-                    submitNewPassword(input) {
+                    getStateAndOtherInfoFromStorage(input) {
                         if (input.userContext["key"] !== undefined) {
-                            log(`SUBMIT_NEW_PASSWORD RECEIVED_USER_CONTEXT`);
+                            log(`GET_OAUTH_STATE RECEIVED_USER_CONTEXT`);
                         }
 
-                        log(`SUBMIT_NEW_PASSWORD`);
-                        return implementation.submitNewPassword(input);
+                        log(`GET_OAUTH_STATE`);
+                        return implementation.getStateAndOtherInfoFromStorage(input);
                     },
-                    sendPasswordResetEmail(input) {
+
+                    setStateAndOtherInfoToStorage(input) {
                         if (input.userContext["key"] !== undefined) {
-                            log(`SEND_PASSWORD_RESET_EMAIL RECEIVED_USER_CONTEXT`);
+                            log(`SET_OAUTH_STATE RECEIVED_USER_CONTEXT`);
                         }
 
-                        log(`SEND_PASSWORD_RESET_EMAIL`);
-                        return implementation.sendPasswordResetEmail(input);
+                        log(`SET_OAUTH_STATE`);
+                        return implementation.setStateAndOtherInfoToStorage(input);
                     },
-                    getResetPasswordTokenFromURL(input) {
+                    signInAndUp(input) {
                         if (input.userContext["key"] !== undefined) {
-                            log(`GET_RESET_TOKEN_FROM_URL RECEIVED_USER_CONTEXT`);
+                            log(`SIGN_IN_AND_UP RECEIVED_USER_CONTEXT`);
                         }
+                        log(`SIGN_IN_AND_UP`);
+                        return implementation.signInAndUp(input);
+                    },
 
-                        return implementation.getResetPasswordTokenFromURL(input);
-                    },
-                    doesEmailExist(...args) {
-                        log(`DOES_EMAIL_EXIST`);
-                        return implementation.doesEmailExist(...args);
-                    },
                     getAuthStateFromURL(input) {
                         if (input.userContext["key"] !== undefined) {
                             log(`GET_AUTH_STATE_FROM_URL RECEIVED_USER_CONTEXT`);
@@ -1388,24 +1120,11 @@ function getThirdPartyEmailPasswordConfigs({
                 };
             },
         },
-        useShadowDom,
-        resetPasswordUsingTokenFeature: {
-            disableDefaultUI,
-        },
         signInAndUpFeature: {
             disableDefaultUI,
-            signInForm: {
-                formFields: getSignInFormFields(formFieldType.signIn),
-            },
-            signUpForm: {
-                formFields: getSignUpFormFields(formFieldType.signUp),
-                privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
-                termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
-            },
             style: theme,
             providers,
         },
-        disableEmailPassword: false,
 
         oAuthCallbackScreen: {
             style: theme,

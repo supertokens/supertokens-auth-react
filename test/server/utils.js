@@ -20,6 +20,7 @@ let axios = require("axios").default;
 module.exports.executeCommand = async function (cmd) {
     return new Promise((resolve, reject) => {
         exec(cmd, (err, stdout, stderr) => {
+            console.log(err, stderr, stdout);
             if (err) {
                 reject(err);
                 return;
@@ -122,6 +123,7 @@ module.exports.startST = async function (config = {}) {
                     " test_mode"
             )
             .catch((err) => {
+                console.log(err);
                 if (!returned) {
                     returned = true;
                     reject(err);

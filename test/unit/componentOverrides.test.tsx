@@ -6,9 +6,7 @@ import { ComponentOverrideContext } from "../../lib/ts/components/componentOverr
 import { ComponentOverrideMap as EmailPasswordOverrideMap } from "../../lib/ts/recipe/emailpassword/types";
 import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../../lib/ts/recipe/thirdparty/types";
 import { ComponentOverrideMap as EmailVerificationOverrideMap } from "../../lib/ts/recipe/emailverification/types";
-import { ComponentOverrideMap as ThirdPartyEmailPasswordOverrideMap } from "../../lib/ts/recipe/thirdpartyemailpassword/types";
 import { ComponentOverrideMap as PasswordlessOverrideMap } from "../../lib/ts/recipe/passwordless/types";
-import { ComponentOverrideMap as ThirdPartyPasswordlessOverrideMap } from "../../lib/ts/recipe/thirdpartypasswordless/types";
 import { ComponentOverrideMap as TOTPOverrideMap } from "../../lib/ts/recipe/totp/types";
 import { ComponentOverrideMap as MFAOverrideMap } from "../../lib/ts/recipe/multifactorauth/types";
 
@@ -17,12 +15,6 @@ import EmailPassword from "../../lib/ts/recipe/emailpassword/recipe";
 import { SessionContextType } from "../../lib/ts/recipe/session";
 import Session from "../../lib/ts/recipe/session/recipe";
 import SuperTokens from "../../lib/ts/superTokens";
-import ThirdPartyEmailPassword from "../../lib/ts/recipe/thirdpartyemailpassword/recipe";
-import { Github, ThirdpartyEmailPasswordComponentsOverrideProvider } from "../../lib/ts/recipe/thirdpartyemailpassword";
-import {
-    SignInAndUp as SignInAndUpThirdpartyEmailPassword,
-    ThirdPartySignInAndUpCallback,
-} from "../../lib/ts/recipe/thirdpartyemailpassword/prebuiltui";
 import { EmailPasswordComponentsOverrideProvider } from "../../lib/ts/recipe/emailpassword";
 import { SignInAndUp as SignInAndUpEmailPassword } from "../../lib/ts/recipe/emailpassword/prebuiltui";
 
@@ -42,8 +34,6 @@ import { ProvidersForm } from "../../lib/ts/recipe/thirdparty/components/themes/
 import { SignInAndUpCallbackTheme } from "../../lib/ts/recipe/thirdparty/components/themes/signInAndUpCallback";
 import { SendVerifyEmail } from "../../lib/ts/recipe/emailverification/components/themes/emailVerification/sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "../../lib/ts/recipe/emailverification/components/themes/emailVerification/verifyEmailLinkClicked";
-import { Header as ThirdPartyEmailPasswordHeader } from "../../lib/ts/recipe/thirdpartyemailpassword/components/themes/signInAndUp/header";
-import { Header as ThirdPartyPasswordlessHeader } from "../../lib/ts/recipe/thirdpartypasswordless/components/themes/signInUp/header";
 import { ComponentOverride } from "../../lib/ts/components/componentOverride/componentOverride";
 import { LinkClickedScreen } from "../../lib/ts/recipe/passwordless/components/themes/linkClickedScreen";
 import { LinkSent } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/linkSent";
@@ -79,9 +69,7 @@ import { FactorOption } from "../../lib/ts/recipe/multifactorauth/components/the
 type AllComponentsOverrideMap = EmailPasswordOverrideMap &
     ThirdPartyOverrideMap &
     EmailVerificationOverrideMap &
-    ThirdPartyEmailPasswordOverrideMap &
     PasswordlessOverrideMap &
-    ThirdPartyPasswordlessOverrideMap &
     TOTPOverrideMap &
     MFAOverrideMap;
 
@@ -111,7 +99,6 @@ describe("Theme component overrides", () => {
         ThirdPartySignInAndUpCallbackTheme_Override: SignInAndUpCallbackTheme,
         EmailVerificationSendVerifyEmail_Override: SendVerifyEmail,
         EmailVerificationVerifyEmailLinkClicked_Override: VerifyEmailLinkClicked,
-        ThirdPartyEmailPasswordHeader_Override: ThirdPartyEmailPasswordHeader,
         PasswordlessEmailForm_Override: EmailForm,
         PasswordlessPhoneForm_Override: PhoneForm,
         PasswordlessEmailOrPhoneForm_Override: EmailOrPhoneForm,
@@ -127,7 +114,6 @@ describe("Theme component overrides", () => {
         PasswordlessMFAOTPFooter_Override: MFAOTPFooter,
         PasswordlessMFAOTPHeader_Override: MFAOTPHeader,
         PasswordlessMFAOTPLoadingScreen_Override: MFAOTPLoadingScreen,
-        ThirdPartyPasswordlessHeader_Override: ThirdPartyPasswordlessHeader,
         TOTPBlockedScreen_Override: BlockedScreen,
         TOTPCodeForm_Override: CodeForm,
         TOTPCodeVerificationFooter_Override: CodeVerificationFooter,
@@ -222,8 +208,6 @@ describe("Components override per recipe provider", () => {
         jest.clearAllMocks();
         SuperTokens.reset();
         EmailPassword.reset();
-        ThirdPartyEmailPassword.reset();
-        Github.reset();
 
         SuperTokens.init({
             appInfo: {
@@ -234,12 +218,6 @@ describe("Components override per recipe provider", () => {
                 websiteDomain: "http://localhost:3000",
             },
             recipeList: [
-                ThirdPartyEmailPassword.init({
-                    signInAndUpFeature: {
-                        providers: [Github.init()],
-                    },
-                    useShadowDom: false,
-                }),
                 ThirdParty.init({
                     signInAndUpFeature: {
                         providers: [Google.init()],
@@ -258,97 +236,5 @@ describe("Components override per recipe provider", () => {
             doesSessionExist: false,
             loading: false,
         });
-    });
-
-    it("Should not affect other recipes components when the same component is overridden", async () => {
-        const result = render(
-            <EmailPasswordComponentsOverrideProvider
-                components={{
-                    EmailPasswordSignInHeader_Override: () => <div>Override emailpassword</div>,
-                }}>
-                <SignInAndUpThirdpartyEmailPassword redirectOnSessionExists={false} />
-            </EmailPasswordComponentsOverrideProvider>
-        );
-
-        expect(await result.findByText("Sign In")).toBeInTheDocument();
-        expect(await result.queryByText("Override emailpassword")).not.toBeInTheDocument();
-    });
-
-    it("Should not affect each others components when two recipes override the same component", async () => {
-        const emailPasswordKey = "EmailPassword_Override";
-        const thirdpartyEmailPasswordKey = "ThirdpartyEmailPassword_Override";
-
-        const result = render(
-            <EmailPasswordComponentsOverrideProvider
-                components={{
-                    EmailPasswordSignInHeader_Override: () => (
-                        <div data-testid="emailpassword-override">{emailPasswordKey}</div>
-                    ),
-                }}>
-                <ThirdpartyEmailPasswordComponentsOverrideProvider
-                    components={{
-                        EmailPasswordSignInHeader_Override: () => (
-                            <div data-testid="thirdpartyemailpassword-override">{thirdpartyEmailPasswordKey}</div>
-                        ),
-                    }}>
-                    <div data-testid="emailpassword-wrapper">
-                        <SignInAndUpEmailPassword redirectOnSessionExists={false} />
-                    </div>
-                    <div data-testid="thirdpartyemailpassword-wrapper">
-                        <SignInAndUpThirdpartyEmailPassword redirectOnSessionExists={false} />
-                    </div>
-                </ThirdpartyEmailPasswordComponentsOverrideProvider>
-            </EmailPasswordComponentsOverrideProvider>
-        );
-
-        expect(await result.findAllByText(emailPasswordKey)).toHaveLength(1);
-        expect(await result.findAllByText(thirdpartyEmailPasswordKey)).toHaveLength(1);
-
-        expect(
-            await within(await result.getByTestId("emailpassword-wrapper")).getByText(emailPasswordKey)
-        ).toBeInTheDocument();
-
-        expect(
-            await within(await result.getByTestId("thirdpartyemailpassword-wrapper")).getByText(
-                thirdpartyEmailPasswordKey
-            )
-        ).toBeInTheDocument();
-    });
-
-    it("Should not affect each others components when two recipes override the same component", async () => {
-        const thirdPartyText = "thirdparty";
-        const thirdpartyEmailPasswordText = "thirpartyemailpassword";
-        SuperTokens.getInstanceOrThrow().redirectToAuth = jest.fn();
-
-        const result = render(
-            <ThirdpartyComponentsOverrideProvider
-                components={{
-                    ThirdPartySignInAndUpCallbackTheme_Override: () => (
-                        <div data-testid="thirdparty-override"> {thirdPartyText} </div>
-                    ),
-                }}>
-                <ThirdpartyEmailPasswordComponentsOverrideProvider
-                    components={{
-                        ThirdPartySignInAndUpCallbackTheme_Override: () => (
-                            <div data-testid="thirdpartyemailpassword-override"> {thirdpartyEmailPasswordText} </div>
-                        ),
-                    }}>
-                    <div data-testid="thirdparty-wrapper">
-                        <SignInAndUpCallback />
-                    </div>
-                    <div data-testid="thirdpartyemailpassword-wrapper">
-                        <ThirdPartySignInAndUpCallback />
-                    </div>
-                </ThirdpartyEmailPasswordComponentsOverrideProvider>
-            </ThirdpartyComponentsOverrideProvider>
-        );
-
-        expect(await result.findAllByText(thirdPartyText)).toHaveLength(1);
-        expect(await result.findAllByText(thirdpartyEmailPasswordText)).toHaveLength(1);
-
-        expect(within(result.getByTestId("thirdparty-wrapper")).getByText(thirdPartyText)).toBeInTheDocument();
-        expect(
-            within(result.getByTestId("thirdpartyemailpassword-wrapper")).getByText(thirdpartyEmailPasswordText)
-        ).toBeInTheDocument();
     });
 });

@@ -39,8 +39,6 @@ import {
     backendBeforeEach,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
-import { getThirdPartyTestCases } from "./thirdparty.test";
-import { getPasswordlessTestCases } from "./passwordless.test";
 
 /*
  * Tests.
@@ -53,15 +51,15 @@ describe("SuperTokens Third Party Passwordless", function () {
     const email = "bradparishdoh@gmail.com";
 
     const signInUpPageLoadLogs = isReact16()
-        ? ["ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO"]
+        ? ["ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO"]
         : [
-              "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-              "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+              "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+              "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
           ];
 
     before(async function () {
         const features = await getFeatureFlags();
-        if (!features.includes("thirdpartypasswordless")) {
+        if (!features.includes("passwordless")) {
             this.skip();
         }
     });
@@ -187,21 +185,22 @@ describe("SuperTokens Third Party Passwordless", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 ...signInUpPageLoadLogs,
-                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE CREATE_CODE",
-                "ST_LOGS THIRDPARTYPASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                "ST_LOGS THIRDPARTYPASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE CONSUME_CODE",
-                "ST_LOGS THIRDPARTYPASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
+                "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
+                "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
+                "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
+                "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
 
-                "ST_LOGS THIRDPARTYPASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
+                "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
+                "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
 
-                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS THIRDPARTYPASSWORDLESS",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS PASSWORDLESS",
 
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
@@ -212,7 +211,7 @@ describe("SuperTokens Third Party Passwordless", function () {
                 this.skip();
             }
             await assertProviders(page);
-            await setEnabledRecipes(["thirdpartypasswordless"], []);
+            await setEnabledRecipes(["thirdparty"], []);
 
             await Promise.all([
                 page.waitForResponse(

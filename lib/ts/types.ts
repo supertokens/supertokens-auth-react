@@ -113,7 +113,7 @@ export type SuperTokensConfig = {
          * e.g.:
          * {
          *     en: {
-         *         PWLESS_SIGN_IN_UP_FOOTER_TOS: "TOS",
+         *         AUTH_PAGE_FOOTER_TOS: "TOS",
          *     }
          * }
          */
@@ -129,6 +129,24 @@ export type SuperTokensConfig = {
         context: GetRedirectionURLContext,
         userContext: UserContext
     ) => Promise<string | undefined | null>;
+
+    style?: string;
+    useShadowDom?: boolean;
+
+    /*
+     * Should default to Sign up form.
+     */
+    defaultToSignUp?: boolean;
+
+    /*
+     * Privacy policy link for sign up form.
+     */
+    privacyPolicyLink?: string;
+
+    /*
+     * Terms and conditions link for sign up form.
+     */
+    termsOfServiceLink?: string;
 };
 
 export type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "signOut">;
@@ -333,6 +351,8 @@ export type NormalisedFormField = {
      *Ability to provide default value to input field.
      */
     getDefaultValue?: () => string;
+
+    hidden?: boolean;
 };
 
 export type ReactComponentClass<P = any> = ComponentClass<P, any> | ((props: P) => JSX.Element);
@@ -390,3 +410,34 @@ export type Navigate =
     | NavigateFunction;
 
 export type UserContext = Record<string, any>;
+
+export type AuthComponentProps = {
+    setFactorList: (factorIds: string[] | undefined) => void;
+    rebuildAuthPage: () => void;
+    navigate: Navigate | undefined;
+    userContext: UserContext;
+    error: string | undefined;
+    onError: (err: string) => void;
+    clearError: () => void;
+};
+export type PartialAuthComponentProps = AuthComponentProps & {
+    // TODO: do we need anything extra here?
+};
+export type FullPageAuthComponent<T = any> = {
+    type: "FULL_PAGE";
+    preloadInfoAndRunChecks: (
+        firstFactors: string[],
+        userContext: UserContext
+    ) => Promise<{ shouldDisplay: true; preloadInfo: T } | { shouldDisplay: false }>;
+    component: React.FC<AuthComponentProps & { preloadInfo: T }>;
+};
+
+export type PartialAuthComponent = {
+    type: "SIGN_IN_UP" | "SIGN_IN" | "SIGN_UP"; // TODO: maybe a better name?
+    factorIds: string[];
+    displayOrder: number;
+    component: React.FC<PartialAuthComponentProps>;
+    translations: TranslationStore;
+};
+
+export type AuthComponent<T = any> = PartialAuthComponent | FullPageAuthComponent<T>;

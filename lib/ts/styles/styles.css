@@ -173,6 +173,7 @@
     border-bottom: 0.3px solid #dddddd;
     align-items: center;
     padding-bottom: 5px;
+    flex: 3 3;
 }
 
 [data-supertokens~="headerTinyTitle"] {
@@ -343,4 +344,38 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+[data-supertokens~="dividerWithOr"] {
+    padding-top: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    color: rgb(var(--palette-textPrimary));
+}
+
+[data-supertokens~="dividerText"] {
+    flex: 1 1;
+}
+
+[data-supertokens~="formLabelWithLinkWrapper"] {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+[data-supertokens~="formLabelLinkBtn"] {
+    width: auto;
+    margin-top: 0;
+    line-height: 24px;
+}
+
+[data-supertokens~="formLabelLinkBtn"]:hover {
+    text-decoration: underline;
+}
+[data-supertokens~="formLabelLinkBtn"]:disabled {
+    color: rgb(var(--palette-textPrimary));
+    cursor: default;
+    text-decoration: none;
 }

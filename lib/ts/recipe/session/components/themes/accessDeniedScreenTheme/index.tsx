@@ -62,12 +62,13 @@ const AccessDeniedScreen: FC<AccessDeniedThemeProps> = (props) => {
 const AccessDeniedThemeWithOverride = withOverride("SessionAccessDenied", AccessDeniedScreen);
 
 export const AccessDeniedScreenTheme: React.FC<AccessDeniedThemeProps> = (props) => {
-    const hasFont = hasFontDefined(props.config.rootStyle);
+    const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
+    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     return (
         <ThemeBase
             loadDefaultFont={!hasFont}
-            userStyles={[props.config.rootStyle, props.config.accessDeniedScreen.style]}>
+            userStyles={[rootStyle, props.config.recipeRootStyle, props.config.accessDeniedScreen.style]}>
             <AccessDeniedThemeWithOverride {...props} />
         </ThemeBase>
     );

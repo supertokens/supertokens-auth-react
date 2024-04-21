@@ -15,6 +15,7 @@
 
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { hasFontDefined } from "../../../../../styles/styles";
+import SuperTokens from "../../../../../superTokens";
 import { useTranslation } from "../../../../../translation/translationContext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { AccessDeniedScreen } from "../../../../session/prebuiltui";
@@ -31,7 +32,7 @@ export function FactorChooserTheme(props: FactorChooserThemeProps): JSX.Element 
     if (props.availableFactors.length === 0) {
         return (
             <AccessDeniedScreen
-                useShadowDom={false}
+                useShadowDom={false /* We set this to false, because we are already inside a shadowDom (if required) */}
                 error={props.showBackButton ? t("MFA_NO_AVAILABLE_OPTIONS") : t("MFA_NO_AVAILABLE_OPTIONS_LOGIN")}
             />
         );
@@ -50,13 +51,14 @@ export function FactorChooserTheme(props: FactorChooserThemeProps): JSX.Element 
 }
 
 function FactorChooserThemeWrapper(props: FactorChooserThemeProps): JSX.Element {
-    const hasFont = hasFontDefined(props.config.rootStyle);
+    const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
+    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     return (
         <UserContextWrapper userContext={props.userContext}>
             <ThemeBase
                 loadDefaultFont={!hasFont}
-                userStyles={[props.config.rootStyle, props.config.factorChooserScreen.style]}>
+                userStyles={[rootStyle, props.config.recipeRootStyle, props.config.factorChooserScreen.style]}>
                 <FactorChooserTheme {...props} />
             </ThemeBase>
         </UserContextWrapper>

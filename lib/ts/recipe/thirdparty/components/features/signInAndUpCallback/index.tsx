@@ -182,7 +182,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
-                useShadowDom={props.recipe.config.useShadowDom}
+                useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}
                 defaultStore={defaultTranslationsThirdParty}>
                 <Fragment>
                     {/* No custom theme, use default. */}

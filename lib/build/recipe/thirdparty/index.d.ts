@@ -19,12 +19,17 @@ import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
 import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import type { User } from "supertokens-web-js/types";
 export default class Wrapper {
-    static init(
-        config?: UserInput
-    ): import("../../types").RecipeInitResult<
+    static init(config?: UserInput): import("../../types").RecipeInitResult<
         never,
         import("./types").PreAndPostAPIHookAction,
-        OnHandleEventContext,
+        {
+            rid: "thirdparty";
+            action: "SUCCESS";
+            isNewRecipeUser: boolean;
+            createdNewSession: boolean;
+            user: User;
+            userContext: UserContext;
+        },
         import("./types").NormalisedConfig
     >;
     static signOut(input?: { userContext?: UserContext }): Promise<void>;

@@ -1,1 +1,2 @@
-export declare const OTPSMSIcon: () => import("react/jsx-runtime").JSX.Element;
+/// <reference types="react" />
+export declare const OTPSMSIcon: () => JSX.Element;

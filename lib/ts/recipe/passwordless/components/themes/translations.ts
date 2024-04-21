@@ -26,19 +26,14 @@ export const defaultTranslationsPasswordless = {
         ERROR_SIGN_IN_UP_RESEND_RESTART_FLOW: "Login timed out. Please try again.",
         ERROR_SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW: "Login unsuccessful. Please try again.",
 
-        PWLESS_SIGN_IN_UP_HEADER_TITLE: "Sign Up or Log In",
-
-        PWLESS_SIGN_IN_UP_FOOTER_START: "By continuing, you agree to our ",
-        PWLESS_SIGN_IN_UP_FOOTER_TOS: "Terms of Service",
-        PWLESS_SIGN_IN_UP_FOOTER_AND: " and ",
-        PWLESS_SIGN_IN_UP_FOOTER_PP: "Privacy Policy",
-        PWLESS_SIGN_IN_UP_FOOTER_END: "",
-
         PWLESS_SIGN_IN_UP_EMAIL_LABEL: "Email",
         PWLESS_SIGN_IN_UP_PHONE_LABEL: "Phone Number",
         PWLESS_SIGN_IN_UP_EMAIL_OR_PHONE_LABEL: "Email or Phone number",
         PWLESS_SIGN_IN_UP_CONTINUE_BUTTON: "CONTINUE",
         PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR: "Please enter a valid phone number with its country code.",
+        PWLESS_COMBO_CONTINUE_WITH_PASSWORDLESS: "Continue with passwordless",
+
+        PWLESS_COMBO_FORGOT_PW_LINK: "Forgot password?",
 
         PWLESS_LINK_SENT_RESEND_SUCCESS: "Link resent",
         PWLESS_LINK_SENT_RESEND_TITLE: "Link sent!",

@@ -19,6 +19,7 @@ export default class ThirdParty extends AuthRecipe<
     static RECIPE_ID: string;
     recipeID: string;
     firstFactorIds: string[];
+    getFirstFactorsForAuthPage(): string[];
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         webJSRecipe?: WebJSRecipeInterface<typeof ThirdpartyWebJS>

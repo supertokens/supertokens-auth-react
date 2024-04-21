@@ -23,6 +23,7 @@ import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
+import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import {
     clearErrorQueryParam,
@@ -263,7 +264,7 @@ export const MFAFeature: React.FC<
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
-                useShadowDom={props.recipe.config.useShadowDom}
+                useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}
                 defaultStore={defaultTranslationsPasswordless}>
                 <MFAFeatureInner {...props} />
             </FeatureWrapper>

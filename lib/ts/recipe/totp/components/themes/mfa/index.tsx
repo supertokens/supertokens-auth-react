@@ -16,6 +16,7 @@ import React from "react";
 
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { hasFontDefined } from "../../../../../styles/styles";
+import SuperTokens from "../../../../../superTokens";
 import { useTranslation } from "../../../../../translation/translationContext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
@@ -63,7 +64,10 @@ const TOTPMFATheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> = 
             onSignOutClicked={props.onSignOutClicked}
         />
     ) : activeScreen === TOTPMFAScreens.AccessDenied ? (
-        <AccessDeniedScreen error={t(featureState.error!)} useShadowDom={false} />
+        <AccessDeniedScreen
+            error={t(featureState.error!)}
+            useShadowDom={false /* We set this to false, because we are already inside a shadowDom (if required) */}
+        />
     ) : activeScreen === TOTPMFAScreens.Loading ? (
         <LoadingScreen />
     ) : (
@@ -118,7 +122,8 @@ const TOTPMFATheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> = 
 };
 
 function TOTPMFAThemeWrapper(props: TOTPMFAProps): JSX.Element {
-    const hasFont = hasFontDefined(props.config.rootStyle);
+    const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
+    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     const activeScreen = getActiveScreen(props);
 
@@ -135,7 +140,7 @@ function TOTPMFAThemeWrapper(props: TOTPMFAProps): JSX.Element {
 
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase loadDefaultFont={!hasFont} userStyles={[props.config.rootStyle, activeStyle]}>
+            <ThemeBase loadDefaultFont={!hasFont} userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
                 <TOTPMFATheme {...props} activeScreen={activeScreen!} />
             </ThemeBase>
         </UserContextWrapper>

@@ -128,7 +128,7 @@ describe("SuperTokens Reset password", function () {
 
             // checks if the window path has changed to '/auth'
             const { pathname: pathAfterBackButtonClick, search } = await page.evaluate(() => window.location);
-            assert.equal(pathAfterBackButtonClick + search, "/auth/?show=signin");
+            assert.equal(pathAfterBackButtonClick + search, "/auth/");
 
             // checks if the page title is 'Sign In'
             const pageTitle = await signInPageHeader.evaluate((header) => header.innerText);

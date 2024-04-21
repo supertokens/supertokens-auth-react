@@ -69,6 +69,12 @@ export default class SuperTokens {
     };
     recipeList: BaseRecipeModule<any, any, any, any>[] = [];
     private userGetRedirectionURL: SuperTokensConfig["getRedirectionURL"];
+    rootStyle: string;
+    useShadowDom: boolean;
+    privacyPolicyLink: string | undefined;
+    termsOfServiceLink: string | undefined;
+    defaultToSignUp: boolean;
+
     /*
      * Constructor.
      */
@@ -102,6 +108,13 @@ export default class SuperTokens {
         this.recipeList = config.recipeList.map(({ authReact }) => {
             return authReact(this.appInfo, enableDebugLogs);
         });
+
+        this.rootStyle = config.style ?? "";
+        this.privacyPolicyLink = config.privacyPolicyLink;
+        this.termsOfServiceLink = config.termsOfServiceLink;
+
+        this.useShadowDom = config.useShadowDom ?? true;
+        this.defaultToSignUp = config.defaultToSignUp ?? false;
     }
 
     /*
@@ -193,7 +206,9 @@ export default class SuperTokens {
     }): Promise<void> => {
         const queryParams = options.queryParams === undefined ? {} : options.queryParams;
         if (options.show !== undefined) {
-            queryParams.show = options.show;
+            if (options.show === "signup") {
+                queryParams.signUp = true;
+            }
         }
         if (options.redirectBack === true) {
             queryParams.redirectToPath = getCurrentNormalisedUrlPathWithQueryParamsAndFragments();

@@ -17,8 +17,13 @@
  * Imports.
  */
 
+import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
+
+import SuperTokens from "../superTokens";
+
 import { RoutingComponent } from "./routingComponent";
 
+import type AuthRecipe from "../recipe/authRecipe";
 import type { RecipeRouter } from "../recipe/recipeRouter";
 import type { ReactRouterDomWithCustomHistory } from "../ui/types";
 
@@ -41,23 +46,13 @@ export function getSuperTokensRoutesForReactRouterDomV6({
     }
 
     const Route = routerInfo.router.Route;
-    return Object.values(
+    const routes = Object.values(
         recipeList.reduce((routes, recipe) => {
             const pathsToFeatureComponentWithRecipeIdMap = recipe.getPathsToFeatureComponentWithRecipeIdMap();
             Object.keys(pathsToFeatureComponentWithRecipeIdMap).forEach((path) => {
                 path = path === "" ? "/" : path;
 
-                let pathForRouter = path;
-                if (basePath !== undefined) {
-                    if (pathForRouter.startsWith(basePath)) {
-                        pathForRouter = pathForRouter.slice(basePath.length);
-                        if (!pathForRouter.startsWith("/")) {
-                            pathForRouter = "/" + pathForRouter;
-                        }
-                    } else {
-                        throw new Error("basePath has to be a prefix of websiteBasePath passed to SuperTokens.init");
-                    }
-                }
+                const pathForRouter = getPathForRouter(basePath, path);
                 if (!(path in routes)) {
                     routes[path] = (
                         <Route
@@ -78,4 +73,45 @@ export function getSuperTokensRoutesForReactRouterDomV6({
             return routes;
         }, {} as Record<string, JSX.Element>)
     );
+
+    if (
+        recipeList.some(
+            (ui) =>
+                ui.getAuthComponents().length !== 0 &&
+                (ui.recipeInstance as AuthRecipe<any, any, any, any>).getFirstFactorsForAuthPage().length !== 0
+        )
+    ) {
+        const path = SuperTokens.getInstanceOrThrow()
+            .appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"))
+            .getAsStringDangerous();
+        routes.push(
+            <Route
+                key={"st-/auth"}
+                path={getPathForRouter(basePath, path)}
+                element={
+                    <RoutingComponent
+                        getReactRouterDomWithCustomHistory={getReactRouterDomWithCustomHistory}
+                        preBuiltUIList={recipeList}
+                        path={path}
+                    />
+                }
+            />
+        );
+    }
+
+    return routes;
+}
+
+function getPathForRouter(basePath: string | undefined, path: string) {
+    if (basePath !== undefined) {
+        if (path.startsWith(basePath)) {
+            path = path.slice(basePath.length);
+            if (!path.startsWith("/")) {
+                path = "/" + path;
+            }
+        } else {
+            throw new Error("basePath has to be a prefix of websiteBasePath passed to SuperTokens.init");
+        }
+    }
+    return path;
 }

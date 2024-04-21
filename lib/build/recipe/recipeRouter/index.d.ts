@@ -1,4 +1,4 @@
-import type { RecipeFeatureComponentMap } from "../../types";
+import type { AuthComponent, RecipeFeatureComponentMap } from "../../types";
 import type { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
 import type { GetLoginMethodsResponseNormalized } from "../multitenancy/types";
 import type RecipeModule from "../recipeModule";
@@ -14,4 +14,6 @@ export declare abstract class RecipeRouter {
     ): ComponentWithRecipeAndMatchingMethod | undefined;
     getPathsToFeatureComponentWithRecipeIdMap: () => BaseFeatureComponentMap;
     abstract getFeatures(): RecipeFeatureComponentMap;
+    abstract getAuthComponents(): AuthComponent[];
+    requiresSignUpPage: boolean;
 }

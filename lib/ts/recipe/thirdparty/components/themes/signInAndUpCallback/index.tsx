@@ -20,6 +20,7 @@ import { PureComponent } from "react";
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { hasFontDefined } from "../../../../../styles/styles";
+import SuperTokens from "../../../../../superTokens";
 import { ThemeBase } from "../themeBase";
 
 import type { NormalisedConfig } from "../../../types";
@@ -51,11 +52,13 @@ const SignInAndUpCallbackThemeWithOverride = withOverride(
 );
 
 export const SignInAndUpCallbackTheme = (props: { config: NormalisedConfig }) => {
-    const hasFont = hasFontDefined(props.config.rootStyle);
+    const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
+    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
+
     return (
         <ThemeBase
             loadDefaultFont={!hasFont}
-            userStyles={[props.config.rootStyle, props.config.signInAndUpFeature.style]}>
+            userStyles={[rootStyle, props.config.recipeRootStyle, props.config.signInAndUpFeature.style]}>
             <SignInAndUpCallbackThemeWithOverride />
         </ThemeBase>
     );

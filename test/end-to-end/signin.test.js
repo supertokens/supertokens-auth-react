@@ -932,9 +932,7 @@ describe("SuperTokens SignIn => Server Error", function () {
         }
 
         await setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "EMAIL_PASSWORD_SIGN_IN", page);
-        await page.evaluate(() =>
-            localStorage.setItem("TRANSLATED_GENERAL_ERROR", "EMAIL_PASSWORD_SIGN_UP_FOOTER_TOS")
-        );
+        await page.evaluate(() => localStorage.setItem("TRANSLATED_GENERAL_ERROR", "AUTH_PAGE_FOOTER_TOS"));
 
         await setInputValues(page, [
             { name: "email", value: "john.doe@supertokens.io" },
@@ -945,7 +943,7 @@ describe("SuperTokens SignIn => Server Error", function () {
 
         // Assert server Error
         const generalError = await getGeneralError(page);
-        assert.strictEqual(generalError, "Terms of Service");
+        assert.strictEqual(generalError, "TOS"); // Custom translation
     });
 
     it("shows raw message for non-translation key general error", async function () {
@@ -988,7 +986,7 @@ describe("SuperTokens SignIn => Server Error", function () {
                         formFields: [
                             {
                                 id: "email",
-                                error: "EMAIL_PASSWORD_SIGN_UP_FOOTER_TOS",
+                                error: "AUTH_PAGE_FOOTER_TOS",
                             },
                         ],
                     }),
@@ -1006,7 +1004,7 @@ describe("SuperTokens SignIn => Server Error", function () {
         await waitForSTElement(page, "[data-supertokens~='inputErrorMessage']");
         // Assert server Error
         let formFieldsErrors = await getFieldErrors(page);
-        assert.deepStrictEqual(formFieldsErrors, ["Terms of Service"]);
+        assert.deepStrictEqual(formFieldsErrors, ["TOS"]); // Custom translation
     });
 
     it("shows raw message for non-translation key field error", async function () {

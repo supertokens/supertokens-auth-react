@@ -295,10 +295,10 @@ SuperTokens.init({
     languageTranslations: {
         translations: {
             en: {
-                PWLESS_SIGN_IN_UP_FOOTER_TOS: "TOS",
+                AUTH_PAGE_FOOTER_TOS: "TOS",
             },
             hu: {
-                PWLESS_SIGN_IN_UP_FOOTER_TOS: "ÁSZF",
+                AUTH_PAGE_FOOTER_TOS: "ÁSZF",
             },
         },
     },
@@ -322,23 +322,15 @@ SuperTokens.init({
             console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
         }
     },
+    useShadowDom,
+    privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
+    termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
+    defaultToSignUp,
     recipeList,
 });
 
 /* App */
 function App() {
-    useEffect(() => {
-        window.addEventListener("TPEP.getAuthorisationURLWithQueryParamsAndSetState", async () => {
-            ThirdPartyEmailPassword.getAuthorisationURLWithQueryParamsAndSetState({
-                providerId: "google",
-                authorisationURL: "",
-                userContext: {
-                    isPreAPITest: true,
-                },
-            });
-        });
-    }, []);
-
     if (doNotUseReactRouterDom) {
         return (
             <ErrorBoundary>
@@ -546,7 +538,6 @@ function SessionInfoTable({ sessionInfo }) {
 
 function getEmailVerificationConfigs({ disableDefaultUI }) {
     return EmailVerification.init({
-        useShadowDom,
         disableDefaultUI,
         sendVerifyEmailScreen: {
             style: theme,
@@ -646,7 +637,6 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
         },
-        useShadowDom,
         resetPasswordUsingTokenFeature: {
             disableDefaultUI,
             enterEmailForm: {
@@ -658,14 +648,11 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
         },
         signInAndUpFeature: {
             disableDefaultUI,
-            defaultToSignUp,
             signInForm: {
                 style: theme.style,
             },
             signUpForm: {
                 style: theme.style,
-                privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
-                termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
                 formFields,
             },
         },
@@ -736,10 +723,6 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
                         log(`CLEAR_LOGIN_ATTEMPT_INFO`);
                         return implementation.clearPasswordlessLoginAttemptInfo(...args);
                     },
-                    getAuthorisationURLFromBackend(...args) {
-                        log(`GET_OAUTH_AUTHORISATION_URL`);
-                        return implementation.getAuthorisationURLFromBackend(...args);
-                    },
                     getThirdPartyStateAndOtherInfoFromStorage(...args) {
                         log(`GET_OAUTH_STATE`);
                         return implementation.getThirdPartyStateAndOtherInfoFromStorage(...args);
@@ -769,7 +752,6 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS THIRDPARTYPASSWORDLESS ON_HANDLE_EVENT ${context.action}`);
         },
-        useShadowDom,
         contactMethod: passwordlessContactMethodType,
         disablePasswordless: false,
         signInUpFeature: {
@@ -780,8 +762,6 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
                     color: red;
                 },
             `,
-            privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-            termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
             providers,
             defaultCountry: passwordlessDefaultCountry,
             resendEmailOrSMSGapInSeconds: 2,
@@ -853,7 +833,6 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS PASSWORDLESS ON_HANDLE_EVENT ${context.action}`);
         },
-        useShadowDom,
         contactMethod: passwordlessContactMethodType,
         signInUpFeature: {
             defaultCountry: passwordlessDefaultCountry,
@@ -863,9 +842,6 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
             resendEmailOrSMSGapInSeconds: 2,
             disableDefaultUI,
             style: theme.style,
-
-            privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
-            termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
         },
         linkClickedScreenFeature: {
             disableDefaultUI,
@@ -929,10 +905,6 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
                         log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
                         return implementation.getAuthorisationURLWithQueryParamsAndSetState(...args);
                     },
-                    getAuthorisationURLFromBackend(...args) {
-                        log(`GET_OAUTH_AUTHORISATION_URL`);
-                        return implementation.getAuthorisationURLFromBackend(...args);
-                    },
                     getStateAndOtherInfoFromStorage(...args) {
                         log(`GET_OAUTH_STATE`);
                         return implementation.getStateAndOtherInfoFromStorage(...args);
@@ -948,12 +920,9 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
                 };
             },
         },
-        useShadowDom,
         signInAndUpFeature: {
             disableDefaultUI,
             style: theme.style,
-            privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
-            termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
             providers,
         },
 
@@ -1016,13 +985,6 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
                         log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
                         return implementation.getAuthorisationURLWithQueryParamsAndSetState(input);
                     },
-                    generateStateToSendToOAuthProvider(input) {
-                        if (input.userContext["key"] !== undefined) {
-                            log(`GENERATE_STATE RECEIVED_USER_CONTEXT`);
-                        }
-
-                        return implementation.generateStateToSendToOAuthProvider(input);
-                    },
                     thirdPartySignInAndUp(input) {
                         if (input.userContext["key"] !== undefined) {
                             log(`SIGN_IN_AND_UP RECEIVED_USER_CONTEXT`);
@@ -1054,30 +1016,6 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
 
                         log(`GET_OAUTH_STATE`);
                         return implementation.getStateAndOtherInfoFromStorage(input);
-                    },
-                    getAuthorisationURLFromBackend(input) {
-                        if (input.userContext["key"] !== undefined) {
-                            log(`GET_OAUTH_AUTHORISATION_URL RECEIVED_USER_CONTEXT`);
-                        }
-
-                        log(`GET_OAUTH_AUTHORISATION_URL`);
-
-                        if (input.userContext["isPreAPITest"] !== undefined) {
-                            return implementation.getAuthorisationURLFromBackend({
-                                ...input,
-                                options: {
-                                    preAPIHook: async (input) => {
-                                        window.localStorage.setItem(
-                                            "getAuthorisationURLFromBackend-pre-api-hook",
-                                            "true"
-                                        );
-                                        return input;
-                                    },
-                                },
-                            });
-                        }
-
-                        return implementation.getAuthorisationURLFromBackend(input);
                     },
                     submitNewPassword(input) {
                         if (input.userContext["key"] !== undefined) {
@@ -1123,7 +1061,6 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
                 };
             },
         },
-        useShadowDom,
         resetPasswordUsingTokenFeature: {
             disableDefaultUI,
         },
@@ -1132,8 +1069,6 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
             signInForm: {},
             signUpForm: {
                 formFields,
-                privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
-                termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
             },
             style: theme.style,
             providers,

@@ -1,1 +1,2 @@
-export declare const OTPEmailIcon: () => import("react/jsx-runtime").JSX.Element;
+/// <reference types="react" />
+export declare const OTPEmailIcon: () => JSX.Element;

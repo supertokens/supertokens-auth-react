@@ -218,7 +218,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
-                useShadowDom={props.recipe.config.useShadowDom}
+                useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}
                 defaultStore={defaultTranslationsPasswordless}>
                 <Fragment>
                     {/* No custom theme, use default. */}

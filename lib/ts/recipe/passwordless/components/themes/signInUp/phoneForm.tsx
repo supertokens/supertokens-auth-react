@@ -23,7 +23,6 @@ import { defaultValidate } from "../../../../emailpassword/validators";
 import { preloadPhoneNumberUtils } from "../../../phoneNumberUtils";
 
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
-import { SignInUpFooter } from "./signInUpFooter";
 
 import type { SignInUpPhoneFormProps } from "../../../types";
 
@@ -91,14 +90,7 @@ export const PhoneForm = withOverride(
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                footer={
-                    props.footer ?? (
-                        <SignInUpFooter
-                            privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
-                            termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
-                        />
-                    )
-                }
+                footer={props.footer}
             />
         );
     }

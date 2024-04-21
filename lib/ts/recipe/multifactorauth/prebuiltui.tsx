@@ -13,6 +13,7 @@ import MultiFactorAuthRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { FeatureBaseProps, RecipeFeatureComponentMap, UserContext } from "../../types";
+import type { AuthComponent } from "../../types";
 
 export class MultiFactorAuthPreBuiltUI extends RecipeRouter {
     static instance?: MultiFactorAuthPreBuiltUI;
@@ -81,6 +82,10 @@ export class MultiFactorAuthPreBuiltUI extends RecipeRouter {
             </UserContextWrapper>
         );
     };
+
+    getAuthComponents(): AuthComponent[] {
+        return [];
+    }
 
     // For tests
     static reset(): void {

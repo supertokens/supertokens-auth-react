@@ -13,10 +13,7 @@
  * under the License.
  */
 
-import SuperTokens from "../../superTokens";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
-import MultiFactorAuth from "../multifactorauth/recipe";
-import { FactorIds } from "../multifactorauth/types";
 
 import {
     defaultPhoneNumberValidator,
@@ -28,7 +25,6 @@ import {
 
 import type { Config, NormalisedConfig, SignInUpFeatureConfigInput } from "./types";
 import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
-import type { DynamicLoginMethodsContextValue } from "../multitenancy/dynamicLoginMethodsContext";
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
@@ -139,54 +135,4 @@ function normalisePasswordlessBaseConfig<T>(config?: T & FeatureBaseConfig): T &
         ...(config as T),
         style,
     };
-}
-
-export function getEnabledContactMethods(
-    contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE",
-    currentDynamicLoginMethods: DynamicLoginMethodsContextValue
-) {
-    let enabledContactMethods = contactMethod === "EMAIL_OR_PHONE" ? ["EMAIL", "PHONE"] : [contactMethod];
-
-    let firstFactors;
-    if (SuperTokens.usesDynamicLoginMethods) {
-        if (!currentDynamicLoginMethods.loaded) {
-            throw new Error(
-                "This should never happen: dynamic login methods not loaded before passwordless UI rendered"
-            );
-        }
-        firstFactors = currentDynamicLoginMethods.loginMethods.firstFactors;
-    } else {
-        firstFactors = MultiFactorAuth.getInstance()?.config.firstFactors;
-    }
-
-    if (firstFactors !== undefined) {
-        if (enabledContactMethods.includes("PHONE")) {
-            if (!firstFactors.includes(FactorIds.OTP_PHONE) && !firstFactors.includes(FactorIds.LINK_PHONE)) {
-                enabledContactMethods = enabledContactMethods.filter((c) => c !== "PHONE");
-            }
-        } else {
-            if (firstFactors.includes(FactorIds.OTP_PHONE) || firstFactors.includes(FactorIds.LINK_PHONE)) {
-                throw new Error(
-                    "The enabled contact method is not a superset of the requested first factors. Please make sure that Passwordless / ThirdPartyPasswordless init is configured correctly on the frontend to include PHONE or EMAIL_OR_PHONE."
-                );
-            }
-        }
-
-        if (enabledContactMethods.includes("EMAIL")) {
-            if (!firstFactors.includes(FactorIds.OTP_EMAIL) && !firstFactors.includes(FactorIds.LINK_EMAIL)) {
-                enabledContactMethods = enabledContactMethods.filter((c) => c !== "EMAIL");
-            }
-        } else {
-            if (firstFactors.includes(FactorIds.OTP_EMAIL) || firstFactors.includes(FactorIds.LINK_EMAIL)) {
-                throw new Error(
-                    "The enabled contact method is not a superset of the requested first factors. Please make sure that Passwordless / ThirdPartyPasswordless init is configured correctly on the frontend to include EMAIL or EMAIL_OR_PHONE."
-                );
-            }
-        }
-    }
-
-    if (enabledContactMethods.length === 0) {
-        throw new Error("The enabled contact method is not a superset of the requested first factors");
-    }
-    return enabledContactMethods;
 }
