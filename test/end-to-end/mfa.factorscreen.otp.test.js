@@ -474,7 +474,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=passwordless`),
                         page.waitForNavigation({ waitUntil: "networkidle0" }),
                     ]);
-                    await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]");
+                    await waitForSTElement(page, "[data-supertokens~=input][name=email]");
                 });
             }
         });

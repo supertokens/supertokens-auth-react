@@ -710,7 +710,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             ]);
 
             const contactInfo = `john.doe.${Date.now()}@supertokens.io`;
-            await setInputValues(page, [{ name: "emailOrPhone", value: contactInfo }]);
+            await setInputValues(page, [{ name: "email", value: contactInfo }]);
             await submitForm(page);
 
             await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
@@ -755,7 +755,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             ]);
 
             const contactInfo = `john.doe.${Date.now()}@supertokens.io`;
-            await setInputValues(page, [{ name: "emailOrPhone", value: contactInfo }]);
+            await setInputValues(page, [{ name: "email", value: contactInfo }]);
             await submitForm(page);
 
             await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
@@ -788,7 +788,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             ]);
 
             const contactInfo = `john.doe.${Date.now()}@supertokens.io`;
-            await setInputValues(page, [{ name: "emailOrPhone", value: contactInfo }]);
+            await setInputValues(page, [{ name: "email", value: contactInfo }]);
             await submitForm(page);
 
             await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
@@ -821,7 +821,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             ]);
 
             const contactInfo = `john.doe.${Date.now()}@supertokens.io`;
-            await setInputValues(page, [{ name: "emailOrPhone", value: contactInfo }]);
+            await setInputValues(page, [{ name: "email", value: contactInfo }]);
             await submitForm(page);
 
             await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
@@ -855,7 +855,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             ]);
 
             const contactInfo = `john.doe.${Date.now()}@supertokens.io`;
-            await setInputValues(page, [{ name: "emailOrPhone", value: contactInfo }]);
+            await setInputValues(page, [{ name: "email", value: contactInfo }]);
             await submitForm(page);
 
             await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
@@ -888,7 +888,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             ]);
 
             const contactInfo = `john.doe.${Date.now()}@supertokens.io`;
-            await setInputValues(page, [{ name: "emailOrPhone", value: contactInfo }]);
+            await setInputValues(page, [{ name: "email", value: contactInfo }]);
             await submitForm(page);
 
             await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
@@ -922,7 +922,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             ]);
 
             const contactInfo = `john.doe.${Date.now()}@supertokens.io`;
-            await setInputValues(page, [{ name: "emailOrPhone", value: contactInfo }]);
+            await setInputValues(page, [{ name: "email", value: contactInfo }]);
             await submitForm(page);
 
             await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");

@@ -121,7 +121,7 @@ describe("SuperTokens Third Party Passwordless", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
 
-            await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
+            await setInputValues(page, [{ name: "email", value: email }]);
             await submitForm(page);
 
             await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
@@ -140,7 +140,7 @@ describe("SuperTokens Third Party Passwordless", function () {
             const logoutButton = await getLogoutButton(page);
             await Promise.all([await logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-            await waitForSTElement(page, `input[name=emailOrPhone]`);
+            await waitForSTElement(page, `input[name=email]`);
 
             // 3. Sign in with auth0 with same address.
             await clickOnProviderButton(page, "Auth0");
@@ -164,7 +164,7 @@ describe("SuperTokens Third Party Passwordless", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
 
-            await setInputValues(page, [{ name: "emailOrPhone", value: "surely-not-verified" + email }]);
+            await setInputValues(page, [{ name: "email", value: "surely-not-verified" + email }]);
             await submitForm(page);
             await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
             const loginAttemptInfo = JSON.parse(

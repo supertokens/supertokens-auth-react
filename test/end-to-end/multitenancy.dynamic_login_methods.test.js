@@ -267,7 +267,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
             page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
             page.waitForNavigation({ waitUntil: "networkidle0" }),
         ]);
-        const input = await page.$("[data-supertokens~=input][name=emailOrPhone]");
+        const input = await page.$("[data-supertokens~=input][name=email]");
         assert.deepStrictEqual(input, null);
 
         await enableDynamicLoginMethods(page, {
@@ -279,7 +279,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
             },
         });
         await Promise.all([page.reload(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-        await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]");
+        await waitForSTElement(page, "[data-supertokens~=input][name=email]");
     });
 
     it("renders thirdpartypasswordless form when enabled on the core", async function () {
@@ -298,7 +298,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
 
         const providers = await getProvidersLabels(page);
         compareArrayContents(providers, ["Continue with Apple"]);
-        await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]");
+        await waitForSTElement(page, "[data-supertokens~=input][name=email]");
     });
 
     it("Renders providers based on the prefix", async function () {
@@ -719,7 +719,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
 
         // Emailpassword
         const inputNames = await getInputNames(page);
-        assert.deepStrictEqual(inputNames, ["emailOrPhone"]);
+        assert.deepStrictEqual(inputNames, ["email"]);
     });
 
     it("should show thirdpartypwless if rid has FE has tpep and tppwless and all 3 enabled in core", async function () {
@@ -747,7 +747,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
 
         // Emailpassword
         const inputNames = await getInputNames(page);
-        assert.deepStrictEqual(inputNames, ["emailOrPhone"]);
+        assert.deepStrictEqual(inputNames, ["email"]);
     });
 
     it("should show thirdpartyemailpassword if FE has only tpep and thirdparty is disbled in core", async function () {
@@ -824,7 +824,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.strictEqual(await getProviderLogoCount(page), 0);
 
         // pwless
-        await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]");
+        await waitForSTElement(page, "[data-supertokens~=input][name=email]");
     });
 
     it("should show thirdpartpasswordless if FE has only tppwless and passwordless is disbled in core", async function () {
@@ -849,7 +849,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.notStrictEqual(await getProviderLogoCount(page), 0);
 
         // pwless
-        await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]", true);
+        await waitForSTElement(page, "[data-supertokens~=input][name=email]", true);
     });
 
     it("should show something went wrong if logging in with disabled method", async function () {

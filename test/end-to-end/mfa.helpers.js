@@ -180,14 +180,14 @@ export async function tryEmailPasswordSignIn(page, email, queryParams) {
     await submitForm(page);
     await new Promise((res) => setTimeout(res, 1000));
 }
-export async function tryPasswordlessSignInUp(page, contactInfo, queryParams) {
+export async function tryPasswordlessSignInUp(page, contactInfo, queryParams, isPhone = false) {
     await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
     await Promise.all([
-        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?factors=otp-phone,otp-email${queryParams ?? ""}`),
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?factors=${isPhone ? "otp-phone" : "otp-email"}${queryParams ?? ""}`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 
-    await setInputValues(page, [{ name: "emailOrPhone", value: contactInfo }]);
+    await setInputValues(page, [{ name: isPhone ? "phoneNumber_text" : "email", value: contactInfo }]);
     await submitForm(page);
 
     await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");

@@ -92,12 +92,6 @@ if (getQueryParams("passwordlessDefaultCountry")) {
 
 const passwordlessDefaultCountry = window.localStorage.getItem("passwordlessDefaultCountry") || undefined;
 
-if (getQueryParams("passwordlessDisablePhoneGuess")) {
-    window.localStorage.setItem("passwordlessDisablePhoneGuess", getQueryParams("passwordlessDisablePhoneGuess"));
-}
-
-const passwordlessDisablePhoneGuess = window.localStorage.getItem("passwordlessDisablePhoneGuess") || undefined;
-
 if (getQueryParams("authRecipe")) {
     window.localStorage.setItem("authRecipe", getQueryParams("authRecipe"));
 }
@@ -765,9 +759,6 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
             providers,
             defaultCountry: passwordlessDefaultCountry,
             resendEmailOrSMSGapInSeconds: 2,
-            guessInternationPhoneNumberFromInputPhoneNumber: passwordlessDisablePhoneGuess
-                ? () => undefined
-                : undefined,
         },
         linkClickedScreenFeature: {
             disableDefaultUI,
@@ -836,9 +827,6 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
         contactMethod: passwordlessContactMethodType,
         signInUpFeature: {
             defaultCountry: passwordlessDefaultCountry,
-            guessInternationPhoneNumberFromInputPhoneNumber: passwordlessDisablePhoneGuess
-                ? () => undefined
-                : undefined,
             resendEmailOrSMSGapInSeconds: 2,
             disableDefaultUI,
             style: theme.style,

@@ -326,7 +326,7 @@ function getDynLoginMethods(firstFactors) {
 async function checkPasswordlessLoginUI(page, contactMethod) {
     switch (contactMethod) {
         case "EMAIL_OR_PHONE":
-            return await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]");
+            return await waitForSTElement(page, "[data-supertokens~=input][name=email]");
         case "EMAIL":
             return await waitForSTElement(page, "[data-supertokens~=input][name=email]");
         case "PHONE":
