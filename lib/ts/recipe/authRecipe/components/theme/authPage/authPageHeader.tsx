@@ -16,6 +16,7 @@ import { Fragment } from "react";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import BackButton from "../../../../emailpassword/components/library/backButton";
 
 export const AuthPageHeader = withOverride(
     "AuthPageHeader",
@@ -23,22 +24,36 @@ export const AuthPageHeader = withOverride(
         onSignInUpSwitcherClick,
         hasSeparateSignUpView,
         isSignUp,
+        showBackButton,
+        resetFactorList,
     }: {
         factorIds: string[];
         isSignUp: boolean;
         hasSeparateSignUpView: boolean;
         onSignInUpSwitcherClick: (() => void) | undefined;
+        resetFactorList: () => void;
+        showBackButton: boolean;
     }): JSX.Element {
         const t = useTranslation();
 
         return (
             <Fragment>
-                <div data-supertokens="headerTitle">
+                <div data-supertokens="headerTitle withBackButton">
+                    {showBackButton ? (
+                        <BackButton onClick={resetFactorList} />
+                    ) : (
+                        <span data-supertokens="backButtonPlaceholder backButtonCommon">
+                            {/* empty span for spacing the back button */}
+                        </span>
+                    )}
                     {!hasSeparateSignUpView
                         ? t("AUTH_PAGE_HEADER_TITLE_SIGN_IN_AND_UP")
                         : isSignUp
                         ? t("AUTH_PAGE_HEADER_TITLE_SIGN_UP")
                         : t("AUTH_PAGE_HEADER_TITLE_SIGN_IN")}
+                    <span data-supertokens="backButtonPlaceholder backButtonCommon">
+                        {/* empty span for spacing the back button */}
+                    </span>
                 </div>
                 {hasSeparateSignUpView &&
                     (!isSignUp ? (

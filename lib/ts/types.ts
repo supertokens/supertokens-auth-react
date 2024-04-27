@@ -412,7 +412,7 @@ export type Navigate =
 export type UserContext = Record<string, any>;
 
 export type AuthComponentProps = {
-    setFactorList: (factorIds: string[] | undefined) => void;
+    setFactorList: (factorIds: string[]) => void;
     rebuildAuthPage: () => void;
     navigate: Navigate | undefined;
     userContext: UserContext;
@@ -420,24 +420,23 @@ export type AuthComponentProps = {
     onError: (err: string) => void;
     clearError: () => void;
 };
-export type PartialAuthComponentProps = AuthComponentProps & {
-    // TODO: do we need anything extra here?
-};
-export type FullPageAuthComponent<T = any> = {
+export type PartialAuthComponentProps = AuthComponentProps;
+export type FullPageAuthComponentProps<PreloadInfoType> = AuthComponentProps & { preloadInfo: PreloadInfoType };
+
+export type FullPageAuthComponent<PreloadInfoType = any> = {
     type: "FULL_PAGE";
     preloadInfoAndRunChecks: (
         firstFactors: string[],
         userContext: UserContext
-    ) => Promise<{ shouldDisplay: true; preloadInfo: T } | { shouldDisplay: false }>;
-    component: React.FC<AuthComponentProps & { preloadInfo: T }>;
+    ) => Promise<{ shouldDisplay: true; preloadInfo: PreloadInfoType } | { shouldDisplay: false }>;
+    component: React.FC<FullPageAuthComponentProps<PreloadInfoType>>;
 };
 
 export type PartialAuthComponent = {
-    type: "SIGN_IN_UP" | "SIGN_IN" | "SIGN_UP"; // TODO: maybe a better name?
+    type: "SIGN_IN_UP" | "SIGN_IN" | "SIGN_UP";
     factorIds: string[];
     displayOrder: number;
     component: React.FC<PartialAuthComponentProps>;
-    translations: TranslationStore;
 };
 
 export type AuthComponent<T = any> = PartialAuthComponent | FullPageAuthComponent<T>;

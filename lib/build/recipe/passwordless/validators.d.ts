@@ -8,7 +8,3 @@ export declare function defaultPhoneNumberValidatorForCombinedInput(
 ): Promise<"GENERAL_ERROR_EMAIL_OR_PHONE_NON_STRING" | "GENERAL_ERROR_EMAIL_OR_PHONE_INVALID" | undefined>;
 export declare function userInputCodeValidate(value: any): Promise<string | undefined>;
 export declare function defaultValidate(_: any): Promise<string | undefined>;
-export declare function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
-    value: string,
-    defaultCountryFromConfig?: string
-): Promise<string | undefined>;

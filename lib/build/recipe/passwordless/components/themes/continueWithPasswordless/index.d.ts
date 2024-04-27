@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import type { PartialAuthComponentProps } from "../../../../../types";
 import type { NormalisedConfig } from "../../../types";
 export declare const ContinueWithPasswordlessTheme: (
@@ -6,4 +5,4 @@ export declare const ContinueWithPasswordlessTheme: (
         config: NormalisedConfig;
         continueWithPasswordlessClicked: () => void;
     }
-) => JSX.Element;
+) => import("react/jsx-runtime").JSX.Element;

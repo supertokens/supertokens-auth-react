@@ -16,39 +16,63 @@
 import STGeneralError from "supertokens-web-js/utils/error";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { useUserContext } from "../../../../../usercontext";
+import { useTranslation } from "../../../../../translation/translationContext";
+import { Label } from "../../../../emailpassword/components/library";
 import FormBase from "../../../../emailpassword/components/library/formBase";
-import { defaultValidate } from "../../../../emailpassword/validators";
+import EmailPassword from "../../../../emailpassword/recipe";
+import { defaultValidate } from "../../../validators";
 
+import { ContinueWithPasswordlessFooter } from "./continueWithPasswordlessFooter";
+
+import type { FormFieldThemeProps } from "../../../../emailpassword/types";
 import type { SignInUpEPComboEmailFormProps } from "../../../types";
 
-export const EmailForm = withOverride(
-    "PasswordlessEmailForm",
-    function PasswordlessEmailForm(
-        props: SignInUpEPComboEmailFormProps & {
-            footer?: JSX.Element;
-        }
-    ): JSX.Element {
-        const userContext = useUserContext();
+export const EPComboEmailForm = withOverride(
+    "PasswordlessEPComboEmailForm",
+    function PasswordlessEPComboEmailForm(props: SignInUpEPComboEmailFormProps): JSX.Element {
+        const t = useTranslation();
 
+        const formFields: FormFieldThemeProps[] = [
+            {
+                id: "email",
+                label: "PWLESS_SIGN_IN_UP_EMAIL_LABEL",
+                inputComponent: undefined,
+                optional: false,
+                autofocus: true,
+                placeholder: "",
+                autoComplete: "email",
+                validate: defaultValidate,
+            },
+        ];
+
+        if (props.showPasswordField) {
+            formFields.push({
+                id: "password",
+                autofocus: false,
+                optional: false,
+                placeholder: "",
+                label: "",
+                validate: defaultValidate,
+                labelComponent: (
+                    <div data-supertokens="formLabelWithLinkWrapper">
+                        <Label value={"PWLESS_COMBO_PASSWORD_LABEL"} data-supertokens="passwordInputLabel" />
+                        <a
+                            onClick={() => EmailPassword.getInstanceOrThrow().redirect({ action: "RESET_PASSWORD" })}
+                            data-supertokens="forgotPasswordLink">
+                            {t("PWLESS_COMBO_FORGOT_PW_LINK")}{" "}
+                        </a>
+                    </div>
+                ),
+            });
+        }
         return (
             <FormBase
                 clearError={props.clearError}
                 onFetchError={props.onFetchError}
                 onError={props.onError}
-                formFields={[
-                    {
-                        id: "email",
-                        label: "PWLESS_SIGN_IN_UP_EMAIL_LABEL",
-                        optional: false,
-                        autofocus: true,
-                        placeholder: "",
-                        autoComplete: "email",
-                        // We are using the default validator that allows any string
-                        validate: defaultValidate,
-                    },
-                ]}
+                formFields={formFields}
                 buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
+                onSuccess={props.onSuccess}
                 callAPI={async (formFields) => {
                     const email = formFields.find((field) => field.id === "email")?.value;
                     if (email === undefined) {
@@ -59,19 +83,23 @@ export const EmailForm = withOverride(
                         throw new STGeneralError(validationRes);
                     }
 
-                    const response = await props.recipeImplementation.createCode({
-                        email,
-                        userContext,
-                    });
-
-                    if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
-                        throw new STGeneralError(response.reason);
+                    if (props.showPasswordField) {
+                        return props.onPasswordSubmit(formFields);
+                    } else {
+                        return props.onContactInfoSubmit(email);
                     }
-
-                    return response;
                 }}
                 validateOnBlur={false}
                 showLabels={true}
+                footer={
+                    props.showContinueWithPasswordlessLink ? (
+                        <ContinueWithPasswordlessFooter
+                            isPhoneNumber={false}
+                            onContinueWithPasswordlessClick={props.onContinueWithPasswordlessClick}
+                            onError={props.onError}
+                        />
+                    ) : undefined
+                }
             />
         );
     }

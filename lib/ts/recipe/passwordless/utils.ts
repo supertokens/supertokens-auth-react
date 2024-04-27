@@ -20,7 +20,6 @@ import {
     defaultPhoneNumberValidatorForCombinedInput,
     defaultEmailValidator,
     defaultEmailValidatorForCombinedInput,
-    defaultGuessInternationPhoneNumberFromInputPhoneNumber,
 } from "./validators";
 
 import type { Config, NormalisedConfig, SignInUpFeatureConfigInput } from "./types";
@@ -85,14 +84,6 @@ function normalizeSignInUpFeatureConfig(
         | (SignInUpFeatureConfigInput & {
               defaultCountry?: string | undefined;
           })
-        | (SignInUpFeatureConfigInput & {
-              guessInternationPhoneNumberFromInputPhoneNumber?:
-                  | ((
-                        inputPhoneNumber: string,
-                        defaultCountryFromConfig?: string | undefined
-                    ) => string | Promise<string | undefined> | undefined)
-                  | undefined;
-          })
         | undefined,
     config: Config
 ) {
@@ -116,14 +107,6 @@ function normalizeSignInUpFeatureConfig(
             "defaultCountry" in signInUpInput
                 ? signInUpInput.defaultCountry
                 : undefined,
-
-        guessInternationPhoneNumberFromInputPhoneNumber:
-            config.contactMethod === "EMAIL_OR_PHONE" &&
-            signInUpInput !== undefined &&
-            "guessInternationPhoneNumberFromInputPhoneNumber" in signInUpInput &&
-            signInUpInput.guessInternationPhoneNumberFromInputPhoneNumber !== undefined
-                ? signInUpInput.guessInternationPhoneNumberFromInputPhoneNumber
-                : defaultGuessInternationPhoneNumberFromInputPhoneNumber,
     };
 
     return signInUpFeature;

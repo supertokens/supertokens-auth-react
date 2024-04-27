@@ -5,6 +5,10 @@ import { getSuperTokensRoutesForReactRouterDom as getSuperTokensRoutesForLegacyR
 import { getSuperTokensRoutesForReactRouterDomV6 } from "../components/superTokensRouteV6";
 import { AuthRecipeComponentsOverrideContextProvider } from "../recipe/authRecipe/componentOverrideContext";
 import AuthPageWrapper from "../recipe/authRecipe/components/feature/authPage/authPage";
+import { AuthPageTheme } from "../recipe/authRecipe/components/theme/authPage";
+import { AuthPageComponentList } from "../recipe/authRecipe/components/theme/authPage/authPageComponentList";
+import { AuthPageFooter } from "../recipe/authRecipe/components/theme/authPage/authPageFooter";
+import { AuthPageHeader } from "../recipe/authRecipe/components/theme/authPage/authPageHeader";
 import { RecipeRouter } from "../recipe/recipeRouter";
 import SuperTokens from "../superTokens";
 import { getCurrentNormalisedUrlPath } from "../utils";
@@ -133,6 +137,11 @@ class UI {
         />
     );
 
+    static AuthPageTheme = AuthPageTheme;
+    static AuthPageFooter = AuthPageFooter;
+    static AuthPageHeader = AuthPageHeader;
+    static AuthPageComponentList = AuthPageComponentList;
+
     static AuthRecipeComponentsOverrideContextProvider = AuthRecipeComponentsOverrideContextProvider;
 }
 
@@ -147,5 +156,9 @@ export {
     canHandleRoute,
     getRoutingComponent,
     AuthPage,
+    AuthPageTheme,
+    AuthPageFooter,
+    AuthPageHeader,
+    AuthPageComponentList,
     AuthRecipeComponentsOverrideContextProvider,
 };

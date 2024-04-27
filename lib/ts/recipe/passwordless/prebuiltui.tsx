@@ -15,8 +15,8 @@ import MFAFeature from "./components/features/mfa";
 import SignInUpFeature from "./components/features/signInAndUp";
 import SignInUpEPComboFeature from "./components/features/signInAndUpEPCombo";
 import UserInputCodeFeature from "./components/features/userInputCode";
-import MFAOTPTheme from "./components/themes/mfa";
-import SignInUpTheme from "./components/themes/signInUp";
+import MFAThemeWrapper from "./components/themes/mfa";
+import SignInUpThemeWrapper from "./components/themes/signInUp";
 import { defaultTranslationsPasswordless } from "./components/themes/translations";
 import Passwordless from "./recipe";
 
@@ -33,6 +33,9 @@ import type { AuthComponent } from "../../types";
 
 export class PasswordlessPreBuiltUI extends RecipeRouter {
     static instance?: PasswordlessPreBuiltUI;
+
+    languageTranslations = defaultTranslationsPasswordless;
+
     constructor(public readonly recipeInstance: Passwordless) {
         super();
     }
@@ -258,7 +261,6 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
                 type: "SIGN_IN" as const,
                 factorIds: factors,
                 displayOrder: 3,
-                translations: defaultTranslationsPasswordless,
                 component: (props: PartialAuthComponentProps) => (
                     <SignInUpFeature
                         {...props}
@@ -273,7 +275,6 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
                 type: "SIGN_UP" as const,
                 factorIds: factors,
                 displayOrder: 3,
-                translations: defaultTranslationsPasswordless,
                 component: (props: PartialAuthComponentProps) => (
                     <ContinueWithPasswordlessFeature
                         key={factors.join("|")}
@@ -297,7 +298,6 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
                         type: "SIGN_IN" as const,
                         factorIds: factors,
                         displayOrder: 3,
-                        translations: defaultTranslationsPasswordless,
                         component: (props: PartialAuthComponentProps) => (
                             <SignInUpEPComboFeature
                                 {...props}
@@ -332,16 +332,16 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
         this.getFeatureComponent("otp-phone", props);
     static MfaOtpEmail = (props: FeatureBaseProps<{ navigate?: Navigate; userContext?: UserContext }>) =>
         this.getFeatureComponent("otp-email", props);
-    static MFAOTPTheme = MFAOTPTheme;
+    static MFAOTPTheme = MFAThemeWrapper;
 
-    static SignInUpTheme = SignInUpTheme;
+    static SignInUpTheme = SignInUpThemeWrapper;
 }
 
 const LinkClicked = PasswordlessPreBuiltUI.LinkClicked;
 const MfaOtpPhone = PasswordlessPreBuiltUI.MfaOtpPhone;
 const MfaOtpEmail = PasswordlessPreBuiltUI.MfaOtpEmail;
 
-export { LinkClicked, SignInUpTheme, MfaOtpPhone, MfaOtpEmail, MFAOTPTheme };
+export { LinkClicked, SignInUpThemeWrapper as SignInUpTheme, MfaOtpPhone, MfaOtpEmail, MFAThemeWrapper as MFAOTPTheme };
 
 function getAllChoices(choices: string[]): string[][] {
     if (choices.length === 0) {

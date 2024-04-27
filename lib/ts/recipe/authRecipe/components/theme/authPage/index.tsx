@@ -16,51 +16,21 @@
 /*
  * Imports.
  */
-import { useMemo } from "react";
 
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
-import { useTranslation } from "../../../../../translation/translationContext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { ThemeBase } from "../themeBase";
 
+import { AuthPageComponentList } from "./authPageComponentList";
 import { AuthPageFooter } from "./authPageFooter";
 import { AuthPageHeader } from "./authPageHeader";
 
 import type { AuthPageThemeProps } from "../../../types";
 
 export function AuthPageTheme(props: AuthPageThemeProps): JSX.Element {
-    const t = useTranslation();
-
-    const authCompList = useMemo(() => {
-        if (props.fullPageCompWithPreloadedInfo) {
-            return [];
-        }
-
-        const list = [props.authComponents[0]];
-        for (let i = 1; i < props.authComponents.length; ++i) {
-            list.push(() => (
-                <div key={`divider-${i}`} data-supertokens="dividerWithOr">
-                    <div data-supertokens="divider"></div>
-                    <div data-supertokens="dividerText">{t("DIVIDER_OR")}</div>
-                    <div data-supertokens="divider"></div>
-                </div>
-            ));
-            list.push(props.authComponents[i]);
-        }
-        return (
-            <div data-supertokens="authComponentList">
-                {list.map((i) =>
-                    i({
-                        ...props,
-                    })
-                )}
-            </div>
-        );
-    }, [props.authComponents]);
-
     if (props.fullPageCompWithPreloadedInfo) {
         return (
             <>
@@ -79,9 +49,11 @@ export function AuthPageTheme(props: AuthPageThemeProps): JSX.Element {
                     isSignUp={props.isSignUp}
                     onSignInUpSwitcherClick={props.onSignInUpSwitcherClick}
                     hasSeparateSignUpView={props.hasSeparateSignUpView}
+                    resetFactorList={props.resetFactorList}
+                    showBackButton={props.showBackButton}
                 />
                 {props.error !== undefined && <GeneralError error={props.error} />}
-                {authCompList}
+                <AuthPageComponentList {...props} />
                 <AuthPageFooter
                     factorIds={props.factorIds}
                     isSignUp={props.isSignUp}

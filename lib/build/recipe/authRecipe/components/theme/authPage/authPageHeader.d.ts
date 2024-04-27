@@ -4,4 +4,6 @@ export declare const AuthPageHeader: import("react").ComponentType<{
     isSignUp: boolean;
     hasSeparateSignUpView: boolean;
     onSignInUpSwitcherClick: (() => void) | undefined;
+    resetFactorList: () => void;
+    showBackButton: boolean;
 }>;

@@ -4,4 +4,8 @@ export declare type ProviderButtonProps = {
     displayName: string;
     logo?: JSX.Element;
 };
-export default function ProviderButton({ logo, providerName, displayName }: ProviderButtonProps): JSX.Element;
+export default function ProviderButton({
+    logo,
+    providerName,
+    displayName,
+}: ProviderButtonProps): import("react/jsx-runtime").JSX.Element;

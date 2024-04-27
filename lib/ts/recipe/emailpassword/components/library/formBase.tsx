@@ -91,6 +91,7 @@ function InputComponentWrapper(props: {
 
     return field.inputComponent !== undefined ? (
         <field.inputComponent
+            key={field.id}
             type={type}
             name={field.id}
             validated={fstate.validated === true}
@@ -105,6 +106,7 @@ function InputComponentWrapper(props: {
         />
     ) : (
         <Input
+            key={field.id}
             type={type}
             name={field.id}
             validated={fstate.validated === true}
@@ -135,6 +137,15 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
     const [fieldStates, setFieldStates] = useState<FieldState[]>(
         props.formFields.map((f) => ({ id: f.id, value: fetchDefaultValue(f) }))
     );
+    useEffect(() => {
+        // If a field has been removed from formFields, we want to remove it from the states array as well.
+        setFieldStates((fs) =>
+            fieldStates.some((s) => !props.formFields.some((f) => f.id === s.id))
+                ? fs.filter((s) => props.formFields.some((f) => f.id === s.id))
+                : fs
+        );
+    }, [props.formFields, setFieldStates]);
+
     const [isLoading, setIsLoading] = useState(false);
 
     const updateFieldState = useCallback(
@@ -300,10 +311,10 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                             type = "password";
                         }
 
-                        const fstate: FieldState | undefined = fieldStates.find((s) => s.id === field.id);
-                        if (fstate === undefined) {
-                            throw new Error("Should never come here");
-                        }
+                        const fstate: FieldState | undefined = fieldStates.find((s) => s.id === field.id) || {
+                            id: field.id,
+                            value: fetchDefaultValue(field),
+                        };
 
                         return (
                             <FormRow key={field.id} hasError={fstate.error !== undefined}>

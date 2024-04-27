@@ -9,7 +9,7 @@ import { SessionAuth } from "../session";
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import SignInAndUpFeature from "./components/features/signInAndUp";
 import SignInAndUpCallbackFeature from "./components/features/signInAndUpCallback";
-import SignInAndUpTheme from "./components/themes/signInAndUp";
+import SignInAndUpThemeWrapper from "./components/themes/signInAndUp";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import { defaultTranslationsThirdParty } from "./components/themes/translations";
 import ThirdParty from "./recipe";
@@ -21,6 +21,8 @@ import type { AuthComponent } from "../../types";
 
 export class ThirdPartyPreBuiltUI extends RecipeRouter {
     static instance?: ThirdPartyPreBuiltUI;
+    languageTranslations = defaultTranslationsThirdParty;
+
     constructor(public readonly recipeInstance: ThirdParty) {
         super();
     }
@@ -103,7 +105,6 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
                     />
                 ),
                 displayOrder: 1,
-                translations: defaultTranslationsThirdParty,
                 factorIds: [FactorIds.THIRDPARTY],
                 type: "SIGN_IN_UP",
             },
@@ -122,10 +123,10 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
 
     static SignInAndUpCallback = (prop: FeatureBaseProps<{ userContext?: UserContext }>) =>
         ThirdPartyPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinupcallback", prop);
-    static SignInAndUpTheme = SignInAndUpTheme;
+    static SignInAndUpTheme = SignInAndUpThemeWrapper;
     static SignInAndUpCallbackTheme = SignInAndUpCallbackTheme;
 }
 
 const SignInAndUpCallback = ThirdPartyPreBuiltUI.SignInAndUpCallback;
 
-export { SignInAndUpCallback, SignInAndUpCallbackTheme, SignInAndUpTheme };
+export { SignInAndUpCallback, SignInAndUpCallbackTheme, SignInAndUpThemeWrapper as SignInAndUpTheme };

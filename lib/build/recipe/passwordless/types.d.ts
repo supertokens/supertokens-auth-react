@@ -26,8 +26,8 @@ import type {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipe/types";
+import type { FormBaseAPIResponse } from "../emailpassword/types";
 import type { Dispatch } from "react";
-import type { RecipeInterface as EPRecipeImplementation } from "supertokens-web-js/recipe/emailpassword";
 import type WebJSRecipe from "supertokens-web-js/recipe/passwordless";
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import type { User } from "supertokens-web-js/types";
@@ -68,10 +68,6 @@ export declare type NormalisedConfig = {
     signInUpFeature: {
         resendEmailOrSMSGapInSeconds: number;
         defaultCountry?: string;
-        guessInternationPhoneNumberFromInputPhoneNumber: (
-            inputPhoneNumber: string,
-            defaultCountryFromConfig?: string
-        ) => Promise<string | undefined> | string | undefined;
         emailOrPhoneFormStyle: string;
         userInputCodeFormStyle: string;
         linkSentScreenStyle: string;
@@ -115,10 +111,6 @@ export declare type UserInput = (
           validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
           signInUpFeature?: SignInUpFeatureConfigInput & {
               defaultCountry?: string;
-              guessInternationPhoneNumberFromInputPhoneNumber?: (
-                  inputPhoneNumber: string,
-                  defaultCountryFromConfig?: string
-              ) => Promise<string | undefined> | string | undefined;
           };
       }
 ) & {
@@ -229,28 +221,54 @@ export declare type SignInUpEPComboEmailOrPhoneFormProps = {
     showPasswordField: boolean;
     showContinueWithPasswordlessLink: boolean;
     clearError: () => void;
-    onContactInfoSubmit: (contactInfo: string, setPhoneNumber: (phoneNumber: string) => void) => void;
-    onPasswordSubmit: (formFields: APIFormField[]) => void;
-    onContinueWithPasswordlessClick: (contactInfo: string) => void;
+    isPhoneNumber: boolean;
+    setIsPhoneNumber: (isPhone: boolean) => void;
+    onContactInfoSubmit: (contactInfo: string) => Promise<FormBaseAPIResponse<unknown>>;
+    onPasswordSubmit: (formFields: APIFormField[]) => Promise<FormBaseAPIResponse<unknown>>;
+    onContinueWithPasswordlessClick: (contactInfo: string) => Promise<void>;
+    onSuccess: (
+        result:
+            | {
+                  status: "OK";
+                  user: User;
+                  createdNewRecipeUser: boolean;
+                  isEmailPassword: true;
+              }
+            | {
+                  status: "OK";
+                  isEmailPassword: false | undefined;
+              }
+    ) => void;
     onError: (error: string) => void;
     onFetchError: (error: Response) => void;
     error: string | undefined;
     recipeImplementation: RecipeImplementation;
-    epRecipeImplementation: EPRecipeImplementation;
     config: NormalisedConfig;
 };
 export declare type SignInUpEPComboEmailFormProps = {
     showPasswordField: boolean;
     showContinueWithPasswordlessLink: boolean;
     clearError: () => void;
-    onContactInfoSubmit: (contactInfo: string, setPhoneNumber: (phoneNumber: string) => void) => void;
-    onPasswordSubmit: (formFields: APIFormField[]) => void;
-    onContinueWithPasswordlessClick: (contactInfo: string) => void;
+    onContactInfoSubmit: (contactInfo: string) => Promise<FormBaseAPIResponse<unknown>>;
+    onPasswordSubmit: (formFields: APIFormField[]) => Promise<FormBaseAPIResponse<unknown>>;
+    onContinueWithPasswordlessClick: (contactInfo: string) => Promise<void>;
+    onSuccess: (
+        result:
+            | {
+                  status: "OK";
+                  user: User;
+                  createdNewRecipeUser: boolean;
+                  isEmailPassword: true;
+              }
+            | {
+                  status: "OK";
+                  isEmailPassword: false | undefined;
+              }
+    ) => void;
     onError: (error: string) => void;
     onFetchError: (error: Response) => void;
     error: string | undefined;
     recipeImplementation: RecipeImplementation;
-    epRecipeImplementation: EPRecipeImplementation;
     config: NormalisedConfig;
 };
 export declare type MFAAction =
@@ -290,12 +308,26 @@ export declare type MFAState = {
 };
 export declare type SignInUpChildProps = SignInUpProps;
 export declare type SignInUpEPComboChildProps = Omit<SignInUpProps, "onSuccess"> & {
+    isPhoneNumber: boolean;
+    setIsPhoneNumber: (isPhone: boolean) => void;
     showPasswordField: boolean;
     showContinueWithPasswordlessLink: boolean;
-    onContactInfoSubmit: (contactInfo: string, setPhoneNumber: (phoneNumber: string) => void) => void;
-    onPasswordSubmit: (formFields: APIFormField[]) => void;
-    onContinueWithPasswordlessClick: (contactInfo: string) => void;
-    onSuccess: (result: { isEmailPassword: true; createdNewRecipeUser: boolean; user: User }) => void;
+    onContactInfoSubmit: (contactInfo: string) => Promise<FormBaseAPIResponse<unknown>>;
+    onPasswordSubmit: (formFields: APIFormField[]) => Promise<FormBaseAPIResponse<unknown>>;
+    onContinueWithPasswordlessClick: (contactInfo: string) => Promise<void>;
+    onSuccess: (
+        result:
+            | {
+                  status: "OK";
+                  user: User;
+                  createdNewRecipeUser: boolean;
+                  isEmailPassword: true;
+              }
+            | {
+                  status: "OK";
+                  isEmailPassword: false | undefined;
+              }
+    ) => void;
 };
 export declare type LinkSentChildProps = LinkSentThemeProps;
 export declare type MFAChildProps = Omit<MFAProps, "featureState" | "dispatch">;

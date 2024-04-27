@@ -37,7 +37,7 @@ export function useChildProps(
     onError: (err: string) => void,
     clearError: () => void,
     rebuildAuthPage: () => void,
-    setFactorList: (factorIds: string[] | undefined) => void,
+    setFactorList: (factorIds: string[]) => void,
     navigate: Navigate | undefined,
     userContext: UserContext
 ): SignInAndUpThemeProps {

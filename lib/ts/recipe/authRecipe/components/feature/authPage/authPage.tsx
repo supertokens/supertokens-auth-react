@@ -63,7 +63,7 @@ export type AuthPageProps = PropsWithChildren<{
 type AuthComponentListInfo = Pick<
     AuthPageThemeProps,
     "authComponents" | "fullPageCompWithPreloadedInfo" | "isSignUp" | "hasSeparateSignUpView" | "factorIds"
-> & { translations: TranslationStore[] };
+>;
 
 const AuthPageWrapper: React.FC<AuthPageProps> = (props) => {
     const authRecipeComponentOverrides = useAuthRecipeComponentOverrideContext();
@@ -164,7 +164,9 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
 
     const [authComponentListInfo, setAuthComponentListInfo] = useState<AuthComponentListInfo | undefined>();
 
-    const showUseAnotherLink = factorList !== undefined;
+    const showUseAnotherLink =
+        factorList !== undefined &&
+        (props.factors === undefined || props.factors.some((id) => !factorList.includes(id)));
 
     const stInstance = SuperTokens.getInstanceOrThrow();
 
@@ -225,8 +227,15 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                   onSignInUpSwitcherClick,
                   privacyPolicyLink,
                   rebuildAuthPage: () => setRebuildReqCount((v) => v + 1),
-                  setFactorList,
-                  showUseAnotherLink,
+                  setFactorList: (factorIds: string[]) => {
+                      setFactorList(factorIds);
+                      setRebuildReqCount((v) => v + 1);
+                  },
+                  resetFactorList: () => {
+                      setFactorList(props.factors);
+                      setRebuildReqCount((v) => v + 1);
+                  },
+                  showBackButton: showUseAnotherLink,
                   termsOfServiceLink,
                   userContext,
               }
@@ -235,8 +244,8 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     const mergedTranslations = useMemo(() => {
         let res: TranslationStore = defaultTranslationsCommon;
         if (authComponentListInfo !== undefined) {
-            for (const store of authComponentListInfo.translations) {
-                res = mergeObjects(res, store);
+            for (const ui of props.preBuiltUIList) {
+                res = mergeObjects(res, ui.languageTranslations);
             }
         }
         res = mergeObjects(res, st.languageTranslations.userTranslationStore);
@@ -338,7 +347,6 @@ async function buildAndSetChildProps(
                     isSignUp,
                     hasSeparateSignUpView,
                     factorIds: firstFactors,
-                    translations: [],
                 });
                 return;
             }
@@ -372,7 +380,6 @@ async function buildAndSetChildProps(
 
     setComponentListInfo({
         authComponents: selectedComponents.sort((a, b) => a.displayOrder - b.displayOrder).map((w) => w.component),
-        translations: selectedComponents.map((c) => c.translations),
         factorIds: firstFactors,
         hasSeparateSignUpView,
         isSignUp,

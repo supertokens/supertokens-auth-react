@@ -13,105 +13,153 @@
  * under the License.
  */
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useEffect } from "react";
 import STGeneralError from "supertokens-web-js/utils/error";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { Label } from "../../../../emailpassword/components/library";
-import FormBase, { useFormFields } from "../../../../emailpassword/components/library/formBase";
+import FormBase from "../../../../emailpassword/components/library/formBase";
 import EmailPassword from "../../../../emailpassword/recipe";
 import { preloadPhoneNumberUtils } from "../../../phoneNumberUtils";
 import { defaultValidate } from "../../../validators";
 import { phoneNumberInputWithInjectedProps } from "../signInUp/phoneNumberInput";
 
+import { ContinueWithPasswordlessFooter } from "./continueWithPasswordlessFooter";
+
+import type { FormFieldThemeProps } from "../../../../emailpassword/types";
 import type { SignInUpEPComboEmailOrPhoneFormProps } from "../../../types";
 
-export const EmailOrPhoneForm = withOverride(
-    "PasswordlessEmailOrPhoneForm",
-    function PasswordlessEmailOrPhoneForm(
-        props: SignInUpEPComboEmailOrPhoneFormProps & {
-            footer?: JSX.Element;
-        }
-    ): JSX.Element {
+export const EPComboEmailOrPhoneForm = withOverride(
+    "PasswordlessEPComboEmailOrPhoneForm",
+    function PasswordlessEPComboEmailOrPhoneForm(props: SignInUpEPComboEmailOrPhoneFormProps): JSX.Element {
         const t = useTranslation();
-        const [isPhoneNumber, setIsPhoneNumber] = useState<boolean>(false);
 
         useEffect(() => {
             // We preload this here, since it will be used almost for sure, but loading it
             void preloadPhoneNumberUtils();
         }, []);
-        const emailOrPhoneInput = useMemo(
+        const phoneInput = useMemo(
             () =>
-                isPhoneNumber
-                    ? phoneNumberInputWithInjectedProps({
-                          defaultCountry: props.config.signInUpFeature.defaultCountry,
-                      })
-                    : undefined,
-            [props.config.signInUpFeature.defaultCountry, isPhoneNumber]
+                phoneNumberInputWithInjectedProps({
+                    defaultCountry: props.config.signInUpFeature.defaultCountry,
+                }),
+            [props.config.signInUpFeature.defaultCountry]
         );
+        const formFields: FormFieldThemeProps[] = props.isPhoneNumber
+            ? [
+                  {
+                      id: "phoneNumber",
+                      label: "",
+
+                      labelComponent: (
+                          <div data-supertokens="formLabelWithLinkWrapper">
+                              <Label value={"PWLESS_SIGN_IN_UP_PHONE_LABEL"} />
+                              <a
+                                  onClick={() => props.setIsPhoneNumber(false)}
+                                  data-supertokens="link linkButton formLabelLinkBtn contactMethodSwitcher">
+                                  {t("PWLESS_SIGN_IN_UP_SWITCH_TO_EMAIL")}
+                              </a>
+                          </div>
+                      ),
+                      inputComponent: phoneInput,
+                      optional: false,
+                      autofocus: true,
+                      placeholder: "",
+                      autoComplete: "tel",
+                      validate: defaultValidate,
+                  },
+              ]
+            : [
+                  {
+                      id: "email",
+                      label: "",
+
+                      labelComponent: (
+                          <div data-supertokens="formLabelWithLinkWrapper">
+                              <Label value={"PWLESS_SIGN_IN_UP_EMAIL_LABEL"} />
+                              <a
+                                  onClick={() => props.setIsPhoneNumber(true)}
+                                  data-supertokens="link linkButton formLabelLinkBtn contactMethodSwitcher">
+                                  {t("PWLESS_SIGN_IN_UP_SWITCH_TO_PHONE")}
+                              </a>
+                          </div>
+                      ),
+                      inputComponent: undefined,
+                      optional: false,
+                      autofocus: true,
+                      placeholder: "",
+                      autoComplete: "email",
+                      validate: defaultValidate,
+                  },
+              ];
+
+        if (props.showPasswordField) {
+            formFields.push({
+                id: "password",
+                autofocus: false,
+                optional: false,
+                placeholder: "",
+                label: "",
+                validate: defaultValidate,
+                labelComponent: (
+                    <div data-supertokens="formLabelWithLinkWrapper">
+                        <Label value={"PWLESS_COMBO_PASSWORD_LABEL"} data-supertokens="passwordInputLabel" />
+                        <a
+                            onClick={() => EmailPassword.getInstanceOrThrow().redirect({ action: "RESET_PASSWORD" })}
+                            data-supertokens="forgotPasswordLink">
+                            {t("PWLESS_COMBO_FORGOT_PW_LINK")}{" "}
+                        </a>
+                    </div>
+                ),
+            });
+        }
 
         return (
             <FormBase
                 clearError={props.clearError}
                 onFetchError={props.onFetchError}
                 onError={props.onError}
-                formFields={[
-                    {
-                        id: "emailOrPhone",
-                        label: "PWLESS_SIGN_IN_UP_EMAIL_OR_PHONE_LABEL",
-                        inputComponent: emailOrPhoneInput,
-                        optional: false,
-                        autofocus: true,
-                        placeholder: "",
-                        // We do not add an autocomplete prop in this case, since we do not really have any sensible option to set
-                        // Setting them to either "tel" or "email" would give people the wrong impression since this could have either
-                        // AFAIK we can't set them both at the same time
-                        validate: defaultValidate,
-                    },
-                    {
-                        id: "password",
-                        hidden: !props.showPasswordField,
-                        autofocus: false,
-                        optional: false,
-                        placeholder: "",
-                        label: "",
-                        validate: defaultValidate,
-                        labelComponent: (
-                            <div data-supertokens="formLabelWithLinkWrapper">
-                                <Label value={"PWLESS_COMBO_PASSWORD_LABEL"} data-supertokens="passwordInputLabel" />
-                                <a
-                                    onClick={() =>
-                                        EmailPassword.getInstanceOrThrow().redirect({ action: "RESET_PASSWORD" })
-                                    }
-                                    data-supertokens="forgotPasswordLink">
-                                    {t("PWLESS_COMBO_FORGOT_PW_LINK")}{" "}
-                                </a>
-                            </div>
-                        ),
-                    },
-                ]}
-                buttonLabel={props.showPasswordField ? "PWLESS_COMBO_SIGN_IN" : "PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
-                callAPI={async (formFields, setValue) => {
-                    const emailOrPhone = formFields.find((field) => field.id === "emailOrPhone")?.value;
-                    if (emailOrPhone === undefined) {
-                        throw new STGeneralError("GENERAL_ERROR_EMAIL_OR_PHONE_UNDEFINED");
-                    }
-                    if (props.showPasswordField) {
-                        return props.onPasswordSubmit(formFields);
+                formFields={formFields}
+                buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
+                callAPI={async (formFields) => {
+                    if (props.isPhoneNumber) {
+                        const phoneNumber = formFields.find((field) => field.id === "phoneNumber")?.value;
+                        if (phoneNumber === undefined) {
+                            throw new STGeneralError("GENERAL_ERROR_PHONE_UNDEFINED");
+                        }
+
+                        const validationRes = await props.config.validatePhoneNumber(phoneNumber);
+                        if (validationRes !== undefined) {
+                            throw new STGeneralError(validationRes);
+                        }
+
+                        return props.onContactInfoSubmit(phoneNumber);
                     } else {
-                        return props.onContactInfoSubmit(emailOrPhone, (phoneNumber) => {
-                            setValue("emailOrPhone", phoneNumber);
-                            setIsPhoneNumber(true);
-                        });
+                        const email = formFields.find((field) => field.id === "email")?.value;
+                        if (email === undefined) {
+                            throw new STGeneralError("GENERAL_ERROR_EMAIL_UNDEFINED");
+                        }
+                        const validationRes = await props.config.validateEmailAddress(email);
+                        if (validationRes !== undefined) {
+                            throw new STGeneralError(validationRes);
+                        }
+
+                        if (props.showPasswordField) {
+                            return props.onPasswordSubmit(formFields);
+                        } else {
+                            return props.onContactInfoSubmit(email);
+                        }
                     }
                 }}
                 validateOnBlur={false}
                 showLabels={true}
+                onSuccess={props.onSuccess}
                 footer={
                     props.showContinueWithPasswordlessLink ? (
                         <ContinueWithPasswordlessFooter
+                            isPhoneNumber={props.isPhoneNumber}
                             onContinueWithPasswordlessClick={props.onContinueWithPasswordlessClick}
                             onError={props.onError}
                         />
@@ -121,26 +169,3 @@ export const EmailOrPhoneForm = withOverride(
         );
     }
 );
-
-const ContinueWithPasswordlessFooter: React.FC<{
-    onError: (err: string) => void;
-    onContinueWithPasswordlessClick: (contactInfo: string) => void;
-}> = ({ onError, onContinueWithPasswordlessClick }) => {
-    const state = useFormFields();
-    const t = useTranslation();
-
-    return (
-        <a
-            onClick={() => {
-                const emailOrPhone = state.find((field) => field.id === "emailOrPhone")?.value;
-                if (emailOrPhone === undefined) {
-                    onError("GENERAL_ERROR_EMAIL_OR_PHONE_UNDEFINED");
-                } else {
-                    onContinueWithPasswordlessClick(emailOrPhone);
-                }
-            }}>
-            {" "}
-            {t("PWLESS_COMBO_CONTINUE_WITH_PASSWORDLESS")}{" "}
-        </a>
-    );
-};

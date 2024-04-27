@@ -9,6 +9,7 @@ import { SessionAuth } from "../session";
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import { EmailVerificationTheme } from "./components/themes/emailVerification";
+import { defaultTranslationsEmailVerification } from "./components/themes/translations";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
 import EmailVerificationRecipe from "./recipe";
 
@@ -18,6 +19,8 @@ import type { AuthComponent } from "../../types";
 
 export class EmailVerificationPreBuiltUI extends RecipeRouter {
     static instance?: EmailVerificationPreBuiltUI;
+    languageTranslations = defaultTranslationsEmailVerification;
+
     constructor(public readonly recipeInstance: EmailVerificationRecipe) {
         super();
     }

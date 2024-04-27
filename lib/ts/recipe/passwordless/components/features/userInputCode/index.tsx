@@ -209,8 +209,6 @@ function getModifiedRecipeImplementation(
                             lastResend: timestamp,
                         },
                     });
-                    // TODO:
-                    rebuildAuthPage();
                 }
             } else if (res.status === "RESTART_FLOW_ERROR") {
                 await originalImpl.clearLoginAttemptInfo({

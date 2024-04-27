@@ -20,12 +20,11 @@ import React from "react";
 import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
-import EmailPassword from "../../../../emailpassword/recipe";
 import { FactorIds } from "../../../../multifactorauth";
 import { ThemeBase } from "../themeBase";
 
-import { EmailForm } from "./emailForm";
-import { EmailOrPhoneForm } from "./emailOrPhoneForm";
+import { EPComboEmailForm } from "./emailForm";
+import { EPComboEmailOrPhoneForm } from "./emailOrPhoneForm";
 
 import type { SignInUpEPComboChildProps } from "../../../types";
 
@@ -42,14 +41,13 @@ const SignInUpTheme: React.FC<SignInUpEPComboChildProps & { activeScreen: SignIn
     ...props
 }) => {
     const commonProps = {
-        epRecipeImplementation: EmailPassword.getInstanceOrThrow().webJSRecipe,
         ...props,
     };
 
     return activeScreen === SignInUpEPComboScreens.EmailForm ? (
-        <EmailForm {...commonProps} />
+        <EPComboEmailForm {...commonProps} />
     ) : activeScreen === SignInUpEPComboScreens.EmailOrPhoneForm ? (
-        <EmailOrPhoneForm {...commonProps} />
+        <EPComboEmailOrPhoneForm {...commonProps} />
     ) : null;
 };
 

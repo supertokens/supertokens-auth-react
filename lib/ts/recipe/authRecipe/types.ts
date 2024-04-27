@@ -13,6 +13,9 @@
  * under the License.
  */
 
+import type { AuthPageComponentList } from "./components/theme/authPage/authPageComponentList";
+import type { AuthPageFooter } from "./components/theme/authPage/authPageFooter";
+import type { AuthPageHeader } from "./components/theme/authPage/authPageHeader";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type { AuthComponentProps, Navigate, PartialAuthComponentProps, UserContext } from "../../types";
 import type {
@@ -30,9 +33,9 @@ export type NormalisedConfig<T, Action, R> = NormalisedRecipeModuleConfig<T, Act
 export type OnHandleEventContext = never;
 
 export type ComponentOverrideMap = {
-    AuthPageHeader_Override: ComponentOverride<any>;
-    AuthPageFooter_Override: ComponentOverride<any>;
-    AuthPageLoginMethodList_Override: ComponentOverride<any>;
+    AuthPageHeader_Override: ComponentOverride<typeof AuthPageHeader>;
+    AuthPageFooter_Override: ComponentOverride<typeof AuthPageFooter>;
+    AuthPageComponentList_Override: ComponentOverride<typeof AuthPageComponentList>;
 };
 
 type ComponentWithPreloadInfo<T> = {
@@ -45,8 +48,9 @@ type ComponentWithPreloadInfo<T> = {
 };
 
 export type AuthPageThemeProps = {
-    showUseAnotherLink: boolean;
-    setFactorList: (factorIds: string[] | undefined) => void;
+    showBackButton: boolean;
+    setFactorList: (factorIds: string[]) => void;
+    resetFactorList: () => void;
 
     fullPageCompWithPreloadedInfo?: ComponentWithPreloadInfo<any>;
     authComponents: React.FC<PartialAuthComponentProps>[];

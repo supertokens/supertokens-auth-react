@@ -72,7 +72,6 @@ export default class Passwordless extends AuthRecipe<
     recipeID = Passwordless.RECIPE_ID;
     firstFactorIds = [FactorIds.OTP_EMAIL, FactorIds.OTP_PHONE, FactorIds.LINK_EMAIL, FactorIds.LINK_PHONE];
 
-    // TODO: Maybe we can remove this (if hasIntersectingRecipes is removed, we can do this by having the constructor set firstFactorIds based on the config)
     public getFirstFactorsForAuthPage(): string[] {
         if (this.config.signInUpFeature.disableDefaultUI) {
             return [];

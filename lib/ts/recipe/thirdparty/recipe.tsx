@@ -115,7 +115,6 @@ export default class ThirdParty extends AuthRecipe<
 
     static getInstanceOrThrow(): ThirdParty {
         if (ThirdParty.instance === undefined) {
-            // TODO Use correct doc link.
             let error =
                 "No instance of ThirdParty found. Make sure to call the ThirdParty.init method." +
                 "See https://supertokens.io/docs/thirdparty/quick-setup/frontend";

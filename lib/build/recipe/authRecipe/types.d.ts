@@ -1,4 +1,7 @@
 /// <reference types="react" />
+import type { AuthPageComponentList } from "./components/theme/authPage/authPageComponentList";
+import type { AuthPageFooter } from "./components/theme/authPage/authPageFooter";
+import type { AuthPageHeader } from "./components/theme/authPage/authPageHeader";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type { AuthComponentProps, Navigate, PartialAuthComponentProps, UserContext } from "../../types";
 import type {
@@ -11,9 +14,9 @@ export declare type Config<T, S, R> = UserInput<T, S, R> & RecipeModuleConfig<T,
 export declare type NormalisedConfig<T, Action, R> = NormalisedRecipeModuleConfig<T, Action, R>;
 export declare type OnHandleEventContext = never;
 export declare type ComponentOverrideMap = {
-    AuthPageHeader_Override: ComponentOverride<any>;
-    AuthPageFooter_Override: ComponentOverride<any>;
-    AuthPageLoginMethodList_Override: ComponentOverride<any>;
+    AuthPageHeader_Override: ComponentOverride<typeof AuthPageHeader>;
+    AuthPageFooter_Override: ComponentOverride<typeof AuthPageFooter>;
+    AuthPageComponentList_Override: ComponentOverride<typeof AuthPageComponentList>;
 };
 declare type ComponentWithPreloadInfo<T> = {
     component: React.FC<
@@ -24,8 +27,9 @@ declare type ComponentWithPreloadInfo<T> = {
     preloadInfo: T;
 };
 export declare type AuthPageThemeProps = {
-    showUseAnotherLink: boolean;
-    setFactorList: (factorIds: string[] | undefined) => void;
+    showBackButton: boolean;
+    setFactorList: (factorIds: string[]) => void;
+    resetFactorList: () => void;
     fullPageCompWithPreloadedInfo?: ComponentWithPreloadInfo<any>;
     authComponents: React.FC<PartialAuthComponentProps>[];
     factorIds: string[];

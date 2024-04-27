@@ -3,6 +3,7 @@ import SuperTokens from "../../superTokens";
 import MultiFactorAuth from "../multifactorauth/recipe";
 import { FactorIds } from "../multifactorauth/types";
 
+import type { TranslationStore } from "../../translation/translationHelpers";
 import type { AuthComponent, RecipeFeatureComponentMap } from "../../types";
 import type { BaseFeatureComponentMap, ComponentWithRecipeAndMatchingMethod } from "../../types";
 import type { GetLoginMethodsResponseNormalized } from "../multitenancy/types";
@@ -146,6 +147,7 @@ function chooseComponentBasedOnFirstFactors(
 export abstract class RecipeRouter {
     private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;
     public abstract recipeInstance: RecipeModule<never, any, any, any>;
+    public abstract languageTranslations: TranslationStore;
     static getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
         normalisedUrl: NormalisedURLPath,
         preBuiltUIList: RecipeRouter[],

@@ -9,7 +9,7 @@ import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import ResetPasswordUsingTokenFeature from "./components/features/resetPasswordUsingToken";
 import SignInFeature from "./components/features/signin";
 import SignUpFeature from "./components/features/signup";
-import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
+import ResetPasswordUsingTokenThemeWrapper from "./components/themes/resetPasswordUsingToken";
 import SignInTheme from "./components/themes/signIn";
 import SignUpTheme from "./components/themes/signUp";
 import { defaultTranslationsEmailPassword } from "./components/themes/translations";
@@ -22,6 +22,7 @@ import type { AuthComponent } from "../../types";
 
 export class EmailPasswordPreBuiltUI extends RecipeRouter {
     static instance?: EmailPasswordPreBuiltUI;
+    languageTranslations = defaultTranslationsEmailPassword;
 
     constructor(public readonly recipeInstance: EmailPassword) {
         super();
@@ -97,7 +98,6 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
                 factorIds: [FactorIds.EMAILPASSWORD],
                 displayOrder: 2,
                 type: "SIGN_UP",
-                translations: defaultTranslationsEmailPassword,
                 component: (props) => (
                     <SignUpFeature
                         key="emailpassword-sign-up"
@@ -111,7 +111,6 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
                 factorIds: [FactorIds.EMAILPASSWORD],
                 displayOrder: 2,
                 type: "SIGN_IN",
-                translations: defaultTranslationsEmailPassword,
                 component: (props) => (
                     <SignInFeature
                         key="emailpassword-sign-in"
@@ -143,9 +142,9 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
     static ResetPasswordUsingToken = (prop: FeatureBaseProps<{ userContext?: UserContext }>) =>
         EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("resetpassword", prop);
 
-    static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
+    static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenThemeWrapper;
 }
 
 const ResetPasswordUsingToken = EmailPasswordPreBuiltUI.ResetPasswordUsingToken;
 
-export { ResetPasswordUsingToken, ResetPasswordUsingTokenTheme };
+export { ResetPasswordUsingToken, ResetPasswordUsingTokenThemeWrapper as ResetPasswordUsingTokenTheme };

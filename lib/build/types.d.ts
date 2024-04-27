@@ -181,7 +181,7 @@ export declare type Navigate =
     | NavigateFunction;
 export declare type UserContext = Record<string, any>;
 export declare type AuthComponentProps = {
-    setFactorList: (factorIds: string[] | undefined) => void;
+    setFactorList: (factorIds: string[]) => void;
     rebuildAuthPage: () => void;
     navigate: Navigate | undefined;
     userContext: UserContext;
@@ -189,8 +189,11 @@ export declare type AuthComponentProps = {
     onError: (err: string) => void;
     clearError: () => void;
 };
-export declare type PartialAuthComponentProps = AuthComponentProps & {};
-export declare type FullPageAuthComponent<T = any> = {
+export declare type PartialAuthComponentProps = AuthComponentProps;
+export declare type FullPageAuthComponentProps<PreloadInfoType> = AuthComponentProps & {
+    preloadInfo: PreloadInfoType;
+};
+export declare type FullPageAuthComponent<PreloadInfoType = any> = {
     type: "FULL_PAGE";
     preloadInfoAndRunChecks: (
         firstFactors: string[],
@@ -198,24 +201,19 @@ export declare type FullPageAuthComponent<T = any> = {
     ) => Promise<
         | {
               shouldDisplay: true;
-              preloadInfo: T;
+              preloadInfo: PreloadInfoType;
           }
         | {
               shouldDisplay: false;
           }
     >;
-    component: React.FC<
-        AuthComponentProps & {
-            preloadInfo: T;
-        }
-    >;
+    component: React.FC<FullPageAuthComponentProps<PreloadInfoType>>;
 };
 export declare type PartialAuthComponent = {
     type: "SIGN_IN_UP" | "SIGN_IN" | "SIGN_UP";
     factorIds: string[];
     displayOrder: number;
     component: React.FC<PartialAuthComponentProps>;
-    translations: TranslationStore;
 };
 export declare type AuthComponent<T = any> = PartialAuthComponent | FullPageAuthComponent<T>;
 export {};
