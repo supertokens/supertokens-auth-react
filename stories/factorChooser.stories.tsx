@@ -71,7 +71,6 @@ const meta: Meta<typeof Page> = {
             },
             firstFactors: [],
             rootStyle: "",
-            useShadowDom: false,
         },
     },
 };

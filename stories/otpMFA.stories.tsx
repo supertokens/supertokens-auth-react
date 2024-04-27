@@ -8,7 +8,6 @@ import { TranslationContextProvider } from "../lib/ts/translation/translationCon
 import { ComponentOverrideContext } from "../lib/ts/components/componentOverride/componentOverrideContext";
 import { LoginAttemptInfo } from "../lib/ts/recipe/passwordless/types";
 import { resetAndInitST, withFetchResponse } from "./utils";
-import { defaultGuessInternationPhoneNumberFromInputPhoneNumber } from "../lib/ts/recipe/passwordless/validators";
 import { SessionContext } from "../lib/ts/recipe/session";
 
 function noop() {}
@@ -87,9 +86,7 @@ const meta: Meta<typeof Page> = {
                 emailOrPhoneFormStyle: "",
                 linkSentScreenStyle: "",
                 resendEmailOrSMSGapInSeconds: 30,
-                guessInternationPhoneNumberFromInputPhoneNumber: defaultGuessInternationPhoneNumberFromInputPhoneNumber,
             },
-            useShadowDom: false,
         } as any, // We are not using any other config values
         recipeImplementation: {
             consumeCode: async () => {
