@@ -14,7 +14,7 @@ rm ../../supertokens-auth-react-*.tgz
 cd node_modules/supertokens-auth-react
 
 # install prod dependencies only
-npm i --production || exit $?
+npm i --force --omit=dev || exit $?
 
 rm -rf node_modules/react # We need this because we do local install instead which doesn't take the parent dir into account
 rm -rf node_modules/.cache
