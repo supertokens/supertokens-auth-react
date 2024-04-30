@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
 import AppWithoutRouter from "./AppWithoutRouter";
@@ -289,21 +289,31 @@ const incorrectFormFields = [
     },
 ];
 
+const DropdownInputComponent = ({ value, name, onChange }) => {
+    const onChangeRef = useRef(onChange);
+
+    if (onChangeRef.current !== onChange) {
+        throw new Error("callbacks passed to inputComponents should be reference stable");
+    }
+
+    return (
+        <select value={value} name={name} onChange={(e) => onChange(e.target.value)}>
+            <option value="" disabled hidden>
+                Select an option
+            </option>
+            <option value="option 1">Option 1</option>
+            <option value="option 2">Option 2</option>
+            <option value="option 3">Option 3</option>
+        </select>
+    );
+};
+
 const customFields = [
     {
         id: "select-dropdown",
         label: "Select Dropdown",
         nonOptionalErrorMsg: "Select dropdown is not an optional",
-        inputComponent: ({ value, name, onChange }) => (
-            <select value={value} name={name} onChange={(e) => onChange(e.target.value)}>
-                <option value="" disabled hidden>
-                    Select an option
-                </option>
-                <option value="option 1">Option 1</option>
-                <option value="option 2">Option 2</option>
-                <option value="option 3">Option 3</option>
-            </select>
-        ),
+        inputComponent: DropdownInputComponent,
         optional: true,
     },
     {

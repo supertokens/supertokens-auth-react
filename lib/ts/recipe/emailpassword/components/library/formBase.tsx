@@ -66,7 +66,7 @@ function InputComponentWrapper(props: {
                 value,
             });
         },
-        [onInputFocus, field]
+        [onInputFocus, field.id]
     );
 
     const useCallbackOnInputBlur = useCallback<(value: string) => void>(
@@ -76,7 +76,7 @@ function InputComponentWrapper(props: {
                 value,
             });
         },
-        [onInputBlur, field]
+        [onInputBlur, field.id]
     );
 
     const useCallbackOnInputChange = useCallback(
@@ -86,7 +86,7 @@ function InputComponentWrapper(props: {
                 value,
             });
         },
-        [onInputChange, field]
+        [onInputChange, field.id]
     );
 
     return field.inputComponent !== undefined ? (
