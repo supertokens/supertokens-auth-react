@@ -42,7 +42,7 @@ export function AuthPageTheme(props: AuthPageThemeProps): JSX.Element {
         );
     }
     return (
-        <div data-supertokens="container auth-page">
+        <div data-supertokens={`container authPage ${props.factorIds.length > 1 ? "multiFactor" : "singleFactor"}`}>
             <div data-supertokens="row">
                 <AuthPageHeader
                     factorIds={props.factorIds}

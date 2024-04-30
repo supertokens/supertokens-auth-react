@@ -101,3 +101,7 @@
 [data-supertokens~="continueWithPasswordlessButtonWrapper"] {
     margin: 9px 0;
 }
+
+[data-supertokens~="continueWithSupertokensLink"] {
+    margin-top: 9px;
+}

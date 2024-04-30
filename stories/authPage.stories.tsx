@@ -29,6 +29,10 @@ export type Args = {
 
 const meta: Meta<Args> = {
     title: "Auth page",
+    parameters: {
+        // Sets the delay (in milliseconds). This will make sure
+        chromatic: { delay: 300 },
+    },
     render: (args, { loaded: { path, funcOverrides } }) => {
         const { prebuiltUIs, key } = useMemo(() => {
             const { prebuiltUIs, recipeList, defaultToSignUp } = buildInit(unflattenArgs(args), funcOverrides);
@@ -45,6 +49,27 @@ const meta: Meta<Args> = {
 
         return (
             <ErrorBoundary key={key}>
+                <style>
+                    {`
+                    *, *::before, *::after {
+                        animation-delay: -1s !important;
+                        animation-duration: 0s !important;
+                        animation-iteration-count: 1 !important;
+                        background-attachment: initial !important;
+                        scroll-behavior: auto !important;
+                        transition-duration: 0s !important;
+                        transition: none !important;
+                    }
+
+                    img, video, iframe {
+                        background: blue !important;
+                        filter: brightness(1) contrast(0) !important;
+                    }
+
+                    svg {
+                        shape-rendering: geometricPrecision !important;
+                    }`}
+                </style>
                 <RoutingComponent
                     key={key}
                     path={args.path ?? path ?? "/auth"}
