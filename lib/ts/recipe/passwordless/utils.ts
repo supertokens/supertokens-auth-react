@@ -15,12 +15,7 @@
 
 import { normaliseAuthRecipe } from "../authRecipe/utils";
 
-import {
-    defaultPhoneNumberValidator,
-    defaultPhoneNumberValidatorForCombinedInput,
-    defaultEmailValidator,
-    defaultEmailValidatorForCombinedInput,
-} from "./validators";
+import { defaultPhoneNumberValidator, defaultEmailValidator } from "./validators";
 
 import type { Config, NormalisedConfig, SignInUpFeatureConfigInput } from "./types";
 import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
@@ -47,8 +42,6 @@ export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
         config.validateEmailAddress !== undefined
     ) {
         validateEmailAddress = config.validateEmailAddress;
-    } else if (config.contactMethod === "EMAIL_OR_PHONE") {
-        validateEmailAddress = defaultEmailValidatorForCombinedInput;
     }
 
     let validatePhoneNumber: NormalisedConfig["validatePhoneNumber"] = defaultPhoneNumberValidator;
@@ -57,8 +50,6 @@ export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
         config.validatePhoneNumber !== undefined
     ) {
         validatePhoneNumber = config.validatePhoneNumber;
-    } else if (config.contactMethod === "EMAIL_OR_PHONE") {
-        validatePhoneNumber = defaultPhoneNumberValidatorForCombinedInput;
     }
 
     return {

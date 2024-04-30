@@ -51,41 +51,6 @@ export async function defaultPhoneNumberValidator(value: string) {
     return undefined;
 }
 
-export function defaultEmailValidatorForCombinedInput(value: any): string | undefined {
-    if (typeof value !== "string") {
-        return "GENERAL_ERROR_EMAIL_OR_PHONE_NON_STRING";
-    }
-    value = value.trim();
-
-    const defaultEmailValidatorRegexp =
-        // eslint-disable-next-line no-useless-escape
-        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    // We check if the email syntax is correct
-    // As per https://github.com/supertokens/supertokens-auth-react/issues/5#issuecomment-709512438
-    // Regex from https://stackoverflow.com/a/46181/3867175
-
-    if (value.match(defaultEmailValidatorRegexp) === null) {
-        return "GENERAL_ERROR_EMAIL_OR_PHONE_INVALID";
-    }
-
-    return undefined;
-}
-
-export async function defaultPhoneNumberValidatorForCombinedInput(value: string) {
-    if (typeof value !== "string") {
-        return "GENERAL_ERROR_EMAIL_OR_PHONE_NON_STRING";
-    }
-
-    value = value.trim();
-
-    const intlTelInputUtils = await getPhoneNumberUtils();
-
-    if (!intlTelInputUtils.isValidNumber(value, undefined as any)) {
-        return "GENERAL_ERROR_EMAIL_OR_PHONE_INVALID";
-    }
-    return undefined;
-}
-
 export async function userInputCodeValidate(value: any): Promise<string | undefined> {
     if (typeof value !== "string") {
         return "GENERAL_ERROR_OTP_NON_STRING";

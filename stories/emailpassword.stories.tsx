@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { userEvent, waitFor, within } from "@storybook/test";
+import { userEvent, within } from "@storybook/testing-library";
 import meta, { Args } from "./authPage.stories";
 
 type Story = StoryObj<Args>;

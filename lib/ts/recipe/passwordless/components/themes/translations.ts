@@ -12,10 +12,6 @@ export const defaultTranslationsPasswordless = {
         GENERAL_ERROR_PHONE_NON_STRING: "Phone number must be of type string",
         GENERAL_ERROR_PHONE_INVALID: "Phone number is invalid",
 
-        GENERAL_ERROR_EMAIL_OR_PHONE_UNDEFINED: "Please set your email or phone number",
-        GENERAL_ERROR_EMAIL_OR_PHONE_NON_STRING: "Email or Phone number must be of type string",
-        GENERAL_ERROR_EMAIL_OR_PHONE_INVALID: "Email or Phone number is invalid",
-
         GENERAL_ERROR_OTP_UNDEFINED: "Please fill your OTP",
         GENERAL_ERROR_OTP_INVALID: "Invalid OTP",
         GENERAL_ERROR_OTP_EXPIRED: "Expired OTP.",

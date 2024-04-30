@@ -34,7 +34,6 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
             PWLESS_SIGN_IN_UP_SWITCH_TO_PHONE: string;
             PWLESS_SIGN_IN_UP_SWITCH_TO_EMAIL: string;
             PWLESS_SIGN_IN_UP_CONTINUE_BUTTON: string;
-            PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR: string;
             PWLESS_COMBO_CONTINUE_WITH_PASSWORDLESS: string;
             PWLESS_COMBO_PASSWORD_LABEL: string;
             PWLESS_COMBO_FORGOT_PW_LINK: string;

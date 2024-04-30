@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { userEvent, waitFor, within } from "@storybook/test";
 import { ErrorBoundary } from "./errorBoundary";
 import { RoutingComponent } from "../lib/ts/components/routingComponent";
 import EmailVerification from "../lib/ts/recipe/emailverification";

@@ -6,7 +6,6 @@ import React from "react";
 import { defaultTranslationsTOTP } from "../lib/ts/recipe/totp/components/themes/translations";
 import { TranslationContextProvider } from "../lib/ts/translation/translationContext";
 import { ComponentOverrideContext } from "../lib/ts/components/componentOverride/componentOverrideContext";
-import { userEvent, within, waitFor } from "@storybook/test";
 import { resetAndInitST, withFetchResponse } from "./utils";
 import { SessionContext } from "../lib/ts/recipe/session";
 

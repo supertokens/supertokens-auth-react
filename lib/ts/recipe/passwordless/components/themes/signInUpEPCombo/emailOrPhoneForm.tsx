@@ -108,8 +108,8 @@ export const EPComboEmailOrPhoneForm = withOverride(
                         <Label value={"PWLESS_COMBO_PASSWORD_LABEL"} data-supertokens="passwordInputLabel" />
                         <a
                             onClick={() => EmailPassword.getInstanceOrThrow().redirect({ action: "RESET_PASSWORD" })}
-                            data-supertokens="forgotPasswordLink">
-                            {t("PWLESS_COMBO_FORGOT_PW_LINK")}{" "}
+                            data-supertokens="link linkButton formLabelLinkBtn forgotPasswordLink">
+                            {t("PWLESS_COMBO_FORGOT_PW_LINK")}
                         </a>
                     </div>
                 ),
@@ -162,6 +162,7 @@ export const EPComboEmailOrPhoneForm = withOverride(
                             isPhoneNumber={props.isPhoneNumber}
                             onContinueWithPasswordlessClick={props.onContinueWithPasswordlessClick}
                             onError={props.onError}
+                            config={props.config}
                         />
                     ) : undefined
                 }

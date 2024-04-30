@@ -8,8 +8,8 @@ const config: StorybookConfig = {
         "@storybook/addon-actions",
         "@storybook/addon-links",
         "@storybook/addon-interactions",
-        "@storybook/addon-designs",
         // "@storybook/addon-actions/register",
+        "@storybook/addon-designs",
     ],
     async webpackFinal(config, { configType }) {
         if (config.module?.rules) {

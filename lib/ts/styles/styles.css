@@ -379,3 +379,7 @@
     cursor: default;
     text-decoration: none;
 }
+
+[data-supertokens~="authComponentList"] {
+    padding-bottom: 20px;
+}

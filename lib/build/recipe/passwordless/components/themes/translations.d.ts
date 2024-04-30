@@ -6,9 +6,6 @@ export declare const defaultTranslationsPasswordless: {
         GENERAL_ERROR_PHONE_UNDEFINED: string;
         GENERAL_ERROR_PHONE_NON_STRING: string;
         GENERAL_ERROR_PHONE_INVALID: string;
-        GENERAL_ERROR_EMAIL_OR_PHONE_UNDEFINED: string;
-        GENERAL_ERROR_EMAIL_OR_PHONE_NON_STRING: string;
-        GENERAL_ERROR_EMAIL_OR_PHONE_INVALID: string;
         GENERAL_ERROR_OTP_UNDEFINED: string;
         GENERAL_ERROR_OTP_INVALID: string;
         GENERAL_ERROR_OTP_EXPIRED: string;

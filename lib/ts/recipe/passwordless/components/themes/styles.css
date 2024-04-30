@@ -97,3 +97,7 @@
     white-space: nowrap;
     margin: "0 16px";
 }
+
+[data-supertokens~="continueWithPasswordlessButtonWrapper"] {
+    margin: 9px 0;
+}
