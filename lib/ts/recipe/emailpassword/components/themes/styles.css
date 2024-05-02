@@ -197,3 +197,11 @@
 [data-supertokens~="resendEmailLink"] {
     display: inline-block;
 }
+
+[data-supertokens~="resetPasswordEmailForm"] {
+    padding-bottom: 20px;
+}
+
+[data-supertokens~="resetPasswordPasswordForm"] {
+    padding-bottom: 20px;
+}

@@ -68,6 +68,7 @@ export declare type NormalisedConfig = {
     signInUpFeature: {
         resendEmailOrSMSGapInSeconds: number;
         defaultCountry?: string;
+        defaultToEmail: boolean;
         emailOrPhoneFormStyle: string;
         userInputCodeFormStyle: string;
         linkSentScreenStyle: string;
@@ -111,6 +112,7 @@ export declare type UserInput = (
           validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
           signInUpFeature?: SignInUpFeatureConfigInput & {
               defaultCountry?: string;
+              defaultToEmail?: boolean;
           };
       }
 ) & {

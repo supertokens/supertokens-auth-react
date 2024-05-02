@@ -54,7 +54,7 @@
     align-items: center;
 }
 
-[data-supertokens~="phoneInputWrapper"] .iti [data-supertokens~="input"] {
+[data-supertokens~="input-phone"] {
     padding-left: 15px;
 }
 

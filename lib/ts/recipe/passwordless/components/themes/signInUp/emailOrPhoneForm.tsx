@@ -37,7 +37,7 @@ export const EmailOrPhoneForm = withOverride(
         }
     ): JSX.Element {
         const t = useTranslation();
-        const [isPhoneNumber, setIsPhoneNumber] = useState<boolean>(false);
+        const [isPhoneNumber, setIsPhoneNumber] = useState<boolean>(!props.config.signInUpFeature.defaultToEmail);
         const userContext = useUserContext();
 
         useEffect(() => {

@@ -153,7 +153,7 @@ function PhoneNumberInput({
             <div data-supertokens={`phoneInputWrapper inputWrapper ${hasError ? "inputError" : ""}`}>
                 <input
                     type="tel"
-                    data-supertokens="input"
+                    data-supertokens={`input input-${name}`}
                     name={name + "_text"}
                     autoFocus={autofocus}
                     autoComplete={autoComplete}

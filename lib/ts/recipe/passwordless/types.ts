@@ -103,6 +103,7 @@ export type NormalisedConfig = {
         resendEmailOrSMSGapInSeconds: number;
         defaultCountry?: string;
 
+        defaultToEmail: boolean;
         emailOrPhoneFormStyle: string;
         userInputCodeFormStyle: string;
         linkSentScreenStyle: string;
@@ -166,6 +167,7 @@ export type UserInput = (
                * Must be a two-letter ISO country code (e.g.: "US")
                */
               defaultCountry?: string;
+              defaultToEmail?: boolean;
           };
       }
 ) & {

@@ -74,6 +74,7 @@ function normalizeSignInUpFeatureConfig(
         | SignInUpFeatureConfigInput
         | (SignInUpFeatureConfigInput & {
               defaultCountry?: string | undefined;
+              defaultToEmail?: boolean;
           })
         | undefined,
     config: Config
@@ -82,7 +83,7 @@ function normalizeSignInUpFeatureConfig(
         throw new Error("Please pass a positive number as resendEmailOrSMSGapInSeconds");
     }
 
-    const signInUpFeature = {
+    return {
         ...signInUpInput,
         resendEmailOrSMSGapInSeconds:
             signInUpInput?.resendEmailOrSMSGapInSeconds === undefined ? 15 : signInUpInput.resendEmailOrSMSGapInSeconds,
@@ -98,9 +99,13 @@ function normalizeSignInUpFeatureConfig(
             "defaultCountry" in signInUpInput
                 ? signInUpInput.defaultCountry
                 : undefined,
+        defaultToEmail:
+            signInUpInput !== undefined &&
+            "defaultToEmail" in signInUpInput &&
+            signInUpInput.defaultToEmail !== undefined
+                ? signInUpInput.defaultToEmail
+                : true,
     };
-
-    return signInUpFeature;
 }
 
 function normalisePasswordlessBaseConfig<T>(config?: T & FeatureBaseConfig): T & NormalisedBaseConfig {

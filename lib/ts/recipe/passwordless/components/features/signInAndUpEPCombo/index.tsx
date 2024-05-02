@@ -54,7 +54,7 @@ export function useChildProps(
         () => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe, recipe.config, rebuildAuthPage),
         [recipe]
     );
-    const [isPhoneNumber, setIsPhoneNumber] = React.useState(false);
+    const [isPhoneNumber, setIsPhoneNumber] = React.useState<boolean>(!recipe.config.signInUpFeature.defaultToEmail);
     const [showPasswordField, setShowPasswordField] = React.useState(false);
     const [showContinueWithPasswordlessLink, setShowContinueWithPasswordlessLink] = React.useState(false);
     const rethrowInRender = useRethrowInRender();
