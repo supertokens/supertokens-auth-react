@@ -21,6 +21,7 @@ export type Args = {
     "thirdparty.providers": ProviderId[];
     "passwordless.initialized": boolean;
     "passwordless.contactMethod": "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
+    "passwordless.defaultToEmail": boolean;
     "passwordless.disableDefaultUISignInUp": boolean;
     path?: string;
     query?: string;
@@ -31,7 +32,7 @@ const meta: Meta<Args> = {
     title: "Auth page",
     parameters: {
         // Sets the delay (in milliseconds). This will make sure
-        chromatic: { delay: 300 },
+        chromatic: { delay: 600 },
     },
     render: (args, { loaded: { path, funcOverrides } }) => {
         const { prebuiltUIs, key } = useMemo(() => {
@@ -68,6 +69,10 @@ const meta: Meta<Args> = {
 
                     svg {
                         shape-rendering: geometricPrecision !important;
+                    }
+
+                    #storybook-root {
+                        padding: 1rem 0;
                     }`}
                 </style>
                 <RoutingComponent
@@ -82,7 +87,14 @@ const meta: Meta<Args> = {
     args: {
         usesDynamicLoginMethods: false,
         "multifactorauth.initialized": true,
-        "multifactorauth.firstFactors": ["emailpassword", "thirdparty"],
+        "multifactorauth.firstFactors": [
+            "emailpassword",
+            "thirdparty",
+            "otp-email",
+            "otp-phone",
+            "link-email",
+            "link-phone",
+        ],
         "multitenancy.initialized": true,
         "multitenancy.firstFactors": ["emailpassword", "thirdparty"],
         "multitenancy.providers": ["github", "google"],
@@ -95,6 +107,7 @@ const meta: Meta<Args> = {
         "passwordless.initialized": true,
         "passwordless.contactMethod": "EMAIL_OR_PHONE",
         "passwordless.disableDefaultUISignInUp": false,
+        "passwordless.defaultToEmail": true,
     },
     argTypes: {
         "multifactorauth.initialized": {
@@ -212,6 +225,15 @@ const meta: Meta<Args> = {
             },
         },
         "passwordless.disableDefaultUISignInUp": {
+            table: {
+                category: "passwordless",
+            },
+            if: {
+                arg: "passwordless.initialized",
+                truthy: true,
+            },
+        },
+        "passwordless.defaultToEmail": {
             table: {
                 category: "passwordless",
             },

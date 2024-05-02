@@ -113,6 +113,7 @@ export type AuthPageConf = {
         initialized: boolean;
         contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
         disableDefaultUISignInUp: boolean;
+        defaultToEmail: boolean;
     };
     multifactorauth: {
         initialized: boolean;
@@ -162,11 +163,12 @@ export function buildInit(args: AuthPageConf, funcOverrides: any) {
                 contactMethod: args.passwordless.contactMethod,
                 signInUpFeature: {
                     disableDefaultUI: args.passwordless.disableDefaultUISignInUp,
+                    defaultToEmail: args.passwordless.defaultToEmail,
                 },
                 override: {
                     functions: funcOverrides?.passwordless || ((i) => i),
                 },
-            })
+            } as any)
         );
         prebuiltUIs.push(PasswordlessPreBuiltUI);
     }
