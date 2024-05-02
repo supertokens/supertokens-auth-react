@@ -27,7 +27,8 @@ export const defaultTranslationsPasswordless = {
         PWLESS_SIGN_IN_UP_SWITCH_TO_PHONE: "Use a Phone number",
         PWLESS_SIGN_IN_UP_SWITCH_TO_EMAIL: "Use an Email",
         PWLESS_SIGN_IN_UP_CONTINUE_BUTTON: "CONTINUE",
-        PWLESS_COMBO_CONTINUE_WITH_PASSWORDLESS: "Continue with passwordless",
+        PWLESS_COMBO_CONTINUE_WITH_PASSWORDLESS_LINK: "Continue with passwordless",
+        PWLESS_COMBO_CONTINUE_WITH_PASSWORDLESS_BUTTON: "CONTINUE WITH PASSWORDLESS",
 
         PWLESS_COMBO_PASSWORD_LABEL: "Password",
         PWLESS_COMBO_FORGOT_PW_LINK: "Forgot password?",

@@ -98,7 +98,7 @@ export const SignUpPasswordless: Story = {
         // Assigns canvas to the component root element
         const canvas = within(canvasElement);
 
-        const switcher = await canvas.findByText("Continue with passwordless");
+        const switcher = await canvas.findByText("CONTINUE WITH PASSWORDLESS");
         await new Promise((res) => setTimeout(res, 100));
         canvasElement;
         await userEvent.click(switcher, { delay: 200 });

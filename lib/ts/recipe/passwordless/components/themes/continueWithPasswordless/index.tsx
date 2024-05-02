@@ -35,7 +35,7 @@ const ContinueWithPasswordless: React.FC<{ continueWithPasswordlessClicked: () =
                     props.continueWithPasswordlessClicked();
                 }}
                 type="button"
-                label={"PWLESS_COMBO_CONTINUE_WITH_PASSWORDLESS"}
+                label={"PWLESS_COMBO_CONTINUE_WITH_PASSWORDLESS_BUTTON"}
             />
         </div>
     );

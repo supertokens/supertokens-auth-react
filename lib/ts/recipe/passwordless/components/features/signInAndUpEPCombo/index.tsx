@@ -65,6 +65,7 @@ export function useChildProps(
             setIsPhoneNumber: (isPhone) => {
                 if (isPhone && showPasswordField) {
                     setShowPasswordField(false);
+                    setShowContinueWithPasswordlessLink(false);
                 }
                 setIsPhoneNumber(isPhone);
             },

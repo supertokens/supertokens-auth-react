@@ -45,7 +45,7 @@ export const ContinueWithPasswordlessFooter: React.FC<{
                     return onContinueWithPasswordlessClick(email);
                 }
             }}>
-            {t("PWLESS_COMBO_CONTINUE_WITH_PASSWORDLESS")}
+            {t("PWLESS_COMBO_CONTINUE_WITH_PASSWORDLESS_LINK")}
         </a>
     );
 };
