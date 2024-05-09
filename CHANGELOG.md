@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.41.0] - 2024-05-09
+
+### Breaking changes
+
+The `shouldDoInterceptionBasedOnUrl` function now returns true:
+
+-   If sessionTokenBackendDomain is a valid subdomain of the URL's domain. This aligns with the behavior of browsers when sending cookies to subdomains.
+-   Even if the ports of the URL you are querying are different compared to the apiDomain's port ot the sessionTokenBackendDomain port (as long as the hostname is the same, or a subdomain of the sessionTokenBackendDomain): #217
+
 ## [0.40.1] - 2024-04-29
 
 ### CI changes
