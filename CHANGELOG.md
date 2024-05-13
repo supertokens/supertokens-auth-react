@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.41.1] - 2024-05-13
+
+### Fixes
+
+-   Custom `inputComponents` (in sign in/up form fields) now get reference-stable callbacks.
+
 ## [0.41.0] - 2024-05-09
 
 ### Breaking changes
