@@ -1,1 +1,2 @@
-export declare const BlockedIcon: () => import("react/jsx-runtime").JSX.Element;
+/// <reference types="react" />
+export declare const BlockedIcon: () => JSX.Element;
