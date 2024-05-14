@@ -903,7 +903,7 @@ function getEmailPasswordConfigs({ disableDefaultUI, formFieldType }) {
     });
 }
 
-function getPasswordlessConfigs({ disableDefaultUI }) {
+function getPasswordlessConfigs({ disableDefaultUI, defaultToEmail }) {
     return Passwordless.init({
         override: {
             functions: (implementation) => {
@@ -968,6 +968,7 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
         contactMethod: passwordlessContactMethodType,
         signInUpFeature: {
             defaultCountry: passwordlessDefaultCountry,
+            defaultToEmail,
             resendEmailOrSMSGapInSeconds: 2,
             disableDefaultUI,
             style: theme,

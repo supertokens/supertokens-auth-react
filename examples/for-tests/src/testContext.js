@@ -21,6 +21,7 @@ export function getTestContext() {
             signUp: localStorage.getItem("SIGNUP_SETTING_TYPE"),
         },
         enableMFA: localStorage.getItem("enableMFA") === "true",
+        defaultToEmail: localStorage.getItem("defaultToEmail") !== "false",
         disableRedirectionAfterSuccessfulSignInUp:
             localStorage.getItem("disableRedirectionAfterSuccessfulSignInUp") === "true",
     };
@@ -32,7 +33,7 @@ export function getEnabledRecipes() {
 
     let enabledRecipes = [];
 
-    if (testContext.enableAllRecipes) {
+    if (testContext.enableAllRecipes || testContext.authRecipe === "all") {
         enabledRecipes = [
             "emailpassword",
             "thirdparty",

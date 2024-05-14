@@ -31,7 +31,6 @@ import {
     screenshotOnFailure,
     setPasswordlessFlowType,
     isReact16,
-    clickOnPasswordlessResendButton,
     isGeneralErrorSupported,
     setGeneralErrorToLocalStorage,
     getInputField,
@@ -39,12 +38,14 @@ import {
     backendBeforeEach,
 } from "../helpers";
 
-import {
-    TEST_CLIENT_BASE_URL,
-    TEST_SERVER_BASE_URL,
-    TEST_APPLICATION_SERVER_BASE_URL,
-    SOMETHING_WENT_WRONG_ERROR,
-} from "../constants";
+import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SOMETHING_WENT_WRONG_ERROR } from "../constants";
+import { tryEmailPasswordSignUp, tryPasswordlessSignInUp } from "./mfa.helpers";
+
+const examplePhoneNumber = "+36701231212";
+const exampleEmail = "test@example.com";
+const registeredEmailWithPass = "ep-test@example.com";
+const unregPhoneNumber = "+36701231000";
+const unregEmail = "test-unknown@example.com";
 
 /*
  * Tests.
@@ -57,7 +58,32 @@ describe("SuperTokens Passwordless", function () {
     });
 });
 
+describe("SuperTokens Passwordless w/ all recipes enabled", function () {
+    getPasswordlessTestCases({
+        authRecipe: "all",
+        logId: "PASSWORDLESS",
+        generalErrorRecipeName: "PASSWORDLESS",
+    });
+});
+
 export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipeName }) {
+    const contactInfoSubmitLogsWithoutEmailChecks = [
+        `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+        `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+    ];
+    const contactInfoSubmitLogsWithEmailChecks = [
+        "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
+        "ST_LOGS PASSWORDLESS OVERRIDE DOES_EMAIL_EXIST",
+        "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
+        "ST_LOGS PASSWORDLESS PRE_API_HOOKS EMAIL_EXISTS",
+        `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+        `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+    ];
+
     let browser;
     let page;
     let consoleLogs = [];
@@ -83,10 +109,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
         "ST_LOGS SESSION OVERRIDE GET_USER_ID",
     ];
 
-    const examplePhoneNumber = "+36701231212";
-    const exampleEmail = "test@example.com";
-
     afterEach(function () {
+        page.evaluate(() => localStorage.removeItem("defaultToEmail"));
         return screenshotOnFailure(this, browser);
     });
 
@@ -100,19 +124,25 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
     describe("with EMAIL_OR_PHONE", () => {
         describe("using an email", () => {
-            getTestCases("EMAIL_OR_PHONE", "emailOrPhone", exampleEmail);
+            getTestCases("EMAIL_OR_PHONE", "email", exampleEmail);
         });
         describe("using a phone number", () => {
-            getTestCases("EMAIL_OR_PHONE", "emailOrPhone", examplePhoneNumber);
+            getTestCases("EMAIL_OR_PHONE", "phoneNumber_text", examplePhoneNumber);
         });
 
         describe("switching input type", () => {
-            const inputName = "emailOrPhone";
+            let contactInfoSubmitLogs =
+                authRecipe === "all" ? contactInfoSubmitLogsWithEmailChecks : contactInfoSubmitLogsWithoutEmailChecks;
+            const inputNameEmail = "email";
+            const inputNamePhone = "phoneNumber_text";
             const contactMethod = "EMAIL_OR_PHONE";
 
             before(async function () {
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
                 await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
+                if (authRecipe === "all") {
+                    await tryEmailPasswordSignUp(page, registeredEmailWithPass);
+                }
             });
 
             after(async function () {
@@ -139,11 +169,21 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
-                await setInputValues(page, [{ name: inputName, value: exampleEmail }]);
+                await setInputValues(page, [{ name: inputNameEmail, value: unregEmail }]);
                 await submitForm(page);
-                const changeButton = await waitForSTElement(page, "[data-supertokens~=secondaryLinkWithLeftArrow]");
+
+                if (authRecipe === "all") {
+                    await waitForSTElement(page, "[data-supertokens~=input-password]");
+                } else {
+                    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+                    const backButton = await waitForSTElement(page, "[data-supertokens~=secondaryLinkWithLeftArrow]");
+                    await backButton.click();
+                }
+
+                const changeButton = await waitForSTElement(page, "[data-supertokens~=contactMethodSwitcher]");
                 await changeButton.click();
-                await setInputValues(page, [{ name: inputName, value: exampleEmail }]);
+                await setInputValues(page, [{ name: inputNamePhone, value: examplePhoneNumber }]);
                 await submitForm(page);
 
                 await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
@@ -161,19 +201,19 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                    ...(authRecipe === "all"
+                        ? []
+                        : [
+                              ...contactInfoSubmitLogs,
+                              `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                              `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                              `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                              `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                              `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                          ]),
+
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
@@ -183,65 +223,92 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 ]);
             });
 
-            it("Successful signin when clicking on resend code", async function () {
-                await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                    page.waitForNavigation({ waitUntil: "networkidle0" }),
-                ]);
+            if (authRecipe === "all") {
+                it("switching input methods after password input shows up", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
 
-                await setInputValues(page, [{ name: inputName, value: exampleEmail }]);
-                await submitForm(page);
+                    await setInputValues(page, [{ name: inputNameEmail, value: unregEmail }]);
+                    await submitForm(page);
+                    await waitForSTElement(page, "[data-supertokens~=input-password]");
+                    const changeButton = await waitForSTElement(page, "[data-supertokens~=contactMethodSwitcher]");
+                    await changeButton.click();
+                    await setInputValues(page, [{ name: inputNamePhone, value: examplePhoneNumber }]);
+                    await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+                    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
-                const ogLoginAttemptInfo = JSON.parse(
-                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-                );
-                const ogDevice = await getPasswordlessDevice(ogLoginAttemptInfo);
-                assert.deepStrictEqual(ogDevice.codes.length, 1);
+                    const loginAttemptInfo = JSON.parse(
+                        await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                    );
+                    const device = await getPasswordlessDevice(loginAttemptInfo);
+                    await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                    await submitForm(page);
 
-                // we wait for the resend button to show
-                await new Promise((r) => setTimeout(r, 2500));
-                await clickOnPasswordlessResendButton(page);
+                    await page.waitForSelector(".sessionInfo-user-id");
+                });
 
-                // we wait for API to complete
-                await new Promise((r) => setTimeout(r, 1000));
-                const newLoginAttemptInfo = JSON.parse(
-                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-                );
-                const newDevice = await getPasswordlessDevice(newLoginAttemptInfo);
-                assert.deepStrictEqual(newDevice.codes.length, 2);
-                assert.notDeepEqual(newDevice.codes[0].userInputCode, newDevice.codes[1].userInputCode);
+                it("sign in with a password", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
 
-                await setInputValues(page, [{ name: "userInputCode", value: newDevice.codes[1].userInputCode }]);
-                await submitForm(page);
+                    await setInputValues(page, [{ name: inputNameEmail, value: registeredEmailWithPass }]);
+                    await submitForm(page);
+                    await setInputValues(page, [{ name: "password", value: "Asdf12.." }]);
+                    await submitForm(page);
 
-                await page.waitForSelector(".sessionInfo-user-id");
+                    await page.waitForSelector(".sessionInfo-user-id");
+                });
 
-                assert.deepStrictEqual(consoleLogs, [
-                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE RESEND_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_RESEND_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
-                    ...signinSuccessLogsOTP,
-                ]);
-            });
+                it("sign in OTP without a pw field showing when signing in with a registered pwless user", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputNameEmail, value: exampleEmail }]);
+                    await submitForm(page);
+
+                    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+                    const loginAttemptInfo = JSON.parse(
+                        await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                    );
+                    const device = await getPasswordlessDevice(loginAttemptInfo);
+                    await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                    await submitForm(page);
+
+                    await page.waitForSelector(".sessionInfo-user-id");
+                });
+
+                it("sign in OTP without a pw field showing when signing in with a phone number", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    const changeButton = await waitForSTElement(page, "[data-supertokens~=contactMethodSwitcher]");
+                    await changeButton.click();
+
+                    await setInputValues(page, [{ name: inputNamePhone, value: unregPhoneNumber }]);
+                    await submitForm(page);
+
+                    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+                    const loginAttemptInfo = JSON.parse(
+                        await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                    );
+                    const device = await getPasswordlessDevice(loginAttemptInfo);
+                    await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                    await submitForm(page);
+
+                    await page.waitForSelector(".sessionInfo-user-id");
+                });
+            }
         });
     });
 
@@ -253,6 +320,10 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
     });
 
     function getTestCases(contactMethod, inputName, contactInfo) {
+        let contactInfoSubmitLogs =
+            authRecipe === "all" && inputName == "email"
+                ? contactInfoSubmitLogsWithEmailChecks
+                : contactInfoSubmitLogsWithoutEmailChecks;
         let accountLinkingSupported;
         describe(`UserInputCode`, function () {
             before(async function () {
@@ -274,6 +345,10 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
             beforeEach(async function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+                await page.evaluate(
+                    (inputName) => localStorage.setItem("defaultToEmail", inputName === "email"),
+                    inputName
+                );
                 await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
                 await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
                 await page.evaluate(() => localStorage.removeItem("mode"));
@@ -305,10 +380,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
@@ -342,10 +415,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
@@ -379,10 +449,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
@@ -418,10 +486,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
@@ -463,10 +529,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
@@ -569,13 +633,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 const error = await waitForSTElement(page, "[data-supertokens~=generalError]");
                 assert.strictEqual(
                     await error.evaluate((e) => e.textContent),
-                    `${
-                        contactMethod === "EMAIL_OR_PHONE"
-                            ? "Email or Phone number"
-                            : contactMethod === "EMAIL"
-                            ? "Email"
-                            : "Phone number"
-                    } is invalid`
+                    `${inputName === "email" ? "Email" : "Phone number"} is invalid`
                 );
                 await waitForSTElement(page, "[data-supertokens~=inputErrorMessage]", true);
             });
@@ -593,13 +651,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
                 assert.strictEqual(
                     await error.evaluate((e) => e.textContent),
-                    `${
-                        contactMethod === "EMAIL_OR_PHONE"
-                            ? "Email or Phone number"
-                            : contactMethod === "EMAIL"
-                            ? "Email"
-                            : "Phone number"
-                    } is invalid`
+                    `${inputName === "email" ? "Email" : "Phone number"} is invalid`
                 );
                 await waitForSTElement(page, "[data-supertokens~=inputErrorMessage]", true);
             });
@@ -639,10 +691,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                         ...signInUpPageLoadLogs,
-                        `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                        `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                        ...contactInfoSubmitLogs,
                         `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                         `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                         `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
@@ -708,10 +758,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                         ...signInUpPageLoadLogs,
-                        `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                        `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                        ...contactInfoSubmitLogs,
                         `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                         `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                         `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
@@ -839,6 +887,10 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
             beforeEach(async function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                await page.evaluate(
+                    (inputName) => localStorage.setItem("defaultToEmail", inputName === "email"),
+                    inputName
+                );
                 await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
                 await page.evaluate(() => localStorage.removeItem("mode"));
 
@@ -867,10 +919,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -903,10 +952,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -946,10 +993,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -983,10 +1028,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -1027,10 +1070,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -1341,6 +1382,10 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
             beforeEach(async function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+                await page.evaluate(
+                    (inputName) => localStorage.setItem("defaultToEmail", inputName === "email"),
+                    inputName
+                );
                 await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
                 await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
 
@@ -1369,10 +1414,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
@@ -1411,10 +1454,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
@@ -1453,10 +1494,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
@@ -1492,10 +1531,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
@@ -1545,10 +1582,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
@@ -1595,10 +1630,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                         ...signInUpPageLoadLogs,
-                        `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                        `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                        ...contactInfoSubmitLogs,
                         `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                         `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                         `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
@@ -1669,10 +1702,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     ...signInUpPageLoadLogs,
-                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
-                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+
+                    ...contactInfoSubmitLogs,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
@@ -1891,7 +1922,7 @@ async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCoun
 
     const browser = await puppeteer.launch({
         args: ["--no-sandbox", "--disable-setuid-sandbox", "--remote-debugging-port=9222"],
-        headless: true,
+        headless: false,
     });
     const page = await browser.newPage();
     page.on("console", (consoleObj) => {
@@ -1909,6 +1940,14 @@ async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCoun
         ),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
+
+    await new Promise((res) => setTimeout(res, 500));
+
+    await tryPasswordlessSignInUp(page, exampleEmail, undefined, false);
+    await clearBrowserCookiesWithoutAffectingConsole(page, []);
+
+    await tryPasswordlessSignInUp(page, examplePhoneNumber, undefined, true);
+    await clearBrowserCookiesWithoutAffectingConsole(page, []);
 
     return { browser, page };
 }

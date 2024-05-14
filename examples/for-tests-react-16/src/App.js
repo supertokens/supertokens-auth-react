@@ -771,7 +771,7 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
     });
 }
 
-function getPasswordlessConfigs({ disableDefaultUI }) {
+function getPasswordlessConfigs({ disableDefaultUI, defautToEmail }) {
     return Passwordless.init({
         override: {
             functions: (implementation) => {
@@ -830,6 +830,7 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
             resendEmailOrSMSGapInSeconds: 2,
             disableDefaultUI,
             style: theme.style,
+            defautToEmail,
         },
         linkClickedScreenFeature: {
             disableDefaultUI,
