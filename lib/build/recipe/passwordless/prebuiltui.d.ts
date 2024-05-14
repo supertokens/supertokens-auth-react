@@ -18,9 +18,6 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
             GENERAL_ERROR_PHONE_UNDEFINED: string;
             GENERAL_ERROR_PHONE_NON_STRING: string;
             GENERAL_ERROR_PHONE_INVALID: string;
-            GENERAL_ERROR_EMAIL_OR_PHONE_UNDEFINED: string;
-            GENERAL_ERROR_EMAIL_OR_PHONE_NON_STRING: string;
-            GENERAL_ERROR_EMAIL_OR_PHONE_INVALID: string;
             GENERAL_ERROR_OTP_UNDEFINED: string;
             GENERAL_ERROR_OTP_INVALID: string;
             GENERAL_ERROR_OTP_EXPIRED: string;
@@ -34,7 +31,8 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
             PWLESS_SIGN_IN_UP_SWITCH_TO_PHONE: string;
             PWLESS_SIGN_IN_UP_SWITCH_TO_EMAIL: string;
             PWLESS_SIGN_IN_UP_CONTINUE_BUTTON: string;
-            PWLESS_COMBO_CONTINUE_WITH_PASSWORDLESS: string;
+            PWLESS_COMBO_CONTINUE_WITH_PASSWORDLESS_LINK: string;
+            PWLESS_COMBO_CONTINUE_WITH_PASSWORDLESS_BUTTON: string;
             PWLESS_COMBO_PASSWORD_LABEL: string;
             PWLESS_COMBO_FORGOT_PW_LINK: string;
             PWLESS_LINK_SENT_RESEND_SUCCESS: string;
