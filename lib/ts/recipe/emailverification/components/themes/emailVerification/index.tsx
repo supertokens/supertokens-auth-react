@@ -53,6 +53,7 @@ function EmailVerificationThemeWrapper(props: EmailVerificationThemeProps): JSX.
             <ThemeBase
                 loadDefaultFont={!hasFont}
                 userStyles={[
+                    rootStyle,
                     props.config.recipeRootStyle,
                     props.verifyEmailLinkClickedScreen === undefined
                         ? props.config.sendVerifyEmailScreen.style

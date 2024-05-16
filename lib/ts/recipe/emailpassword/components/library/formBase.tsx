@@ -138,12 +138,21 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
         props.formFields.map((f) => ({ id: f.id, value: fetchDefaultValue(f) }))
     );
     useEffect(() => {
-        // If a field has been removed from formFields, we want to remove it from the states array as well.
-        setFieldStates((fs) =>
-            fieldStates.some((s) => !props.formFields.some((f) => f.id === s.id))
-                ? fs.filter((s) => props.formFields.some((f) => f.id === s.id))
-                : fs
-        );
+        setFieldStates((fs) => {
+            let ret = fs;
+            const fieldsWithoutState = props.formFields.filter((f) => !fieldStates.some((s) => f.id === s.id));
+            // If there is a formfield missing from the states array, we fill with the default value
+            if (fieldsWithoutState.length > 0) {
+                fs = [...fs, ...fieldsWithoutState.map((f) => ({ id: f.id, value: fetchDefaultValue(f) }))];
+            }
+
+            // If a field has been removed from formFields, we want to remove it from the states array as well.
+            if (fieldStates.some((s) => !props.formFields.some((f) => f.id === s.id))) {
+                ret = fs.filter((s) => props.formFields.some((f) => f.id === s.id));
+            }
+
+            return ret;
+        });
     }, [props.formFields, setFieldStates]);
 
     const [isLoading, setIsLoading] = useState(false);

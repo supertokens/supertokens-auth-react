@@ -1,7 +1,9 @@
 /// <reference types="react" />
 import { RecipeRouter } from "../recipeRouter";
+import LinkSentThemeWrapper from "./components/themes/linkSent";
 import MFAThemeWrapper from "./components/themes/mfa";
 import SignInUpThemeWrapper from "./components/themes/signInUp";
+import SignInUpEPComboThemeWrapper from "./components/themes/signInUpEPCombo";
 import Passwordless from "./recipe";
 import type { LoginAttemptInfo } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
@@ -130,6 +132,8 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     ) => JSX.Element;
     static MFAOTPTheme: typeof MFAThemeWrapper;
     static SignInUpTheme: typeof SignInUpThemeWrapper;
+    static SignInUpEPComboTheme: typeof SignInUpEPComboThemeWrapper;
+    static LinkSentTheme: typeof LinkSentThemeWrapper;
 }
 declare const LinkClicked: (
     props: FeatureBaseProps<{
@@ -149,4 +153,12 @@ declare const MfaOtpEmail: (
         userContext?: UserContext;
     }>
 ) => JSX.Element;
-export { LinkClicked, SignInUpThemeWrapper as SignInUpTheme, MfaOtpPhone, MfaOtpEmail, MFAThemeWrapper as MFAOTPTheme };
+export {
+    LinkClicked,
+    SignInUpThemeWrapper as SignInUpTheme,
+    SignInUpEPComboThemeWrapper as SignInUpEPComboTheme,
+    LinkSentThemeWrapper as LinkSentTheme,
+    MfaOtpPhone,
+    MfaOtpEmail,
+    MFAThemeWrapper as MFAOTPTheme,
+};

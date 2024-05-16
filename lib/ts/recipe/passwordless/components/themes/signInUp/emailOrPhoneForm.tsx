@@ -89,19 +89,13 @@ export const EmailOrPhoneForm = withOverride(
                                   labelComponent: (
                                       <div data-supertokens="formLabelWithLinkWrapper">
                                           <Label
-                                              value={
-                                                  isPhoneNumber
-                                                      ? "PWLESS_SIGN_IN_UP_PHONE_LABEL"
-                                                      : "PWLESS_SIGN_IN_UP_EMAIL_LABEL"
-                                              }
+                                              value={"PWLESS_SIGN_IN_UP_EMAIL_LABEL"}
                                               data-supertokens="passwordInputLabel"
                                           />
                                           <a
                                               onClick={() => setIsPhoneNumber((v) => !v)}
                                               data-supertokens="link linkButton formLabelLinkBtn contactMethodSwitcher">
-                                              {isPhoneNumber
-                                                  ? t("PWLESS_SIGN_IN_UP_SWITCH_TO_EMAIL")
-                                                  : t("PWLESS_SIGN_IN_UP_SWITCH_TO_PHONE")}
+                                              {t("PWLESS_SIGN_IN_UP_SWITCH_TO_PHONE")}
                                           </a>
                                       </div>
                                   ),

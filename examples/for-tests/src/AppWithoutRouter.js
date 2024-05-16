@@ -23,7 +23,6 @@ function Routing() {
     const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
 
     let recipePreBuiltUIList = [];
-    console.log(enabledRecipes);
     if (enabledRecipes.some((r) => r.startsWith("thirdparty"))) {
         recipePreBuiltUIList.push(ThirdPartyPreBuiltUI);
     }
