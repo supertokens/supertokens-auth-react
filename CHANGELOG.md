@@ -7,6 +7,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.42.0] - UNRELEASED
+
+### Breaking changes
+
+-   Removed `ThirdPartyEmailPassword` and `ThirdPartyPasswordless` recipes.
+-   `EmailPassword` recipe:
+
+    -   Removed embeddable components: `SignInUp`, `SignInAndUpTheme`
+    -   Removed overridable components: `EmailPasswordSignIn`, `EmailPasswordSignInFooter`, `EmailPasswordSignInHeader`, `EmailPasswordSignUp`, `EmailPasswordSignUpFooter`, `EmailPasswordSignUpHeader`
+    -   Moved `useShadowDom`, `defaultToSignUp`, `privacyPolicyLink`, `termsOfServiceLink` from the config to the root configuration passed to `SuperTokens.init`.
+
+-   `Passwordless` recipe:
+
+    -   Removed embeddable components: `SignInUp`
+    -   Removed overrideable components: `PasswordlessSignInUpHeader_Override`, `PasswordlessSignInUpFooter_Override`
+    -   Removed the `guessInternationPhoneNumberFromInputPhoneNumber` configurable callback, since now the user sets if they are entering email or a phone number explicitly
+    -   Added `defaultToEmail` configuration option, which decides if the contact info input form starts in the email or phone state if the `contactMethod` is set to `EMAIL_OR_PHONE`
+    -   Moved `useShadowDom`, `privacyPolicyLink`, `termsOfServiceLink` from the config to the root configuration passed to `SuperTokens.init`.
+
+-   `ThirdParty` recipe:
+
+    -   Removed embeddable components: `SignInAndUp`
+    -   Removed overridable components: `ThirdPartySignInAndUpHeader`, `ThirdPartySignUpFooter`
+
+-   Renamed translation strings to reflect the new component/UI structure:
+    -   `EMAIL_PASSWORD_SIGN_IN_FORGOT_PW_LINK` instead of `EMAIL_PASSWORD_SIGN_IN_FOOTER_FORGOT_PW_LINK`
+    -   `AUTH_PAGE_HEADER_TITLE_SIGN_IN_AND_UP` instead of `PWLESS_SIGN_IN_UP_HEADER_TITLE` and `THIRD_PARTY_SIGN_IN_AND_UP_HEADER_TITLE`
+    -   `AUTH_PAGE_HEADER_TITLE_SIGN_IN` instead of `EMAIL_PASSWORD_SIGN_IN_HEADER_TITLE`
+    -   `AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_START` instead of `EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_START`
+    -   `AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_SIGN_IN_LINK` instead of `EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_SIGN_UP_LINK`
+    -   `AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_END` instead of `EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_END`
+    -   `AUTH_PAGE_HEADER_TITLE_SIGN_UP` instead of `EMAIL_PASSWORD_SIGN_UP_HEADER_TITLE`
+    -   `AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_START` instead of `EMAIL_PASSWORD_SIGN_UP_HEADER_SUBTITLE_START`
+    -   `AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_SIGN_UP_LINK` instead of `EMAIL_PASSWORD_SIGN_UP_HEADER_SUBTITLE_SIGN_IN_LINK`
+    -   `AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_END` instead of `EMAIL_PASSWORD_SIGN_UP_HEADER_SUBTITLE_END`
+    -   `AUTH_PAGE_FOOTER_START` instead of `EMAIL_PASSWORD_SIGN_UP_FOOTER_START`, `PWLESS_SIGN_IN_UP_FOOTER_START` and `THIRD_PARTY_SIGN_IN_UP_FOOTER_START`
+    -   `AUTH_PAGE_FOOTER_TOS` instead of: `EMAIL_PASSWORD_SIGN_UP_FOOTER_TOS`, `PWLESS_SIGN_IN_UP_FOOTER_TOS` and `THIRD_PARTY_SIGN_IN_UP_FOOTER_TOS`
+    -   `AUTH_PAGE_FOOTER_AND` instead of `EMAIL_PASSWORD_SIGN_UP_FOOTER_AND`, `PWLESS_SIGN_IN_UP_FOOTER_AND` and `THIRD_PARTY_SIGN_IN_UP_FOOTER_AND`
+    -   `AUTH_PAGE_FOOTER_PP` instead of `EMAIL_PASSWORD_SIGN_UP_FOOTER_PP`, `PWLESS_SIGN_IN_UP_FOOTER_PP` and `THIRD_PARTY_SIGN_IN_UP_FOOTER_PP`
+    -   `AUTH_PAGE_FOOTER_END` instead of `EMAIL_PASSWORD_SIGN_UP_FOOTER_END`, `PWLESS_SIGN_IN_UP_FOOTER_END` and `THIRD_PARTY_SIGN_IN_UP_FOOTER_END`
+-   Moved `useShadowDom` property from recipe configs to the root configuration passed to `SuperTokens.init`.
+-   Removed `SESSION_ALREADY_EXISTS` event from auth recipes and moved it into the `Session` recipe
+-   Added new keys to `data-supertokens` props of several elements
+-   Updated some styles to work with the updated UI structure
+-   The auth page now uses the `signUp` query param to decide if it shows the sign in or sign up view instead of `show`
+
+### Changes
+
+-   Added overrideable components:
+    -   General: `AuthPageComponentList`, `AuthPageHeader`, `AuthPageFooter`.
+        -   These can be overridden by using `AuthRecipeComponentsOverrideContextProvider`
+    -   `Passwordless`: `PasswordlessContinueWithPasswordless_Override`
+-   Added new embeddable components:
+    -   General: `AuthPage` and `AuthPageTheme`
+    -   `EmailPassword`: `SignInTheme`, `SignUpTheme`
+-   Added a new `style` prop to the root level config
+
 ## [0.41.1] - 2024-05-13
 
 ### Fixes
