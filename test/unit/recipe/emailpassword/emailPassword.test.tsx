@@ -79,7 +79,7 @@ describe("EmailPassword", function () {
                 ["", "test", "test123", "Str0ngP@ssword"],
             ]
         );
-        assert(EmailPasswordPreBuiltUI.getFeatures()["/auth"] !== undefined);
+        assert(EmailPassword.getInstanceOrThrow().getFirstFactorsForAuthPage().length !== 0);
         assert(EmailPasswordPreBuiltUI.getFeatures()["/auth/reset-password"] !== undefined);
         assert(EmailPasswordPreBuiltUI.getFeatures()["/auth/verify-email"] === undefined);
         assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().config.recipeId, "emailpassword");
@@ -89,18 +89,14 @@ describe("EmailPassword", function () {
         EmailPassword.init({
             signInAndUpFeature: {
                 disableDefaultUI: true,
-                signUpForm: {
-                    privacyPolicyLink,
-                    termsOfServiceLink,
-                },
                 signInForm: {},
             },
             resetPasswordUsingTokenFeature: {
                 disableDefaultUI: true,
             },
         }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
-        assert(EmailPasswordPreBuiltUI.getFeatures()["/auth"] === undefined);
-        assert(EmailPasswordPreBuiltUI.getFeatures()["/auth/reset-password"] === undefined);
+        assert.strictEqual(EmailPassword.getInstanceOrThrow().getFirstFactorsForAuthPage().length, 0);
+        assert.strictEqual(EmailPasswordPreBuiltUI.getFeatures()["/auth/reset-password"], undefined);
     });
 
     it("Initializing EmailPassword with optional custom Fields for SignUp", async function () {

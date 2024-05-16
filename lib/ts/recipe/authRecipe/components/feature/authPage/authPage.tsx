@@ -39,7 +39,7 @@ import AuthPageThemeWrapper from "../../theme/authPage";
 
 import type AuthRecipe from "../../..";
 import type { TranslationStore } from "../../../../../translation/translationHelpers";
-import type { Navigate, PartialAuthComponent, UserContext } from "../../../../../types";
+import type { AuthComponent, Navigate, PartialAuthComponent, UserContext } from "../../../../../types";
 import type { GetLoginMethodsResponseNormalized } from "../../../../multitenancy/types";
 import type { RecipeRouter } from "../../../../recipeRouter";
 import type { AuthPageThemeProps } from "../../../types";
@@ -102,7 +102,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
         GetLoginMethodsResponseNormalized | undefined
     >(undefined);
     const [error, setError] = useState<string | undefined>(errorFromQS);
-    const [sessionLoadedAndDidNotExist, setSessionLoadedAndDidNotExist] = useState(false);
+    const [sessionLoadedAndNotRedirecting, setSessionLoadedAndNotRedirecting] = useState(false);
     const st = SuperTokens.getInstanceOrThrow();
     const [factorList, setFactorList] = useState<string[] | undefined>(props.factors);
     const [isSignUp, setIsSignUp] = useState<boolean>(props.isSignUp ?? isSignUpFromQS ?? st.defaultToSignUp);
@@ -131,7 +131,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
 
     useEffect(() => {
-        if (sessionLoadedAndDidNotExist) {
+        if (sessionLoadedAndNotRedirecting) {
             return;
         }
 
@@ -155,9 +155,11 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                             props.navigate
                         )
                         .catch(rethrowInRender);
+                } else {
+                    setSessionLoadedAndNotRedirecting(true);
                 }
             } else {
-                setSessionLoadedAndDidNotExist(true);
+                setSessionLoadedAndNotRedirecting(true);
             }
         }
     }, [sessionContext.loading]);
@@ -181,7 +183,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
         }
 
         if (
-            sessionLoadedAndDidNotExist &&
+            sessionLoadedAndNotRedirecting &&
             (loadedDynamicLoginMethods !== undefined || !SuperTokens.usesDynamicLoginMethods)
         ) {
             void buildAndSetChildProps(
@@ -201,7 +203,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
             abortCtl.abort();
         };
     }, [
-        sessionLoadedAndDidNotExist,
+        sessionLoadedAndNotRedirecting,
         rebuildReqCount,
         setRebuildReqCount,
         props.preBuiltUIList,
@@ -323,7 +325,7 @@ async function buildAndSetChildProps(
 
     const isSignUp = hasSeparateSignUpView && isSignUpState;
 
-    const authComps = [];
+    const authComps: AuthComponent[] = [];
 
     for (const ui of recipeRouters) {
         authComps.push(...ui.getAuthComponents());

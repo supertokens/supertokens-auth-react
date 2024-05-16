@@ -127,21 +127,7 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
     getAuthComponents(): AuthComponent[];
     requiresSignUpPage: boolean;
     static reset(): void;
-    static SignInFeature: import("react").FC<
-        import("../../types").AuthComponentProps & {
-            recipe: EmailPassword;
-            userContext: UserContext;
-            useComponentOverrides: () => import("./types").ComponentOverrideMap;
-        }
-    >;
     static SignInTheme: typeof SignInTheme;
-    static SignUpFeature: import("react").FC<
-        import("../../types").AuthComponentProps & {
-            recipe: EmailPassword;
-            userContext?: UserContext | undefined;
-            useComponentOverrides: () => import("./types").ComponentOverrideMap;
-        }
-    >;
     static SignUpTheme: typeof SignUpTheme;
     static ResetPasswordUsingToken: (
         prop: FeatureBaseProps<{
@@ -155,4 +141,9 @@ declare const ResetPasswordUsingToken: (
         userContext?: UserContext;
     }>
 ) => JSX.Element;
-export { ResetPasswordUsingToken, ResetPasswordUsingTokenThemeWrapper as ResetPasswordUsingTokenTheme };
+export {
+    ResetPasswordUsingToken,
+    SignInTheme,
+    SignUpTheme,
+    ResetPasswordUsingTokenThemeWrapper as ResetPasswordUsingTokenTheme,
+};

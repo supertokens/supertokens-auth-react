@@ -525,7 +525,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     it("should show thirdpartyemailpassword with emailpassword disabled if FE only has tpep but only thirdparty is enabled", async function () {
-        await setEnabledRecipes(page, ["thirdpartyemailpassword"]);
+        await setEnabledRecipes(page, ["thirdparty", "emailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: false },
             passwordless: { enabled: false },
@@ -554,7 +554,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     it("should show thirdpartyemailpassword if FE has tpep and both emailpassword and thirdparty is enabled", async function () {
-        await setEnabledRecipes(page, ["thirdpartyemailpassword"]);
+        await setEnabledRecipes(page, ["thirdparty", "emailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
             passwordless: { enabled: false },
@@ -639,7 +639,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     it("should show thirdpartyemailpassword if FE has tpep and ep and both emailpassword and thirdparty is enabled", async function () {
-        await setEnabledRecipes(page, ["thirdpartyemailpassword", "emailpassword"]);
+        await setEnabledRecipes(page, ["thirdparty", "emailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
             passwordless: { enabled: false },
@@ -667,7 +667,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     it("should show thirdpartypasswordless if FE has tppwless and ep and both emailpassword and thirdparty is enabled", async function () {
-        await setEnabledRecipes(page, ["thirdpartypasswordless", "emailpassword"]);
+        await setEnabledRecipes(page, ["thirdparty", "passwordless", "emailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
             passwordless: { enabled: false },
@@ -695,7 +695,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     it("should show thirdpartyemailpassword if FE has tpep and tppwless and all 3 enabled in core", async function () {
-        await setEnabledRecipes(page, ["thirdpartypasswordless", "thirdpartyemailpassword"]);
+        await setEnabledRecipes(page, ["thirdparty", "passwordless", "emailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
             passwordless: { enabled: true },
@@ -723,7 +723,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     it("should show thirdpartypwless if rid has FE has tpep and tppwless and all 3 enabled in core", async function () {
-        await setEnabledRecipes(page, ["thirdpartypasswordless", "thirdpartyemailpassword"]);
+        await setEnabledRecipes(page, ["thirdparty", "passwordless", "emailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
             passwordless: { enabled: true },
@@ -751,7 +751,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     it("should show thirdpartyemailpassword if FE has only tpep and thirdparty is disbled in core", async function () {
-        await setEnabledRecipes(page, ["thirdpartyemailpassword"]);
+        await setEnabledRecipes(page, ["thirdparty", "emailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: true },
             passwordless: { enabled: false },
@@ -777,7 +777,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     it("should show thirdpartyemailpassword if FE has only tpep and thirdparty is disbled in core", async function () {
-        await setEnabledRecipes(page, ["thirdpartyemailpassword"]);
+        await setEnabledRecipes(page, ["thirdparty", "emailpassword"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: false },
             passwordless: { enabled: false },
@@ -803,7 +803,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     it("should show thirdpartpasswordless if FE has only tppwless and thirdparty is disbled in core", async function () {
-        await setEnabledRecipes(page, ["thirdpartypasswordless"]);
+        await setEnabledRecipes(page, ["thirdparty", "passwordless"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: false },
             passwordless: { enabled: true },
@@ -828,7 +828,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     it("should show thirdpartpasswordless if FE has only tppwless and passwordless is disbled in core", async function () {
-        await setEnabledRecipes(page, ["thirdpartypasswordless"]);
+        await setEnabledRecipes(page, ["thirdparty", "passwordless"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: false },
             passwordless: { enabled: false },

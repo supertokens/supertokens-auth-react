@@ -35,7 +35,13 @@ import {
     setAccountLinkingConfig,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
-import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API, SOMETHING_WENT_WRONG_ERROR } from "../constants";
+import {
+    CONSUME_CODE_API,
+    CREATE_CODE_API,
+    CREATE_TOTP_DEVICE_API,
+    MFA_INFO_API,
+    SOMETHING_WENT_WRONG_ERROR,
+} from "../constants";
 
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 import { getTestPhoneNumber } from "../exampleTestHelpers";
@@ -322,6 +328,89 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     try {
                         await tryEmailPasswordSignIn(page, email);
                         await waitForAccessDenied(page);
+                    } finally {
+                        page.off("request", requestHandler);
+                        await page.setRequestInterception(false);
+                    }
+                });
+
+                it("should handle consumeCode restart flow error", async () => {
+                    await setMFAInfo({
+                        requirements: [factorId],
+                        alreadySetup: [factorId],
+                        allowedToSetup: [factorId],
+                    });
+
+                    await page.setRequestInterception(true);
+                    const requestHandler = (request) => {
+                        if (request.url() === CONSUME_CODE_API && request.method() === "POST") {
+                            return request.respond({
+                                status: 200,
+                                headers: {
+                                    "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                    "access-control-allow-credentials": "true",
+                                },
+                                body: JSON.stringify({
+                                    status: "RESTART_FLOW_ERROR",
+                                }),
+                            });
+                        }
+
+                        return request.continue();
+                    };
+                    page.on("request", requestHandler);
+                    try {
+                        await tryEmailPasswordSignIn(page, email);
+
+                        await completeOTP(page);
+
+                        await waitForAccessDenied(page);
+                    } finally {
+                        page.off("request", requestHandler);
+                        await page.setRequestInterception(false);
+                    }
+                });
+
+                it("should handle consumeCode restart flow error when setting up factor", async () => {
+                    await setMFAInfo({
+                        requirements: [factorId],
+                        alreadySetup: [],
+                        allowedToSetup: [factorId],
+                        noContacts: true,
+                    });
+
+                    await page.setRequestInterception(true);
+                    const requestHandler = (request) => {
+                        if (request.url() === CONSUME_CODE_API && request.method() === "POST") {
+                            return request.respond({
+                                status: 200,
+                                headers: {
+                                    "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                    "access-control-allow-credentials": "true",
+                                },
+                                body: JSON.stringify({
+                                    status: "RESTART_FLOW_ERROR",
+                                }),
+                            });
+                        }
+
+                        return request.continue();
+                    };
+                    page.on("request", requestHandler);
+                    try {
+                        await tryEmailPasswordSignIn(page, email);
+
+                        await setInputValues(page, [
+                            contactMethod === "PHONE"
+                                ? { name: "phoneNumber_text", value: getTestPhoneNumber() }
+                                : { name: "email", value: await getTestEmail() },
+                        ]);
+                        await submitForm(page);
+
+                        await completeOTP(page);
+
+                        const error = await getGeneralError(page);
+                        assert.strictEqual("Login unsuccessful. Please try again.", error);
                     } finally {
                         page.off("request", requestHandler);
                         await page.setRequestInterception(false);

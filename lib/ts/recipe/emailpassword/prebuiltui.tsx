@@ -134,9 +134,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static SignInFeature = SignInFeature;
     static SignInTheme = SignInTheme;
-    static SignUpFeature = SignUpFeature;
     static SignUpTheme = SignUpTheme;
 
     static ResetPasswordUsingToken = (prop: FeatureBaseProps<{ userContext?: UserContext }>) =>
@@ -147,4 +145,9 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
 
 const ResetPasswordUsingToken = EmailPasswordPreBuiltUI.ResetPasswordUsingToken;
 
-export { ResetPasswordUsingToken, ResetPasswordUsingTokenThemeWrapper as ResetPasswordUsingTokenTheme };
+export {
+    ResetPasswordUsingToken,
+    SignInTheme,
+    SignUpTheme,
+    ResetPasswordUsingTokenThemeWrapper as ResetPasswordUsingTokenTheme,
+};

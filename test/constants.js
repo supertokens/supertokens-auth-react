@@ -33,6 +33,7 @@ export const SEND_VERIFY_EMAIL_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/u
 export const VERIFY_EMAIL_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/user/email/verify`;
 export const SIGN_IN_UP_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/signinup`;
 export const CREATE_CODE_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/signinup/code`;
+export const CONSUME_CODE_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/signinup/code/consume`;
 export const CREATE_TOTP_DEVICE_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/totp/device`;
 export const GET_AUTH_URL_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/authorisationurl`;
 export const LOGIN_METHODS_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/loginmethods`;

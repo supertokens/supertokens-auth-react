@@ -1328,7 +1328,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 consoleLogs.length = 0;
 
                 await Promise.all([
-                    page.goto(device.codes[0].urlWithLinkCode.replace(/[?&]preAuthSessionId=[^&#]+/, "")),
+                    page.goto(device.codes[0].urlWithLinkCode.replace(/([?&])preAuthSessionId=[^&#]+&?/, "$1")),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
@@ -1922,7 +1922,7 @@ async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCoun
 
     const browser = await puppeteer.launch({
         args: ["--no-sandbox", "--disable-setuid-sandbox", "--remote-debugging-port=9222"],
-        headless: false,
+        headless: true,
     });
     const page = await browser.newPage();
     page.on("console", (consoleObj) => {

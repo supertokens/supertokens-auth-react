@@ -89,30 +89,6 @@ describe("Passwordless", function () {
         assert.strictEqual(Passwordless.getInstanceOrThrow().config.signInUpFeature.resendEmailOrSMSGapInSeconds, 5);
     });
 
-    it("Initializing Passwordless with TOS", async function () {
-        Passwordless.init({
-            contactMethod: "PHONE",
-            signInUpFeature: {
-                termsOfServiceLink,
-                privacyPolicyLink,
-            },
-        }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
-        assert.notDeepStrictEqual(Passwordless.getInstanceOrThrow(), undefined);
-        assert.deepStrictEqual(Passwordless.getInstanceOrThrow().config.recipeId, "passwordless");
-        assert.deepStrictEqual(
-            Passwordless.getInstanceOrThrow().config.appInfo,
-            SuperTokens.getInstanceOrThrow().appInfo
-        );
-        assert.deepStrictEqual(
-            Passwordless.getInstanceOrThrow().config.signInUpFeature.termsOfServiceLink,
-            termsOfServiceLink
-        );
-        assert.deepStrictEqual(
-            Passwordless.getInstanceOrThrow().config.signInUpFeature.privacyPolicyLink,
-            privacyPolicyLink
-        );
-    });
-
     it("Initializing Passwordless with custom authRecipeModule custom configs.", async function () {
         Passwordless.init({
             contactMethod: "PHONE",
@@ -125,7 +101,6 @@ describe("Passwordless", function () {
             getRedirectionURL: () => {
                 throw new Error("GET REDIRECTION HOOK THROWS");
             },
-            useShadowDom: false,
         }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
         assert.notDeepStrictEqual(Passwordless.getInstanceOrThrow(), undefined);
         assert.deepStrictEqual(Passwordless.getInstanceOrThrow().config.recipeId, "passwordless");
@@ -133,7 +108,6 @@ describe("Passwordless", function () {
             Passwordless.getInstanceOrThrow().config.appInfo,
             SuperTokens.getInstanceOrThrow().appInfo
         );
-        assert.deepStrictEqual(Passwordless.getInstanceOrThrow().config.useShadowDom, false);
         assert.throws(() => Passwordless.getInstanceOrThrow().config.preAPIHook({} as any), {
             message: "PRE API HOOK THROWS",
         });

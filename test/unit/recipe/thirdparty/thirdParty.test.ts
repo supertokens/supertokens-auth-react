@@ -99,8 +99,6 @@ describe("ThirdParty", function () {
     it("Initializing ThirdParty with TOS", async function () {
         ThirdParty.init({
             signInAndUpFeature: {
-                termsOfServiceLink,
-                privacyPolicyLink,
                 providers: [Google.init()],
             },
         }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
@@ -109,14 +107,6 @@ describe("ThirdParty", function () {
         assert.deepStrictEqual(
             ThirdParty.getInstanceOrThrow().config.appInfo,
             SuperTokens.getInstanceOrThrow().appInfo
-        );
-        assert.deepStrictEqual(
-            ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.termsOfServiceLink,
-            termsOfServiceLink
-        );
-        assert.deepStrictEqual(
-            ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.privacyPolicyLink,
-            privacyPolicyLink
         );
     });
 
@@ -328,7 +318,6 @@ describe("ThirdParty", function () {
             getRedirectionURL: () => {
                 throw new Error("GET REDIRECTION HOOK THROWS");
             },
-            useShadowDom: false,
             signInAndUpFeature: {
                 providers: [Google.init(), Github.init(), Facebook.init()],
             },
@@ -340,7 +329,6 @@ describe("ThirdParty", function () {
             SuperTokens.getInstanceOrThrow().appInfo
         );
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.length, 3);
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.useShadowDom, false);
         assert.throws(() => ThirdParty.getInstanceOrThrow().config.preAPIHook({} as any), {
             message: "PRE API HOOK THROWS",
         });

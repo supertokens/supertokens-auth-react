@@ -50,7 +50,7 @@ import type Recipe from "../../../recipe";
 import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap, MFAChildProps } from "../../../types";
 import type { MFAAction, MFAState, NormalisedConfig } from "../../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
-import type { PasswordlessFlowType } from "supertokens-web-js/recipe/thirdpartypasswordless";
+import type { PasswordlessFlowType } from "supertokens-web-js/recipe/passwordless/types";
 
 export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
     return React.useReducer(
