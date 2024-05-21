@@ -157,11 +157,11 @@
         },
         {
             "path": "recipe/emailverification/index.js",
-            "limit": "8kb"
+            "limit": "9kb"
         },
         {
             "path": "recipe/passwordless/index.js",
-            "limit": "71kb"
+            "limit": "17kb"
         },
         {
             "path": "recipe/emailverification/prebuiltui.js",
@@ -173,11 +173,11 @@
         },
         {
             "path": "recipe/emailpassword/prebuiltui.js",
-            "limit": "39kb"
+            "limit": "40kb"
         },
         {
             "path": "recipe/passwordless/prebuiltui.js",
-            "limit": "127kb"
+            "limit": "129kb"
         },
         {
             "path": "recipe/multitenancy/index.js",
