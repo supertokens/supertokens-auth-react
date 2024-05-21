@@ -316,7 +316,7 @@ async function buildAndSetChildProps(
     if (
         factorListState === undefined &&
         loadedDynamicLoginMethods?.firstFactors === undefined &&
-        MultiFactorAuth.getInstance()?.config.firstFactors
+        MultiFactorAuth.getInstance()?.config.firstFactors === undefined
     ) {
         const missingPreBuiltUIs = authRecipesInited.filter(
             (recipe) => !recipeRouters.some((router) => router.recipeInstance.recipeID === recipe.recipeID)
