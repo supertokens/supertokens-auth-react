@@ -10,8 +10,6 @@ import ResetPasswordUsingTokenFeature from "./components/features/resetPasswordU
 import SignInFeature from "./components/features/signin";
 import SignUpFeature from "./components/features/signup";
 import ResetPasswordUsingTokenThemeWrapper from "./components/themes/resetPasswordUsingToken";
-import SignInTheme from "./components/themes/signIn";
-import SignUpTheme from "./components/themes/signUp";
 import { defaultTranslationsEmailPassword } from "./components/themes/translations";
 import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
 import EmailPassword from "./recipe";
@@ -134,9 +132,6 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static SignInTheme = SignInTheme;
-    static SignUpTheme = SignUpTheme;
-
     static ResetPasswordUsingToken = (prop: FeatureBaseProps<{ userContext?: UserContext }>) =>
         EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("resetpassword", prop);
 
@@ -145,9 +140,4 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
 
 const ResetPasswordUsingToken = EmailPasswordPreBuiltUI.ResetPasswordUsingToken;
 
-export {
-    ResetPasswordUsingToken,
-    SignInTheme,
-    SignUpTheme,
-    ResetPasswordUsingTokenThemeWrapper as ResetPasswordUsingTokenTheme,
-};
+export { ResetPasswordUsingToken, ResetPasswordUsingTokenThemeWrapper as ResetPasswordUsingTokenTheme };

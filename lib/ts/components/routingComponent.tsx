@@ -65,7 +65,13 @@ export function RoutingComponent(props: {
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
 
     if (isAuthPage) {
-        return <AuthPageWrapper preBuiltUIList={props.preBuiltUIList} navigate={navigate} />;
+        return (
+            <AuthPageWrapper
+                preBuiltUIList={props.preBuiltUIList}
+                navigate={navigate}
+                useSignUpStateFromQueryString={true}
+            />
+        );
     }
     if (SuperTokens.usesDynamicLoginMethods && loadedDynamicLoginMethods === undefined) {
         return <DynamicLoginMethodsSpinner />;

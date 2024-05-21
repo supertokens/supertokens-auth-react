@@ -54,7 +54,7 @@
     align-items: center;
 }
 
-[data-supertokens~="input-phone"] {
+input[type="tel"][data-supertokens~="input-phoneNumber"] {
     padding-left: 15px;
 }
 

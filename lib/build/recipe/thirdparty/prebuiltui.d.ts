@@ -1,6 +1,5 @@
 /// <reference types="react" />
 import { RecipeRouter } from "../recipeRouter";
-import SignInAndUpThemeWrapper from "./components/themes/signInAndUp";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import ThirdParty from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
@@ -69,17 +68,6 @@ export declare class ThirdPartyPreBuiltUI extends RecipeRouter {
             userContext?: UserContext;
         }>
     ) => JSX.Element;
-    static SignInAndUpTheme: import("react").FC<
-        import("../../types").AuthComponentProps & {
-            providers: Pick<import("./providers").default, "id" | "getButton">[];
-            recipeImplementation: import("../../types").WebJSRecipeInterface<
-                typeof import("supertokens-web-js/lib/build/recipe/thirdparty")
-            >;
-            config: import("./types").NormalisedConfig;
-        } & {
-            userContext?: UserContext | undefined;
-        }
-    >;
     static SignInAndUpCallbackTheme: (props: {
         config: import("./types").NormalisedConfig;
     }) => import("react/jsx-runtime").JSX.Element;
@@ -89,4 +77,4 @@ declare const SignInAndUpCallback: (
         userContext?: UserContext;
     }>
 ) => JSX.Element;
-export { SignInAndUpCallback, SignInAndUpCallbackTheme, SignInAndUpThemeWrapper as SignInAndUpTheme };
+export { SignInAndUpCallback, SignInAndUpCallbackTheme };

@@ -87,7 +87,6 @@ export function normaliseSignInAndUpFeature(
         config.providers = [];
     }
 
-    const disableDefaultUI = config.disableDefaultUI === true;
     const style = config.style !== undefined ? config.style : "";
     /*
      * Convert custom configs to custom providers.
@@ -109,7 +108,6 @@ export function normaliseSignInAndUpFeature(
     );
 
     return {
-        disableDefaultUI,
         style,
         providers,
     };

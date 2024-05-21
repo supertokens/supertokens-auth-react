@@ -133,4 +133,4 @@ export const FactorIds = {
     LINK_PHONE: "link-phone",
     THIRDPARTY: "thirdparty",
     TOTP: "totp",
-};
+} as const;

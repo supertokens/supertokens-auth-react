@@ -72,7 +72,7 @@ export const PhoneForm = withOverride(
                         throw new STGeneralError("GENERAL_ERROR_PHONE_UNDEFINED");
                     }
 
-                    const validationRes = await props.config.validatePhoneNumber(phoneNumber);
+                    const validationRes = await props.validatePhoneNumber(phoneNumber);
                     if (validationRes !== undefined) {
                         throw new STGeneralError(validationRes);
                     }

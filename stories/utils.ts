@@ -38,6 +38,7 @@ export function resetAndInitST(
     recipeList?: any[],
     usesDynamicLoginMethods?: boolean,
     defaultToSignUp?: boolean,
+    rootStyle?: string,
     { path, query, hash } = { path: "/auth", query: "", hash: "" }
 ) {
     (WindowHandlerReference as any).instance = undefined;
@@ -75,6 +76,7 @@ export function resetAndInitST(
             appName: "Storybook test",
             websiteDomain: "http://localhost:6006",
         },
+        style: rootStyle,
         recipeList: recipeList ?? [Session.init()],
         windowHandler: (oI) => ({
             ...oI,
@@ -100,19 +102,17 @@ export type ProviderId = "google" | "github";
 export type AuthPageConf = {
     usesDynamicLoginMethods: boolean;
     defaultToSignUp: boolean;
+    rootStyle: string;
     emailpassword: {
         initialized: boolean;
-        disableDefaultUISignInUp: boolean;
     };
     thirdparty: {
         initialized: boolean;
-        disableDefaultUISignInUp: boolean;
         providers: ProviderId[];
     };
     passwordless: {
         initialized: boolean;
         contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
-        disableDefaultUISignInUp: boolean;
         defaultToEmail: boolean;
     };
     multifactorauth: {
@@ -133,9 +133,6 @@ export function buildInit(args: AuthPageConf, funcOverrides: any) {
     if (args.emailpassword.initialized) {
         recipeList.push(
             EmailPassword.init({
-                signInAndUpFeature: {
-                    disableDefaultUI: args.emailpassword.disableDefaultUISignInUp,
-                },
                 override: {
                     functions: funcOverrides?.emailpassword || ((i) => i),
                 },
@@ -148,7 +145,6 @@ export function buildInit(args: AuthPageConf, funcOverrides: any) {
             ThirdParty.init({
                 signInAndUpFeature: {
                     providers: buildProviderArray(args.thirdparty.providers),
-                    disableDefaultUI: args.thirdparty.disableDefaultUISignInUp,
                 },
                 override: {
                     functions: funcOverrides?.thirdparty || ((i) => i),
@@ -162,7 +158,6 @@ export function buildInit(args: AuthPageConf, funcOverrides: any) {
             Passwordless.init({
                 contactMethod: args.passwordless.contactMethod,
                 signInUpFeature: {
-                    disableDefaultUI: args.passwordless.disableDefaultUISignInUp,
                     defaultToEmail: args.passwordless.defaultToEmail,
                 },
                 override: {

@@ -73,9 +73,6 @@ export default class Passwordless extends AuthRecipe<
     firstFactorIds = [FactorIds.OTP_EMAIL, FactorIds.OTP_PHONE, FactorIds.LINK_EMAIL, FactorIds.LINK_PHONE];
 
     public getFirstFactorsForAuthPage(): string[] {
-        if (this.config.signInUpFeature.disableDefaultUI) {
-            return [];
-        }
         if (this.config.contactMethod === "EMAIL") {
             return [FactorIds.OTP_EMAIL, FactorIds.LINK_EMAIL];
         }

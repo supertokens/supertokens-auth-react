@@ -22,6 +22,7 @@ export default class SuperTokens {
     privacyPolicyLink: string | undefined;
     termsOfServiceLink: string | undefined;
     defaultToSignUp: boolean;
+    disableAuthRoute: boolean;
     constructor(config: SuperTokensConfig);
     static init(config: SuperTokensConfig): void;
     static getInstanceOrThrow(): SuperTokens;

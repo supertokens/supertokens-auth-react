@@ -28,6 +28,7 @@ import { getInvalidClaimsFromResponse } from "../../../../session";
 import SessionRecipe from "../../../../session/recipe";
 import Session from "../../../../session/recipe";
 import useSessionContext from "../../../../session/useSessionContext";
+import { defaultPhoneNumberValidator } from "../../../defaultPhoneNumberValidator";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import SignInUpThemeWrapper from "../../themes/signInUp";
 
@@ -116,6 +117,7 @@ export function useChildProps(
             factorIds,
             recipeImplementation: recipeImplementation,
             config: recipe.config,
+            validatePhoneNumber: recipe.config.validatePhoneNumber ?? defaultPhoneNumberValidator,
         };
     }, [error, factorIds, userContext, recipeImplementation]);
 }

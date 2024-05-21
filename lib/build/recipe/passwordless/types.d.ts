@@ -45,7 +45,6 @@ export declare type PreAPIHookContext = {
 export declare type GetRedirectionURLContext = never;
 export declare type OnHandleEventContext =
     | {
-          rid: "passwordless";
           action: "SUCCESS";
           isNewRecipeUser: boolean;
           createdNewSession: boolean;
@@ -64,7 +63,7 @@ export declare type PasswordlessNormalisedBaseConfig = {
 } & NormalisedBaseConfig;
 export declare type NormalisedConfig = {
     validateEmailAddress: (email: string) => Promise<string | undefined> | string | undefined;
-    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
+    validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
     signInUpFeature: {
         resendEmailOrSMSGapInSeconds: number;
         defaultCountry?: string;
@@ -72,7 +71,6 @@ export declare type NormalisedConfig = {
         emailOrPhoneFormStyle: string;
         userInputCodeFormStyle: string;
         linkSentScreenStyle: string;
-        disableDefaultUI?: boolean;
     };
     linkClickedScreenFeature: PasswordlessNormalisedBaseConfig;
     mfaFeature: PasswordlessNormalisedBaseConfig;
@@ -87,7 +85,6 @@ export declare type PasswordlessFeatureBaseConfig = {
     disableDefaultUI?: boolean;
 } & FeatureBaseConfig;
 export declare type SignInUpFeatureConfigInput = {
-    disableDefaultUI?: boolean;
     resendEmailOrSMSGapInSeconds?: number;
     emailOrPhoneFormStyle?: string;
     userInputCodeFormStyle?: string;
@@ -139,6 +136,7 @@ export declare type MFAProps = {
         showAccessDenied: boolean;
         error: string | undefined;
     };
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
     userContext?: UserContext;
 };
 export declare type SignInUpProps = {
@@ -151,6 +149,7 @@ export declare type SignInUpProps = {
     error: string | undefined;
     clearError: () => void;
     userContext: UserContext;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 };
 export declare type LoginAttemptInfo = {
     deviceId: string;
@@ -192,6 +191,7 @@ export declare type SignInUpPhoneFormProps = {
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: () => void;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 };
 export declare type SignInUpEmailOrPhoneFormProps = {
     clearError: () => void;
@@ -201,6 +201,7 @@ export declare type SignInUpEmailOrPhoneFormProps = {
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: () => void;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 };
 export declare type SignInUpUserInputCodeFormProps = {
     clearError: () => void;
@@ -246,6 +247,7 @@ export declare type SignInUpEPComboEmailOrPhoneFormProps = {
     error: string | undefined;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 };
 export declare type SignInUpEPComboEmailFormProps = {
     showPasswordField: boolean;
@@ -271,6 +273,7 @@ export declare type SignInUpEPComboEmailFormProps = {
     onFetchError: (error: Response) => void;
     error: string | undefined;
     recipeImplementation: RecipeImplementation;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
     config: NormalisedConfig;
 };
 export declare type MFAAction =
@@ -330,6 +333,7 @@ export declare type SignInUpEPComboChildProps = Omit<SignInUpProps, "onSuccess">
                   isEmailPassword: false | undefined;
               }
     ) => void;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 };
 export declare type LinkSentChildProps = LinkSentThemeProps;
 export declare type MFAChildProps = Omit<MFAProps, "featureState" | "dispatch">;

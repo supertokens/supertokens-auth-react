@@ -26,6 +26,10 @@ export function selectComponentsToCoverAllFirstFactors(
     comps: PartialAuthComponent[],
     firstFactorIds: string[]
 ): PartialAuthComponent[] | undefined {
+    if (firstFactorIds.length === 0) {
+        return undefined;
+    }
+
     for (let i = 0; i < comps.length; ++i) {
         const c = comps[i];
 

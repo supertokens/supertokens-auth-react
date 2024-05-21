@@ -47,11 +47,9 @@ export declare type NormalisedConfig = {
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
-    disableDefaultUI?: boolean;
     providers?: (Provider | CustomProviderConfig)[];
 };
 export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
-    disableDefaultUI: boolean;
     providers: Provider[];
 };
 export declare type GetRedirectionURLContext = never;
@@ -65,7 +63,6 @@ export declare type PreAPIHookContext = {
 export declare type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {
-          rid: "thirdparty";
           action: "SUCCESS";
           isNewRecipeUser: boolean;
           createdNewSession: boolean;

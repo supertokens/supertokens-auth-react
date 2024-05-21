@@ -40,6 +40,7 @@ import AuthPageThemeWrapper from "../../theme/authPage";
 import type AuthRecipe from "../../..";
 import type { TranslationStore } from "../../../../../translation/translationHelpers";
 import type { AuthComponent, Navigate, PartialAuthComponent, UserContext } from "../../../../../types";
+import type { FactorIds } from "../../../../multifactorauth/types";
 import type { GetLoginMethodsResponseNormalized } from "../../../../multitenancy/types";
 import type { RecipeRouter } from "../../../../recipeRouter";
 import type { AuthPageThemeProps } from "../../../types";
@@ -55,7 +56,8 @@ export type AuthPageProps = PropsWithChildren<{
     redirectOnSessionExists?: boolean;
     onSessionAlreadyExists?: () => void;
     preBuiltUIList: RecipeRouter[];
-    factors?: string[];
+    factors?: (typeof FactorIds)[keyof Omit<typeof FactorIds, "TOTP">][];
+    useSignUpStateFromQueryString?: boolean;
     isSignUp?: boolean;
     navigate?: Navigate;
     userContext?: UserContext;
@@ -80,15 +82,19 @@ const AuthPageWrapper: React.FC<AuthPageProps> = (props) => {
 };
 
 const AuthPageInner: React.FC<AuthPageProps> = (props) => {
+    if (props.factors !== undefined && props.factors.length === 0) {
+        throw new Error("The factors array cannot be empty");
+    }
+
     const windowHandler = WindowHandlerReference.getReferenceOrThrow().windowHandler;
 
     const search = new URLSearchParams(windowHandler.location.getSearch());
 
-    const factorsStringFromQS = search.get("factors");
-    const factorListFromQS = factorsStringFromQS ? factorsStringFromQS.split(",") : undefined;
-    const signUpStringFromQS = search.get("signUp");
+    const showStringFromQS = search.get("show");
     const isSignUpFromQS =
-        signUpStringFromQS === null ? undefined : signUpStringFromQS === "" || signUpStringFromQS === "true";
+        props.useSignUpStateFromQueryString !== true || showStringFromQS === null
+            ? undefined
+            : showStringFromQS === "signup";
 
     let errorFromQS =
         search.get("error") !== null ? search.get("message") ?? search.get("error") ?? undefined : undefined;
@@ -112,11 +118,13 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     const lastBuild = useRef<{ buildReq: number | undefined }>({ buildReq: undefined });
 
     const onSignInUpSwitcherClick = useCallback(() => {
-        updateQueryParam("signUp", isSignUp ? "false" : "true");
+        if (props.useSignUpStateFromQueryString === true) {
+            updateQueryParam("show", isSignUp ? "signin" : "signup");
+        }
         setError(undefined);
         setIsSignUp(!isSignUp);
         setRebuildReqCount((v) => v + 1);
-    }, [isSignUp, setIsSignUp, setRebuildReqCount, setError]);
+    }, [isSignUp, setIsSignUp, setRebuildReqCount, setError, props.useSignUpStateFromQueryString]);
 
     useEffect(() => {
         if (loadedDynamicLoginMethods) {
@@ -191,7 +199,6 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                 loadedDynamicLoginMethods,
                 userContext,
                 factorList,
-                factorListFromQS,
                 isSignUp,
                 setAuthComponentListInfo,
                 abortCtl.signal
@@ -210,7 +217,6 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
         loadedDynamicLoginMethods,
         userContext,
         factorList,
-        factorListFromQS,
         isSignUp,
         setAuthComponentListInfo,
         rethrowInRender,
@@ -292,27 +298,36 @@ async function buildAndSetChildProps(
     loadedDynamicLoginMethods: GetLoginMethodsResponseNormalized | undefined,
     userContext: UserContext,
     factorListState: string[] | undefined,
-    factorListFromQS: string[] | undefined,
     isSignUpState: boolean,
     setComponentListInfo: (info: AuthComponentListInfo) => void,
     abort: AbortSignal
 ) {
-    const authRecipesInList = recipeRouters
-        .map((r) => r.recipeInstance)
-        .filter((router) => "firstFactorIds" in (router as AuthRecipe<any, any, any, any>)) as AuthRecipe<
-        any,
-        any,
-        any,
-        any
-    >[];
+    const authRecipesInited = SuperTokens.getInstanceOrThrow().recipeList.filter(
+        (recipe) => "firstFactorIds" in (recipe as AuthRecipe<any, any, any, any>)
+    ) as AuthRecipe<any, any, any, any>[];
 
     // The first factors list we show is a fallback:
     const firstFactors =
-        factorListState ?? // First we use the in-memory list
-        factorListFromQS ?? // or the one from the querystring
+        factorListState ?? // First we use the in-memory list (initialized to whatever we get from props)
         loadedDynamicLoginMethods?.firstFactors ?? // or the tenant config
         MultiFactorAuth.getInstance()?.config.firstFactors ?? // or the static config from the MFA recipe
-        authRecipesInList.reduce((acc, recipe) => [...acc, ...recipe.getFirstFactorsForAuthPage()], [] as string[]); // or we show everything we have initialized
+        authRecipesInited.reduce((acc, recipe) => [...acc, ...recipe.getFirstFactorsForAuthPage()], [] as string[]); // or we show everything we have initialized
+
+    if (
+        factorListState === undefined &&
+        loadedDynamicLoginMethods?.firstFactors === undefined &&
+        MultiFactorAuth.getInstance()?.config.firstFactors
+    ) {
+        const missingPreBuiltUIs = authRecipesInited.filter(
+            (recipe) => !recipeRouters.some((router) => router.recipeInstance.recipeID === recipe.recipeID)
+        );
+        if (missingPreBuiltUIs.length > 0) {
+            // In this case we'd most likely throw anyway (except in the case of EP+Pwless), but we want to provide a better error message
+            throw new Error(
+                `Factor list not set but PreBuiltUI not added for ${missingPreBuiltUIs.map((r) => r.recipeID)}`
+            );
+        }
+    }
 
     // We want only want to show a separate sign up view if there is a UI that both:
     // 1. requires showing a separate sign up page (i.e.: emailpassword)

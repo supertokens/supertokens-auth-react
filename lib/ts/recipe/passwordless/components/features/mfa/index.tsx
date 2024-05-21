@@ -41,6 +41,7 @@ import { getAvailableFactors } from "../../../../multifactorauth/utils";
 import { getInvalidClaimsFromResponse } from "../../../../session";
 import SessionRecipe from "../../../../session/recipe";
 import Session from "../../../../session/recipe";
+import { defaultPhoneNumberValidator } from "../../../defaultPhoneNumberValidator";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import MFAThemeWrapper from "../../themes/mfa";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
@@ -196,6 +197,7 @@ export function useChildProps(
             recipeImplementation: recipeImplementation,
             config: recipe.config,
             contactMethod,
+            validatePhoneNumber: recipe.config.validatePhoneNumber ?? defaultPhoneNumberValidator,
         };
     }, [contactMethod, state, recipeImplementation]);
 }

@@ -15,7 +15,7 @@
 
 import { normaliseAuthRecipe } from "../authRecipe/utils";
 
-import { defaultPhoneNumberValidator, defaultEmailValidator } from "./validators";
+import { defaultEmailValidator } from "./validators";
 
 import type { Config, NormalisedConfig, SignInUpFeatureConfigInput } from "./types";
 import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
@@ -44,7 +44,7 @@ export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
         validateEmailAddress = config.validateEmailAddress;
     }
 
-    let validatePhoneNumber: NormalisedConfig["validatePhoneNumber"] = defaultPhoneNumberValidator;
+    let validatePhoneNumber: NormalisedConfig["validatePhoneNumber"] = undefined;
     if (
         (config.contactMethod === "PHONE" || config.contactMethod === "EMAIL_OR_PHONE") &&
         config.validatePhoneNumber !== undefined

@@ -1,8 +1,6 @@
 /// <reference types="react" />
 import { RecipeRouter } from "../recipeRouter";
 import ResetPasswordUsingTokenThemeWrapper from "./components/themes/resetPasswordUsingToken";
-import SignInTheme from "./components/themes/signIn";
-import SignUpTheme from "./components/themes/signUp";
 import EmailPassword from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
@@ -127,8 +125,6 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
     getAuthComponents(): AuthComponent[];
     requiresSignUpPage: boolean;
     static reset(): void;
-    static SignInTheme: typeof SignInTheme;
-    static SignUpTheme: typeof SignUpTheme;
     static ResetPasswordUsingToken: (
         prop: FeatureBaseProps<{
             userContext?: UserContext;
@@ -141,9 +137,4 @@ declare const ResetPasswordUsingToken: (
         userContext?: UserContext;
     }>
 ) => JSX.Element;
-export {
-    ResetPasswordUsingToken,
-    SignInTheme,
-    SignUpTheme,
-    ResetPasswordUsingTokenThemeWrapper as ResetPasswordUsingTokenTheme,
-};
+export { ResetPasswordUsingToken, ResetPasswordUsingTokenThemeWrapper as ResetPasswordUsingTokenTheme };

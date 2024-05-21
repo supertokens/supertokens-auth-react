@@ -73,11 +73,6 @@ export type NormalisedConfig = {
 
 export type SignInAndUpFeatureUserInput = {
     /*
-     * Disable default implementation with default routes.
-     */
-    disableDefaultUI?: boolean;
-
-    /*
      * SignUp form config.
      */
 
@@ -91,11 +86,6 @@ export type SignInAndUpFeatureUserInput = {
 };
 
 export type NormalisedSignInAndUpFeatureConfig = {
-    /*
-     * Disable default implementation with default routes.
-     */
-    disableDefaultUI: boolean;
-
     /*
      * SignUp form config.
      */
@@ -300,7 +290,6 @@ export type OnHandleEventContext =
           userContext: UserContext;
       }
     | {
-          rid: "emailpassword";
           action: "SUCCESS";
           isNewRecipeUser: boolean;
           createdNewSession: boolean;

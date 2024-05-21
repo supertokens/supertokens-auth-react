@@ -76,7 +76,6 @@ export type GetRedirectionURLContext = never;
 
 export type OnHandleEventContext =
     | {
-          rid: "passwordless";
           action: "SUCCESS";
           isNewRecipeUser: boolean;
           createdNewSession: boolean;
@@ -97,7 +96,9 @@ export type PasswordlessNormalisedBaseConfig = {
 
 export type NormalisedConfig = {
     validateEmailAddress: (email: string) => Promise<string | undefined> | string | undefined;
-    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
+    // We set this to be optional, because we do not want to load the default validator when normalizing the config.
+    // This is because it makes our bundle size grow by a lot even if the user doesn't actually use phone based pwless anywhere
+    validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 
     signInUpFeature: {
         resendEmailOrSMSGapInSeconds: number;
@@ -107,8 +108,6 @@ export type NormalisedConfig = {
         emailOrPhoneFormStyle: string;
         userInputCodeFormStyle: string;
         linkSentScreenStyle: string;
-
-        disableDefaultUI?: boolean;
     };
     linkClickedScreenFeature: PasswordlessNormalisedBaseConfig;
     mfaFeature: PasswordlessNormalisedBaseConfig;
@@ -128,7 +127,6 @@ export type PasswordlessFeatureBaseConfig = {
 } & FeatureBaseConfig;
 
 export type SignInUpFeatureConfigInput = {
-    disableDefaultUI?: boolean;
     resendEmailOrSMSGapInSeconds?: number;
 
     emailOrPhoneFormStyle?: string;
@@ -195,6 +193,7 @@ export type MFAProps = {
         showAccessDenied: boolean;
         error: string | undefined;
     };
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
     userContext?: UserContext;
 };
 export type SignInUpProps = {
@@ -207,6 +206,7 @@ export type SignInUpProps = {
     error: string | undefined;
     clearError: () => void;
     userContext: UserContext;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 };
 export type LoginAttemptInfo = {
     deviceId: string;
@@ -252,6 +252,7 @@ export type SignInUpPhoneFormProps = {
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: () => void;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 };
 
 export type SignInUpEmailOrPhoneFormProps = {
@@ -262,6 +263,7 @@ export type SignInUpEmailOrPhoneFormProps = {
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: () => void;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 };
 
 export type SignInUpUserInputCodeFormProps = {
@@ -302,6 +304,7 @@ export type SignInUpEPComboEmailOrPhoneFormProps = {
     error: string | undefined;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 };
 
 export type SignInUpEPComboEmailFormProps = {
@@ -320,6 +323,7 @@ export type SignInUpEPComboEmailFormProps = {
     onFetchError: (error: Response) => void;
     error: string | undefined;
     recipeImplementation: RecipeImplementation;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
     config: NormalisedConfig;
 };
 
@@ -374,6 +378,7 @@ export type SignInUpEPComboChildProps = Omit<SignInUpProps, "onSuccess"> & {
             | { status: "OK"; user: User; createdNewRecipeUser: boolean; isEmailPassword: true }
             | { status: "OK"; isEmailPassword: false | undefined }
     ) => void;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 };
 export type LinkSentChildProps = LinkSentThemeProps;
 export type MFAChildProps = Omit<MFAProps, "featureState" | "dispatch">;

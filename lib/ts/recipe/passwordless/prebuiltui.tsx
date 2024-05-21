@@ -15,10 +15,7 @@ import MFAFeature from "./components/features/mfa";
 import SignInUpFeature from "./components/features/signInAndUp";
 import SignInUpEPComboFeature from "./components/features/signInAndUpEPCombo";
 import UserInputCodeFeature from "./components/features/userInputCode";
-import LinkSentThemeWrapper from "./components/themes/linkSent";
 import MFAThemeWrapper from "./components/themes/mfa";
-import SignInUpThemeWrapper from "./components/themes/signInUp";
-import SignInUpEPComboThemeWrapper from "./components/themes/signInUpEPCombo";
 import { defaultTranslationsPasswordless } from "./components/themes/translations";
 import Passwordless from "./recipe";
 
@@ -335,25 +332,13 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
     static MfaOtpEmail = (props: FeatureBaseProps<{ navigate?: Navigate; userContext?: UserContext }>) =>
         this.getFeatureComponent("otp-email", props);
     static MFAOTPTheme = MFAThemeWrapper;
-
-    static SignInUpTheme = SignInUpThemeWrapper;
-    static SignInUpEPComboTheme = SignInUpEPComboThemeWrapper;
-    static LinkSentTheme = LinkSentThemeWrapper;
 }
 
 const LinkClicked = PasswordlessPreBuiltUI.LinkClicked;
 const MfaOtpPhone = PasswordlessPreBuiltUI.MfaOtpPhone;
 const MfaOtpEmail = PasswordlessPreBuiltUI.MfaOtpEmail;
 
-export {
-    LinkClicked,
-    SignInUpThemeWrapper as SignInUpTheme,
-    SignInUpEPComboThemeWrapper as SignInUpEPComboTheme,
-    LinkSentThemeWrapper as LinkSentTheme,
-    MfaOtpPhone,
-    MfaOtpEmail,
-    MFAThemeWrapper as MFAOTPTheme,
-};
+export { LinkClicked, MfaOtpPhone, MfaOtpEmail, MFAThemeWrapper as MFAOTPTheme };
 
 function getAllChoices(choices: string[]): string[][] {
     if (choices.length === 0) {

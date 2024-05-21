@@ -46,6 +46,7 @@ const SignInUpTheme: React.FC<SignInUpProps & { activeScreen: SignInUpScreens }>
         onError: props.onError,
         onFetchError: props.onFetchError,
         error: props.error,
+        validatePhoneNumber: props.validatePhoneNumber,
     };
 
     return activeScreen === SignInUpScreens.EmailForm ? (

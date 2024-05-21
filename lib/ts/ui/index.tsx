@@ -14,8 +14,8 @@ import SuperTokens from "../superTokens";
 import { getCurrentNormalisedUrlPath } from "../utils";
 
 import type { PreBuiltRecipes, ReactRouterDomWithCustomHistory } from "./types";
-import type AuthRecipe from "../recipe/authRecipe";
-import type { Navigate, UserContext } from "../types";
+import type { AuthPageProps } from "../recipe/authRecipe/components/feature/authPage/authPage";
+import type { AuthPageThemeProps } from "../recipe/authRecipe/types";
 import type { PropsWithChildren } from "react";
 
 class UI {
@@ -93,12 +93,7 @@ class UI {
         const isAuthPage = path === SuperTokens.getInstanceOrThrow().appInfo.websiteBasePath.getAsStringDangerous();
 
         if (isAuthPage) {
-            // TODO: cleanup
-            return recipeList.some(
-                (v) =>
-                    v.getAuthComponents().length !== 0 &&
-                    (v.recipeInstance as AuthRecipe<any, any, any, any>).getFirstFactorsForAuthPage().length !== 0
-            );
+            return !SuperTokens.getInstanceOrThrow().disableAuthRoute;
         }
 
         return (
@@ -121,15 +116,11 @@ class UI {
         );
     }
     static AuthPage = (
-        props: PropsWithChildren<{
-            redirectOnSessionExists?: boolean;
-            onSessionAlreadyExists?: () => void;
-            preBuiltUIList: PreBuiltRecipes;
-            factors?: string[];
-            isSignUp?: boolean;
-            navigate?: Navigate;
-            userContext?: UserContext;
-        }>
+        props: PropsWithChildren<
+            Omit<AuthPageProps, "preBuiltUIList"> & {
+                preBuiltUIList: PreBuiltRecipes;
+            }
+        >
     ) => (
         <AuthPageWrapper
             {...props}
@@ -161,4 +152,5 @@ export {
     AuthPageHeader,
     AuthPageComponentList,
     AuthRecipeComponentsOverrideContextProvider,
+    AuthPageThemeProps,
 };

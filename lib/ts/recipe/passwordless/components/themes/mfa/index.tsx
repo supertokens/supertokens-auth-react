@@ -56,6 +56,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
         onError: (error: string) => props.dispatch({ type: "setError", showAccessDenied: false, error }),
         onFetchError: props.onFetchError,
         error: featureState.error,
+        validatePhoneNumber: props.validatePhoneNumber,
     };
 
     if (!featureState.loaded) {

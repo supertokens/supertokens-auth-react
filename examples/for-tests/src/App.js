@@ -493,6 +493,7 @@ SuperTokens.init({
     privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
     termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
     defaultToSignUp,
+    disableAuthRoute: testContext.disableDefaultUI,
     recipeList,
 });
 
@@ -890,7 +891,6 @@ function getEmailPasswordConfigs({ disableDefaultUI, formFieldType }) {
             },
         },
         signInAndUpFeature: {
-            disableDefaultUI,
             signInForm: {
                 style: theme,
                 formFields: getSignInFormFields(formFieldType.signIn),
@@ -970,7 +970,6 @@ function getPasswordlessConfigs({ disableDefaultUI, defaultToEmail }) {
             defaultCountry: passwordlessDefaultCountry,
             defaultToEmail,
             resendEmailOrSMSGapInSeconds: 2,
-            disableDefaultUI,
             style: theme,
         },
         linkClickedScreenFeature: {
@@ -1130,7 +1129,6 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
             },
         },
         signInAndUpFeature: {
-            disableDefaultUI,
             style: theme,
             providers,
         },

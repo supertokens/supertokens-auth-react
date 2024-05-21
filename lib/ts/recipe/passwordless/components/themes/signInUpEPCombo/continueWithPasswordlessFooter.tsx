@@ -3,14 +3,29 @@ import { useFormFields } from "../../../../emailpassword/components/library/form
 
 import type { NormalisedConfig } from "../../../types";
 
-export const ContinueWithPasswordlessFooter: React.FC<{
-    onError: (err: string) => void;
-    isPhoneNumber: boolean;
-    onContinueWithPasswordlessClick: (contactInfo: string) => Promise<void>;
-    config: NormalisedConfig;
-}> = ({ onError, onContinueWithPasswordlessClick, isPhoneNumber, config }) => {
+export const ContinueWithPasswordlessFooter: React.FC<
+    | {
+          onError: (err: string) => void;
+          isPhoneNumber: true;
+          onContinueWithPasswordlessClick: (contactInfo: string) => Promise<void>;
+          validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
+          config: NormalisedConfig;
+      }
+    | {
+          onError: (err: string) => void;
+          isPhoneNumber: false;
+          onContinueWithPasswordlessClick: (contactInfo: string) => Promise<void>;
+          validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
+          config: NormalisedConfig;
+      }
+> = ({ onError, onContinueWithPasswordlessClick, validatePhoneNumber, isPhoneNumber, config }) => {
     const state = useFormFields();
     const t = useTranslation();
+    if (isPhoneNumber && validatePhoneNumber === undefined) {
+        throw new Error(
+            "This should never happen: ContinueWithPasswordlessFooter rendered without validatePhoneNumber but isPhoneNumber=true"
+        );
+    }
 
     return (
         <a
@@ -23,7 +38,7 @@ export const ContinueWithPasswordlessFooter: React.FC<{
                         return;
                     }
 
-                    const validationRes = await config.validatePhoneNumber(phoneNumber);
+                    const validationRes = await validatePhoneNumber!(phoneNumber);
                     if (validationRes !== undefined) {
                         onError(validationRes);
                         return;

@@ -55,9 +55,6 @@ export default class EmailPassword extends AuthRecipe<
     recipeID = EmailPassword.RECIPE_ID;
     firstFactorIds = [FactorIds.EMAILPASSWORD];
     public getFirstFactorsForAuthPage(): string[] {
-        if (this.config.signInAndUpFeature.disableDefaultUI) {
-            return [];
-        }
         return this.firstFactorIds;
     }
 

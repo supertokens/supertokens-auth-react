@@ -13,8 +13,6 @@
  * under the License.
  */
 
-import { getPhoneNumberUtils } from "./phoneNumberUtils";
-
 export function defaultEmailValidator(value: any): string | undefined {
     if (typeof value !== "string") {
         return "GENERAL_ERROR_EMAIL_NON_STRING";
@@ -33,21 +31,6 @@ export function defaultEmailValidator(value: any): string | undefined {
         return "GENERAL_ERROR_EMAIL_INVALID";
     }
 
-    return undefined;
-}
-
-export async function defaultPhoneNumberValidator(value: string) {
-    if (typeof value !== "string") {
-        return "GENERAL_ERROR_PHONE_NON_STRING";
-    }
-
-    value = value.trim();
-
-    const intlTelInputUtils = await getPhoneNumberUtils();
-
-    if (!intlTelInputUtils.isValidNumber(value, undefined as any)) {
-        return "GENERAL_ERROR_PHONE_INVALID";
-    }
     return undefined;
 }
 

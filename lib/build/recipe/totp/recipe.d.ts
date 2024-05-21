@@ -9,7 +9,7 @@ import type {
 } from "./types";
 import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
 export declare const totpFactor: {
-    id: string;
+    id: "totp";
     name: string;
     description: string;
     path: string;

@@ -165,7 +165,7 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                     return [...os, update({ id, value: "" })];
                 }
 
-                return os.filter((f) => f !== field).concat(update(field));
+                return os.filter((f) => f.id !== field.id).concat(update(field));
             });
         },
         [setFieldStates]

@@ -68,22 +68,12 @@ export type NormalisedConfig = {
 
 export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     /*
-     * Disable default implementation with default routes.
-     */
-    disableDefaultUI?: boolean;
-
-    /*
      * Providers
      */
     providers?: (Provider | CustomProviderConfig)[];
 };
 
 export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
-    /*
-     * Disable default implementation with default routes.
-     */
-    disableDefaultUI: boolean;
-
     /*
      * Providers
      */
@@ -105,7 +95,6 @@ export type PreAPIHookContext = {
 export type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {
-          rid: "thirdparty";
           action: "SUCCESS";
           isNewRecipeUser: boolean;
           createdNewSession: boolean;

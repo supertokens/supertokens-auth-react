@@ -14,18 +14,16 @@ export type Args = {
     "multitenancy.firstFactors": FirstFactor[];
     "multitenancy.providers": ProviderId[];
     "emailpassword.initialized": boolean;
-    "emailpassword.disableDefaultUISignInUp": boolean;
     defaultToSignUp: boolean;
     "thirdparty.initialized": boolean;
-    "thirdparty.disableDefaultUISignInUp": boolean;
     "thirdparty.providers": ProviderId[];
     "passwordless.initialized": boolean;
     "passwordless.contactMethod": "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
     "passwordless.defaultToEmail": boolean;
-    "passwordless.disableDefaultUISignInUp": boolean;
     path?: string;
     query?: string;
     hash?: string;
+    rootStyle?: string;
 };
 
 const meta: Meta<Args> = {
@@ -40,7 +38,7 @@ const meta: Meta<Args> = {
             for (const ui of prebuiltUIs) {
                 ui.reset();
             }
-            resetAndInitST(recipeList, args.usesDynamicLoginMethods, defaultToSignUp, {
+            resetAndInitST(recipeList, args.usesDynamicLoginMethods, defaultToSignUp, args.rootStyle, {
                 path: args.path ?? path ?? "/auth",
                 query: args.query ?? "",
                 hash: args.hash ?? "",
@@ -99,15 +97,13 @@ const meta: Meta<Args> = {
         "multitenancy.firstFactors": ["emailpassword", "thirdparty"],
         "multitenancy.providers": ["github", "google"],
         "emailpassword.initialized": true,
-        "emailpassword.disableDefaultUISignInUp": false,
         defaultToSignUp: false,
         "thirdparty.initialized": true,
-        "thirdparty.disableDefaultUISignInUp": false,
         "thirdparty.providers": ["github", "google"],
         "passwordless.initialized": true,
         "passwordless.contactMethod": "EMAIL_OR_PHONE",
-        "passwordless.disableDefaultUISignInUp": false,
         "passwordless.defaultToEmail": true,
+        rootStyle: "",
     },
     argTypes: {
         "multifactorauth.initialized": {
@@ -164,15 +160,6 @@ const meta: Meta<Args> = {
                 category: "emailpassword",
             },
         },
-        "emailpassword.disableDefaultUISignInUp": {
-            table: {
-                category: "emailpassword",
-            },
-            if: {
-                arg: "emailpassword.initialized",
-                truthy: true,
-            },
-        },
         defaultToSignUp: {
             if: {
                 arg: "emailpassword.initialized",
@@ -182,15 +169,6 @@ const meta: Meta<Args> = {
         "thirdparty.initialized": {
             table: {
                 category: "thirdparty",
-            },
-        },
-        "thirdparty.disableDefaultUISignInUp": {
-            table: {
-                category: "thirdparty",
-            },
-            if: {
-                arg: "thirdparty.initialized",
-                truthy: true,
             },
         },
         "thirdparty.providers": {
@@ -216,15 +194,6 @@ const meta: Meta<Args> = {
             control: {
                 type: "radio",
             },
-            table: {
-                category: "passwordless",
-            },
-            if: {
-                arg: "passwordless.initialized",
-                truthy: true,
-            },
-        },
-        "passwordless.disableDefaultUISignInUp": {
             table: {
                 category: "passwordless",
             },

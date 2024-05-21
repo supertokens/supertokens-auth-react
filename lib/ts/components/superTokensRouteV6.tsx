@@ -23,7 +23,6 @@ import SuperTokens from "../superTokens";
 
 import { RoutingComponent } from "./routingComponent";
 
-import type AuthRecipe from "../recipe/authRecipe";
 import type { RecipeRouter } from "../recipe/recipeRouter";
 import type { ReactRouterDomWithCustomHistory } from "../ui/types";
 
@@ -75,11 +74,8 @@ export function getSuperTokensRoutesForReactRouterDomV6({
     );
 
     if (
-        recipeList.some(
-            (ui) =>
-                ui.getAuthComponents().length !== 0 &&
-                (ui.recipeInstance as AuthRecipe<any, any, any, any>).getFirstFactorsForAuthPage().length !== 0
-        )
+        !SuperTokens.getInstanceOrThrow().disableAuthRoute &&
+        recipeList.some((ui) => ui.getAuthComponents().length !== 0)
     ) {
         const path = SuperTokens.getInstanceOrThrow()
             .appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"))

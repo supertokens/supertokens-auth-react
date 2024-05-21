@@ -71,6 +71,7 @@ export declare type SuperTokensConfig = {
     ) => Promise<string | undefined | null>;
     style?: string;
     useShadowDom?: boolean;
+    disableAuthRoute?: boolean;
     defaultToSignUp?: boolean;
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;

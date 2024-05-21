@@ -1,12 +1,14 @@
 import React from "react";
 import type { Navigate, UserContext } from "../../../../../types";
+import type { FactorIds } from "../../../../multifactorauth/types";
 import type { RecipeRouter } from "../../../../recipeRouter";
 import type { PropsWithChildren } from "react";
 export declare type AuthPageProps = PropsWithChildren<{
     redirectOnSessionExists?: boolean;
     onSessionAlreadyExists?: () => void;
     preBuiltUIList: RecipeRouter[];
-    factors?: string[];
+    factors?: (typeof FactorIds)[keyof Omit<typeof FactorIds, "TOTP">][];
+    useSignUpStateFromQueryString?: boolean;
     isSignUp?: boolean;
     navigate?: Navigate;
     userContext?: UserContext;

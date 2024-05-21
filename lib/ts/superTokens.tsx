@@ -74,6 +74,7 @@ export default class SuperTokens {
     privacyPolicyLink: string | undefined;
     termsOfServiceLink: string | undefined;
     defaultToSignUp: boolean;
+    disableAuthRoute: boolean;
 
     /*
      * Constructor.
@@ -115,6 +116,7 @@ export default class SuperTokens {
 
         this.useShadowDom = config.useShadowDom ?? true;
         this.defaultToSignUp = config.defaultToSignUp ?? false;
+        this.disableAuthRoute = config.disableAuthRoute ?? false;
     }
 
     /*
@@ -206,9 +208,7 @@ export default class SuperTokens {
     }): Promise<void> => {
         const queryParams = options.queryParams === undefined ? {} : options.queryParams;
         if (options.show !== undefined) {
-            if (options.show === "signup") {
-                queryParams.signUp = true;
-            }
+            queryParams.show = options.show;
         }
         if (options.redirectBack === true) {
             queryParams.redirectToPath = getCurrentNormalisedUrlPathWithQueryParamsAndFragments();

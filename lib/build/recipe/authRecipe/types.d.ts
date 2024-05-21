@@ -14,9 +14,9 @@ export declare type Config<T, S, R> = UserInput<T, S, R> & RecipeModuleConfig<T,
 export declare type NormalisedConfig<T, Action, R> = NormalisedRecipeModuleConfig<T, Action, R>;
 export declare type OnHandleEventContext = never;
 export declare type ComponentOverrideMap = {
-    AuthPageHeader_Override: ComponentOverride<typeof AuthPageHeader>;
-    AuthPageFooter_Override: ComponentOverride<typeof AuthPageFooter>;
-    AuthPageComponentList_Override: ComponentOverride<typeof AuthPageComponentList>;
+    AuthPageHeader_Override?: ComponentOverride<typeof AuthPageHeader>;
+    AuthPageFooter_Override?: ComponentOverride<typeof AuthPageFooter>;
+    AuthPageComponentList_Override?: ComponentOverride<typeof AuthPageComponentList>;
 };
 declare type ComponentWithPreloadInfo<T> = {
     component: React.FC<

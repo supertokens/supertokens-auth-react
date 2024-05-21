@@ -9,14 +9,14 @@ import type {
 } from "./types";
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
 export declare const otpPhoneFactor: {
-    id: string;
+    id: "otp-phone";
     name: string;
     description: string;
     path: string;
     logo: () => import("react/jsx-runtime").JSX.Element;
 };
 export declare const otpEmailFactor: {
-    id: string;
+    id: "otp-email";
     name: string;
     description: string;
     path: string;
@@ -32,7 +32,7 @@ export default class Passwordless extends AuthRecipe<
     static instance?: Passwordless;
     static RECIPE_ID: string;
     recipeID: string;
-    firstFactorIds: string[];
+    firstFactorIds: ("otp-email" | "otp-phone" | "link-email" | "link-phone")[];
     getFirstFactorsForAuthPage(): string[];
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,

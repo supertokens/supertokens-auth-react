@@ -33,9 +33,9 @@ export type NormalisedConfig<T, Action, R> = NormalisedRecipeModuleConfig<T, Act
 export type OnHandleEventContext = never;
 
 export type ComponentOverrideMap = {
-    AuthPageHeader_Override: ComponentOverride<typeof AuthPageHeader>;
-    AuthPageFooter_Override: ComponentOverride<typeof AuthPageFooter>;
-    AuthPageComponentList_Override: ComponentOverride<typeof AuthPageComponentList>;
+    AuthPageHeader_Override?: ComponentOverride<typeof AuthPageHeader>;
+    AuthPageFooter_Override?: ComponentOverride<typeof AuthPageFooter>;
+    AuthPageComponentList_Override?: ComponentOverride<typeof AuthPageComponentList>;
 };
 
 type ComponentWithPreloadInfo<T> = {

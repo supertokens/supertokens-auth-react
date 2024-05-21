@@ -132,6 +132,7 @@ export type SuperTokensConfig = {
 
     style?: string;
     useShadowDom?: boolean;
+    disableAuthRoute?: boolean;
 
     /*
      * Should default to Sign up form.

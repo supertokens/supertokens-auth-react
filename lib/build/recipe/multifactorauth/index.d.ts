@@ -8,13 +8,13 @@ import type { MFAFactorInfo } from "supertokens-web-js/recipe/multifactorauth/ty
 export default class Wrapper {
     static MultiFactorAuthClaim: import("./multiFactorAuthClaim").MultiFactorAuthClaimClass;
     static FactorIds: {
-        EMAILPASSWORD: string;
-        OTP_EMAIL: string;
-        OTP_PHONE: string;
-        LINK_EMAIL: string;
-        LINK_PHONE: string;
-        THIRDPARTY: string;
-        TOTP: string;
+        readonly EMAILPASSWORD: "emailpassword";
+        readonly OTP_EMAIL: "otp-email";
+        readonly OTP_PHONE: "otp-phone";
+        readonly LINK_EMAIL: "link-email";
+        readonly LINK_PHONE: "link-phone";
+        readonly THIRDPARTY: "thirdparty";
+        readonly TOTP: "totp";
     };
     static init(
         config?: UserInput

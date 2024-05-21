@@ -98,6 +98,7 @@ export const EPComboEmailForm = withOverride(
                             onContinueWithPasswordlessClick={props.onContinueWithPasswordlessClick}
                             onError={props.onError}
                             config={props.config}
+                            validatePhoneNumber={props.validatePhoneNumber}
                         />
                     ) : undefined
                 }

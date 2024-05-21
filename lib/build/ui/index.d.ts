@@ -5,7 +5,8 @@ import { AuthPageComponentList } from "../recipe/authRecipe/components/theme/aut
 import { AuthPageFooter } from "../recipe/authRecipe/components/theme/authPage/authPageFooter";
 import { AuthPageHeader } from "../recipe/authRecipe/components/theme/authPage/authPageHeader";
 import type { PreBuiltRecipes, ReactRouterDomWithCustomHistory } from "./types";
-import type { Navigate, UserContext } from "../types";
+import type { AuthPageProps } from "../recipe/authRecipe/components/feature/authPage/authPage";
+import type { AuthPageThemeProps } from "../recipe/authRecipe/types";
 import type { PropsWithChildren } from "react";
 declare class UI {
     private static reactRouterDom;
@@ -19,15 +20,11 @@ declare class UI {
     static canHandleRoute(preBuiltUiClassList: PreBuiltRecipes): boolean;
     static getRoutingComponent(preBuiltUiClassList: PreBuiltRecipes): JSX.Element;
     static AuthPage: (
-        props: PropsWithChildren<{
-            redirectOnSessionExists?: boolean;
-            onSessionAlreadyExists?: () => void;
-            preBuiltUIList: PreBuiltRecipes;
-            factors?: string[];
-            isSignUp?: boolean;
-            navigate?: Navigate;
-            userContext?: UserContext;
-        }>
+        props: PropsWithChildren<
+            Omit<AuthPageProps, "preBuiltUIList"> & {
+                preBuiltUIList: PreBuiltRecipes;
+            }
+        >
     ) => import("react/jsx-runtime").JSX.Element;
     static AuthPageTheme: typeof AuthPageTheme;
     static AuthPageFooter: React.ComponentType<{
@@ -45,7 +42,7 @@ declare class UI {
         resetFactorList: () => void;
         showBackButton: boolean;
     }>;
-    static AuthPageComponentList: React.ComponentType<import("../recipe/authRecipe/types").AuthPageThemeProps>;
+    static AuthPageComponentList: React.ComponentType<AuthPageThemeProps>;
     static AuthRecipeComponentsOverrideContextProvider: React.FC<
         React.PropsWithChildren<{
             components: import("../recipe/authRecipe/types").ComponentOverrideMap;
@@ -56,15 +53,11 @@ declare const getSuperTokensRoutesForReactRouterDom: typeof UI.getSuperTokensRou
 declare const canHandleRoute: typeof UI.canHandleRoute;
 declare const getRoutingComponent: typeof UI.getRoutingComponent;
 declare const AuthPage: (
-    props: PropsWithChildren<{
-        redirectOnSessionExists?: boolean;
-        onSessionAlreadyExists?: () => void;
-        preBuiltUIList: PreBuiltRecipes;
-        factors?: string[];
-        isSignUp?: boolean;
-        navigate?: Navigate;
-        userContext?: UserContext;
-    }>
+    props: PropsWithChildren<
+        Omit<AuthPageProps, "preBuiltUIList"> & {
+            preBuiltUIList: PreBuiltRecipes;
+        }
+    >
 ) => import("react/jsx-runtime").JSX.Element;
 export default UI;
 export {
@@ -77,4 +70,5 @@ export {
     AuthPageHeader,
     AuthPageComponentList,
     AuthRecipeComponentsOverrideContextProvider,
+    AuthPageThemeProps,
 };

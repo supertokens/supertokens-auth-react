@@ -91,7 +91,6 @@ export function normaliseSignInAndUpFeature(config?: SignInAndUpFeatureUserInput
         config = {};
     }
 
-    const disableDefaultUI = config.disableDefaultUI === true;
     const signUpForm: NormalisedSignUpFormFeatureConfig = normaliseSignUpFormFeatureConfig(config.signUpForm);
 
     /*
@@ -126,7 +125,6 @@ export function normaliseSignInAndUpFeature(config?: SignInAndUpFeatureUserInput
         config.signInForm
     );
     return {
-        disableDefaultUI,
         signUpForm,
         signInForm,
     };

@@ -102,8 +102,20 @@ function AppWithReactDomRouter(props) {
                             <Contact />
                         </Route>
                         <Route path="/custom-supertokens-login">
-                            <AuthPage preBuiltUIList={[EmailPasswordPreBuiltUI]} />
+                            <AuthPage factors={["emailpassword"]} preBuiltUIList={[EmailPasswordPreBuiltUI]} />
                         </Route>
+                        <Route
+                            path="/auth-for-factors"
+                            element={
+                                <AuthPage
+                                    preBuiltUIList={recipePreBuiltUIList}
+                                    userContext={{
+                                        key: "value",
+                                    }}
+                                    factors={new URLSearchParams(window.location.search).get("factors")?.split(",")}
+                                />
+                            }
+                        />
                     </Switch>
                 </BaseComponent>
             </Router>

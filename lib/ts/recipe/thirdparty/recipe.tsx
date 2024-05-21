@@ -53,9 +53,6 @@ export default class ThirdParty extends AuthRecipe<
     recipeID = ThirdParty.RECIPE_ID;
     firstFactorIds = [FactorIds.THIRDPARTY];
     public getFirstFactorsForAuthPage(): string[] {
-        if (this.config.signInAndUpFeature.disableDefaultUI) {
-            return [];
-        }
         return this.firstFactorIds;
     }
 

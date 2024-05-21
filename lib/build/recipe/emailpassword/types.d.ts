@@ -53,12 +53,10 @@ export declare type NormalisedConfig = {
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = {
-    disableDefaultUI?: boolean;
     signUpForm?: SignUpFormFeatureUserInput;
     signInForm?: SignInFormFeatureUserInput;
 };
 export declare type NormalisedSignInAndUpFeatureConfig = {
-    disableDefaultUI: boolean;
     signUpForm: NormalisedSignUpFormFeatureConfig;
     signInForm: NormalisedSignInFormFeatureConfig;
 };
@@ -158,7 +156,6 @@ export declare type OnHandleEventContext =
           userContext: UserContext;
       }
     | {
-          rid: "emailpassword";
           action: "SUCCESS";
           isNewRecipeUser: boolean;
           createdNewSession: boolean;

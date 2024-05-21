@@ -1083,3 +1083,30 @@ function TestIfUserContextCanBePassedToPreBuiltComponets() {
         <PasswordlessLinkClicked userContext={userContext} />,
     ];
 }
+
+SuperTokens.init({
+    appInfo: {
+        appName: "SuperTokens Demo App",
+        apiDomain: getApiDomain(),
+        websiteDomain: window.location.origin,
+    },
+    recipeList,
+    style: `
+        [data-supertokens~=authPage] [data-supertokens~=headerSubtitle] {
+            display: none;
+        }
+    `,
+});
+
+function testAuthPagePropTypes() {
+    return [
+        // @ts-expect-error This has to be a valid factor
+        <AuthPage preBuiltUIList={[ThirdPartyPreBuiltUI]} factors={["asdf"]} />,
+        // @ts-expect-error This has to be a valid first factor
+        <AuthPage preBuiltUIList={[ThirdPartyPreBuiltUI]} factors={["totp"]} />,
+        <AuthPage
+            preBuiltUIList={[ThirdPartyPreBuiltUI]}
+            factors={["thirdparty", "emailpassword", "link-email", "link-phone", "otp-email", "otp-phone"]}
+        />,
+    ];
+}
