@@ -20,7 +20,7 @@ export function getTestContext() {
                 ? localStorage.getItem("firstFactors").split(", ")
                 : undefined,
         enableMFA: localStorage.getItem("enableMFA") === "true",
-        defaultToEmail: localStorage.getItem("defaultToEmail") === "true",
+        defaultToEmail: localStorage.getItem("defaultToEmail") !== "false",
         disableRedirectionAfterSuccessfulSignInUp:
             localStorage.getItem("disableRedirectionAfterSuccessfulSignInUp") === "true",
     };

@@ -247,16 +247,19 @@ let recipeList = [
 
 let enabledRecipes = getEnabledRecipes();
 
-if (enabledRecipes.includes("thirdparty")) {
+if (
+    enabledRecipes.includes("thirdparty") ||
+    enabledRecipes.includes("thirdpartyemailpassword") ||
+    enabledRecipes.includes("thirdpartypasswordless")
+) {
     recipeList = [getThirdPartyConfigs(testContext), ...recipeList];
 }
-if (enabledRecipes.includes("emailpassword")) {
+if (enabledRecipes.includes("emailpassword") || enabledRecipes.includes("thirdpartyemailpassword")) {
     recipeList = [getEmailPasswordConfigs(testContext), ...recipeList];
 }
-if (enabledRecipes.includes("passwordless")) {
+if (enabledRecipes.includes("passwordless") || enabledRecipes.includes("thirdpartypasswordless")) {
     recipeList = [getPasswordlessConfigs(testContext), ...recipeList];
 }
-
 if (emailVerificationMode !== "OFF") {
     recipeList.push(getEmailVerificationConfigs(testContext));
 }
@@ -639,7 +642,7 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
     });
 }
 
-function getPasswordlessConfigs({ disableDefaultUI, defautToEmail }) {
+function getPasswordlessConfigs({ disableDefaultUI, defaultToEmail }) {
     return Passwordless.init({
         override: {
             functions: (implementation) => {
@@ -695,9 +698,9 @@ function getPasswordlessConfigs({ disableDefaultUI, defautToEmail }) {
         contactMethod: passwordlessContactMethodType,
         signInUpFeature: {
             defaultCountry: passwordlessDefaultCountry,
+            defaultToEmail,
             resendEmailOrSMSGapInSeconds: 2,
             style: theme.style,
-            defautToEmail,
         },
         linkClickedScreenFeature: {
             disableDefaultUI,

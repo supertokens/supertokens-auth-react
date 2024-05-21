@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-domv5";
-import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
+import { getSuperTokensRoutesForReactRouterDom, AuthPage } from "supertokens-auth-react/ui";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from "./App";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
