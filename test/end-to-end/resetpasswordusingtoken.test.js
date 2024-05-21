@@ -130,7 +130,7 @@ describe("SuperTokens Reset password", function () {
 
             // checks if the window path has changed to '/auth'
             const { pathname: pathAfterBackButtonClick, search } = await page.evaluate(() => window.location);
-            assert.equal(pathAfterBackButtonClick + search, "/auth/");
+            assert.equal(pathAfterBackButtonClick + search, "/auth/?show=signin");
         });
 
         it("Should send reset password for valid email", async function () {

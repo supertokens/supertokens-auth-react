@@ -50,12 +50,10 @@ describe("SuperTokens Third Party Passwordless", function () {
 
     const email = "bradparishdoh@gmail.com";
 
-    const signInUpPageLoadLogs = isReact16()
-        ? ["ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO"]
-        : [
-              "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-              "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-          ];
+    const signInUpPageLoadLogs = [
+        "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+        "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+    ];
 
     before(async function () {
         const features = await getFeatureFlags();

@@ -45,12 +45,10 @@ import { getThirdPartyTestCases } from "./thirdparty.test";
  * Tests.
  */
 describe("SuperTokens Third Party Passwordless", function () {
-    const signInUpPageLoadLogs = isReact16()
-        ? ["ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO"]
-        : [
-              "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-              "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-          ];
+    const signInUpPageLoadLogs = [
+        "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+        "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+    ];
 
     before(async function () {
         const features = await getFeatureFlags();

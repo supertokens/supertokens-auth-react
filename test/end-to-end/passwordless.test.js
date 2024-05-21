@@ -87,9 +87,10 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
     let browser;
     let page;
     let consoleLogs = [];
-    const signInUpPageLoadLogs = isReact16()
-        ? [`ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`]
-        : [`ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`, `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`];
+    const signInUpPageLoadLogs = [
+        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+    ];
 
     const signinSuccessLogsOTP = [
         "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",

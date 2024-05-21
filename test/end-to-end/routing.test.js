@@ -707,7 +707,7 @@ describe("SuperTokens Routing in Test App", function () {
 
             it("/auth should show sign up form", async function () {
                 await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?factors=emailpassword`),
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth-for-factors?factors=emailpassword`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 const signUpButtonLabel = await getSubmitFormButtonLabel(page);
@@ -737,7 +737,7 @@ describe("SuperTokens Routing in Test App", function () {
 
             it("/auth should show signin form", async function () {
                 await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?factors=emailpassword`),
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth-for-factors?factors=emailpassword`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 const signInButtonLabel = await getSubmitFormButtonLabelWithoutShadowDom(page);
