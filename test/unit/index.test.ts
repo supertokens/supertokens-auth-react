@@ -239,16 +239,11 @@ describe("SuperTokens", function () {
         assert.strictEqual(canHandleRoute([EmailPasswordPreBuiltUI]), true);
     });
 
-    it("Recipe disable default Implementation should disable default routes for Sign In and Up", async function () {
+    it("disableAuthRoute should disable default routes for Sign In and Up", async function () {
         SuperTokens.init({
             ...defaultConfigs,
-            recipeList: [
-                EmailPassword.init({
-                    signInAndUpFeature: {
-                        disableDefaultUI: true,
-                    },
-                }),
-            ],
+            disableAuthRoute: true,
+            recipeList: [EmailPassword.init()],
         });
 
         const randomWebsitePath = SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();

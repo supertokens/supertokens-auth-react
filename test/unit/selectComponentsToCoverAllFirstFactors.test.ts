@@ -28,6 +28,14 @@ describe("selectComponentsToCoverAllFirstFactors", function () {
             undefined
         );
     });
+
+    it("should return undefined if the factors cannot be covered", async function () {
+        assert.deepStrictEqual(
+            selectComponentsToCoverAllFirstFactors([mockCompWithFactorIds(["emailpassword"])], []),
+            undefined
+        );
+    });
+
     it("should select components that cover all factors", async function () {
         assert.deepStrictEqual(
             selectComponentsToCoverAllFirstFactors(

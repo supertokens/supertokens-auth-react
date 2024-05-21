@@ -88,14 +88,12 @@ describe("EmailPassword", function () {
     it("Initializing EmailPassword and disable default implementations", async function () {
         EmailPassword.init({
             signInAndUpFeature: {
-                disableDefaultUI: true,
                 signInForm: {},
             },
             resetPasswordUsingTokenFeature: {
                 disableDefaultUI: true,
             },
         }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
-        assert.strictEqual(EmailPassword.getInstanceOrThrow().getFirstFactorsForAuthPage().length, 0);
         assert.strictEqual(EmailPasswordPreBuiltUI.getFeatures()["/auth/reset-password"], undefined);
     });
 

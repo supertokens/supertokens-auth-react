@@ -22,8 +22,6 @@ describe("Exports", function () {
             let {
                 ResetPasswordUsingToken,
                 ResetPasswordUsingTokenTheme,
-                SignInTheme,
-                SignUpTheme,
             } = require("../../recipe/emailpassword/prebuiltui");
             assert(init !== undefined && _default.init !== undefined);
             assert(doesEmailExist !== undefined && _default.doesEmailExist !== undefined);
@@ -38,8 +36,6 @@ describe("Exports", function () {
                 ResetPasswordUsingTokenTheme !== undefined &&
                     _defaultPreBuiltUI.ResetPasswordUsingTokenTheme !== undefined
             );
-            assert(SignInTheme !== undefined && SignInTheme === _defaultPreBuiltUI.SignInTheme);
-            assert(SignUpTheme !== undefined && SignUpTheme === _defaultPreBuiltUI.SignUpTheme);
         });
     });
 
@@ -60,11 +56,7 @@ describe("Exports", function () {
                 Google,
             } = require("../../recipe/thirdparty");
             let _defaultPreBuiltUI = require("../../recipe/thirdparty/prebuiltui");
-            let {
-                SignInAndUpCallback,
-                SignInAndUpCallbackTheme,
-                SignInAndUpTheme,
-            } = require("../../recipe/thirdparty/prebuiltui");
+            let { SignInAndUpCallback, SignInAndUpCallbackTheme } = require("../../recipe/thirdparty/prebuiltui");
 
             assert(init !== undefined && _default.init !== undefined);
 
@@ -82,7 +74,6 @@ describe("Exports", function () {
             assert(Google !== undefined && _default.Google !== undefined);
             assert(SignInAndUpCallback !== undefined && _defaultPreBuiltUI.SignInAndUpCallback !== undefined);
             assert(SignInAndUpCallbackTheme !== undefined && _defaultPreBuiltUI.SignInAndUpCallbackTheme !== undefined);
-            assert(SignInAndUpTheme !== undefined && _defaultPreBuiltUI.SignInAndUpTheme !== undefined);
         });
     });
 
@@ -109,7 +100,6 @@ describe("Exports", function () {
                 MfaOtpPhone,
                 MfaOtpEmail,
                 MFAOTPTheme,
-                SignInUpTheme,
             } = require("../../recipe/passwordless/prebuiltui");
 
             assert(consumeCode !== undefined && _default.consumeCode !== undefined);
@@ -129,7 +119,6 @@ describe("Exports", function () {
             assert(MfaOtpPhone !== undefined && _defaultPreBuiltUI.MfaOtpPhone === MfaOtpPhone);
             assert(MfaOtpEmail !== undefined && _defaultPreBuiltUI.MfaOtpEmail === MfaOtpEmail);
             assert(MFAOTPTheme !== undefined && _defaultPreBuiltUI.MFAOTPTheme === MFAOTPTheme);
-            assert(SignInUpTheme !== undefined && _defaultPreBuiltUI.SignInUpTheme === SignInUpTheme);
         });
     });
 });
