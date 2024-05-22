@@ -85,6 +85,10 @@ export function useChildProps(
                     }
                 }
                 const email = contactInfo;
+                if (recipe.config.contactMethod === "PHONE") {
+                    setShowPasswordField(true);
+                    return { status: "OK" };
+                }
                 const [epExists, pwlessExists] = await Promise.all([
                     EmailPassword.getInstanceOrThrow().webJSRecipe.doesEmailExist({ email, userContext }),
                     recipeImplementation.doesEmailExist({ email, userContext }),

@@ -319,6 +319,18 @@ SuperTokens.init({
 
 /* App */
 function App() {
+    useEffect(() => {
+        window.addEventListener("TP.getAuthorisationURLWithQueryParamsAndSetState", async () => {
+            ThirdParty.getAuthorisationURLWithQueryParamsAndSetState({
+                providerId: "google",
+                authorisationURL: "",
+                userContext: {
+                    isPreAPITest: true,
+                },
+            });
+        });
+    }, []);
+
     if (doNotUseReactRouterDom) {
         return (
             <ErrorBoundary>
@@ -427,14 +439,8 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
     const [sessionInfoUsingFetch, setSessionInfoUsingFetch] = useState(undefined);
 
     async function logout() {
-        const useRecipe = getQueryParams("rid") || authRecipe;
-        if (useRecipe === "thirdparty") {
-            await ThirdParty.signOut();
-        } else if (useRecipe === "passwordless") {
-            await Passwordless.signOut();
-        } else {
-            await EmailPassword.signOut();
-        }
+        await Session.signOut();
+
         if (redirectOnLogout) {
             if (props.history === undefined) {
                 window.location.href = "/auth";
@@ -592,10 +598,6 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
                         log(`DOES_EMAIL_EXIST`);
                         return implementation.doesEmailExist(...args);
                     },
-                    sendPasswordResetEmail(...args) {
-                        log(`SEND_PASSWORD_RESET_EMAIL`);
-                        return implementation.sendPasswordResetEmail(...args);
-                    },
                     signIn(...args) {
                         log(`SIGN_IN`);
                         return implementation.signIn(...args);
@@ -604,9 +606,28 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
                         log(`SIGN_UP`);
                         return implementation.signUp(...args);
                     },
-                    submitNewPassword(...args) {
+                    sendPasswordResetEmail(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`SEND_PASSWORD_RESET_EMAIL RECEIVED_USER_CONTEXT`);
+                        }
+
+                        log(`SEND_PASSWORD_RESET_EMAIL`);
+                        return implementation.sendPasswordResetEmail(input);
+                    },
+                    getResetPasswordTokenFromURL(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`GET_RESET_TOKEN_FROM_URL RECEIVED_USER_CONTEXT`);
+                        }
+
+                        return implementation.getResetPasswordTokenFromURL(input);
+                    },
+                    submitNewPassword(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`SUBMIT_NEW_PASSWORD RECEIVED_USER_CONTEXT`);
+                        }
+
                         log(`SUBMIT_NEW_PASSWORD`);
-                        return implementation.submitNewPassword(...args);
+                        return implementation.submitNewPassword(input);
                     },
                 };
             },
@@ -760,21 +781,81 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
 
                 return {
                     ...implementation,
-                    getAuthorisationURLWithQueryParamsAndSetState(...args) {
+                    generateStateToSendToOAuthProvider(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`GENERATE_STATE RECEIVED_USER_CONTEXT`);
+                        }
+                        return implementation.generateStateToSendToOAuthProvider(input);
+                    },
+                    getAuthorisationURLWithQueryParamsAndSetState(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE RECEIVED_USER_CONTEXT`);
+                        }
                         log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
-                        return implementation.getAuthorisationURLWithQueryParamsAndSetState(...args);
+                        return implementation.getAuthorisationURLWithQueryParamsAndSetState(input);
                     },
-                    getStateAndOtherInfoFromStorage(...args) {
+                    getAuthorisationURLFromBackend(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`GET_OAUTH_AUTHORISATION_URL RECEIVED_USER_CONTEXT`);
+                        }
+
+                        log(`GET_OAUTH_AUTHORISATION_URL`);
+
+                        if (input.userContext["isPreAPITest"] !== undefined) {
+                            return implementation.getAuthorisationURLFromBackend({
+                                ...input,
+                                options: {
+                                    preAPIHook: async (input) => {
+                                        window.localStorage.setItem(
+                                            "getAuthorisationURLFromBackend-pre-api-hook",
+                                            "true"
+                                        );
+                                        return input;
+                                    },
+                                },
+                            });
+                        }
+
+                        return implementation.getAuthorisationURLFromBackend(input);
+                    },
+                    getStateAndOtherInfoFromStorage(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`GET_OAUTH_STATE RECEIVED_USER_CONTEXT`);
+                        }
+
                         log(`GET_OAUTH_STATE`);
-                        return implementation.getStateAndOtherInfoFromStorage(...args);
+                        return implementation.getStateAndOtherInfoFromStorage(input);
                     },
-                    setStateAndOtherInfoToStorage(...args) {
+
+                    setStateAndOtherInfoToStorage(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`SET_OAUTH_STATE RECEIVED_USER_CONTEXT`);
+                        }
+
                         log(`SET_OAUTH_STATE`);
-                        return implementation.setStateAndOtherInfoToStorage(...args);
+                        return implementation.setStateAndOtherInfoToStorage(input);
                     },
-                    signInAndUp(...args) {
+                    signInAndUp(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`SIGN_IN_AND_UP RECEIVED_USER_CONTEXT`);
+                        }
                         log(`SIGN_IN_AND_UP`);
-                        return implementation.signInAndUp(...args);
+                        return implementation.signInAndUp(input);
+                    },
+
+                    getAuthStateFromURL(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`GET_AUTH_STATE_FROM_URL RECEIVED_USER_CONTEXT`);
+                        }
+
+                        return implementation.getAuthStateFromURL(input);
+                    },
+                    verifyAndGetStateOrThrowError(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`VERIFY_STATE RECEIVED_USER_CONTEXT`);
+                        }
+
+                        return implementation.verifyAndGetStateOrThrowError(input);
                     },
                 };
             },

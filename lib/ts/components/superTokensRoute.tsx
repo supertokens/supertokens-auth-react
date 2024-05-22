@@ -76,19 +76,13 @@ export function getSuperTokensRoutesForReactRouterDom({
             .appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"))
             .getAsStringDangerous();
         routes.push(
-            <Route
-                key={"st-/auth"}
-                path={getPathForRouter(basePath, path)}
-                element={
-                    <Route exact key={`st-${path}`} path={getPathForRouter(basePath, path)}>
-                        <RoutingComponent
-                            getReactRouterDomWithCustomHistory={getReactRouterDomWithCustomHistory}
-                            preBuiltUIList={recipeList}
-                            path={path}
-                        />
-                    </Route>
-                }
-            />
+            <Route key={"st-/auth"} exact path={getPathForRouter(basePath, path)}>
+                <RoutingComponent
+                    getReactRouterDomWithCustomHistory={getReactRouterDomWithCustomHistory}
+                    preBuiltUIList={recipeList}
+                    path={path}
+                />
+            </Route>
         );
     }
     return routes;
