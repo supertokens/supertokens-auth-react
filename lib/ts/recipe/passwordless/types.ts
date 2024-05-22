@@ -24,6 +24,8 @@ import type { MFAOTPHeader } from "./components/themes/mfa/mfaOTPHeader";
 import type { EmailForm } from "./components/themes/signInUp/emailForm";
 import type { EmailOrPhoneForm } from "./components/themes/signInUp/emailOrPhoneForm";
 import type { PhoneForm } from "./components/themes/signInUp/phoneForm";
+import type { EPComboEmailForm } from "./components/themes/signInUpEPCombo/emailForm";
+import type { EPComboEmailOrPhoneForm } from "./components/themes/signInUpEPCombo/emailOrPhoneForm";
 import type { UserInputCodeFormFooter } from "./components/themes/userInputCodeForm/userInputCodeFormFooter";
 import type { UserInputCodeFormHeader } from "./components/themes/userInputCodeForm/userInputCodeFormHeader";
 import type { UserInputCodeFormScreen } from "./components/themes/userInputCodeForm/userInputCodeFormScreen";
@@ -440,6 +442,8 @@ export type ComponentOverrideMap = {
     PasswordlessEmailForm_Override?: ComponentOverride<typeof EmailForm>;
     PasswordlessPhoneForm_Override?: ComponentOverride<typeof PhoneForm>;
     PasswordlessEmailOrPhoneForm_Override?: ComponentOverride<typeof EmailOrPhoneForm>;
+    PasswordlessEPComboEmailForm_Override?: ComponentOverride<typeof EPComboEmailForm>;
+    PasswordlessEPComboEmailOrPhoneForm_Override?: ComponentOverride<typeof EPComboEmailOrPhoneForm>;
 
     PasswordlessUserInputCodeFormHeader_Override?: ComponentOverride<typeof UserInputCodeFormHeader>;
     PasswordlessUserInputCodeFormFooter_Override?: ComponentOverride<typeof UserInputCodeFormFooter>;
