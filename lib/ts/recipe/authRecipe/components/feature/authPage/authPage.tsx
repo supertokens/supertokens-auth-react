@@ -34,8 +34,6 @@ import Multitenancy from "../../../../multitenancy/recipe";
 import Session from "../../../../session/recipe";
 import SessionAuthWrapper from "../../../../session/sessionAuth";
 import useSessionContext from "../../../../session/useSessionContext";
-import ThirdParty from "../../../../thirdparty/recipe";
-import { mergeProviders } from "../../../../thirdparty/utils";
 import { useAuthRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 import { selectComponentsToCoverAllFirstFactors } from "../../../utils";
 import AuthPageThemeWrapper from "../../theme/authPage";
@@ -357,19 +355,20 @@ async function buildAndSetChildProps(
     }
 
     if (firstFactors.includes(FactorIds.THIRDPARTY)) {
-        try {
-            const thirdPartyRecipe = ThirdParty.getInstanceOrThrow();
+        // we get the thirdparty recipe here like this, because importing the recipe here would heavily increase the bundle size of many recipes
+        const thirdPartyPreBuiltUI = recipeRouters.find((r) => r.recipeInstance.recipeID === FactorIds.THIRDPARTY);
 
+        // here we ignore if we couldn't find the necessary prebuilt UI, because we want to throw in the standard location
+        if (thirdPartyPreBuiltUI !== undefined) {
+            // We remove the thirdparty factor if:
+            //  We have no provider defined on the client side and
+            //  We have no provider defined for the tenant either
             if (
-                mergeProviders({
-                    tenantProviders: loadedDynamicLoginMethods?.thirdparty.providers,
-                    clientProviders: thirdPartyRecipe.config.signInAndUpFeature.providers,
-                }).length === 0
+                thirdPartyPreBuiltUI.recipeInstance.config.signInAndUpFeature.providers.length === 0 &&
+                (!SuperTokens.usesDynamicLoginMethods || loadedDynamicLoginMethods!.thirdparty.providers.length === 0)
             ) {
                 firstFactors = firstFactors.filter((f) => f !== FactorIds.THIRDPARTY);
             }
-        } catch {
-            // We can ignore this here since it'll throw later anyway where it is consistent with other recipes
         }
     }
 
