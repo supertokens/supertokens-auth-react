@@ -33,7 +33,7 @@ const CustomAuthPageTheme: React.FC<AuthPageThemeProps> = (props) => {
                         lastResend: Date.now(),
                         contactMethod: "PHONE",
                         contactInfo: phoneNumber,
-                        redirectToPath: "/dashboard",
+                        redirectToPath: "/",
                     };
 
                     const res = await Passwordless.createCode({
