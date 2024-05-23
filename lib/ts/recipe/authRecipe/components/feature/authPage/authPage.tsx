@@ -100,6 +100,9 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
         search.get("error") !== null ? search.get("message") ?? search.get("error") ?? undefined : undefined;
     errorFromQS = errorFromQS !== undefined ? errorQSMap[errorFromQS] ?? errorFromQS : undefined;
 
+    const showStringFromQSRef = useRef(showStringFromQS);
+    const errorFromQSRef = useRef(errorFromQS);
+
     const sessionContext = useSessionContext();
     const userContext = useUserContext();
 
@@ -116,6 +119,28 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     // We use this to signal that we need to update the components we show on screen
     const [rebuildReqCount, setRebuildReqCount] = useState(0);
     const lastBuild = useRef<{ buildReq: number | undefined }>({ buildReq: undefined });
+
+    useEffect(() => {
+        if (props.useSignUpStateFromQueryString && showStringFromQSRef.current !== showStringFromQS) {
+            const isSignUpFromQS =
+                props.useSignUpStateFromQueryString !== true || showStringFromQS === null
+                    ? undefined
+                    : showStringFromQS === "signup";
+            showStringFromQSRef.current = showStringFromQS;
+            const newIsSignUpVal = isSignUpFromQS ?? st.defaultToSignUp;
+            if (isSignUp !== newIsSignUpVal) {
+                setIsSignUp(newIsSignUpVal);
+                setRebuildReqCount((v) => v + 1);
+            }
+        }
+    });
+
+    useEffect(() => {
+        if (errorFromQSRef.current !== errorFromQS) {
+            errorFromQSRef.current = errorFromQS;
+            setError(errorFromQS);
+        }
+    });
 
     const onSignInUpSwitcherClick = useCallback(() => {
         if (props.useSignUpStateFromQueryString === true) {
