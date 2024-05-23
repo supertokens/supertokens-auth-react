@@ -35,6 +35,9 @@ import { UserInputCodeFormFooter } from "../../lib/ts/recipe/passwordless/compon
 import { EmailForm } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/emailForm";
 import { PhoneForm } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/phoneForm";
 import { EmailOrPhoneForm } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/emailOrPhoneForm";
+import { EPComboEmailForm } from "../../lib/ts/recipe/passwordless/components/themes/signInUpEPCombo/emailForm";
+import { EPComboEmailOrPhoneForm } from "../../lib/ts/recipe/passwordless/components/themes/signInUpEPCombo/emailOrPhoneForm";
+
 import { MFAFooter } from "../../lib/ts/recipe/passwordless/components/themes/mfa/mfaFooter";
 import { MFAHeader } from "../../lib/ts/recipe/passwordless/components/themes/mfa/mfaHeader";
 import { MFAOTPFooter } from "../../lib/ts/recipe/passwordless/components/themes/mfa/mfaOTPFooter";
@@ -107,6 +110,8 @@ describe("Theme component overrides", () => {
         PasswordlessLinkClickedScreen_Override: LinkClickedScreen,
         PasswordlessContinueWithPasswordless_Override: ContinueWithPasswordlessTheme,
         PasswordlessMFAFooter_Override: MFAFooter,
+        PasswordlessEPComboEmailForm_Override: EPComboEmailForm,
+        PasswordlessEPComboEmailOrPhoneForm_Override: EPComboEmailOrPhoneForm,
         PasswordlessMFAHeader_Override: MFAHeader,
         PasswordlessMFAOTPFooter_Override: MFAOTPFooter,
         PasswordlessMFAOTPHeader_Override: MFAOTPHeader,
