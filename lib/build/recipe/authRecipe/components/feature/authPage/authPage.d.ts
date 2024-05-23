@@ -1,6 +1,6 @@
 import React from "react";
+import { FactorIds } from "../../../../multifactorauth/types";
 import type { Navigate, UserContext } from "../../../../../types";
-import type { FactorIds } from "../../../../multifactorauth/types";
 import type { RecipeRouter } from "../../../../recipeRouter";
 import type { PropsWithChildren } from "react";
 export declare type AuthPageProps = PropsWithChildren<{

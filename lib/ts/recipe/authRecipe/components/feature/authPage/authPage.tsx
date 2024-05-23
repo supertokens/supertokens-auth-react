@@ -27,12 +27,15 @@ import { defaultTranslationsCommon } from "../../../../../translation/translatio
 import { UserContextProvider, useUserContext } from "../../../../../usercontext";
 import { getRedirectToPathFromURL, mergeObjects, updateQueryParam, useRethrowInRender } from "../../../../../utils";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
+import { FactorIds } from "../../../../multifactorauth/types";
 import DynamicLoginMethodsSpinner from "../../../../multitenancy/components/features/dynamicLoginMethodsSpinner";
 import { DynamicLoginMethodsProvider } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import Multitenancy from "../../../../multitenancy/recipe";
 import Session from "../../../../session/recipe";
 import SessionAuthWrapper from "../../../../session/sessionAuth";
 import useSessionContext from "../../../../session/useSessionContext";
+import ThirdParty from "../../../../thirdparty/recipe";
+import { mergeProviders } from "../../../../thirdparty/utils";
 import { useAuthRecipeComponentOverrideContext } from "../../../componentOverrideContext";
 import { selectComponentsToCoverAllFirstFactors } from "../../../utils";
 import AuthPageThemeWrapper from "../../theme/authPage";
@@ -40,7 +43,6 @@ import AuthPageThemeWrapper from "../../theme/authPage";
 import type AuthRecipe from "../../..";
 import type { TranslationStore } from "../../../../../translation/translationHelpers";
 import type { AuthComponent, Navigate, PartialAuthComponent, UserContext } from "../../../../../types";
-import type { FactorIds } from "../../../../multifactorauth/types";
 import type { GetLoginMethodsResponseNormalized } from "../../../../multitenancy/types";
 import type { RecipeRouter } from "../../../../recipeRouter";
 import type { AuthPageThemeProps } from "../../../types";
@@ -332,7 +334,7 @@ async function buildAndSetChildProps(
     ) as AuthRecipe<any, any, any, any>[];
 
     // The first factors list we show is a fallback:
-    const firstFactors =
+    let firstFactors =
         factorListState ?? // First we use the in-memory list (initialized to whatever we get from props)
         loadedDynamicLoginMethods?.firstFactors ?? // or the tenant config
         MultiFactorAuth.getInstance()?.config.firstFactors ?? // or the static config from the MFA recipe
@@ -351,6 +353,23 @@ async function buildAndSetChildProps(
             throw new Error(
                 `Factor list not set but PreBuiltUI not added for ${missingPreBuiltUIs.map((r) => r.recipeID)}`
             );
+        }
+    }
+
+    if (firstFactors.includes(FactorIds.THIRDPARTY)) {
+        try {
+            const thirdPartyRecipe = ThirdParty.getInstanceOrThrow();
+
+            if (
+                mergeProviders({
+                    tenantProviders: loadedDynamicLoginMethods?.thirdparty.providers,
+                    clientProviders: thirdPartyRecipe.config.signInAndUpFeature.providers,
+                }).length === 0
+            ) {
+                firstFactors = firstFactors.filter((f) => f !== FactorIds.THIRDPARTY);
+            }
+        } catch {
+            // We can ignore this here since it'll throw later anyway where it is consistent with other recipes
         }
     }
 
