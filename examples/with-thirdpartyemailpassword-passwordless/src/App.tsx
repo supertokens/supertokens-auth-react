@@ -3,13 +3,10 @@ import "./App.css";
 import SuperTokens, { SuperTokensWrapper, redirectToAuth } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
-import ThirdPartyEmailPassword, {
-    Google,
-    Github,
-    Apple,
-    ThirdpartyEmailPasswordComponentsOverrideProvider,
-} from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
@@ -41,7 +38,8 @@ SuperTokens.init({
         EmailVerification.init({
             mode: "REQUIRED",
         }),
-        ThirdPartyEmailPassword.init({
+        EmailPassword.init(),
+        ThirdParty.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init(), Apple.init()],
             },
@@ -58,75 +56,36 @@ function App() {
 
     return (
         <SuperTokensWrapper>
-            <ThirdpartyEmailPasswordComponentsOverrideProvider
-                components={{
-                    ThirdPartySignInAndUpProvidersForm_Override: ({
-                        DefaultComponent,
-                        ...props
-                    }: {
-                        DefaultComponent: any;
-                    }) => (
-                        <div>
-                            <DefaultComponent {...props} />
-                            <div
-                                id="passwordlessLoginBtn"
-                                style={{
-                                    display: "flex",
-                                    alignContent: "center",
-                                    justifyContent: "center",
-                                    paddingTop: "5px",
-                                    paddingBottom: "5px",
-                                    border: "2px",
-                                    borderStyle: "solid",
-                                    borderRadius: "8px",
-                                    marginTop: "10px",
-                                    cursor: "pointer",
-                                    maxWidth: "240px",
-                                    margin: "0 auto",
-                                }}
-                                onClick={() => {
-                                    redirectToAuth({
-                                        queryParams: {
-                                            rid: "passwordless",
-                                        },
-                                        redirectBack: false,
-                                    });
-                                }}>
-                                Passwordless login
-                            </div>
-                        </div>
-                    ),
-                }}>
-                <div className="App">
-                    <Router>
-                        <div className="fill">
-                            <Routes>
-                                {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
-                                    ThirdPartyEmailPasswordPreBuiltUI,
-                                    EmailVerificationPreBuiltUI,
-                                    PasswordlessPreBuiltUI,
-                                ])}
-                                <Route
-                                    path="/"
-                                    element={
-                                        /* This protects the "/" route so that it shows 
-                                    <Home /> only if the user is logged in.
-                                    Else it redirects the user to "/auth" */
-                                        <SessionAuth
-                                            onSessionExpired={() => {
-                                                updateShowSessionExpiredPopup(true);
-                                            }}>
-                                            <Home />
-                                            {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                        </SessionAuth>
-                                    }
-                                />
-                            </Routes>
-                        </div>
-                        <Footer />
-                    </Router>
-                </div>
-            </ThirdpartyEmailPasswordComponentsOverrideProvider>
+            <div className="App">
+                <Router>
+                    <div className="fill">
+                        <Routes>
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
+                                ThirdPartyPreBuiltUI,
+                                EmailPasswordPreBuiltUI,
+                                EmailVerificationPreBuiltUI,
+                                PasswordlessPreBuiltUI,
+                            ])}
+                            <Route
+                                path="/"
+                                element={
+                                    /* This protects the "/" route so that it shows 
+                                <Home /> only if the user is logged in.
+                                Else it redirects the user to "/auth" */
+                                    <SessionAuth
+                                        onSessionExpired={() => {
+                                            updateShowSessionExpiredPopup(true);
+                                        }}>
+                                        <Home />
+                                        {showSessionExpiredPopup && <SessionExpiredPopup />}
+                                    </SessionAuth>
+                                }
+                            />
+                        </Routes>
+                    </div>
+                    <Footer />
+                </Router>
+            </div>
         </SuperTokensWrapper>
     );
 }

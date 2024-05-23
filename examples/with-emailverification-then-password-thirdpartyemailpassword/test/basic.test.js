@@ -30,7 +30,6 @@ const {
 const SuperTokensNode = require("supertokens-node");
 const Session = require("supertokens-node/recipe/session");
 const EmailVerification = require("supertokens-node/recipe/emailverification");
-const ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -48,7 +47,7 @@ SuperTokensNode.init({
         websiteDomain: websiteDomain,
         appName: "testNode",
     },
-    recipeList: [EmailVerification.init({ mode: "OPTIONAL" }), ThirdPartyEmailPassword.init(), Session.init()],
+    recipeList: [EmailVerification.init({ mode: "OPTIONAL" }), Session.init()],
 });
 
 describe("SuperTokens Example Basic tests", function () {
@@ -63,7 +62,7 @@ describe("SuperTokens Example Basic tests", function () {
             headless: true,
         });
         page = await browser.newPage();
-        page.on("console", (e) => console.log(e.text()));
+        // page.on("console", (e) => console.log(e.text()));
     });
 
     after(async function () {

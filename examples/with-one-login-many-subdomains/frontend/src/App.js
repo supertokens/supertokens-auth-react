@@ -1,8 +1,9 @@
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
-import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
+import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import Multitenancy, { AllowedDomainsClaim } from "supertokens-auth-react/recipe/multitenancy";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
@@ -38,8 +39,9 @@ SuperTokens.init({
                 }),
             },
         }),
-        ThirdPartyEmailPassword.init(),
-        ThirdPartyPasswordless.init({
+        ThirdParty.init(),
+        EmailPassword.init(),
+        Passwordless.init({
             contactMethod: "EMAIL",
         }),
         Session.init({

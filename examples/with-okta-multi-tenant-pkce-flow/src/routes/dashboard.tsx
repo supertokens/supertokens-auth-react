@@ -1,4 +1,4 @@
-import { signOut } from "supertokens-auth-react/recipe/thirdparty";
+import { signOut } from "supertokens-auth-react/recipe/session";
 import Session from "supertokens-auth-react/recipe/session";
 
 // This route is accessible only to logged in users

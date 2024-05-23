@@ -40,11 +40,6 @@ SuperTokens.init({
         apiDomain: getApiDomain(), // TODO: Change to your app's API domain
         websiteDomain: getWebsiteDomain(), // TODO: Change to your app's website domain
     },
-    getRedirectionURL: async (ctx) => {
-        if (ctx.action === "TO_AUTH") {
-            return "/auth?rid=thirdpartyemailpassword";
-        }
-    },
     recipeList: [
         EmailVerification.init({
             mode: "REQUIRED",

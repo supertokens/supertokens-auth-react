@@ -7,8 +7,9 @@ let Session = require("supertokens-node/recipe/session");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let Multitenancy = require("supertokens-node/recipe/multitenancy");
-let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
-let ThirdPartyPasswordless = require("supertokens-node/recipe/thirdpartypasswordless");
+let ThirdParty = require("supertokens-node/recipe/thirdparty");
+let EmailPassword = require("supertokens-node/recipe/emailpassword");
+let Passwordless = require("supertokens-node/recipe/passwordless");
 let Dashboard = require("supertokens-node/recipe/dashboard");
 let EmailVerification = require("supertokens-node/recipe/emailverification");
 
@@ -40,8 +41,9 @@ supertokens.init({
                 return [tenantId + ".example.com", "example.com"];
             },
         }),
-        ThirdPartyEmailPassword.init(),
-        ThirdPartyPasswordless.init({ contactMethod: "EMAIL", flowType: "USER_INPUT_CODE_AND_MAGIC_LINK" }),
+        ThirdParty.init(),
+        EmailPassword.init(),
+        Passwordless.init({ contactMethod: "EMAIL", flowType: "USER_INPUT_CODE_AND_MAGIC_LINK" }),
         Session.init(),
         Dashboard.init(),
     ],

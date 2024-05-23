@@ -4,10 +4,12 @@ import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import Multitenancy, { AllowedDomainsClaim } from "supertokens-auth-react/recipe/multitenancy";
-import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
-import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
-import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
+import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import Session, { SessionAuth, getClaimValue } from "supertokens-auth-react/recipe/session";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./Home";
@@ -33,8 +35,9 @@ SuperTokens.init({
                 }),
             },
         }),
-        ThirdPartyEmailPassword.init(),
-        ThirdPartyPasswordless.init({
+        ThirdParty.init(),
+        EmailPassword.init(),
+        Passwordless.init({
             contactMethod: "EMAIL",
         }),
         Session.init({
@@ -68,8 +71,9 @@ function App() {
                     <div className="fill">
                         <Routes>
                             {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
-                                ThirdPartyEmailPasswordPreBuiltUI,
-                                ThirdPartyPasswordlessPreBuiltUI,
+                                ThirdPartyPreBuiltUI,
+                                EmailPasswordPreBuiltUI,
+                                PasswordlessPreBuiltUI,
                                 EmailVerificationPreBuiltUI,
                             ])}
                             <Route

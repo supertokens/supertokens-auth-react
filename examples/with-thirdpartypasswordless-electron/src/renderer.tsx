@@ -31,8 +31,10 @@ import "./index.css";
 import React, { useState } from "react";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
-import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
-import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
+import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import SessionExpiredPopup from "./SessionExpiredPopup";
@@ -72,12 +74,15 @@ SuperTokens.init({
     cookieHandler: getCookieHandler, // Refer to src/cookieHandler.ts
     windowHandler: getWindowHandler, // Refer to src/windowHandler.ts
     recipeList: [
-        ThirdPartyPasswordless.init({
+        Passwordless.init({
+            contactMethod: "EMAIL_OR_PHONE",
+        }),
+        ThirdParty.init({
             override: {
                 functions: (oI) => {
                     return {
                         ...oI,
-                        getThirdPartyAuthorisationURLWithQueryParamsAndSetState: async (input) => {
+                        getAuthorisationURLWithQueryParamsAndSetState: async (input) => {
                             /**
                              *
                              * We override the frontendRedirectURI here because
@@ -91,19 +96,14 @@ SuperTokens.init({
                                 ...input,
                                 frontendRedirectURI: getApiDomain() + "/auth/callback/" + input.thirdPartyId,
                             };
-                            return oI.getThirdPartyAuthorisationURLWithQueryParamsAndSetState(input);
+                            return oI.getAuthorisationURLWithQueryParamsAndSetState(input);
                         },
                     };
                 },
             },
-            signInUpFeature: {
-                providers: [
-                    ThirdPartyPasswordless.Github.init(),
-                    ThirdPartyPasswordless.Google.init(),
-                    ThirdPartyPasswordless.Apple.init(),
-                ],
+            signInAndUpFeature: {
+                providers: [ThirdParty.Github.init(), ThirdParty.Google.init(), ThirdParty.Apple.init()],
             },
-            contactMethod: "EMAIL_OR_PHONE",
         }),
         Session.init(),
     ],
@@ -120,7 +120,8 @@ function App() {
                         <Routes>
                             {/* This shows the login UI on "/auth" route */}
                             {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
-                                ThirdPartyPasswordlessPreBuiltUI,
+                                ThirdPartyPreBuiltUI,
+                                PasswordlessPreBuiltUI,
                             ])}
 
                             <Route

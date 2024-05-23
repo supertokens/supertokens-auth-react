@@ -53,10 +53,6 @@ SuperTokens.init({
     recipeList: [
         Passwordless.init({
             contactMethod: "PHONE",
-            signInUpFeature: {
-                // this will not show the passwordless UI unless we render it ourselves.
-                disableDefaultUI: true,
-            },
         }),
         EmailPassword.init({
             signInAndUpFeature: {

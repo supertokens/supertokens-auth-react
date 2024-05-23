@@ -3,13 +3,10 @@ import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
-import ThirdPartyEmailPassword, {
-    Google,
-    Github,
-    Apple,
-    ThirdpartyEmailPasswordComponentsOverrideProvider,
-} from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
+import EmailPassword, { EmailPasswordComponentsOverrideProvider } from "supertokens-auth-react/recipe/emailpassword";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
@@ -48,7 +45,8 @@ SuperTokens.init({
         EmailVerification.init({
             mode: "REQUIRED",
         }),
-        ThirdPartyEmailPassword.init({
+        EmailPassword.init(),
+        ThirdParty.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init(), Apple.init()],
             },
@@ -74,15 +72,8 @@ function App() {
 
     return (
         <SuperTokensWrapper>
-            <ThirdpartyEmailPasswordComponentsOverrideProvider
+            <EmailPasswordComponentsOverrideProvider
                 components={{
-                    ThirdPartySignInAndUpProvidersForm_Override: ({ DefaultComponent, ...props }) => {
-                        if (window.location.pathname === "/set-password") {
-                            return null;
-                        } else {
-                            return <DefaultComponent {...props} />;
-                        }
-                    },
                     EmailPasswordSignUpForm_Override: CustomSignUp,
                 }}>
                 <div className="App">
@@ -91,7 +82,8 @@ function App() {
                             <Routes>
                                 {/* This shows the login UI on "/auth" route */}
                                 {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
-                                    ThirdPartyEmailPasswordPreBuiltUI,
+                                    ThirdPartyPreBuiltUI,
+                                    EmailPasswordPreBuiltUI,
                                     EmailVerificationPreBuiltUI,
                                 ])}
                                 <Route
@@ -122,7 +114,7 @@ function App() {
                         <Footer />
                     </Router>
                 </div>
-            </ThirdpartyEmailPasswordComponentsOverrideProvider>
+            </EmailPasswordComponentsOverrideProvider>
         </SuperTokensWrapper>
     );
 }

@@ -1,14 +1,14 @@
 import React from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
-import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
-import ThirdPartyEmailPassword, {
-    Google,
-    Github,
-    Apple,
-    ThirdpartyEmailPasswordComponentsOverrideProvider,
-} from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+import {
+    getSuperTokensRoutesForReactRouterDom,
+    AuthRecipeComponentsOverrideContextProvider,
+} from "supertokens-auth-react/ui";
+import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
@@ -33,7 +33,18 @@ SuperTokens.init({
         websiteDomain: getWebsiteDomain(), // TODO: Change to your app's website domain
     },
     recipeList: [
-        ThirdPartyEmailPassword.init({
+        EmailPassword.init({
+            onHandleEvent: (context) => {
+                if (context.action === "SUCCESS") {
+                    if (context.isNewRecipeUser) {
+                        // we save info in localstorage to indicate to the UI that we should show
+                        // a sign in message in the sign in page.
+                        localStorage.setItem("showSignInMessage", "true");
+                    }
+                }
+            },
+        }),
+        ThirdParty.init({
             onHandleEvent: (context) => {
                 if (context.action === "SUCCESS") {
                     if (context.isNewRecipeUser) {
@@ -54,9 +65,9 @@ SuperTokens.init({
 function App() {
     return (
         <SuperTokensWrapper>
-            <ThirdpartyEmailPasswordComponentsOverrideProvider
+            <AuthRecipeComponentsOverrideContextProvider
                 components={{
-                    ThirdPartyEmailPasswordHeader_Override: ({ DefaultComponent, ...props }) => {
+                    AuthPageHeader_Override: ({ DefaultComponent, ...props }) => {
                         if (props.isSignUp) {
                             return <DefaultComponent {...props} />;
                         } else {
@@ -75,7 +86,8 @@ function App() {
                             <Routes>
                                 {/* This shows the login UI on "/auth" route */}
                                 {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
-                                    ThirdPartyEmailPasswordPreBuiltUI,
+                                    ThirdPartyPreBuiltUI,
+                                    EmailPasswordPreBuiltUI,
                                 ])}
 
                                 <Route
@@ -94,7 +106,7 @@ function App() {
                         <Footer />
                     </Router>
                 </div>
-            </ThirdpartyEmailPasswordComponentsOverrideProvider>
+            </AuthRecipeComponentsOverrideContextProvider>
         </SuperTokensWrapper>
     );
 }

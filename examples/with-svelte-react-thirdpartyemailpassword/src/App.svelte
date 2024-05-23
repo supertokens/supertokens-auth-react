@@ -4,12 +4,14 @@
     import ReactDOM from "react-dom";
     import SuperTokens from "supertokens-auth-react";
     import { getRoutingComponent, canHandleRoute } from "supertokens-auth-react/ui";
-    import ThirdPartyEmailPassword, {
+    import ThirdParty, {
         Github,
         Google,
         signOut,
-    } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-    import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+    } from "supertokens-auth-react/recipe/thirdparty";
+    import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+    import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+    import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
     import Session from "supertokens-auth-react/recipe/session";
     import { Router, Route } from "svelte-navigator";
     import { onMount } from "svelte";
@@ -22,7 +24,8 @@
             websiteDomain: "http://localhost:8080", // TODO: Change to your app's website domain
         },
         recipeList: [
-            ThirdPartyEmailPassword.init({
+            EmailPassword.init(),
+            ThirdParty.init({
                 signInAndUpFeature: {
                     providers: [Github.init(), Google.init()],
                 },
@@ -33,8 +36,8 @@
 
     class SuperTokensComponent extends React.Component {
         render() {
-            if (canHandleRoute([ThirdPartyEmailPasswordPreBuiltUI])) {
-                return getRoutingComponent([ThirdPartyEmailPasswordPreBuiltUI]);
+            if (canHandleRoute([ThirdPartyPreBuiltUI, EmailPasswordPreBuiltUI])) {
+                return getRoutingComponent([ThirdPartyPreBuiltUI, EmailPasswordPreBuiltUI]);
             }
             return "Route not found";
         }

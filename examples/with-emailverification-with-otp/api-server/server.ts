@@ -1,7 +1,8 @@
 import express from "express";
 import supertokens from "supertokens-node";
 import Session from "supertokens-node/recipe/session";
-import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
+import ThirdParty from "supertokens-node/recipe/thirdparty";
+import EmailPassword from "supertokens-node/recipe/emailpassword";
 import EmailVerification from "supertokens-node/recipe/emailverification";
 import MultiFactorAuth from "supertokens-node/recipe/multifactorauth";
 import AccountLinking from "supertokens-node/recipe/accountlinking";
@@ -56,33 +57,37 @@ supertokens.init({
             contactMethod: "EMAIL",
             flowType: "USER_INPUT_CODE",
         }),
-        ThirdPartyEmailPassword.init({
-            providers: [
-                // We have provided you with development keys which you can use for testing.
-                // IMPORTANT: Please replace them with your own OAuth keys for production use.
-                {
-                    config: {
-                        thirdPartyId: "google",
-                        clients: [
-                            {
-                                clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
-                                clientSecret: "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",
-                            },
-                        ],
+        EmailPassword.init(),
+        ThirdParty.init({
+            signInAndUpFeature: {
+                providers: [
+                    // We have provided you with development keys which you can use for testing.
+                    // IMPORTANT: Please replace them with your own OAuth keys for production use.
+                    {
+                        config: {
+                            thirdPartyId: "google",
+                            clients: [
+                                {
+                                    clientId:
+                                        "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
+                                    clientSecret: "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",
+                                },
+                            ],
+                        },
                     },
-                },
-                {
-                    config: {
-                        thirdPartyId: "github",
-                        clients: [
-                            {
-                                clientId: "467101b197249757c71f",
-                                clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
-                            },
-                        ],
+                    {
+                        config: {
+                            thirdPartyId: "github",
+                            clients: [
+                                {
+                                    clientId: "467101b197249757c71f",
+                                    clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
+                                },
+                            ],
+                        },
                     },
-                },
-            ],
+                ],
+            },
         }),
         Session.init(), // initializes session features
         Dashboard.init(),

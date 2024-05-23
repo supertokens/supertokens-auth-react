@@ -18,7 +18,7 @@ describe("Auth wrappers in SSR", () => {
             render(<Auth />);
         });
     }
-    console.log("a");
+
     for (const Auth of authComponents) {
         test(`${Auth.name} should work without recipe init`, async () => {
             // We suppress errors from react to not spam the console with uncaught error exceptions

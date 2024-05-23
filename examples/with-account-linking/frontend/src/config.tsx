@@ -1,10 +1,13 @@
-import ThirdPartyEmailPassword, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
-import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import Session from "supertokens-auth-react/recipe/session";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
+import MultiFactorAuth from "supertokens-auth-react/lib/build/recipe/multifactorauth/recipe";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -30,13 +33,14 @@ export const SuperTokensConfig = {
         EmailVerification.init({
             mode: "REQUIRED",
         }),
-        ThirdPartyEmailPassword.init({
+        EmailPassword.init(),
+        ThirdParty.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init()],
             },
         }),
         Passwordless.init({
-            contactMethod: "EMAIL_OR_PHONE",
+            contactMethod: "PHONE",
         }),
         Session.init(),
     ],
@@ -46,4 +50,9 @@ export const recipeDetails = {
     docsLink: "https://supertokens.com/docs/thirdpartyemailpassword/introduction",
 };
 
-export const PreBuiltUIList = [ThirdPartyEmailPasswordPreBuiltUI, PasswordlessPreBuiltUI, EmailVerificationPreBuiltUI];
+export const PreBuiltUIList = [
+    ThirdPartyPreBuiltUI,
+    EmailPasswordPreBuiltUI,
+    PasswordlessPreBuiltUI,
+    EmailVerificationPreBuiltUI,
+];
