@@ -31,7 +31,7 @@ supertokens.init({
         apiDomain,
         websiteDomain,
     },
-    debug: true,
+    // debug: true,
     recipeList: [
         EmailVerification.init({
             mode: "REQUIRED",

@@ -5,15 +5,22 @@ import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import Session, { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { AuthPage, AuthPageTheme, AuthPageThemeProps } from "supertokens-auth-react/ui";
+import { SecondFactorClaim } from "../secondFactorClaim";
 
 const CustomAuthPageTheme: React.FC<AuthPageThemeProps> = (props) => {
     let [showDefaultUI, setShowDefaultUI] = useState(false);
     const session = useSessionContext();
+    const navigate = useNavigate();
 
     useEffect(() => {
         let aborting = false;
         async function effect() {
             if (session.loading === true) {
+                return;
+            }
+
+            if (!session.invalidClaims.some((e) => e.id === SecondFactorClaim.id)) {
+                navigate("/");
                 return;
             }
 

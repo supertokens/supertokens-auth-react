@@ -73,7 +73,7 @@ describe("SuperTokens Example Basic tests", function () {
     before(async function () {
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: false,
+            headless: true,
         });
         page = await browser.newPage();
         // page.on("console", c => console.log(c.text()));
@@ -137,6 +137,13 @@ describe("SuperTokens Example Basic tests", function () {
             await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
 
+            // Attempt reloading second factor page
+            await Promise.all([
+                page.goto(`${websiteDomain}/second-factor`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+
             // Create a new token and use it (we don't have access to the originally sent one)
             const tokenInfo = await EmailVerification.createEmailVerificationToken(
                 "public",
@@ -146,8 +153,15 @@ describe("SuperTokens Example Basic tests", function () {
             await page.goto(`${websiteDomain}/auth/verify-email?token=${tokenInfo.token}`);
             await submitForm(page);
 
-            const callApiBtn = await page.waitForSelector(".sessionButton");
+            await page.waitForSelector(".sessionButton");
 
+            // Attempt reloading second factor page
+            await Promise.all([
+                page.goto(`${websiteDomain}/second-factor`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            const callApiBtn = await page.waitForSelector(".sessionButton");
             let setAlertContent;
             let alertContent = new Promise((res) => (setAlertContent = res));
             page.on("dialog", async (dialog) => {
