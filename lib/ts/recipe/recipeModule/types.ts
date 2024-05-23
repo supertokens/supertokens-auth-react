@@ -31,7 +31,6 @@ export type UserInput<GetRedirectionURLContextType, Action, OnHandleEventContext
     preAPIHook?: RecipePreAPIHookFunction<Action>;
     postAPIHook?: RecipePostAPIHookFunction<Action>;
     onHandleEvent?: RecipeOnHandleEventFunction<OnHandleEventContextType>;
-    useShadowDom?: boolean;
     style?: string;
 };
 
@@ -47,8 +46,7 @@ export type NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEvent
         userContext: UserContext
     ) => Promise<string | undefined | null>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContextType>;
-    useShadowDom: boolean;
-    rootStyle: string;
+    recipeRootStyle: string;
     preAPIHook: (context: RecipePreAPIHookContext<Action>) => Promise<{ url: string; requestInit: RequestInit }>;
     postAPIHook: (context: RecipePostAPIHookContext<Action>) => Promise<void>;
 };

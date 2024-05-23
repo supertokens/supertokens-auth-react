@@ -1,4 +1,5 @@
-import ThirdPartyEmailPasswordNode from "supertokens-node/recipe/thirdpartyemailpassword";
+import ThirdPartyNode from "supertokens-node/recipe/thirdparty";
+import EmailPasswordNode from "supertokens-node/recipe/emailpassword";
 import SessionNode from "supertokens-node/recipe/session";
 import EmailVerificationNode from "supertokens-node/recipe/emailverification";
 import { appInfo } from "./appInfo";
@@ -18,60 +19,96 @@ export let backendConfig = (): TypeInput => {
             EmailVerificationNode.init({
                 mode: "REQUIRED",
             }),
-            ThirdPartyEmailPasswordNode.init({
-                providers: [
-                    // We have provided you with development keys which you can use for testing.
-                    // IMPORTANT: Please replace them with your own OAuth keys for production use.
-                    {
-                        config: {
-                            thirdPartyId: "google",
-                            clients: [
-                                {
-                                    clientId: process.env.GOOGLE_CLIENT_ID,
-                                    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                                },
-                            ],
+            EmailPasswordNode.init({
+                override: {
+                    apis: (originalImplementation) => ({
+                        ...originalImplementation,
+
+                        signUpPOST: async function (input) {
+                            if (originalImplementation.signUpPOST === undefined) {
+                                throw Error("Should never come here");
+                            }
+
+                            let response = await originalImplementation.signUpPOST(input);
+
+                            if (response.status === "OK") {
+                                // retrieve the accessTokenPayload from the user's session
+                                const accessTokenPayload = response.session.getAccessTokenPayload();
+
+                                // create a supabase client with the supabase_token from the accessTokenPayload
+                                const supabase = getSupabase(accessTokenPayload.supabase_token);
+
+                                // store the user's email mapped to their userId in Supabase
+                                const { error } = await supabase
+                                    .from("users")
+                                    .insert({ email: response.user.emails[0], user_id: response.user.id });
+
+                                if (error !== null) {
+                                    throw error;
+                                }
+                            }
+
+                            return response;
                         },
-                    },
-                    {
-                        config: {
-                            thirdPartyId: "github",
-                            clients: [
-                                {
-                                    clientId: process.env.GITHUB_CLIENT_ID,
-                                    clientSecret: process.env.GITHUB_CLIENT_SECRET,
-                                },
-                            ],
-                        },
-                    },
-                    {
-                        config: {
-                            thirdPartyId: "apple",
-                            clients: [
-                                {
-                                    clientId: process.env.APPLE_CLIENT_ID,
-                                    additionalConfig: {
-                                        keyId: process.env.APPLE_KEY_ID,
-                                        privateKey: process.env.APPLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-                                        teamId: process.env.APPLE_TEAM_ID,
+                    }),
+                },
+            }),
+            ThirdPartyNode.init({
+                signInAndUpFeature: {
+                    providers: [
+                        // We have provided you with development keys which you can use for testing.
+                        // IMPORTANT: Please replace them with your own OAuth keys for production use.
+                        {
+                            config: {
+                                thirdPartyId: "google",
+                                clients: [
+                                    {
+                                        clientId: process.env.GOOGLE_CLIENT_ID,
+                                        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
                                     },
-                                },
-                            ],
+                                ],
+                            },
                         },
-                    },
-                ],
+                        {
+                            config: {
+                                thirdPartyId: "github",
+                                clients: [
+                                    {
+                                        clientId: process.env.GITHUB_CLIENT_ID,
+                                        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+                                    },
+                                ],
+                            },
+                        },
+                        {
+                            config: {
+                                thirdPartyId: "apple",
+                                clients: [
+                                    {
+                                        clientId: process.env.APPLE_CLIENT_ID,
+                                        additionalConfig: {
+                                            keyId: process.env.APPLE_KEY_ID,
+                                            privateKey: process.env.APPLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+                                            teamId: process.env.APPLE_TEAM_ID,
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    ],
+                },
                 override: {
                     apis: (originalImplementation) => {
                         return {
                             ...originalImplementation,
-                            // the thirdPartySignInUpPost function handles sign up/in via Social login
-                            thirdPartySignInUpPOST: async function (input) {
-                                if (originalImplementation.thirdPartySignInUpPOST === undefined) {
+                            // the signInUpPost function handles sign up/in via Social login
+                            signInUpPOST: async function (input) {
+                                if (originalImplementation.signInUpPOST === undefined) {
                                     throw Error("Should never come here");
                                 }
 
                                 // call the sign up/in api for social login
-                                let response = await originalImplementation.thirdPartySignInUpPOST(input);
+                                let response = await originalImplementation.signInUpPOST(input);
 
                                 // check that there is no issue with sign up and that a new user is created
                                 if (response.status === "OK" && response.createdNewRecipeUser) {
@@ -84,35 +121,7 @@ export let backendConfig = (): TypeInput => {
                                     // store the user's email mapped to their userId in Supabase
                                     const { error } = await supabase
                                         .from("users")
-                                        .insert({ email: response.user.email, user_id: response.user.id });
-
-                                    if (error !== null) {
-                                        throw error;
-                                    }
-                                }
-
-                                return response;
-                            },
-
-                            // the emailPasswordSignUpPOST function handles sign up via Email-Password
-                            emailPasswordSignUpPOST: async function (input) {
-                                if (originalImplementation.emailPasswordSignUpPOST === undefined) {
-                                    throw Error("Should never come here");
-                                }
-
-                                let response = await originalImplementation.emailPasswordSignUpPOST(input);
-
-                                if (response.status === "OK") {
-                                    // retrieve the accessTokenPayload from the user's session
-                                    const accessTokenPayload = response.session.getAccessTokenPayload();
-
-                                    // create a supabase client with the supabase_token from the accessTokenPayload
-                                    const supabase = getSupabase(accessTokenPayload.supabase_token);
-
-                                    // store the user's email mapped to their userId in Supabase
-                                    const { error } = await supabase
-                                        .from("users")
-                                        .insert({ email: response.user.email, user_id: response.user.id });
+                                        .insert({ email: response.user.emails[0], user_id: response.user.id });
 
                                     if (error !== null) {
                                         throw error;

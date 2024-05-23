@@ -3,10 +3,20 @@ import React from "react";
 import { RoutingComponent } from "../components/routingComponent";
 import { getSuperTokensRoutesForReactRouterDom as getSuperTokensRoutesForLegacyReactRouterDom } from "../components/superTokensRoute";
 import { getSuperTokensRoutesForReactRouterDomV6 } from "../components/superTokensRouteV6";
+import { AuthRecipeComponentsOverrideContextProvider } from "../recipe/authRecipe/componentOverrideContext";
+import AuthPageWrapper from "../recipe/authRecipe/components/feature/authPage/authPage";
+import { AuthPageTheme } from "../recipe/authRecipe/components/theme/authPage";
+import { AuthPageComponentList } from "../recipe/authRecipe/components/theme/authPage/authPageComponentList";
+import { AuthPageFooter } from "../recipe/authRecipe/components/theme/authPage/authPageFooter";
+import { AuthPageHeader } from "../recipe/authRecipe/components/theme/authPage/authPageHeader";
 import { RecipeRouter } from "../recipe/recipeRouter";
+import SuperTokens from "../superTokens";
 import { getCurrentNormalisedUrlPath } from "../utils";
 
 import type { PreBuiltRecipes, ReactRouterDomWithCustomHistory } from "./types";
+import type { AuthPageProps } from "../recipe/authRecipe/components/feature/authPage/authPage";
+import type { AuthPageThemeProps } from "../recipe/authRecipe/types";
+import type { PropsWithChildren } from "react";
 
 class UI {
     private static reactRouterDom: ReactRouterDomWithCustomHistory;
@@ -79,6 +89,13 @@ class UI {
 
     static canHandleRoute(preBuiltUiClassList: PreBuiltRecipes): boolean {
         const recipeList = preBuiltUiClassList.map((r) => r.getInstanceOrInitAndGetInstance());
+        const path = getCurrentNormalisedUrlPath().getAsStringDangerous();
+        const isAuthPage = path === SuperTokens.getInstanceOrThrow().appInfo.websiteBasePath.getAsStringDangerous();
+
+        if (isAuthPage) {
+            return !SuperTokens.getInstanceOrThrow().disableAuthRoute;
+        }
+
         return (
             RecipeRouter.getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
                 getCurrentNormalisedUrlPath(),
@@ -98,11 +115,42 @@ class UI {
             />
         );
     }
+    static AuthPage = (
+        props: PropsWithChildren<
+            Omit<AuthPageProps, "preBuiltUIList"> & {
+                preBuiltUIList: PreBuiltRecipes;
+            }
+        >
+    ) => (
+        <AuthPageWrapper
+            {...props}
+            preBuiltUIList={props.preBuiltUIList.map((r) => r.getInstanceOrInitAndGetInstance())}
+        />
+    );
+
+    static AuthPageTheme = AuthPageTheme;
+    static AuthPageFooter = AuthPageFooter;
+    static AuthPageHeader = AuthPageHeader;
+    static AuthPageComponentList = AuthPageComponentList;
+
+    static AuthRecipeComponentsOverrideContextProvider = AuthRecipeComponentsOverrideContextProvider;
 }
 
 const getSuperTokensRoutesForReactRouterDom = UI.getSuperTokensRoutesForReactRouterDom;
 const canHandleRoute = UI.canHandleRoute;
 const getRoutingComponent = UI.getRoutingComponent;
+const AuthPage = UI.AuthPage;
 
 export default UI;
-export { getSuperTokensRoutesForReactRouterDom, canHandleRoute, getRoutingComponent };
+export {
+    getSuperTokensRoutesForReactRouterDom,
+    canHandleRoute,
+    getRoutingComponent,
+    AuthPage,
+    AuthPageTheme,
+    AuthPageFooter,
+    AuthPageHeader,
+    AuthPageComponentList,
+    AuthRecipeComponentsOverrideContextProvider,
+    AuthPageThemeProps,
+};

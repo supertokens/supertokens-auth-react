@@ -32,7 +32,6 @@ const SuperTokensNode = require("supertokens-node");
 const Session = require("supertokens-node/recipe/session");
 const Passwordless = require("supertokens-node/recipe/passwordless");
 const EmailVerification = require("supertokens-node/recipe/emailverification");
-const ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -54,7 +53,6 @@ SuperTokensNode.init({
     recipeList: [
         EmailVerification.init({ mode: "OPTIONAL" }),
         Passwordless.init({ contactMethod: "EMAIL", flowType: "USER_INPUT_CODE" }),
-        ThirdPartyEmailPassword.init(),
         Session.init(),
     ],
 });

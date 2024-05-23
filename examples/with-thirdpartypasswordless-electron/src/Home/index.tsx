@@ -3,7 +3,7 @@ import Logout from "./logout";
 import SuccessView from "./successView";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { useNavigate } from "react-router-dom";
-import { signOut } from "supertokens-auth-react/recipe/thirdpartypasswordless";
+import { signOut } from "supertokens-auth-react/recipe/session";
 
 export default function Home() {
     const session = useSessionContext();

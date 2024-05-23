@@ -120,7 +120,7 @@ export async function getSubmitFormButtonLabel(page) {
 }
 
 export async function getProvidersLabels(page) {
-    await waitForSTElement(page);
+    await waitForSTElement(page, "[data-supertokens~=headerTitle]");
     return await page.evaluate(
         ({ ST_ROOT_SELECTOR }) =>
             Array.from(
@@ -171,15 +171,15 @@ export async function getLogoutButton(page) {
 }
 
 export async function getSignInOrSignUpSwitchLink(page) {
-    return waitForSTElement(page, "div > div > [data-supertokens~='headerSubtitle'] > [data-supertokens~='link']");
+    return waitForSTElement(page, "[data-supertokens~='headerSubtitle'] > [data-supertokens~='link']");
 }
 
 export async function getForgotPasswordLink(page) {
-    return waitForSTElement(page, "form > div > [data-supertokens~='forgotPasswordLink']");
+    return waitForSTElement(page, "[data-supertokens~='forgotPasswordLink']");
 }
 
 export async function getResendResetPasswordEmailLink(page) {
-    return waitForSTElement(page, "div > div > [data-supertokens~='enterEmailSuccessMessage'] > span");
+    return waitForSTElement(page, "[data-supertokens~='enterEmailSuccessMessage'] > span");
 }
 
 export async function getTextByDataSupertokens(page, value) {
@@ -645,7 +645,7 @@ export function getDefaultSignUpFieldValues({
     return { fieldValues, postValues };
 }
 
-export async function signUp(page, fields, postValues = undefined, rid = "emailpassword") {
+export async function signUp(page, fields, postValues = undefined) {
     // Set values.
     await setInputValues(page, fields);
     const successAdornments = await getInputAdornmentsSuccess(page);
@@ -661,7 +661,7 @@ export async function signUp(page, fields, postValues = undefined, rid = "emailp
     // Verify that email exists API has not been called.
     assert.strictEqual(hasEmailExistMethodBeenCalled, false);
 
-    assert.strictEqual(request.headers().rid, rid);
+    assert.strictEqual(request.headers().rid, "emailpassword");
     if (postValues !== undefined) {
         assert.strictEqual(request.postData(), postValues);
     }

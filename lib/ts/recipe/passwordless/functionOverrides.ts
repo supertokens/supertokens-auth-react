@@ -65,7 +65,6 @@ export const getFunctionOverrides =
 
                 onHandleEvent({
                     action: "SUCCESS",
-                    rid: "passwordless",
                     isNewRecipeUser: response.createdNewRecipeUser,
                     user: response.user,
                     createdNewSession:

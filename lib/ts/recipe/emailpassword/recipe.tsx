@@ -54,6 +54,9 @@ export default class EmailPassword extends AuthRecipe<
 
     recipeID = EmailPassword.RECIPE_ID;
     firstFactorIds = [FactorIds.EMAILPASSWORD];
+    public getFirstFactorsForAuthPage(): string[] {
+        return this.firstFactorIds;
+    }
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,

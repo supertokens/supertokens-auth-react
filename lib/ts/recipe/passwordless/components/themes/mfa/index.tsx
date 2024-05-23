@@ -16,14 +16,15 @@ import React from "react";
 
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { hasFontDefined } from "../../../../../styles/styles";
+import SuperTokens from "../../../../../superTokens";
 import { useTranslation } from "../../../../../translation/translationContext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { AccessDeniedScreen } from "../../../../session/prebuiltui";
 import { EmailForm } from "../signInUp/emailForm";
 import { PhoneForm } from "../signInUp/phoneForm";
-import { UserInputCodeForm } from "../signInUp/userInputCodeForm";
 import { ThemeBase } from "../themeBase";
+import { UserInputCodeForm } from "../userInputCodeForm/userInputCodeFormScreen";
 
 import { LoadingScreen } from "./loadingScreen";
 import { MFAFooter } from "./mfaFooter";
@@ -55,6 +56,7 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
         onError: (error: string) => props.dispatch({ type: "setError", showAccessDenied: false, error }),
         onFetchError: props.onFetchError,
         error: featureState.error,
+        validatePhoneNumber: props.validatePhoneNumber,
     };
 
     if (!featureState.loaded) {
@@ -62,7 +64,10 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
     }
 
     return activeScreen === MFAScreens.AccessDenied ? (
-        <AccessDeniedScreen useShadowDom={false} error={t(featureState.error!)} />
+        <AccessDeniedScreen
+            useShadowDom={false /* We set this to false, because we are already inside a shadowDom (if required) */}
+            error={t(featureState.error!)}
+        />
     ) : (
         <div data-supertokens="container pwless-mfa">
             <div data-supertokens="row">
@@ -131,7 +136,8 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
 };
 
 function MFAThemeWrapper(props: MFAProps): JSX.Element {
-    const hasFont = hasFontDefined(props.config.rootStyle);
+    const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
+    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     const activeScreen = getActiveScreen(props);
 
@@ -150,7 +156,7 @@ function MFAThemeWrapper(props: MFAProps): JSX.Element {
         <UserContextWrapper userContext={props.userContext}>
             <ThemeBase
                 loadDefaultFont={!hasFont}
-                userStyles={[props.config.rootStyle, activeStyle, props.config.mfaFeature.style]}>
+                userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle, props.config.mfaFeature.style]}>
                 <MFATheme {...props} activeScreen={activeScreen!} />
             </ThemeBase>
         </UserContextWrapper>

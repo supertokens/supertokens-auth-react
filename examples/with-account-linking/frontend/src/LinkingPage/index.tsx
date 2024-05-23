@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
-import { redirectToThirdPartyLogin, emailPasswordSignUp } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import Passwordless from "supertokens-auth-react/recipe/passwordless";
+import { redirectToThirdPartyLogin } from "supertokens-auth-react/recipe/thirdparty";
+import { signUp } from "supertokens-auth-react/recipe/emailpassword";
+import Passwordless, { clearLoginAttemptInfo } from "supertokens-auth-react/recipe/passwordless";
 
 import { getApiDomain } from "../config";
 import "./styles.css";
@@ -28,7 +29,7 @@ export const LinkingPage: React.FC = () => {
     }, [setUserInfo]);
 
     const addPassword = useCallback(async () => {
-        const resp = await emailPasswordSignUp({
+        const resp = await signUp({
             formFields: [
                 { id: "email", value: userInfo.user.emails[0] },
                 { id: "password", value: password },
@@ -41,6 +42,7 @@ export const LinkingPage: React.FC = () => {
         } else {
             setSuccess("Successfully added password");
             setError(null);
+            loadUserInfo();
         }
     }, [setError, setSuccess, password]);
 
@@ -96,6 +98,7 @@ export const LinkingPage: React.FC = () => {
                 window.alert("OTP expired. Please try again");
                 setShowEnterOTPField(false);
             } else {
+                clearLoginAttemptInfo();
                 setSuccess("Successfully added phone number");
                 setShowEnterOTPField(false);
                 loadUserInfo();
@@ -118,8 +121,8 @@ export const LinkingPage: React.FC = () => {
     }
 
     let passwordLoginMethods = userInfo?.user.loginMethods.filter((lm: any) => lm.recipeId === "emailpassword");
-    let thirdPartyLoginMethod = userInfo?.user.loginMethods.filter((lm: any) => lm.recipeId === "thirdparty");
-    let phoneLoginMethod = userInfo?.user.loginMethods.filter((lm: any) => lm.recipeId === "passwordless");
+    let thirdPartyLoginMethods = userInfo?.user.loginMethods.filter((lm: any) => lm.recipeId === "thirdparty");
+    let phoneLoginMethods = userInfo?.user.loginMethods.filter((lm: any) => lm.recipeId === "passwordless");
 
     return (
         <div className="fill" id="home-container">
@@ -138,7 +141,7 @@ export const LinkingPage: React.FC = () => {
                             <span className="contactInfo"> Email: {lm.email}</span>
                         </div>
                     ))}
-                    {thirdPartyLoginMethod.map((lm: any) => (
+                    {thirdPartyLoginMethods.map((lm: any) => (
                         <div key={lm.recipeUserId} className="thirdparty login-method">
                             <span className="recipeId">{lm.recipeId}</span>
                             <span className="userId">{lm.recipeUserId}</span>
@@ -147,7 +150,7 @@ export const LinkingPage: React.FC = () => {
                             </span>
                         </div>
                     ))}
-                    {phoneLoginMethod.map((lm: any) => (
+                    {phoneLoginMethods.map((lm: any) => (
                         <div key={lm.recipeUserId} className="passwordless login-method">
                             <span className="recipeId">{lm.recipeId}</span>
                             <span className="userId">{lm.recipeUserId}</span>
@@ -157,18 +160,21 @@ export const LinkingPage: React.FC = () => {
                     ))}
                 </ul>
             )}
-            {passwordLoginMethods?.length === 0 && (
-                <form
-                    onSubmit={(ev) => {
-                        addPassword();
-                        ev.preventDefault();
-                        return false;
-                    }}>
-                    <input type="password" onChange={(ev) => setPassword(ev.currentTarget.value)}></input>
-                    <button type="submit"> Add password </button>
-                </form>
-            )}
-            {phoneLoginMethod?.length === 0 && (
+            {passwordLoginMethods?.length === 0 &&
+                (thirdPartyLoginMethods?.some((lm: any) => lm.email !== undefined && lm.verified) ? (
+                    <form
+                        onSubmit={(ev) => {
+                            addPassword();
+                            ev.preventDefault();
+                            return false;
+                        }}>
+                        <input type="password" onChange={(ev) => setPassword(ev.currentTarget.value)}></input>
+                        <button type="submit"> Add password </button>
+                    </form>
+                ) : (
+                    <div> Please add an email address by connecting a google account before adding a password </div>
+                ))}
+            {phoneLoginMethods?.length === 0 && (
                 <form
                     onSubmit={(ev) => {
                         if (showEnterOTPField) {
@@ -195,7 +201,7 @@ export const LinkingPage: React.FC = () => {
                     )}
                 </form>
             )}
-            {thirdPartyLoginMethod?.length === 0 && (
+            {thirdPartyLoginMethods?.length === 0 && (
                 <form
                     onSubmit={(ev) => {
                         ev.preventDefault();

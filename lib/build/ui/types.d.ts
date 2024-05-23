@@ -3,8 +3,6 @@ import type { EmailVerificationPreBuiltUI } from "../recipe/emailverification/pr
 import type { MultiFactorAuthPreBuiltUI } from "../recipe/multifactorauth/prebuiltui";
 import type { PasswordlessPreBuiltUI } from "../recipe/passwordless/prebuiltui";
 import type { ThirdPartyPreBuiltUI } from "../recipe/thirdparty/prebuiltui";
-import type { ThirdPartyEmailPasswordPreBuiltUI } from "../recipe/thirdpartyemailpassword/prebuiltui";
-import type { ThirdPartyPasswordlessPreBuiltUI } from "../recipe/thirdpartypasswordless/prebuiltui";
 import type { TOTPPreBuiltUI } from "../recipe/totp/prebuiltui";
 export declare type ReactRouterDomWithCustomHistory = {
     router: {
@@ -14,9 +12,7 @@ export declare type ReactRouterDomWithCustomHistory = {
     useLocation: () => any;
 };
 export declare type PreBuiltRecipes = (
-    | typeof ThirdPartyEmailPasswordPreBuiltUI
     | typeof ThirdPartyPreBuiltUI
-    | typeof ThirdPartyPasswordlessPreBuiltUI
     | typeof EmailPasswordPreBuiltUI
     | typeof PasswordlessPreBuiltUI
     | typeof EmailVerificationPreBuiltUI

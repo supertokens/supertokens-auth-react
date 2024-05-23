@@ -63,7 +63,6 @@ export const getFunctionOverrides =
 
                 onHandleEvent({
                     action: "SUCCESS",
-                    rid: "emailpassword",
                     isNewRecipeUser: true,
                     createdNewSession:
                         payloadAfterCall !== undefined &&
@@ -102,7 +101,6 @@ export const getFunctionOverrides =
 
                 onHandleEvent({
                     action: "SUCCESS",
-                    rid: "emailpassword",
                     isNewRecipeUser: false,
                     createdNewSession:
                         payloadAfterCall !== undefined &&

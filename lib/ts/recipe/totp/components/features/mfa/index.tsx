@@ -23,6 +23,7 @@ import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
+import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, getRedirectToPathFromURL, useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
@@ -283,7 +284,9 @@ export const SignInUpFeature: React.FC<
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
-            <FeatureWrapper useShadowDom={props.recipe.config.useShadowDom} defaultStore={defaultTranslationsTOTP}>
+            <FeatureWrapper
+                useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}
+                defaultStore={defaultTranslationsTOTP}>
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {props.children === undefined && (

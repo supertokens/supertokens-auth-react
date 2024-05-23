@@ -35,7 +35,6 @@ export const getFunctionOverrides =
 
                 onHandleEvent({
                     action: "SUCCESS",
-                    rid: "thirdparty",
                     isNewRecipeUser: response.createdNewRecipeUser,
                     user: response.user,
                     createdNewSession:

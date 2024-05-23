@@ -7,10 +7,6 @@ import EmailPassword from "../lib/ts/recipe/emailpassword";
 import EmailPasswordRecipe from "../lib/ts/recipe/emailpassword/recipe";
 import ThirdParty from "../lib/ts/recipe/thirdparty";
 import ThirdPartyRecipe from "../lib/ts/recipe/thirdparty/recipe";
-import ThirdPartyEmailPassword from "../lib/ts/recipe/thirdpartyemailpassword";
-import ThirdPartyEmailPasswordRecipe from "../lib/ts/recipe/thirdpartyemailpassword/recipe";
-import ThirdPartyPasswordless from "../lib/ts/recipe/thirdpartypasswordless";
-import ThirdPartyPasswordlessRecipe from "../lib/ts/recipe/thirdpartypasswordless/recipe";
 import MultiFactorAuth from "../lib/ts/recipe/multifactorauth";
 import MultiFactorAuthRecipe from "../lib/ts/recipe/multifactorauth/recipe";
 import MultiTenancy from "../lib/ts/recipe/multitenancy";
@@ -20,15 +16,11 @@ import SessionRecipeWebJS from "supertokens-web-js/lib/build/recipe/session/reci
 import PasswordlessRecipeWebJS from "supertokens-web-js/lib/build/recipe/passwordless/recipe";
 import EmailPasswordRecipeWebJS from "supertokens-web-js/lib/build/recipe/emailpassword/recipe";
 import ThirdPartyRecipeWebJS from "supertokens-web-js/lib/build/recipe/thirdparty/recipe";
-import ThirdPartyEmailPasswordRecipeWebJS from "supertokens-web-js/lib/build/recipe/thirdpartyemailpassword/recipe";
-import ThirdPartyPasswordlessRecipeWebJS from "supertokens-web-js/lib/build/recipe/thirdpartypasswordless/recipe";
 import MultiFactorAuthRecipeWebJS from "supertokens-web-js/lib/build/recipe/multifactorauth/recipe";
 import MultiTenancyRecipeWebJS from "supertokens-web-js/lib/build/recipe/multitenancy/recipe";
 import EmailVerificationRecipeWebJS from "supertokens-web-js/lib/build/recipe/emailverification/recipe";
 import { RecipeInitResult } from "../lib/ts/types";
 import Provider from "../lib/ts/recipe/thirdparty/providers";
-import { ThirdPartyPasswordlessPreBuiltUI } from "../lib/ts/recipe/thirdpartypasswordless/prebuiltui";
-import { ThirdPartyEmailPasswordPreBuiltUI } from "../lib/ts/recipe/thirdpartyemailpassword/prebuiltui";
 import { ThirdPartyPreBuiltUI } from "../lib/ts/recipe/thirdparty/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "../lib/ts/recipe/emailpassword/prebuiltui";
 import { PasswordlessPreBuiltUI } from "../lib/ts/recipe/passwordless/prebuiltui";
@@ -45,6 +37,8 @@ export function withFetchResponse<T>(resp: T): T & { fetchResponse: Response } {
 export function resetAndInitST(
     recipeList?: any[],
     usesDynamicLoginMethods?: boolean,
+    defaultToSignUp?: boolean,
+    rootStyle?: string,
     { path, query, hash } = { path: "/auth", query: "", hash: "" }
 ) {
     (WindowHandlerReference as any).instance = undefined;
@@ -52,8 +46,6 @@ export function resetAndInitST(
     PasswordlessRecipe.reset();
     EmailPasswordRecipe.reset();
     ThirdPartyRecipe.reset();
-    ThirdPartyEmailPasswordRecipe.reset();
-    ThirdPartyPasswordlessRecipe.reset();
     MultiFactorAuthRecipe.reset();
     MultiTenancyRecipe.reset();
     EmailVerificationRecipe.reset();
@@ -64,8 +56,6 @@ export function resetAndInitST(
     PasswordlessRecipeWebJS.reset();
     EmailPasswordRecipeWebJS.reset();
     ThirdPartyRecipeWebJS.reset();
-    ThirdPartyEmailPasswordRecipeWebJS.reset();
-    ThirdPartyPasswordlessRecipeWebJS.reset();
     MultiFactorAuthRecipeWebJS.reset();
     MultiTenancyRecipeWebJS.reset();
     EmailVerificationRecipeWebJS.reset();
@@ -79,11 +69,14 @@ export function resetAndInitST(
 
     SuperTokens.init({
         usesDynamicLoginMethods,
+        useShadowDom: false,
+        defaultToSignUp,
         appInfo: {
             apiDomain: "http://localhost:3000",
             appName: "Storybook test",
             websiteDomain: "http://localhost:6006",
         },
+        style: rootStyle,
         recipeList: recipeList ?? [Session.init()],
         windowHandler: (oI) => ({
             ...oI,
@@ -108,34 +101,19 @@ export type ProviderId = "google" | "github";
 
 export type AuthPageConf = {
     usesDynamicLoginMethods: boolean;
+    defaultToSignUp: boolean;
+    rootStyle: string;
     emailpassword: {
         initialized: boolean;
-        disableDefaultUISignInUp: boolean;
-        defaultToSignUp: boolean;
     };
     thirdparty: {
         initialized: boolean;
-        disableDefaultUISignInUp: boolean;
         providers: ProviderId[];
     };
     passwordless: {
         initialized: boolean;
         contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
-        disableDefaultUISignInUp: boolean;
-    };
-    thirdpartyemailpassword: {
-        initialized: boolean;
-        defaultToSignUp: boolean;
-        disableDefaultUISignInUp: boolean;
-        providers: ProviderId[] | undefined;
-        disableEmailPassword: boolean;
-    };
-    thirdpartypasswordless: {
-        initialized: boolean;
-        disableDefaultUISignInUp: boolean;
-        providers: ProviderId[] | undefined;
-        contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
-        disablePasswordless: boolean;
+        defaultToEmail: boolean;
     };
     multifactorauth: {
         initialized: boolean;
@@ -155,11 +133,6 @@ export function buildInit(args: AuthPageConf, funcOverrides: any) {
     if (args.emailpassword.initialized) {
         recipeList.push(
             EmailPassword.init({
-                useShadowDom: false,
-                signInAndUpFeature: {
-                    disableDefaultUI: args.emailpassword.disableDefaultUISignInUp,
-                    defaultToSignUp: args.emailpassword.defaultToSignUp,
-                },
                 override: {
                     functions: funcOverrides?.emailpassword || ((i) => i),
                 },
@@ -170,10 +143,8 @@ export function buildInit(args: AuthPageConf, funcOverrides: any) {
     if (args.thirdparty.initialized) {
         recipeList.push(
             ThirdParty.init({
-                useShadowDom: false,
                 signInAndUpFeature: {
                     providers: buildProviderArray(args.thirdparty.providers),
-                    disableDefaultUI: args.thirdparty.disableDefaultUISignInUp,
                 },
                 override: {
                     functions: funcOverrides?.thirdparty || ((i) => i),
@@ -185,56 +156,20 @@ export function buildInit(args: AuthPageConf, funcOverrides: any) {
     if (args.passwordless.initialized) {
         recipeList.push(
             Passwordless.init({
-                useShadowDom: false,
                 contactMethod: args.passwordless.contactMethod,
                 signInUpFeature: {
-                    disableDefaultUI: args.passwordless.disableDefaultUISignInUp,
+                    defaultToEmail: args.passwordless.defaultToEmail,
                 },
                 override: {
                     functions: funcOverrides?.passwordless || ((i) => i),
                 },
-            })
+            } as any)
         );
         prebuiltUIs.push(PasswordlessPreBuiltUI);
-    }
-    if (args.thirdpartyemailpassword.initialized) {
-        recipeList.push(
-            ThirdPartyEmailPassword.init({
-                useShadowDom: false,
-                disableEmailPassword: args.thirdpartyemailpassword.disableEmailPassword,
-                signInAndUpFeature: {
-                    providers: buildProviderArray(args.thirdpartyemailpassword.providers),
-                    disableDefaultUI: args.thirdpartyemailpassword.disableDefaultUISignInUp,
-                    defaultToSignUp: args.thirdpartyemailpassword.defaultToSignUp,
-                },
-                override: {
-                    functions: funcOverrides?.thirdpartyemailpassword || ((i) => i),
-                },
-            })
-        );
-        prebuiltUIs.push(ThirdPartyEmailPasswordPreBuiltUI);
-    }
-    if (args.thirdpartypasswordless.initialized) {
-        recipeList.push(
-            ThirdPartyPasswordless.init({
-                useShadowDom: false,
-                contactMethod: args.thirdpartypasswordless.contactMethod,
-                disablePasswordless: args.thirdpartypasswordless.disablePasswordless,
-                signInUpFeature: {
-                    providers: buildProviderArray(args.thirdpartypasswordless.providers),
-                    disableDefaultUI: args.thirdpartypasswordless.disableDefaultUISignInUp,
-                },
-                override: {
-                    functions: funcOverrides?.thirdpartypasswordless || ((i) => i),
-                },
-            })
-        );
-        prebuiltUIs.push(ThirdPartyPasswordlessPreBuiltUI);
     }
     if (args.multifactorauth.initialized) {
         recipeList.push(
             MultiFactorAuth.init({
-                useShadowDom: false,
                 firstFactors: args.multifactorauth.firstFactors,
                 disableDefaultUI: args.multifactorauth.disableDefaultUI,
                 override: {
@@ -247,7 +182,6 @@ export function buildInit(args: AuthPageConf, funcOverrides: any) {
     if (args.multitenancy.initialized) {
         recipeList.push(
             MultiTenancy.init({
-                useShadowDom: false,
                 override: {
                     functions: (oI) => ({
                         ...oI,
@@ -280,6 +214,8 @@ export function buildInit(args: AuthPageConf, funcOverrides: any) {
     }
 
     return {
+        useShadowDom: false,
+        defaultToSignUp: args.defaultToSignUp,
         recipeList,
         prebuiltUIs,
     };

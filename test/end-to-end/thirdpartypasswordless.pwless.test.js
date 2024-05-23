@@ -56,7 +56,7 @@ describe("SuperTokens Third Party Passwordless", function () {
     describe("Passwordless specific", function () {
         getPasswordlessTestCases({
             authRecipe: "thirdpartypasswordless",
-            logId: "THIRDPARTYPASSWORDLESS",
+            logId: "PASSWORDLESS",
             generalErrorRecipeName: "THIRD_PARTY_PASSWORDLESS",
         });
     });

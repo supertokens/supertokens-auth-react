@@ -1,53 +1,44 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import Page from "../lib/ts/recipe/totp/components/themes/mfa";
-import React, { useMemo, useState } from "react";
-import { AuthPageConf, resetAndInitST, buildInit, ProviderId, FirstFactor, unflattenArgs } from "./utils";
+import React, { useMemo } from "react";
+import { resetAndInitST, buildInit, ProviderId, FirstFactor, unflattenArgs } from "./utils";
 import { RoutingComponent } from "../lib/ts/components/routingComponent";
-import { passwordlessFirstFactors } from "../lib/ts/recipe/passwordless/recipe";
 import { ErrorBoundary } from "./errorBoundary";
 
 export type Args = {
     usesDynamicLoginMethods: boolean;
     "multifactorauth.initialized": boolean;
     "multifactorauth.firstFactors": FirstFactor[] | undefined;
-    "multifactorauth.disableDefaultUI": boolean;
     "multitenancy.initialized": boolean;
     "multitenancy.firstFactors": FirstFactor[];
     "multitenancy.providers": ProviderId[];
     "emailpassword.initialized": boolean;
-    "emailpassword.disableDefaultUISignInUp": boolean;
-    "emailpassword.defaultToSignUp": boolean;
+    defaultToSignUp: boolean;
     "thirdparty.initialized": boolean;
-    "thirdparty.disableDefaultUISignInUp": boolean;
     "thirdparty.providers": ProviderId[];
     "passwordless.initialized": boolean;
     "passwordless.contactMethod": "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
-    "passwordless.disableDefaultUISignInUp": boolean;
-    "thirdpartyemailpassword.initialized": boolean;
-    "thirdpartyemailpassword.disableDefaultUISignInUp": boolean;
-    "thirdpartyemailpassword.providers": ProviderId[] | undefined;
-    "thirdpartyemailpassword.disableEmailPassword": boolean;
-    "thirdpartyemailpassword.defaultToSignUp": boolean;
-    "thirdpartypasswordless.initialized": boolean;
-    "thirdpartypasswordless.disableDefaultUISignInUp": boolean;
-    "thirdpartypasswordless.providers": ProviderId[] | undefined;
-    "thirdpartypasswordless.contactMethod": "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
-    "thirdpartypasswordless.disablePasswordless": boolean;
+    "passwordless.defaultToEmail": boolean;
     path?: string;
     query?: string;
     hash?: string;
+    rootStyle?: string;
 };
 
 const meta: Meta<Args> = {
     title: "Auth page",
+    parameters: {
+        // Sets the delay (in milliseconds). This will make sure
+        chromatic: { delay: 600 },
+    },
     render: (args, { loaded: { path, funcOverrides } }) => {
         const { prebuiltUIs, key } = useMemo(() => {
-            const { prebuiltUIs, recipeList } = buildInit(unflattenArgs(args), funcOverrides);
+            const { prebuiltUIs, recipeList, defaultToSignUp } = buildInit(unflattenArgs(args), funcOverrides);
             for (const ui of prebuiltUIs) {
                 ui.reset();
             }
-            resetAndInitST(recipeList, args.usesDynamicLoginMethods, {
+            resetAndInitST(recipeList, args.usesDynamicLoginMethods, defaultToSignUp, args.rootStyle, {
                 path: args.path ?? path ?? "/auth",
                 query: args.query ?? "",
                 hash: args.hash ?? "",
@@ -57,6 +48,31 @@ const meta: Meta<Args> = {
 
         return (
             <ErrorBoundary key={key}>
+                <style>
+                    {`
+                    *, *::before, *::after {
+                        animation-delay: -1s !important;
+                        animation-duration: 0s !important;
+                        animation-iteration-count: 1 !important;
+                        background-attachment: initial !important;
+                        scroll-behavior: auto !important;
+                        transition-duration: 0s !important;
+                        transition: none !important;
+                    }
+
+                    img, video, iframe {
+                        background: blue !important;
+                        filter: brightness(1) contrast(0) !important;
+                    }
+
+                    svg {
+                        shape-rendering: geometricPrecision !important;
+                    }
+
+                    #storybook-root {
+                        padding: 1rem 0;
+                    }`}
+                </style>
                 <RoutingComponent
                     key={key}
                     path={args.path ?? path ?? "/auth"}
@@ -69,30 +85,25 @@ const meta: Meta<Args> = {
     args: {
         usesDynamicLoginMethods: false,
         "multifactorauth.initialized": true,
-        "multifactorauth.firstFactors": ["emailpassword", "thirdparty"],
-        "multifactorauth.disableDefaultUI": false,
+        "multifactorauth.firstFactors": [
+            "emailpassword",
+            "thirdparty",
+            "otp-email",
+            "otp-phone",
+            "link-email",
+            "link-phone",
+        ],
         "multitenancy.initialized": true,
         "multitenancy.firstFactors": ["emailpassword", "thirdparty"],
         "multitenancy.providers": ["github", "google"],
         "emailpassword.initialized": true,
-        "emailpassword.disableDefaultUISignInUp": false,
-        "emailpassword.defaultToSignUp": false,
+        defaultToSignUp: false,
         "thirdparty.initialized": true,
-        "thirdparty.disableDefaultUISignInUp": false,
         "thirdparty.providers": ["github", "google"],
         "passwordless.initialized": true,
         "passwordless.contactMethod": "EMAIL_OR_PHONE",
-        "passwordless.disableDefaultUISignInUp": false,
-        "thirdpartyemailpassword.initialized": true,
-        "thirdpartyemailpassword.disableDefaultUISignInUp": false,
-        "thirdpartyemailpassword.defaultToSignUp": false,
-        "thirdpartyemailpassword.providers": ["github", "google"],
-        "thirdpartyemailpassword.disableEmailPassword": false,
-        "thirdpartypasswordless.initialized": true,
-        "thirdpartypasswordless.disableDefaultUISignInUp": false,
-        "thirdpartypasswordless.providers": ["github", "google"],
-        "thirdpartypasswordless.contactMethod": "EMAIL_OR_PHONE",
-        "thirdpartypasswordless.disablePasswordless": false,
+        "passwordless.defaultToEmail": true,
+        rootStyle: "",
     },
     argTypes: {
         "multifactorauth.initialized": {
@@ -101,19 +112,10 @@ const meta: Meta<Args> = {
             },
         },
         "multifactorauth.firstFactors": {
-            options: [...passwordlessFirstFactors, "emailpassword", "thirdparty"],
+            options: ["otp-phone", "otp-email", "link-phone", "link-email", "emailpassword", "thirdparty"],
             control: {
                 type: "check",
             },
-            table: {
-                category: "multifactorauth",
-            },
-            if: {
-                arg: "multifactorauth.initialized",
-                truthy: true,
-            },
-        },
-        "multifactorauth.disableDefaultUI": {
             table: {
                 category: "multifactorauth",
             },
@@ -128,7 +130,7 @@ const meta: Meta<Args> = {
             },
         },
         "multitenancy.firstFactors": {
-            options: [...passwordlessFirstFactors, "emailpassword", "thirdparty"],
+            options: ["otp-phone", "otp-email", "link-phone", "link-email", "emailpassword", "thirdparty"],
             control: {
                 type: "check",
             },
@@ -158,19 +160,7 @@ const meta: Meta<Args> = {
                 category: "emailpassword",
             },
         },
-        "emailpassword.disableDefaultUISignInUp": {
-            table: {
-                category: "emailpassword",
-            },
-            if: {
-                arg: "emailpassword.initialized",
-                truthy: true,
-            },
-        },
-        "emailpassword.defaultToSignUp": {
-            table: {
-                category: "emailpassword",
-            },
+        defaultToSignUp: {
             if: {
                 arg: "emailpassword.initialized",
                 truthy: true,
@@ -179,15 +169,6 @@ const meta: Meta<Args> = {
         "thirdparty.initialized": {
             table: {
                 category: "thirdparty",
-            },
-        },
-        "thirdparty.disableDefaultUISignInUp": {
-            table: {
-                category: "thirdparty",
-            },
-            if: {
-                arg: "thirdparty.initialized",
-                truthy: true,
             },
         },
         "thirdparty.providers": {
@@ -221,98 +202,12 @@ const meta: Meta<Args> = {
                 truthy: true,
             },
         },
-        "passwordless.disableDefaultUISignInUp": {
+        "passwordless.defaultToEmail": {
             table: {
                 category: "passwordless",
             },
             if: {
                 arg: "passwordless.initialized",
-                truthy: true,
-            },
-        },
-        "thirdpartyemailpassword.initialized": {
-            table: {
-                category: "thirdpartyemailpassword",
-            },
-        },
-        "thirdpartyemailpassword.disableDefaultUISignInUp": {
-            table: {
-                category: "thirdpartyemailpassword",
-            },
-            if: {
-                arg: "thirdpartyemailpassword.initialized",
-                truthy: true,
-            },
-        },
-        "thirdpartyemailpassword.defaultToSignUp": {
-            table: {
-                category: "thirdpartyemailpassword",
-            },
-            if: {
-                arg: "thirdpartyemailpassword.initialized",
-                truthy: true,
-            },
-        },
-        "thirdpartyemailpassword.providers": {
-            table: {
-                category: "thirdpartyemailpassword",
-            },
-            if: {
-                arg: "thirdpartyemailpassword.initialized",
-                truthy: true,
-            },
-        },
-        "thirdpartyemailpassword.disableEmailPassword": {
-            table: {
-                category: "thirdpartyemailpassword",
-            },
-            if: {
-                arg: "thirdpartyemailpassword.initialized",
-                truthy: true,
-            },
-        },
-        "thirdpartypasswordless.initialized": {
-            table: {
-                category: "thirdpartypasswordless",
-            },
-        },
-        "thirdpartypasswordless.disableDefaultUISignInUp": {
-            table: {
-                category: "thirdpartypasswordless",
-            },
-            if: {
-                arg: "thirdpartypasswordless.initialized",
-                truthy: true,
-            },
-        },
-        "thirdpartypasswordless.providers": {
-            table: {
-                category: "thirdpartypasswordless",
-            },
-            if: {
-                arg: "thirdpartypasswordless.initialized",
-                truthy: true,
-            },
-        },
-        "thirdpartypasswordless.contactMethod": {
-            options: ["EMAIL", "PHONE", "EMAIL_OR_PHONE"],
-            control: {
-                type: "radio",
-            },
-            table: {
-                category: "thirdpartypasswordless",
-            },
-            if: {
-                arg: "thirdpartypasswordless.initialized",
-                truthy: true,
-            },
-        },
-        "thirdpartypasswordless.disablePasswordless": {
-            table: {
-                category: "thirdpartypasswordless",
-            },
-            if: {
-                arg: "thirdpartypasswordless.initialized",
                 truthy: true,
             },
         },

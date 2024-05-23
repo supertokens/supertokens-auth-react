@@ -18,13 +18,14 @@ import { useEffect } from "react";
 import STGeneralError from "supertokens-web-js/utils/error";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../translation/translationContext";
 import { useUserContext } from "../../../../../usercontext";
+import { Label } from "../../../../emailpassword/components/library";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { preloadPhoneNumberUtils } from "../../../phoneNumberUtils";
-import { defaultEmailValidator, defaultValidate } from "../../../validators";
+import { defaultValidate } from "../../../validators";
 
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
-import { SignInUpFooter } from "./signInUpFooter";
 
 import type { SignInUpEmailOrPhoneFormProps } from "../../../types";
 
@@ -35,132 +36,119 @@ export const EmailOrPhoneForm = withOverride(
             footer?: JSX.Element;
         }
     ): JSX.Element {
-        const [isPhoneNumber, setIsPhoneNumber] = useState<boolean>(false);
+        const t = useTranslation();
+        const [isPhoneNumber, setIsPhoneNumber] = useState<boolean>(!props.config.signInUpFeature.defaultToEmail);
         const userContext = useUserContext();
 
         useEffect(() => {
             // We preload this here, since it will be used almost for sure, but loading it
             void preloadPhoneNumberUtils();
         }, []);
-        const emailOrPhoneInput = useMemo(
+        const phoneInput = useMemo(
             () =>
-                isPhoneNumber
-                    ? phoneNumberInputWithInjectedProps({
-                          defaultCountry: props.config.signInUpFeature.defaultCountry,
-                      })
-                    : undefined,
-            [props.config.signInUpFeature.defaultCountry, isPhoneNumber]
+                phoneNumberInputWithInjectedProps({
+                    defaultCountry: props.config.signInUpFeature.defaultCountry,
+                }),
+            [props.config.signInUpFeature.defaultCountry]
         );
         return (
             <FormBase
                 clearError={props.clearError}
                 onFetchError={props.onFetchError}
                 onError={props.onError}
-                formFields={[
-                    {
-                        id: "emailOrPhone",
-                        label: "PWLESS_SIGN_IN_UP_EMAIL_OR_PHONE_LABEL",
-                        inputComponent: emailOrPhoneInput,
-                        optional: false,
-                        autofocus: true,
-                        placeholder: "",
-                        // We do not add an autocomplete prop in this case, since we do not really have any sensible option to set
-                        // Setting them to either "tel" or "email" would give people the wrong impression since this could have either
-                        // AFAIK we can't set them both at the same time
-                        validate: defaultValidate,
-                    },
-                ]}
+                formFields={
+                    isPhoneNumber
+                        ? [
+                              {
+                                  id: "phoneNumber",
+                                  label: "",
+
+                                  labelComponent: (
+                                      <div data-supertokens="formLabelWithLinkWrapper">
+                                          <Label value={"PWLESS_SIGN_IN_UP_PHONE_LABEL"} />
+                                          <a
+                                              onClick={() => setIsPhoneNumber(false)}
+                                              data-supertokens="link linkButton formLabelLinkBtn contactMethodSwitcher">
+                                              {t("PWLESS_SIGN_IN_UP_SWITCH_TO_EMAIL")}
+                                          </a>
+                                      </div>
+                                  ),
+                                  inputComponent: phoneInput,
+                                  optional: false,
+                                  autofocus: true,
+                                  placeholder: "",
+                                  autoComplete: "tel",
+                                  validate: defaultValidate,
+                              },
+                          ]
+                        : [
+                              {
+                                  id: "email",
+                                  label: "",
+
+                                  labelComponent: (
+                                      <div data-supertokens="formLabelWithLinkWrapper">
+                                          <Label
+                                              value={"PWLESS_SIGN_IN_UP_EMAIL_LABEL"}
+                                              data-supertokens="passwordInputLabel"
+                                          />
+                                          <a
+                                              onClick={() => setIsPhoneNumber((v) => !v)}
+                                              data-supertokens="link linkButton formLabelLinkBtn contactMethodSwitcher">
+                                              {t("PWLESS_SIGN_IN_UP_SWITCH_TO_PHONE")}
+                                          </a>
+                                      </div>
+                                  ),
+                                  inputComponent: undefined,
+                                  optional: false,
+                                  autofocus: true,
+                                  placeholder: "",
+                                  autoComplete: "email",
+                                  validate: defaultValidate,
+                              },
+                          ]
+                }
                 buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
                 onSuccess={props.onSuccess}
-                callAPI={async (formFields, setValue) => {
-                    const emailOrPhone = formFields.find((field) => field.id === "emailOrPhone")?.value;
-                    if (emailOrPhone === undefined) {
-                        throw new STGeneralError("GENERAL_ERROR_EMAIL_OR_PHONE_UNDEFINED");
-                    }
-
-                    // We check if it looks like an email by default. Even if this fails (e.g., the user mistyped the @ symbol),
-                    // the guessInternationPhoneNumberFromInputPhoneNumber can decide to not change to the phone UI.
-                    // By default it stays on the combined input in 2 cases:
-                    // - if the input contains the @ symbol
-                    // - if less than half of the input looks like a phone number
-                    if ((await defaultEmailValidator(emailOrPhone)) === undefined) {
-                        const emailValidationRes = await props.config.validateEmailAddress(emailOrPhone);
-                        if (emailValidationRes === undefined) {
-                            const response = await props.recipeImplementation.createCode({
-                                email: emailOrPhone,
-                                userContext,
-                            });
-
-                            if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
-                                throw new STGeneralError(response.reason);
-                            }
-
-                            return response;
-                        } else {
-                            throw new STGeneralError(emailValidationRes);
+                callAPI={async (formFields) => {
+                    let contactInfo: { email: string } | { phoneNumber: string };
+                    if (isPhoneNumber) {
+                        const phoneNumber = formFields.find((field) => field.id === "phoneNumber")?.value;
+                        if (phoneNumber === undefined) {
+                            throw new STGeneralError("GENERAL_ERROR_PHONE_UNDEFINED");
                         }
+
+                        const validationRes = await props.validatePhoneNumber(phoneNumber);
+                        if (validationRes !== undefined) {
+                            throw new STGeneralError(validationRes);
+                        }
+                        contactInfo = { phoneNumber };
                     } else {
-                        const phoneValidationRes = await props.config.validatePhoneNumber(emailOrPhone);
-                        if (phoneValidationRes === undefined) {
-                            const response = await props.recipeImplementation.createCode({
-                                phoneNumber: emailOrPhone,
-                                userContext,
-                            });
-
-                            if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
-                                throw new STGeneralError(response.reason);
-                            }
-                            return response;
+                        const email = formFields.find((field) => field.id === "email")?.value;
+                        if (email === undefined) {
+                            throw new STGeneralError("GENERAL_ERROR_EMAIL_UNDEFINED");
                         }
-
-                        const intPhoneNumber =
-                            await props.config.signInUpFeature.guessInternationPhoneNumberFromInputPhoneNumber(
-                                emailOrPhone,
-                                props.config.signInUpFeature.defaultCountry
-                            );
-
-                        if (intPhoneNumber && isPhoneNumber !== true) {
-                            const phoneValidationResAfterGuess = await props.config.validatePhoneNumber(intPhoneNumber);
-                            if (phoneValidationResAfterGuess === undefined) {
-                                try {
-                                    const response = await props.recipeImplementation.createCode({
-                                        phoneNumber: intPhoneNumber,
-                                        userContext,
-                                    });
-
-                                    if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
-                                        throw new STGeneralError(response.reason);
-                                    }
-                                    return response;
-                                } catch (ex) {
-                                    // General errors from the API can make createCode throw but we want to switch to the phone UI anyway
-                                    setValue("emailOrPhone", intPhoneNumber);
-                                    setIsPhoneNumber(true);
-                                    throw ex;
-                                }
-                            } else {
-                                // In this case we could get a phonenumber but not a completely valid one
-                                // We want to switch to the phone UI and pre-fill the number
-
-                                setValue("emailOrPhone", intPhoneNumber);
-                                setIsPhoneNumber(true);
-                                throw new STGeneralError("PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR");
-                            }
-                        } else {
-                            throw new STGeneralError(phoneValidationRes);
+                        const validationRes = await props.config.validateEmailAddress(email);
+                        if (validationRes !== undefined) {
+                            throw new STGeneralError(validationRes);
                         }
+                        contactInfo = { email };
                     }
+
+                    const response = await props.recipeImplementation.createCode({
+                        ...contactInfo,
+                        userContext,
+                    });
+
+                    if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
+                        throw new STGeneralError(response.reason);
+                    }
+
+                    return response;
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                footer={
-                    props.footer ?? (
-                        <SignInUpFooter
-                            privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
-                            termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
-                        />
-                    )
-                }
+                footer={props.footer}
             />
         );
     }

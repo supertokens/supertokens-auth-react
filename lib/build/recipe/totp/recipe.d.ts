@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import TOTPWebJS from "supertokens-web-js/recipe/totp";
 import RecipeModule from "../recipeModule";
 import type {
@@ -10,11 +9,11 @@ import type {
 } from "./types";
 import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
 export declare const totpFactor: {
-    id: string;
+    id: "totp";
     name: string;
     description: string;
     path: string;
-    logo: () => JSX.Element;
+    logo: () => import("react/jsx-runtime").JSX.Element;
 };
 export default class TOTP extends RecipeModule<
     GetRedirectionURLContext,

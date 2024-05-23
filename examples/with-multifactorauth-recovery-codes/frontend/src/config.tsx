@@ -1,6 +1,8 @@
-import ThirdPartyEmailPassword, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
-import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import Session from "supertokens-auth-react/recipe/session";
@@ -36,9 +38,12 @@ export const SuperTokensConfig = {
         EmailVerification.init({
             mode: "REQUIRED",
         }),
-        MultiFactorAuth.init(),
+        MultiFactorAuth.init({
+            firstFactors: ["emailpassword", "thirdparty"],
+        }),
         TOTP.init(),
-        ThirdPartyEmailPassword.init({
+        EmailPassword.init(),
+        ThirdParty.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init()],
             },
@@ -67,7 +72,8 @@ export const recipeDetails = {
 };
 
 export const PreBuiltUIList = [
-    ThirdPartyEmailPasswordPreBuiltUI,
+    ThirdPartyPreBuiltUI,
+    EmailPasswordPreBuiltUI,
     PasswordlessPreBuiltUI,
     EmailVerificationPreBuiltUI,
     MultiFactorAuthPreBuiltUI,

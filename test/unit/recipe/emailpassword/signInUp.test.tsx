@@ -4,7 +4,8 @@ import { render, waitFor } from "@testing-library/react";
 import SuperTokens from "../../../../lib/ts/superTokens";
 import Session from "../../../../lib/ts/recipe/session/recipe";
 import Recipe from "../../../../lib/ts/recipe/emailpassword/recipe";
-import { SignInAndUp } from "../../../../lib/ts/recipe/emailpassword/prebuiltui";
+import { AuthPage } from "../../../../lib/ts/ui/index";
+import { EmailPasswordPreBuiltUI } from "../../../../lib/ts/recipe/emailpassword/prebuiltui";
 import { SessionContextType } from "../../../../lib/ts/recipe/session";
 
 const MockSession = {
@@ -14,6 +15,9 @@ const MockSession = {
     doesSessionExist: jest.fn(),
     validateClaims: jest.fn(),
     validateGlobalClaimsAndHandleSuccessRedirection: jest.fn().mockReturnValue(new Promise(() => {})),
+    config: {
+        onHandleEvent: jest.fn(),
+    },
 };
 
 const setMockResolvesSession = (ctx: SessionContextType) => {
@@ -48,11 +52,8 @@ describe("EmailPassword.SignInAndUp", () => {
                 websiteBasePath: "/auth",
                 websiteDomain,
             },
-            recipeList: [
-                Recipe.init({
-                    useShadowDom: false,
-                }),
-            ],
+            useShadowDom: false,
+            recipeList: [Recipe.init()],
         });
 
         setMockResolvesSession({
@@ -66,19 +67,13 @@ describe("EmailPassword.SignInAndUp", () => {
 
     test("redirect if session exists", async () => {
         // when
-        render(<SignInAndUp />);
+        render(<AuthPage preBuiltUIList={[EmailPasswordPreBuiltUI]} />);
         // then
         await waitFor(() => {
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledTimes(1);
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledWith(
-                {
-                    action: "SUCCESS",
-                    recipeId: "emailpassword",
-                    newSessionCreated: false,
-                    isNewRecipeUser: false,
-                    createdNewUser: false,
-                },
-                "emailpassword",
+                undefined,
+                "session",
                 undefined,
                 {},
                 undefined
@@ -88,7 +83,12 @@ describe("EmailPassword.SignInAndUp", () => {
 
     test("not redirect if session exists but redirectOnSessionExists=false", async () => {
         // when
-        const result = render(<SignInAndUp redirectOnSessionExists={false}> mockRenderedText </SignInAndUp>);
+        const result = render(
+            <AuthPage preBuiltUIList={[EmailPasswordPreBuiltUI]} redirectOnSessionExists={false}>
+                {" "}
+                mockRenderedText{" "}
+            </AuthPage>
+        );
 
         expect(await result.findByText(`mockRenderedText`)).toBeInTheDocument();
         // then

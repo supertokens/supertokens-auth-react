@@ -2,7 +2,7 @@ import React from "react";
 import Logout from "./Logout";
 import SuccessView from "./SuccessView";
 import { useNavigate } from "react-router-dom";
-import { signOut } from "supertokens-auth-react/recipe/emailpassword";
+import { signOut } from "supertokens-auth-react/recipe/session";
 
 export default function Home() {
     const navigate = useNavigate();

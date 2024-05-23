@@ -14,6 +14,7 @@
  */
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import SuperTokens from "../../../../../superTokens";
 import { ThemeBase } from "../themeBase";
 
 import type { NormalisedConfig } from "../../../types";
@@ -36,8 +37,10 @@ const DynamicLoginMethodsSpinnerThemeWithOverride = withOverride(
 );
 
 export const DynamicLoginMethodsSpinnerTheme = (props: { config: NormalisedConfig }) => {
+    const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
+
     return (
-        <ThemeBase loadDefaultFont={false} userStyles={[props.config.rootStyle]}>
+        <ThemeBase loadDefaultFont={false} userStyles={[rootStyle, props.config.recipeRootStyle]}>
             <DynamicLoginMethodsSpinnerThemeWithOverride />
         </ThemeBase>
     );

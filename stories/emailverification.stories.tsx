@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { ErrorBoundary } from "./errorBoundary";
 import { RoutingComponent } from "../lib/ts/components/routingComponent";
 import EmailVerification from "../lib/ts/recipe/emailverification";
@@ -23,7 +22,6 @@ export default {
             const prebuiltUIs = [EmailVerificationPreBuiltUI];
             const recipeList = [
                 EmailVerification.init({
-                    useShadowDom: false,
                     mode: "OPTIONAL",
                     override: {
                         functions: (oI) => ({
@@ -53,7 +51,7 @@ export default {
             for (const ui of prebuiltUIs) {
                 ui.reset();
             }
-            resetAndInitST(recipeList, args.usesDynamicLoginMethods, {
+            resetAndInitST(recipeList, args.usesDynamicLoginMethods, undefined, {
                 path: args.path,
                 query: args.query,
                 hash: args.hash,

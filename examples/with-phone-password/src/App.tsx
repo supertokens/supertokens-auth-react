@@ -3,6 +3,7 @@ import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
 import Passwordless, { PasswordlessComponentsOverrideProvider } from "supertokens-auth-react/recipe/passwordless";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
@@ -52,12 +53,11 @@ SuperTokens.init({
         },
     },
     recipeList: [
+        MultiFactorAuth.init({
+            firstFactors: ["emailpassword"],
+        }),
         Passwordless.init({
             contactMethod: "PHONE",
-            signInUpFeature: {
-                // this will not show the passwordless UI unless we render it ourselves.
-                disableDefaultUI: true,
-            },
         }),
         EmailPassword.init({
             signInAndUpFeature: {
@@ -82,7 +82,12 @@ SuperTokens.init({
                 functions: (oI) => ({
                     ...oI,
                     getGlobalClaimValidators: ({ claimValidatorsAddedByOtherRecipes }) => {
-                        return [...claimValidatorsAddedByOtherRecipes, PhoneVerifiedClaim.validators.isTrue()];
+                        return [
+                            ...claimValidatorsAddedByOtherRecipes.filter(
+                                (v) => v.id !== MultiFactorAuth.MultiFactorAuthClaim.id
+                            ),
+                            PhoneVerifiedClaim.validators.isTrue(),
+                        ];
                     },
                 }),
             },

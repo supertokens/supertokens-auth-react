@@ -41,18 +41,21 @@ export default function CustomSignUp({ DefaultComponent, ...props }) {
             // we hide all the unnecessary UI components
             document
                 .querySelector("#supertokens-root")
-                .shadowRoot.querySelector("div > div > div:nth-child(2)").style.display = "none";
+                .shadowRoot.querySelector("[data-supertokens~=headerSubtitle]").style.display = "none";
             document
                 .querySelector("#supertokens-root")
-                .shadowRoot.querySelector("div > div > div:nth-child(3)").style.display = "none";
+                .shadowRoot.querySelector("[data-supertokens~=divider]").style.display = "none";
             document
                 .querySelector("#supertokens-root")
-                .shadowRoot.querySelector("div > div > div:nth-child(4)").style.display = "none";
+                .shadowRoot.querySelector("[data-supertokens~=formRow]:nth-child(1)").style.display = "none";
             document
                 .querySelector("#supertokens-root")
-                .shadowRoot.querySelector("form > div:nth-child(2) > div").style.display = "none";
-            document.querySelector("#supertokens-root").shadowRoot.querySelector("div > div > div").innerText =
-                "Set Password";
+                .shadowRoot.querySelector(
+                    "[data-supertokens~=formRow]:nth-child(2) [data-supertokens~=label]"
+                ).style.display = "none";
+            document
+                .querySelector("#supertokens-root")
+                .shadowRoot.querySelector("[data-supertokens~=headerTitle]").innerText = "Set Password";
             document
                 .querySelector("#supertokens-root")
                 .shadowRoot.querySelector("form > div:nth-child(3) > button").innerText = "CONTINUE";

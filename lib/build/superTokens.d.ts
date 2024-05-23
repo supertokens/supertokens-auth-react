@@ -17,6 +17,12 @@ export default class SuperTokens {
     };
     recipeList: BaseRecipeModule<any, any, any, any>[];
     private userGetRedirectionURL;
+    rootStyle: string;
+    useShadowDom: boolean;
+    privacyPolicyLink: string | undefined;
+    termsOfServiceLink: string | undefined;
+    defaultToSignUp: boolean;
+    disableAuthRoute: boolean;
     constructor(config: SuperTokensConfig);
     static init(config: SuperTokensConfig): void;
     static getInstanceOrThrow(): SuperTokens;

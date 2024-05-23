@@ -53,6 +53,7 @@ import {
     waitForSTElement,
     getResetPasswordSuccessBackToSignInButton,
     backendBeforeEach,
+    waitForText,
 } from "../helpers";
 
 /*
@@ -124,15 +125,12 @@ describe("SuperTokens Reset password", function () {
 
             await backButton.click();
 
-            const signInPageHeader = await waitForSTElement(page, "[data-supertokens='headerTitle']");
+            // Wait for the title to show Sign In
+            await waitForText(page, "[data-supertokens~='headerTitle']", "Sign In");
 
             // checks if the window path has changed to '/auth'
             const { pathname: pathAfterBackButtonClick, search } = await page.evaluate(() => window.location);
             assert.equal(pathAfterBackButtonClick + search, "/auth/?show=signin");
-
-            // checks if the page title is 'Sign In'
-            const pageTitle = await signInPageHeader.evaluate((header) => header.innerText);
-            assert.equal(pageTitle, "Sign In");
         });
 
         it("Should send reset password for valid email", async function () {

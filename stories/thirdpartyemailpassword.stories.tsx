@@ -16,7 +16,7 @@ export const SignIn: Story = {
 export const SignUp: Story = {
     args: {
         "multifactorauth.firstFactors": ["thirdparty", "emailpassword"],
-        "thirdpartyemailpassword.defaultToSignUp": true,
+        defaultToSignUp: true,
     },
 };
 export const ResetPassword: Story = {

@@ -69,6 +69,13 @@ export default class SuperTokens {
     };
     recipeList: BaseRecipeModule<any, any, any, any>[] = [];
     private userGetRedirectionURL: SuperTokensConfig["getRedirectionURL"];
+    rootStyle: string;
+    useShadowDom: boolean;
+    privacyPolicyLink: string | undefined;
+    termsOfServiceLink: string | undefined;
+    defaultToSignUp: boolean;
+    disableAuthRoute: boolean;
+
     /*
      * Constructor.
      */
@@ -102,6 +109,14 @@ export default class SuperTokens {
         this.recipeList = config.recipeList.map(({ authReact }) => {
             return authReact(this.appInfo, enableDebugLogs);
         });
+
+        this.rootStyle = config.style ?? "";
+        this.privacyPolicyLink = config.privacyPolicyLink;
+        this.termsOfServiceLink = config.termsOfServiceLink;
+
+        this.useShadowDom = config.useShadowDom ?? true;
+        this.defaultToSignUp = config.defaultToSignUp ?? false;
+        this.disableAuthRoute = config.disableAuthRoute ?? false;
     }
 
     /*

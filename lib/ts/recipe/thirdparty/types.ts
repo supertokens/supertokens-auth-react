@@ -14,13 +14,17 @@
  */
 
 import type { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
-import type { SignInAndUpHeader } from "./components/themes/signInAndUp/signInAndUpHeader";
-import type { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
 import type { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import type Provider from "./providers";
 import type { CustomProviderConfig } from "./providers/types";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig, NormalisedBaseConfig, UserContext, WebJSRecipeInterface } from "../../types";
+import type {
+    FeatureBaseConfig,
+    NormalisedBaseConfig,
+    PartialAuthComponentProps,
+    UserContext,
+    WebJSRecipeInterface,
+} from "../../types";
 import type {
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
     Config as AuthRecipeModuleConfig,
@@ -33,8 +37,6 @@ import type { StateObject as WebJsStateObject, RecipeInterface } from "supertoke
 import type { User } from "supertokens-web-js/types";
 
 export type ComponentOverrideMap = {
-    ThirdPartySignUpFooter_Override?: ComponentOverride<typeof SignUpFooter>;
-    ThirdPartySignInAndUpHeader_Override?: ComponentOverride<typeof SignInAndUpHeader>;
     ThirdPartySignInAndUpProvidersForm_Override?: ComponentOverride<typeof ProvidersForm>;
     ThirdPartySignInAndUpCallbackTheme_Override?: ComponentOverride<typeof SignInAndUpCallbackTheme>;
 };
@@ -66,42 +68,12 @@ export type NormalisedConfig = {
 
 export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     /*
-     * Disable default implementation with default routes.
-     */
-    disableDefaultUI?: boolean;
-
-    /*
-     * Privacy policy link for sign up form.
-     */
-    privacyPolicyLink?: string;
-
-    /*
-     * Terms and conditions link for sign up form.
-     */
-    termsOfServiceLink?: string;
-
-    /*
      * Providers
      */
     providers?: (Provider | CustomProviderConfig)[];
 };
 
 export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
-    /*
-     * Disable default implementation with default routes.
-     */
-    disableDefaultUI: boolean;
-
-    /*
-     * Privacy policy link for sign up form.
-     */
-    privacyPolicyLink?: string;
-
-    /*
-     * Terms and conditions link for sign up form.
-     */
-    termsOfServiceLink?: string;
-
     /*
      * Providers
      */
@@ -123,7 +95,6 @@ export type PreAPIHookContext = {
 export type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {
-          rid: "thirdparty";
           action: "SUCCESS";
           isNewRecipeUser: boolean;
           createdNewSession: boolean;
@@ -131,24 +102,10 @@ export type OnHandleEventContext =
           userContext: UserContext;
       };
 
-export type SignInAndUpThemeProps = {
-    featureState: {
-        error: string | undefined;
-    };
-    dispatch: (action: ThirdPartySignInUpActions) => void;
+export type SignInAndUpThemeProps = PartialAuthComponentProps & {
     providers: Pick<Provider, "id" | "getButton">[];
     recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;
     config: NormalisedConfig;
-};
-export type ThirdPartySignInUpChildProps = Omit<SignInAndUpThemeProps, "featureState" | "dispatch">;
-
-export type ThirdPartySignInUpActions = {
-    type: "setError";
-    error: string | undefined;
-};
-
-export type ThirdPartySignInAndUpState = {
-    error: string | undefined;
 };
 
 export type StateObject = WebJsStateObject & {

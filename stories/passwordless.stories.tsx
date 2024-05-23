@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import meta, { Args } from "./authPage.stories";
 import { overridePWlessWithLoginAttempt } from "./utils";
+import { within } from "@storybook/testing-library";
+import userEvent from "@testing-library/user-event";
 
 type Story = StoryObj<Args>;
 
@@ -12,6 +14,13 @@ export default {
 export const ContactFormCombined: Story = {
     args: {
         "multifactorauth.firstFactors": ["otp-email", "otp-phone"],
+    },
+};
+export const ContactFormCombinedPhone: Story = {
+    args: {
+        path: "/auth",
+        "multifactorauth.firstFactors": ["otp-email", "otp-phone"],
+        "passwordless.defaultToEmail": false,
     },
 };
 

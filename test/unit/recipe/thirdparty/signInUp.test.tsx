@@ -5,7 +5,8 @@ import SuperTokens from "../../../../lib/ts/superTokens";
 import Session from "../../../../lib/ts/recipe/session/recipe";
 import Recipe from "../../../../lib/ts/recipe/thirdparty/recipe";
 import { Github } from "../../../../lib/ts/recipe/thirdparty";
-import { SignInAndUp } from "../../../../lib/ts/recipe/thirdparty/prebuiltui";
+import { AuthPage } from "../../../../lib/ts/ui";
+import { ThirdPartyPreBuiltUI } from "../../../../lib/ts/recipe/thirdparty/prebuiltui";
 import { SessionContextType } from "../../../../lib/ts/recipe/session";
 
 const MockSession = {
@@ -15,6 +16,9 @@ const MockSession = {
     doesSessionExist: jest.fn(),
     validateClaims: jest.fn(),
     validateGlobalClaimsAndHandleSuccessRedirection: jest.fn().mockReturnValue(new Promise(() => {})),
+    config: {
+        onHandleEvent: jest.fn(),
+    },
 };
 
 const setMockResolvesSession = (ctx: SessionContextType) => {
@@ -50,6 +54,7 @@ describe("ThirdParty.SignInAndUp", () => {
                 websiteBasePath: "/auth",
                 websiteDomain,
             },
+            useShadowDom: false,
             recipeList: [
                 Recipe.init({
                     signInAndUpFeature: {
@@ -62,7 +67,6 @@ describe("ThirdParty.SignInAndUp", () => {
                             },
                         ],
                     },
-                    useShadowDom: false,
                 }),
             ],
         });
@@ -78,19 +82,13 @@ describe("ThirdParty.SignInAndUp", () => {
 
     test("redirect if session exists", async () => {
         // when
-        render(<SignInAndUp />);
+        render(<AuthPage preBuiltUIList={[ThirdPartyPreBuiltUI]} />);
         // then
         await waitFor(() => {
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledTimes(1);
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledWith(
-                {
-                    action: "SUCCESS",
-                    recipeId: "thirdparty",
-                    newSessionCreated: false,
-                    isNewRecipeUser: false,
-                    createdNewUser: false,
-                },
-                "thirdparty",
+                undefined,
+                "session",
                 undefined,
                 {},
                 undefined
@@ -99,13 +97,18 @@ describe("ThirdParty.SignInAndUp", () => {
     });
 
     test("check if the logo is rendered, when a logo is provided for custom providers", async () => {
-        const result = render(<SignInAndUp redirectOnSessionExists={false} />);
+        const result = render(<AuthPage preBuiltUIList={[ThirdPartyPreBuiltUI]} redirectOnSessionExists={false} />);
         expect(await result.findByText("LOGO")).toBeInTheDocument();
     });
 
     test("not redirect if session exists but redirectOnSessionExists=false", async () => {
         // when
-        const result = render(<SignInAndUp redirectOnSessionExists={false}> mockRenderedText </SignInAndUp>);
+        const result = render(
+            <AuthPage preBuiltUIList={[ThirdPartyPreBuiltUI]} redirectOnSessionExists={false}>
+                {" "}
+                mockRenderedText{" "}
+            </AuthPage>
+        );
 
         expect(await result.findByText(`mockRenderedText`)).toBeInTheDocument();
         // then

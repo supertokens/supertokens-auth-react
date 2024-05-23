@@ -2,10 +2,12 @@ import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
-import ThirdPartyEmailPassword, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import ThirdParty, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
-import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
@@ -23,14 +25,26 @@ i18next.init({
     resources: {
         en: {
             translation: {
-                THIRD_PARTY_EMAIL_PASSWORD_SIGN_IN_AND_UP_DIVIDER_OR: "or translation",
-                THIRD_PARTY_SIGN_IN_AND_UP_HEADER_TITLE: "Sign Up / Sign In",
+                AUTH_PAGE_HEADER_TITLE_SIGN_IN_AND_UP: "Sign Up / Sign In",
+                AUTH_PAGE_HEADER_TITLE_SIGN_IN: "Sign In",
+                AUTH_PAGE_HEADER_TITLE_SIGN_UP: "Sign Up",
 
-                THIRD_PARTY_SIGN_IN_UP_FOOTER_START: "By continuing, you agree to our ",
-                THIRD_PARTY_SIGN_IN_UP_FOOTER_TOS: "Terms of Service",
-                THIRD_PARTY_SIGN_IN_UP_FOOTER_AND: " and ",
-                THIRD_PARTY_SIGN_IN_UP_FOOTER_PP: "Privacy Policy",
-                THIRD_PARTY_SIGN_IN_UP_FOOTER_END: "",
+                AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_START: "Not registered yet?",
+                AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_SIGN_UP_LINK: "Sign Up",
+                AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_END: "",
+
+                AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_START: "Already have an account?",
+                AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_SIGN_IN_LINK: "Sign In",
+                AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_END: "",
+
+                AUTH_PAGE_FOOTER_START: "By continuing, you agree to our ",
+                AUTH_PAGE_FOOTER_TOS: "Terms of Service",
+                AUTH_PAGE_FOOTER_AND: " and ",
+                AUTH_PAGE_FOOTER_PP: "Privacy Policy",
+                AUTH_PAGE_FOOTER_END: "",
+
+                DIVIDER_OR: "or",
+
                 THIRD_PARTY_PROVIDER_DEFAULT_BTN_START: "Continue with ",
                 THIRD_PARTY_PROVIDER_DEFAULT_BTN_END: "",
 
@@ -38,6 +52,7 @@ i18next.init({
                 BRANDING_POWERED_BY_START: "Powered by ",
                 BRANDING_POWERED_BY_END: "",
                 SOMETHING_WENT_WRONG_ERROR: "Something went wrong. Please try again.",
+                SOMETHING_WENT_WRONG_ERROR_RELOAD: "Something went wrong. Please try again later or reload the page.",
                 EMAIL_VERIFICATION_RESEND_SUCCESS: "Email resent",
                 EMAIL_VERIFICATION_SEND_TITLE: "Verify your email address",
                 EMAIL_VERIFICATION_SEND_DESC_START: "",
@@ -62,7 +77,7 @@ i18next.init({
                 EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_START: "Not registered yet?",
                 EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_SIGN_UP_LINK: "Sign Up",
                 EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_END: "",
-                EMAIL_PASSWORD_SIGN_IN_FOOTER_FORGOT_PW_LINK: "Forgot password?",
+                EMAIL_PASSWORD_SIGN_IN_FORGOT_PW_LINK: "Forgot password?",
                 EMAIL_PASSWORD_SIGN_IN_SUBMIT_BTN: "SIGN IN",
                 EMAIL_PASSWORD_SIGN_IN_WRONG_CREDENTIALS_ERROR: "Incorrect email and password combination",
 
@@ -71,7 +86,7 @@ i18next.init({
                 EMAIL_PASSWORD_SIGN_UP_HEADER_SUBTITLE_SIGN_IN_LINK: "Sign In",
                 EMAIL_PASSWORD_SIGN_UP_HEADER_SUBTITLE_END: "",
                 EMAIL_PASSWORD_SIGN_UP_FOOTER_START: "By continuing, you agree to our ",
-                EMAIL_PASSWORD_SIGN_UP_FOOTER_TOS: "Terms of Service",
+                AUTH_PAGE_FOOTER_TOS: "Terms of Service",
                 EMAIL_PASSWORD_SIGN_UP_FOOTER_AND: " and ",
                 EMAIL_PASSWORD_SIGN_UP_FOOTER_PP: "Privacy Policy",
                 EMAIL_PASSWORD_SIGN_UP_FOOTER_END: "",
@@ -114,8 +129,8 @@ i18next.init({
         },
         hu: {
             translation: {
-                EMAIL_PASSWORD_SIGN_IN_HEADER_TITLE: "Bejelentkezés",
-                EMAIL_PASSWORD_SIGN_UP_HEADER_TITLE: "Regisztráció",
+                AUTH_PAGE_HEADER_TITLE_SIGN_IN: "Bejelentkezés",
+                AUTH_PAGE_HEADER_TITLE_SIGN_UP: "Regisztráció",
             },
         },
     },
@@ -150,7 +165,8 @@ SuperTokens.init({
         EmailVerification.init({
             mode: "REQUIRED",
         }),
-        ThirdPartyEmailPassword.init({
+        EmailPassword.init(),
+        ThirdParty.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init(), Apple.init()],
             },
@@ -169,7 +185,8 @@ function App() {
                         <Routes>
                             {/* This shows the login UI on "/auth" route */}
                             {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
-                                ThirdPartyEmailPasswordPreBuiltUI,
+                                ThirdPartyPreBuiltUI,
+                                EmailPasswordPreBuiltUI,
                                 EmailVerificationPreBuiltUI,
                             ])}
                             <Route

@@ -1,7 +1,7 @@
 <script>
     import { Link } from "svelte-navigator";
     import Session from "supertokens-auth-react/recipe/session";
-    import { signOut } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+    import { signOut } from "supertokens-auth-react/recipe/session";
     import { onMount } from "svelte";
 
     let sess;

@@ -1,5 +1,5 @@
 /* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
- *
+co *
  * This software is licensed under the Apache License, Version 2.0 (the
  * "License") as published by the Apache Software Foundation.
  *
@@ -258,7 +258,7 @@ describe("SuperTokens Account linking", function () {
                 // 2. Log out
                 await logOut(page);
 
-                await waitForSTElement(page, `input[name=emailOrPhone]`);
+                await waitForSTElement(page, `input[name=email]`);
 
                 // 3. Try sign up with email password
                 await tryEmailPasswordSignUp(page, email);
@@ -299,7 +299,7 @@ describe("SuperTokens Account linking", function () {
                 // 3. Log out
                 await logOut(page);
 
-                await waitForSTElement(page, `input[name=emailOrPhone]`);
+                await waitForSTElement(page, `input[name=email]`);
 
                 await setAccountLinkingConfig(true, true, true);
                 // 4. Try sign in with emailpassword
@@ -333,7 +333,7 @@ describe("SuperTokens Account linking", function () {
                 // 2. Log out
                 await logOut(page);
 
-                await waitForSTElement(page, `input[name=emailOrPhone]`);
+                await waitForSTElement(page, `input[name=email]`);
 
                 // 3. Try sign up with third party
                 await tryThirdPartySignInUp(page, email, false);
@@ -359,7 +359,7 @@ describe("SuperTokens Account linking", function () {
                 // 2. Log out
                 await logOut(page);
 
-                await waitForSTElement(page, `input[name=emailOrPhone]`);
+                await waitForSTElement(page, `input[name=email]`);
 
                 // 3. Sign up with third party
                 await tryThirdPartySignInUp(page, email2, false);
@@ -398,7 +398,7 @@ describe("SuperTokens Account linking", function () {
                 // 3. Log out
                 await logOut(page);
 
-                await waitForSTElement(page, `input[name=emailOrPhone]`);
+                await waitForSTElement(page, `input[name=email]`);
 
                 await setAccountLinkingConfig(true, true, true);
                 // 4. Try sign in with third party
@@ -427,7 +427,7 @@ describe("SuperTokens Account linking", function () {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
-                await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
+                await setInputValues(page, [{ name: "email", value: email }]);
                 await submitForm(page);
 
                 assert.strictEqual(
@@ -453,7 +453,7 @@ describe("SuperTokens Account linking", function () {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
-                await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
+                await setInputValues(page, [{ name: "email", value: email }]);
                 await submitForm(page);
 
                 assert.strictEqual(
@@ -531,7 +531,7 @@ describe("SuperTokens Account linking", function () {
                 // 3. Log out
                 await logOut(page);
 
-                await waitForSTElement(page, `input[name=emailOrPhone]`);
+                await waitForSTElement(page, `input[name=email]`);
 
                 await setAccountLinkingConfig(true, true, true);
                 // 4. Try sign in with emailpassword
@@ -578,7 +578,7 @@ async function tryPasswordlessSignInUp(page, email) {
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 
-    await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
+    await setInputValues(page, [{ name: "email", value: email }]);
     await submitForm(page);
 
     await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");

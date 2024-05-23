@@ -581,8 +581,8 @@ describe("SuperTokens Routing in Test App", function () {
                     page.goto(`${TEST_CLIENT_BASE_URL}/`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
-                const signUpButtonLabel = await getSubmitFormButtonLabel(page);
-                assert.strictEqual(signUpButtonLabel, "SIGN IN");
+                const continueButtonLabel = await getSubmitFormButtonLabel(page);
+                assert.strictEqual(continueButtonLabel, "SIGN IN");
                 // Click on forgot password link.
                 await clickForgotPasswordLink(page);
                 const buttonLabel = await getSubmitFormButtonLabel(page);
@@ -707,7 +707,7 @@ describe("SuperTokens Routing in Test App", function () {
 
             it("/auth should show sign up form", async function () {
                 await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth-for-factors?factors=emailpassword`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 const signUpButtonLabel = await getSubmitFormButtonLabel(page);
@@ -737,7 +737,7 @@ describe("SuperTokens Routing in Test App", function () {
 
             it("/auth should show signin form", async function () {
                 await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth-for-factors?factors=emailpassword`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 const signInButtonLabel = await getSubmitFormButtonLabelWithoutShadowDom(page);

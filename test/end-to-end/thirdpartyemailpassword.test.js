@@ -58,6 +58,7 @@ import {
     EMAIL_EXISTS_API,
     GET_AUTH_URL_API,
     TEST_APPLICATION_SERVER_BASE_URL,
+    SIGN_IN_API,
 } from "../constants";
 
 /*
@@ -82,6 +83,7 @@ describe("SuperTokens Third Party Email Password", function () {
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
+            // console.log(log);
             if (log.startsWith("ST_LOGS")) {
                 consoleLogs.push(log);
             }
@@ -296,24 +298,24 @@ describe("SuperTokens Third Party Email Password", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_AUTHORISATION_URL",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS GET_AUTHORISATION_URL",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE SET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_AUTHORISATION_URL",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
+                "ST_LOGS THIRD_PARTY OVERRIDE SET_OAUTH_STATE",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE SIGN_IN_AND_UP",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS THIRD_PARTY_SIGN_IN_UP",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS THIRD_PARTY_SIGN_IN_UP",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
 
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
 
-                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS THIRD_PARTY_EMAIL_PASSWORD",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS THIRD_PARTY",
 
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
@@ -379,7 +381,7 @@ describe("SuperTokens Third Party Email Password", function () {
                 this.skip();
             }
             await assertProviders(page);
-            await setEnabledRecipes(["thirdpartyemailpassword"], []);
+            await setEnabledRecipes(["thirdparty"], []);
 
             await Promise.all([
                 page.waitForResponse(
@@ -402,10 +404,10 @@ describe("SuperTokens Third Party Email Password", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE SIGN_IN_AND_UP",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
@@ -433,7 +435,7 @@ describe("SuperTokens Third Party Email Password", function () {
         it("Test that pre api hook is called when using it in overrides", async function () {
             // This will trigger a function call to getAuthorisationURLWithQueryParamsAndSetState
             await page.evaluate(() =>
-                window.dispatchEvent(new Event("TPEP.getAuthorisationURLWithQueryParamsAndSetState"))
+                window.dispatchEvent(new Event("TP.getAuthorisationURLWithQueryParamsAndSetState"))
             );
             await waitFor(2000); // Adding delay to let network call finish
 
@@ -908,9 +910,12 @@ describe("SuperTokens Third Party Email Password", function () {
 
         it("Check if incorrect getDefaultValue throws error", async function () {
             await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_GETDEFAULT"));
-            let pageErrorMessage = "";
+            let setPageError;
+            let pageErrorMessage = new Promise((res) => {
+                setPageError = res;
+            });
             page.on("pageerror", (err) => {
-                pageErrorMessage = err.message;
+                setPageError(err.message);
             });
 
             await page.reload({
@@ -920,7 +925,7 @@ describe("SuperTokens Third Party Email Password", function () {
 
             const expectedErrorMessage = "getDefaultValue for country must return a string";
             assert(
-                pageErrorMessage.includes(expectedErrorMessage),
+                (await pageErrorMessage).includes(expectedErrorMessage),
                 `Expected "${expectedErrorMessage}" to be included in page-error`
             );
         });
@@ -932,9 +937,12 @@ describe("SuperTokens Third Party Email Password", function () {
             });
             await toggleSignInSignUp(page);
 
-            let pageErrorMessage = "";
+            let setPageError;
+            let pageErrorMessage = new Promise((res) => {
+                setPageError = res;
+            });
             page.on("pageerror", (err) => {
-                pageErrorMessage = err.message;
+                setPageError(err.message);
             });
 
             // check terms and condition checkbox since it emits non-string value => boolean
@@ -943,16 +951,19 @@ describe("SuperTokens Third Party Email Password", function () {
 
             const expectedErrorMessage = "terms value must be a string";
             assert(
-                pageErrorMessage.includes(expectedErrorMessage),
+                (await pageErrorMessage).includes(expectedErrorMessage),
                 `Expected "${expectedErrorMessage}" to be included in page-error`
             );
         });
 
         it("Check if empty string for nonOptionalErrorMsg throws error", async function () {
             const expectedErrorMessage = "nonOptionalErrorMsg for field city cannot be an empty string";
-            let pageErrorMessage = "";
+            let setPageError;
+            let pageErrorMessage = new Promise((res) => {
+                setPageError = res;
+            });
             page.on("pageerror", (err) => {
-                pageErrorMessage = err.message;
+                setPageError(err.message);
             });
 
             await page.evaluate(() =>
@@ -962,14 +973,10 @@ describe("SuperTokens Third Party Email Password", function () {
                 waitUntil: "domcontentloaded",
             });
 
-            if (pageErrorMessage !== "") {
-                assert(
-                    pageErrorMessage.includes(expectedErrorMessage),
-                    `Expected "${expectedErrorMessage}" to be included in page-error`
-                );
-            } else {
-                throw "Empty nonOptionalErrorMsg should throw error";
-            }
+            assert(
+                (await pageErrorMessage).includes(expectedErrorMessage),
+                `Expected "${expectedErrorMessage}" to be included in page-error`
+            );
         });
     });
 });

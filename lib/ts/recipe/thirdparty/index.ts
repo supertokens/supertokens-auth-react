@@ -41,8 +41,7 @@ import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventCo
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./utils";
 
 import type { UserContext } from "../../types";
-import type { StateObject } from "supertokens-web-js/recipe/thirdparty";
-import type { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import type { StateObject, RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdparty";
 import type { User } from "supertokens-web-js/types";
 
 export default class Wrapper {

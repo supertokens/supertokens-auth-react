@@ -18,7 +18,7 @@
  */
 import intlTelInput from "intl-tel-input";
 import phoneNumberInputLibStyles from "intl-tel-input/build/css/intlTelInput.css";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import ErrorIcon from "../../../../../components/assets/errorIcon";
 import { ST_ROOT_ID } from "../../../../../constants";
@@ -55,63 +55,53 @@ function PhoneNumberInput({
         }
     }
 
-    const [phoneInputInstance, setPhoneInputInstance] = useState<intlTelInput.Plugin>();
-
-    const onChangeRef = useRef<typeof onChange>();
-    useEffect(() => {
-        onChangeRef.current = onChange;
-    }, [onChange]);
-
     const handleChange = useCallback(
         (newValue: string) => {
-            if (onChangeRef.current !== undefined) {
-                onChangeRef.current(newValue);
-            }
+            onChange(newValue);
         },
-        [onChangeRef]
+        [onChange]
     );
 
     const handleCountryChange = useCallback(
         (ev) => {
-            if (onChangeRef.current !== undefined && phoneInputInstance !== undefined) {
-                onChangeRef.current(ev.target.value);
-            }
+            onChange(ev.target.value);
         },
-        [onChangeRef]
+        [onChange]
     );
 
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const itiRef = useRef<intlTelInput.Plugin | null>(null);
 
     useEffect(() => {
-        if (inputRef.current !== null && inputRef.current.value !== value && phoneInputInstance) {
-            phoneInputInstance.setNumber(value);
+        if (inputRef.current !== null && inputRef.current.value !== value && itiRef.current) {
+            itiRef.current.setNumber(value);
         }
-    }, [phoneInputInstance, value]);
+    }, [itiRef, value]);
 
     useEffect(() => {
-        if (inputRef.current !== null && inputRef.current.dataset["intl-tel-input-id"] === undefined) {
-            const iti = intlTelInput(inputRef.current, {
+        if (inputRef.current !== null && itiRef.current === null) {
+            itiRef.current = intlTelInput(inputRef.current, {
                 initialCountry: defaultCountry,
                 nationalMode: false,
                 preferredCountries: defaultCountry ? [defaultCountry] : [],
             });
 
             if (value.length > 0) {
-                iti.setNumber(value);
+                itiRef.current.setNumber(value);
             } else if (defaultCountry === undefined) {
                 // We set the country to an empty string, because this will display the Unknown flag
                 // instead of the first one in the list
-                iti.setCountry("");
+                itiRef.current.setCountry("");
             } else {
                 // if we get here that means that value is empty and defaultCountry is not undefined
-                const data = iti.getSelectedCountryData();
+                const data = itiRef.current.getSelectedCountryData();
                 // In this case we want to also signal to the embedding form that we are prefilling this.
                 handleChange("+" + data.dialCode);
             }
 
             // This is a workaround, since the lib adds the dropdown to the body directly,
             // if it detects a mobile environment, but this doesn't work with our styling if we use shadow dom
-            const anyIti = iti as any;
+            const anyIti = itiRef as any;
             if (anyIti.isMobile) {
                 const root = document.getElementById(ST_ROOT_ID);
 
@@ -130,7 +120,6 @@ function PhoneNumberInput({
                 }
             }
             inputRef.current.addEventListener("countrychange", handleCountryChange);
-            setPhoneInputInstance(iti);
         }
     }, []);
 
@@ -153,7 +142,7 @@ function PhoneNumberInput({
             <div data-supertokens={`phoneInputWrapper inputWrapper ${hasError ? "inputError" : ""}`}>
                 <input
                     type="tel"
-                    data-supertokens="input"
+                    data-supertokens={`input input-${name}`}
                     name={name + "_text"}
                     autoFocus={autofocus}
                     autoComplete={autoComplete}

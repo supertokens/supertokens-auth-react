@@ -1,20 +1,13 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
-import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
+import { getSuperTokensRoutesForReactRouterDom, AuthPage } from "supertokens-auth-react/ui";
+import { ResetPasswordUsingToken } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
-import {
-    ResetPasswordUsingToken,
-    SignInAndUp as TPSignInAndUp,
-    ThirdPartySignInAndUpCallback,
-} from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
 import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from "./App";
-import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
-import { ThirdPartyPasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartypasswordless/prebuiltui";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
-import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { ThirdPartyPreBuiltUI, SignInAndUpCallback } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
 import { MultiFactorAuthPreBuiltUI } from "supertokens-auth-react/recipe/multifactorauth/prebuiltui";
 import { TOTPPreBuiltUI } from "supertokens-auth-react/recipe/totp/prebuiltui";
 import { AccessDeniedScreen } from "supertokens-auth-react/recipe/session/prebuiltui";
@@ -26,20 +19,14 @@ function AppWithReactDomRouter(props) {
     const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
 
     let recipePreBuiltUIList = [TOTPPreBuiltUI];
-    if (enabledRecipes.includes("emailpassword")) {
-        recipePreBuiltUIList.push(EmailPasswordPreBuiltUI);
-    }
-    if (enabledRecipes.includes("thirdparty")) {
+    if (enabledRecipes.some((r) => r.startsWith("thirdparty"))) {
         recipePreBuiltUIList.push(ThirdPartyPreBuiltUI);
     }
-    if (enabledRecipes.includes("thirdpartyemailpassword")) {
-        recipePreBuiltUIList.push(ThirdPartyEmailPasswordPreBuiltUI);
+    if (enabledRecipes.some((r) => r.endsWith("emailpassword"))) {
+        recipePreBuiltUIList.push(EmailPasswordPreBuiltUI);
     }
-    if (enabledRecipes.includes("passwordless")) {
+    if (enabledRecipes.some((r) => r.endsWith("passwordless"))) {
         recipePreBuiltUIList.push(PasswordlessPreBuiltUI);
-    }
-    if (enabledRecipes.includes("thirdpartypasswordless")) {
-        recipePreBuiltUIList.push(ThirdPartyPasswordlessPreBuiltUI);
     }
 
     if (emailVerificationMode !== "OFF") {
@@ -128,7 +115,24 @@ function AppWithReactDomRouter(props) {
                         />
 
                         <Route path="/contact" element={<Contact />} />
-                        <Route path="/custom-supertokens-login" element={<SignInAndUp />} />
+                        <Route
+                            path="/custom-supertokens-login"
+                            element={
+                                <AuthPage factors={["emailpassword"]} preBuiltUIList={[EmailPasswordPreBuiltUI]} />
+                            }
+                        />
+                        <Route
+                            path="/auth-for-factors"
+                            element={
+                                <AuthPage
+                                    preBuiltUIList={recipePreBuiltUIList}
+                                    userContext={{
+                                        key: "value",
+                                    }}
+                                    factors={new URLSearchParams(window.location.search).get("factors")?.split(",")}
+                                />
+                            }
+                        />
 
                         {/* User context paths */}
                         {isForUserContext && (
@@ -147,7 +151,7 @@ function AppWithReactDomRouter(props) {
                         <Route
                             path="/auth/customcallback/auth0"
                             element={
-                                <ThirdPartySignInAndUpCallback
+                                <SignInAndUpCallback
                                     userContext={{
                                         key: "value",
                                     }}
@@ -159,10 +163,12 @@ function AppWithReactDomRouter(props) {
                             <Route
                                 path="/auth"
                                 element={
-                                    <TPSignInAndUp
+                                    <AuthPage
+                                        preBuiltUIList={[ThirdPartyPreBuiltUI]}
                                         userContext={{
                                             key: "value",
                                         }}
+                                        factors={["thirdparty"]}
                                     />
                                 }
                             />

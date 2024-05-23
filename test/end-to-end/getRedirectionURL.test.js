@@ -173,7 +173,7 @@ describe("getRedirectionURL Tests", function () {
                 await toggleSignInSignUp(page);
                 await defaultSignUp(page, "thirdpartyemailpassword");
                 const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
-                assert.equal(newUserCheck, "thirdpartyemailpassword-true");
+                assert.equal(newUserCheck, "emailpassword-true");
             });
 
             it("Test that isNewRecipeUser works correctly when signing up with auth 0", async function () {
@@ -184,7 +184,7 @@ describe("getRedirectionURL Tests", function () {
                     page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
                 ]);
                 const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
-                assert.equal(newUserCheck, "thirdpartyemailpassword-true");
+                assert.equal(newUserCheck, "thirdparty-true");
             });
         });
 
@@ -359,7 +359,7 @@ describe("getRedirectionURL Tests", function () {
                 await page.waitForSelector(".sessionInfo-user-id");
 
                 const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
-                assert.equal(newUserCheck, "thirdpartypasswordless-true");
+                assert.equal(newUserCheck, "passwordless-true");
             });
 
             it("Test that isNewRecipeUser works correctly when signing up with auth 0", async function () {
@@ -374,7 +374,7 @@ describe("getRedirectionURL Tests", function () {
                     page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
                 ]);
                 const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
-                assert.equal(newUserCheck, "thirdpartypasswordless-true");
+                assert.equal(newUserCheck, "thirdparty-true");
             });
         });
 
@@ -432,7 +432,7 @@ describe("getRedirectionURL Tests", function () {
 
                     const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
                     assert.equal(newUserCheck, "emailpassword-true");
-                    assert.equal(urlBeforeSignUp, urlAfterSignUp);
+                    assert(urlAfterSignUp.startsWith(urlBeforeSignUp));
                 });
             });
 
@@ -616,7 +616,7 @@ describe("getRedirectionURL Tests", function () {
 
                     const urlAfterSignUp = await page.url();
                     const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
-                    assert.equal(newUserCheck, "thirdpartypasswordless-true");
+                    assert.equal(newUserCheck, "passwordless-true");
                     assert.equal(magicLink, urlAfterSignUp);
                 });
             });

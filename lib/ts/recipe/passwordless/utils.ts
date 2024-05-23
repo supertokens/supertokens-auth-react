@@ -13,22 +13,12 @@
  * under the License.
  */
 
-import SuperTokens from "../../superTokens";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
-import MultiFactorAuth from "../multifactorauth/recipe";
-import { FactorIds } from "../multifactorauth/types";
 
-import {
-    defaultPhoneNumberValidator,
-    defaultPhoneNumberValidatorForCombinedInput,
-    defaultEmailValidator,
-    defaultEmailValidatorForCombinedInput,
-    defaultGuessInternationPhoneNumberFromInputPhoneNumber,
-} from "./validators";
+import { defaultEmailValidator } from "./validators";
 
 import type { Config, NormalisedConfig, SignInUpFeatureConfigInput } from "./types";
 import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
-import type { DynamicLoginMethodsContextValue } from "../multitenancy/dynamicLoginMethodsContext";
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
@@ -52,18 +42,14 @@ export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
         config.validateEmailAddress !== undefined
     ) {
         validateEmailAddress = config.validateEmailAddress;
-    } else if (config.contactMethod === "EMAIL_OR_PHONE") {
-        validateEmailAddress = defaultEmailValidatorForCombinedInput;
     }
 
-    let validatePhoneNumber: NormalisedConfig["validatePhoneNumber"] = defaultPhoneNumberValidator;
+    let validatePhoneNumber: NormalisedConfig["validatePhoneNumber"] = undefined;
     if (
         (config.contactMethod === "PHONE" || config.contactMethod === "EMAIL_OR_PHONE") &&
         config.validatePhoneNumber !== undefined
     ) {
         validatePhoneNumber = config.validatePhoneNumber;
-    } else if (config.contactMethod === "EMAIL_OR_PHONE") {
-        validatePhoneNumber = defaultPhoneNumberValidatorForCombinedInput;
     }
 
     return {
@@ -88,14 +74,7 @@ function normalizeSignInUpFeatureConfig(
         | SignInUpFeatureConfigInput
         | (SignInUpFeatureConfigInput & {
               defaultCountry?: string | undefined;
-          })
-        | (SignInUpFeatureConfigInput & {
-              guessInternationPhoneNumberFromInputPhoneNumber?:
-                  | ((
-                        inputPhoneNumber: string,
-                        defaultCountryFromConfig?: string | undefined
-                    ) => string | Promise<string | undefined> | undefined)
-                  | undefined;
+              defaultToEmail?: boolean;
           })
         | undefined,
     config: Config
@@ -104,7 +83,7 @@ function normalizeSignInUpFeatureConfig(
         throw new Error("Please pass a positive number as resendEmailOrSMSGapInSeconds");
     }
 
-    const signInUpFeature = {
+    return {
         ...signInUpInput,
         resendEmailOrSMSGapInSeconds:
             signInUpInput?.resendEmailOrSMSGapInSeconds === undefined ? 15 : signInUpInput.resendEmailOrSMSGapInSeconds,
@@ -120,17 +99,13 @@ function normalizeSignInUpFeatureConfig(
             "defaultCountry" in signInUpInput
                 ? signInUpInput.defaultCountry
                 : undefined,
-
-        guessInternationPhoneNumberFromInputPhoneNumber:
-            config.contactMethod === "EMAIL_OR_PHONE" &&
+        defaultToEmail:
             signInUpInput !== undefined &&
-            "guessInternationPhoneNumberFromInputPhoneNumber" in signInUpInput &&
-            signInUpInput.guessInternationPhoneNumberFromInputPhoneNumber !== undefined
-                ? signInUpInput.guessInternationPhoneNumberFromInputPhoneNumber
-                : defaultGuessInternationPhoneNumberFromInputPhoneNumber,
+            "defaultToEmail" in signInUpInput &&
+            signInUpInput.defaultToEmail !== undefined
+                ? signInUpInput.defaultToEmail
+                : true,
     };
-
-    return signInUpFeature;
 }
 
 function normalisePasswordlessBaseConfig<T>(config?: T & FeatureBaseConfig): T & NormalisedBaseConfig {
@@ -139,54 +114,4 @@ function normalisePasswordlessBaseConfig<T>(config?: T & FeatureBaseConfig): T &
         ...(config as T),
         style,
     };
-}
-
-export function getEnabledContactMethods(
-    contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE",
-    currentDynamicLoginMethods: DynamicLoginMethodsContextValue
-) {
-    let enabledContactMethods = contactMethod === "EMAIL_OR_PHONE" ? ["EMAIL", "PHONE"] : [contactMethod];
-
-    let firstFactors;
-    if (SuperTokens.usesDynamicLoginMethods) {
-        if (!currentDynamicLoginMethods.loaded) {
-            throw new Error(
-                "This should never happen: dynamic login methods not loaded before passwordless UI rendered"
-            );
-        }
-        firstFactors = currentDynamicLoginMethods.loginMethods.firstFactors;
-    } else {
-        firstFactors = MultiFactorAuth.getInstance()?.config.firstFactors;
-    }
-
-    if (firstFactors !== undefined) {
-        if (enabledContactMethods.includes("PHONE")) {
-            if (!firstFactors.includes(FactorIds.OTP_PHONE) && !firstFactors.includes(FactorIds.LINK_PHONE)) {
-                enabledContactMethods = enabledContactMethods.filter((c) => c !== "PHONE");
-            }
-        } else {
-            if (firstFactors.includes(FactorIds.OTP_PHONE) || firstFactors.includes(FactorIds.LINK_PHONE)) {
-                throw new Error(
-                    "The enabled contact method is not a superset of the requested first factors. Please make sure that Passwordless / ThirdPartyPasswordless init is configured correctly on the frontend to include PHONE or EMAIL_OR_PHONE."
-                );
-            }
-        }
-
-        if (enabledContactMethods.includes("EMAIL")) {
-            if (!firstFactors.includes(FactorIds.OTP_EMAIL) && !firstFactors.includes(FactorIds.LINK_EMAIL)) {
-                enabledContactMethods = enabledContactMethods.filter((c) => c !== "EMAIL");
-            }
-        } else {
-            if (firstFactors.includes(FactorIds.OTP_EMAIL) || firstFactors.includes(FactorIds.LINK_EMAIL)) {
-                throw new Error(
-                    "The enabled contact method is not a superset of the requested first factors. Please make sure that Passwordless / ThirdPartyPasswordless init is configured correctly on the frontend to include EMAIL or EMAIL_OR_PHONE."
-                );
-            }
-        }
-    }
-
-    if (enabledContactMethods.length === 0) {
-        throw new Error("The enabled contact method is not a superset of the requested first factors");
-    }
-    return enabledContactMethods;
 }

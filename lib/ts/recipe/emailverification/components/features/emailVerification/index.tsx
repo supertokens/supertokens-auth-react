@@ -22,6 +22,7 @@ import { useContext, useState, useMemo, useCallback, Fragment } from "react";
 import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
+import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import { clearQueryParams, getQueryParams, useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
 import { SessionContext } from "../../../../session";
@@ -165,7 +166,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
-                useShadowDom={props.recipe.config.useShadowDom}
+                useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}
                 defaultStore={defaultTranslationsEmailVerification}>
                 <Fragment>
                     {/* No custom theme, use default. */}

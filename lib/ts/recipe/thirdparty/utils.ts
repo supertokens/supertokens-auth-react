@@ -87,11 +87,7 @@ export function normaliseSignInAndUpFeature(
         config.providers = [];
     }
 
-    const disableDefaultUI = config.disableDefaultUI === true;
     const style = config.style !== undefined ? config.style : "";
-    const privacyPolicyLink = config.privacyPolicyLink;
-    const termsOfServiceLink = config.termsOfServiceLink;
-
     /*
      * Convert custom configs to custom providers.
      */
@@ -112,9 +108,6 @@ export function normaliseSignInAndUpFeature(
     );
 
     return {
-        disableDefaultUI,
-        privacyPolicyLink,
-        termsOfServiceLink,
         style,
         providers,
     };

@@ -8,14 +8,18 @@ import { SessionAuth } from "../session";
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import { default as MFATOTPFeature } from "./components/features/mfa";
 import MFATOTPTheme from "./components/themes/mfa";
+import { defaultTranslationsTOTP } from "./components/themes/translations";
 import { DEFAULT_TOTP_PATH } from "./constants";
 import TOTPRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { FeatureBaseProps, RecipeFeatureComponentMap, UserContext } from "../../types";
+import type { AuthComponent } from "../../types";
 
 export class TOTPPreBuiltUI extends RecipeRouter {
     static instance?: TOTPPreBuiltUI;
+    languageTranslations = defaultTranslationsTOTP;
+
     constructor(public readonly recipeInstance: TOTPRecipe) {
         super();
     }
@@ -81,6 +85,10 @@ export class TOTPPreBuiltUI extends RecipeRouter {
             </UserContextWrapper>
         );
     };
+
+    getAuthComponents(): AuthComponent[] {
+        return [];
+    }
 
     // For tests
     static reset(): void {

@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import { Fragment, useState } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import { useCallback } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
@@ -91,6 +91,7 @@ function InputComponentWrapper(props: {
 
     return field.inputComponent !== undefined ? (
         <field.inputComponent
+            key={field.id}
             type={type}
             name={field.id}
             validated={fstate.validated === true}
@@ -105,6 +106,7 @@ function InputComponentWrapper(props: {
         />
     ) : (
         <Input
+            key={field.id}
             type={type}
             name={field.id}
             validated={fstate.validated === true}
@@ -135,6 +137,24 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
     const [fieldStates, setFieldStates] = useState<FieldState[]>(
         props.formFields.map((f) => ({ id: f.id, value: fetchDefaultValue(f) }))
     );
+    useEffect(() => {
+        setFieldStates((fs) => {
+            let ret = fs;
+            const fieldsWithoutState = props.formFields.filter((f) => !fieldStates.some((s) => f.id === s.id));
+            // If there is a formfield missing from the states array, we fill with the default value
+            if (fieldsWithoutState.length > 0) {
+                fs = [...fs, ...fieldsWithoutState.map((f) => ({ id: f.id, value: fetchDefaultValue(f) }))];
+            }
+
+            // If a field has been removed from formFields, we want to remove it from the states array as well.
+            if (fieldStates.some((s) => !props.formFields.some((f) => f.id === s.id))) {
+                ret = fs.filter((s) => props.formFields.some((f) => f.id === s.id));
+            }
+
+            return ret;
+        });
+    }, [props.formFields, setFieldStates]);
+
     const [isLoading, setIsLoading] = useState(false);
 
     const updateFieldState = useCallback(
@@ -145,7 +165,7 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                     return [...os, update({ id, value: "" })];
                 }
 
-                return os.filter((f) => f !== field).concat(update(field));
+                return os.filter((f) => f.id !== field.id).concat(update(field));
             });
         },
         [setFieldStates]
@@ -286,54 +306,70 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
     );
 
     return (
-        <form autoComplete="on" noValidate onSubmit={onFormSubmit} data-supertokens={props.formDataSupertokens}>
-            {formFields.map((field) => {
-                let type = "text";
-                // If email or password, replace field type.
-                if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
-                    type = field.id;
-                }
-                if (field.id === "confirm-password") {
-                    type = "password";
-                }
+        <FormStateContext.Provider value={fieldStates}>
+            <form autoComplete="on" noValidate onSubmit={onFormSubmit} data-supertokens={props.formDataSupertokens}>
+                {formFields
+                    .filter((f) => f.hidden !== true)
+                    .map((field) => {
+                        let type = "text";
+                        // If email or password, replace field type.
+                        if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
+                            type = field.id;
+                        }
+                        if (field.id === "confirm-password") {
+                            type = "password";
+                        }
 
-                const fstate: FieldState | undefined = fieldStates.find((s) => s.id === field.id);
-                if (fstate === undefined) {
-                    throw new Error("Should never come here");
-                }
+                        const fstate: FieldState | undefined = fieldStates.find((s) => s.id === field.id) || {
+                            id: field.id,
+                            value: fetchDefaultValue(field),
+                        };
 
-                return (
-                    <FormRow key={field.id} hasError={fstate.error !== undefined}>
-                        <Fragment>
-                            {showLabels &&
-                                (field.labelComponent !== undefined ? (
-                                    field.labelComponent
-                                ) : (
-                                    <Label value={field.label} showIsRequired={field.showIsRequired} />
-                                ))}
+                        return (
+                            <FormRow key={field.id} hasError={fstate.error !== undefined}>
+                                <Fragment>
+                                    {showLabels &&
+                                        (field.labelComponent !== undefined ? (
+                                            field.labelComponent
+                                        ) : (
+                                            <Label value={field.label} showIsRequired={field.showIsRequired} />
+                                        ))}
 
-                            <InputComponentWrapper
-                                type={type}
-                                field={field}
-                                fstate={fstate}
-                                onInputFocus={onInputFocus}
-                                onInputBlur={onInputBlur}
-                                onInputChange={onInputChange}
-                            />
-                            {fstate.error && <InputError error={fstate.error} />}
-                        </Fragment>
-                    </FormRow>
-                );
-            })}
+                                    <InputComponentWrapper
+                                        type={type}
+                                        field={field}
+                                        fstate={fstate}
+                                        onInputFocus={onInputFocus}
+                                        onInputBlur={onInputBlur}
+                                        onInputChange={onInputChange}
+                                    />
+                                    {fstate.error && <InputError error={fstate.error} />}
+                                </Fragment>
+                            </FormRow>
+                        );
+                    })}
 
-            <FormRow key="form-button">
-                <Fragment>
-                    <Button disabled={isLoading} isLoading={isLoading} type="submit" label={buttonLabel} />
-                    {footer}
-                </Fragment>
-            </FormRow>
-        </form>
+                <FormRow key="form-button">
+                    <Fragment>
+                        <Button disabled={isLoading} isLoading={isLoading} type="submit" label={buttonLabel} />
+                        {footer}
+                    </Fragment>
+                </FormRow>
+            </form>
+        </FormStateContext.Provider>
     );
+};
+
+const FormStateContext = React.createContext<{ id: string; value: string }[] | undefined>(undefined);
+
+export const useFormFields = () => {
+    const ctx = useContext(FormStateContext);
+
+    if (ctx === undefined) {
+        throw new Error("useFormState used outside FormBase");
+    }
+
+    return ctx;
 };
 
 export default FormBase;

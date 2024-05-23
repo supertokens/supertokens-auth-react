@@ -103,23 +103,11 @@ describe("SuperTokens userContext with UI components test", function () {
         ]);
         await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_API);
 
-        assert(
-            consoleLogs.includes(
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE SEND_PASSWORD_RESET_EMAIL RECEIVED_USER_CONTEXT"
-            )
-        );
+        assert(consoleLogs.includes("ST_LOGS EMAIL_PASSWORD OVERRIDE SEND_PASSWORD_RESET_EMAIL RECEIVED_USER_CONTEXT"));
 
-        assert(
-            consoleLogs.includes(
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE SUBMIT_NEW_PASSWORD RECEIVED_USER_CONTEXT"
-            )
-        );
+        assert(consoleLogs.includes("ST_LOGS EMAIL_PASSWORD OVERRIDE SUBMIT_NEW_PASSWORD RECEIVED_USER_CONTEXT"));
 
-        assert(
-            consoleLogs.includes(
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_RESET_TOKEN_FROM_URL RECEIVED_USER_CONTEXT"
-            )
-        );
+        assert(consoleLogs.includes("ST_LOGS EMAIL_PASSWORD OVERRIDE GET_RESET_TOKEN_FROM_URL RECEIVED_USER_CONTEXT"));
     });
 
     it("Test that userContext is passed correctly when using third party with Auth0", async function () {
@@ -157,38 +145,22 @@ describe("SuperTokens userContext with UI components test", function () {
 
         assert(
             consoleLogs.includes(
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE RECEIVED_USER_CONTEXT"
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE RECEIVED_USER_CONTEXT"
             )
         );
 
-        assert(
-            consoleLogs.includes("ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GENERATE_STATE RECEIVED_USER_CONTEXT")
-        );
+        assert(consoleLogs.includes("ST_LOGS THIRD_PARTY OVERRIDE GENERATE_STATE RECEIVED_USER_CONTEXT"));
 
-        assert(
-            consoleLogs.includes("ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE SET_OAUTH_STATE RECEIVED_USER_CONTEXT")
-        );
+        assert(consoleLogs.includes("ST_LOGS THIRD_PARTY OVERRIDE SET_OAUTH_STATE RECEIVED_USER_CONTEXT"));
 
-        assert(
-            consoleLogs.includes(
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_AUTHORISATION_URL RECEIVED_USER_CONTEXT"
-            )
-        );
+        assert(consoleLogs.includes("ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_AUTHORISATION_URL RECEIVED_USER_CONTEXT"));
 
-        assert(
-            consoleLogs.includes("ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE SIGN_IN_AND_UP RECEIVED_USER_CONTEXT")
-        );
+        assert(consoleLogs.includes("ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP RECEIVED_USER_CONTEXT"));
 
-        assert(
-            consoleLogs.includes("ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_STATE RECEIVED_USER_CONTEXT")
-        );
+        assert(consoleLogs.includes("ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE RECEIVED_USER_CONTEXT"));
 
-        assert(consoleLogs.includes("ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE VERIFY_STATE RECEIVED_USER_CONTEXT"));
+        assert(consoleLogs.includes("ST_LOGS THIRD_PARTY OVERRIDE VERIFY_STATE RECEIVED_USER_CONTEXT"));
 
-        assert(
-            consoleLogs.includes(
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_AUTHORISATION_URL RECEIVED_USER_CONTEXT"
-            )
-        );
+        assert(consoleLogs.includes("ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_AUTHORISATION_URL RECEIVED_USER_CONTEXT"));
     });
 });

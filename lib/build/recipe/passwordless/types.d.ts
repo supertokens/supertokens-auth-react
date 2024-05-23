@@ -1,4 +1,6 @@
+import type { ContinueWithPasswordlessTheme } from "./components/themes/continueWithPasswordless";
 import type { LinkClickedScreen } from "./components/themes/linkClickedScreen";
+import type { LinkSent } from "./components/themes/linkSent";
 import type { LoadingScreen } from "./components/themes/mfa/loadingScreen";
 import type { MFAFooter } from "./components/themes/mfa/mfaFooter";
 import type { MFAHeader } from "./components/themes/mfa/mfaHeader";
@@ -6,21 +8,27 @@ import type { MFAOTPFooter } from "./components/themes/mfa/mfaOTPFooter";
 import type { MFAOTPHeader } from "./components/themes/mfa/mfaOTPHeader";
 import type { EmailForm } from "./components/themes/signInUp/emailForm";
 import type { EmailOrPhoneForm } from "./components/themes/signInUp/emailOrPhoneForm";
-import type { LinkSent } from "./components/themes/signInUp/linkSent";
 import type { PhoneForm } from "./components/themes/signInUp/phoneForm";
-import type { SignInUpFooter } from "./components/themes/signInUp/signInUpFooter";
-import type { SignInUpHeader } from "./components/themes/signInUp/signInUpHeader";
-import type { UserInputCodeForm } from "./components/themes/signInUp/userInputCodeForm";
-import type { UserInputCodeFormFooter } from "./components/themes/signInUp/userInputCodeFormFooter";
-import type { UserInputCodeFormHeader } from "./components/themes/signInUp/userInputCodeFormHeader";
+import type { EPComboEmailForm } from "./components/themes/signInUpEPCombo/emailForm";
+import type { EPComboEmailOrPhoneForm } from "./components/themes/signInUpEPCombo/emailOrPhoneForm";
+import type { UserInputCodeFormFooter } from "./components/themes/userInputCodeForm/userInputCodeFormFooter";
+import type { UserInputCodeFormHeader } from "./components/themes/userInputCodeForm/userInputCodeFormHeader";
+import type { UserInputCodeFormScreen } from "./components/themes/userInputCodeForm/userInputCodeFormScreen";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig, NormalisedBaseConfig, UserContext, WebJSRecipeInterface } from "../../types";
+import type {
+    APIFormField,
+    FeatureBaseConfig,
+    NormalisedBaseConfig,
+    UserContext,
+    WebJSRecipeInterface,
+} from "../../types";
 import type {
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipe/types";
+import type { FormBaseAPIResponse } from "../emailpassword/types";
 import type { Dispatch } from "react";
 import type WebJSRecipe from "supertokens-web-js/recipe/passwordless";
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
@@ -39,7 +47,6 @@ export declare type PreAPIHookContext = {
 export declare type GetRedirectionURLContext = never;
 export declare type OnHandleEventContext =
     | {
-          rid: "passwordless";
           action: "SUCCESS";
           isNewRecipeUser: boolean;
           createdNewSession: boolean;
@@ -58,20 +65,14 @@ export declare type PasswordlessNormalisedBaseConfig = {
 } & NormalisedBaseConfig;
 export declare type NormalisedConfig = {
     validateEmailAddress: (email: string) => Promise<string | undefined> | string | undefined;
-    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
+    validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
     signInUpFeature: {
         resendEmailOrSMSGapInSeconds: number;
         defaultCountry?: string;
-        guessInternationPhoneNumberFromInputPhoneNumber: (
-            inputPhoneNumber: string,
-            defaultCountryFromConfig?: string
-        ) => Promise<string | undefined> | string | undefined;
-        privacyPolicyLink?: string;
-        termsOfServiceLink?: string;
+        defaultToEmail: boolean;
         emailOrPhoneFormStyle: string;
         userInputCodeFormStyle: string;
         linkSentScreenStyle: string;
-        disableDefaultUI?: boolean;
     };
     linkClickedScreenFeature: PasswordlessNormalisedBaseConfig;
     mfaFeature: PasswordlessNormalisedBaseConfig;
@@ -86,10 +87,7 @@ export declare type PasswordlessFeatureBaseConfig = {
     disableDefaultUI?: boolean;
 } & FeatureBaseConfig;
 export declare type SignInUpFeatureConfigInput = {
-    disableDefaultUI?: boolean;
     resendEmailOrSMSGapInSeconds?: number;
-    privacyPolicyLink?: string;
-    termsOfServiceLink?: string;
     emailOrPhoneFormStyle?: string;
     userInputCodeFormStyle?: string;
     linkSentScreenStyle?: string;
@@ -113,10 +111,7 @@ export declare type UserInput = (
           validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
           signInUpFeature?: SignInUpFeatureConfigInput & {
               defaultCountry?: string;
-              guessInternationPhoneNumberFromInputPhoneNumber?: (
-                  inputPhoneNumber: string,
-                  defaultCountryFromConfig?: string
-              ) => Promise<string | undefined> | string | undefined;
+              defaultToEmail?: boolean;
           };
       }
 ) & {
@@ -143,20 +138,20 @@ export declare type MFAProps = {
         showAccessDenied: boolean;
         error: string | undefined;
     };
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
     userContext?: UserContext;
 };
 export declare type SignInUpProps = {
     recipeImplementation: RecipeImplementation;
+    factorIds: string[];
     config: NormalisedConfig;
     onSuccess?: (result: { createdNewRecipeUser: boolean; user: User }) => void;
-    dispatch: Dispatch<PasswordlessSignInUpAction>;
     onFetchError: (err: Response) => void;
-    featureState: {
-        loginAttemptInfo?: LoginAttemptInfo;
-        loaded: boolean;
-        error: string | undefined;
-    };
+    onError: (err: string) => void;
+    error: string | undefined;
+    clearError: () => void;
     userContext: UserContext;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 };
 export declare type LoginAttemptInfo = {
     deviceId: string;
@@ -198,6 +193,7 @@ export declare type SignInUpPhoneFormProps = {
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: () => void;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 };
 export declare type SignInUpEmailOrPhoneFormProps = {
     clearError: () => void;
@@ -207,6 +203,7 @@ export declare type SignInUpEmailOrPhoneFormProps = {
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: () => void;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 };
 export declare type SignInUpUserInputCodeFormProps = {
     clearError: () => void;
@@ -225,32 +222,61 @@ export declare type LinkClickedScreenProps = {
     consumeCode: () => void;
     onSuccess?: () => void;
 };
-export declare type PasswordlessSignInUpAction =
-    | {
-          type: "load";
-          loginAttemptInfo: LoginAttemptInfo | undefined;
-          error: string | undefined;
-      }
-    | {
-          type: "startLogin";
-          loginAttemptInfo: LoginAttemptInfo;
-      }
-    | {
-          type: "resendCode";
-          timestamp: number;
-      }
-    | {
-          type: "restartFlow";
-          error: string | undefined;
-      }
-    | {
-          type: "setError";
-          error: string | undefined;
-      };
-export declare type SignInUpState = {
+export declare type SignInUpEPComboEmailOrPhoneFormProps = {
+    showPasswordField: boolean;
+    showContinueWithPasswordlessLink: boolean;
+    clearError: () => void;
+    isPhoneNumber: boolean;
+    setIsPhoneNumber: (isPhone: boolean) => void;
+    onContactInfoSubmit: (contactInfo: string) => Promise<FormBaseAPIResponse<unknown>>;
+    onPasswordSubmit: (formFields: APIFormField[]) => Promise<FormBaseAPIResponse<unknown>>;
+    onContinueWithPasswordlessClick: (contactInfo: string) => Promise<void>;
+    onSuccess: (
+        result:
+            | {
+                  status: "OK";
+                  user: User;
+                  createdNewRecipeUser: boolean;
+                  isEmailPassword: true;
+              }
+            | {
+                  status: "OK";
+                  isEmailPassword: false | undefined;
+              }
+    ) => void;
+    onError: (error: string) => void;
+    onFetchError: (error: Response) => void;
     error: string | undefined;
-    loaded: boolean;
-    loginAttemptInfo: LoginAttemptInfo | undefined;
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
+};
+export declare type SignInUpEPComboEmailFormProps = {
+    showPasswordField: boolean;
+    showContinueWithPasswordlessLink: boolean;
+    clearError: () => void;
+    onContactInfoSubmit: (contactInfo: string) => Promise<FormBaseAPIResponse<unknown>>;
+    onPasswordSubmit: (formFields: APIFormField[]) => Promise<FormBaseAPIResponse<unknown>>;
+    onContinueWithPasswordlessClick: (contactInfo: string) => Promise<void>;
+    onSuccess: (
+        result:
+            | {
+                  status: "OK";
+                  user: User;
+                  createdNewRecipeUser: boolean;
+                  isEmailPassword: true;
+              }
+            | {
+                  status: "OK";
+                  isEmailPassword: false | undefined;
+              }
+    ) => void;
+    onError: (error: string) => void;
+    onFetchError: (error: Response) => void;
+    error: string | undefined;
+    recipeImplementation: RecipeImplementation;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
+    config: NormalisedConfig;
 };
 export declare type MFAAction =
     | {
@@ -287,7 +313,31 @@ export declare type MFAState = {
     loginAttemptInfo: LoginAttemptInfo | undefined;
     canChangeEmail: boolean;
 };
-export declare type SignInUpChildProps = Omit<SignInUpProps, "featureState" | "dispatch">;
+export declare type SignInUpChildProps = SignInUpProps;
+export declare type SignInUpEPComboChildProps = Omit<SignInUpProps, "onSuccess"> & {
+    isPhoneNumber: boolean;
+    setIsPhoneNumber: (isPhone: boolean) => void;
+    showPasswordField: boolean;
+    showContinueWithPasswordlessLink: boolean;
+    onContactInfoSubmit: (contactInfo: string) => Promise<FormBaseAPIResponse<unknown>>;
+    onPasswordSubmit: (formFields: APIFormField[]) => Promise<FormBaseAPIResponse<unknown>>;
+    onContinueWithPasswordlessClick: (contactInfo: string) => Promise<void>;
+    onSuccess: (
+        result:
+            | {
+                  status: "OK";
+                  user: User;
+                  createdNewRecipeUser: boolean;
+                  isEmailPassword: true;
+              }
+            | {
+                  status: "OK";
+                  isEmailPassword: false | undefined;
+              }
+    ) => void;
+    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
+};
+export declare type LinkSentChildProps = LinkSentThemeProps;
 export declare type MFAChildProps = Omit<MFAProps, "featureState" | "dispatch">;
 export declare type LinkSentThemeProps = {
     clearError: () => void;
@@ -336,16 +386,17 @@ export declare type MFAOTPHeaderProps = {
     config: NormalisedConfig;
 };
 export declare type ComponentOverrideMap = {
-    PasswordlessSignInUpHeader_Override?: ComponentOverride<typeof SignInUpHeader>;
-    PasswordlessSignInUpFooter_Override?: ComponentOverride<typeof SignInUpFooter>;
     PasswordlessEmailForm_Override?: ComponentOverride<typeof EmailForm>;
     PasswordlessPhoneForm_Override?: ComponentOverride<typeof PhoneForm>;
     PasswordlessEmailOrPhoneForm_Override?: ComponentOverride<typeof EmailOrPhoneForm>;
+    PasswordlessEPComboEmailForm_Override?: ComponentOverride<typeof EPComboEmailForm>;
+    PasswordlessEPComboEmailOrPhoneForm_Override?: ComponentOverride<typeof EPComboEmailOrPhoneForm>;
     PasswordlessUserInputCodeFormHeader_Override?: ComponentOverride<typeof UserInputCodeFormHeader>;
     PasswordlessUserInputCodeFormFooter_Override?: ComponentOverride<typeof UserInputCodeFormFooter>;
-    PasswordlessUserInputCodeForm_Override?: ComponentOverride<typeof UserInputCodeForm>;
+    PasswordlessUserInputCodeForm_Override?: ComponentOverride<typeof UserInputCodeFormScreen>;
     PasswordlessLinkSent_Override?: ComponentOverride<typeof LinkSent>;
     PasswordlessLinkClickedScreen_Override?: ComponentOverride<typeof LinkClickedScreen>;
+    PasswordlessContinueWithPasswordless_Override?: ComponentOverride<typeof ContinueWithPasswordlessTheme>;
     PasswordlessMFAHeader_Override?: ComponentOverride<typeof MFAHeader>;
     PasswordlessMFAFooter_Override?: ComponentOverride<typeof MFAFooter>;
     PasswordlessMFAOTPHeader_Override?: ComponentOverride<typeof MFAOTPHeader>;

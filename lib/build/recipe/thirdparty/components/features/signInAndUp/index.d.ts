@@ -1,20 +1,22 @@
 import * as React from "react";
-import type { FeatureBaseProps, UserContext } from "../../../../../types";
+import type { Navigate, PartialAuthComponentProps, UserContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
-import type {
-    ComponentOverrideMap,
-    ThirdPartySignInAndUpState,
-    ThirdPartySignInUpActions,
-    ThirdPartySignInUpChildProps,
-} from "../../../types";
-export declare const useFeatureReducer: () => [ThirdPartySignInAndUpState, React.Dispatch<ThirdPartySignInUpActions>];
-export declare function useChildProps(recipe: Recipe): ThirdPartySignInUpChildProps;
-export declare function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChildProps | undefined;
-declare type PropType = FeatureBaseProps<{
+import type { ComponentOverrideMap, SignInAndUpThemeProps } from "../../../types";
+export declare function useChildProps(
+    recipe: Recipe,
+    error: string | undefined,
+    onError: (err: string) => void,
+    clearError: () => void,
+    rebuildAuthPage: () => void,
+    setFactorList: (factorIds: string[]) => void,
+    navigate: Navigate | undefined,
+    userContext: UserContext
+): SignInAndUpThemeProps;
+declare type PropType = PartialAuthComponentProps & {
     recipe: Recipe;
     userContext?: UserContext;
     useComponentOverrides: () => ComponentOverrideMap;
-}>;
+};
 export declare const SignInAndUpFeature: React.FC<PropType>;
 declare const SignInAndUpFeatureWrapper: React.FC<PropType>;
 export default SignInAndUpFeatureWrapper;

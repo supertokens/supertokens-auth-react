@@ -20,8 +20,6 @@ import { useUserContext } from "../../../../../usercontext";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { defaultValidate } from "../../../../emailpassword/validators";
 
-import { SignInUpFooter } from "./signInUpFooter";
-
 import type { SignInUpEmailFormProps } from "../../../types";
 
 export const EmailForm = withOverride(
@@ -75,14 +73,7 @@ export const EmailForm = withOverride(
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                footer={
-                    props.footer ?? (
-                        <SignInUpFooter
-                            privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
-                            termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
-                        />
-                    )
-                }
+                footer={props.footer}
             />
         );
     }

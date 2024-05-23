@@ -2,7 +2,8 @@ const express = require("express");
 const supertokens = require("supertokens-node");
 const Session = require("supertokens-node/recipe/session");
 const EmailVerification = require("supertokens-node/recipe/emailverification");
-const ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
+const ThirdParty = require("supertokens-node/recipe/thirdparty");
+const EmailPassword = require("supertokens-node/recipe/emailpassword");
 const { middleware, errorHandler } = require("supertokens-node/framework/express");
 const cors = require("cors");
 const Dashboard = require("supertokens-node/recipe/dashboard");
@@ -26,33 +27,37 @@ supertokens.init({
         websiteDomain, // TODO: Change to your app's website domain
     },
     recipeList: [
-        ThirdPartyEmailPassword.init({
-            providers: [
-                // We have provided you with development keys which you can use for testsing.
-                // IMPORTANT: Please replace them with your own OAuth keys for production use.
-                {
-                    config: {
-                        thirdPartyId: "google",
-                        clients: [
-                            {
-                                clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
-                                clientSecret: "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",
-                            },
-                        ],
+        EmailPassword.init(),
+        ThirdParty.init({
+            signInAndUpFeature: {
+                providers: [
+                    // We have provided you with development keys which you can use for testsing.
+                    // IMPORTANT: Please replace them with your own OAuth keys for production use.
+                    {
+                        config: {
+                            thirdPartyId: "google",
+                            clients: [
+                                {
+                                    clientId:
+                                        "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
+                                    clientSecret: "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",
+                                },
+                            ],
+                        },
                     },
-                },
-                {
-                    config: {
-                        thirdPartyId: "github",
-                        clients: [
-                            {
-                                clientId: "467101b197249757c71f",
-                                clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
-                            },
-                        ],
+                    {
+                        config: {
+                            thirdPartyId: "github",
+                            clients: [
+                                {
+                                    clientId: "467101b197249757c71f",
+                                    clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
+                                },
+                            ],
+                        },
                     },
-                },
-            ],
+                ],
+            },
         }),
         Session.init(), // initializes session features
         Dashboard.init(),

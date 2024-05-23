@@ -4,8 +4,9 @@ import { render, waitFor } from "@testing-library/react";
 import SuperTokens from "../../../../lib/ts/superTokens";
 import Session from "../../../../lib/ts/recipe/session/recipe";
 import Recipe from "../../../../lib/ts/recipe/passwordless/recipe";
-import { SignInUp } from "../../../../lib/ts/recipe/passwordless/prebuiltui";
 import { SessionContextType } from "../../../../lib/ts/recipe/session";
+import { AuthPage } from "../../../../lib/ts/ui";
+import { PasswordlessPreBuiltUI } from "../../../../lib/ts/recipe/passwordless/prebuiltui";
 
 const MockSession = {
     addEventListener: jest.fn(),
@@ -14,6 +15,9 @@ const MockSession = {
     doesSessionExist: jest.fn(),
     validateClaims: jest.fn(),
     validateGlobalClaimsAndHandleSuccessRedirection: jest.fn().mockReturnValue(new Promise(() => {})),
+    config: {
+        onHandleEvent: jest.fn(),
+    },
 };
 
 const setMockResolvesSession = (ctx: SessionContextType) => {
@@ -48,10 +52,10 @@ describe("Passwordless.SingInUp", () => {
                 websiteBasePath: "/auth",
                 websiteDomain,
             },
+            useShadowDom: false,
             recipeList: [
                 Recipe.init({
                     contactMethod: "EMAIL_OR_PHONE",
-                    useShadowDom: false,
                 }),
             ],
         });
@@ -67,19 +71,13 @@ describe("Passwordless.SingInUp", () => {
 
     test("redirect if session exists", async () => {
         // when
-        render(<SignInUp />);
+        render(<AuthPage preBuiltUIList={[PasswordlessPreBuiltUI]} />);
         // then
         await waitFor(() => {
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledTimes(1);
             expect(MockSession.validateGlobalClaimsAndHandleSuccessRedirection).toHaveBeenCalledWith(
-                {
-                    action: "SUCCESS",
-                    recipeId: "passwordless",
-                    newSessionCreated: false,
-                    isNewRecipeUser: false,
-                    createdNewUser: false,
-                },
-                "passwordless",
+                undefined,
+                "session",
                 undefined,
                 {},
                 undefined
@@ -89,7 +87,12 @@ describe("Passwordless.SingInUp", () => {
 
     test("not redirect if session exists but redirectOnSessionExists=false", async () => {
         // when
-        const result = render(<SignInUp redirectOnSessionExists={false}> mockRenderedText </SignInUp>);
+        const result = render(
+            <AuthPage preBuiltUIList={[PasswordlessPreBuiltUI]} redirectOnSessionExists={false}>
+                {" "}
+                mockRenderedText{" "}
+            </AuthPage>
+        );
 
         expect(await result.findByText(`mockRenderedText`)).toBeInTheDocument();
         // then

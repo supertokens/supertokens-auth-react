@@ -85,10 +85,6 @@
     cursor: pointer;
 }
 
-[data-supertokens~="forgotPasswordLink"] {
-    margin-top: 10px;
-}
-
 [data-supertokens~="enterEmailSuccessMessage"] {
     margin-top: 15px;
     margin-bottom: 15px;
@@ -144,6 +140,10 @@
     padding-bottom: 0;
 }
 
+[data-supertokens~="formRow"]:last-child {
+    padding-bottom: 0;
+}
+
 [data-supertokens~="sendVerifyEmailIcon"] {
     margin-top: 11px;
 }
@@ -196,4 +196,12 @@
 
 [data-supertokens~="resendEmailLink"] {
     display: inline-block;
+}
+
+[data-supertokens~="resetPasswordEmailForm"] {
+    padding-bottom: 20px;
+}
+
+[data-supertokens~="resetPasswordPasswordForm"] {
+    padding-bottom: 20px;
 }

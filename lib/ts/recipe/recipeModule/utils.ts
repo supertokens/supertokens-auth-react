@@ -25,9 +25,6 @@ export function normaliseRecipeModuleConfig<T, S, R>(config?: Config<T, S, R>): 
         postAPIHook = async () => {};
     }
 
-    let useShadowDom = config.useShadowDom === undefined ? true : config.useShadowDom;
-    useShadowDom = getShouldUseShadowDomBasedOnBrowser(useShadowDom);
-
     const rootStyle = config.style === undefined ? "" : config.style;
 
     return {
@@ -36,11 +33,6 @@ export function normaliseRecipeModuleConfig<T, S, R>(config?: Config<T, S, R>): 
         onHandleEvent,
         preAPIHook,
         postAPIHook,
-        useShadowDom,
-        rootStyle,
+        recipeRootStyle: rootStyle,
     };
-}
-
-function getShouldUseShadowDomBasedOnBrowser(useShadowDom?: boolean): boolean {
-    return useShadowDom !== undefined ? useShadowDom : true;
 }

@@ -17,6 +17,7 @@
  * Imports.
  */
 import { hasFontDefined } from "../../../../../styles/styles";
+import SuperTokens from "../../../../../superTokens";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { ThemeBase } from "../../../../emailpassword/components/themes/themeBase";
 import { useSessionContext } from "../../../../session";
@@ -44,14 +45,16 @@ export function EmailVerificationTheme(props: EmailVerificationThemeProps): JSX.
 }
 
 function EmailVerificationThemeWrapper(props: EmailVerificationThemeProps): JSX.Element {
-    const hasFont = hasFontDefined(props.config.rootStyle);
+    const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
+    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     return (
         <UserContextWrapper userContext={props.userContext}>
             <ThemeBase
                 loadDefaultFont={!hasFont}
                 userStyles={[
-                    props.config.rootStyle,
+                    rootStyle,
+                    props.config.recipeRootStyle,
                     props.verifyEmailLinkClickedScreen === undefined
                         ? props.config.sendVerifyEmailScreen.style
                         : props.config.verifyEmailLinkClickedScreen.style,

@@ -2,6 +2,7 @@ import React from "react";
 
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
+import SuperTokens from "../../../../../superTokens";
 import UI from "../../../../../ui";
 import { AccessDeniedScreenTheme } from "../../themes/accessDeniedScreenTheme";
 import { defaultTranslationsSession } from "../../themes/translations";
@@ -26,7 +27,7 @@ const AccessDeniedScreen: React.FC<
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 defaultStore={defaultTranslationsSession}
-                useShadowDom={props.useShadowDom ?? props.recipe.config.useShadowDom}>
+                useShadowDom={props.useShadowDom ?? SuperTokens.getInstanceOrThrow().useShadowDom}>
                 <AccessDeniedScreenTheme
                     config={props.recipe.config}
                     navigate={navigate}

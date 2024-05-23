@@ -40,18 +40,15 @@ import {
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
 import { getThirdPartyTestCases } from "./thirdparty.test";
-import { getPasswordlessTestCases } from "./passwordless.test";
 
 /*
  * Tests.
  */
 describe("SuperTokens Third Party Passwordless", function () {
-    const signInUpPageLoadLogs = isReact16()
-        ? ["ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO"]
-        : [
-              "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-              "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-          ];
+    const signInUpPageLoadLogs = [
+        "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+        "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+    ];
 
     before(async function () {
         const features = await getFeatureFlags();
@@ -64,9 +61,9 @@ describe("SuperTokens Third Party Passwordless", function () {
         getThirdPartyTestCases({
             authRecipe: "thirdpartypasswordless",
             rid: "thirdpartypasswordless",
-            logId: "THIRDPARTYPASSWORDLESS",
+            logId: "THIRDPARTY",
             signInUpPageLoadLogs,
-            thirdPartySignInUpLog: "THIRD_PARTY_SIGN_IN_AND_UP",
+            thirdPartySignInUpLog: "SIGN_IN_AND_UP",
         });
     });
 });

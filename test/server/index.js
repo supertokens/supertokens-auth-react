@@ -18,15 +18,11 @@ let { default: SuperTokensRaw } = require("supertokens-node/lib/build/supertoken
 const { default: EmailVerificationRaw } = require("supertokens-node/lib/build/recipe/emailverification/recipe");
 const { default: EmailPasswordRaw } = require("supertokens-node/lib/build/recipe/emailpassword/recipe");
 const { default: ThirdPartyRaw } = require("supertokens-node/lib/build/recipe/thirdparty/recipe");
-const {
-    default: ThirdPartyEmailPasswordRaw,
-} = require("supertokens-node/lib/build/recipe/thirdpartyemailpassword/recipe");
 const { default: SessionRaw } = require("supertokens-node/lib/build/recipe/session/recipe");
 let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
 let ThirdParty = require("supertokens-node/recipe/thirdparty");
 let EmailVerification = require("supertokens-node/recipe/emailverification");
-let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let express = require("express");
@@ -49,88 +45,27 @@ let {
 let { version: nodeSDKVersion } = require("supertokens-node/lib/build/version");
 const fetch = require("isomorphic-fetch");
 
-let passwordlessSupported;
-let PasswordlessRaw;
-let Passwordless;
+const PasswordlessRaw = require("supertokens-node/lib/build/recipe/passwordless/recipe").default;
+const Passwordless = require("supertokens-node/recipe/passwordless");
 
-try {
-    PasswordlessRaw = require("supertokens-node/lib/build/recipe/passwordless/recipe").default;
-    Passwordless = require("supertokens-node/recipe/passwordless");
-    passwordlessSupported = true;
-} catch (ex) {
-    passwordlessSupported = false;
-}
+const UserRolesRaw = require("supertokens-node/lib/build/recipe/userroles/recipe").default;
+const UserRoles = require("supertokens-node/recipe/userroles");
 
-let thirdPartyPasswordlessSupported;
-let ThirdPartyPasswordlessRaw;
-let ThirdPartyPasswordless;
+const MultitenancyRaw = require("supertokens-node/lib/build/recipe/multitenancy/recipe").default;
+const Multitenancy = require("supertokens-node/lib/build/recipe/multitenancy");
 
-try {
-    ThirdPartyPasswordlessRaw = require("supertokens-node/lib/build/recipe/thirdpartypasswordless/recipe").default;
-    ThirdPartyPasswordless = require("supertokens-node/recipe/thirdpartypasswordless");
-    thirdPartyPasswordlessSupported = true;
-} catch (ex) {
-    thirdPartyPasswordlessSupported = false;
-}
+const AccountLinkingRaw = require("supertokens-node/lib/build/recipe/accountlinking/recipe").default;
+const AccountLinking = require("supertokens-node/recipe/accountlinking");
 
-try {
-    UserRolesRaw = require("supertokens-node/lib/build/recipe/userroles/recipe").default;
-    UserRoles = require("supertokens-node/recipe/userroles");
-    userRolesSupported = true;
-} catch (ex) {
-    userRolesSupported = false;
-}
+const UserMetadataRaw = require("supertokens-node/lib/build/recipe/usermetadata/recipe").default;
+const UserMetadata = require("supertokens-node/recipe/usermetadata");
 
-let Multitenancy, MultitenancyRaw, multitenancySupported;
-try {
-    MultitenancyRaw = require("supertokens-node/lib/build/recipe/multitenancy/recipe").default;
-    Multitenancy = require("supertokens-node/lib/build/recipe/multitenancy");
-    multitenancySupported = true;
-} catch {
-    multitenancySupported = false;
-}
+const MultiFactorAuthRaw = require("supertokens-node/lib/build/recipe/multifactorauth/recipe").default;
+const MultiFactorAuth = require("supertokens-node/recipe/multifactorauth");
 
-let AccountLinking, AccountLinkingRaw, accountLinkingSupported;
-try {
-    AccountLinkingRaw = require("supertokens-node/lib/build/recipe/accountlinking/recipe").default;
-    AccountLinking = require("supertokens-node/recipe/accountlinking");
-    accountLinkingSupported = true;
-} catch (ex) {
-    accountLinkingSupported = false;
-}
+const TOTPRaw = require("supertokens-node/lib/build/recipe/totp/recipe").default;
+const TOTP = require("supertokens-node/recipe/totp");
 
-/** @type {import("supertokens-node/recipe/usermetadata").default | undefined} */
-let UserMetadata;
-let UserMetadataRaw, userMetadataSupported;
-try {
-    UserMetadataRaw = require("supertokens-node/lib/build/recipe/usermetadata/recipe").default;
-    UserMetadata = require("supertokens-node/recipe/usermetadata");
-    userMetadataSupported = true;
-} catch (ex) {
-    userMetadataSupported = false;
-}
-
-/** @type {import("supertokens-node/recipe/multifactorauth").default | undefined} */
-let MultiFactorAuth;
-let MultiFactorAuthRaw, multiFactorAuthSupported;
-try {
-    MultiFactorAuthRaw = require("supertokens-node/lib/build/recipe/multifactorauth/recipe").default;
-    MultiFactorAuth = require("supertokens-node/recipe/multifactorauth");
-    multiFactorAuthSupported = true;
-} catch (ex) {
-    multiFactorAuthSupported = false;
-}
-
-/** @type {import("supertokens-node/recipe/totp").default | undefined} */
-let TOTP;
-let TOTPRaw, totpSupported;
-try {
-    TOTPRaw = require("supertokens-node/lib/build/recipe/totp/recipe").default;
-    TOTP = require("supertokens-node/recipe/totp");
-    totpSupported = true;
-} catch (ex) {
-    totpSupported = false;
-}
 const OTPAuth = require("otpauth");
 
 let generalErrorSupported;
@@ -332,7 +267,7 @@ app.get("/sessioninfo", verifySession(), async (req, res, next) => {
         res.send({
             sessionHandle: session.getHandle(),
             userId: session.getUserId(),
-            recipeUserId: accountLinkingSupported ? session.getRecipeUserId().getAsString() : session.getUserId(),
+            recipeUserId: session.getRecipeUserId().getAsString(),
             accessTokenPayload,
             sessionData,
         });
@@ -342,11 +277,6 @@ app.get("/sessioninfo", verifySession(), async (req, res, next) => {
 });
 
 app.post("/deleteUser", async (req, res) => {
-    if (!accountLinkingSupported) {
-        const user = await EmailPassword.getUserByEmail("public", req.body.email);
-        return res.send(await SuperTokens.deleteUser(user.id));
-    }
-
     const users = await SuperTokens.listUsersByAccountInfo("public", req.body);
     res.send(await SuperTokens.deleteUser(users[0].id));
 });
@@ -381,7 +311,7 @@ app.post("/changeEmail", async (req, res) => {
 
 app.get("/unverifyEmail", verifySession(), async (req, res) => {
     let session = req.session;
-    await EmailVerification.unverifyEmail(accountLinkingSupported ? session.getRecipeUserId() : session.getUserId());
+    await EmailVerification.unverifyEmail(session.getRecipeUserId());
     await session.fetchAndSetClaim(EmailVerification.EmailVerificationClaim, {});
     res.send({ status: "OK" });
 });
@@ -544,35 +474,14 @@ app.post("/test/getTOTPCode", (req, res) => {
 app.get("/test/featureFlags", (req, res) => {
     const available = [];
 
-    if (passwordlessSupported) {
-        available.push("passwordless");
-    }
-
-    if (thirdPartyPasswordlessSupported) {
-        available.push("thirdpartypasswordless");
-    }
-
-    if (generalErrorSupported) {
-        available.push("generalerror");
-    }
-
-    if (userRolesSupported) {
-        available.push("userroles");
-    }
-
-    if (multitenancySupported) {
-        available.push("multitenancy");
-        available.push("multitenancyManagementEndpoints");
-    }
-
-    if (accountLinkingSupported) {
-        available.push("accountlinking");
-    }
-
-    if (multiFactorAuthSupported) {
-        available.push("mfa");
-    }
-
+    available.push("passwordless");
+    available.push("thirdpartypasswordless");
+    available.push("generalerror");
+    available.push("userroles");
+    available.push("multitenancy");
+    available.push("multitenancyManagementEndpoints");
+    available.push("accountlinking");
+    available.push("mfa");
     available.push("recipeConfig");
 
     res.send({
@@ -615,42 +524,18 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
 function initST() {
     if (process.env.TEST_MODE) {
         mfaInfo = {};
-        if (userRolesSupported) {
-            UserRolesRaw.reset();
-        }
 
-        if (thirdPartyPasswordlessSupported) {
-            ThirdPartyPasswordlessRaw.reset();
-        }
-
-        if (passwordlessSupported) {
-            PasswordlessRaw.reset();
-        }
-
-        if (multitenancySupported) {
-            MultitenancyRaw.reset();
-        }
-
-        if (accountLinkingSupported) {
-            AccountLinkingRaw.reset();
-        }
-
-        if (userMetadataSupported) {
-            UserMetadataRaw.reset();
-        }
-
-        if (multiFactorAuthSupported) {
-            MultiFactorAuthRaw.reset();
-        }
-
-        if (totpSupported) {
-            TOTPRaw.reset();
-        }
+        UserRolesRaw.reset();
+        PasswordlessRaw.reset();
+        MultitenancyRaw.reset();
+        AccountLinkingRaw.reset();
+        UserMetadataRaw.reset();
+        MultiFactorAuthRaw.reset();
+        TOTPRaw.reset();
 
         EmailVerificationRaw.reset();
         EmailPasswordRaw.reset();
         ThirdPartyRaw.reset();
-        ThirdPartyEmailPasswordRaw.reset();
         SessionRaw.reset();
 
         SuperTokensRaw.reset();
@@ -823,109 +708,6 @@ function initST() {
             }),
         ],
         [
-            "thirdpartyemailpassword",
-            ThirdPartyEmailPassword.init({
-                signUpFeature: {
-                    formFields,
-                },
-                emailDelivery: {
-                    override: (oI) => {
-                        return {
-                            ...oI,
-                            sendEmail: async (input) => {
-                                console.log(input.passwordResetLink);
-                                latestURLWithToken = input.passwordResetLink;
-                            },
-                        };
-                    },
-                },
-                providers:
-                    enabledProviders !== undefined
-                        ? fullProviderList.filter((config) => enabledProviders.includes(config.config))
-                        : fullProviderList,
-                override: {
-                    apis: (originalImplementation) => {
-                        return {
-                            ...originalImplementation,
-                            emailPasswordSignUpPOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API sign up",
-                                    };
-                                }
-
-                                return originalImplementation.emailPasswordSignUpPOST(input);
-                            },
-                            passwordResetPOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API reset password consume",
-                                    };
-                                }
-                                return originalImplementation.passwordResetPOST(input);
-                            },
-                            generatePasswordResetTokenPOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API reset password",
-                                    };
-                                }
-                                return originalImplementation.generatePasswordResetTokenPOST(input);
-                            },
-                            emailPasswordEmailExistsGET: async function (input) {
-                                let generalError = input.options.req.getKeyValueFromQuery("generalError");
-                                if (generalError === "true") {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API email exists",
-                                    };
-                                }
-                                return originalImplementation.emailPasswordEmailExistsGET(input);
-                            },
-                            emailPasswordSignInPOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API sign in",
-                                    };
-                                }
-                                return originalImplementation.emailPasswordSignInPOST(input);
-                            },
-                            authorisationUrlGET: async function (input) {
-                                let generalErrorFromQuery = input.options.req.getKeyValueFromQuery("generalError");
-                                if (generalErrorFromQuery === "true") {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API authorisation url get",
-                                    };
-                                }
-
-                                return originalImplementation.authorisationUrlGET(input);
-                            },
-                            thirdPartySignInUpPOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API sign in up",
-                                    };
-                                }
-
-                                return originalImplementation.thirdPartySignInUpPOST(input);
-                            },
-                        };
-                    },
-                },
-            }),
-        ],
-        [
             "session",
             Session.init({
                 overwriteSessionDuringSignIn: true,
@@ -971,142 +753,65 @@ function initST() {
         },
         ...passwordlessConfig,
     };
-    if (passwordlessSupported) {
-        recipeList.push([
-            "passwordless",
-            Passwordless.init({
-                ...passwordlessConfig,
-                override: {
-                    apis: (originalImplementation) => {
-                        return {
-                            ...originalImplementation,
-                            createCodePOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API create code",
-                                    };
-                                }
-                                return originalImplementation.createCodePOST(input);
-                            },
-                            resendCodePOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API resend code",
-                                    };
-                                }
-                                return originalImplementation.resendCodePOST(input);
-                            },
-                            consumeCodePOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API consume code",
-                                    };
-                                }
 
-                                const resp = await originalImplementation.consumeCodePOST(input);
+    recipeList.push([
+        "passwordless",
+        Passwordless.init({
+            ...passwordlessConfig,
+            override: {
+                apis: (originalImplementation) => {
+                    return {
+                        ...originalImplementation,
+                        createCodePOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API create code",
+                                };
+                            }
+                            return originalImplementation.createCodePOST(input);
+                        },
+                        resendCodePOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API resend code",
+                                };
+                            }
+                            return originalImplementation.resendCodePOST(input);
+                        },
+                        consumeCodePOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API consume code",
+                                };
+                            }
 
-                                return resp;
-                            },
-                        };
-                    },
+                            const resp = await originalImplementation.consumeCodePOST(input);
+
+                            return resp;
+                        },
+                    };
                 },
-            }),
-        ]);
-    }
+            },
+        }),
+    ]);
 
-    if (thirdPartyPasswordlessSupported) {
-        recipeList.push([
-            "thirdpartypasswordless",
-            ThirdPartyPasswordless.init({
-                ...passwordlessConfig,
-                providers:
-                    enabledProviders !== undefined
-                        ? fullProviderList.filter((config) => enabledProviders.includes(config.config))
-                        : fullProviderList,
-                override: {
-                    apis: (originalImplementation) => {
-                        return {
-                            ...originalImplementation,
-                            authorisationUrlGET: async function (input) {
-                                let generalErrorFromQuery = input.options.req.getKeyValueFromQuery("generalError");
-                                if (generalErrorFromQuery === "true") {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API authorisation url get",
-                                    };
-                                }
+    recipeList.push(["userroles", UserRoles.init()]);
 
-                                return originalImplementation.authorisationUrlGET(input);
-                            },
-                            thirdPartySignInUpPOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API sign in up",
-                                    };
-                                }
-
-                                return originalImplementation.thirdPartySignInUpPOST(input);
-                            },
-                            createCodePOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API create code",
-                                    };
-                                }
-                                return originalImplementation.createCodePOST(input);
-                            },
-                            resendCodePOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API resend code",
-                                    };
-                                }
-                                return originalImplementation.resendCodePOST(input);
-                            },
-                            consumeCodePOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API consume code",
-                                    };
-                                }
-                                return originalImplementation.consumeCodePOST(input);
-                            },
-                        };
-                    },
-                },
-            }),
-        ]);
-    }
-
-    if (userRolesSupported) {
-        recipeList.push(["userroles", UserRoles.init()]);
-    }
-
-    if (multitenancySupported) {
-        recipeList.push([
-            "multitenancy",
-            Multitenancy.init({
-                getAllowedDomainsForTenantId: (tenantId) => [
-                    `${tenantId}.example.com`,
-                    websiteDomain.replace(/https?:\/\/([^:\/]*).*/, "$1"),
-                ],
-            }),
-        ]);
-    }
+    recipeList.push([
+        "multitenancy",
+        Multitenancy.init({
+            getAllowedDomainsForTenantId: (tenantId) => [
+                `${tenantId}.example.com`,
+                websiteDomain.replace(/https?:\/\/([^:\/]*).*/, "$1"),
+            ],
+        }),
+    ]);
 
     accountLinkingConfig = {
         enabled: false,
@@ -1117,90 +822,84 @@ function initST() {
         },
         ...accountLinkingConfig,
     };
-    if (accountLinkingSupported) {
-        if (accountLinkingConfig.enabled) {
-            recipeList.push([
-                "accountlinking",
-                AccountLinking.init({
-                    shouldDoAutomaticAccountLinking: () => ({
-                        ...accountLinkingConfig.shouldAutoLink,
-                    }),
+    if (accountLinkingConfig.enabled) {
+        recipeList.push([
+            "accountlinking",
+            AccountLinking.init({
+                shouldDoAutomaticAccountLinking: () => ({
+                    ...accountLinkingConfig.shouldAutoLink,
                 }),
-            ]);
-        }
-    }
-    if (multiFactorAuthSupported) {
-        recipeList.push([
-            "multifactorauth",
-            MultiFactorAuth.init({
-                firstFactors: mfaInfo.firstFactors,
-                override: {
-                    functions: (oI) => ({
-                        ...oI,
-                        getFactorsSetupForUser: async (input) => {
-                            const res = await oI.getFactorsSetupForUser(input);
-                            if (mfaInfo?.alreadySetup) {
-                                return mfaInfo.alreadySetup;
-                            }
-                            return res;
-                        },
-                        assertAllowedToSetupFactorElseThrowInvalidClaimError: async (input) => {
-                            if (mfaInfo?.allowedToSetup) {
-                                if (!mfaInfo.allowedToSetup.includes(input.factorId)) {
-                                    throw new Session.Error({
-                                        type: "INVALID_CLAIMS",
-                                        message: "INVALID_CLAIMS",
-                                        payload: [
-                                            {
-                                                id: "test",
-                                                reason: "test override",
-                                            },
-                                        ],
-                                    });
-                                }
-                            } else {
-                                await oI.assertAllowedToSetupFactorElseThrowInvalidClaimError(input);
-                            }
-                        },
-                        getMFARequirementsForAuth: async (input) => {
-                            const res = await oI.getMFARequirementsForAuth(input);
-                            if (mfaInfo?.requirements) {
-                                return mfaInfo.requirements;
-                            }
-                            return res;
-                        },
-                    }),
-                    apis: (oI) => ({
-                        ...oI,
-                        resyncSessionAndFetchMFAInfoPUT: async (input) => {
-                            const res = await oI.resyncSessionAndFetchMFAInfoPUT(input);
-
-                            if (res.status === "OK") {
-                                if (mfaInfo.alreadySetup) {
-                                    res.factors.alreadySetup = [...mfaInfo.alreadySetup];
-                                }
-                            }
-                            if (mfaInfo.noContacts) {
-                                res.emails = {};
-                                res.phoneNumbers = {};
-                            }
-                            return res;
-                        },
-                    }),
-                },
             }),
         ]);
     }
+    recipeList.push([
+        "multifactorauth",
+        MultiFactorAuth.init({
+            firstFactors: mfaInfo.firstFactors,
+            override: {
+                functions: (oI) => ({
+                    ...oI,
+                    getFactorsSetupForUser: async (input) => {
+                        const res = await oI.getFactorsSetupForUser(input);
+                        if (mfaInfo?.alreadySetup) {
+                            return mfaInfo.alreadySetup;
+                        }
+                        return res;
+                    },
+                    assertAllowedToSetupFactorElseThrowInvalidClaimError: async (input) => {
+                        if (mfaInfo?.allowedToSetup) {
+                            if (!mfaInfo.allowedToSetup.includes(input.factorId)) {
+                                throw new Session.Error({
+                                    type: "INVALID_CLAIMS",
+                                    message: "INVALID_CLAIMS",
+                                    payload: [
+                                        {
+                                            id: "test",
+                                            reason: "test override",
+                                        },
+                                    ],
+                                });
+                            }
+                        } else {
+                            await oI.assertAllowedToSetupFactorElseThrowInvalidClaimError(input);
+                        }
+                    },
+                    getMFARequirementsForAuth: async (input) => {
+                        const res = await oI.getMFARequirementsForAuth(input);
+                        if (mfaInfo?.requirements) {
+                            return mfaInfo.requirements;
+                        }
+                        return res;
+                    },
+                }),
+                apis: (oI) => ({
+                    ...oI,
+                    resyncSessionAndFetchMFAInfoPUT: async (input) => {
+                        const res = await oI.resyncSessionAndFetchMFAInfoPUT(input);
 
-    if (totpSupported) {
-        recipeList.push([
-            "totp",
-            TOTP.init({
-                defaultPeriod: 1,
-                defaultSkew: 30,
-            }),
-        ]);
-    }
+                        if (res.status === "OK") {
+                            if (mfaInfo.alreadySetup) {
+                                res.factors.alreadySetup = [...mfaInfo.alreadySetup];
+                            }
+                        }
+                        if (mfaInfo.noContacts) {
+                            res.emails = {};
+                            res.phoneNumbers = {};
+                        }
+                        return res;
+                    },
+                }),
+            },
+        }),
+    ]);
+
+    recipeList.push([
+        "totp",
+        TOTP.init({
+            defaultPeriod: 1,
+            defaultSkew: 30,
+        }),
+    ]);
 
     SuperTokens.init({
         appInfo: {

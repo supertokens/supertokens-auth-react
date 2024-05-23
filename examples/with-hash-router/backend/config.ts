@@ -34,6 +34,18 @@ export const SuperTokensConfig: TypeInput = {
         Dashboard.init(),
         EmailVerification.init({
             mode: "REQUIRED",
+            emailDelivery: {
+                override: (oI) => ({
+                    ...oI,
+                    sendEmail: (input) => {
+                        input.emailVerifyLink = input.emailVerifyLink.replace(
+                            getWebsiteDomain(),
+                            `${getWebsiteDomain()}/#`
+                        );
+                        return oI.sendEmail(input);
+                    },
+                }),
+            },
         }),
     ],
 };

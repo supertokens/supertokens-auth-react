@@ -1,9 +1,11 @@
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
-import ThirdPartyEmailpassword, { Github, Google } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import ThirdParty, { Github, Google } from "supertokens-auth-react/recipe/thirdparty";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
-import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import "./App.css";
@@ -29,11 +31,14 @@ SuperTokens.init({
         websiteDomain: getWebsiteDomain(),
     },
     recipeList: [
-        MultiFactorAuth.init(),
+        MultiFactorAuth.init({
+            firstFactors: ["emailpassword", "thirdparty"],
+        }),
         Passwordless.init({
             contactMethod: "EMAIL",
         }),
-        ThirdPartyEmailpassword.init({
+        EmailPassword.init(),
+        ThirdParty.init({
             signInAndUpFeature: {
                 providers: [Github.init(), Google.init()],
             },
@@ -49,7 +54,8 @@ function App() {
                 <Router>
                     <Routes>
                         {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
-                            ThirdPartyEmailPasswordPreBuiltUI,
+                            ThirdPartyPreBuiltUI,
+                            EmailPasswordPreBuiltUI,
                             PasswordlessPreBuiltUI,
                         ])}
                         <Route

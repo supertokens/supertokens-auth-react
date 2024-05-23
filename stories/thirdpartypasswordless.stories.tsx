@@ -33,7 +33,7 @@ export const OTPFormPhone: Story = {
     loaders: [
         async () => ({
             funcOverrides: {
-                thirdpartypasswordless: overridePWlessWithLoginAttempt({
+                passwordless: overridePWlessWithLoginAttempt({
                     contactInfo: "+36701234567",
                     contactMethod: "PHONE",
                     flowType: "USER_INPUT_CODE",
@@ -53,7 +53,7 @@ export const OTPFormEmail: Story = {
     loaders: [
         async () => ({
             funcOverrides: {
-                thirdpartypasswordless: overridePWlessWithLoginAttempt({
+                passwordless: overridePWlessWithLoginAttempt({
                     contactInfo: "test@supertokens.com",
                     contactMethod: "EMAIL",
                     flowType: "USER_INPUT_CODE",
@@ -72,7 +72,7 @@ export const OTPOrLinkEmail: Story = {
     loaders: [
         async () => ({
             funcOverrides: {
-                thirdpartypasswordless: overridePWlessWithLoginAttempt({
+                passwordless: overridePWlessWithLoginAttempt({
                     contactInfo: "test@supertokens.com",
                     contactMethod: "EMAIL",
                     flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
@@ -92,7 +92,7 @@ export const OTPOrLinkPhone: Story = {
     loaders: [
         async () => ({
             funcOverrides: {
-                thirdpartypasswordless: overridePWlessWithLoginAttempt({
+                passwordless: overridePWlessWithLoginAttempt({
                     contactInfo: "+36701234567",
                     contactMethod: "PHONE",
                     flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
@@ -112,7 +112,7 @@ export const LinkSentEmail: Story = {
     loaders: [
         async () => ({
             funcOverrides: {
-                thirdpartypasswordless: overridePWlessWithLoginAttempt({
+                passwordless: overridePWlessWithLoginAttempt({
                     contactInfo: "test@supertokens.com",
                     contactMethod: "EMAIL",
                     flowType: "MAGIC_LINK",
@@ -132,7 +132,7 @@ export const LinkSentPhone: Story = {
     loaders: [
         async () => ({
             funcOverrides: {
-                thirdpartypasswordless: overridePWlessWithLoginAttempt({
+                passwordless: overridePWlessWithLoginAttempt({
                     contactInfo: "+36701234567",
                     contactMethod: "PHONE",
                     flowType: "MAGIC_LINK",
@@ -152,7 +152,7 @@ export const OTPResend: Story = {
     loaders: [
         async () => ({
             funcOverrides: {
-                thirdpartypasswordless: overridePWlessWithLoginAttempt({
+                passwordless: overridePWlessWithLoginAttempt({
                     contactInfo: "+36701234567",
                     contactMethod: "PHONE",
                     flowType: "USER_INPUT_CODE",
@@ -171,7 +171,7 @@ export const LinkResend: Story = {
     loaders: [
         async () => ({
             funcOverrides: {
-                thirdpartypasswordless: overridePWlessWithLoginAttempt({
+                passwordless: overridePWlessWithLoginAttempt({
                     contactInfo: "+36701234567",
                     contactMethod: "PHONE",
                     flowType: "MAGIC_LINK",

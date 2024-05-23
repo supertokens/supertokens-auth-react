@@ -2,29 +2,25 @@ import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
-import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
+import { FactorIds } from "../multifactorauth";
 import { RecipeRouter } from "../recipeRouter";
-import { SessionAuth } from "../session";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import ResetPasswordUsingTokenFeature from "./components/features/resetPasswordUsingToken";
-import SignInAndUpFeature from "./components/features/signInAndUp";
-import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
-import SignInAndUpTheme from "./components/themes/signInAndUp";
+import SignInFeature from "./components/features/signin";
+import SignUpFeature from "./components/features/signup";
+import ResetPasswordUsingTokenThemeWrapper from "./components/themes/resetPasswordUsingToken";
+import { defaultTranslationsEmailPassword } from "./components/themes/translations";
 import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
 import EmailPassword from "./recipe";
 
-import type {
-    GetRedirectionURLContext,
-    OnHandleEventContext,
-    PreAndPostAPIHookAction,
-    NormalisedConfig,
-} from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
+import type { AuthComponent } from "../../types";
 
 export class EmailPasswordPreBuiltUI extends RecipeRouter {
     static instance?: EmailPasswordPreBuiltUI;
+    languageTranslations = defaultTranslationsEmailPassword;
 
     constructor(public readonly recipeInstance: EmailPassword) {
         super();
@@ -45,7 +41,7 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
         return EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
     }
     static getFeatureComponent(
-        componentName: "signinup" | "resetpassword",
+        componentName: "resetpassword",
         props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
@@ -61,17 +57,6 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
-        if (this.recipeInstance.config.signInAndUpFeature.disableDefaultUI !== true) {
-            const normalisedFullPath = this.recipeInstance.config.appInfo.websiteBasePath.appendPath(
-                new NormalisedURLPath("/")
-            );
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
-                component: (props) => this.getFeatureComponent("signinup", props as any, useComponentOverrides),
-                recipeID: EmailPassword.RECIPE_ID,
-            };
-        }
-
         if (this.recipeInstance.config.resetPasswordUsingTokenFeature.disableDefaultUI !== true) {
             const normalisedFullPath = this.recipeInstance.config.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH)
@@ -86,44 +71,11 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
         return features;
     };
     getFeatureComponent = (
-        componentName: "signinup" | "resetpassword",
+        componentName: "resetpassword",
         props: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
-        if (componentName === "signinup") {
-            if (props.redirectOnSessionExists !== false) {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <AuthWidgetWrapper<
-                            GetRedirectionURLContext,
-                            PreAndPostAPIHookAction,
-                            OnHandleEventContext,
-                            NormalisedConfig
-                        >
-                            authRecipe={this.recipeInstance}
-                            navigate={props.navigate}>
-                            <SignInAndUpFeature
-                                recipe={this.recipeInstance}
-                                {...props}
-                                useComponentOverrides={useComponentOverrides}
-                            />
-                        </AuthWidgetWrapper>
-                    </UserContextWrapper>
-                );
-            } else {
-                return (
-                    <UserContextWrapper userContext={props.userContext}>
-                        <SessionAuth requireAuth={false} doRedirection={false}>
-                            <SignInAndUpFeature
-                                recipe={this.recipeInstance}
-                                {...props}
-                                useComponentOverrides={useComponentOverrides}
-                            />
-                        </SessionAuth>
-                    </UserContextWrapper>
-                );
-            }
-        } else if (componentName === "resetpassword") {
+        if (componentName === "resetpassword") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
                     <ResetPasswordUsingTokenFeature
@@ -138,6 +90,38 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
         }
     };
 
+    getAuthComponents(): AuthComponent[] {
+        return [
+            {
+                factorIds: [FactorIds.EMAILPASSWORD],
+                displayOrder: 2,
+                type: "SIGN_UP",
+                component: (props) => (
+                    <SignUpFeature
+                        key="emailpassword-sign-up"
+                        recipe={this.recipeInstance}
+                        useComponentOverrides={useRecipeComponentOverrideContext}
+                        {...props}
+                    />
+                ),
+            },
+            {
+                factorIds: [FactorIds.EMAILPASSWORD],
+                displayOrder: 2,
+                type: "SIGN_IN",
+                component: (props) => (
+                    <SignInFeature
+                        key="emailpassword-sign-in"
+                        recipe={this.recipeInstance}
+                        useComponentOverrides={useRecipeComponentOverrideContext}
+                        {...props}
+                    />
+                ),
+            },
+        ];
+    }
+    public requiresSignUpPage = true;
+
     // For tests
     static reset(): void {
         if (!isTest()) {
@@ -148,17 +132,12 @@ export class EmailPasswordPreBuiltUI extends RecipeRouter {
         return;
     }
 
-    static SignInAndUp = (
-        prop: FeatureBaseProps<{ redirectOnSessionExists?: boolean; userContext?: UserContext }> = {}
-    ) => EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("signinup", prop);
     static ResetPasswordUsingToken = (prop: FeatureBaseProps<{ userContext?: UserContext }>) =>
         EmailPasswordPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("resetpassword", prop);
 
-    static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
-    static SignInAndUpTheme = SignInAndUpTheme;
+    static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenThemeWrapper;
 }
 
-const SignInAndUp = EmailPasswordPreBuiltUI.SignInAndUp;
 const ResetPasswordUsingToken = EmailPasswordPreBuiltUI.ResetPasswordUsingToken;
 
-export { SignInAndUp, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme, SignInAndUpTheme };
+export { ResetPasswordUsingToken, ResetPasswordUsingTokenThemeWrapper as ResetPasswordUsingTokenTheme };

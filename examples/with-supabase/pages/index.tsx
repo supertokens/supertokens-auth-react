@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { redirectToAuth } from "supertokens-auth-react";
-import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import dynamic from "next/dynamic";
-import { useSessionContext, SessionAuth } from "supertokens-auth-react/recipe/session";
+import { useSessionContext, SessionAuth, signOut } from "supertokens-auth-react/recipe/session";
 import { getSupabase } from "../utils/supabase";
 
 export default function Home() {
@@ -46,7 +45,7 @@ function ProtectedPage() {
     }, [sessionContext]);
 
     async function logoutClicked() {
-        await ThirdPartyEmailPassword.signOut();
+        await signOut();
         redirectToAuth();
     }
 

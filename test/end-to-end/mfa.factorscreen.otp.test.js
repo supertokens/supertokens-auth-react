@@ -35,7 +35,13 @@ import {
     setAccountLinkingConfig,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
-import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API, SOMETHING_WENT_WRONG_ERROR } from "../constants";
+import {
+    CONSUME_CODE_API,
+    CREATE_CODE_API,
+    CREATE_TOTP_DEVICE_API,
+    MFA_INFO_API,
+    SOMETHING_WENT_WRONG_ERROR,
+} from "../constants";
 
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 import { getTestPhoneNumber } from "../exampleTestHelpers";
@@ -328,6 +334,89 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     }
                 });
 
+                it("should handle consumeCode restart flow error", async () => {
+                    await setMFAInfo({
+                        requirements: [factorId],
+                        alreadySetup: [factorId],
+                        allowedToSetup: [factorId],
+                    });
+
+                    await page.setRequestInterception(true);
+                    const requestHandler = (request) => {
+                        if (request.url() === CONSUME_CODE_API && request.method() === "POST") {
+                            return request.respond({
+                                status: 200,
+                                headers: {
+                                    "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                    "access-control-allow-credentials": "true",
+                                },
+                                body: JSON.stringify({
+                                    status: "RESTART_FLOW_ERROR",
+                                }),
+                            });
+                        }
+
+                        return request.continue();
+                    };
+                    page.on("request", requestHandler);
+                    try {
+                        await tryEmailPasswordSignIn(page, email);
+
+                        await completeOTP(page);
+
+                        await waitForAccessDenied(page);
+                    } finally {
+                        page.off("request", requestHandler);
+                        await page.setRequestInterception(false);
+                    }
+                });
+
+                it("should handle consumeCode restart flow error when setting up factor", async () => {
+                    await setMFAInfo({
+                        requirements: [factorId],
+                        alreadySetup: [],
+                        allowedToSetup: [factorId],
+                        noContacts: true,
+                    });
+
+                    await page.setRequestInterception(true);
+                    const requestHandler = (request) => {
+                        if (request.url() === CONSUME_CODE_API && request.method() === "POST") {
+                            return request.respond({
+                                status: 200,
+                                headers: {
+                                    "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                    "access-control-allow-credentials": "true",
+                                },
+                                body: JSON.stringify({
+                                    status: "RESTART_FLOW_ERROR",
+                                }),
+                            });
+                        }
+
+                        return request.continue();
+                    };
+                    page.on("request", requestHandler);
+                    try {
+                        await tryEmailPasswordSignIn(page, email);
+
+                        await setInputValues(page, [
+                            contactMethod === "PHONE"
+                                ? { name: "phoneNumber_text", value: getTestPhoneNumber() }
+                                : { name: "email", value: await getTestEmail() },
+                        ]);
+                        await submitForm(page);
+
+                        await completeOTP(page);
+
+                        const error = await getGeneralError(page);
+                        assert.strictEqual("Login unsuccessful. Please try again.", error);
+                    } finally {
+                        page.off("request", requestHandler);
+                        await page.setRequestInterception(false);
+                    }
+                });
+
                 it("should enable you to change the contact info during setup (w/ contact form)", async () => {
                     await setMFAInfo({
                         requirements: [factorId],
@@ -448,7 +537,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         "[data-supertokens~=pwless-mfa][data-supertokens~=footer] [data-supertokens~=secondaryText]:nth-child(1)"
                     );
                     await Promise.all([logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-                    await waitForSTElement(page, "[data-supertokens~=input][name=email]");
+                    await waitForSTElement(page, "[data-supertokens~=authPage]");
                     assert.strictEqual(await page.url(), `${TEST_CLIENT_BASE_URL}/auth/`);
                 });
 
@@ -466,7 +555,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         "[data-supertokens~=pwless-mfa][data-supertokens~=otpFooter] [data-supertokens~=secondaryText]:nth-child(1)"
                     );
                     await Promise.all([logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-                    await waitForSTElement(page, "[data-supertokens~=input][name=email]");
+                    await waitForSTElement(page, "[data-supertokens~=authPage]");
                     assert.strictEqual(await page.url(), `${TEST_CLIENT_BASE_URL}/auth/`);
 
                     // This part checks that the login attempt info has been cleared
@@ -474,7 +563,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=passwordless`),
                         page.waitForNavigation({ waitUntil: "networkidle0" }),
                     ]);
-                    await waitForSTElement(page, "[data-supertokens~=input][name=emailOrPhone]");
+                    await waitForSTElement(page, "[data-supertokens~=input][name=email]");
                 });
             }
         });

@@ -65,7 +65,7 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
 
     // Otherwise, return Form.
     return (
-        <div data-supertokens="container">
+        <div data-supertokens="container resetPasswordEmailForm">
             <div data-supertokens="row">
                 <div data-supertokens="headerTitle withBackButton">
                     <BackButton onClick={props.onBackButtonClicked} />

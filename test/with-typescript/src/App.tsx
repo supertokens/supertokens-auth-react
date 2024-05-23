@@ -1,7 +1,7 @@
 import * as React from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "../../../";
-import { getSuperTokensRoutesForReactRouterDom } from "../../../ui";
+import { getSuperTokensRoutesForReactRouterDom, AuthPage } from "../../../ui";
 import EmailPassword, {
     EmailPasswordComponentsOverrideProvider,
     GetRedirectionURLContext as EmailPasswordGetRedirectionURLContext,
@@ -16,12 +16,6 @@ import ThirdParty, {
     PreAPIHookContext as ThirdPartyPreAPIHookContext,
     ThirdpartyComponentsOverrideProvider,
 } from "../../../recipe/thirdparty";
-import ThirdPartyEmailPassword, {
-    GetRedirectionURLContext as ThirdPartyEmailPasswordGetRedirectionURLContext,
-    OnHandleEventContext as ThirdPartyEmailPasswordOnHandleEventContext,
-    PreAPIHookContext as ThirdPartyEmailPasswordPreAPIHookContext,
-    ThirdpartyEmailPasswordComponentsOverrideProvider,
-} from "../../../recipe/thirdpartyemailpassword";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
@@ -30,32 +24,17 @@ import HydrogenTheme from "./Themes/Hydrogen";
 import DarkTheme from "./Themes/Dark";
 import Passwordless from "../../../recipe/passwordless";
 import { PasswordlessFlowType } from "supertokens-web-js/recipe/passwordless/types";
-import ThirdPartyPasswordless from "../../../recipe/thirdpartypasswordless";
 import { PermissionClaim, UserRoleClaim } from "../../../recipe/userroles";
 import {
     ThirdPartyPreBuiltUI,
-    SignInAndUp as TPSignInAndUp,
     SignInAndUpCallback as TPSignInAndUpCallback,
 } from "../../../recipe/thirdparty/prebuiltui";
 import {
-    ThirdPartyEmailPasswordPreBuiltUI,
-    SignInAndUp as TPEmailPasswordSignInAndUp,
-    ResetPasswordUsingToken as TPEmailPasswordResetPasswordUsingToken,
-} from "../../../recipe/thirdpartyemailpassword/prebuiltui";
-import {
     EmailPasswordPreBuiltUI,
-    SignInAndUp as EmailPasswordSignInAndUp,
     ResetPasswordUsingToken as EmailPasswordResetPasswordUsingToken,
 } from "../../../recipe/emailpassword/prebuiltui";
 import { AccessDeniedScreen } from "../../../recipe/session/prebuiltui";
-import {
-    SignInUp as PasswordlessSignInUp,
-    LinkClicked as PasswordlessLinkClicked,
-} from "../../../recipe/passwordless/prebuiltui";
-import {
-    SignInAndUp as TPPasswordlessSignInAndUp,
-    PasswordlessLinkClicked as TPPasswordlessPasswordlessLinkClicked,
-} from "../../../recipe/thirdpartypasswordless/prebuiltui";
+import { LinkClicked as PasswordlessLinkClicked } from "../../../recipe/passwordless/prebuiltui";
 import EmailVerification from "../../../recipe/emailverification";
 import MultiFactorAuth from "../../../recipe/multifactorauth";
 
@@ -117,6 +96,8 @@ SuperTokens.init({
         apiDomain: getApiDomain(),
         websiteDomain: window.location.origin,
     },
+    privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
+    termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
     async getRedirectionURL(context) {
         if (context.action === "TO_AUTH") {
             return "/auth";
@@ -132,14 +113,14 @@ function App() {
         <SuperTokensWrapper>
             <EmailPasswordComponentsOverrideProvider
                 components={{
-                    EmailPasswordSignIn_Override: ({ DefaultComponent, ...props }) => {
+                    EmailPasswordSignInForm_Override: ({ DefaultComponent, ...props }) => {
                         return (
                             <div>
                                 <DefaultComponent {...props} />
                             </div>
                         );
                     },
-                    EmailPasswordSignInHeader_Override: ({ DefaultComponent, ...props }) => {
+                    EmailPasswordSignUpForm_Override: ({ DefaultComponent, ...props }) => {
                         return (
                             <div>
                                 <DefaultComponent {...props} />
@@ -164,87 +145,71 @@ function App() {
                             );
                         },
                     }}>
-                    <ThirdpartyEmailPasswordComponentsOverrideProvider
-                        components={{
-                            ThirdPartySignInAndUpProvidersForm_Override: ({ DefaultComponent, ...props }) => {
-                                return (
-                                    <div>
-                                        <DefaultComponent {...props} />
-                                    </div>
-                                );
-                            },
-                            EmailPasswordResetPasswordEmail_Override: ({ DefaultComponent, ...props }) => {
-                                return (
-                                    <div>
-                                        <DefaultComponent {...props} />
-                                    </div>
-                                );
-                            },
-                        }}>
-                        <div className="App">
-                            <Router>
-                                <div className="fill">
-                                    <Routes>
-                                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
-                                            ThirdPartyPreBuiltUI,
-                                            ThirdPartyEmailPasswordPreBuiltUI,
-                                            EmailPasswordPreBuiltUI,
-                                        ])}
-                                        <Route
-                                            path="/"
-                                            element={
-                                                <SessionAuth
-                                                    doRedirection={true}
-                                                    requireAuth={true}
-                                                    overrideGlobalClaimValidators={(o) => [
-                                                        ...o,
-                                                        UserRoleClaim.validators.includes("admin"),
-                                                        PermissionClaim.validators.excludesAll([
-                                                            "delete_user",
-                                                            "delete_post",
-                                                        ]),
-                                                        AllowedDomainsClaim.validators.hasAccessToCurrentDomain(),
-                                                        Multitenancy.AllowedDomainsClaim.validators.includes(
-                                                            "asdf.com"
-                                                        ),
-                                                    ]}
-                                                    accessDeniedScreen={({ validationError }) => (
-                                                        <div>{JSON.stringify(validationError)}</div>
-                                                    )}>
-                                                    <Home />
-                                                </SessionAuth>
-                                            }
-                                        />
-                                        <Route
-                                            path="/redirect-to-this-custom-path"
-                                            element={
-                                                <SessionAuth requireAuth={true}>
-                                                    <Home />
-                                                </SessionAuth>
-                                            }
-                                        />
-                                        <Route
-                                            path="/no-redirection-sign-in"
-                                            element={
-                                                <EmailPasswordPreBuiltUI.SignInAndUp redirectOnSessionExists={false} />
-                                            }
-                                        />
-                                        <Route
-                                            path="/no-redirection-sign-in-with-children"
-                                            element={
-                                                <EmailPasswordPreBuiltUI.SignInAndUp redirectOnSessionExists={false}>
-                                                    <Home />
-                                                </EmailPasswordPreBuiltUI.SignInAndUp>
-                                            }
-                                        />
-                                    </Routes>
-                                </div>
-                                <div className="footer">
-                                    <Footer />
-                                </div>
-                            </Router>
-                        </div>
-                    </ThirdpartyEmailPasswordComponentsOverrideProvider>
+                    <div className="App">
+                        <Router>
+                            <div className="fill">
+                                <Routes>
+                                    {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
+                                        ThirdPartyPreBuiltUI,
+                                        EmailPasswordPreBuiltUI,
+                                    ])}
+                                    <Route
+                                        path="/"
+                                        element={
+                                            <SessionAuth
+                                                doRedirection={true}
+                                                requireAuth={true}
+                                                overrideGlobalClaimValidators={(o) => [
+                                                    ...o,
+                                                    UserRoleClaim.validators.includes("admin"),
+                                                    PermissionClaim.validators.excludesAll([
+                                                        "delete_user",
+                                                        "delete_post",
+                                                    ]),
+                                                    AllowedDomainsClaim.validators.hasAccessToCurrentDomain(),
+                                                    Multitenancy.AllowedDomainsClaim.validators.includes("asdf.com"),
+                                                ]}
+                                                accessDeniedScreen={({ validationError }) => (
+                                                    <div>{JSON.stringify(validationError)}</div>
+                                                )}>
+                                                <Home />
+                                            </SessionAuth>
+                                        }
+                                    />
+                                    <Route
+                                        path="/redirect-to-this-custom-path"
+                                        element={
+                                            <SessionAuth requireAuth={true}>
+                                                <Home />
+                                            </SessionAuth>
+                                        }
+                                    />
+                                    <Route
+                                        path="/no-redirection-sign-in"
+                                        element={
+                                            <AuthPage
+                                                redirectOnSessionExists={false}
+                                                preBuiltUIList={[EmailPasswordPreBuiltUI]}
+                                            />
+                                        }
+                                    />
+                                    <Route
+                                        path="/no-redirection-sign-in-with-children"
+                                        element={
+                                            <AuthPage
+                                                redirectOnSessionExists={false}
+                                                preBuiltUIList={[EmailPasswordPreBuiltUI]}>
+                                                <Home />
+                                            </AuthPage>
+                                        }
+                                    />
+                                </Routes>
+                            </div>
+                            <div className="footer">
+                                <Footer />
+                            </div>
+                        </Router>
+                    </div>
                 </ThirdpartyComponentsOverrideProvider>
             </EmailPasswordComponentsOverrideProvider>
         </SuperTokensWrapper>
@@ -293,7 +258,6 @@ function getRecipeList() {
     return [
         getEmailPasswordConfigs(),
         getThirdPartyConfigs(),
-        getThirdPartyEmailPasswordConfigs(),
         Session.init(),
         Session.init({
             autoAddCredentials: true,
@@ -387,8 +351,6 @@ function getEmailPasswordConfigs() {
             },
             signUpForm: {
                 style: theme.style,
-                privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-                termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
                 formFields: [
                     {
                         id: "email",
@@ -534,8 +496,6 @@ function getThirdPartyConfigs() {
         },
         signInAndUpFeature: {
             style: theme.style,
-            privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-            termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
             providers: [
                 ThirdParty.Github.init(),
                 ThirdParty.Google.init({
@@ -577,151 +537,6 @@ function getThirdPartyConfigs() {
     });
 }
 
-function getThirdPartyEmailPasswordConfigs() {
-    return ThirdPartyEmailPassword.init({
-        onHandleEvent(context: ThirdPartyEmailPasswordOnHandleEventContext) {},
-
-        async preAPIHook(context: ThirdPartyEmailPasswordPreAPIHookContext) {
-            return context;
-        },
-
-        async getRedirectionURL(context: ThirdPartyEmailPasswordGetRedirectionURLContext) {
-            return undefined;
-        },
-        signInAndUpFeature: {
-            style: theme.style,
-            signInForm: {
-                formFields: [
-                    {
-                        id: "email",
-                        label: "Email",
-                        nonOptionalErrorMsg: "Please add your email",
-                        getDefaultValue: () => "abc@xyz.com",
-                    },
-                ],
-            },
-            signUpForm: {
-                privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-                termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
-                formFields: [
-                    {
-                        id: "email",
-                        label: "Your Email",
-                        placeholder: "Your work email",
-                    },
-                    {
-                        id: "name",
-                        label: "Full name",
-                        placeholder: "First name and last name",
-                    },
-                    {
-                        id: "age",
-                        label: "Your age",
-                        placeholder: "How old are you?",
-                        validate: async (value) => {
-                            if (parseInt(value) > 18) {
-                                return undefined;
-                            }
-
-                            return "You must be over 18 to register";
-                        },
-                    },
-                    {
-                        id: "country",
-                        label: "Your Country",
-                        placeholder: "Where do you live?",
-                        optional: true,
-                    },
-                    {
-                        id: "terms",
-                        label: "",
-                        optional: false,
-                        nonOptionalErrorMsg: "Please check Terms and conditions",
-                        getDefaultValue: () => "true",
-                        inputComponent: (inputProps) => (
-                            <div
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "left",
-                                }}>
-                                <input
-                                    name={inputProps.name}
-                                    type="checkbox"
-                                    value={inputProps.value}
-                                    checked={inputProps.value === "true"}
-                                    onChange={(e) => {
-                                        if (inputProps.onChange) {
-                                            inputProps.onChange(e.target.checked.toString());
-                                        }
-                                    }}></input>
-                                <span style={{ marginLeft: 5 }}>I agree to the terms and conditions</span>
-                            </div>
-                        ),
-                        validate: async (value) => {
-                            if (value === "true") {
-                                return undefined;
-                            }
-                            return "Please check Terms and conditions";
-                        },
-                    },
-                    {
-                        id: "select",
-                        label: "Select",
-                        getDefaultValue: () => "option 2",
-                        inputComponent: (inputProps) => (
-                            <select
-                                onBlur={(e) => {
-                                    if (inputProps.onInputBlur) {
-                                        inputProps.onInputBlur(e.target.value);
-                                    }
-                                }}
-                                onFocus={(e) => {
-                                    if (inputProps.onInputFocus) {
-                                        inputProps.onInputFocus(e.target.value);
-                                    }
-                                }}
-                                value={inputProps.value}
-                                name={inputProps.name}
-                                onChange={(e) => {
-                                    if (inputProps.onChange) {
-                                        inputProps.onChange(e.target.value);
-                                    }
-                                }}>
-                                <option value="" disabled hidden>
-                                    Select an option
-                                </option>
-                                <option value="option 1">Option 1</option>
-                                <option value="option 2">Option 2</option>
-                                <option value="option 3">Option 3</option>
-                            </select>
-                        ),
-                        optional: true,
-                    },
-                ],
-            },
-            providers: [
-                ThirdPartyEmailPassword.Github.init(),
-                ThirdPartyEmailPassword.Google.init(),
-                ThirdPartyEmailPassword.Facebook.init(),
-                ThirdPartyEmailPassword.Apple.init(),
-                {
-                    id: "custom",
-                    name: "Custom",
-                    logo: <svg></svg>,
-                },
-                {
-                    id: "custom-2",
-                    name: "Custom-2",
-                },
-            ],
-        },
-        oAuthCallbackScreen: {
-            style: theme.style,
-        },
-    });
-}
-
 Passwordless.init({
     contactMethod: "EMAIL",
     preAPIHook: async (context) => {
@@ -748,9 +563,6 @@ Passwordless.init({
     onHandleEvent: (context) => {
         if (context.action === "PASSWORDLESS_CODE_SENT") {
         } else if (context.action === "PASSWORDLESS_RESTART_FLOW") {
-        } else if (context.action === "SESSION_ALREADY_EXISTS") {
-            // called when a user visits the login / sign up page with a valid session
-            // in this case, they are usually redirected to the main app
         } else if (context.action === "SUCCESS") {
             let user = context.user;
             if (context.isNewRecipeUser) {
@@ -1106,305 +918,6 @@ ThirdParty.signOut({
 ThirdParty.signOut(undefined);
 ThirdParty.signOut();
 
-// TPEP
-ThirdPartyEmailPassword.doesEmailExist({
-    email: "",
-    options: {
-        preAPIHook: undefined,
-    },
-    userContext: undefined,
-});
-// @ts-expect-error
-ThirdPartyEmailPassword.doesEmailExist(undefined);
-// @ts-expect-error
-ThirdPartyEmailPassword.doesEmailExist();
-
-ThirdPartyEmailPassword.emailPasswordSignIn({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-    formFields: [
-        {
-            id: "",
-            value: "",
-        },
-    ],
-});
-// @ts-expect-error
-ThirdPartyEmailPassword.emailPasswordSignIn(undefined);
-// @ts-expect-error
-ThirdPartyEmailPassword.emailPasswordSignIn();
-
-ThirdPartyEmailPassword.emailPasswordSignUp({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-    formFields: [
-        {
-            id: "",
-            value: "",
-        },
-    ],
-});
-// @ts-expect-error
-ThirdPartyEmailPassword.emailPasswordSignUp(undefined);
-// @ts-expect-error
-ThirdPartyEmailPassword.emailPasswordSignUp();
-
-// @ts-expect-error
-ThirdPartyEmailPassword.getAuthorisationURLFromBackend(undefined);
-// @ts-expect-error
-ThirdPartyEmailPassword.getAuthorisationURLFromBackend();
-
-ThirdPartyEmailPassword.getAuthorisationURLWithQueryParamsAndSetState({
-    thirdPartyId: "",
-    frontendRedirectURI: "",
-    redirectURIOnProviderDashboard: undefined,
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-});
-// @ts-expect-error
-ThirdPartyEmailPassword.getAuthorisationURLWithQueryParamsAndSetState(undefined);
-// @ts-expect-error
-ThirdPartyEmailPassword.getAuthorisationURLWithQueryParamsAndSetState();
-
-ThirdPartyEmailPassword.getResetPasswordTokenFromURL({
-    userContext: undefined,
-});
-ThirdPartyEmailPassword.getResetPasswordTokenFromURL(undefined);
-ThirdPartyEmailPassword.getResetPasswordTokenFromURL();
-
-ThirdPartyEmailPassword.sendPasswordResetEmail({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-    formFields: [
-        {
-            id: "",
-            value: "",
-        },
-    ],
-});
-// @ts-expect-error
-ThirdPartyEmailPassword.sendPasswordResetEmail(undefined);
-// @ts-expect-error
-ThirdPartyEmailPassword.sendPasswordResetEmail();
-
-ThirdPartyEmailPassword.signOut({
-    userContext: undefined,
-});
-ThirdPartyEmailPassword.signOut(undefined);
-ThirdPartyEmailPassword.signOut();
-
-ThirdPartyEmailPassword.submitNewPassword({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-    formFields: [
-        {
-            id: "",
-            value: "",
-        },
-    ],
-});
-// @ts-expect-error
-ThirdPartyEmailPassword.submitNewPassword(undefined);
-// @ts-expect-error
-ThirdPartyEmailPassword.submitNewPassword();
-
-ThirdPartyEmailPassword.thirdPartySignInAndUp({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-});
-ThirdPartyEmailPassword.thirdPartySignInAndUp(undefined);
-ThirdPartyEmailPassword.thirdPartySignInAndUp();
-
-// TPP
-ThirdPartyPasswordless.clearPasswordlessLoginAttemptInfo({
-    userContext: undefined,
-});
-ThirdPartyPasswordless.clearPasswordlessLoginAttemptInfo(undefined);
-ThirdPartyPasswordless.clearPasswordlessLoginAttemptInfo();
-
-ThirdPartyPasswordless.consumePasswordlessCode({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-    userInputCode: "",
-});
-ThirdPartyPasswordless.consumePasswordlessCode({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-});
-
-ThirdPartyPasswordless.createPasswordlessCode({
-    email: "",
-    options: {
-        preAPIHook: undefined,
-    },
-    userContext: undefined,
-});
-ThirdPartyPasswordless.createPasswordlessCode({
-    phoneNumber: "",
-    options: {
-        preAPIHook: undefined,
-    },
-    userContext: undefined,
-});
-ThirdPartyPasswordless.createPasswordlessCode({
-    email: "",
-    phoneNumber: "",
-    options: {
-        preAPIHook: undefined,
-    },
-    userContext: undefined,
-});
-
-ThirdPartyPasswordless.doesPasswordlessUserEmailExist({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-    email: "",
-});
-
-ThirdPartyPasswordless.doesPasswordlessUserPhoneNumberExist({
-    userContext: undefined,
-    phoneNumber: "",
-    options: {
-        preAPIHook: undefined,
-    },
-});
-
-ThirdPartyPasswordless.getPasswordlessLinkCodeFromURL({
-    userContext: undefined,
-});
-ThirdPartyPasswordless.getPasswordlessLinkCodeFromURL(undefined);
-ThirdPartyPasswordless.getPasswordlessLinkCodeFromURL();
-
-ThirdPartyPasswordless.getPasswordlessPreAuthSessionIdFromURL({
-    userContext: undefined,
-});
-ThirdPartyPasswordless.getPasswordlessPreAuthSessionIdFromURL(undefined);
-ThirdPartyPasswordless.getPasswordlessPreAuthSessionIdFromURL();
-
-ThirdPartyPasswordless.getThirdPartyAuthorisationURLWithQueryParamsAndSetState({
-    thirdPartyId: "",
-    frontendRedirectURI: "",
-    redirectURIOnProviderDashboard: undefined,
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-});
-ThirdPartyPasswordless.getThirdPartyAuthorisationURLWithQueryParamsAndSetState({
-    thirdPartyId: "",
-    frontendRedirectURI: "",
-    redirectURIOnProviderDashboard: undefined,
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-});
-
-ThirdPartyPasswordless.resendPasswordlessCode({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-});
-ThirdPartyPasswordless.resendPasswordlessCode(undefined);
-ThirdPartyPasswordless.resendPasswordlessCode();
-
-ThirdPartyPasswordless.setPasswordlessLoginAttemptInfo({
-    attemptInfo: {
-        deviceId: "",
-        preAuthSessionId: "",
-        flowType: "USER_INPUT_CODE",
-    },
-    userContext: undefined,
-});
-ThirdPartyPasswordless.setPasswordlessLoginAttemptInfo({
-    attemptInfo: {
-        deviceId: "",
-        preAuthSessionId: "",
-        flowType: "MAGIC_LINK",
-    },
-    userContext: undefined,
-});
-ThirdPartyPasswordless.setPasswordlessLoginAttemptInfo({
-    attemptInfo: {
-        deviceId: "",
-        preAuthSessionId: "",
-        flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
-    },
-    userContext: undefined,
-});
-ThirdPartyPasswordless.setPasswordlessLoginAttemptInfo<{
-    customData: string;
-}>({
-    // @ts-expect-error
-    attemptInfo: {
-        deviceId: "",
-        preAuthSessionId: "",
-        flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
-    },
-    userContext: undefined,
-});
-ThirdPartyPasswordless.setPasswordlessLoginAttemptInfo<{
-    customData: string;
-}>({
-    attemptInfo: {
-        deviceId: "",
-        preAuthSessionId: "",
-        flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
-        // @ts-expect-error
-        customData: 123,
-    },
-    userContext: undefined,
-});
-ThirdPartyPasswordless.setPasswordlessLoginAttemptInfo<{
-    customData: string;
-}>({
-    attemptInfo: {
-        deviceId: "",
-        preAuthSessionId: "",
-        flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
-        customData: "",
-    },
-    userContext: undefined,
-});
-// @ts-expect-error
-ThirdPartyPasswordless.setPasswordlessLoginAttemptInfo(undefined);
-// @ts-expect-error
-ThirdPartyPasswordless.setPasswordlessLoginAttemptInfo();
-
-ThirdPartyPasswordless.signOut({
-    userContext: undefined,
-});
-ThirdPartyPasswordless.signOut(undefined);
-ThirdPartyPasswordless.signOut();
-
-ThirdPartyPasswordless.thirdPartySignInAndUp({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-});
-ThirdPartyPasswordless.thirdPartySignInAndUp(undefined);
-ThirdPartyPasswordless.thirdPartySignInAndUp();
-
 Session.addAxiosInterceptors({});
 
 Session.validateClaims({
@@ -1509,16 +1022,6 @@ Passwordless.init({
     },
 });
 
-ThirdPartyPasswordless.init({
-    contactMethod: "EMAIL",
-    mfaFeature: {
-        style: "",
-    },
-});
-
-ThirdPartyPasswordless.init({
-    contactMethod: "EMAIL",
-});
 // Testing that 'null' is allowed to be returned from getRedirectionURL
 SuperTokens.init({
     appInfo: {
@@ -1543,11 +1046,6 @@ SuperTokens.init({
     recipeList: [
         EmailPassword.init(),
         ThirdParty.init({
-            async getRedirectionURL(context, userContext) {
-                return null;
-            },
-        }),
-        ThirdPartyEmailPassword.init({
             async getRedirectionURL(context, userContext) {
                 return null;
             },
@@ -1578,16 +1076,37 @@ export const PhoneVerifiedClaim = new BooleanClaim({
 function TestIfUserContextCanBePassedToPreBuiltComponets() {
     const userContext = {};
     return [
-        <TPSignInAndUp userContext={userContext} />,
+        <AuthPage preBuiltUIList={[EmailPasswordPreBuiltUI]} userContext={userContext} />,
         <TPSignInAndUpCallback userContext={userContext} />,
-        <TPEmailPasswordSignInAndUp userContext={userContext} />,
-        <TPEmailPasswordResetPasswordUsingToken userContext={userContext} />,
-        <EmailPasswordSignInAndUp userContext={userContext} />,
         <EmailPasswordResetPasswordUsingToken userContext={userContext} />,
         <AccessDeniedScreen userContext={userContext} />,
-        <PasswordlessSignInUp userContext={userContext} />,
         <PasswordlessLinkClicked userContext={userContext} />,
-        <TPPasswordlessSignInAndUp userContext={userContext} />,
-        <TPPasswordlessPasswordlessLinkClicked userContext={userContext} />,
+    ];
+}
+
+SuperTokens.init({
+    appInfo: {
+        appName: "SuperTokens Demo App",
+        apiDomain: getApiDomain(),
+        websiteDomain: window.location.origin,
+    },
+    recipeList,
+    style: `
+        [data-supertokens~=authPage] [data-supertokens~=headerSubtitle] {
+            display: none;
+        }
+    `,
+});
+
+function testAuthPagePropTypes() {
+    return [
+        // @ts-expect-error This has to be a valid factor
+        <AuthPage preBuiltUIList={[ThirdPartyPreBuiltUI]} factors={["asdf"]} />,
+        // @ts-expect-error This has to be a valid first factor
+        <AuthPage preBuiltUIList={[ThirdPartyPreBuiltUI]} factors={["totp"]} />,
+        <AuthPage
+            preBuiltUIList={[ThirdPartyPreBuiltUI]}
+            factors={["thirdparty", "emailpassword", "link-email", "link-phone", "otp-email", "otp-phone"]}
+        />,
     ];
 }

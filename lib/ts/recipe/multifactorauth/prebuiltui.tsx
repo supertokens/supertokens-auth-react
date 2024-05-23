@@ -7,15 +7,19 @@ import { SessionAuth } from "../session";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import { default as FactorChooserFeature } from "./components/features/factorChooser";
-import FactorChooserTheme from "./components/themes/factorChooser";
+import FactorChooserThemeWrapper from "./components/themes/factorChooser";
+import { defaultTranslationsMultiFactorAuth } from "./components/themes/translations";
 import { DEFAULT_FACTOR_CHOOSER_PATH } from "./constants";
 import MultiFactorAuthRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { FeatureBaseProps, RecipeFeatureComponentMap, UserContext } from "../../types";
+import type { AuthComponent } from "../../types";
 
 export class MultiFactorAuthPreBuiltUI extends RecipeRouter {
     static instance?: MultiFactorAuthPreBuiltUI;
+    languageTranslations = defaultTranslationsMultiFactorAuth;
+
     constructor(public readonly recipeInstance: MultiFactorAuthRecipe) {
         super();
     }
@@ -82,6 +86,10 @@ export class MultiFactorAuthPreBuiltUI extends RecipeRouter {
         );
     };
 
+    getAuthComponents(): AuthComponent[] {
+        return [];
+    }
+
     // For tests
     static reset(): void {
         if (!isTest()) {
@@ -94,9 +102,9 @@ export class MultiFactorAuthPreBuiltUI extends RecipeRouter {
 
     static FactorChooser = (props: FeatureBaseProps<{ userContext?: UserContext }>): JSX.Element =>
         MultiFactorAuthPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("factorchooser", props);
-    static FactorChooserTheme = FactorChooserTheme;
+    static FactorChooserTheme = FactorChooserThemeWrapper;
 }
 
 const FactorChooser = MultiFactorAuthPreBuiltUI.FactorChooser;
 
-export { FactorChooser, FactorChooserTheme };
+export { FactorChooser, FactorChooserThemeWrapper as FactorChooserTheme };

@@ -178,7 +178,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
             const email = await getTestEmail();
             const phoneNumber = getTestPhoneNumber();
 
-            await tryPasswordlessSignInUp(page, phoneNumber);
+            await tryPasswordlessSignInUp(page, phoneNumber, undefined, true);
 
             await waitForDashboard(page);
             await setupOTP(page, "EMAIL", email);
@@ -189,14 +189,14 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 requirements: [{ oneOf: ["otp-email"] }],
             });
 
-            await tryPasswordlessSignInUp(page, phoneNumber);
+            await tryPasswordlessSignInUp(page, phoneNumber, undefined, true);
 
             await waitFor(500);
             await completeOTP(page);
             await waitForDashboard(page);
 
             await logout(page);
-            await tryPasswordlessSignInUp(page, phoneNumber, "&redirectToPath=%2Fredirect-here");
+            await tryPasswordlessSignInUp(page, phoneNumber, "&redirectToPath=%2Fredirect-here", true);
             await waitFor(500);
             await completeOTP(page);
 

@@ -1,2 +1,1 @@
-/// <reference types="react" />
-export declare const TOTPIcon: () => JSX.Element;
+export declare const TOTPIcon: () => import("react/jsx-runtime").JSX.Element;

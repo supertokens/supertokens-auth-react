@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import { redirectToAuth, useUserContext } from "..";
+import AuthPageWrapper from "../recipe/authRecipe/components/feature/authPage/authPage";
 import DynamicLoginMethodsSpinner from "../recipe/multitenancy/components/features/dynamicLoginMethodsSpinner";
 import Multitenancy from "../recipe/multitenancy/recipe";
 import { RecipeRouter } from "../recipe/recipeRouter";
@@ -23,9 +24,13 @@ export function RoutingComponent(props: {
     >(undefined);
     const navigate = props.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
     const path = props.path;
+    const isAuthPage = path === SuperTokens.getInstanceOrThrow().appInfo.websiteBasePath.getAsStringDangerous();
 
     const location = props.getReactRouterDomWithCustomHistory()?.useLocation();
     const componentToRender = React.useMemo(() => {
+        if (isAuthPage) {
+            return;
+        }
         const normalizedPath = new NormalisedURLPath(path);
         // During development, this runs twice so as to warn devs of if there
         // are any side effects that happen here. So in tests, it will result in
@@ -59,6 +64,15 @@ export function RoutingComponent(props: {
             );
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
 
+    if (isAuthPage) {
+        return (
+            <AuthPageWrapper
+                preBuiltUIList={props.preBuiltUIList}
+                navigate={navigate}
+                useSignUpStateFromQueryString={true}
+            />
+        );
+    }
     if (SuperTokens.usesDynamicLoginMethods && loadedDynamicLoginMethods === undefined) {
         return <DynamicLoginMethodsSpinner />;
     }

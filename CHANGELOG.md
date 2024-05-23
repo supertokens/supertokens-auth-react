@@ -7,6 +7,146 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.42.0] - 2024-05-24
+
+### Breaking changes
+
+-   Removed `ThirdPartyEmailPassword` and `ThirdPartyPasswordless` recipes.
+-   `EmailPassword` recipe:
+
+    -   Removed embeddable components: `SignInUp`, `SignInAndUpTheme`
+    -   Removed overridable components: `EmailPasswordSignIn`, `EmailPasswordSignInFooter`, `EmailPasswordSignInHeader`, `EmailPasswordSignUp`, `EmailPasswordSignUpFooter`, `EmailPasswordSignUpHeader`
+    -   Moved `useShadowDom`, `defaultToSignUp`, `privacyPolicyLink`, `termsOfServiceLink` from the config to the root configuration passed to `SuperTokens.init`.
+
+-   `Passwordless` recipe:
+
+    -   Removed embeddable components: `SignInUp`
+    -   Removed overrideable components: `PasswordlessSignInUpHeader_Override`, `PasswordlessSignInUpFooter_Override`
+    -   Removed the `guessInternationPhoneNumberFromInputPhoneNumber` configurable callback, since now the user sets if they are entering email or a phone number explicitly
+    -   Moved `useShadowDom`, `privacyPolicyLink`, `termsOfServiceLink` from the config to the root configuration passed to `SuperTokens.init`.
+    -   Changed the UX of the contactinfo entry form for `EMAIL_OR_PHONE`
+    -   Added `defaultToEmail` configuration option, which decides if the contact info input form starts in the email or phone state if the `contactMethod` is set to `EMAIL_OR_PHONE`
+
+-   `ThirdParty` recipe:
+
+    -   Removed embeddable components: `SignInAndUp`
+    -   Removed overridable components: `ThirdPartySignInAndUpHeader`, `ThirdPartySignUpFooter`
+    -   Moved `useShadowDom`, `privacyPolicyLink`, `termsOfServiceLink` from the config to the root configuration passed to `SuperTokens.init`.
+
+-   Removed `SESSION_ALREADY_EXISTS` event from auth recipes and moved it into the `Session` recipe
+-   Added new keys to `data-supertokens` props of several elements
+-   Updated some styles to work with the updated UI structure
+-   Renamed translation strings to reflect the new component/UI structure:
+    -   `EMAIL_PASSWORD_SIGN_IN_FORGOT_PW_LINK` instead of `EMAIL_PASSWORD_SIGN_IN_FOOTER_FORGOT_PW_LINK`
+    -   `AUTH_PAGE_HEADER_TITLE_SIGN_IN_AND_UP` instead of `PWLESS_SIGN_IN_UP_HEADER_TITLE` and `THIRD_PARTY_SIGN_IN_AND_UP_HEADER_TITLE`
+    -   `AUTH_PAGE_HEADER_TITLE_SIGN_IN` instead of `EMAIL_PASSWORD_SIGN_IN_HEADER_TITLE`
+    -   `AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_START` instead of `EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_START`
+    -   `AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_SIGN_IN_LINK` instead of `EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_SIGN_UP_LINK`
+    -   `AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_END` instead of `EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_END`
+    -   `AUTH_PAGE_HEADER_TITLE_SIGN_UP` instead of `EMAIL_PASSWORD_SIGN_UP_HEADER_TITLE`
+    -   `AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_START` instead of `EMAIL_PASSWORD_SIGN_UP_HEADER_SUBTITLE_START`
+    -   `AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_SIGN_UP_LINK` instead of `EMAIL_PASSWORD_SIGN_UP_HEADER_SUBTITLE_SIGN_IN_LINK`
+    -   `AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_END` instead of `EMAIL_PASSWORD_SIGN_UP_HEADER_SUBTITLE_END`
+    -   `AUTH_PAGE_FOOTER_START` instead of `EMAIL_PASSWORD_SIGN_UP_FOOTER_START`, `PWLESS_SIGN_IN_UP_FOOTER_START` and `THIRD_PARTY_SIGN_IN_UP_FOOTER_START`
+    -   `AUTH_PAGE_FOOTER_TOS` instead of: `EMAIL_PASSWORD_SIGN_UP_FOOTER_TOS`, `PWLESS_SIGN_IN_UP_FOOTER_TOS` and `THIRD_PARTY_SIGN_IN_UP_FOOTER_TOS`
+    -   `AUTH_PAGE_FOOTER_AND` instead of `EMAIL_PASSWORD_SIGN_UP_FOOTER_AND`, `PWLESS_SIGN_IN_UP_FOOTER_AND` and `THIRD_PARTY_SIGN_IN_UP_FOOTER_AND`
+    -   `AUTH_PAGE_FOOTER_PP` instead of `EMAIL_PASSWORD_SIGN_UP_FOOTER_PP`, `PWLESS_SIGN_IN_UP_FOOTER_PP` and `THIRD_PARTY_SIGN_IN_UP_FOOTER_PP`
+    -   `AUTH_PAGE_FOOTER_END` instead of `EMAIL_PASSWORD_SIGN_UP_FOOTER_END`, `PWLESS_SIGN_IN_UP_FOOTER_END` and `THIRD_PARTY_SIGN_IN_UP_FOOTER_END`
+
+### Changes
+
+-   Added overrideable components:
+    -   General: `AuthPageComponentList`, `AuthPageHeader`, `AuthPageFooter`.
+        -   These can be overridden by using `AuthRecipeComponentsOverrideContextProvider`
+    -   `Passwordless`: `PasswordlessContinueWithPasswordless_Override`
+-   Added new embeddable components:
+    -   General: `AuthPage` and `AuthPageTheme`
+    -   `EmailPassword`: `SignInTheme`, `SignUpTheme`
+-   Added a new `style` prop to the root level config
+
+### Migration guide
+
+#### Removed recipes
+
+-   If you were using `ThirdPartyEmailPassword`, you should now init `ThirdParty` and `EmailPassword` recipes separately. The config for the individual recipes are mostly the same, except the syntax may be different. Check our recipe guides for [ThirdParty](https://supertokens.com/docs/thirdparty/introduction) and [EmailPassword](https://supertokens.com/docs/emailpassword/introduction) for more information.
+
+-   If you were using `ThirdPartyPasswordless`, you should now init `ThirdParty` and `Passwordless` recipes separately. The config for the individual recipes are mostly the same, except the syntax may be different. Check our recipe guides for [ThirdParty](https://supertokens.com/docs/thirdparty/introduction) and [Passwordless](https://supertokens.com/docs/passwordless/introduction) for more information.
+
+#### Moved configuration options
+
+Several configuration options (`useShadowDom`, `defaultToSignUp`, `privacyPolicyLink`, `termsOfServiceLink`) were moved to the root configuration (the one passed directly to `SuperTokens.init`) out of recipe specific configs. The function of these props remain identical, the only necessary migration is moving them:
+
+Before:
+
+```tsx
+SuperTokens.init({
+    appInfo: {
+        // appInfo
+    },
+    recipeList: [
+        EmailPassword.init({
+            useShadowDom: false,
+            signInAndUpFeature: {
+                defaultToSignUp: true,
+                signUpForm: {
+                    privacyPolicyLink: "http://example.com",
+                    termsOfServiceLink: "http://example.com",
+                },
+            },
+        }),
+        Session.init(),
+    ],
+});
+```
+
+After:
+
+```tsx
+SuperTokens.init({
+    appInfo: {
+        // appInfo
+    },
+    useShadowDom: false,
+    defaultToSignUp: true,
+    privacyPolicyLink: "http://example.com",
+    termsOfServiceLink: "http://example.com",
+    recipeList: [EmailPassword.init(), Session.init()],
+});
+```
+
+#### Removed embeddable components
+
+The auth page related embeddable components (`SignInAndUp`, `SignInUp`) and the related theme components were removed. We instead recommend you to use the new `AuthPage` component with the appropriate pre-built UI objects and factorsIds set. For more information check the following [guide](https://supertokens.com/docs/thirdpartyemailpassword/common-customizations/embed-sign-in-up-form)
+
+Before:
+
+```tsx
+import { SignInAndUp } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+
+const Component = () => {
+    const navigate = useNavigate();
+
+    return <SignInAndUp navigate={navigate} />;
+};
+```
+
+After:
+
+```tsx
+import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
+import { AuthPage } from "supertokens-auth-react/ui";
+
+const Component = () => {
+    const navigate = useNavigate();
+
+    return <AuthPage preBuiltUIList={[PasswordlessPreBuiltUI]} factors={["otp-phone"]} navigate={navigate} />;
+};
+```
+
+#### Updated styles
+
+Some parts of our default styles have been changed, including some changes to the `data-supertokens` props added to elements. Since customizations can take many forms we cannot give you exact guidance on how/what needs to change. In almost all cases, no updates should be required, but please check that your custom styles still work as you expect.
+
 ## [0.41.1] - 2024-05-13
 
 ### Fixes

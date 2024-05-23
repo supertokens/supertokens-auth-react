@@ -2,8 +2,10 @@ import { useState } from "react";
 import "./App.css";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
-import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/thirdpartyemailpassword/prebuiltui";
+import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route, useLocation } from "react-router-dom";
@@ -35,13 +37,10 @@ SuperTokens.init({
         }
     },
     recipeList: [
-        ThirdPartyEmailPassword.init({
+        EmailPassword.init(),
+        ThirdParty.init({
             signInAndUpFeature: {
-                providers: [
-                    ThirdPartyEmailPassword.Github.init(),
-                    ThirdPartyEmailPassword.Google.init(),
-                    ThirdPartyEmailPassword.Apple.init(),
-                ],
+                providers: [ThirdParty.Github.init(), ThirdParty.Google.init(), ThirdParty.Apple.init()],
             },
         }),
         Session.init(),
@@ -67,7 +66,8 @@ function App() {
                     <Routes>
                         {/* This shows the login UI on "/auth" route */}
                         {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), [
-                            ThirdPartyEmailPasswordPreBuiltUI,
+                            ThirdPartyPreBuiltUI,
+                            EmailPasswordPreBuiltUI,
                         ])}
 
                         <Route

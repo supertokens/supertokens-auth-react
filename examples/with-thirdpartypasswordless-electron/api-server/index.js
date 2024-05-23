@@ -6,7 +6,8 @@ let supertokens = require("supertokens-node");
 let Session = require("supertokens-node/recipe/session");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
-let ThirdPartyPasswordless = require("supertokens-node/recipe/thirdpartypasswordless");
+let ThirdParty = require("supertokens-node/recipe/thirdparty");
+let Passwordless = require("supertokens-node/recipe/passwordless");
 // let Twilio = require("twilio");
 let axios = require("axios").default;
 let { mailTransporter, getEmailBody } = require("./mailer");
@@ -33,49 +34,7 @@ supertokens.init({
         websiteDomain, // TODO: Change to your app's website domain
     },
     recipeList: [
-        ThirdPartyPasswordless.init({
-            providers: [
-                // We have provided you with development keys which you can use for testing.
-                // IMPORTANT: Please replace them with your own OAuth keys for production use.
-                {
-                    config: {
-                        thirdPartyId: "google",
-                        clients: [
-                            {
-                                clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
-                                clientSecret: "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",
-                            },
-                        ],
-                    },
-                },
-                {
-                    config: {
-                        thirdPartyId: "github",
-                        clients: [
-                            {
-                                clientId: "467101b197249757c71f",
-                                clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
-                            },
-                        ],
-                    },
-                },
-                {
-                    config: {
-                        thirdPartyId: "apple",
-                        clients: [
-                            {
-                                clientId: "4398792-io.supertokens.example.service",
-                                additionalConfig: {
-                                    keyId: "7M48Y4RYDL",
-                                    privateKey:
-                                        "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgu8gXs+XYkqXD6Ala9Sf/iJXzhbwcoG5dMh1OonpdJUmgCgYIKoZIzj0DAQehRANCAASfrvlFbFCYqn3I2zeknYXLwtH30JuOKestDbSfZYxZNMqhF/OzdZFTV0zc5u5s3eN+oCWbnvl0hM+9IW0UlkdA\n-----END PRIVATE KEY-----",
-                                    teamId: "YWQCXGJRJL",
-                                },
-                            },
-                        ],
-                    },
-                },
-            ],
+        Passwordless.init({
             contactMethod: "EMAIL_OR_PHONE",
             flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
             emailDelivery: {
@@ -124,6 +83,53 @@ supertokens.init({
                         console.log("Magic link is: " + input.urlWithLinkCode);
                     },
                 },
+            },
+        }),
+        ThirdParty.init({
+            signInAndUpFeature: {
+                providers: [
+                    // We have provided you with development keys which you can use for testing.
+                    // IMPORTANT: Please replace them with your own OAuth keys for production use.
+                    {
+                        config: {
+                            thirdPartyId: "google",
+                            clients: [
+                                {
+                                    clientId:
+                                        "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
+                                    clientSecret: "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",
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        config: {
+                            thirdPartyId: "github",
+                            clients: [
+                                {
+                                    clientId: "467101b197249757c71f",
+                                    clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        config: {
+                            thirdPartyId: "apple",
+                            clients: [
+                                {
+                                    clientId: "4398792-io.supertokens.example.service",
+                                    additionalConfig: {
+                                        keyId: "7M48Y4RYDL",
+                                        privateKey:
+                                            "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgu8gXs+XYkqXD6Ala9Sf/iJXzhbwcoG5dMh1OonpdJUmgCgYIKoZIzj0DAQehRANCAASfrvlFbFCYqn3I2zeknYXLwtH30JuOKestDbSfZYxZNMqhF/OzdZFTV0zc5u5s3eN+oCWbnvl0hM+9IW0UlkdA\n-----END PRIVATE KEY-----",
+                                        teamId: "YWQCXGJRJL",
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
             },
         }),
         /**

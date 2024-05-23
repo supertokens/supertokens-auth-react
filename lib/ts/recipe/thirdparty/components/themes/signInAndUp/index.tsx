@@ -12,54 +12,30 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { hasFontDefined } from "../../../../../styles/styles";
+import SuperTokens from "../../../../../superTokens";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
-import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { ThemeBase } from "../themeBase";
 
 import { ProvidersForm } from "./providersForm";
-import { SignInAndUpHeader } from "./signInAndUpHeader";
-import { SignUpFooter } from "./signUpFooter";
 
 import type { UserContext } from "../../../../../types";
 import type { SignInAndUpThemeProps } from "../../../types";
-
-const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
-    return (
-        <div data-supertokens="container">
-            <div data-supertokens="row">
-                <SignInAndUpHeader />
-
-                <div data-supertokens="divider"></div>
-
-                {props.featureState.error && <GeneralError error={props.featureState.error} />}
-
-                <ProvidersForm {...props} />
-
-                <SignUpFooter
-                    privacyPolicyLink={props.config.signInAndUpFeature.privacyPolicyLink}
-                    termsOfServiceLink={props.config.signInAndUpFeature.termsOfServiceLink}
-                />
-            </div>
-            <SuperTokensBranding />
-        </div>
-    );
-};
 
 const SignInAndUpThemeWrapper: React.FC<
     SignInAndUpThemeProps & {
         userContext?: UserContext;
     }
 > = (props) => {
-    const hasFont = hasFontDefined(props.config.rootStyle);
+    const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
+    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     return (
         <UserContextWrapper userContext={props.userContext}>
             <ThemeBase
                 loadDefaultFont={!hasFont}
-                userStyles={[props.config.rootStyle, props.config.signInAndUpFeature.style]}>
-                <SignInAndUpTheme {...props} />
+                userStyles={[rootStyle, props.config.recipeRootStyle, props.config.signInAndUpFeature.style]}>
+                <ProvidersForm {...props} />
             </ThemeBase>
         </UserContextWrapper>
     );

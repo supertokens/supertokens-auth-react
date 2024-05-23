@@ -30,6 +30,7 @@ export default abstract class AuthRecipe<
     N extends NormalisedConfig<T, Action, R | OnHandleEventContext>
 > extends RecipeModule<T, Action, R | OnHandleEventContext, N> {
     public abstract firstFactorIds: string[];
+    public abstract getFirstFactorsForAuthPage(): string[];
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getAuthRecipeDefaultRedirectionURL = async (_context: T): Promise<string> => {

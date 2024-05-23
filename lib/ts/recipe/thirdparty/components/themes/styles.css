@@ -1,15 +1,11 @@
 @import "../../../../styles/styles.css";
 
-[data-supertokens~="row"] {
-    padding-bottom: 30px;
-}
-
 [data-supertokens~="providerContainer"] {
     padding-top: 9px;
     padding-bottom: 9px;
 }
 
-[data-supertokens~="providerButton"] {
+[data-supertokens~="button"][data-supertokens~="providerButton"] {
     min-height: 32px;
     display: flex;
     flex-direction: row;
@@ -21,7 +17,12 @@
     color: black;
 }
 
-[data-supertokens~="providerButton"]:hover {
+[data-supertokens~="multiFactor"] [data-supertokens~="button"][data-supertokens~="providerButton"] {
+    margin: auto;
+    max-width: 240px;
+}
+
+[data-supertokens~="button"][data-supertokens~="providerButton"]:hover {
     filter: none;
     background-color: #fafafa;
 }
@@ -29,6 +30,10 @@
 [data-supertokens~="providerButtonLeft"] {
     min-width: 34px;
     margin-left: 66px;
+}
+
+[data-supertokens~="multiFactor"] [data-supertokens~="providerButtonLeft"] {
+    margin-left: 30px;
 }
 
 [data-supertokens~="providerButtonLogo"] {

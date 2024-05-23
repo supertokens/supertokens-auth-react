@@ -69,6 +69,12 @@ export declare type SuperTokensConfig = {
         context: GetRedirectionURLContext,
         userContext: UserContext
     ) => Promise<string | undefined | null>;
+    style?: string;
+    useShadowDom?: boolean;
+    disableAuthRoute?: boolean;
+    defaultToSignUp?: boolean;
+    privacyPolicyLink?: string;
+    termsOfServiceLink?: string;
 };
 export declare type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "signOut">;
 export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
@@ -138,6 +144,7 @@ export declare type NormalisedFormField = {
     autoComplete?: string;
     autofocus?: boolean;
     getDefaultValue?: () => string;
+    hidden?: boolean;
 };
 export declare type ReactComponentClass<P = any> = ComponentClass<P, any> | ((props: P) => JSX.Element);
 export declare type FeatureBaseConfig = {
@@ -174,4 +181,40 @@ export declare type Navigate =
       }
     | NavigateFunction;
 export declare type UserContext = Record<string, any>;
+export declare type AuthComponentProps = {
+    setFactorList: (factorIds: string[]) => void;
+    rebuildAuthPage: () => void;
+    navigate: Navigate | undefined;
+    userContext: UserContext;
+    error: string | undefined;
+    onError: (err: string) => void;
+    clearError: () => void;
+};
+export declare type PartialAuthComponentProps = AuthComponentProps;
+export declare type FullPageAuthComponentProps<PreloadInfoType> = AuthComponentProps & {
+    preloadInfo: PreloadInfoType;
+};
+export declare type FullPageAuthComponent<PreloadInfoType = any> = {
+    type: "FULL_PAGE";
+    preloadInfoAndRunChecks: (
+        firstFactors: string[],
+        userContext: UserContext
+    ) => Promise<
+        | {
+              shouldDisplay: true;
+              preloadInfo: PreloadInfoType;
+          }
+        | {
+              shouldDisplay: false;
+          }
+    >;
+    component: React.FC<FullPageAuthComponentProps<PreloadInfoType>>;
+};
+export declare type PartialAuthComponent = {
+    type: "SIGN_IN_UP" | "SIGN_IN" | "SIGN_UP";
+    factorIds: string[];
+    displayOrder: number;
+    component: React.FC<PartialAuthComponentProps>;
+};
+export declare type AuthComponent<T = any> = PartialAuthComponent | FullPageAuthComponent<T>;
 export {};

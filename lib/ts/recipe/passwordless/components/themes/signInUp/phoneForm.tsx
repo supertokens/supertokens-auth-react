@@ -23,7 +23,6 @@ import { defaultValidate } from "../../../../emailpassword/validators";
 import { preloadPhoneNumberUtils } from "../../../phoneNumberUtils";
 
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
-import { SignInUpFooter } from "./signInUpFooter";
 
 import type { SignInUpPhoneFormProps } from "../../../types";
 
@@ -73,7 +72,7 @@ export const PhoneForm = withOverride(
                         throw new STGeneralError("GENERAL_ERROR_PHONE_UNDEFINED");
                     }
 
-                    const validationRes = await props.config.validatePhoneNumber(phoneNumber);
+                    const validationRes = await props.validatePhoneNumber(phoneNumber);
                     if (validationRes !== undefined) {
                         throw new STGeneralError(validationRes);
                     }
@@ -91,14 +90,7 @@ export const PhoneForm = withOverride(
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                footer={
-                    props.footer ?? (
-                        <SignInUpFooter
-                            privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
-                            termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
-                        />
-                    )
-                }
+                footer={props.footer}
             />
         );
     }

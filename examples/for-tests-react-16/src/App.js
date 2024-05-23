@@ -11,8 +11,6 @@ import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
-import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 import UserRoles from "supertokens-auth-react/recipe/userroles";
 import Multitenancy from "supertokens-auth-react/recipe/multitenancy";
 import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
@@ -91,12 +89,6 @@ if (getQueryParams("passwordlessDefaultCountry")) {
 }
 
 const passwordlessDefaultCountry = window.localStorage.getItem("passwordlessDefaultCountry") || undefined;
-
-if (getQueryParams("passwordlessDisablePhoneGuess")) {
-    window.localStorage.setItem("passwordlessDisablePhoneGuess", getQueryParams("passwordlessDisablePhoneGuess"));
-}
-
-const passwordlessDisablePhoneGuess = window.localStorage.getItem("passwordlessDisablePhoneGuess") || undefined;
 
 if (getQueryParams("authRecipe")) {
     window.localStorage.setItem("authRecipe", getQueryParams("authRecipe"));
@@ -255,22 +247,19 @@ let recipeList = [
 
 let enabledRecipes = getEnabledRecipes();
 
-if (enabledRecipes.includes("thirdparty")) {
+if (
+    enabledRecipes.includes("thirdparty") ||
+    enabledRecipes.includes("thirdpartyemailpassword") ||
+    enabledRecipes.includes("thirdpartypasswordless")
+) {
     recipeList = [getThirdPartyConfigs(testContext), ...recipeList];
 }
-if (enabledRecipes.includes("emailpassword")) {
+if (enabledRecipes.includes("emailpassword") || enabledRecipes.includes("thirdpartyemailpassword")) {
     recipeList = [getEmailPasswordConfigs(testContext), ...recipeList];
 }
-if (enabledRecipes.includes("thirdpartyemailpassword")) {
-    recipeList = [getThirdPartyEmailPasswordConfigs(testContext), ...recipeList];
-}
-if (enabledRecipes.includes("passwordless")) {
+if (enabledRecipes.includes("passwordless") || enabledRecipes.includes("thirdpartypasswordless")) {
     recipeList = [getPasswordlessConfigs(testContext), ...recipeList];
 }
-if (enabledRecipes.includes("thirdpartypasswordless")) {
-    recipeList = [getThirdPartyPasswordlessConfigs(testContext), ...recipeList];
-}
-
 if (emailVerificationMode !== "OFF") {
     recipeList.push(getEmailVerificationConfigs(testContext));
 }
@@ -295,10 +284,10 @@ SuperTokens.init({
     languageTranslations: {
         translations: {
             en: {
-                PWLESS_SIGN_IN_UP_FOOTER_TOS: "TOS",
+                AUTH_PAGE_FOOTER_TOS: "TOS",
             },
             hu: {
-                PWLESS_SIGN_IN_UP_FOOTER_TOS: "ÁSZF",
+                AUTH_PAGE_FOOTER_TOS: "ÁSZF",
             },
         },
     },
@@ -308,8 +297,6 @@ SuperTokens.init({
                 emailpassword: "EMAIL_PASSWORD",
                 thirdparty: "THIRD_PARTY",
                 passwordless: "PASSWORDLESS",
-                thirdpartypasswordless: "THIRDPARTYPASSWORDLESS",
-                thirdpartyemailpassword: "THIRD_PARTY_EMAIL_PASSWORD",
             }[context.recipeId];
 
             console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`);
@@ -322,14 +309,19 @@ SuperTokens.init({
             console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
         }
     },
+    useShadowDom,
+    privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
+    termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
+    defaultToSignUp,
+    disableAuthRoute: testContext.disableDefaultUI,
     recipeList,
 });
 
 /* App */
 function App() {
     useEffect(() => {
-        window.addEventListener("TPEP.getAuthorisationURLWithQueryParamsAndSetState", async () => {
-            ThirdPartyEmailPassword.getAuthorisationURLWithQueryParamsAndSetState({
+        window.addEventListener("TP.getAuthorisationURLWithQueryParamsAndSetState", async () => {
+            ThirdParty.getAuthorisationURLWithQueryParamsAndSetState({
                 providerId: "google",
                 authorisationURL: "",
                 userContext: {
@@ -447,18 +439,8 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
     const [sessionInfoUsingFetch, setSessionInfoUsingFetch] = useState(undefined);
 
     async function logout() {
-        const useRecipe = getQueryParams("rid") || authRecipe;
-        if (useRecipe === "thirdparty") {
-            await ThirdParty.signOut();
-        } else if (useRecipe === "thirdpartyemailpassword") {
-            await ThirdPartyEmailPassword.signOut();
-        } else if (useRecipe === "passwordless") {
-            await Passwordless.signOut();
-        } else if (useRecipe === "thirdpartypasswordless") {
-            await ThirdPartyPasswordless.signOut();
-        } else {
-            await EmailPassword.signOut();
-        }
+        await Session.signOut();
+
         if (redirectOnLogout) {
             if (props.history === undefined) {
                 window.location.href = "/auth";
@@ -546,7 +528,6 @@ function SessionInfoTable({ sessionInfo }) {
 
 function getEmailVerificationConfigs({ disableDefaultUI }) {
     return EmailVerification.init({
-        useShadowDom,
         disableDefaultUI,
         sendVerifyEmailScreen: {
             style: theme,
@@ -617,10 +598,6 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
                         log(`DOES_EMAIL_EXIST`);
                         return implementation.doesEmailExist(...args);
                     },
-                    sendPasswordResetEmail(...args) {
-                        log(`SEND_PASSWORD_RESET_EMAIL`);
-                        return implementation.sendPasswordResetEmail(...args);
-                    },
                     signIn(...args) {
                         log(`SIGN_IN`);
                         return implementation.signIn(...args);
@@ -629,9 +606,28 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
                         log(`SIGN_UP`);
                         return implementation.signUp(...args);
                     },
-                    submitNewPassword(...args) {
+                    sendPasswordResetEmail(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`SEND_PASSWORD_RESET_EMAIL RECEIVED_USER_CONTEXT`);
+                        }
+
+                        log(`SEND_PASSWORD_RESET_EMAIL`);
+                        return implementation.sendPasswordResetEmail(input);
+                    },
+                    getResetPasswordTokenFromURL(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`GET_RESET_TOKEN_FROM_URL RECEIVED_USER_CONTEXT`);
+                        }
+
+                        return implementation.getResetPasswordTokenFromURL(input);
+                    },
+                    submitNewPassword(input) {
+                        if (input.userContext["key"] !== undefined) {
+                            log(`SUBMIT_NEW_PASSWORD RECEIVED_USER_CONTEXT`);
+                        }
+
                         log(`SUBMIT_NEW_PASSWORD`);
-                        return implementation.submitNewPassword(...args);
+                        return implementation.submitNewPassword(input);
                     },
                 };
             },
@@ -646,7 +642,6 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
         },
-        useShadowDom,
         resetPasswordUsingTokenFeature: {
             disableDefaultUI,
             enterEmailForm: {
@@ -657,150 +652,18 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
             },
         },
         signInAndUpFeature: {
-            disableDefaultUI,
-            defaultToSignUp,
             signInForm: {
                 style: theme.style,
             },
             signUpForm: {
                 style: theme.style,
-                privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
-                termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
                 formFields,
             },
         },
     });
 }
 
-function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI, thirdPartyRedirectURL }) {
-    let providers = [
-        ThirdParty.Github.init(),
-        ThirdParty.Google.init(),
-        ThirdParty.Facebook.init(),
-        ThirdParty.Apple.init(),
-        {
-            id: "custom",
-            name: "Custom",
-        },
-        {
-            id: "auth0",
-            name: "Auth0",
-            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
-        },
-        {
-            id: "mock-provider",
-            name: "Mock Provider",
-        },
-    ];
-    if (staticProviderList) {
-        const ids = JSON.parse(staticProviderList);
-        providers = ids.map((id) => providers.find((p) => p.id === id) || { id, name: id });
-    }
-
-    return ThirdPartyPasswordless.init({
-        override: {
-            functions: (implementation) => {
-                const log = logWithPrefix(`ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE`);
-
-                return {
-                    ...implementation,
-                    doesPasswordlessUserEmailExist(...args) {
-                        log(`DOES_PASSWORDLESS_USER_EMAIL_EXIST`);
-                        return implementation.doesPasswordlessUserEmailExist(...args);
-                    },
-                    doesPasswordlessUserPhoneNumberExist(...args) {
-                        log(`DOES_PASSWORDLESS_USER_PHONE_NUMBER_EXIST`);
-                        return implementation.doesPasswordlessUserPhoneNumberExist(...args);
-                    },
-                    createPasswordlessCode(...args) {
-                        log(`CREATE_CODE`);
-                        return implementation.createPasswordlessCode(...args);
-                    },
-                    resendPasswordlessCode(...args) {
-                        log(`RESEND_CODE`);
-                        return implementation.resendPasswordlessCode(...args);
-                    },
-                    consumePasswordlessCode(...args) {
-                        log(`CONSUME_CODE`);
-                        return implementation.consumePasswordlessCode(...args);
-                    },
-                    getPasswordlessLoginAttemptInfo(...args) {
-                        log(`GET_LOGIN_ATTEMPT_INFO`);
-                        return implementation.getPasswordlessLoginAttemptInfo(...args);
-                    },
-                    setPasswordlessLoginAttemptInfo(...args) {
-                        log(`SET_LOGIN_ATTEMPT_INFO`);
-                        return implementation.setPasswordlessLoginAttemptInfo(...args);
-                    },
-                    clearPasswordlessLoginAttemptInfo(...args) {
-                        log(`CLEAR_LOGIN_ATTEMPT_INFO`);
-                        return implementation.clearPasswordlessLoginAttemptInfo(...args);
-                    },
-                    getAuthorisationURLFromBackend(...args) {
-                        log(`GET_OAUTH_AUTHORISATION_URL`);
-                        return implementation.getAuthorisationURLFromBackend(...args);
-                    },
-                    getThirdPartyStateAndOtherInfoFromStorage(...args) {
-                        log(`GET_OAUTH_STATE`);
-                        return implementation.getThirdPartyStateAndOtherInfoFromStorage(...args);
-                    },
-                    getThirdPartyAuthorisationURLWithQueryParamsAndSetState(...args) {
-                        log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
-                        return implementation.getThirdPartyAuthorisationURLWithQueryParamsAndSetState(...args);
-                    },
-                    setThirdPartyStateAndOtherInfoToStorage(...args) {
-                        log(`SET_OAUTH_STATE`);
-                        return implementation.setThirdPartyStateAndOtherInfoToStorage(...args);
-                    },
-                    thirdPartySignInAndUp(...args) {
-                        log(`THIRD_PARTY_SIGN_IN_AND_UP`);
-                        return implementation.thirdPartySignInAndUp(...args);
-                    },
-                };
-            },
-        },
-        preAPIHook: async (context) => {
-            console.log(`ST_LOGS THIRDPARTYPASSWORDLESS PRE_API_HOOKS ${context.action}`);
-            return context;
-        },
-        getRedirectionURL: async (context) => {
-            console.log(`ST_LOGS THIRDPARTYPASSWORDLESS GET_REDIRECTION_URL ${context.action}`);
-        },
-        onHandleEvent: async (context) => {
-            console.log(`ST_LOGS THIRDPARTYPASSWORDLESS ON_HANDLE_EVENT ${context.action}`);
-        },
-        useShadowDom,
-        contactMethod: passwordlessContactMethodType,
-        disablePasswordless: false,
-        signInUpFeature: {
-            disableDefaultUI,
-            style: theme.style,
-            thirdPartyProviderAndEmailOrPhoneFormStyle: `
-                [data-supertokens~=providerCustom] {
-                    color: red;
-                },
-            `,
-            privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-            termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
-            providers,
-            defaultCountry: passwordlessDefaultCountry,
-            resendEmailOrSMSGapInSeconds: 2,
-            guessInternationPhoneNumberFromInputPhoneNumber: passwordlessDisablePhoneGuess
-                ? () => undefined
-                : undefined,
-        },
-        linkClickedScreenFeature: {
-            disableDefaultUI,
-            style: theme.style,
-        },
-        mfaFeature: {
-            disableDefaultUI,
-            style: theme,
-        },
-    });
-}
-
-function getPasswordlessConfigs({ disableDefaultUI }) {
+function getPasswordlessConfigs({ disableDefaultUI, defaultToEmail }) {
     return Passwordless.init({
         override: {
             functions: (implementation) => {
@@ -853,19 +716,12 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS PASSWORDLESS ON_HANDLE_EVENT ${context.action}`);
         },
-        useShadowDom,
         contactMethod: passwordlessContactMethodType,
         signInUpFeature: {
             defaultCountry: passwordlessDefaultCountry,
-            guessInternationPhoneNumberFromInputPhoneNumber: passwordlessDisablePhoneGuess
-                ? () => undefined
-                : undefined,
+            defaultToEmail,
             resendEmailOrSMSGapInSeconds: 2,
-            disableDefaultUI,
             style: theme.style,
-
-            privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
-            termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
         },
         linkClickedScreenFeature: {
             disableDefaultUI,
@@ -925,135 +781,18 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
 
                 return {
                     ...implementation,
-                    getAuthorisationURLWithQueryParamsAndSetState(...args) {
-                        log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
-                        return implementation.getAuthorisationURLWithQueryParamsAndSetState(...args);
-                    },
-                    getAuthorisationURLFromBackend(...args) {
-                        log(`GET_OAUTH_AUTHORISATION_URL`);
-                        return implementation.getAuthorisationURLFromBackend(...args);
-                    },
-                    getStateAndOtherInfoFromStorage(...args) {
-                        log(`GET_OAUTH_STATE`);
-                        return implementation.getStateAndOtherInfoFromStorage(...args);
-                    },
-                    setStateAndOtherInfoToStorage(...args) {
-                        log(`SET_OAUTH_STATE`);
-                        return implementation.setStateAndOtherInfoToStorage(...args);
-                    },
-                    signInAndUp(...args) {
-                        log(`SIGN_IN_AND_UP`);
-                        return implementation.signInAndUp(...args);
-                    },
-                };
-            },
-        },
-        useShadowDom,
-        signInAndUpFeature: {
-            disableDefaultUI,
-            style: theme.style,
-            privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
-            termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
-            providers,
-        },
-
-        oAuthCallbackScreen: {
-            style: theme.style,
-        },
-    });
-}
-
-function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultUI, thirdPartyRedirectURL }) {
-    let providers = [
-        ThirdParty.Github.init(),
-        ThirdParty.Google.init(),
-        ThirdParty.Facebook.init(),
-        ThirdParty.Apple.init(),
-        {
-            id: "custom",
-            name: "Custom",
-        },
-        {
-            id: "auth0",
-            name: "Auth0",
-            getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
-        },
-        {
-            id: "mock-provider",
-            name: "Mock Provider",
-        },
-    ];
-    if (staticProviderList) {
-        const ids = JSON.parse(staticProviderList);
-        providers = ids.map((id) => providers.find((p) => p.id === id) || { id, name: id });
-    }
-    return ThirdPartyEmailPassword.init({
-        preAPIHook: async (context) => {
-            console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
-            return context;
-        },
-        getRedirectionURL: async (context) => {
-            console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
-            if (context.action === "SUCCESS") {
-                setIsNewUserToStorage("thirdpartyemailpassword", context.isNewRecipeUser);
-                return context.redirectToPath || "/dashboard";
-            }
-        },
-        onHandleEvent: async (context) => {
-            console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
-        },
-        override: {
-            functions: (implementation) => {
-                const log = logWithPrefix(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE`);
-
-                return {
-                    ...implementation,
-                    getAuthorisationURLWithQueryParamsAndSetState(input) {
-                        if (input.userContext["key"] !== undefined) {
-                            log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE RECEIVED_USER_CONTEXT`);
-                        }
-
-                        log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
-                        return implementation.getAuthorisationURLWithQueryParamsAndSetState(input);
-                    },
                     generateStateToSendToOAuthProvider(input) {
                         if (input.userContext["key"] !== undefined) {
                             log(`GENERATE_STATE RECEIVED_USER_CONTEXT`);
                         }
-
                         return implementation.generateStateToSendToOAuthProvider(input);
                     },
-                    thirdPartySignInAndUp(input) {
+                    getAuthorisationURLWithQueryParamsAndSetState(input) {
                         if (input.userContext["key"] !== undefined) {
-                            log(`SIGN_IN_AND_UP RECEIVED_USER_CONTEXT`);
+                            log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE RECEIVED_USER_CONTEXT`);
                         }
-
-                        log(`SIGN_IN_AND_UP`);
-                        return implementation.thirdPartySignInAndUp(input);
-                    },
-                    emailPasswordSignIn(...args) {
-                        log(`SIGN_IN_AND_UP`);
-                        return implementation.emailPasswordSignIn(...args);
-                    },
-                    emailPasswordSignUp(...args) {
-                        log(`SIGN_IN_AND_UP`);
-                        return implementation.emailPasswordSignUp(...args);
-                    },
-                    setStateAndOtherInfoToStorage(input) {
-                        if (input.userContext["key"] !== undefined) {
-                            log(`SET_OAUTH_STATE RECEIVED_USER_CONTEXT`);
-                        }
-
-                        log(`SET_OAUTH_STATE`);
-                        return implementation.setStateAndOtherInfoToStorage(input);
-                    },
-                    getStateAndOtherInfoFromStorage(input) {
-                        if (input.userContext["key"] !== undefined) {
-                            log(`GET_OAUTH_STATE RECEIVED_USER_CONTEXT`);
-                        }
-
-                        log(`GET_OAUTH_STATE`);
-                        return implementation.getStateAndOtherInfoFromStorage(input);
+                        log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
+                        return implementation.getAuthorisationURLWithQueryParamsAndSetState(input);
                     },
                     getAuthorisationURLFromBackend(input) {
                         if (input.userContext["key"] !== undefined) {
@@ -1079,33 +818,31 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
 
                         return implementation.getAuthorisationURLFromBackend(input);
                     },
-                    submitNewPassword(input) {
+                    getStateAndOtherInfoFromStorage(input) {
                         if (input.userContext["key"] !== undefined) {
-                            log(`SUBMIT_NEW_PASSWORD RECEIVED_USER_CONTEXT`);
+                            log(`GET_OAUTH_STATE RECEIVED_USER_CONTEXT`);
                         }
 
-                        log(`SUBMIT_NEW_PASSWORD`);
-                        return implementation.submitNewPassword(input);
+                        log(`GET_OAUTH_STATE`);
+                        return implementation.getStateAndOtherInfoFromStorage(input);
                     },
-                    sendPasswordResetEmail(input) {
+
+                    setStateAndOtherInfoToStorage(input) {
                         if (input.userContext["key"] !== undefined) {
-                            log(`SEND_PASSWORD_RESET_EMAIL RECEIVED_USER_CONTEXT`);
+                            log(`SET_OAUTH_STATE RECEIVED_USER_CONTEXT`);
                         }
 
-                        log(`SEND_PASSWORD_RESET_EMAIL`);
-                        return implementation.sendPasswordResetEmail(input);
+                        log(`SET_OAUTH_STATE`);
+                        return implementation.setStateAndOtherInfoToStorage(input);
                     },
-                    getResetPasswordTokenFromURL(input) {
+                    signInAndUp(input) {
                         if (input.userContext["key"] !== undefined) {
-                            log(`GET_RESET_TOKEN_FROM_URL RECEIVED_USER_CONTEXT`);
+                            log(`SIGN_IN_AND_UP RECEIVED_USER_CONTEXT`);
                         }
+                        log(`SIGN_IN_AND_UP`);
+                        return implementation.signInAndUp(input);
+                    },
 
-                        return implementation.getResetPasswordTokenFromURL(input);
-                    },
-                    doesEmailExist(...args) {
-                        log(`DOES_EMAIL_EXIST`);
-                        return implementation.doesEmailExist(...args);
-                    },
                     getAuthStateFromURL(input) {
                         if (input.userContext["key"] !== undefined) {
                             log(`GET_AUTH_STATE_FROM_URL RECEIVED_USER_CONTEXT`);
@@ -1123,22 +860,10 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
                 };
             },
         },
-        useShadowDom,
-        resetPasswordUsingTokenFeature: {
-            disableDefaultUI,
-        },
         signInAndUpFeature: {
-            disableDefaultUI,
-            signInForm: {},
-            signUpForm: {
-                formFields,
-                privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
-                termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
-            },
             style: theme.style,
             providers,
         },
-        disableEmailPassword: false,
 
         oAuthCallbackScreen: {
             style: theme.style,

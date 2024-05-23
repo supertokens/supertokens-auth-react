@@ -5,13 +5,17 @@ import { RecipeRouter } from "../recipeRouter";
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import AccessDeniedScreenFeature from "./components/features/accessDeniedScreen";
 import { AccessDeniedScreenTheme } from "./components/themes/accessDeniedScreenTheme";
+import { defaultTranslationsSession } from "./components/themes/translations";
 import Session from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
+import type { AuthComponent } from "../../types";
 
 export class SessionPreBuiltUI extends RecipeRouter {
     static instance?: SessionPreBuiltUI;
+    languageTranslations = defaultTranslationsSession;
+
     constructor(public readonly recipeInstance: Session) {
         super();
     }
@@ -40,6 +44,10 @@ export class SessionPreBuiltUI extends RecipeRouter {
             props,
             useComponentOverrides
         );
+    }
+
+    getAuthComponents(): AuthComponent[] {
+        return [];
     }
 
     // Instance methods

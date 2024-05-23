@@ -89,7 +89,7 @@ const Input: React.FC<InputProps> = ({
                 <input
                     autoFocus={autofocus}
                     autoComplete={autoComplete}
-                    data-supertokens="input"
+                    data-supertokens={`input input-${name}`}
                     className="supertokens-input"
                     onFocus={handleFocus}
                     onBlur={handleBlur}

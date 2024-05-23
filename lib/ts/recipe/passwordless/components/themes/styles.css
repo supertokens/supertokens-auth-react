@@ -21,12 +21,6 @@
     animation: swingIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) alternate 2 both;
 }
 
-[data-supertokens~="codeInputLabelWrapper"] {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 [data-supertokens~="headerSubtitle"] strong {
     max-width: 100%;
     display: inline-block;
@@ -50,21 +44,6 @@
     text-overflow: ellipsis;
 }
 
-[data-supertokens~="resendCodeBtn"] {
-    width: auto;
-    margin-top: 0;
-    line-height: 24px;
-}
-
-[data-supertokens~="resendCodeBtn"]:hover {
-    text-decoration: underline;
-}
-[data-supertokens~="resendCodeBtn"]:disabled {
-    color: rgb(var(--palette-textPrimary));
-    cursor: default;
-    text-decoration: none;
-}
-
 [data-supertokens~="phoneInputLibRoot"] {
     display: flex;
     align-items: center;
@@ -75,7 +54,7 @@
     align-items: center;
 }
 
-[data-supertokens~="phoneInputWrapper"] .iti [data-supertokens~="input"] {
+input[type="tel"][data-supertokens~="input-phoneNumber"] {
     padding-left: 15px;
 }
 
@@ -117,4 +96,12 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     margin: "0 16px";
+}
+
+[data-supertokens~="continueWithPasswordlessButtonWrapper"] {
+    margin: 9px 0;
+}
+
+[data-supertokens~="continueWithSupertokensLink"] {
+    margin-top: 9px;
 }

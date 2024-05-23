@@ -17,99 +17,55 @@
  */
 import React from "react";
 
-import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { hasFontDefined } from "../../../../../styles/styles";
+import SuperTokens from "../../../../../superTokens";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
-import GeneralError from "../../../../emailpassword/components/library/generalError";
-import { useDynamicLoginMethods } from "../../../../multitenancy/dynamicLoginMethodsContext";
-import { getEnabledContactMethods } from "../../../utils";
+import { FactorIds } from "../../../../multifactorauth";
 import { ThemeBase } from "../themeBase";
 
 import { EmailForm } from "./emailForm";
 import { EmailOrPhoneForm } from "./emailOrPhoneForm";
-import { LinkSent } from "./linkSent";
 import { PhoneForm } from "./phoneForm";
-import { SignInUpHeader } from "./signInUpHeader";
-import { UserInputCodeForm } from "./userInputCodeForm";
-import { UserInputCodeFormHeader } from "./userInputCodeFormHeader";
 
-import type { DynamicLoginMethodsContextValue } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import type { SignInUpProps } from "../../../types";
 
 export enum SignInUpScreens {
-    LinkSent,
     EmailForm,
     PhoneForm,
     EmailOrPhoneForm,
-    UserInputCodeForm,
 }
 
 /*
  * Component.
  */
-const SignInUpTheme: React.FC<SignInUpProps & { activeScreen: SignInUpScreens }> = ({
-    activeScreen,
-    featureState,
-    ...props
-}) => {
+const SignInUpTheme: React.FC<SignInUpProps & { activeScreen: SignInUpScreens }> = ({ activeScreen, ...props }) => {
     const commonProps = {
         recipeImplementation: props.recipeImplementation,
         config: props.config,
-        clearError: () => props.dispatch({ type: "setError", error: undefined }),
-        onError: (error: string) => props.dispatch({ type: "setError", error }),
+        clearError: props.clearError,
+        onError: props.onError,
         onFetchError: props.onFetchError,
-        error: featureState.error,
+        error: props.error,
+        validatePhoneNumber: props.validatePhoneNumber,
     };
 
-    return activeScreen === SignInUpScreens.LinkSent ? (
-        <LinkSent {...commonProps} loginAttemptInfo={featureState.loginAttemptInfo!} />
-    ) : (
-        <div data-supertokens="container">
-            <div data-supertokens="row">
-                {featureState.loaded && (
-                    <React.Fragment>
-                        {activeScreen === SignInUpScreens.UserInputCodeForm ? (
-                            <UserInputCodeFormHeader
-                                {...commonProps}
-                                loginAttemptInfo={featureState.loginAttemptInfo!}
-                            />
-                        ) : (
-                            <SignInUpHeader />
-                        )}
-                        {featureState.error !== undefined && <GeneralError error={featureState.error} />}
-                        {activeScreen === SignInUpScreens.EmailForm ? (
-                            <EmailForm {...commonProps} />
-                        ) : activeScreen === SignInUpScreens.PhoneForm ? (
-                            <PhoneForm {...commonProps} />
-                        ) : activeScreen === SignInUpScreens.EmailOrPhoneForm ? (
-                            <EmailOrPhoneForm {...commonProps} />
-                        ) : activeScreen === SignInUpScreens.UserInputCodeForm ? (
-                            <UserInputCodeForm
-                                {...commonProps}
-                                loginAttemptInfo={featureState.loginAttemptInfo!}
-                                onSuccess={props.onSuccess}
-                            />
-                        ) : null}
-                    </React.Fragment>
-                )}
-            </div>
-            <SuperTokensBranding />
-        </div>
-    );
+    return activeScreen === SignInUpScreens.EmailForm ? (
+        <EmailForm {...commonProps} />
+    ) : activeScreen === SignInUpScreens.PhoneForm ? (
+        <PhoneForm {...commonProps} />
+    ) : activeScreen === SignInUpScreens.EmailOrPhoneForm ? (
+        <EmailOrPhoneForm {...commonProps} />
+    ) : null;
 };
 
 function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element {
-    const hasFont = hasFontDefined(props.config.rootStyle);
+    const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
+    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
-    const currentDynamicLoginMethods = useDynamicLoginMethods();
-    const activeScreen = getActiveScreen(props, currentDynamicLoginMethods);
+    const activeScreen = getActiveScreen(props.factorIds);
 
     let activeStyle;
-    if (activeScreen === SignInUpScreens.LinkSent) {
-        activeStyle = props.config.signInUpFeature.linkSentScreenStyle;
-    } else if (activeScreen === SignInUpScreens.UserInputCodeForm) {
-        activeStyle = props.config.signInUpFeature.userInputCodeFormStyle;
-    } else if (activeScreen === SignInUpScreens.EmailForm) {
+    if (activeScreen === SignInUpScreens.EmailForm) {
         activeStyle = props.config.signInUpFeature.emailOrPhoneFormStyle;
     } else if (activeScreen === SignInUpScreens.PhoneForm) {
         activeStyle = props.config.signInUpFeature.emailOrPhoneFormStyle;
@@ -119,7 +75,7 @@ function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element {
 
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase loadDefaultFont={!hasFont} userStyles={[props.config.rootStyle, activeStyle]}>
+            <ThemeBase loadDefaultFont={!hasFont} userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
                 <SignInUpTheme {...props} activeScreen={activeScreen!} />
             </ThemeBase>
         </UserContextWrapper>
@@ -128,23 +84,14 @@ function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element {
 
 export default SignInUpThemeWrapper;
 
-export function getActiveScreen(
-    props: Pick<SignInUpProps, "featureState" | "config">,
-    currentDynamicLoginMethods: DynamicLoginMethodsContextValue
-) {
-    const enabledContactMethods = getEnabledContactMethods(props.config.contactMethod, currentDynamicLoginMethods);
-
-    if (props.featureState.loginAttemptInfo && props.featureState.loginAttemptInfo.flowType === "MAGIC_LINK") {
-        return SignInUpScreens.LinkSent;
-    } else if (props.featureState.loginAttemptInfo) {
-        return SignInUpScreens.UserInputCodeForm;
-    } else if (enabledContactMethods.length > 1) {
-        return SignInUpScreens.EmailOrPhoneForm;
-    } else if (enabledContactMethods[0] === "EMAIL") {
-        return SignInUpScreens.EmailForm;
-    } else if (enabledContactMethods[0] === "PHONE") {
+export function getActiveScreen(factorIds: string[]) {
+    if (factorIds.includes(FactorIds.LINK_EMAIL) || factorIds.includes(FactorIds.OTP_EMAIL)) {
+        if (factorIds.includes(FactorIds.OTP_PHONE) || factorIds.includes(FactorIds.LINK_PHONE)) {
+            return SignInUpScreens.EmailOrPhoneForm;
+        } else {
+            return SignInUpScreens.EmailForm;
+        }
+    } else {
         return SignInUpScreens.PhoneForm;
     }
-
-    throw new Error("Couldn't choose active screen; Should never happen");
 }

@@ -23,6 +23,7 @@ import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
+import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import {
     clearErrorQueryParam,
@@ -40,6 +41,7 @@ import { getAvailableFactors } from "../../../../multifactorauth/utils";
 import { getInvalidClaimsFromResponse } from "../../../../session";
 import SessionRecipe from "../../../../session/recipe";
 import Session from "../../../../session/recipe";
+import { defaultPhoneNumberValidator } from "../../../defaultPhoneNumberValidator";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import MFAThemeWrapper from "../../themes/mfa";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
@@ -49,7 +51,7 @@ import type Recipe from "../../../recipe";
 import type { AdditionalLoginAttemptInfoProperties, ComponentOverrideMap, MFAChildProps } from "../../../types";
 import type { MFAAction, MFAState, NormalisedConfig } from "../../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
-import type { PasswordlessFlowType } from "supertokens-web-js/recipe/thirdpartypasswordless";
+import type { PasswordlessFlowType } from "supertokens-web-js/recipe/passwordless/types";
 
 export const useFeatureReducer = (): [MFAState, React.Dispatch<MFAAction>] => {
     return React.useReducer(
@@ -195,6 +197,7 @@ export function useChildProps(
             recipeImplementation: recipeImplementation,
             config: recipe.config,
             contactMethod,
+            validatePhoneNumber: recipe.config.validatePhoneNumber ?? defaultPhoneNumberValidator,
         };
     }, [contactMethod, state, recipeImplementation]);
 }
@@ -263,7 +266,7 @@ export const MFAFeature: React.FC<
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
-                useShadowDom={props.recipe.config.useShadowDom}
+                useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}
                 defaultStore={defaultTranslationsPasswordless}>
                 <MFAFeatureInner {...props} />
             </FeatureWrapper>

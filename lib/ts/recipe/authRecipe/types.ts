@@ -13,6 +13,11 @@
  * under the License.
  */
 
+import type { AuthPageComponentList } from "./components/theme/authPage/authPageComponentList";
+import type { AuthPageFooter } from "./components/theme/authPage/authPageFooter";
+import type { AuthPageHeader } from "./components/theme/authPage/authPageHeader";
+import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import type { AuthComponentProps, Navigate, PartialAuthComponentProps, UserContext } from "../../types";
 import type {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -25,6 +30,45 @@ export type Config<T, S, R> = UserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
 
 export type NormalisedConfig<T, Action, R> = NormalisedRecipeModuleConfig<T, Action, R>;
 
-export type OnHandleEventContext = {
-    action: "SESSION_ALREADY_EXISTS";
+export type OnHandleEventContext = never;
+
+export type ComponentOverrideMap = {
+    AuthPageHeader_Override?: ComponentOverride<typeof AuthPageHeader>;
+    AuthPageFooter_Override?: ComponentOverride<typeof AuthPageFooter>;
+    AuthPageComponentList_Override?: ComponentOverride<typeof AuthPageComponentList>;
+};
+
+type ComponentWithPreloadInfo<T> = {
+    component: React.FC<
+        AuthComponentProps & {
+            preloadInfo: T;
+        }
+    >;
+    preloadInfo: T;
+};
+
+export type AuthPageThemeProps = {
+    showBackButton: boolean;
+    setFactorList: (factorIds: string[]) => void;
+    resetFactorList: () => void;
+
+    fullPageCompWithPreloadedInfo?: ComponentWithPreloadInfo<any>;
+    authComponents: React.FC<PartialAuthComponentProps>[];
+    factorIds: string[];
+
+    hasSeparateSignUpView: boolean;
+    isSignUp: boolean;
+    onSignInUpSwitcherClick: () => void;
+
+    error: string | undefined;
+    onError: (err: string) => void;
+    clearError: () => void;
+
+    rebuildAuthPage: () => void;
+
+    privacyPolicyLink: string | undefined;
+    termsOfServiceLink: string | undefined;
+
+    userContext: UserContext;
+    navigate: Navigate | undefined;
 };
