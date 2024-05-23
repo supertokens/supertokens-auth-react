@@ -233,13 +233,17 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
                     await waitForSTElement(page, "[data-supertokens~=input-phoneNumber]", true);
                     await setInputValues(page, [{ name: inputNameEmail, value: unregEmail }]);
-                    await waitForSTElement(page, "[data-supertokens~=continueWithSupertokensLink]");
                     await submitForm(page);
+
+                    await waitForSTElement(page, "[data-supertokens~=continueWithSupertokensLink]");
                     await waitForSTElement(page, "[data-supertokens~=input-password]");
+
                     const changeButton = await waitForSTElement(page, "[data-supertokens~=contactMethodSwitcher]");
                     await changeButton.click();
+
                     await waitForSTElement(page, "[data-supertokens~=input-password]", true);
                     await waitForSTElement(page, "[data-supertokens~=continueWithSupertokensLink]", true);
+
                     await setInputValues(page, [{ name: inputNamePhone, value: examplePhoneNumber }]);
                     await submitForm(page);
 
