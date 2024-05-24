@@ -91,13 +91,18 @@ export async function waitForSTElement(page, selector, inverted = false) {
     return res;
 }
 
-export function waitForUrl(page, pathname) {
+export function waitForUrl(page, url, onlyPath = true) {
     return page.waitForFunction(
-        (pathname) => {
-            return window.location.pathname === pathname;
+        (pathname, onlyPath) => {
+            return (
+                (onlyPath
+                    ? window.location.pathname
+                    : window.location.pathname + window.location.search + window.location.hash) === pathname
+            );
         },
         { polling: 50 },
-        pathname
+        url,
+        onlyPath
     );
 }
 

@@ -55,6 +55,7 @@ import {
     backendBeforeEach,
     getInputField,
     isReact16,
+    waitForUrl,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -286,9 +287,8 @@ describe("SuperTokens SignIn", function () {
 
             // Redirected to onSuccessFulRedirectUrl
             const onSuccessFulRedirectUrl = "/dashboard";
-            let pathname = await page.evaluate(() => window.location.pathname);
             // Session.doesSessionExist returns true, allow to stay on /dashboard
-            assert.deepStrictEqual(pathname, onSuccessFulRedirectUrl);
+            await waitForUrl(page, onSuccessFulRedirectUrl);
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/dashboard-no-auth`),
@@ -326,8 +326,7 @@ describe("SuperTokens SignIn", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth");
+            await waitForUrl(page, "/auth");
             cookies = await page.cookies();
             assert.deepStrictEqual(cookies.length, 1);
             assert.deepStrictEqual(cookies[0].name, "st-last-access-token-update");
@@ -433,9 +432,8 @@ describe("SuperTokens SignIn", function () {
 
             // Redirected to onSuccessFulRedirectUrl
             const onSuccessFulRedirectUrl = "/dashboard";
-            let pathname = await page.evaluate(() => window.location.pathname);
             // Session.doesSessionExist returns true, allow to stay on /dashboard
-            assert.deepStrictEqual(pathname, onSuccessFulRedirectUrl);
+            await waitForUrl(page, onSuccessFulRedirectUrl);
 
             // Test that sessionInfo was fetched successfully using axios and fetch (i.e. Interceptors work)
             const axiosUserId = await getUserIdWithAxios(page);
@@ -457,8 +455,7 @@ describe("SuperTokens SignIn", function () {
             // Logout
             const logoutButton = await getLogoutButton(page);
             await Promise.all([await logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-            pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth");
+            await waitForUrl(page, "/auth");
             cookies = await page.cookies();
             assert.deepStrictEqual(cookies.length, 1);
             assert.deepStrictEqual(cookies[0].name, "st-last-access-token-update");
@@ -526,11 +523,7 @@ describe("SuperTokens SignIn", function () {
             const backBtn = await waitForSTElement(page, "[data-supertokens~=logoutButton]");
             backBtn.click();
 
-            const redirectUrl = await page.evaluate(() => {
-                return window.location.pathname + window.location.search;
-            });
-
-            assert.deepStrictEqual(redirectUrl, "/dashboard");
+            await waitForUrl(page, "/dashboard", false);
         });
 
         it("Successful Sign In with redirect to, redirectToPath directly", async function () {
@@ -662,8 +655,7 @@ describe("SuperTokens SignIn", function () {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 await page.waitForSelector(".sessionInfo-user-id");
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/redirect-to-this-custom-path");
+                await waitForUrl(page, "/redirect-to-this-custom-path");
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -703,8 +695,7 @@ describe("SuperTokens SignIn", function () {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 await page.waitForSelector(".sessionInfo-user-id");
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/CasE/Case-SensItive1-PAth");
+                await waitForUrl(page, "/CasE/Case-SensItive1-PAth");
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -741,8 +732,7 @@ describe("SuperTokens SignIn", function () {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/dashboard");
+                await waitForUrl(page, "/dashboard");
             });
         });
     });

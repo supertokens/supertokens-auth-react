@@ -48,6 +48,7 @@ import {
     getInputField,
     getLabelsText,
     isReact16,
+    waitForUrl,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -148,8 +149,7 @@ describe("SuperTokens Third Party Email Password", function () {
         it("Successful signup with credentials", async function () {
             await toggleSignInSignUp(page);
             await defaultSignUp(page, "thirdpartyemailpassword");
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            await waitForUrl(page, "/dashboard");
         });
 
         it("should show error message on sign up with duplicate email on sign up click", async function () {
@@ -294,8 +294,7 @@ describe("SuperTokens Third Party Email Password", function () {
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             await page.waitForSelector(".sessionInfo-user-id");
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            await waitForUrl(page, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -336,22 +335,19 @@ describe("SuperTokens Third Party Email Password", function () {
                 '{"formFields":[{"id":"email","value":"bradparishdoh@gmail.com"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
                 "thirdpartyemailpassword"
             );
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            await waitForUrl(page, "/dashboard");
             const emailPasswordUserId = await getUserIdWithFetch(page);
             const logoutButton = await getLogoutButton(page);
             await Promise.all([await logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-            pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth");
+            await waitForUrl(page, "/auth");
             // 2. Sign in with auth0 with same address.
             await clickOnProviderButton(page, "Auth0");
             await Promise.all([
                 loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
-            pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            await waitForUrl(page, "/dashboard");
             const thirdPartyUserId = await getUserIdWithFetch(page);
 
             // 3. Compare userIds
@@ -411,9 +407,8 @@ describe("SuperTokens Third Party Email Password", function () {
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            const search = await page.evaluate(() => window.location.search);
-            assert.deepStrictEqual(pathname, "/auth/");
+            await waitForUrl(page, "/auth/");
+            const search = page.evaluate(() => window.location.search);
             assert.deepStrictEqual(search, "?error=signin");
         });
     });

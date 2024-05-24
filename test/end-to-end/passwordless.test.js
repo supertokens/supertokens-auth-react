@@ -1115,10 +1115,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await page.goto(device.codes[0].urlWithLinkCode);
                 await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-                const urlWithHash = await page.evaluate(
-                    () => window.location.pathname + window.location.search + window.location.hash
-                );
-                assert.deepStrictEqual(urlWithHash, "/#cell=4,1-6,2");
+                await waitForUrl(page, "/#cell=4,1-6,2", false);
             });
 
             it("create code general error", async function () {
@@ -1193,8 +1190,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
                 // We have been redirected to linkSent
                 await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/auth/");
+                await waitForUrl(page, "/auth/");
 
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
                 assert.strictEqual(await error.evaluate((e) => e.textContent), "general error from API consume code");
@@ -1229,8 +1225,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
                 // We have been redirected to linkSent
                 await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/auth/");
+                await waitForUrl(page, "/auth/");
 
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
                 assert.strictEqual(await error.evaluate((e) => e.textContent), SOMETHING_WENT_WRONG_ERROR);
@@ -1245,8 +1240,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/auth/");
+                await waitForUrl(page, "/auth/");
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -1264,8 +1258,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 const btn = await waitForSTElement(page, "[data-supertokens='button']");
                 await btn.click();
                 await waitForSTElement(page, "[data-supertokens='generalError']");
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/auth/");
+                await waitForUrl(page, "/auth/");
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -1291,8 +1284,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await btn.click();
                 await waitForSTElement(page, "[data-supertokens='generalError']");
 
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/auth/");
+                await waitForUrl(page, "/auth/");
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -1318,8 +1310,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await btn.click();
                 await waitForSTElement(page, "[data-supertokens='generalError']");
 
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/auth/");
+                await waitForUrl(page, "/auth/");
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -1341,8 +1332,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/auth/");
+                await waitForUrl(page, "/auth/");
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -1360,8 +1350,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/auth/");
+                await waitForUrl(page, "/auth/");
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -1630,8 +1619,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await btn.click();
                 await waitForSTElement(page, "[data-supertokens='generalError']");
 
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/auth/");
+                await waitForUrl(page, "/auth/");
 
                 assert.deepStrictEqual(
                     [
@@ -1694,8 +1682,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await anotherTab.goto(device.codes[0].urlWithLinkCode + "''");
                 await anotherTab.waitForNavigation({ waitUntil: "networkidle0" });
 
-                const pathname = await anotherTab.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/auth/");
+                const pathname = await waitForUrl(anotherTab, "/auth/");
 
                 await waitForSTElement(anotherTab, "[data-supertokens~=input][name=userInputCode]");
                 await waitForSTElement(anotherTab, "[data-supertokens~='generalError']");

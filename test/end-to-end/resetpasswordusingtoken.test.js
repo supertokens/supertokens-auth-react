@@ -54,6 +54,7 @@ import {
     getResetPasswordSuccessBackToSignInButton,
     backendBeforeEach,
     waitForText,
+    waitForUrl,
 } from "../helpers";
 
 /*
@@ -353,8 +354,7 @@ describe("SuperTokens Reset password", function () {
             assert.deepStrictEqual(title, "Success!");
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/");
+            await waitForUrl(page, "/auth/");
         });
     });
 });

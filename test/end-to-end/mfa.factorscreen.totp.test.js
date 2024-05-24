@@ -32,6 +32,7 @@ import {
     getFactorChooserOptions,
     isMFASupported,
     setAccountLinkingConfig,
+    waitForUrl,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API } from "../constants";
@@ -176,8 +177,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 await completeTOTP(page, secret);
                 await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/redirect-here");
+                await waitForUrl(page, "/redirect-here");
             });
 
             it("should show access denied if the app navigates to the setup page but the user it is not allowed to set up the factor", async () => {

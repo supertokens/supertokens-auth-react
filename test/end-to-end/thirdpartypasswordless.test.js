@@ -37,6 +37,7 @@ import {
     clickOnProviderButtonWithoutWaiting,
     getGeneralError,
     backendBeforeEach,
+    waitForUrl,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
 
@@ -173,8 +174,7 @@ describe("SuperTokens Third Party Passwordless", function () {
             await submitForm(page);
 
             await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            await waitForUrl(page, "/dashboard");
 
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",

@@ -32,6 +32,7 @@ import {
     isMFASupported,
     setAccountLinkingConfig,
     expectErrorThrown,
+    waitForUrl,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API } from "../constants";
@@ -167,8 +168,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/redirect-here");
+            await waitForUrl(page, "/redirect-here");
         });
 
         it("set up otp-email and sign-in", async function () {
@@ -202,8 +202,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/redirect-here");
+            await waitForUrl(page, "/redirect-here");
         });
 
         it("set up totp and sign-in", async function () {
@@ -238,8 +237,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/redirect-here");
+            await waitForUrl(page, "/redirect-here");
         });
 
         it("should show access denied if the only next option is an unknown factor id", async () => {

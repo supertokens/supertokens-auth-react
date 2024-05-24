@@ -31,6 +31,7 @@ import {
     assertNoSTComponents,
     clearBrowserCookiesWithoutAffectingConsole,
     screenshotOnFailure,
+    waitForUrl,
 } from "../helpers";
 /*
  * Tests.
@@ -484,8 +485,7 @@ describe("SuperTokens Routing in Test App", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?router=no-router&rid=unknown`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            await assert.strictEqual(pathname, DEFAULT_WEBSITE_BASE_PATH);
+            await waitForUrl(page, DEFAULT_WEBSITE_BASE_PATH);
             const signInButtonLabel = await getSubmitFormButtonLabel(page);
             assert.strictEqual(signInButtonLabel, "SIGN IN");
         });
