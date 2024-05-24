@@ -32,6 +32,7 @@ import {
     screenshotOnFailure,
     clickOnProviderButtonWithoutWaiting,
     backendBeforeEach,
+    waitForUrl,
 } from "../helpers";
 
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
@@ -110,8 +111,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             await page.waitForSelector(".sessionInfo-user-id");
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            await waitForUrl(page, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -215,8 +215,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             await page.waitForSelector(".sessionInfo-user-id");
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            await waitForUrl(page, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -255,8 +254,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/hello");
+            await waitForUrl(page, "/hello");
         });
 
         it("Successful signin with auth0 and redirectToPath case sensitive", async function () {
@@ -270,8 +268,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/CasE/Case-SensItive1-PAth");
+            await waitForUrl(page, "/CasE/Case-SensItive1-PAth");
         });
 
         it("should work with custom getRedirectUrl", async function () {
@@ -287,8 +284,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
             await clickOnProviderButton(page, "Auth0");
             await loginWithAuth0(page);
 
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/auth0-custom-redirect");
+            await waitForUrl(page, "/auth/auth0-custom-redirect");
         });
 
         // it("Successful signin with facebook", async function () {
@@ -302,8 +298,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
         //         loginWithFacebook(page),
         //         page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
         //     ]);
-        //     const pathname = await page.evaluate(() => window.location.pathname);
-        //     assert.deepStrictEqual(pathname, "/dashboard");
+        //     await waitForUrl(page(pathname, "/dashboard");
         //     assert.deepStrictEqual(consoleLogs, [
         //         "ST_LOGS ${logId} PRE_API_HOOKS GET_AUTHORISATION_URL",
         //         "ST_LOGS ${logId} PRE_API_HOOKS SIGN_IN_UP",
@@ -323,8 +318,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
         //         loginWithGoogle(page),
         //         page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
         //     ]);
-        //     const pathname = await page.evaluate(() => window.location.pathname);
-        //     assert.deepStrictEqual(pathname, "/dashboard");
+        //     await waitForUrl(page(pathname, "/dashboard");
         //     assert.deepStrictEqual(consoleLogs, [
         //         "ST_LOGS ${logId} PRE_API_HOOKS GET_AUTHORISATION_URL",
         //         "ST_LOGS ${logId} PRE_API_HOOKS SIGN_IN_UP",
@@ -441,9 +435,8 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH`,
                 ...signInUpPageLoadLogs,
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            const search = await page.evaluate(() => window.location.search);
-            assert.deepStrictEqual(pathname, "/auth/");
+            await waitForUrl(page, "/auth/");
+            const search = page.evaluate(() => window.location.search);
             assert(search.endsWith("error=signin"));
         });
 
@@ -472,9 +465,8 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH`,
                 ...signInUpPageLoadLogs,
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            const search = await page.evaluate(() => window.location.search);
-            assert.deepStrictEqual(pathname, "/auth/");
+            await waitForUrl(page, "/auth/");
+            const search = page.evaluate(() => window.location.search);
             assert(search.endsWith("error=signin"));
         });
 
@@ -503,9 +495,8 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH`,
                 ...signInUpPageLoadLogs,
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            const search = await page.evaluate(() => window.location.search);
-            assert.deepStrictEqual(pathname, "/auth/");
+            await waitForUrl(page, "/auth/");
+            const search = page.evaluate(() => window.location.search);
             assert(search.endsWith("error=signin"));
         });
 
@@ -534,9 +525,8 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH`,
                 ...signInUpPageLoadLogs,
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            const search = await page.evaluate(() => window.location.search);
-            assert.deepStrictEqual(pathname, "/auth/");
+            await waitForUrl(page, "/auth/");
+            const search = page.evaluate(() => window.location.search);
             assert(search.endsWith("error=signin"));
         });
 
@@ -565,9 +555,8 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH`,
                 ...signInUpPageLoadLogs,
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            const search = await page.evaluate(() => window.location.search);
-            assert.deepStrictEqual(pathname, "/auth/");
+            await waitForUrl(page, "/auth/");
+            const search = page.evaluate(() => window.location.search);
             assert(search.endsWith("error=signin"));
         });
 
@@ -596,9 +585,8 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 `ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH`,
                 ...signInUpPageLoadLogs,
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            const search = await page.evaluate(() => window.location.search);
-            assert.deepStrictEqual(pathname, "/auth/");
+            await waitForUrl(page, "/auth/");
+            const search = page.evaluate(() => window.location.search);
             assert(search.endsWith("error=signin"));
         });
     });

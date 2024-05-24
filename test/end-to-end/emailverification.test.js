@@ -54,6 +54,7 @@ import {
     backendBeforeEach,
     getDefaultSignUpFieldValues,
     getTestEmail,
+    waitForUrl,
 } from "../helpers";
 
 describe("SuperTokens Email Verification", function () {
@@ -147,8 +148,7 @@ describe("SuperTokens Email Verification", function () {
                 consoleLogs.pop();
             }
 
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/");
+            await waitForUrl(page, "/auth/");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -171,8 +171,7 @@ describe("SuperTokens Email Verification", function () {
             await signUp(page, fieldValues, postValues, "emailpassword");
 
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/verify-email");
+            await waitForUrl(page, "/auth/verify-email");
 
             await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/deleteUser`, {
                 method: "POST",
@@ -187,8 +186,7 @@ describe("SuperTokens Email Verification", function () {
             consoleLogs = [];
             await page.reload({ waitUntil: ["networkidle0"] });
             // Click on Logout should remove session and redirect to login page
-            pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/");
+            await waitForUrl(page, "/auth/");
 
             // In strict mode useEffects may be called twice in development mode,
             // but sometimes the second call is aborted by the navigation in the first
@@ -216,8 +214,7 @@ describe("SuperTokens Email Verification", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/");
+            await waitForUrl(page, "/auth/");
         });
 
         it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified", async function () {
@@ -227,8 +224,7 @@ describe("SuperTokens Email Verification", function () {
             ]);
             await toggleSignInSignUp(page);
             await defaultSignUp(page);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/verify-email");
+            await waitForUrl(page, "/auth/verify-email");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -260,8 +256,7 @@ describe("SuperTokens Email Verification", function () {
             const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: "john.doe2@supertokens.io" });
             await signUp(page, fieldValues, postValues, "emailpassword");
 
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/verify-email");
+            await waitForUrl(page, "/auth/verify-email");
 
             // we wait for email to be created
             await new Promise((r) => setTimeout(r, 1000));
@@ -274,8 +269,7 @@ describe("SuperTokens Email Verification", function () {
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             // check that we are in /redirect-here?foo=bar
-            const urlWithQP = await page.evaluate(() => window.location.pathname + window.location.search);
-            assert.deepStrictEqual(urlWithQP, "/redirect-here?foo=bar");
+            await waitForUrl(page, "/redirect-here?foo=bar", false);
         });
 
         it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified and then post verification should redirect with original redirectPath (w/o leading slash) and newUser", async function () {
@@ -287,8 +281,7 @@ describe("SuperTokens Email Verification", function () {
             const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: await getTestEmail() });
             await signUp(page, fieldValues, postValues, "emailpassword");
 
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/verify-email");
+            await waitForUrl(page, "/auth/verify-email");
 
             // we wait for email to be created
             await new Promise((r) => setTimeout(r, 1000));
@@ -301,8 +294,7 @@ describe("SuperTokens Email Verification", function () {
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             // check that we are in /?foo=bar
-            const urlWithQP = await page.evaluate(() => window.location.pathname + window.location.search);
-            assert.deepStrictEqual(urlWithQP, "/?foo=bar");
+            await waitForUrl(page, "/?foo=bar", false);
         });
 
         it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified and then post verification should redirect with original redirectPath (query params + fragment) and newUser", async function () {
@@ -318,8 +310,7 @@ describe("SuperTokens Email Verification", function () {
             const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: await getTestEmail() });
             await signUp(page, fieldValues, postValues, "emailpassword");
 
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/verify-email");
+            await waitForUrl(page, "/auth/verify-email");
 
             // we wait for email to be created
             await new Promise((r) => setTimeout(r, 1000));
@@ -331,10 +322,7 @@ describe("SuperTokens Email Verification", function () {
             // click on the continue button
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-            const urlWithQP = await page.evaluate(
-                () => window.location.pathname + window.location.search + window.location.hash
-            );
-            assert.deepStrictEqual(urlWithQP, "/redirect-here?foo=bar#cell=4,1-6,2");
+            await waitForUrl(page, "/redirect-here?foo=bar#cell=4,1-6,2", false);
         });
 
         it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified and then post verification should redirect with original redirectPath (only fragment) and newUser", async function () {
@@ -346,8 +334,7 @@ describe("SuperTokens Email Verification", function () {
             const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: await getTestEmail() });
             await signUp(page, fieldValues, postValues, "emailpassword");
 
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/verify-email");
+            await waitForUrl(page, "/auth/verify-email");
 
             // we wait for email to be created
             await new Promise((r) => setTimeout(r, 1000));
@@ -360,10 +347,7 @@ describe("SuperTokens Email Verification", function () {
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             // check that we are in /#cell=4,1-6,2
-            const urlWithQP = await page.evaluate(
-                () => window.location.pathname + window.location.search + window.location.hash
-            );
-            assert.deepStrictEqual(urlWithQP, "/#cell=4,1-6,2");
+            await waitForUrl(page, "/#cell=4,1-6,2", false);
         });
 
         it("Should redirect to verify email screen on successful sign in when mode is REQUIRED and email is not verified", async function () {
@@ -377,8 +361,7 @@ describe("SuperTokens Email Verification", function () {
             ]);
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             await new Promise((r) => setTimeout(r, 2000));
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/verify-email");
+            await waitForUrl(page, "/auth/verify-email");
             // Click on resend email should show "Email Resent" success message
             await sendVerifyEmail(page);
             await page.waitForResponse(
@@ -389,8 +372,7 @@ describe("SuperTokens Email Verification", function () {
 
             // Click on Logout should remove session and redirect to login page
             await Promise.all([clickLinkWithRightArrow(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-            pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/");
+            await waitForUrl(page, "/auth/");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -431,8 +413,7 @@ describe("SuperTokens Email Verification", function () {
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/verify-email");
+            await waitForUrl(page, "/auth/verify-email");
 
             const latestURLWithToken = await getLatestURLWithToken();
             await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
@@ -442,14 +423,12 @@ describe("SuperTokens Email Verification", function () {
 
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             await page.waitForSelector(".sessionInfo-user-id");
-            pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            await waitForUrl(page, "/dashboard");
 
             await page.evaluate((url) => window.fetch(url), `${TEST_APPLICATION_SERVER_BASE_URL}/unverifyEmail`);
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
 
-            pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/verify-email");
+            await waitForUrl(page, "/auth/verify-email");
         });
     });
 
@@ -478,8 +457,7 @@ describe("SuperTokens Email Verification", function () {
             // Click Continue should redirect to /auth when no session is present
             await Promise.all([clickLinkWithRightArrow(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/");
+            await waitForUrl(page, "/auth/");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -498,8 +476,7 @@ describe("SuperTokens Email Verification", function () {
             await waitForText(page, "[data-supertokens~=headerTitle]", "Email verification successful!");
 
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/");
+            await waitForUrl(page, "/auth/");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -521,8 +498,7 @@ describe("SuperTokens Email Verification", function () {
             assert.deepStrictEqual(title, "Email verification successful!");
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             await page.waitForSelector(".sessionInfo-user-id");
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            await waitForUrl(page, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
@@ -578,8 +554,7 @@ describe("SuperTokens Email Verification", function () {
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             await page.waitForSelector(".sessionInfo-user-id");
 
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            await waitForUrl(page, "/dashboard");
         });
 
         it("Should allow to verify an email without a valid session", async function () {
@@ -590,8 +565,7 @@ describe("SuperTokens Email Verification", function () {
                 submitForm(page),
                 page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 200),
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/verify-email");
+            await waitForUrl(page, "/auth/verify-email");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -630,8 +604,7 @@ describe("SuperTokens Email Verification", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             // In this case we redirect to "/dashboard" (coming from the getRedirectURL config)
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            await waitForUrl(page, "/dashboard");
         });
     });
 });
@@ -784,8 +757,7 @@ describe("SuperTokens Email Verification general errors", function () {
             ]);
             await toggleSignInSignUp(page);
             await defaultSignUp(page);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/verify-email");
+            await waitForUrl(page, "/auth/verify-email");
             await Promise.all([
                 sendVerifyEmail(page),
                 page.waitForResponse(
@@ -856,8 +828,7 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
         //         page.goto(`${TEST_CLIENT_BASE_URL}/dashboard?mode=REQUIRED`),
         //         page.waitForNavigation({ waitUntil: "networkidle0" }),
         //     ]);
-        //     const pathname = await page.evaluate(() => window.location.pathname);
-        //     assert.deepStrictEqual(pathname, "/dashboard");
+        //     await waitForUrl(page(pathname, "/dashboard");
 
         //     assert.deepStrictEqual(consoleLogs, [
         //         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
@@ -929,8 +900,7 @@ describe("Email verification signOut errors", function () {
         const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: "john.doe2@supertokens.io" });
         await signUp(page, fieldValues, postValues, "emailpassword");
 
-        let pathname = await page.evaluate(() => window.location.pathname);
-        assert.deepStrictEqual(pathname, "/auth/verify-email");
+        await waitForUrl(page, "/auth/verify-email");
 
         await page.setRequestInterception(true);
         const requestHandler = (request) => {

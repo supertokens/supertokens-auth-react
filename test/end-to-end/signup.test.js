@@ -43,6 +43,7 @@ import {
     getInputField,
     isReact16,
     getDefaultSignUpFieldValues,
+    waitForUrl,
 } from "../helpers";
 
 import {
@@ -294,8 +295,7 @@ describe("SuperTokens SignUp", function () {
         it("Successful signup", async function () {
             await defaultSignUp(page);
             const onSuccessFulRedirectUrl = "/dashboard";
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, onSuccessFulRedirectUrl);
+            await waitForUrl(page, onSuccessFulRedirectUrl);
 
             const cookies = await page.cookies();
 
@@ -310,8 +310,7 @@ describe("SuperTokens SignUp", function () {
                 waitUntil: "networkidle0",
             });
 
-            pathname = await page.evaluate(() => window.location.pathname);
-            assert.strictEqual(pathname, onSuccessFulRedirectUrl);
+            await waitForUrl(page, onSuccessFulRedirectUrl);
 
             // Clear cookies, try to signup with same address.
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
