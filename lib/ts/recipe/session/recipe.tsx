@@ -48,7 +48,6 @@ import type {
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
 import type { SessionClaim } from "supertokens-web-js/recipe/session";
 import type { RecipeEvent } from "supertokens-web-js/recipe/session/types";
-import { logDebugMessage } from "../../logger";
 
 export default class Session extends RecipeModule<unknown, unknown, unknown, NormalisedSessionConfig> {
     static instance?: Session;
@@ -133,13 +132,9 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         userContext?: UserContext,
         navigate?: Navigate
     ): Promise<void> => {
-        logDebugMessage("validateGlobalClaimsAndHandleSuccessRedirection called");
         userContext = getNormalisedUserContext(userContext);
         // First we check if there is an active session
         if (!(await this.doesSessionExist({ userContext }))) {
-            logDebugMessage(
-                "validateGlobalClaimsAndHandleSuccessRedirection no session exists, so redirecting to auth"
-            );
             // If there is none, we have no way of checking claims, so we redirect to the auth page
             // This can happen e.g.: if the user clicked on the email verification link in a browser without an active session
             return SuperTokens.getInstanceOrThrow().redirectToAuth({
@@ -149,16 +144,11 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
             });
         }
 
-        logDebugMessage("validateGlobalClaimsAndHandleSuccessRedirection validating claims");
         // We validate all the global claims
         const invalidClaims = await this.validateClaims({ userContext });
 
-        logDebugMessage(
-            `validateGlobalClaimsAndHandleSuccessRedirection: invalid claims: ${invalidClaims.map((c) => c.id)}`
-        );
         if (invalidClaims.length > 0) {
             if (successRedirectContext !== undefined) {
-                logDebugMessage(`validateGlobalClaimsAndHandleSuccessRedirection: saving successRedirectContext`);
                 // if we have to redirect and we have success context we wanted to use we save it in localstorage
                 // this way after the other page did solved the validation error it can continue
                 // the sign in process by calling this function without passing the redirect info
@@ -174,9 +164,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
 
             // if redirectPath is string that means failed claim had callback that returns path, we redirect there otherwise continue
             if (failureRedirectInfo.redirectPath !== undefined) {
-                logDebugMessage(
-                    `validateGlobalClaimsAndHandleSuccessRedirection: failureRedirection: ${failureRedirectInfo.redirectPath} (${failureRedirectInfo.failedClaim?.id})`
-                );
                 // the validation part can throw, but this is handled in all places where this is called,
                 // since getFailureRedirectionInfo can also throw
                 if (validateAndCompareOnFailureRedirectionURLToCurrent(failureRedirectInfo.redirectPath)) {
@@ -186,16 +173,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                 }
                 return SuperTokens.getInstanceOrThrow().redirectToUrl(failureRedirectInfo.redirectPath, navigate);
             }
-            logDebugMessage(
-                `validateGlobalClaimsAndHandleSuccessRedirection: no redirectPath based on validation errors`
-            );
         }
 
         // If we don't need to redirect because of a claim, we try and execute the original redirection
         if (successRedirectContext === undefined) {
-            logDebugMessage(
-                `validateGlobalClaimsAndHandleSuccessRedirection: loading successRedirectContext from storage`
-            );
             // if this wasn't set directly we try and grab it from local storage
             // generally this means this is a secondary factor completion or emailverification
             const successContextStr = await getLocalStorage("supertokens-success-redirection-context");
@@ -212,9 +193,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                     await removeFromLocalStorage("supertokens-success-redirection-context");
                 }
             } else {
-                logDebugMessage(
-                    `validateGlobalClaimsAndHandleSuccessRedirection: using default because loading failed`
-                );
                 // If there was nothing in localstorage we set a default
                 // this can happen if the user visited email verification screen without an auth recipe redirecting them there
                 // but already had the email verified and an active session
@@ -233,17 +211,8 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         }
 
         if (redirectToPath !== undefined) {
-            logDebugMessage(
-                `validateGlobalClaimsAndHandleSuccessRedirection: using redirectToPath directly passed here`
-            );
             successRedirectContext.redirectToPath = redirectToPath;
         }
-
-        logDebugMessage(
-            `validateGlobalClaimsAndHandleSuccessRedirection: redirecting with context: ${JSON.stringify(
-                successRedirectContext
-            )}`
-        );
 
         return SuperTokens.getInstanceOrThrow().redirect(
             successRedirectContext as SuccessRedirectContext,
