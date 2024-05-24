@@ -36,6 +36,7 @@ import {
     getInputField,
     isAccountLinkingSupported,
     backendBeforeEach,
+    waitForUrl,
 } from "../helpers";
 
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -490,8 +491,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
                 await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/redirect-here");
+                await waitForUrl(page, "/redirect-here");
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -1032,8 +1032,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await page.goto(device.codes[0].urlWithLinkCode);
                 await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/redirect-here");
+                await waitForUrl(page, "/redirect-here");
+
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -1074,8 +1074,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await page.goto(device.codes[0].urlWithLinkCode);
                 await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/redirect-here");
+                await waitForUrl(page, "/redirect-here");
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -1534,8 +1533,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await submitForm(page);
 
                 await page.waitForNavigation({ waitUntil: "networkidle0" });
-                const pathname = await page.evaluate(() => window.location.pathname);
-                assert.deepStrictEqual(pathname, "/redirect-here");
+                await waitForUrl(page, "/redirect-here");
 
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
