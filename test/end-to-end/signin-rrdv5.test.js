@@ -572,6 +572,7 @@ describe("SuperTokens SignIn with react router dom v5", function () {
                     submitFormReturnRequestAndResponse(page, SIGN_IN_API),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
+                await page.waitForSelector(".sessionInfo-user-id");
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/redirect-to-this-custom-path");
                 assert.deepStrictEqual(consoleLogs, [
@@ -611,6 +612,7 @@ describe("SuperTokens SignIn with react router dom v5", function () {
                     submitFormReturnRequestAndResponse(page, SIGN_IN_API),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
+                await page.waitForSelector(".sessionInfo-user-id");
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/CasE/Case-SensItive1-PAth");
                 assert.deepStrictEqual(consoleLogs, [

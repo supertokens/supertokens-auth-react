@@ -102,6 +102,7 @@ describe("SuperTokens SignIn", function () {
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
+            // console.log(log);
             if (log.startsWith("ST_LOGS")) {
                 consoleLogs.push(log);
             }
@@ -660,6 +661,7 @@ describe("SuperTokens SignIn", function () {
                     submitFormReturnRequestAndResponse(page, SIGN_IN_API),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
+                await page.waitForSelector(".sessionInfo-user-id");
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/redirect-to-this-custom-path");
                 assert.deepStrictEqual(consoleLogs, [
@@ -700,6 +702,7 @@ describe("SuperTokens SignIn", function () {
                     submitFormReturnRequestAndResponse(page, SIGN_IN_API),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
+                await page.waitForSelector(".sessionInfo-user-id");
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/CasE/Case-SensItive1-PAth");
                 assert.deepStrictEqual(consoleLogs, [
