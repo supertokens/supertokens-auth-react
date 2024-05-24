@@ -91,6 +91,16 @@ export async function waitForSTElement(page, selector, inverted = false) {
     return res;
 }
 
+export function waitForUrl(page, pathname) {
+    return page.waitForFunction(
+        (pathname) => {
+            return window.location.pathname === pathname;
+        },
+        { polling: 50 },
+        pathname
+    );
+}
+
 export async function waitForText(page, selector, text, timeout = 10000, pollDelay = 50) {
     const start = new Date().getTime();
 
