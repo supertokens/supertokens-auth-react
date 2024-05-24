@@ -408,7 +408,7 @@ describe("SuperTokens Third Party Email Password", function () {
                 "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
             ]);
             await waitForUrl(page, "/auth/");
-            const search = page.evaluate(() => window.location.search);
+            const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(search, "?error=signin");
         });
     });

@@ -436,7 +436,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 ...signInUpPageLoadLogs,
             ]);
             await waitForUrl(page, "/auth/");
-            const search = page.evaluate(() => window.location.search);
+            const search = await page.evaluate(() => window.location.search);
             assert(search.endsWith("error=signin"));
         });
 
@@ -466,7 +466,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 ...signInUpPageLoadLogs,
             ]);
             await waitForUrl(page, "/auth/");
-            const search = page.evaluate(() => window.location.search);
+            const search = await page.evaluate(() => window.location.search);
             assert(search.endsWith("error=signin"));
         });
 
@@ -496,7 +496,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 ...signInUpPageLoadLogs,
             ]);
             await waitForUrl(page, "/auth/");
-            const search = page.evaluate(() => window.location.search);
+            const search = await page.evaluate(() => window.location.search);
             assert(search.endsWith("error=signin"));
         });
 
@@ -526,7 +526,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 ...signInUpPageLoadLogs,
             ]);
             await waitForUrl(page, "/auth/");
-            const search = page.evaluate(() => window.location.search);
+            const search = await page.evaluate(() => window.location.search);
             assert(search.endsWith("error=signin"));
         });
 
@@ -556,7 +556,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 ...signInUpPageLoadLogs,
             ]);
             await waitForUrl(page, "/auth/");
-            const search = page.evaluate(() => window.location.search);
+            const search = await page.evaluate(() => window.location.search);
             assert(search.endsWith("error=signin"));
         });
 
@@ -586,7 +586,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 ...signInUpPageLoadLogs,
             ]);
             await waitForUrl(page, "/auth/");
-            const search = page.evaluate(() => window.location.search);
+            const search = await page.evaluate(() => window.location.search);
             assert(search.endsWith("error=signin"));
         });
     });
