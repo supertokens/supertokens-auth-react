@@ -50,7 +50,7 @@ const unregEmail = "test-unknown@example.com";
 /*
  * Tests.
  */
-describe("SuperTokens Passwordless", function () {
+describe.only("SuperTokens Passwordless", function () {
     getPasswordlessTestCases({
         authRecipe: "passwordless",
         logId: "PASSWORDLESS",
@@ -58,7 +58,7 @@ describe("SuperTokens Passwordless", function () {
     });
 });
 
-describe("SuperTokens Passwordless w/ all recipes enabled", function () {
+describe.only("SuperTokens Passwordless w/ all recipes enabled", function () {
     getPasswordlessTestCases({
         authRecipe: "all",
         logId: "PASSWORDLESS",
@@ -907,7 +907,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 consoleLogs.length = 0;
             });
 
-            it("Successful signin", async function () {
+            it.only("Successful signin", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -940,7 +940,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 ]);
             });
 
-            it("Successful signin w/ email verification", async function () {
+            it.only("Successful signin w/ email verification", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=required`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -974,7 +974,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 ]);
             });
 
-            it("Successful signin on new device", async function () {
+            it.only("Successful signin on new device", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -1015,7 +1015,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 ]);
             });
 
-            it("Successful signin w/ stored redirectToPath", async function () {
+            it.only("Successful signin w/ stored redirectToPath", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -1057,7 +1057,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 ]);
             });
 
-            it("Successful signin w/ stored redirectToPath and email verification", async function () {
+            it.only("Successful signin w/ stored redirectToPath and email verification", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here&mode=REQUIRED`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -1099,7 +1099,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 ]);
             });
 
-            it("Successful signin w/ stored redirectToPath (only fragment) and email verification", async function () {
+            it.only("Successful signin w/ stored redirectToPath (only fragment) and email verification", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent("#cell=4,1-6,2")}`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -1937,7 +1937,7 @@ async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCoun
     const page = await browser.newPage();
     page.on("console", (consoleObj) => {
         const log = consoleObj.text();
-        // console.log(log);
+        console.log(log);
         if (log.startsWith("ST_LOGS")) {
             consoleLogs.push(log);
         }

@@ -458,6 +458,7 @@ SuperTokens.init({
         apiDomain: getApiDomain(),
         websiteBasePath,
     },
+    enableDebugLogs: true,
     languageTranslations: {
         translations: {
             en: {
