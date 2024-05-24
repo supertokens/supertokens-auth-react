@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.34.4",
+    "version": "0.34.5",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {

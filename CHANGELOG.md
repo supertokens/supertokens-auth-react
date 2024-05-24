@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.34.5] - UNRELEASED
+
+### Test updates
+
+-   Set test server dependency to a fixed version
+
 ## [0.34.4] - 2023-10-16
 
 ### Test updates
