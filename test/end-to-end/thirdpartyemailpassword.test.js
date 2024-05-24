@@ -293,6 +293,7 @@ describe("SuperTokens Third Party Email Password", function () {
                 loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
+            await page.waitForSelector(".sessionInfo-user-id");
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
