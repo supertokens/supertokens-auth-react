@@ -17,30 +17,8 @@
  * Imports
  */
 
-import assert from "assert";
-import puppeteer from "puppeteer";
-import {
-    clearBrowserCookiesWithoutAffectingConsole,
-    clickOnProviderButton,
-    getUserIdWithFetch,
-    getLogoutButton,
-    loginWithAuth0,
-    setInputValues,
-    submitForm,
-    waitForSTElement,
-    getPasswordlessDevice,
-    setPasswordlessFlowType,
-    getFeatureFlags,
-    isReact16,
-    assertProviders,
-    setEnabledRecipes,
-    clickOnProviderButtonWithoutWaiting,
-    getGeneralError,
-    backendBeforeEach,
-} from "../helpers";
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
-import { getThirdPartyTestCases } from "./thirdparty.test";
-import { getPasswordlessTestCases } from "./passwordless.test";
+import { getFeatureFlags } from "../helpers";
+import { getPasswordlessTestCases } from "./passwordless.test_gen";
 
 /*
  * Tests.
@@ -58,6 +36,7 @@ describe("SuperTokens Third Party Passwordless", function () {
             authRecipe: "thirdpartypasswordless",
             logId: "PASSWORDLESS",
             generalErrorRecipeName: "THIRD_PARTY_PASSWORDLESS",
+            contactMethod: "EMAIL_OR_PHONE",
         });
     });
 });

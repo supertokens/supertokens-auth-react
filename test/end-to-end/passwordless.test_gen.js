@@ -48,26 +48,7 @@ const registeredEmailWithPass = "ep-test@example.com";
 const unregPhoneNumber = "+36701231000";
 const unregEmail = "test-unknown@example.com";
 
-/*
- * Tests.
- */
-describe("SuperTokens Passwordless", function () {
-    getPasswordlessTestCases({
-        authRecipe: "passwordless",
-        logId: "PASSWORDLESS",
-        generalErrorRecipeName: "PASSWORDLESS",
-    });
-});
-
-describe("SuperTokens Passwordless w/ all recipes enabled", function () {
-    getPasswordlessTestCases({
-        authRecipe: "all",
-        logId: "PASSWORDLESS",
-        generalErrorRecipeName: "PASSWORDLESS",
-    });
-});
-
-export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipeName }) {
+export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipeName, contactMethod }) {
     const contactInfoSubmitLogsWithoutEmailChecks = [
         `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
         `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
@@ -116,135 +97,85 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
         return screenshotOnFailure(this, browser);
     });
 
-    describe("with EMAIL", () => {
-        getTestCases("EMAIL", "email", exampleEmail);
-    });
-
-    describe("with PHONE", () => {
-        getTestCases("PHONE", "phoneNumber_text", examplePhoneNumber);
-    });
-
-    describe("with EMAIL_OR_PHONE", () => {
-        describe("using an email", () => {
-            getTestCases("EMAIL_OR_PHONE", "email", exampleEmail);
+    if (contactMethod === "EMAIL") {
+        describe("with EMAIL", () => {
+            getTestCases("EMAIL", "email", exampleEmail);
         });
-        describe("using a phone number", () => {
-            getTestCases("EMAIL_OR_PHONE", "phoneNumber_text", examplePhoneNumber);
+    }
+
+    if (contactMethod === "PHONE") {
+        describe("with PHONE", () => {
+            getTestCases("PHONE", "phoneNumber_text", examplePhoneNumber);
         });
+    }
 
-        describe("switching input type", () => {
-            let contactInfoSubmitLogs =
-                authRecipe === "all" ? contactInfoSubmitLogsWithEmailChecks : contactInfoSubmitLogsWithoutEmailChecks;
-            const inputNameEmail = "email";
-            const inputNamePhone = "phoneNumber_text";
-            const contactMethod = "EMAIL_OR_PHONE";
-
-            before(async function () {
-                ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
-                await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
-                if (authRecipe === "all") {
-                    await tryEmailPasswordSignUp(page, registeredEmailWithPass);
-                }
+    if (contactMethod === "EMAIL_OR_PHONE") {
+        describe("with EMAIL_OR_PHONE", () => {
+            describe("using an email", () => {
+                getTestCases("EMAIL_OR_PHONE", "email", exampleEmail);
+            });
+            describe("using a phone number", () => {
+                getTestCases("EMAIL_OR_PHONE", "phoneNumber_text", examplePhoneNumber);
             });
 
-            after(async function () {
-                await browser.close();
-                await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                    method: "POST",
-                }).catch(console.error);
+            describe("switching input type", () => {
+                let contactInfoSubmitLogs =
+                    authRecipe === "all"
+                        ? contactInfoSubmitLogsWithEmailChecks
+                        : contactInfoSubmitLogsWithoutEmailChecks;
+                const inputNameEmail = "email";
+                const inputNamePhone = "phoneNumber_text";
+                const contactMethod = "EMAIL_OR_PHONE";
 
-                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                    method: "POST",
-                }).catch(console.error);
-            });
+                before(async function () {
+                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
+                    await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
+                    if (authRecipe === "all") {
+                        await tryEmailPasswordSignUp(page, registeredEmailWithPass);
+                    }
+                });
 
-            beforeEach(async function () {
-                await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-                await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                after(async function () {
+                    await browser.close();
+                    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+                        method: "POST",
+                    }).catch(console.error);
 
-                consoleLogs.length = 0;
-            });
+                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
+                        method: "POST",
+                    }).catch(console.error);
+                });
 
-            it("Successful signin", async function () {
-                await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                    page.waitForNavigation({ waitUntil: "networkidle0" }),
-                ]);
+                beforeEach(async function () {
+                    await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+                    await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
-                await setInputValues(page, [{ name: inputNameEmail, value: unregEmail }]);
-                await submitForm(page);
+                    consoleLogs.length = 0;
+                });
 
-                if (authRecipe === "all") {
-                    await waitForSTElement(page, "[data-supertokens~=input-password]");
-                } else {
-                    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-
-                    const backButton = await waitForSTElement(page, "[data-supertokens~=secondaryLinkWithLeftArrow]");
-                    await backButton.click();
-                }
-
-                const changeButton = await waitForSTElement(page, "[data-supertokens~=contactMethodSwitcher]");
-                await changeButton.click();
-                await setInputValues(page, [{ name: inputNamePhone, value: examplePhoneNumber }]);
-                await submitForm(page);
-
-                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-
-                const loginAttemptInfo = JSON.parse(
-                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-                );
-                const device = await getPasswordlessDevice(loginAttemptInfo);
-                await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
-                await submitForm(page);
-
-                await page.waitForSelector(".sessionInfo-user-id");
-
-                assert.deepStrictEqual(consoleLogs, [
-                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    ...signInUpPageLoadLogs,
-
-                    ...(authRecipe === "all"
-                        ? []
-                        : [
-                              ...contactInfoSubmitLogs,
-                              `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                              `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                              `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
-                              `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                              `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                          ]),
-
-                    ...contactInfoSubmitLogs,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
-                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
-                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
-                    ...signinSuccessLogsOTP,
-                ]);
-            });
-
-            if (authRecipe === "all") {
-                it("switching input methods after password input shows up", async function () {
+                it("Successful signin", async function () {
                     await Promise.all([
                         page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                         page.waitForNavigation({ waitUntil: "networkidle0" }),
                     ]);
 
-                    await waitForSTElement(page, "[data-supertokens~=input-phoneNumber]", true);
                     await setInputValues(page, [{ name: inputNameEmail, value: unregEmail }]);
                     await submitForm(page);
 
-                    await waitForSTElement(page, "[data-supertokens~=continueWithSupertokensLink]");
-                    await waitForSTElement(page, "[data-supertokens~=input-password]");
+                    if (authRecipe === "all") {
+                        await waitForSTElement(page, "[data-supertokens~=input-password]");
+                    } else {
+                        await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+                        const backButton = await waitForSTElement(
+                            page,
+                            "[data-supertokens~=secondaryLinkWithLeftArrow]"
+                        );
+                        await backButton.click();
+                    }
 
                     const changeButton = await waitForSTElement(page, "[data-supertokens~=contactMethodSwitcher]");
                     await changeButton.click();
-
-                    await waitForSTElement(page, "[data-supertokens~=input-password]", true);
-                    await waitForSTElement(page, "[data-supertokens~=continueWithSupertokensLink]", true);
-
                     await setInputValues(page, [{ name: inputNamePhone, value: examplePhoneNumber }]);
                     await submitForm(page);
 
@@ -258,70 +189,131 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     await submitForm(page);
 
                     await page.waitForSelector(".sessionInfo-user-id");
-                });
 
-                it("sign in with a password", async function () {
-                    await Promise.all([
-                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    assert.deepStrictEqual(consoleLogs, [
+                        "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                        "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                        ...signInUpPageLoadLogs,
+
+                        ...(authRecipe === "all"
+                            ? []
+                            : [
+                                  ...contactInfoSubmitLogs,
+                                  `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                                  `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                                  `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                                  `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                                  `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                              ]),
+
+                        ...contactInfoSubmitLogs,
+                        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        ...signinSuccessLogsOTP,
                     ]);
-
-                    await setInputValues(page, [{ name: inputNameEmail, value: registeredEmailWithPass }]);
-                    await submitForm(page);
-                    await setInputValues(page, [{ name: "password", value: "Asdf12.." }]);
-                    await waitForSTElement(page, "[data-supertokens~=continueWithSupertokensLink]", true);
-                    await submitForm(page);
-
-                    await page.waitForSelector(".sessionInfo-user-id");
                 });
 
-                it("sign in OTP without a pw field showing when signing in with a registered pwless user", async function () {
-                    await Promise.all([
-                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                        page.waitForNavigation({ waitUntil: "networkidle0" }),
-                    ]);
+                if (authRecipe === "all") {
+                    it("switching input methods after password input shows up", async function () {
+                        await Promise.all([
+                            page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                            page.waitForNavigation({ waitUntil: "networkidle0" }),
+                        ]);
 
-                    await setInputValues(page, [{ name: inputNameEmail, value: exampleEmail }]);
-                    await submitForm(page);
+                        await waitForSTElement(page, "[data-supertokens~=input-phoneNumber]", true);
+                        await setInputValues(page, [{ name: inputNameEmail, value: unregEmail }]);
+                        await submitForm(page);
 
-                    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+                        await waitForSTElement(page, "[data-supertokens~=continueWithSupertokensLink]");
+                        await waitForSTElement(page, "[data-supertokens~=input-password]");
 
-                    const loginAttemptInfo = JSON.parse(
-                        await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-                    );
-                    const device = await getPasswordlessDevice(loginAttemptInfo);
-                    await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
-                    await submitForm(page);
+                        const changeButton = await waitForSTElement(page, "[data-supertokens~=contactMethodSwitcher]");
+                        await changeButton.click();
 
-                    await page.waitForSelector(".sessionInfo-user-id");
-                });
+                        await waitForSTElement(page, "[data-supertokens~=input-password]", true);
+                        await waitForSTElement(page, "[data-supertokens~=continueWithSupertokensLink]", true);
 
-                it("sign in OTP without a pw field showing when signing in with a phone number", async function () {
-                    await Promise.all([
-                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                        page.waitForNavigation({ waitUntil: "networkidle0" }),
-                    ]);
+                        await setInputValues(page, [{ name: inputNamePhone, value: examplePhoneNumber }]);
+                        await submitForm(page);
 
-                    const changeButton = await waitForSTElement(page, "[data-supertokens~=contactMethodSwitcher]");
-                    await changeButton.click();
+                        await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
-                    await setInputValues(page, [{ name: inputNamePhone, value: unregPhoneNumber }]);
-                    await submitForm(page);
+                        const loginAttemptInfo = JSON.parse(
+                            await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                        );
+                        const device = await getPasswordlessDevice(loginAttemptInfo);
+                        await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                        await submitForm(page);
 
-                    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+                        await page.waitForSelector(".sessionInfo-user-id");
+                    });
 
-                    const loginAttemptInfo = JSON.parse(
-                        await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-                    );
-                    const device = await getPasswordlessDevice(loginAttemptInfo);
-                    await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
-                    await submitForm(page);
+                    it("sign in with a password", async function () {
+                        await Promise.all([
+                            page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                            page.waitForNavigation({ waitUntil: "networkidle0" }),
+                        ]);
 
-                    await page.waitForSelector(".sessionInfo-user-id");
-                });
-            }
+                        await setInputValues(page, [{ name: inputNameEmail, value: registeredEmailWithPass }]);
+                        await submitForm(page);
+                        await setInputValues(page, [{ name: "password", value: "Asdf12.." }]);
+                        await waitForSTElement(page, "[data-supertokens~=continueWithSupertokensLink]", true);
+                        await submitForm(page);
+
+                        await page.waitForSelector(".sessionInfo-user-id");
+                    });
+
+                    it("sign in OTP without a pw field showing when signing in with a registered pwless user", async function () {
+                        await Promise.all([
+                            page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                            page.waitForNavigation({ waitUntil: "networkidle0" }),
+                        ]);
+
+                        await setInputValues(page, [{ name: inputNameEmail, value: exampleEmail }]);
+                        await submitForm(page);
+
+                        await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+                        const loginAttemptInfo = JSON.parse(
+                            await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                        );
+                        const device = await getPasswordlessDevice(loginAttemptInfo);
+                        await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                        await submitForm(page);
+
+                        await page.waitForSelector(".sessionInfo-user-id");
+                    });
+
+                    it("sign in OTP without a pw field showing when signing in with a phone number", async function () {
+                        await Promise.all([
+                            page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                            page.waitForNavigation({ waitUntil: "networkidle0" }),
+                        ]);
+
+                        const changeButton = await waitForSTElement(page, "[data-supertokens~=contactMethodSwitcher]");
+                        await changeButton.click();
+
+                        await setInputValues(page, [{ name: inputNamePhone, value: unregPhoneNumber }]);
+                        await submitForm(page);
+
+                        await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+                        const loginAttemptInfo = JSON.parse(
+                            await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                        );
+                        const device = await getPasswordlessDevice(loginAttemptInfo);
+                        await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                        await submitForm(page);
+
+                        await page.waitForSelector(".sessionInfo-user-id");
+                    });
+                }
+            });
         });
-    });
+    }
 
     before(async function () {
         const features = await getFeatureFlags();
