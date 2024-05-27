@@ -33,6 +33,9 @@ export async function setupUserWithAllFactors(page) {
     const latestURLWithToken = await getLatestURLWithToken();
     await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
 
+    // wait until all the handlers are set up
+    await waitFor(250);
+
     // click on the continue button
     await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 

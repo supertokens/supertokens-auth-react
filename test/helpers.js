@@ -67,28 +67,38 @@ export async function waitFor(ms) {
  */
 
 export async function waitForSTElement(page, selector, inverted = false) {
-    await page.waitForSelector(ST_ROOT_SELECTOR);
-    const res = await page.waitForFunction(
-        (elementSelector, rootSelector, inverted) => {
-            const root = document.querySelector(rootSelector);
-            if (!root || !root.shadowRoot) {
-                return false;
+    const start = Date.now();
+    while (start > Date.now() - 30000) {
+        try {
+            await page.waitForSelector(ST_ROOT_SELECTOR);
+            const res = await page.waitForFunction(
+                (elementSelector, rootSelector, inverted) => {
+                    const root = document.querySelector(rootSelector);
+                    if (!root || !root.shadowRoot) {
+                        return false;
+                    }
+                    if (elementSelector === undefined) {
+                        return true;
+                    }
+                    const elem = root.shadowRoot.querySelector(elementSelector);
+                    return inverted ? elem === null : elem;
+                },
+                { polling: 50 },
+                selector,
+                ST_ROOT_SELECTOR,
+                inverted
+            );
+            if (res) {
+                return res.asElement();
             }
-            if (elementSelector === undefined) {
-                return true;
+            return res;
+        } catch (ex) {
+            if (start >= Date.now() - 30000) {
+                throw ex;
             }
-            const elem = root.shadowRoot.querySelector(elementSelector);
-            return inverted ? elem === null : elem;
-        },
-        { polling: 50 },
-        selector,
-        ST_ROOT_SELECTOR,
-        inverted
-    );
-    if (res) {
-        return res.asElement();
+            console.log("Caught exception in waitForSTElement, but retrying until timeout", ex);
+        }
     }
-    return res;
 }
 
 export function waitForUrl(page, url, onlyPath = true) {

@@ -51,7 +51,7 @@ export default {
             for (const ui of prebuiltUIs) {
                 ui.reset();
             }
-            resetAndInitST(recipeList, args.usesDynamicLoginMethods, undefined, {
+            resetAndInitST(recipeList, args.usesDynamicLoginMethods, undefined, undefined, {
                 path: args.path,
                 query: args.query,
                 hash: args.hash,
@@ -77,7 +77,7 @@ export default {
 };
 
 export const SentEmail: Story = {};
-export const LinkCliked: Story = {
+export const LinkClicked: Story = {
     args: {
         path: "/auth/verify-email",
         query: "token=asdf",
