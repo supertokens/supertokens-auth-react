@@ -17,6 +17,7 @@ import { useCallback, useEffect, useState } from "react";
 import STGeneralError from "supertokens-web-js/utils/error";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import { useTranslation } from "../../../../../translation/translationContext";
@@ -47,6 +48,7 @@ export const UserInputCodeFormScreen: React.FC<
                 {props.error !== undefined && <GeneralError error={props.error} />}
                 <UserInputCodeForm {...props} />
             </div>
+            <SuperTokensBranding />
         </div>
     );
 };
