@@ -41,6 +41,7 @@ import {
     isGeneralErrorSupported,
     setGeneralErrorToLocalStorage,
     backendBeforeEach,
+    waitForUrl,
 } from "../helpers";
 
 import {
@@ -124,8 +125,7 @@ describe("General error rendering", function () {
                     (response) => response.url() === SEND_VERIFY_EMAIL_API && response.status() === 200
                 ),
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/verify-email");
+            await waitForUrl(page, "/auth/verify-email");
 
             response = await response.json();
 
@@ -179,8 +179,7 @@ describe("General error rendering", function () {
                 rid
             );
 
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/verify-email");
+            await waitForUrl(page, "/auth/verify-email");
 
             await logoutFromEmailVerification(page);
 

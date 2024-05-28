@@ -43,6 +43,7 @@ import {
     getInputField,
     isReact16,
     getDefaultSignUpFieldValues,
+    waitForUrl,
 } from "../helpers";
 
 import {
@@ -294,8 +295,7 @@ describe("SuperTokens SignUp", function () {
         it("Successful signup", async function () {
             await defaultSignUp(page);
             const onSuccessFulRedirectUrl = "/dashboard";
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, onSuccessFulRedirectUrl);
+            await waitForUrl(page, onSuccessFulRedirectUrl);
 
             const cookies = await page.cookies();
 
@@ -310,8 +310,7 @@ describe("SuperTokens SignUp", function () {
                 waitUntil: "networkidle0",
             });
 
-            pathname = await page.evaluate(() => window.location.pathname);
-            assert.strictEqual(pathname, onSuccessFulRedirectUrl);
+            await waitForUrl(page, onSuccessFulRedirectUrl);
 
             // Clear cookies, try to signup with same address.
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
@@ -806,33 +805,38 @@ describe("SuperTokens SignUp", function () {
 
         it("Should throw error for incorrect getDefaultValue func call", async function () {
             await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_GETDEFAULT"));
-            let pageErrorMessage = "";
+            let setPageError;
+            let pageErrorMessage = new Promise((res) => {
+                setPageError = res;
+            });
             page.on("pageerror", (err) => {
-                pageErrorMessage = err.message;
+                setPageError(err.message);
             });
 
             await page.reload({
                 waitUntil: "domcontentloaded",
             });
-            await toggleSignInSignUp(page);
 
             const expectedErrorMessage = "getDefaultValue for country must return a string";
             assert(
-                pageErrorMessage.includes(expectedErrorMessage),
+                (await pageErrorMessage).includes(expectedErrorMessage),
                 `Expected "${expectedErrorMessage}" to be included in page-error`
             );
         });
 
         it("Should throw error for non-string params to onChange", async function () {
             await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_ONCHANGE"));
+
+            let setPageError;
+            let pageErrorMessage = new Promise((res) => {
+                setPageError = res;
+            });
+            page.on("pageerror", (err) => {
+                setPageError(err.message);
+            });
+
             await page.reload({
                 waitUntil: "domcontentloaded",
-            });
-            await toggleSignInSignUp(page);
-
-            let pageErrorMessage = "";
-            page.on("pageerror", (err) => {
-                pageErrorMessage = err.message;
             });
 
             // check terms and condition checkbox since it emits non-string value => boolean
@@ -841,16 +845,19 @@ describe("SuperTokens SignUp", function () {
 
             const expectedErrorMessage = "terms value must be a string";
             assert(
-                pageErrorMessage.includes(expectedErrorMessage),
+                (await pageErrorMessage).includes(expectedErrorMessage),
                 `Expected "${expectedErrorMessage}" to be included in page-error`
             );
         });
 
         it("Should throw error for empty string for nonOptionalErrorMsg", async function () {
             const expectedErrorMessage = "nonOptionalErrorMsg for field city cannot be an empty string";
-            let pageErrorMessage = "";
+            let setPageError;
+            let pageErrorMessage = new Promise((res) => {
+                setPageError = res;
+            });
             page.on("pageerror", (err) => {
-                pageErrorMessage = err.message;
+                setPageError(err.message);
             });
 
             await page.evaluate(() =>
@@ -862,7 +869,7 @@ describe("SuperTokens SignUp", function () {
 
             assert.ok(pageErrorMessage !== "", "Empty nonOptionalErrorMsg should throw error");
             assert(
-                pageErrorMessage.includes(expectedErrorMessage),
+                (await pageErrorMessage).includes(expectedErrorMessage),
                 `Expected "${expectedErrorMessage}" to be included in page-error`
             );
         });

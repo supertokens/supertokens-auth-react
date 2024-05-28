@@ -48,6 +48,7 @@ import {
     getInputField,
     getLabelsText,
     isReact16,
+    waitForUrl,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -146,8 +147,7 @@ describe("SuperTokens Third Party Email Password", function () {
         it("Successful signup with credentials", async function () {
             await toggleSignInSignUp(page);
             await defaultSignUp(page, "thirdpartyemailpassword");
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            await waitForUrl(page, "/dashboard");
         });
 
         it("should show error message on sign up with duplicate email on sign up click", async function () {
@@ -291,8 +291,8 @@ describe("SuperTokens Third Party Email Password", function () {
                 loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            await page.waitForSelector(".sessionInfo-user-id");
+            await waitForUrl(page, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -333,22 +333,19 @@ describe("SuperTokens Third Party Email Password", function () {
                 '{"formFields":[{"id":"email","value":"bradparishdoh@gmail.com"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
                 "thirdpartyemailpassword"
             );
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            await waitForUrl(page, "/dashboard");
             const emailPasswordUserId = await getUserIdWithFetch(page);
             const logoutButton = await getLogoutButton(page);
             await Promise.all([await logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-            pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth");
+            await waitForUrl(page, "/auth");
             // 2. Sign in with auth0 with same address.
             await clickOnProviderButton(page, "Auth0");
             await Promise.all([
                 loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
-            pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            await waitForUrl(page, "/dashboard");
             const thirdPartyUserId = await getUserIdWithFetch(page);
 
             // 3. Compare userIds
@@ -408,7 +405,7 @@ describe("SuperTokens Third Party Email Password", function () {
                 "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
             ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
+            await waitForUrl(page, "/auth/");
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth/");
             assert.deepStrictEqual(search, "?error=signin");
@@ -908,9 +905,12 @@ describe("SuperTokens Third Party Email Password", function () {
 
         it("Check if incorrect getDefaultValue throws error", async function () {
             await page.evaluate(() => window.localStorage.setItem("SIGNUP_SETTING_TYPE", "INCORRECT_GETDEFAULT"));
-            let pageErrorMessage = "";
+            let setPageError;
+            let pageErrorMessage = new Promise((res) => {
+                setPageError = res;
+            });
             page.on("pageerror", (err) => {
-                pageErrorMessage = err.message;
+                setPageError(err.message);
             });
 
             await page.reload({
@@ -920,7 +920,7 @@ describe("SuperTokens Third Party Email Password", function () {
 
             const expectedErrorMessage = "getDefaultValue for country must return a string";
             assert(
-                pageErrorMessage.includes(expectedErrorMessage),
+                (await pageErrorMessage).includes(expectedErrorMessage),
                 `Expected "${expectedErrorMessage}" to be included in page-error`
             );
         });
@@ -932,9 +932,12 @@ describe("SuperTokens Third Party Email Password", function () {
             });
             await toggleSignInSignUp(page);
 
-            let pageErrorMessage = "";
+            let setPageError;
+            let pageErrorMessage = new Promise((res) => {
+                setPageError = res;
+            });
             page.on("pageerror", (err) => {
-                pageErrorMessage = err.message;
+                setPageError(err.message);
             });
 
             // check terms and condition checkbox since it emits non-string value => boolean
@@ -943,16 +946,19 @@ describe("SuperTokens Third Party Email Password", function () {
 
             const expectedErrorMessage = "terms value must be a string";
             assert(
-                pageErrorMessage.includes(expectedErrorMessage),
+                (await pageErrorMessage).includes(expectedErrorMessage),
                 `Expected "${expectedErrorMessage}" to be included in page-error`
             );
         });
 
         it("Check if empty string for nonOptionalErrorMsg throws error", async function () {
             const expectedErrorMessage = "nonOptionalErrorMsg for field city cannot be an empty string";
-            let pageErrorMessage = "";
+            let setPageError;
+            let pageErrorMessage = new Promise((res) => {
+                setPageError = res;
+            });
             page.on("pageerror", (err) => {
-                pageErrorMessage = err.message;
+                setPageError(err.message);
             });
 
             await page.evaluate(() =>
@@ -962,14 +968,10 @@ describe("SuperTokens Third Party Email Password", function () {
                 waitUntil: "domcontentloaded",
             });
 
-            if (pageErrorMessage !== "") {
-                assert(
-                    pageErrorMessage.includes(expectedErrorMessage),
-                    `Expected "${expectedErrorMessage}" to be included in page-error`
-                );
-            } else {
-                throw "Empty nonOptionalErrorMsg should throw error";
-            }
+            assert(
+                (await pageErrorMessage).includes(expectedErrorMessage),
+                `Expected "${expectedErrorMessage}" to be included in page-error`
+            );
         });
     });
 });

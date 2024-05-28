@@ -31,6 +31,7 @@ import {
     waitFor,
     waitForText,
     backendBeforeEach,
+    waitForUrl,
 } from "../helpers";
 
 import { TEST_APPLICATION_SERVER_BASE_URL, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
@@ -183,8 +184,7 @@ describe("User Roles in the frontend", function () {
                 }),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/not-an-admin");
+            await waitForUrl(page, "/not-an-admin");
         });
 
         it("should set invalid claims when added to validators", async () => {

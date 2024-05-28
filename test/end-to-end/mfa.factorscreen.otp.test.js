@@ -33,6 +33,7 @@ import {
     getGeneralError,
     isMFASupported,
     setAccountLinkingConfig,
+    waitForUrl,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API, SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -190,8 +191,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
                     await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-                    const pathname = await page.evaluate(() => window.location.pathname);
-                    assert.deepStrictEqual(pathname, "/redirect-here");
+                    await waitForUrl(page, "/redirect-here");
                 });
 
                 it("should show general error if the app navigates to the setup page but the user is not allowed to set up the factor", async () => {

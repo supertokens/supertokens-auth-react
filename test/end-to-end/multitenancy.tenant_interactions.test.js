@@ -46,6 +46,7 @@ import {
     removeUserFromTenant,
     removeTenant,
     backendBeforeEach,
+    waitForUrl,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -425,8 +426,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             const email = await epSignUp(page);
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            await waitForUrl(page, "/dashboard");
             const userId = await getUserIdWithFetch(page);
             addUserToTenant("public", userId);
 
@@ -559,8 +559,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             ]);
 
             await getSubmitFormButton(page);
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/");
+            await waitForUrl(page, "/auth/");
         });
     });
 

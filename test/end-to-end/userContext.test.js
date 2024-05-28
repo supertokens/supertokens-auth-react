@@ -25,6 +25,7 @@ import {
     clickOnProviderButton,
     loginWithAuth0,
     backendBeforeEach,
+    waitForUrl,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -152,8 +153,7 @@ describe("SuperTokens userContext with UI components test", function () {
             loginWithAuth0(page),
             page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
         ]);
-        const pathname = await page.evaluate(() => window.location.pathname);
-        assert.deepStrictEqual(pathname, "/dashboard");
+        await waitForUrl(page, "/dashboard");
 
         assert(
             consoleLogs.includes(
