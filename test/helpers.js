@@ -119,7 +119,7 @@ export async function getSubmitFormButtonLabel(page) {
 }
 
 export async function getProvidersLabels(page) {
-    await waitForSTElement(page);
+    await waitForSTElement(page, "[data-supertokens~=headerTitle]");
     return await page.evaluate(
         ({ ST_ROOT_SELECTOR }) =>
             Array.from(
