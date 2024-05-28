@@ -99,6 +99,7 @@ export async function waitForSTElement(page, selector, inverted = false) {
             console.log("Caught exception in waitForSTElement, but retrying until timeout", ex);
         }
     }
+    throw new Error(`Waiting for ${selector} to ${inverted ? "disappear" : "appear"} timed out`);
 }
 
 export function waitForUrl(page, url, onlyPath = true) {
