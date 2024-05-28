@@ -407,7 +407,6 @@ describe("SuperTokens Third Party Email Password", function () {
             ]);
             await waitForUrl(page, "/auth/");
             const search = await page.evaluate(() => window.location.search);
-            assert.deepStrictEqual(pathname, "/auth/");
             assert.deepStrictEqual(search, "?error=signin");
         });
     });

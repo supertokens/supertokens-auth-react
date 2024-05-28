@@ -419,7 +419,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     "[data-supertokens~=totp-mfa][data-supertokens~=deviceSetupFooter] [data-supertokens~=secondaryText]:nth-child(1)"
                 );
                 await Promise.all([logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-                await waitForSTElement(page, "[data-supertokens~=authPage]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=email]");
                 assert.strictEqual(await page.url(), `${TEST_CLIENT_BASE_URL}/auth/`);
             });
 
@@ -438,7 +438,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     "[data-supertokens~=totp-mfa][data-supertokens~=codeVerificationFooter] [data-supertokens~=secondaryText]:nth-child(1)"
                 );
                 await Promise.all([logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-                await waitForSTElement(page, "[data-supertokens~=authPage]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=email]");
                 assert.strictEqual(await page.url(), `${TEST_CLIENT_BASE_URL}/auth/`);
             });
         });
