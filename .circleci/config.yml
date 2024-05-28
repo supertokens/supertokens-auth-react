@@ -10,7 +10,7 @@ orbs:
 jobs:
     setup:
         machine:
-            image: ubuntu-2204:2022.04.1
+            image: ubuntu-2204:edge
 
         steps:
             - checkout
