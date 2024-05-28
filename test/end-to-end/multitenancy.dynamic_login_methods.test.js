@@ -229,9 +229,14 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
 
     it("should postpone render with no react-router-dom", async function () {
         await page.setRequestInterception(true);
-        const requestHandler = (request) => {
+        let resolveLoginMethodsReq;
+        const loginMethodsReqPromise = new Promise((res) => {
+            resolveLoginMethodsReq = res;
+        });
+        const requestHandler = async (request) => {
             if (request.url().startsWith(LOGIN_METHODS_API)) {
-                setTimeout(() => request.continue(), 500);
+                await loginMethodsReqPromise;
+                request.continue();
             } else {
                 request.continue();
             }
@@ -249,7 +254,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
 
         const spinner = await waitForSTElement(page, "[data-supertokens~=delayedRender]");
         assert.ok(spinner);
-        await page.waitForTimeout(2000);
+        resolveLoginMethodsReq();
         const providers = await getProvidersLabels(page);
         compareArrayContents(providers, ["Continue with Apple"]);
     });
