@@ -816,6 +816,7 @@ describe("SuperTokens SignUp", function () {
             await page.reload({
                 waitUntil: "domcontentloaded",
             });
+            await toggleSignInSignUp(page);
 
             const expectedErrorMessage = "getDefaultValue for country must return a string";
             assert(
@@ -838,6 +839,7 @@ describe("SuperTokens SignUp", function () {
             await page.reload({
                 waitUntil: "domcontentloaded",
             });
+            await toggleSignInSignUp(page);
 
             // check terms and condition checkbox since it emits non-string value => boolean
             let termsCheckbox = await waitForSTElement(page, '[name="terms"]');
