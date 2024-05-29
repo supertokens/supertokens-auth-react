@@ -73,10 +73,7 @@ describe("SuperTokens Example Basic tests", function () {
         it("Successful signup with credentials", async function () {
             await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-            const dividerTextEle = await waitForSTElement(
-                page,
-                "[data-supertokens~='thirdPartyEmailPasswordDividerOr']"
-            );
+            const dividerTextEle = await waitForSTElement(page, "[data-supertokens~='dividerWithOr']");
             const dividerText = await page.evaluate((e) => e.innerText, dividerTextEle);
             assert.strictEqual(dividerText, "or translation");
 

@@ -93,7 +93,7 @@ export async function waitForSTElement(page, selector, inverted = false) {
             }
             return res;
         } catch (ex) {
-            if (start >= Date.now() - 30000) {
+            if (start < Date.now() - 30000) {
                 throw ex;
             }
             console.log("Caught exception in waitForSTElement, but retrying until timeout", ex);

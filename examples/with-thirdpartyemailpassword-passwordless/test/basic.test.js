@@ -144,7 +144,7 @@ describe("SuperTokens Example Basic tests", function () {
             await pwlessBtn.click();
 
             // redirected to /auth
-            await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
+            await setInputValues(page, [{ name: "email", value: email }]);
             await submitForm(page);
             // Sent the otp
             await waitForSTElement(page, "[name=userInputCode]");

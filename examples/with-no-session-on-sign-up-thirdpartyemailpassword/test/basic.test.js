@@ -61,7 +61,7 @@ describe("SuperTokens Example Basic tests", function () {
     before(async function () {
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
+            headless: false,
         });
         page = await browser.newPage();
     });
@@ -91,9 +91,6 @@ describe("SuperTokens Example Basic tests", function () {
                 // Wait until the ... disappears from the button indicating it's done
                 await page.waitForFunction((e) => !e.innerText.endsWith("..."), {}, submitButton);
             }
-
-            // We switch back over to sign in...
-            await toggleSignInSignUp(page);
             await waitForSTElement(page, "[data-supertokens~='forgotPasswordLink']");
 
             // It only shows up after navigation
