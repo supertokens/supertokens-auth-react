@@ -7,10 +7,12 @@ then
     echo "api not working... exiting!"
     exit 1
 fi
+
 if [[ `echo $isLatest | jq .isLatest` == "true" ]]
 then
     cd ..
     npm publish --tag latest
+    npx -y chromatic
 else
     cd ..
     npm publish --tag version-$version
