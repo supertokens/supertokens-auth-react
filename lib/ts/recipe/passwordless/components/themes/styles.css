@@ -102,6 +102,6 @@ input[type="tel"][data-supertokens~="input-phoneNumber"] {
     margin: 9px 0;
 }
 
-[data-supertokens~="continueWithSupertokensLink"] {
+[data-supertokens~="continueWithPasswordlessLink"] {
     margin-top: 9px;
 }

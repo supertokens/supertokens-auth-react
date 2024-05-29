@@ -227,14 +227,14 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                         await setInputValues(page, [{ name: inputNameEmail, value: unregEmail }]);
                         await submitForm(page);
 
-                        await waitForSTElement(page, "[data-supertokens~=continueWithSupertokensLink]");
+                        await waitForSTElement(page, "[data-supertokens~=continueWithPasswordlessLink]");
                         await waitForSTElement(page, "[data-supertokens~=input-password]");
 
                         const changeButton = await waitForSTElement(page, "[data-supertokens~=contactMethodSwitcher]");
                         await changeButton.click();
 
                         await waitForSTElement(page, "[data-supertokens~=input-password]", true);
-                        await waitForSTElement(page, "[data-supertokens~=continueWithSupertokensLink]", true);
+                        await waitForSTElement(page, "[data-supertokens~=continueWithPasswordlessLink]", true);
 
                         await setInputValues(page, [{ name: inputNamePhone, value: examplePhoneNumber }]);
                         await submitForm(page);
@@ -260,7 +260,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                         await setInputValues(page, [{ name: inputNameEmail, value: registeredEmailWithPass }]);
                         await submitForm(page);
                         await setInputValues(page, [{ name: "password", value: "Asdf12.." }]);
-                        await waitForSTElement(page, "[data-supertokens~=continueWithSupertokensLink]", true);
+                        await waitForSTElement(page, "[data-supertokens~=continueWithPasswordlessLink]", true);
                         await submitForm(page);
 
                         await page.waitForSelector(".sessionInfo-user-id");

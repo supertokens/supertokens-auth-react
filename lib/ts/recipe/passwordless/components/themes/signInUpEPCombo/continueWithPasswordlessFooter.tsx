@@ -29,7 +29,7 @@ export const ContinueWithPasswordlessFooter: React.FC<
 
     return (
         <a
-            data-supertokens="link linkButton continueWithSupertokensLink"
+            data-supertokens="link linkButton continueWithPasswordlessLink"
             onClick={async () => {
                 if (isPhoneNumber) {
                     const phoneNumber = state.find((field) => field.id === "phoneNumber")?.value;
