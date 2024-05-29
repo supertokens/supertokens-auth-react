@@ -12,7 +12,8 @@ if [[ `echo $isLatest | jq .isLatest` == "true" ]]
 then
     cd ..
     npm publish --tag latest
-    npx -y chromatic
+    npm i || exit $?
+    npx -y chromatic --auto-accept-changes master
 else
     cd ..
     npm publish --tag version-$version

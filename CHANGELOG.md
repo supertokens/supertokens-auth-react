@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.42.2] - 2024-05-29
+
+### Changes
+
+-   Updating publish script to update to the lib on chromatic
+
 ## [0.42.1] - 2024-05-29
 
 ### Changes
