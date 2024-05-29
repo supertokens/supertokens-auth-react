@@ -140,7 +140,9 @@ describe("SuperTokens Example Basic tests", function () {
         it("Successful signup with credentials", async function () {
             await Promise.all([page.goto(websiteDomain), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-            const pwlessBtn = await waitForSTElement(page, "#passwordlessLoginBtn");
+            await toggleSignInSignUp(page);
+
+            const pwlessBtn = await waitForSTElement(page, "[data-supertokens~=continueWithPasswordlessButtonWrapper]");
             await pwlessBtn.click();
 
             // redirected to /auth

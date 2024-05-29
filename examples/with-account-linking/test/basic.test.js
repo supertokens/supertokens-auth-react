@@ -143,11 +143,17 @@ describe("SuperTokens Example Basic tests", function () {
             await page.evaluate(() => __supertokensSessionRecipe.signOut({}));
             await new Promise((res) => setTimeout(res, 200));
 
-            await page.goto(`${websiteDomain}/auth?rid=passwordless`);
+            await page.goto(`${websiteDomain}/auth?show=signup`);
 
-            await setInputValues(page, [{ name: "emailOrPhone", value: email }]);
+            const contWithPwless = await waitForSTElement(
+                page,
+                "[data-supertokens~=continueWithPasswordlessButtonWrapper]"
+            );
+            await contWithPwless.click();
+
+            await setInputValues(page, [{ name: "email", value: email }]);
+
             await submitForm(page);
-
             await waitForSTElement(page, "[name=userInputCode]");
 
             const loginAttemptInfo = JSON.parse(
