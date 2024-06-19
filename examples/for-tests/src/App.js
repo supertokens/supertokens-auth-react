@@ -590,6 +590,14 @@ export const DashboardNoAuthRequired = doNotUseReactRouterDom
 export function DashboardNoAuthRequiredHelper(props) {
     let sessionContext = useSessionContext();
 
+    useEffect(() => {
+        if (testContext.signoutOnSessionNotExists) {
+            if (!sessionContext.loading && !sessionContext.doesSessionExist) {
+                Session.signOut();
+            }
+        }
+    }, [sessionContext]);
+
     if (sessionContext.loading) {
         return null;
     }
