@@ -55,35 +55,35 @@ export default class BoxySAML extends Provider {
     }
 
     getLogo = (): JSX.Element => {
-        switch (this.name) {
-            case "Microsoft Entra ID": {
+        switch (this.name.toLowerCase()) {
+            case "microsoft entra id": {
                 return microsoftEntraIdLogo;
             }
-            case "Microsoft AD FS": {
+            case "microsoft ad fs": {
                 return microsoftADFSLogo;
             }
-            case "Okta": {
+            case "okta": {
                 return oktaLogo;
             }
-            case "Auth0": {
+            case "auth0": {
                 return auth0Logo;
             }
-            case "Google": {
+            case "google": {
                 return googleLogo;
             }
-            case "OneLogin": {
+            case "onelogin": {
                 return oneLoginLogo;
             }
-            case "PingOne": {
+            case "pingone": {
                 return pingOneLogo;
             }
-            case "JumpCloud": {
+            case "jumpcloud": {
                 return jumpCloudLogo;
             }
-            case "Rippling": {
+            case "rippling": {
                 return ripplingLogo;
             }
-            case "OpenID": {
+            case "openid": {
                 return openIdLogo;
             }
             default: {
