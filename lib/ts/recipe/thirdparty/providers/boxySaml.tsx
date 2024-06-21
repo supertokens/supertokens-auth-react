@@ -34,44 +34,6 @@ import type { BuiltInProviderConfig } from "./types";
 
 import Provider from ".";
 
-function getSamlProviderLogo(name: string) {
-    switch (name) {
-        case "Microsoft Entra ID": {
-            return microsoftEntraIdLogo;
-        }
-        case "Microsoft AD FS": {
-            return microsoftADFSLogo;
-        }
-        case "Okta": {
-            return oktaLogo;
-        }
-        case "Auth0": {
-            return auth0Logo;
-        }
-        case "Google": {
-            return googleLogo;
-        }
-        case "OneLogin": {
-            return oneLoginLogo;
-        }
-        case "PingOne": {
-            return pingOneLogo;
-        }
-        case "JumpCloud": {
-            return jumpCloudLogo;
-        }
-        case "Rippling": {
-            return ripplingLogo;
-        }
-        case "OpenID": {
-            return openIdLogo;
-        }
-        default: {
-            return genericSAMLLogo;
-        }
-    }
-}
-
 /*
  * Class.
  */
@@ -93,7 +55,41 @@ export default class BoxySAML extends Provider {
     }
 
     getLogo = (): JSX.Element => {
-        return getSamlProviderLogo(this.name);
+        switch (this.name) {
+            case "Microsoft Entra ID": {
+                return microsoftEntraIdLogo;
+            }
+            case "Microsoft AD FS": {
+                return microsoftADFSLogo;
+            }
+            case "Okta": {
+                return oktaLogo;
+            }
+            case "Auth0": {
+                return auth0Logo;
+            }
+            case "Google": {
+                return googleLogo;
+            }
+            case "OneLogin": {
+                return oneLoginLogo;
+            }
+            case "PingOne": {
+                return pingOneLogo;
+            }
+            case "JumpCloud": {
+                return jumpCloudLogo;
+            }
+            case "Rippling": {
+                return ripplingLogo;
+            }
+            case "OpenID": {
+                return openIdLogo;
+            }
+            default: {
+                return genericSAMLLogo;
+            }
+        }
     };
 
     /*
