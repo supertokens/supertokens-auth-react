@@ -68,6 +68,22 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
     // Reusing the parent context was removed because it caused a redirect loop in an edge case
     // because it'd also reuse the invalid claims part until it loaded.
     const [context, setContext] = useState<SessionContextType>({ loading: true });
+    const setContextIfChanged = useCallback(
+        (newValue: SessionContextType) => {
+            setContext((oldValue) => {
+                // We can't do this check before re-validation because there are be validators that depend on the current time
+                // Since the context is constructed by the same functions the property order should be stable, meaning that
+                // a simple JSON string check should be sufficient.
+                // Plus since this is just an optimization it is fine to have false positives,
+                // and this method won't have false negatives (where we'd miss an update).
+                if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
+                    return newValue;
+                }
+                return oldValue;
+            });
+        },
+        [setContext]
+    );
 
     const session = useRef<Session>();
 
@@ -191,7 +207,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
                         if (failureRedirectInfo.redirectPath !== undefined) {
                             if (validateAndCompareOnFailureRedirectionURLToCurrent(failureRedirectInfo.redirectPath)) {
-                                setContext(toSetContext);
+                                setContextIfChanged(toSetContext);
                                 return;
                             } else {
                                 return await SuperTokens.getInstanceOrThrow().redirectToUrl(
@@ -209,7 +225,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                             message: "Showing access denied screen because a claim validator failed",
                             claimValidationError: failureRedirectInfo.failedClaim,
                         });
-                        return setContext({
+                        return setContextIfChanged({
                             ...toSetContext,
                             accessDeniedValidatorError: failureRedirectInfo.failedClaim,
                         });
@@ -217,7 +233,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 }
             }
 
-            setContext(toSetContext);
+            setContextIfChanged(toSetContext);
         },
         [
             context.loading,
@@ -262,7 +278,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                                 if (
                                     validateAndCompareOnFailureRedirectionURLToCurrent(failureRedirectInfo.redirectPath)
                                 ) {
-                                    setContext({ ...event.sessionContext, loading: false, invalidClaims });
+                                    setContextIfChanged({ ...event.sessionContext, loading: false, invalidClaims });
                                 } else {
                                     return await SuperTokens.getInstanceOrThrow().redirectToUrl(
                                         failureRedirectInfo.redirectPath,
@@ -279,7 +295,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                                 message: "Showing access denied screen because a claim validator failed",
                                 claimValidationError: failureRedirectInfo.failedClaim,
                             });
-                            return setContext({
+                            return setContextIfChanged({
                                 ...event.sessionContext,
                                 loading: false,
                                 invalidClaims,
@@ -287,15 +303,15 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                             });
                         }
                     }
-                    setContext({ ...event.sessionContext, loading: false, invalidClaims });
+                    setContextIfChanged({ ...event.sessionContext, loading: false, invalidClaims });
 
                     return;
                 }
                 case "SIGN_OUT":
-                    setContext({ ...event.sessionContext, loading: false, invalidClaims: [] });
+                    setContextIfChanged({ ...event.sessionContext, loading: false, invalidClaims: [] });
                     return;
                 case "UNAUTHORISED":
-                    setContext({ ...event.sessionContext, loading: false, invalidClaims: [] });
+                    setContextIfChanged({ ...event.sessionContext, loading: false, invalidClaims: [] });
                     if (props.onSessionExpired !== undefined) {
                         props.onSessionExpired();
                     } else if (props.requireAuth !== false && props.doRedirection !== false) {
@@ -316,7 +332,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             return session.current.addEventListener(onHandleEvent);
         }
         return undefined;
-    }, [props, setContext, context.loading, userContext, navigate, redirectToLogin]);
+    }, [props, setContextIfChanged, context.loading, userContext, navigate, redirectToLogin]);
 
     if (props.requireAuth !== false && (context.loading || !context.doesSessionExist)) {
         return null;
