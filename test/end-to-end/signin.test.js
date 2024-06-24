@@ -112,6 +112,10 @@ describe("SuperTokens SignIn", function () {
     });
 
     describe("SignIn test ", function () {
+        afterEach(async function () {
+            await page.evaluate(() => localStorage.removeItem("signoutOnSessionNotExists"));
+        });
+
         it("Should contain email and password fields only", async function () {
             const inputNames = await getInputNames(page);
             assert.deepStrictEqual(inputNames, ["email", "password"]);
