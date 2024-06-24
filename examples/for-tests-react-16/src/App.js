@@ -431,7 +431,7 @@ export function DashboardNoAuthRequiredHelper(props) {
     }
 
     if (sessionContext.doesSessionExist) {
-        return Dashboard({ redirectOnLogout: false, ...props });
+        return <Dashboard redirectOnLogout={false} {...props} />;
     } else {
         return <div className="not-logged-in">Not logged in</div>;
     }
