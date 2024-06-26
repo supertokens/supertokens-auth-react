@@ -22,7 +22,6 @@ export default class Wrapper {
         never,
         import("./types").PreAndPostAPIHookAction,
         {
-            rid: "thirdparty";
             action: "SUCCESS";
             isNewRecipeUser: boolean;
             createdNewSession: boolean;

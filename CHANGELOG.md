@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-## [0.42.3] - 2024-07-19
+## [0.43.0] - 2024-06-25
+
+### Changes
+
+-   Updated SAML third-party provider to use logo based on the provider name
+
+## [0.42.3] - 2024-06-24
 
 ### Changes
 
