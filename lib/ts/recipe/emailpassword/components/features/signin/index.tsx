@@ -23,16 +23,17 @@ import { useCallback } from "react";
 
 import AuthComponentWrapper from "../../../../../components/authCompWrapper";
 import { useTranslation } from "../../../../../translation/translationContext";
-import { getRedirectToPathFromURL, useRethrowInRender } from "../../../../../utils";
+import { useRethrowInRender } from "../../../../../utils";
 import { EmailVerificationClaim } from "../../../../emailverification";
 import EmailVerification from "../../../../emailverification/recipe";
 import { getInvalidClaimsFromResponse } from "../../../../session";
 import Session from "../../../../session/recipe";
 import useSessionContext from "../../../../session/useSessionContext";
+import EmailPassword from "../../../recipe";
 import { Label } from "../../library";
 import SignInTheme from "../../themes/signIn";
 
-import type { Navigate, UserContext, PartialAuthComponentProps } from "../../../../../types";
+import type { Navigate, UserContext, PartialAuthComponentProps, SuccessRedirectContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { SignInThemeProps } from "../../../types";
 import type { ComponentOverrideMap } from "../../../types";
@@ -40,6 +41,9 @@ import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
 export function useChildProps(
     recipe: Recipe,
+    onAuthSuccess: (
+        successContext: Omit<SuccessRedirectContext, "redirectToPath" | "action" | "loginChallenge">
+    ) => Promise<void>,
     error: string | undefined,
     onError: (err: string) => void,
     clearError: () => void,
@@ -61,25 +65,16 @@ export function useChildProps(
             payloadAfterCall = undefined;
         }
 
-        return Session.getInstanceOrThrow()
-            .validateGlobalClaimsAndHandleSuccessRedirection(
-                {
-                    action: "SUCCESS",
-                    createdNewUser: false,
-                    isNewRecipeUser: false,
-                    newSessionCreated:
-                        session.loading ||
-                        !session.doesSessionExist ||
-                        (payloadAfterCall !== undefined &&
-                            session.accessTokenPayload.sessionHandle !== payloadAfterCall.sessionHandle),
-                    recipeId: recipe!.recipeID,
-                },
-                recipe!.recipeID,
-                getRedirectToPathFromURL(),
-                userContext,
-                navigate
-            )
-            .catch(rethrowInRender);
+        return onAuthSuccess({
+            createdNewUser: false,
+            isNewRecipeUser: false,
+            newSessionCreated:
+                session.loading ||
+                !session.doesSessionExist ||
+                (payloadAfterCall !== undefined &&
+                    session.accessTokenPayload.sessionHandle !== payloadAfterCall.sessionHandle),
+            recipeId: EmailPassword.RECIPE_ID,
+        }).catch(rethrowInRender);
     }, [recipe, userContext, navigate]);
 
     return useMemo(() => {
@@ -153,6 +148,7 @@ export const SignInFeature: React.FC<
 > = (props) => {
     const childProps = useChildProps(
         props.recipe,
+        props.onAuthSuccess,
         props.error,
         props.onError,
         props.clearError,

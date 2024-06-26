@@ -27,14 +27,13 @@ import EmailPassword from "../../../../emailpassword/recipe";
 import { EmailVerificationClaim } from "../../../../emailverification";
 import EmailVerification from "../../../../emailverification/recipe";
 import { getInvalidClaimsFromResponse } from "../../../../session";
-import SessionRecipe from "../../../../session/recipe";
 import Session from "../../../../session/recipe";
 import useSessionContext from "../../../../session/useSessionContext";
 import { defaultPhoneNumberValidator } from "../../../defaultPhoneNumberValidator";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import SignInUpEPComboThemeWrapper from "../../themes/signInUpEPCombo";
 
-import type { Navigate, UserContext, PartialAuthComponentProps } from "../../../../../types";
+import type { Navigate, UserContext, PartialAuthComponentProps, SuccessRedirectContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 import type { SignInUpEPComboChildProps, NormalisedConfig } from "../../../types";
@@ -43,6 +42,9 @@ import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 export function useChildProps(
     recipe: Recipe,
     factorIds: string[],
+    onAuthSuccess: (
+        successContext: Omit<SuccessRedirectContext, "redirectToPath" | "action" | "loginChallenge">
+    ) => Promise<void>,
     error: string | undefined,
     onError: (err: string) => void,
     clearError: () => void,
@@ -165,25 +167,16 @@ export function useChildProps(
                 } catch {
                     payloadAfterCall = undefined;
                 }
-                return SessionRecipe.getInstanceOrThrow()
-                    .validateGlobalClaimsAndHandleSuccessRedirection(
-                        {
-                            action: "SUCCESS",
-                            createdNewUser: result.createdNewRecipeUser && result.user.loginMethods.length === 1,
-                            isNewRecipeUser: result.createdNewRecipeUser,
-                            newSessionCreated:
-                                session.loading ||
-                                !session.doesSessionExist ||
-                                (payloadAfterCall !== undefined &&
-                                    session.accessTokenPayload.sessionHandle !== payloadAfterCall.sessionHandle),
-                            recipeId: result.isEmailPassword ? EmailPassword.RECIPE_ID : recipe.recipeID,
-                        },
-                        result.isEmailPassword ? EmailPassword.RECIPE_ID : recipe.recipeID,
-                        getRedirectToPathFromURL(),
-                        userContext,
-                        navigate
-                    )
-                    .catch(rethrowInRender);
+                return onAuthSuccess({
+                    createdNewUser: result.createdNewRecipeUser && result.user.loginMethods.length === 1,
+                    isNewRecipeUser: result.createdNewRecipeUser,
+                    newSessionCreated:
+                        session.loading ||
+                        !session.doesSessionExist ||
+                        (payloadAfterCall !== undefined &&
+                            session.accessTokenPayload.sessionHandle !== payloadAfterCall.sessionHandle),
+                    recipeId: result.isEmailPassword ? EmailPassword.RECIPE_ID : (recipe.recipeID as any), // TODO: type this right
+                }).catch(rethrowInRender);
             },
             error,
             onError,
@@ -242,6 +235,7 @@ const SignInUpEPComboFeatureInner: React.FC<
     const childProps = useChildProps(
         props.recipe,
         props.factorIds,
+        props.onAuthSuccess,
         props.error,
         props.onError,
         props.clearError,

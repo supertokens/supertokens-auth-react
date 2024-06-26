@@ -1,5 +1,4 @@
-import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { UserContext } from "../../types";
+import type { SuccessRedirectContextOAuth2 } from "../../types";
 import type {
     UserInput as RecipeModuleUserInput,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -31,17 +30,6 @@ export type NormalisedConfig = NormalisedRecipeModuleConfig<
     };
 };
 
-export type ComponentOverrideMap = {
-    ResumePageSpinner: ComponentOverride<any>; // TODO: proper component list. this is a just placeholder to the typechecker happy
-};
+export type GetRedirectionURLContext = SuccessRedirectContextOAuth2;
 
-export type GetRedirectionURLContext = {
-    // TODO: proper list
-    action: "RESUME";
-};
-
-export type OnHandleEventContext = {
-    // TODO: proper list
-    action: "RESUMER";
-    userContext: UserContext;
-};
+export type OnHandleEventContext = never;

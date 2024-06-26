@@ -104,19 +104,34 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                     userContext,
                 });
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
+                const loginChallenge = stateResponse?.oauth2LoginChallenge;
 
                 return Session.getInstanceOrThrow()
                     .validateGlobalClaimsAndHandleSuccessRedirection(
-                        {
-                            action: "SUCCESS",
-                            createdNewUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
-                            isNewRecipeUser: response.createdNewRecipeUser,
-                            newSessionCreated:
-                                payloadAfterCall !== undefined &&
-                                (payloadBeforeCall === undefined ||
-                                    payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
-                            recipeId: props.recipe.recipeID,
-                        },
+                        loginChallenge !== undefined
+                            ? {
+                                  action: "SUCCESS_OAUTH2",
+                                  loginChallenge,
+                                  createdNewUser:
+                                      response.createdNewRecipeUser && response.user.loginMethods.length === 1,
+                                  isNewRecipeUser: response.createdNewRecipeUser,
+                                  newSessionCreated:
+                                      payloadAfterCall !== undefined &&
+                                      (payloadBeforeCall === undefined ||
+                                          payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
+                                  recipeId: props.recipe.recipeID,
+                              }
+                            : {
+                                  action: "SUCCESS",
+                                  createdNewUser:
+                                      response.createdNewRecipeUser && response.user.loginMethods.length === 1,
+                                  isNewRecipeUser: response.createdNewRecipeUser,
+                                  newSessionCreated:
+                                      payloadAfterCall !== undefined &&
+                                      (payloadBeforeCall === undefined ||
+                                          payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
+                                  recipeId: props.recipe.recipeID,
+                              },
                         props.recipe.recipeID,
                         redirectToPath,
                         userContext,

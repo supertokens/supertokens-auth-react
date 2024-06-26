@@ -1,10 +1,13 @@
 import * as React from "react";
-import type { Navigate, UserContext, AuthComponentProps } from "../../../../../types";
+import type { Navigate, UserContext, AuthComponentProps, SuccessRedirectContext } from "../../../../../types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap, LoginAttemptInfo, SignInUpUserInputCodeFormProps } from "../../../types";
 export declare function useChildProps(
     recipe: Recipe,
     loginAttemptInfo: LoginAttemptInfo,
+    onAuthSuccess: (
+        successContext: Omit<SuccessRedirectContext, "redirectToPath" | "action" | "loginChallenge">
+    ) => Promise<void>,
     error: string | undefined,
     onError: (err: string) => void,
     clearError: () => void,

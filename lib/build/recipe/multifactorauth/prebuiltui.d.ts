@@ -23,6 +23,7 @@ export declare class MultiFactorAuthPreBuiltUI extends RecipeRouter {
             AUTH_PAGE_HEADER_TITLE_SIGN_IN_AND_UP: string;
             AUTH_PAGE_HEADER_TITLE_SIGN_IN: string;
             AUTH_PAGE_HEADER_TITLE_SIGN_UP: string;
+            AUTH_PAGE_HEADER_TITLE_SIGN_IN_UP_TO_APP: string;
             AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_START: string;
             AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_SIGN_UP_LINK: string;
             AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_END: string;

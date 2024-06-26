@@ -7,7 +7,8 @@ import type {
     Navigate,
     NormalisedConfigWithAppInfoAndRecipeID,
     RecipeInitResult,
-    SuccessRedirectContext,
+    SuccessRedirectContextInApp,
+    SuccessRedirectContextOAuth2,
     UserContext,
 } from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
@@ -52,7 +53,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     addEventListener: (listener: (ctx: RecipeEventWithSessionContext) => void) => () => void;
     validateGlobalClaimsAndHandleSuccessRedirection: (
         successRedirectContext:
-            | (Omit<SuccessRedirectContext, "recipeId"> & {
+            | ((Omit<SuccessRedirectContextInApp, "recipeId"> | Omit<SuccessRedirectContextOAuth2, "recipeId">) & {
                   recipeId: string;
               })
             | undefined,

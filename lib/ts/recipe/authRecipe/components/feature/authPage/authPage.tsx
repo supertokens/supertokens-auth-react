@@ -31,6 +31,7 @@ import { FactorIds } from "../../../../multifactorauth/types";
 import DynamicLoginMethodsSpinner from "../../../../multitenancy/components/features/dynamicLoginMethodsSpinner";
 import { DynamicLoginMethodsProvider } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import Multitenancy from "../../../../multitenancy/recipe";
+import OAuth2 from "../../../../oauth2/recipe";
 import Session from "../../../../session/recipe";
 import SessionAuthWrapper from "../../../../session/sessionAuth";
 import useSessionContext from "../../../../session/useSessionContext";
@@ -40,7 +41,13 @@ import AuthPageThemeWrapper from "../../theme/authPage";
 
 import type AuthRecipe from "../../..";
 import type { TranslationStore } from "../../../../../translation/translationHelpers";
-import type { AuthComponent, Navigate, PartialAuthComponent, UserContext } from "../../../../../types";
+import type {
+    AuthComponent,
+    Navigate,
+    PartialAuthComponent,
+    SuccessRedirectContext,
+    UserContext,
+} from "../../../../../types";
 import type { GetLoginMethodsResponseNormalized } from "../../../../multitenancy/types";
 import type { RecipeRouter } from "../../../../recipeRouter";
 import type { AuthPageThemeProps } from "../../../types";
@@ -102,6 +109,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
 
     const showStringFromQSRef = useRef(showStringFromQS);
     const errorFromQSRef = useRef(errorFromQS);
+    const loginChallenge = search.get("loginChallenge");
 
     const sessionContext = useSessionContext();
     const userContext = useUserContext();
@@ -109,6 +117,12 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     const rethrowInRender = useRethrowInRender();
     const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState<
         GetLoginMethodsResponseNormalized | undefined
+    >(undefined);
+    const [oauth2ClientInfo, setOAuth2ClientInfo] = useState<
+        | {
+              clientAppName: string;
+          }
+        | undefined
     >(undefined);
     const [error, setError] = useState<string | undefined>(errorFromQS);
     const [sessionLoadedAndNotRedirecting, setSessionLoadedAndNotRedirecting] = useState(false);
@@ -162,6 +176,19 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                 (err) => rethrowInRender(err)
             );
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
+
+    useEffect(() => {
+        if (oauth2ClientInfo) {
+            return;
+        }
+        const oauth2Recipe = OAuth2.getInstance();
+        if (oauth2Recipe !== undefined) {
+            // TODO: real impl
+            setTimeout(() => {
+                setOAuth2ClientInfo({ clientAppName: "Test App" });
+            }, 100);
+        }
+    }, [setOAuth2ClientInfo, loginChallenge, oauth2ClientInfo]);
 
     useEffect(() => {
         if (sessionLoadedAndNotRedirecting) {
@@ -247,10 +274,34 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
         rethrowInRender,
     ]);
 
+    const onAuthSuccess = useCallback(
+        (ctx: Omit<SuccessRedirectContext, "redirectToPath" | "action" | "loginChallenge">) => {
+            return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                loginChallenge !== null
+                    ? {
+                          ...ctx,
+                          action: "SUCCESS_OAUTH2",
+                          loginChallenge,
+                      }
+                    : {
+                          ...ctx,
+                          action: "SUCCESS",
+                          redirectToPath: getRedirectToPathFromURL(),
+                      },
+                ctx.recipeId,
+                getRedirectToPathFromURL(),
+                userContext
+            );
+        },
+        [loginChallenge]
+    );
+
     const childProps: AuthPageThemeProps | undefined =
         authComponentListInfo !== undefined
             ? {
                   ...authComponentListInfo,
+                  clientAppName: oauth2ClientInfo?.clientAppName,
+                  onAuthSuccess,
                   error,
                   onError: (err) => {
                       setError(err);

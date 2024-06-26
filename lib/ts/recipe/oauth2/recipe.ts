@@ -32,7 +32,12 @@ import type {
     PreAndPostAPIHookAction,
     UserInput,
 } from "./types";
-import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
+import type {
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipeInterface,
+    SuccessRedirectContextOAuth2,
+} from "../../types";
 import type { NormalisedAppInfo } from "../../types";
 
 /*
@@ -95,6 +100,21 @@ export default class OAuth2 extends RecipeModule<
         }
 
         return OAuth2.instance;
+    }
+
+    static getInstance(): OAuth2 | undefined {
+        return OAuth2.instance;
+    }
+
+    async getDefaultRedirectionURL(ctx: SuccessRedirectContextOAuth2): Promise<string> {
+        if (ctx.action === "SUCCESS_OAUTH2") {
+            const domain = this.config.appInfo.apiDomain.getAsStringDangerous();
+            const basePath = this.config.appInfo.apiBasePath.getAsStringDangerous();
+
+            return `${domain}${basePath}/oauth2/login?loginChallenge${ctx.loginChallenge}`;
+        } else {
+            throw new Error("Should never come here: unknown action in OAuth2.getDefaultRedirectionURL");
+        }
     }
 
     /*

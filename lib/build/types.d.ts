@@ -9,7 +9,7 @@ import type { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/
 import type NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import type NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import type { WindowHandlerInput } from "supertokens-web-js/utils/windowHandler/types";
-export declare type SuccessRedirectContext = {
+declare type SuccessRedirectContextCommon = {
     recipeId:
         | "emailpassword"
         | "thirdparty"
@@ -18,18 +18,25 @@ export declare type SuccessRedirectContext = {
         | "thirdpartyemailpassword"
         | "emailverification"
         | "totp";
-    action: "SUCCESS";
     isNewRecipeUser: boolean;
     createdNewUser: boolean;
     newSessionCreated: boolean;
+};
+export declare type SuccessRedirectContextInApp = SuccessRedirectContextCommon & {
+    action: "SUCCESS";
     redirectToPath?: string;
 };
+export declare type SuccessRedirectContextOAuth2 = SuccessRedirectContextCommon & {
+    action: "SUCCESS_OAUTH2";
+    loginChallenge: string;
+};
+export declare type SuccessRedirectContext = SuccessRedirectContextInApp | SuccessRedirectContextOAuth2;
 export declare type GetRedirectionURLContext =
     | {
           action: "TO_AUTH";
           showSignIn?: boolean;
       }
-    | SuccessRedirectContext;
+    | SuccessRedirectContextInApp;
 export declare type ValidationFailureCallback =
     | (({
           userContext,
@@ -184,6 +191,9 @@ export declare type UserContext = Record<string, any>;
 export declare type AuthComponentProps = {
     setFactorList: (factorIds: string[]) => void;
     rebuildAuthPage: () => void;
+    onAuthSuccess: (
+        successContext: Omit<SuccessRedirectContext, "redirectToPath" | "action" | "loginChallenge">
+    ) => Promise<void>;
     navigate: Navigate | undefined;
     userContext: UserContext;
     error: string | undefined;

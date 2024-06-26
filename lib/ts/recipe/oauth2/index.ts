@@ -13,7 +13,6 @@
  * under the License.
  */
 
-import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 import OAuth2 from "./recipe";
 import { UserInput } from "./types";
 
@@ -23,11 +22,8 @@ export default class Wrapper {
     static init(config?: UserInput) {
         return OAuth2.init(config);
     }
-
-    static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
 const init = Wrapper.init;
-const MultitenancyComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 
-export { init, UserInput, RecipeInterface, MultitenancyComponentsOverrideProvider };
+export { init, UserInput, RecipeInterface };

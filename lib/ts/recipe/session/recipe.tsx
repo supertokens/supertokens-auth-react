@@ -27,6 +27,7 @@ import {
     removeFromLocalStorage,
     setLocalStorage,
 } from "../../utils";
+import OAuth2 from "../oauth2/recipe";
 import RecipeModule from "../recipeModule";
 
 import {
@@ -42,7 +43,8 @@ import type {
     NormalisedAppInfo,
     NormalisedConfigWithAppInfoAndRecipeID,
     RecipeInitResult,
-    SuccessRedirectContext,
+    SuccessRedirectContextInApp,
+    SuccessRedirectContextOAuth2,
     UserContext,
 } from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
@@ -126,7 +128,11 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         // it as a string (e.g.: when defining it in recipes), but we want to type it more
         // strictly in the callbacks the app provides to help integrating our SDK.
         // This is the "meeting point" between the two types, so we need to cast between them here.
-        successRedirectContext: (Omit<SuccessRedirectContext, "recipeId"> & { recipeId: string }) | undefined,
+        successRedirectContext:
+            | ((Omit<SuccessRedirectContextInApp, "recipeId"> | Omit<SuccessRedirectContextOAuth2, "recipeId">) & {
+                  recipeId: string;
+              })
+            | undefined,
         fallbackRecipeId: string,
         redirectToPath?: string,
         userContext?: UserContext,
@@ -210,12 +216,21 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
             throw new Error("This should never happen: successRedirectContext undefined ");
         }
 
-        if (redirectToPath !== undefined) {
+        if (successRedirectContext.action === "SUCCESS_OAUTH2") {
+            return OAuth2.getInstanceOrThrow().redirect(
+                successRedirectContext as SuccessRedirectContextOAuth2,
+                navigate,
+                {},
+                userContext
+            );
+        }
+
+        if (successRedirectContext.action === "SUCCESS" && redirectToPath !== undefined) {
             successRedirectContext.redirectToPath = redirectToPath;
         }
 
         return SuperTokens.getInstanceOrThrow().redirect(
-            successRedirectContext as SuccessRedirectContext,
+            successRedirectContext as SuccessRedirectContextInApp,
             navigate,
             {},
             userContext
