@@ -203,6 +203,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                 if (props.onSessionAlreadyExists !== undefined) {
                     props.onSessionAlreadyExists();
                 } else if (props.redirectOnSessionExists !== false) {
+                    // TODO: OAuth2 redirection
                     Session.getInstanceOrThrow().config.onHandleEvent({
                         action: "SESSION_ALREADY_EXISTS",
                     });

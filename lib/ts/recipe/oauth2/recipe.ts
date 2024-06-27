@@ -50,7 +50,7 @@ export default class OAuth2 extends RecipeModule<
     NormalisedConfig
 > {
     static instance?: OAuth2;
-    static readonly RECIPE_ID = "multitenancy";
+    static readonly RECIPE_ID = "oauth2";
 
     public readonly recipeID = OAuth2.RECIPE_ID;
 
@@ -111,7 +111,7 @@ export default class OAuth2 extends RecipeModule<
             const domain = this.config.appInfo.apiDomain.getAsStringDangerous();
             const basePath = this.config.appInfo.apiBasePath.getAsStringDangerous();
 
-            return `${domain}${basePath}/oauth2/login?loginChallenge${ctx.loginChallenge}`;
+            return `${domain}${basePath}/oauth2/login?loginChallenge=${ctx.loginChallenge}`;
         } else {
             throw new Error("Should never come here: unknown action in OAuth2.getDefaultRedirectionURL");
         }
