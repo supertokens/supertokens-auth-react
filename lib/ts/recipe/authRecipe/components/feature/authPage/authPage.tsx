@@ -46,6 +46,7 @@ import type { GetLoginMethodsResponseNormalized } from "../../../../multitenancy
 import type { RecipeRouter } from "../../../../recipeRouter";
 import type { AuthPageThemeProps, AuthSuccessContext } from "../../../types";
 import type { PropsWithChildren } from "react";
+import type { LoginInfo } from "supertokens-web-js/recipe/oauth2/types";
 
 const errorQSMap: Record<string, string | undefined> = {
     signin: "SOMETHING_WENT_WRONG_ERROR",
@@ -112,12 +113,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState<
         GetLoginMethodsResponseNormalized | undefined
     >(undefined);
-    const [oauth2ClientInfo, setOAuth2ClientInfo] = useState<
-        | {
-              clientAppName: string;
-          }
-        | undefined
-    >(undefined);
+    const [oauth2ClientInfo, setOAuth2ClientInfo] = useState<LoginInfo | undefined>(undefined);
     const [error, setError] = useState<string | undefined>(errorFromQS);
     const [sessionLoadedAndNotRedirecting, setSessionLoadedAndNotRedirecting] = useState(false);
     const st = SuperTokens.getInstanceOrThrow();
@@ -176,11 +172,10 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
             return;
         }
         const oauth2Recipe = OAuth2.getInstance();
-        if (oauth2Recipe !== undefined) {
-            // TODO: real impl
-            setTimeout(() => {
-                setOAuth2ClientInfo({ clientAppName: "Test App" });
-            }, 100);
+        if (oauth2Recipe !== undefined && loginChallenge !== null) {
+            void OAuth2.getInstanceOrThrow()
+                .webJSRecipe.getLoginChallengeInfo({ loginChallenge, userContext })
+                .then(({ info }) => setOAuth2ClientInfo(info));
         }
     }, [setOAuth2ClientInfo, loginChallenge, oauth2ClientInfo]);
 
@@ -221,7 +216,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                         void Session.getInstanceOrThrow()
                             .validateGlobalClaimsAndHandleSuccessRedirection(
                                 undefined,
-                                Session.RECIPE_ID, // TODO
+                                Session.RECIPE_ID,
                                 getRedirectToPathFromURL(),
                                 userContext,
                                 props.navigate
@@ -310,10 +305,10 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     );
 
     const childProps: AuthPageThemeProps | undefined =
-        authComponentListInfo !== undefined
+        authComponentListInfo !== undefined && (loginChallenge === null || oauth2ClientInfo !== undefined)
             ? {
                   ...authComponentListInfo,
-                  clientAppName: oauth2ClientInfo?.clientAppName,
+                  clientAppName: oauth2ClientInfo?.clientName,
                   onAuthSuccess,
                   error,
                   onError: (err) => {

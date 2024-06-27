@@ -6,7 +6,7 @@ import type {
 import type OverrideableBuilder from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/oauth2/types";
 
-export type PreAndPostAPIHookAction = never;
+export type PreAndPostAPIHookAction = "GET_LOGIN_CHALLENGE_INFO";
 
 export type UserInput = {
     override?: {

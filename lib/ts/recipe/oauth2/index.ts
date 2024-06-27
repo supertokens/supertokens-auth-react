@@ -22,6 +22,8 @@ export default class Wrapper {
     static init(config?: UserInput) {
         return OAuth2.init(config);
     }
+
+    // TODO: do we need to expose the login challenge getter here?
 }
 
 const init = Wrapper.init;
