@@ -41,16 +41,10 @@ import AuthPageThemeWrapper from "../../theme/authPage";
 
 import type AuthRecipe from "../../..";
 import type { TranslationStore } from "../../../../../translation/translationHelpers";
-import type {
-    AuthComponent,
-    Navigate,
-    PartialAuthComponent,
-    SuccessRedirectContext,
-    UserContext,
-} from "../../../../../types";
+import type { AuthComponent, Navigate, PartialAuthComponent, UserContext } from "../../../../../types";
 import type { GetLoginMethodsResponseNormalized } from "../../../../multitenancy/types";
 import type { RecipeRouter } from "../../../../recipeRouter";
-import type { AuthPageThemeProps } from "../../../types";
+import type { AuthPageThemeProps, AuthSuccessContext } from "../../../types";
 import type { PropsWithChildren } from "react";
 
 const errorQSMap: Record<string, string | undefined> = {
@@ -203,19 +197,37 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                 if (props.onSessionAlreadyExists !== undefined) {
                     props.onSessionAlreadyExists();
                 } else if (props.redirectOnSessionExists !== false) {
-                    // TODO: OAuth2 redirection
                     Session.getInstanceOrThrow().config.onHandleEvent({
                         action: "SESSION_ALREADY_EXISTS",
                     });
-                    void Session.getInstanceOrThrow()
-                        .validateGlobalClaimsAndHandleSuccessRedirection(
-                            undefined,
-                            Session.RECIPE_ID, // TODO
-                            getRedirectToPathFromURL(),
-                            userContext,
-                            props.navigate
-                        )
-                        .catch(rethrowInRender);
+                    if (loginChallenge !== null) {
+                        void Session.getInstanceOrThrow()
+                            .validateGlobalClaimsAndHandleSuccessRedirection(
+                                {
+                                    action: "SUCCESS_OAUTH2",
+                                    createdNewUser: false,
+                                    isNewRecipeUser: false,
+                                    loginChallenge,
+                                    newSessionCreated: false,
+                                    recipeId: Session.RECIPE_ID,
+                                },
+                                Session.RECIPE_ID,
+                                getRedirectToPathFromURL(),
+                                userContext,
+                                props.navigate
+                            )
+                            .catch(rethrowInRender);
+                    } else {
+                        void Session.getInstanceOrThrow()
+                            .validateGlobalClaimsAndHandleSuccessRedirection(
+                                undefined,
+                                Session.RECIPE_ID, // TODO
+                                getRedirectToPathFromURL(),
+                                userContext,
+                                props.navigate
+                            )
+                            .catch(rethrowInRender);
+                    }
                 } else {
                     setSessionLoadedAndNotRedirecting(true);
                 }
@@ -276,7 +288,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     ]);
 
     const onAuthSuccess = useCallback(
-        (ctx: Omit<SuccessRedirectContext, "redirectToPath" | "action" | "loginChallenge">) => {
+        (ctx: AuthSuccessContext) => {
             return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
                 loginChallenge !== null
                     ? {

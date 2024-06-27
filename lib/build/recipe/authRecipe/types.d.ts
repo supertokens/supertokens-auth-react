@@ -32,11 +32,15 @@ declare type ComponentWithPreloadInfo<T> = {
     >;
     preloadInfo: T;
 };
+export declare type AuthSuccessContext = Omit<
+    SuccessRedirectContext,
+    "redirectToPath" | "action" | "loginChallenge" | "recipeId"
+> & {
+    recipeId: string;
+};
 export declare type AuthPageThemeProps = {
     clientAppName: string | undefined;
-    onAuthSuccess: (
-        successContext: Omit<SuccessRedirectContext, "redirectToPath" | "action" | "loginChallenge">
-    ) => Promise<void>;
+    onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>;
     showBackButton: boolean;
     setFactorList: (factorIds: string[]) => void;
     resetFactorList: () => void;

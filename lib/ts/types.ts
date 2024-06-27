@@ -14,6 +14,7 @@
  */
 
 import type { DateProviderInput } from "./dateProvider/types";
+import type { AuthSuccessContext } from "./recipe/authRecipe/types";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
@@ -421,9 +422,7 @@ export type UserContext = Record<string, any>;
 export type AuthComponentProps = {
     setFactorList: (factorIds: string[]) => void;
     rebuildAuthPage: () => void;
-    onAuthSuccess: (
-        successContext: Omit<SuccessRedirectContext, "redirectToPath" | "action" | "loginChallenge">
-    ) => Promise<void>;
+    onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>;
     navigate: Navigate | undefined;
     userContext: UserContext;
     error: string | undefined;

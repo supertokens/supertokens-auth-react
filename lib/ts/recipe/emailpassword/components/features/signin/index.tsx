@@ -33,7 +33,8 @@ import EmailPassword from "../../../recipe";
 import { Label } from "../../library";
 import SignInTheme from "../../themes/signIn";
 
-import type { Navigate, UserContext, PartialAuthComponentProps, SuccessRedirectContext } from "../../../../../types";
+import type { Navigate, UserContext, PartialAuthComponentProps } from "../../../../../types";
+import type { AuthSuccessContext } from "../../../../authRecipe/types";
 import type Recipe from "../../../recipe";
 import type { SignInThemeProps } from "../../../types";
 import type { ComponentOverrideMap } from "../../../types";
@@ -41,9 +42,7 @@ import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
 export function useChildProps(
     recipe: Recipe,
-    onAuthSuccess: (
-        successContext: Omit<SuccessRedirectContext, "redirectToPath" | "action" | "loginChallenge">
-    ) => Promise<void>,
+    onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>,
     error: string | undefined,
     onError: (err: string) => void,
     clearError: () => void,

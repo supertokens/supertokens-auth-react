@@ -1,12 +1,11 @@
 import * as React from "react";
-import type { Navigate, PartialAuthComponentProps, SuccessRedirectContext, UserContext } from "../../../../../types";
+import type { Navigate, PartialAuthComponentProps, UserContext } from "../../../../../types";
+import type { AuthSuccessContext } from "../../../../authRecipe/types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap, SignInAndUpThemeProps } from "../../../types";
 export declare function useChildProps(
     recipe: Recipe,
-    onAuthSuccess: (
-        successContext: Omit<SuccessRedirectContext, "redirectToPath" | "action" | "loginChallenge">
-    ) => Promise<void>,
+    onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>,
     error: string | undefined,
     onError: (err: string) => void,
     clearError: () => void,

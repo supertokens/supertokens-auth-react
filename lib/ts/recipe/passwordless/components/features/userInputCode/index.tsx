@@ -28,7 +28,8 @@ import Session from "../../../../session/recipe";
 import useSessionContext from "../../../../session/useSessionContext";
 import UserInputCodeFormScreenWrapper from "../../themes/userInputCodeForm/userInputCodeFormScreen";
 
-import type { Navigate, UserContext, AuthComponentProps, SuccessRedirectContext } from "../../../../../types";
+import type { Navigate, UserContext, AuthComponentProps } from "../../../../../types";
+import type { AuthSuccessContext } from "../../../../authRecipe/types";
 import type Recipe from "../../../recipe";
 import type {
     AdditionalLoginAttemptInfoProperties,
@@ -42,9 +43,7 @@ import type { User } from "supertokens-web-js/types";
 export function useChildProps(
     recipe: Recipe,
     loginAttemptInfo: LoginAttemptInfo,
-    onAuthSuccess: (
-        successContext: Omit<SuccessRedirectContext, "redirectToPath" | "action" | "loginChallenge">
-    ) => Promise<void>,
+    onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>,
     error: string | undefined,
     onError: (err: string) => void,
     clearError: () => void,

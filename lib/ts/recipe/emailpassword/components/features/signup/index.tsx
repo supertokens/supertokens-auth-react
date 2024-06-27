@@ -32,13 +32,8 @@ import Session from "../../../../session/recipe";
 import useSessionContext from "../../../../session/useSessionContext";
 import SignUpTheme from "../../themes/signUp";
 
-import type {
-    Navigate,
-    NormalisedFormField,
-    UserContext,
-    PartialAuthComponentProps,
-    SuccessRedirectContext,
-} from "../../../../../types";
+import type { Navigate, NormalisedFormField, UserContext, PartialAuthComponentProps } from "../../../../../types";
+import type { AuthSuccessContext } from "../../../../authRecipe/types";
 import type Recipe from "../../../recipe";
 import type { SignUpThemeProps } from "../../../types";
 import type { ComponentOverrideMap, FormFieldThemeProps } from "../../../types";
@@ -47,9 +42,7 @@ import type { User } from "supertokens-web-js/types";
 
 export function useChildProps(
     recipe: Recipe,
-    onAuthSuccess: (
-        successContext: Omit<SuccessRedirectContext, "redirectToPath" | "action" | "loginChallenge">
-    ) => Promise<void>,
+    onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>,
     error: string | undefined,
     onError: (err: string) => void,
     clearError: () => void,

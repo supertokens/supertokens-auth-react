@@ -31,7 +31,8 @@ import { defaultPhoneNumberValidator } from "../../../defaultPhoneNumberValidato
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import SignInUpThemeWrapper from "../../themes/signInUp";
 
-import type { Navigate, UserContext, PartialAuthComponentProps, SuccessRedirectContext } from "../../../../../types";
+import type { Navigate, UserContext, PartialAuthComponentProps } from "../../../../../types";
+import type { AuthSuccessContext } from "../../../../authRecipe/types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 import type { SignInUpChildProps, NormalisedConfig } from "../../../types";
@@ -41,9 +42,7 @@ import type { User } from "supertokens-web-js/types";
 export function useChildProps(
     recipe: Recipe,
     factorIds: string[],
-    onAuthSuccess: (
-        successContext: Omit<SuccessRedirectContext, "redirectToPath" | "action" | "loginChallenge">
-    ) => Promise<void>,
+    onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>,
     error: string | undefined,
     onError: (err: string) => void,
     clearError: () => void,

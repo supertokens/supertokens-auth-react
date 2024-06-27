@@ -33,7 +33,8 @@ import { defaultPhoneNumberValidator } from "../../../defaultPhoneNumberValidato
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import SignInUpEPComboThemeWrapper from "../../themes/signInUpEPCombo";
 
-import type { Navigate, UserContext, PartialAuthComponentProps, SuccessRedirectContext } from "../../../../../types";
+import type { Navigate, UserContext, PartialAuthComponentProps } from "../../../../../types";
+import type { AuthSuccessContext } from "../../../../authRecipe/types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 import type { SignInUpEPComboChildProps, NormalisedConfig } from "../../../types";
@@ -42,9 +43,7 @@ import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 export function useChildProps(
     recipe: Recipe,
     factorIds: string[],
-    onAuthSuccess: (
-        successContext: Omit<SuccessRedirectContext, "redirectToPath" | "action" | "loginChallenge">
-    ) => Promise<void>,
+    onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>,
     error: string | undefined,
     onError: (err: string) => void,
     clearError: () => void,
@@ -175,7 +174,7 @@ export function useChildProps(
                         !session.doesSessionExist ||
                         (payloadAfterCall !== undefined &&
                             session.accessTokenPayload.sessionHandle !== payloadAfterCall.sessionHandle),
-                    recipeId: result.isEmailPassword ? EmailPassword.RECIPE_ID : (recipe.recipeID as any), // TODO: type this right
+                    recipeId: result.isEmailPassword ? EmailPassword.RECIPE_ID : recipe.recipeID,
                 }).catch(rethrowInRender);
             },
             error,
