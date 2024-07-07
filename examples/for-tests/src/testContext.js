@@ -22,6 +22,7 @@ export function getTestContext() {
         },
         enableMFA: localStorage.getItem("enableMFA") === "true",
         defaultToEmail: localStorage.getItem("defaultToEmail") !== "false",
+        signoutOnSessionNotExists: localStorage.getItem("signoutOnSessionNotExists") === "true",
         disableRedirectionAfterSuccessfulSignInUp:
             localStorage.getItem("disableRedirectionAfterSuccessfulSignInUp") === "true",
     };

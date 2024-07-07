@@ -418,12 +418,20 @@ export const DashboardNoAuthRequired = doNotUseReactRouterDom
 export function DashboardNoAuthRequiredHelper(props) {
     let sessionContext = useSessionContext();
 
+    useEffect(() => {
+        if (testContext.signoutOnSessionNotExists) {
+            if (!sessionContext.loading && !sessionContext.doesSessionExist) {
+                Session.signOut();
+            }
+        }
+    }, [sessionContext]);
+
     if (sessionContext.loading) {
         return null;
     }
 
     if (sessionContext.doesSessionExist) {
-        return Dashboard({ redirectOnLogout: false, ...props });
+        return <Dashboard redirectOnLogout={false} {...props} />;
     } else {
         return <div className="not-logged-in">Not logged in</div>;
     }

@@ -112,6 +112,10 @@ describe("SuperTokens SignIn", function () {
     });
 
     describe("SignIn test ", function () {
+        afterEach(async function () {
+            await page.evaluate(() => localStorage.removeItem("signoutOnSessionNotExists"));
+        });
+
         it("Should contain email and password fields only", async function () {
             const inputNames = await getInputNames(page);
             assert.deepStrictEqual(inputNames, ["email", "password"]);
@@ -211,6 +215,32 @@ describe("SuperTokens SignIn", function () {
             assert.strictEqual(generalError, "Incorrect email and password combination");
             await toggleSignInSignUp(page);
             await waitForSTElement(page, "[data-supertokens~=generalError]", true);
+        });
+
+        it("should work visiting no required session page", async function () {
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+            let cookies = await page.cookies();
+            assert.deepStrictEqual(cookies.length, 1);
+            assert.deepStrictEqual(cookies[0].name, "st-last-access-token-update");
+            await page.evaluate(() => window.localStorage.setItem("signoutOnSessionNotExists", "true"));
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/dashboard-no-auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            let text = await getTextInDashboardNoAuth(page);
+
+            assert.strictEqual(text, "Not logged in");
+            // We wait for some time to ensure we didn't get into a sign-out loop
+            await new Promise((res) => setTimeout(res, 1000));
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS SESSION OVERRIDE SIGN_OUT",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SIGN_OUT",
+                "ST_LOGS SESSION OVERRIDE SIGN_OUT",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SIGN_OUT",
+            ]);
         });
 
         it("Successful Sign In with no required session page", async function () {
@@ -492,8 +522,7 @@ describe("SuperTokens SignIn", function () {
                 ),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            const { pathname, search } = await page.evaluate(() => window.location);
-            assert.deepStrictEqual(pathname + search, "/redirect-heree?foo=bar");
+            await waitForUrl(page, "/redirect-heree?foo=bar", false);
         });
 
         it("Successful Sign In with redirect to, redirectToPath directly without trailing slash", async function () {

@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.43.0] - 2024-06-25
+
+### Changes
+
+-   Updated SAML third-party provider to use logo based on the provider name
+
+## [0.42.3] - 2024-06-24
+
+### Changes
+
+-   Now we only update the session context if the object changes by value. This optimization should help reduce unnecessary re-renders.
+
 ## [0.42.2] - 2024-05-29
 
 ### Changes
