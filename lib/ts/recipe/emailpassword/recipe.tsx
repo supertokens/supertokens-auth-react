@@ -50,7 +50,7 @@ export default class EmailPassword extends AuthRecipe<
     NormalisedConfig
 > {
     static instance?: EmailPassword;
-    static RECIPE_ID = "emailpassword";
+    static RECIPE_ID = "emailpassword" as const;
 
     recipeID = EmailPassword.RECIPE_ID;
     firstFactorIds = [FactorIds.EMAILPASSWORD];
@@ -63,7 +63,6 @@ export default class EmailPassword extends AuthRecipe<
         public readonly webJSRecipe: WebJSRecipeInterface<typeof EmailPasswordWebJS> = EmailPasswordWebJS
     ) {
         super(config);
-        this.recipeID = config.recipeId;
     }
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {

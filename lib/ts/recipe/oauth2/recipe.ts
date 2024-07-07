@@ -1,4 +1,4 @@
-/* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
+/* Copyright (c) 2024, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
  * "License") as published by the Apache Software Foundation.
@@ -32,7 +32,12 @@ import type {
     PreAndPostAPIHookAction,
     UserInput,
 } from "./types";
-import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
+import type {
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipeInterface,
+    SuccessRedirectContextOAuth2,
+} from "../../types";
 import type { NormalisedAppInfo } from "../../types";
 
 /*
@@ -45,7 +50,7 @@ export default class OAuth2 extends RecipeModule<
     NormalisedConfig
 > {
     static instance?: OAuth2;
-    static readonly RECIPE_ID = "multitenancy";
+    static readonly RECIPE_ID = "oauth2";
 
     public readonly recipeID = OAuth2.RECIPE_ID;
 
@@ -95,6 +100,21 @@ export default class OAuth2 extends RecipeModule<
         }
 
         return OAuth2.instance;
+    }
+
+    static getInstance(): OAuth2 | undefined {
+        return OAuth2.instance;
+    }
+
+    async getDefaultRedirectionURL(ctx: SuccessRedirectContextOAuth2): Promise<string> {
+        if (ctx.action === "SUCCESS_OAUTH2") {
+            const domain = this.config.appInfo.apiDomain.getAsStringDangerous();
+            const basePath = this.config.appInfo.apiBasePath.getAsStringDangerous();
+
+            return `${domain}${basePath}/oauth2/login?loginChallenge=${ctx.loginChallenge}`;
+        } else {
+            throw new Error("Should never come here: unknown action in OAuth2.getDefaultRedirectionURL");
+        }
     }
 
     /*

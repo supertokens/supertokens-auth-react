@@ -27,12 +27,14 @@ import { mergeProviders } from "../../../utils";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 
 import type { Navigate, PartialAuthComponentProps, UserContext, WebJSRecipeInterface } from "../../../../../types";
+import type { AuthSuccessContext } from "../../../../authRecipe/types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap, SignInAndUpThemeProps } from "../../../types";
 import type ThirdPartyWebJS from "supertokens-web-js/recipe/thirdparty";
 
 export function useChildProps(
     recipe: Recipe,
+    onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>,
     error: string | undefined,
     onError: (err: string) => void,
     clearError: () => void,
@@ -57,6 +59,7 @@ export function useChildProps(
         }
 
         return {
+            onAuthSuccess,
             error,
             onError,
             clearError,
@@ -84,6 +87,7 @@ type PropType = PartialAuthComponentProps & {
 export const SignInAndUpFeature: React.FC<PropType> = (props) => {
     const childProps = useChildProps(
         props.recipe,
+        props.onAuthSuccess,
         props.error,
         props.onError,
         props.clearError,

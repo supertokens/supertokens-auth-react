@@ -3,6 +3,7 @@ export const defaultTranslationsCommon = {
         AUTH_PAGE_HEADER_TITLE_SIGN_IN_AND_UP: "Sign Up / Sign In",
         AUTH_PAGE_HEADER_TITLE_SIGN_IN: "Sign In",
         AUTH_PAGE_HEADER_TITLE_SIGN_UP: "Sign Up",
+        AUTH_PAGE_HEADER_TITLE_SIGN_IN_UP_TO_APP: " to continue to ",
 
         AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_START: "Not registered yet?",
         AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_SIGN_UP_LINK: "Sign Up",

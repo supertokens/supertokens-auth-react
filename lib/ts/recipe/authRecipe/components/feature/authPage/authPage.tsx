@@ -31,6 +31,7 @@ import { FactorIds } from "../../../../multifactorauth/types";
 import DynamicLoginMethodsSpinner from "../../../../multitenancy/components/features/dynamicLoginMethodsSpinner";
 import { DynamicLoginMethodsProvider } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import Multitenancy from "../../../../multitenancy/recipe";
+import OAuth2 from "../../../../oauth2/recipe";
 import Session from "../../../../session/recipe";
 import SessionAuthWrapper from "../../../../session/sessionAuth";
 import useSessionContext from "../../../../session/useSessionContext";
@@ -43,8 +44,9 @@ import type { TranslationStore } from "../../../../../translation/translationHel
 import type { AuthComponent, Navigate, PartialAuthComponent, UserContext } from "../../../../../types";
 import type { GetLoginMethodsResponseNormalized } from "../../../../multitenancy/types";
 import type { RecipeRouter } from "../../../../recipeRouter";
-import type { AuthPageThemeProps } from "../../../types";
+import type { AuthPageThemeProps, AuthSuccessContext } from "../../../types";
 import type { PropsWithChildren } from "react";
+import type { LoginInfo } from "supertokens-web-js/recipe/oauth2/types";
 
 const errorQSMap: Record<string, string | undefined> = {
     signin: "SOMETHING_WENT_WRONG_ERROR",
@@ -102,6 +104,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
 
     const showStringFromQSRef = useRef(showStringFromQS);
     const errorFromQSRef = useRef(errorFromQS);
+    const loginChallenge = search.get("loginChallenge");
 
     const sessionContext = useSessionContext();
     const userContext = useUserContext();
@@ -110,6 +113,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState<
         GetLoginMethodsResponseNormalized | undefined
     >(undefined);
+    const [oauth2ClientInfo, setOAuth2ClientInfo] = useState<LoginInfo | undefined>(undefined);
     const [error, setError] = useState<string | undefined>(errorFromQS);
     const [sessionLoadedAndNotRedirecting, setSessionLoadedAndNotRedirecting] = useState(false);
     const st = SuperTokens.getInstanceOrThrow();
@@ -164,6 +168,18 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
 
     useEffect(() => {
+        if (oauth2ClientInfo) {
+            return;
+        }
+        const oauth2Recipe = OAuth2.getInstance();
+        if (oauth2Recipe !== undefined && loginChallenge !== null) {
+            void OAuth2.getInstanceOrThrow()
+                .webJSRecipe.getLoginChallengeInfo({ loginChallenge, userContext })
+                .then(({ info }) => setOAuth2ClientInfo(info));
+        }
+    }, [setOAuth2ClientInfo, loginChallenge, oauth2ClientInfo]);
+
+    useEffect(() => {
         if (sessionLoadedAndNotRedirecting) {
             return;
         }
@@ -179,15 +195,34 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                     Session.getInstanceOrThrow().config.onHandleEvent({
                         action: "SESSION_ALREADY_EXISTS",
                     });
-                    void Session.getInstanceOrThrow()
-                        .validateGlobalClaimsAndHandleSuccessRedirection(
-                            undefined,
-                            Session.RECIPE_ID, // TODO
-                            getRedirectToPathFromURL(),
-                            userContext,
-                            props.navigate
-                        )
-                        .catch(rethrowInRender);
+                    if (loginChallenge !== null) {
+                        void Session.getInstanceOrThrow()
+                            .validateGlobalClaimsAndHandleSuccessRedirection(
+                                {
+                                    action: "SUCCESS_OAUTH2",
+                                    createdNewUser: false,
+                                    isNewRecipeUser: false,
+                                    loginChallenge,
+                                    newSessionCreated: false,
+                                    recipeId: Session.RECIPE_ID,
+                                },
+                                Session.RECIPE_ID,
+                                getRedirectToPathFromURL(),
+                                userContext,
+                                props.navigate
+                            )
+                            .catch(rethrowInRender);
+                    } else {
+                        void Session.getInstanceOrThrow()
+                            .validateGlobalClaimsAndHandleSuccessRedirection(
+                                undefined,
+                                Session.RECIPE_ID,
+                                getRedirectToPathFromURL(),
+                                userContext,
+                                props.navigate
+                            )
+                            .catch(rethrowInRender);
+                    }
                 } else {
                     setSessionLoadedAndNotRedirecting(true);
                 }
@@ -247,10 +282,34 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
         rethrowInRender,
     ]);
 
+    const onAuthSuccess = useCallback(
+        (ctx: AuthSuccessContext) => {
+            return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                loginChallenge !== null
+                    ? {
+                          ...ctx,
+                          action: "SUCCESS_OAUTH2",
+                          loginChallenge,
+                      }
+                    : {
+                          ...ctx,
+                          action: "SUCCESS",
+                          redirectToPath: getRedirectToPathFromURL(),
+                      },
+                ctx.recipeId,
+                getRedirectToPathFromURL(),
+                userContext
+            );
+        },
+        [loginChallenge]
+    );
+
     const childProps: AuthPageThemeProps | undefined =
-        authComponentListInfo !== undefined
+        authComponentListInfo !== undefined && (loginChallenge === null || oauth2ClientInfo !== undefined)
             ? {
                   ...authComponentListInfo,
+                  clientAppName: oauth2ClientInfo?.clientName,
+                  onAuthSuccess,
                   error,
                   onError: (err) => {
                       setError(err);

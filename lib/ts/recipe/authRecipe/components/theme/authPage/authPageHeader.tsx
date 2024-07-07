@@ -26,6 +26,7 @@ export const AuthPageHeader = withOverride(
         isSignUp,
         showBackButton,
         resetFactorList,
+        clientAppName,
     }: {
         factorIds: string[];
         isSignUp: boolean;
@@ -33,6 +34,7 @@ export const AuthPageHeader = withOverride(
         onSignInUpSwitcherClick: (() => void) | undefined;
         resetFactorList: () => void;
         showBackButton: boolean;
+        clientAppName?: string;
     }): JSX.Element {
         const t = useTranslation();
 
@@ -51,6 +53,7 @@ export const AuthPageHeader = withOverride(
                         : isSignUp
                         ? t("AUTH_PAGE_HEADER_TITLE_SIGN_UP")
                         : t("AUTH_PAGE_HEADER_TITLE_SIGN_IN")}
+                    {clientAppName && `${t("AUTH_PAGE_HEADER_TITLE_SIGN_IN_UP_TO_APP")}${t(clientAppName)}`}
                     <span data-supertokens="backButtonPlaceholder backButtonCommon">
                         {/* empty span for spacing the back button */}
                     </span>

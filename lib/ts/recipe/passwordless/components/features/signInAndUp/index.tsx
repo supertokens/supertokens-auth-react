@@ -25,7 +25,6 @@ import { getRedirectToPathFromURL, useRethrowInRender } from "../../../../../uti
 import { EmailVerificationClaim } from "../../../../emailverification";
 import EmailVerification from "../../../../emailverification/recipe";
 import { getInvalidClaimsFromResponse } from "../../../../session";
-import SessionRecipe from "../../../../session/recipe";
 import Session from "../../../../session/recipe";
 import useSessionContext from "../../../../session/useSessionContext";
 import { defaultPhoneNumberValidator } from "../../../defaultPhoneNumberValidator";
@@ -33,6 +32,7 @@ import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import SignInUpThemeWrapper from "../../themes/signInUp";
 
 import type { Navigate, UserContext, PartialAuthComponentProps } from "../../../../../types";
+import type { AuthSuccessContext } from "../../../../authRecipe/types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 import type { SignInUpChildProps, NormalisedConfig } from "../../../types";
@@ -42,6 +42,7 @@ import type { User } from "supertokens-web-js/types";
 export function useChildProps(
     recipe: Recipe,
     factorIds: string[],
+    onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>,
     error: string | undefined,
     onError: (err: string) => void,
     clearError: () => void,
@@ -68,25 +69,16 @@ export function useChildProps(
                 } catch {
                     payloadAfterCall = undefined;
                 }
-                return SessionRecipe.getInstanceOrThrow()
-                    .validateGlobalClaimsAndHandleSuccessRedirection(
-                        {
-                            action: "SUCCESS",
-                            createdNewUser: result.createdNewRecipeUser && result.user.loginMethods.length === 1,
-                            isNewRecipeUser: result.createdNewRecipeUser,
-                            newSessionCreated:
-                                session.loading ||
-                                !session.doesSessionExist ||
-                                (payloadAfterCall !== undefined &&
-                                    session.accessTokenPayload.sessionHandle !== payloadAfterCall.sessionHandle),
-                            recipeId: recipe.recipeID,
-                        },
-                        recipe.recipeID,
-                        getRedirectToPathFromURL(),
-                        userContext,
-                        navigate
-                    )
-                    .catch(rethrowInRender);
+                return onAuthSuccess({
+                    createdNewUser: result.createdNewRecipeUser && result.user.loginMethods.length === 1,
+                    isNewRecipeUser: result.createdNewRecipeUser,
+                    newSessionCreated:
+                        session.loading ||
+                        !session.doesSessionExist ||
+                        (payloadAfterCall !== undefined &&
+                            session.accessTokenPayload.sessionHandle !== payloadAfterCall.sessionHandle),
+                    recipeId: "passwordless",
+                }).catch(rethrowInRender);
             },
             error,
             onError,
@@ -137,6 +129,7 @@ const SignInUpFeatureInner: React.FC<
     const childProps = useChildProps(
         props.recipe,
         props.factorIds,
+        props.onAuthSuccess,
         props.error,
         props.onError,
         props.clearError,

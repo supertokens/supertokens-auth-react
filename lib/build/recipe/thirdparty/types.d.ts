@@ -81,4 +81,5 @@ export declare type StateObject = WebJsStateObject & {
 export declare type CustomStateProperties = {
     rid: string;
     redirectToPath: string;
+    oauth2LoginChallenge?: string;
 };
