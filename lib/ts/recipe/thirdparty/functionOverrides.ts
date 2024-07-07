@@ -1,4 +1,4 @@
-import { getRedirectToPathFromURL } from "../../utils";
+import { getQueryParams, getRedirectToPathFromURL } from "../../utils";
 import Session from "../session/recipe";
 
 import type { OnHandleEventContext } from "./types";
@@ -49,6 +49,7 @@ export const getFunctionOverrides =
         },
 
         setStateAndOtherInfoToStorage: function (input) {
+            const loginChallenge = getQueryParams("loginChallenge") ?? undefined;
             return originalImp.setStateAndOtherInfoToStorage<{
                 rid?: string;
                 redirectToPath?: string;
@@ -56,6 +57,7 @@ export const getFunctionOverrides =
                 state: {
                     ...input.state,
                     rid: recipeId,
+                    oauth2LoginChallenge: loginChallenge,
                     redirectToPath: getRedirectToPathFromURL(),
                 },
                 userContext: input.userContext,

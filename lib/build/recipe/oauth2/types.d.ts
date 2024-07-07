@@ -1,4 +1,4 @@
-import type { SuccessRedirectContextOAuth2 } from "../../types";
+import type { SuccessRedirectContextOAuth2, UserContext } from "../../types";
 import type {
     UserInput as RecipeModuleUserInput,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -6,6 +6,12 @@ import type {
 import type OverrideableBuilder from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/oauth2/types";
 export declare type PreAndPostAPIHookAction = "GET_LOGIN_CHALLENGE_INFO";
+export declare type PreAPIHookContext = {
+    action: PreAndPostAPIHookAction;
+    requestInit: RequestInit;
+    url: string;
+    userContext: UserContext;
+};
 export declare type UserInput = {
     override?: {
         functions?: (

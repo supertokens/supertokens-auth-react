@@ -1,4 +1,4 @@
-/* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
+/* Copyright (c) 2024, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
  * "License") as published by the Apache Software Foundation.
@@ -14,18 +14,50 @@
  */
 
 import OAuth2 from "./recipe";
-import { UserInput } from "./types";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 
+import type { RecipeFunctionOptions, LoginInfo } from "supertokens-web-js/recipe/oauth2";
 import type { RecipeInterface } from "supertokens-web-js/recipe/oauth2";
 
 export default class Wrapper {
     static init(config?: UserInput) {
         return OAuth2.init(config);
     }
-
-    // TODO: do we need to expose the login challenge getter here?
+    /**
+     * Returns information about an OAuth login in progress
+     *
+     * @param loginChallenge The login challenge from the url
+     *
+     * @param userContext (OPTIONAL) Refer to {@link https://supertokens.com/docs/emailpassword/advanced-customizations/user-context the documentation}
+     *
+     * @param options (OPTIONAL) Use this to configure additional properties (for example pre api hooks)
+     *
+     * @returns `{status: "OK", info: LoginInfo}`
+     *
+     * @throws STGeneralError if the API exposed by the backend SDKs returns `status: "GENERAL_ERROR"`
+     */
+    static getLoginChallengeInfo(input: {
+        loginChallenge: string;
+        options?: RecipeFunctionOptions;
+        userContext?: any;
+    }): Promise<{
+        status: "OK";
+        info: LoginInfo;
+        fetchResponse: Response;
+    }> {
+        return OAuth2.getInstanceOrThrow().webJSRecipe.getLoginChallengeInfo(input);
+    }
 }
 
 const init = Wrapper.init;
+const getLoginChallengeInfo = Wrapper.getLoginChallengeInfo;
 
-export { init, UserInput, RecipeInterface };
+export {
+    init,
+    getLoginChallengeInfo,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    UserInput,
+    RecipeInterface,
+};
