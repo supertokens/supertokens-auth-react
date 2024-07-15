@@ -483,6 +483,7 @@ app.get("/test/featureFlags", (req, res) => {
     available.push("accountlinking");
     available.push("mfa");
     available.push("recipeConfig");
+    available.push("accountlinking-fixes");
 
     res.send({
         available,
