@@ -52,7 +52,7 @@ const UserRolesRaw = require("supertokens-node/lib/build/recipe/userroles/recipe
 const UserRoles = require("supertokens-node/recipe/userroles");
 
 const MultitenancyRaw = require("supertokens-node/lib/build/recipe/multitenancy/recipe").default;
-const Multitenancy = require("supertokens-node/lib/build/recipe/multitenancy");
+const Multitenancy = require("supertokens-node/lib/build/recipe/multitenancy/index");
 
 const AccountLinkingRaw = require("supertokens-node/lib/build/recipe/accountlinking/recipe").default;
 const AccountLinking = require("supertokens-node/recipe/accountlinking");
