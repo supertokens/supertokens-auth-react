@@ -386,10 +386,18 @@ app.get("/token", async (_, res) => {
 
 app.post("/setupTenant", async (req, res) => {
     const { tenantId, loginMethods, coreConfig } = req.body;
+    let firstFactors = [];
+    if (loginMethods.emailPassword?.enabled === true) {
+        firstFactors.push("emailpassword");
+    }
+    if (loginMethods.passwordless?.enabled === true) {
+        firstFactors.push("otp-phone", "otp-email", "link-phone", "link-email");
+    }
+    if (loginMethods.thirdParty?.enabled === true) {
+        firstFactors.push("thirdparty");
+    }
     let coreResp = await Multitenancy.createOrUpdateTenant(tenantId, {
-        emailPasswordEnabled: loginMethods.emailPassword?.enabled === true,
-        thirdPartyEnabled: loginMethods.thirdParty?.enabled === true,
-        passwordlessEnabled: loginMethods.passwordless?.enabled === true,
+        firstFactors,
         coreConfig,
     });
 
