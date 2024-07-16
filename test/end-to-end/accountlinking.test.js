@@ -373,6 +373,7 @@ describe("SuperTokens Account linking", function () {
                 await tryThirdPartySignInUp(page, email, false, email2);
 
                 assert.strictEqual(new URL(page.url()).pathname, "/auth/");
+                const features = await getFeatureFlags();
                 if (features.includes("accountlinking-fixes")) {
                     assert.strictEqual(
                         await getGeneralError(page),
