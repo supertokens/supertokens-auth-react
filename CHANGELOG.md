@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-## [0.41.2] - UNRELEASED
+## [0.41.3] - 2024-07-16
+
+-   Fixes e2e test
+
+## [0.41.2]
 
 ### Test changes
 
