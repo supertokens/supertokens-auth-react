@@ -13,15 +13,15 @@
  * under the License.
  */
 
-import OAuth2 from "./recipe";
+import OAuth2Provider from "./recipe";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 
-import type { RecipeFunctionOptions, LoginInfo } from "supertokens-web-js/recipe/oauth2";
-import type { RecipeInterface } from "supertokens-web-js/recipe/oauth2";
+import type { RecipeFunctionOptions, LoginInfo } from "supertokens-web-js/recipe/oauth2provider";
+import type { RecipeInterface } from "supertokens-web-js/recipe/oauth2provider";
 
 export default class Wrapper {
     static init(config?: UserInput) {
-        return OAuth2.init(config);
+        return OAuth2Provider.init(config);
     }
     /**
      * Returns information about an OAuth login in progress
@@ -45,7 +45,7 @@ export default class Wrapper {
         info: LoginInfo;
         fetchResponse: Response;
     }> {
-        return OAuth2.getInstanceOrThrow().webJSRecipe.getLoginChallengeInfo(input);
+        return OAuth2Provider.getInstanceOrThrow().webJSRecipe.getLoginChallengeInfo(input);
     }
 }
 

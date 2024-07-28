@@ -27,7 +27,7 @@ import {
     removeFromLocalStorage,
     setLocalStorage,
 } from "../../utils";
-import OAuth2 from "../oauth2/recipe";
+import OAuth2Provider from "../oauth2provider/recipe";
 import RecipeModule from "../recipeModule";
 
 import {
@@ -217,7 +217,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         }
 
         if (successRedirectContext.action === "SUCCESS_OAUTH2") {
-            return OAuth2.getInstanceOrThrow().redirect(
+            return OAuth2Provider.getInstanceOrThrow().redirect(
                 successRedirectContext as SuccessRedirectContextOAuth2,
                 navigate,
                 {},

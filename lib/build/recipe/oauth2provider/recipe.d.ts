@@ -1,4 +1,4 @@
-import OAuth2WebJS from "supertokens-web-js/recipe/oauth2";
+import OAuth2WebJS from "supertokens-web-js/recipe/oauth2provider";
 import RecipeModule from "../recipeModule";
 import type {
     GetRedirectionURLContext,
@@ -13,23 +13,23 @@ import type {
     WebJSRecipeInterface,
     SuccessRedirectContextOAuth2,
 } from "../../types";
-export default class OAuth2 extends RecipeModule<
+export default class OAuth2Provider extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
     OnHandleEventContext,
     NormalisedConfig
 > {
     readonly webJSRecipe: WebJSRecipeInterface<typeof OAuth2WebJS>;
-    static instance?: OAuth2;
-    static readonly RECIPE_ID = "oauth2";
-    readonly recipeID = "oauth2";
+    static instance?: OAuth2Provider;
+    static readonly RECIPE_ID = "oauth2provider";
+    readonly recipeID = "oauth2provider";
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         webJSRecipe?: WebJSRecipeInterface<typeof OAuth2WebJS>
     );
     static init(config?: UserInput): RecipeInitResult<any, never, any, any>;
-    static getInstanceOrThrow(): OAuth2;
-    static getInstance(): OAuth2 | undefined;
+    static getInstanceOrThrow(): OAuth2Provider;
+    static getInstance(): OAuth2Provider | undefined;
     getDefaultRedirectionURL(ctx: SuccessRedirectContextOAuth2): Promise<string>;
     static reset(): void;
 }

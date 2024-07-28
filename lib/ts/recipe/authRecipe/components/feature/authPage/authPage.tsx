@@ -31,7 +31,7 @@ import { FactorIds } from "../../../../multifactorauth/types";
 import DynamicLoginMethodsSpinner from "../../../../multitenancy/components/features/dynamicLoginMethodsSpinner";
 import { DynamicLoginMethodsProvider } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import Multitenancy from "../../../../multitenancy/recipe";
-import OAuth2 from "../../../../oauth2/recipe";
+import OAuth2Provider from "../../../../oauth2provider/recipe";
 import Session from "../../../../session/recipe";
 import SessionAuthWrapper from "../../../../session/sessionAuth";
 import useSessionContext from "../../../../session/useSessionContext";
@@ -46,7 +46,7 @@ import type { GetLoginMethodsResponseNormalized } from "../../../../multitenancy
 import type { RecipeRouter } from "../../../../recipeRouter";
 import type { AuthPageThemeProps, AuthSuccessContext } from "../../../types";
 import type { PropsWithChildren } from "react";
-import type { LoginInfo } from "supertokens-web-js/recipe/oauth2/types";
+import type { LoginInfo } from "supertokens-web-js/recipe/oauth2provider/types";
 
 const errorQSMap: Record<string, string | undefined> = {
     signin: "SOMETHING_WENT_WRONG_ERROR",
@@ -171,9 +171,9 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
         if (oauth2ClientInfo) {
             return;
         }
-        const oauth2Recipe = OAuth2.getInstance();
+        const oauth2Recipe = OAuth2Provider.getInstance();
         if (oauth2Recipe !== undefined && loginChallenge !== null) {
-            void OAuth2.getInstanceOrThrow()
+            void OAuth2Provider.getInstanceOrThrow()
                 .webJSRecipe.getLoginChallengeInfo({ loginChallenge, userContext })
                 .then(({ info }) => setOAuth2ClientInfo(info));
         }

@@ -17,7 +17,7 @@
  * Imports.
  */
 
-import OAuth2WebJS from "supertokens-web-js/recipe/oauth2";
+import OAuth2WebJS from "supertokens-web-js/recipe/oauth2provider";
 
 import { SSR_ERROR } from "../../constants";
 import { isTest } from "../../utils";
@@ -43,16 +43,16 @@ import type { NormalisedAppInfo } from "../../types";
 /*
  * Class.
  */
-export default class OAuth2 extends RecipeModule<
+export default class OAuth2Provider extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
     OnHandleEventContext,
     NormalisedConfig
 > {
-    static instance?: OAuth2;
-    static readonly RECIPE_ID = "oauth2";
+    static instance?: OAuth2Provider;
+    static readonly RECIPE_ID = "oauth2provider";
 
-    public readonly recipeID = OAuth2.RECIPE_ID;
+    public readonly recipeID = OAuth2Provider.RECIPE_ID;
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
@@ -64,7 +64,7 @@ export default class OAuth2 extends RecipeModule<
     static init(config?: UserInput): RecipeInitResult<any, never, any, any> {
         const normalisedConfig = normaliseOAuth2Config(config);
         return {
-            recipeID: OAuth2.RECIPE_ID,
+            recipeID: OAuth2Provider.RECIPE_ID,
             authReact: (
                 appInfo: NormalisedAppInfo
             ): RecipeModule<
@@ -73,12 +73,12 @@ export default class OAuth2 extends RecipeModule<
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
-                OAuth2.instance = new OAuth2({
+                OAuth2Provider.instance = new OAuth2Provider({
                     ...normalisedConfig,
                     appInfo,
-                    recipeId: OAuth2.RECIPE_ID,
+                    recipeId: OAuth2Provider.RECIPE_ID,
                 });
-                return OAuth2.instance;
+                return OAuth2Provider.instance;
             },
             webJS: OAuth2WebJS.init({
                 ...normalisedConfig,
@@ -86,10 +86,10 @@ export default class OAuth2 extends RecipeModule<
         };
     }
 
-    static getInstanceOrThrow(): OAuth2 {
-        if (OAuth2.instance === undefined) {
+    static getInstanceOrThrow(): OAuth2Provider {
+        if (OAuth2Provider.instance === undefined) {
             let error =
-                "No instance of OAuth2 found. Make sure to call the OAuth2.init method." +
+                "No instance of OAuth2Provider found. Make sure to call the OAuth2Provider.init method." +
                 "See https://supertokens.io/docs/oauth2/quick-setup/frontend";
 
             // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
@@ -99,11 +99,11 @@ export default class OAuth2 extends RecipeModule<
             throw Error(error);
         }
 
-        return OAuth2.instance;
+        return OAuth2Provider.instance;
     }
 
-    static getInstance(): OAuth2 | undefined {
-        return OAuth2.instance;
+    static getInstance(): OAuth2Provider | undefined {
+        return OAuth2Provider.instance;
     }
 
     async getDefaultRedirectionURL(ctx: SuccessRedirectContextOAuth2): Promise<string> {
@@ -113,7 +113,7 @@ export default class OAuth2 extends RecipeModule<
 
             return `${domain}${basePath}/oauth2/login?loginChallenge=${ctx.loginChallenge}`;
         } else {
-            throw new Error("Should never come here: unknown action in OAuth2.getDefaultRedirectionURL");
+            throw new Error("Should never come here: unknown action in OAuth2Provider.getDefaultRedirectionURL");
         }
     }
 
@@ -125,7 +125,7 @@ export default class OAuth2 extends RecipeModule<
             return;
         }
 
-        OAuth2.instance = undefined;
+        OAuth2Provider.instance = undefined;
         return;
     }
 }

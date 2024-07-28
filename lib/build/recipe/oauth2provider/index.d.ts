@@ -1,6 +1,6 @@
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import type { RecipeFunctionOptions, LoginInfo } from "supertokens-web-js/recipe/oauth2";
-import type { RecipeInterface } from "supertokens-web-js/recipe/oauth2";
+import type { RecipeFunctionOptions, LoginInfo } from "supertokens-web-js/recipe/oauth2provider";
+import type { RecipeInterface } from "supertokens-web-js/recipe/oauth2provider";
 export default class Wrapper {
     static init(config?: UserInput): import("../../types").RecipeInitResult<any, never, any, any>;
     /**

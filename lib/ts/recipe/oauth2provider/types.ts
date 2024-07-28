@@ -4,7 +4,7 @@ import type {
     NormalisedConfig as NormalisedRecipeModuleConfig,
 } from "../recipeModule/types";
 import type OverrideableBuilder from "supertokens-js-override";
-import type { RecipeInterface } from "supertokens-web-js/recipe/oauth2/types";
+import type { RecipeInterface } from "supertokens-web-js/recipe/oauth2provider/types";
 
 export type PreAndPostAPIHookAction = "GET_LOGIN_CHALLENGE_INFO";
 
