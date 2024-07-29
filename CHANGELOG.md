@@ -7,11 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-## [0.44.1] - 2024-07-29
+## [0.45.0] - 2024-07-31
 
-### Changes
+### Breaking changes
 
--   Updated the default font-weight for headings to be 400 instead of 500
+-   Updated the font and font-weights in the default styles
+-   We no longer load the Rubik font by default
 
 ## [0.44.0] - 2024-07-15
 

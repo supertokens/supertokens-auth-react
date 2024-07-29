@@ -16,7 +16,6 @@
 /*
  * Imports.
  */
-import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { ThemeBase } from "../../../../emailpassword/components/themes/themeBase";
@@ -46,12 +45,10 @@ export function EmailVerificationTheme(props: EmailVerificationThemeProps): JSX.
 
 function EmailVerificationThemeWrapper(props: EmailVerificationThemeProps): JSX.Element {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
-    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     return (
         <UserContextWrapper userContext={props.userContext}>
             <ThemeBase
-                loadDefaultFont={!hasFont}
                 userStyles={[
                     rootStyle,
                     props.config.recipeRootStyle,

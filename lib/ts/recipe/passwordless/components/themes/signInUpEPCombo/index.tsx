@@ -17,7 +17,6 @@
  */
 import React from "react";
 
-import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { FactorIds } from "../../../../multifactorauth";
@@ -53,7 +52,6 @@ const SignInUpTheme: React.FC<SignInUpEPComboChildProps & { activeScreen: SignIn
 
 function SignInUpThemeWrapper(props: SignInUpEPComboChildProps): JSX.Element {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
-    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     const activeScreen = getActiveScreen(props.factorIds);
 
@@ -61,7 +59,7 @@ function SignInUpThemeWrapper(props: SignInUpEPComboChildProps): JSX.Element {
 
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase loadDefaultFont={!hasFont} userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
+            <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
                 <SignInUpTheme {...props} activeScreen={activeScreen!} />
             </ThemeBase>
         </UserContextWrapper>

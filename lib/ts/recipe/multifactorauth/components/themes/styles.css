@@ -11,7 +11,7 @@
 
 [data-supertokens~="mfa"] [data-supertokens~="headerTitle"] {
     font-size: var(--font-size-3);
-    font-weight: 400;
+    font-weight: 600;
     line-height: 30px;
 }
 
@@ -56,7 +56,7 @@
 [data-supertokens~="factorName"] {
     color: rgb(var(--palette-textPrimary));
     font-size: var(--font-size-1);
-    font-weight: 500;
+    font-weight: 400;
     margin: 4px;
 }
 

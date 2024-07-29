@@ -18,7 +18,6 @@ import STGeneralError from "supertokens-web-js/utils/error";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
-import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { useUserContext } from "../../../../../usercontext";
@@ -200,13 +199,12 @@ function UserInputCodeFormScreenWrapper(
     props: SignInUpUserInputCodeFormProps & { userContext: UserContext }
 ): JSX.Element {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
-    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     const activeStyle = props.config.signInUpFeature.userInputCodeFormStyle;
 
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase loadDefaultFont={!hasFont} userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
+            <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
                 <UserInputCodeFormScreen {...props} />
             </ThemeBase>
         </UserContextWrapper>
