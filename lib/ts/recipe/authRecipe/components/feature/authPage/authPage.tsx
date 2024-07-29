@@ -308,7 +308,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
         authComponentListInfo !== undefined && (loginChallenge === null || oauth2ClientInfo !== undefined)
             ? {
                   ...authComponentListInfo,
-                  clientAppName: oauth2ClientInfo?.clientName,
+                  oauth2ClientInfo,
                   onAuthSuccess,
                   error,
                   onError: (err) => {

@@ -39,4 +39,4 @@ export type NormalisedConfig = NormalisedRecipeModuleConfig<
 
 export type GetRedirectionURLContext = SuccessRedirectContextOAuth2;
 
-export type OnHandleEventContext = never;
+export type OnHandleEventContext = any;

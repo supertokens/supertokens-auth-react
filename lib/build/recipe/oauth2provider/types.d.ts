@@ -33,4 +33,4 @@ export declare type NormalisedConfig = NormalisedRecipeModuleConfig<
     };
 };
 export declare type GetRedirectionURLContext = SuccessRedirectContextOAuth2;
-export declare type OnHandleEventContext = never;
+export declare type OnHandleEventContext = any;

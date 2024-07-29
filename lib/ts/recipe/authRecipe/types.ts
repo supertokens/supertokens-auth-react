@@ -59,7 +59,11 @@ export type AuthSuccessContext = Omit<
 > & { recipeId: string };
 
 export type AuthPageThemeProps = {
-    clientAppName: string | undefined;
+    oauth2ClientInfo?: {
+        clientLogo?: string;
+        clientUri?: string;
+        clientName: string;
+    };
     onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>;
 
     showBackButton: boolean;

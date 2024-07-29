@@ -383,3 +383,24 @@
 [data-supertokens~="authComponentList"] {
     padding-bottom: 20px;
 }
+
+[data-supertokens~="authPageTitleOAuthClient"] {
+    color: rgb(var(--palette-textGray));
+    font-size: var(--font-size-1);
+    font-weight: 400;
+    margin: 10px 0 25px;
+}
+
+[data-supertokens~="authPageTitleOAuthClientUrl"] {
+    text-decoration: none;
+}
+
+[data-supertokens~="authPageTitleOAuthClientLogo"] {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 10px;
+}
+
+[data-supertokens~="authPageTitleOAuthClient"] [data-supertokens~="authPageTitleOAuthClientName"] {
+    color: rgb(var(--palette-textTitle));
+}

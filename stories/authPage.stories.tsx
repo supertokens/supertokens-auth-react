@@ -20,6 +20,10 @@ export type Args = {
     "passwordless.initialized": boolean;
     "passwordless.contactMethod": "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
     "passwordless.defaultToEmail": boolean;
+    "oauth2.initialized": boolean;
+    "oauth2.clientName": string;
+    "oauth2.clientLogoUri": string;
+    "oauth2.clientUri": string;
     path?: string;
     query?: string;
     hash?: string;
@@ -104,6 +108,10 @@ const meta: Meta<Args> = {
         "passwordless.contactMethod": "EMAIL_OR_PHONE",
         "passwordless.defaultToEmail": true,
         rootStyle: "",
+        "oauth2.initialized": true,
+        "oauth2.clientName": "My App",
+        "oauth2.clientLogoUri": "https://example.com/logo.png",
+        "oauth2.clientUri": "https://example.com",
     },
     argTypes: {
         "multifactorauth.initialized": {
@@ -208,6 +216,38 @@ const meta: Meta<Args> = {
             },
             if: {
                 arg: "passwordless.initialized",
+                truthy: true,
+            },
+        },
+        "oauth2.initialized": {
+            table: {
+                category: "oauth2",
+            },
+        },
+        "oauth2.clientName": {
+            table: {
+                category: "oauth2",
+            },
+            if: {
+                arg: "oauth2.initialized",
+                truthy: true,
+            },
+        },
+        "oauth2.clientLogoUri": {
+            table: {
+                category: "oauth2",
+            },
+            if: {
+                arg: "oauth2.initialized",
+                truthy: true,
+            },
+        },
+        "oauth2.clientUri": {
+            table: {
+                category: "oauth2",
+            },
+            if: {
+                arg: "oauth2.initialized",
                 truthy: true,
             },
         },

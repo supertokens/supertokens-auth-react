@@ -39,7 +39,11 @@ export declare type AuthSuccessContext = Omit<
     recipeId: string;
 };
 export declare type AuthPageThemeProps = {
-    clientAppName: string | undefined;
+    oauth2ClientInfo?: {
+        clientLogo?: string;
+        clientUri?: string;
+        clientName: string;
+    };
     onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>;
     showBackButton: boolean;
     setFactorList: (factorIds: string[]) => void;

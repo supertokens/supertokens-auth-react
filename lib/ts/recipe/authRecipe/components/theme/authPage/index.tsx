@@ -51,7 +51,7 @@ export function AuthPageTheme(props: AuthPageThemeProps): JSX.Element {
                     hasSeparateSignUpView={props.hasSeparateSignUpView}
                     resetFactorList={props.resetFactorList}
                     showBackButton={props.showBackButton}
-                    clientAppName={props.clientAppName}
+                    oauth2ClientInfo={props.oauth2ClientInfo}
                 />
                 {props.error !== undefined && <GeneralError error={props.error} />}
                 <AuthPageComponentList {...props} />
