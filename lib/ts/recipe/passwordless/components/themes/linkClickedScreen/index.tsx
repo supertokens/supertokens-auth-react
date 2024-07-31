@@ -19,7 +19,6 @@ import React, { useState } from "react";
 
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { Button } from "../../../../emailpassword/components/library";
@@ -66,11 +65,8 @@ const LinkClickedScreenWithOverride = withOverride("PasswordlessLinkClickedScree
 
 export const LinkClickedScreen = (props: LinkClickedScreenProps) => {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
-    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
     return (
-        <ThemeBase
-            loadDefaultFont={!hasFont}
-            userStyles={[rootStyle, props.config.recipeRootStyle, props.config.linkClickedScreenFeature.style]}>
+        <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, props.config.linkClickedScreenFeature.style]}>
             <LinkClickedScreenWithOverride {...props} />
         </ThemeBase>
     );

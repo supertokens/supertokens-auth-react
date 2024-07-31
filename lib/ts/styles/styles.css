@@ -54,7 +54,7 @@
 }
 
 [data-supertokens~="container"] {
-    font-family: "Rubik", sans-serif;
+    font-family: "Arial", sans-serif;
     margin: 12px auto;
     margin-top: 26px;
     margin-bottom: 26px;
@@ -111,7 +111,7 @@
     font-size: var(--font-size-4);
     line-height: 40px;
     letter-spacing: 0.58px;
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: 2px;
     color: rgb(var(--palette-textTitle));
 }
@@ -150,7 +150,7 @@
 
 [data-supertokens~="primaryText"] {
     font-size: var(--font-size-1);
-    font-weight: 500;
+    font-weight: 400;
     letter-spacing: 0.4px;
     line-height: 21px;
     color: rgb(var(--palette-textLabel));
@@ -158,13 +158,13 @@
 
 [data-supertokens~="secondaryText"] {
     font-size: var(--font-size-1);
-    font-weight: 300;
+    font-weight: 400;
     letter-spacing: 0.4px;
     color: rgb(var(--palette-textPrimary));
 }
 
 [data-supertokens~="secondaryText"] strong {
-    font-weight: 500;
+    font-weight: 600;
 }
 
 [data-supertokens~="divider"] {
@@ -180,7 +180,7 @@
     margin-top: 13px;
     font-size: var(--font-size-3);
     letter-spacing: 1.1px;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 28px;
 }
 
@@ -218,14 +218,14 @@
 }
 
 [data-supertokens~="linkButton"] {
-    font-family: "Rubik", sans-serif;
+    font-family: "Arial", sans-serif;
     background-color: transparent;
     border: 0;
 }
 
 [data-supertokens~="secondaryLinkWithLeftArrow"] {
     color: rgb(var(--palette-textGray));
-    font-weight: 500;
+    font-weight: 400;
     margin-top: 10px;
     margin-bottom: 40px;
     cursor: pointer;
@@ -239,12 +239,12 @@
 }
 
 [data-supertokens~="button"] {
-    font-family: "Rubik", sans-serif;
+    font-family: "Arial", sans-serif;
     background-color: rgb(var(--palette-primary));
     color: rgb(var(--palette-buttonText));
     width: 100%;
     height: 34px;
-    font-weight: 700;
+    font-weight: 600;
     border-width: 1px;
     border-style: solid;
     border-radius: 6px;
@@ -319,7 +319,7 @@
 }
 
 [data-supertokens~="footerLinkGroupVert"] [data-supertokens~="secondaryLinkWithLeftArrow"] {
-    font-weight: 500;
+    font-weight: 400;
     position: relative;
     left: -6px; /* half the width of the left arrow */
 }

@@ -4,7 +4,6 @@ import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
 import ErrorRoundIcon from "../../../../../components/assets/errorRoundIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { useUserContext } from "../../../../../usercontext";
@@ -63,12 +62,9 @@ const AccessDeniedThemeWithOverride = withOverride("SessionAccessDenied", Access
 
 export const AccessDeniedScreenTheme: React.FC<AccessDeniedThemeProps> = (props) => {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
-    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     return (
-        <ThemeBase
-            loadDefaultFont={!hasFont}
-            userStyles={[rootStyle, props.config.recipeRootStyle, props.config.accessDeniedScreen.style]}>
+        <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, props.config.accessDeniedScreen.style]}>
             <AccessDeniedThemeWithOverride {...props} />
         </ThemeBase>
     );

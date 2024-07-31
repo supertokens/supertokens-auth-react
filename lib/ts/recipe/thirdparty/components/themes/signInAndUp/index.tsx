@@ -12,7 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { ThemeBase } from "../themeBase";
@@ -28,13 +27,10 @@ const SignInAndUpThemeWrapper: React.FC<
     }
 > = (props) => {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
-    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase
-                loadDefaultFont={!hasFont}
-                userStyles={[rootStyle, props.config.recipeRootStyle, props.config.signInAndUpFeature.style]}>
+            <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, props.config.signInAndUpFeature.style]}>
                 <ProvidersForm {...props} />
             </ThemeBase>
         </UserContextWrapper>

@@ -15,7 +15,6 @@
 import React from "react";
 
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
-import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import { useTranslation } from "../../../../../translation/translationContext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
@@ -137,7 +136,6 @@ const MFATheme: React.FC<MFAProps & { activeScreen: MFAScreens }> = ({
 
 function MFAThemeWrapper(props: MFAProps): JSX.Element {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
-    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     const activeScreen = getActiveScreen(props);
 
@@ -155,7 +153,6 @@ function MFAThemeWrapper(props: MFAProps): JSX.Element {
     return (
         <UserContextWrapper userContext={props.userContext}>
             <ThemeBase
-                loadDefaultFont={!hasFont}
                 userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle, props.config.mfaFeature.style]}>
                 <MFATheme {...props} activeScreen={activeScreen!} />
             </ThemeBase>

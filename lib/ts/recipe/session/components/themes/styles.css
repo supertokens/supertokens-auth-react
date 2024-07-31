@@ -28,7 +28,7 @@
 [data-supertokens~="accessDenied"] [data-supertokens~="headerTitle"] {
     margin: 10px 0 0 0;
     font-style: normal;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 20px;
     line-height: 30px;
 }
@@ -51,10 +51,10 @@
 }
 
 [data-supertokens~="buttonBase"] {
-    font-family: "Rubik", sans-serif;
+    font-family: "Arial", sans-serif;
     font-size: var(--font-size-1);
     line-height: 21px;
-    font-weight: 500;
+    font-weight: 400;
     background: transparent;
     outline: none;
     border: none;
