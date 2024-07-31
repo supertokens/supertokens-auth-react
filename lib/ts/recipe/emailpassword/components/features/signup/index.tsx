@@ -122,7 +122,7 @@ export function useChildProps(
             onError,
             clearError,
         };
-    }, [recipe]);
+    }, [recipe, error, userContext]);
 }
 
 export const SignUpFeature: React.FC<

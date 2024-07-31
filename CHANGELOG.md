@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Updated the font and font-weights in the default styles
 -   We no longer load the Rubik font by default
 
+### Fixes
+
+-   Now the error prop should be updated in override components.
+
 ## [0.44.0] - 2024-07-15
 
 -   Removes the default `maxAgeInSeconds` value (previously 300 seconds) in EmailVerification Claim. If the claim value is true and `maxAgeInSeconds` is not provided, it will not be refreshed.
