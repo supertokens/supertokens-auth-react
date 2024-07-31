@@ -41,11 +41,11 @@ declare class UI {
         onSignInUpSwitcherClick: (() => void) | undefined;
         resetFactorList: () => void;
         showBackButton: boolean;
-        oauthClientInfo?:
+        oauth2ClientInfo?:
             | {
-                  clientLogo?: string | undefined;
+                  clientLogoUri?: string | undefined;
                   clientUri?: string | undefined;
-                  clientAppName?: string | undefined;
+                  clientName: string;
               }
             | undefined;
     }>;
