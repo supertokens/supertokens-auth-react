@@ -7,12 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-## [0.44.1] - 2024-07-29
-
-### Changes
-
--   Updated the default font-weight for headings to be 400 instead of 500
-
 ## [0.44.0] - 2024-07-15
 
 -   Removes the default `maxAgeInSeconds` value (previously 300 seconds) in EmailVerification Claim. If the claim value is true and `maxAgeInSeconds` is not provided, it will not be refreshed.

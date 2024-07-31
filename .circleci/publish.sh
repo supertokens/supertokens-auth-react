@@ -13,11 +13,8 @@ then
     cd ..
     npm publish --tag latest
     npm i || exit $?
-    npx -y chromatic --auto-accept-changes --branch=master
-    npx -y chromatic --auto-accept-changes --branch=$version
+    npx -y chromatic --auto-accept-changes master
 else
     cd ..
     npm publish --tag version-$version
-    npm i || exit $?
-    npx -y chromatic --auto-accept-changes --branch=$version
 fi
