@@ -23,7 +23,6 @@ import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
 import EmailLargeIcon from "../../../../../components/assets/emailLargeIcon";
 import SMSLargeIcon from "../../../../../components/assets/smsLargeIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { useUserContext } from "../../../../../usercontext";
@@ -138,13 +137,12 @@ export const LinkSent = withOverride("PasswordlessLinkSent", PasswordlessLinkSen
 
 function LinkSentWrapper(props: LinkSentThemeProps & { userContext: UserContext }): JSX.Element {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
-    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     const activeStyle = props.config.signInUpFeature.linkSentScreenStyle;
 
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase loadDefaultFont={!hasFont} userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
+            <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
                 <LinkSent {...props} />
             </ThemeBase>
         </UserContextWrapper>

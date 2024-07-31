@@ -16,7 +16,6 @@
 /*
  * Imports.
  */
-import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { ThemeBase } from "../themeBase";
@@ -46,13 +45,12 @@ export function ResetPasswordUsingTokenTheme(props: ResetPasswordUsingTokenTheme
 
 function ResetPasswordUsingTokenThemeWrapper(props: ResetPasswordUsingTokenThemeProps): JSX.Element {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
-    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
     const userStyles = props.submitNewPasswordForm
         ? props.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.style
         : props.config.resetPasswordUsingTokenFeature.enterEmailForm.style;
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase loadDefaultFont={!hasFont} userStyles={[rootStyle, props.config.recipeRootStyle, userStyles]}>
+            <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, userStyles]}>
                 <ResetPasswordUsingTokenTheme {...props} />
             </ThemeBase>
         </UserContextWrapper>

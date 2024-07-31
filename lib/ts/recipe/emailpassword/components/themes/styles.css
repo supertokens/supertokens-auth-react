@@ -123,7 +123,7 @@
 
 [data-supertokens~="label"] {
     text-align: left;
-    font-weight: 500;
+    font-weight: 400;
     font-size: var(--font-size-1);
     line-height: 24px;
     color: rgb(var(--palette-textLabel));
@@ -148,19 +148,11 @@
     margin-top: 11px;
 }
 
-[data-supertokens~="headerTinyTitle"] {
-    margin-top: 13px;
-    font-size: var(--font-size-3);
-    letter-spacing: 1.1px;
-    font-weight: 500;
-    line-height: 28px;
-}
-
 [data-supertokens~="sendVerifyEmailText"] {
     line-height: 21px;
     font-size: var(--font-size-1);
     text-align: center;
-    font-weight: 300;
+    font-weight: 400;
     letter-spacing: 0.8px;
 }
 
@@ -177,7 +169,7 @@
 
 [data-supertokens~="sendVerifyEmailResend"] {
     margin-top: 13px;
-    font-weight: 300;
+    font-weight: 400;
 }
 
 [data-supertokens~="sendVerifyEmailResend"]:hover {

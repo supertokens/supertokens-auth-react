@@ -18,7 +18,6 @@
 import React from "react";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import { Button } from "../../../../emailpassword/components/library";
 import { ThemeBase } from "../themeBase";
@@ -50,9 +49,8 @@ export const ContinueWithPasswordlessTheme = (
     props: PartialAuthComponentProps & { config: NormalisedConfig; continueWithPasswordlessClicked: () => void }
 ) => {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
-    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
     return (
-        <ThemeBase loadDefaultFont={!hasFont} userStyles={[rootStyle, props.config.recipeRootStyle]}>
+        <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle]}>
             <ContinueWithPasswordlessWithOverride {...props} />
         </ThemeBase>
     );

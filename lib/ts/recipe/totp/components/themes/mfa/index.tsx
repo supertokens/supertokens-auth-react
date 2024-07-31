@@ -15,7 +15,6 @@
 import React from "react";
 
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
-import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import { useTranslation } from "../../../../../translation/translationContext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
@@ -123,7 +122,6 @@ const TOTPMFATheme: React.FC<TOTPMFAProps & { activeScreen: TOTPMFAScreens }> = 
 
 function TOTPMFAThemeWrapper(props: TOTPMFAProps): JSX.Element {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
-    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     const activeScreen = getActiveScreen(props);
 
@@ -140,7 +138,7 @@ function TOTPMFAThemeWrapper(props: TOTPMFAProps): JSX.Element {
 
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase loadDefaultFont={!hasFont} userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
+            <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
                 <TOTPMFATheme {...props} activeScreen={activeScreen!} />
             </ThemeBase>
         </UserContextWrapper>

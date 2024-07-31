@@ -14,7 +14,6 @@
  */
 
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
-import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import { useTranslation } from "../../../../../translation/translationContext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
@@ -52,13 +51,10 @@ export function FactorChooserTheme(props: FactorChooserThemeProps): JSX.Element 
 
 function FactorChooserThemeWrapper(props: FactorChooserThemeProps): JSX.Element {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
-    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase
-                loadDefaultFont={!hasFont}
-                userStyles={[rootStyle, props.config.recipeRootStyle, props.config.factorChooserScreen.style]}>
+            <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, props.config.factorChooserScreen.style]}>
                 <FactorChooserTheme {...props} />
             </ThemeBase>
         </UserContextWrapper>

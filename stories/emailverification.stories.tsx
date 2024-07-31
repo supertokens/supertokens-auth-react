@@ -28,7 +28,16 @@ export default {
                             ...oI,
                             isEmailVerified: async () => withFetchResponse({ status: "OK", isVerified: false }),
                             sendVerificationEmail: async () => withFetchResponse({ status: "OK" }),
-                            verifyEmail: () => new Promise((res) => {}),
+                            verifyEmail: async (inp) =>
+                                new Promise((res, rej) => {
+                                    if (args.query.includes("token=success")) {
+                                        res({ status: "OK" } as any);
+                                    } else if (args.query.includes("token=invalid")) {
+                                        res({ status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" } as any);
+                                    } else if (args.query.includes("token=error")) {
+                                        rej({ status: "ERROR" } as any);
+                                    }
+                                }),
                         }),
                     },
                 }),
@@ -77,9 +86,31 @@ export default {
 };
 
 export const SentEmail: Story = {};
+
 export const LinkClicked: Story = {
     args: {
         path: "/auth/verify-email",
-        query: "token=asdf",
+        query: "token=stayloading",
+    },
+};
+
+export const LinkClickedSuccess: Story = {
+    args: {
+        path: "/auth/verify-email",
+        query: "token=success",
+    },
+};
+
+export const LinkClickedInvalidToken: Story = {
+    args: {
+        path: "/auth/verify-email",
+        query: "token=invalid",
+    },
+};
+
+export const LinkClickedError: Story = {
+    args: {
+        path: "/auth/verify-email",
+        query: "token=error",
     },
 };
