@@ -52,7 +52,7 @@ const UserRolesRaw = require("supertokens-node/lib/build/recipe/userroles/recipe
 const UserRoles = require("supertokens-node/recipe/userroles");
 
 const MultitenancyRaw = require("supertokens-node/lib/build/recipe/multitenancy/recipe").default;
-const Multitenancy = require("supertokens-node/lib/build/recipe/multitenancy");
+const Multitenancy = require("supertokens-node/recipe/multitenancy");
 
 const AccountLinkingRaw = require("supertokens-node/lib/build/recipe/accountlinking/recipe").default;
 const AccountLinking = require("supertokens-node/recipe/accountlinking");
@@ -65,6 +65,9 @@ const MultiFactorAuth = require("supertokens-node/recipe/multifactorauth");
 
 const TOTPRaw = require("supertokens-node/lib/build/recipe/totp/recipe").default;
 const TOTP = require("supertokens-node/recipe/totp");
+
+const OAuth2ProviderRaw = require("supertokens-node/lib/build/recipe/oauth2provider/recipe").default;
+const OAuth2Provider = require("supertokens-node/recipe/oauth2provider");
 
 const OTPAuth = require("otpauth");
 
@@ -489,6 +492,11 @@ app.get("/test/featureFlags", (req, res) => {
     });
 });
 
+app.post("/test/create-oauth2-client", async (req, res) => {
+    const { client } = await OAuth2Provider.createOAuth2Client(req.body);
+    res.send({ client });
+});
+
 app.use(errorHandler());
 
 app.use(async (err, req, res, next) => {
@@ -532,6 +540,7 @@ function initST() {
         UserMetadataRaw.reset();
         MultiFactorAuthRaw.reset();
         TOTPRaw.reset();
+        OAuth2ProviderRaw.reset();
 
         EmailVerificationRaw.reset();
         EmailPasswordRaw.reset();
@@ -730,6 +739,7 @@ function initST() {
                 },
             }),
         ],
+        ["oauth2provider", OAuth2Provider.init()],
     ];
 
     passwordlessConfig = {
