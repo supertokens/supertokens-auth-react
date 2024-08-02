@@ -1115,6 +1115,8 @@ export async function createOAuth2Client(input) {
     return await resp.json();
 }
 
+// For the OAuth2 end-to-end test, we need to provide the created clientId to both the OAuth2 login and callback pages.
+// We use localStorage to store the clientId instead of query params, as it must be available on the callback page as well.
 export async function setOAuth2ClientIdInStorage(page, clientId) {
     return page.evaluate((clientId) => localStorage.setItem("oauth2-client-id", clientId), clientId);
 }

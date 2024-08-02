@@ -48,10 +48,12 @@ describe("SuperTokens OAuth2Provider", function () {
     let browser;
     let page;
     let consoleLogs = [];
+    let skipped = false;
 
     before(async function () {
         // Skip these tests if running in React 16
         if (isReact16()) {
+            skipped = true;
             this.skip();
         }
 
@@ -68,6 +70,9 @@ describe("SuperTokens OAuth2Provider", function () {
     });
 
     after(async function () {
+        if (skipped) {
+            return;
+        }
         await browser.close();
 
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
@@ -127,7 +132,7 @@ describe("SuperTokens OAuth2Provider", function () {
 
             // Validate token data
             const tokenData = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenData.client_id, client.clientId);
+            assert.deepStrictEqual(tokenData.aud, [client.clientId]);
 
             // Logout
             const logoutButton = await getOAuth2LogoutButton(page);
@@ -147,8 +152,9 @@ describe("SuperTokens OAuth2Provider", function () {
                 grantTypes: ["authorization_code", "refresh_token"],
                 responseTypes: ["code", "id_token"],
                 skipConsent: true,
-                // Setting access token lifespan to 3 seconds to force refresh
-                authorizationCodeGrantAccessTokenLifespan: "3s",
+                // The library refreshes the token 60 seconds before it expires.
+                // We set the token lifespan to 63 seconds to force a refresh in 3 seconds.
+                authorizationCodeGrantAccessTokenLifespan: "63s",
             });
 
             await setOAuth2ClientIdInStorage(page, client.clientId);
@@ -168,19 +174,19 @@ describe("SuperTokens OAuth2Provider", function () {
 
             // Validate token data
             const tokenDataAfterLogin = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenDataAfterLogin.client_id, client.clientId);
+            assert.deepStrictEqual(tokenDataAfterLogin.aud, [client.clientId]);
 
-            // The react-oauth2-code-pkce library refreshes the token in an interval of 10 seconds.
-            // To force the refresh before that, we wait for 4 seconds and reload the page.
+            // Although the react-oidc-context library automatically refreshes the
+            // token, we wait for 4 seconds and reload the page to ensure a refresh.
             await waitFor(4000);
             await page.reload();
             await page.waitForNavigation({ waitUntil: "networkidle0" });
 
             const tokenDataAfterRefresh = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenDataAfterRefresh.client_id, client.clientId);
+            assert.deepStrictEqual(tokenDataAfterRefresh.aud, [client.clientId]);
 
             // Validate the token was refreshed
-            assert(tokenDataAfterLogin.jti !== tokenDataAfterRefresh.jti);
+            assert(tokenDataAfterLogin.iat !== tokenDataAfterRefresh.iat);
             assert(tokenDataAfterLogin.exp < tokenDataAfterRefresh.exp);
         });
     });
