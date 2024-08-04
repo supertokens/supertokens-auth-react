@@ -204,6 +204,7 @@ function getModifiedRecipeImplementation(
                         userContext: input.userContext,
                         attemptInfo: {
                             ...loginAttemptInfo,
+                            tryLinkingWithSessionUser: loginAttemptInfo.tryLinkingWithSessionUser ?? false,
                             lastResend: timestamp,
                         },
                     });

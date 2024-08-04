@@ -105,6 +105,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     const showStringFromQSRef = useRef(showStringFromQS);
     const errorFromQSRef = useRef(errorFromQS);
     const loginChallenge = search.get("loginChallenge");
+    const forceFreshAuth = search.get("forceFreshAuth") === "true";
 
     const sessionContext = useSessionContext();
     const userContext = useUserContext();
@@ -191,7 +192,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
             if (sessionContext.doesSessionExist) {
                 if (props.onSessionAlreadyExists !== undefined) {
                     props.onSessionAlreadyExists();
-                } else if (props.redirectOnSessionExists !== false) {
+                } else if (props.redirectOnSessionExists !== false && !forceFreshAuth) {
                     Session.getInstanceOrThrow().config.onHandleEvent({
                         action: "SESSION_ALREADY_EXISTS",
                     });
@@ -298,7 +299,8 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                       },
                 ctx.recipeId,
                 getRedirectToPathFromURL(),
-                userContext
+                userContext,
+                props.navigate
             );
         },
         [loginChallenge]

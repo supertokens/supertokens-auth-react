@@ -357,6 +357,7 @@ function useOnLoad(
                         // createCode also dispatches the event that marks this page fully loaded
                         createResp = await recipeImplementation!.createCode({
                             ...createCodeInfo,
+                            tryLinkingWithSessionUser: true,
                             userContext,
                         });
                     } catch (err: any) {
@@ -463,6 +464,7 @@ function getModifiedRecipeImplementation(
 
             const res = await originalImpl.createCode({
                 ...input,
+                tryLinkingWithSessionUser: true,
                 userContext: { ...input.userContext, additionalAttemptInfo },
             });
 
@@ -493,6 +495,7 @@ function getModifiedRecipeImplementation(
                         userContext: input.userContext,
                         attemptInfo: {
                             ...loginAttemptInfo,
+                            tryLinkingWithSessionUser: loginAttemptInfo.tryLinkingWithSessionUser ?? true,
                             lastResend: timestamp,
                         },
                     });

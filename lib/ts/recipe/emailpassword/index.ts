@@ -100,6 +100,7 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
+        tryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext?: UserContext;
     }): Promise<
@@ -133,6 +134,7 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
+        tryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext?: UserContext;
     }): Promise<

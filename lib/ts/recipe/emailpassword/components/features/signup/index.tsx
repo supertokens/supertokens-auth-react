@@ -166,6 +166,14 @@ export default SignUpFeature;
 const getModifiedRecipeImplementation = (origImpl: RecipeInterface): RecipeInterface => {
     return {
         ...origImpl,
+        signIn: async function (input) {
+            const response = await origImpl.signIn({ ...input, tryLinkingWithSessionUser: false });
+            return response;
+        },
+        signUp: async function (input) {
+            const response = await origImpl.signUp({ ...input, tryLinkingWithSessionUser: false });
+            return response;
+        },
     };
 };
 

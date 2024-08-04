@@ -649,7 +649,7 @@ export async function defaultSignUp(page, rid = "emailpassword") {
             { name: "name", value: "John Doe" },
             { name: "age", value: "20" },
         ],
-        '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
+        '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}],"tryLinkingWithSessionUser":false}',
         rid
     );
 }
@@ -666,7 +666,7 @@ export function getDefaultSignUpFieldValues({
         { name: "name", value: name },
         { name: "age", value: age },
     ];
-    const postValues = `{"formFields":[{"id":"email","value":"${email}"},{"id":"password","value":"${password}"},{"id":"name","value":"${name}"},{"id":"age","value":"${age}"},{"id":"country","value":""}]}`;
+    const postValues = `{"formFields":[{"id":"email","value":"${email}"},{"id":"password","value":"${password}"},{"id":"name","value":"${name}"},{"id":"age","value":"${age}"},{"id":"country","value":""}],"tryLinkingWithSessionUser":false}`;
 
     return { fieldValues, postValues };
 }

@@ -76,7 +76,11 @@ export function useChildProps(
             showContinueWithPasswordlessLink,
             onContactInfoSubmit: async (contactInfo: string) => {
                 if (isPhoneNumber) {
-                    const createRes = await recipeImplementation.createCode({ phoneNumber: contactInfo, userContext });
+                    const createRes = await recipeImplementation.createCode({
+                        phoneNumber: contactInfo,
+                        tryLinkingWithSessionUser: false,
+                        userContext,
+                    });
 
                     if (createRes.status === "SIGN_IN_UP_NOT_ALLOWED") {
                         throw new STGeneralError(createRes.reason);
@@ -105,7 +109,11 @@ export function useChildProps(
                     return { status: "OK" };
                 } else if (pwlessExists.doesExist) {
                     // only pwless exists
-                    const createRes = await recipeImplementation.createCode({ email, userContext });
+                    const createRes = await recipeImplementation.createCode({
+                        email,
+                        tryLinkingWithSessionUser: false,
+                        userContext,
+                    });
 
                     if (createRes.status === "SIGN_IN_UP_NOT_ALLOWED") {
                         throw new STGeneralError(createRes.reason);
@@ -134,6 +142,7 @@ export function useChildProps(
 
                 const response = await EmailPassword.getInstanceOrThrow().webJSRecipe.signIn({
                     formFields,
+                    tryLinkingWithSessionUser: false,
                     userContext,
                 });
                 if (response.status === "WRONG_CREDENTIALS_ERROR") {
@@ -147,7 +156,11 @@ export function useChildProps(
             onContinueWithPasswordlessClick: async (contactInfo) => {
                 // When this function is called, the contactInfo has already been validated
                 const createInfo = isPhoneNumber ? { phoneNumber: contactInfo } : { email: contactInfo };
-                const createRes = await recipeImplementation.createCode({ ...createInfo, userContext });
+                const createRes = await recipeImplementation.createCode({
+                    ...createInfo,
+                    tryLinkingWithSessionUser: false,
+                    userContext,
+                });
                 if (createRes.status !== "OK") {
                     onError(createRes.reason);
                 } else {
@@ -313,6 +326,7 @@ function getModifiedRecipeImplementation(
 
             const res = await originalImpl.createCode({
                 ...input,
+                tryLinkingWithSessionUser: false,
                 userContext: { ...input.userContext, additionalAttemptInfo },
             });
             if (res.status === "OK") {

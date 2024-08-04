@@ -208,6 +208,7 @@ function getModifiedRecipeImplementation(
 
             const res = await originalImpl.createCode({
                 ...input,
+                tryLinkingWithSessionUser: false,
                 userContext: { ...input.userContext, additionalAttemptInfo },
             });
             if (res.status === "OK") {
