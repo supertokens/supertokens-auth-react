@@ -41,6 +41,10 @@ import fetch from "isomorphic-fetch";
 
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_OUT_API } from "../constants";
 
+// We do no thave to use a separate domain for the oauth2 client, since the way we are testing
+// the lib doesn't interact with the supertokens session handling.
+// Using a redirection uri that has the same domain as the auth portal shouldn't affect the test.
+
 /*
  * Tests.
  */
