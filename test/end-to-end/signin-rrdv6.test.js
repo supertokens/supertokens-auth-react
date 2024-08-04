@@ -186,7 +186,7 @@ describe("SuperTokens SignIn with react router dom v6", function () {
             assert.strictEqual(request.headers().rid, "emailpassword");
             assert.strictEqual(
                 request.postData(),
-                '{"formFields":[{"id":"email","value":"john@gmail.com"},{"id":"password","value":"********"}]}'
+                '{"formFields":[{"id":"email","value":"john@gmail.com"},{"id":"password","value":"********"}],"tryLinkingWithSessionUser":false}'
             );
 
             assert.strictEqual(response.status, "WRONG_CREDENTIALS_ERROR");
@@ -258,7 +258,7 @@ describe("SuperTokens SignIn with react router dom v6", function () {
             assert.strictEqual(request.headers().rid, "emailpassword");
             assert.strictEqual(
                 request.postData(),
-                '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}]}'
+                '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}],"tryLinkingWithSessionUser":false}'
             );
 
             assert.strictEqual(response.status, "OK");
@@ -403,7 +403,7 @@ describe("SuperTokens SignIn with react router dom v6", function () {
             assert.strictEqual(request.headers().rid, "emailpassword");
             assert.strictEqual(
                 request.postData(),
-                '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}]}'
+                '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}],"tryLinkingWithSessionUser":false}'
             );
 
             assert.strictEqual(response.status, "OK");

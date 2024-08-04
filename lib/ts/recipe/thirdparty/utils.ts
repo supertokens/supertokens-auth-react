@@ -152,6 +152,7 @@ export async function redirectToThirdPartyLogin(input: {
         thirdPartyId: input.thirdPartyId,
         frontendRedirectURI: provider.getRedirectURL(),
         redirectURIOnProviderDashboard: provider.getRedirectURIOnProviderDashboard(),
+        tryLinkingWithSessionUser: false,
         userContext: input.userContext,
     });
 

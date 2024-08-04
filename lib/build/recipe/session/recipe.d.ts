@@ -58,9 +58,9 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
               })
             | undefined,
         fallbackRecipeId: string,
-        redirectToPath?: string,
-        userContext?: UserContext,
-        navigate?: Navigate
+        redirectToPath: string | undefined,
+        userContext: UserContext | undefined,
+        navigate: Navigate | undefined
     ) => Promise<void>;
     /**
      * This should only get called if validateGlobalClaimsAndHandleSuccessRedirection couldn't get a redirectInfo

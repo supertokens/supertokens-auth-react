@@ -12,6 +12,7 @@ import { MultiFactorAuthPreBuiltUI } from "supertokens-auth-react/recipe/multifa
 import { TOTPPreBuiltUI } from "supertokens-auth-react/recipe/totp/prebuiltui";
 import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from "./App";
 import { getEnabledRecipes, getTestContext } from "./testContext";
+import OAuth2Page from "./OAuth2Page";
 
 function AppWithReactDomRouter(props) {
     /**
@@ -172,6 +173,9 @@ function AppWithReactDomRouter(props) {
                                 }
                             />
                         )}
+
+                        <Route path="/oauth2/login" element={<OAuth2Page />} />
+                        <Route path="/oauth2/callback" element={<OAuth2Page />} />
                     </Routes>
                 </BaseComponent>
             </Router>

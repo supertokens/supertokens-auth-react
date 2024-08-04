@@ -180,9 +180,7 @@ module.exports.startST = async function (config = {}) {
                             },
                             body: JSON.stringify({
                                 appId,
-                                emailPasswordEnabled: true,
-                                thirdPartyEnabled: true,
-                                passwordlessEnabled: true,
+                                firstFactors: ["emailpassword", "thirdparty", "passwordless"],
                                 coreConfig: config.coreConfig,
                             }),
                         });

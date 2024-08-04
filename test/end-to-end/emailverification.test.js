@@ -104,6 +104,7 @@ describe("SuperTokens Email Verification", function () {
             consoleLogs = [];
             page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
+                // console.log(log);
                 if (log.startsWith("ST_LOGS")) {
                     consoleLogs.push(log);
                 }

@@ -134,9 +134,9 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
               })
             | undefined,
         fallbackRecipeId: string,
-        redirectToPath?: string,
-        userContext?: UserContext,
-        navigate?: Navigate
+        redirectToPath: string | undefined,
+        userContext: UserContext | undefined,
+        navigate: Navigate | undefined
     ): Promise<void> => {
         userContext = getNormalisedUserContext(userContext);
         // First we check if there is an active session

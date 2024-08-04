@@ -137,6 +137,7 @@ export const EmailOrPhoneForm = withOverride(
 
                     const response = await props.recipeImplementation.createCode({
                         ...contactInfo,
+                        // tryLinkingWithSessionUser is set by the fn override
                         userContext,
                     });
 

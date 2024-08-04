@@ -649,7 +649,7 @@ export async function defaultSignUp(page, rid = "emailpassword") {
             { name: "name", value: "John Doe" },
             { name: "age", value: "20" },
         ],
-        '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
+        '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}],"tryLinkingWithSessionUser":false}',
         rid
     );
 }
@@ -666,7 +666,7 @@ export function getDefaultSignUpFieldValues({
         { name: "name", value: name },
         { name: "age", value: age },
     ];
-    const postValues = `{"formFields":[{"id":"email","value":"${email}"},{"id":"password","value":"${password}"},{"id":"name","value":"${name}"},{"id":"age","value":"${age}"},{"id":"country","value":""}]}`;
+    const postValues = `{"formFields":[{"id":"email","value":"${email}"},{"id":"password","value":"${password}"},{"id":"name","value":"${name}"},{"id":"age","value":"${age}"},{"id":"country","value":""}],"tryLinkingWithSessionUser":false}`;
 
     return { fieldValues, postValues };
 }
@@ -958,7 +958,7 @@ export async function setGeneralErrorToLocalStorage(recipeName, action, page) {
     });
 }
 
-export async function getTestEmail(post) {
+export function getTestEmail(post) {
     return `john.doe+${Date.now()}-${post ?? "0"}@supertokens.io`;
 }
 
@@ -1104,4 +1104,37 @@ export async function expectErrorThrown(page, cb) {
     });
     await Promise.all([hitErrorBoundary, cb()]);
     assert(hitErrorBoundary);
+}
+
+export async function createOAuth2Client(input) {
+    const resp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/create-oauth2-client`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(input),
+    });
+    return await resp.json();
+}
+
+// For the OAuth2 end-to-end test, we need to provide the created clientId to both the OAuth2 login and callback pages.
+// We use localStorage to store the clientId instead of query params, as it must be available on the callback page as well.
+export async function setOAuth2ClientIdInStorage(page, clientId) {
+    return page.evaluate((clientId) => localStorage.setItem("oauth2-client-id", clientId), clientId);
+}
+
+export async function removeOAuth2ClientIdFromStorage(page) {
+    return page.evaluate(() => localStorage.removeItem("oauth2-client-id"));
+}
+
+export async function getOAuth2LoginButton(page) {
+    return page.waitForSelector("#oauth2-login-button");
+}
+
+export async function getOAuth2LogoutButton(page) {
+    return page.waitForSelector("#oauth2-logout-button");
+}
+
+export async function getOAuth2TokenData(page) {
+    const element = await page.waitForSelector("#oauth2-token-data");
+    const tokenData = await element.evaluate((el) => el.textContent);
+    return JSON.parse(tokenData);
 }

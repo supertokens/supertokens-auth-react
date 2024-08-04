@@ -58,6 +58,7 @@ export const SignUpForm = withOverride(
 
                     const res = await props.recipeImplementation.signUp({
                         formFields,
+                        tryLinkingWithSessionUser: false,
                         userContext,
                     });
 
