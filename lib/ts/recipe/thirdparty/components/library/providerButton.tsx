@@ -13,6 +13,8 @@
  * under the License.
  */
 
+import { useEffect, useRef } from "react";
+
 import { useTranslation } from "../../../../translation/translationContext";
 
 export type ProviderButtonProps = {
@@ -24,6 +26,30 @@ export type ProviderButtonProps = {
 export default function ProviderButton({ logo, providerName, displayName }: ProviderButtonProps) {
     const t = useTranslation();
     const providerStyleName = `provider${providerName}`;
+    const textRef = useRef<HTMLDivElement>(null);
+    const isTextOverflowing = (element: Element) => {
+        return element.scrollWidth > element.clientWidth;
+    };
+    useEffect(() => {
+        const textElement = textRef.current;
+        if (textElement && isTextOverflowing(textElement)) {
+            textElement.classList.add("scroll-text-animation");
+        }
+
+        const handleResize = () => {
+            if (textElement) {
+                if (isTextOverflowing(textElement)) {
+                    textElement.classList.add("scroll-text-animation");
+                } else {
+                    textElement.classList.remove("scroll-text-animation");
+                }
+            }
+        };
+        addEventListener("resize", handleResize);
+        return () => {
+            removeEventListener("resize", handleResize);
+        };
+    }, []);
 
     return (
         <button data-supertokens={`button providerButton ${providerStyleName}`}>
@@ -34,10 +60,12 @@ export default function ProviderButton({ logo, providerName, displayName }: Prov
                     </div>
                 </div>
             )}
-            <div data-supertokens="providerButtonText">
-                {t("THIRD_PARTY_PROVIDER_DEFAULT_BTN_START")}
-                {displayName}
-                {t("THIRD_PARTY_PROVIDER_DEFAULT_BTN_END")}
+            <div data-supertokens="providerButtonText" ref={textRef}>
+                <span>
+                    {t("THIRD_PARTY_PROVIDER_DEFAULT_BTN_START")}
+                    {displayName}
+                    {t("THIRD_PARTY_PROVIDER_DEFAULT_BTN_END")}
+                </span>
             </div>
         </button>
     );

@@ -29,16 +29,15 @@
 
 [data-supertokens~="providerButtonLeft"] {
     min-width: 34px;
-    margin-left: 66px;
 }
 
 [data-supertokens~="multiFactor"] [data-supertokens~="providerButtonLeft"] {
-    margin-left: 30px;
 }
 
 [data-supertokens~="providerButtonLogo"] {
     height: 30px;
     display: flex;
+    align-items: center;
 }
 
 [data-supertokens~="providerButtonLogoCenter"] {
@@ -52,10 +51,40 @@
     justify-content: center;
     overflow: hidden;
     white-space: nowrap;
-    text-overflow: ellipsis;
     display: inline-block;
+    flex-grow: 1;
+    max-width: 100%;
 }
 
 [data-supertokens~="providerButtonText"]:only-child {
     margin: 0 auto;
+}
+
+[data-supertokens~="providerButtonText"]:not(:hover) {
+    text-overflow: ellipsis;
+}
+.scroll-text-animation:hover span,
+.scroll-text-animation:focus span {
+    display: inline-block;
+    animation-name: scroll-text;
+    animation-duration: 7s;
+    animation-timing-function: linear;
+    animation-delay: 0s;
+    animation-iteration-count: 1;
+    animation-direction: normal;
+}
+
+@keyframes scroll-text {
+    0% {
+        transform: translateX(0%);
+    }
+    90% {
+        transform: translateX(-100%);
+    }
+    95% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(0%);
+    }
 }
