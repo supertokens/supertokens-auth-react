@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.46.0] - 2024-08-05
+
+### Breaking changes
+
+-   Updated the prebuilt UI button styles
+
 ## [0.45.0] - 2024-07-31
 
 ### Breaking changes
