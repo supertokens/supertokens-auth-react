@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.45.1] - 2024-08-09
+
+### Changes
+
+-   Now we only update the session context if the object changes by value. This optimization should help reduce unnecessary re-renders.
+
 ## [0.45.0] - 2024-07-31
 
 ### Breaking changes
