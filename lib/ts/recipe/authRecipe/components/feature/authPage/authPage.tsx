@@ -444,7 +444,26 @@ async function buildAndSetChildProps(
     const selectedComponents = selectComponentsToCoverAllFirstFactors(partialAuthComps, firstFactors);
 
     if (selectedComponents === undefined) {
-        throw new Error("Couldn't cover all first factors");
+        const availableFactors = new Set();
+        for (const comp of partialAuthComps) {
+            for (const id of comp.factorIds) {
+                availableFactors.add(id);
+            }
+        }
+        const source =
+            factorListState !== undefined
+                ? "local state or props"
+                : loadedDynamicLoginMethods?.firstFactors !== undefined
+                ? "dynamic tenant configuration"
+                : MultiFactorAuth.getInstance()?.config.firstFactors !== undefined
+                ? "the config passed to the MFA recipe"
+                : "all recipes initialized";
+
+        throw new Error(
+            `Couldn't cover all first factors: ${firstFactors.join(
+                ", "
+            )} (from ${source}), available components: ${Array.from(availableFactors).join(", ")}`
+        );
     }
 
     setComponentListInfo({
