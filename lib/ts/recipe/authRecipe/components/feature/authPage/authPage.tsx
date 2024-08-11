@@ -354,10 +354,6 @@ async function buildAndSetChildProps(
         }
     }
 
-    if (firstFactors.length === 0) {
-        throw new Error("There are no enabled factors to show");
-    }
-
     if (firstFactors.includes(FactorIds.THIRDPARTY)) {
         // we get the thirdparty recipe here like this, because importing the recipe here would heavily increase the bundle size of many recipes
         const thirdPartyPreBuiltUI = recipeRouters.find((r) => r.recipeInstance.recipeID === FactorIds.THIRDPARTY);
@@ -372,11 +368,6 @@ async function buildAndSetChildProps(
                 (!SuperTokens.usesDynamicLoginMethods || loadedDynamicLoginMethods!.thirdparty.providers.length === 0)
             ) {
                 firstFactors = firstFactors.filter((f) => f !== FactorIds.THIRDPARTY);
-                if (firstFactors.length === 0) {
-                    throw new Error(
-                        "The only enabled first factor is thirdparty, but no providers were defined. Please define at least one provider."
-                    );
-                }
             }
         }
     }
@@ -444,26 +435,7 @@ async function buildAndSetChildProps(
     const selectedComponents = selectComponentsToCoverAllFirstFactors(partialAuthComps, firstFactors);
 
     if (selectedComponents === undefined) {
-        const availableFactors = new Set();
-        for (const comp of partialAuthComps) {
-            for (const id of comp.factorIds) {
-                availableFactors.add(id);
-            }
-        }
-        const source =
-            factorListState !== undefined
-                ? "local state or props"
-                : loadedDynamicLoginMethods?.firstFactors !== undefined
-                ? "dynamic tenant configuration"
-                : MultiFactorAuth.getInstance()?.config.firstFactors !== undefined
-                ? "the config passed to the MFA recipe"
-                : "all recipes initialized";
-
-        throw new Error(
-            `Couldn't cover all first factors: ${firstFactors.join(
-                ", "
-            )} (from ${source}), available components: ${Array.from(availableFactors).join(", ")}`
-        );
+        throw new Error("Couldn't cover all first factors");
     }
 
     setComponentListInfo({
