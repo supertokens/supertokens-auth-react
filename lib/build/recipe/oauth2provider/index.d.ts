@@ -1,3 +1,5 @@
+/// <reference types="react" />
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import type { RecipeFunctionOptions, LoginInfo } from "supertokens-web-js/recipe/oauth2provider";
 import type { RecipeInterface } from "supertokens-web-js/recipe/oauth2provider";
@@ -25,6 +27,11 @@ export default class Wrapper {
         info: LoginInfo;
         fetchResponse: Response;
     }>;
+    static ComponentsOverrideProvider: import("react").FC<
+        import("react").PropsWithChildren<{
+            components: import("./types").ComponentOverrideMap;
+        }>
+    >;
 }
 declare const init: typeof Wrapper.init;
 declare const getLoginChallengeInfo: typeof Wrapper.getLoginChallengeInfo;
@@ -36,4 +43,5 @@ export {
     OnHandleEventContext,
     UserInput,
     RecipeInterface,
+    RecipeComponentsOverrideContextProvider,
 };

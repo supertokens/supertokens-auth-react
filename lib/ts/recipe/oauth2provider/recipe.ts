@@ -23,6 +23,7 @@ import { SSR_ERROR } from "../../constants";
 import { isTest } from "../../utils";
 import RecipeModule from "../recipeModule";
 
+import { getFunctionOverrides } from "./functionOverrides";
 import { normaliseOAuth2Config } from "./utils";
 
 import type {
@@ -32,12 +33,7 @@ import type {
     PreAndPostAPIHookAction,
     UserInput,
 } from "./types";
-import type {
-    RecipeInitResult,
-    NormalisedConfigWithAppInfoAndRecipeID,
-    WebJSRecipeInterface,
-    SuccessRedirectContextOAuth2,
-} from "../../types";
+import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
 import type { NormalisedAppInfo } from "../../types";
 
 /*
@@ -82,6 +78,14 @@ export default class OAuth2Provider extends RecipeModule<
             },
             webJS: OAuth2WebJS.init({
                 ...normalisedConfig,
+                override: {
+                    functions: (originalImpl, builder) => {
+                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
+                        builder.override(functions);
+                        builder.override(normalisedConfig.override.functions);
+                        return originalImpl;
+                    },
+                },
             }),
         };
     }
@@ -106,8 +110,8 @@ export default class OAuth2Provider extends RecipeModule<
         return OAuth2Provider.instance;
     }
 
-    async getDefaultRedirectionURL(ctx: SuccessRedirectContextOAuth2): Promise<string> {
-        if (ctx.action === "SUCCESS_OAUTH2") {
+    async getDefaultRedirectionURL(ctx: GetRedirectionURLContext): Promise<string> {
+        if (ctx.action === "SUCCESS_OAUTH2" || ctx.action === "CONTINUE_OAUTH2_AFTER_REFRESH") {
             const domain = this.config.appInfo.apiDomain.getAsStringDangerous();
             const basePath = this.config.appInfo.apiBasePath.getAsStringDangerous();
 

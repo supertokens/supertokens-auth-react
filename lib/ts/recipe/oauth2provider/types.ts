@@ -4,7 +4,7 @@ import type {
     NormalisedConfig as NormalisedRecipeModuleConfig,
 } from "../recipeModule/types";
 import type OverrideableBuilder from "supertokens-js-override";
-import type { RecipeInterface } from "supertokens-web-js/recipe/oauth2provider/types";
+import type { LoginInfo, RecipeInterface } from "supertokens-web-js/recipe/oauth2provider/types";
 
 export type PreAndPostAPIHookAction = "GET_LOGIN_CHALLENGE_INFO";
 
@@ -16,6 +16,7 @@ export type PreAPIHookContext = {
 };
 
 export type UserInput = {
+    disableDefaultUI?: boolean;
     override?: {
         functions?: (
             originalImplementation: RecipeInterface,
@@ -29,14 +30,32 @@ export type NormalisedConfig = NormalisedRecipeModuleConfig<
     PreAndPostAPIHookAction,
     OnHandleEventContext
 > & {
+    disableDefaultUI: boolean;
     override: {
-        functions?: (
+        functions: (
             originalImplementation: RecipeInterface,
             builder: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
     };
 };
 
-export type GetRedirectionURLContext = SuccessRedirectContextOAuth2;
+export type ContinueOAuth2AfterRefreshRedirectContext = {
+    recipeId: "oauth2provider";
+    action: "CONTINUE_OAUTH2_AFTER_REFRESH";
+    loginChallenge: string;
+};
 
-export type OnHandleEventContext = any;
+export type GetRedirectionURLContext = SuccessRedirectContextOAuth2 | ContinueOAuth2AfterRefreshRedirectContext;
+
+export type OnHandleEventContext = {
+    /*
+     * On Handle Event actions
+     */
+    action: "LOADED_LOGIN_CHALLENGE";
+    loginChallenge: string;
+    loginInfo: LoginInfo;
+    userContext: UserContext;
+};
+
+// TODO: update this whenever we add components
+export type ComponentOverrideMap = any;

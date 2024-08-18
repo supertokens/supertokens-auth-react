@@ -7,6 +7,7 @@ import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpass
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import { ThirdPartyPreBuiltUI, SignInAndUpCallback } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { OAuth2ProviderPreBuiltUI } from "supertokens-auth-react/recipe/oauth2provider/prebuiltui";
 import { AccessDeniedScreen } from "supertokens-auth-react/recipe/session/prebuiltui";
 import { MultiFactorAuthPreBuiltUI } from "supertokens-auth-react/recipe/multifactorauth/prebuiltui";
 import { TOTPPreBuiltUI } from "supertokens-auth-react/recipe/totp/prebuiltui";
@@ -31,7 +32,7 @@ function AppWithReactDomRouter(props) {
     const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
     const websiteBasePath = window.localStorage.getItem("websiteBasePath") || undefined;
 
-    let recipePreBuiltUIList = [TOTPPreBuiltUI];
+    let recipePreBuiltUIList = [TOTPPreBuiltUI, OAuth2ProviderPreBuiltUI];
     if (enabledRecipes.some((r) => r.startsWith("thirdparty"))) {
         recipePreBuiltUIList.push(ThirdPartyPreBuiltUI);
     }
@@ -174,8 +175,8 @@ function AppWithReactDomRouter(props) {
                             />
                         )}
 
-                        <Route path="/oauth2/login" element={<OAuth2Page />} />
-                        <Route path="/oauth2/callback" element={<OAuth2Page />} />
+                        <Route path="/oauth/login" element={<OAuth2Page />} />
+                        <Route path="/oauth/callback" element={<OAuth2Page />} />
                     </Routes>
                 </BaseComponent>
             </Router>

@@ -26,6 +26,7 @@ export default [
             passwordless: "lib/ts/recipe/passwordless/index.ts",
             passwordlessprebuiltui: "lib/ts/recipe/passwordless/prebuiltui.tsx",
             oauth2provider: "lib/ts/recipe/oauth2provider/index.ts",
+            oauth2providerprebuiltui: "lib/ts/recipe/oauth2provider/prebuiltui.tsx",
             thirdparty: "lib/ts/recipe/thirdparty/index.ts",
             thirdpartyprebuiltui: "lib/ts/recipe/thirdparty/prebuiltui.tsx",
             multitenancy: "lib/ts/recipe/multitenancy/index.ts",

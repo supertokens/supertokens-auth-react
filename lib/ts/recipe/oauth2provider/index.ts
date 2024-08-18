@@ -13,6 +13,7 @@
  * under the License.
  */
 
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 import OAuth2Provider from "./recipe";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 
@@ -47,6 +48,8 @@ export default class Wrapper {
     }> {
         return OAuth2Provider.getInstanceOrThrow().webJSRecipe.getLoginChallengeInfo(input);
     }
+
+    static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
 const init = Wrapper.init;
@@ -60,4 +63,5 @@ export {
     OnHandleEventContext,
     UserInput,
     RecipeInterface,
+    RecipeComponentsOverrideContextProvider,
 };
