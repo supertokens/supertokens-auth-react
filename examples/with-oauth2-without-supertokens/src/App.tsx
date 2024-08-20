@@ -1,7 +1,7 @@
 import { AuthProvider, AuthProviderProps, useAuth } from "react-oidc-context";
 import "./App.css";
 
-const authServerUrl = process.env.REACT_APP_AUTH_SERVER_API_URL || "http://localhost:3006";
+const authServerUrl = process.env.REACT_APP_AUTH_SERVER_API_URL || "http://localhost.com:3006";
 const clientId = "REPLACE_WITH_YOUR_CLIENT_ID";
 
 const oidcConfig: AuthProviderProps = {

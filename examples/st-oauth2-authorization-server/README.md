@@ -14,9 +14,17 @@ cd supertokens-auth-react/examples/st-oauth2-authorization-server
 npm install
 ```
 
-## Update Environment variables
+## Set Up Frontend and Backend URLs
 
-The frontend runs on `http://localhost:3005` and the backend on `http://localhost:3006` by default. You can customize these by setting the environment variables `REACT_APP_AUTH_SERVER_WEBSITE_URL` and `REACT_APP_AUTH_SERVER_API_URL`.
+When running locally, we recommend using a different domain than `localhost` for the authorization server to prevent cookie sharing with other client apps running on `localhost`.
+
+By default, the frontend runs at `http://localhost.com:3005` and the backend at `http://localhost.com:3006`. You can customize these by setting the `REACT_APP_AUTH_SERVER_WEBSITE_URL` and `REACT_APP_AUTH_SERVER_API_URL` environment variables.
+
+After configuring the URLs, add the domain to `/etc/hosts`. For example, if your domain is `localhost.com`, add:
+
+```bash
+127.0.0.1   localhost.com
+```
 
 ## Run the demo app
 

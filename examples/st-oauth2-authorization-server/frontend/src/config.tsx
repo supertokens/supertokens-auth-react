@@ -4,11 +4,11 @@ import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpass
 import Session from "supertokens-auth-react/recipe/session";
 
 export function getWebsiteDomain() {
-    return process.env.REACT_APP_AUTH_SERVER_WEBSITE_URL || "http://localhost:3005";
+    return process.env.REACT_APP_AUTH_SERVER_WEBSITE_URL || "http://localhost.com:3005";
 }
 
 export function getApiDomain() {
-    return process.env.REACT_APP_AUTH_SERVER_API_URL || "http://localhost:3006";
+    return process.env.REACT_APP_AUTH_SERVER_API_URL || "http://localhost.com:3006";
 }
 
 export const SuperTokensConfig = {
