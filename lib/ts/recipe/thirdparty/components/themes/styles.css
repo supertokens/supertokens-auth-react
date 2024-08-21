@@ -31,9 +31,6 @@
     min-width: 34px;
 }
 
-[data-supertokens~="multiFactor"] [data-supertokens~="providerButtonLeft"] {
-}
-
 [data-supertokens~="providerButtonLogo"] {
     height: 30px;
     display: flex;
@@ -62,29 +59,4 @@
 
 [data-supertokens~="providerButtonText"]:not(:hover) {
     text-overflow: ellipsis;
-}
-.scroll-text-animation:hover span,
-.scroll-text-animation:focus span {
-    display: inline-block;
-    animation-name: scroll-text;
-    animation-duration: 7s;
-    animation-timing-function: linear;
-    animation-delay: 0s;
-    animation-iteration-count: 1;
-    animation-direction: normal;
-}
-
-@keyframes scroll-text {
-    0% {
-        transform: translateX(0%);
-    }
-    90% {
-        transform: translateX(-100%);
-    }
-    95% {
-        transform: translateX(0%);
-    }
-    100% {
-        transform: translateX(0%);
-    }
 }

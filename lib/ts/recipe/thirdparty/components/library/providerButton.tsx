@@ -23,25 +23,61 @@ export type ProviderButtonProps = {
     logo?: JSX.Element;
 };
 
-export default function ProviderButton({ logo, providerName, displayName }: ProviderButtonProps) {
+export default function ProviderButton({ logo, providerName, displayName }: ProviderButtonProps): React.ReactElement {
     const t = useTranslation();
     const providerStyleName = `provider${providerName}`;
-    const textRef = useRef<HTMLDivElement>(null);
+    const buttonTextContainerRef = useRef<HTMLDivElement>(null);
+    const buttonTextRef = useRef<HTMLSpanElement>(null);
+    const SCROLL_ANIMATION_CLASS = "scroll-text-animation";
+
     const isTextOverflowing = (element: Element) => {
         return element.scrollWidth > element.clientWidth;
     };
+
+    function startAnimation() {
+        const buttonTextContainer = buttonTextContainerRef.current;
+        const buttonText = buttonTextRef.current;
+        const BUFFER = 10;
+
+        if (!buttonTextContainer || !buttonText || !buttonTextContainer.classList.contains(SCROLL_ANIMATION_CLASS)) {
+            return;
+        }
+
+        const keyframes = [
+            { transform: "translateX(0px)" },
+            {
+                transform: `translateX(-${
+                    buttonTextContainer.scrollWidth - buttonTextContainer.clientWidth + BUFFER
+                }px)`,
+            },
+        ];
+        const options: KeyframeAnimationOptions = {
+            duration: 3000,
+            iterations: 1,
+        };
+        buttonText.style.display = "inline-block";
+        buttonText.animate(keyframes, options);
+    }
+
+    const stopAnimation = () => {
+        const buttonText = buttonTextRef.current;
+        if (!buttonText) {
+            return;
+        }
+        buttonText.getAnimations().forEach((animation) => animation.cancel());
+    };
     useEffect(() => {
-        const textElement = textRef.current;
-        if (textElement && isTextOverflowing(textElement)) {
-            textElement.classList.add("scroll-text-animation");
+        const buttonTextContainer = buttonTextContainerRef.current;
+        if (buttonTextContainer && isTextOverflowing(buttonTextContainer)) {
+            buttonTextContainer.classList.add(SCROLL_ANIMATION_CLASS);
         }
 
         const handleResize = () => {
-            if (textElement) {
-                if (isTextOverflowing(textElement)) {
-                    textElement.classList.add("scroll-text-animation");
+            if (buttonTextContainer) {
+                if (isTextOverflowing(buttonTextContainer)) {
+                    buttonTextContainer.classList.add(SCROLL_ANIMATION_CLASS);
                 } else {
-                    textElement.classList.remove("scroll-text-animation");
+                    buttonTextContainer.classList.remove(SCROLL_ANIMATION_CLASS);
                 }
             }
         };
@@ -60,8 +96,8 @@ export default function ProviderButton({ logo, providerName, displayName }: Prov
                     </div>
                 </div>
             )}
-            <div data-supertokens="providerButtonText" ref={textRef}>
-                <span>
+            <div data-supertokens="providerButtonText" ref={buttonTextContainerRef}>
+                <span onMouseEnter={() => startAnimation()} onMouseLeave={() => stopAnimation()} ref={buttonTextRef}>
                     {t("THIRD_PARTY_PROVIDER_DEFAULT_BTN_START")}
                     {displayName}
                     {t("THIRD_PARTY_PROVIDER_DEFAULT_BTN_END")}
