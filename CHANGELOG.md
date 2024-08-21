@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Breaking changes
+
+-   Made MFA related screens do a success redirection if MFA is already completed and the `stepUp` query param is not set to `true`.
+
 ## [0.45.1] - 2024-08-09
 
 ### Changes
