@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Breaking changes
+
+-   The prebuilt UI now clears the login attempt info if the stored data doesn't contain all the required properties. This should help migration from a custom UI to the prebuilt UI.
+
 ## [0.45.1] - 2024-08-09
 
 ### Changes
