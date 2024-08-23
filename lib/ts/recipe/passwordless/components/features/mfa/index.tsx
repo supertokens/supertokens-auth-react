@@ -43,6 +43,7 @@ import SessionRecipe from "../../../../session/recipe";
 import Session from "../../../../session/recipe";
 import { defaultPhoneNumberValidator } from "../../../defaultPhoneNumberValidator";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
+import { checkAdditionalLoginAttemptInfoProperties } from "../../../utils";
 import MFAThemeWrapper from "../../themes/mfa";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
@@ -315,7 +316,11 @@ function useOnLoad(
 
             const factorId = props.contactMethod === "EMAIL" ? FactorIds.OTP_EMAIL : FactorIds.OTP_PHONE;
 
-            if (loginAttemptInfo && props.contactMethod !== loginAttemptInfo.contactMethod) {
+            if (
+                loginAttemptInfo &&
+                (props.contactMethod !== loginAttemptInfo.contactMethod ||
+                    !checkAdditionalLoginAttemptInfoProperties(loginAttemptInfo))
+            ) {
                 await recipeImplementation?.clearLoginAttemptInfo({ userContext });
                 loginAttemptInfo = undefined;
             }
