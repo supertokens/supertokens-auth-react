@@ -6,6 +6,7 @@ export function normaliseOAuth2Config(config?: UserInput): NormalisedConfig {
     return {
         ...normaliseRecipeModuleConfig(config),
         disableDefaultUI: config?.disableDefaultUI ?? false,
+        oauth2LogoutScreen: { style: config?.oauth2LogoutScreen?.style ?? "" },
         override: {
             functions: (originalImplementation) => originalImplementation,
             ...config?.override,

@@ -16,4 +16,13 @@ export const getFunctionOverrides =
             });
             return response;
         },
+        async logOut(input) {
+            const response = await originalImp.logOut(input);
+            onHandleEvent({
+                action: "OAUTH2_LOGOUT_SUCCESS",
+                frontendRedirectTo: response.frontendRedirectTo,
+                userContext: input.userContext,
+            });
+            return response;
+        },
     });

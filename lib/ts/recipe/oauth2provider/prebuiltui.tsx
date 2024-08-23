@@ -6,9 +6,10 @@ import { RecipeRouter } from "../recipeRouter";
 import { SessionAuth } from "../session";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import { default as OAuth2LogoutScreen } from "./components/features/oauth2LogoutScreen";
 import { default as TryRefreshPageFeature } from "./components/features/tryRefreshPage";
 import { defaultTranslationsOAuth2Provider } from "./components/themes/translations";
-import { DEFAULT_TRY_REFRESH_PATH } from "./constants";
+import { DEFAULT_TRY_REFRESH_PATH, DEFAULT_OAUTH2_LOGOUT_PATH } from "./constants";
 import OAuth2ProviderRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
@@ -38,7 +39,7 @@ export class OAuth2ProviderPreBuiltUI extends RecipeRouter {
         return OAuth2ProviderPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
     }
     static getFeatureComponent(
-        componentName: "try-refresh-page",
+        componentName: "try-refresh-page" | "oauth2-logout-screen",
         props: any,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
@@ -64,25 +65,52 @@ export class OAuth2ProviderPreBuiltUI extends RecipeRouter {
                 recipeID: OAuth2ProviderRecipe.RECIPE_ID,
             };
         }
+        // TODO: Should this be checking this.recipeInstance.config.oauth2LogoutScreen.disableDefaultUI
+        if (this.recipeInstance.config.disableDefaultUI !== true) {
+            const normalisedFullPath = this.recipeInstance.config.appInfo.websiteBasePath.appendPath(
+                new NormalisedURLPath(DEFAULT_OAUTH2_LOGOUT_PATH)
+            );
+            features[normalisedFullPath.getAsStringDangerous()] = {
+                matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
+                component: (props) =>
+                    this.getFeatureComponent("oauth2-logout-screen", props as any, useComponentOverrides),
+                recipeID: OAuth2ProviderRecipe.RECIPE_ID,
+            };
+        }
         return features;
     };
     getFeatureComponent = (
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _: "try-refresh-page",
+        componentName: "try-refresh-page" | "oauth2-logout-screen",
         props: FeatureBaseProps<{ userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
-        return (
-            <UserContextWrapper userContext={props.userContext}>
-                <SessionAuth requireAuth={false} overrideGlobalClaimValidators={() => []}>
-                    <TryRefreshPageFeature
-                        recipe={this.recipeInstance}
-                        useComponentOverrides={useComponentOverrides}
-                        {...props}
-                    />
-                </SessionAuth>
-            </UserContextWrapper>
-        );
+        if (componentName === "try-refresh-page") {
+            return (
+                <UserContextWrapper userContext={props.userContext}>
+                    <SessionAuth requireAuth={false} overrideGlobalClaimValidators={() => []}>
+                        <TryRefreshPageFeature
+                            recipe={this.recipeInstance}
+                            useComponentOverrides={useComponentOverrides}
+                            {...props}
+                        />
+                    </SessionAuth>
+                </UserContextWrapper>
+            );
+        } else if (componentName === "oauth2-logout-screen") {
+            return (
+                <UserContextWrapper userContext={props.userContext}>
+                    <SessionAuth requireAuth={false} overrideGlobalClaimValidators={() => []}>
+                        <OAuth2LogoutScreen
+                            recipe={this.recipeInstance}
+                            useComponentOverrides={useComponentOverrides}
+                            {...props}
+                        />
+                    </SessionAuth>
+                </UserContextWrapper>
+            );
+        }
+        throw new Error("Should never come here.");
     };
 
     getAuthComponents(): AuthComponent[] {
@@ -101,6 +129,8 @@ export class OAuth2ProviderPreBuiltUI extends RecipeRouter {
 
     static TryRefreshPage = (props: FeatureBaseProps<{ userContext?: UserContext }>) =>
         OAuth2ProviderPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("try-refresh-page", props);
+    static OAuth2LogoutScreen = (props: FeatureBaseProps<{ userContext?: UserContext }>) =>
+        OAuth2ProviderPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent("oauth2-logout-screen", props);
 }
 
 const TryRefreshPage = OAuth2ProviderPreBuiltUI.TryRefreshPage;

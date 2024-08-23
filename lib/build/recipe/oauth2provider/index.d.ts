@@ -29,7 +29,7 @@ export default class Wrapper {
     }>;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
-            components: import("./types").ComponentOverrideMap;
+            components: any;
         }>
     >;
 }

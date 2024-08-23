@@ -7,7 +7,12 @@ import type {
     PreAndPostAPIHookAction,
     UserInput,
 } from "./types";
-import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
+import type {
+    RecipeInitResult,
+    NormalisedConfigWithAppInfoAndRecipeID,
+    WebJSRecipeInterface,
+    UserContext,
+} from "../../types";
 export default class OAuth2Provider extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -26,5 +31,13 @@ export default class OAuth2Provider extends RecipeModule<
     static getInstanceOrThrow(): OAuth2Provider;
     static getInstance(): OAuth2Provider | undefined;
     getDefaultRedirectionURL(ctx: GetRedirectionURLContext): Promise<string>;
+    logOut(
+        logoutChallenge: string,
+        userContext: UserContext
+    ): Promise<{
+        status: "OK";
+        frontendRedirectTo: string;
+        fetchResponse: Response;
+    }>;
     static reset(): void;
 }

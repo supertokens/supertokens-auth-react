@@ -12,5 +12,20 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export const DEFAULT_TRY_REFRESH_PATH = "/try-refresh";
-export const DEFAULT_OAUTH2_LOGOUT_PATH = "/oauth/logout";
+
+@import "../../../../styles/styles.css";
+
+[data-supertokens~="logoutIcon"] {
+    padding: 18px 20px 18px 24px;
+    background-color: rgba(var(--palette-textGray), 0.1);
+    border-radius: 12px;
+}
+
+[data-supertokens~="oauth2Logout"] [data-supertokens~="headerTitle"] {
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+[data-supertokens~="oauth2Logout"] [data-supertokens~="button"] {
+    margin-bottom: 24px;
+}

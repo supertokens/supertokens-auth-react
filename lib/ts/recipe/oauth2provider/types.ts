@@ -1,4 +1,4 @@
-import type { SuccessRedirectContextOAuth2, UserContext } from "../../types";
+import type { FeatureBaseConfig, NormalisedBaseConfig, SuccessRedirectContextOAuth2, UserContext } from "../../types";
 import type {
     UserInput as RecipeModuleUserInput,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -6,7 +6,7 @@ import type {
 import type OverrideableBuilder from "supertokens-js-override";
 import type { LoginInfo, RecipeInterface } from "supertokens-web-js/recipe/oauth2provider/types";
 
-export type PreAndPostAPIHookAction = "GET_LOGIN_CHALLENGE_INFO";
+export type PreAndPostAPIHookAction = "GET_LOGIN_CHALLENGE_INFO" | "LOG_OUT";
 
 export type PreAPIHookContext = {
     action: PreAndPostAPIHookAction;
@@ -17,6 +17,7 @@ export type PreAPIHookContext = {
 
 export type UserInput = {
     disableDefaultUI?: boolean;
+    oauth2LogoutScreen?: FeatureBaseConfig;
     override?: {
         functions?: (
             originalImplementation: RecipeInterface,
@@ -31,6 +32,7 @@ export type NormalisedConfig = NormalisedRecipeModuleConfig<
     OnHandleEventContext
 > & {
     disableDefaultUI: boolean;
+    oauth2LogoutScreen: NormalisedBaseConfig;
     override: {
         functions: (
             originalImplementation: RecipeInterface,
@@ -45,17 +47,39 @@ export type ContinueOAuth2AfterRefreshRedirectContext = {
     loginChallenge: string;
 };
 
-export type GetRedirectionURLContext = SuccessRedirectContextOAuth2 | ContinueOAuth2AfterRefreshRedirectContext;
-
-export type OnHandleEventContext = {
-    /*
-     * On Handle Event actions
-     */
-    action: "LOADED_LOGIN_CHALLENGE";
-    loginChallenge: string;
-    loginInfo: LoginInfo;
-    userContext: UserContext;
+export type PostOAuth2LogoutRedirectContext = {
+    recipeId: "oauth2provider";
+    action: "POST_OAUTH2_LOGOUT_REDIRECT";
+    frontendRedirectTo: string;
 };
+
+export type GetRedirectionURLContext =
+    | SuccessRedirectContextOAuth2
+    | ContinueOAuth2AfterRefreshRedirectContext
+    | PostOAuth2LogoutRedirectContext;
+
+export type OnHandleEventContext =
+    | {
+          /*
+           * On Handle Event actions
+           */
+          action: "LOADED_LOGIN_CHALLENGE";
+          loginChallenge: string;
+          loginInfo: LoginInfo;
+          userContext: UserContext;
+      }
+    | {
+          action: "OAUTH2_LOGOUT_SUCCESS";
+          frontendRedirectTo: string;
+          userContext: UserContext;
+      };
 
 // TODO: update this whenever we add components
 export type ComponentOverrideMap = any;
+
+export type OAuth2LogoutScreenThemeProps = {
+    config: NormalisedConfig;
+    isLoggingOut: boolean;
+    onLogoutClicked: () => void;
+    showSpinner: boolean;
+};
