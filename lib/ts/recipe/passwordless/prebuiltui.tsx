@@ -18,6 +18,7 @@ import UserInputCodeFeature from "./components/features/userInputCode";
 import MFAThemeWrapper from "./components/themes/mfa";
 import { defaultTranslationsPasswordless } from "./components/themes/translations";
 import Passwordless from "./recipe";
+import { checkAdditionalLoginAttemptInfoProperties } from "./utils";
 
 import type { AdditionalLoginAttemptInfoProperties, LoginAttemptInfo } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
@@ -187,6 +188,13 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
                         ) {
                             await Passwordless.getInstanceOrThrow().webJSRecipe?.clearLoginAttemptInfo({ userContext });
                             loginAttemptInfo = undefined;
+                        } else if (!checkAdditionalLoginAttemptInfoProperties(loginAttemptInfo)) {
+                            // If these properties are not set, it means that the user likely started logging in
+                            // using a custom UI and then switched to the pre-built UI. In that case, we should clear
+                            // the login attempt info so that the user is prompted to login again, since the pre-built UI
+                            // requires these properties to be set in order to show the correct UI.
+                            await Passwordless.getInstanceOrThrow().webJSRecipe?.clearLoginAttemptInfo({ userContext });
+                            loginAttemptInfo = undefined;
                         }
                     }
 
@@ -232,6 +240,13 @@ export class PasswordlessPreBuiltUI extends RecipeRouter {
                             !firstFactors.includes(FactorIds.OTP_EMAIL) &&
                             !firstFactors.includes(FactorIds.LINK_EMAIL)
                         ) {
+                            await Passwordless.getInstanceOrThrow().webJSRecipe?.clearLoginAttemptInfo({ userContext });
+                            loginAttemptInfo = undefined;
+                        } else if (!checkAdditionalLoginAttemptInfoProperties(loginAttemptInfo)) {
+                            // If these properties are not set, it means that the user likely started logging in
+                            // using a custom UI and then switched to the pre-built UI. In that case, we should clear
+                            // the login attempt info so that the user is prompted to login again, since the pre-built UI
+                            // requires these properties to be set in order to show the correct UI.
                             await Passwordless.getInstanceOrThrow().webJSRecipe?.clearLoginAttemptInfo({ userContext });
                             loginAttemptInfo = undefined;
                         }

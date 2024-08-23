@@ -17,7 +17,7 @@ import { normaliseAuthRecipe } from "../authRecipe/utils";
 
 import { defaultEmailValidator } from "./validators";
 
-import type { Config, NormalisedConfig, SignInUpFeatureConfigInput } from "./types";
+import type { Config, LoginAttemptInfo, NormalisedConfig, SignInUpFeatureConfigInput } from "./types";
 import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 
@@ -114,4 +114,15 @@ function normalisePasswordlessBaseConfig<T>(config?: T & FeatureBaseConfig): T &
         ...(config as T),
         style,
     };
+}
+
+export function checkAdditionalLoginAttemptInfoProperties(loginAttemptInfo: LoginAttemptInfo) {
+    if (
+        loginAttemptInfo.contactInfo === undefined ||
+        loginAttemptInfo.contactMethod === undefined ||
+        loginAttemptInfo.lastResend === undefined
+    ) {
+        return false;
+    }
+    return true;
 }

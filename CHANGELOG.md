@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.46.0] - 2024-08-26
+
+### Breaking changes
+
+-   The prebuilt UI now clears the login attempt info if the stored data doesn't contain all the required properties. This should help migration from a custom UI to the prebuilt UI.
+-   Changed `redirectToFactor` to accept an object instead of multiple arguments.
+-   Changed `redirectToFactorChooser` to accept an object instead of multiple arguments.
+-   Made MFA related screens do a success redirection if MFA is already completed and the `stepUp` query param is not set to `true`.
+    -   `redirectToFactorChooser` now accepts a `stepUp` option to set the `stepUp` query param.
+    -   `redirectToFactor` now accepts a `stepUp` option to set the `stepUp` query param.
+
 ### Fixes
 
 -   Fixed an issue where the `Session` recipe was not allowed in the pre-built UI list (it's still a no-op, but it shouldn't be a type issue)
