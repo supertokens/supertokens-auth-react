@@ -320,7 +320,7 @@ function useOnLoad(
                 loginAttemptInfo = undefined;
             }
 
-            if (mfaInfo.factors.next.length === 0 && stepUp !== "true") {
+            if (mfaInfo.factors.next.length === 0 && stepUp !== "true" && doSetup !== "true") {
                 const redirectToPath = getRedirectToPathFromURL();
                 try {
                     await SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(

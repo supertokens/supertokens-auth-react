@@ -16,10 +16,19 @@ export default function SelectPhone() {
             if (res.status === 200) {
                 const loadedInfo = await res.clone().json();
                 if (loadedInfo.user.phoneNumbers.length === 0) {
-                    await MultiFactorAuth.redirectToFactor(MultiFactorAuth.FactorIds.OTP_PHONE, true, false, nav);
+                    await MultiFactorAuth.redirectToFactor({
+                        factorId: MultiFactorAuth.FactorIds.OTP_PHONE,
+                        setup: true,
+                        redirectBack: false,
+                        navigate,
+                    });
                 } else if (loadedInfo.user.phoneNumbers.length === 1) {
                     await Passwordless.createCode({ phoneNumber: loadedInfo.user.phoneNumbers[0] });
-                    await MultiFactorAuth.redirectToFactor(MultiFactorAuth.FactorIds.OTP_PHONE, false, false, nav);
+                    await MultiFactorAuth.redirectToFactor({
+                        factorId: MultiFactorAuth.FactorIds.OTP_PHONE,
+                        redirectBack: false,
+                        navigate,
+                    });
                 } else {
                     setUserInfo(loadedInfo);
                 }
@@ -65,12 +74,11 @@ export default function SelectPhone() {
                                                 hasOtherPhoneNumbers: true,
                                             },
                                         });
-                                        return MultiFactorAuth.redirectToFactor(
-                                            MultiFactorAuth.FactorIds.OTP_PHONE,
-                                            false,
-                                            false,
-                                            nav
-                                        );
+                                        return MultiFactorAuth.redirectToFactor({
+                                            factorId: MultiFactorAuth.FactorIds.OTP_PHONE,
+                                            redirectBack: false,
+                                            navigate: nav,
+                                        });
                                     }
                                 })
                                 .catch(setError);

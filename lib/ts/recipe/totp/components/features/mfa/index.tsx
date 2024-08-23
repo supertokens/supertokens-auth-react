@@ -150,7 +150,7 @@ function useOnLoad(
                 error = "SOMETHING_WENT_WRONG_ERROR";
             }
 
-            if (mfaInfo.factors.next.length === 0 && stepUp !== "true") {
+            if (mfaInfo.factors.next.length === 0 && stepUp !== "true" && doSetup !== "true") {
                 const redirectToPath = getRedirectToPathFromURL();
                 try {
                     await SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
