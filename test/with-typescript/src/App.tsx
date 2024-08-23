@@ -33,7 +33,7 @@ import {
     EmailPasswordPreBuiltUI,
     ResetPasswordUsingToken as EmailPasswordResetPasswordUsingToken,
 } from "../../../recipe/emailpassword/prebuiltui";
-import { AccessDeniedScreen } from "../../../recipe/session/prebuiltui";
+import { SessionPreBuiltUI, AccessDeniedScreen } from "../../../recipe/session/prebuiltui";
 import { LinkClicked as PasswordlessLinkClicked } from "../../../recipe/passwordless/prebuiltui";
 import EmailVerification from "../../../recipe/emailverification";
 import MultiFactorAuth from "../../../recipe/multifactorauth";
@@ -1105,7 +1105,7 @@ function testAuthPagePropTypes() {
         // @ts-expect-error This has to be a valid first factor
         <AuthPage preBuiltUIList={[ThirdPartyPreBuiltUI]} factors={["totp"]} />,
         <AuthPage
-            preBuiltUIList={[ThirdPartyPreBuiltUI]}
+            preBuiltUIList={[ThirdPartyPreBuiltUI, SessionPreBuiltUI]}
             factors={["thirdparty", "emailpassword", "link-email", "link-phone", "otp-email", "otp-phone"]}
         />,
     ];

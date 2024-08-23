@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `redirectToFactorChooser` now accepts a `stepUp` option to set the `stepUp` query param.
     -   `redirectToFactor` now accepts a `stepUp` option to set the `stepUp` query param.
 
+### Fixes
+
+-   Fixed an issue where the `Session` recipe was not allowed in the pre-built UI list (it's still a no-op, but it shouldn't be a type issue)
+
 ## [0.45.1] - 2024-08-09
 
 ### Changes
