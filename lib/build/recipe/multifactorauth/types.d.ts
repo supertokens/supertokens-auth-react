@@ -55,11 +55,13 @@ export declare type GetRedirectionURLContext =
     | {
           action: "FACTOR_CHOOSER";
           nextFactorOptions?: string[];
+          stepUp?: boolean;
       }
     | {
           action: "GO_TO_FACTOR";
           factorId: string;
           forceSetup?: boolean;
+          stepUp?: boolean;
       };
 export declare type PreAndPostAPIHookAction = "GET_MFA_INFO";
 export declare type PreAPIHookContext = {

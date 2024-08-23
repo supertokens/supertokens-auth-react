@@ -151,8 +151,15 @@ export default class MultiFactorAuth extends RecipeModule<
         if (context.action === "FACTOR_CHOOSER") {
             const chooserPath = new NormalisedURLPath(DEFAULT_FACTOR_CHOOSER_PATH);
             let url = this.config.appInfo.websiteBasePath.appendPath(chooserPath).getAsStringDangerous();
+            const queryParams = new URLSearchParams();
             if (context.nextFactorOptions && context.nextFactorOptions.length > 0) {
-                url += `?n=${context.nextFactorOptions.join(",")}`;
+                queryParams.set("n", context.nextFactorOptions.join(","));
+            }
+            if (context.stepUp) {
+                queryParams.set("stepUp", "true");
+            }
+            if (queryParams.toString() !== "") {
+                url += "?" + queryParams.toString();
             }
             return url;
         } else if (context.action === "GO_TO_FACTOR") {
@@ -161,8 +168,15 @@ export default class MultiFactorAuth extends RecipeModule<
                 let url = this.config.appInfo.websiteBasePath
                     .appendPath(new NormalisedURLPath(redirectInfo.path))
                     .getAsStringDangerous();
+                const queryParams = new URLSearchParams();
                 if (context.forceSetup) {
-                    url += "?setup=true";
+                    queryParams.set("setup", "true");
+                }
+                if (context.stepUp) {
+                    queryParams.set("stepUp", "true");
+                }
+                if (queryParams.toString() !== "") {
+                    url += "?" + queryParams.toString();
                 }
                 return url;
             }
@@ -189,15 +203,23 @@ export default class MultiFactorAuth extends RecipeModule<
         return this.config.getSecondaryFactorInfo(this.secondaryFactors, userContext);
     }
 
-    async redirectToFactor(
-        factorId: string,
-        forceSetup = false,
-        redirectBack = false,
-        navigate?: Navigate,
-        userContext?: UserContext
-    ) {
+    async redirectToFactor({
+        factorId,
+        forceSetup,
+        stepUp,
+        redirectBack,
+        navigate,
+        userContext,
+    }: {
+        factorId: string;
+        forceSetup: boolean | undefined;
+        stepUp: boolean | undefined;
+        redirectBack: boolean | undefined;
+        navigate: Navigate | undefined;
+        userContext: UserContext | undefined;
+    }) {
         let url = await this.getRedirectUrl(
-            { action: "GO_TO_FACTOR", forceSetup, factorId },
+            { action: "GO_TO_FACTOR", forceSetup, stepUp, factorId },
             getNormalisedUserContext(userContext)
         );
         if (url === null) {
@@ -226,14 +248,21 @@ export default class MultiFactorAuth extends RecipeModule<
         return SuperTokens.getInstanceOrThrow().redirectToUrl(url, navigate);
     }
 
-    async redirectToFactorChooser(
+    async redirectToFactorChooser({
         redirectBack = false,
-        nextFactorOptions: string[] = [],
-        navigate?: Navigate,
-        userContext?: UserContext
-    ) {
+        nextFactorOptions = [],
+        stepUp,
+        navigate,
+        userContext,
+    }: {
+        redirectBack: boolean | undefined;
+        nextFactorOptions: string[] | undefined;
+        stepUp: boolean | undefined;
+        navigate: Navigate | undefined;
+        userContext: UserContext | undefined;
+    }) {
         let url = await this.getRedirectUrl(
-            { action: "FACTOR_CHOOSER", nextFactorOptions },
+            { action: "FACTOR_CHOOSER", nextFactorOptions, stepUp },
             getNormalisedUserContext(userContext)
         );
 
