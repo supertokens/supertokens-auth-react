@@ -123,8 +123,8 @@
 
 [data-supertokens~="label"] {
     text-align: left;
-    font-weight: 400;
-    font-size: var(--font-size-1);
+    font-weight: 700;
+    font-size: var(--font-size-0);
     line-height: 24px;
     color: rgb(var(--palette-textLabel));
 }

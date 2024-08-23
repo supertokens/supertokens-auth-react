@@ -2,19 +2,20 @@
     --palette-background: 255, 255, 255;
     --palette-inputBackground: 250, 250, 250;
     --palette-inputBorder: 224, 224, 224;
-    --palette-primary: 255, 155, 51;
-    --palette-primaryBorder: 238, 141, 35;
+    --palette-primary: 45, 54, 68;
+    --palette-primaryBorder: 45, 54, 68;
     --palette-success: 65, 167, 0;
     --palette-successBackground: 217, 255, 191;
     --palette-error: 255, 23, 23;
     --palette-errorBackground: 255, 241, 235;
-    --palette-textTitle: 34, 34, 34;
-    --palette-textLabel: 34, 34, 34;
-    --palette-textInput: 34, 34, 34;
+    --palette-textTitle: 0, 0, 0;
+    --palette-textLabel: 0, 0, 0;
+    --palette-textInput: 0, 0, 0;
     --palette-textPrimary: 101, 101, 101;
-    --palette-textLink: 0, 118, 255;
+    --palette-textLink: 0, 122, 255;
     --palette-buttonText: 255, 255, 255;
-    --palette-textGray: 128, 128, 128;
+    --palette-textGray: 54, 54, 54;
+    --palette-textLightGray: 128, 128, 128;
     --palette-superTokensBrandingBackground: 242, 245, 246;
     --palette-superTokensBrandingText: 173, 189, 196;
 
@@ -109,10 +110,10 @@
 
 [data-supertokens~="headerTitle"] {
     font-size: var(--font-size-4);
-    line-height: 40px;
+    line-height: 27.6px;
     letter-spacing: 0.58px;
-    font-weight: 600;
-    margin-bottom: 2px;
+    font-weight: 400;
+    margin-bottom: 20px;
     color: rgb(var(--palette-textTitle));
 }
 
@@ -352,11 +353,13 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    color: rgb(var(--palette-textPrimary));
+    color: rgb(var(--palette-textLightGray));
 }
 
 [data-supertokens~="dividerText"] {
     flex: 1 1;
+    font-weight: 400;
+    font-size: var(--font-size-1);
 }
 
 [data-supertokens~="formLabelWithLinkWrapper"] {
@@ -382,4 +385,8 @@
 
 [data-supertokens~="authComponentList"] {
     padding-bottom: 20px;
+}
+
+[data-supertokens~="contactMethodSwitcher"] {
+    font-size: var(--font-size-0);
 }
