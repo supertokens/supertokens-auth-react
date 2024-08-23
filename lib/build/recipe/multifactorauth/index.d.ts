@@ -34,19 +34,21 @@ export default class Wrapper {
         phoneNumbers: Record<string, string[] | undefined>;
         fetchResponse: Response;
     }>;
-    static redirectToFactor(
-        factorId: string,
-        forceSetup?: boolean,
-        redirectBack?: boolean,
-        navigate?: Navigate,
-        userContext?: UserContext
-    ): Promise<void>;
-    static redirectToFactorChooser(
-        redirectBack?: boolean,
-        nextFactorOptions?: string[],
-        navigate?: Navigate,
-        userContext?: UserContext
-    ): Promise<void>;
+    static redirectToFactor(input: {
+        factorId: string;
+        forceSetup?: boolean;
+        stepUp?: boolean;
+        redirectBack?: boolean;
+        navigate?: Navigate;
+        userContext?: UserContext;
+    }): Promise<void>;
+    static redirectToFactorChooser(input: {
+        redirectBack?: boolean;
+        nextFactorOptions?: string[];
+        stepUp?: boolean;
+        navigate?: Navigate;
+        userContext?: UserContext;
+    }): Promise<void>;
     static ComponentsOverrideProvider: import("react").FC<
         import("react").PropsWithChildren<{
             components: import("./types").ComponentOverrideMap;

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Breaking changes
+
+-   Changed `redirectToFactor` to accept an object instead of multiple arguments.
+-   Changed `redirectToFactorChooser` to accept an object instead of multiple arguments.
+-   Made MFA related screens do a success redirection if MFA is already completed and the `stepUp` query param is not set to `true`.
+    -   `redirectToFactorChooser` now accepts a `stepUp` option to set the `stepUp` query param.
+    -   `redirectToFactor` now accepts a `stepUp` option to set the `stepUp` query param.
+
 ## [0.45.1] - 2024-08-09
 
 ### Changes

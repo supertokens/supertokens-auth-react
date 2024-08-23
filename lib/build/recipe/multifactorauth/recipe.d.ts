@@ -41,18 +41,33 @@ export default class MultiFactorAuth extends RecipeModule<
     addMFAFactors(secondaryFactors: SecondaryFactorRedirectionInfo[]): void;
     isFirstFactorEnabledOnClient(factorId: string): boolean;
     getSecondaryFactors(userContext: UserContext): SecondaryFactorRedirectionInfo[];
-    redirectToFactor(
-        factorId: string,
-        forceSetup?: boolean,
-        redirectBack?: boolean,
-        navigate?: Navigate,
-        userContext?: UserContext
-    ): Promise<void>;
-    redirectToFactorChooser(
-        redirectBack?: boolean,
-        nextFactorOptions?: string[],
-        navigate?: Navigate,
-        userContext?: UserContext
-    ): Promise<void>;
+    redirectToFactor({
+        factorId,
+        forceSetup,
+        stepUp,
+        redirectBack,
+        navigate,
+        userContext,
+    }: {
+        factorId: string;
+        forceSetup: boolean | undefined;
+        stepUp: boolean | undefined;
+        redirectBack: boolean | undefined;
+        navigate: Navigate | undefined;
+        userContext: UserContext | undefined;
+    }): Promise<void>;
+    redirectToFactorChooser({
+        redirectBack,
+        nextFactorOptions,
+        stepUp,
+        navigate,
+        userContext,
+    }: {
+        redirectBack: boolean | undefined;
+        nextFactorOptions: string[] | undefined;
+        stepUp: boolean | undefined;
+        navigate: Navigate | undefined;
+        userContext: UserContext | undefined;
+    }): Promise<void>;
     static reset(): void;
 }

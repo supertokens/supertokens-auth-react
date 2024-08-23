@@ -514,9 +514,13 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
             <a
                 className="goToFactorChooser"
                 onClick={() => {
-                    return MultiFactorAuth.redirectToFactorChooser(true, undefined, props.history);
+                    return MultiFactorAuth.redirectToFactorChooser({
+                        redirectBack: true,
+                        stepUp: true,
+                        navigate: props.history,
+                    });
                 }}>
-                MFA chooser
+                MFA chooser (step up)
             </a>
         </div>
     );

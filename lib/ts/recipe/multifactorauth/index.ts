@@ -53,34 +53,38 @@ export default class Wrapper {
         });
     }
 
-    static redirectToFactor(
-        factorId: string,
-        forceSetup = false,
-        redirectBack = true,
-        navigate?: Navigate,
-        userContext?: UserContext
-    ) {
-        return MultiFactorAuthRecipe.getInstanceOrThrow().redirectToFactor(
-            factorId,
-            forceSetup,
-            redirectBack,
-            navigate,
-            userContext
-        );
+    static redirectToFactor(input: {
+        factorId: string;
+        forceSetup?: boolean;
+        stepUp?: boolean;
+        redirectBack?: boolean;
+        navigate?: Navigate;
+        userContext?: UserContext;
+    }) {
+        return MultiFactorAuthRecipe.getInstanceOrThrow().redirectToFactor({
+            factorId: input.factorId,
+            forceSetup: input.forceSetup ?? false,
+            redirectBack: input.redirectBack ?? true,
+            stepUp: input.stepUp ?? false,
+            navigate: input.navigate,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
     }
 
-    static redirectToFactorChooser(
-        redirectBack = true,
-        nextFactorOptions: string[] = [],
-        navigate?: Navigate,
-        userContext?: UserContext
-    ) {
-        return MultiFactorAuthRecipe.getInstanceOrThrow().redirectToFactorChooser(
-            redirectBack,
-            nextFactorOptions,
-            navigate,
-            userContext
-        );
+    static redirectToFactorChooser(input: {
+        redirectBack?: boolean;
+        nextFactorOptions?: string[];
+        stepUp?: boolean;
+        navigate?: Navigate;
+        userContext?: UserContext;
+    }) {
+        return MultiFactorAuthRecipe.getInstanceOrThrow().redirectToFactorChooser({
+            nextFactorOptions: input.nextFactorOptions ?? [],
+            redirectBack: input.redirectBack ?? true,
+            stepUp: input.stepUp ?? false,
+            navigate: input.navigate,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
     }
 
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;

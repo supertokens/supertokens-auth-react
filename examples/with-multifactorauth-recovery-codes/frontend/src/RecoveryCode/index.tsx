@@ -17,7 +17,12 @@ export default function RecoveryCode() {
         if (reset.data.status !== "OK") {
             setError("Recovery code not found");
         } else {
-            await MultiFactorAuth.redirectToFactor("totp", true, false, nav);
+            await MultiFactorAuth.redirectToFactor({
+                factorId: "totp",
+                forceSetup: true,
+                redirectBack: false,
+                navigate: nav,
+            });
         }
     }
 
