@@ -18,16 +18,16 @@ export default function SelectPhone() {
                 if (loadedInfo.user.phoneNumbers.length === 0) {
                     await MultiFactorAuth.redirectToFactor({
                         factorId: MultiFactorAuth.FactorIds.OTP_PHONE,
-                        setup: true,
+                        forceSetup: true,
                         redirectBack: false,
-                        navigate,
+                        navigate: nav,
                     });
                 } else if (loadedInfo.user.phoneNumbers.length === 1) {
                     await Passwordless.createCode({ phoneNumber: loadedInfo.user.phoneNumbers[0] });
                     await MultiFactorAuth.redirectToFactor({
                         factorId: MultiFactorAuth.FactorIds.OTP_PHONE,
                         redirectBack: false,
-                        navigate,
+                        navigate: nav,
                     });
                 } else {
                     setUserInfo(loadedInfo);

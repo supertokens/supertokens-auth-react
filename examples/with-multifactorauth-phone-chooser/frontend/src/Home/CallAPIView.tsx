@@ -15,7 +15,7 @@ export default function CallAPIView() {
     async function goToPhoneSetup() {
         await MultiFactorAuth.redirectToFactor({
             factorId: MultiFactorAuth.FactorIds.OTP_PHONE,
-            setup: true,
+            forceSetup: true,
             redirectBack: true,
             navigate,
         });
