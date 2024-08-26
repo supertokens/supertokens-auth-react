@@ -449,6 +449,8 @@ if (testContext.enableMFA) {
     );
 }
 
+console.log(recipeList);
+
 SuperTokens.init({
     usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
     clientType: testContext.clientType,
@@ -712,14 +714,14 @@ function SessionInfoTable({ sessionInfo }) {
 
 function getEmailVerificationConfigs({ disableDefaultUI }) {
     return EmailVerification.init({
-        disableDefaultUI,
+        disableDefaultUI: false,
         sendVerifyEmailScreen: {
             style: theme,
         },
         verifyEmailLinkClickedScreen: {
             style: theme,
         },
-        mode: emailVerificationMode,
+        mode: "REQUIRED",
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS EMAIL_VERIFICATION GET_REDIRECTION_URL ${context.action}`);
         },

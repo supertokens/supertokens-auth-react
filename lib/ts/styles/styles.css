@@ -11,11 +11,10 @@
     --palette-textTitle: 0, 0, 0;
     --palette-textLabel: 0, 0, 0;
     --palette-textInput: 0, 0, 0;
-    --palette-textPrimary: 101, 101, 101;
+    --palette-textPrimary: 128, 128, 128;
     --palette-textLink: 0, 122, 255;
     --palette-buttonText: 255, 255, 255;
     --palette-textGray: 54, 54, 54;
-    --palette-textLightGray: 128, 128, 128;
     --palette-superTokensBrandingBackground: 242, 245, 246;
     --palette-superTokensBrandingText: 173, 189, 196;
 
@@ -24,6 +23,7 @@
     --font-size-2: 16px;
     --font-size-3: 19px;
     --font-size-4: 24px;
+    --font-size-5: 28px;
 }
 /*
  * Default styles.
@@ -150,7 +150,7 @@
 }
 
 [data-supertokens~="primaryText"] {
-    font-size: var(--font-size-1);
+    font-size: var(--font-size-2);
     font-weight: 400;
     letter-spacing: 0.4px;
     line-height: 21px;
@@ -178,10 +178,10 @@
 }
 
 [data-supertokens~="headerTinyTitle"] {
-    margin-top: 13px;
-    font-size: var(--font-size-3);
+    margin-top: 24px;
+    font-size: var(--font-size-5);
     letter-spacing: 1.1px;
-    font-weight: 600;
+    font-weight: 400;
     line-height: 28px;
 }
 
@@ -353,7 +353,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    color: rgb(var(--palette-textLightGray));
+    color: rgb(var(--palette-textPrimary));
 }
 
 [data-supertokens~="dividerText"] {
@@ -372,6 +372,7 @@
     width: auto;
     margin-top: 0;
     line-height: 24px;
+    font-size: var(--font-size-0);
 }
 
 [data-supertokens~="formLabelLinkBtn"]:hover {
@@ -385,8 +386,4 @@
 
 [data-supertokens~="authComponentList"] {
     padding-bottom: 20px;
-}
-
-[data-supertokens~="contactMethodSwitcher"] {
-    font-size: var(--font-size-0);
 }

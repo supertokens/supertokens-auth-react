@@ -149,22 +149,18 @@
 }
 
 [data-supertokens~="sendVerifyEmailText"] {
-    line-height: 21px;
-    font-size: var(--font-size-1);
+    font-size: var(--font-size-2);
     text-align: center;
     font-weight: 400;
     letter-spacing: 0.8px;
+    line-height: 20.8px;
 }
 
 [data-supertokens~="secondaryLinkWithArrow"] {
     margin-top: 10px;
     margin-bottom: 30px;
     cursor: pointer;
-}
-[data-supertokens~="secondaryLinkWithArrow"]:hover {
-    position: relative;
-    left: 2px;
-    word-spacing: 4px;
+    font-weight: 700;
 }
 
 [data-supertokens~="sendVerifyEmailResend"] {
@@ -196,4 +192,36 @@
 
 [data-supertokens~="resetPasswordPasswordForm"] {
     padding-bottom: 20px;
+}
+[data-supertokens~="buttonWithArrow"] {
+    border-radius: 6px;
+    border: 1px solid #d0d5dd;
+    width: 100%;
+    color: rgb(var(--palette-textGray));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin: 24px 0;
+    min-height: 48px;
+    cursor: pointer;
+}
+[data-supertokens~="buttonWithArrow"]:hover {
+    background-color: rgb(var(--palette-inputBackground));
+}
+[data-supertokens~="buttonWithArrow"] [data-supertokens~="secondaryText"] {
+    font-weight: 700;
+    font-size: var(--font-size-2);
+    color: rgb(var(--palette-textGray));
+    margin: 0;
+}
+
+[data-supertokens~="buttonWithArrow"]:hover [data-supertokens~="secondaryLinkWithRightArrow"] ~ svg {
+    position: relative;
+    left: 2px;
+}
+
+[data-supertokens~="buttonWithArrow"] [data-supertokens~="secondaryLinkWithLeftArrow"] {
+    display: flex;
+    align-items: center;
 }
