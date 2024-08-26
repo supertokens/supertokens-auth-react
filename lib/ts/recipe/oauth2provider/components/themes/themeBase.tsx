@@ -26,12 +26,6 @@ export const ThemeBase: React.FC<
     return (
         <Fragment>
             {children}
-            {loadDefaultFont && (
-                <link
-                    href="//fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700"
-                    rel="stylesheet"
-                    type="text/css"></link>
-            )}
             <style>
                 {styles}
                 {userStyles.join("\n")}
