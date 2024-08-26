@@ -449,8 +449,6 @@ if (testContext.enableMFA) {
     );
 }
 
-console.log(recipeList);
-
 SuperTokens.init({
     usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
     clientType: testContext.clientType,
