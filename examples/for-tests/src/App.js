@@ -714,14 +714,14 @@ function SessionInfoTable({ sessionInfo }) {
 
 function getEmailVerificationConfigs({ disableDefaultUI }) {
     return EmailVerification.init({
-        disableDefaultUI: false,
+        disableDefaultUI,
         sendVerifyEmailScreen: {
             style: theme,
         },
         verifyEmailLinkClickedScreen: {
             style: theme,
         },
-        mode: "REQUIRED",
+        mode: emailVerificationMode,
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS EMAIL_VERIFICATION GET_REDIRECTION_URL ${context.action}`);
         },
