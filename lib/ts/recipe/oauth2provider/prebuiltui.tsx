@@ -65,8 +65,7 @@ export class OAuth2ProviderPreBuiltUI extends RecipeRouter {
                 recipeID: OAuth2ProviderRecipe.RECIPE_ID,
             };
         }
-        // TODO: Should this be checking this.recipeInstance.config.oauth2LogoutScreen.disableDefaultUI
-        if (this.recipeInstance.config.disableDefaultUI !== true) {
+        if (this.recipeInstance.config.oauth2LogoutScreen.disableDefaultUI !== true) {
             const normalisedFullPath = this.recipeInstance.config.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(DEFAULT_OAUTH2_LOGOUT_PATH)
             );

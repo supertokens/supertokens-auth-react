@@ -1,4 +1,6 @@
-import type { FeatureBaseConfig, NormalisedBaseConfig, SuccessRedirectContextOAuth2, UserContext } from "../../types";
+import type { OAuth2LogoutScreenInner } from "./components/themes/oauth2LogoutScreen/OAuth2LogoutScreenInner";
+import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import type { NormalisedBaseConfig, SuccessRedirectContextOAuth2, UserContext } from "../../types";
 import type {
     UserInput as RecipeModuleUserInput,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -14,7 +16,7 @@ export declare type PreAPIHookContext = {
 };
 export declare type UserInput = {
     disableDefaultUI?: boolean;
-    oauth2LogoutScreen?: FeatureBaseConfig;
+    oauth2LogoutScreen?: Partial<OAuth2LogoutScreenConfig>;
     override?: {
         functions?: (
             originalImplementation: RecipeInterface,
@@ -28,13 +30,16 @@ export declare type NormalisedConfig = NormalisedRecipeModuleConfig<
     OnHandleEventContext
 > & {
     disableDefaultUI: boolean;
-    oauth2LogoutScreen: NormalisedBaseConfig;
+    oauth2LogoutScreen: OAuth2LogoutScreenConfig;
     override: {
         functions: (
             originalImplementation: RecipeInterface,
             builder: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
     };
+};
+export declare type OAuth2LogoutScreenConfig = NormalisedBaseConfig & {
+    disableDefaultUI: boolean;
 };
 export declare type ContinueOAuth2AfterRefreshRedirectContext = {
     recipeId: "oauth2provider";
@@ -62,7 +67,9 @@ export declare type OnHandleEventContext =
           frontendRedirectTo: string;
           userContext: UserContext;
       };
-export declare type ComponentOverrideMap = any;
+export declare type ComponentOverrideMap = {
+    OAuth2LogoutScreenInner_Override?: ComponentOverride<typeof OAuth2LogoutScreenInner>;
+};
 export declare type OAuth2LogoutScreenThemeProps = {
     config: NormalisedConfig;
     isLoggingOut: boolean;

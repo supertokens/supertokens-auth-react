@@ -1142,6 +1142,9 @@ export async function setOAuth2ClientInfo(page, clientId, scopes, extraConfig, e
 export async function removeOAuth2ClientInfo(page) {
     await page.evaluate(() => localStorage.removeItem("oauth2-client-id"));
     await page.evaluate(() => localStorage.removeItem("oauth2-scopes"));
+    await page.evaluate(() => localStorage.removeItem("oauth2-extra-config"));
+    await page.evaluate(() => localStorage.removeItem("oauth2-extra-sign-in-params"));
+    await page.evaluate(() => localStorage.removeItem("oauth2-extra-sign-out-params"));
 }
 
 export async function getOAuth2LoginButton(page, type = "default") {
@@ -1154,8 +1157,9 @@ export async function getOAuth2Error(page) {
     return await ele.evaluate((el) => el.textContent);
 }
 
-export async function getOAuth2LogoutButton(page) {
-    return page.waitForSelector("#oauth2-logout-button");
+export async function getOAuth2LogoutButton(page, type = "silent") {
+    const id = type === "silent" ? "#oauth2-logout-button" : `#oauth2-logout-button-${type}`;
+    return page.waitForSelector(id);
 }
 
 export async function getOAuth2TokenData(page) {

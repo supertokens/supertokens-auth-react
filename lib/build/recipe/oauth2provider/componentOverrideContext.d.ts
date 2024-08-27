@@ -1,8 +1,9 @@
 /// <reference types="react" />
-declare const useContext: () => any,
+import type { ComponentOverrideMap } from "./types";
+declare const useContext: () => ComponentOverrideMap,
     Provider: import("react").FC<
         import("react").PropsWithChildren<{
-            components: any;
+            components: ComponentOverrideMap;
         }>
     >;
 export { useContext as useRecipeComponentOverrideContext, Provider as RecipeComponentsOverrideContextProvider };

@@ -26,6 +26,7 @@ import UI from "../../../../../ui";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, useRethrowInRender } from "../../../../../utils";
 import { SessionContext } from "../../../../session";
+import OAuth2Provider from "../../../recipe";
 import { OAuth2LogoutScreenTheme } from "../../themes/oauth2LogoutScreen";
 import { defaultTranslationsOAuth2Provider } from "../../themes/translations";
 
@@ -57,9 +58,12 @@ export const OAuth2LogoutScreen: React.FC<Prop> = (props) => {
             return;
         }
         setIsLoggingOut(true);
-        const { frontendRedirectTo } = await props.recipe.logOut(logoutChallenge, userContext);
-        await props.recipe
-            .redirect(
+        try {
+            const { frontendRedirectTo } = await OAuth2Provider.getInstanceOrThrow().webJSRecipe.logOut({
+                logoutChallenge,
+                userContext,
+            });
+            await props.recipe.redirect(
                 {
                     recipeId: "oauth2provider",
                     action: "POST_OAUTH2_LOGOUT_REDIRECT",
@@ -68,8 +72,10 @@ export const OAuth2LogoutScreen: React.FC<Prop> = (props) => {
                 navigate,
                 {},
                 userContext
-            )
-            .catch(rethrowInRender);
+            );
+        } catch (err: any) {
+            rethrowInRender(err);
+        }
     }, [logoutChallenge, navigate, props.recipe, userContext, rethrowInRender]);
 
     React.useEffect(() => {

@@ -23,7 +23,7 @@ const oidcConfig = {
 };
 
 function AuthPage() {
-    const { signinRedirect, signinSilent, signoutSilent, user, error } = useAuth();
+    const { signinRedirect, signinSilent, signoutSilent, signoutRedirect, user, error } = useAuth();
 
     return (
         <div>
@@ -35,6 +35,9 @@ function AuthPage() {
                         <pre id="oauth2-token-data">{JSON.stringify(user.profile, null, 2)}</pre>
                         <button id="oauth2-logout-button" onClick={() => signoutSilent(extraSignOutParams)}>
                             Logout
+                        </button>
+                        <button id="oauth2-logout-button-redirect" onClick={() => signoutRedirect(extraSignOutParams)}>
+                            Logout (Redirect)
                         </button>
                     </>
                 )}

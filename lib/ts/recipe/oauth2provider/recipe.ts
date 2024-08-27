@@ -33,12 +33,7 @@ import type {
     PreAndPostAPIHookAction,
     UserInput,
 } from "./types";
-import type {
-    RecipeInitResult,
-    NormalisedConfigWithAppInfoAndRecipeID,
-    WebJSRecipeInterface,
-    UserContext,
-} from "../../types";
+import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
 import type { NormalisedAppInfo } from "../../types";
 
 /*
@@ -126,17 +121,6 @@ export default class OAuth2Provider extends RecipeModule<
         } else {
             throw new Error("Should never come here: unknown action in OAuth2Provider.getDefaultRedirectionURL");
         }
-    }
-
-    async logOut(
-        logoutChallenge: string,
-        userContext: UserContext
-    ): Promise<{
-        status: "OK";
-        frontendRedirectTo: string;
-        fetchResponse: Response;
-    }> {
-        return await this.webJSRecipe.logOut({ logoutChallenge, userContext });
     }
 
     /*

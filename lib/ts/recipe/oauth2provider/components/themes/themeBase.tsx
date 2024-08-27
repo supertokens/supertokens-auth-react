@@ -20,9 +20,10 @@ import styles from "./styles.css";
 
 import type { PropsWithChildren } from "react";
 
-export const ThemeBase: React.FC<
-    PropsWithChildren<{ loadDefaultFont: boolean; userStyles: Array<string | undefined> }>
-> = ({ children, userStyles, loadDefaultFont }) => {
+export const ThemeBase: React.FC<PropsWithChildren<{ userStyles: Array<string | undefined> }>> = ({
+    children,
+    userStyles,
+}) => {
     return (
         <Fragment>
             {children}
