@@ -224,9 +224,10 @@ describe("SuperTokens OAuth2Provider", function () {
 
             await page.waitForSelector("#oauth2-token-data", { hidden: true });
 
-            // Ensure supertokens session was cleared
-            const sessionInfoRes = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/sessioninfo`);
-            assert.strictEqual(sessionInfoRes.status, 401);
+            // Ensure that the SuperTokens session was cleared by checking for a redirect to the provider's auth page during the login flow.
+            loginButton = await getOAuth2LoginButton(page);
+            await loginButton.click();
+            await waitForUrl(page, "/auth");
         });
 
         it("should login without interaction if the user already has a session", async function () {
