@@ -116,6 +116,8 @@ export default class OAuth2Provider extends RecipeModule<
             const basePath = this.config.appInfo.apiBasePath.getAsStringDangerous();
 
             return `${domain}${basePath}/oauth/login?loginChallenge=${ctx.loginChallenge}`;
+        } else if (ctx.action === "POST_OAUTH2_LOGOUT_REDIRECT") {
+            return ctx.frontendRedirectTo;
         } else {
             throw new Error("Should never come here: unknown action in OAuth2Provider.getDefaultRedirectionURL");
         }

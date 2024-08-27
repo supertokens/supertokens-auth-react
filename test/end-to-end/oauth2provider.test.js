@@ -37,6 +37,7 @@ import {
     getDefaultSignUpFieldValues,
     getTestEmail,
     getOAuth2Error,
+    waitForSTElement,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 
@@ -165,6 +166,68 @@ describe("SuperTokens OAuth2Provider", function () {
             loginButton = await getOAuth2LoginButton(page);
             await loginButton.click();
             await waitForUrl(page, "/oauth/callback");
+        });
+
+        it("should successfully complete the OAuth2 Logout flow", async function () {
+            const postLogoutRedirectUri = `${TEST_CLIENT_BASE_URL}/oauth/login?logout=true`;
+
+            const { client } = await createOAuth2Client({
+                scope: "offline_access profile openid email",
+                redirectUris: [`${TEST_CLIENT_BASE_URL}/oauth/callback`],
+                postLogoutRedirectUris: [postLogoutRedirectUri],
+                accessTokenStrategy: "jwt",
+                tokenEndpointAuthMethod: "none",
+                grantTypes: ["authorization_code", "refresh_token"],
+                responseTypes: ["code", "id_token"],
+                skipConsent: true,
+            });
+
+            await setOAuth2ClientInfo(
+                page,
+                client.clientId,
+                undefined,
+                undefined,
+                undefined,
+                JSON.stringify({
+                    post_logout_redirect_uri: postLogoutRedirectUri,
+                })
+            );
+
+            await Promise.all([
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+                page.goto(`${TEST_CLIENT_BASE_URL}/oauth/login`),
+            ]);
+
+            let loginButton = await getOAuth2LoginButton(page);
+            await loginButton.click();
+
+            await waitForUrl(page, "/auth");
+
+            await toggleSignInSignUp(page);
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: getTestEmail() });
+            await signUp(page, fieldValues, postValues, "emailpassword");
+
+            await waitForUrl(page, "/oauth/callback");
+
+            // Logout
+            const logoutButton = await getOAuth2LogoutButton(page, "redirect");
+            await logoutButton.click();
+
+            await waitForUrl(page, "/auth/oauth/logout");
+
+            // Click the Logout button on the provider website
+            const stLogoutButton = await waitForSTElement(page, "[data-supertokens~=button]");
+            await stLogoutButton.click();
+
+            // Ensure the final url matches the post_logout_redirect uri
+            await waitForUrl(page, "/oauth/login?logout=true", false);
+
+            await page.waitForSelector("#oauth2-token-data", { hidden: true });
+
+            // Ensure that the SuperTokens session was cleared by checking for a redirect to the provider's auth page during the login flow.
+            loginButton = await getOAuth2LoginButton(page);
+            await loginButton.click();
+            await waitForUrl(page, "/auth");
         });
 
         it("should login without interaction if the user already has a session", async function () {

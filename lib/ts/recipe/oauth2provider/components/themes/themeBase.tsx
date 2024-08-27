@@ -12,5 +12,25 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export const DEFAULT_TRY_REFRESH_PATH = "/try-refresh";
-export const DEFAULT_OAUTH2_LOGOUT_PATH = "/oauth/logout";
+
+import React from "react";
+import { Fragment } from "react";
+
+import styles from "./styles.css";
+
+import type { PropsWithChildren } from "react";
+
+export const ThemeBase: React.FC<PropsWithChildren<{ userStyles: Array<string | undefined> }>> = ({
+    children,
+    userStyles,
+}) => {
+    return (
+        <Fragment>
+            {children}
+            <style>
+                {styles}
+                {userStyles.join("\n")}
+            </style>
+        </Fragment>
+    );
+};
