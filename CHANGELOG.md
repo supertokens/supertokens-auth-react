@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-## [0.47.0] - 2024-08-05
+## [0.47.0] - 2024-08-28
 
 ### Breaking changes
 
@@ -19,6 +19,18 @@ The value of the following palette variables have changed
 -   **--palette-textPrimary** changed from `rgb(101, 101, 101)` to `rgb(128, 128, 128)`
 -   **--palette-textLink** changed from `rgb(0, 118, 255)` to `rgb(0, 122, 255)`
 -   **--palette-textGray** changed from `rgb(128, 128, 128)` to `rgb(54, 54, 54)`
+
+Provider Button Style has changed
+
+-   Adjusted the layout of the provider buttons. Previously, the logo and text had fixed spacing and were centered within the button. Now, the logo is aligned to the left, and the text is centered within the remaining space, enhancing visual balance and consistency across different button text lengths.
+
+Icon updates
+
+-   Changed the Email Icon used in the "Verify Email" UI
+
+-   Changed the SMS Icon used in the "Link sent to phone" UI
+
+-   Changed the button arrow icons
 
 ## [0.46.0] - 2024-08-26
 
