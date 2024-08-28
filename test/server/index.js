@@ -743,7 +743,7 @@ function initST() {
 
     passwordlessConfig = {
         contactMethod: "EMAIL_OR_PHONE",
-        flowType: "MAGIC_LINK",
+        flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
         emailDelivery: {
             override: (oI) => {
                 return {
