@@ -55,8 +55,26 @@
 
 [data-supertokens~="providerButtonText"]:only-child {
     margin: 0 auto;
+    text-overflow: ellipsis;
 }
 
-[data-supertokens~="providerButtonText"]:not(:hover) {
-    text-overflow: ellipsis;
+.scroll-text-animation:hover span,
+.scroll-text-animation:focus span {
+    display: inline-block;
+    animation: scroll-left 4s linear forwards;
+    position: relative;
+    width: fit-content;
+    text-overflow: clip;
+}
+
+@keyframes scroll-left {
+    25% {
+        transform: translateX(0);
+        left: 0%;
+    }
+    75%,
+    100% {
+        transform: translateX(calc(-100% - 10px));
+        left: 100%;
+    }
 }
