@@ -67,7 +67,7 @@ export const ResendButton = withOverride(
                 type="button"
                 disabled={secsUntilResend !== undefined}
                 onClick={onClick}
-                data-supertokens="link formLabelLinkBtn linkButton resendCodeBtn">
+                data-supertokens="link linkButton formLabelLinkBtn resendCodeBtn">
                 {secsUntilResend !== undefined ? (
                     <React.Fragment>
                         {t("PWLESS_RESEND_BTN_DISABLED_START")}
