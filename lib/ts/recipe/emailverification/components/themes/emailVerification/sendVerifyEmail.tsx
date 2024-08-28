@@ -112,7 +112,7 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
                 </div>
                 <div data-supertokens="headerTitle headerTinyTitle">{t("EMAIL_VERIFICATION_SEND_TITLE")}</div>
                 <div data-supertokens="divider"></div>
-                <div data-supertokens="secondaryText sendVerifyEmailText">
+                <div data-supertokens="primaryText sendVerifyEmailText">
                     {t("EMAIL_VERIFICATION_SEND_DESC_START")}
                     <strong>{t("EMAIL_VERIFICATION_SEND_DESC_STRONG")}</strong>
                     {t("EMAIL_VERIFICATION_SEND_DESC_END")}

@@ -101,7 +101,7 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
                 </div>
                 <div data-supertokens="headerTitle headerTinyTitle">{t("PWLESS_LINK_SENT_RESEND_TITLE")}</div>
                 <div data-supertokens="divider"></div>
-                <div data-supertokens="secondaryText sendCodeText">
+                <div data-supertokens="primaryText sendCodeText">
                     {props.loginAttemptInfo.contactMethod === "EMAIL"
                         ? t("PWLESS_LINK_SENT_RESEND_DESC_START_EMAIL")
                         : t("PWLESS_LINK_SENT_RESEND_DESC_START_PHONE")}

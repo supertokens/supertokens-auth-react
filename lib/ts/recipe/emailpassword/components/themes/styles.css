@@ -148,12 +148,10 @@
     margin-top: 11px;
 }
 
-[data-supertokens~="sendVerifyEmailText"] {
-    font-size: var(--font-size-2);
+[data-supertokens~="primaryText"][data-supertokens~="sendVerifyEmailText"] {
     text-align: center;
-    font-weight: 400;
     letter-spacing: 0.8px;
-    line-height: 20.8px;
+    color: rgb(var(--palette-textPrimary));
 }
 
 [data-supertokens~="secondaryLinkWithArrow"] {
