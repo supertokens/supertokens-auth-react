@@ -11,7 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking changes
 
--   Updated the prebuilt UI designs
+The value of the following palette variables have changed
+
+-   **--palette-textTitle** changed from `rgb(34, 34, 34)` to `rgb(0, 0, 0)`
+-   **--palette-textLabel** changed from rgb`(34, 34, 34)` to `rgb(0, 0, 0)`
+-   **--palette-textInput** changed from `rgb(34, 34, 34)` to `rgb(0, 0, 0)`
+-   **--palette-textPrimary** changed from `rgb(101, 101, 101)` to `rgb(128, 128, 128)`
+-   **--palette-textLink** changed from `rgb(0, 118, 255)` to `rgb(0, 122, 255)`
+-   **--palette-textGray** changed from `rgb(128, 128, 128)` to `rgb(54, 54, 54)`
 
 ## [0.46.0] - 2024-08-26
 
