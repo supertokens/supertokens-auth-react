@@ -415,6 +415,11 @@
     left: 2px;
 }
 
+[data-supertokens~="buttonWithArrow"]:hover [data-supertokens~="secondaryLinkWithLeftArrow"] svg {
+    position: relative;
+    left: -2px;
+}
+
 [data-supertokens~="buttonWithArrow"] [data-supertokens~="secondaryLinkWithLeftArrow"] {
     display: flex;
     align-items: center;
