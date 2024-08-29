@@ -68,11 +68,14 @@
 }
 
 @keyframes scroll-left {
-    25% {
+    0% {
         transform: translateX(0);
         left: 0%;
     }
-    75%,
+    50% {
+        transform: translateX(calc(-100% - 10px));
+        left: 100%;
+    }
     100% {
         transform: translateX(calc(-100% - 10px));
         left: 100%;

@@ -1022,7 +1022,7 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
         },
         {
             id: "mock-provider",
-            name: "Mock Provider",
+            name: "Mock Provider gdgdgd gdgdgdd bdgdgdgd gdgdgdgd",
         },
     ];
     if (staticProviderList) {
