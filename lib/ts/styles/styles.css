@@ -387,3 +387,35 @@
 [data-supertokens~="authComponentList"] {
     padding-bottom: 20px;
 }
+[data-supertokens~="buttonWithArrow"] {
+    border-radius: 6px;
+    border: 1px solid #d0d5dd;
+    width: 100%;
+    color: rgb(var(--palette-textGray));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin: 24px 0;
+    min-height: 48px;
+    cursor: pointer;
+}
+[data-supertokens~="buttonWithArrow"]:hover {
+    background-color: rgb(var(--palette-inputBackground));
+}
+[data-supertokens~="buttonWithArrow"] [data-supertokens~="secondaryText"] {
+    font-weight: 700;
+    font-size: var(--font-size-2);
+    color: rgb(var(--palette-textGray));
+    margin: 0;
+}
+
+[data-supertokens~="buttonWithArrow"]:hover [data-supertokens~="secondaryLinkWithRightArrow"] ~ svg {
+    position: relative;
+    left: 2px;
+}
+
+[data-supertokens~="buttonWithArrow"] [data-supertokens~="secondaryLinkWithLeftArrow"] {
+    display: flex;
+    align-items: center;
+}

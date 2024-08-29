@@ -13,9 +13,13 @@
  * under the License.
  */
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 
 import { useTranslation } from "../../../../translation/translationContext";
+
+const isTextOverflowing = (element: Element) => {
+    return element.scrollWidth > element.clientWidth;
+};
 
 export type ProviderButtonProps = {
     providerName: string;
@@ -30,11 +34,7 @@ export default function ProviderButton({ logo, providerName, displayName }: Prov
 
     const SCROLL_ANIMATION_CLASS = "scroll-text-animation";
 
-    const isTextOverflowing = (element: Element) => {
-        return element.scrollWidth > element.clientWidth;
-    };
-
-    useEffect(() => {
+    useLayoutEffect(() => {
         const buttonTextContainer = buttonTextContainerRef.current;
         if (buttonTextContainer && isTextOverflowing(buttonTextContainer)) {
             buttonTextContainer.classList.add(SCROLL_ANIMATION_CLASS);
