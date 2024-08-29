@@ -51,6 +51,7 @@
     display: inline-block;
     flex-grow: 1;
     max-width: 100%;
+    font-size: var(--font-size-1);
 }
 
 [data-supertokens~="providerButtonText"]:only-child {
@@ -79,5 +80,11 @@
     100% {
         transform: translateX(calc(-100% - 10px));
         left: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    [data-supertokens~="providerButtonText"] {
+        font-size: var(--font-size-0);
     }
 }
