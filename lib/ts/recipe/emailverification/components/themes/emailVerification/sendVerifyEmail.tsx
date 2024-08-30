@@ -111,22 +111,25 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
                     <EmailLargeIcon />
                 </div>
                 <div data-supertokens="headerTitle headerTinyTitle">{t("EMAIL_VERIFICATION_SEND_TITLE")}</div>
+                <div data-supertokens="divider"></div>
                 <div data-supertokens="primaryText sendVerifyEmailText">
                     {t("EMAIL_VERIFICATION_SEND_DESC_START")}
                     <strong>{t("EMAIL_VERIFICATION_SEND_DESC_STRONG")}</strong>
                     {t("EMAIL_VERIFICATION_SEND_DESC_END")}
                 </div>
+                {
+                    <div data-supertokens="buttonWithArrow" onClick={logout}>
+                        <div data-supertokens="secondaryText secondaryLinkWithRightArrow">
+                            {t("EMAIL_VERIFICATION_LOGOUT")}
+                        </div>
+                        <ArrowRightIcon color="rgb(var(--palette-textGray))" />
+                    </div>
+                }
                 {status !== "EMAIL_RESENT" && (
                     <div data-supertokens="link sendVerifyEmailResend" onClick={resendEmail}>
                         {t("EMAIL_VERIFICATION_RESEND_BTN")}
                     </div>
                 )}
-                {
-                    <div data-supertokens="secondaryText secondaryLinkWithArrow" onClick={logout}>
-                        {t("EMAIL_VERIFICATION_LOGOUT")}
-                        <ArrowRightIcon color="rgb(var(--palette-textPrimary))" />
-                    </div>
-                }
             </div>
         </div>
     );

@@ -2,19 +2,19 @@
     --palette-background: 255, 255, 255;
     --palette-inputBackground: 250, 250, 250;
     --palette-inputBorder: 224, 224, 224;
-    --palette-primary: 255, 155, 51;
-    --palette-primaryBorder: 238, 141, 35;
+    --palette-primary: 45, 54, 68;
+    --palette-primaryBorder: 45, 54, 68;
     --palette-success: 65, 167, 0;
     --palette-successBackground: 217, 255, 191;
     --palette-error: 255, 23, 23;
     --palette-errorBackground: 255, 241, 235;
-    --palette-textTitle: 34, 34, 34;
-    --palette-textLabel: 34, 34, 34;
-    --palette-textInput: 34, 34, 34;
-    --palette-textPrimary: 101, 101, 101;
-    --palette-textLink: 0, 118, 255;
+    --palette-textTitle: 0, 0, 0;
+    --palette-textLabel: 0, 0, 0;
+    --palette-textInput: 0, 0, 0;
+    --palette-textPrimary: 128, 128, 128;
+    --palette-textLink: 0, 122, 255;
     --palette-buttonText: 255, 255, 255;
-    --palette-textGray: 128, 128, 128;
+    --palette-textGray: 54, 54, 54;
     --palette-superTokensBrandingBackground: 242, 245, 246;
     --palette-superTokensBrandingText: 173, 189, 196;
 
@@ -23,6 +23,7 @@
     --font-size-2: 16px;
     --font-size-3: 19px;
     --font-size-4: 24px;
+    --font-size-5: 28px;
 }
 /*
  * Default styles.
@@ -109,10 +110,10 @@
 
 [data-supertokens~="headerTitle"] {
     font-size: var(--font-size-4);
-    line-height: 40px;
+    line-height: 27.6px;
     letter-spacing: 0.58px;
-    font-weight: 600;
-    margin-bottom: 2px;
+    font-weight: 700;
+    margin-bottom: 20px;
     color: rgb(var(--palette-textTitle));
 }
 
@@ -149,7 +150,7 @@
 }
 
 [data-supertokens~="primaryText"] {
-    font-size: var(--font-size-1);
+    font-size: var(--font-size-2);
     font-weight: 400;
     letter-spacing: 0.4px;
     line-height: 21px;
@@ -177,10 +178,10 @@
 }
 
 [data-supertokens~="headerTinyTitle"] {
-    margin-top: 13px;
-    font-size: var(--font-size-3);
+    margin-top: 24px;
+    font-size: var(--font-size-5);
     letter-spacing: 1.1px;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 28px;
 }
 
@@ -357,6 +358,8 @@
 
 [data-supertokens~="dividerText"] {
     flex: 1 1;
+    font-weight: 400;
+    font-size: var(--font-size-1);
 }
 
 [data-supertokens~="formLabelWithLinkWrapper"] {
@@ -369,6 +372,7 @@
     width: auto;
     margin-top: 0;
     line-height: 24px;
+    font-size: var(--font-size-0);
 }
 
 [data-supertokens~="formLabelLinkBtn"]:hover {
@@ -382,4 +386,41 @@
 
 [data-supertokens~="authComponentList"] {
     padding-bottom: 20px;
+}
+[data-supertokens~="buttonWithArrow"] {
+    border-radius: 6px;
+    border: 1px solid #d0d5dd;
+    width: 100%;
+    color: rgb(var(--palette-textGray));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin: 24px 0;
+    min-height: 48px;
+    cursor: pointer;
+}
+[data-supertokens~="buttonWithArrow"]:hover {
+    background-color: rgb(var(--palette-inputBackground));
+}
+[data-supertokens~="buttonWithArrow"] [data-supertokens~="secondaryText"] {
+    font-weight: 700;
+    font-size: var(--font-size-2);
+    color: rgb(var(--palette-textGray));
+    margin: 0;
+}
+
+[data-supertokens~="buttonWithArrow"]:hover [data-supertokens~="secondaryLinkWithRightArrow"] ~ svg {
+    position: relative;
+    left: 2px;
+}
+
+[data-supertokens~="buttonWithArrow"]:hover [data-supertokens~="secondaryLinkWithLeftArrow"] svg {
+    position: relative;
+    left: -2px;
+}
+
+[data-supertokens~="buttonWithArrow"] [data-supertokens~="secondaryLinkWithLeftArrow"] {
+    display: flex;
+    align-items: center;
 }

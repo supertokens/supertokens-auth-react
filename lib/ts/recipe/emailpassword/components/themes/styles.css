@@ -123,8 +123,8 @@
 
 [data-supertokens~="label"] {
     text-align: left;
-    font-weight: 400;
-    font-size: var(--font-size-1);
+    font-weight: 700;
+    font-size: var(--font-size-0);
     line-height: 24px;
     color: rgb(var(--palette-textLabel));
 }
@@ -148,23 +148,17 @@
     margin-top: 11px;
 }
 
-[data-supertokens~="sendVerifyEmailText"] {
-    line-height: 21px;
-    font-size: var(--font-size-1);
+[data-supertokens~="primaryText"][data-supertokens~="sendVerifyEmailText"] {
     text-align: center;
-    font-weight: 400;
     letter-spacing: 0.8px;
+    color: rgb(var(--palette-textPrimary));
 }
 
 [data-supertokens~="secondaryLinkWithArrow"] {
     margin-top: 10px;
     margin-bottom: 30px;
     cursor: pointer;
-}
-[data-supertokens~="secondaryLinkWithArrow"]:hover {
-    position: relative;
-    left: 2px;
-    word-spacing: 4px;
+    font-weight: 700;
 }
 
 [data-supertokens~="sendVerifyEmailResend"] {

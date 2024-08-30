@@ -100,6 +100,7 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
                     {props.loginAttemptInfo.contactMethod === "EMAIL" ? <EmailLargeIcon /> : <SMSLargeIcon />}
                 </div>
                 <div data-supertokens="headerTitle headerTinyTitle">{t("PWLESS_LINK_SENT_RESEND_TITLE")}</div>
+                <div data-supertokens="divider"></div>
                 <div data-supertokens="primaryText sendCodeText">
                     {props.loginAttemptInfo.contactMethod === "EMAIL"
                         ? t("PWLESS_LINK_SENT_RESEND_DESC_START_EMAIL")
@@ -109,25 +110,27 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
                         ? t("PWLESS_LINK_SENT_RESEND_DESC_END_EMAIL")
                         : t("PWLESS_LINK_SENT_RESEND_DESC_END_PHONE")}
                 </div>
-                <ResendButton
-                    loginAttemptInfo={props.loginAttemptInfo}
-                    resendEmailOrSMSGapInSeconds={props.config.signInUpFeature.resendEmailOrSMSGapInSeconds}
-                    onClick={resendEmail}
-                />
                 {
                     <div
-                        data-supertokens="secondaryText secondaryLinkWithLeftArrow"
+                        data-supertokens="buttonWithArrow"
                         onClick={() =>
                             props.recipeImplementation.clearLoginAttemptInfo({
                                 userContext,
                             })
                         }>
-                        <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
-                        {props.loginAttemptInfo.contactMethod === "EMAIL"
-                            ? t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL")
-                            : t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE")}
+                        <div data-supertokens="secondaryText secondaryLinkWithLeftArrow">
+                            <ArrowLeftIcon color="rgb(var(--palette-textGray))" />
+                            {props.loginAttemptInfo.contactMethod === "EMAIL"
+                                ? t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL")
+                                : t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE")}
+                        </div>
                     </div>
                 }
+                <ResendButton
+                    loginAttemptInfo={props.loginAttemptInfo}
+                    resendEmailOrSMSGapInSeconds={props.config.signInUpFeature.resendEmailOrSMSGapInSeconds}
+                    onClick={resendEmail}
+                />
             </div>
         </div>
     );

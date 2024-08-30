@@ -30,9 +30,10 @@
     text-overflow: ellipsis;
 }
 
-[data-supertokens~="sendCodeText"] {
+[data-supertokens~="primaryText"][data-supertokens~="sendCodeText"] {
     margin-top: 15px;
     margin-bottom: 20px;
+    color: rgb(var(--palette-textPrimary));
 }
 
 [data-supertokens~="sendCodeText"] strong {

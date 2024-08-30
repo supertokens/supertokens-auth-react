@@ -4,7 +4,7 @@ export const defaultTranslationsEmailVerification = {
     en: {
         ...defaultTranslationsCommon.en,
         EMAIL_VERIFICATION_RESEND_SUCCESS: "Email resent",
-        EMAIL_VERIFICATION_SEND_TITLE: "Verify your email address",
+        EMAIL_VERIFICATION_SEND_TITLE: "Verify your email!",
         EMAIL_VERIFICATION_SEND_DESC_START: "",
         EMAIL_VERIFICATION_SEND_DESC_STRONG: "Please click on the link",
         EMAIL_VERIFICATION_SEND_DESC_END: " in the email we just sent you to confirm your email address.",
