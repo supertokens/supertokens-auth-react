@@ -9,8 +9,8 @@ export const OTPEmailIcon = () => (
         />
         <defs>
             <linearGradient id="paint0_linear_4445_310" x1="8.5" y1="0" x2="8.5" y2="12" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#5FACFF" />
-                <stop offset="1" stopColor="#1686FF" />
+                <stop stopColor="#1C222A" />
+                <stop offset="1" stopColor="#1C222A" />
             </linearGradient>
         </defs>
     </svg>

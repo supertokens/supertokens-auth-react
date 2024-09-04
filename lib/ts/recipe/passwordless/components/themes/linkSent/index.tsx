@@ -120,9 +120,11 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
                         }>
                         <div data-supertokens="secondaryText secondaryLinkWithLeftArrow">
                             <ArrowLeftIcon color="rgb(var(--palette-textGray))" />
-                            {props.loginAttemptInfo.contactMethod === "EMAIL"
-                                ? t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL")
-                                : t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE")}
+                            <span>
+                                {props.loginAttemptInfo.contactMethod === "EMAIL"
+                                    ? t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL")
+                                    : t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE")}
+                            </span>
                         </div>
                     </div>
                 }
