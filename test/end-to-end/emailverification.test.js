@@ -371,7 +371,10 @@ describe("SuperTokens Email Verification", function () {
             assert.deepStrictEqual(generalSuccess, "Email resent");
 
             // Click on Logout should remove session and redirect to login page
-            await Promise.all([clickLinkWithRightArrow(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+            await Promise.all([
+                logoutFromEmailVerification(page),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             await waitForUrl(page, "/auth/");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
