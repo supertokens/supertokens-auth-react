@@ -26,6 +26,7 @@ import { getRedirectToPathFromURL, useRethrowInRender, validateForm } from "../.
 import EmailPassword from "../../../../emailpassword/recipe";
 import { EmailVerificationClaim } from "../../../../emailverification";
 import EmailVerification from "../../../../emailverification/recipe";
+import { FactorIds } from "../../../../multifactorauth";
 import { getInvalidClaimsFromResponse } from "../../../../session";
 import SessionRecipe from "../../../../session/recipe";
 import Session from "../../../../session/recipe";
@@ -61,6 +62,10 @@ export function useChildProps(
     const rethrowInRender = useRethrowInRender();
 
     return useMemo(() => {
+        const isPasswordlessEmailEnabled = [FactorIds.LINK_EMAIL, FactorIds.OTP_EMAIL].some((id) =>
+            factorIds.includes(id)
+        );
+
         return {
             isPhoneNumber,
             setIsPhoneNumber: (isPhone) => {
@@ -85,7 +90,7 @@ export function useChildProps(
                     }
                 }
                 const email = contactInfo;
-                if (recipe.config.contactMethod === "PHONE") {
+                if (recipe.config.contactMethod === "PHONE" || !isPasswordlessEmailEnabled) {
                     setShowPasswordField(true);
                     return { status: "OK" };
                 }
@@ -114,7 +119,9 @@ export function useChildProps(
                     }
                 } else {
                     setShowPasswordField(true);
-                    setShowContinueWithPasswordlessLink(true);
+                    if (isPasswordlessEmailEnabled) {
+                        setShowContinueWithPasswordlessLink(true);
+                    }
                     return { status: "OK" };
                 }
             },

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.47.1] - 2024-09-18
+
+### Fixes
+
+-   Fixed an issue where we showed the "continue with passwordless" button during sign-in even if email-based passwordless was disabled by the tenant configuration.
+
 ## [0.47.0] - 2024-09-02
 
 ### Breaking changes
