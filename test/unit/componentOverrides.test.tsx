@@ -10,6 +10,7 @@ import { ComponentOverrideMap as PasswordlessOverrideMap } from "../../lib/ts/re
 import { ComponentOverrideMap as TOTPOverrideMap } from "../../lib/ts/recipe/totp/types";
 import { ComponentOverrideMap as MFAOverrideMap } from "../../lib/ts/recipe/multifactorauth/types";
 import { ComponentOverrideMap as AuthRecipeOverrideMap } from "../../lib/ts/recipe/authRecipe/types";
+import { ComponentOverrideMap as OAuth2ProviderOverrideMap } from "../../lib/ts/recipe/oauth2provider/types";
 
 import "@testing-library/jest-dom";
 import EmailPassword from "../../lib/ts/recipe/emailpassword/recipe";
@@ -56,6 +57,7 @@ import { FactorChooserHeader } from "../../lib/ts/recipe/multifactorauth/compone
 import { FactorList } from "../../lib/ts/recipe/multifactorauth/components/themes/factorChooser/factorList";
 import { FactorOption } from "../../lib/ts/recipe/multifactorauth/components/themes/factorChooser/factorOption";
 import { AuthPageComponentList, AuthPageFooter, AuthPageHeader } from "../../lib/ts/ui";
+import { OAuth2LogoutScreenInner } from "../../lib/ts/recipe/oauth2provider/components/themes/oauth2LogoutScreen/OAuth2LogoutScreenInner";
 
 type AllComponentsOverrideMap = AuthRecipeOverrideMap &
     EmailPasswordOverrideMap &
@@ -63,7 +65,8 @@ type AllComponentsOverrideMap = AuthRecipeOverrideMap &
     EmailVerificationOverrideMap &
     PasswordlessOverrideMap &
     TOTPOverrideMap &
-    MFAOverrideMap;
+    MFAOverrideMap &
+    OAuth2ProviderOverrideMap;
 
 const makeOverride = () => () => <h1 data-testid="override">Override</h1>;
 const WithProvider: React.FC<any> = ({ overrideMap, children }) => {
@@ -131,6 +134,7 @@ describe("Theme component overrides", () => {
         AuthPageComponentList_Override: AuthPageComponentList,
         AuthPageFooter_Override: AuthPageFooter,
         AuthPageHeader_Override: AuthPageHeader,
+        OAuth2LogoutScreenInner_Override: OAuth2LogoutScreenInner,
     };
 
     Object.entries(overrides).forEach(([key, comp]) => {
@@ -157,6 +161,7 @@ describe("Theme component overrides", () => {
                                   },
                                   verifyEmailLinkClickedScreen: { style: `` },
                                   sendVerifyEmailScreen: { style: `` },
+                                  oauth2LogoutScreen: { style: `` },
                               },
                           },
                       ];

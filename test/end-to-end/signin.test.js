@@ -482,7 +482,7 @@ describe("SuperTokens SignIn", function () {
             await assertSignInRedirectTo(
                 page,
                 `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=%2Fredirect-here`,
-                `${TEST_CLIENT_BASE_URL}/redirect-here`
+                `/redirect-here`
             );
 
             // test that if we visit auth again, we end up in redirect-heree again with query params kept
@@ -492,15 +492,14 @@ describe("SuperTokens SignIn", function () {
                 ),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            const { pathname, search } = await page.evaluate(() => window.location);
-            assert.deepStrictEqual(pathname + search, "/redirect-heree?foo=bar");
+            await waitForUrl(page, "/redirect-heree?foo=bar", false);
         });
 
         it("Successful Sign In with redirect to, redirectToPath directly without trailing slash", async function () {
             await assertSignInRedirectTo(
                 page,
                 `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=redirect-here`,
-                `${TEST_CLIENT_BASE_URL}/redirect-here`
+                `/redirect-here`
             );
         });
 
@@ -531,7 +530,7 @@ describe("SuperTokens SignIn", function () {
             await assertSignInRedirectTo(
                 page,
                 `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=https://attacker.com/path`,
-                `${TEST_CLIENT_BASE_URL}/path`
+                `/path`
             );
         });
 
@@ -540,7 +539,7 @@ describe("SuperTokens SignIn", function () {
             await assertSignInRedirectTo(
                 page,
                 `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=javascript:alert(1)`,
-                `${TEST_CLIENT_BASE_URL}/javascript:alert(1)`
+                `/javascript:alert(1)`
             );
         });
 
@@ -1054,11 +1053,5 @@ async function assertSignInRedirectTo(page, startUrl, finalUrl) {
     ]);
 
     // Submit.
-    await Promise.all([
-        submitFormReturnRequestAndResponse(page, SIGN_IN_API),
-        page.waitForNavigation({ waitUntil: "networkidle0" }),
-    ]);
-
-    let href = await page.evaluate(() => window.location.href);
-    assert.deepStrictEqual(href, finalUrl);
+    await Promise.all([submitFormReturnRequestAndResponse(page, SIGN_IN_API), waitForUrl(page, finalUrl, false)]);
 }

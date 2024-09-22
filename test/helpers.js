@@ -1117,20 +1117,49 @@ export async function createOAuth2Client(input) {
 
 // For the OAuth2 end-to-end test, we need to provide the created clientId to both the OAuth2 login and callback pages.
 // We use localStorage to store the clientId instead of query params, as it must be available on the callback page as well.
-export async function setOAuth2ClientIdInStorage(page, clientId) {
-    return page.evaluate((clientId) => localStorage.setItem("oauth2-client-id", clientId), clientId);
+export async function setOAuth2ClientInfo(page, clientId, scopes, extraConfig, extraSignInParams, extraSignOutParams) {
+    await page.evaluate((clientId) => localStorage.setItem("oauth2-client-id", clientId), clientId);
+    if (scopes) {
+        await page.evaluate((scopes) => localStorage.setItem("oauth2-scopes", scopes), scopes);
+    }
+    if (extraConfig) {
+        await page.evaluate((extraConfig) => localStorage.setItem("oauth2-extra-config", extraConfig), extraConfig);
+    }
+    if (extraSignInParams) {
+        await page.evaluate(
+            (extraSignInParams) => localStorage.setItem("oauth2-extra-sign-in-params", extraSignInParams),
+            extraSignInParams
+        );
+    }
+    if (extraSignOutParams) {
+        await page.evaluate(
+            (extraSignOutParams) => localStorage.setItem("oauth2-extra-sign-out-params", extraSignOutParams),
+            extraSignOutParams
+        );
+    }
 }
 
-export async function removeOAuth2ClientIdFromStorage(page) {
-    return page.evaluate(() => localStorage.removeItem("oauth2-client-id"));
+export async function removeOAuth2ClientInfo(page) {
+    await page.evaluate(() => localStorage.removeItem("oauth2-client-id"));
+    await page.evaluate(() => localStorage.removeItem("oauth2-scopes"));
+    await page.evaluate(() => localStorage.removeItem("oauth2-extra-config"));
+    await page.evaluate(() => localStorage.removeItem("oauth2-extra-sign-in-params"));
+    await page.evaluate(() => localStorage.removeItem("oauth2-extra-sign-out-params"));
 }
 
-export async function getOAuth2LoginButton(page) {
-    return page.waitForSelector("#oauth2-login-button");
+export async function getOAuth2LoginButton(page, type = "default") {
+    const id = type === "default" ? "#oauth2-login-button" : `#oauth2-login-button-${type}`;
+    return page.waitForSelector(id);
 }
 
-export async function getOAuth2LogoutButton(page) {
-    return page.waitForSelector("#oauth2-logout-button");
+export async function getOAuth2Error(page) {
+    const ele = await page.waitForSelector("#oauth2-error-message");
+    return await ele.evaluate((el) => el.textContent);
+}
+
+export async function getOAuth2LogoutButton(page, type = "silent") {
+    const id = type === "silent" ? "#oauth2-logout-button" : `#oauth2-logout-button-${type}`;
+    return page.waitForSelector(id);
 }
 
 export async function getOAuth2TokenData(page) {
