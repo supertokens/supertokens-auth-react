@@ -22,7 +22,7 @@ import { useContext, Fragment } from "react";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
-import { getQueryParams, useRethrowInRender } from "../../../../../utils";
+import { getQueryParams, getTenantIdFromQueryParams, useRethrowInRender } from "../../../../../utils";
 import DynamicLoginMethodsSpinner from "../../../../multitenancy/components/features/dynamicLoginMethodsSpinner";
 import { SessionContext } from "../../../../session";
 import { defaultTranslationsOAuth2Provider } from "../../themes/translations";
@@ -53,6 +53,7 @@ export const TryRefreshPage: React.FC<Prop> = (props) => {
                     {
                         action: "CONTINUE_OAUTH2_AFTER_REFRESH",
                         loginChallenge: loginChallenge ?? "",
+                        tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                         recipeId: "oauth2provider",
                     },
                     props.navigate,

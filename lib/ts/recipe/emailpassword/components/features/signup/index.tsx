@@ -24,7 +24,7 @@ import STGeneralError from "supertokens-web-js/utils/error";
 
 import AuthComponentWrapper from "../../../../../components/authCompWrapper";
 import { useUserContext } from "../../../../../usercontext";
-import { useRethrowInRender } from "../../../../../utils";
+import { getTenantIdFromQueryParams, useRethrowInRender } from "../../../../../utils";
 import { EmailVerificationClaim } from "../../../../emailverification";
 import EmailVerification from "../../../../emailverification/recipe";
 import { getInvalidClaimsFromResponse } from "../../../../session";
@@ -96,6 +96,7 @@ export function useChildProps(
                             await evInstance.redirect(
                                 {
                                     action: "VERIFY_EMAIL",
+                                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                                 },
                                 navigate,
                                 undefined,

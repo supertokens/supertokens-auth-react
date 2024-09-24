@@ -55,6 +55,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         successRedirectContext:
             | ((Omit<SuccessRedirectContextInApp, "recipeId"> | Omit<SuccessRedirectContextOAuth2, "recipeId">) & {
                   recipeId: string;
+                  tenantIdFromQueryParams: string | undefined;
               })
             | undefined,
         fallbackRecipeId: string,

@@ -21,7 +21,7 @@ import { CookieHandlerReference } from "supertokens-web-js/utils/cookieHandler";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
-import { SSR_ERROR } from "./constants";
+import { SSR_ERROR, TENANT_ID_QUERY_PARAM } from "./constants";
 import { enableLogging, logDebugMessage } from "./logger";
 import Multitenancy from "./recipe/multitenancy/recipe";
 import { saveCurrentLanguage, TranslationController } from "./translation/translationHelpers";
@@ -32,6 +32,7 @@ import {
     getDefaultCookieScope,
     getNormalisedUserContext,
     getOriginOfPage,
+    getTenantIdFromQueryParams,
     isTest,
     normaliseCookieScopeOrThrowError,
     normaliseInputAppInfoOrThrowError,
@@ -43,7 +44,14 @@ import type RecipeModule from "./recipe/recipeModule";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import type { Navigate, GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig, UserContext } from "./types";
+import type {
+    Navigate,
+    GetRedirectionURLContext,
+    NormalisedAppInfo,
+    SuperTokensConfig,
+    UserContext,
+    NormalisedGetRedirectionURLContext,
+} from "./types";
 
 /*
  * Class.
@@ -183,7 +191,10 @@ export default class SuperTokens {
         this.languageTranslations.translationEventSource.emit("TranslationLoaded", store);
     }
 
-    async getRedirectUrl(context: GetRedirectionURLContext, userContext: UserContext): Promise<string | null> {
+    async getRedirectUrl(
+        context: NormalisedGetRedirectionURLContext<GetRedirectionURLContext>,
+        userContext: UserContext
+    ): Promise<string | null> {
         if (this.userGetRedirectionURL) {
             const userRes = await this.userGetRedirectionURL(context, userContext);
             if (userRes !== undefined) {
@@ -192,7 +203,11 @@ export default class SuperTokens {
         }
         if (context.action === "TO_AUTH") {
             const redirectUrl = this.appInfo.websiteBasePath.getAsStringDangerous();
-            return appendTrailingSlashToURL(redirectUrl);
+            const basePath = appendTrailingSlashToURL(redirectUrl);
+            if (context.tenantIdFromQueryParams) {
+                return appendQueryParamsToURL(basePath, { [TENANT_ID_QUERY_PARAM]: context.tenantIdFromQueryParams });
+            }
+            return basePath;
         } else if (context.action === "SUCCESS") {
             return context.redirectToPath ?? "/";
         }
@@ -218,6 +233,7 @@ export default class SuperTokens {
             {
                 action: "TO_AUTH",
                 showSignIn: options.show === "signin",
+                tenantIdFromQueryParams: getTenantIdFromQueryParams(),
             },
             options.userContext
         );
@@ -235,7 +251,7 @@ export default class SuperTokens {
     };
 
     redirect = async (
-        context: GetRedirectionURLContext,
+        context: NormalisedGetRedirectionURLContext<GetRedirectionURLContext>,
         navigate?: Navigate,
         queryParams?: Record<string, string>,
         userContext?: UserContext

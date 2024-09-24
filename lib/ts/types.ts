@@ -133,7 +133,7 @@ export type SuperTokensConfig = {
     };
     enableDebugLogs?: boolean;
     getRedirectionURL?: (
-        context: GetRedirectionURLContext,
+        context: NormalisedGetRedirectionURLContext<GetRedirectionURLContext>,
         userContext: UserContext
     ) => Promise<string | undefined | null>;
 
@@ -449,3 +449,6 @@ export type PartialAuthComponent = {
 };
 
 export type AuthComponent<T = any> = PartialAuthComponent | FullPageAuthComponent<T>;
+export type NormalisedGetRedirectionURLContext<RecipeContext> = RecipeContext & {
+    tenantIdFromQueryParams: string | undefined;
+};

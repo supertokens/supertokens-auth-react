@@ -29,6 +29,7 @@ import {
     clearErrorQueryParam,
     getQueryParams,
     getRedirectToPathFromURL,
+    getTenantIdFromQueryParams,
     useOnMountAPICall,
     useRethrowInRender,
 } from "../../../../../utils";
@@ -181,6 +182,7 @@ export function useChildProps(
                             await evInstance.redirect(
                                 {
                                     action: "VERIFY_EMAIL",
+                                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                                 },
                                 navigate,
                                 undefined,
@@ -372,6 +374,7 @@ function useOnLoad(
                                     const evInstance = EmailVerificationRecipe.getInstanceOrThrow();
                                     await evInstance.redirect(
                                         {
+                                            tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                                             action: "VERIFY_EMAIL",
                                         },
                                         props.navigate,

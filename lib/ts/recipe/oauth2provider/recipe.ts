@@ -111,6 +111,7 @@ export default class OAuth2Provider extends RecipeModule<
     }
 
     async getDefaultRedirectionURL(ctx: GetRedirectionURLContext): Promise<string> {
+        // We do not use the util here, because we are likely redirecting across domains here.
         if (ctx.action === "SUCCESS_OAUTH2" || ctx.action === "CONTINUE_OAUTH2_AFTER_REFRESH") {
             const domain = this.config.appInfo.apiDomain.getAsStringDangerous();
             const basePath = this.config.appInfo.apiBasePath.getAsStringDangerous();

@@ -19,7 +19,12 @@ import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
-import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "./constants";
+import {
+    DEFAULT_API_BASE_PATH,
+    DEFAULT_WEBSITE_BASE_PATH,
+    RECIPE_ID_QUERY_PARAM,
+    TENANT_ID_QUERY_PARAM,
+} from "./constants";
 
 import type { FormFieldError } from "./recipe/emailpassword/types";
 import type {
@@ -28,6 +33,7 @@ import type {
     Navigate,
     NormalisedAppInfo,
     NormalisedFormField,
+    NormalisedGetRedirectionURLContext,
     UserContext,
 } from "./types";
 
@@ -117,6 +123,40 @@ export function getRedirectToPathFromURL(): string | undefined {
             return undefined;
         }
     }
+}
+
+export function getTenantIdFromQueryParams(): string | undefined {
+    return getQueryParams(TENANT_ID_QUERY_PARAM) ?? undefined;
+}
+
+export function getDefaultRedirectionURLForPath(
+    config: { appInfo: NormalisedAppInfo },
+    defaultPath: string,
+    context: NormalisedGetRedirectionURLContext<unknown>,
+    extraQueryParams?: Record<string, string | undefined>
+): string {
+    const redirectPath = config.appInfo.websiteBasePath
+        .appendPath(new NormalisedURLPath(defaultPath))
+        .getAsStringDangerous();
+
+    const queryParams = new URLSearchParams();
+    if (context.tenantIdFromQueryParams !== undefined) {
+        queryParams.set(TENANT_ID_QUERY_PARAM, context.tenantIdFromQueryParams);
+    }
+
+    if (extraQueryParams !== undefined) {
+        Object.entries(extraQueryParams).forEach(([key, value]) => {
+            if (value !== undefined) {
+                queryParams.set(key, value);
+            }
+        });
+    }
+
+    if (queryParams.toString() !== "") {
+        return `${redirectPath}?${queryParams.toString()}`;
+    }
+
+    return redirectPath;
 }
 
 /*

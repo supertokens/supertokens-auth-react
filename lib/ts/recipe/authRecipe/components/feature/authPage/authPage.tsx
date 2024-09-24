@@ -25,7 +25,13 @@ import SuperTokens from "../../../../../superTokens";
 import { TranslationContextProvider } from "../../../../../translation/translationContext";
 import { defaultTranslationsCommon } from "../../../../../translation/translations";
 import { UserContextProvider, useUserContext } from "../../../../../usercontext";
-import { getRedirectToPathFromURL, mergeObjects, updateQueryParam, useRethrowInRender } from "../../../../../utils";
+import {
+    getRedirectToPathFromURL,
+    getTenantIdFromQueryParams,
+    mergeObjects,
+    updateQueryParam,
+    useRethrowInRender,
+} from "../../../../../utils";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
 import { FactorIds } from "../../../../multifactorauth/types";
 import DynamicLoginMethodsSpinner from "../../../../multitenancy/components/features/dynamicLoginMethodsSpinner";
@@ -205,6 +211,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                                     isNewRecipeUser: false,
                                     loginChallenge,
                                     newSessionCreated: false,
+                                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                                     recipeId: Session.RECIPE_ID,
                                 },
                                 Session.RECIPE_ID,
@@ -290,11 +297,13 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                     ? {
                           ...ctx,
                           action: "SUCCESS_OAUTH2",
+                          tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                           loginChallenge,
                       }
                     : {
                           ...ctx,
                           action: "SUCCESS",
+                          tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                           redirectToPath: getRedirectToPathFromURL(),
                       },
                 ctx.recipeId,

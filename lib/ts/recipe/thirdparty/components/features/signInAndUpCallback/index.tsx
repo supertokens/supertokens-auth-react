@@ -22,7 +22,7 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
-import { useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
+import { getTenantIdFromQueryParams, useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
 import { EmailVerificationClaim } from "../../../../emailverification";
 import EmailVerification from "../../../../emailverification/recipe";
 import { getInvalidClaimsFromResponse } from "../../../../session";
@@ -120,6 +120,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                                       (payloadBeforeCall === undefined ||
                                           payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
                                   recipeId: props.recipe.recipeID,
+                                  tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                               }
                             : {
                                   action: "SUCCESS",
@@ -131,6 +132,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                                       (payloadBeforeCall === undefined ||
                                           payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
                                   recipeId: props.recipe.recipeID,
+                                  tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                               },
                         props.recipe.recipeID,
                         redirectToPath,
@@ -154,6 +156,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                         await evInstance.redirect(
                             {
                                 action: "VERIFY_EMAIL",
+                                tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                             },
                             props.navigate,
                             undefined,

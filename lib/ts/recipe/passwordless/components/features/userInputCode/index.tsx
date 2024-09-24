@@ -20,7 +20,7 @@ import { Fragment } from "react";
 import { useMemo } from "react";
 
 import AuthComponentWrapper from "../../../../../components/authCompWrapper";
-import { clearErrorQueryParam, useRethrowInRender } from "../../../../../utils";
+import { clearErrorQueryParam, getTenantIdFromQueryParams, useRethrowInRender } from "../../../../../utils";
 import { EmailVerificationClaim } from "../../../../emailverification";
 import EmailVerification from "../../../../emailverification/recipe";
 import { getInvalidClaimsFromResponse } from "../../../../session";
@@ -91,6 +91,7 @@ export function useChildProps(
                             await evInstance.redirect(
                                 {
                                     action: "VERIFY_EMAIL",
+                                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                                 },
                                 navigate,
                                 undefined,

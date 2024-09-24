@@ -23,7 +23,7 @@ import { useCallback } from "react";
 
 import AuthComponentWrapper from "../../../../../components/authCompWrapper";
 import { useTranslation } from "../../../../../translation/translationContext";
-import { useRethrowInRender } from "../../../../../utils";
+import { getTenantIdFromQueryParams, useRethrowInRender } from "../../../../../utils";
 import { EmailVerificationClaim } from "../../../../emailverification";
 import EmailVerification from "../../../../emailverification/recipe";
 import { getInvalidClaimsFromResponse } from "../../../../session";
@@ -78,7 +78,12 @@ export function useChildProps(
 
     return useMemo(() => {
         const onForgotPasswordClick = () =>
-            recipe.redirect({ action: "RESET_PASSWORD" }, navigate, undefined, userContext);
+            recipe.redirect(
+                { action: "RESET_PASSWORD", tenantIdFromQueryParams: getTenantIdFromQueryParams() },
+                navigate,
+                undefined,
+                userContext
+            );
 
         const signInAndUpFeature = recipe.config.signInAndUpFeature;
         const signInFeature = signInAndUpFeature.signInForm;
@@ -118,6 +123,7 @@ export function useChildProps(
                             await evInstance.redirect(
                                 {
                                     action: "VERIFY_EMAIL",
+                                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                                 },
                                 navigate,
                                 undefined,
