@@ -8,7 +8,10 @@ import type {
 import type OverrideableBuilder from "supertokens-js-override";
 import type { LoginInfo, RecipeInterface } from "supertokens-web-js/recipe/oauth2provider/types";
 
-export type PreAndPostAPIHookAction = "GET_LOGIN_CHALLENGE_INFO" | "LOG_OUT";
+export type PreAndPostAPIHookAction =
+    | "GET_LOGIN_CHALLENGE_INFO"
+    | "GET_REDIRECT_URL_TO_CONTINUE_OAUTH_FLOW"
+    | "LOG_OUT";
 
 export type PreAPIHookContext = {
     action: PreAndPostAPIHookAction;
@@ -50,7 +53,7 @@ export type OAuth2LogoutScreenConfig = NormalisedBaseConfig & {
 export type ContinueOAuth2AfterRefreshRedirectContext = {
     recipeId: "oauth2provider";
     action: "CONTINUE_OAUTH2_AFTER_REFRESH";
-    loginChallenge: string;
+    frontendRedirectTo: string;
 };
 
 export type PostOAuth2LogoutRedirectContext = {

@@ -203,13 +203,20 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                         action: "SESSION_ALREADY_EXISTS",
                     });
                     if (loginChallenge !== null) {
-                        void Session.getInstanceOrThrow()
-                            .validateGlobalClaimsAndHandleSuccessRedirection(
+                        (async function () {
+                            const { frontendRedirectTo } =
+                                await OAuth2Provider.getInstanceOrThrow().webJSRecipe.getRedirectURLToContinueOAuthFlow(
+                                    {
+                                        loginChallenge,
+                                        userContext,
+                                    }
+                                );
+                            return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
                                 {
                                     action: "SUCCESS_OAUTH2",
                                     createdNewUser: false,
                                     isNewRecipeUser: false,
-                                    loginChallenge,
+                                    frontendRedirectTo,
                                     newSessionCreated: false,
                                     tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                                     recipeId: Session.RECIPE_ID,
@@ -218,8 +225,8 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                                 getRedirectToPathFromURL(),
                                 userContext,
                                 props.navigate
-                            )
-                            .catch(rethrowInRender);
+                            );
+                        })().catch(rethrowInRender);
                     } else {
                         void Session.getInstanceOrThrow()
                             .validateGlobalClaimsAndHandleSuccessRedirection(
@@ -291,21 +298,33 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     ]);
 
     const onAuthSuccess = useCallback(
-        (ctx: AuthSuccessContext) => {
+        async (ctx: AuthSuccessContext) => {
+            if (loginChallenge === null) {
+                return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                    {
+                        ...ctx,
+                        action: "SUCCESS",
+                        tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+                        redirectToPath: getRedirectToPathFromURL(),
+                    },
+                    ctx.recipeId,
+                    getRedirectToPathFromURL(),
+                    userContext,
+                    props.navigate
+                );
+            }
+            const { frontendRedirectTo } =
+                await OAuth2Provider.getInstanceOrThrow().webJSRecipe.getRedirectURLToContinueOAuthFlow({
+                    loginChallenge,
+                    userContext,
+                });
             return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                loginChallenge !== null
-                    ? {
-                          ...ctx,
-                          action: "SUCCESS_OAUTH2",
-                          tenantIdFromQueryParams: getTenantIdFromQueryParams(),
-                          loginChallenge,
-                      }
-                    : {
-                          ...ctx,
-                          action: "SUCCESS",
-                          tenantIdFromQueryParams: getTenantIdFromQueryParams(),
-                          redirectToPath: getRedirectToPathFromURL(),
-                      },
+                {
+                    ...ctx,
+                    action: "SUCCESS_OAUTH2",
+                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+                    frontendRedirectTo,
+                },
                 ctx.recipeId,
                 getRedirectToPathFromURL(),
                 userContext,

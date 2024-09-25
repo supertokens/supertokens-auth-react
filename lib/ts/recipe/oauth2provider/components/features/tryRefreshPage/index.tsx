@@ -48,19 +48,25 @@ export const TryRefreshPage: React.FC<Prop> = (props) => {
 
     React.useEffect(() => {
         if (sessionContext.loading === false) {
-            void props.recipe
-                .redirect(
-                    {
-                        action: "CONTINUE_OAUTH2_AFTER_REFRESH",
-                        loginChallenge: loginChallenge ?? "",
-                        tenantIdFromQueryParams: getTenantIdFromQueryParams(),
-                        recipeId: "oauth2provider",
-                    },
-                    props.navigate,
-                    {},
-                    userContext
-                )
-                .catch(rethrowInRender);
+            if (loginChallenge) {
+                (async function () {
+                    const { frontendRedirectTo } = await props.recipe.webJSRecipe.getRedirectURLToContinueOAuthFlow({
+                        loginChallenge,
+                        userContext,
+                    });
+                    return props.recipe.redirect(
+                        {
+                            action: "CONTINUE_OAUTH2_AFTER_REFRESH",
+                            frontendRedirectTo,
+                            tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+                            recipeId: "oauth2provider",
+                        },
+                        props.navigate,
+                        {},
+                        userContext
+                    );
+                })().catch(rethrowInRender);
+            }
         }
     }, [loginChallenge, props.recipe, props.navigate, userContext, sessionContext]);
 

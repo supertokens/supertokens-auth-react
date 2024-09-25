@@ -29,7 +29,7 @@ export declare type SuccessRedirectContextInApp = SuccessRedirectContextCommon &
 };
 export declare type SuccessRedirectContextOAuth2 = SuccessRedirectContextCommon & {
     action: "SUCCESS_OAUTH2";
-    loginChallenge: string;
+    frontendRedirectTo: string;
 };
 export declare type SuccessRedirectContext = SuccessRedirectContextInApp | SuccessRedirectContextOAuth2;
 export declare type GetRedirectionURLContext =

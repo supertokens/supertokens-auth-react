@@ -25,6 +25,7 @@ import { useUserContext } from "../../../../../usercontext";
 import { getTenantIdFromQueryParams, useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
 import { EmailVerificationClaim } from "../../../../emailverification";
 import EmailVerification from "../../../../emailverification/recipe";
+import OAuth2Provider from "../../../../oauth2provider/recipe";
 import { getInvalidClaimsFromResponse } from "../../../../session";
 import Session from "../../../../session/recipe";
 import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
@@ -106,40 +107,57 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
                 const loginChallenge = stateResponse?.oauth2LoginChallenge;
 
-                return Session.getInstanceOrThrow()
-                    .validateGlobalClaimsAndHandleSuccessRedirection(
-                        loginChallenge !== undefined
-                            ? {
-                                  action: "SUCCESS_OAUTH2",
-                                  loginChallenge,
-                                  createdNewUser:
-                                      response.createdNewRecipeUser && response.user.loginMethods.length === 1,
-                                  isNewRecipeUser: response.createdNewRecipeUser,
-                                  newSessionCreated:
-                                      payloadAfterCall !== undefined &&
-                                      (payloadBeforeCall === undefined ||
-                                          payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
-                                  recipeId: props.recipe.recipeID,
-                                  tenantIdFromQueryParams: getTenantIdFromQueryParams(),
-                              }
-                            : {
-                                  action: "SUCCESS",
-                                  createdNewUser:
-                                      response.createdNewRecipeUser && response.user.loginMethods.length === 1,
-                                  isNewRecipeUser: response.createdNewRecipeUser,
-                                  newSessionCreated:
-                                      payloadAfterCall !== undefined &&
-                                      (payloadBeforeCall === undefined ||
-                                          payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
-                                  recipeId: props.recipe.recipeID,
-                                  tenantIdFromQueryParams: getTenantIdFromQueryParams(),
-                              },
-                        props.recipe.recipeID,
-                        redirectToPath,
-                        userContext,
-                        props.navigate
-                    )
-                    .catch(rethrowInRender);
+                if (loginChallenge !== undefined) {
+                    try {
+                        const { frontendRedirectTo } =
+                            await OAuth2Provider.getInstanceOrThrow().webJSRecipe.getRedirectURLToContinueOAuthFlow({
+                                loginChallenge,
+                                userContext,
+                            });
+                        return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                            {
+                                action: "SUCCESS_OAUTH2",
+                                frontendRedirectTo,
+                                createdNewUser:
+                                    response.createdNewRecipeUser && response.user.loginMethods.length === 1,
+                                isNewRecipeUser: response.createdNewRecipeUser,
+                                newSessionCreated:
+                                    payloadAfterCall !== undefined &&
+                                    (payloadBeforeCall === undefined ||
+                                        payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
+                                recipeId: props.recipe.recipeID,
+                                tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+                            },
+                            props.recipe.recipeID,
+                            redirectToPath,
+                            userContext,
+                            props.navigate
+                        );
+                    } catch (e: any) {
+                        rethrowInRender(e);
+                    }
+                } else {
+                    return Session.getInstanceOrThrow()
+                        .validateGlobalClaimsAndHandleSuccessRedirection(
+                            {
+                                action: "SUCCESS",
+                                createdNewUser:
+                                    response.createdNewRecipeUser && response.user.loginMethods.length === 1,
+                                isNewRecipeUser: response.createdNewRecipeUser,
+                                newSessionCreated:
+                                    payloadAfterCall !== undefined &&
+                                    (payloadBeforeCall === undefined ||
+                                        payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
+                                recipeId: props.recipe.recipeID,
+                                tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+                            },
+                            props.recipe.recipeID,
+                            redirectToPath,
+                            userContext,
+                            props.navigate
+                        )
+                        .catch(rethrowInRender);
+                }
             }
         },
         [props.recipe, props.navigate, userContext]

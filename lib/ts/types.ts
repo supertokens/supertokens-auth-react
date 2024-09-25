@@ -43,7 +43,7 @@ type SuccessRedirectContextCommon = {
 export type SuccessRedirectContextInApp = SuccessRedirectContextCommon & { action: "SUCCESS"; redirectToPath?: string };
 export type SuccessRedirectContextOAuth2 = SuccessRedirectContextCommon & {
     action: "SUCCESS_OAUTH2";
-    loginChallenge: string;
+    frontendRedirectTo: string;
 };
 
 export type SuccessRedirectContext = SuccessRedirectContextInApp | SuccessRedirectContextOAuth2;

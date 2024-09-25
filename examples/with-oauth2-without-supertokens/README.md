@@ -17,16 +17,14 @@ npm install
 ## 1. Create an OAuth2 Client
 
 ```bash
-curl -X POST http://localhost:4445/admin/clients \
+curl -X POST http://localhost:3567/recipe/oauth/clients \
      -H "Content-Type: application/json" \
      -d '{
            "scope": "offline_access openid email",
-           "redirect_uris": ["http://localhost:3000"],
-           "access_token_strategy": "jwt",
-           "token_endpoint_auth_method": "none",
-           "grant_types": ["authorization_code", "refresh_token"],
-           "response_types": ["code", "id_token"],
-           "skip_consent": true
+           "redirectUris": ["http://localhost:3000"],
+           "grantTypes": ["authorization_code", "refresh_token"],
+           "responseTypes": ["code", "id_token"],
+           "tokenEndpointAuthMethod": "none"
          }'
 ```
 
