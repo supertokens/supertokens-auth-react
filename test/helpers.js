@@ -947,6 +947,15 @@ export async function isMFASupported() {
     return true;
 }
 
+export async function isOauth2Supported() {
+    const features = await getFeatureFlags();
+    if (!features.includes("oauth2")) {
+        return false;
+    }
+
+    return true;
+}
+
 /**
  * For example setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "EMAIL_PASSWORD_SIGN_UP", page) to
  * set for signUp in email password
