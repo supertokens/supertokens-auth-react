@@ -628,6 +628,11 @@ describe("EmailPassword", function () {
             },
         }).authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
 
-        assert((await EmailPassword.getInstanceOrThrow().getRedirectUrl({ action: "RESET_PASSWORD" }, {})) === null);
+        assert(
+            (await EmailPassword.getInstanceOrThrow().getRedirectUrl(
+                { action: "RESET_PASSWORD", tenantIdFromQueryParams: undefined },
+                {}
+            )) === null
+        );
     });
 });
