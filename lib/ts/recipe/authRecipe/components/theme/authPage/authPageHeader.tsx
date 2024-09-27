@@ -35,7 +35,7 @@ export const AuthPageHeader = withOverride(
         resetFactorList: () => void;
         showBackButton: boolean;
         oauth2ClientInfo?: {
-            clientLogoUri?: string;
+            logoUri?: string;
             clientUri?: string;
             clientName: string;
         };
@@ -44,9 +44,9 @@ export const AuthPageHeader = withOverride(
 
         return (
             <Fragment>
-                {oauth2ClientInfo?.clientLogoUri && (
+                {oauth2ClientInfo?.logoUri && (
                     <img
-                        src={oauth2ClientInfo.clientLogoUri}
+                        src={oauth2ClientInfo.logoUri}
                         alt={oauth2ClientInfo.clientName}
                         data-supertokens="authPageTitleOAuthClientLogo"
                     />

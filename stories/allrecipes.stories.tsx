@@ -147,7 +147,7 @@ export const OAuth2Login: Story = {
         query: "loginChallenge=asdf",
         "oauth2.initialized": true,
         "oauth2.clientName": "Google",
-        "oauth2.clientLogoUri": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg",
+        "oauth2.logoUri": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg",
         "oauth2.clientUri": "https://google.com",
     },
 };

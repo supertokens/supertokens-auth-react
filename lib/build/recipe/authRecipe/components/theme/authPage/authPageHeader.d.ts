@@ -8,7 +8,7 @@ export declare const AuthPageHeader: import("react").ComponentType<{
     showBackButton: boolean;
     oauth2ClientInfo?:
         | {
-              clientLogoUri?: string | undefined;
+              logoUri?: string | undefined;
               clientUri?: string | undefined;
               clientName: string;
           }
