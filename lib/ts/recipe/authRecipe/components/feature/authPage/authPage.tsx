@@ -189,7 +189,11 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
         },
         async (info) => {
             if (info !== undefined) {
-                setOAuth2ClientInfo(info.info);
+                if (info.status === "OK") {
+                    setOAuth2ClientInfo(info.info);
+                } else {
+                    setError("SOMETHING_WENT_WRONG_ERROR");
+                }
             }
         },
         () => {
