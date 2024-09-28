@@ -26,6 +26,7 @@ import { TranslationContextProvider } from "../../../../../translation/translati
 import { defaultTranslationsCommon } from "../../../../../translation/translations";
 import { UserContextProvider, useUserContext } from "../../../../../usercontext";
 import {
+    clearQueryParams,
     getRedirectToPathFromURL,
     getTenantIdFromQueryParams,
     mergeObjects,
@@ -192,11 +193,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
             }
         },
         () => {
-            return SuperTokens.getInstanceOrThrow().redirectToAuth({
-                navigate: props.navigate,
-                redirectBack: false,
-                userContext,
-            });
+            return clearQueryParams(["loginChallenge"]);
         }
     );
 
@@ -348,7 +345,8 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     );
 
     const childProps: AuthPageThemeProps | undefined =
-        authComponentListInfo !== undefined && (loginChallenge === null || oauth2ClientInfo !== undefined)
+        authComponentListInfo !== undefined &&
+        (loginChallenge === null || oauth2ClientInfo !== undefined || OAuth2Provider.getInstance() === undefined)
             ? {
                   ...authComponentListInfo,
                   oauth2ClientInfo,
