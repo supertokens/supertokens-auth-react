@@ -107,13 +107,15 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
                 const loginChallenge = stateResponse?.oauth2LoginChallenge;
 
-                if (loginChallenge !== undefined) {
+                const oauth2Recipe = OAuth2Provider.getInstance();
+                if (loginChallenge !== undefined && oauth2Recipe !== undefined) {
                     try {
-                        const { frontendRedirectTo } =
-                            await OAuth2Provider.getInstanceOrThrow().webJSRecipe.getRedirectURLToContinueOAuthFlow({
+                        const { frontendRedirectTo } = await oauth2Recipe.webJSRecipe.getRedirectURLToContinueOAuthFlow(
+                            {
                                 loginChallenge,
                                 userContext,
-                            });
+                            }
+                        );
                         return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
                             {
                                 action: "SUCCESS_OAUTH2",

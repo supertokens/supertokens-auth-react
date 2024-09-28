@@ -30,6 +30,7 @@ import {
     getTenantIdFromQueryParams,
     mergeObjects,
     updateQueryParam,
+    useOnMountAPICall,
     useRethrowInRender,
 } from "../../../../../utils";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
@@ -174,17 +175,30 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
             );
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
 
-    useEffect(() => {
-        if (oauth2ClientInfo) {
-            return;
+    useOnMountAPICall(
+        async () => {
+            if (oauth2ClientInfo) {
+                return;
+            }
+            const oauth2Recipe = OAuth2Provider.getInstance();
+            if (oauth2Recipe !== undefined && loginChallenge !== null) {
+                return oauth2Recipe.webJSRecipe.getLoginChallengeInfo({ loginChallenge, userContext });
+            }
+            return undefined;
+        },
+        async (info) => {
+            if (info !== undefined) {
+                setOAuth2ClientInfo(info.info);
+            }
+        },
+        () => {
+            return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                navigate: props.navigate,
+                redirectBack: false,
+                userContext,
+            });
         }
-        const oauth2Recipe = OAuth2Provider.getInstance();
-        if (oauth2Recipe !== undefined && loginChallenge !== null) {
-            void OAuth2Provider.getInstanceOrThrow()
-                .webJSRecipe.getLoginChallengeInfo({ loginChallenge, userContext })
-                .then(({ info }) => setOAuth2ClientInfo(info));
-        }
-    }, [setOAuth2ClientInfo, loginChallenge, oauth2ClientInfo]);
+    );
 
     useEffect(() => {
         if (sessionLoadedAndNotRedirecting) {
@@ -202,15 +216,14 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                     Session.getInstanceOrThrow().config.onHandleEvent({
                         action: "SESSION_ALREADY_EXISTS",
                     });
-                    if (loginChallenge !== null) {
+                    const oauth2Recipe = OAuth2Provider.getInstance();
+                    if (loginChallenge !== null && oauth2Recipe !== undefined) {
                         (async function () {
                             const { frontendRedirectTo } =
-                                await OAuth2Provider.getInstanceOrThrow().webJSRecipe.getRedirectURLToContinueOAuthFlow(
-                                    {
-                                        loginChallenge,
-                                        userContext,
-                                    }
-                                );
+                                await oauth2Recipe.webJSRecipe.getRedirectURLToContinueOAuthFlow({
+                                    loginChallenge,
+                                    userContext,
+                                });
                             return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
                                 {
                                     action: "SUCCESS_OAUTH2",
@@ -299,7 +312,8 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
 
     const onAuthSuccess = useCallback(
         async (ctx: AuthSuccessContext) => {
-            if (loginChallenge === null) {
+            const oauth2Recipe = OAuth2Provider.getInstance();
+            if (loginChallenge === null || oauth2Recipe === undefined) {
                 return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
                     {
                         ...ctx,
@@ -313,11 +327,10 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                     props.navigate
                 );
             }
-            const { frontendRedirectTo } =
-                await OAuth2Provider.getInstanceOrThrow().webJSRecipe.getRedirectURLToContinueOAuthFlow({
-                    loginChallenge,
-                    userContext,
-                });
+            const { frontendRedirectTo } = await oauth2Recipe.webJSRecipe.getRedirectURLToContinueOAuthFlow({
+                loginChallenge,
+                userContext,
+            });
             return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
                 {
                     ...ctx,
