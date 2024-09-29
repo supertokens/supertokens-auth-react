@@ -24,7 +24,7 @@ import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, getTenantIdFromQueryParams, useRethrowInRender } from "../../../../../utils";
 import DynamicLoginMethodsSpinner from "../../../../multitenancy/components/features/dynamicLoginMethodsSpinner";
-import { SessionContext } from "../../../../session";
+import SessionAPIWrapper, { SessionContext } from "../../../../session";
 import { defaultTranslationsOAuth2Provider } from "../../themes/translations";
 
 import type { FeatureBaseProps, UserContext } from "../../../../../types";
@@ -46,6 +46,7 @@ export const TryRefreshPage: React.FC<Prop> = (props) => {
         userContext = props.userContext;
     }
 
+    SessionAPIWrapper.attemptRefreshingSession;
     React.useEffect(() => {
         if (sessionContext.loading === false) {
             if (loginChallenge) {
