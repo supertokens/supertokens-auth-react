@@ -766,7 +766,7 @@ export async function setupBrowser() {
     });
     browser.logs = [];
     function addLog(str) {
-        if (process.env.DEBUG !== undefined) {
+        if (process.env.BROWSER_LOGS !== undefined) {
             console.log(str);
         }
         browser.logs.push(str);
