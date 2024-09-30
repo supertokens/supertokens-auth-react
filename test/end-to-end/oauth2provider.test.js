@@ -39,6 +39,7 @@ import {
     getOAuth2Error,
     waitForSTElement,
     isOauth2Supported,
+    setupBrowser,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 
@@ -81,10 +82,7 @@ describe("SuperTokens OAuth2Provider", function () {
             }),
         }).catch(console.error);
 
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {

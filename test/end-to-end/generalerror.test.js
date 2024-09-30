@@ -42,6 +42,7 @@ import {
     setGeneralErrorToLocalStorage,
     backendBeforeEach,
     waitForUrl,
+    setupBrowser,
 } from "../helpers";
 
 import {
@@ -78,10 +79,7 @@ describe("General error rendering", function () {
                 method: "POST",
             }).catch(console.error);
 
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: true,
-            });
+            browser = await setupBrowser();
         });
 
         after(async function () {
@@ -240,10 +238,7 @@ function getEmailPasswordTests(rid, ridForStorage) {
                 method: "POST",
             }).catch(console.error);
 
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: true,
-            });
+            browser = await setupBrowser();
         });
 
         after(async function () {
@@ -378,10 +373,7 @@ function getThirdPartyTests(rid, ridForStorage) {
                 method: "POST",
             }).catch(console.error);
 
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: true,
-            });
+            browser = await setupBrowser();
         });
 
         after(async function () {

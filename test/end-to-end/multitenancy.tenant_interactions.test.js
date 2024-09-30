@@ -47,6 +47,7 @@ import {
     removeTenant,
     backendBeforeEach,
     waitForUrl,
+    setupBrowser,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -117,10 +118,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
     });
 
     before(async () => {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-web-security"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {

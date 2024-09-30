@@ -49,6 +49,7 @@ import {
     getLabelsText,
     isReact16,
     waitForUrl,
+    setupBrowser,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -77,10 +78,7 @@ describe("SuperTokens Third Party Email Password", function () {
             method: "POST",
         }).catch(console.error);
 
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();

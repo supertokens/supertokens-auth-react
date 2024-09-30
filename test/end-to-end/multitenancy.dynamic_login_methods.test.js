@@ -40,6 +40,7 @@ import {
     setupTenant,
     backendBeforeEach,
     getTextByDataSupertokens,
+    setupBrowser,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -106,10 +107,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     before(async () => {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-web-security"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {

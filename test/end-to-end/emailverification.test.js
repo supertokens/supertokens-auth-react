@@ -55,6 +55,7 @@ import {
     getDefaultSignUpFieldValues,
     getTestEmail,
     waitForUrl,
+    setupBrowser,
 } from "../helpers";
 
 describe("SuperTokens Email Verification", function () {
@@ -68,10 +69,7 @@ describe("SuperTokens Email Verification", function () {
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
         }).catch(console.error);
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
         accountLinkingSupported = await isAccountLinkingSupported();
 
         page = await browser.newPage();
@@ -616,10 +614,7 @@ describe("SuperTokens Email Verification server errors", function () {
     let consoleLogs;
 
     before(async function () {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
         page = await browser.newPage();
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`);
     });
@@ -673,10 +668,7 @@ describe("SuperTokens Email Verification general errors", function () {
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
         }).catch(console.error);
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
         page = await browser.newPage();
         await Promise.all([
             page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
@@ -784,10 +776,7 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
         }).catch(console.error);
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {
@@ -864,10 +853,7 @@ describe("Email verification signOut errors", function () {
             method: "POST",
         }).catch(console.error);
 
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {
@@ -950,10 +936,7 @@ describe("Email verification claim refresh with clock skew", function () {
             }),
         }).catch(console.error);
 
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {

@@ -44,6 +44,7 @@ import {
     isReact16,
     getDefaultSignUpFieldValues,
     waitForUrl,
+    setupBrowser,
 } from "../helpers";
 
 import {
@@ -69,10 +70,7 @@ describe("SuperTokens SignUp", function () {
             method: "POST",
         }).catch(console.error);
 
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
@@ -880,10 +878,7 @@ describe("SuperTokens SignUp => Server Error", function () {
     let consoleLogs;
 
     before(async function () {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {

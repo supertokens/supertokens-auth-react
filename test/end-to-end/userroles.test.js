@@ -32,6 +32,7 @@ import {
     waitForText,
     backendBeforeEach,
     waitForUrl,
+    setupBrowser,
 } from "../helpers";
 
 import { TEST_APPLICATION_SERVER_BASE_URL, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
@@ -54,10 +55,7 @@ describe("User Roles in the frontend", function () {
                 method: "POST",
             }).catch(console.error);
 
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: true,
-            });
+            browser = await setupBrowser();
             page = await browser.newPage();
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=emailpassword`),
