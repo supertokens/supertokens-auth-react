@@ -168,11 +168,11 @@ const getModifiedRecipeImplementation = (origImpl: RecipeInterface): RecipeInter
     return {
         ...origImpl,
         signIn: async function (input) {
-            const response = await origImpl.signIn({ ...input, tryLinkingWithSessionUser: false });
+            const response = await origImpl.signIn({ ...input, shouldTryLinkingWithSessionUser: false });
             return response;
         },
         signUp: async function (input) {
-            const response = await origImpl.signUp({ ...input, tryLinkingWithSessionUser: false });
+            const response = await origImpl.signUp({ ...input, shouldTryLinkingWithSessionUser: false });
             return response;
         },
     };

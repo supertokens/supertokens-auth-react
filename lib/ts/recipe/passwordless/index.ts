@@ -42,13 +42,13 @@ export default class Wrapper {
         input:
             | {
                   email: string;
-                  tryLinkingWithSessionUser?: boolean;
+                  shouldTryLinkingWithSessionUser?: boolean;
                   userContext?: UserContext;
                   options?: RecipeFunctionOptions;
               }
             | {
                   phoneNumber: string;
-                  tryLinkingWithSessionUser?: boolean;
+                  shouldTryLinkingWithSessionUser?: boolean;
                   userContext?: UserContext;
                   options?: RecipeFunctionOptions;
               }

@@ -83,7 +83,7 @@ export function useChildProps(
                 if (isPhoneNumber) {
                     const createRes = await recipeImplementation.createCode({
                         phoneNumber: contactInfo,
-                        tryLinkingWithSessionUser: false,
+                        shouldTryLinkingWithSessionUser: false,
                         userContext,
                     });
 
@@ -116,7 +116,7 @@ export function useChildProps(
                     // only pwless exists
                     const createRes = await recipeImplementation.createCode({
                         email,
-                        tryLinkingWithSessionUser: false,
+                        shouldTryLinkingWithSessionUser: false,
                         userContext,
                     });
 
@@ -147,7 +147,7 @@ export function useChildProps(
 
                 const response = await EmailPassword.getInstanceOrThrow().webJSRecipe.signIn({
                     formFields,
-                    tryLinkingWithSessionUser: false,
+                    shouldTryLinkingWithSessionUser: false,
                     userContext,
                 });
                 if (response.status === "WRONG_CREDENTIALS_ERROR") {
@@ -163,7 +163,7 @@ export function useChildProps(
                 const createInfo = isPhoneNumber ? { phoneNumber: contactInfo } : { email: contactInfo };
                 const createRes = await recipeImplementation.createCode({
                     ...createInfo,
-                    tryLinkingWithSessionUser: false,
+                    shouldTryLinkingWithSessionUser: false,
                     userContext,
                 });
                 if (createRes.status !== "OK") {
@@ -332,7 +332,7 @@ function getModifiedRecipeImplementation(
 
             const res = await originalImpl.createCode({
                 ...input,
-                tryLinkingWithSessionUser: false,
+                shouldTryLinkingWithSessionUser: false,
                 userContext: { ...input.userContext, additionalAttemptInfo },
             });
             if (res.status === "OK") {

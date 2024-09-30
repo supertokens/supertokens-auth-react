@@ -173,7 +173,7 @@ describe("General error rendering", function () {
                     { name: "name", value: "John Doe" },
                     { name: "age", value: "20" },
                 ],
-                '{"formFields":[{"id":"email","value":"john.doe2@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}],"tryLinkingWithSessionUser":false}',
+                '{"formFields":[{"id":"email","value":"john.doe2@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}],"shouldTryLinkingWithSessionUser":false}',
                 rid
             );
 

@@ -651,7 +651,7 @@ export async function defaultSignUp(page, rid = "emailpassword") {
             { name: "name", value: "John Doe" },
             { name: "age", value: "20" },
         ],
-        '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}],"tryLinkingWithSessionUser":false}',
+        '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}],"shouldTryLinkingWithSessionUser":false}',
         rid
     );
 }
@@ -668,7 +668,7 @@ export function getDefaultSignUpFieldValues({
         { name: "name", value: name },
         { name: "age", value: age },
     ];
-    const postValues = `{"formFields":[{"id":"email","value":"${email}"},{"id":"password","value":"${password}"},{"id":"name","value":"${name}"},{"id":"age","value":"${age}"},{"id":"country","value":""}],"tryLinkingWithSessionUser":false}`;
+    const postValues = `{"formFields":[{"id":"email","value":"${email}"},{"id":"password","value":"${password}"},{"id":"name","value":"${name}"},{"id":"age","value":"${age}"},{"id":"country","value":""}],"shouldTryLinkingWithSessionUser":false}`;
 
     return { fieldValues, postValues };
 }
@@ -798,19 +798,27 @@ export async function setupBrowser() {
             );
         });
         page.on("requestfinished", async (req) => {
-            const resp = await req.response();
-            const respText = req.url().startsWith(API_BASE_URL) ? await resp.text() : "response omitted";
-            addLog(
-                `browserlog.network ${JSON.stringify({
-                    t: new Date().toISOString(),
-                    message: `Request done: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
-                    pageurl: page.url(),
-                })}`
-            );
+            try {
+                const resp = await req.response();
+                const respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
+                    ? await resp.text()
+                    : "response omitted";
+                addLog(
+                    `browserlog.network ${JSON.stringify({
+                        t: new Date().toISOString(),
+                        message: `Request done: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
+                        pageurl: page.url(),
+                    })}`
+                );
+            } catch (e) {
+                console.log("requestfinished err", req.url(), e);
+            }
         });
         page.on("requestfailed", async (req) => {
             const resp = await req.response();
-            const respText = req.url().startsWith(API_BASE_URL) ? await resp.text() : "response omitted";
+            const respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
+                ? await resp.text()
+                : "response omitted";
             addLog(
                 `browserlog.network ${JSON.stringify({
                     t: new Date().toISOString(),

@@ -43,7 +43,7 @@ declare class UI {
         showBackButton: boolean;
         oauth2ClientInfo?:
             | {
-                  clientLogoUri?: string | undefined;
+                  logoUri?: string | undefined;
                   clientUri?: string | undefined;
                   clientName: string;
               }

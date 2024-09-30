@@ -86,7 +86,7 @@ export default class Wrapper {
         thirdPartyId: string;
         frontendRedirectURI: string;
         redirectURIOnProviderDashboard?: string;
-        tryLinkingWithSessionUser?: boolean;
+        shouldTryLinkingWithSessionUser?: boolean;
         userContext?: UserContext;
         options?: RecipeFunctionOptions;
     }): Promise<string> {

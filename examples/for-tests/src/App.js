@@ -443,7 +443,7 @@ if (testContext.enableMFA) {
 SuperTokens.init({
     usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
     clientType: testContext.clientType,
-    enableLogging: true,
+    enableDebugLogs: true,
     appInfo: {
         appName: "SuperTokens",
         websiteDomain: getWebsiteDomain(),
