@@ -798,27 +798,39 @@ export async function setupBrowser() {
             );
         });
         page.on("requestfinished", async (req) => {
+            if (req.method() === "OPTION") {
+                return;
+            }
+            const resp = await req.response();
+            let respText;
             try {
-                const resp = await req.response();
-                const respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
+                respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
                     ? await resp.text()
                     : "response omitted";
-                addLog(
-                    `browserlog.network ${JSON.stringify({
-                        t: new Date().toISOString(),
-                        message: `Request done: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
-                        pageurl: page.url(),
-                    })}`
-                );
             } catch (e) {
-                console.log("requestfinished err", req.url(), e);
+                respText = "response loading failed " + e.message;
             }
+            addLog(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Request done: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
+                    pageurl: page.url(),
+                })}`
+            );
         });
         page.on("requestfailed", async (req) => {
+            if (req.method() === "OPTION") {
+                return;
+            }
             const resp = await req.response();
-            const respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
-                ? await resp.text()
-                : "response omitted";
+            let respText;
+            try {
+                respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
+                    ? await resp.text()
+                    : "response omitted";
+            } catch (e) {
+                respText = "response loading failed " + e.message;
+            }
             addLog(
                 `browserlog.network ${JSON.stringify({
                     t: new Date().toISOString(),

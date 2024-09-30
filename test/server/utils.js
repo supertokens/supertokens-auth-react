@@ -20,8 +20,8 @@ let axios = require("axios").default;
 module.exports.executeCommand = async function (cmd) {
     return new Promise((resolve, reject) => {
         exec(cmd, (err, stdout, stderr) => {
-            console.log(err, stderr, stdout);
             if (err) {
+                console.log({ err });
                 reject(err);
                 return;
             }
