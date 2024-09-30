@@ -373,7 +373,7 @@ describe("SuperTokens Account linking", function () {
                 assert.strictEqual(new URL(page.url()).pathname, "/auth/");
                 assert.strictEqual(
                     await getGeneralError(page),
-                    "Cannot sign in / up because new email cannot be applied to existing account. Please contact support. (ERR_CODE_005)"
+                    "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_004)"
                 );
             });
 
