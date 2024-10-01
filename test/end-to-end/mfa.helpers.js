@@ -30,6 +30,8 @@ export async function setupUserWithAllFactors(page) {
     await tryEmailPasswordSignUp(page, email);
 
     await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+    // we wait for sometime so that the api to generate the token is called
+    await new Promise((res) => setTimeout(res, 500));
     const latestURLWithToken = await getLatestURLWithToken();
     await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
 
