@@ -211,7 +211,7 @@ export async function tryPasswordlessSignInUp(page, contactInfo, queryParams, is
 }
 export async function goToFactorChooser(page, waitForList = true) {
     const ele = await page.waitForSelector(".goToFactorChooser");
-    await waitFor(100);
+    await waitFor(500);
     await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), ele.click()]);
     if (waitForList) {
         await waitForSTElement(page, "[data-supertokens~=factorChooserList]");
