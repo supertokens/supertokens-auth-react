@@ -22,7 +22,7 @@ export type Args = {
     "passwordless.defaultToEmail": boolean;
     "oauth2.initialized": boolean;
     "oauth2.clientName": string;
-    "oauth2.clientLogoUri": string;
+    "oauth2.logoUri": string;
     "oauth2.clientUri": string;
     path?: string;
     query?: string;
@@ -110,7 +110,7 @@ const meta: Meta<Args> = {
         rootStyle: "",
         "oauth2.initialized": true,
         "oauth2.clientName": "My App",
-        "oauth2.clientLogoUri": "https://example.com/logo.png",
+        "oauth2.logoUri": "https://example.com/logo.png",
         "oauth2.clientUri": "https://example.com",
     },
     argTypes: {
@@ -233,7 +233,7 @@ const meta: Meta<Args> = {
                 truthy: true,
             },
         },
-        "oauth2.clientLogoUri": {
+        "oauth2.logoUri": {
             table: {
                 category: "oauth2",
             },

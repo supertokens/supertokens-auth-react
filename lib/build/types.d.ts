@@ -29,7 +29,7 @@ export declare type SuccessRedirectContextInApp = SuccessRedirectContextCommon &
 };
 export declare type SuccessRedirectContextOAuth2 = SuccessRedirectContextCommon & {
     action: "SUCCESS_OAUTH2";
-    loginChallenge: string;
+    frontendRedirectTo: string;
 };
 export declare type SuccessRedirectContext = SuccessRedirectContextInApp | SuccessRedirectContextOAuth2;
 export declare type GetRedirectionURLContext =
@@ -74,7 +74,7 @@ export declare type SuperTokensConfig = {
     };
     enableDebugLogs?: boolean;
     getRedirectionURL?: (
-        context: GetRedirectionURLContext,
+        context: NormalisedGetRedirectionURLContext<GetRedirectionURLContext>,
         userContext: UserContext
     ) => Promise<string | undefined | null>;
     style?: string;
@@ -226,4 +226,7 @@ export declare type PartialAuthComponent = {
     component: React.FC<PartialAuthComponentProps>;
 };
 export declare type AuthComponent<T = any> = PartialAuthComponent | FullPageAuthComponent<T>;
+export declare type NormalisedGetRedirectionURLContext<RecipeContext> = RecipeContext & {
+    tenantIdFromQueryParams: string | undefined;
+};
 export {};

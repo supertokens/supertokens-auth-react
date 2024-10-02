@@ -38,6 +38,8 @@ import {
     getTestEmail,
     getOAuth2Error,
     waitForSTElement,
+    isOauth2Supported,
+    setupBrowser,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 
@@ -63,7 +65,7 @@ describe("SuperTokens OAuth2Provider", function () {
 
     before(async function () {
         // Skip these tests if running in React 16
-        if (isReact16()) {
+        if (isReact16() || !(await isOauth2Supported())) {
             skipped = true;
             this.skip();
         }
@@ -80,10 +82,7 @@ describe("SuperTokens OAuth2Provider", function () {
             }),
         }).catch(console.error);
 
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {
@@ -125,11 +124,9 @@ describe("SuperTokens OAuth2Provider", function () {
             const { client } = await createOAuth2Client({
                 scope: "offline_access profile openid email",
                 redirectUris: [`${TEST_CLIENT_BASE_URL}/oauth/callback`],
-                accessTokenStrategy: "jwt",
                 tokenEndpointAuthMethod: "none",
                 grantTypes: ["authorization_code", "refresh_token"],
                 responseTypes: ["code", "id_token"],
-                skipConsent: true,
             });
 
             await setOAuth2ClientInfo(page, client.clientId);
@@ -152,7 +149,7 @@ describe("SuperTokens OAuth2Provider", function () {
 
             // Validate token data
             const tokenData = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenData.aud, [client.clientId]);
+            assert.deepStrictEqual(tokenData.aud, client.clientId);
 
             // Logout
             const logoutButton = await getOAuth2LogoutButton(page);
@@ -262,7 +259,7 @@ describe("SuperTokens OAuth2Provider", function () {
 
             // Validate token data
             const tokenData = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenData.aud, [client.clientId]);
+            assert.deepStrictEqual(tokenData.aud, client.clientId);
         });
 
         it("should require logging in again with prompt=login", async function () {
@@ -296,7 +293,7 @@ describe("SuperTokens OAuth2Provider", function () {
 
             // Validate token data
             const tokenData = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenData.aud, [client.clientId]);
+            assert.deepStrictEqual(tokenData.aud, client.clientId);
 
             await Promise.all([
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -339,7 +336,7 @@ describe("SuperTokens OAuth2Provider", function () {
 
             // Validate token data
             const tokenData = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenData.aud, [client.clientId]);
+            assert.deepStrictEqual(tokenData.aud, client.clientId);
 
             await Promise.all([
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -395,7 +392,7 @@ describe("SuperTokens OAuth2Provider", function () {
 
             // Validate token data
             const tokenDataAfterLogin = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenDataAfterLogin.aud, [client.clientId]);
+            assert.deepStrictEqual(tokenDataAfterLogin.aud, client.clientId);
 
             // Although the react-oidc-context library automatically refreshes the
             // token, we wait for 4 seconds and reload the page to ensure a refresh.
@@ -403,7 +400,7 @@ describe("SuperTokens OAuth2Provider", function () {
             await Promise.all([page.reload(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             const tokenDataAfterRefresh = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenDataAfterRefresh.aud, [client.clientId]);
+            assert.deepStrictEqual(tokenDataAfterRefresh.aud, client.clientId);
 
             // Validate the token was refreshed
             assert(tokenDataAfterLogin.iat !== tokenDataAfterRefresh.iat);
@@ -441,7 +438,7 @@ describe("SuperTokens OAuth2Provider", function () {
 
             // Validate token data
             const tokenDataAfterLogin = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenDataAfterLogin.aud, [client.clientId]);
+            assert.deepStrictEqual(tokenDataAfterLogin.aud, client.clientId);
 
             await page.evaluate(
                 (url) =>
@@ -463,7 +460,7 @@ describe("SuperTokens OAuth2Provider", function () {
             await waitFor(1000);
 
             const tokenDataAfterRefresh = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenDataAfterRefresh.aud, [client.clientId]);
+            assert.deepStrictEqual(tokenDataAfterRefresh.aud, client.clientId);
 
             // Validate the token was refreshed
             assert(tokenDataAfterLogin.iat !== tokenDataAfterRefresh.iat);
@@ -510,7 +507,7 @@ describe("SuperTokens OAuth2Provider", function () {
 
             // Validate token data
             const tokenDataAfterLogin = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenDataAfterLogin.aud, [client.clientId]);
+            assert.deepStrictEqual(tokenDataAfterLogin.aud, client.clientId);
 
             // Although the react-oidc-context library automatically refreshes the
             // token, we wait for 4 seconds and reload the page to ensure a refresh.
@@ -518,7 +515,7 @@ describe("SuperTokens OAuth2Provider", function () {
             await Promise.all([page.reload(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             const tokenDataAfterRefresh = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenDataAfterRefresh.aud, [client.clientId]);
+            assert.deepStrictEqual(tokenDataAfterRefresh.aud, client.clientId);
 
             // Validate the token was refreshed
             assert(tokenDataAfterLogin.iat !== tokenDataAfterRefresh.iat);
@@ -564,7 +561,7 @@ describe("SuperTokens OAuth2Provider", function () {
 
             // Validate token data
             const tokenDataAfterLogin = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenDataAfterLogin.aud, [client.clientId]);
+            assert.deepStrictEqual(tokenDataAfterLogin.aud, client.clientId);
 
             // Although the react-oidc-context library automatically refreshes the
             // token, we wait for 4 seconds and reload the page to ensure a refresh.
@@ -572,7 +569,7 @@ describe("SuperTokens OAuth2Provider", function () {
             await Promise.all([page.reload(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             const tokenDataAfterRefresh = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenDataAfterRefresh.aud, [client.clientId]);
+            assert.deepStrictEqual(tokenDataAfterRefresh.aud, client.clientId);
 
             // Validate the token was refreshed
             assert(tokenDataAfterLogin.iat !== tokenDataAfterRefresh.iat);
@@ -652,7 +649,7 @@ describe("SuperTokens OAuth2Provider", function () {
 
             // Validate token data
             const tokenDataAfterLogin = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenDataAfterLogin.aud, [client.clientId]);
+            assert.deepStrictEqual(tokenDataAfterLogin.aud, client.clientId);
 
             // Although the react-oidc-context library automatically refreshes the
             // token, we wait for 6 seconds and reload the page to ensure a refresh.
@@ -660,7 +657,7 @@ describe("SuperTokens OAuth2Provider", function () {
             await Promise.all([page.reload(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             const tokenDataAfterRefresh = await getOAuth2TokenData(page);
-            assert.deepStrictEqual(tokenDataAfterRefresh.aud, [client.clientId]);
+            assert.deepStrictEqual(tokenDataAfterRefresh.aud, client.clientId);
 
             // Validate the token was refreshed
             assert(tokenDataAfterLogin.iat !== tokenDataAfterRefresh.iat);

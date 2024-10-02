@@ -66,8 +66,14 @@ const MultiFactorAuth = require("supertokens-node/recipe/multifactorauth");
 const TOTPRaw = require("supertokens-node/lib/build/recipe/totp/recipe").default;
 const TOTP = require("supertokens-node/recipe/totp");
 
-const OAuth2ProviderRaw = require("supertokens-node/lib/build/recipe/oauth2provider/recipe").default;
-const OAuth2Provider = require("supertokens-node/recipe/oauth2provider");
+let OAuth2ProviderRaw = undefined;
+let OAuth2Provider = undefined;
+try {
+    OAuth2ProviderRaw = require("supertokens-node/lib/build/recipe/oauth2provider/recipe").default;
+    OAuth2Provider = require("supertokens-node/recipe/oauth2provider");
+} catch {
+    // OAuth2Provider is not supported by the tested version of the node SDK
+}
 
 const OTPAuth = require("otpauth");
 
@@ -498,15 +504,20 @@ app.get("/test/featureFlags", (req, res) => {
     available.push("accountlinking");
     available.push("mfa");
     available.push("recipeConfig");
+    available.push("oauth2");
 
     res.send({
         available,
     });
 });
 
-app.post("/test/create-oauth2-client", async (req, res) => {
-    const { client } = await OAuth2Provider.createOAuth2Client(req.body);
-    res.send({ client });
+app.post("/test/create-oauth2-client", async (req, res, next) => {
+    try {
+        const { client } = await OAuth2Provider.createOAuth2Client(req.body);
+        res.send({ client });
+    } catch (e) {
+        next(e);
+    }
 });
 
 app.use(errorHandler());
@@ -552,7 +563,9 @@ function initST() {
         UserMetadataRaw.reset();
         MultiFactorAuthRaw.reset();
         TOTPRaw.reset();
-        OAuth2ProviderRaw.reset();
+        if (OAuth2ProviderRaw) {
+            OAuth2ProviderRaw.reset();
+        }
 
         EmailVerificationRaw.reset();
         EmailPasswordRaw.reset();
@@ -751,8 +764,10 @@ function initST() {
                 },
             }),
         ],
-        ["oauth2provider", OAuth2Provider.init()],
     ];
+    if (OAuth2Provider) {
+        recipeList.push(["oauth2provider", OAuth2Provider.init()]);
+    }
 
     passwordlessConfig = {
         contactMethod: "EMAIL_OR_PHONE",

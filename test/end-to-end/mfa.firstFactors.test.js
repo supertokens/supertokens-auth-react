@@ -28,6 +28,7 @@ import {
     submitForm,
     isMFASupported,
     setAccountLinkingConfig,
+    setupBrowser,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 
@@ -56,10 +57,7 @@ describe("SuperTokens MFA firstFactors support", function () {
         }).catch(console.error);
 
         await setAccountLinkingConfig(true, true, false);
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {

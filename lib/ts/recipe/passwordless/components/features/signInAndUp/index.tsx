@@ -21,7 +21,7 @@ import { useMemo } from "react";
 
 import AuthComponentWrapper from "../../../../../components/authCompWrapper";
 import { useUserContext } from "../../../../../usercontext";
-import { getRedirectToPathFromURL, useRethrowInRender } from "../../../../../utils";
+import { getRedirectToPathFromURL, getTenantIdFromQueryParams, useRethrowInRender } from "../../../../../utils";
 import { EmailVerificationClaim } from "../../../../emailverification";
 import EmailVerification from "../../../../emailverification/recipe";
 import { getInvalidClaimsFromResponse } from "../../../../session";
@@ -93,6 +93,7 @@ export function useChildProps(
                             await evInstance.redirect(
                                 {
                                     action: "VERIFY_EMAIL",
+                                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                                 },
                                 navigate,
                                 undefined,
@@ -208,7 +209,7 @@ function getModifiedRecipeImplementation(
 
             const res = await originalImpl.createCode({
                 ...input,
-                tryLinkingWithSessionUser: false,
+                shouldTryLinkingWithSessionUser: false,
                 userContext: { ...input.userContext, additionalAttemptInfo },
             });
             if (res.status === "OK") {

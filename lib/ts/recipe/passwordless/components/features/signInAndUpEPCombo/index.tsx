@@ -22,7 +22,12 @@ import STGeneralError from "supertokens-web-js/lib/build/error";
 
 import AuthComponentWrapper from "../../../../../components/authCompWrapper";
 import { useUserContext } from "../../../../../usercontext";
-import { getRedirectToPathFromURL, useRethrowInRender, validateForm } from "../../../../../utils";
+import {
+    getRedirectToPathFromURL,
+    getTenantIdFromQueryParams,
+    useRethrowInRender,
+    validateForm,
+} from "../../../../../utils";
 import EmailPassword from "../../../../emailpassword/recipe";
 import { EmailVerificationClaim } from "../../../../emailverification";
 import EmailVerification from "../../../../emailverification/recipe";
@@ -78,7 +83,7 @@ export function useChildProps(
                 if (isPhoneNumber) {
                     const createRes = await recipeImplementation.createCode({
                         phoneNumber: contactInfo,
-                        tryLinkingWithSessionUser: false,
+                        shouldTryLinkingWithSessionUser: false,
                         userContext,
                     });
 
@@ -111,7 +116,7 @@ export function useChildProps(
                     // only pwless exists
                     const createRes = await recipeImplementation.createCode({
                         email,
-                        tryLinkingWithSessionUser: false,
+                        shouldTryLinkingWithSessionUser: false,
                         userContext,
                     });
 
@@ -142,7 +147,7 @@ export function useChildProps(
 
                 const response = await EmailPassword.getInstanceOrThrow().webJSRecipe.signIn({
                     formFields,
-                    tryLinkingWithSessionUser: false,
+                    shouldTryLinkingWithSessionUser: false,
                     userContext,
                 });
                 if (response.status === "WRONG_CREDENTIALS_ERROR") {
@@ -158,7 +163,7 @@ export function useChildProps(
                 const createInfo = isPhoneNumber ? { phoneNumber: contactInfo } : { email: contactInfo };
                 const createRes = await recipeImplementation.createCode({
                     ...createInfo,
-                    tryLinkingWithSessionUser: false,
+                    shouldTryLinkingWithSessionUser: false,
                     userContext,
                 });
                 if (createRes.status !== "OK") {
@@ -203,6 +208,7 @@ export function useChildProps(
                             await evInstance.redirect(
                                 {
                                     action: "VERIFY_EMAIL",
+                                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                                 },
                                 navigate,
                                 undefined,
@@ -326,7 +332,7 @@ function getModifiedRecipeImplementation(
 
             const res = await originalImpl.createCode({
                 ...input,
-                tryLinkingWithSessionUser: false,
+                shouldTryLinkingWithSessionUser: false,
                 userContext: { ...input.userContext, additionalAttemptInfo },
             });
             if (res.status === "OK") {

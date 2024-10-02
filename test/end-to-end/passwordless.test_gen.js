@@ -37,6 +37,7 @@ import {
     isAccountLinkingSupported,
     backendBeforeEach,
     waitForUrl,
+    setupBrowser,
 } from "../helpers";
 
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -1907,10 +1908,7 @@ async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCoun
         }),
     }).catch(console.error);
 
-    const browser = await puppeteer.launch({
-        args: ["--no-sandbox", "--disable-setuid-sandbox", "--remote-debugging-port=9222"],
-        headless: true,
-    });
+    const browser = await setupBrowser();
     const page = await browser.newPage();
     page.on("console", (consoleObj) => {
         const log = consoleObj.text();

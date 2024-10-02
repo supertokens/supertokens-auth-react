@@ -24,7 +24,7 @@ import STGeneralError from "supertokens-web-js/utils/error";
 
 import AuthComponentWrapper from "../../../../../components/authCompWrapper";
 import { useUserContext } from "../../../../../usercontext";
-import { useRethrowInRender } from "../../../../../utils";
+import { getTenantIdFromQueryParams, useRethrowInRender } from "../../../../../utils";
 import { EmailVerificationClaim } from "../../../../emailverification";
 import EmailVerification from "../../../../emailverification/recipe";
 import { getInvalidClaimsFromResponse } from "../../../../session";
@@ -96,6 +96,7 @@ export function useChildProps(
                             await evInstance.redirect(
                                 {
                                     action: "VERIFY_EMAIL",
+                                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                                 },
                                 navigate,
                                 undefined,
@@ -167,11 +168,11 @@ const getModifiedRecipeImplementation = (origImpl: RecipeInterface): RecipeInter
     return {
         ...origImpl,
         signIn: async function (input) {
-            const response = await origImpl.signIn({ ...input, tryLinkingWithSessionUser: false });
+            const response = await origImpl.signIn({ ...input, shouldTryLinkingWithSessionUser: false });
             return response;
         },
         signUp: async function (input) {
-            const response = await origImpl.signUp({ ...input, tryLinkingWithSessionUser: false });
+            const response = await origImpl.signUp({ ...input, shouldTryLinkingWithSessionUser: false });
             return response;
         },
     };

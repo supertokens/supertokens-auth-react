@@ -129,7 +129,7 @@ export type AuthPageConf = {
     oauth2: {
         initialized: boolean;
         clientName: string;
-        clientLogoUri: string;
+        logoUri: string;
         clientUri: string;
     };
 };
@@ -231,7 +231,7 @@ export function buildInit(args: AuthPageConf, funcOverrides: any) {
                                 status: "OK",
                                 info: {
                                     clientName: args.oauth2.clientName,
-                                    clientLogoUri: args.oauth2.clientLogoUri || undefined,
+                                    logoUri: args.oauth2.logoUri || undefined,
                                     clientUri: args.oauth2.clientUri || undefined,
                                 },
                                 fetchResponse: undefined as any,

@@ -37,6 +37,8 @@ import { AccessDeniedScreen } from "../../../recipe/session/prebuiltui";
 import { LinkClicked as PasswordlessLinkClicked } from "../../../recipe/passwordless/prebuiltui";
 import EmailVerification from "../../../recipe/emailverification";
 import MultiFactorAuth from "../../../recipe/multifactorauth";
+import OAuth2Provider from "../../../recipe/oauth2provider";
+import { OAuth2ProviderPreBuiltUI } from "../../../recipe/oauth2provider/prebuiltui";
 
 import { DateProviderReference } from "../../../utils/dateProvider";
 import { DateProviderInput, DateProviderInterface } from "../../../utils/dateProvider/types";
@@ -1108,8 +1110,32 @@ function testAuthPagePropTypes() {
         // @ts-expect-error This has to be a valid first factor
         <AuthPage preBuiltUIList={[ThirdPartyPreBuiltUI]} factors={["totp"]} />,
         <AuthPage
-            preBuiltUIList={[ThirdPartyPreBuiltUI]}
+            preBuiltUIList={[ThirdPartyPreBuiltUI, OAuth2ProviderPreBuiltUI]}
             factors={["thirdparty", "emailpassword", "link-email", "link-phone", "otp-email", "otp-phone"]}
         />,
     ];
 }
+
+SuperTokens.init({
+    appInfo: {} as any,
+    recipeList: [
+        OAuth2Provider.init({
+            oauth2LogoutScreen: {
+                style: "",
+            },
+            style: "",
+            getRedirectionURL: async (context, userContext) => {
+                if (context.action === "SUCCESS_OAUTH2") {
+                    return undefined;
+                }
+                if (context.action === "CONTINUE_OAUTH2_AFTER_REFRESH") {
+                    return undefined;
+                }
+                if (context.action === "POST_OAUTH2_LOGOUT_REDIRECT") {
+                    return undefined;
+                }
+                return undefined;
+            },
+        }),
+    ],
+});

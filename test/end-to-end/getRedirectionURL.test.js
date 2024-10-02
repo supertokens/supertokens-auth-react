@@ -17,6 +17,7 @@ import {
     isPasswordlessSupported,
     isThirdPartyPasswordlessSupported,
     backendBeforeEach,
+    setupBrowser,
 } from "../helpers";
 
 import {
@@ -38,10 +39,7 @@ describe("getRedirectionURL Tests", function () {
                     method: "POST",
                 }).catch(console.error);
 
-                browser = await puppeteer.launch({
-                    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                    headless: true,
-                });
+                browser = await setupBrowser();
             });
 
             after(async function () {
@@ -86,10 +84,7 @@ describe("getRedirectionURL Tests", function () {
                     method: "POST",
                 }).catch(console.error);
 
-                browser = await puppeteer.launch({
-                    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                    headless: true,
-                });
+                browser = await setupBrowser();
                 page = await browser.newPage();
                 await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdparty`);
             });
@@ -139,10 +134,7 @@ describe("getRedirectionURL Tests", function () {
                     method: "POST",
                 }).catch(console.error);
 
-                browser = await puppeteer.launch({
-                    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                    headless: true,
-                });
+                browser = await setupBrowser();
                 page = await browser.newPage();
             });
 
@@ -216,10 +208,7 @@ describe("getRedirectionURL Tests", function () {
                     }),
                 }).catch(console.error);
 
-                browser = await puppeteer.launch({
-                    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                    headless: true,
-                });
+                browser = await setupBrowser();
                 page = await browser.newPage();
                 await Promise.all([
                     page.goto(
@@ -303,10 +292,7 @@ describe("getRedirectionURL Tests", function () {
                     }),
                 }).catch(console.error);
 
-                browser = await puppeteer.launch({
-                    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                    headless: true,
-                });
+                browser = await setupBrowser();
                 page = await browser.newPage();
                 await Promise.all([
                     page.goto(
@@ -390,10 +376,7 @@ describe("getRedirectionURL Tests", function () {
                         method: "POST",
                     }).catch(console.error);
 
-                    browser = await puppeteer.launch({
-                        args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                        headless: true,
-                    });
+                    browser = await setupBrowser();
 
                     page = await browser.newPage();
                     // We need to set the localStorage value before the page loads to ensure ST initialises with the correct value
@@ -464,10 +447,7 @@ describe("getRedirectionURL Tests", function () {
                         }),
                     }).catch(console.error);
 
-                    browser = await puppeteer.launch({
-                        args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                        headless: true,
-                    });
+                    browser = await setupBrowser();
                     page = await browser.newPage();
                     // We need to set the localStorage value before the page loads to ensure ST initialises with the correct value
                     await page.evaluateOnNewDocument(() => {
@@ -557,10 +537,7 @@ describe("getRedirectionURL Tests", function () {
                         }),
                     }).catch(console.error);
 
-                    browser = await puppeteer.launch({
-                        args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                        headless: true,
-                    });
+                    browser = await setupBrowser();
                     page = await browser.newPage();
                     // We need to set the localStorage value before the page loads to ensure ST initialises with the correct value
                     await page.evaluateOnNewDocument(() => {
@@ -632,10 +609,7 @@ describe("getRedirectionURL Tests", function () {
                         method: "POST",
                     }).catch(console.error);
 
-                    browser = await puppeteer.launch({
-                        args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                        headless: true,
-                    });
+                    browser = await setupBrowser();
 
                     page = await browser.newPage();
                     // We need to set the localStorage value before the page loads to ensure ST initialises with the correct value

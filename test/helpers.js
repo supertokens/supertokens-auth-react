@@ -27,7 +27,9 @@ import {
 
 import path from "path";
 import assert from "assert";
+import { appendFile } from "fs/promises";
 import mkdirp from "mkdirp";
+import Puppeteer from "puppeteer";
 
 const SESSION_STORAGE_STATE_KEY = "supertokens-oauth-state";
 
@@ -649,7 +651,7 @@ export async function defaultSignUp(page, rid = "emailpassword") {
             { name: "name", value: "John Doe" },
             { name: "age", value: "20" },
         ],
-        '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}],"tryLinkingWithSessionUser":false}',
+        '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}],"shouldTryLinkingWithSessionUser":false}',
         rid
     );
 }
@@ -666,7 +668,7 @@ export function getDefaultSignUpFieldValues({
         { name: "name", value: name },
         { name: "age", value: age },
     ];
-    const postValues = `{"formFields":[{"id":"email","value":"${email}"},{"id":"password","value":"${password}"},{"id":"name","value":"${name}"},{"id":"age","value":"${age}"},{"id":"country","value":""}],"tryLinkingWithSessionUser":false}`;
+    const postValues = `{"formFields":[{"id":"email","value":"${email}"},{"id":"password","value":"${password}"},{"id":"name","value":"${name}"},{"id":"age","value":"${age}"},{"id":"country","value":""}],"shouldTryLinkingWithSessionUser":false}`;
 
     return { fieldValues, postValues };
 }
@@ -752,12 +754,114 @@ export async function getTextInDashboardNoAuth(page) {
     return await page.evaluate(() => document.querySelector("#root > div > div.fill > div.not-logged-in").innerText);
 }
 
+export async function setupBrowser() {
+    const browser = await Puppeteer.launch({
+        args: [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-web-security",
+            "--host-resolver-rules=MAP example.com 127.0.0.1, MAP *.example.com 127.0.0.1",
+        ],
+        headless: process.env.HEADLESS !== "false",
+    });
+    browser.logs = [];
+    function addLog(str) {
+        if (process.env.BROWSER_LOGS !== undefined) {
+            console.log(str);
+        }
+        browser.logs.push(str);
+    }
+    const origNewPage = browser.newPage.bind(browser);
+    browser.newPage = async () => {
+        const page = await origNewPage();
+        page.on("console", (msg) => {
+            if (msg.text().startsWith("com.supertokens")) {
+                addLog(msg.text());
+            } else {
+                addLog(
+                    `browserlog.console ${JSON.stringify({
+                        t: new Date().toISOString(),
+                        message: msg.text(),
+                        pageurl: page.url(),
+                    })}`
+                );
+            }
+        });
+
+        page.on("request", (req) => {
+            addLog(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Requested: ${req.method()} ${req.url()} (${req.postData()})`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        page.on("requestfinished", async (req) => {
+            if (req.method() === "OPTION") {
+                return;
+            }
+            const resp = await req.response();
+            let respText;
+            try {
+                respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
+                    ? await resp.text()
+                    : "response omitted";
+            } catch (e) {
+                respText = "response loading failed " + e.message;
+            }
+            addLog(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Request done: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        page.on("requestfailed", async (req) => {
+            if (req.method() === "OPTION") {
+                return;
+            }
+            const resp = await req.response();
+            let respText;
+            try {
+                respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
+                    ? await resp.text()
+                    : "response omitted";
+            } catch (e) {
+                respText = "response loading failed " + e.message;
+            }
+            addLog(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Request failed: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        return page;
+    };
+    browser.on("disconnected", async () => {
+        if (process.env.MOCHA_FILE !== undefined) {
+            const reportFile = path.parse(process.env.MOCHA_FILE);
+            const logFile = path.join(reportFile.dir, "logs", "browser.log");
+            await appendFile(logFile, browser.logs.join("\n"));
+        }
+    });
+    return browser;
+}
+
 /**
  * @param {import("mocha").Context} ctx
  * @param {import("puppeteer").Browser} browser
  */
 export async function screenshotOnFailure(ctx, browser) {
     if (ctx.currentTest?.isFailed()) {
+        console.log(
+            `${ctx.currentTest.fullTitle()} failed ${new Date(
+                Date.now() - ctx.currentTest.duration
+            ).toISOString()} - ${new Date().toISOString()}`
+        );
         const pages = await browser.pages();
 
         let screenshotRoot;
@@ -941,6 +1045,15 @@ export async function isAccountLinkingSupported() {
 export async function isMFASupported() {
     const features = await getFeatureFlags();
     if (!features.includes("mfa")) {
+        return false;
+    }
+
+    return true;
+}
+
+export async function isOauth2Supported() {
+    const features = await getFeatureFlags();
+    if (!features.includes("oauth2")) {
         return false;
     }
 

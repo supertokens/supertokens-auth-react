@@ -22,9 +22,9 @@ import { useContext, Fragment } from "react";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
-import { getQueryParams, useRethrowInRender } from "../../../../../utils";
+import { getQueryParams, getTenantIdFromQueryParams, useRethrowInRender } from "../../../../../utils";
 import DynamicLoginMethodsSpinner from "../../../../multitenancy/components/features/dynamicLoginMethodsSpinner";
-import { SessionContext } from "../../../../session";
+import SessionAPIWrapper, { SessionContext } from "../../../../session";
 import { defaultTranslationsOAuth2Provider } from "../../themes/translations";
 
 import type { FeatureBaseProps, UserContext } from "../../../../../types";
@@ -46,20 +46,28 @@ export const TryRefreshPage: React.FC<Prop> = (props) => {
         userContext = props.userContext;
     }
 
+    SessionAPIWrapper.attemptRefreshingSession;
     React.useEffect(() => {
         if (sessionContext.loading === false) {
-            void props.recipe
-                .redirect(
-                    {
-                        action: "CONTINUE_OAUTH2_AFTER_REFRESH",
-                        loginChallenge: loginChallenge ?? "",
-                        recipeId: "oauth2provider",
-                    },
-                    props.navigate,
-                    {},
-                    userContext
-                )
-                .catch(rethrowInRender);
+            if (loginChallenge) {
+                (async function () {
+                    const { frontendRedirectTo } = await props.recipe.webJSRecipe.getRedirectURLToContinueOAuthFlow({
+                        loginChallenge,
+                        userContext,
+                    });
+                    return props.recipe.redirect(
+                        {
+                            action: "CONTINUE_OAUTH2_AFTER_REFRESH",
+                            frontendRedirectTo,
+                            tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+                            recipeId: "oauth2provider",
+                        },
+                        props.navigate,
+                        {},
+                        userContext
+                    );
+                })().catch(rethrowInRender);
+            }
         }
     }, [loginChallenge, props.recipe, props.navigate, userContext, sessionContext]);
 

@@ -23,6 +23,7 @@ import SuperTokens from "../../superTokens";
 import {
     getLocalStorage,
     getNormalisedUserContext,
+    getTenantIdFromQueryParams,
     isTest,
     removeFromLocalStorage,
     setLocalStorage,
@@ -42,6 +43,7 @@ import type {
     Navigate,
     NormalisedAppInfo,
     NormalisedConfigWithAppInfoAndRecipeID,
+    NormalisedGetRedirectionURLContext,
     RecipeInitResult,
     SuccessRedirectContextInApp,
     SuccessRedirectContextOAuth2,
@@ -131,6 +133,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         successRedirectContext:
             | ((Omit<SuccessRedirectContextInApp, "recipeId"> | Omit<SuccessRedirectContextOAuth2, "recipeId">) & {
                   recipeId: string;
+                  tenantIdFromQueryParams: string | undefined;
               })
             | undefined,
         fallbackRecipeId: string,
@@ -208,6 +211,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                     createdNewUser: false,
                     isNewRecipeUser: false,
                     newSessionCreated: false,
+                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                 };
             }
         }
@@ -218,7 +222,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
 
         if (successRedirectContext.action === "SUCCESS_OAUTH2") {
             return OAuth2Provider.getInstanceOrThrow().redirect(
-                successRedirectContext as SuccessRedirectContextOAuth2,
+                successRedirectContext as NormalisedGetRedirectionURLContext<SuccessRedirectContextOAuth2>,
                 navigate,
                 {},
                 userContext
@@ -230,7 +234,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         }
 
         return SuperTokens.getInstanceOrThrow().redirect(
-            successRedirectContext as SuccessRedirectContextInApp,
+            successRedirectContext as NormalisedGetRedirectionURLContext<SuccessRedirectContextInApp>,
             navigate,
             {},
             userContext
@@ -242,6 +246,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
      * @returns "/"
      */
     getDefaultRedirectionURL = async (): Promise<string> => {
+        // We do not use the util here, since we are redirecting outside of the SDK routes
         return "/";
     };
 

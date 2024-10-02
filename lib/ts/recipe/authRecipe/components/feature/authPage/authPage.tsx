@@ -25,7 +25,15 @@ import SuperTokens from "../../../../../superTokens";
 import { TranslationContextProvider } from "../../../../../translation/translationContext";
 import { defaultTranslationsCommon } from "../../../../../translation/translations";
 import { UserContextProvider, useUserContext } from "../../../../../usercontext";
-import { getRedirectToPathFromURL, mergeObjects, updateQueryParam, useRethrowInRender } from "../../../../../utils";
+import {
+    clearQueryParams,
+    getRedirectToPathFromURL,
+    getTenantIdFromQueryParams,
+    mergeObjects,
+    updateQueryParam,
+    useOnMountAPICall,
+    useRethrowInRender,
+} from "../../../../../utils";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
 import { FactorIds } from "../../../../multifactorauth/types";
 import DynamicLoginMethodsSpinner from "../../../../multitenancy/components/features/dynamicLoginMethodsSpinner";
@@ -168,17 +176,30 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
             );
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
 
-    useEffect(() => {
-        if (oauth2ClientInfo) {
-            return;
+    useOnMountAPICall(
+        async () => {
+            if (oauth2ClientInfo) {
+                return;
+            }
+            const oauth2Recipe = OAuth2Provider.getInstance();
+            if (oauth2Recipe !== undefined && loginChallenge !== null) {
+                return oauth2Recipe.webJSRecipe.getLoginChallengeInfo({ loginChallenge, userContext });
+            }
+            return undefined;
+        },
+        async (info) => {
+            if (info !== undefined) {
+                if (info.status === "OK") {
+                    setOAuth2ClientInfo(info.info);
+                } else {
+                    setError("SOMETHING_WENT_WRONG_ERROR");
+                }
+            }
+        },
+        () => {
+            return clearQueryParams(["loginChallenge"]);
         }
-        const oauth2Recipe = OAuth2Provider.getInstance();
-        if (oauth2Recipe !== undefined && loginChallenge !== null) {
-            void OAuth2Provider.getInstanceOrThrow()
-                .webJSRecipe.getLoginChallengeInfo({ loginChallenge, userContext })
-                .then(({ info }) => setOAuth2ClientInfo(info));
-        }
-    }, [setOAuth2ClientInfo, loginChallenge, oauth2ClientInfo]);
+    );
 
     useEffect(() => {
         if (sessionLoadedAndNotRedirecting) {
@@ -196,23 +217,30 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                     Session.getInstanceOrThrow().config.onHandleEvent({
                         action: "SESSION_ALREADY_EXISTS",
                     });
-                    if (loginChallenge !== null) {
-                        void Session.getInstanceOrThrow()
-                            .validateGlobalClaimsAndHandleSuccessRedirection(
+                    const oauth2Recipe = OAuth2Provider.getInstance();
+                    if (loginChallenge !== null && oauth2Recipe !== undefined) {
+                        (async function () {
+                            const { frontendRedirectTo } =
+                                await oauth2Recipe.webJSRecipe.getRedirectURLToContinueOAuthFlow({
+                                    loginChallenge,
+                                    userContext,
+                                });
+                            return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
                                 {
                                     action: "SUCCESS_OAUTH2",
                                     createdNewUser: false,
                                     isNewRecipeUser: false,
-                                    loginChallenge,
+                                    frontendRedirectTo,
                                     newSessionCreated: false,
+                                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                                     recipeId: Session.RECIPE_ID,
                                 },
                                 Session.RECIPE_ID,
                                 getRedirectToPathFromURL(),
                                 userContext,
                                 props.navigate
-                            )
-                            .catch(rethrowInRender);
+                            );
+                        })().catch(rethrowInRender);
                     } else {
                         void Session.getInstanceOrThrow()
                             .validateGlobalClaimsAndHandleSuccessRedirection(
@@ -284,19 +312,33 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     ]);
 
     const onAuthSuccess = useCallback(
-        (ctx: AuthSuccessContext) => {
+        async (ctx: AuthSuccessContext) => {
+            const oauth2Recipe = OAuth2Provider.getInstance();
+            if (loginChallenge === null || oauth2Recipe === undefined) {
+                return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                    {
+                        ...ctx,
+                        action: "SUCCESS",
+                        tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+                        redirectToPath: getRedirectToPathFromURL(),
+                    },
+                    ctx.recipeId,
+                    getRedirectToPathFromURL(),
+                    userContext,
+                    props.navigate
+                );
+            }
+            const { frontendRedirectTo } = await oauth2Recipe.webJSRecipe.getRedirectURLToContinueOAuthFlow({
+                loginChallenge,
+                userContext,
+            });
             return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
-                loginChallenge !== null
-                    ? {
-                          ...ctx,
-                          action: "SUCCESS_OAUTH2",
-                          loginChallenge,
-                      }
-                    : {
-                          ...ctx,
-                          action: "SUCCESS",
-                          redirectToPath: getRedirectToPathFromURL(),
-                      },
+                {
+                    ...ctx,
+                    action: "SUCCESS_OAUTH2",
+                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+                    frontendRedirectTo,
+                },
                 ctx.recipeId,
                 getRedirectToPathFromURL(),
                 userContext,
@@ -307,7 +349,8 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     );
 
     const childProps: AuthPageThemeProps | undefined =
-        authComponentListInfo !== undefined && (loginChallenge === null || oauth2ClientInfo !== undefined)
+        authComponentListInfo !== undefined &&
+        (loginChallenge === null || oauth2ClientInfo !== undefined || OAuth2Provider.getInstance() === undefined)
             ? {
                   ...authComponentListInfo,
                   oauth2ClientInfo,

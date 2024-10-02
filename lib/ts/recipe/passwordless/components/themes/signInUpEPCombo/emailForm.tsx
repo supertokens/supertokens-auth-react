@@ -17,6 +17,7 @@ import STGeneralError from "supertokens-web-js/utils/error";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import { getTenantIdFromQueryParams } from "../../../../../utils";
 import { Label } from "../../../../emailpassword/components/library";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import EmailPassword from "../../../../emailpassword/recipe";
@@ -57,7 +58,12 @@ export const EPComboEmailForm = withOverride(
                     <div data-supertokens="formLabelWithLinkWrapper">
                         <Label value={"PWLESS_COMBO_PASSWORD_LABEL"} data-supertokens="passwordInputLabel" />
                         <a
-                            onClick={() => EmailPassword.getInstanceOrThrow().redirect({ action: "RESET_PASSWORD" })}
+                            onClick={() =>
+                                EmailPassword.getInstanceOrThrow().redirect({
+                                    action: "RESET_PASSWORD",
+                                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+                                })
+                            }
                             data-supertokens="link linkButton formLabelLinkBtn forgotPasswordLink">
                             {t("PWLESS_COMBO_FORGOT_PW_LINK")}
                         </a>

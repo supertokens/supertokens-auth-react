@@ -56,6 +56,7 @@ import {
     getInputField,
     isReact16,
     waitForUrl,
+    setupBrowser,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -77,10 +78,7 @@ describe("SuperTokens SignIn", function () {
             method: "POST",
         }).catch(console.error);
 
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {
@@ -183,7 +181,7 @@ describe("SuperTokens SignIn", function () {
             assert.strictEqual(request.headers().rid, "emailpassword");
             assert.strictEqual(
                 request.postData(),
-                '{"formFields":[{"id":"email","value":"john@gmail.com"},{"id":"password","value":"********"}],"tryLinkingWithSessionUser":false}'
+                '{"formFields":[{"id":"email","value":"john@gmail.com"},{"id":"password","value":"********"}],"shouldTryLinkingWithSessionUser":false}'
             );
 
             assert.strictEqual(response.status, "WRONG_CREDENTIALS_ERROR");
@@ -270,7 +268,7 @@ describe("SuperTokens SignIn", function () {
             assert.strictEqual(request.headers().rid, "emailpassword");
             assert.strictEqual(
                 request.postData(),
-                '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}],"tryLinkingWithSessionUser":false}'
+                '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}],"shouldTryLinkingWithSessionUser":false}'
             );
 
             assert.strictEqual(response.status, "OK");
@@ -415,7 +413,7 @@ describe("SuperTokens SignIn", function () {
             assert.strictEqual(request.headers().rid, "emailpassword");
             assert.strictEqual(
                 request.postData(),
-                '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}],"tryLinkingWithSessionUser":false}'
+                '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}],"shouldTryLinkingWithSessionUser":false}'
             );
 
             assert.strictEqual(response.status, "OK");
@@ -873,10 +871,7 @@ describe("SuperTokens SignIn => Server Error", function () {
     let consoleLogs;
 
     before(async function () {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {

@@ -20,7 +20,12 @@ import { Fragment } from "react";
 import { useMemo } from "react";
 
 import AuthComponentWrapper from "../../../../../components/authCompWrapper";
-import { clearErrorQueryParam, getRedirectToPathFromURL, useRethrowInRender } from "../../../../../utils";
+import {
+    clearErrorQueryParam,
+    getRedirectToPathFromURL,
+    getTenantIdFromQueryParams,
+    useRethrowInRender,
+} from "../../../../../utils";
 import { EmailVerificationClaim } from "../../../../emailverification";
 import EmailVerification from "../../../../emailverification/recipe";
 import { getInvalidClaimsFromResponse } from "../../../../session";
@@ -81,6 +86,7 @@ export function useChildProps(
                                 (payloadAfterCall !== undefined &&
                                     session.accessTokenPayload.sessionHandle !== payloadAfterCall.sessionHandle),
                             recipeId: recipe.recipeID,
+                            tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                         },
                         recipe.recipeID,
                         getRedirectToPathFromURL(),
@@ -98,6 +104,7 @@ export function useChildProps(
                             const evInstance = EmailVerification.getInstanceOrThrow();
                             await evInstance.redirect(
                                 {
+                                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                                     action: "VERIFY_EMAIL",
                                 },
                                 navigate,
@@ -204,7 +211,7 @@ function getModifiedRecipeImplementation(
                         userContext: input.userContext,
                         attemptInfo: {
                             ...loginAttemptInfo,
-                            tryLinkingWithSessionUser: loginAttemptInfo.tryLinkingWithSessionUser ?? false,
+                            shouldTryLinkingWithSessionUser: loginAttemptInfo.shouldTryLinkingWithSessionUser ?? false,
                             lastResend: timestamp,
                         },
                     });

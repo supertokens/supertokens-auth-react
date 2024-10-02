@@ -1,5 +1,7 @@
 import { EmailVerificationClaimClass as EmailVerificationClaimClassWebJS } from "supertokens-web-js/recipe/emailverification";
 
+import { getTenantIdFromQueryParams } from "../../utils";
+
 import EmailVerification from "./recipe";
 
 import type { UserContext, ValidationFailureCallback } from "../../types";
@@ -24,7 +26,10 @@ export class EmailVerificationClaimClass extends EmailVerificationClaimClassWebJ
                         }
                         const recipe = EmailVerification.getInstanceOrThrow();
                         if (recipe.config.mode === "REQUIRED") {
-                            return recipe.getRedirectUrl({ action: "VERIFY_EMAIL" }, args.userContext);
+                            return recipe.getRedirectUrl(
+                                { action: "VERIFY_EMAIL", tenantIdFromQueryParams: getTenantIdFromQueryParams() },
+                                args.userContext
+                            );
                         }
                         return undefined;
                     },

@@ -62,7 +62,7 @@ export const EmailForm = withOverride(
 
                     const response = await props.recipeImplementation.createCode({
                         email,
-                        // tryLinkingWithSessionUser is set by the fn override
+                        // shouldTryLinkingWithSessionUser is set by the fn override
                         userContext,
                     });
 

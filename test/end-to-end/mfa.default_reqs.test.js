@@ -32,6 +32,7 @@ import {
     getFactorChooserOptions,
     setAccountLinkingConfig,
     isMFASupported,
+    setupBrowser,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API, TEST_APPLICATION_SERVER_BASE_URL } from "../constants";
@@ -80,10 +81,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
         }).catch(console.error);
 
         await setAccountLinkingConfig(true, true, false);
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {

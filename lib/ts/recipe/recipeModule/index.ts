@@ -20,7 +20,7 @@ import { appendQueryParamsToURL, getNormalisedUserContext } from "../../utils";
 import { BaseRecipeModule } from "./baseRecipeModule";
 
 import type { NormalisedConfig } from "./types";
-import type { Navigate, UserContext } from "../../types";
+import type { Navigate, NormalisedGetRedirectionURLContext, UserContext } from "../../types";
 
 export default abstract class RecipeModule<
     GetRedirectionURLContextType,
@@ -29,7 +29,7 @@ export default abstract class RecipeModule<
     N extends NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType>
 > extends BaseRecipeModule<GetRedirectionURLContextType, Action, OnHandleEventContextType, N> {
     redirect = async (
-        context: GetRedirectionURLContextType,
+        context: NormalisedGetRedirectionURLContext<GetRedirectionURLContextType>,
         navigate?: Navigate,
         queryParams?: Record<string, string>,
         userContext?: UserContext
@@ -54,7 +54,7 @@ export default abstract class RecipeModule<
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     getRedirectUrl = async (
-        context: GetRedirectionURLContextType,
+        context: NormalisedGetRedirectionURLContext<GetRedirectionURLContextType>,
         userContext: UserContext
     ): Promise<string | null> => {
         // If getRedirectionURL provided by user.
@@ -68,7 +68,10 @@ export default abstract class RecipeModule<
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async getDefaultRedirectionURL(_: GetRedirectionURLContextType, _userContext: UserContext): Promise<string> {
+    async getDefaultRedirectionURL(
+        _: NormalisedGetRedirectionURLContext<GetRedirectionURLContextType>,
+        _userContext: UserContext
+    ): Promise<string> {
         throw new Error("getDefaultRedirectionURL is not implemented.");
     }
 }

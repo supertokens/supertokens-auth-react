@@ -1,4 +1,4 @@
 {
     "_comment": "contains a list of frontend-backend interface versions that this package supports",
-    "versions": ["2.0", "3.0"]
+    "versions": ["3.1", "4.0"]
 }

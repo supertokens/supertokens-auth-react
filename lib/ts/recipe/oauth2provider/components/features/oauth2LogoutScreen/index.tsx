@@ -24,7 +24,7 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
 import UI from "../../../../../ui";
 import { useUserContext } from "../../../../../usercontext";
-import { getQueryParams, useRethrowInRender } from "../../../../../utils";
+import { getQueryParams, getTenantIdFromQueryParams, useRethrowInRender } from "../../../../../utils";
 import { SessionContext } from "../../../../session";
 import OAuth2Provider from "../../../recipe";
 import { OAuth2LogoutScreenTheme } from "../../themes/oauth2LogoutScreen";
@@ -67,6 +67,7 @@ export const OAuth2LogoutScreen: React.FC<Prop> = (props) => {
                 {
                     recipeId: "oauth2provider",
                     action: "POST_OAUTH2_LOGOUT_REDIRECT",
+                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                     frontendRedirectTo,
                 },
                 navigate,

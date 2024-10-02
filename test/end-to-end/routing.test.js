@@ -32,6 +32,7 @@ import {
     clearBrowserCookiesWithoutAffectingConsole,
     screenshotOnFailure,
     waitForUrl,
+    setupBrowser,
 } from "../helpers";
 /*
  * Tests.
@@ -40,10 +41,7 @@ describe("SuperTokens Routing in Test App", function () {
     let browser, page;
 
     before(async function () {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
         page = await browser.newPage();
     });
 

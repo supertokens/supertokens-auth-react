@@ -29,6 +29,7 @@ import {
     clearErrorQueryParam,
     getQueryParams,
     getRedirectToPathFromURL,
+    getTenantIdFromQueryParams,
     useOnMountAPICall,
     useRethrowInRender,
 } from "../../../../../utils";
@@ -181,6 +182,7 @@ export function useChildProps(
                             await evInstance.redirect(
                                 {
                                     action: "VERIFY_EMAIL",
+                                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                                 },
                                 navigate,
                                 undefined,
@@ -357,7 +359,7 @@ function useOnLoad(
                         // createCode also dispatches the event that marks this page fully loaded
                         createResp = await recipeImplementation!.createCode({
                             ...createCodeInfo,
-                            tryLinkingWithSessionUser: true,
+                            shouldTryLinkingWithSessionUser: true,
                             userContext,
                         });
                     } catch (err: any) {
@@ -372,6 +374,7 @@ function useOnLoad(
                                     const evInstance = EmailVerificationRecipe.getInstanceOrThrow();
                                     await evInstance.redirect(
                                         {
+                                            tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                                             action: "VERIFY_EMAIL",
                                         },
                                         props.navigate,
@@ -464,7 +467,7 @@ function getModifiedRecipeImplementation(
 
             const res = await originalImpl.createCode({
                 ...input,
-                tryLinkingWithSessionUser: true,
+                shouldTryLinkingWithSessionUser: true,
                 userContext: { ...input.userContext, additionalAttemptInfo },
             });
 
@@ -495,7 +498,7 @@ function getModifiedRecipeImplementation(
                         userContext: input.userContext,
                         attemptInfo: {
                             ...loginAttemptInfo,
-                            tryLinkingWithSessionUser: loginAttemptInfo.tryLinkingWithSessionUser ?? true,
+                            shouldTryLinkingWithSessionUser: loginAttemptInfo.shouldTryLinkingWithSessionUser ?? true,
                             lastResend: timestamp,
                         },
                     });
@@ -512,7 +515,10 @@ function getModifiedRecipeImplementation(
         },
 
         consumeCode: async (input) => {
-            const res = await originalImpl.consumeCode(input);
+            const res = await originalImpl.consumeCode({
+                ...input,
+                shouldTryLinkingWithSessionUser: true,
+            });
 
             if (res.status === "RESTART_FLOW_ERROR") {
                 await originalImpl.clearLoginAttemptInfo({
