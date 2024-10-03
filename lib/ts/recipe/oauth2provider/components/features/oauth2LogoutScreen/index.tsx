@@ -80,17 +80,22 @@ export const OAuth2LogoutScreen: React.FC<Prop> = (props) => {
     }, [logoutChallenge, navigate, props.recipe, userContext, rethrowInRender]);
 
     React.useEffect(() => {
-        // Redirect to the auth page if there is no logoutChallenge
-        if (logoutChallenge === undefined) {
-            void SuperTokens.getInstanceOrThrow().redirectToAuth({
-                userContext,
-                redirectBack: false,
-            });
-        }
-
-        // Call logOut directly if there is no session
-        if (sessionContext.loading === false && sessionContext.doesSessionExist === false) {
-            void onLogout();
+        // We wait for session loading to finish
+        if (sessionContext.loading === false) {
+            // Redirect to the auth page if there is no logoutChallenge
+            if (logoutChallenge === undefined) {
+                void SuperTokens.getInstanceOrThrow()
+                    .redirectToAuth({
+                        userContext,
+                        redirectBack: false,
+                    })
+                    .catch(rethrowInRender);
+            } else {
+                // Call logOut directly if there is no session
+                if (sessionContext.doesSessionExist === false) {
+                    void onLogout();
+                }
+            }
         }
     }, [userContext, logoutChallenge, sessionContext, onLogout]);
 

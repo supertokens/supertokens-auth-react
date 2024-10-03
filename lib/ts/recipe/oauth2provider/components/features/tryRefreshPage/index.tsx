@@ -66,6 +66,13 @@ export const TryRefreshPage: React.FC<Prop> = (props) => {
                         userContext
                     );
                 })().catch(rethrowInRender);
+            } else {
+                void SuperTokens.getInstanceOrThrow()
+                    .redirectToAuth({
+                        userContext,
+                        redirectBack: false,
+                    })
+                    .catch(rethrowInRender);
             }
         }
     }, [loginChallenge, props.recipe, props.navigate, userContext, sessionContext]);
