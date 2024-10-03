@@ -371,10 +371,18 @@ describe("SuperTokens Account linking", function () {
                 await tryThirdPartySignInUp(page, email, false, email2);
 
                 assert.strictEqual(new URL(page.url()).pathname, "/auth/");
-                assert.strictEqual(
-                    await getGeneralError(page),
-                    "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_004)"
-                );
+                const features = await getFeatureFlags();
+                if (features.includes("accountlinking-fixes")) {
+                    assert.strictEqual(
+                        await getGeneralError(page),
+                        "Cannot sign in / up due to security reasons. Please try a different login method or contact support. (ERR_CODE_004)"
+                    );
+                } else {
+                    assert.strictEqual(
+                        await getGeneralError(page),
+                        "Cannot sign in / up because new email cannot be applied to existing account. Please contact support. (ERR_CODE_005)"
+                    );
+                }
             });
 
             it("should not allow sign in w/ an unverified thirdparty user in case of conflict", async function () {

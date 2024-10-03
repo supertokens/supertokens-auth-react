@@ -23,18 +23,10 @@
 
 export default function ArrowLeftIcon({ color }: { color: string }): JSX.Element {
     return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="11.272"
-            height="9.49"
-            viewBox="0 0 11.272 9.49"
-            data-supertokens="arrowLeftIcon">
+        <svg width="6" height="8" viewBox="0 0 6 8" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
-                fill={color}
-                stroke="#fff"
-                strokeWidth="0.75px"
-                d="M9.931 5.2h.016-7.041L5.12 7.41a.581.581 0 0 1 0 .817l-.344.345a.576.576 0 0 1-.813 0L.168 4.778a.58.58 0 0 1 0-.816L3.962.168a.577.577 0 0 1 .813 0l.345.344a.57.57 0 0 1 .168.407.553.553 0 0 1-.168.4l-2.239 2.23h7.058a.6.6 0 0 1 .584.59v.487a.585.585 0 0 1-.592.574z"
-                transform="translate(.375 .375)"
+                d="M0.372871 3.24407C-0.0875903 3.64284 -0.0875899 4.35716 0.372872 4.75593L3.84535 7.76318C4.49299 8.32406 5.5 7.864 5.5 7.00725L5.5 0.992749C5.5 0.135997 4.49299 -0.324056 3.84535 0.23682L0.372871 3.24407Z"
+                fill={`${color}`}
             />
         </svg>
     );

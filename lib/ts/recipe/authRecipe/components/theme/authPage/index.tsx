@@ -18,7 +18,6 @@
  */
 
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
-import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
@@ -70,11 +69,10 @@ export function AuthPageTheme(props: AuthPageThemeProps): JSX.Element {
 
 function AuthPageThemeWrapper(props: AuthPageThemeProps): JSX.Element {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
-    const hasFont = hasFontDefined(rootStyle);
 
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase loadDefaultFont={!hasFont} userStyles={[rootStyle]}>
+            <ThemeBase userStyles={[rootStyle]}>
                 <AuthPageTheme {...props} />
             </ThemeBase>
         </UserContextWrapper>

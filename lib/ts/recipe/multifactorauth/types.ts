@@ -79,11 +79,13 @@ export type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<
     | {
           action: "FACTOR_CHOOSER";
           nextFactorOptions?: string[];
+          stepUp?: boolean;
       }
     | {
           action: "GO_TO_FACTOR";
           factorId: string;
           forceSetup?: boolean;
+          stepUp?: boolean;
       }
 >;
 

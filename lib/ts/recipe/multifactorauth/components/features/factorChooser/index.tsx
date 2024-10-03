@@ -25,9 +25,10 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
-import { getQueryParams, useOnMountAPICall } from "../../../../../utils";
+import { getQueryParams, getRedirectToPathFromURL, useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
 import { SessionContext } from "../../../../session";
 import Session from "../../../../session/recipe";
+import MultiFactorAuth from "../../../recipe";
 import { getAvailableFactors } from "../../../utils";
 import FactorChooserTheme from "../../themes/factorChooser";
 import { defaultTranslationsMultiFactorAuth } from "../../themes/translations";
@@ -45,6 +46,8 @@ type Prop = FeatureBaseProps<{
 export const FactorChooser: React.FC<Prop> = (props) => {
     const sessionContext = useContext(SessionContext);
 
+    const rethrowInRender = useRethrowInRender();
+
     const [mfaInfo, setMFAInfo] = useState<LoadedMFAInfo | undefined>(undefined);
     let userContext = useUserContext();
     if (props.userContext !== undefined) {
@@ -53,6 +56,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
 
     const nextQueryParam = getQueryParams("n") ?? undefined;
+    const stepUpQueryParam = getQueryParams("stepUp");
 
     const redirectToAuthWithHistory = useCallback(async () => {
         await redirectToAuth({ redirectBack: false, navigate: props.navigate });
@@ -65,11 +69,23 @@ export const FactorChooser: React.FC<Prop> = (props) => {
 
     const checkMFAInfo = useCallback(
         async (mfaInfo: Awaited<ReturnType<typeof fetchMFAInfo>>): Promise<void> => {
-            setMFAInfo({
-                factors: mfaInfo.factors,
-                phoneNumbers: mfaInfo.phoneNumbers,
-                emails: mfaInfo.emails,
-            });
+            if (mfaInfo.factors.next.length === 0 && stepUpQueryParam !== "true") {
+                void Session.getInstanceOrThrow()
+                    .validateGlobalClaimsAndHandleSuccessRedirection(
+                        undefined,
+                        MultiFactorAuth.RECIPE_ID,
+                        getRedirectToPathFromURL(),
+                        userContext,
+                        props.navigate
+                    )
+                    .catch(rethrowInRender);
+            } else {
+                setMFAInfo({
+                    factors: mfaInfo.factors,
+                    phoneNumbers: mfaInfo.phoneNumbers,
+                    emails: mfaInfo.emails,
+                });
+            }
         },
         [setMFAInfo, nextQueryParam, userContext]
     );
@@ -93,7 +109,14 @@ export const FactorChooser: React.FC<Prop> = (props) => {
                 action: "FACTOR_CHOOSEN",
                 factorId,
             });
-            return props.recipe.redirectToFactor(factorId, false, false, props.navigate);
+            return props.recipe.redirectToFactor({
+                factorId,
+                forceSetup: false,
+                stepUp: stepUpQueryParam === "true",
+                redirectBack: false,
+                navigate: props.navigate,
+                userContext: props.userContext,
+            });
         },
         [props.recipe]
     );

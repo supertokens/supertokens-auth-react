@@ -8,8 +8,8 @@ export const TOTPIcon = () => (
         />
         <defs>
             <linearGradient id="paint0_linear_4901_3396" x1="10" y1="0" x2="10" y2="19" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#5FACFF" />
-                <stop offset="1" stopColor="#1686FF" />
+                <stop stopColor="#1C222A" />
+                <stop offset="1" stopColor="#1C222A" />
             </linearGradient>
         </defs>
     </svg>

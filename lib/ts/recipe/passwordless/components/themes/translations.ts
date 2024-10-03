@@ -37,7 +37,7 @@ export const defaultTranslationsPasswordless = {
         PWLESS_LINK_SENT_RESEND_TITLE: "Link sent!",
         PWLESS_LINK_SENT_RESEND_DESC_START_EMAIL: "We sent a link to ",
         PWLESS_LINK_SENT_RESEND_DESC_START_PHONE: "We sent a link to your phone number ",
-        PWLESS_LINK_SENT_RESEND_DESC_END_EMAIL: " Click the link to login or sign up",
+        PWLESS_LINK_SENT_RESEND_DESC_END_EMAIL: ". Click the link to login or sign up",
         PWLESS_LINK_SENT_RESEND_DESC_END_PHONE: "",
 
         PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL: "Change email",

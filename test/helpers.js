@@ -370,7 +370,7 @@ export async function logoutFromEmailVerification(page) {
         ({ ST_ROOT_SELECTOR }) =>
             document
                 .querySelector(ST_ROOT_SELECTOR)
-                .shadowRoot.querySelector("[data-supertokens~='secondaryLinkWithArrow']")
+                .shadowRoot.querySelector("[data-supertokens~='buttonWithArrow']")
                 .click(),
         { ST_ROOT_SELECTOR }
     );

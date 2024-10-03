@@ -23,7 +23,6 @@ import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
 import EmailLargeIcon from "../../../../../components/assets/emailLargeIcon";
 import SMSLargeIcon from "../../../../../components/assets/smsLargeIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { useUserContext } from "../../../../../usercontext";
@@ -101,6 +100,7 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
                     {props.loginAttemptInfo.contactMethod === "EMAIL" ? <EmailLargeIcon /> : <SMSLargeIcon />}
                 </div>
                 <div data-supertokens="headerTitle headerTinyTitle">{t("PWLESS_LINK_SENT_RESEND_TITLE")}</div>
+                <div data-supertokens="divider"></div>
                 <div data-supertokens="primaryText sendCodeText">
                     {props.loginAttemptInfo.contactMethod === "EMAIL"
                         ? t("PWLESS_LINK_SENT_RESEND_DESC_START_EMAIL")
@@ -110,25 +110,29 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
                         ? t("PWLESS_LINK_SENT_RESEND_DESC_END_EMAIL")
                         : t("PWLESS_LINK_SENT_RESEND_DESC_END_PHONE")}
                 </div>
-                <ResendButton
-                    loginAttemptInfo={props.loginAttemptInfo}
-                    resendEmailOrSMSGapInSeconds={props.config.signInUpFeature.resendEmailOrSMSGapInSeconds}
-                    onClick={resendEmail}
-                />
                 {
                     <div
-                        data-supertokens="secondaryText secondaryLinkWithLeftArrow"
+                        data-supertokens="buttonWithArrow"
                         onClick={() =>
                             props.recipeImplementation.clearLoginAttemptInfo({
                                 userContext,
                             })
                         }>
-                        <ArrowLeftIcon color="rgb(var(--palette-textPrimary))" />
-                        {props.loginAttemptInfo.contactMethod === "EMAIL"
-                            ? t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL")
-                            : t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE")}
+                        <div data-supertokens="secondaryText secondaryLinkWithLeftArrow">
+                            <ArrowLeftIcon color="rgb(var(--palette-textGray))" />
+                            <span>
+                                {props.loginAttemptInfo.contactMethod === "EMAIL"
+                                    ? t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL")
+                                    : t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE")}
+                            </span>
+                        </div>
                     </div>
                 }
+                <ResendButton
+                    loginAttemptInfo={props.loginAttemptInfo}
+                    resendEmailOrSMSGapInSeconds={props.config.signInUpFeature.resendEmailOrSMSGapInSeconds}
+                    onClick={resendEmail}
+                />
             </div>
         </div>
     );
@@ -138,13 +142,12 @@ export const LinkSent = withOverride("PasswordlessLinkSent", PasswordlessLinkSen
 
 function LinkSentWrapper(props: LinkSentThemeProps & { userContext: UserContext }): JSX.Element {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
-    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     const activeStyle = props.config.signInUpFeature.linkSentScreenStyle;
 
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase loadDefaultFont={!hasFont} userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
+            <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
                 <LinkSent {...props} />
             </ThemeBase>
         </UserContextWrapper>

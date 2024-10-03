@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-## [0.44.0] - 2024-10-07
+## [0.49.0] - 2024-10-07
 
 ### Changes
 
@@ -92,7 +92,89 @@ Passwordless.init({
 });
 ```
 
-## [0.43.0] - 2024-10-07
+## [0.47.1] - 2024-09-18
+
+### Fixes
+
+-   Fixed an issue where we showed the "continue with passwordless" button during sign-in even if email-based passwordless was disabled by the tenant configuration.
+
+## [0.47.0] - 2024-09-02
+
+### Breaking changes
+
+Redesigned the pre-built UI with a modern monochrome aesthetic, creating a cleaner and more unified visual experience. Please double check any custom styles you added still looks good with the new UI.
+
+### Details
+
+-   Changed a lot of the default styles to fit the new UI
+-   `--palette-textTitle` changed from `rgb(34, 34, 34)` to `rgb(0, 0, 0)`
+-   `--palette-textLabel` changed from rgb`(34, 34, 34)` to `rgb(0, 0, 0)`
+-   `--palette-textInput` changed from `rgb(34, 34, 34)` to `rgb(0, 0, 0)`
+-   `--palette-textPrimary` changed from `rgb(101, 101, 101)` to `rgb(128, 128, 128)`
+-   `--palette-textLink` changed from `rgb(0, 118, 255)` to `rgb(0, 122, 255)`
+-   `--palette-textGray` changed from `rgb(128, 128, 128)` to `rgb(54, 54, 54)`
+-   Adjusted the layout of the provider buttons. Now:
+    -   The logo is aligned to the left, and the text is centered within the entire button, enhancing visual balance and consistency across different button text lengths.
+    -   The button now has a fixed height of 40px.
+    -   We add an animation to the button when hovering over it if the text is too long.
+-   Changed the Email Icon used in the "Verify Email" UI
+-   Changed the SMS Icon used in the "Link sent to phone" UI
+-   Changed the button arrow icons
+-   Updated some translation strings to fit the new UI
+    -   `EMAIL_VERIFICATION_SEND_TITLE`
+    -   `PWLESS_LINK_SENT_RESEND_DESC_END_EMAIL`
+
+## [0.46.0] - 2024-08-26
+
+### Breaking changes
+
+-   The prebuilt UI now clears the login attempt info if the stored data doesn't contain all the required properties. This should help migration from a custom UI to the prebuilt UI.
+-   Changed `redirectToFactor` to accept an object instead of multiple arguments.
+-   Changed `redirectToFactorChooser` to accept an object instead of multiple arguments.
+-   Made MFA related screens do a success redirection if MFA is already completed and the `stepUp` query param is not set to `true`.
+    -   `redirectToFactorChooser` now accepts a `stepUp` option to set the `stepUp` query param.
+    -   `redirectToFactor` now accepts a `stepUp` option to set the `stepUp` query param.
+
+### Fixes
+
+-   Fixed an issue where the `Session` recipe was not allowed in the pre-built UI list (it's still a no-op, but it shouldn't be a type issue)
+
+## [0.45.1] - 2024-08-09
+
+### Changes
+
+-   Now we only update the session context if the object changes by value. This optimization should help reduce unnecessary re-renders.
+
+## [0.45.0] - 2024-07-31
+
+### Breaking changes
+
+-   Updated the font and font-weights in the default styles
+-   We no longer load the Rubik font by default
+
+### Fixes
+
+-   Now the error prop should be updated in override components.
+
+## [0.44.0] - 2024-07-15
+
+-   Removes the default `maxAgeInSeconds` value (previously 300 seconds) in EmailVerification Claim. If the claim value is true and `maxAgeInSeconds` is not provided, it will not be refreshed.
+
+## [0.43.1] - 2024-07-15
+
+-   Fixes to e2e test
+
+## [0.43.0] - 2024-06-25
+
+### Changes
+
+-   Updated SAML third-party provider to use logo based on the provider name
+
+## [0.42.3] - 2024-06-24
+
+### Changes
+
+-   Now we only update the session context if the object changes by value. This optimization should help reduce unnecessary re-renders.
 
 ## [0.42.2] - 2024-05-29
 

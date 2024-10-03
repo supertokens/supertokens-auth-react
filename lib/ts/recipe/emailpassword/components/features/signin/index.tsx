@@ -141,7 +141,7 @@ export function useChildProps(
             onForgotPasswordClick: onForgotPasswordClick,
             userContext,
         };
-    }, [recipe]);
+    }, [recipe, error, userContext]);
 }
 
 export const SignInFeature: React.FC<

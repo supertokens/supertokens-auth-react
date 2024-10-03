@@ -9,8 +9,8 @@ export const OTPSMSIcon = () => (
         />
         <defs>
             <linearGradient id="paint0_linear_4445_316" x1="8.5" y1="0" x2="8.5" y2="15" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#5FACFF" />
-                <stop offset="1" stopColor="#1585FF" />
+                <stop stopColor="#1C222A" />
+                <stop offset="1" stopColor="#1C222A" />
             </linearGradient>
         </defs>
     </svg>

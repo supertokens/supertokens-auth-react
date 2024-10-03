@@ -30,6 +30,7 @@ import MultiFactorAuth from "../../../../multifactorauth/recipe";
 import { FactorIds } from "../../../../multifactorauth/types";
 import { getAvailableFactors } from "../../../../multifactorauth/utils";
 import SessionRecipe from "../../../../session/recipe";
+import TOTP from "../../../recipe";
 import MFATOTPThemeWrapper from "../../themes/mfa";
 import { defaultTranslationsTOTP } from "../../themes/translations";
 
@@ -124,7 +125,12 @@ export const useFeatureReducer = (): [TOTPMFAState, React.Dispatch<TOTPMFAAction
     );
 };
 
-function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFAAction>, userContext: UserContext) {
+function useOnLoad(
+    recipeImpl: RecipeInterface,
+    dispatch: React.Dispatch<TOTPMFAAction>,
+    navigate: Navigate | undefined,
+    userContext: UserContext
+) {
     const fetchMFAInfo = React.useCallback(
         async () => MultiFactorAuth.getInstanceOrThrow().webJSRecipe.resyncSessionAndFetchMFAInfo({ userContext }),
         [userContext]
@@ -139,9 +145,32 @@ function useOnLoad(recipeImpl: RecipeInterface, dispatch: React.Dispatch<TOTPMFA
             let error: string | undefined = undefined;
             const errorQueryParam = getQueryParams("error");
             const doSetup = getQueryParams("setup");
+            const stepUp = getQueryParams("stepUp");
             if (errorQueryParam !== null) {
                 error = "SOMETHING_WENT_WRONG_ERROR";
             }
+
+            if (mfaInfo.factors.next.length === 0 && stepUp !== "true" && doSetup !== "true") {
+                const redirectToPath = getRedirectToPathFromURL();
+                try {
+                    await SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                        undefined,
+                        TOTP.RECIPE_ID,
+                        redirectToPath,
+                        userContext,
+                        navigate
+                    );
+                } catch {
+                    // If we couldn't redirect to EV (or an unknown claim validation failed or somehow the redirection threw an error)
+                    // we fall back to showing the something went wrong error
+                    dispatch({
+                        type: "setError",
+                        showAccessDenied: true,
+                        error: "SOMETHING_WENT_WRONG_ERROR_RELOAD",
+                    });
+                }
+            }
+
             const alreadySetup = mfaInfo.factors.alreadySetup.includes(FactorIds.TOTP);
 
             // If the next array only has a single option, it means the we were redirected here
@@ -280,7 +309,7 @@ export const SignInUpFeature: React.FC<
         [props.recipe]
     );
     const childProps = useChildProps(props.recipe, recipeImplementation, state, dispatch, userContext, props.navigate)!;
-    useOnLoad(recipeImplementation, dispatch, userContext);
+    useOnLoad(recipeImplementation, dispatch, props.navigate, userContext);
 
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>

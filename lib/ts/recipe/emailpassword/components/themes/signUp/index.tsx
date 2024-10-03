@@ -15,7 +15,6 @@
 import STGeneralError from "supertokens-web-js/lib/build/error";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { hasFontDefined } from "../../../../../styles/styles";
 import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
@@ -77,13 +76,12 @@ export const SignUpForm = withOverride(
 
 function SignUpTheme(props: SignUpThemeProps): JSX.Element {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
-    const hasFont = hasFontDefined(rootStyle) || hasFontDefined(props.config.recipeRootStyle);
 
     const activeStyle = props.config.signInAndUpFeature.signUpForm.style;
 
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase loadDefaultFont={!hasFont} userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
+            <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
                 <SignUpForm {...props} />
             </ThemeBase>
         </UserContextWrapper>

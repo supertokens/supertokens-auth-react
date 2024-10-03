@@ -13,7 +13,13 @@
  * under the License.
  */
 
+import { useLayoutEffect, useRef } from "react";
+
 import { useTranslation } from "../../../../translation/translationContext";
+
+const isTextOverflowing = (element: Element) => {
+    return element.scrollWidth > element.clientWidth;
+};
 
 export type ProviderButtonProps = {
     providerName: string;
@@ -21,9 +27,33 @@ export type ProviderButtonProps = {
     logo?: JSX.Element;
 };
 
-export default function ProviderButton({ logo, providerName, displayName }: ProviderButtonProps) {
+export default function ProviderButton({ logo, providerName, displayName }: ProviderButtonProps): React.ReactElement {
     const t = useTranslation();
     const providerStyleName = `provider${providerName}`;
+    const buttonTextContainerRef = useRef<HTMLDivElement>(null);
+
+    const SCROLL_ANIMATION_CLASS = "scroll-text-animation";
+
+    useLayoutEffect(() => {
+        const buttonTextContainer = buttonTextContainerRef.current;
+        if (buttonTextContainer && isTextOverflowing(buttonTextContainer)) {
+            buttonTextContainer.classList.add(SCROLL_ANIMATION_CLASS);
+        }
+
+        const handleResize = () => {
+            if (buttonTextContainer) {
+                if (isTextOverflowing(buttonTextContainer)) {
+                    buttonTextContainer.classList.add(SCROLL_ANIMATION_CLASS);
+                } else {
+                    buttonTextContainer.classList.remove(SCROLL_ANIMATION_CLASS);
+                }
+            }
+        };
+        addEventListener("resize", handleResize);
+        return () => {
+            removeEventListener("resize", handleResize);
+        };
+    }, []);
 
     return (
         <button data-supertokens={`button providerButton ${providerStyleName}`}>
@@ -34,10 +64,12 @@ export default function ProviderButton({ logo, providerName, displayName }: Prov
                     </div>
                 </div>
             )}
-            <div data-supertokens="providerButtonText">
-                {t("THIRD_PARTY_PROVIDER_DEFAULT_BTN_START")}
-                {displayName}
-                {t("THIRD_PARTY_PROVIDER_DEFAULT_BTN_END")}
+            <div data-supertokens="providerButtonText" ref={buttonTextContainerRef}>
+                <span>
+                    {t("THIRD_PARTY_PROVIDER_DEFAULT_BTN_START")}
+                    {displayName}
+                    {t("THIRD_PARTY_PROVIDER_DEFAULT_BTN_END")}
+                </span>
             </div>
         </button>
     );

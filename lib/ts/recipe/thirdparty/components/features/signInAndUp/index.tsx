@@ -75,7 +75,7 @@ export function useChildProps(
             navigate,
             userContext,
         };
-    }, [recipe, recipeImplementation]);
+    }, [recipe, recipeImplementation, error, userContext]);
 }
 
 type PropType = PartialAuthComponentProps & {

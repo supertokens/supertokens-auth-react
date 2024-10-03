@@ -157,16 +157,18 @@ export default class MultiFactorAuth extends RecipeModule<
                 context.nextFactorOptions && context.nextFactorOptions.length > 0
                     ? context.nextFactorOptions.join(",")
                     : undefined;
-            return getDefaultRedirectionURLForPath(this.config, DEFAULT_FACTOR_CHOOSER_PATH, context, { n: nParam });
+
+            return getDefaultRedirectionURLForPath(this.config, DEFAULT_FACTOR_CHOOSER_PATH, context, {
+                n: nParam,
+                stepUp: context.stepUp ? "true" : undefined,
+            });
         } else if (context.action === "GO_TO_FACTOR") {
             const redirectInfo = this.getSecondaryFactors(userContext).find((f) => f.id === context.factorId);
             if (redirectInfo !== undefined) {
-                return getDefaultRedirectionURLForPath(
-                    this.config,
-                    redirectInfo.path,
-                    context,
-                    context.forceSetup ? { setup: "true" } : {}
-                );
+                return getDefaultRedirectionURLForPath(this.config, redirectInfo.path, context, {
+                    setup: context.forceSetup ? "true" : undefined,
+                    stepUp: context.stepUp ? "true" : undefined,
+                });
             }
             throw new Error("Requested redirect to unknown factor id: " + context.factorId);
         } else {
@@ -191,15 +193,29 @@ export default class MultiFactorAuth extends RecipeModule<
         return this.config.getSecondaryFactorInfo(this.secondaryFactors, userContext);
     }
 
-    async redirectToFactor(
-        factorId: string,
-        forceSetup = false,
-        redirectBack = false,
-        navigate?: Navigate,
-        userContext?: UserContext
-    ) {
+    async redirectToFactor({
+        factorId,
+        forceSetup,
+        stepUp,
+        redirectBack,
+        navigate,
+        userContext,
+    }: {
+        factorId: string;
+        forceSetup: boolean | undefined;
+        stepUp: boolean | undefined;
+        redirectBack: boolean | undefined;
+        navigate: Navigate | undefined;
+        userContext: UserContext | undefined;
+    }) {
         let url = await this.getRedirectUrl(
-            { action: "GO_TO_FACTOR", forceSetup, factorId, tenantIdFromQueryParams: getTenantIdFromQueryParams() },
+            {
+                action: "GO_TO_FACTOR",
+                forceSetup,
+                stepUp,
+                factorId,
+                tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+            },
             getNormalisedUserContext(userContext)
         );
         if (url === null) {
@@ -228,14 +244,26 @@ export default class MultiFactorAuth extends RecipeModule<
         return SuperTokens.getInstanceOrThrow().redirectToUrl(url, navigate);
     }
 
-    async redirectToFactorChooser(
+    async redirectToFactorChooser({
         redirectBack = false,
-        nextFactorOptions: string[] = [],
-        navigate?: Navigate,
-        userContext?: UserContext
-    ) {
+        nextFactorOptions = [],
+        stepUp,
+        navigate,
+        userContext,
+    }: {
+        redirectBack: boolean | undefined;
+        nextFactorOptions: string[] | undefined;
+        stepUp: boolean | undefined;
+        navigate: Navigate | undefined;
+        userContext: UserContext | undefined;
+    }) {
         let url = await this.getRedirectUrl(
-            { action: "FACTOR_CHOOSER", nextFactorOptions, tenantIdFromQueryParams: getTenantIdFromQueryParams() },
+            {
+                action: "FACTOR_CHOOSER",
+                nextFactorOptions,
+                stepUp,
+                tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+            },
             getNormalisedUserContext(userContext)
         );
 

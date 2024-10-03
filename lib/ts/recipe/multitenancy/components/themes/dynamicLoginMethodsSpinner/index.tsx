@@ -40,7 +40,7 @@ export const DynamicLoginMethodsSpinnerTheme = (props: { config: NormalisedConfi
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
 
     return (
-        <ThemeBase loadDefaultFont={false} userStyles={[rootStyle, props.config.recipeRootStyle]}>
+        <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle]}>
             <DynamicLoginMethodsSpinnerThemeWithOverride />
         </ThemeBase>
     );

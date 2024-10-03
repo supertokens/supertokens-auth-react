@@ -13,7 +13,12 @@ export default function CallAPIView() {
     }
 
     async function goToPhoneSetup() {
-        await MultiFactorAuth.redirectToFactor(MultiFactorAuth.FactorIds.OTP_PHONE, true, true, navigate);
+        await MultiFactorAuth.redirectToFactor({
+            factorId: MultiFactorAuth.FactorIds.OTP_PHONE,
+            forceSetup: true,
+            redirectBack: true,
+            navigate,
+        });
     }
 
     return (

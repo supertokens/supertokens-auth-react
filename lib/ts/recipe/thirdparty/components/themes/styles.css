@@ -3,6 +3,9 @@
 [data-supertokens~="providerContainer"] {
     padding-top: 9px;
     padding-bottom: 9px;
+
+    --logo-size: 34px;
+    --logo-horizontal-spacing: 8px;
 }
 
 [data-supertokens~="button"][data-supertokens~="providerButton"] {
@@ -10,16 +13,12 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 2px 8px;
-
+    justify-content: center;
+    padding: 2px calc(var(--logo-size) + 2 * var(--logo-horizontal-spacing));
     background-color: white;
     border-color: rgb(221, 221, 221);
     color: black;
-}
-
-[data-supertokens~="multiFactor"] [data-supertokens~="button"][data-supertokens~="providerButton"] {
-    margin: auto;
-    max-width: 240px;
+    position: relative;
 }
 
 [data-supertokens~="button"][data-supertokens~="providerButton"]:hover {
@@ -28,17 +27,15 @@
 }
 
 [data-supertokens~="providerButtonLeft"] {
-    min-width: 34px;
-    margin-left: 66px;
-}
-
-[data-supertokens~="multiFactor"] [data-supertokens~="providerButtonLeft"] {
-    margin-left: 30px;
+    width: calc(var(--logo-size));
+    position: absolute;
+    left: calc(var(--logo-horizontal-spacing));
 }
 
 [data-supertokens~="providerButtonLogo"] {
     height: 30px;
     display: flex;
+    align-items: center;
 }
 
 [data-supertokens~="providerButtonLogoCenter"] {
@@ -52,10 +49,39 @@
     justify-content: center;
     overflow: hidden;
     white-space: nowrap;
-    text-overflow: ellipsis;
     display: inline-block;
+    flex-grow: 1;
+    max-width: 100%;
+    font-size: var(--font-size-1);
+    text-overflow: ellipsis;
 }
 
-[data-supertokens~="providerButtonText"]:only-child {
-    margin: 0 auto;
+.scroll-text-animation:hover span,
+.scroll-text-animation:focus span {
+    display: inline-block;
+    animation: scroll-left 2s linear forwards;
+    position: relative;
+    width: fit-content;
+    text-overflow: clip;
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0);
+        left: 0%;
+    }
+    50% {
+        transform: translateX(calc(-100% - 10px));
+        left: 100%;
+    }
+    100% {
+        transform: translateX(calc(-100% - 10px));
+        left: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    [data-supertokens~="providerButtonText"] {
+        font-size: var(--font-size-0);
+    }
 }

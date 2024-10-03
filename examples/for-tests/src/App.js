@@ -582,12 +582,20 @@ export const DashboardNoAuthRequired = doNotUseReactRouterDom
 export function DashboardNoAuthRequiredHelper(props) {
     let sessionContext = useSessionContext();
 
+    useEffect(() => {
+        if (testContext.signoutOnSessionNotExists) {
+            if (!sessionContext.loading && !sessionContext.doesSessionExist) {
+                Session.signOut();
+            }
+        }
+    }, [sessionContext]);
+
     if (sessionContext.loading) {
         return null;
     }
 
     if (sessionContext.doesSessionExist) {
-        return Dashboard({ redirectOnLogout: false, ...props });
+        return <Dashboard redirectOnLogout={false} {...props} />;
     } else {
         return <div className="not-logged-in">Not logged in</div>;
     }
@@ -670,9 +678,13 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
             <a
                 className="goToFactorChooser"
                 onClick={() => {
-                    return MultiFactorAuth.redirectToFactorChooser(true, undefined, props.history);
+                    return MultiFactorAuth.redirectToFactorChooser({
+                        redirectBack: true,
+                        stepUp: true,
+                        navigate: props.history,
+                    });
                 }}>
-                MFA chooser
+                MFA chooser (step up)
             </a>
         </div>
     );

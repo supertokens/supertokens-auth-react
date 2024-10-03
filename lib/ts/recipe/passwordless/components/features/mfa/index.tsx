@@ -44,6 +44,7 @@ import SessionRecipe from "../../../../session/recipe";
 import Session from "../../../../session/recipe";
 import { defaultPhoneNumberValidator } from "../../../defaultPhoneNumberValidator";
 import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
+import { checkAdditionalLoginAttemptInfoProperties } from "../../../utils";
 import MFAThemeWrapper from "../../themes/mfa";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 
@@ -305,6 +306,7 @@ function useOnLoad(
             let error: string | undefined = undefined;
             const errorQueryParam = getQueryParams("error");
             const doSetup = getQueryParams("setup");
+            const stepUp = getQueryParams("stepUp");
             if (errorQueryParam !== null) {
                 error = "SOMETHING_WENT_WRONG_ERROR";
             }
@@ -316,9 +318,34 @@ function useOnLoad(
 
             const factorId = props.contactMethod === "EMAIL" ? FactorIds.OTP_EMAIL : FactorIds.OTP_PHONE;
 
-            if (loginAttemptInfo && props.contactMethod !== loginAttemptInfo.contactMethod) {
+            if (
+                loginAttemptInfo &&
+                (props.contactMethod !== loginAttemptInfo.contactMethod ||
+                    !checkAdditionalLoginAttemptInfoProperties(loginAttemptInfo))
+            ) {
                 await recipeImplementation?.clearLoginAttemptInfo({ userContext });
                 loginAttemptInfo = undefined;
+            }
+
+            if (mfaInfo.factors.next.length === 0 && stepUp !== "true" && doSetup !== "true") {
+                const redirectToPath = getRedirectToPathFromURL();
+                try {
+                    await SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                        undefined,
+                        props.recipe.recipeID,
+                        redirectToPath,
+                        userContext,
+                        props.navigate
+                    );
+                } catch {
+                    // If we couldn't redirect to EV (or an unknown claim validation failed or somehow the redirection threw an error)
+                    // we fall back to showing the something went wrong error
+                    dispatch({
+                        type: "setError",
+                        showAccessDenied: true,
+                        error: "SOMETHING_WENT_WRONG_ERROR_RELOAD",
+                    });
+                }
             }
 
             // If the next array only has a single option, it means the we were redirected here
