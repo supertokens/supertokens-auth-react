@@ -57,6 +57,7 @@ export const SignInForm = withOverride(
 
                     const response = await props.recipeImplementation.signIn({
                         formFields,
+                        shouldTryLinkingWithSessionUser: false,
                         userContext,
                     });
                     if (response.status === "WRONG_CREDENTIALS_ERROR") {

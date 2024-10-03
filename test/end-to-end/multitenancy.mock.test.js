@@ -28,6 +28,7 @@ import {
     assertNoSTComponents,
     assertProviders,
     getProviderLogoCount,
+    setupBrowser,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, DEFAULT_WEBSITE_BASE_PATH, ST_ROOT_SELECTOR } from "../constants";
 import { before } from "mocha";
@@ -64,10 +65,7 @@ describe.skip("SuperTokens Multitenancy w/ mocked login methods", function () {
     });
 
     before(async () => {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-web-security"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {

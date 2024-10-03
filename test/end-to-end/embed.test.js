@@ -5,17 +5,19 @@ import { TEST_SERVER_BASE_URL } from "../constants";
 import { AuthPage } from "./pages/AuthPage";
 import { EmailVerificationPage } from "./pages/EmailVerificationPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
-import { backendBeforeEach, clearBrowserCookiesWithoutAffectingConsole, screenshotOnFailure } from "../helpers";
+import {
+    backendBeforeEach,
+    clearBrowserCookiesWithoutAffectingConsole,
+    screenshotOnFailure,
+    setupBrowser,
+} from "../helpers";
 
 describe("Embed components", async () => {
     let browser;
     let page;
 
     before(async function () {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
 
         await backendBeforeEach();
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {

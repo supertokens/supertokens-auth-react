@@ -386,6 +386,7 @@ describe("ThirdParty", function () {
                 userContext: {
                     key: "value",
                 },
+                shouldTryLinkingWithSessionUser: false,
             });
             throw new Error("redirectToThirdPartyLogin should have failed but didnt");
         } catch (e) {

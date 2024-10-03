@@ -23,7 +23,13 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
-import { getQueryParams, getURLHash, useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
+import {
+    getQueryParams,
+    getTenantIdFromQueryParams,
+    getURLHash,
+    useOnMountAPICall,
+    useRethrowInRender,
+} from "../../../../../utils";
 import Session from "../../../../session/recipe";
 import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
@@ -148,6 +154,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                                 (payloadBeforeCall === undefined ||
                                     payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
                             recipeId: props.recipe.recipeID,
+                            tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                         },
                         props.recipe.recipeID,
                         loginAttemptInfo?.redirectToPath,

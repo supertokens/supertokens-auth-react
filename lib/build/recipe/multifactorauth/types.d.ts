@@ -3,7 +3,7 @@ import type { FactorChooserHeader } from "./components/themes/factorChooser/fact
 import type { FactorList } from "./components/themes/factorChooser/factorList";
 import type { FactorOption } from "./components/themes/factorChooser/factorOption";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig, UserContext } from "../../types";
+import type { FeatureBaseConfig, NormalisedGetRedirectionURLContext, UserContext } from "../../types";
 import type {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -51,7 +51,7 @@ export declare type NormalisedConfig = {
         ) => RecipeInterface;
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-export declare type GetRedirectionURLContext =
+export declare type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<
     | {
           action: "FACTOR_CHOOSER";
           nextFactorOptions?: string[];
@@ -62,7 +62,8 @@ export declare type GetRedirectionURLContext =
           factorId: string;
           forceSetup?: boolean;
           stepUp?: boolean;
-      };
+      }
+>;
 export declare type PreAndPostAPIHookAction = "GET_MFA_INFO";
 export declare type PreAPIHookContext = {
     action: PreAndPostAPIHookAction;

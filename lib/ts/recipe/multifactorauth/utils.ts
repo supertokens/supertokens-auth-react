@@ -13,6 +13,7 @@
  * under the License.
  */
 
+import { logDebugMessage } from "../../logger";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 
 import type MultiFactorAuth from "./recipe";
@@ -48,6 +49,14 @@ export function getAvailableFactors(
     recipe: MultiFactorAuth,
     userContext: UserContext
 ) {
+    logDebugMessage(`getAvailableFactors: allowed to setup: ${factors.allowedToSetup}`);
+    logDebugMessage(`getAvailableFactors: already setup: ${factors.alreadySetup}`);
+    logDebugMessage(`getAvailableFactors: next from factorInfo: ${factors.next}`);
+    logDebugMessage(`getAvailableFactors: nextArrayQueryParam: ${nextArrayQueryParam}`);
+    logDebugMessage(
+        `getAvailableFactors: secondary factors: ${recipe.getSecondaryFactors(userContext).map((f) => f.id)}`
+    );
+
     // There are 3 cases here:
     // 1. The app provided an array of factors to show (nextArrayQueryParam) -> we show whatever is in the array
     // 2. no app provided list and validator passed -> we show all factors available to set up or complete

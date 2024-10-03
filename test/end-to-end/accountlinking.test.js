@@ -45,6 +45,7 @@ import {
     sendEmailResetPasswordSuccessMessage,
     changeEmail,
     backendBeforeEach,
+    setupBrowser,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, RESET_PASSWORD_API } from "../constants";
 
@@ -71,10 +72,7 @@ describe("SuperTokens Account linking", function () {
                 method: "POST",
             }).catch(console.error);
 
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: true,
-            });
+            browser = await setupBrowser();
             page = await browser.newPage();
             page.on("console", (consoleObj) => {
                 const log = consoleObj.text();

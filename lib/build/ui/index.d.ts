@@ -41,6 +41,13 @@ declare class UI {
         onSignInUpSwitcherClick: (() => void) | undefined;
         resetFactorList: () => void;
         showBackButton: boolean;
+        oauth2ClientInfo?:
+            | {
+                  logoUri?: string | undefined;
+                  clientUri?: string | undefined;
+                  clientName: string;
+              }
+            | undefined;
     }>;
     static AuthPageComponentList: React.ComponentType<AuthPageThemeProps>;
     static AuthRecipeComponentsOverrideContextProvider: React.FC<

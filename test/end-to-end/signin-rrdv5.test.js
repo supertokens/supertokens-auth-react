@@ -52,6 +52,7 @@ import {
     backendBeforeEach,
     setEnabledRecipes,
     waitForUrl,
+    setupBrowser,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -77,10 +78,7 @@ describe("SuperTokens SignIn with react router dom v5", function () {
             method: "POST",
         }).catch(console.error);
 
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {
@@ -655,10 +653,7 @@ describe("SuperTokens SignIn => Server Error", function () {
 
     before(async function () {
         await setEnabledRecipes(["emailpassword"], []);
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {

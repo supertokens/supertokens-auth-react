@@ -18,10 +18,9 @@
  */
 
 import EmailPasswordWebJS from "supertokens-web-js/recipe/emailpassword";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 import { SSR_ERROR } from "../../constants";
-import { isTest } from "../../utils";
+import { getDefaultRedirectionURLForPath, isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
 import { FactorIds } from "../multifactorauth/types";
 
@@ -50,7 +49,7 @@ export default class EmailPassword extends AuthRecipe<
     NormalisedConfig
 > {
     static instance?: EmailPassword;
-    static RECIPE_ID = "emailpassword";
+    static RECIPE_ID = "emailpassword" as const;
 
     recipeID = EmailPassword.RECIPE_ID;
     firstFactorIds = [FactorIds.EMAILPASSWORD];
@@ -63,15 +62,11 @@ export default class EmailPassword extends AuthRecipe<
         public readonly webJSRecipe: WebJSRecipeInterface<typeof EmailPasswordWebJS> = EmailPasswordWebJS
     ) {
         super(config);
-        this.recipeID = config.recipeId;
     }
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "RESET_PASSWORD") {
-            const resetPasswordPath = new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH);
-            return `${this.config.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${
-                this.config.recipeId
-            }`;
+            return getDefaultRedirectionURLForPath(this.config, DEFAULT_RESET_PASSWORD_PATH, context);
         }
 
         return this.getAuthRecipeDefaultRedirectionURL(context);

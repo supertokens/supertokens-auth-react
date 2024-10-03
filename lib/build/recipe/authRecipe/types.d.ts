@@ -3,7 +3,13 @@ import type { AuthPageComponentList } from "./components/theme/authPage/authPage
 import type { AuthPageFooter } from "./components/theme/authPage/authPageFooter";
 import type { AuthPageHeader } from "./components/theme/authPage/authPageHeader";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { AuthComponentProps, Navigate, PartialAuthComponentProps, UserContext } from "../../types";
+import type {
+    AuthComponentProps,
+    Navigate,
+    PartialAuthComponentProps,
+    SuccessRedirectContext,
+    UserContext,
+} from "../../types";
 import type {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -26,7 +32,19 @@ declare type ComponentWithPreloadInfo<T> = {
     >;
     preloadInfo: T;
 };
+export declare type AuthSuccessContext = Omit<
+    SuccessRedirectContext,
+    "redirectToPath" | "action" | "loginChallenge" | "recipeId"
+> & {
+    recipeId: string;
+};
 export declare type AuthPageThemeProps = {
+    oauth2ClientInfo?: {
+        clientLogo?: string;
+        clientUri?: string;
+        clientName: string;
+    };
+    onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>;
     showBackButton: boolean;
     setFactorList: (factorIds: string[]) => void;
     resetFactorList: () => void;

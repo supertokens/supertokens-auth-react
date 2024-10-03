@@ -141,6 +141,17 @@ export const ResetPasswordLinkClicked: Story = {
     },
 };
 
+export const OAuth2Login: Story = {
+    args: {
+        path: "/auth",
+        query: "loginChallenge=asdf",
+        "oauth2.initialized": true,
+        "oauth2.clientName": "Google",
+        "oauth2.logoUri": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg",
+        "oauth2.clientUri": "https://google.com",
+    },
+};
+
 export const ContactFormCombined: Story = {
     args: {
         "multifactorauth.firstFactors": ["thirdparty", "emailpassword", "otp-email", "otp-phone"],

@@ -25,12 +25,21 @@ import SuperTokens from "../../../../../superTokens";
 import { TranslationContextProvider } from "../../../../../translation/translationContext";
 import { defaultTranslationsCommon } from "../../../../../translation/translations";
 import { UserContextProvider, useUserContext } from "../../../../../usercontext";
-import { getRedirectToPathFromURL, mergeObjects, updateQueryParam, useRethrowInRender } from "../../../../../utils";
+import {
+    clearQueryParams,
+    getRedirectToPathFromURL,
+    getTenantIdFromQueryParams,
+    mergeObjects,
+    updateQueryParam,
+    useOnMountAPICall,
+    useRethrowInRender,
+} from "../../../../../utils";
 import MultiFactorAuth from "../../../../multifactorauth/recipe";
 import { FactorIds } from "../../../../multifactorauth/types";
 import DynamicLoginMethodsSpinner from "../../../../multitenancy/components/features/dynamicLoginMethodsSpinner";
 import { DynamicLoginMethodsProvider } from "../../../../multitenancy/dynamicLoginMethodsContext";
 import Multitenancy from "../../../../multitenancy/recipe";
+import OAuth2Provider from "../../../../oauth2provider/recipe";
 import Session from "../../../../session/recipe";
 import SessionAuthWrapper from "../../../../session/sessionAuth";
 import useSessionContext from "../../../../session/useSessionContext";
@@ -43,8 +52,9 @@ import type { TranslationStore } from "../../../../../translation/translationHel
 import type { AuthComponent, Navigate, PartialAuthComponent, UserContext } from "../../../../../types";
 import type { GetLoginMethodsResponseNormalized } from "../../../../multitenancy/types";
 import type { RecipeRouter } from "../../../../recipeRouter";
-import type { AuthPageThemeProps } from "../../../types";
+import type { AuthPageThemeProps, AuthSuccessContext } from "../../../types";
 import type { PropsWithChildren } from "react";
+import type { LoginInfo } from "supertokens-web-js/recipe/oauth2provider/types";
 
 const errorQSMap: Record<string, string | undefined> = {
     signin: "SOMETHING_WENT_WRONG_ERROR",
@@ -102,6 +112,8 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
 
     const showStringFromQSRef = useRef(showStringFromQS);
     const errorFromQSRef = useRef(errorFromQS);
+    const loginChallenge = search.get("loginChallenge");
+    const forceFreshAuth = search.get("forceFreshAuth") === "true";
 
     const sessionContext = useSessionContext();
     const userContext = useUserContext();
@@ -110,6 +122,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState<
         GetLoginMethodsResponseNormalized | undefined
     >(undefined);
+    const [oauth2ClientInfo, setOAuth2ClientInfo] = useState<LoginInfo | undefined>(undefined);
     const [error, setError] = useState<string | undefined>(errorFromQS);
     const [sessionLoadedAndNotRedirecting, setSessionLoadedAndNotRedirecting] = useState(false);
     const st = SuperTokens.getInstanceOrThrow();
@@ -163,6 +176,31 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
             );
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
 
+    useOnMountAPICall(
+        async () => {
+            if (oauth2ClientInfo) {
+                return;
+            }
+            const oauth2Recipe = OAuth2Provider.getInstance();
+            if (oauth2Recipe !== undefined && loginChallenge !== null) {
+                return oauth2Recipe.webJSRecipe.getLoginChallengeInfo({ loginChallenge, userContext });
+            }
+            return undefined;
+        },
+        async (info) => {
+            if (info !== undefined) {
+                if (info.status === "OK") {
+                    setOAuth2ClientInfo(info.info);
+                } else {
+                    setError("SOMETHING_WENT_WRONG_ERROR");
+                }
+            }
+        },
+        () => {
+            return clearQueryParams(["loginChallenge"]);
+        }
+    );
+
     useEffect(() => {
         if (sessionLoadedAndNotRedirecting) {
             return;
@@ -175,19 +213,48 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
             if (sessionContext.doesSessionExist) {
                 if (props.onSessionAlreadyExists !== undefined) {
                     props.onSessionAlreadyExists();
-                } else if (props.redirectOnSessionExists !== false) {
+                } else if (props.redirectOnSessionExists !== false && !forceFreshAuth) {
                     Session.getInstanceOrThrow().config.onHandleEvent({
                         action: "SESSION_ALREADY_EXISTS",
                     });
-                    void Session.getInstanceOrThrow()
-                        .validateGlobalClaimsAndHandleSuccessRedirection(
-                            undefined,
-                            Session.RECIPE_ID, // TODO
-                            getRedirectToPathFromURL(),
-                            userContext,
-                            props.navigate
-                        )
-                        .catch(rethrowInRender);
+                    const oauth2Recipe = OAuth2Provider.getInstance();
+                    if (loginChallenge !== null && oauth2Recipe !== undefined) {
+                        (async function () {
+                            const { frontendRedirectTo } =
+                                await oauth2Recipe.webJSRecipe.getRedirectURLToContinueOAuthFlow({
+                                    loginChallenge,
+                                    userContext,
+                                });
+                            return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                                {
+                                    // We get here if the user was redirected to the auth screen with an already existing session
+                                    // and a loginChallenge (we check the forceFreshAuth queryparam above)
+                                    action: "SUCCESS_OAUTH2",
+                                    frontendRedirectTo,
+                                    // We can use these defaults, since this is not the result of a sign in/up call
+                                    createdNewUser: false,
+                                    isNewRecipeUser: false,
+                                    newSessionCreated: false,
+                                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+                                    recipeId: Session.RECIPE_ID,
+                                },
+                                Session.RECIPE_ID,
+                                getRedirectToPathFromURL(),
+                                userContext,
+                                props.navigate
+                            );
+                        })().catch(rethrowInRender);
+                    } else {
+                        void Session.getInstanceOrThrow()
+                            .validateGlobalClaimsAndHandleSuccessRedirection(
+                                undefined,
+                                Session.RECIPE_ID,
+                                getRedirectToPathFromURL(),
+                                userContext,
+                                props.navigate
+                            )
+                            .catch(rethrowInRender);
+                    }
                 } else {
                     setSessionLoadedAndNotRedirecting(true);
                 }
@@ -247,10 +314,50 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
         rethrowInRender,
     ]);
 
+    const onAuthSuccess = useCallback(
+        async (ctx: AuthSuccessContext) => {
+            const oauth2Recipe = OAuth2Provider.getInstance();
+            if (loginChallenge === null || oauth2Recipe === undefined) {
+                return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                    {
+                        ...ctx,
+                        action: "SUCCESS",
+                        tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+                        redirectToPath: getRedirectToPathFromURL(),
+                    },
+                    ctx.recipeId,
+                    getRedirectToPathFromURL(),
+                    userContext,
+                    props.navigate
+                );
+            }
+            const { frontendRedirectTo } = await oauth2Recipe.webJSRecipe.getRedirectURLToContinueOAuthFlow({
+                loginChallenge,
+                userContext,
+            });
+            return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                {
+                    ...ctx,
+                    action: "SUCCESS_OAUTH2",
+                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+                    frontendRedirectTo,
+                },
+                ctx.recipeId,
+                getRedirectToPathFromURL(),
+                userContext,
+                props.navigate
+            );
+        },
+        [loginChallenge]
+    );
+
     const childProps: AuthPageThemeProps | undefined =
-        authComponentListInfo !== undefined
+        authComponentListInfo !== undefined &&
+        (loginChallenge === null || oauth2ClientInfo !== undefined || OAuth2Provider.getInstance() === undefined)
             ? {
                   ...authComponentListInfo,
+                  oauth2ClientInfo,
+                  onAuthSuccess,
                   error,
                   onError: (err) => {
                       setError(err);

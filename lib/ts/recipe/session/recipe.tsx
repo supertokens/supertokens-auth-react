@@ -23,10 +23,12 @@ import SuperTokens from "../../superTokens";
 import {
     getLocalStorage,
     getNormalisedUserContext,
+    getTenantIdFromQueryParams,
     isTest,
     removeFromLocalStorage,
     setLocalStorage,
 } from "../../utils";
+import OAuth2Provider from "../oauth2provider/recipe";
 import RecipeModule from "../recipeModule";
 
 import {
@@ -41,8 +43,10 @@ import type {
     Navigate,
     NormalisedAppInfo,
     NormalisedConfigWithAppInfoAndRecipeID,
+    NormalisedGetRedirectionURLContext,
     RecipeInitResult,
-    SuccessRedirectContext,
+    SuccessRedirectContextInApp,
+    SuccessRedirectContextOAuth2,
     UserContext,
 } from "../../types";
 import type { ClaimValidationError, SessionClaimValidator } from "supertokens-web-js/recipe/session";
@@ -126,11 +130,16 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
         // it as a string (e.g.: when defining it in recipes), but we want to type it more
         // strictly in the callbacks the app provides to help integrating our SDK.
         // This is the "meeting point" between the two types, so we need to cast between them here.
-        successRedirectContext: (Omit<SuccessRedirectContext, "recipeId"> & { recipeId: string }) | undefined,
+        successRedirectContext:
+            | ((Omit<SuccessRedirectContextInApp, "recipeId"> | Omit<SuccessRedirectContextOAuth2, "recipeId">) & {
+                  recipeId: string;
+                  tenantIdFromQueryParams: string | undefined;
+              })
+            | undefined,
         fallbackRecipeId: string,
-        redirectToPath?: string,
-        userContext?: UserContext,
-        navigate?: Navigate
+        redirectToPath: string | undefined,
+        userContext: UserContext | undefined,
+        navigate: Navigate | undefined
     ): Promise<void> => {
         userContext = getNormalisedUserContext(userContext);
         // First we check if there is an active session
@@ -202,6 +211,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                     createdNewUser: false,
                     isNewRecipeUser: false,
                     newSessionCreated: false,
+                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                 };
             }
         }
@@ -210,12 +220,21 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
             throw new Error("This should never happen: successRedirectContext undefined ");
         }
 
-        if (redirectToPath !== undefined) {
+        if (successRedirectContext.action === "SUCCESS_OAUTH2") {
+            return OAuth2Provider.getInstanceOrThrow().redirect(
+                successRedirectContext as NormalisedGetRedirectionURLContext<SuccessRedirectContextOAuth2>,
+                navigate,
+                {},
+                userContext
+            );
+        }
+
+        if (successRedirectContext.action === "SUCCESS" && redirectToPath !== undefined) {
             successRedirectContext.redirectToPath = redirectToPath;
         }
 
         return SuperTokens.getInstanceOrThrow().redirect(
-            successRedirectContext as SuccessRedirectContext,
+            successRedirectContext as NormalisedGetRedirectionURLContext<SuccessRedirectContextInApp>,
             navigate,
             {},
             userContext
@@ -227,6 +246,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
      * @returns "/"
      */
     getDefaultRedirectionURL = async (): Promise<string> => {
+        // We do not use the util here, since we are redirecting outside of the SDK routes
         return "/";
     };
 

@@ -56,6 +56,7 @@ import {
     getInputField,
     isReact16,
     waitForUrl,
+    setupBrowser,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -77,10 +78,7 @@ describe("SuperTokens SignIn", function () {
             method: "POST",
         }).catch(console.error);
 
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {
@@ -187,7 +185,7 @@ describe("SuperTokens SignIn", function () {
             assert.strictEqual(request.headers().rid, "emailpassword");
             assert.strictEqual(
                 request.postData(),
-                '{"formFields":[{"id":"email","value":"john@gmail.com"},{"id":"password","value":"********"}]}'
+                '{"formFields":[{"id":"email","value":"john@gmail.com"},{"id":"password","value":"********"}],"shouldTryLinkingWithSessionUser":false}'
             );
 
             assert.strictEqual(response.status, "WRONG_CREDENTIALS_ERROR");
@@ -300,7 +298,7 @@ describe("SuperTokens SignIn", function () {
             assert.strictEqual(request.headers().rid, "emailpassword");
             assert.strictEqual(
                 request.postData(),
-                '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}]}'
+                '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}],"shouldTryLinkingWithSessionUser":false}'
             );
 
             assert.strictEqual(response.status, "OK");
@@ -445,7 +443,7 @@ describe("SuperTokens SignIn", function () {
             assert.strictEqual(request.headers().rid, "emailpassword");
             assert.strictEqual(
                 request.postData(),
-                '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}]}'
+                '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}],"shouldTryLinkingWithSessionUser":false}'
             );
 
             assert.strictEqual(response.status, "OK");
@@ -512,7 +510,7 @@ describe("SuperTokens SignIn", function () {
             await assertSignInRedirectTo(
                 page,
                 `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=%2Fredirect-here`,
-                `${TEST_CLIENT_BASE_URL}/redirect-here`
+                `/redirect-here`
             );
 
             // test that if we visit auth again, we end up in redirect-heree again with query params kept
@@ -529,7 +527,7 @@ describe("SuperTokens SignIn", function () {
             await assertSignInRedirectTo(
                 page,
                 `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=redirect-here`,
-                `${TEST_CLIENT_BASE_URL}/redirect-here`
+                `/redirect-here`
             );
         });
 
@@ -560,7 +558,7 @@ describe("SuperTokens SignIn", function () {
             await assertSignInRedirectTo(
                 page,
                 `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=https://attacker.com/path`,
-                `${TEST_CLIENT_BASE_URL}/path`
+                `/path`
             );
         });
 
@@ -569,7 +567,7 @@ describe("SuperTokens SignIn", function () {
             await assertSignInRedirectTo(
                 page,
                 `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=javascript:alert(1)`,
-                `${TEST_CLIENT_BASE_URL}/javascript:alert(1)`
+                `/javascript:alert(1)`
             );
         });
 
@@ -903,10 +901,7 @@ describe("SuperTokens SignIn => Server Error", function () {
     let consoleLogs;
 
     before(async function () {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
     });
 
     after(async function () {
@@ -1083,11 +1078,5 @@ async function assertSignInRedirectTo(page, startUrl, finalUrl) {
     ]);
 
     // Submit.
-    await Promise.all([
-        submitFormReturnRequestAndResponse(page, SIGN_IN_API),
-        page.waitForNavigation({ waitUntil: "networkidle0" }),
-    ]);
-
-    let href = await page.evaluate(() => window.location.href);
-    assert.deepStrictEqual(href, finalUrl);
+    await Promise.all([submitFormReturnRequestAndResponse(page, SIGN_IN_API), waitForUrl(page, finalUrl, false)]);
 }

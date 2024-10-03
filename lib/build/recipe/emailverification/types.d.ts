@@ -1,7 +1,7 @@
 import type { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
 import type { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig, ThemeBaseProps, UserContext } from "../../types";
+import type { FeatureBaseConfig, NormalisedGetRedirectionURLContext, ThemeBaseProps, UserContext } from "../../types";
 import type {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -39,9 +39,9 @@ export declare type NormalisedConfig = {
         ) => RecipeInterface;
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-export declare type GetRedirectionURLContext = {
+export declare type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<{
     action: "VERIFY_EMAIL";
-};
+}>;
 export declare type PreAndPostAPIHookAction = "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED";
 export declare type PreAPIHookContext = {
     action: PreAndPostAPIHookAction;

@@ -7,6 +7,91 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.49.0] - 2024-10-07
+
+### Changes
+
+-   Added the `OAuth2Provider` recipe
+-   Changed the input types and default implementation of `AuthPageHeader` to show the client information in OAuth2 flows
+
+### Breaking changes
+
+-   Now only supporting FDI 4.0 (Node >= 24.0.0)
+-   All `getRedirectionURL` functions now also get a new `tenantIdFromQueryParams` prop
+    -   This is used in OAuth2 + Multi-tenant flows.
+    -   This should be safe to ignore if:
+        -   You are not using those recipes
+        -   You have a custom `getTenantId` implementation
+        -   You are not customizing paths of the pages handled by SuperTokens.
+    -   This is used to keep the `tenantId` query param during internal redirections between pages handled by the SDK.
+    -   If you have custom paths, you should set the tenantId queryparam based on this. (See migrations below for more details)
+-   Added a new `shouldTryLinkingToSessionUser` flag to sign in/up related function inputs:
+    -   No action is needed if you are not using MFA/session based account linking.
+    -   If you are implementing MFA:
+        -   Plase set this flag to `false` (or leave as undefined) during first factor sign-ins
+        -   Please set this flag to `true` for secondary factors.
+        -   Please forward this flag to the original implementation in any of your overrides.
+    -   Changed functions:
+        -   `EmailPassword`:
+            -   `signIn`, `signUp`: both override and callable functions
+        -   `ThirdParty`:
+            -   `getAuthorisationURLWithQueryParamsAndSetState`: both override and callable function
+            -   `redirectToThirdPartyLogin`: callable function takes this flag as an optional input (it defaults to false on the backend)
+        -   `Passwordless`:
+            -   Functions overrides: `consumeCode`, `resendCode`, `createCode`, `setLoginAttemptInfo`, `getLoginAttemptInfo`
+            -   Calling `createCode` and `setLoginAttemptInfo` take this flag as an optional input (it defaults to false on the backend)
+-   Changed the default implementation of `getTenantId` to default to the `tenantId` query parameter (if present) then falling back to the public tenant instead of always defaulting to the public tenant
+-   We now disable session based account linking in the magic link based flow in passwordless by default
+    -   This is to make it function more consistently instead of only working if the link was opened on the same device
+    -   You can override by overriding the `consumeCode` function in the Passwordless Recipe
+
+### Migration
+
+#### tenantIdFromQueryParams in getRedirectionURL
+
+Before:
+
+```ts
+EmailPassword.init({
+    async getRedirectionURL(context) {
+        if (context.action === "RESET_PASSWORD") {
+            return `/reset-password`;
+        }
+        return "";
+    },
+});
+```
+
+After:
+
+```ts
+EmailPassword.init({
+    async getRedirectionURL(context) {
+        return `/reset-password?tenantId=${context.tenantIdFromQueryParams}`;
+    },
+});
+```
+
+#### Session based account linking for magic link based flows
+
+You can re-enable linking by overriding the `consumeCode` function in the passwordless recipe and setting `shouldTryLinkingToSessionUser` to `true`.
+
+```ts
+Passwordless.init({
+    override: {
+        functions: (original) => {
+            return {
+                ...original,
+                consumeCode: async (input) => {
+                    // Please note that this is means that the session is required and will cause an error if it is not present
+                    return original.consumeCode({ ...input, shouldTryLinkingWithSessionUser: true });
+                },
+            };
+        },
+    },
+});
+```
+
 ## [0.47.1] - 2024-09-18
 
 ### Fixes

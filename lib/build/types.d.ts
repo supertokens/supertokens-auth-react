@@ -1,4 +1,5 @@
 import type { DateProviderInput } from "./dateProvider/types";
+import type { AuthSuccessContext } from "./recipe/authRecipe/types";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
@@ -9,7 +10,7 @@ import type { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/
 import type NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import type NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import type { WindowHandlerInput } from "supertokens-web-js/utils/windowHandler/types";
-export declare type SuccessRedirectContext = {
+declare type SuccessRedirectContextCommon = {
     recipeId:
         | "emailpassword"
         | "thirdparty"
@@ -18,18 +19,26 @@ export declare type SuccessRedirectContext = {
         | "thirdpartyemailpassword"
         | "emailverification"
         | "totp";
-    action: "SUCCESS";
     isNewRecipeUser: boolean;
     createdNewUser: boolean;
     newSessionCreated: boolean;
+};
+export declare type SuccessRedirectContextInApp = SuccessRedirectContextCommon & {
+    action: "SUCCESS";
     redirectToPath?: string;
 };
-export declare type GetRedirectionURLContext =
+export declare type SuccessRedirectContextOAuth2 = SuccessRedirectContextCommon & {
+    action: "SUCCESS_OAUTH2";
+    frontendRedirectTo: string;
+};
+export declare type SuccessRedirectContext = SuccessRedirectContextInApp | SuccessRedirectContextOAuth2;
+export declare type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<
     | {
           action: "TO_AUTH";
           showSignIn?: boolean;
       }
-    | SuccessRedirectContext;
+    | SuccessRedirectContextInApp
+>;
 export declare type ValidationFailureCallback =
     | (({
           userContext,
@@ -66,7 +75,7 @@ export declare type SuperTokensConfig = {
     };
     enableDebugLogs?: boolean;
     getRedirectionURL?: (
-        context: GetRedirectionURLContext,
+        context: NormalisedGetRedirectionURLContext<GetRedirectionURLContext>,
         userContext: UserContext
     ) => Promise<string | undefined | null>;
     style?: string;
@@ -184,6 +193,7 @@ export declare type UserContext = Record<string, any>;
 export declare type AuthComponentProps = {
     setFactorList: (factorIds: string[]) => void;
     rebuildAuthPage: () => void;
+    onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>;
     navigate: Navigate | undefined;
     userContext: UserContext;
     error: string | undefined;
@@ -217,4 +227,7 @@ export declare type PartialAuthComponent = {
     component: React.FC<PartialAuthComponentProps>;
 };
 export declare type AuthComponent<T = any> = PartialAuthComponent | FullPageAuthComponent<T>;
+export declare type NormalisedGetRedirectionURLContext<RecipeContext> = RecipeContext & {
+    tenantIdFromQueryParams: string | undefined;
+};
 export {};

@@ -16,6 +16,6 @@
         "express": "4.17.1",
         "morgan": "^1.10.0",
         "otpauth": "^9.2.0",
-        "supertokens-node": "latest"
+        "supertokens-node": "github:supertokens/supertokens-node#feat/oauth2/base"
     }
 }

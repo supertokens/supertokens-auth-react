@@ -26,6 +26,7 @@ export const AuthPageHeader = withOverride(
         isSignUp,
         showBackButton,
         resetFactorList,
+        oauth2ClientInfo,
     }: {
         factorIds: string[];
         isSignUp: boolean;
@@ -33,11 +34,23 @@ export const AuthPageHeader = withOverride(
         onSignInUpSwitcherClick: (() => void) | undefined;
         resetFactorList: () => void;
         showBackButton: boolean;
+        oauth2ClientInfo?: {
+            logoUri?: string;
+            clientUri?: string;
+            clientName: string;
+        };
     }): JSX.Element {
         const t = useTranslation();
 
         return (
             <Fragment>
+                {oauth2ClientInfo?.logoUri && (
+                    <img
+                        src={oauth2ClientInfo.logoUri}
+                        alt={oauth2ClientInfo.clientName}
+                        data-supertokens="authPageTitleOAuthClientLogo"
+                    />
+                )}
                 <div data-supertokens="headerTitle withBackButton">
                     {showBackButton ? (
                         <BackButton onClick={resetFactorList} />
@@ -55,6 +68,24 @@ export const AuthPageHeader = withOverride(
                         {/* empty span for spacing the back button */}
                     </span>
                 </div>
+                {oauth2ClientInfo &&
+                    oauth2ClientInfo.clientName !== undefined &&
+                    oauth2ClientInfo.clientName.length > 0 && (
+                        <div data-supertokens="authPageTitleOAuthClient">
+                            {t("AUTH_PAGE_HEADER_TITLE_SIGN_IN_UP_TO_APP")}
+                            {oauth2ClientInfo.clientUri !== undefined ? (
+                                <a
+                                    data-supertokens="authPageTitleOAuthClientUrl link"
+                                    href={oauth2ClientInfo.clientUri}>
+                                    {oauth2ClientInfo.clientName}
+                                </a>
+                            ) : (
+                                <span data-supertokens="authPageTitleOAuthClientName">
+                                    {oauth2ClientInfo.clientName}
+                                </span>
+                            )}
+                        </div>
+                    )}
                 {hasSeparateSignUpView &&
                     (!isSignUp ? (
                         <div data-supertokens="headerSubtitle secondaryText">

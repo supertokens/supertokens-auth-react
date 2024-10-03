@@ -20,8 +20,8 @@ let axios = require("axios").default;
 module.exports.executeCommand = async function (cmd) {
     return new Promise((resolve, reject) => {
         exec(cmd, (err, stdout, stderr) => {
-            console.log(err, stderr, stdout);
             if (err) {
+                // console.log({ err });
                 reject(err);
                 return;
             }
@@ -180,9 +180,14 @@ module.exports.startST = async function (config = {}) {
                             },
                             body: JSON.stringify({
                                 appId,
-                                emailPasswordEnabled: true,
-                                thirdPartyEnabled: true,
-                                passwordlessEnabled: true,
+                                firstFactors: [
+                                    "emailpassword",
+                                    "thirdparty",
+                                    "otp-phone",
+                                    "link-phone",
+                                    "otp-email",
+                                    "link-email",
+                                ],
                                 coreConfig: config.coreConfig,
                             }),
                         });

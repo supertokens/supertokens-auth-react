@@ -52,7 +52,7 @@ const UserRolesRaw = require("supertokens-node/lib/build/recipe/userroles/recipe
 const UserRoles = require("supertokens-node/recipe/userroles");
 
 const MultitenancyRaw = require("supertokens-node/lib/build/recipe/multitenancy/recipe").default;
-const Multitenancy = require("supertokens-node/lib/build/recipe/multitenancy/index");
+const Multitenancy = require("supertokens-node/recipe/multitenancy");
 
 const AccountLinkingRaw = require("supertokens-node/lib/build/recipe/accountlinking/recipe").default;
 const AccountLinking = require("supertokens-node/recipe/accountlinking");
@@ -65,6 +65,15 @@ const MultiFactorAuth = require("supertokens-node/recipe/multifactorauth");
 
 const TOTPRaw = require("supertokens-node/lib/build/recipe/totp/recipe").default;
 const TOTP = require("supertokens-node/recipe/totp");
+
+let OAuth2ProviderRaw = undefined;
+let OAuth2Provider = undefined;
+try {
+    OAuth2ProviderRaw = require("supertokens-node/lib/build/recipe/oauth2provider/recipe").default;
+    OAuth2Provider = require("supertokens-node/recipe/oauth2provider");
+} catch {
+    // OAuth2Provider is not supported by the tested version of the node SDK
+}
 
 const OTPAuth = require("otpauth");
 
@@ -491,11 +500,21 @@ app.get("/test/featureFlags", (req, res) => {
     available.push("accountlinking");
     available.push("mfa");
     available.push("recipeConfig");
+    available.push("oauth2");
     available.push("accountlinking-fixes");
 
     res.send({
         available,
     });
+});
+
+app.post("/test/create-oauth2-client", async (req, res, next) => {
+    try {
+        const { client } = await OAuth2Provider.createOAuth2Client(req.body);
+        res.send({ client });
+    } catch (e) {
+        next(e);
+    }
 });
 
 app.use(errorHandler());
@@ -541,6 +560,9 @@ function initST() {
         UserMetadataRaw.reset();
         MultiFactorAuthRaw.reset();
         TOTPRaw.reset();
+        if (OAuth2ProviderRaw) {
+            OAuth2ProviderRaw.reset();
+        }
 
         EmailVerificationRaw.reset();
         EmailPasswordRaw.reset();
@@ -740,6 +762,9 @@ function initST() {
             }),
         ],
     ];
+    if (OAuth2Provider) {
+        recipeList.push(["oauth2provider", OAuth2Provider.init()]);
+    }
 
     passwordlessConfig = {
         contactMethod: "EMAIL_OR_PHONE",

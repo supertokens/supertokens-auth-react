@@ -79,6 +79,7 @@ export const PhoneForm = withOverride(
 
                     const response = await props.recipeImplementation.createCode({
                         phoneNumber,
+                        // shouldTryLinkingWithSessionUser is set by the fn override
                         userContext,
                     });
 

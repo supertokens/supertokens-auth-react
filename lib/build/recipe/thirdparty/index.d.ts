@@ -31,7 +31,11 @@ export default class Wrapper {
         import("./types").NormalisedConfig
     >;
     static signOut(input?: { userContext?: UserContext }): Promise<void>;
-    static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: UserContext }): Promise<{
+    static redirectToThirdPartyLogin(input: {
+        thirdPartyId: string;
+        shouldTryLinkingWithSessionUser?: boolean;
+        userContext?: UserContext;
+    }): Promise<{
         status: "OK" | "ERROR";
     }>;
     static getStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
@@ -41,6 +45,7 @@ export default class Wrapper {
         thirdPartyId: string;
         frontendRedirectURI: string;
         redirectURIOnProviderDashboard?: string;
+        shouldTryLinkingWithSessionUser?: boolean;
         userContext?: UserContext;
         options?: RecipeFunctionOptions;
     }): Promise<string>;

@@ -27,7 +27,9 @@ import {
 
 import path from "path";
 import assert from "assert";
+import { appendFile } from "fs/promises";
 import mkdirp from "mkdirp";
+import Puppeteer from "puppeteer";
 
 const SESSION_STORAGE_STATE_KEY = "supertokens-oauth-state";
 
@@ -649,7 +651,7 @@ export async function defaultSignUp(page, rid = "emailpassword") {
             { name: "name", value: "John Doe" },
             { name: "age", value: "20" },
         ],
-        '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
+        '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}],"shouldTryLinkingWithSessionUser":false}',
         rid
     );
 }
@@ -666,7 +668,7 @@ export function getDefaultSignUpFieldValues({
         { name: "name", value: name },
         { name: "age", value: age },
     ];
-    const postValues = `{"formFields":[{"id":"email","value":"${email}"},{"id":"password","value":"${password}"},{"id":"name","value":"${name}"},{"id":"age","value":"${age}"},{"id":"country","value":""}]}`;
+    const postValues = `{"formFields":[{"id":"email","value":"${email}"},{"id":"password","value":"${password}"},{"id":"name","value":"${name}"},{"id":"age","value":"${age}"},{"id":"country","value":""}],"shouldTryLinkingWithSessionUser":false}`;
 
     return { fieldValues, postValues };
 }
@@ -752,12 +754,114 @@ export async function getTextInDashboardNoAuth(page) {
     return await page.evaluate(() => document.querySelector("#root > div > div.fill > div.not-logged-in").innerText);
 }
 
+export async function setupBrowser() {
+    const browser = await Puppeteer.launch({
+        args: [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-web-security",
+            "--host-resolver-rules=MAP example.com 127.0.0.1, MAP *.example.com 127.0.0.1",
+        ],
+        headless: process.env.HEADLESS !== "false",
+    });
+    browser.logs = [];
+    function addLog(str) {
+        if (process.env.BROWSER_LOGS !== undefined) {
+            console.log(str);
+        }
+        browser.logs.push(str);
+    }
+    const origNewPage = browser.newPage.bind(browser);
+    browser.newPage = async () => {
+        const page = await origNewPage();
+        page.on("console", (msg) => {
+            if (msg.text().startsWith("com.supertokens")) {
+                addLog(msg.text());
+            } else {
+                addLog(
+                    `browserlog.console ${JSON.stringify({
+                        t: new Date().toISOString(),
+                        message: msg.text(),
+                        pageurl: page.url(),
+                    })}`
+                );
+            }
+        });
+
+        page.on("request", (req) => {
+            addLog(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Requested: ${req.method()} ${req.url()} (${req.postData()})`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        page.on("requestfinished", async (req) => {
+            if (req.method() === "OPTION") {
+                return;
+            }
+            const resp = await req.response();
+            let respText;
+            try {
+                respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
+                    ? await resp.text()
+                    : "response omitted";
+            } catch (e) {
+                respText = "response loading failed " + e.message;
+            }
+            addLog(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Request done: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        page.on("requestfailed", async (req) => {
+            if (req.method() === "OPTION") {
+                return;
+            }
+            const resp = await req.response();
+            let respText;
+            try {
+                respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
+                    ? await resp.text()
+                    : "response omitted";
+            } catch (e) {
+                respText = "response loading failed " + e.message;
+            }
+            addLog(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Request failed: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        return page;
+    };
+    browser.on("disconnected", async () => {
+        if (process.env.MOCHA_FILE !== undefined) {
+            const reportFile = path.parse(process.env.MOCHA_FILE);
+            const logFile = path.join(reportFile.dir, "logs", "browser.log");
+            await appendFile(logFile, browser.logs.join("\n"));
+        }
+    });
+    return browser;
+}
+
 /**
  * @param {import("mocha").Context} ctx
  * @param {import("puppeteer").Browser} browser
  */
 export async function screenshotOnFailure(ctx, browser) {
     if (ctx.currentTest?.isFailed()) {
+        console.log(
+            `${ctx.currentTest.fullTitle()} failed ${new Date(
+                Date.now() - ctx.currentTest.duration
+            ).toISOString()} - ${new Date().toISOString()}`
+        );
         const pages = await browser.pages();
 
         let screenshotRoot;
@@ -947,6 +1051,15 @@ export async function isMFASupported() {
     return true;
 }
 
+export async function isOauth2Supported() {
+    const features = await getFeatureFlags();
+    if (!features.includes("oauth2")) {
+        return false;
+    }
+
+    return true;
+}
+
 /**
  * For example setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "EMAIL_PASSWORD_SIGN_UP", page) to
  * set for signUp in email password
@@ -958,7 +1071,7 @@ export async function setGeneralErrorToLocalStorage(recipeName, action, page) {
     });
 }
 
-export async function getTestEmail(post) {
+export function getTestEmail(post) {
     return `john.doe+${Date.now()}-${post ?? "0"}@supertokens.io`;
 }
 
@@ -1104,4 +1217,66 @@ export async function expectErrorThrown(page, cb) {
     });
     await Promise.all([hitErrorBoundary, cb()]);
     assert(hitErrorBoundary);
+}
+
+export async function createOAuth2Client(input) {
+    const resp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/create-oauth2-client`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(input),
+    });
+    return await resp.json();
+}
+
+// For the OAuth2 end-to-end test, we need to provide the created clientId to both the OAuth2 login and callback pages.
+// We use localStorage to store the clientId instead of query params, as it must be available on the callback page as well.
+export async function setOAuth2ClientInfo(page, clientId, scopes, extraConfig, extraSignInParams, extraSignOutParams) {
+    await page.evaluate((clientId) => localStorage.setItem("oauth2-client-id", clientId), clientId);
+    if (scopes) {
+        await page.evaluate((scopes) => localStorage.setItem("oauth2-scopes", scopes), scopes);
+    }
+    if (extraConfig) {
+        await page.evaluate((extraConfig) => localStorage.setItem("oauth2-extra-config", extraConfig), extraConfig);
+    }
+    if (extraSignInParams) {
+        await page.evaluate(
+            (extraSignInParams) => localStorage.setItem("oauth2-extra-sign-in-params", extraSignInParams),
+            extraSignInParams
+        );
+    }
+    if (extraSignOutParams) {
+        await page.evaluate(
+            (extraSignOutParams) => localStorage.setItem("oauth2-extra-sign-out-params", extraSignOutParams),
+            extraSignOutParams
+        );
+    }
+}
+
+export async function removeOAuth2ClientInfo(page) {
+    await page.evaluate(() => localStorage.removeItem("oauth2-client-id"));
+    await page.evaluate(() => localStorage.removeItem("oauth2-scopes"));
+    await page.evaluate(() => localStorage.removeItem("oauth2-extra-config"));
+    await page.evaluate(() => localStorage.removeItem("oauth2-extra-sign-in-params"));
+    await page.evaluate(() => localStorage.removeItem("oauth2-extra-sign-out-params"));
+}
+
+export async function getOAuth2LoginButton(page, type = "default") {
+    const id = type === "default" ? "#oauth2-login-button" : `#oauth2-login-button-${type}`;
+    return page.waitForSelector(id);
+}
+
+export async function getOAuth2Error(page) {
+    const ele = await page.waitForSelector("#oauth2-error-message");
+    return await ele.evaluate((el) => el.textContent);
+}
+
+export async function getOAuth2LogoutButton(page, type = "silent") {
+    const id = type === "silent" ? "#oauth2-logout-button" : `#oauth2-logout-button-${type}`;
+    return page.waitForSelector(id);
+}
+
+export async function getOAuth2TokenData(page) {
+    const element = await page.waitForSelector("#oauth2-token-data");
+    const tokenData = await element.evaluate((el) => el.textContent);
+    return JSON.parse(tokenData);
 }

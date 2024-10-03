@@ -35,6 +35,7 @@ export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps>
                     recipeImplementation: props.recipeImplementation,
                     thirdPartyId: providerId,
                     config: props.config,
+                    shouldTryLinkingWithSessionUser: false,
                     userContext,
                 });
             } catch (e) {

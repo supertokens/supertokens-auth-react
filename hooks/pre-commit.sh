@@ -34,7 +34,7 @@ else
 fi
 
 npm run check-circular-dependencies
-circDep=$?
+circDep=$? 
 
 echo "$(tput setaf 3)* No circular dependencies?$(tput sgr 0)"
 

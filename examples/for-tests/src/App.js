@@ -14,6 +14,7 @@ import Multitenancy from "supertokens-auth-react/recipe/multitenancy";
 import UserRoles from "supertokens-auth-react/recipe/userroles";
 import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
 import TOTP from "supertokens-auth-react/recipe/totp";
+import OAuth2Provider from "supertokens-auth-react/recipe/oauth2provider";
 
 import axios from "axios";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
@@ -27,6 +28,7 @@ import { logWithPrefix } from "./logWithPrefix";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { useNavigate } from "react-router-dom";
 import { getTestContext, getEnabledRecipes, getQueryParams } from "./testContext";
+import { getApiDomain, getWebsiteDomain } from "./config";
 
 const loadv5RRD = window.localStorage.getItem("react-router-dom-is-v5") === "true";
 if (loadv5RRD) {
@@ -42,18 +44,6 @@ const withRouter = function (Child) {
 };
 
 Session.addAxiosInterceptors(axios);
-
-export function getApiDomain() {
-    const apiPort = process.env.REACT_APP_API_PORT || 8082;
-    const apiUrl = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
-    return apiUrl;
-}
-
-export function getWebsiteDomain() {
-    const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3031;
-    const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
-    return getQueryParams("websiteDomain") ?? websiteUrl;
-}
 
 /*
  * Use localStorage for tests configurations.
@@ -419,6 +409,7 @@ let recipeList = [
             console.log(`ST_LOGS SESSION ON_HANDLE_EVENT ${ctx.action}`);
         },
     }),
+    OAuth2Provider.init(),
 ];
 
 let enabledRecipes = getEnabledRecipes();
@@ -452,6 +443,7 @@ if (testContext.enableMFA) {
 SuperTokens.init({
     usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
     clientType: testContext.clientType,
+    enableDebugLogs: true,
     appInfo: {
         appName: "SuperTokens",
         websiteDomain: getWebsiteDomain(),
@@ -813,7 +805,6 @@ function getSignInFormFields(formType) {
                     id: "test",
                 },
             ];
-            return;
     }
 }
 

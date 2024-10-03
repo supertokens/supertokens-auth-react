@@ -18,12 +18,11 @@
  */
 
 import EmailVerificationWebJS from "supertokens-web-js/recipe/emailverification";
-import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 
 import { SSR_ERROR } from "../../constants";
-import { isTest } from "../../utils";
+import { getDefaultRedirectionURLForPath, isTest } from "../../utils";
 import RecipeModule from "../recipeModule";
 
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
@@ -135,10 +134,7 @@ export default class EmailVerification extends RecipeModule<
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "VERIFY_EMAIL") {
-            const verifyEmailPath = new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH);
-            return `${this.config.appInfo.websiteBasePath.appendPath(verifyEmailPath).getAsStringDangerous()}?rid=${
-                this.config.recipeId
-            }`;
+            return getDefaultRedirectionURLForPath(this.config, DEFAULT_VERIFY_EMAIL_PATH, context);
         } else {
             return "/";
         }

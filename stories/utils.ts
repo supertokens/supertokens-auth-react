@@ -29,6 +29,7 @@ import SuperTokensWebJS from "supertokens-web-js/lib/build/supertokens";
 import { AdditionalLoginAttemptInfoProperties, LoginAttemptInfo } from "../lib/ts/recipe/passwordless/types";
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
+import OAuth2Provider from "../lib/ts/recipe/oauth2provider/recipe";
 
 export function withFetchResponse<T>(resp: T): T & { fetchResponse: Response } {
     return resp as any;
@@ -125,6 +126,12 @@ export type AuthPageConf = {
         firstFactors: FirstFactor[];
         providers: ProviderId[];
     };
+    oauth2: {
+        initialized: boolean;
+        clientName: string;
+        logoUri: string;
+        clientUri: string;
+    };
 };
 
 export function buildInit(args: AuthPageConf, funcOverrides: any) {
@@ -210,6 +217,29 @@ export function buildInit(args: AuthPageConf, funcOverrides: any) {
                     }),
                 },
             })
+        );
+    }
+
+    if (args.oauth2.initialized) {
+        recipeList.push(
+            OAuth2Provider.init({
+                override: {
+                    functions: (oI) => ({
+                        ...oI,
+                        getLoginChallengeInfo: async () => {
+                            return {
+                                status: "OK",
+                                info: {
+                                    clientName: args.oauth2.clientName,
+                                    logoUri: args.oauth2.logoUri || undefined,
+                                    clientUri: args.oauth2.clientUri || undefined,
+                                },
+                                fetchResponse: undefined as any,
+                            };
+                        },
+                    }),
+                },
+            }) as any
         );
     }
 

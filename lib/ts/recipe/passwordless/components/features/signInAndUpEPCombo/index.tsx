@@ -22,13 +22,17 @@ import STGeneralError from "supertokens-web-js/lib/build/error";
 
 import AuthComponentWrapper from "../../../../../components/authCompWrapper";
 import { useUserContext } from "../../../../../usercontext";
-import { getRedirectToPathFromURL, useRethrowInRender, validateForm } from "../../../../../utils";
+import {
+    getRedirectToPathFromURL,
+    getTenantIdFromQueryParams,
+    useRethrowInRender,
+    validateForm,
+} from "../../../../../utils";
 import EmailPassword from "../../../../emailpassword/recipe";
 import { EmailVerificationClaim } from "../../../../emailverification";
 import EmailVerification from "../../../../emailverification/recipe";
 import { FactorIds } from "../../../../multifactorauth";
 import { getInvalidClaimsFromResponse } from "../../../../session";
-import SessionRecipe from "../../../../session/recipe";
 import Session from "../../../../session/recipe";
 import useSessionContext from "../../../../session/useSessionContext";
 import { defaultPhoneNumberValidator } from "../../../defaultPhoneNumberValidator";
@@ -36,6 +40,7 @@ import { getPhoneNumberUtils } from "../../../phoneNumberUtils";
 import SignInUpEPComboThemeWrapper from "../../themes/signInUpEPCombo";
 
 import type { Navigate, UserContext, PartialAuthComponentProps } from "../../../../../types";
+import type { AuthSuccessContext } from "../../../../authRecipe/types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
 import type { SignInUpEPComboChildProps, NormalisedConfig } from "../../../types";
@@ -44,6 +49,7 @@ import type { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 export function useChildProps(
     recipe: Recipe,
     factorIds: string[],
+    onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>,
     error: string | undefined,
     onError: (err: string) => void,
     clearError: () => void,
@@ -80,7 +86,11 @@ export function useChildProps(
             showContinueWithPasswordlessLink,
             onContactInfoSubmit: async (contactInfo: string) => {
                 if (isPhoneNumber) {
-                    const createRes = await recipeImplementation.createCode({ phoneNumber: contactInfo, userContext });
+                    const createRes = await recipeImplementation.createCode({
+                        phoneNumber: contactInfo,
+                        shouldTryLinkingWithSessionUser: false,
+                        userContext,
+                    });
 
                     if (createRes.status === "SIGN_IN_UP_NOT_ALLOWED") {
                         throw new STGeneralError(createRes.reason);
@@ -109,7 +119,11 @@ export function useChildProps(
                     return { status: "OK" };
                 } else if (pwlessExists.doesExist) {
                     // only pwless exists
-                    const createRes = await recipeImplementation.createCode({ email, userContext });
+                    const createRes = await recipeImplementation.createCode({
+                        email,
+                        shouldTryLinkingWithSessionUser: false,
+                        userContext,
+                    });
 
                     if (createRes.status === "SIGN_IN_UP_NOT_ALLOWED") {
                         throw new STGeneralError(createRes.reason);
@@ -140,6 +154,7 @@ export function useChildProps(
 
                 const response = await EmailPassword.getInstanceOrThrow().webJSRecipe.signIn({
                     formFields,
+                    shouldTryLinkingWithSessionUser: false,
                     userContext,
                 });
                 if (response.status === "WRONG_CREDENTIALS_ERROR") {
@@ -153,7 +168,11 @@ export function useChildProps(
             onContinueWithPasswordlessClick: async (contactInfo) => {
                 // When this function is called, the contactInfo has already been validated
                 const createInfo = isPhoneNumber ? { phoneNumber: contactInfo } : { email: contactInfo };
-                const createRes = await recipeImplementation.createCode({ ...createInfo, userContext });
+                const createRes = await recipeImplementation.createCode({
+                    ...createInfo,
+                    shouldTryLinkingWithSessionUser: false,
+                    userContext,
+                });
                 if (createRes.status !== "OK") {
                     onError(createRes.reason);
                 } else {
@@ -172,25 +191,16 @@ export function useChildProps(
                 } catch {
                     payloadAfterCall = undefined;
                 }
-                return SessionRecipe.getInstanceOrThrow()
-                    .validateGlobalClaimsAndHandleSuccessRedirection(
-                        {
-                            action: "SUCCESS",
-                            createdNewUser: result.createdNewRecipeUser && result.user.loginMethods.length === 1,
-                            isNewRecipeUser: result.createdNewRecipeUser,
-                            newSessionCreated:
-                                session.loading ||
-                                !session.doesSessionExist ||
-                                (payloadAfterCall !== undefined &&
-                                    session.accessTokenPayload.sessionHandle !== payloadAfterCall.sessionHandle),
-                            recipeId: result.isEmailPassword ? EmailPassword.RECIPE_ID : recipe.recipeID,
-                        },
-                        result.isEmailPassword ? EmailPassword.RECIPE_ID : recipe.recipeID,
-                        getRedirectToPathFromURL(),
-                        userContext,
-                        navigate
-                    )
-                    .catch(rethrowInRender);
+                return onAuthSuccess({
+                    createdNewUser: result.createdNewRecipeUser && result.user.loginMethods.length === 1,
+                    isNewRecipeUser: result.createdNewRecipeUser,
+                    newSessionCreated:
+                        session.loading ||
+                        !session.doesSessionExist ||
+                        (payloadAfterCall !== undefined &&
+                            session.accessTokenPayload.sessionHandle !== payloadAfterCall.sessionHandle),
+                    recipeId: result.isEmailPassword ? EmailPassword.RECIPE_ID : recipe.recipeID,
+                }).catch(rethrowInRender);
             },
             error,
             onError,
@@ -205,6 +215,7 @@ export function useChildProps(
                             await evInstance.redirect(
                                 {
                                     action: "VERIFY_EMAIL",
+                                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                                 },
                                 navigate,
                                 undefined,
@@ -249,6 +260,7 @@ const SignInUpEPComboFeatureInner: React.FC<
     const childProps = useChildProps(
         props.recipe,
         props.factorIds,
+        props.onAuthSuccess,
         props.error,
         props.onError,
         props.clearError,
@@ -327,6 +339,7 @@ function getModifiedRecipeImplementation(
 
             const res = await originalImpl.createCode({
                 ...input,
+                shouldTryLinkingWithSessionUser: false,
                 userContext: { ...input.userContext, additionalAttemptInfo },
             });
             if (res.status === "OK") {

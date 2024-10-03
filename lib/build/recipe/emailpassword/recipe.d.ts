@@ -16,8 +16,8 @@ export default class EmailPassword extends AuthRecipe<
 > {
     readonly webJSRecipe: WebJSRecipeInterface<typeof EmailPasswordWebJS>;
     static instance?: EmailPassword;
-    static RECIPE_ID: string;
-    recipeID: string;
+    static RECIPE_ID: "emailpassword";
+    recipeID: "emailpassword";
     firstFactorIds: "emailpassword"[];
     getFirstFactorsForAuthPage(): string[];
     constructor(

@@ -8,6 +8,7 @@ import type {
     Navigate,
     NormalisedAppInfo,
     NormalisedFormField,
+    NormalisedGetRedirectionURLContext,
     UserContext,
 } from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
@@ -17,6 +18,15 @@ export declare function clearErrorQueryParam(): void;
 export declare function getQueryParams(param: string): string | null;
 export declare function getURLHash(): string;
 export declare function getRedirectToPathFromURL(): string | undefined;
+export declare function getTenantIdFromQueryParams(): string | undefined;
+export declare function getDefaultRedirectionURLForPath(
+    config: {
+        appInfo: NormalisedAppInfo;
+    },
+    defaultPath: string,
+    context: NormalisedGetRedirectionURLContext<unknown>,
+    extraQueryParams?: Record<string, string | undefined>
+): string;
 export declare function isTest(): boolean;
 export declare function normaliseInputAppInfoOrThrowError(appInfo: AppInfoUserInput): NormalisedAppInfo;
 export declare function validateForm(

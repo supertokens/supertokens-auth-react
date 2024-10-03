@@ -22,9 +22,10 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
-import { useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
+import { getTenantIdFromQueryParams, useOnMountAPICall, useRethrowInRender } from "../../../../../utils";
 import { EmailVerificationClaim } from "../../../../emailverification";
 import EmailVerification from "../../../../emailverification/recipe";
+import OAuth2Provider from "../../../../oauth2provider/recipe";
 import { getInvalidClaimsFromResponse } from "../../../../session";
 import Session from "../../../../session/recipe";
 import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
@@ -104,25 +105,55 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                     userContext,
                 });
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
+                const loginChallenge = stateResponse?.oauth2LoginChallenge;
 
-                return Session.getInstanceOrThrow()
-                    .validateGlobalClaimsAndHandleSuccessRedirection(
-                        {
-                            action: "SUCCESS",
-                            createdNewUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
-                            isNewRecipeUser: response.createdNewRecipeUser,
-                            newSessionCreated:
-                                payloadAfterCall !== undefined &&
-                                (payloadBeforeCall === undefined ||
-                                    payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
-                            recipeId: props.recipe.recipeID,
-                        },
-                        props.recipe.recipeID,
-                        redirectToPath,
-                        userContext,
-                        props.navigate
-                    )
-                    .catch(rethrowInRender);
+                const ctx = {
+                    createdNewUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
+                    isNewRecipeUser: response.createdNewRecipeUser,
+                    newSessionCreated:
+                        payloadAfterCall !== undefined &&
+                        (payloadBeforeCall === undefined ||
+                            payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
+                    recipeId: props.recipe.recipeID,
+                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+                };
+                const oauth2Recipe = OAuth2Provider.getInstance();
+                if (loginChallenge !== undefined && oauth2Recipe !== undefined) {
+                    try {
+                        const { frontendRedirectTo } = await oauth2Recipe.webJSRecipe.getRedirectURLToContinueOAuthFlow(
+                            {
+                                loginChallenge,
+                                userContext,
+                            }
+                        );
+                        return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                            {
+                                ...ctx,
+                                action: "SUCCESS_OAUTH2",
+                                frontendRedirectTo,
+                            },
+                            props.recipe.recipeID,
+                            redirectToPath,
+                            userContext,
+                            props.navigate
+                        );
+                    } catch (e: any) {
+                        rethrowInRender(e);
+                    }
+                } else {
+                    return Session.getInstanceOrThrow()
+                        .validateGlobalClaimsAndHandleSuccessRedirection(
+                            {
+                                ...ctx,
+                                action: "SUCCESS",
+                            },
+                            props.recipe.recipeID,
+                            redirectToPath,
+                            userContext,
+                            props.navigate
+                        )
+                        .catch(rethrowInRender);
+                }
             }
         },
         [props.recipe, props.navigate, userContext]
@@ -139,6 +170,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                         await evInstance.redirect(
                             {
                                 action: "VERIFY_EMAIL",
+                                tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                             },
                             props.navigate,
                             undefined,

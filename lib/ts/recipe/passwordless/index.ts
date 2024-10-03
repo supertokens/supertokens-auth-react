@@ -40,8 +40,18 @@ export default class Wrapper {
 
     static async createCode(
         input:
-            | { email: string; userContext?: UserContext; options?: RecipeFunctionOptions }
-            | { phoneNumber: string; userContext?: UserContext; options?: RecipeFunctionOptions }
+            | {
+                  email: string;
+                  shouldTryLinkingWithSessionUser?: boolean;
+                  userContext?: UserContext;
+                  options?: RecipeFunctionOptions;
+              }
+            | {
+                  phoneNumber: string;
+                  shouldTryLinkingWithSessionUser?: boolean;
+                  userContext?: UserContext;
+                  options?: RecipeFunctionOptions;
+              }
     ): Promise<
         | {
               status: "OK";
