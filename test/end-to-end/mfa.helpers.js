@@ -30,6 +30,8 @@ export async function setupUserWithAllFactors(page) {
     await tryEmailPasswordSignUp(page, email);
 
     await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+    // we wait for sometime so that the api to generate the token is called
+    await new Promise((res) => setTimeout(res, 500));
     const latestURLWithToken = await getLatestURLWithToken();
     await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
 
@@ -209,7 +211,7 @@ export async function tryPasswordlessSignInUp(page, contactInfo, queryParams, is
 }
 export async function goToFactorChooser(page, waitForList = true) {
     const ele = await page.waitForSelector(".goToFactorChooser");
-    await waitFor(100);
+    await waitFor(500);
     await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), ele.click()]);
     if (waitForList) {
         await waitForSTElement(page, "[data-supertokens~=factorChooserList]");
