@@ -130,6 +130,7 @@ export async function redirectToThirdPartyLogin(input: {
     thirdPartyId: string;
     config: NormalisedConfig;
     userContext: UserContext;
+    shouldTryLinkingWithSessionUser: boolean | undefined;
     recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;
 }): Promise<{ status: "OK" | "ERROR" }> {
     const loginMethods = await Multitenancy.getInstanceOrThrow().getCurrentDynamicLoginMethods({
@@ -152,7 +153,7 @@ export async function redirectToThirdPartyLogin(input: {
         thirdPartyId: input.thirdPartyId,
         frontendRedirectURI: provider.getRedirectURL(),
         redirectURIOnProviderDashboard: provider.getRedirectURIOnProviderDashboard(),
-        shouldTryLinkingWithSessionUser: false,
+        shouldTryLinkingWithSessionUser: input.shouldTryLinkingWithSessionUser,
         userContext: input.userContext,
     });
 

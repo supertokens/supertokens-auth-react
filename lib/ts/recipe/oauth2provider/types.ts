@@ -1,6 +1,11 @@
 import type { OAuth2LogoutScreenInner } from "./components/themes/oauth2LogoutScreen/OAuth2LogoutScreenInner";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { NormalisedBaseConfig, SuccessRedirectContextOAuth2, UserContext } from "../../types";
+import type {
+    NormalisedBaseConfig,
+    NormalisedGetRedirectionURLContext,
+    SuccessRedirectContextOAuth2,
+    UserContext,
+} from "../../types";
 import type {
     UserInput as RecipeModuleUserInput,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -23,6 +28,7 @@ export type PreAPIHookContext = {
 export type UserInput = {
     disableDefaultUI?: boolean;
     oauth2LogoutScreen?: Partial<OAuth2LogoutScreenConfig>;
+    tryRefreshPage?: Partial<OAuth2TryRefreshPageConfig>;
     override?: {
         functions?: (
             originalImplementation: RecipeInterface,
@@ -38,6 +44,7 @@ export type NormalisedConfig = NormalisedRecipeModuleConfig<
 > & {
     disableDefaultUI: boolean;
     oauth2LogoutScreen: OAuth2LogoutScreenConfig;
+    tryRefreshPage: OAuth2TryRefreshPageConfig;
     override: {
         functions: (
             originalImplementation: RecipeInterface,
@@ -47,6 +54,11 @@ export type NormalisedConfig = NormalisedRecipeModuleConfig<
 };
 
 export type OAuth2LogoutScreenConfig = NormalisedBaseConfig & {
+    disableDefaultUI: boolean;
+};
+
+// This doesn't have the NormalisedBaseConfig because it only shows the generic spinner
+export type OAuth2TryRefreshPageConfig = {
     disableDefaultUI: boolean;
 };
 
@@ -62,10 +74,9 @@ export type PostOAuth2LogoutRedirectContext = {
     frontendRedirectTo: string;
 };
 
-export type GetRedirectionURLContext =
-    | SuccessRedirectContextOAuth2
-    | ContinueOAuth2AfterRefreshRedirectContext
-    | PostOAuth2LogoutRedirectContext;
+export type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<
+    SuccessRedirectContextOAuth2 | ContinueOAuth2AfterRefreshRedirectContext | PostOAuth2LogoutRedirectContext
+>;
 
 export type OnHandleEventContext =
     | {

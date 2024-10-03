@@ -17,6 +17,7 @@ export declare function redirectToThirdPartyLogin(input: {
     thirdPartyId: string;
     config: NormalisedConfig;
     userContext: UserContext;
+    shouldTryLinkingWithSessionUser: boolean | undefined;
     recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;
 }): Promise<{
     status: "OK" | "ERROR";

@@ -39,7 +39,6 @@ import type {
 } from "./types";
 import type {
     NormalisedConfigWithAppInfoAndRecipeID,
-    NormalisedGetRedirectionURLContext,
     RecipeInitResult,
     UserContext,
     WebJSRecipeInterface,
@@ -133,9 +132,7 @@ export default class EmailVerification extends RecipeModule<
         });
     }
 
-    getDefaultRedirectionURL = async (
-        context: NormalisedGetRedirectionURLContext<GetRedirectionURLContext>
-    ): Promise<string> => {
+    getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "VERIFY_EMAIL") {
             return getDefaultRedirectionURLForPath(this.config, DEFAULT_VERIFY_EMAIL_PATH, context);
         } else {

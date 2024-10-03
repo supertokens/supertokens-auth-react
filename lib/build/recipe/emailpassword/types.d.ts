@@ -12,6 +12,7 @@ import type {
     FormFieldBaseConfig,
     NormalisedBaseConfig,
     NormalisedFormField,
+    NormalisedGetRedirectionURLContext,
     ThemeBaseProps,
     UserContext,
 } from "../../types";
@@ -141,9 +142,9 @@ export declare type PreAPIHookContext = {
     url: string;
     userContext: UserContext;
 };
-export declare type GetRedirectionURLContext = {
+export declare type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<{
     action: "RESET_PASSWORD";
-};
+}>;
 export declare type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {

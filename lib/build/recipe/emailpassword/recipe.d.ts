@@ -7,12 +7,7 @@ import type {
     NormalisedConfig,
     UserInput,
 } from "./types";
-import type {
-    RecipeInitResult,
-    NormalisedConfigWithAppInfoAndRecipeID,
-    WebJSRecipeInterface,
-    NormalisedGetRedirectionURLContext,
-} from "../../types";
+import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
 export default class EmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
     never,
@@ -29,9 +24,7 @@ export default class EmailPassword extends AuthRecipe<
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         webJSRecipe?: WebJSRecipeInterface<typeof EmailPasswordWebJS>
     );
-    getDefaultRedirectionURL: (
-        context: NormalisedGetRedirectionURLContext<GetRedirectionURLContext>
-    ) => Promise<string>;
+    getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     static init(
         config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;

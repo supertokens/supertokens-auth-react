@@ -12,7 +12,6 @@ import type {
 import type {
     Navigate,
     NormalisedConfigWithAppInfoAndRecipeID,
-    NormalisedGetRedirectionURLContext,
     RecipeInitResult,
     UserContext,
     WebJSRecipeInterface,
@@ -38,10 +37,7 @@ export default class MultiFactorAuth extends RecipeModule<
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstance(): MultiFactorAuth | undefined;
     static getInstanceOrThrow(): MultiFactorAuth;
-    getDefaultRedirectionURL: (
-        context: NormalisedGetRedirectionURLContext<GetRedirectionURLContext>,
-        userContext: UserContext
-    ) => Promise<string>;
+    getDefaultRedirectionURL: (context: GetRedirectionURLContext, userContext: UserContext) => Promise<string>;
     addMFAFactors(secondaryFactors: SecondaryFactorRedirectionInfo[]): void;
     isFirstFactorEnabledOnClient(factorId: string): boolean;
     getSecondaryFactors(userContext: UserContext): SecondaryFactorRedirectionInfo[];

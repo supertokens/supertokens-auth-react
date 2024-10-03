@@ -52,7 +52,6 @@ import type {
 import type {
     Navigate,
     NormalisedConfigWithAppInfoAndRecipeID,
-    NormalisedGetRedirectionURLContext,
     RecipeInitResult,
     UserContext,
     WebJSRecipeInterface,
@@ -152,10 +151,7 @@ export default class MultiFactorAuth extends RecipeModule<
         return MultiFactorAuth.instance;
     }
 
-    getDefaultRedirectionURL = async (
-        context: NormalisedGetRedirectionURLContext<GetRedirectionURLContext>,
-        userContext: UserContext
-    ): Promise<string> => {
+    getDefaultRedirectionURL = async (context: GetRedirectionURLContext, userContext: UserContext): Promise<string> => {
         if (context.action === "FACTOR_CHOOSER") {
             const nParam =
                 context.nextFactorOptions && context.nextFactorOptions.length > 0

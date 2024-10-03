@@ -21,7 +21,7 @@ module.exports.executeCommand = async function (cmd) {
     return new Promise((resolve, reject) => {
         exec(cmd, (err, stdout, stderr) => {
             if (err) {
-                console.log({ err });
+                // console.log({ err });
                 reject(err);
                 return;
             }
@@ -180,7 +180,14 @@ module.exports.startST = async function (config = {}) {
                             },
                             body: JSON.stringify({
                                 appId,
-                                firstFactors: ["emailpassword", "thirdparty", "passwordless"],
+                                firstFactors: [
+                                    "emailpassword",
+                                    "thirdparty",
+                                    "otp-phone",
+                                    "link-phone",
+                                    "otp-email",
+                                    "link-email",
+                                ],
                                 coreConfig: config.coreConfig,
                             }),
                         });

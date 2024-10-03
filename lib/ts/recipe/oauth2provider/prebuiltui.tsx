@@ -54,8 +54,11 @@ export class OAuth2ProviderPreBuiltUI extends RecipeRouter {
     getFeatures = (
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap => {
+        if (this.recipeInstance.config.disableDefaultUI) {
+            return {};
+        }
         const features: RecipeFeatureComponentMap = {};
-        if (this.recipeInstance.config.disableDefaultUI !== true) {
+        if (this.recipeInstance.config.tryRefreshPage.disableDefaultUI !== true) {
             const normalisedFullPath = this.recipeInstance.config.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(DEFAULT_TRY_REFRESH_PATH)
             );

@@ -10,7 +10,6 @@ import type {
 } from "./types";
 import type {
     NormalisedConfigWithAppInfoAndRecipeID,
-    NormalisedGetRedirectionURLContext,
     RecipeInitResult,
     UserContext,
     WebJSRecipeInterface,
@@ -39,8 +38,6 @@ export default class EmailVerification extends RecipeModule<
         isVerified: boolean;
         fetchResponse: Response;
     }>;
-    getDefaultRedirectionURL: (
-        context: NormalisedGetRedirectionURLContext<GetRedirectionURLContext>
-    ) => Promise<string>;
+    getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     static reset(): void;
 }

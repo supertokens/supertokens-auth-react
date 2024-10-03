@@ -227,10 +227,13 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                                 });
                             return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
                                 {
+                                    // We get here if the user was redirected to the auth screen with an already existing session
+                                    // and a loginChallenge (we check the forceFreshAuth queryparam above)
                                     action: "SUCCESS_OAUTH2",
+                                    frontendRedirectTo,
+                                    // We can use these defaults, since this is not the result of a sign in/up call
                                     createdNewUser: false,
                                     isNewRecipeUser: false,
-                                    frontendRedirectTo,
                                     newSessionCreated: false,
                                     tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                                     recipeId: Session.RECIPE_ID,

@@ -48,12 +48,13 @@ export type SuccessRedirectContextOAuth2 = SuccessRedirectContextCommon & {
 
 export type SuccessRedirectContext = SuccessRedirectContextInApp | SuccessRedirectContextOAuth2;
 
-export type GetRedirectionURLContext =
+export type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<
     | {
           action: "TO_AUTH";
           showSignIn?: boolean;
       }
-    | SuccessRedirectContextInApp;
+    | SuccessRedirectContextInApp
+>;
 
 export type ValidationFailureCallback =
     | (({

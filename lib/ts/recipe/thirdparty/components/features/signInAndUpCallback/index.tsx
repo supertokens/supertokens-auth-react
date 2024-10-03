@@ -107,6 +107,16 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
                 const loginChallenge = stateResponse?.oauth2LoginChallenge;
 
+                const ctx = {
+                    createdNewUser: response.createdNewRecipeUser && response.user.loginMethods.length === 1,
+                    isNewRecipeUser: response.createdNewRecipeUser,
+                    newSessionCreated:
+                        payloadAfterCall !== undefined &&
+                        (payloadBeforeCall === undefined ||
+                            payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
+                    recipeId: props.recipe.recipeID,
+                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+                };
                 const oauth2Recipe = OAuth2Provider.getInstance();
                 if (loginChallenge !== undefined && oauth2Recipe !== undefined) {
                     try {
@@ -118,17 +128,9 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                         );
                         return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
                             {
+                                ...ctx,
                                 action: "SUCCESS_OAUTH2",
                                 frontendRedirectTo,
-                                createdNewUser:
-                                    response.createdNewRecipeUser && response.user.loginMethods.length === 1,
-                                isNewRecipeUser: response.createdNewRecipeUser,
-                                newSessionCreated:
-                                    payloadAfterCall !== undefined &&
-                                    (payloadBeforeCall === undefined ||
-                                        payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
-                                recipeId: props.recipe.recipeID,
-                                tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                             },
                             props.recipe.recipeID,
                             redirectToPath,
@@ -142,16 +144,8 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                     return Session.getInstanceOrThrow()
                         .validateGlobalClaimsAndHandleSuccessRedirection(
                             {
+                                ...ctx,
                                 action: "SUCCESS",
-                                createdNewUser:
-                                    response.createdNewRecipeUser && response.user.loginMethods.length === 1,
-                                isNewRecipeUser: response.createdNewRecipeUser,
-                                newSessionCreated:
-                                    payloadAfterCall !== undefined &&
-                                    (payloadBeforeCall === undefined ||
-                                        payloadBeforeCall.sessionHandle !== payloadAfterCall.sessionHandle),
-                                recipeId: props.recipe.recipeID,
-                                tenantIdFromQueryParams: getTenantIdFromQueryParams(),
                             },
                             props.recipe.recipeID,
                             redirectToPath,

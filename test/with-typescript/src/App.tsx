@@ -1139,3 +1139,12 @@ SuperTokens.init({
         }),
     ],
 });
+
+EmailPassword.init({
+    async getRedirectionURL(context) {
+        if (context.action === "RESET_PASSWORD") {
+            return `/reset-password?tenantId=${context.tenantIdFromQueryParams}`;
+        }
+        return "";
+    },
+});

@@ -61,6 +61,7 @@ export default class Wrapper {
 
     static async redirectToThirdPartyLogin(input: {
         thirdPartyId: string;
+        shouldTryLinkingWithSessionUser?: boolean;
         userContext?: UserContext;
     }): Promise<{ status: "OK" | "ERROR" }> {
         const recipeInstance: ThirdParty = ThirdParty.getInstanceOrThrow();
@@ -69,6 +70,7 @@ export default class Wrapper {
             thirdPartyId: input.thirdPartyId,
             config: recipeInstance.config,
             userContext: getNormalisedUserContext(input.userContext),
+            shouldTryLinkingWithSessionUser: input.shouldTryLinkingWithSessionUser,
             recipeImplementation: recipeInstance.webJSRecipe,
         });
     }

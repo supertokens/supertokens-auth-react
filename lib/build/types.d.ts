@@ -32,12 +32,13 @@ export declare type SuccessRedirectContextOAuth2 = SuccessRedirectContextCommon 
     frontendRedirectTo: string;
 };
 export declare type SuccessRedirectContext = SuccessRedirectContextInApp | SuccessRedirectContextOAuth2;
-export declare type GetRedirectionURLContext =
+export declare type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<
     | {
           action: "TO_AUTH";
           showSignIn?: boolean;
       }
-    | SuccessRedirectContextInApp;
+    | SuccessRedirectContextInApp
+>;
 export declare type ValidationFailureCallback =
     | (({
           userContext,

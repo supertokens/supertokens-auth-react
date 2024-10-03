@@ -35,12 +35,7 @@ import type {
     NormalisedConfig,
     UserInput,
 } from "./types";
-import type {
-    RecipeInitResult,
-    NormalisedConfigWithAppInfoAndRecipeID,
-    WebJSRecipeInterface,
-    NormalisedGetRedirectionURLContext,
-} from "../../types";
+import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
 import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
 
@@ -69,9 +64,7 @@ export default class EmailPassword extends AuthRecipe<
         super(config);
     }
 
-    getDefaultRedirectionURL = async (
-        context: NormalisedGetRedirectionURLContext<GetRedirectionURLContext>
-    ): Promise<string> => {
+    getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "RESET_PASSWORD") {
             return getDefaultRedirectionURLForPath(this.config, DEFAULT_RESET_PASSWORD_PATH, context);
         }
