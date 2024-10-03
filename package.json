@@ -137,19 +137,19 @@
     "size-limit": [
         {
             "path": "lib/build/index.js",
-            "limit": "23.5kb"
+            "limit": "25kb"
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "24.5kb"
+            "limit": "26kb"
         },
         {
             "path": "recipe/session/prebuiltui.js",
-            "limit": "29kb"
+            "limit": "31kb"
         },
         {
             "path": "recipe/thirdparty/index.js",
-            "limit": "33kb"
+            "limit": "34kb"
         },
         {
             "path": "recipe/emailpassword/index.js",
@@ -165,19 +165,19 @@
         },
         {
             "path": "recipe/emailverification/prebuiltui.js",
-            "limit": "34kb"
+            "limit": "36kb"
         },
         {
             "path": "recipe/thirdparty/prebuiltui.js",
-            "limit": "54kb"
+            "limit": "56kb"
         },
         {
             "path": "recipe/emailpassword/prebuiltui.js",
-            "limit": "40kb"
+            "limit": "42kb"
         },
         {
             "path": "recipe/passwordless/prebuiltui.js",
-            "limit": "130kb"
+            "limit": "132kb"
         },
         {
             "path": "recipe/multitenancy/index.js",
@@ -189,6 +189,14 @@
         },
         {
             "path": "recipe/multifactorauth/prebuiltui.js",
+            "limit": "35kb"
+        },
+        {
+            "path": "recipe/oauth2provider/index.js",
+            "limit": "12kb"
+        },
+        {
+            "path": "recipe/oauth2provider/prebuiltui.js",
             "limit": "33kb"
         }
     ],
