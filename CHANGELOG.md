@@ -32,11 +32,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
         -   Please set this flag to `true` for secondary factors.
         -   Please forward this flag to the original implementation in any of your overrides.
     -   Changed functions:
-        -   `EmailPassword.signIn`, `EmailPassword.signUp`: both override and callable functions
-        -   `ThirdParty.getAuthorisationURLWithQueryParamsAndSetState`: both override and callable function
+        -   `EmailPassword`:
+            -   `signIn`, `signUp`: both override and callable functions
+        -   `ThirdParty`:
+            -   `getAuthorisationURLWithQueryParamsAndSetState`: both override and callable function
+            -   `redirectToThirdPartyLogin`: callable function takes this flag as an optional input (it defaults to false on the backend)
         -   `Passwordless`:
             -   Functions overrides: `consumeCode`, `resendCode`, `createCode`, `setLoginAttemptInfo`, `getLoginAttemptInfo`
-            -   Calling `createCode` and `setLoginAttemptInfo` take this flag as an optional input (it defaults to false)
+            -   Calling `createCode` and `setLoginAttemptInfo` take this flag as an optional input (it defaults to false on the backend)
 -   Changed the default implementation of `getTenantId` to default to the `tenantId` query parameter (if present) then falling back to the public tenant instead of always defaulting to the public tenant
 -   We now disable session based account linking in the magic link based flow in passwordless by default
     -   This is to make it function more consistently instead of only working if the link was opened on the same device
