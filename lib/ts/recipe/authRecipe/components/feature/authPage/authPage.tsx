@@ -569,7 +569,9 @@ async function buildAndSetChildProps(
         throw new Error(
             `Couldn't cover all first factors: ${firstFactors.join(
                 ", "
-            )} (from ${source}), available components: ${Array.from(availableFactors).join(", ")}`
+            )} (from ${source}), available components: ${Array.from(availableFactors).join(", ")}.\n` +
+                "You may have missed adding a recipe into the list of prebuiltUIs passed to list of prebuiltUIs passed to getSuperTokensRoutesForReactRouterDom, canHandleRoute, handleRoute functions or the AuthPage component.\n" +
+                "Another common error is adding a non-existent factor id into the list, e.g.: passwordless instead of otp-email/phone"
         );
     }
 

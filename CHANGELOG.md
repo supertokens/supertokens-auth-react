@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Added the `OAuth2Provider` recipe
 -   Changed the input types and default implementation of `AuthPageHeader` to show the client information in OAuth2 flows
+-   Expanded an error message in `AuthPage` to help with common errors
 
 ### Breaking changes
 
