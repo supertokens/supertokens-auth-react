@@ -416,7 +416,7 @@ describe("SuperTokens SignIn with react router dom v5", function () {
             assert.strictEqual(request.headers().rid, "emailpassword");
             assert.strictEqual(
                 request.postData(),
-                '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}]}'
+                '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}],"shouldTryLinkingWithSessionUser":false}'
             );
 
             assert.strictEqual(response.status, "OK");

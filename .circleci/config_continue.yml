@@ -28,6 +28,7 @@ jobs:
     test:
         docker:
             - image: rishabhpoddar/supertokens_website_sdk_testing_node_16
+            - image: rishabhpoddar/oauth-server-cicd
         environment:
             MOCHA_FILE: test_report/report_node-<< parameters.fdi-version >>.xml
             RUN_REACT_16_TESTS: << parameters.run-react-16-tests >>
