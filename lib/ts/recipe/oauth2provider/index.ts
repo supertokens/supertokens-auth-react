@@ -24,6 +24,7 @@ export default class Wrapper {
     static init(config?: UserInput) {
         return OAuth2Provider.init(config);
     }
+
     /**
      * Returns information about an OAuth login in progress
      *

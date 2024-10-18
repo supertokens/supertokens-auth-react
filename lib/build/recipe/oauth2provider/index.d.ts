@@ -4,7 +4,14 @@ import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventCo
 import type { RecipeFunctionOptions, LoginInfo } from "supertokens-web-js/recipe/oauth2provider";
 import type { RecipeInterface } from "supertokens-web-js/recipe/oauth2provider";
 export default class Wrapper {
-    static init(config?: UserInput): import("../../types").RecipeInitResult<any, never, any, any>;
+    static init(
+        config?: UserInput
+    ): import("../../types").RecipeInitResult<
+        GetRedirectionURLContext,
+        import("./types").PreAndPostAPIHookAction,
+        OnHandleEventContext,
+        import("./types").NormalisedConfig
+    >;
     /**
      * Returns information about an OAuth login in progress
      *
