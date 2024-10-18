@@ -22,7 +22,9 @@ export default class OAuth2Provider extends RecipeModule<
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         webJSRecipe?: WebJSRecipeInterface<typeof OAuth2WebJS>
     );
-    static init(config?: UserInput): RecipeInitResult<any, never, any, any>;
+    static init(
+        config?: UserInput
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): OAuth2Provider;
     static getInstance(): OAuth2Provider | undefined;
     getDefaultRedirectionURL(ctx: GetRedirectionURLContext): Promise<string>;

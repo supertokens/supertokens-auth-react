@@ -57,7 +57,9 @@ export default class OAuth2Provider extends RecipeModule<
         super(config);
     }
 
-    static init(config?: UserInput): RecipeInitResult<any, never, any, any> {
+    static init(
+        config?: UserInput
+    ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normaliseOAuth2Config(config);
         return {
             recipeID: OAuth2Provider.RECIPE_ID,
