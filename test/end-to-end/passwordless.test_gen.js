@@ -38,6 +38,7 @@ import {
     backendBeforeEach,
     waitForUrl,
     setupBrowser,
+    clickForgotPasswordLink,
 } from "../helpers";
 
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -1866,6 +1867,37 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
             });
         });
+
+        if (authRecipe === "all") {
+            describe("with emailpassword combo", () => {
+                before(async function () {
+                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
+                    await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
+                    if (authRecipe === "all") {
+                        await tryEmailPasswordSignUp(page, registeredEmailWithPass);
+                    }
+                });
+
+                it("should navigate to the sign in page when the user clicks on the forgot password link", async function () {
+                    await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+
+                    await setInputValues(page, [{ name: "email", value: registeredEmailWithPass }]);
+                    await submitForm(page);
+
+                    const testVal = "nav check" + Date.now();
+
+                    await page.evaluate((testVal) => {
+                        window.testVal = testVal;
+                    }, testVal);
+
+                    await clickForgotPasswordLink(page);
+                    await waitForUrl(page, "/auth/reset-password");
+
+                    const testValAfterNav = await page.evaluate(() => window.testVal);
+                    assert.strictEqual(testVal, testValAfterNav);
+                });
+            });
+        }
     }
 }
 

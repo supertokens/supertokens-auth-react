@@ -59,10 +59,13 @@ export const EPComboEmailForm = withOverride(
                         <Label value={"PWLESS_COMBO_PASSWORD_LABEL"} data-supertokens="passwordInputLabel" />
                         <a
                             onClick={() =>
-                                EmailPassword.getInstanceOrThrow().redirect({
-                                    action: "RESET_PASSWORD",
-                                    tenantIdFromQueryParams: getTenantIdFromQueryParams(),
-                                })
+                                EmailPassword.getInstanceOrThrow().redirect(
+                                    {
+                                        action: "RESET_PASSWORD",
+                                        tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+                                    },
+                                    props.navigate
+                                )
                             }
                             data-supertokens="link linkButton formLabelLinkBtn forgotPasswordLink">
                             {t("PWLESS_COMBO_FORGOT_PW_LINK")}

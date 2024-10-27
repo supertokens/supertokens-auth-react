@@ -233,6 +233,7 @@ export function useChildProps(
             recipeImplementation: recipeImplementation,
             config: recipe.config,
             validatePhoneNumber: recipe.config.validatePhoneNumber ?? defaultPhoneNumberValidator,
+            navigate,
         };
     }, [
         error,
@@ -242,6 +243,7 @@ export function useChildProps(
         isPhoneNumber,
         showPasswordField,
         showContinueWithPasswordlessLink,
+        navigate,
     ]);
 }
 

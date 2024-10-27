@@ -30,7 +30,7 @@ export default abstract class RecipeModule<
 > extends BaseRecipeModule<GetRedirectionURLContextType, Action, OnHandleEventContextType, N> {
     redirect = async (
         context: NormalisedGetRedirectionURLContext<GetRedirectionURLContextType>,
-        navigate?: Navigate,
+        navigate: Navigate | undefined,
         queryParams?: Record<string, string>,
         userContext?: UserContext
     ): Promise<void> => {
