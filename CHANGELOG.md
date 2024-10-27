@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.48.0] - 2024-10-07
 
+### Fixes
+
+-   Fixed an issue where the `AuthPage` was using full-page redirects to navigate to the password reset page if both emailpassword and passwordless were enabled.
+
 ### Changes
 
 -   Added the `OAuth2Provider` recipe

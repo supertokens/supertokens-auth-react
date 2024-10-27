@@ -18,6 +18,7 @@ import type { ComponentOverride } from "../../components/componentOverride/compo
 import type {
     APIFormField,
     FeatureBaseConfig,
+    Navigate,
     NormalisedBaseConfig,
     UserContext,
     WebJSRecipeInterface,
@@ -250,6 +251,7 @@ export declare type SignInUpEPComboEmailOrPhoneFormProps = {
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
+    navigate: Navigate | undefined;
 };
 export declare type SignInUpEPComboEmailFormProps = {
     showPasswordField: boolean;
@@ -277,6 +279,7 @@ export declare type SignInUpEPComboEmailFormProps = {
     recipeImplementation: RecipeImplementation;
     validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
     config: NormalisedConfig;
+    navigate: Navigate | undefined;
 };
 export declare type MFAAction =
     | {
@@ -336,6 +339,7 @@ export declare type SignInUpEPComboChildProps = Omit<SignInUpProps, "onSuccess">
               }
     ) => void;
     validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
+    navigate: Navigate | undefined;
 };
 export declare type LinkSentChildProps = LinkSentThemeProps;
 export declare type MFAChildProps = Omit<MFAProps, "featureState" | "dispatch">;
