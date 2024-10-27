@@ -40,6 +40,7 @@ import {
     waitForSTElement,
     isOauth2Supported,
     setupBrowser,
+    getGeneralError,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 
@@ -48,6 +49,7 @@ import {
     TEST_SERVER_BASE_URL,
     SIGN_OUT_API,
     TEST_APPLICATION_SERVER_BASE_URL,
+    SOMETHING_WENT_WRONG_ERROR,
 } from "../constants";
 
 // We do no thave to use a separate domain for the oauth2 client, since the way we are testing
@@ -120,6 +122,36 @@ describe("SuperTokens OAuth2Provider", function () {
             await removeOAuth2ClientInfo(page);
         });
 
+        it("should clear invalid/expired loginChallenge from the url and show an error", async function () {
+            const { client } = await createOAuth2Client({
+                scope: "offline_access profile openid email",
+                redirectUris: [`${TEST_CLIENT_BASE_URL}/oauth/callback`],
+                tokenEndpointAuthMethod: "none",
+                grantTypes: ["authorization_code", "refresh_token"],
+                responseTypes: ["code", "id_token"],
+            });
+
+            await setOAuth2ClientInfo(page, client.clientId);
+
+            await Promise.all([
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+                page.goto(`${TEST_CLIENT_BASE_URL}/oauth/login`),
+            ]);
+
+            let loginButton = await getOAuth2LoginButton(page);
+            await loginButton.click();
+
+            await waitForUrl(page, "/auth");
+
+            await Promise.all([
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+                page.goto(page.url().replace("loginChallenge=", "loginChallenge=nooope")),
+            ]);
+
+            const error = await getGeneralError(page);
+            assert.strictEqual(error, SOMETHING_WENT_WRONG_ERROR);
+        });
+
         it("should successfully complete the OAuth2 flow", async function () {
             const { client } = await createOAuth2Client({
                 scope: "offline_access profile openid email",
@@ -163,6 +195,67 @@ describe("SuperTokens OAuth2Provider", function () {
             loginButton = await getOAuth2LoginButton(page);
             await loginButton.click();
             await waitForUrl(page, "/oauth/callback");
+        });
+
+        it("should handle invalid logoutChallenge in the OAuth2 Logout flow", async function () {
+            const postLogoutRedirectUri = `${TEST_CLIENT_BASE_URL}/oauth/login?logout=true`;
+
+            const { client } = await createOAuth2Client({
+                scope: "offline_access profile openid email",
+                redirectUris: [`${TEST_CLIENT_BASE_URL}/oauth/callback`],
+                postLogoutRedirectUris: [postLogoutRedirectUri],
+                accessTokenStrategy: "jwt",
+                tokenEndpointAuthMethod: "none",
+                grantTypes: ["authorization_code", "refresh_token"],
+                responseTypes: ["code", "id_token"],
+                skipConsent: true,
+            });
+
+            await setOAuth2ClientInfo(
+                page,
+                client.clientId,
+                undefined,
+                undefined,
+                undefined,
+                JSON.stringify({
+                    post_logout_redirect_uri: postLogoutRedirectUri,
+                })
+            );
+
+            await Promise.all([
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+                page.goto(`${TEST_CLIENT_BASE_URL}/oauth/login`),
+            ]);
+
+            let loginButton = await getOAuth2LoginButton(page);
+            await loginButton.click();
+
+            await waitForUrl(page, "/auth");
+
+            await toggleSignInSignUp(page);
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: getTestEmail() });
+            await signUp(page, fieldValues, postValues, "emailpassword");
+
+            await waitForUrl(page, "/oauth/callback");
+
+            // Logout
+            const logoutButton = await getOAuth2LogoutButton(page, "redirect");
+            await logoutButton.click();
+
+            await waitForUrl(page, "/auth/oauth/logout");
+
+            await Promise.all([
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+                page.goto(page.url().replace("logoutChallenge=", "logoutChallenge=nooope")),
+            ]);
+
+            // Click the Logout button on the provider website
+            const stLogoutButton = await waitForSTElement(page, "[data-supertokens~=button]");
+            await stLogoutButton.click();
+
+            // Ensure the we get redirected to the auth page
+            await waitForUrl(page, "/auth/");
+            await waitForSTElement(page);
         });
 
         it("should successfully complete the OAuth2 Logout flow", async function () {

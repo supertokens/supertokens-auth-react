@@ -25,7 +25,7 @@ import SuperTokens from "../../../../../superTokens";
 import UI from "../../../../../ui";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, getTenantIdFromQueryParams, useRethrowInRender } from "../../../../../utils";
-import { SessionContext } from "../../../../session";
+import { doesSessionExist, SessionContext } from "../../../../session";
 import OAuth2Provider from "../../../recipe";
 import { OAuth2LogoutScreenTheme } from "../../themes/oauth2LogoutScreen";
 import { defaultTranslationsOAuth2Provider } from "../../themes/translations";
@@ -75,7 +75,16 @@ export const OAuth2LogoutScreen: React.FC<Prop> = (props) => {
                 userContext
             );
         } catch (err: any) {
-            rethrowInRender(err);
+            if (!(await doesSessionExist(userContext))) {
+                void SuperTokens.getInstanceOrThrow()
+                    .redirectToAuth({
+                        userContext,
+                        redirectBack: false,
+                    })
+                    .catch(rethrowInRender);
+            } else {
+                rethrowInRender(err);
+            }
         }
     }, [logoutChallenge, navigate, props.recipe, userContext, rethrowInRender]);
 

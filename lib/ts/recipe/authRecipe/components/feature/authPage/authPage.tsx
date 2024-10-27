@@ -197,7 +197,8 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
             }
         },
         () => {
-            return clearQueryParams(["loginChallenge"]);
+            clearQueryParams(["loginChallenge"]);
+            setError("SOMETHING_WENT_WRONG_ERROR");
         }
     );
 
