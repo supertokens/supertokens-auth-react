@@ -1878,6 +1878,15 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     }
                 });
 
+                beforeEach(async function () {
+                    await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+
+                    await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                    await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
+
+                    consoleLogs.length = 0;
+                });
+
                 it("should navigate to the sign in page when the user clicks on the forgot password link", async function () {
                     await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
 
