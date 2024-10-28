@@ -1878,6 +1878,17 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     }
                 });
 
+                after(async function () {
+                    await browser.close();
+                    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+                        method: "POST",
+                    }).catch(console.error);
+
+                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
+                        method: "POST",
+                    }).catch(console.error);
+                });
+
                 beforeEach(async function () {
                     await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
 
