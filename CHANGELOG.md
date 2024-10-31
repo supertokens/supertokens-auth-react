@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking changes
 
--   Now only supporting FDI 4.0 (Node >= 24.0.0)
+-   Now only supporting FDI 3.1 and 4.0 (Node >= 21.0.0)
 -   All `getRedirectionURL` functions now also get a new `tenantIdFromQueryParams` prop
     -   This is used in OAuth2 + Multi-tenant flows.
     -   This should be safe to ignore if:
