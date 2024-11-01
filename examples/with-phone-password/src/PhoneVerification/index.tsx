@@ -37,7 +37,7 @@ const CustomSignInUpTheme = (props: AuthPageThemeProps) => {
 
                     const res = await Passwordless.createCode({
                         phoneNumber,
-                        tryLinkingWithSessionUser: true,
+                        shouldTryLinkingWithSessionUser: true,
                         userContext: { additionalAttemptInfo },
                     });
 
