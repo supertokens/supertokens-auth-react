@@ -124,7 +124,7 @@ export type SecondaryFactorRedirectionInfo = {
     id: string;
     name: string;
     description: string;
-    logo: FC;
+    logo: FC | undefined;
     path: string;
 };
 

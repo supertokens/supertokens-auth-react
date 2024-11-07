@@ -37,7 +37,7 @@ export function normaliseMultiFactorAuthFeature(config?: Config): NormalisedConf
         ...normaliseRecipeModuleConfig(config),
         disableDefaultUI,
         firstFactors: config?.firstFactors,
-        getSecondaryFactorInfo: (orig) => orig,
+        getSecondaryFactorInfo: config?.getSecondaryFactorInfo ?? ((orig) => orig),
         factorChooserScreen: config.factorChooserScreen ?? {},
         override,
     };

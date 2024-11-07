@@ -32,12 +32,12 @@ export const FactorOption = withOverride(
         id: string;
         name: string;
         description: string;
-        logo: FC;
+        logo: FC | undefined;
     }): JSX.Element {
         const t = useTranslation();
         return (
             <a data-supertokens={`factorChooserOption ${id}`} onClick={onClick}>
-                <div data-supertokens="factorLogo"> {logo({})}</div>
+                <div data-supertokens="factorLogo"> {logo ? logo({}) : null}</div>
                 <div data-supertokens="factorOptionText">
                     <h6 data-supertokens="factorName">{t(name)}</h6>
                     <p data-supertokens="factorDescription">{t(description)}</p>

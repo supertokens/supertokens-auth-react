@@ -4,5 +4,5 @@ export declare const FactorOption: import("react").ComponentType<{
     id: string;
     name: string;
     description: string;
-    logo: FC;
+    logo: FC | undefined;
 }>;
