@@ -7,7 +7,7 @@ import {
     screenshotOnFailure,
     assertProviders,
     clickOnProviderButton,
-    loginWithAuth0,
+    loginWithMockProvider,
     setPasswordlessFlowType,
     waitForSTElement,
     getPasswordlessDevice,
@@ -123,9 +123,9 @@ describe("getRedirectionURL Tests", function () {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 await assertProviders(page);
-                await clickOnProviderButton(page, "Auth0");
+                await clickOnProviderButton(page, "Mock Provider");
                 await Promise.all([
-                    loginWithAuth0(page),
+                    loginWithMockProvider(page),
                     page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
                 ]);
                 const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
@@ -184,9 +184,9 @@ describe("getRedirectionURL Tests", function () {
 
             it("Test that isNewUser works correctly when signing up with auth 0", async function () {
                 await assertProviders(page);
-                await clickOnProviderButton(page, "Auth0");
+                await clickOnProviderButton(page, "Mock Provider");
                 await Promise.all([
-                    loginWithAuth0(page),
+                    loginWithMockProvider(page),
                     page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
                 ]);
                 const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
@@ -381,9 +381,9 @@ describe("getRedirectionURL Tests", function () {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 await assertProviders(page);
-                await clickOnProviderButton(page, "Auth0");
+                await clickOnProviderButton(page, "Mock Provider");
                 await Promise.all([
-                    loginWithAuth0(page),
+                    loginWithMockProvider(page),
                     page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
                 ]);
                 const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));

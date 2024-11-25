@@ -562,6 +562,23 @@ export async function loginWithFacebook(page) {
     await Promise.all([page.keyboard.press("Enter"), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 }
 
+export async function loginWithMockProvider(
+    page,
+    email = "st_test_user@supertokens.io",
+    userId = "123",
+    isVerified = true
+) {
+    const url = new URL(page.url());
+    await Promise.all([
+        page.goto(
+            `${TEST_CLIENT_BASE_URL}/auth/callback/mock-provider?code=asdf&email=${encodeURIComponent(
+                email
+            )}&userId=${encodeURIComponent(userId)}&isVerified=${isVerified}&state=${url.searchParams.get("state")}`
+        ),
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
+    ]);
+}
+
 export async function loginWithAuth0(page) {
     await page.focus("input[type=email]");
     await page.keyboard.type(process.env.AUTH0_EMAIL);

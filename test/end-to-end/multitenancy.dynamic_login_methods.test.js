@@ -36,9 +36,10 @@ import {
     loginWithGoogle,
     clearBrowserCookiesWithoutAffectingConsole,
     clickOnProviderButton,
-    loginWithAuth0,
+    loginWithMockProvider,
     isMultitenancySupported,
     isAccountLinkingSupported,
+    loginWithAuth0,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
