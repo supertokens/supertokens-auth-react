@@ -7,7 +7,7 @@ import {
     screenshotOnFailure,
     assertProviders,
     clickOnProviderButton,
-    loginWithAuth0,
+    loginWithMockProvider,
     setPasswordlessFlowType,
     waitForSTElement,
     getPasswordlessDevice,
@@ -119,9 +119,9 @@ describe("getRedirectionURL Tests", function () {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 await assertProviders(page);
-                await clickOnProviderButton(page, "Auth0");
+                await clickOnProviderButton(page, "Mock Provider");
                 await Promise.all([
-                    loginWithAuth0(page),
+                    loginWithMockProvider(page),
                     page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
                 ]);
                 const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
@@ -178,9 +178,9 @@ describe("getRedirectionURL Tests", function () {
 
             it("Test that isNewRecipeUser works correctly when signing up with auth 0", async function () {
                 await assertProviders(page);
-                await clickOnProviderButton(page, "Auth0");
+                await clickOnProviderButton(page, "Mock Provider");
                 await Promise.all([
-                    loginWithAuth0(page),
+                    loginWithMockProvider(page),
                     page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
                 ]);
                 const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
@@ -368,9 +368,9 @@ describe("getRedirectionURL Tests", function () {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 await assertProviders(page);
-                await clickOnProviderButton(page, "Auth0");
+                await clickOnProviderButton(page, "Mock Provider");
                 await Promise.all([
-                    loginWithAuth0(page),
+                    loginWithMockProvider(page),
                     page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
                 ]);
                 const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
@@ -668,10 +668,10 @@ describe("getRedirectionURL Tests", function () {
                     ]);
 
                     await assertProviders(page);
-                    await clickOnProviderButton(page, "Auth0");
+                    await clickOnProviderButton(page, "Mock Provider");
 
                     await Promise.all([
-                        loginWithAuth0(page),
+                        loginWithMockProvider(page),
                         page.waitForResponse(
                             (response) => response.url() === SIGN_IN_UP_API && response.status() === 200
                         ),
@@ -680,7 +680,7 @@ describe("getRedirectionURL Tests", function () {
                     const urlAfterSignUp = await page.url();
                     const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
                     assert.equal(newUserCheck, "thirdparty-true");
-                    assert(urlAfterSignUp.includes("/auth/callback/auth0"));
+                    assert(urlAfterSignUp.includes("/auth/callback/mock-provider"));
                 });
             });
         });

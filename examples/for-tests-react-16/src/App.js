@@ -272,50 +272,52 @@ if (testContext.enableMFA) {
     );
 }
 
-SuperTokens.init({
-    usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
-    clientType: testContext.clientType,
-    appInfo: {
-        appName: "SuperTokens",
-        websiteDomain: getWebsiteDomain(),
-        apiDomain: getApiDomain(),
-        websiteBasePath,
-    },
-    languageTranslations: {
-        translations: {
-            en: {
-                AUTH_PAGE_FOOTER_TOS: "TOS",
-            },
-            hu: {
-                AUTH_PAGE_FOOTER_TOS: "ÁSZF",
+if (!window.location.pathname.startsWith("/mockProvider")) {
+    SuperTokens.init({
+        usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
+        clientType: testContext.clientType,
+        appInfo: {
+            appName: "SuperTokens",
+            websiteDomain: getWebsiteDomain(),
+            apiDomain: getApiDomain(),
+            websiteBasePath,
+        },
+        languageTranslations: {
+            translations: {
+                en: {
+                    AUTH_PAGE_FOOTER_TOS: "TOS",
+                },
+                hu: {
+                    AUTH_PAGE_FOOTER_TOS: "ÁSZF",
+                },
             },
         },
-    },
-    getRedirectionURL: (context) => {
-        if (context.action === "SUCCESS") {
-            let logId = {
-                emailpassword: "EMAIL_PASSWORD",
-                thirdparty: "THIRD_PARTY",
-                passwordless: "PASSWORDLESS",
-            }[context.recipeId];
+        getRedirectionURL: (context) => {
+            if (context.action === "SUCCESS") {
+                let logId = {
+                    emailpassword: "EMAIL_PASSWORD",
+                    thirdparty: "THIRD_PARTY",
+                    passwordless: "PASSWORDLESS",
+                }[context.recipeId];
 
-            console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`);
-            setIsNewUserToStorage(context.recipeId, context.isNewRecipeUser);
-            if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
-                return null;
+                console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`);
+                setIsNewUserToStorage(context.recipeId, context.isNewRecipeUser);
+                if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
+                    return null;
+                }
+                return context.redirectToPath || "/dashboard";
+            } else {
+                console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
             }
-            return context.redirectToPath || "/dashboard";
-        } else {
-            console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
-        }
-    },
-    useShadowDom,
-    privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
-    termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
-    defaultToSignUp,
-    disableAuthRoute: testContext.disableDefaultUI,
-    recipeList,
-});
+        },
+        useShadowDom,
+        privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
+        termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
+        defaultToSignUp,
+        disableAuthRoute: testContext.disableDefaultUI,
+        recipeList,
+    });
+}
 
 /* App */
 function App() {
