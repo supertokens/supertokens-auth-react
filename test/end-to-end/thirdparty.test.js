@@ -26,12 +26,13 @@ import {
     assertNoSTComponents,
     generateState,
     clickOnProviderButton,
-    loginWithAuth0,
+    loginWithMockProvider,
     getGeneralError,
     waitFor,
     screenshotOnFailure,
     clickOnProviderButtonWithoutWaiting,
     backendBeforeEach,
+    loginWithAuth0,
 } from "../helpers";
 
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
@@ -136,37 +137,37 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
             ]);
         });
 
-        it("Successful sign in with Auth0 with redirectToPath (w/ leading slash) keeping query params", async function () {
+        it("Successful sign in with redirectToPath (w/ leading slash) keeping query params", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here%3Ffoo%3Dbar`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await assertProviders(page);
-            await clickOnProviderButton(page, "Auth0");
+            await clickOnProviderButton(page, "Mock Provider");
             await Promise.all([
-                loginWithAuth0(page),
+                loginWithMockProvider(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const { pathname, search } = await page.evaluate(() => window.location);
             assert.deepStrictEqual(pathname + search, "/redirect-here?foo=bar");
         });
 
-        it("Successful sign in with Auth0 with redirectToPath (w/o leading slash) keeping query params", async function () {
+        it("Successful sign in with SSO with redirectToPath (w/o leading slash) keeping query params", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%3Ffoo%3Dbar`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await assertProviders(page);
-            await clickOnProviderButton(page, "Auth0");
+            await clickOnProviderButton(page, "Mock Provider");
             await Promise.all([
-                loginWithAuth0(page),
+                loginWithMockProvider(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const { pathname, search } = await page.evaluate(() => window.location);
             assert.deepStrictEqual(pathname + search, "/?foo=bar");
         });
 
-        it("Successful sign in with Auth0 with redirectToPath (query params + fragment)", async function () {
+        it("Successful sign in with SSO with redirectToPath (query params + fragment)", async function () {
             await Promise.all([
                 page.goto(
                     `${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent(
@@ -176,39 +177,39 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await assertProviders(page);
-            await clickOnProviderButton(page, "Auth0");
+            await clickOnProviderButton(page, "Mock Provider");
             await Promise.all([
-                loginWithAuth0(page),
+                loginWithMockProvider(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const { pathname, search, hash } = await page.evaluate(() => window.location);
             assert.deepStrictEqual(pathname + search + hash, "/redirect-here?foo=bar#cell=4,1-6,2");
         });
 
-        it("Successful sign in with Auth0 with redirectToPath (only fragment)", async function () {
+        it("Successful sign in with SSO with redirectToPath (only fragment)", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent("#cell=4,1-6,2")}`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await assertProviders(page);
-            await clickOnProviderButton(page, "Auth0");
+            await clickOnProviderButton(page, "Mock Provider");
             await Promise.all([
-                loginWithAuth0(page),
+                loginWithMockProvider(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const { pathname, search, hash } = await page.evaluate(() => window.location);
             assert.deepStrictEqual(pathname + search + hash, "/#cell=4,1-6,2");
         });
 
-        it("Successful signin with Auth0 and email verification", async function () {
+        it("Successful signin with SSO and email verification", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await assertProviders(page);
-            await clickOnProviderButton(page, "Auth0");
+            await clickOnProviderButton(page, "Mock Provider");
             await Promise.all([
-                loginWithAuth0(page),
+                loginWithMockProvider(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
@@ -241,30 +242,30 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
             ]);
         });
 
-        it("Successful signin with auth0 and redirectToPath", async function () {
+        it("Successful signin with SSO and redirectToPath", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=/hello`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await assertProviders(page);
-            await clickOnProviderButton(page, "Auth0");
+            await clickOnProviderButton(page, "Mock Provider");
             await Promise.all([
-                loginWithAuth0(page),
+                loginWithMockProvider(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/hello");
         });
 
-        it("Successful signin with auth0 and redirectToPath case sensitive", async function () {
+        it("Successful signin with SSO and redirectToPath case sensitive", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2FCasE%2FCase-SensItive1-PAth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await assertProviders(page);
-            await clickOnProviderButton(page, "Auth0");
+            await clickOnProviderButton(page, "Mock Provider");
             await Promise.all([
-                loginWithAuth0(page),
+                loginWithMockProvider(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
@@ -359,8 +360,8 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
                 }
             };
             page.on("request", requestHandler);
-            await clickOnProviderButton(page, "Auth0");
-            await loginWithAuth0(page);
+            await clickOnProviderButton(page, "Mock Provider");
+            await loginWithMockProvider(page);
             const error = await getGeneralError(page);
             assert.deepStrictEqual(error, "Terms of Service");
         });
@@ -395,8 +396,8 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
             };
             page.on("request", requestHandler);
 
-            await clickOnProviderButton(page, "Auth0");
-            await loginWithAuth0(page);
+            await clickOnProviderButton(page, "Mock Provider");
+            await loginWithMockProvider(page);
 
             const error = await getGeneralError(page);
             assert.deepStrictEqual(error, "Test message!!!!");

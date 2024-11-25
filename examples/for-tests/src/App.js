@@ -438,30 +438,32 @@ if (emailVerificationMode !== "OFF") {
     recipeList.push(getEmailVerificationConfigs(testContext));
 }
 
-SuperTokens.init({
-    usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
-    clientType: testContext.clientType,
-    appInfo: {
-        appName: "SuperTokens",
-        websiteDomain: getWebsiteDomain(),
-        apiDomain: getApiDomain(),
-        websiteBasePath,
-    },
-    languageTranslations: {
-        translations: {
-            en: {
-                PWLESS_SIGN_IN_UP_FOOTER_TOS: "TOS",
-            },
-            hu: {
-                PWLESS_SIGN_IN_UP_FOOTER_TOS: "ÁSZF",
+if (!window.location.pathname.startsWith("/mockProvider")) {
+    SuperTokens.init({
+        usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
+        clientType: testContext.clientType,
+        appInfo: {
+            appName: "SuperTokens",
+            websiteDomain: getWebsiteDomain(),
+            apiDomain: getApiDomain(),
+            websiteBasePath,
+        },
+        languageTranslations: {
+            translations: {
+                en: {
+                    PWLESS_SIGN_IN_UP_FOOTER_TOS: "TOS",
+                },
+                hu: {
+                    PWLESS_SIGN_IN_UP_FOOTER_TOS: "ÁSZF",
+                },
             },
         },
-    },
-    getRedirectionURL: (context) => {
-        console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
-    },
-    recipeList,
-});
+        getRedirectionURL: (context) => {
+            console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
+        },
+        recipeList,
+    });
+}
 
 /* App */
 function App() {
