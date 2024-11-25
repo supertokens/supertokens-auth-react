@@ -37,7 +37,7 @@ import {
     assertProviders,
     clickOnProviderButton,
     clickOnProviderButtonWithoutWaiting,
-    loginWithAuth0,
+    loginWithMockProvider,
     isGeneralErrorSupported,
     setGeneralErrorToLocalStorage,
     backendBeforeEach,
@@ -403,7 +403,7 @@ function getThirdPartyTests(rid, ridForStorage) {
             await assertProviders(page);
 
             let [_, response1] = await Promise.all([
-                clickOnProviderButtonWithoutWaiting(page, "Auth0"),
+                clickOnProviderButtonWithoutWaiting(page, "Mock Provider"),
                 page.waitForResponse(
                     (response) =>
                         response.url().includes(GET_AUTH_URL_API) &&
@@ -428,10 +428,10 @@ function getThirdPartyTests(rid, ridForStorage) {
 
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await assertProviders(page);
-            await clickOnProviderButton(page, "Auth0");
+            await clickOnProviderButton(page, "Mock Provider");
 
             let [_, response1] = await Promise.all([
-                loginWithAuth0(page),
+                loginWithMockProvider(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
 
