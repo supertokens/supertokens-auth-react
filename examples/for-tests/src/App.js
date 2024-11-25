@@ -459,48 +459,50 @@ if (testContext.enableMFA) {
     );
 }
 
-SuperTokens.init({
-    usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
-    clientType: testContext.clientType,
-    appInfo: {
-        appName: "SuperTokens",
-        websiteDomain: getWebsiteDomain(),
-        apiDomain: getApiDomain(),
-        websiteBasePath,
-    },
-    languageTranslations: {
-        translations: {
-            en: {
-                PWLESS_SIGN_IN_UP_FOOTER_TOS: "TOS",
-            },
-            hu: {
-                PWLESS_SIGN_IN_UP_FOOTER_TOS: "ÁSZF",
+if (!window.location.pathname.startsWith("/mockProvider")) {
+    SuperTokens.init({
+        usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
+        clientType: testContext.clientType,
+        appInfo: {
+            appName: "SuperTokens",
+            websiteDomain: getWebsiteDomain(),
+            apiDomain: getApiDomain(),
+            websiteBasePath,
+        },
+        languageTranslations: {
+            translations: {
+                en: {
+                    PWLESS_SIGN_IN_UP_FOOTER_TOS: "TOS",
+                },
+                hu: {
+                    PWLESS_SIGN_IN_UP_FOOTER_TOS: "ÁSZF",
+                },
             },
         },
-    },
-    getRedirectionURL: (context) => {
-        if (context.action === "SUCCESS") {
-            let logId = {
-                emailpassword: "EMAIL_PASSWORD",
-                thirdparty: "THIRD_PARTY",
-                passwordless: "PASSWORDLESS",
-                thirdpartypasswordless: "THIRDPARTYPASSWORDLESS",
-                thirdpartyemailpassword: "THIRD_PARTY_EMAIL_PASSWORD",
-            }[context.recipeId];
+        getRedirectionURL: (context) => {
+            if (context.action === "SUCCESS") {
+                let logId = {
+                    emailpassword: "EMAIL_PASSWORD",
+                    thirdparty: "THIRD_PARTY",
+                    passwordless: "PASSWORDLESS",
+                    thirdpartypasswordless: "THIRDPARTYPASSWORDLESS",
+                    thirdpartyemailpassword: "THIRD_PARTY_EMAIL_PASSWORD",
+                }[context.recipeId];
 
-            console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`);
-            setIsNewUserToStorage(context.recipeId, context.isNewRecipeUser);
-            if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
-                return null;
+                console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`);
+                setIsNewUserToStorage(context.recipeId, context.isNewRecipeUser);
+                if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
+                    return null;
+                }
+                console.log(JSON.stringify(context));
+                return context.redirectToPath || "/dashboard";
+            } else {
+                console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
             }
-            console.log(JSON.stringify(context));
-            return context.redirectToPath || "/dashboard";
-        } else {
-            console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
-        }
-    },
-    recipeList,
-});
+        },
+        recipeList,
+    });
+}
 
 /* App */
 function App() {

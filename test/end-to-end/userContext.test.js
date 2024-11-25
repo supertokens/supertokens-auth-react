@@ -23,9 +23,10 @@ import {
     submitFormReturnRequestAndResponse,
     assertProviders,
     clickOnProviderButton,
-    loginWithAuth0,
+    loginWithMockProvider,
     backendBeforeEach,
     waitForUrl,
+    loginWithAuth0,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
