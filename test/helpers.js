@@ -630,6 +630,7 @@ export async function loginWithMockProvider(
     userId = "123",
     isVerified = true
 ) {
+    const url = new URL(page.url());
     await Promise.all([
         page.goto(
             `${TEST_CLIENT_BASE_URL}/auth/callback/mock-provider?code=asdf&email=${encodeURIComponent(
@@ -639,7 +640,6 @@ export async function loginWithMockProvider(
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 }
-loginWithMockProvider;
 
 export async function loginWithAuth0(page) {
     await page.focus("input[type=email]");

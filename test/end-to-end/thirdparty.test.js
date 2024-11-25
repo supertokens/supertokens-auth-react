@@ -272,10 +272,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
 
         it("should work with custom getRedirectUrl", async function () {
             await page.evaluate((TEST_CLIENT_BASE_URL) => {
-                localStorage.setItem(
-                    "thirdPartyRedirectURL",
-                    `${TEST_CLIENT_BASE_URL}/auth/mock-provider-custom-redirect`
-                );
+                localStorage.setItem("thirdPartyRedirectURL", `${TEST_CLIENT_BASE_URL}/auth/auth0-custom-redirect`);
             }, TEST_CLIENT_BASE_URL);
 
             await Promise.all([
@@ -283,10 +280,10 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await assertProviders(page);
-            await clickOnProviderButton(page, "Mock Provider");
-            await loginWithMockProvider(page);
+            await clickOnProviderButton(page, "Auth0");
+            await loginWithAuth0(page);
 
-            await waitForUrl(page, "/auth/mock-provider-custom-redirect");
+            await waitForUrl(page, "/auth/auth0-custom-redirect");
         });
 
         // it("Successful signin with facebook", async function () {
