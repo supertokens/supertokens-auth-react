@@ -509,6 +509,7 @@ export async function assertProviders(page) {
         "Continue with Apple",
         "Continue with Custom",
         "Continue with Auth0",
+        "Continue with Mock Provider",
     ]);
 }
 

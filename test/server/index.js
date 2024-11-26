@@ -44,6 +44,7 @@ let {
     customAuth0Provider,
     maxVersion,
     stopST,
+    mockThirdPartyProvider,
 } = require("./utils");
 let { version: nodeSDKVersion } = require("supertokens-node/lib/build/version");
 const fetch = require("isomorphic-fetch");
@@ -133,6 +134,7 @@ const providers = [
         },
     },
     customAuth0Provider(),
+    mockThirdPartyProvider,
 ];
 
 let urlencodedParser = bodyParser.urlencoded({ limit: "20mb", extended: true, parameterLimit: 20000 });

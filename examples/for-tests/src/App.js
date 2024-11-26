@@ -660,6 +660,10 @@ function getThirdPartyPasswordlessConfigs({ staticProviderList, disableDefaultUI
             name: "Auth0",
             getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
         },
+        {
+            id: "mock-provider",
+            name: "Mock Provider",
+        },
     ];
     if (staticProviderList) {
         const ids = JSON.parse(staticProviderList);
@@ -893,6 +897,10 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
                 </button>
             ),
         },
+        {
+            id: "mock-provider",
+            name: "Mock Provider",
+        },
     ];
     if (staticProviderList) {
         const ids = JSON.parse(staticProviderList);
@@ -989,6 +997,10 @@ function getThirdPartyEmailPasswordConfigs({ staticProviderList, disableDefaultU
             id: "auth0",
             name: "Auth0",
             getRedirectURL: thirdPartyRedirectURL !== null ? () => thirdPartyRedirectURL : undefined,
+        },
+        {
+            id: "mock-provider",
+            name: "Mock Provider",
         },
     ];
     if (staticProviderList) {
