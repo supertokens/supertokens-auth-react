@@ -458,7 +458,12 @@ describe("SuperTokens Email Verification", function () {
             pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/dashboard");
 
-            await page.evaluate((url) => window.fetch(url), `${TEST_APPLICATION_SERVER_BASE_URL}/unverifyEmail`);
+            await Promise.all([
+                page.waitForResponse(
+                    (response) => response.url() === SEND_VERIFY_EMAIL_API && response.status() === 200
+                ),
+                page.evaluate((url) => window.fetch(url), `${TEST_APPLICATION_SERVER_BASE_URL}/unverifyEmail`),
+            ]);
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
 
             pathname = await page.evaluate(() => window.location.pathname);
