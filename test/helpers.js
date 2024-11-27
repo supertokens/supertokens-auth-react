@@ -144,6 +144,7 @@ export async function getProviderLogoCount(page) {
 }
 
 export async function getSubmitFormButtonLabelWithoutShadowDom(page) {
+    await page.waitForSelector("form > div > button");
     return await page.evaluate(() => document.querySelector("form > div > button").innerText);
 }
 
@@ -496,10 +497,22 @@ async function assertValidator(actualValidate, expectedValidate, values) {
 }
 
 export async function getLatestURLWithToken() {
-    const response = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/token`);
-    const { latestURLWithToken } = await response.json();
+    let latestURLWithToken;
+    const start = Date.now();
+    while (latestURLWithToken === undefined) {
+        const response = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/token`);
+        const respBody = await response.json();
+        latestURLWithToken = respBody.latestURLWithToken;
+        if (latestURLWithToken === undefined) {
+            if (Date.now() - start > 10000) {
+                throw new Error("Timeout waiting for latestURLWithToken");
+            }
+            await new Promise((res) => setTimeout(res, 250));
+        }
+    }
     return latestURLWithToken;
 }
+
 export async function assertProviders(page) {
     const providers = await getProvidersLabels(page);
     assert.deepStrictEqual(providers, [
@@ -649,12 +662,14 @@ export async function generateState(state, page) {
 }
 
 export async function getUserIdWithAxios(page) {
+    await page.waitForSelector("#root > div > div.fill > div > div.axios > ul > li.sessionInfo-user-id");
     return await page.evaluate(
         () => document.querySelector("#root > div > div.fill > div > div.axios > ul > li.sessionInfo-user-id").innerText
     );
 }
 
 export async function getSessionHandleWithAxios(page) {
+    await page.waitForSelector("#root > div > div.fill > div > div.axios > ul > li.sessionInfo-session-handle");
     return await page.evaluate(
         () =>
             document.querySelector("#root > div > div.fill > div > div.axios > ul > li.sessionInfo-session-handle")
@@ -685,12 +700,14 @@ export async function getInvalidClaimsJSON(page) {
 }
 
 export async function getUserIdFromSessionContext(page) {
+    await page.waitForSelector("#root > div > div.fill > div > div.session-context-userId");
     return await page.evaluate(
         () => document.querySelector("#root > div > div.fill > div > div.session-context-userId").innerText
     );
 }
 
 export async function getTextInDashboardNoAuth(page) {
+    await page.waitForSelector("#root > div > div.fill > div.not-logged-in");
     return await page.evaluate(() => document.querySelector("#root > div > div.fill > div.not-logged-in").innerText);
 }
 
