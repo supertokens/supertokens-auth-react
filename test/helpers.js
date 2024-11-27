@@ -514,23 +514,15 @@ export async function submitFormReturnRequestAndResponse(page, URL) {
     };
 }
 
-export async function hasMethodBeenCalled(page, URL, method = "GET", timeout = 1000) {
-    let methodCalled = false;
-
-    const onRequestVerifyMatch = (request) => {
-        // If method called before hasMethodBeenCalled timeouts, update methodCalled.
-        if (request.url() === URL && request.method() === method) {
-            methodCalled = true;
-        }
-        request.continue();
-    };
-
-    await page.setRequestInterception(true);
-    page.on("request", onRequestVerifyMatch);
-    await new Promise((r) => setTimeout(r, timeout));
-    await page.setRequestInterception(false);
-    page.off("request", onRequestVerifyMatch);
-    return methodCalled;
+export async function hasMethodBeenCalled(page, URL, method = "GET", timeout = 2000) {
+    try {
+        await page.waitForResponse((response) => response.url() === URL && response.request().method() === method, {
+            timeout,
+        });
+        return true;
+    } catch (e) {
+        return false;
+    }
 }
 
 export async function assertFormFieldsEqual(actual, expected, values) {
