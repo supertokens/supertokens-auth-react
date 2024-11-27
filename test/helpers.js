@@ -556,7 +556,7 @@ export async function getLatestURLWithToken() {
         const response = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/token`);
         const respBody = await response.json();
         latestURLWithToken = respBody.latestURLWithToken;
-        if (latestURLWithToken === undefined) {
+        if (latestURLWithToken === undefined || latestURLWithToken === "") {
             if (Date.now() - start > 10000) {
                 throw new Error("Timeout waiting for latestURLWithToken");
             }
