@@ -16,7 +16,16 @@ jobs:
             - run: npm run build-check
             - run: npm run size
             - run: npm run check-circular-dependencies
-            - run: (cd .circleci/ && ./markTesting.sh)
+            # - run: (cd .circleci/ && ./markTesting.sh)
+            - run:
+                  name: Mark Testing (Conditional)
+                  command: |
+                      if [ "$CIRCLE_BRANCH" != "ci/use-circle-ci-tests-for-partial-rerun-support" ]; then
+                          echo "Running ./markTesting.sh as branch is $CIRCLE_BRANCH";
+                          (cd .circleci/ && ./markTesting.sh);
+                      else
+                          echo "Skipping ./markTesting.sh for branch $CIRCLE_BRANCH";
+                      fi
             - persist_to_workspace:
                   root: / # relative path to our working directory
                   paths:
