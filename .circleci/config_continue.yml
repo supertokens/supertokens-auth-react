@@ -74,7 +74,7 @@ workflows:
                       tags:
                           only: /dev-v[0-9]+(\.[0-9]+)*/
                       branches:
-                          ignore: /.*/
+                          only: ci/use-circle-ci-tests-for-partial-rerun-support
 
             - test:
                   name: "test-<< matrix.fdi-version >>-react-16-<< matrix.run-react-16-tests >>"
