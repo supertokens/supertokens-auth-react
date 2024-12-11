@@ -34,6 +34,7 @@ export const LinkingPage: React.FC = () => {
                 { id: "email", value: userInfo.user.emails[0] },
                 { id: "password", value: password },
             ],
+            shouldTryLinkingWithSessionUser: true,
         });
 
         if (resp.status !== "OK") {
@@ -54,6 +55,7 @@ export const LinkingPage: React.FC = () => {
         try {
             let response = await Passwordless.createCode({
                 phoneNumber,
+                shouldTryLinkingWithSessionUser: true,
             });
 
             if (cancel) {

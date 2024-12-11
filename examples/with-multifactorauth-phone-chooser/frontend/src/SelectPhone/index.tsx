@@ -60,7 +60,7 @@ export default function SelectPhone() {
                     <li
                         className="phoneNumberCard"
                         onClick={() => {
-                            Passwordless.createCode({ phoneNumber: number })
+                            Passwordless.createCode({ phoneNumber: number, shouldTryLinkingWithSessionUser: true })
                                 .then(async (info) => {
                                     if (info.status !== "OK") {
                                         setError(info.reason);
