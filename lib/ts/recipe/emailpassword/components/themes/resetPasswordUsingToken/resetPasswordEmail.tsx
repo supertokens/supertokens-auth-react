@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { useState } from "react";
+import { Fragment, useState } from "react";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
@@ -25,48 +25,44 @@ import GeneralError from "../../library/generalError";
 
 import type { EnterEmailProps, EnterEmailStatus } from "../../../types";
 
-const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
-    const t = useTranslation();
-    const userContext = useUserContext();
-    const [status, setStatus] = useState<EnterEmailStatus>("READY");
-    const [emailFieldValue, setEmailFieldValue] = useState<string>("");
+const EmailPasswordResetPasswordEmail = withOverride(
+    "EmailPasswordResetPasswordEmail",
+    (
+        props: EnterEmailProps & {
+            status: EnterEmailStatus;
+            onSuccess: () => void;
+            resend: () => void;
+        }
+    ) => {
+        const t = useTranslation();
+        const userContext = useUserContext();
+        const [emailFieldValue, setEmailFieldValue] = useState<string>("");
+        const { formFields } = props;
 
-    const onSuccess = (): void => {
-        setStatus("SENT");
-    };
+        const emailSuccessText =
+            t("EMAIL_PASSWORD_RESET_SEND_BEFORE_EMAIL") +
+            (emailFieldValue !== undefined && emailFieldValue.length > 0
+                ? emailFieldValue
+                : t("EMAIL_PASSWORD_RESET_SEND_FALLBACK_EMAIL")) +
+            t("EMAIL_PASSWORD_RESET_SEND_AFTER_EMAIL");
 
-    const resend = (): void => {
-        setStatus("READY");
-    };
-    const { formFields } = props;
-
-    const emailSuccessText =
-        t("EMAIL_PASSWORD_RESET_SEND_BEFORE_EMAIL") +
-        (emailFieldValue !== undefined && emailFieldValue.length > 0
-            ? emailFieldValue
-            : t("EMAIL_PASSWORD_RESET_SEND_FALLBACK_EMAIL")) +
-        t("EMAIL_PASSWORD_RESET_SEND_AFTER_EMAIL");
-
-    if (status === "SENT") {
-        return (
-            <div data-supertokens="container">
-                <div data-supertokens="row">
+        if (props.status === "SENT") {
+            return (
+                <Fragment>
                     <div data-supertokens="primaryText enterEmailSuccessMessage">
                         {emailSuccessText}
-                        <span data-supertokens="link resendEmailLink" onClick={resend}>
+                        <span data-supertokens="link resendEmailLink" onClick={props.resend}>
                             {t("EMAIL_PASSWORD_RESET_RESEND_LINK")}
                         </span>
                     </div>
                     <BackToSignInButton onClick={props.onBackButtonClicked} />
-                </div>
-            </div>
-        );
-    }
+                </Fragment>
+            );
+        }
 
-    // Otherwise, return Form.
-    return (
-        <div data-supertokens="container resetPasswordEmailForm">
-            <div data-supertokens="row">
+        // Otherwise, return Form.
+        return (
+            <Fragment>
                 <div data-supertokens="headerTitle withBackButton">
                     <BackButton onClick={props.onBackButtonClicked} />
                     {t("EMAIL_PASSWORD_RESET_HEADER_TITLE")}
@@ -81,7 +77,7 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                     onError={props.onError}
                     formFields={formFields}
                     buttonLabel={"EMAIL_PASSWORD_RESET_SEND_BTN"}
-                    onSuccess={onSuccess}
+                    onSuccess={props.onSuccess}
                     callAPI={async (formFields) => {
                         const validationErrors = await validateForm(
                             formFields,
@@ -118,9 +114,26 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                     showLabels={true}
                     validateOnBlur={true}
                 />
+            </Fragment>
+        );
+    }
+);
+
+export const ResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
+    const [status, setStatus] = useState<EnterEmailStatus>("READY");
+    const onSuccess = (): void => {
+        setStatus("SENT");
+    };
+
+    const resend = (): void => {
+        setStatus("READY");
+    };
+
+    return (
+        <div data-supertokens={`container ${status === "SENT" ? "" : "resetPasswordEmailForm"}`}>
+            <div data-supertokens="row">
+                <EmailPasswordResetPasswordEmail {...props} status={status} onSuccess={onSuccess} resend={resend} />
             </div>
         </div>
     );
 };
-
-export const ResetPasswordEmail = withOverride("EmailPasswordResetPasswordEmail", EmailPasswordResetPasswordEmail);
