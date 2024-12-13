@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import type { InputProps } from "./components/library/input";
-import type { ResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/resetPasswordEmail";
+import type { EmailPasswordResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/resetPasswordEmail";
 import type { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
 import type { SignInForm } from "./components/themes/signIn";
 import type { SignUpForm } from "./components/themes/signUp";
@@ -28,7 +28,7 @@ import type { User } from "supertokens-web-js/types";
 export declare type ComponentOverrideMap = {
     EmailPasswordSignInForm_Override?: ComponentOverride<typeof SignInForm>;
     EmailPasswordSignUpForm_Override?: ComponentOverride<typeof SignUpForm>;
-    EmailPasswordResetPasswordEmail_Override?: ComponentOverride<typeof ResetPasswordEmail>;
+    EmailPasswordResetPasswordEmail_Override?: ComponentOverride<typeof EmailPasswordResetPasswordEmail>;
     EmailPasswordSubmitNewPassword_Override?: ComponentOverride<typeof SubmitNewPassword>;
 };
 export declare type UserInput = {

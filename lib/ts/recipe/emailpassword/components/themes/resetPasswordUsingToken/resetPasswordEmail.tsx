@@ -25,7 +25,7 @@ import GeneralError from "../../library/generalError";
 
 import type { EnterEmailProps, EnterEmailStatus } from "../../../types";
 
-const EmailPasswordResetPasswordEmail = withOverride(
+export const EmailPasswordResetPasswordEmail = withOverride(
     "EmailPasswordResetPasswordEmail",
     (
         props: EnterEmailProps & {
