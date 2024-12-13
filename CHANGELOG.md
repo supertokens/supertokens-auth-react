@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.49.0] 2024-12-13
+
+### Breaking changes
+
+-   Moved the overridden components UI inside auth container which was earlier being rendered outside the auth container
+
 ## [0.48.0] - 2024-10-07
 
 ### Fixes

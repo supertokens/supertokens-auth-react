@@ -1,5 +1,6 @@
 /// <reference types="react" />
-export declare const ResetPasswordEmail: import("react").ComponentType<
+import type { EnterEmailProps, EnterEmailStatus } from "../../../types";
+export declare const EmailPasswordResetPasswordEmail: import("react").ComponentType<
     import("../../../../../types").ThemeBaseProps & {
         formFields: Omit<import("../../../types").FormFieldThemeProps, "inputComponent">[];
         error: string | undefined;
@@ -11,6 +12,9 @@ export declare const ResetPasswordEmail: import("react").ComponentType<
         config: import("../../../types").NormalisedConfig;
         onBackButtonClicked: () => void;
     } & {
-        children?: import("react").ReactNode;
+        status: EnterEmailStatus;
+        onSuccess: () => void;
+        resend: () => void;
     }
 >;
+export declare const ResetPasswordEmail: React.FC<EnterEmailProps>;
