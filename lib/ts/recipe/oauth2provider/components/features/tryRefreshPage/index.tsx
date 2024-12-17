@@ -51,9 +51,11 @@ export const TryRefreshPage: React.FC<Prop> = (props) => {
     React.useEffect(() => {
         if (sessionContext.loading === false) {
             (async function () {
+                console.log("forceRefresh", forceRefresh);
                 if (forceRefresh) {
                     await attemptRefreshingSession();
                 }
+                console.log("loginChallenge", loginChallenge);
                 if (loginChallenge) {
                     const { frontendRedirectTo } = await props.recipe.webJSRecipe.getRedirectURLToContinueOAuthFlow({
                         loginChallenge,
