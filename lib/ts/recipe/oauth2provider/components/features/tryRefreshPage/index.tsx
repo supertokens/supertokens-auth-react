@@ -51,11 +51,10 @@ export const TryRefreshPage: React.FC<Prop> = (props) => {
     React.useEffect(() => {
         if (sessionContext.loading === false) {
             (async function () {
-                console.log("forceRefresh", forceRefresh);
+                document.cookie = "st-last-access-token-update=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
                 if (forceRefresh) {
                     await attemptRefreshingSession();
                 }
-                console.log("loginChallenge", loginChallenge);
                 if (loginChallenge) {
                     const { frontendRedirectTo } = await props.recipe.webJSRecipe.getRedirectURLToContinueOAuthFlow({
                         loginChallenge,
