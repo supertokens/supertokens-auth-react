@@ -19,12 +19,13 @@
 import * as React from "react";
 import { useContext, Fragment } from "react";
 
+import { redirectToAuth } from "../../../../..";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import { getQueryParams, getTenantIdFromQueryParams, useRethrowInRender } from "../../../../../utils";
 import DynamicLoginMethodsSpinner from "../../../../multitenancy/components/features/dynamicLoginMethodsSpinner";
-import { SessionContext } from "../../../../session";
+import { SessionContext, attemptRefreshingSession } from "../../../../session";
 import { defaultTranslationsOAuth2Provider } from "../../themes/translations";
 
 import type { FeatureBaseProps, UserContext } from "../../../../../types";
@@ -41,6 +42,7 @@ export const TryRefreshPage: React.FC<Prop> = (props) => {
     const rethrowInRender = useRethrowInRender();
     const sessionContext = useContext(SessionContext);
     const loginChallenge = getQueryParams("loginChallenge") ?? undefined;
+    const forceRefresh = getQueryParams("forceRefresh") ?? undefined;
     let userContext = useUserContext();
     if (props.userContext !== undefined) {
         userContext = props.userContext;
@@ -48,8 +50,11 @@ export const TryRefreshPage: React.FC<Prop> = (props) => {
 
     React.useEffect(() => {
         if (sessionContext.loading === false) {
-            if (loginChallenge) {
-                (async function () {
+            (async function () {
+                if (forceRefresh) {
+                    await attemptRefreshingSession();
+                }
+                if (loginChallenge) {
                     const { frontendRedirectTo } = await props.recipe.webJSRecipe.getRedirectURLToContinueOAuthFlow({
                         loginChallenge,
                         userContext,
@@ -65,15 +70,13 @@ export const TryRefreshPage: React.FC<Prop> = (props) => {
                         {},
                         userContext
                     );
-                })().catch(rethrowInRender);
-            } else {
-                void SuperTokens.getInstanceOrThrow()
-                    .redirectToAuth({
-                        userContext,
+                } else {
+                    await redirectToAuth({
                         redirectBack: false,
-                    })
-                    .catch(rethrowInRender);
-            }
+                        userContext,
+                    });
+                }
+            })().catch(rethrowInRender);
         }
     }, [loginChallenge, props.recipe, props.navigate, userContext, sessionContext]);
 
