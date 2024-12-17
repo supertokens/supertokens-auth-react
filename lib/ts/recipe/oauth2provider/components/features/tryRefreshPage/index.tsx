@@ -51,7 +51,7 @@ export const TryRefreshPage: React.FC<Prop> = (props) => {
     React.useEffect(() => {
         if (sessionContext.loading === false) {
             (async function () {
-                document.cookie = "st-last-access-token-update=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                document.cookie = "st-last-access-token-update=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
                 if (forceRefresh) {
                     await attemptRefreshingSession();
                 }
