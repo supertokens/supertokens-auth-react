@@ -105,3 +105,5 @@ export type NormalisedConfig = Record<string, unknown> &
     NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type RecipeImplementation = WebJSRecipeInterface<typeof WebJSRecipe>;
+
+export type ComponentOverrideMap = Record<string, unknown>;
