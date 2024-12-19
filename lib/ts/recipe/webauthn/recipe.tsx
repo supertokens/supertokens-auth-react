@@ -15,6 +15,7 @@
 
 import WebauthnWebJS from "supertokens-web-js/lib/build/recipe/webauthn";
 
+import { SSR_ERROR } from "../../constants";
 import AuthRecipe from "../authRecipe";
 
 import { getFunctionOverrides } from "./functionOverrides";
@@ -100,5 +101,23 @@ export default class Webauthn extends AuthRecipe<
                 },
             }),
         };
+    }
+
+    static getInstance(): Webauthn | undefined {
+        return Webauthn.instance;
+    }
+
+    static getInstanceOrThrow(): Webauthn {
+        if (Webauthn.instance === undefined) {
+            let error = "No instance of Webauthn found. Make sure to call the Webauthn.init method.";
+
+            // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
+            if (typeof window === "undefined") {
+                error = error + SSR_ERROR;
+            }
+            throw Error(error);
+        }
+
+        return Webauthn.instance;
     }
 }

@@ -106,4 +106,4 @@ export type NormalisedConfig = Record<string, unknown> &
 
 export type RecipeImplementation = WebJSRecipeInterface<typeof WebJSRecipe>;
 
-export type ComponentOverrideMap = Record<string, unknown>;
+export type ComponentOverrideMap = Record<string, undefined>;
