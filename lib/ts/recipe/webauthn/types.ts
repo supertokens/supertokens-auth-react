@@ -52,16 +52,20 @@ export type OnHandleEventContext =
           user: User;
       }
     | {
+          action: "REGISTER_OPTIONS";
+      }
+    | {
+          action: "SIGN_IN_OPTIONS";
+      }
+    | {
+          action: "GET_EMAIL_EXISTS";
+          exists: boolean;
+      }
+    | {
           action: "REGISTER_CREDENTIAL";
       }
     | {
-          action: "CREDENTIAL_ADDED";
-      }
-    | {
           action: "AUTHENTICATE_CREDENTIAL";
-      }
-    | {
-          action: "CREDENTIAL_AUTHENTICATED";
       }
     | {
           action: "SIGN_IN";
@@ -70,13 +74,19 @@ export type OnHandleEventContext =
           action: "SIGN_UP";
       }
     | {
-          action: "SEND_RECOVER_TOKEN";
+          action: "GENERATE_RECOVER_ACCOUNT_TOKEN";
       }
     | {
-          action: "RECOVER_ACCOUNT_FAILED";
+          action: "RECOVER_ACCOUNT";
       }
     | {
-          action: "RECOVER_ACCOUNT_SUCCEEDED";
+          action: "REGISTER_CREDENTIAL_WITH_SIGN_UP";
+      }
+    | {
+          action: "AUTHENTICATE_CREDENTIAL_WITH_SIGN_IN";
+      }
+    | {
+          action: "REGISTER_CREDENTIAL_WITH_RECOVER_ACCOUNT";
       }
     | AuthRecipeModuleOnHandleEventContext;
 
