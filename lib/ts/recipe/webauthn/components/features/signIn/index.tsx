@@ -39,7 +39,7 @@ export const SignInWithPasskeyFeature: React.FC<
 
     return (
         <AuthComponentWrapper recipeComponentOverrides={recipeComponentOverrides}>
-            {/* <FeatureWrapper
+            <FeatureWrapper
                 useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}
                 defaultStore={defaultTranslationsWebauthn}>
                 <ContinueWithPasskeyTheme
@@ -48,13 +48,7 @@ export const SignInWithPasskeyFeature: React.FC<
                     config={props.recipe.config}
                     continueFor="SIGN_IN"
                 />
-            </FeatureWrapper> */}
-            <ContinueWithPasskeyTheme
-                {...props}
-                continueWithPasskeyClicked={() => props.setFactorList(props.factorIds)}
-                config={props.recipe.config}
-                continueFor="SIGN_IN"
-            />
+            </FeatureWrapper>
         </AuthComponentWrapper>
     );
 };
