@@ -16,7 +16,6 @@
  * Imports.
  */
 import { isTest } from "../../../utils";
-import { googleLogo } from "../constants";
 
 import type { BuiltInProviderConfig } from "./types";
 
@@ -42,8 +41,8 @@ export default class Google extends Provider {
         });
     }
 
-    getLogo = (): JSX.Element => {
-        return googleLogo;
+    getLogo = (): undefined => {
+        return undefined;
     };
 
     /*
