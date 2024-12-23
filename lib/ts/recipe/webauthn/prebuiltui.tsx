@@ -1,11 +1,21 @@
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { isTest } from "../../utils";
+import { FactorIds } from "../multifactorauth";
 import { RecipeRouter } from "../recipeRouter";
+import SessionAuth from "../session/sessionAuth";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import ContinueWithPasskeyFeature from "./components/features/continueWithPasskey";
 import WebauthnRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
-import type { AuthComponent, RecipeFeatureComponentMap } from "../../types";
+import type {
+    AuthComponent,
+    FeatureBaseProps,
+    PartialAuthComponentProps,
+    RecipeFeatureComponentMap,
+    UserContext,
+} from "../../types";
 
 export class WebauthnPreBuiltUI extends RecipeRouter {
     static instance?: WebauthnPreBuiltUI;
@@ -32,8 +42,8 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
         return WebauthnPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
     }
     static getFeatureComponent(
-        componentName: "mfaWebauthn",
-        props: any,
+        componentName: "sign-up" | "sign-in",
+        props: FeatureBaseProps<{ userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
         return WebauthnPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatureComponent(
@@ -45,7 +55,7 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
 
     // Instance methods
     getFeatures = (
-        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+        _: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
         // TODO: Define after components are defined
@@ -54,15 +64,45 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
 
     getFeatureComponent = (
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _: "mfaWebauthn",
-        props: any,
-        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+        componentName: "sign-up" | "sign-in",
+        props: FeatureBaseProps<{ userContext?: UserContext }>,
+        _: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
-        return <div></div>;
+        if (componentName === "sign-up") {
+            return (
+                <UserContextWrapper userContext={props.userContext}>
+                    <SessionAuth requireAuth={false} doRedirection={false}>
+                        <div></div>
+                    </SessionAuth>
+                </UserContextWrapper>
+            );
+        } else if (componentName === "sign-in") {
+            // TODO: Define this once sign-in is ready.
+            return <div></div>;
+        }
+        throw new Error("Should never come here.");
     };
 
     getAuthComponents(): AuthComponent[] {
-        return [];
+        const res: AuthComponent[] = [
+            {
+                type: "SIGN_UP" as const,
+                factorIds: [FactorIds.WEBAUTHN],
+                displayOrder: 4,
+                component: (props: PartialAuthComponentProps) => (
+                    <ContinueWithPasskeyFeature
+                        continueFor="SIGN_UP"
+                        key="webauthn-sign-up"
+                        {...props}
+                        recipe={this.recipeInstance}
+                        factorIds={[FactorIds.WEBAUTHN]}
+                        useComponentOverrides={useRecipeComponentOverrideContext}
+                    />
+                ),
+            },
+        ];
+
+        return res;
     }
 
     // For tests

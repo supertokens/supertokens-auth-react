@@ -8,7 +8,9 @@ export function normaliseWebauthnConfig(config: Config): NormalisedConfig {
         config = {};
     }
 
-    const override = {
+    const override: {
+        functions: (originalImplementation: RecipeInterface) => RecipeInterface;
+    } = {
         functions: (originalImplementation: RecipeInterface) => originalImplementation,
         ...config.override,
     };

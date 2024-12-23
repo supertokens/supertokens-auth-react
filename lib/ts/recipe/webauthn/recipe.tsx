@@ -19,7 +19,7 @@ import { SSR_ERROR } from "../../constants";
 import AuthRecipe from "../authRecipe";
 
 import { getFunctionOverrides } from "./functionOverrides";
-import { normaliseWebauthnConfig } from "./util";
+import { normaliseWebauthnConfig } from "./utils";
 
 import type {
     GetRedirectionURLContext,

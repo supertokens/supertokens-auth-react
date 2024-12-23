@@ -1,0 +1,10 @@
+@import "../../../../styles/styles.css";
+@import "../../../emailpassword/components/themes/styles.css";
+
+[data-supertokens~="webauthn"] [data-supertokens~="container"] {
+    padding-top: 24px;
+}
+
+[data-supertokens~="continueWithPasskeyButtonWrapper"] {
+    margin: 9px 0;
+}

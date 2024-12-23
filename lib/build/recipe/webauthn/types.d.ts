@@ -1,18 +1,3 @@
-/* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
- *
- * This software is licensed under the Apache License, Version 2.0 (the
- * "License") as published by the Apache Software Foundation.
- *
- * You may not use this file except in compliance with the License. You may
- * obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- */
-
 import type {
     FeatureBaseConfig,
     NormalisedGetRedirectionURLContext,
@@ -28,19 +13,13 @@ import type {
 import type WebJSRecipe from "supertokens-web-js/recipe/webauthn";
 import type { RecipeInterface } from "supertokens-web-js/recipe/webauthn";
 import type { User } from "supertokens-web-js/types";
-
-export type WebauthnFeatureBaseConfig = {
+export declare type WebauthnFeatureBaseConfig = {
     disableDefaultUI?: boolean;
 } & FeatureBaseConfig;
-
-export type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<{
-    /*
-     * Get Redirection URL Context
-     */
+export declare type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<{
     action: "RECOVER_ACCOUNT";
 }>;
-
-export type PreAndPostAPIHookAction =
+export declare type PreAndPostAPIHookAction =
     | "REGISTER_OPTIONS"
     | "SIGN_IN_OPTIONS"
     | "SIGN_UP"
@@ -48,8 +27,7 @@ export type PreAndPostAPIHookAction =
     | "EMAIL_EXISTS"
     | "GENERATE_RECOVER_ACCOUNT_TOKEN"
     | "RECOVER_ACCOUNT";
-
-export type OnHandleEventContext =
+export declare type OnHandleEventContext =
     | {
           action: "SUCCESS";
           isNewRecipeUser: boolean;
@@ -94,35 +72,28 @@ export type OnHandleEventContext =
           action: "REGISTER_CREDENTIAL_WITH_RECOVER_ACCOUNT";
       }
     | AuthRecipeModuleOnHandleEventContext;
-
-export type UserInput = Record<string, unknown> & {
+export declare type UserInput = Record<string, unknown> & {
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
     };
     linkClickedScreenFeature?: WebauthnFeatureBaseConfig;
     mfaFeature?: WebauthnFeatureBaseConfig;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-
-export type Config = UserInput &
+export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-
-export type NormalisedConfig = {
+export declare type NormalisedConfig = {
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-
-export type RecipeImplementation = WebJSRecipeInterface<typeof WebJSRecipe>;
-
-export type ComponentOverrideMap = Record<string, undefined>;
-
-export type WebauthnSignUpState = {
+export declare type RecipeImplementation = WebJSRecipeInterface<typeof WebJSRecipe>;
+export declare type ComponentOverrideMap = Record<string, undefined>;
+export declare type WebauthnSignUpState = {
     showBackButton: boolean;
     loaded: boolean;
     error: string | undefined;
 };
-
-export type SignUpChildProps = {
+export declare type SignUpChildProps = {
     recipeImplementation: RecipeImplementation;
     factorIds: string[];
     config: NormalisedConfig;
@@ -132,6 +103,4 @@ export type SignUpChildProps = {
     error: string | undefined;
     userContext: UserContext;
 };
-
-// Type to indicate what the `Continue with` button is being used for.
-export type ContinueFor = "SIGN_UP" | "SIGN_IN";
+export declare type ContinueFor = "SIGN_UP" | "SIGN_IN";
