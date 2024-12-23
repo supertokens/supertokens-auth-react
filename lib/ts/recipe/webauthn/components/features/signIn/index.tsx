@@ -12,5 +12,51 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+/*
+ * Imports.
+ */
+import * as React from "react";
 
-// TODO: Define later with more code
+import AuthComponentWrapper from "../../../../../components/authCompWrapper";
+import FeatureWrapper from "../../../../../components/featureWrapper";
+import SuperTokens from "../../../../../superTokens";
+import { ContinueWithPasskeyTheme } from "../../themes/continueWithPasskey";
+import { defaultTranslationsWebauthn } from "../../themes/translations";
+
+import type { UserContext, PartialAuthComponentProps } from "../../../../../types";
+import type Recipe from "../../../recipe";
+import type { ComponentOverrideMap } from "../../../types";
+
+export const SignInWithPasskeyFeature: React.FC<
+    PartialAuthComponentProps & {
+        recipe: Recipe;
+        factorIds: string[];
+        userContext?: UserContext;
+        useComponentOverrides: () => ComponentOverrideMap;
+    }
+> = (props) => {
+    const recipeComponentOverrides = props.useComponentOverrides();
+
+    return (
+        <AuthComponentWrapper recipeComponentOverrides={recipeComponentOverrides}>
+            {/* <FeatureWrapper
+                useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}
+                defaultStore={defaultTranslationsWebauthn}>
+                <ContinueWithPasskeyTheme
+                    {...props}
+                    continueWithPasskeyClicked={() => props.setFactorList(props.factorIds)}
+                    config={props.recipe.config}
+                    continueFor="SIGN_IN"
+                />
+            </FeatureWrapper> */}
+            <ContinueWithPasskeyTheme
+                {...props}
+                continueWithPasskeyClicked={() => props.setFactorList(props.factorIds)}
+                config={props.recipe.config}
+                continueFor="SIGN_IN"
+            />
+        </AuthComponentWrapper>
+    );
+};
+
+export default SignInWithPasskeyFeature;

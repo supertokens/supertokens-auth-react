@@ -18,6 +18,7 @@ export type Args = {
     "thirdparty.initialized": boolean;
     "thirdparty.providers": ProviderId[];
     "passwordless.initialized": boolean;
+    "webauthn.initialized": boolean;
     "passwordless.contactMethod": "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
     "passwordless.defaultToEmail": boolean;
     "oauth2.initialized": boolean;
@@ -105,6 +106,7 @@ const meta: Meta<Args> = {
         "thirdparty.initialized": true,
         "thirdparty.providers": ["github", "google"],
         "passwordless.initialized": true,
+        "webauthn.initialized": true,
         "passwordless.contactMethod": "EMAIL_OR_PHONE",
         "passwordless.defaultToEmail": true,
         rootStyle: "",
@@ -195,6 +197,11 @@ const meta: Meta<Args> = {
         "passwordless.initialized": {
             table: {
                 category: "passwordless",
+            },
+        },
+        "webauthn.initialized": {
+            table: {
+                category: "webauthn",
             },
         },
         "passwordless.contactMethod": {

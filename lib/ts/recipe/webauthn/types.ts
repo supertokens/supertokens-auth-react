@@ -95,7 +95,7 @@ export type OnHandleEventContext =
       }
     | AuthRecipeModuleOnHandleEventContext;
 
-export type UserInput = Record<string, unknown> & {
+export type UserInput = {} & {
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
     };

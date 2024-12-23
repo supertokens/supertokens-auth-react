@@ -105,6 +105,24 @@ export const SignUpPasswordless: Story = {
     },
 };
 
+export const SignUpPasskey: Story = {
+    args: {
+        path: "/auth",
+        "multifactorauth.initialized": false,
+        "passwordless.initialized": false,
+        "webauthn.initialized": true,
+        defaultToSignUp: true,
+    },
+    play: async ({ canvasElement }) => {
+        // Assigns canvas to the component root element
+        // const canvas = within(canvasElement);
+        // const switcher = await canvas.findByText("CONTINUE WITH PASSKEY");
+        // await new Promise((res) => setTimeout(res, 100));
+        // canvasElement;
+        // await userEvent.click(switcher, { delay: 200 });
+    },
+};
+
 export const SignUpFieldErrors: Story = {
     args: {
         path: "/auth",

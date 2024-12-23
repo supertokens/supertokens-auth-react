@@ -5,7 +5,8 @@ import { RecipeRouter } from "../recipeRouter";
 import SessionAuth from "../session/sessionAuth";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
-import ContinueWithPasskeyFeature from "./components/features/continueWithPasskey";
+import SignInWithPasskeyFeature from "./components/features/signIn";
+import { defaultTranslationsWebauthn } from "./components/themes/translations";
 import WebauthnRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
@@ -19,9 +20,7 @@ import type {
 
 export class WebauthnPreBuiltUI extends RecipeRouter {
     static instance?: WebauthnPreBuiltUI;
-    languageTranslations = {
-        en: {},
-    };
+    languageTranslations = defaultTranslationsWebauthn;
 
     constructor(public readonly recipeInstance: WebauthnRecipe) {
         super();
@@ -42,7 +41,7 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
         return WebauthnPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
     }
     static getFeatureComponent(
-        componentName: "sign-up" | "sign-in",
+        componentName: "webauthn-sign-up",
         props: FeatureBaseProps<{ userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
@@ -63,12 +62,11 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
     };
 
     getFeatureComponent = (
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        componentName: "sign-up" | "sign-in",
+        componentName: "webauthn-sign-up",
         props: FeatureBaseProps<{ userContext?: UserContext }>,
         _: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
-        if (componentName === "sign-up") {
+        if (componentName === "webauthn-sign-up") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
                     <SessionAuth requireAuth={false} doRedirection={false}>
@@ -76,22 +74,19 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
                     </SessionAuth>
                 </UserContextWrapper>
             );
-        } else if (componentName === "sign-in") {
-            // TODO: Define this once sign-in is ready.
-            return <div></div>;
         }
         throw new Error("Should never come here.");
     };
 
     getAuthComponents(): AuthComponent[] {
-        const res: AuthComponent[] = [
+        return [
             {
                 type: "SIGN_UP" as const,
                 factorIds: [FactorIds.WEBAUTHN],
                 displayOrder: 4,
+                /* TODO: Update the following to be sign up instead of sign in */
                 component: (props: PartialAuthComponentProps) => (
-                    <ContinueWithPasskeyFeature
-                        continueFor="SIGN_UP"
+                    <SignInWithPasskeyFeature
                         key="webauthn-sign-up"
                         {...props}
                         recipe={this.recipeInstance}
@@ -100,9 +95,21 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
                     />
                 ),
             },
+            {
+                type: "SIGN_IN" as const,
+                factorIds: [FactorIds.WEBAUTHN],
+                displayOrder: 4,
+                component: (props: PartialAuthComponentProps) => (
+                    <SignInWithPasskeyFeature
+                        key="webauthn-sign-in"
+                        {...props}
+                        recipe={this.recipeInstance}
+                        factorIds={[FactorIds.WEBAUTHN]}
+                        useComponentOverrides={useRecipeComponentOverrideContext}
+                    />
+                ),
+            },
         ];
-
-        return res;
     }
 
     // For tests

@@ -43,7 +43,7 @@ export default class Webauthn extends AuthRecipe<
     NormalisedConfig
 > {
     static instance?: Webauthn;
-    static RECIPE_ID = "passwordless";
+    static RECIPE_ID = "webauthn";
 
     recipeID = Webauthn.RECIPE_ID;
     firstFactorIds = [];
