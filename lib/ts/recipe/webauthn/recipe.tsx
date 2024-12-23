@@ -35,6 +35,7 @@ import type {
     RecipeInitResult,
 } from "../../types";
 import type RecipeModule from "../recipeModule";
+import { FactorIds } from "../multifactorauth";
 
 export default class Webauthn extends AuthRecipe<
     GetRedirectionURLContext,
@@ -46,7 +47,7 @@ export default class Webauthn extends AuthRecipe<
     static RECIPE_ID = "webauthn";
 
     recipeID = Webauthn.RECIPE_ID;
-    firstFactorIds = [];
+    firstFactorIds = [FactorIds.WEBAUTHN];
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
