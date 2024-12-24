@@ -15,6 +15,8 @@
 
 import type {
     FeatureBaseConfig,
+    NormalisedBaseConfig,
+    NormalisedFormField,
     NormalisedGetRedirectionURLContext,
     UserContext,
     WebJSRecipeInterface,
@@ -25,6 +27,7 @@ import type {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     Config as AuthRecipeModuleConfig,
 } from "../authRecipe/types";
+import type { InputProps } from "../emailpassword/components/library/input";
 import type WebJSRecipe from "supertokens-web-js/recipe/webauthn";
 import type { RecipeInterface } from "supertokens-web-js/recipe/webauthn";
 import type { User } from "supertokens-web-js/types";
@@ -95,7 +98,7 @@ export type OnHandleEventContext =
       }
     | AuthRecipeModuleOnHandleEventContext;
 
-export type UserInput = {} & {
+export type UserInput = Record<string, unknown> & {
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
     };
@@ -106,7 +109,18 @@ export type UserInput = {} & {
 export type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
+export type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
+    /*
+     * Normalised form fields for SignUp.
+     */
+    formFields: (NormalisedFormField & {
+        inputComponent?: (props: InputProps) => JSX.Element;
+    })[];
+};
+
 export type NormalisedConfig = {
+    signUpFeature: NormalisedSignUpFormFeatureConfig;
+
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
     };
@@ -122,7 +136,7 @@ export type WebauthnSignUpState = {
     error: string | undefined;
 };
 
-export type SignUpChildProps = {
+export type SignUpThemeProps = {
     recipeImplementation: RecipeImplementation;
     factorIds: string[];
     config: NormalisedConfig;

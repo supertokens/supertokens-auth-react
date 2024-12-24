@@ -27,14 +27,14 @@ import { useRethrowInRender } from "../../../../../utils";
 import Session from "../../../../session/recipe";
 import useSessionContext from "../../../../session/useSessionContext";
 import { ContinueWithPasskeyTheme } from "../../themes/continueWithPasskey";
+import SignUpTheme from "../../themes/signUp";
 import { defaultTranslationsWebauthn } from "../../themes/translations";
-// import SignUpThemeWrapper from "../../themes/signInUp";
 
 import type { UserContext, PartialAuthComponentProps } from "../../../../../types";
 import type { AuthSuccessContext } from "../../../../authRecipe/types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
-import type { SignUpChildProps } from "../../../types";
+import type { SignUpThemeProps } from "../../../types";
 import type { User } from "supertokens-web-js/types";
 
 export function useChildProps(
@@ -44,7 +44,7 @@ export function useChildProps(
     error: string | undefined,
     onError: (err: string) => void,
     userContext: UserContext
-): SignUpChildProps {
+): SignUpThemeProps {
     const session = useSessionContext();
     const recipeImplementation = recipe.webJSRecipe;
     const rethrowInRender = useRethrowInRender();
@@ -109,8 +109,7 @@ const SignUpFeatureInner: React.FC<
     return (
         <Fragment>
             {/* No custom theme, use default. */}
-            {/* {props.children === undefined && <SignUpThemeWrapper {...childProps} />} */}
-            {props.children === undefined && <div></div>}
+            {props.children === undefined && <SignUpTheme {...childProps} />}
 
             {/* Otherwise, custom theme is provided, propagate props. */}
             {props.children &&
