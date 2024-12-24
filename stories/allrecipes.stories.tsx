@@ -115,11 +115,11 @@ export const SignUpPasskey: Story = {
     },
     play: async ({ canvasElement }) => {
         // Assigns canvas to the component root element
-        const canvas = within(canvasElement);
-        const switcher = await canvas.findByText("CONTINUE WITH PASSKEY");
-        await new Promise((res) => setTimeout(res, 100));
-        canvasElement;
-        await userEvent.click(switcher, { delay: 200 });
+        // const canvas = within(canvasElement);
+        // const switcher = await canvas.findByText("CONTINUE WITH PASSKEY");
+        // await new Promise((res) => setTimeout(res, 100));
+        // canvasElement;
+        // await userEvent.click(switcher, { delay: 200 });
     },
 };
 

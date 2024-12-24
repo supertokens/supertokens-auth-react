@@ -37,6 +37,12 @@ export const SignInWithPasskeyFeature: React.FC<
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
 
+    // TODO: Define the code to handle sign in properly through this component.
+    const handleWebauthnSignInClick = () => {
+        alert("This is yet to be defined!");
+        return;
+    };
+
     return (
         <AuthComponentWrapper recipeComponentOverrides={recipeComponentOverrides}>
             <FeatureWrapper
@@ -44,7 +50,7 @@ export const SignInWithPasskeyFeature: React.FC<
                 defaultStore={defaultTranslationsWebauthn}>
                 <ContinueWithPasskeyTheme
                     {...props}
-                    continueWithPasskeyClicked={() => props.setFactorList(props.factorIds)}
+                    continueWithPasskeyClicked={handleWebauthnSignInClick}
                     config={props.recipe.config}
                     continueFor="SIGN_IN"
                 />

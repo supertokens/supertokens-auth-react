@@ -6,6 +6,7 @@ import SessionAuth from "../session/sessionAuth";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import SignInWithPasskeyFeature from "./components/features/signIn";
+import SignUpFeature, { SignUpWithPasskeyFeature } from "./components/features/signUp";
 import { defaultTranslationsWebauthn } from "./components/themes/translations";
 import WebauthnRecipe from "./recipe";
 
@@ -81,12 +82,29 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
     getAuthComponents(): AuthComponent[] {
         return [
             {
+                type: "FULL_PAGE",
+                async preloadInfoAndRunChecks(firstFactors) {
+                    return {
+                        shouldDisplay: firstFactors.length === 1 && firstFactors.includes(FactorIds.WEBAUTHN),
+                        preloadInfo: {},
+                    };
+                },
+                component: (props) => (
+                    <SignUpFeature
+                        key="webauthnSignUpFullPage"
+                        {...props}
+                        recipe={this.recipeInstance}
+                        useComponentOverrides={useRecipeComponentOverrideContext}
+                        factorIds={[FactorIds.WEBAUTHN]}
+                    />
+                ),
+            },
+            {
                 type: "SIGN_UP" as const,
                 factorIds: [FactorIds.WEBAUTHN],
                 displayOrder: 4,
-                /* TODO: Update the following to be sign up instead of sign in */
                 component: (props: PartialAuthComponentProps) => (
-                    <SignInWithPasskeyFeature
+                    <SignUpWithPasskeyFeature
                         key="webauthn-sign-up"
                         {...props}
                         recipe={this.recipeInstance}

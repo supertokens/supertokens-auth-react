@@ -20,10 +20,14 @@ import { Fragment } from "react";
 import { useMemo } from "react";
 
 import AuthComponentWrapper from "../../../../../components/authCompWrapper";
+import FeatureWrapper from "../../../../../components/featureWrapper";
+import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import { useRethrowInRender } from "../../../../../utils";
 import Session from "../../../../session/recipe";
 import useSessionContext from "../../../../session/useSessionContext";
+import { ContinueWithPasskeyTheme } from "../../themes/continueWithPasskey";
+import { defaultTranslationsWebauthn } from "../../themes/translations";
 // import SignUpThemeWrapper from "../../themes/signInUp";
 
 import type { UserContext, PartialAuthComponentProps } from "../../../../../types";
@@ -39,9 +43,7 @@ export function useChildProps(
     onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>,
     error: string | undefined,
     onError: (err: string) => void,
-    // clearError: () => void,
     userContext: UserContext
-    // navigate?: Navigate
 ): SignUpChildProps {
     const session = useSessionContext();
     const recipeImplementation = recipe.webJSRecipe;
@@ -101,9 +103,7 @@ const SignUpFeatureInner: React.FC<
         props.onAuthSuccess,
         props.error,
         props.onError,
-        // props.clearError,
         userContext
-        // props.navigate
     )!;
 
     return (
@@ -139,6 +139,32 @@ export const SignUpFeature: React.FC<
     return (
         <AuthComponentWrapper recipeComponentOverrides={recipeComponentOverrides}>
             <SignUpFeatureInner {...props} />
+        </AuthComponentWrapper>
+    );
+};
+
+export const SignUpWithPasskeyFeature: React.FC<
+    PartialAuthComponentProps & {
+        recipe: Recipe;
+        factorIds: string[];
+        userContext?: UserContext;
+        useComponentOverrides: () => ComponentOverrideMap;
+    }
+> = (props) => {
+    const recipeComponentOverrides = props.useComponentOverrides();
+
+    return (
+        <AuthComponentWrapper recipeComponentOverrides={recipeComponentOverrides}>
+            <FeatureWrapper
+                useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}
+                defaultStore={defaultTranslationsWebauthn}>
+                <ContinueWithPasskeyTheme
+                    {...props}
+                    continueWithPasskeyClicked={() => props.setFactorList(props.factorIds)}
+                    config={props.recipe.config}
+                    continueFor="SIGN_UP"
+                />
+            </FeatureWrapper>
         </AuthComponentWrapper>
     );
 };
