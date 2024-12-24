@@ -83,9 +83,10 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
         return [
             {
                 type: "FULL_PAGE",
-                async preloadInfoAndRunChecks(firstFactors) {
+                async preloadInfoAndRunChecks(firstFactors, _, isSignUp) {
                     return {
-                        shouldDisplay: firstFactors.length === 1 && firstFactors.includes(FactorIds.WEBAUTHN),
+                        shouldDisplay:
+                            isSignUp && firstFactors.length === 1 && firstFactors.includes(FactorIds.WEBAUTHN),
                         preloadInfo: {},
                     };
                 },
