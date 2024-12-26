@@ -3,7 +3,7 @@ import { defaultTranslationsCommon } from "../../../../translation/translations"
 export const defaultTranslationsWebauthn = {
     en: {
         ...defaultTranslationsCommon.en,
-        WEBAUTHN_EMAIL_CONTINUE_BUTTON: "Continue",
+        WEBAUTHN_EMAIL_CONTINUE_BUTTON: "CONTINUE",
         WEBAUTHN_SIGN_UP_LABEL: "Email",
         WEBAUTHN_RECOVER_ACCOUNT_LABEL: "Recover Account",
         WEBAUTHN_CONTINUE_WITHOUT_PASSKEY_BUTTON: "Continue without passkey",
