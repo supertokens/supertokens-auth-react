@@ -437,8 +437,7 @@ export type FullPageAuthComponent<PreloadInfoType = any> = {
     type: "FULL_PAGE";
     preloadInfoAndRunChecks: (
         firstFactors: string[],
-        userContext: UserContext,
-        isSignUp: boolean
+        userContext: UserContext
     ) => Promise<{ shouldDisplay: true; preloadInfo: PreloadInfoType } | { shouldDisplay: false }>;
     component: React.FC<FullPageAuthComponentProps<PreloadInfoType>>;
 };

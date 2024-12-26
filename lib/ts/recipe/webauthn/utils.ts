@@ -1,6 +1,7 @@
 import { normaliseAuthRecipe } from "../authRecipe/utils";
 
 import type { Config, NormalisedConfig } from "./types";
+import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/webauthn";
 
 export function normaliseWebauthnConfig(config: Config): NormalisedConfig {
@@ -17,6 +18,15 @@ export function normaliseWebauthnConfig(config: Config): NormalisedConfig {
 
     return {
         ...normaliseAuthRecipe(config),
+        signUpFeature: normalisePasskeyBaseConfig(config.signUpFeature),
         override,
+    };
+}
+
+function normalisePasskeyBaseConfig<T>(config?: T & FeatureBaseConfig): T & NormalisedBaseConfig {
+    const style = config && config.style !== undefined ? config.style : "";
+    return {
+        ...(config as T),
+        style,
     };
 }

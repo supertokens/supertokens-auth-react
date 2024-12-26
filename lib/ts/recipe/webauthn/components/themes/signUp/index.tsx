@@ -17,6 +17,8 @@ import SuperTokens from "../../../../../superTokens";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { ThemeBase } from "../themeBase";
 
+import { SignUpForm } from "./signUpForm";
+
 import type { SignUpThemeProps } from "../../../types";
 
 function SignUpTheme(props: SignUpThemeProps): JSX.Element {
@@ -27,7 +29,7 @@ function SignUpTheme(props: SignUpThemeProps): JSX.Element {
     return (
         <UserContextWrapper userContext={props.userContext}>
             <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
-                <div></div>
+                <SignUpForm {...props} />
             </ThemeBase>
         </UserContextWrapper>
     );

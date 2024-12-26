@@ -102,8 +102,7 @@ export type UserInput = Record<string, unknown> & {
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
     };
-    linkClickedScreenFeature?: WebauthnFeatureBaseConfig;
-    mfaFeature?: WebauthnFeatureBaseConfig;
+    signUpFeature?: NormalisedSignUpFormFeatureConfig;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type Config = UserInput &
@@ -137,6 +136,7 @@ export type WebauthnSignUpState = {
 };
 
 export type SignUpThemeProps = {
+    clearError: () => void;
     recipeImplementation: RecipeImplementation;
     factorIds: string[];
     config: NormalisedConfig;
@@ -145,6 +145,16 @@ export type SignUpThemeProps = {
     onError: (err: string) => void;
     error: string | undefined;
     userContext: UserContext;
+};
+
+export type SignUpFormProps = {
+    clearError: () => void;
+    onError: (error: string) => void;
+    onFetchError: (error: Response) => void;
+    error: string | undefined;
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+    onSuccess?: (result: { createdNewRecipeUser: boolean; user: User }) => void;
 };
 
 // Type to indicate what the `Continue with` button is being used for.

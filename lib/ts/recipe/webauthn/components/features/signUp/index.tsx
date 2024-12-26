@@ -26,6 +26,7 @@ import { useUserContext } from "../../../../../usercontext";
 import { useRethrowInRender } from "../../../../../utils";
 import Session from "../../../../session/recipe";
 import useSessionContext from "../../../../session/useSessionContext";
+import { WEBAUTHN_IS_SIGN_UP_STATE_KEY } from "../../../constants";
 import { ContinueWithPasskeyTheme } from "../../themes/continueWithPasskey";
 import SignUpTheme from "../../themes/signUp";
 import { defaultTranslationsWebauthn } from "../../themes/translations";
@@ -33,7 +34,7 @@ import { defaultTranslationsWebauthn } from "../../themes/translations";
 import type { UserContext, PartialAuthComponentProps } from "../../../../../types";
 import type { AuthSuccessContext } from "../../../../authRecipe/types";
 import type Recipe from "../../../recipe";
-import type { ComponentOverrideMap } from "../../../types";
+import type { ComponentOverrideMap, ContinueFor } from "../../../types";
 import type { SignUpThemeProps } from "../../../types";
 import type { User } from "supertokens-web-js/types";
 
@@ -43,7 +44,8 @@ export function useChildProps(
     onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>,
     error: string | undefined,
     onError: (err: string) => void,
-    userContext: UserContext
+    userContext: UserContext,
+    clearError: () => void
 ): SignUpThemeProps {
     const session = useSessionContext();
     const recipeImplementation = recipe.webJSRecipe;
@@ -74,6 +76,7 @@ export function useChildProps(
             },
             error,
             onError,
+            clearError,
             onFetchError: async (/* err: Response*/) => {
                 // TODO: Do we need to do something else?
                 onError("SOMETHING_WENT_WRONG_ERROR");
@@ -103,7 +106,8 @@ const SignUpFeatureInner: React.FC<
         props.onAuthSuccess,
         props.error,
         props.onError,
-        userContext
+        userContext,
+        props.clearError
     )!;
 
     return (
@@ -152,6 +156,14 @@ export const SignUpWithPasskeyFeature: React.FC<
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
 
+    const handleContinueClick = React.useCallback(
+        (continueFor: ContinueFor) => {
+            props.setFactorList(props.factorIds);
+            props.userContext[WEBAUTHN_IS_SIGN_UP_STATE_KEY] = continueFor === "SIGN_UP";
+        },
+        [props]
+    );
+
     return (
         <AuthComponentWrapper recipeComponentOverrides={recipeComponentOverrides}>
             <FeatureWrapper
@@ -159,7 +171,7 @@ export const SignUpWithPasskeyFeature: React.FC<
                 defaultStore={defaultTranslationsWebauthn}>
                 <ContinueWithPasskeyTheme
                     {...props}
-                    continueWithPasskeyClicked={() => props.setFactorList(props.factorIds)}
+                    continueWithPasskeyClicked={handleContinueClick}
                     config={props.recipe.config}
                     continueFor="SIGN_UP"
                 />
