@@ -34,9 +34,7 @@ export const SignUpForm = withOverride(
 
         const defaultFooter = (
             <div data-supertokens="continueWithoutPasskey">
-                <a
-                    onClick={() => alert("That is not defined yet!")}
-                    data-supertokens="formLabelLinkBtn continueWithoutPasskeyLabel">
+                <a onClick={props.resetFactorList} data-supertokens="formLabelLinkBtn continueWithoutPasskeyLabel">
                     {t("WEBAUTHN_CONTINUE_WITHOUT_PASSKEY_BUTTON")}
                 </a>
             </div>

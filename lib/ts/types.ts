@@ -423,6 +423,7 @@ export type UserContext = Record<string, any>;
 export type AuthComponentProps = {
     setFactorList: (factorIds: string[]) => void;
     resetFactorList: () => void;
+    onSignInUpSwitcherClick: () => void;
     rebuildAuthPage: () => void;
     onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>;
     navigate: Navigate | undefined;

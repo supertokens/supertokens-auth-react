@@ -146,6 +146,7 @@ export type SignUpThemeProps = {
     error: string | undefined;
     userContext: UserContext;
     resetFactorList: () => void;
+    onSignInUpSwitcherClick: () => void;
 };
 
 export type SignUpFormProps = {
@@ -156,6 +157,7 @@ export type SignUpFormProps = {
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: (result: { createdNewRecipeUser: boolean; user: User }) => void;
+    resetFactorList: () => void;
 };
 
 // Type to indicate what the `Continue with` button is being used for.
