@@ -13,8 +13,11 @@
  * under the License.
  */
 
+import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import SuperTokens from "../../../../../superTokens";
+import { AuthPageFooter, AuthPageHeader } from "../../../../../ui";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { ThemeBase } from "../themeBase";
 
 import { SignUpForm } from "./signUpForm";
@@ -26,10 +29,45 @@ function SignUpTheme(props: SignUpThemeProps): JSX.Element {
 
     const activeStyle = props.config.signUpFeature.style;
 
+    // TODO: Define a way to reset the factor list.
+    const handleResetFactorList = () => {
+        return null;
+    };
+
+    const stInstance = SuperTokens.getInstanceOrThrow();
+
+    const privacyPolicyLink = stInstance.privacyPolicyLink;
+    const termsOfServiceLink = stInstance.termsOfServiceLink;
+
     return (
         <UserContextWrapper userContext={props.userContext}>
             <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
-                <SignUpForm {...props} />
+                <div
+                    data-supertokens={`container authPage ${
+                        props.factorIds.length > 1 ? "multiFactor" : "singleFactor"
+                    }`}>
+                    <div data-supertokens="row">
+                        <AuthPageHeader
+                            factorIds={props.factorIds}
+                            isSignUp={true}
+                            onSignInUpSwitcherClick={undefined}
+                            hasSeparateSignUpView={true}
+                            resetFactorList={handleResetFactorList}
+                            showBackButton={true}
+                            oauth2ClientInfo={undefined}
+                        />
+                        {props.error !== undefined && <GeneralError error={props.error} />}
+                        <SignUpForm {...props} />
+                        <AuthPageFooter
+                            factorIds={props.factorIds}
+                            isSignUp={true}
+                            hasSeparateSignUpView={true}
+                            privacyPolicyLink={privacyPolicyLink}
+                            termsOfServiceLink={termsOfServiceLink}
+                        />
+                    </div>
+                    <SuperTokensBranding />
+                </div>
             </ThemeBase>
         </UserContextWrapper>
     );
