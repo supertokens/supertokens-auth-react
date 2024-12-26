@@ -32,6 +32,16 @@ export const SignUpForm = withOverride(
     ): JSX.Element {
         const t = useTranslation();
 
+        const defaultFooter = (
+            <div data-supertokens="continueWithoutPasskey">
+                <a
+                    onClick={() => alert("That is not defined yet!")}
+                    data-supertokens="formLabelLinkBtn continueWithoutPasskeyLabel">
+                    {t("WEBAUTHN_CONTINUE_WITHOUT_PASSKEY_BUTTON")}
+                </a>
+            </div>
+        );
+
         return (
             <FormBase
                 clearError={props.clearError}
@@ -71,7 +81,7 @@ export const SignUpForm = withOverride(
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                footer={props.footer}
+                footer={props.footer || defaultFooter}
             />
         );
     }

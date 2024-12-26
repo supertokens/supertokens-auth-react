@@ -8,3 +8,19 @@
 [data-supertokens~="continueWithPasskeyButtonWrapper"] {
     margin: 9px 0;
 }
+
+[data-supertokens~="continueWithoutPasskey"] {
+    margin-top: 15px;
+}
+
+[data-supertokens~="continueWithoutPasskey"] [data-supertokens~="continueWithoutPasskeyLabel"] {
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 21px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #0076ff;
+    cursor: pointer;
+}
