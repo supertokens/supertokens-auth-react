@@ -21,24 +21,19 @@ import { Label } from "../../../../emailpassword/components/library";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { defaultEmailValidator } from "../../../../emailpassword/validators";
 
+import { ContinueWithoutPasskey } from "./continueWithoutPasskey";
+
 import type { SignUpFormProps } from "../../../types";
 
 export const SignUpForm = withOverride(
     "PasskeySignUpForm",
-    function PasswordlessEmailForm(
+    function PasskeyEmailForm(
         props: SignUpFormProps & {
             footer?: JSX.Element;
         }
     ): JSX.Element {
         const t = useTranslation();
-
-        const defaultFooter = (
-            <div data-supertokens="continueWithoutPasskey">
-                <a onClick={props.resetFactorList} data-supertokens="formLabelLinkBtn continueWithoutPasskeyLabel">
-                    {t("WEBAUTHN_CONTINUE_WITHOUT_PASSKEY_BUTTON")}
-                </a>
-            </div>
-        );
+        const defaultFooter = <ContinueWithoutPasskey onClick={props.resetFactorList} />;
 
         return (
             <FormBase
