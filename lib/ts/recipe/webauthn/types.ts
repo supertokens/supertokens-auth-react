@@ -145,6 +145,7 @@ export type SignUpThemeProps = {
     onError: (err: string) => void;
     error: string | undefined;
     userContext: UserContext;
+    resetFactorList: () => void;
 };
 
 export type SignUpFormProps = {

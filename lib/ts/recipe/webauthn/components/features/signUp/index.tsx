@@ -44,7 +44,8 @@ export function useChildProps(
     error: string | undefined,
     onError: (err: string) => void,
     userContext: UserContext,
-    clearError: () => void
+    clearError: () => void,
+    resetFactorList: () => void
 ): SignUpThemeProps {
     const session = useSessionContext();
     const recipeImplementation = recipe.webJSRecipe;
@@ -83,6 +84,7 @@ export function useChildProps(
             factorIds,
             recipeImplementation: recipeImplementation,
             config: recipe.config,
+            resetFactorList: resetFactorList,
         };
     }, [error, factorIds, userContext, recipeImplementation]);
 }
@@ -106,7 +108,8 @@ const SignUpFeatureInner: React.FC<
         props.error,
         props.onError,
         userContext,
-        props.clearError
+        props.clearError,
+        props.resetFactorList
     )!;
 
     return (

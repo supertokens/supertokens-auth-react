@@ -30,9 +30,9 @@ function SignUpTheme(props: SignUpThemeProps): JSX.Element {
     const activeStyle = props.config.signUpFeature.style;
 
     // TODO: Define a way to reset the factor list.
-    const handleResetFactorList = () => {
-        return null;
-    };
+    // const handleResetFactorList = () => {
+    //     return null;
+    // };
 
     const stInstance = SuperTokens.getInstanceOrThrow();
 
@@ -52,7 +52,7 @@ function SignUpTheme(props: SignUpThemeProps): JSX.Element {
                             isSignUp={true}
                             onSignInUpSwitcherClick={undefined}
                             hasSeparateSignUpView={true}
-                            resetFactorList={handleResetFactorList}
+                            resetFactorList={props.resetFactorList}
                             showBackButton={true}
                             oauth2ClientInfo={undefined}
                         />
