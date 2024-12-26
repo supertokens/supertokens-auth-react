@@ -8,7 +8,6 @@ import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import SignInWithPasskeyFeature from "./components/features/signIn";
 import SignUpFeature, { SignUpWithPasskeyFeature } from "./components/features/signUp";
 import { defaultTranslationsWebauthn } from "./components/themes/translations";
-import { WEBAUTHN_IS_SIGN_UP_STATE_KEY } from "./constants";
 import WebauthnRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
@@ -84,8 +83,7 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
         return [
             {
                 type: "FULL_PAGE",
-                async preloadInfoAndRunChecks(firstFactors, userContext) {
-                    const isSignUp = userContext[WEBAUTHN_IS_SIGN_UP_STATE_KEY] || false;
+                async preloadInfoAndRunChecks(firstFactors, _, isSignUp) {
                     return {
                         shouldDisplay:
                             isSignUp && firstFactors.length === 1 && firstFactors.includes(FactorIds.WEBAUTHN),
@@ -132,6 +130,8 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
             },
         ];
     }
+
+    public requiresSignUpPage = true;
 
     // For tests
     static reset(): void {

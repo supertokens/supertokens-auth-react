@@ -55,6 +55,7 @@ export const SignUpForm = withOverride(
                     if (email === undefined) {
                         throw new STGeneralError("GENERAL_ERROR_EMAIL_UNDEFINED");
                     }
+                    // TODO: Define actual code
                     return null;
                 }}
                 validateOnBlur={false}
