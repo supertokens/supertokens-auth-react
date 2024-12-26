@@ -16,9 +16,10 @@
 import STGeneralError from "supertokens-web-js/utils/error";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-// import { useUserContext } from "../../../../../usercontext";
+import { useTranslation } from "../../../../../translation/translationContext";
+import { Label } from "../../../../emailpassword/components/library";
 import FormBase from "../../../../emailpassword/components/library/formBase";
-import { defaultValidate } from "../../../../emailpassword/validators";
+import { defaultEmailValidator } from "../../../../emailpassword/validators";
 
 import type { SignUpFormProps } from "../../../types";
 
@@ -29,7 +30,7 @@ export const SignUpForm = withOverride(
             footer?: JSX.Element;
         }
     ): JSX.Element {
-        // const userContext = useUserContext();
+        const t = useTranslation();
 
         return (
             <FormBase
@@ -39,13 +40,23 @@ export const SignUpForm = withOverride(
                 formFields={[
                     {
                         id: "email",
-                        label: "WEBAUTHN_SIGN_UP_LABEL",
+                        label: "",
+                        labelComponent: (
+                            <div data-supertokens="formLabelWithLinkWrapper">
+                                <Label value={"WEBAUTHN_SIGN_UP_LABEL"} data-supertokens="emailInputLabel" />
+                                <a
+                                    onClick={() => alert("That is not defined yet!")}
+                                    data-supertokens="link linkButton formLabelLinkBtn recoverAccountTrigger">
+                                    {t("WEBAUTHN_RECOVER_ACCOUNT_LABEL")}
+                                </a>
+                            </div>
+                        ),
                         optional: false,
                         autofocus: true,
                         placeholder: "",
                         autoComplete: "email",
                         // We are using the default validator that allows any string
-                        validate: defaultValidate,
+                        validate: defaultEmailValidator,
                     },
                 ]}
                 buttonLabel={"WEBAUTHN_EMAIL_CONTINUE_BUTTON"}
