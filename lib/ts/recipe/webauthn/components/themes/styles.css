@@ -101,3 +101,7 @@
     color: #808080;
     margin-top: 9px;
 }
+
+[data-supertokens~="passkeyConfirmationContainer"] [data-supertokens~="passkeyConfirmationFooter"] {
+    margin-top: 25px;
+}

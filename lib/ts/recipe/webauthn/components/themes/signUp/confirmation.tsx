@@ -15,7 +15,9 @@
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import Button from "../../../../emailpassword/components/library/button";
 
+import { ContinueWithoutPasskey } from "./continueWithoutPasskey";
 import { PasskeyFeatureBlocks } from "./featureBlocks";
 
 import type { SignUpFormProps } from "../../../types";
@@ -36,6 +38,10 @@ export const PasskeyConfirmation = withOverride(
                     <div data-supertokens="enteredEmailId">{props.email}</div>
                 </div>
                 <PasskeyFeatureBlocks />
+                <div data-supertokens="passkeyConfirmationFooter">
+                    <Button disabled={false} isLoading={false} type="button" label="WEBAUTHN_EMAIL_CONTINUE_BUTTON" />
+                    <ContinueWithoutPasskey onClick={props.resetFactorList} />
+                </div>
             </div>
         );
     }
