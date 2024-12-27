@@ -13,6 +13,7 @@
  * under the License.
  */
 
+import { useCallback, useState } from "react";
 import STGeneralError from "supertokens-web-js/utils/error";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
@@ -21,19 +22,33 @@ import { Label } from "../../../../emailpassword/components/library";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { defaultEmailValidator } from "../../../../emailpassword/validators";
 
+import { PasskeyConfirmation } from "./confirmation";
 import { ContinueWithoutPasskey } from "./continueWithoutPasskey";
 
-import type { SignUpFormProps } from "../../../types";
+import type { ContinueOnSuccessParams, SignUpFormProps } from "../../../types";
 
-export const SignUpForm = withOverride(
+export enum SignUpScreen {
+    SignUpForm,
+    PasskeyConfirmation,
+}
+
+export const SignUpFormInner = withOverride(
     "PasskeySignUpForm",
     function PasskeyEmailForm(
         props: SignUpFormProps & {
             footer?: JSX.Element;
+            onContinueClick: (params: ContinueOnSuccessParams) => void;
         }
     ): JSX.Element {
         const t = useTranslation();
         const defaultFooter = <ContinueWithoutPasskey onClick={props.resetFactorList} />;
+
+        const onEmailContinueSuccess = useCallback(
+            (params: ContinueOnSuccessParams) => {
+                props.onContinueClick(params);
+            },
+            [props]
+        );
 
         return (
             <FormBase
@@ -63,14 +78,20 @@ export const SignUpForm = withOverride(
                     },
                 ]}
                 buttonLabel={"WEBAUTHN_EMAIL_CONTINUE_BUTTON"}
-                onSuccess={props.onSuccess}
+                onSuccess={onEmailContinueSuccess}
                 callAPI={async (formFields) => {
                     const email = formFields.find((field) => field.id === "email")?.value;
                     if (email === undefined) {
                         throw new STGeneralError("GENERAL_ERROR_EMAIL_UNDEFINED");
                     }
-                    // TODO: Define actual code
-                    return null;
+
+                    // We do not want the form to make the API call since we have
+                    // an intermediary step here so we will just mock an OK status
+                    // to render the next step.
+                    return {
+                        status: "OK",
+                        email,
+                    };
                 }}
                 validateOnBlur={false}
                 showLabels={true}
@@ -79,3 +100,27 @@ export const SignUpForm = withOverride(
         );
     }
 );
+
+export const SignUpForm = (
+    props: SignUpFormProps & {
+        footer?: JSX.Element;
+        onContinueClick: (params: ContinueOnSuccessParams) => void;
+        activeScreen: SignUpScreen;
+    }
+): JSX.Element | null => {
+    const [, setContinueClickResponse] = useState<ContinueOnSuccessParams | null>(null);
+
+    const onContinueClickCallback = useCallback(
+        (params: ContinueOnSuccessParams) => {
+            setContinueClickResponse(params);
+            props.onContinueClick(params);
+        },
+        [setContinueClickResponse, props]
+    );
+
+    return props.activeScreen === SignUpScreen.SignUpForm ? (
+        <SignUpFormInner {...props} onContinueClick={onContinueClickCallback} />
+    ) : props.activeScreen === SignUpScreen.PasskeyConfirmation ? (
+        <PasskeyConfirmation {...props} />
+    ) : null;
+};

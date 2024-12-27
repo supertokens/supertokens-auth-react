@@ -13,6 +13,8 @@
  * under the License.
  */
 
+import { useCallback, useState } from "react";
+
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import SuperTokens from "../../../../../superTokens";
 import { AuthPageFooter, AuthPageHeader } from "../../../../../ui";
@@ -20,7 +22,7 @@ import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { ThemeBase } from "../themeBase";
 
-import { SignUpForm } from "./signUpForm";
+import { SignUpForm, SignUpScreen } from "./signUpForm";
 
 import type { SignUpThemeProps } from "../../../types";
 
@@ -33,6 +35,11 @@ function SignUpTheme(props: SignUpThemeProps): JSX.Element {
 
     const privacyPolicyLink = stInstance.privacyPolicyLink;
     const termsOfServiceLink = stInstance.termsOfServiceLink;
+
+    const [activeScreen, setActiveScreen] = useState<SignUpScreen>(SignUpScreen.SignUpForm);
+    const onContinueClick = useCallback(() => {
+        setActiveScreen(SignUpScreen.PasskeyConfirmation);
+    }, [setActiveScreen]);
 
     return (
         <UserContextWrapper userContext={props.userContext}>
@@ -50,9 +57,15 @@ function SignUpTheme(props: SignUpThemeProps): JSX.Element {
                             resetFactorList={props.resetFactorList}
                             showBackButton={true}
                             oauth2ClientInfo={undefined}
+                            headerLabel={
+                                activeScreen === SignUpScreen.PasskeyConfirmation
+                                    ? "WEBAUTHN_CREATE_A_PASSKEY_HEADER"
+                                    : undefined
+                            }
+                            hideSignInSwitcher={activeScreen === SignUpScreen.PasskeyConfirmation}
                         />
                         {props.error !== undefined && <GeneralError error={props.error} />}
-                        <SignUpForm {...props} />
+                        <SignUpForm {...props} onContinueClick={onContinueClick} activeScreen={activeScreen} />
                         <AuthPageFooter
                             factorIds={props.factorIds}
                             isSignUp={true}

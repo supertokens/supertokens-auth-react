@@ -160,5 +160,9 @@ export type SignUpFormProps = {
     resetFactorList: () => void;
 };
 
+export type ContinueOnSuccessParams = {
+    email: string;
+};
+
 // Type to indicate what the `Continue with` button is being used for.
 export type ContinueFor = "SIGN_UP" | "SIGN_IN";
