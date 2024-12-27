@@ -164,5 +164,11 @@ export type ContinueOnSuccessParams = {
     email: string;
 };
 
+export type FeatureBlockDetailProps = {
+    title: string;
+    subText: string;
+    icon: JSX.Element;
+};
+
 // Type to indicate what the `Continue with` button is being used for.
 export type ContinueFor = "SIGN_UP" | "SIGN_IN";

@@ -16,6 +16,8 @@
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 
+import { PasskeyFeatureBlocks } from "./featureBlocks";
+
 import type { SignUpFormProps } from "../../../types";
 
 export const PasskeyConfirmation = withOverride(
@@ -33,6 +35,7 @@ export const PasskeyConfirmation = withOverride(
                     <div data-supertokens="continueWithLabel">{t("WEBAUTHN_CONTINUE_WITH_EMAIL_SUBTEXT")}</div>
                     <div data-supertokens="enteredEmailId">{props.email}</div>
                 </div>
+                <PasskeyFeatureBlocks />
             </div>
         );
     }
