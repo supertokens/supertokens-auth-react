@@ -18,13 +18,16 @@ import STGeneralError from "supertokens-web-js/utils/error";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import { useUserContext } from "../../../../../usercontext";
 import { Label } from "../../../../emailpassword/components/library";
 import FormBase from "../../../../emailpassword/components/library/formBase";
+import { handleFormSubmit } from "../../../../emailpassword/components/library/functions/form";
 import { defaultEmailValidator } from "../../../../emailpassword/validators";
 
 import { PasskeyConfirmation } from "./confirmation";
 import { ContinueWithoutPasskey } from "./continueWithoutPasskey";
 
+import type { APIFormField } from "../../../../../types";
 import type { ContinueOnSuccessParams, SignUpFormProps } from "../../../types";
 
 export enum SignUpScreen {
@@ -109,6 +112,7 @@ export const SignUpForm = (
     }
 ): JSX.Element | null => {
     const [continueClickResponse, setContinueClickResponse] = useState<ContinueOnSuccessParams | null>(null);
+    const userContext = useUserContext();
 
     const onContinueClickCallback = useCallback(
         (params: ContinueOnSuccessParams) => {
@@ -118,9 +122,35 @@ export const SignUpForm = (
         [setContinueClickResponse, props]
     );
 
+    const callAPI = useCallback(
+        async (_: APIFormField[], __: (id: string, value: string) => any) => {
+            if (continueClickResponse === null) {
+                throw props.onError("EMAIL_INPUT_NOT_POPULATED_ERROR");
+            }
+
+            return await props.recipeImplementation.registerCredentialWithSignUp({
+                email: continueClickResponse.email,
+                userContext,
+            });
+        },
+        [continueClickResponse, props, userContext]
+    );
+
+    const onConfirmationClick = useCallback(async () => {
+        await handleFormSubmit({
+            callAPI: callAPI,
+            clearError: () => alert("Clearing error"),
+            onError: (error) => console.error("Got error: ", error),
+        });
+    }, [callAPI]);
+
     return props.activeScreen === SignUpScreen.SignUpForm ? (
         <SignUpFormInner {...props} onContinueClick={onContinueClickCallback} />
     ) : props.activeScreen === SignUpScreen.PasskeyConfirmation ? (
-        <PasskeyConfirmation {...props} email={continueClickResponse?.email || ""} />
+        <PasskeyConfirmation
+            {...props}
+            email={continueClickResponse?.email || ""}
+            onContinueClick={onConfirmationClick}
+        />
     ) : null;
 };

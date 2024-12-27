@@ -27,6 +27,7 @@ export const PasskeyConfirmation = withOverride(
     function PasskeyConfirmation(
         props: SignUpFormProps & {
             email: string;
+            onContinueClick: () => void;
         }
     ): JSX.Element {
         const t = useTranslation();
@@ -39,7 +40,13 @@ export const PasskeyConfirmation = withOverride(
                 </div>
                 <PasskeyFeatureBlocks />
                 <div data-supertokens="passkeyConfirmationFooter">
-                    <Button disabled={false} isLoading={false} type="button" label="WEBAUTHN_EMAIL_CONTINUE_BUTTON" />
+                    <Button
+                        disabled={false}
+                        isLoading={false}
+                        type="button"
+                        onClick={props.onContinueClick}
+                        label="WEBAUTHN_EMAIL_CONTINUE_BUTTON"
+                    />
                     <ContinueWithoutPasskey onClick={props.resetFactorList} />
                 </div>
             </div>

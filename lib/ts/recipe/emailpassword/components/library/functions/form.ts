@@ -18,16 +18,20 @@ export const handleFormSubmit = async ({
     updateFieldState,
 }: FormOnSubmitParameters<any>): Promise<void> => {
     // Prevent default event propagation.
-    e.preventDefault();
+    e?.preventDefault();
 
     // Set loading state.
-    setIsLoading(true);
+    if (setIsLoading) {
+        setIsLoading(true);
+    }
 
-    setFieldStates((os) => os.map((fs) => ({ ...fs, error: undefined })));
+    if (setFieldStates) {
+        setFieldStates((os) => os.map((fs) => ({ ...fs, error: undefined })));
+    }
 
     // Get the fields values from form.
-    const apiFields = formFields.map((field) => {
-        const fieldState = fieldStates.find((fs) => fs.id === field.id);
+    const apiFields = formFields?.map((field) => {
+        const fieldState = fieldStates?.find((fs) => fs.id === field.id);
         return {
             id: field.id,
             value: fieldState === undefined ? "" : fieldState.value,
@@ -41,7 +45,7 @@ export const handleFormSubmit = async ({
         let generalError: STGeneralError | undefined;
         let fetchError: Response | undefined;
         try {
-            result = await callAPI(apiFields, (id, value) => fieldUpdates.push({ id, value }));
+            result = await callAPI(apiFields || [], (id, value) => fieldUpdates.push({ id, value }));
         } catch (e) {
             if (STGeneralError.isThisError(e)) {
                 generalError = e;
@@ -51,14 +55,14 @@ export const handleFormSubmit = async ({
                 throw e;
             }
         }
-        if (unmounting.current.signal.aborted) {
+        if (unmounting?.current.signal.aborted) {
             return;
         }
 
         if (generalError !== undefined || (result !== undefined && result.status !== "OK")) {
-            for (const field of formFields) {
+            for (const field of formFields || []) {
                 const update = fieldUpdates.find((f) => f.id === field.id);
-                if (update || field.clearOnSubmit === true) {
+                if ((update || field.clearOnSubmit === true) && updateFieldState) {
                     // We can do these one by one, it's almost never more than one field
                     updateFieldState(field.id, (os) => ({ ...os, value: update ? update.value : "" }));
                 }
@@ -76,14 +80,16 @@ export const handleFormSubmit = async ({
         } else {
             // If successful
             if (result.status === "OK") {
-                setIsLoading(false);
+                if (setIsLoading) {
+                    setIsLoading(false);
+                }
                 clearError();
                 if (onSuccess !== undefined) {
                     onSuccess(result);
                 }
             }
 
-            if (unmounting.current.signal.aborted) {
+            if (unmounting?.current.signal.aborted) {
                 return;
             }
 
@@ -93,7 +99,7 @@ export const handleFormSubmit = async ({
                 const getErrorMessage = (fs: FieldState) => {
                     const errorMessage = errorFields.find((ef: any) => ef.id === fs.id)?.error;
                     if (errorMessage === "Field is not optional") {
-                        const fieldConfigData = formFields.find((f) => f.id === fs.id);
+                        const fieldConfigData = formFields?.find((f) => f.id === fs.id);
                         // replace non-optional server error message from nonOptionalErrorMsg
                         if (fieldConfigData?.nonOptionalErrorMsg !== undefined) {
                             return fieldConfigData?.nonOptionalErrorMsg;
@@ -101,12 +107,16 @@ export const handleFormSubmit = async ({
                     }
                     return errorMessage;
                 };
-                setFieldStates((os) => os.map((fs) => ({ ...fs, error: getErrorMessage(fs) })));
+                if (setFieldStates) {
+                    setFieldStates((os) => os.map((fs) => ({ ...fs, error: getErrorMessage(fs) })));
+                }
             }
         }
     } catch (e) {
         onError("SOMETHING_WENT_WRONG_ERROR");
     } finally {
-        setIsLoading(false);
+        if (setIsLoading) {
+            setIsLoading(false);
+        }
     }
 };
