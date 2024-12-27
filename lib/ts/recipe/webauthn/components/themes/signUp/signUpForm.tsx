@@ -108,7 +108,7 @@ export const SignUpForm = (
         activeScreen: SignUpScreen;
     }
 ): JSX.Element | null => {
-    const [, setContinueClickResponse] = useState<ContinueOnSuccessParams | null>(null);
+    const [continueClickResponse, setContinueClickResponse] = useState<ContinueOnSuccessParams | null>(null);
 
     const onContinueClickCallback = useCallback(
         (params: ContinueOnSuccessParams) => {
@@ -121,6 +121,6 @@ export const SignUpForm = (
     return props.activeScreen === SignUpScreen.SignUpForm ? (
         <SignUpFormInner {...props} onContinueClick={onContinueClickCallback} />
     ) : props.activeScreen === SignUpScreen.PasskeyConfirmation ? (
-        <PasskeyConfirmation {...props} />
+        <PasskeyConfirmation {...props} email={continueClickResponse?.email || ""} />
     ) : null;
 };

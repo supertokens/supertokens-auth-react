@@ -14,6 +14,7 @@
  */
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 import type { SignUpFormProps } from "../../../types";
 
@@ -21,9 +22,18 @@ export const PasskeyConfirmation = withOverride(
     "PasskeyConfirmation",
     function PasskeyConfirmation(
         props: SignUpFormProps & {
-            footer?: JSX.Element;
+            email: string;
         }
     ): JSX.Element {
-        return <div></div>;
+        const t = useTranslation();
+
+        return (
+            <div data-supertokens="passkeyConfirmationContainer">
+                <div data-supertokens="passkeyConfirmationEmailContainer">
+                    <div data-supertokens="continueWithLabel">{t("WEBAUTHN_CONTINUE_WITH_EMAIL_SUBTEXT")}</div>
+                    <div data-supertokens="enteredEmailId">{props.email}</div>
+                </div>
+            </div>
+        );
     }
 );

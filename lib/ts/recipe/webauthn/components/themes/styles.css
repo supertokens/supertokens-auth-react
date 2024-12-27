@@ -24,3 +24,32 @@
     color: #0076ff;
     cursor: pointer;
 }
+
+[data-supertokens~="passkeyConfirmationContainer"] [data-supertokens~="passkeyConfirmationEmailContainer"] {
+    padding-bottom: 15px;
+}
+
+[data-supertokens~="passkeyConfirmationContainer"]
+    [data-supertokens~="passkeyConfirmationEmailContainer"]
+    [data-supertokens~="continueWithLabel"] {
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 13.8px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #808080;
+}
+
+[data-supertokens~="passkeyConfirmationContainer"]
+    [data-supertokens~="passkeyConfirmationEmailContainer"]
+    [data-supertokens~="enteredEmailId"] {
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 16.1px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+}
