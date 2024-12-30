@@ -18,5 +18,7 @@ export const defaultTranslationsWebauthn = {
             "Passkey will automatically be available across all your synced devices.",
         WEBAUTHN_FEATURE_BLOCK_KEEP_ACCOUNT_SAFER: "Keep your account safer",
         WEBAUTHN_FEATURE_BLOCK_KEEP_ACCOUNT_SAFER_DETAIL: "Passkey offer state of the art phishing resistance.",
+        WEBAUTHN_PASSKEY_RECOVERABLE_ERROR:
+            "The request either timed out, was canceled or the device is already registered. Please try again or try using another device.",
     },
 };

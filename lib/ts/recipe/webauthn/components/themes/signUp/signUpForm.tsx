@@ -113,6 +113,8 @@ export const SignUpForm = (
 ): JSX.Element | null => {
     const [continueClickResponse, setContinueClickResponse] = useState<ContinueOnSuccessParams | null>(null);
     const userContext = useUserContext();
+    const [showPasskeyConfirmationError, setShowPasskeyConfirmationError] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const onContinueClickCallback = useCallback(
         (params: ContinueOnSuccessParams) => {
@@ -139,8 +141,11 @@ export const SignUpForm = (
     const onConfirmationClick = useCallback(async () => {
         await handleFormSubmit({
             callAPI: callAPI,
-            clearError: () => alert("Clearing error"),
-            onError: (error) => console.error("Got error: ", error),
+            clearError: () => setShowPasskeyConfirmationError(false),
+            onError: () => setShowPasskeyConfirmationError(true),
+            onFetchError: () => setShowPasskeyConfirmationError(true),
+            onSuccess: (payload) => console.warn("payload: ", payload),
+            setIsLoading: setIsLoading,
         });
     }, [callAPI]);
 
@@ -151,6 +156,8 @@ export const SignUpForm = (
             {...props}
             email={continueClickResponse?.email || ""}
             onContinueClick={onConfirmationClick}
+            errorMessageLabel={showPasskeyConfirmationError ? "WEBAUTHN_PASSKEY_RECOVERABLE_ERROR" : undefined}
+            isLoading={isLoading}
         />
     ) : null;
 };

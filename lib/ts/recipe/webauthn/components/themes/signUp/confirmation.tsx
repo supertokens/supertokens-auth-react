@@ -28,6 +28,8 @@ export const PasskeyConfirmation = withOverride(
         props: SignUpFormProps & {
             email: string;
             onContinueClick: () => void;
+            errorMessageLabel?: string;
+            isLoading: boolean;
         }
     ): JSX.Element {
         const t = useTranslation();
@@ -39,10 +41,13 @@ export const PasskeyConfirmation = withOverride(
                     <div data-supertokens="enteredEmailId">{props.email}</div>
                 </div>
                 <PasskeyFeatureBlocks />
+                {props.errorMessageLabel !== undefined && props.errorMessageLabel !== "" && (
+                    <div data-supertokens="passkeyRecoverableErrorContainer">{t(props.errorMessageLabel)}</div>
+                )}
                 <div data-supertokens="passkeyConfirmationFooter">
                     <Button
                         disabled={false}
-                        isLoading={false}
+                        isLoading={props.isLoading}
                         type="button"
                         onClick={props.onContinueClick}
                         label="WEBAUTHN_EMAIL_CONTINUE_BUTTON"
