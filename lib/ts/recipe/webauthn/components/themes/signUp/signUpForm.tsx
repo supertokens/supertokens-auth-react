@@ -26,6 +26,7 @@ import { defaultEmailValidator } from "../../../../emailpassword/validators";
 
 import { PasskeyConfirmation } from "./confirmation";
 import { ContinueWithoutPasskey } from "./continueWithoutPasskey";
+import { SignUpSomethingWentWrong } from "./somethingWentWrong";
 
 import type { APIFormField } from "../../../../../types";
 import type { ContinueOnSuccessParams, SignUpFormProps } from "../../../types";
@@ -33,6 +34,7 @@ import type { ContinueOnSuccessParams, SignUpFormProps } from "../../../types";
 export enum SignUpScreen {
     SignUpForm,
     PasskeyConfirmation,
+    Error,
 }
 
 export const SignUpFormInner = withOverride(
@@ -109,6 +111,7 @@ export const SignUpForm = (
         footer?: JSX.Element;
         onContinueClick: (params: ContinueOnSuccessParams) => void;
         activeScreen: SignUpScreen;
+        setActiveScreen: React.Dispatch<React.SetStateAction<SignUpScreen>>;
     }
 ): JSX.Element | null => {
     const [continueClickResponse, setContinueClickResponse] = useState<ContinueOnSuccessParams | null>(null);
@@ -130,10 +133,20 @@ export const SignUpForm = (
                 throw props.onError("EMAIL_INPUT_NOT_POPULATED_ERROR");
             }
 
-            return await props.recipeImplementation.registerCredentialWithSignUp({
+            const response = await props.recipeImplementation.registerCredentialWithSignUp({
                 email: continueClickResponse.email,
                 userContext,
             });
+
+            // If it is an error related to passkey, we need to handle it.
+            if (
+                response.status === "FAILED_TO_REGISTER_USER" ||
+                response.status === "AUTHENTICATOR_ALREADY_REGISTERED"
+            ) {
+                setShowPasskeyConfirmationError(true);
+            }
+
+            return response;
         },
         [continueClickResponse, props, userContext]
     );
@@ -142,12 +155,12 @@ export const SignUpForm = (
         await handleFormSubmit({
             callAPI: callAPI,
             clearError: () => setShowPasskeyConfirmationError(false),
-            onError: () => setShowPasskeyConfirmationError(true),
+            onError: () => props.setActiveScreen(SignUpScreen.Error),
             onFetchError: () => setShowPasskeyConfirmationError(true),
             onSuccess: (payload) => console.warn("payload: ", payload),
             setIsLoading: setIsLoading,
         });
-    }, [callAPI]);
+    }, [callAPI, props]);
 
     return props.activeScreen === SignUpScreen.SignUpForm ? (
         <SignUpFormInner {...props} onContinueClick={onContinueClickCallback} />
@@ -159,5 +172,7 @@ export const SignUpForm = (
             errorMessageLabel={showPasskeyConfirmationError ? "WEBAUTHN_PASSKEY_RECOVERABLE_ERROR" : undefined}
             isLoading={isLoading}
         />
+    ) : props.activeScreen === SignUpScreen.Error ? (
+        <SignUpSomethingWentWrong onClick={() => props.setActiveScreen(SignUpScreen.SignUpForm)} />
     ) : null;
 };

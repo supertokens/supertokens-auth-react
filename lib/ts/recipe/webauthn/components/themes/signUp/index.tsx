@@ -49,23 +49,30 @@ function SignUpTheme(props: SignUpThemeProps): JSX.Element {
                         props.factorIds.length > 1 ? "multiFactor" : "singleFactor"
                     }`}>
                     <div data-supertokens="row">
-                        <AuthPageHeader
-                            factorIds={props.factorIds}
-                            isSignUp={true}
-                            onSignInUpSwitcherClick={props.onSignInUpSwitcherClick}
-                            hasSeparateSignUpView={true}
-                            resetFactorList={props.resetFactorList}
-                            showBackButton={true}
-                            oauth2ClientInfo={undefined}
-                            headerLabel={
-                                activeScreen === SignUpScreen.PasskeyConfirmation
-                                    ? "WEBAUTHN_CREATE_A_PASSKEY_HEADER"
-                                    : undefined
-                            }
-                            hideSignInSwitcher={activeScreen === SignUpScreen.PasskeyConfirmation}
-                        />
+                        {activeScreen !== SignUpScreen.Error && (
+                            <AuthPageHeader
+                                factorIds={props.factorIds}
+                                isSignUp={true}
+                                onSignInUpSwitcherClick={props.onSignInUpSwitcherClick}
+                                hasSeparateSignUpView={true}
+                                resetFactorList={props.resetFactorList}
+                                showBackButton={true}
+                                oauth2ClientInfo={undefined}
+                                headerLabel={
+                                    activeScreen === SignUpScreen.PasskeyConfirmation
+                                        ? "WEBAUTHN_CREATE_A_PASSKEY_HEADER"
+                                        : undefined
+                                }
+                                hideSignInSwitcher={activeScreen === SignUpScreen.PasskeyConfirmation}
+                            />
+                        )}
                         {props.error !== undefined && <GeneralError error={props.error} />}
-                        <SignUpForm {...props} onContinueClick={onContinueClick} activeScreen={activeScreen} />
+                        <SignUpForm
+                            {...props}
+                            onContinueClick={onContinueClick}
+                            activeScreen={activeScreen}
+                            setActiveScreen={setActiveScreen}
+                        />
                         <AuthPageFooter
                             factorIds={props.factorIds}
                             isSignUp={true}

@@ -96,6 +96,9 @@ export type OnHandleEventContext =
     | {
           action: "REGISTER_CREDENTIAL_WITH_RECOVER_ACCOUNT";
       }
+    | {
+          action: "FAILED_TO_REGISTER_USER";
+      }
     | AuthRecipeModuleOnHandleEventContext;
 
 export type UserInput = Record<string, unknown> & {

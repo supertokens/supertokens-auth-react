@@ -120,3 +120,49 @@
 [data-supertokens~="passkeyConfirmationContainer"] [data-supertokens~="passkeyConfirmationFooter"] {
     margin-top: 25px;
 }
+
+[data-supertokens~="somethingWentWrongContainer"]
+    [data-supertokens~="somethingWentWrongErrorDetailsContainer"]
+    [data-supertokens~="label"] {
+    margin-top: 4px;
+    font-family: Arial;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 40px;
+    letter-spacing: 0.5799999833106995px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #222222;
+}
+
+[data-supertokens~="somethingWentWrongContainer"]
+    [data-supertokens~="somethingWentWrongErrorDetailsContainer"]
+    [data-supertokens~="errorDetails"] {
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 21px;
+    letter-spacing: 0.4000000059604645px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #656565;
+}
+
+[data-supertokens~="somethingWentWrongContainer"] [data-supertokens~="goBackButtonContainer"] {
+    margin-top: 22px;
+}
+
+[data-supertokens~="somethingWentWrongContainer"]
+    [data-supertokens~="goBackButtonContainer"]
+    [data-supertokens~="errorGoBackLabel"] {
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 21px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #0076ff;
+}

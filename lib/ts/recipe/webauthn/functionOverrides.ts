@@ -113,6 +113,10 @@ export const getFunctionOverrides =
                 onHandleEvent({
                     action: "REGISTER_CREDENTIAL_WITH_SIGN_UP",
                 });
+            } else if (response.status === "FAILED_TO_REGISTER_USER") {
+                onHandleEvent({
+                    action: "FAILED_TO_REGISTER_USER",
+                });
             }
 
             return response;
