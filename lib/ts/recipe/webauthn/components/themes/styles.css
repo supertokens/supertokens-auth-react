@@ -170,3 +170,25 @@
 [data-supertokens~="passkeySignInContainer"] {
     margin-bottom: 6px;
 }
+
+[data-supertokens~="passkeyRecoverAccountFormContainer"]
+    [data-supertokens~="passkeyRecoverAccountFormHeaderWrapper"]
+    [data-supertokens~="passkeyRecoverAccountFormHeader"] {
+    padding-top: 10px;
+}
+
+[data-supertokens~="passkeyRecoverAccountFormContainer"]
+    [data-supertokens~="passkeyRecoverAccountFormHeaderWrapper"]
+    [data-supertokens~="passkeyRecoverAccountFormSubHeader"] {
+    width: 70%;
+    margin: 0 auto;
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 16.1px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #808080;
+    margin-bottom: 20px;
+}

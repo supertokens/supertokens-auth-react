@@ -175,5 +175,10 @@ export type FeatureBlockDetailProps = {
     icon: JSX.Element;
 };
 
+export type RecoverFromProps = {
+    onSuccess: () => void;
+    onBackClick: () => void;
+};
+
 // Type to indicate what the `Continue with` button is being used for.
 export type ContinueFor = "SIGN_UP" | "SIGN_IN";

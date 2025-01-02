@@ -49,7 +49,7 @@ function PasskeySignUpTheme(props: SignUpThemeProps): JSX.Element {
                         props.factorIds.length > 1 ? "multiFactor" : "singleFactor"
                     }`}>
                     <div data-supertokens="row">
-                        {activeScreen !== SignUpScreen.Error && (
+                        {![SignUpScreen.Error, SignUpScreen.RecoverAccount].includes(activeScreen) && (
                             <AuthPageHeader
                                 factorIds={props.factorIds}
                                 isSignUp={true}
