@@ -20,7 +20,6 @@ import SuperTokens from "../../../../../superTokens";
 import { Button } from "../../../../emailpassword/components/library";
 import { ThemeBase } from "../themeBase";
 
-import type { PartialAuthComponentProps } from "../../../../../types";
 import type { ContinueFor, NormalisedConfig } from "../../../types";
 
 interface ContinueWithPasskeyProps {
@@ -45,9 +44,7 @@ const ContinueWithPasskey: React.FC<ContinueWithPasskeyProps> = ({ continueFor, 
 
 const ContinueWithPasskeyWithOverride = withOverride("WebauthnContinueWithPasskey", ContinueWithPasskey);
 
-export const ContinueWithPasskeyTheme = (
-    props: PartialAuthComponentProps & { config: NormalisedConfig } & ContinueWithPasskeyProps
-) => {
+export const ContinueWithPasskeyTheme = (props: { config: NormalisedConfig } & ContinueWithPasskeyProps) => {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
     return (
         <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle]}>

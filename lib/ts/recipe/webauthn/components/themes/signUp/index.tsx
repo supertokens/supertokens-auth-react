@@ -26,7 +26,7 @@ import { SignUpForm, SignUpScreen } from "./signUpForm";
 
 import type { SignUpThemeProps } from "../../../types";
 
-function SignUpTheme(props: SignUpThemeProps): JSX.Element {
+function PasskeySignUpTheme(props: SignUpThemeProps): JSX.Element {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
 
     const activeStyle = props.config.signUpFeature.style;
@@ -88,4 +88,4 @@ function SignUpTheme(props: SignUpThemeProps): JSX.Element {
     );
 }
 
-export default SignUpTheme;
+export default PasskeySignUpTheme;

@@ -20,12 +20,11 @@ import * as React from "react";
 import AuthComponentWrapper from "../../../../../components/authCompWrapper";
 import { useUserContext } from "../../../../../usercontext";
 import { useRethrowInRender } from "../../../../../utils";
-import { handleFormSubmit } from "../../../../emailpassword/components/library/functions/form";
 import { useSessionContext } from "../../../../session";
 import Session from "../../../../session/recipe";
-import { ContinueWithPasskeyTheme } from "../../themes/continueWithPasskey";
+import SignInTheme from "../../themes/signIn";
 
-import type { UserContext, PartialAuthComponentProps, APIFormField } from "../../../../../types";
+import type { UserContext, PartialAuthComponentProps } from "../../../../../types";
 import type { AuthSuccessContext } from "../../../../authRecipe/types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap, SignInThemeProps } from "../../../types";
@@ -109,46 +108,10 @@ const SignInFeatureInner: React.FC<
         props.onSignInUpSwitcherClick
     )!;
 
-    const callAPI = React.useCallback(
-        async (_: APIFormField[], __: (id: string, value: string) => any) => {
-            const email = prompt("Enter email ID");
-            if (email === null) {
-                alert("Please enter an email");
-                return;
-            }
-
-            const response = await childProps.recipeImplementation.authenticateCredentialWithSignIn({
-                email: email,
-                userContext,
-            });
-
-            return response;
-        },
-        [childProps, userContext]
-    );
-
-    // Define the code to handle sign in properly through this component.
-    const handleWebauthnSignInClick = async () => {
-        await handleFormSubmit({
-            callAPI: callAPI,
-            clearError: () => alert("Clear error"),
-            onError: () => alert("Error"),
-            onFetchError: () => alert("Fetch error"),
-            onSuccess: (payload) => console.warn("payload: ", payload),
-        });
-    };
-
     return (
         <React.Fragment>
             {/* No custom theme, use default. */}
-            {props.children === undefined && (
-                <ContinueWithPasskeyTheme
-                    {...props}
-                    continueWithPasskeyClicked={handleWebauthnSignInClick}
-                    config={props.recipe.config}
-                    continueFor="SIGN_IN"
-                />
-            )}
+            {props.children === undefined && <SignInTheme {...childProps} />}
 
             {/* Otherwise, custom theme is provided, propagate props. */}
             {props.children &&
