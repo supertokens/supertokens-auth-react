@@ -180,7 +180,7 @@
 [data-supertokens~="passkeyRecoverAccountFormContainer"]
     [data-supertokens~="passkeyRecoverAccountFormHeaderWrapper"]
     [data-supertokens~="passkeyRecoverAccountFormSubHeader"] {
-    width: 70%;
+    width: 75%;
     margin: 0 auto;
     font-family: Arial;
     font-size: 14px;
