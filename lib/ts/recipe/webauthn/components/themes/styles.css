@@ -102,7 +102,7 @@
     margin-top: 9px;
 }
 
-[data-supertokens~="passkeyConfirmationContainer"] [data-supertokens~="passkeyRecoverableErrorContainer"] {
+[data-supertokens~="passkeyRecoverableErrorContainer"] {
     margin-top: 15px;
     border-radius: 6px;
     background-color: #fceaeb;
@@ -165,4 +165,8 @@
     text-underline-position: from-font;
     text-decoration-skip-ink: none;
     color: #0076ff;
+}
+
+[data-supertokens~="passkeySignInContainer"] {
+    margin-bottom: 6px;
 }

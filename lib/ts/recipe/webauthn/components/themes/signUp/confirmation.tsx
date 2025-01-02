@@ -16,6 +16,7 @@
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 import Button from "../../../../emailpassword/components/library/button";
+import { RecoverableError } from "../error/recoverableError";
 
 import { ContinueWithoutPasskey } from "./continueWithoutPasskey";
 import { PasskeyFeatureBlocks } from "./featureBlocks";
@@ -42,7 +43,7 @@ export const PasskeyConfirmation = withOverride(
                 </div>
                 <PasskeyFeatureBlocks />
                 {props.errorMessageLabel !== undefined && props.errorMessageLabel !== "" && (
-                    <div data-supertokens="passkeyRecoverableErrorContainer">{t(props.errorMessageLabel)}</div>
+                    <RecoverableError errorMessageLabel={props.errorMessageLabel} />
                 )}
                 <div data-supertokens="passkeyConfirmationFooter">
                     <Button

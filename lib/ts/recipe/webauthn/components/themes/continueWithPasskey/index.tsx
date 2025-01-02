@@ -25,13 +25,18 @@ import type { ContinueFor, NormalisedConfig } from "../../../types";
 interface ContinueWithPasskeyProps {
     continueFor: ContinueFor;
     continueWithPasskeyClicked: (continueFor: ContinueFor) => void;
+    isLoading?: boolean;
 }
 
-const ContinueWithPasskey: React.FC<ContinueWithPasskeyProps> = ({ continueFor, continueWithPasskeyClicked }) => {
+const ContinueWithPasskey: React.FC<ContinueWithPasskeyProps> = ({
+    continueFor,
+    continueWithPasskeyClicked,
+    isLoading = false,
+}) => {
     return (
         <div data-supertokens="continueWithPasskeyButtonWrapper">
             <Button
-                isLoading={false}
+                isLoading={isLoading}
                 onClick={() => {
                     continueWithPasskeyClicked(continueFor);
                 }}

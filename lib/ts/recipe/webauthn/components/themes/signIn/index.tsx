@@ -20,6 +20,7 @@ import { useUserContext } from "../../../../../usercontext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { handleFormSubmit } from "../../../../emailpassword/components/library/functions/form";
 import { ContinueWithPasskeyTheme } from "../continueWithPasskey";
+import { RecoverableError } from "../error/recoverableError";
 import { ThemeBase } from "../themeBase";
 
 import type { APIFormField } from "../../../../../types";
@@ -27,6 +28,8 @@ import type { SignInThemeProps } from "../../../types";
 
 function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
     const userContext = useUserContext();
+    const [error, setError] = React.useState<string | null>(null);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const callAPI = React.useCallback(
         async (_: APIFormField[], __: (id: string, value: string) => any) => {
@@ -41,6 +44,11 @@ function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
                 userContext,
             });
 
+            if (response.status === "FAILED_TO_AUTHENTICATE_USER") {
+                setError("Failed to authenticate user");
+                return;
+            }
+
             return response;
         },
         [props, userContext]
@@ -50,10 +58,11 @@ function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
     const handleWebauthnSignInClick = async () => {
         await handleFormSubmit({
             callAPI: callAPI,
-            clearError: () => alert("Clear error"),
-            onError: () => alert("Error"),
-            onFetchError: () => alert("Fetch error"),
+            clearError: () => setError(null),
+            onError: (error) => setError(error),
+            onFetchError: () => setError("Failed to fetch from upstream"),
             onSuccess: (payload) => console.warn("payload: ", payload),
+            setIsLoading: setIsLoading,
         });
     };
 
@@ -64,12 +73,18 @@ function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
     return (
         <UserContextWrapper userContext={props.userContext}>
             <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
-                <ContinueWithPasskeyTheme
-                    {...props}
-                    continueWithPasskeyClicked={handleWebauthnSignInClick}
-                    config={props.config}
-                    continueFor="SIGN_IN"
-                />
+                <div data-supertokens="passkeySignInContainer">
+                    {error !== "" && error !== null && (
+                        <RecoverableError errorMessageLabel="WEBAUTHN_PASSKEY_RECOVERABLE_ERROR" />
+                    )}
+                    <ContinueWithPasskeyTheme
+                        {...props}
+                        continueWithPasskeyClicked={handleWebauthnSignInClick}
+                        config={props.config}
+                        continueFor="SIGN_IN"
+                        isLoading={isLoading}
+                    />
+                </div>
             </ThemeBase>
         </UserContextWrapper>
     );
