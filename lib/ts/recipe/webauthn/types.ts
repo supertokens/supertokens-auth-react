@@ -152,6 +152,8 @@ export type SignUpThemeProps = {
     onSignInUpSwitcherClick: () => void;
 };
 
+export type SignInThemeProps = SignUpThemeProps;
+
 export type SignUpFormProps = {
     clearError: () => void;
     onError: (error: string) => void;

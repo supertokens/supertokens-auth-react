@@ -123,6 +123,16 @@ export const SignUpPasskey: Story = {
     },
 };
 
+export const SignInPasskey: Story = {
+    args: {
+        path: "/auth",
+        "multifactorauth.initialized": false,
+        "passwordless.initialized": false,
+        "webauthn.initialized": true,
+        defaultToSignUp: false,
+    },
+};
+
 export const SignUpFieldErrors: Story = {
     args: {
         path: "/auth",
