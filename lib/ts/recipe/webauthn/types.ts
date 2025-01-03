@@ -176,8 +176,14 @@ export type FeatureBlockDetailProps = {
 };
 
 export type RecoverFromProps = {
-    onSuccess: () => void;
+    onSuccess: (result: any) => void;
     onBackClick: () => void;
+    recipeImplementation: RecipeImplementation;
+};
+
+export type EmailSentProps = {
+    email: string;
+    onEmailChangeClick: () => void;
 };
 
 // Type to indicate what the `Continue with` button is being used for.

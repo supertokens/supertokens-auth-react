@@ -24,5 +24,12 @@ export const defaultTranslationsWebauthn = {
         WEBAUTHN_ERROR_GO_BACK_BUTTON_LABEL: "Go back",
         WEBAUTHN_UNRECOVERABLE_ERROR: "Something went wrong",
         WEBAUTHN_UNRECOVERABLE_ERROR_DETAILS: "something went wrong with your current session. please try again.",
+        WEBAUTHN_EMAIL_SENT_LABEL: "Email sent",
+        WEBAUTHN_EMAIL_SENT_PRE_LABEL: "Account recovery email has been sent to ",
+        WEBAUTHN_EMAIL_SENT_POST_LABEL: ", if it exists in our system.",
+        WEBAUTHN_RESEND_OR_CHANGE_EMAIL_LABEL: "Resend or change email",
+        WEBAUTHN_ACCOUNT_RECOVERY_NOT_ALLOWED_LABEL: "Account Recovery is not allowed, please contact support.",
+        WEBAUTHN_ACCOUNT_RECOVERY_GENERAL_ERROR:
+            "Something went wrong while trying to send recover account token, please try again.",
     },
 };

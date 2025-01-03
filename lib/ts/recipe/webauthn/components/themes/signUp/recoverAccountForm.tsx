@@ -18,23 +18,29 @@ import STGeneralError from "supertokens-web-js/lib/build/error";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import { useUserContext } from "../../../../../usercontext";
 import { Label } from "../../../../emailpassword/components/library";
 import BackButton from "../../../../emailpassword/components/library/backButton";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { defaultEmailValidator } from "../../../../emailpassword/validators";
+import { RecoverableError } from "../error/recoverableError";
 
 import type { RecoverFromProps } from "../../../types";
 
 export const PasskeyRecoverAccountFormInner = withOverride(
     "PasskeyRecoverAccountFormInner",
-    (props: RecoverFromProps): JSX.Element => {
-        const [, setError] = useState<string | undefined>(undefined);
+    (
+        props: RecoverFromProps & {
+            setError: React.Dispatch<React.SetStateAction<string | undefined>>;
+        }
+    ): JSX.Element => {
+        const userContext = useUserContext();
 
         return (
             <FormBase
-                clearError={() => setError(undefined)}
-                onFetchError={() => setError("Failed to fetch")}
-                onError={(error) => setError(error)}
+                clearError={() => props.setError(undefined)}
+                onFetchError={() => props.setError("WEBAUTHN_ACCOUNT_RECOVERY_GENERAL_ERROR")}
+                onError={() => props.setError("WEBAUTHN_ACCOUNT_RECOVERY_GENERAL_ERROR")}
                 formFields={[
                     {
                         id: "email",
@@ -59,9 +65,18 @@ export const PasskeyRecoverAccountFormInner = withOverride(
                     if (email === undefined) {
                         throw new STGeneralError("GENERAL_ERROR_EMAIL_UNDEFINED");
                     }
-                    // TODO: Define code to make the API call to send reset email.
+                    // Define code to make the API call to send reset email.
+                    const res = await props.recipeImplementation.generateRecoverAccountToken({
+                        email: email,
+                        userContext: userContext,
+                    });
+
+                    if (res.status === "RECOVER_ACCOUNT_NOT_ALLOWED") {
+                        props.setError("WEBAUTHN_ACCOUNT_RECOVERY_NOT_ALLOWED_LABEL");
+                    }
+
                     return {
-                        status: "OK",
+                        ...res,
                         email,
                     };
                 }}
@@ -76,6 +91,7 @@ export const PasskeyRecoverAccountForm = withOverride(
     "PasskeyRecoverAccountForm",
     (props: RecoverFromProps): JSX.Element => {
         const t = useTranslation();
+        const [errorLabel, setErrorLabel] = useState<string | undefined>(undefined);
 
         return (
             <div data-supertokens="passkeyRecoverAccountFormContainer">
@@ -91,7 +107,12 @@ export const PasskeyRecoverAccountForm = withOverride(
                         {t("WEBAUTHN_RECOVER_ACCOUNT_SUBHEADER_LABEL")}
                     </div>
                 </div>
-                <PasskeyRecoverAccountFormInner {...props} />
+                {errorLabel !== undefined && (
+                    <div data-supertokens="errorContainer">
+                        <RecoverableError errorMessageLabel={errorLabel} />
+                    </div>
+                )}
+                <PasskeyRecoverAccountFormInner {...props} setError={setErrorLabel} />
             </div>
         );
     }

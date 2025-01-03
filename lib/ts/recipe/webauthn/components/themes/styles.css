@@ -192,3 +192,25 @@
     color: #808080;
     margin-bottom: 20px;
 }
+
+[data-supertokens~="passkeyRecoverAccountFormContainer"] [data-supertokens~="errorContainer"] {
+    margin-bottom: 15px;
+}
+
+[data-supertokens~="passkeyEmailSentContainer"] [data-supertokens~="emailSentDescription"] {
+    margin: 0 auto;
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 16.1px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #808080;
+}
+
+[data-supertokens~="passkeyEmailSentContainer"]
+    [data-supertokens~="emailSentDescription"]
+    [data-supertokens~="changeEmailBtn"] {
+    line-height: 16.1px;
+}

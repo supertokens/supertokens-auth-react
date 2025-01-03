@@ -26,6 +26,7 @@ import { defaultEmailValidator } from "../../../../emailpassword/validators";
 
 import { PasskeyConfirmation } from "./confirmation";
 import { ContinueWithoutPasskey } from "./continueWithoutPasskey";
+import { PasskeyEmailSent } from "./emailSent";
 import { PasskeyRecoverAccountForm } from "./recoverAccountForm";
 import { SignUpSomethingWentWrong } from "./somethingWentWrong";
 
@@ -122,6 +123,7 @@ export const SignUpForm = (
     const userContext = useUserContext();
     const [showPasskeyConfirmationError, setShowPasskeyConfirmationError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [recoverAccountEmail, setRecoverAccountEmail] = useState<string>("");
 
     const onContinueClickCallback = useCallback(
         (params: ContinueOnSuccessParams) => {
@@ -166,12 +168,17 @@ export const SignUpForm = (
         });
     }, [callAPI, props]);
 
-    const onRecoverAccountFormSuccess = () => {
+    const onRecoverAccountFormSuccess = (result: { email: string }) => {
+        setRecoverAccountEmail(result.email);
         props.setActiveScreen(SignUpScreen.RecoverEmailSent);
     };
 
     const onRecoverAccountBackClick = () => {
         props.setActiveScreen(SignUpScreen.SignUpForm);
+    };
+
+    const onEmailChangeClick = () => {
+        props.setActiveScreen(SignUpScreen.RecoverAccount);
     };
 
     return props.activeScreen === SignUpScreen.SignUpForm ? (
@@ -187,6 +194,12 @@ export const SignUpForm = (
     ) : props.activeScreen === SignUpScreen.Error ? (
         <SignUpSomethingWentWrong onClick={() => props.setActiveScreen(SignUpScreen.SignUpForm)} />
     ) : props.activeScreen === SignUpScreen.RecoverAccount ? (
-        <PasskeyRecoverAccountForm onSuccess={onRecoverAccountFormSuccess} onBackClick={onRecoverAccountBackClick} />
+        <PasskeyRecoverAccountForm
+            onSuccess={onRecoverAccountFormSuccess}
+            onBackClick={onRecoverAccountBackClick}
+            recipeImplementation={props.recipeImplementation}
+        />
+    ) : props.activeScreen === SignUpScreen.RecoverEmailSent ? (
+        <PasskeyEmailSent email={recoverAccountEmail} onEmailChangeClick={onEmailChangeClick} />
     ) : null;
 };
