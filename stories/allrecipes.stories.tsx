@@ -133,6 +133,16 @@ export const SignInPasskey: Story = {
     },
 };
 
+export const RecoverAccountWithToken: Story = {
+    args: {
+        path: "/auth/webauthn/recover",
+        "multifactorauth.initialized": false,
+        "passwordless.initialized": false,
+        "webauthn.initialized": true,
+        query: "token=asdf",
+    },
+};
+
 export const SignUpFieldErrors: Story = {
     args: {
         path: "/auth",

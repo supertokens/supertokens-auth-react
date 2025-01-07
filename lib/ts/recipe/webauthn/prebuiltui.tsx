@@ -1,13 +1,17 @@
+import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
+
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { isTest } from "../../utils";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { FactorIds } from "../multifactorauth";
 import { RecipeRouter } from "../recipeRouter";
 import SessionAuth from "../session/sessionAuth";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import { RecoverAccountUsingToken } from "./components/features/recoverAccountWithToken";
 import SignInWithPasskeyFeature from "./components/features/signIn";
 import SignUpFeature, { SignUpWithPasskeyFeature } from "./components/features/signUp";
 import { defaultTranslationsWebauthn } from "./components/themes/translations";
+import { DEFAULT_WEBAUTHN_RECOVERY_PATH } from "./constants";
 import WebauthnRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
@@ -42,7 +46,7 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
         return WebauthnPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
     }
     static getFeatureComponent(
-        componentName: "webauthn-sign-up",
+        componentName: "webauthn-recover-account",
         props: FeatureBaseProps<{ userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
@@ -55,23 +59,33 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
 
     // Instance methods
     getFeatures = (
-        _: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
-        // TODO: Define after components are defined
+        if (this.recipeInstance.config.disableDefaultUI !== true) {
+            const normalisedFullPath = this.recipeInstance.config.appInfo.websiteBasePath.appendPath(
+                new NormalisedURLPath(DEFAULT_WEBAUTHN_RECOVERY_PATH)
+            );
+            features[normalisedFullPath.getAsStringDangerous()] = {
+                matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
+                component: (props: any) =>
+                    this.getFeatureComponent("webauthn-recover-account", props, useComponentOverrides),
+                recipeID: WebauthnRecipe.RECIPE_ID,
+            };
+        }
         return features;
     };
 
     getFeatureComponent = (
-        componentName: "webauthn-sign-up",
+        componentName: "webauthn-recover-account",
         props: FeatureBaseProps<{ userContext?: UserContext }>,
         _: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
-        if (componentName === "webauthn-sign-up") {
+        if (componentName === "webauthn-recover-account") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
                     <SessionAuth requireAuth={false} doRedirection={false}>
-                        <div></div>
+                        <RecoverAccountUsingToken />
                     </SessionAuth>
                 </UserContextWrapper>
             );

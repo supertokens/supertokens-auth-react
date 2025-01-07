@@ -122,6 +122,7 @@ export type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
 
 export type NormalisedConfig = {
     signUpFeature: NormalisedSignUpFormFeatureConfig;
+    disableDefaultUI?: boolean;
 
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
