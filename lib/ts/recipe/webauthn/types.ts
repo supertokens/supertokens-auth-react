@@ -13,6 +13,8 @@
  * under the License.
  */
 
+import type Recipe from "./recipe";
+import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type {
     FeatureBaseConfig,
     NormalisedBaseConfig,
@@ -27,6 +29,7 @@ import type {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     Config as AuthRecipeModuleConfig,
 } from "../authRecipe/types";
+import type SignInForm from "./components/features/signIn";
 import type { InputProps } from "../emailpassword/components/library/input";
 import type WebJSRecipe from "supertokens-web-js/recipe/webauthn";
 import type { RecipeInterface } from "supertokens-web-js/recipe/webauthn";
@@ -131,7 +134,9 @@ export type NormalisedConfig = {
 
 export type RecipeImplementation = WebJSRecipeInterface<typeof WebJSRecipe>;
 
-export type ComponentOverrideMap = Record<string, undefined>;
+export type ComponentOverrideMap = {
+    PasskeySignInForm_Override?: ComponentOverride<typeof SignInForm>;
+};
 
 export type WebauthnSignUpState = {
     showBackButton: boolean;
@@ -164,6 +169,21 @@ export type SignUpFormProps = {
     config: NormalisedConfig;
     onSuccess?: (result: { createdNewRecipeUser: boolean; user: User }) => void;
     resetFactorList: () => void;
+};
+
+export type RecoverAccountWithTokenProps = {
+    userContext?: UserContext | undefined;
+    recipe: Recipe;
+    useComponentOverrides: () => ComponentOverrideMap;
+};
+
+export type RecoverAccountWithTokenThemeProps = {
+    config: NormalisedConfig;
+    userContext?: UserContext;
+    recipeImplementation: RecipeImplementation;
+    error: string | undefined;
+    clearError: () => void;
+    onError: (error: string) => void;
 };
 
 export type ContinueOnSuccessParams = {

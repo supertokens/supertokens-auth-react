@@ -14,11 +14,55 @@
  */
 
 import * as React from "react";
+
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import FeatureWrapper from "../../../../../components/featureWrapper";
+import SuperTokens from "../../../../../superTokens";
 import { getQueryParams } from "../../../../../utils";
+import { defaultTranslationsEmailPassword } from "../../../../emailpassword/components/themes/translations";
+import RecoverAccountWithToken from "../../themes/recoverAccountWithToken";
 
-export const RecoverAccountUsingToken = (props): JSX.Element => {
+import type { RecoverAccountWithTokenProps } from "../../../types";
+
+export const RecoverAccountUsingToken: React.FC<RecoverAccountWithTokenProps> = (props): JSX.Element => {
     const token = getQueryParams("token");
-    console.log("token: ", token);
+    let userContext;
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
+    const [error, setError] = React.useState<string>();
 
-    return <div>Recovering using token</div>;
+    const childProps = {
+        config: props.recipe.config,
+        error: error,
+        onError: (error: string) => setError(error),
+        clearError: () => setError(undefined),
+        recipeImplementation: props.recipe.webJSRecipe,
+        token,
+        useComponentOverride: props.useComponentOverrides,
+        userContext,
+    };
+    const recipeComponentOverrides = props.useComponentOverrides();
+
+    return (
+        <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
+            <FeatureWrapper
+                useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}
+                defaultStore={defaultTranslationsEmailPassword}>
+                <React.Fragment>
+                    {/* No custom theme, use default. */}
+                    {props.children === undefined && <RecoverAccountWithToken {...childProps} />}
+                    {/* Otherwise, custom theme is provided, propagate props. */}
+                    {props.children &&
+                        React.Children.map(props.children, (child) => {
+                            if (React.isValidElement(child)) {
+                                return React.cloneElement(child, childProps);
+                            }
+
+                            return child;
+                        })}
+                </React.Fragment>
+            </FeatureWrapper>
+        </ComponentOverrideContext.Provider>
+    );
 };

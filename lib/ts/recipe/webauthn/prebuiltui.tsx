@@ -79,13 +79,17 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
     getFeatureComponent = (
         componentName: "webauthn-recover-account",
         props: FeatureBaseProps<{ userContext?: UserContext }>,
-        _: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
+        useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
         if (componentName === "webauthn-recover-account") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
                     <SessionAuth requireAuth={false} doRedirection={false}>
-                        <RecoverAccountUsingToken />
+                        <RecoverAccountUsingToken
+                            recipe={this.recipeInstance}
+                            {...props}
+                            useComponentOverrides={useComponentOverrides}
+                        />
                     </SessionAuth>
                 </UserContextWrapper>
             );

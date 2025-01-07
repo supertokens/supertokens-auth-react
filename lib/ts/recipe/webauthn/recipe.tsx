@@ -17,6 +17,7 @@ import WebauthnWebJS from "supertokens-web-js/lib/build/recipe/webauthn";
 
 import { SSR_ERROR } from "../../constants";
 import AuthRecipe from "../authRecipe";
+import { FactorIds } from "../multifactorauth";
 
 import { getFunctionOverrides } from "./functionOverrides";
 import { normaliseWebauthnConfig } from "./utils";
@@ -35,7 +36,6 @@ import type {
     RecipeInitResult,
 } from "../../types";
 import type RecipeModule from "../recipeModule";
-import { FactorIds } from "../multifactorauth";
 
 export default class Webauthn extends AuthRecipe<
     GetRedirectionURLContext,
