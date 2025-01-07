@@ -103,7 +103,7 @@ export type OnHandleEventContext =
       };
 
 export type SignInAndUpThemeProps = PartialAuthComponentProps & {
-    providers: Pick<Provider, "id" | "getButton">[];
+    providers: Pick<Provider, "id" | "getButton" | "name">[];
     recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;
     config: NormalisedConfig;
 };

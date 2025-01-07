@@ -69,7 +69,7 @@ export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps>
                 return (
                     <div key={`provider-${provider.id}`} data-supertokens="providerContainer">
                         <span onClick={() => signInClick(provider.id)}>
-                            {provider.getButton(undefined, getProviderLogo(provider.id))}
+                            {provider.getButton(undefined, getProviderLogo(provider.id, provider.name))}
                         </span>
                     </div>
                 );

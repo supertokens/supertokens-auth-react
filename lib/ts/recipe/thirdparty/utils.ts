@@ -223,7 +223,10 @@ export const mergeProviders = ({
                     ...provider.config,
                     id: tenantProvider.id,
                     name: tenantProvider.name,
-                    buttonComponent: provider.getButton(tenantProvider.name, getProviderLogo(tenantProvider.id)),
+                    buttonComponent: provider.getButton(
+                        tenantProvider.name,
+                        getProviderLogo(tenantProvider.id, tenantProvider.name)
+                    ),
                 })
             );
         } else {
