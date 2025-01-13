@@ -13,8 +13,9 @@
  * under the License.
  */
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
+import { redirectToAuth } from "../../../../..";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import SuperTokens from "../../../../../superTokens";
 import { AuthPageFooter, AuthPageHeader } from "../../../../../ui";
@@ -22,8 +23,9 @@ import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { PasskeyConfirmation } from "../signUp/confirmation";
 import { ThemeBase } from "../themeBase";
 
-import type { RecoverAccountWithTokenThemeProps } from "../../../types";
 import { PasskeyRecoverAccountSuccess } from "./success";
+
+import type { RecoverAccountWithTokenThemeProps } from "../../../types";
 
 export enum RecoverAccountScreen {
     ContinueWithPasskey,
@@ -39,18 +41,69 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
     const privacyPolicyLink = stInstance.privacyPolicyLink;
     const termsOfServiceLink = stInstance.termsOfServiceLink;
 
+    type RegisterOptions = Extract<
+        Awaited<ReturnType<typeof props.recipeImplementation.getRegisterOptions>>,
+        { status: "OK" }
+    >;
+    const [errorMessageLabel, setErrorMessageLabel] = useState<string | null>(null);
     const [activeScreen, setActiveScreen] = useState<RecoverAccountScreen>(RecoverAccountScreen.ContinueWithPasskey);
+    const [registerOptions, setRegisterOptions] = useState<RegisterOptions | null>(null);
 
     const onResetFactorList = () => {
         throw new Error("Should never come here as we don't have back functionality");
     };
 
-    // TODO: Get the reset options as soon as the page loads and afterwards use the token
+    // Get the reset options as soon as the page loads and afterwards use the token
     // with the options.
+    const fetchAndStoreRegisterOptions = useCallback(async () => {
+        // If the page is loaded without a valid token, we want to redirect the user
+        // back to the sign in page.
+        if (props.token === null) {
+            await redirectToAuth();
+            return;
+        }
+
+        const registerOptions = await props.recipeImplementation.getRegisterOptions({
+            userContext: props.userContext,
+            recoverAccountToken: props.token,
+        });
+        if (registerOptions.status !== "OK") {
+            switch (registerOptions.status) {
+                case "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR":
+                    setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_TOKEN_INVALID_ERROR");
+                    break;
+                case "INVALID_EMAIL_ERROR":
+                    setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_INVALID_EMAIL_ERROR");
+                    break;
+                case "INVALID_GENERATED_OPTIONS_ERROR":
+                    setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_INVALID_GENERATED_OPTIONS_ERROR");
+                    // TODO: Should we trigger an automatic retry here or will there
+                    // be a separate expired token related error?
+                    break;
+                default:
+                    throw new Error("Should never come here");
+            }
+
+            return;
+        }
+
+        setRegisterOptions(registerOptions);
+    }, [props]);
+
+    useEffect(() => {
+        void fetchAndStoreRegisterOptions();
+    }, []);
 
     const onContinueClick = useCallback(() => {
         // TODO: Add support to make the network call and show the next screen based
         // on that result.
+        //
+        // We will do the following things in the order when the user clicks on the continue
+        // button.
+        // 1. Check if the fetched register options have expired
+        // 2. If not expired, we can continue and use the values to register the user.
+        // 3. If expired, we will get new registerOptions and register the user.
+        // 4. If registration fails with a token expiry error, we should following 3rd step.
         setActiveScreen(RecoverAccountScreen.Success);
     }, [setActiveScreen]);
 
@@ -80,6 +133,8 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
                             {...props}
                             activeScreen={activeScreen}
                             onContinueClick={onContinueClick}
+                            errorMessageLabel={errorMessageLabel}
+                            email={registerOptions?.user.name || null}
                         />
                         {activeScreen !== RecoverAccountScreen.Success && (
                             <AuthPageFooter
@@ -102,6 +157,8 @@ const RecoverAccountThemeInner = (
     props: RecoverAccountWithTokenThemeProps & {
         activeScreen: RecoverAccountScreen;
         onContinueClick: () => void;
+        errorMessageLabel: string | null;
+        email: string | null;
     }
 ) => {
     return props.activeScreen === RecoverAccountScreen.ContinueWithPasskey ? (
@@ -109,9 +166,8 @@ const RecoverAccountThemeInner = (
             {...props}
             email={props.email || ""}
             onContinueClick={props.onContinueClick}
-            // errorMessageLabel={showPasskeyConfirmationError ? "WEBAUTHN_PASSKEY_RECOVERABLE_ERROR" : undefined}
+            errorMessageLabel={props.errorMessageLabel || undefined}
             isLoading={false}
-            onFetchError={() => {}}
             hideContinueWithoutPasskey
         />
     ) : props.activeScreen === RecoverAccountScreen.Success ? (

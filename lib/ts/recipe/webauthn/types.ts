@@ -163,7 +163,7 @@ export type SignInThemeProps = SignUpThemeProps;
 export type SignUpFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
-    onFetchError: (error: Response) => void;
+    onFetchError?: (error: Response) => void;
     error: string | undefined;
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
@@ -184,7 +184,7 @@ export type RecoverAccountWithTokenThemeProps = {
     error: string | undefined;
     clearError: () => void;
     onError: (error: string) => void;
-    email: string | null;
+    token: string | null;
 };
 
 export type ContinueOnSuccessParams = {

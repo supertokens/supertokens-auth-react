@@ -32,5 +32,10 @@ export const defaultTranslationsWebauthn = {
         WEBAUTHN_ACCOUNT_RECOVERY_GENERAL_ERROR:
             "Something went wrong while trying to send recover account token, please try again.",
         WEBAUTHN_ACCOUNT_RECOVERY_SUCCESSFUL_LABEL: "Account recovered successfully!",
+        WEBAUTHN_ACCOUNT_RECOVERY_TOKEN_INVALID_ERROR:
+            "The token used for recovering the account is invalid. Please try with a different token or request a new one.",
+        WEBAUTHN_ACCOUNT_RECOVERY_INVALID_EMAIL_ERROR:
+            "The email used is invalid. Please try with a different email ID or reach out to support.",
+        WEBAUTHN_ACCOUNT_RECOVERY_INVALID_GENERATED_OPTIONS_ERROR: "Failed to recover account, please try again.",
     },
 };
