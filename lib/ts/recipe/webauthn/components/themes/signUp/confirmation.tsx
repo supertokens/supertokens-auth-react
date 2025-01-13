@@ -54,7 +54,9 @@ export const PasskeyConfirmation = withOverride(
                         onClick={props.onContinueClick}
                         label="WEBAUTHN_EMAIL_CONTINUE_BUTTON"
                     />
-                    {!props.hideContinueWithoutPasskey && <ContinueWithoutPasskey onClick={props.resetFactorList} />}
+                    {!props.hideContinueWithoutPasskey && props.resetFactorList !== undefined && (
+                        <ContinueWithoutPasskey onClick={props.resetFactorList} />
+                    )}
                 </div>
             </div>
         );

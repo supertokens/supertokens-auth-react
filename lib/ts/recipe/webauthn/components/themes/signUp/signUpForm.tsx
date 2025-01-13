@@ -51,7 +51,10 @@ export const SignUpFormInner = withOverride(
         }
     ): JSX.Element {
         const t = useTranslation();
-        const defaultFooter = <ContinueWithoutPasskey onClick={props.resetFactorList} />;
+        const defaultFooter =
+            props.resetFactorList !== undefined ? (
+                <ContinueWithoutPasskey onClick={props.resetFactorList} />
+            ) : undefined;
 
         const onEmailContinueSuccess = useCallback(
             (params: ContinueOnSuccessParams) => {

@@ -13,11 +13,16 @@
  * under the License.
  */
 
+import { redirectToAuth } from "../../../../..";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { Button } from "../../../../emailpassword/components/library";
 
 export const PasskeyRecoverAccountSuccess = (): JSX.Element => {
     const t = useTranslation();
+
+    const onContinueClick = async () => {
+        await redirectToAuth({ show: "signin" });
+    };
 
     return (
         <div data-supertokens="passkeyRecoverAccountSuccessContainer">
@@ -37,7 +42,7 @@ export const PasskeyRecoverAccountSuccess = (): JSX.Element => {
                 disabled={false}
                 isLoading={false}
                 type="button"
-                onClick={() => {}}
+                onClick={onContinueClick}
                 label="WEBAUTHN_EMAIL_CONTINUE_BUTTON"
             />
         </div>

@@ -168,7 +168,7 @@ export type SignUpFormProps = {
     recipeImplementation: RecipeImplementation;
     config: NormalisedConfig;
     onSuccess?: (result: { createdNewRecipeUser: boolean; user: User }) => void;
-    resetFactorList: () => void;
+    resetFactorList?: () => void;
 };
 
 export type RecoverAccountWithTokenProps = {

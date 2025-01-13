@@ -45,6 +45,9 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
         throw new Error("Should never come here as we don't have back functionality");
     };
 
+    // TODO: Get the reset options as soon as the page loads and afterwards use the token
+    // with the options.
+
     const onContinueClick = useCallback(() => {
         // TODO: Add support to make the network call and show the next screen based
         // on that result.
@@ -109,7 +112,6 @@ const RecoverAccountThemeInner = (
             // errorMessageLabel={showPasskeyConfirmationError ? "WEBAUTHN_PASSKEY_RECOVERABLE_ERROR" : undefined}
             isLoading={false}
             onFetchError={() => {}}
-            resetFactorList={() => {}}
             hideContinueWithoutPasskey
         />
     ) : props.activeScreen === RecoverAccountScreen.Success ? (
