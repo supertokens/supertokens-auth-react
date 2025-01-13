@@ -31,5 +31,6 @@ export const defaultTranslationsWebauthn = {
         WEBAUTHN_ACCOUNT_RECOVERY_NOT_ALLOWED_LABEL: "Account Recovery is not allowed, please contact support.",
         WEBAUTHN_ACCOUNT_RECOVERY_GENERAL_ERROR:
             "Something went wrong while trying to send recover account token, please try again.",
+        WEBAUTHN_ACCOUNT_RECOVERY_SUCCESSFUL_LABEL: "Account recovered successfully!",
     },
 };

@@ -214,3 +214,17 @@
     [data-supertokens~="changeEmailBtn"] {
     line-height: 16.1px;
 }
+
+[data-supertokens~="passkeyRecoverAccountSuccessContainer"]
+    [data-supertokens~="header"]
+    [data-supertokens~="headerText"] {
+    margin-top: 20px;
+    font-family: Poppins;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 30px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #000000;
+}

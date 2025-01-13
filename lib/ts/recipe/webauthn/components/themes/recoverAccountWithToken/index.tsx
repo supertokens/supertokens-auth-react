@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import SuperTokens from "../../../../../superTokens";
@@ -23,6 +23,7 @@ import { PasskeyConfirmation } from "../signUp/confirmation";
 import { ThemeBase } from "../themeBase";
 
 import type { RecoverAccountWithTokenThemeProps } from "../../../types";
+import { PasskeyRecoverAccountSuccess } from "./success";
 
 export enum RecoverAccountScreen {
     ContinueWithPasskey,
@@ -38,33 +39,45 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
     const privacyPolicyLink = stInstance.privacyPolicyLink;
     const termsOfServiceLink = stInstance.termsOfServiceLink;
 
-    const [activeScreen] = useState<RecoverAccountScreen>(RecoverAccountScreen.ContinueWithPasskey);
+    const [activeScreen, setActiveScreen] = useState<RecoverAccountScreen>(RecoverAccountScreen.ContinueWithPasskey);
 
     const onResetFactorList = () => {
         throw new Error("Should never come here as we don't have back functionality");
     };
+
+    const onContinueClick = useCallback(() => {
+        // TODO: Add support to make the network call and show the next screen based
+        // on that result.
+        setActiveScreen(RecoverAccountScreen.Success);
+    }, [setActiveScreen]);
 
     return (
         <UserContextWrapper userContext={props.userContext}>
             <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
                 <div data-supertokens="container authPage singleFactor">
                     <div data-supertokens="row">
-                        <AuthPageHeader
-                            factorIds={["webauthn"]}
-                            isSignUp={true}
-                            onSignInUpSwitcherClick={undefined}
-                            hasSeparateSignUpView={true}
-                            resetFactorList={onResetFactorList}
-                            showBackButton={false}
-                            oauth2ClientInfo={undefined}
-                            headerLabel={
-                                activeScreen === RecoverAccountScreen.ContinueWithPasskey
-                                    ? "WEBAUTHN_CREATE_A_PASSKEY_HEADER"
-                                    : undefined
-                            }
-                            hideSignInSwitcher={true}
+                        {activeScreen !== RecoverAccountScreen.Success && (
+                            <AuthPageHeader
+                                factorIds={["webauthn"]}
+                                isSignUp={true}
+                                onSignInUpSwitcherClick={undefined}
+                                hasSeparateSignUpView={true}
+                                resetFactorList={onResetFactorList}
+                                showBackButton={false}
+                                oauth2ClientInfo={undefined}
+                                headerLabel={
+                                    activeScreen === RecoverAccountScreen.ContinueWithPasskey
+                                        ? "WEBAUTHN_CREATE_A_PASSKEY_HEADER"
+                                        : undefined
+                                }
+                                hideSignInSwitcher={true}
+                            />
+                        )}
+                        <RecoverAccountThemeInner
+                            {...props}
+                            activeScreen={activeScreen}
+                            onContinueClick={onContinueClick}
                         />
-                        <RecoverAccountThemeInner {...props} activeScreen={activeScreen} />
                         {activeScreen !== RecoverAccountScreen.Success && (
                             <AuthPageFooter
                                 factorIds={[]}
@@ -85,13 +98,14 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
 const RecoverAccountThemeInner = (
     props: RecoverAccountWithTokenThemeProps & {
         activeScreen: RecoverAccountScreen;
+        onContinueClick: () => void;
     }
 ) => {
     return props.activeScreen === RecoverAccountScreen.ContinueWithPasskey ? (
         <PasskeyConfirmation
             {...props}
             email={props.email || ""}
-            onContinueClick={() => {}}
+            onContinueClick={props.onContinueClick}
             // errorMessageLabel={showPasskeyConfirmationError ? "WEBAUTHN_PASSKEY_RECOVERABLE_ERROR" : undefined}
             isLoading={false}
             onFetchError={() => {}}
@@ -99,7 +113,7 @@ const RecoverAccountThemeInner = (
             hideContinueWithoutPasskey
         />
     ) : props.activeScreen === RecoverAccountScreen.Success ? (
-        <div></div>
+        <PasskeyRecoverAccountSuccess />
     ) : null;
 };
 
