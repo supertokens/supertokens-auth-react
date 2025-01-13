@@ -184,6 +184,7 @@ export type RecoverAccountWithTokenThemeProps = {
     error: string | undefined;
     clearError: () => void;
     onError: (error: string) => void;
+    email: string | null;
 };
 
 export type ContinueOnSuccessParams = {

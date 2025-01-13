@@ -90,7 +90,7 @@ const RecoverAccountThemeInner = (
     return props.activeScreen === RecoverAccountScreen.ContinueWithPasskey ? (
         <PasskeyConfirmation
             {...props}
-            email={""}
+            email={props.email || ""}
             onContinueClick={() => {}}
             // errorMessageLabel={showPasskeyConfirmationError ? "WEBAUTHN_PASSKEY_RECOVERABLE_ERROR" : undefined}
             isLoading={false}

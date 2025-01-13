@@ -26,6 +26,7 @@ import type { RecoverAccountWithTokenProps } from "../../../types";
 
 export const RecoverAccountUsingToken: React.FC<RecoverAccountWithTokenProps> = (props): JSX.Element => {
     const token = getQueryParams("token");
+    const email = getQueryParams("email");
     let userContext;
     if (props.userContext !== undefined) {
         userContext = props.userContext;
@@ -41,6 +42,7 @@ export const RecoverAccountUsingToken: React.FC<RecoverAccountWithTokenProps> = 
         token,
         useComponentOverride: props.useComponentOverrides,
         userContext,
+        email,
     };
     const recipeComponentOverrides = props.useComponentOverrides();
 

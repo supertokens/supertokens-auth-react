@@ -139,7 +139,7 @@ export const RecoverAccountWithToken: Story = {
         "multifactorauth.initialized": false,
         "passwordless.initialized": false,
         "webauthn.initialized": true,
-        query: "token=asdf",
+        query: "token=asdf&email=demo@supertokens.com",
     },
 };
 
