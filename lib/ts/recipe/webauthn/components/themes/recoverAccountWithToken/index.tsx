@@ -96,6 +96,7 @@ const RecoverAccountThemeInner = (
             isLoading={false}
             onFetchError={() => {}}
             resetFactorList={() => {}}
+            hideContinueWithoutPasskey
         />
     ) : props.activeScreen === RecoverAccountScreen.Success ? (
         <div></div>

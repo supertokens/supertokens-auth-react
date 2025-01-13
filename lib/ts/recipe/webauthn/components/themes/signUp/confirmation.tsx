@@ -31,6 +31,7 @@ export const PasskeyConfirmation = withOverride(
             onContinueClick: () => void;
             errorMessageLabel?: string;
             isLoading: boolean;
+            hideContinueWithoutPasskey?: boolean;
         }
     ): JSX.Element {
         const t = useTranslation();
@@ -53,7 +54,7 @@ export const PasskeyConfirmation = withOverride(
                         onClick={props.onContinueClick}
                         label="WEBAUTHN_EMAIL_CONTINUE_BUTTON"
                     />
-                    <ContinueWithoutPasskey onClick={props.resetFactorList} />
+                    {!props.hideContinueWithoutPasskey && <ContinueWithoutPasskey onClick={props.resetFactorList} />}
                 </div>
             </div>
         );

@@ -19,8 +19,8 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
 import { getQueryParams } from "../../../../../utils";
-import { defaultTranslationsEmailPassword } from "../../../../emailpassword/components/themes/translations";
 import RecoverAccountWithToken from "../../themes/recoverAccountWithToken";
+import { defaultTranslationsWebauthn } from "../../themes/translations";
 
 import type { RecoverAccountWithTokenProps } from "../../../types";
 
@@ -48,7 +48,7 @@ export const RecoverAccountUsingToken: React.FC<RecoverAccountWithTokenProps> = 
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}
-                defaultStore={defaultTranslationsEmailPassword}>
+                defaultStore={defaultTranslationsWebauthn}>
                 <React.Fragment>
                     {/* No custom theme, use default. */}
                     {props.children === undefined && <RecoverAccountWithToken {...childProps} />}
