@@ -63,31 +63,36 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
             return;
         }
 
-        const registerOptions = await props.recipeImplementation.getRegisterOptions({
-            userContext: props.userContext,
-            recoverAccountToken: props.token,
-        });
-        if (registerOptions.status !== "OK") {
-            switch (registerOptions.status) {
-                case "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR":
-                    setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_TOKEN_INVALID_ERROR");
-                    break;
-                case "INVALID_EMAIL_ERROR":
-                    setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_INVALID_EMAIL_ERROR");
-                    break;
-                case "INVALID_GENERATED_OPTIONS_ERROR":
-                    setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_INVALID_GENERATED_OPTIONS_ERROR");
-                    // TODO: Should we trigger an automatic retry here or will there
-                    // be a separate expired token related error?
-                    break;
-                default:
-                    throw new Error("Should never come here");
+        try {
+            const registerOptions = await props.recipeImplementation.getRegisterOptions({
+                userContext: props.userContext,
+                recoverAccountToken: props.token,
+            });
+            if (registerOptions.status !== "OK") {
+                switch (registerOptions.status) {
+                    case "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR":
+                        setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_TOKEN_INVALID_ERROR");
+                        break;
+                    case "INVALID_EMAIL_ERROR":
+                        setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_INVALID_EMAIL_ERROR");
+                        break;
+                    case "INVALID_GENERATED_OPTIONS_ERROR":
+                        setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_INVALID_GENERATED_OPTIONS_ERROR");
+                        // TODO: Should we trigger an automatic retry here or will there
+                        // be a separate expired token related error?
+                        break;
+                    default:
+                        throw new Error("Should never come here");
+                }
+
+                return;
             }
 
-            return;
+            setRegisterOptions(registerOptions);
+        } catch (err: any) {
+            // This will likely be a fetch error.
+            setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_FETCH_ERROR");
         }
-
-        setRegisterOptions(registerOptions);
     }, [props]);
 
     useEffect(() => {
@@ -135,6 +140,7 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
                             onContinueClick={onContinueClick}
                             errorMessageLabel={errorMessageLabel}
                             email={registerOptions?.user.name || null}
+                            isContinueDisabled={registerOptions === null}
                         />
                         {activeScreen !== RecoverAccountScreen.Success && (
                             <AuthPageFooter
@@ -159,16 +165,18 @@ const RecoverAccountThemeInner = (
         onContinueClick: () => void;
         errorMessageLabel: string | null;
         email: string | null;
+        isContinueDisabled: boolean;
     }
 ) => {
     return props.activeScreen === RecoverAccountScreen.ContinueWithPasskey ? (
         <PasskeyConfirmation
             {...props}
-            email={props.email || ""}
+            email={props.email || undefined}
             onContinueClick={props.onContinueClick}
             errorMessageLabel={props.errorMessageLabel || undefined}
             isLoading={false}
             hideContinueWithoutPasskey
+            isContinueDisabled={props.isContinueDisabled}
         />
     ) : props.activeScreen === RecoverAccountScreen.Success ? (
         <PasskeyRecoverAccountSuccess />
