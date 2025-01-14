@@ -25,6 +25,21 @@
     cursor: pointer;
 }
 
+[data-supertokens~="signUpFormInnerContainer"] [data-supertokens~="cautionMessage"] {
+    padding: 14px;
+    background: #ff95001a;
+    color: #7c603e;
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    border-radius: 6px;
+    margin-bottom: 14px;
+}
+
 [data-supertokens~="passkeyConfirmationContainer"] [data-supertokens~="passkeyConfirmationEmailContainer"] {
     padding-bottom: 5px;
 }

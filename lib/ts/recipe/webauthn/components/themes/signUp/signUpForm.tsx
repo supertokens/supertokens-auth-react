@@ -64,52 +64,55 @@ export const SignUpFormInner = withOverride(
         );
 
         return (
-            <FormBase
-                clearError={props.clearError}
-                onFetchError={props.onFetchError}
-                onError={props.onError}
-                formFields={[
-                    {
-                        id: "email",
-                        label: "",
-                        labelComponent: (
-                            <div data-supertokens="formLabelWithLinkWrapper">
-                                <Label value={"WEBAUTHN_SIGN_UP_LABEL"} data-supertokens="emailInputLabel" />
-                                <a
-                                    onClick={() => props.setActiveScreen(SignUpScreen.RecoverAccount)}
-                                    data-supertokens="link linkButton formLabelLinkBtn recoverAccountTrigger">
-                                    {t("WEBAUTHN_RECOVER_ACCOUNT_LABEL")}
-                                </a>
-                            </div>
-                        ),
-                        optional: false,
-                        autofocus: true,
-                        placeholder: "",
-                        autoComplete: "email",
-                        // We are using the default validator that allows any string
-                        validate: defaultEmailValidator,
-                    },
-                ]}
-                buttonLabel={"WEBAUTHN_EMAIL_CONTINUE_BUTTON"}
-                onSuccess={onEmailContinueSuccess}
-                callAPI={async (formFields) => {
-                    const email = formFields.find((field) => field.id === "email")?.value;
-                    if (email === undefined) {
-                        throw new STGeneralError("GENERAL_ERROR_EMAIL_UNDEFINED");
-                    }
+            <div data-supertokens="signUpFormInnerContainer">
+                <div data-supertokens="cautionMessage">{t("WEBAUTHN_SIGN_UP_CAUTION_MESSAGE_LABEL")}</div>
+                <FormBase
+                    clearError={props.clearError}
+                    onFetchError={props.onFetchError}
+                    onError={props.onError}
+                    formFields={[
+                        {
+                            id: "email",
+                            label: "",
+                            labelComponent: (
+                                <div data-supertokens="formLabelWithLinkWrapper">
+                                    <Label value={"WEBAUTHN_SIGN_UP_LABEL"} data-supertokens="emailInputLabel" />
+                                    <a
+                                        onClick={() => props.setActiveScreen(SignUpScreen.RecoverAccount)}
+                                        data-supertokens="link linkButton formLabelLinkBtn recoverAccountTrigger">
+                                        {t("WEBAUTHN_RECOVER_ACCOUNT_LABEL")}
+                                    </a>
+                                </div>
+                            ),
+                            optional: false,
+                            autofocus: true,
+                            placeholder: "",
+                            autoComplete: "email",
+                            // We are using the default validator that allows any string
+                            validate: defaultEmailValidator,
+                        },
+                    ]}
+                    buttonLabel={"WEBAUTHN_EMAIL_CONTINUE_BUTTON"}
+                    onSuccess={onEmailContinueSuccess}
+                    callAPI={async (formFields) => {
+                        const email = formFields.find((field) => field.id === "email")?.value;
+                        if (email === undefined) {
+                            throw new STGeneralError("GENERAL_ERROR_EMAIL_UNDEFINED");
+                        }
 
-                    // We do not want the form to make the API call since we have
-                    // an intermediary step here so we will just mock an OK status
-                    // to render the next step.
-                    return {
-                        status: "OK",
-                        email,
-                    };
-                }}
-                validateOnBlur={false}
-                showLabels={true}
-                footer={props.footer || defaultFooter}
-            />
+                        // We do not want the form to make the API call since we have
+                        // an intermediary step here so we will just mock an OK status
+                        // to render the next step.
+                        return {
+                            status: "OK",
+                            email,
+                        };
+                    }}
+                    validateOnBlur={false}
+                    showLabels={true}
+                    footer={props.footer || defaultFooter}
+                />
+            </div>
         );
     }
 );

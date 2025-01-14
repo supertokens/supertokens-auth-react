@@ -38,5 +38,7 @@ export const defaultTranslationsWebauthn = {
             "The email used is invalid. Please try with a different email ID or reach out to support.",
         WEBAUTHN_ACCOUNT_RECOVERY_INVALID_GENERATED_OPTIONS_ERROR: "Failed to recover account, please try again.",
         WEBAUTHN_ACCOUNT_RECOVERY_FETCH_ERROR: "Something went wrong, please refresh the page or reach out to support.",
+        WEBAUTHN_SIGN_UP_CAUTION_MESSAGE_LABEL:
+            "Make sure your email is correct—we’ll use it to help you recover your account.",
     },
 };
