@@ -197,7 +197,7 @@ export type FeatureBlockDetailProps = {
     icon: JSX.Element;
 };
 
-export type RecoverFromProps = {
+export type RecoverFormProps = {
     onSuccess: (result: any) => void;
     onBackClick: () => void;
     recipeImplementation: RecipeImplementation;

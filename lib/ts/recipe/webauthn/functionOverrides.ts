@@ -7,48 +7,16 @@ export const getFunctionOverrides =
     (originalImp: RecipeInterface): RecipeInterface => ({
         ...originalImp,
         getRegisterOptions: async function (input) {
-            const response = await originalImp.getRegisterOptions(input);
-
-            if (response.status === "OK") {
-                onHandleEvent({
-                    action: "REGISTER_OPTIONS",
-                });
-            }
-
-            return response;
+            return await originalImp.getRegisterOptions(input);
         },
         getSignInOptions: async function (input) {
-            const response = await originalImp.getSignInOptions(input);
-
-            if (response.status === "OK") {
-                onHandleEvent({
-                    action: "SIGN_IN_OPTIONS",
-                });
-            }
-
-            return response;
+            return await originalImp.getSignInOptions(input);
         },
         signIn: async function (input) {
-            const response = await originalImp.signIn(input);
-
-            if (response.status === "OK") {
-                onHandleEvent({
-                    action: "SIGN_IN",
-                });
-            }
-
-            return response;
+            return await originalImp.signIn(input);
         },
         signUp: async function (input) {
-            const response = await originalImp.signUp(input);
-
-            if (response.status === "OK") {
-                onHandleEvent({
-                    action: "SIGN_UP",
-                });
-            }
-
-            return response;
+            return await originalImp.signUp(input);
         },
         getEmailExists: async function (input) {
             const response = await originalImp.getEmailExists(input);
@@ -63,26 +31,10 @@ export const getFunctionOverrides =
             return response;
         },
         generateRecoverAccountToken: async function (input) {
-            const response = await originalImp.generateRecoverAccountToken(input);
-
-            if (response.status === "OK") {
-                onHandleEvent({
-                    action: "GENERATE_RECOVER_ACCOUNT_TOKEN",
-                });
-            }
-
-            return response;
+            return await originalImp.generateRecoverAccountToken(input);
         },
         recoverAccount: async function (input) {
-            const response = await originalImp.recoverAccount(input);
-
-            if (response.status === "OK") {
-                onHandleEvent({
-                    action: "RECOVER_ACCOUNT",
-                });
-            }
-
-            return response;
+            return await originalImp.recoverAccount(input);
         },
         registerCredential: async function (input) {
             const response = await originalImp.registerCredential(input);
@@ -109,11 +61,7 @@ export const getFunctionOverrides =
         registerCredentialWithSignUp: async function (input) {
             const response = await originalImp.registerCredentialWithSignUp(input);
 
-            if (response.status === "OK") {
-                onHandleEvent({
-                    action: "REGISTER_CREDENTIAL_WITH_SIGN_UP",
-                });
-            } else if (response.status === "FAILED_TO_REGISTER_USER") {
+            if (response.status === "FAILED_TO_REGISTER_USER") {
                 onHandleEvent({
                     action: "FAILED_TO_REGISTER_USER",
                 });
@@ -122,25 +70,9 @@ export const getFunctionOverrides =
             return response;
         },
         authenticateCredentialWithSignIn: async function (input) {
-            const response = await originalImp.authenticateCredentialWithSignIn(input);
-
-            if (response.status === "OK") {
-                onHandleEvent({
-                    action: "AUTHENTICATE_CREDENTIAL_WITH_SIGN_IN",
-                });
-            }
-
-            return response;
+            return await originalImp.authenticateCredentialWithSignIn(input);
         },
         registerCredentialWithRecoverAccount: async function (input) {
-            const response = await originalImp.registerCredentialWithRecoverAccount(input);
-
-            if (response.status === "OK") {
-                onHandleEvent({
-                    action: "REGISTER_CREDENTIAL_WITH_RECOVER_ACCOUNT",
-                });
-            }
-
-            return response;
+            return await originalImp.registerCredentialWithRecoverAccount(input);
         },
     });

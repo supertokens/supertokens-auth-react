@@ -25,12 +25,12 @@ import FormBase from "../../../../emailpassword/components/library/formBase";
 import { defaultEmailValidator } from "../../../../emailpassword/validators";
 import { RecoverableError } from "../error/recoverableError";
 
-import type { RecoverFromProps } from "../../../types";
+import type { RecoverFormProps } from "../../../types";
 
 export const PasskeyRecoverAccountForm = withOverride(
     "PasskeyRecoverAccountForm",
     (
-        props: RecoverFromProps & {
+        props: RecoverFormProps & {
             setError: React.Dispatch<React.SetStateAction<string | undefined>>;
         }
     ): JSX.Element => {
@@ -87,9 +87,15 @@ export const PasskeyRecoverAccountForm = withOverride(
     }
 );
 
+<<<<<<< Updated upstream
 export const PasskeyRecoverAccount = withOverride(
     "PasskeyRecoverAccount",
     (props: RecoverFromProps): JSX.Element => {
+=======
+export const PasskeyRecoverAccountForm = withOverride(
+    "PasskeyRecoverAccountForm",
+    (props: RecoverFormProps): JSX.Element => {
+>>>>>>> Stashed changes
         const t = useTranslation();
         const [errorLabel, setErrorLabel] = useState<string | undefined>(undefined);
 

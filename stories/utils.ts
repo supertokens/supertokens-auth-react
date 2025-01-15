@@ -106,7 +106,6 @@ export type FirstFactor =
     | "link-email"
     | "thirdparty"
     | "emailpassword"
-    | "webauthn-sign-up";
 export type ProviderId = "google" | "github";
 
 export type AuthPageConf = {
