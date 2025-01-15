@@ -2,6 +2,6 @@ import { createGenericComponentsOverrideContext } from "../../components/compone
 
 import type { ComponentOverrideMap } from "./types";
 
-const [useContext, Provider] = createGenericComponentsOverrideContext<ComponentOverrideMap>();
+const [useContext, Provider] = createGenericComponentsOverrideContext<ComponentOverrideMap>({}, "authRecipe");
 
 export { useContext as useAuthRecipeComponentOverrideContext, Provider as AuthRecipeComponentsOverrideContextProvider };

@@ -52,7 +52,7 @@ export default class EmailVerification extends RecipeModule<
     NormalisedConfig
 > {
     static instance?: EmailVerification;
-    static RECIPE_ID = "emailverification";
+    static RECIPE_ID = "emailverification" as const;
 
     static EmailVerificationClaim = new EmailVerificationClaimClass(
         () => EmailVerification.getInstanceOrThrow().webJSRecipe

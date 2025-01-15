@@ -55,7 +55,7 @@ import type { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 
 export default class Session extends RecipeModule<unknown, unknown, unknown, NormalisedSessionConfig> {
     static instance?: Session;
-    static RECIPE_ID = "session";
+    static RECIPE_ID = "session" as const;
 
     public recipeID = Session.RECIPE_ID;
 

@@ -65,7 +65,7 @@ export default class MultiFactorAuth extends RecipeModule<
     NormalisedConfig
 > {
     static instance?: MultiFactorAuth;
-    static RECIPE_ID = "multifactorauth";
+    static RECIPE_ID = "multifactorauth" as const;
 
     static MultiFactorAuthClaim = new MultiFactorAuthClaimClass(
         () => MultiFactorAuth.getInstanceOrThrow(),

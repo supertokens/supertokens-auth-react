@@ -39,6 +39,7 @@ import {
     redirectWithFullPageReload,
     redirectWithNavigate,
 } from "./utils";
+import { package_version } from "./version";
 
 import type RecipeModule from "./recipe/recipeModule";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
@@ -51,6 +52,10 @@ import type {
     SuperTokensConfig,
     UserContext,
     NormalisedGetRedirectionURLContext,
+    AllRecipeComponentOverrides,
+    SuperTokensPlugin,
+    AllRecipeConfigs,
+    PluginRouteHandler,
 } from "./types";
 
 /*
@@ -83,16 +88,40 @@ export default class SuperTokens {
     termsOfServiceLink: string | undefined;
     defaultToSignUp: boolean;
     disableAuthRoute: boolean;
+    componentOverrides: Partial<AllRecipeComponentOverrides> = {};
+    pluginRouteHandlers: PluginRouteHandler[] = [];
 
     /*
      * Constructor.
      */
-    constructor(config: SuperTokensConfig) {
+    constructor(config: SuperTokensConfig, plugins: SuperTokensPlugin[]) {
         this.appInfo = normaliseInputAppInfoOrThrowError(config.appInfo);
         if (config.recipeList === undefined || config.recipeList.length === 0) {
             throw new Error(
                 "Please provide at least one recipe to the supertokens.init function call. See https://supertokens.io/docs/emailpassword/quick-setup/frontend"
             );
+        }
+
+        this.componentOverrides = {};
+
+        for (const plugin of plugins) {
+            if (plugin.overrideMap !== undefined) {
+                for (const t of Object.keys(plugin.overrideMap) as (keyof AllRecipeConfigs)[]) {
+                    if (plugin.overrideMap[t]?.components) {
+                        this.componentOverrides[t] = {
+                            ...this.componentOverrides[t],
+                            ...(plugin.overrideMap[t]?.components as AllRecipeComponentOverrides[typeof t]),
+                        };
+                    }
+                }
+            }
+            this.componentOverrides.authRecipe = {
+                ...(this.componentOverrides.authRecipe ?? {}),
+                ...(plugin.generalAuthRecipeComponentOverrides ?? {}),
+            };
+            if (plugin.routeHandlers) {
+                this.pluginRouteHandlers.push(...plugin.routeHandlers);
+            }
         }
 
         const translationConfig = config.languageTranslations === undefined ? {} : config.languageTranslations;
@@ -145,14 +174,44 @@ export default class SuperTokens {
                 ? config.recipeList
                 : config.recipeList.concat(Multitenancy.init({}));
 
+        const finalPluginList: SuperTokensPlugin[] = [];
+        if (config.plugins) {
+            for (const plugin of config.plugins) {
+                if (plugin.compatibleAuthReactSDKVersions) {
+                    const versionContraints = Array.isArray(plugin.compatibleAuthReactSDKVersions)
+                        ? plugin.compatibleAuthReactSDKVersions
+                        : [plugin.compatibleAuthReactSDKVersions];
+                    if (!versionContraints.includes(package_version)) {
+                        // TODO: better checks
+                        throw new Error("Plugin version mismatch");
+                    }
+                }
+                if (plugin.dependencies) {
+                    const result = plugin.dependencies(finalPluginList, package_version);
+                    if (result.status === "ERROR") {
+                        throw new Error(result.message);
+                    }
+                    if (result.pluginsToAdd) {
+                        finalPluginList.push(...result.pluginsToAdd);
+                    }
+                }
+                finalPluginList.push(plugin);
+            }
+        }
+
         SuperTokensWebJS.init({
             ...config,
             recipeList: recipes.map(({ webJS }) => webJS),
+            plugins: finalPluginList as any, // TODO: fix this
         });
 
-        SuperTokens.instance = new SuperTokens({ ...config, recipeList: recipes });
+        SuperTokens.instance = new SuperTokens({ ...config, recipeList: recipes }, finalPluginList);
 
         PostSuperTokensInitCallbacks.runPostInitCallbacks();
+    }
+
+    static getInstance(): SuperTokens | undefined {
+        return SuperTokens.instance;
     }
 
     static getInstanceOrThrow(): SuperTokens {

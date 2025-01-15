@@ -67,6 +67,19 @@ export function getSuperTokensRoutesForReactRouterDom({
             return routes;
         }, {} as Record<string, JSX.Element>)
     );
+    const pluginRouteHandlers = SuperTokens.getInstanceOrThrow().pluginRouteHandlers;
+    for (const handler of pluginRouteHandlers) {
+        const path = handler.path;
+        routes.push(
+            <Route exact key={`st-plugin-${path}`} path={path}>
+                <RoutingComponent
+                    getReactRouterDomWithCustomHistory={getReactRouterDomWithCustomHistory}
+                    preBuiltUIList={recipeList}
+                    path={path}
+                />
+            </Route>
+        );
+    }
 
     if (
         !SuperTokens.getInstanceOrThrow().disableAuthRoute &&

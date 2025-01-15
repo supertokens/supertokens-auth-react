@@ -15,8 +15,27 @@
 
 import type { DateProviderInput } from "./dateProvider/types";
 import type { AuthSuccessContext } from "./recipe/authRecipe/types";
+import type { ComponentOverrideMap as AuthRecipeComponentOverrideMap } from "./recipe/authRecipe/types";
+import type { Config as EmailPasswordConfig } from "./recipe/emailpassword/types";
+import type { ComponentOverrideMap as EmailPasswordComponentOverrideMap } from "./recipe/emailpassword/types";
+import type { Config as EmailVerificationConfig } from "./recipe/emailverification/types";
+import type { ComponentOverrideMap as EmailVerificationComponentOverrideMap } from "./recipe/emailverification/types";
+import type { Config as MultiFactorAuthConfig } from "./recipe/multifactorauth/types";
+import type { ComponentOverrideMap as MultiFactorAuthComponentOverrideMap } from "./recipe/multifactorauth/types";
+import type { UserInput as MultitenancyConfig } from "./recipe/multitenancy/types";
+import type { ComponentOverrideMap as MultitenancyComponentOverrideMap } from "./recipe/multitenancy/types";
+import type { UserInput as OAuth2ProviderConfig } from "./recipe/oauth2provider/types";
+import type { ComponentOverrideMap as OAuth2ProviderComponentOverrideMap } from "./recipe/oauth2provider/types";
+import type { Config as PasswordlessConfig } from "./recipe/passwordless/types";
+import type { ComponentOverrideMap as PasswordlessComponentOverrideMap } from "./recipe/passwordless/types";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
+import type { InputType as SessionConfig } from "./recipe/session/types";
+import type { ComponentOverrideMap as SessionComponentOverrideMap } from "./recipe/session/types";
+import type { Config as ThirdPartyConfig } from "./recipe/thirdparty/types";
+import type { ComponentOverrideMap as ThirdPartyComponentOverrideMap } from "./recipe/thirdparty/types";
+import type { Config as TotpConfig } from "./recipe/totp/types";
+import type { ComponentOverrideMap as TotpComponentOverrideMap } from "./recipe/totp/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 import type { ComponentClass, PropsWithChildren } from "react";
 import type { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
@@ -156,6 +175,8 @@ export type SuperTokensConfig = {
      * Terms and conditions link for sign up form.
      */
     termsOfServiceLink?: string;
+
+    plugins?: SuperTokensPlugin[];
 };
 
 export type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "signOut">;
@@ -452,4 +473,59 @@ export type PartialAuthComponent = {
 export type AuthComponent<T = any> = PartialAuthComponent | FullPageAuthComponent<T>;
 export type NormalisedGetRedirectionURLContext<RecipeContext> = RecipeContext & {
     tenantIdFromQueryParams: string | undefined;
+};
+
+export type AllRecipeConfigs = {
+    emailpassword: EmailPasswordConfig;
+    emailverification: EmailVerificationConfig;
+    multifactorauth: MultiFactorAuthConfig;
+    multitenancy: MultitenancyConfig;
+    oauth2provider: OAuth2ProviderConfig;
+    passwordless: PasswordlessConfig;
+    session: SessionConfig;
+    thirdparty: ThirdPartyConfig;
+    totp: TotpConfig;
+};
+
+export type AllRecipeComponentOverrides = {
+    emailpassword: EmailPasswordComponentOverrideMap;
+    emailverification: EmailVerificationComponentOverrideMap;
+    multifactorauth: MultiFactorAuthComponentOverrideMap;
+    multitenancy: MultitenancyComponentOverrideMap;
+    oauth2provider: OAuth2ProviderComponentOverrideMap;
+    passwordless: PasswordlessComponentOverrideMap;
+    session: SessionComponentOverrideMap;
+    thirdparty: ThirdPartyComponentOverrideMap;
+    totp: TotpComponentOverrideMap;
+    authRecipe: AuthRecipeComponentOverrideMap;
+};
+
+export type RecipePluginOverride<T extends keyof AllRecipeConfigs> = {
+    functions?: NonNullable<AllRecipeConfigs[T]["override"]>["functions"];
+    components?: AllRecipeComponentOverrides[T];
+    config?: (config: AllRecipeConfigs[T]) => AllRecipeConfigs[T];
+};
+
+export type PluginRouteHandler = {
+    path: string; // this is appended to apiBasePath
+    handler: () => JSX.Element;
+};
+
+// TODO: this should probably derive from the web-js version
+export type SuperTokensPlugin = {
+    id: string; // TODO: validate that no two plugins have the same id
+    version?: string;
+    compatibleAuthReactSDKVersions?: string | string[]; // match the syntax of the engines field in package.json
+    compatibleWebJSSDKVersions?: string | string[]; // match the syntax of the engines field in package.json
+    dependencies?: (
+        pluginsAbove: Pick<SuperTokensPlugin, "id" | "version">[],
+        sdkVersion: string
+    ) => { status: "OK"; pluginsToAdd?: SuperTokensPlugin[] } | { status: "ERROR"; message: string };
+    overrideMap?: {
+        [recipeId in keyof AllRecipeConfigs]?: RecipePluginOverride<recipeId> & {
+            recipeInitRequired?: boolean | ((sdkVersion: string) => boolean);
+        };
+    };
+    generalAuthRecipeComponentOverrides?: AuthRecipeComponentOverrideMap;
+    routeHandlers?: PluginRouteHandler[];
 };

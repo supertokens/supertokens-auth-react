@@ -10,6 +10,9 @@ import type {
     SuperTokensConfig,
     UserContext,
     NormalisedGetRedirectionURLContext,
+    AllRecipeComponentOverrides,
+    SuperTokensPlugin,
+    PluginRouteHandler,
 } from "./types";
 export default class SuperTokens {
     private static instance?;
@@ -30,8 +33,11 @@ export default class SuperTokens {
     termsOfServiceLink: string | undefined;
     defaultToSignUp: boolean;
     disableAuthRoute: boolean;
-    constructor(config: SuperTokensConfig);
+    componentOverrides: Partial<AllRecipeComponentOverrides>;
+    pluginRouteHandlers: PluginRouteHandler[];
+    constructor(config: SuperTokensConfig, plugins: SuperTokensPlugin[]);
     static init(config: SuperTokensConfig): void;
+    static getInstance(): SuperTokens | undefined;
     static getInstanceOrThrow(): SuperTokens;
     getRecipeOrThrow<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>>(
         recipeId: string

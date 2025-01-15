@@ -49,7 +49,7 @@ export default class ThirdParty extends AuthRecipe<
     NormalisedConfig
 > {
     static instance?: ThirdParty;
-    static RECIPE_ID = "thirdparty";
+    static RECIPE_ID = "thirdparty" as const;
     recipeID = ThirdParty.RECIPE_ID;
     firstFactorIds = [FactorIds.THIRDPARTY];
     public getFirstFactorsForAuthPage(): string[] {
@@ -65,7 +65,6 @@ export default class ThirdParty extends AuthRecipe<
         }
 
         super(config);
-        this.recipeID = config.recipeId;
     }
 
     /*

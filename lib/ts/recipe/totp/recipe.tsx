@@ -54,7 +54,7 @@ export default class TOTP extends RecipeModule<
     NormalisedConfig
 > {
     static instance?: TOTP;
-    static RECIPE_ID = "totp";
+    static RECIPE_ID = "totp" as const;
 
     public recipeID = TOTP.RECIPE_ID;
 
