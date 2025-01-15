@@ -18,12 +18,13 @@ import * as React from "react";
 import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
-import { handleFormSubmit } from "../../../../emailpassword/components/library/functions/form";
+import { handleCallAPI } from "../../../../../utils";
 import { ContinueWithPasskeyTheme } from "../continueWithPasskey";
 import { RecoverableError } from "../error/recoverableError";
 import { ThemeBase } from "../themeBase";
 
 import type { APIFormField } from "../../../../../types";
+import type { FieldState } from "../../../../emailpassword/components/library/formBase";
 import type { SignInThemeProps } from "../../../types";
 
 function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
@@ -56,14 +57,39 @@ function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
 
     // Define the code to handle sign in properly through this component.
     const handleWebauthnSignInClick = async () => {
-        await handleFormSubmit({
-            callAPI: callAPI,
-            clearError: () => setError(null),
-            onError: (error) => setError(error),
-            onFetchError: () => setError("Failed to fetch from upstream"),
-            onSuccess: (payload) => console.warn("payload: ", payload),
-            setIsLoading: setIsLoading,
-        });
+        const fieldUpdates: FieldState[] = [];
+        setIsLoading(true);
+
+        try {
+            const { result, generalError, fetchError } = await handleCallAPI<any>({
+                apiFields: [],
+                fieldUpdates,
+                callAPI: callAPI,
+            });
+
+            if (generalError !== undefined) {
+                setError(generalError.message);
+            } else if (fetchError !== undefined) {
+                setError("Failed to fetch from upstream");
+            } else {
+                // If successful
+                if (result.status === "OK") {
+                    if (setIsLoading) {
+                        setIsLoading(false);
+                    }
+                    setError(null);
+                    if (props.onSuccess !== undefined) {
+                        props.onSuccess(result);
+                    }
+                }
+            }
+        } catch (e) {
+            setError("SOMETHING_WENT_WRONG_ERROR");
+        } finally {
+            if (setIsLoading) {
+                setIsLoading(false);
+            }
+        }
     };
 
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;

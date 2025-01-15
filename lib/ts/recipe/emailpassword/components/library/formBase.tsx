@@ -21,9 +21,8 @@ import { useCallback } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
 
+import { handleCallAPI } from "../../../../utils";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
-
-import { handleFormSubmit } from "./functions/form";
 
 import type { APIFormField } from "../../../../types";
 import type { FormBaseProps, FormFieldThemeProps } from "../../types";
@@ -210,17 +209,101 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
 
     const onFormSubmit = useCallback(
         async (e: FormEvent): Promise<void> => {
-            return await handleFormSubmit({
-                ...props,
-                event: e,
-                setIsLoading,
-                setFieldStates,
-                unmounting,
-                fieldStates,
-                updateFieldState,
+            // Prevent default event propagation.
+            e.preventDefault();
+
+            // Set loading state.
+            if (setIsLoading) {
+                setIsLoading(true);
+            }
+
+            if (setFieldStates) {
+                setFieldStates((os) => os.map((fs) => ({ ...fs, error: undefined })));
+            }
+
+            // Get the fields values from form.
+            const apiFields = formFields?.map((field) => {
+                const fieldState = fieldStates?.find((fs) => fs.id === field.id);
+                return {
+                    id: field.id,
+                    value: fieldState === undefined ? "" : fieldState.value,
+                };
             });
+
+            const fieldUpdates: FieldState[] = [];
+            // Call API.
+            try {
+                const { result, generalError, fetchError } = await handleCallAPI({
+                    apiFields,
+                    fieldUpdates,
+                    callAPI: props.callAPI,
+                });
+                if (unmounting?.current.signal.aborted) {
+                    return;
+                }
+
+                if (generalError !== undefined || (result !== undefined && result.status !== "OK")) {
+                    for (const field of formFields || []) {
+                        const update = fieldUpdates.find((f) => f.id === field.id);
+                        if ((update || field.clearOnSubmit === true) && updateFieldState) {
+                            // We can do these one by one, it's almost never more than one field
+                            updateFieldState(field.id, (os) => ({ ...os, value: update ? update.value : "" }));
+                        }
+                    }
+                }
+
+                if (generalError !== undefined) {
+                    props.onError(generalError.message);
+                } else if (fetchError !== undefined) {
+                    if (props.onFetchError) {
+                        props.onFetchError(fetchError);
+                    } else {
+                        throw fetchError;
+                    }
+                } else {
+                    // If successful
+                    if (result.status === "OK") {
+                        if (setIsLoading) {
+                            setIsLoading(false);
+                        }
+                        props.clearError();
+                        if (props.onSuccess !== undefined) {
+                            props.onSuccess(result);
+                        }
+                    }
+
+                    if (unmounting?.current.signal.aborted) {
+                        return;
+                    }
+
+                    // If field error.
+                    if (result.status === "FIELD_ERROR") {
+                        const errorFields = result.formFields;
+                        const getErrorMessage = (fs: FieldState) => {
+                            const errorMessage = errorFields.find((ef: any) => ef.id === fs.id)?.error;
+                            if (errorMessage === "Field is not optional") {
+                                const fieldConfigData = formFields?.find((f) => f.id === fs.id);
+                                // replace non-optional server error message from nonOptionalErrorMsg
+                                if (fieldConfigData?.nonOptionalErrorMsg !== undefined) {
+                                    return fieldConfigData?.nonOptionalErrorMsg;
+                                }
+                            }
+                            return errorMessage;
+                        };
+                        if (setFieldStates) {
+                            setFieldStates((os) => os.map((fs) => ({ ...fs, error: getErrorMessage(fs) })));
+                        }
+                    }
+                }
+            } catch (e) {
+                props.onError("SOMETHING_WENT_WRONG_ERROR");
+            } finally {
+                if (setIsLoading) {
+                    setIsLoading(false);
+                }
+            }
         },
-        [setIsLoading, setFieldStates, props, formFields, fieldStates]
+        [setIsLoading, setFieldStates, props, formFields, fieldStates, updateFieldState]
     );
 
     return (

@@ -19,9 +19,9 @@ import STGeneralError from "supertokens-web-js/utils/error";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { useUserContext } from "../../../../../usercontext";
+import { handleCallAPI } from "../../../../../utils";
 import { Label } from "../../../../emailpassword/components/library";
 import FormBase from "../../../../emailpassword/components/library/formBase";
-import { handleFormSubmit } from "../../../../emailpassword/components/library/functions/form";
 import { defaultEmailValidator } from "../../../../emailpassword/validators";
 
 import { PasskeyConfirmation } from "./confirmation";
@@ -31,6 +31,7 @@ import { PasskeyRecoverAccountForm } from "./recoverAccountForm";
 import { SignUpSomethingWentWrong } from "./somethingWentWrong";
 
 import type { APIFormField } from "../../../../../types";
+import type { FieldState } from "../../../../emailpassword/components/library/formBase";
 import type { ContinueOnSuccessParams, SignUpFormProps } from "../../../types";
 
 export enum SignUpScreen {
@@ -164,14 +165,39 @@ export const SignUpForm = (
     );
 
     const onConfirmationClick = useCallback(async () => {
-        await handleFormSubmit({
-            callAPI: callAPI,
-            clearError: () => setShowPasskeyConfirmationError(false),
-            onError: () => props.setActiveScreen(SignUpScreen.Error),
-            onFetchError: () => setShowPasskeyConfirmationError(true),
-            onSuccess: (payload) => console.warn("payload: ", payload),
-            setIsLoading: setIsLoading,
-        });
+        const fieldUpdates: FieldState[] = [];
+        setIsLoading(true);
+
+        try {
+            const { result, generalError, fetchError } = await handleCallAPI<any>({
+                apiFields: [],
+                fieldUpdates,
+                callAPI: callAPI,
+            });
+
+            if (generalError !== undefined) {
+                props.setActiveScreen(SignUpScreen.Error);
+            } else if (fetchError !== undefined) {
+                setShowPasskeyConfirmationError(true);
+            } else {
+                // If successful
+                if (result.status === "OK") {
+                    if (setIsLoading) {
+                        setIsLoading(false);
+                    }
+                    setShowPasskeyConfirmationError(false);
+                    if (props.onSuccess !== undefined) {
+                        props.onSuccess(result);
+                    }
+                }
+            }
+        } catch (e) {
+            props.setActiveScreen(SignUpScreen.Error);
+        } finally {
+            if (setIsLoading) {
+                setIsLoading(false);
+            }
+        }
     }, [callAPI, props]);
 
     const onRecoverAccountFormSuccess = (result: { email: string }) => {
@@ -204,6 +230,7 @@ export const SignUpForm = (
             onSuccess={onRecoverAccountFormSuccess}
             onBackClick={onRecoverAccountBackClick}
             recipeImplementation={props.recipeImplementation}
+            setError={(error) => setShowPasskeyConfirmationError(Boolean(error))}
         />
     ) : props.activeScreen === SignUpScreen.RecoverEmailSent ? (
         <PasskeyEmailSent email={recoverAccountEmail} onEmailChangeClick={onEmailChangeClick} />

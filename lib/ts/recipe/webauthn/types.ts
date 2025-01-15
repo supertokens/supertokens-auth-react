@@ -63,12 +63,6 @@ export type OnHandleEventContext =
           user: User;
       }
     | {
-          action: "REGISTER_OPTIONS";
-      }
-    | {
-          action: "SIGN_IN_OPTIONS";
-      }
-    | {
           action: "GET_EMAIL_EXISTS";
           exists: boolean;
       }
@@ -77,27 +71,6 @@ export type OnHandleEventContext =
       }
     | {
           action: "AUTHENTICATE_CREDENTIAL";
-      }
-    | {
-          action: "SIGN_IN";
-      }
-    | {
-          action: "SIGN_UP";
-      }
-    | {
-          action: "GENERATE_RECOVER_ACCOUNT_TOKEN";
-      }
-    | {
-          action: "RECOVER_ACCOUNT";
-      }
-    | {
-          action: "REGISTER_CREDENTIAL_WITH_SIGN_UP";
-      }
-    | {
-          action: "AUTHENTICATE_CREDENTIAL_WITH_SIGN_IN";
-      }
-    | {
-          action: "REGISTER_CREDENTIAL_WITH_RECOVER_ACCOUNT";
       }
     | {
           action: "FAILED_TO_REGISTER_USER";
