@@ -118,7 +118,6 @@ export const SignUpPasskey: Story = {
         const canvas = within(canvasElement);
         const switcher = await canvas.findByText("CONTINUE WITH PASSKEY");
         await new Promise((res) => setTimeout(res, 100));
-        canvasElement;
         await userEvent.click(switcher, { delay: 200 });
     },
 };
