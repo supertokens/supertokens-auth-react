@@ -27,8 +27,8 @@ import { RecoverableError } from "../error/recoverableError";
 
 import type { RecoverFromProps } from "../../../types";
 
-export const PasskeyRecoverAccountFormInner = withOverride(
-    "PasskeyRecoverAccountFormInner",
+export const PasskeyRecoverAccountForm = withOverride(
+    "PasskeyRecoverAccountForm",
     (
         props: RecoverFromProps & {
             setError: React.Dispatch<React.SetStateAction<string | undefined>>;
