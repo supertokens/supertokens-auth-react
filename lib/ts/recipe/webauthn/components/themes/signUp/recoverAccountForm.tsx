@@ -87,39 +87,30 @@ export const PasskeyRecoverAccountForm = withOverride(
     }
 );
 
-<<<<<<< Updated upstream
-export const PasskeyRecoverAccount = withOverride(
-    "PasskeyRecoverAccount",
-    (props: RecoverFromProps): JSX.Element => {
-=======
-export const PasskeyRecoverAccountForm = withOverride(
-    "PasskeyRecoverAccountForm",
-    (props: RecoverFormProps): JSX.Element => {
->>>>>>> Stashed changes
-        const t = useTranslation();
-        const [errorLabel, setErrorLabel] = useState<string | undefined>(undefined);
+export const PasskeyRecoverAccount = withOverride("PasskeyRecoverAccount", (props: RecoverFormProps): JSX.Element => {
+    const t = useTranslation();
+    const [errorLabel, setErrorLabel] = useState<string | undefined>(undefined);
 
-        return (
-            <div data-supertokens="passkeyRecoverAccountFormContainer">
-                <div data-supertokens="passkeyRecoverAccountFormHeaderWrapper">
-                    <div data-supertokens="passkeyRecoverAccountFormHeader headerTitle withBackButton">
-                        <BackButton onClick={props.onBackClick} />
-                        {t("WEBAUTHN_RECOVER_ACCOUNT_LABEL")}
-                        <span data-supertokens="backButtonPlaceholder backButtonCommon">
-                            {/* empty span for spacing the back button */}
-                        </span>
-                    </div>
-                    <div data-supertokens="passkeyRecoverAccountFormSubHeader">
-                        {t("WEBAUTHN_RECOVER_ACCOUNT_SUBHEADER_LABEL")}
-                    </div>
+    return (
+        <div data-supertokens="passkeyRecoverAccountFormContainer">
+            <div data-supertokens="passkeyRecoverAccountFormHeaderWrapper">
+                <div data-supertokens="passkeyRecoverAccountFormHeader headerTitle withBackButton">
+                    <BackButton onClick={props.onBackClick} />
+                    {t("WEBAUTHN_RECOVER_ACCOUNT_LABEL")}
+                    <span data-supertokens="backButtonPlaceholder backButtonCommon">
+                        {/* empty span for spacing the back button */}
+                    </span>
                 </div>
-                {errorLabel !== undefined && (
-                    <div data-supertokens="errorContainer">
-                        <RecoverableError errorMessageLabel={errorLabel} />
-                    </div>
-                )}
-                <PasskeyRecoverAccountFormInner {...props} setError={setErrorLabel} />
+                <div data-supertokens="passkeyRecoverAccountFormSubHeader">
+                    {t("WEBAUTHN_RECOVER_ACCOUNT_SUBHEADER_LABEL")}
+                </div>
             </div>
-        );
-    }
-);
+            {errorLabel !== undefined && (
+                <div data-supertokens="errorContainer">
+                    <RecoverableError errorMessageLabel={errorLabel} />
+                </div>
+            )}
+            <PasskeyRecoverAccountForm {...props} setError={setErrorLabel} />
+        </div>
+    );
+});
