@@ -14,7 +14,7 @@
 }
 
 [data-supertokens~="continueWithoutPasskey"] [data-supertokens~="continueWithoutPasskeyLabel"] {
-    font-size: 14px;
+    font-size: var(--font-size-1);
     font-weight: 700;
     line-height: 21px;
     text-align: center;
@@ -28,7 +28,7 @@
     padding: 14px;
     background: #ff95001a;
     color: #7c603e;
-    font-size: 14px;
+    font-size: var(--font-size-1);
     font-weight: 400;
     line-height: 20px;
     text-align: center;
@@ -45,19 +45,19 @@
 [data-supertokens~="passkeyConfirmationContainer"]
     [data-supertokens~="passkeyConfirmationEmailContainer"]
     [data-supertokens~="continueWithLabel"] {
-    font-size: 12px;
+    font-size: var(--font-size-0);
     font-weight: 400;
     line-height: 13.8px;
     text-align: center;
     text-underline-position: from-font;
     text-decoration-skip-ink: none;
-    color: #808080;
+    color: rgb(var(--palette-textGray));
 }
 
 [data-supertokens~="passkeyConfirmationContainer"]
     [data-supertokens~="passkeyConfirmationEmailContainer"]
     [data-supertokens~="enteredEmailId"] {
-    font-size: 14px;
+    font-size: var(--font-size-1);
     font-weight: 700;
     line-height: 16.1px;
     text-align: center;
@@ -87,13 +87,13 @@
     [data-supertokens~="passkeyFeatureBlock"]
     [data-supertokens~="passkeyFeatureBlockDetails"]
     [data-supertokens~="passkeyFeatureBlockTitle"] {
-    font-size: 14px;
+    font-size: var(--font-size-1);
     font-weight: 700;
     line-height: 16.1px;
     text-align: left;
     text-underline-position: from-font;
     text-decoration-skip-ink: none;
-    color: #000000;
+    color: rgb(var(--palette-textTitle));
 }
 
 [data-supertokens~="passkeyConfirmationContainer"]
@@ -101,13 +101,13 @@
     [data-supertokens~="passkeyFeatureBlock"]
     [data-supertokens~="passkeyFeatureBlockDetails"]
     [data-supertokens~="passkeyFeatureBlockSubText"] {
-    font-size: 12px;
+    font-size: var(--font-size-0);
     font-weight: 400;
     line-height: 13.8px;
     text-align: left;
     text-underline-position: from-font;
     text-decoration-skip-ink: none;
-    color: #808080;
+    color: rgb(var(--palette-textGray));
     margin-top: 9px;
 }
 
@@ -117,7 +117,7 @@
     background-color: #fceaeb;
     color: #cf3644;
     padding: 10px;
-    font-size: 14px;
+    font-size: var(--font-size-1);
     font-weight: 400;
     line-height: 16.59px;
     text-align: center;
@@ -133,7 +133,7 @@
     [data-supertokens~="somethingWentWrongErrorDetailsContainer"]
     [data-supertokens~="label"] {
     margin-top: 4px;
-    font-size: 24px;
+    font-size: var(--font-size-4);
     font-weight: 500;
     line-height: 40px;
     letter-spacing: 0.5799999833106995px;
@@ -146,7 +146,7 @@
 [data-supertokens~="somethingWentWrongContainer"]
     [data-supertokens~="somethingWentWrongErrorDetailsContainer"]
     [data-supertokens~="errorDetails"] {
-    font-size: 14px;
+    font-size: var(--font-size-1);
     font-weight: 400;
     line-height: 21px;
     letter-spacing: 0.4000000059604645px;
@@ -163,7 +163,7 @@
 [data-supertokens~="somethingWentWrongContainer"]
     [data-supertokens~="goBackButtonContainer"]
     [data-supertokens~="errorGoBackLabel"] {
-    font-size: 14px;
+    font-size: var(--font-size-1);
     font-weight: 500;
     line-height: 21px;
     text-align: center;
@@ -187,13 +187,13 @@
     [data-supertokens~="passkeyRecoverAccountFormSubHeader"] {
     width: 75%;
     margin: 0 auto;
-    font-size: 14px;
+    font-size: var(--font-size-1);
     font-weight: 400;
     line-height: 16.1px;
     text-align: center;
     text-underline-position: from-font;
     text-decoration-skip-ink: none;
-    color: #808080;
+    color: rgb(var(--palette-textGray));
     margin-bottom: 20px;
 }
 
@@ -203,13 +203,13 @@
 
 [data-supertokens~="passkeyEmailSentContainer"] [data-supertokens~="emailSentDescription"] {
     margin: 0 auto;
-    font-size: 14px;
+    font-size: var(--font-size-1);
     font-weight: 400;
     line-height: 16.1px;
     text-align: center;
     text-underline-position: from-font;
     text-decoration-skip-ink: none;
-    color: #808080;
+    color: rgb(var(--palette-textGray));
 }
 
 [data-supertokens~="passkeyEmailSentContainer"]
@@ -228,5 +228,5 @@
     text-align: center;
     text-underline-position: from-font;
     text-decoration-skip-ink: none;
-    color: #000000;
+    color: rgb(var(--palette-textTitle));
 }
