@@ -21,13 +21,23 @@ import { useTranslation } from "../../../../../translation/translationContext";
 
 import type { FeatureBlockDetailProps } from "../../../types";
 
-enum FeatureBlockIcon {
-    FingerPrint,
-    MultipleDevices,
-    Security,
-}
-
-const featureBlockIcons = [FingerPrintIcon, MultipleDevicesIcon, SecurityIcon];
+const blockDetails = [
+    {
+        title: "WEBAUTHN_FEATURE_BLOCK_NO_NEED_TO_REMEMBER_PASSWORD",
+        subText: "WEBAUTHN_FEATURE_BLOCK_NO_NEED_TO_REMEMBER_PASSWORD_DETAIL",
+        icon: <FingerPrintIcon />,
+    },
+    {
+        title: "WEBAUTHN_FEATURE_BLOCK_WORKS_ON_ALL_DEVICES",
+        subText: "WEBAUTHN_FEATURE_BLOCK_WORKS_ON_ALL_DEVICES_DETAIL",
+        icon: <MultipleDevicesIcon />,
+    },
+    {
+        title: "WEBAUTHN_FEATURE_BLOCK_KEEP_ACCOUNT_SAFER",
+        subText: "WEBAUTHN_FEATURE_BLOCK_KEEP_ACCOUNT_SAFER_DETAIL",
+        icon: <SecurityIcon />,
+    },
+];
 
 export const PasskeyFeatureBlock = withOverride(
     "PasskeyFeatureBlock",
@@ -46,27 +56,9 @@ export const PasskeyFeatureBlock = withOverride(
 );
 
 export const PasskeyFeatureBlocks = withOverride("PasskeyFeatureBlocks", function PasskeyFeatureBlocks(): JSX.Element {
-    const blockDetails: Record<FeatureBlockIcon, FeatureBlockDetailProps> = {
-        [FeatureBlockIcon.FingerPrint]: {
-            title: "WEBAUTHN_FEATURE_BLOCK_NO_NEED_TO_REMEMBER_PASSWORD",
-            subText: "WEBAUTHN_FEATURE_BLOCK_NO_NEED_TO_REMEMBER_PASSWORD_DETAIL",
-            icon: featureBlockIcons[0](),
-        },
-        [FeatureBlockIcon.MultipleDevices]: {
-            title: "WEBAUTHN_FEATURE_BLOCK_WORKS_ON_ALL_DEVICES",
-            subText: "WEBAUTHN_FEATURE_BLOCK_WORKS_ON_ALL_DEVICES_DETAIL",
-            icon: featureBlockIcons[1](),
-        },
-        [FeatureBlockIcon.Security]: {
-            title: "WEBAUTHN_FEATURE_BLOCK_KEEP_ACCOUNT_SAFER",
-            subText: "WEBAUTHN_FEATURE_BLOCK_KEEP_ACCOUNT_SAFER_DETAIL",
-            icon: featureBlockIcons[2](),
-        },
-    };
-
     return (
         <div data-supertokens="passkeyFeatureBlocksContainer">
-            {Object.values(blockDetails).map((blockDetail) => (
+            {blockDetails.forEach((blockDetail) => (
                 <PasskeyFeatureBlock {...blockDetail} />
             ))}
         </div>

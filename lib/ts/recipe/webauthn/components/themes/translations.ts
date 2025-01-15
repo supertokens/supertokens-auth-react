@@ -23,7 +23,7 @@ export const defaultTranslationsWebauthn = {
             "The request either timed out, was canceled or the device is already registered. Please try again or try using another device.",
         WEBAUTHN_ERROR_GO_BACK_BUTTON_LABEL: "Go back",
         WEBAUTHN_UNRECOVERABLE_ERROR: "Something went wrong",
-        WEBAUTHN_UNRECOVERABLE_ERROR_DETAILS: "something went wrong with your current session. please try again.",
+        WEBAUTHN_UNRECOVERABLE_ERROR_DETAILS: "Something went wrong with your current session. please try again.",
         WEBAUTHN_EMAIL_SENT_LABEL: "Email sent",
         WEBAUTHN_EMAIL_SENT_LABEL_PRE_EMAIL: "Account recovery email has been sent to ",
         WEBAUTHN_EMAIL_SENT_LABEL_POST_EMAIL: ", if it exists in our system.",
