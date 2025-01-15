@@ -87,8 +87,8 @@ export const PasskeyRecoverAccountForm = withOverride(
     }
 );
 
-export const PasskeyRecoverAccountForm = withOverride(
-    "PasskeyRecoverAccountForm",
+export const PasskeyRecoverAccount = withOverride(
+    "PasskeyRecoverAccount",
     (props: RecoverFromProps): JSX.Element => {
         const t = useTranslation();
         const [errorLabel, setErrorLabel] = useState<string | undefined>(undefined);
