@@ -19,6 +19,9 @@ export const defaultTranslationsCommon = {
         AUTH_PAGE_FOOTER_PP: "Privacy Policy",
         AUTH_PAGE_FOOTER_END: "",
 
+        AUTH_PAGE_TENTANT_ERROR: "Tenant not found",
+        TENANT_LOGIN_METHODS_ERROR: "Unable to load tenant configuration",
+
         DIVIDER_OR: "or",
 
         BRANDING_POWERED_BY_START: "Powered by ",

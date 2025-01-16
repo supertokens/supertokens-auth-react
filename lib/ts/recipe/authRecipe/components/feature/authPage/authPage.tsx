@@ -172,7 +172,8 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
             .getCurrentDynamicLoginMethods({ userContext })
             .then(
                 (loginMethods) => setLoadedDynamicLoginMethods(loginMethods),
-                (err) => rethrowInRender(err)
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                () => {}
             );
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
 
