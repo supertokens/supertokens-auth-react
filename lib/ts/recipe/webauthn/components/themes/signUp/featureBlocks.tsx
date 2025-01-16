@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import FingerPrintIcon from "../../../../../components/assets/fingerprintIcon";
+import FingerPrintIcon from "../../../../../components/assets/fingerPrintIcon";
 import MultipleDevicesIcon from "../../../../../components/assets/multipleDevicesIcon";
 import SecurityIcon from "../../../../../components/assets/securityIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
@@ -58,7 +58,7 @@ export const PasskeyFeatureBlock = withOverride(
 export const PasskeyFeatureBlocks = withOverride("PasskeyFeatureBlocks", function PasskeyFeatureBlocks(): JSX.Element {
     return (
         <div data-supertokens="passkeyFeatureBlocksContainer">
-            {blockDetails.forEach((blockDetail) => (
+            {blockDetails.map((blockDetail) => (
                 <PasskeyFeatureBlock {...blockDetail} />
             ))}
         </div>
