@@ -1,5 +1,10 @@
+/// <reference types="react" />
+import type Recipe from "./recipe";
+import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type {
     FeatureBaseConfig,
+    NormalisedBaseConfig,
+    NormalisedFormField,
     NormalisedGetRedirectionURLContext,
     UserContext,
     WebJSRecipeInterface,
@@ -10,6 +15,8 @@ import type {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     Config as AuthRecipeModuleConfig,
 } from "../authRecipe/types";
+import type SignInForm from "./components/features/signIn";
+import type { InputProps } from "../emailpassword/components/library/input";
 import type WebJSRecipe from "supertokens-web-js/recipe/webauthn";
 import type { RecipeInterface } from "supertokens-web-js/recipe/webauthn";
 import type { User } from "supertokens-web-js/types";
@@ -35,12 +42,6 @@ export declare type OnHandleEventContext =
           user: User;
       }
     | {
-          action: "REGISTER_OPTIONS";
-      }
-    | {
-          action: "SIGN_IN_OPTIONS";
-      }
-    | {
           action: "GET_EMAIL_EXISTS";
           exists: boolean;
       }
@@ -51,49 +52,40 @@ export declare type OnHandleEventContext =
           action: "AUTHENTICATE_CREDENTIAL";
       }
     | {
-          action: "SIGN_IN";
-      }
-    | {
-          action: "SIGN_UP";
-      }
-    | {
-          action: "GENERATE_RECOVER_ACCOUNT_TOKEN";
-      }
-    | {
-          action: "RECOVER_ACCOUNT";
-      }
-    | {
-          action: "REGISTER_CREDENTIAL_WITH_SIGN_UP";
-      }
-    | {
-          action: "AUTHENTICATE_CREDENTIAL_WITH_SIGN_IN";
-      }
-    | {
-          action: "REGISTER_CREDENTIAL_WITH_RECOVER_ACCOUNT";
+          action: "FAILED_TO_REGISTER_USER";
       }
     | AuthRecipeModuleOnHandleEventContext;
 export declare type UserInput = Record<string, unknown> & {
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
     };
-    linkClickedScreenFeature?: WebauthnFeatureBaseConfig;
-    mfaFeature?: WebauthnFeatureBaseConfig;
+    signUpFeature?: NormalisedSignUpFormFeatureConfig;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+export declare type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
+    formFields: (NormalisedFormField & {
+        inputComponent?: (props: InputProps) => JSX.Element;
+    })[];
+};
 export declare type NormalisedConfig = {
+    signUpFeature: NormalisedSignUpFormFeatureConfig;
+    disableDefaultUI?: boolean;
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type RecipeImplementation = WebJSRecipeInterface<typeof WebJSRecipe>;
-export declare type ComponentOverrideMap = Record<string, undefined>;
+export declare type ComponentOverrideMap = {
+    PasskeySignInForm_Override?: ComponentOverride<typeof SignInForm>;
+};
 export declare type WebauthnSignUpState = {
     showBackButton: boolean;
     loaded: boolean;
     error: string | undefined;
 };
-export declare type SignUpChildProps = {
+export declare type SignUpThemeProps = {
+    clearError: () => void;
     recipeImplementation: RecipeImplementation;
     factorIds: string[];
     config: NormalisedConfig;
@@ -102,5 +94,49 @@ export declare type SignUpChildProps = {
     onError: (err: string) => void;
     error: string | undefined;
     userContext: UserContext;
+    resetFactorList: () => void;
+    onSignInUpSwitcherClick: () => void;
+};
+export declare type SignInThemeProps = SignUpThemeProps;
+export declare type SignUpFormProps = {
+    clearError: () => void;
+    onError: (error: string) => void;
+    onFetchError?: (error: Response) => void;
+    error: string | undefined;
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+    onSuccess?: (result: { createdNewRecipeUser: boolean; user: User }) => void;
+    resetFactorList?: () => void;
+};
+export declare type RecoverAccountWithTokenProps = {
+    userContext?: UserContext | undefined;
+    recipe: Recipe;
+    useComponentOverrides: () => ComponentOverrideMap;
+};
+export declare type RecoverAccountWithTokenThemeProps = {
+    config: NormalisedConfig;
+    userContext?: UserContext;
+    recipeImplementation: RecipeImplementation;
+    error: string | undefined;
+    clearError: () => void;
+    onError: (error: string) => void;
+    token: string | null;
+};
+export declare type ContinueOnSuccessParams = {
+    email: string;
+};
+export declare type FeatureBlockDetailProps = {
+    title: string;
+    subText: string;
+    icon: JSX.Element;
+};
+export declare type RecoverFormProps = {
+    onSuccess: (result: any) => void;
+    onBackClick: () => void;
+    recipeImplementation: RecipeImplementation;
+};
+export declare type EmailSentProps = {
+    email: string;
+    onEmailChangeClick: () => void;
 };
 export declare type ContinueFor = "SIGN_UP" | "SIGN_IN";

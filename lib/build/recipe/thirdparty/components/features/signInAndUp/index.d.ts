@@ -12,7 +12,9 @@ export declare function useChildProps(
     rebuildAuthPage: () => void,
     setFactorList: (factorIds: string[]) => void,
     navigate: Navigate | undefined,
-    userContext: UserContext
+    userContext: UserContext,
+    resetFactorList: () => void,
+    onSignInUpSwitcherClick: () => void
 ): SignInAndUpThemeProps;
 declare type PropType = PartialAuthComponentProps & {
     recipe: Recipe;

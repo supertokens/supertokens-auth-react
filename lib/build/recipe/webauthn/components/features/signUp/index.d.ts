@@ -3,16 +3,27 @@ import type { UserContext, PartialAuthComponentProps } from "../../../../../type
 import type { AuthSuccessContext } from "../../../../authRecipe/types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
-import type { SignUpChildProps } from "../../../types";
+import type { SignUpThemeProps } from "../../../types";
 export declare function useChildProps(
     recipe: Recipe,
     factorIds: string[],
     onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>,
     error: string | undefined,
     onError: (err: string) => void,
-    userContext: UserContext
-): SignUpChildProps;
+    userContext: UserContext,
+    clearError: () => void,
+    resetFactorList: () => void,
+    onSignInUpSwitcherClick: () => void
+): SignUpThemeProps;
 export declare const SignUpFeature: React.FC<
+    PartialAuthComponentProps & {
+        recipe: Recipe;
+        factorIds: string[];
+        userContext?: UserContext;
+        useComponentOverrides: () => ComponentOverrideMap;
+    }
+>;
+export declare const SignUpWithPasskeyFeature: React.FC<
     PartialAuthComponentProps & {
         recipe: Recipe;
         factorIds: string[];

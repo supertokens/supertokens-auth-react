@@ -1,5 +1,7 @@
 import type { DateProviderInput } from "./dateProvider/types";
 import type { AuthSuccessContext } from "./recipe/authRecipe/types";
+import type { FieldState } from "./recipe/emailpassword/components/library/formBase";
+import type { FormBaseAPIResponse } from "./recipe/emailpassword/types";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
@@ -192,6 +194,8 @@ export declare type Navigate =
 export declare type UserContext = Record<string, any>;
 export declare type AuthComponentProps = {
     setFactorList: (factorIds: string[]) => void;
+    resetFactorList: () => void;
+    onSignInUpSwitcherClick: () => void;
     rebuildAuthPage: () => void;
     onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>;
     navigate: Navigate | undefined;
@@ -208,7 +212,8 @@ export declare type FullPageAuthComponent<PreloadInfoType = any> = {
     type: "FULL_PAGE";
     preloadInfoAndRunChecks: (
         firstFactors: string[],
-        userContext: UserContext
+        userContext: UserContext,
+        isSignUp: boolean
     ) => Promise<
         | {
               shouldDisplay: true;
@@ -229,5 +234,13 @@ export declare type PartialAuthComponent = {
 export declare type AuthComponent<T = any> = PartialAuthComponent | FullPageAuthComponent<T>;
 export declare type NormalisedGetRedirectionURLContext<RecipeContext> = RecipeContext & {
     tenantIdFromQueryParams: string | undefined;
+};
+export declare type CallAPIParameters<T> = {
+    callAPI: (fields: APIFormField[], setValue: (id: string, value: string) => void) => Promise<FormBaseAPIResponse<T>>;
+    apiFields?: {
+        id: string;
+        value: string;
+    }[];
+    fieldUpdates: FieldState[];
 };
 export {};

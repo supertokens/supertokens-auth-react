@@ -24,9 +24,9 @@ export const PasskeyEmailSent = withOverride("PasskeyEmailSent", (props: EmailSe
         <div data-supertokens="passkeyEmailSentContainer">
             <div data-supertokens="headerTitle">{t("WEBAUTHN_EMAIL_SENT_LABEL")}</div>
             <div data-supertokens="emailSentDescription">
-                {t("WEBAUTHN_EMAIL_SENT_PRE_LABEL")}
+                {t("WEBAUTHN_EMAIL_SENT_LABEL_PRE_EMAIL")}
                 {props.email}
-                {t("WEBAUTHN_EMAIL_SENT_POST_LABEL")}
+                {t("WEBAUTHN_EMAIL_SENT_LABEL_POST_EMAIL")}
                 <a
                     onClick={props.onEmailChangeClick}
                     data-supertokens="link linkButton formLabelLinkBtn changeEmailBtn">

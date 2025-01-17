@@ -18,7 +18,7 @@ export default class Webauthn extends AuthRecipe<
     static instance?: Webauthn;
     static RECIPE_ID: string;
     recipeID: string;
-    firstFactorIds: never[];
+    firstFactorIds: "webauthn"[];
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         webJSRecipe?: WebJSRecipeInterface<typeof WebauthnWebJS>
