@@ -58,8 +58,8 @@ export default function FeatureWrapper({
             .getCurrentDynamicLoginMethods({ userContext })
             .then(
                 (loginMethods) => setLoadedDynamicLoginMethods(loginMethods),
-                (err) => {
-                    setHasError(err);
+                () => {
+                    setHasError(true);
                 }
             );
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods, hasError]);

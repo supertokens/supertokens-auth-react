@@ -170,11 +170,10 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
         }
         Multitenancy.getInstanceOrThrow()
             .getCurrentDynamicLoginMethods({ userContext })
-            .then(
-                (loginMethods) => setLoadedDynamicLoginMethods(loginMethods),
-                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                () => {}
-            );
+            .then((loginMethods) => setLoadedDynamicLoginMethods(loginMethods))
+            // Error is handled by routingComponet which shows the AccessDeniedScreen
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            .catch(() => {});
     }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
 
     useOnMountAPICall(
