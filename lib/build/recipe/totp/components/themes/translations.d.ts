@@ -37,6 +37,8 @@ export declare const defaultTranslationsTOTP: {
         AUTH_PAGE_FOOTER_AND: string;
         AUTH_PAGE_FOOTER_PP: string;
         AUTH_PAGE_FOOTER_END: string;
+        AUTH_PAGE_TENTANT_ERROR: string;
+        TENANT_LOGIN_METHODS_ERROR: string;
         DIVIDER_OR: string;
         BRANDING_POWERED_BY_START: string;
         BRANDING_POWERED_BY_END: string;

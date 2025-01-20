@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
-import { redirectToAuth, useUserContext } from "..";
+import { redirectToAuth, useTranslation, useUserContext } from "..";
 import AuthPageWrapper from "../recipe/authRecipe/components/feature/authPage/authPage";
 import DynamicLoginMethodsSpinner from "../recipe/multitenancy/components/features/dynamicLoginMethodsSpinner";
 import Multitenancy from "../recipe/multitenancy/recipe";
 import { RecipeRouter } from "../recipe/recipeRouter";
+import { AccessDeniedScreen } from "../recipe/session/prebuiltui";
 import SuperTokens from "../superTokens";
-import { useRethrowInRender } from "../utils";
 
 import type { GetLoginMethodsResponseNormalized } from "../recipe/multitenancy/types";
 import type { ReactRouterDomWithCustomHistory } from "../ui/types";
@@ -18,10 +18,11 @@ export function RoutingComponent(props: {
     path: string;
 }): JSX.Element | null {
     const userContext = useUserContext();
-    const rethrowInRender = useRethrowInRender();
+    const t = useTranslation();
     const [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods] = useState<
         GetLoginMethodsResponseNormalized | undefined
     >(undefined);
+    const [errMsg, setErrMsg] = useState<string | undefined>(undefined);
     const navigate = props.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
     const path = props.path;
     const isAuthPage = path === SuperTokens.getInstanceOrThrow().appInfo.websiteBasePath.getAsStringDangerous();
@@ -53,16 +54,28 @@ export function RoutingComponent(props: {
     }, [path, location, loadedDynamicLoginMethods, props.preBuiltUIList]);
 
     useEffect(() => {
-        if (loadedDynamicLoginMethods) {
+        // Don't make the API call if we already have an error or the methods
+        if (errMsg !== undefined || loadedDynamicLoginMethods) {
             return;
         }
         Multitenancy.getInstanceOrThrow()
             .getCurrentDynamicLoginMethods({ userContext })
             .then(
                 (loginMethods) => setLoadedDynamicLoginMethods(loginMethods),
-                (err) => rethrowInRender(err)
+                (err) => {
+                    const translatedMessage = t("TENANT_LOGIN_METHODS_ERROR");
+                    let message = `${translatedMessage}: ${err.message}`;
+                    if (err.status === 500) {
+                        message = t("AUTH_PAGE_TENTANT_ERROR");
+                    }
+                    setErrMsg(message);
+                }
             );
-    }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods]);
+    }, [loadedDynamicLoginMethods, setLoadedDynamicLoginMethods, errMsg]);
+
+    if (errMsg !== undefined) {
+        return <AccessDeniedScreen error={errMsg} />;
+    }
 
     if (isAuthPage) {
         return (
