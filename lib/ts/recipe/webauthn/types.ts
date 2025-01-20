@@ -43,7 +43,7 @@ export type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<{
     /*
      * Get Redirection URL Context
      */
-    action: "RECOVER_ACCOUNT";
+    action: "SEND_RECOVERY_EMAIL";
 }>;
 
 export type PreAndPostAPIHookAction =
@@ -129,6 +129,7 @@ export type SignUpThemeProps = {
     userContext: UserContext;
     resetFactorList: () => void;
     onSignInUpSwitcherClick: () => void;
+    onRecoverAccountClick: () => void;
 };
 
 export type SignInThemeProps = SignUpThemeProps;

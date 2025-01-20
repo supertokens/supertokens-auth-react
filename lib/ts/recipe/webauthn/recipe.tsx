@@ -16,9 +16,11 @@
 import WebauthnWebJS from "supertokens-web-js/lib/build/recipe/webauthn";
 
 import { SSR_ERROR } from "../../constants";
+import { getDefaultRedirectionURLForPath } from "../../utils";
 import AuthRecipe from "../authRecipe";
 import { FactorIds } from "../multifactorauth";
 
+import { DEFAULT_WEBAUTHN_SEND_RECOVERY_EMAIL_PATH } from "./constants";
 import { getFunctionOverrides } from "./functionOverrides";
 import { normaliseWebauthnConfig } from "./utils";
 
@@ -65,6 +67,10 @@ export default class Webauthn extends AuthRecipe<
     }
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
+        if (context.action === "SEND_RECOVERY_EMAIL") {
+            return getDefaultRedirectionURLForPath(this.config, DEFAULT_WEBAUTHN_SEND_RECOVERY_EMAIL_PATH, context);
+        }
+
         return this.getAuthRecipeDefaultRedirectionURL(context);
     };
 

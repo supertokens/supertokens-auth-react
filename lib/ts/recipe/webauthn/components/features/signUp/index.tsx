@@ -30,7 +30,7 @@ import { ContinueWithPasskeyTheme } from "../../themes/continueWithPasskey";
 import SignUpTheme from "../../themes/signUp";
 import { defaultTranslationsWebauthn } from "../../themes/translations";
 
-import type { UserContext, PartialAuthComponentProps } from "../../../../../types";
+import type { UserContext, PartialAuthComponentProps, Navigate } from "../../../../../types";
 import type { AuthSuccessContext } from "../../../../authRecipe/types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
@@ -46,11 +46,15 @@ export function useChildProps(
     userContext: UserContext,
     clearError: () => void,
     resetFactorList: () => void,
-    onSignInUpSwitcherClick: () => void
+    onSignInUpSwitcherClick: () => void,
+    navigate?: Navigate
 ): SignUpThemeProps {
     const session = useSessionContext();
     const recipeImplementation = recipe.webJSRecipe;
     const rethrowInRender = useRethrowInRender();
+
+    const onRecoverAccountClick = () =>
+        recipe.redirect({ action: "SEND_RECOVERY_EMAIL", tenantIdFromQueryParams: "" }, navigate, {}, userContext);
 
     return useMemo(() => {
         return {
@@ -87,6 +91,7 @@ export function useChildProps(
             config: recipe.config,
             resetFactorList: resetFactorList,
             onSignInUpSwitcherClick,
+            onRecoverAccountClick,
         };
     }, [error, factorIds, userContext, recipeImplementation]);
 }
@@ -112,7 +117,8 @@ const SignUpFeatureInner: React.FC<
         userContext,
         props.clearError,
         props.resetFactorList,
-        props.onSignInUpSwitcherClick
+        props.onSignInUpSwitcherClick,
+        props.navigate
     )!;
 
     return (

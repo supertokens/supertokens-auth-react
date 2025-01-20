@@ -23,7 +23,6 @@ import { handleCallAPI } from "../../../../../utils";
 import { Label } from "../../../../emailpassword/components/library";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { defaultEmailValidator } from "../../../../emailpassword/validators";
-import { DEFAULT_WEBAUTHN_SEND_RECOVERY_EMAIL_PATH } from "../../../constants";
 
 import { PasskeyConfirmation } from "./confirmation";
 import { ContinueWithoutPasskey } from "./continueWithoutPasskey";
@@ -46,6 +45,7 @@ export const SignUpFormInner = withOverride(
             footer?: JSX.Element;
             onContinueClick: (params: ContinueOnSuccessParams) => void;
             setActiveScreen: React.Dispatch<React.SetStateAction<SignUpScreen>>;
+            onRecoverAccountClick: () => void;
         }
     ): JSX.Element {
         const t = useTranslation();
@@ -76,7 +76,7 @@ export const SignUpFormInner = withOverride(
                                 <div data-supertokens="formLabelWithLinkWrapper">
                                     <Label value={"WEBAUTHN_SIGN_UP_LABEL"} data-supertokens="emailInputLabel" />
                                     <a
-                                        href={DEFAULT_WEBAUTHN_SEND_RECOVERY_EMAIL_PATH}
+                                        onClick={props.onRecoverAccountClick}
                                         data-supertokens="link linkButton formLabelLinkBtn recoverAccountTrigger">
                                         {t("WEBAUTHN_RECOVER_ACCOUNT_LABEL")}
                                     </a>
@@ -121,6 +121,7 @@ export const SignUpForm = (
         onContinueClick: (params: ContinueOnSuccessParams) => void;
         activeScreen: SignUpScreen;
         setActiveScreen: React.Dispatch<React.SetStateAction<SignUpScreen>>;
+        onRecoverAccountClick: () => void;
     }
 ): JSX.Element | null => {
     const [continueClickResponse, setContinueClickResponse] = useState<ContinueOnSuccessParams | null>(null);
