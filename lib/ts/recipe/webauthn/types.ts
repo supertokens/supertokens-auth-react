@@ -160,6 +160,21 @@ export type RecoverAccountWithTokenThemeProps = {
     token: string | null;
 };
 
+export type SendRecoveryEmailFormProps = {
+    userContext?: UserContext | undefined;
+    recipe: Recipe;
+    useComponentOverrides: () => ComponentOverrideMap;
+};
+
+export type SendRecoveryEmailFormThemeProps = {
+    config: NormalisedConfig;
+    userContext?: UserContext;
+    recipeImplementation: RecipeImplementation;
+    error: string | undefined;
+    clearError: () => void;
+    onError: (error: string) => void;
+};
+
 export type ContinueOnSuccessParams = {
     email: string;
 };

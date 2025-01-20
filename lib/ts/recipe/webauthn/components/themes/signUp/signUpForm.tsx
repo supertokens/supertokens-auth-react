@@ -26,8 +26,6 @@ import { defaultEmailValidator } from "../../../../emailpassword/validators";
 
 import { PasskeyConfirmation } from "./confirmation";
 import { ContinueWithoutPasskey } from "./continueWithoutPasskey";
-import { PasskeyEmailSent } from "./emailSent";
-import { PasskeyRecoverAccountForm } from "./recoverAccountForm";
 import { SignUpSomethingWentWrong } from "./somethingWentWrong";
 
 import type { APIFormField } from "../../../../../types";
@@ -38,8 +36,6 @@ export enum SignUpScreen {
     SignUpForm,
     PasskeyConfirmation,
     Error,
-    RecoverAccount,
-    RecoverEmailSent,
 }
 
 export const SignUpFormInner = withOverride(
@@ -79,7 +75,7 @@ export const SignUpFormInner = withOverride(
                                 <div data-supertokens="formLabelWithLinkWrapper">
                                     <Label value={"WEBAUTHN_SIGN_UP_LABEL"} data-supertokens="emailInputLabel" />
                                     <a
-                                        onClick={() => props.setActiveScreen(SignUpScreen.RecoverAccount)}
+                                        onClick={() => console.error("Recover account link: to be defined")}
                                         data-supertokens="link linkButton formLabelLinkBtn recoverAccountTrigger">
                                         {t("WEBAUTHN_RECOVER_ACCOUNT_LABEL")}
                                     </a>
@@ -130,7 +126,6 @@ export const SignUpForm = (
     const userContext = useUserContext();
     const [showPasskeyConfirmationError, setShowPasskeyConfirmationError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [recoverAccountEmail, setRecoverAccountEmail] = useState<string>("");
 
     const onContinueClickCallback = useCallback(
         (params: ContinueOnSuccessParams) => {
@@ -200,19 +195,6 @@ export const SignUpForm = (
         }
     }, [callAPI, props]);
 
-    const onRecoverAccountFormSuccess = (result: { email: string }) => {
-        setRecoverAccountEmail(result.email);
-        props.setActiveScreen(SignUpScreen.RecoverEmailSent);
-    };
-
-    const onRecoverAccountBackClick = () => {
-        props.setActiveScreen(SignUpScreen.SignUpForm);
-    };
-
-    const onEmailChangeClick = () => {
-        props.setActiveScreen(SignUpScreen.RecoverAccount);
-    };
-
     return props.activeScreen === SignUpScreen.SignUpForm ? (
         <SignUpFormInner {...props} onContinueClick={onContinueClickCallback} />
     ) : props.activeScreen === SignUpScreen.PasskeyConfirmation ? (
@@ -225,14 +207,5 @@ export const SignUpForm = (
         />
     ) : props.activeScreen === SignUpScreen.Error ? (
         <SignUpSomethingWentWrong onClick={() => props.setActiveScreen(SignUpScreen.SignUpForm)} />
-    ) : props.activeScreen === SignUpScreen.RecoverAccount ? (
-        <PasskeyRecoverAccountForm
-            onSuccess={onRecoverAccountFormSuccess}
-            onBackClick={onRecoverAccountBackClick}
-            recipeImplementation={props.recipeImplementation}
-            setError={(error) => setShowPasskeyConfirmationError(Boolean(error))}
-        />
-    ) : props.activeScreen === SignUpScreen.RecoverEmailSent ? (
-        <PasskeyEmailSent email={recoverAccountEmail} onEmailChangeClick={onEmailChangeClick} />
     ) : null;
 };

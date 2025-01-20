@@ -49,9 +49,7 @@ function PasskeySignUpTheme(props: SignUpThemeProps): JSX.Element {
                         props.factorIds.length > 1 ? "multiFactor" : "singleFactor"
                     }`}>
                     <div data-supertokens="row">
-                        {![SignUpScreen.Error, SignUpScreen.RecoverAccount, SignUpScreen.RecoverEmailSent].includes(
-                            activeScreen
-                        ) && (
+                        {![SignUpScreen.Error].includes(activeScreen) && (
                             <AuthPageHeader
                                 factorIds={props.factorIds}
                                 isSignUp={true}
@@ -75,15 +73,13 @@ function PasskeySignUpTheme(props: SignUpThemeProps): JSX.Element {
                             activeScreen={activeScreen}
                             setActiveScreen={setActiveScreen}
                         />
-                        {activeScreen !== SignUpScreen.RecoverEmailSent && (
-                            <AuthPageFooter
-                                factorIds={props.factorIds}
-                                isSignUp={true}
-                                hasSeparateSignUpView={true}
-                                privacyPolicyLink={privacyPolicyLink}
-                                termsOfServiceLink={termsOfServiceLink}
-                            />
-                        )}
+                        <AuthPageFooter
+                            factorIds={props.factorIds}
+                            isSignUp={true}
+                            hasSeparateSignUpView={true}
+                            privacyPolicyLink={privacyPolicyLink}
+                            termsOfServiceLink={termsOfServiceLink}
+                        />
                     </div>
                     <SuperTokensBranding />
                 </div>
