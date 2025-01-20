@@ -23,6 +23,7 @@ import { handleCallAPI } from "../../../../../utils";
 import { Label } from "../../../../emailpassword/components/library";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { defaultEmailValidator } from "../../../../emailpassword/validators";
+import { DEFAULT_WEBAUTHN_SEND_RECOVERY_EMAIL_PATH } from "../../../constants";
 
 import { PasskeyConfirmation } from "./confirmation";
 import { ContinueWithoutPasskey } from "./continueWithoutPasskey";
@@ -75,7 +76,7 @@ export const SignUpFormInner = withOverride(
                                 <div data-supertokens="formLabelWithLinkWrapper">
                                     <Label value={"WEBAUTHN_SIGN_UP_LABEL"} data-supertokens="emailInputLabel" />
                                     <a
-                                        onClick={() => console.error("Recover account link: to be defined")}
+                                        href={DEFAULT_WEBAUTHN_SEND_RECOVERY_EMAIL_PATH}
                                         data-supertokens="link linkButton formLabelLinkBtn recoverAccountTrigger">
                                         {t("WEBAUTHN_RECOVER_ACCOUNT_LABEL")}
                                     </a>

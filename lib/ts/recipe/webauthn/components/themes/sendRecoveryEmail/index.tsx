@@ -9,7 +9,7 @@ import GeneralError from "../../../../emailpassword/components/library/generalEr
 import { ThemeBase } from "../themeBase";
 
 import { PasskeyEmailSent } from "./emailSent";
-import { PasskeyRecoverAccountForm } from "./recoverAccountForm";
+import { PasskeyRecoverAccount } from "./recoverAccountForm";
 
 import type { SendRecoveryEmailFormThemeProps } from "../../../types";
 
@@ -39,11 +39,10 @@ export const SendRecoveryEmailFormThemeInner = (
     };
 
     return props.activeScreen === SendRecoveryEmailScreen.RecoverAccount ? (
-        <PasskeyRecoverAccountForm
+        <PasskeyRecoverAccount
             onSuccess={onRecoverAccountFormSuccess}
             onBackClick={onRecoverAccountBackClick}
             recipeImplementation={props.recipeImplementation}
-            setError={(error) => console.error(error)}
         />
     ) : props.activeScreen === SendRecoveryEmailScreen.RecoverEmailSent ? (
         <PasskeyEmailSent email={recoverAccountEmail} onEmailChangeClick={onEmailChangeClick} />

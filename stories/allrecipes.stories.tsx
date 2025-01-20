@@ -142,6 +142,15 @@ export const RecoverAccountWithToken: Story = {
     },
 };
 
+export const SendRecoveryEmail: Story = {
+    args: {
+        path: "/auth/webauthn/recover/send-email",
+        "multifactorauth.initialized": false,
+        "passwordless.initialized": false,
+        "webauthn.initialized": true,
+    },
+};
+
 export const SignUpFieldErrors: Story = {
     args: {
         path: "/auth",

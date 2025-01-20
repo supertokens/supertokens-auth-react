@@ -8,10 +8,11 @@ import SessionAuth from "../session/sessionAuth";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import { RecoverAccountUsingToken } from "./components/features/recoverAccountWithToken";
+import { SendRecoveryEmailForm } from "./components/features/sendRecoveryEmail";
 import SignInWithPasskeyFeature from "./components/features/signIn";
 import SignUpFeature, { SignUpWithPasskeyFeature } from "./components/features/signUp";
 import { defaultTranslationsWebauthn } from "./components/themes/translations";
-import { DEFAULT_WEBAUTHN_RECOVERY_PATH } from "./constants";
+import { DEFAULT_WEBAUTHN_RECOVERY_PATH, DEFAULT_WEBAUTHN_SEND_RECOVERY_EMAIL_PATH } from "./constants";
 import WebauthnRecipe from "./recipe";
 
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
@@ -46,7 +47,7 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
         return WebauthnPreBuiltUI.getInstanceOrInitAndGetInstance().getFeatures(useComponentOverrides);
     }
     static getFeatureComponent(
-        componentName: "webauthn-recover-account",
+        componentName: "webauthn-recover-account" | "webauthn-send-recovery-email",
         props: FeatureBaseProps<{ userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element {
@@ -72,12 +73,23 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
                     this.getFeatureComponent("webauthn-recover-account", props, useComponentOverrides),
                 recipeID: WebauthnRecipe.RECIPE_ID,
             };
+
+            const normalisedFullPathForRecoveryThroughEmail =
+                this.recipeInstance.config.appInfo.websiteBasePath.appendPath(
+                    new NormalisedURLPath(DEFAULT_WEBAUTHN_SEND_RECOVERY_EMAIL_PATH)
+                );
+            features[normalisedFullPathForRecoveryThroughEmail.getAsStringDangerous()] = {
+                matches: matchRecipeIdUsingQueryParams(this.recipeInstance.config.recipeId),
+                component: (props: any) =>
+                    this.getFeatureComponent("webauthn-send-recovery-email", props, useComponentOverrides),
+                recipeID: WebauthnRecipe.RECIPE_ID,
+            };
         }
         return features;
     };
 
     getFeatureComponent = (
-        componentName: "webauthn-recover-account",
+        componentName: "webauthn-recover-account" | "webauthn-send-recovery-email",
         props: FeatureBaseProps<{ userContext?: UserContext }>,
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): JSX.Element => {
@@ -86,6 +98,18 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
                 <UserContextWrapper userContext={props.userContext}>
                     <SessionAuth requireAuth={false} doRedirection={false}>
                         <RecoverAccountUsingToken
+                            recipe={this.recipeInstance}
+                            {...props}
+                            useComponentOverrides={useComponentOverrides}
+                        />
+                    </SessionAuth>
+                </UserContextWrapper>
+            );
+        } else if (componentName === "webauthn-send-recovery-email") {
+            return (
+                <UserContextWrapper userContext={props.userContext}>
+                    <SessionAuth requireAuth={false} doRedirection={false}>
+                        <SendRecoveryEmailForm
                             recipe={this.recipeInstance}
                             {...props}
                             useComponentOverrides={useComponentOverrides}
