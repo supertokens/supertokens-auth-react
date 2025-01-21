@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { UserContext, PartialAuthComponentProps } from "../../../../../types";
+import type { UserContext, PartialAuthComponentProps, Navigate } from "../../../../../types";
 import type { AuthSuccessContext } from "../../../../authRecipe/types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap } from "../../../types";
@@ -13,7 +13,8 @@ export declare function useChildProps(
     userContext: UserContext,
     clearError: () => void,
     resetFactorList: () => void,
-    onSignInUpSwitcherClick: () => void
+    onSignInUpSwitcherClick: () => void,
+    navigate?: Navigate
 ): SignUpThemeProps;
 export declare const SignUpFeature: React.FC<
     PartialAuthComponentProps & {

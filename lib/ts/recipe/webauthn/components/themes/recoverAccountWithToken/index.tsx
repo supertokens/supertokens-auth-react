@@ -99,7 +99,7 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
         void fetchAndStoreRegisterOptions();
     }, []);
 
-    const onContinueClick = useCallback(() => {
+    const onContinueClick = useCallback(async () => {
         // TODO: Add support to make the network call and show the next screen based
         // on that result.
         //
@@ -109,6 +109,20 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
         // 2. If not expired, we can continue and use the values to register the user.
         // 3. If expired, we will get new registerOptions and register the user.
         // 4. If registration fails with a token expiry error, we should following 3rd step.
+        if (registerOptions === null) {
+            // If it still stays null, which should never happen as the continue
+            // button will be disabled if register options is null which would mean
+            // an error.
+            throw new Error("Should never come here");
+        }
+
+        const expiresAtDate = new Date(registerOptions.expiresAt);
+        if (isNaN(expiresAtDate.getTime()) || new Date() > expiresAtDate) {
+            // Fetch the options again as they have either expired or are invalid.
+            await fetchAndStoreRegisterOptions();
+        }
+
+        // TODO: Do rest of the logic once recover flow is ready in core.
         setActiveScreen(RecoverAccountScreen.Success);
     }, [setActiveScreen]);
 

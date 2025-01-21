@@ -117,7 +117,7 @@ export type WebauthnSignUpState = {
     error: string | undefined;
 };
 
-export type SignUpThemeProps = {
+export type SignUpThemeBaseProps = {
     clearError: () => void;
     recipeImplementation: RecipeImplementation;
     factorIds: string[];
@@ -129,10 +129,13 @@ export type SignUpThemeProps = {
     userContext: UserContext;
     resetFactorList: () => void;
     onSignInUpSwitcherClick: () => void;
+};
+
+export type SignUpThemeProps = SignUpThemeBaseProps & {
     onRecoverAccountClick: () => void;
 };
 
-export type SignInThemeProps = SignUpThemeProps;
+export type SignInThemeProps = SignUpThemeBaseProps;
 
 export type SignUpFormProps = {
     clearError: () => void;

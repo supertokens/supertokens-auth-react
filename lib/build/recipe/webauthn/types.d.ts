@@ -24,7 +24,7 @@ export declare type WebauthnFeatureBaseConfig = {
     disableDefaultUI?: boolean;
 } & FeatureBaseConfig;
 export declare type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<{
-    action: "RECOVER_ACCOUNT";
+    action: "SEND_RECOVERY_EMAIL";
 }>;
 export declare type PreAndPostAPIHookAction =
     | "REGISTER_OPTIONS"
@@ -84,7 +84,7 @@ export declare type WebauthnSignUpState = {
     loaded: boolean;
     error: string | undefined;
 };
-export declare type SignUpThemeProps = {
+export declare type SignUpThemeBaseProps = {
     clearError: () => void;
     recipeImplementation: RecipeImplementation;
     factorIds: string[];
@@ -97,7 +97,10 @@ export declare type SignUpThemeProps = {
     resetFactorList: () => void;
     onSignInUpSwitcherClick: () => void;
 };
-export declare type SignInThemeProps = SignUpThemeProps;
+export declare type SignUpThemeProps = SignUpThemeBaseProps & {
+    onRecoverAccountClick: () => void;
+};
+export declare type SignInThemeProps = SignUpThemeBaseProps;
 export declare type SignUpFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
@@ -121,6 +124,19 @@ export declare type RecoverAccountWithTokenThemeProps = {
     clearError: () => void;
     onError: (error: string) => void;
     token: string | null;
+};
+export declare type SendRecoveryEmailFormProps = {
+    userContext?: UserContext | undefined;
+    recipe: Recipe;
+    useComponentOverrides: () => ComponentOverrideMap;
+};
+export declare type SendRecoveryEmailFormThemeProps = {
+    config: NormalisedConfig;
+    userContext?: UserContext;
+    recipeImplementation: RecipeImplementation;
+    error: string | undefined;
+    clearError: () => void;
+    onError: (error: string) => void;
 };
 export declare type ContinueOnSuccessParams = {
     email: string;

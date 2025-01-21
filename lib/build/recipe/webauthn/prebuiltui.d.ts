@@ -64,7 +64,7 @@ export declare class WebauthnPreBuiltUI extends RecipeRouter {
     static getInstanceOrInitAndGetInstance(): WebauthnPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
     static getFeatureComponent(
-        componentName: "webauthn-recover-account",
+        componentName: "webauthn-recover-account" | "webauthn-send-recovery-email",
         props: FeatureBaseProps<{
             userContext?: UserContext;
         }>,
@@ -72,7 +72,7 @@ export declare class WebauthnPreBuiltUI extends RecipeRouter {
     ): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
     getFeatureComponent: (
-        componentName: "webauthn-recover-account",
+        componentName: "webauthn-recover-account" | "webauthn-send-recovery-email",
         props: FeatureBaseProps<{
             userContext?: UserContext;
         }>,
