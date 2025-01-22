@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import type { SendRecoveryEmailFormThemeProps } from "../../../types";
 export declare enum SendRecoveryEmailScreen {
     RecoverAccount = 0,

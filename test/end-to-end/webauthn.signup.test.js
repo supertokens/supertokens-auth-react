@@ -7,12 +7,16 @@ import {
     clearBrowserCookiesWithoutAffectingConsole,
     toggleSignInSignUp,
     getTestEmail,
+    waitForSTElement,
+    submitForm,
 } from "../helpers";
 import { tryWebauthnSignUp } from "./webauthn.helpers";
+import assert from "assert";
 
 describe("SuperTokens Webauthn SignUp", () => {
     let browser;
     let page;
+    let consoleLogs = [];
 
     before(async function () {
         await backendBeforeEach();
@@ -53,12 +57,31 @@ describe("SuperTokens Webauthn SignUp", () => {
     });
 
     describe("SignUp test", () => {
-        it("should show the continue with passkey successfully", async () => {
-            const setupPage = await browser.newPage();
-            email = await getTestEmail();
+        it("should show the create a passkey successfully", async () => {
+            const email = await getTestEmail();
+            await tryWebauthnSignUp(page, email);
+            const continueWithPasskeyContainer = await waitForSTElement(page, "[data-supertokens~='headerTitle']");
+            const enteredEmailContainer = await waitForSTElement(page, "[data-supertokens~='enteredEmailId']");
+
+            const headerText = await continueWithPasskeyContainer.evaluate((el) => el.textContent);
+            const emailText = await enteredEmailContainer.evaluate((el) => el.textContent);
+
+            // Assert the text contains "Create a passkey"
+            assert.deepStrictEqual(headerText, "Create a passkey");
+            assert.strictEqual(emailText, email);
+        });
+        it("should successfully signup the user", async () => {
+            const email = await getTestEmail();
             await tryWebauthnSignUp(page, email);
 
-            console.log(setupPage);
+            // We should be in the confirmation page now.
+            await submitForm(page);
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS WEBAUTHN OVERRIDE GET REGISTER OPTIONS WITH SIGN UP",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
+            ]);
         });
     });
 });

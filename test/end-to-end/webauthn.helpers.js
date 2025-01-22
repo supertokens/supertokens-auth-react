@@ -3,7 +3,7 @@ import { toggleSignInSignUp, setInputValues, submitForm } from "../helpers";
 
 export async function tryWebauthnSignUp(page, email) {
     await Promise.all([
-        page.goto(`${TEST_CLIENT_BASE_URL}/auth-for-factors/?factors=webauthn`),
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=webauthn`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 

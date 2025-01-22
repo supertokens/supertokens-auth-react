@@ -5,6 +5,7 @@ import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpass
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
+import { WebauthnPreBuiltUI } from "supertokens-auth-react/recipe/webauthn/prebuiltui";
 import { getEnabledRecipes } from "./testContext";
 
 function AppWithoutRouter() {
@@ -31,6 +32,9 @@ function Routing() {
     }
     if (enabledRecipes.some((r) => r.endsWith("passwordless"))) {
         recipePreBuiltUIList.push(PasswordlessPreBuiltUI);
+    }
+    if (enabledRecipes.some((r) => r.endsWith("webauthn"))) {
+        recipePreBuiltUIList.push(WebauthnPreBuiltUI);
     }
 
     if (emailVerificationMode !== "OFF") {

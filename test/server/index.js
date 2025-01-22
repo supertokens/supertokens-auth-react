@@ -21,6 +21,7 @@ const { default: ThirdPartyRaw } = require("supertokens-node/lib/build/recipe/th
 const { default: SessionRaw } = require("supertokens-node/lib/build/recipe/session/recipe");
 let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
+// let Webauthn = require("supertokens-node/recipe/webauthn");
 let ThirdParty = require("supertokens-node/recipe/thirdparty");
 let EmailVerification = require("supertokens-node/recipe/emailverification");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
@@ -698,6 +699,22 @@ function initST() {
                 },
             }),
         ],
+        // [
+        //     "webauthn",
+        //     Webauthn.init({
+        //         emailDelivery: {
+        //             override: (oI) => {
+        //                 return {
+        //                     ...oI,
+        //                     sendEmail: async (input) => {
+        //                         console.log(input.passwordResetLink);
+        //                         latestURLWithToken = input.passwordResetLink;
+        //                     },
+        //                 };
+        //             },
+        //         },
+        //     })
+        // ],
         [
             "thirdparty",
             ThirdParty.init({

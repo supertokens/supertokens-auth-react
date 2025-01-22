@@ -41,6 +41,7 @@ export function getEnabledRecipes() {
             "thirdpartyemailpassword",
             "passwordless",
             "thirdpartypasswordless",
+            "webauthn",
         ];
     } else if (testContext.clientRecipeListForDynamicLogin) {
         enabledRecipes = JSON.parse(testContext.clientRecipeListForDynamicLogin);
@@ -51,6 +52,7 @@ export function getEnabledRecipes() {
             "thirdpartyemailpassword",
             "passwordless",
             "thirdpartypasswordless",
+            "webauthn",
         ];
     } else {
         if (testContext.authRecipe === "both") {

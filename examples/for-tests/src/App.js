@@ -8,6 +8,7 @@ import Footer from "./Footer";
 import SuperTokens from "supertokens-auth-react";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import Webauthn from "supertokens-auth-react/recipe/webauthn";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
 import Multitenancy from "supertokens-auth-react/recipe/multitenancy";
@@ -426,6 +427,9 @@ if (enabledRecipes.includes("emailpassword") || enabledRecipes.includes("thirdpa
 }
 if (enabledRecipes.includes("passwordless") || enabledRecipes.includes("thirdpartypasswordless")) {
     recipeList = [getPasswordlessConfigs(testContext), ...recipeList];
+}
+if (enabledRecipes.includes("webauthn")) {
+    recipeList = [getWebauthnConfigs(), ...recipeList];
 }
 
 if (emailVerificationMode !== "OFF") {
@@ -1145,6 +1149,65 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
 
 function setIsNewUserToStorage(recipeName, isNewRecipeUser) {
     localStorage.setItem("isNewUserCheck", `${recipeName}-${isNewRecipeUser}`);
+}
+
+function getWebauthnConfigs() {
+    return Webauthn.init({
+        style: `          
+            [data-supertokens~=container] {
+                font-family: cursive;
+            }
+        `,
+        override: {
+            functions: (implementation) => {
+                const log = logWithPrefix(`ST_LOGS WEBAUTHN OVERRIDE`);
+
+                return {
+                    ...implementation,
+                    getRegisterOptions(...args) {
+                        log(`GET REGISTER OPTIONS`);
+                        return implementation.getRegisterOptions(...args);
+                    },
+                    registerCredentialWithSignUp(...args) {
+                        log(`GET REGISTER OPTIONS WITH SIGN UP`);
+
+                        // We are mocking the popup since it's not possible to
+                        // test the webauthn popup.
+                        return {
+                            status: "OK",
+                            user: {},
+                            fetchResponse: {},
+                        };
+                    },
+                };
+            },
+        },
+        preAPIHook: async (context) => {
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`)?.includes(context.action)) {
+                let errorFromStorage = localStorage.getItem("TRANSLATED_GENERAL_ERROR");
+
+                if (context.action === "EMAIL_EXISTS") {
+                    context.url += "&generalError=true";
+                } else {
+                    let jsonBody = JSON.parse(context.requestInit.body);
+                    jsonBody = {
+                        ...jsonBody,
+                        generalError: true,
+                        generalErrorMessage: errorFromStorage === null ? undefined : errorFromStorage,
+                    };
+                    context.requestInit.body = JSON.stringify(jsonBody);
+                }
+            }
+            console.log(`ST_LOGS WEBAUTHN PRE_API_HOOKS ${context.action}`);
+            return context;
+        },
+        getRedirectionURL: async (context) => {
+            console.log(`ST_LOGS WEBAUTHN GET_REDIRECTION_URL ${context.action}`);
+        },
+        onHandleEvent: async (context) => {
+            console.log(`ST_LOGS WEBAUTHN ON_HANDLE_EVENT ${context.action}`);
+        },
+    });
 }
 
 window.SuperTokens = SuperTokens;
