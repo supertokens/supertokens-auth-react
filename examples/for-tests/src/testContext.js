@@ -25,6 +25,8 @@ export function getTestContext() {
         signoutOnSessionNotExists: localStorage.getItem("signoutOnSessionNotExists") === "true",
         disableRedirectionAfterSuccessfulSignInUp:
             localStorage.getItem("disableRedirectionAfterSuccessfulSignInUp") === "true",
+        throwWebauthnError: localStorage.getItem("throwWebauthnError") === "true",
+        webauthnErrorStatus: localStorage.getItem("webauthnErrorStatus") || undefined,
     };
     return ret;
 }

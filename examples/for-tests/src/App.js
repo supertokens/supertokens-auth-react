@@ -16,6 +16,7 @@ import UserRoles from "supertokens-auth-react/recipe/userroles";
 import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
 import TOTP from "supertokens-auth-react/recipe/totp";
 import OAuth2Provider from "supertokens-auth-react/recipe/oauth2provider";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 import axios from "axios";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
@@ -429,7 +430,7 @@ if (enabledRecipes.includes("passwordless") || enabledRecipes.includes("thirdpar
     recipeList = [getPasswordlessConfigs(testContext), ...recipeList];
 }
 if (enabledRecipes.includes("webauthn")) {
-    recipeList = [getWebauthnConfigs(), ...recipeList];
+    recipeList = [getWebauthnConfigs(testContext), ...recipeList];
 }
 
 if (emailVerificationMode !== "OFF") {
@@ -1151,7 +1152,7 @@ function setIsNewUserToStorage(recipeName, isNewRecipeUser) {
     localStorage.setItem("isNewUserCheck", `${recipeName}-${isNewRecipeUser}`);
 }
 
-function getWebauthnConfigs() {
+function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus }) {
     return Webauthn.init({
         style: `          
             [data-supertokens~=container] {
@@ -1170,6 +1171,18 @@ function getWebauthnConfigs() {
                     },
                     registerCredentialWithSignUp(...args) {
                         log(`GET REGISTER OPTIONS WITH SIGN UP`);
+
+                        // We will throw an error if it is asked for.
+                        if (throwWebauthnError) {
+                            throw new STGeneralError("TEST ERROR");
+                        }
+
+                        // Return error status if the user passed that.
+                        if (webauthnErrorStatus) {
+                            return {
+                                status: webauthnErrorStatus,
+                            };
+                        }
 
                         // We are mocking the popup since it's not possible to
                         // test the webauthn popup.

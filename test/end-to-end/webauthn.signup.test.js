@@ -70,7 +70,7 @@ describe("SuperTokens Webauthn SignUp", () => {
             assert.deepStrictEqual(headerText, "Create a passkey");
             assert.strictEqual(emailText, email);
         });
-        it("should successfully signup the user", async () => {
+        it("should successfully signup the user and redirect", async () => {
             const email = await getTestEmail();
             await tryWebauthnSignUp(page, email);
 
@@ -82,6 +82,34 @@ describe("SuperTokens Webauthn SignUp", () => {
                 "ST_LOGS WEBAUTHN OVERRIDE GET REGISTER OPTIONS WITH SIGN UP",
                 "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
             ]);
+        });
+        it("should show recoverable error in the same view", async () => {
+            // Set the error to be thrown
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("webauthnErrorStatus", "FAILED_TO_REGISTER_USER");
+            });
+
+            const email = await getTestEmail();
+            await tryWebauthnSignUp(page, email);
+
+            // We should be in the confirmation page now.
+            await submitForm(page);
+
+            await waitForSTElement(page, "[data-supertokens~='passkeyRecoverableErrorContainer']");
+        });
+        it("should show something went wrong on general error", async () => {
+            // Set the error to be thrown
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("throwWebauthnError", "true");
+            });
+
+            const email = await getTestEmail();
+            await tryWebauthnSignUp(page, email);
+
+            // We should be in the confirmation page now.
+            await submitForm(page);
+
+            await waitForSTElement(page, "[data-supertokens~='somethingWentWrongContainer']");
         });
     });
 });
