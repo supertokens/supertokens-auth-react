@@ -16,6 +16,7 @@ import SignInUpFeature from "./components/features/signInAndUp";
 import SignInUpEPComboFeature from "./components/features/signInAndUpEPCombo";
 import UserInputCodeFeature from "./components/features/userInputCode";
 import MFAThemeWrapper from "./components/themes/mfa";
+import { ThemeBase } from "./components/themes/themeBase";
 import { defaultTranslationsPasswordless } from "./components/themes/translations";
 import Passwordless from "./recipe";
 import { checkAdditionalLoginAttemptInfoProperties } from "./utils";
@@ -353,7 +354,7 @@ const LinkClicked = PasswordlessPreBuiltUI.LinkClicked;
 const MfaOtpPhone = PasswordlessPreBuiltUI.MfaOtpPhone;
 const MfaOtpEmail = PasswordlessPreBuiltUI.MfaOtpEmail;
 
-export { LinkClicked, MfaOtpPhone, MfaOtpEmail, MFAThemeWrapper as MFAOTPTheme };
+export { LinkClicked, MfaOtpPhone, MfaOtpEmail, MFAThemeWrapper as MFAOTPTheme, ThemeBase };
 
 function getAllChoices(choices: string[]): string[][] {
     if (choices.length === 0) {

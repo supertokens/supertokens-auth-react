@@ -8,6 +8,7 @@ import { SessionAuth } from "../session";
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import { default as MFATOTPFeature } from "./components/features/mfa";
 import MFATOTPTheme from "./components/themes/mfa";
+import { ThemeBase } from "./components/themes/themeBase";
 import { defaultTranslationsTOTP } from "./components/themes/translations";
 import { DEFAULT_TOTP_PATH } from "./constants";
 import TOTPRecipe from "./recipe";
@@ -107,4 +108,4 @@ export class TOTPPreBuiltUI extends RecipeRouter {
 
 const MFATOTP = TOTPPreBuiltUI.MFATOTP;
 
-export { MFATOTP, MFATOTPTheme };
+export { MFATOTP, MFATOTPTheme, ThemeBase };

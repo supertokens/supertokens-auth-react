@@ -1,6 +1,7 @@
 /// <reference types="react" />
 import { RecipeRouter } from "../recipeRouter";
 import MFAThemeWrapper from "./components/themes/mfa";
+import { ThemeBase } from "./components/themes/themeBase";
 import Passwordless from "./recipe";
 import type { LoginAttemptInfo } from "./types";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
@@ -148,4 +149,4 @@ declare const MfaOtpEmail: (
         userContext?: UserContext;
     }>
 ) => JSX.Element;
-export { LinkClicked, MfaOtpPhone, MfaOtpEmail, MFAThemeWrapper as MFAOTPTheme };
+export { LinkClicked, MfaOtpPhone, MfaOtpEmail, MFAThemeWrapper as MFAOTPTheme, ThemeBase };

@@ -1,6 +1,7 @@
 /// <reference types="react" />
 import { RecipeRouter } from "../recipeRouter";
 import ResetPasswordUsingTokenThemeWrapper from "./components/themes/resetPasswordUsingToken";
+import { ThemeBase } from "./components/themes/themeBase";
 import EmailPassword from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
@@ -138,4 +139,4 @@ declare const ResetPasswordUsingToken: (
         userContext?: UserContext;
     }>
 ) => JSX.Element;
-export { ResetPasswordUsingToken, ResetPasswordUsingTokenThemeWrapper as ResetPasswordUsingTokenTheme };
+export { ResetPasswordUsingToken, ResetPasswordUsingTokenThemeWrapper as ResetPasswordUsingTokenTheme, ThemeBase };

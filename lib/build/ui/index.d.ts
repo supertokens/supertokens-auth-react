@@ -4,6 +4,7 @@ import { AuthPageTheme } from "../recipe/authRecipe/components/theme/authPage";
 import { AuthPageComponentList } from "../recipe/authRecipe/components/theme/authPage/authPageComponentList";
 import { AuthPageFooter } from "../recipe/authRecipe/components/theme/authPage/authPageFooter";
 import { AuthPageHeader } from "../recipe/authRecipe/components/theme/authPage/authPageHeader";
+import { ThemeBase } from "../recipe/authRecipe/components/theme/themeBase";
 import type { PreBuiltRecipes, ReactRouterDomWithCustomHistory } from "./types";
 import type { AuthPageProps } from "../recipe/authRecipe/components/feature/authPage/authPage";
 import type { AuthPageThemeProps } from "../recipe/authRecipe/types";
@@ -78,4 +79,5 @@ export {
     AuthPageComponentList,
     AuthRecipeComponentsOverrideContextProvider,
     AuthPageThemeProps,
+    ThemeBase,
 };

@@ -10,6 +10,7 @@ import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import SignInAndUpFeature from "./components/features/signInAndUp";
 import SignInAndUpCallbackFeature from "./components/features/signInAndUpCallback";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
+import { ThemeBase } from "./components/themes/themeBase";
 import { defaultTranslationsThirdParty } from "./components/themes/translations";
 import ThirdParty from "./recipe";
 import { matchRecipeIdUsingState } from "./utils";
@@ -127,4 +128,4 @@ export class ThirdPartyPreBuiltUI extends RecipeRouter {
 
 const SignInAndUpCallback = ThirdPartyPreBuiltUI.SignInAndUpCallback;
 
-export { SignInAndUpCallback, SignInAndUpCallbackTheme };
+export { SignInAndUpCallback, SignInAndUpCallbackTheme, ThemeBase };

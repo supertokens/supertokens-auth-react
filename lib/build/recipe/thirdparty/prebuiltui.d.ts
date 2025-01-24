@@ -1,6 +1,7 @@
 /// <reference types="react" />
 import { RecipeRouter } from "../recipeRouter";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
+import { ThemeBase } from "./components/themes/themeBase";
 import ThirdParty from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
@@ -78,4 +79,4 @@ declare const SignInAndUpCallback: (
         userContext?: UserContext;
     }>
 ) => JSX.Element;
-export { SignInAndUpCallback, SignInAndUpCallbackTheme };
+export { SignInAndUpCallback, SignInAndUpCallbackTheme, ThemeBase };

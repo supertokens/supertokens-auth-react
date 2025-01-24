@@ -1,6 +1,7 @@
 /// <reference types="react" />
 import { RecipeRouter } from "../recipeRouter";
 import { AccessDeniedScreenTheme } from "./components/themes/accessDeniedScreenTheme";
+import { ThemeBase } from "./components/themes/themeBase";
 import Session from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { RecipeFeatureComponentMap, FeatureBaseProps, UserContext } from "../../types";
@@ -75,4 +76,4 @@ declare const AccessDeniedScreen: (
         userContext?: UserContext;
     }>
 ) => React.ReactElement;
-export { AccessDeniedScreen, AccessDeniedScreenTheme };
+export { AccessDeniedScreen, AccessDeniedScreenTheme, ThemeBase };

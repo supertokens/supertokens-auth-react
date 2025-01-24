@@ -1,5 +1,6 @@
 /// <reference types="react" />
 import { RecipeRouter } from "../recipeRouter";
+import { ThemeBase } from "./components/themes/themeBase";
 import OAuth2ProviderRecipe from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { FeatureBaseProps, RecipeFeatureComponentMap, UserContext } from "../../types";
@@ -68,4 +69,4 @@ declare const TryRefreshPage: (
         userContext?: UserContext;
     }>
 ) => JSX.Element;
-export { TryRefreshPage };
+export { TryRefreshPage, ThemeBase };

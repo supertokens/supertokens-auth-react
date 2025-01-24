@@ -5,6 +5,7 @@ import { RecipeRouter } from "../recipeRouter";
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import AccessDeniedScreenFeature from "./components/features/accessDeniedScreen";
 import { AccessDeniedScreenTheme } from "./components/themes/accessDeniedScreenTheme";
+import { ThemeBase } from "./components/themes/themeBase";
 import { defaultTranslationsSession } from "./components/themes/translations";
 import Session from "./recipe";
 
@@ -96,4 +97,4 @@ export class SessionPreBuiltUI extends RecipeRouter {
 
 const AccessDeniedScreen = SessionPreBuiltUI.AccessDeniedScreen;
 
-export { AccessDeniedScreen, AccessDeniedScreenTheme };
+export { AccessDeniedScreen, AccessDeniedScreenTheme, ThemeBase };

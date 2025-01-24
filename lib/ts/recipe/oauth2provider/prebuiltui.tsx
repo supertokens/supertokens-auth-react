@@ -8,6 +8,7 @@ import { SessionAuth } from "../session";
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import { default as OAuth2LogoutScreen } from "./components/features/oauth2LogoutScreen";
 import { default as TryRefreshPageFeature } from "./components/features/tryRefreshPage";
+import { ThemeBase } from "./components/themes/themeBase";
 import { defaultTranslationsOAuth2Provider } from "./components/themes/translations";
 import { DEFAULT_TRY_REFRESH_PATH, DEFAULT_OAUTH2_LOGOUT_PATH } from "./constants";
 import OAuth2ProviderRecipe from "./recipe";
@@ -137,4 +138,4 @@ export class OAuth2ProviderPreBuiltUI extends RecipeRouter {
 
 const TryRefreshPage = OAuth2ProviderPreBuiltUI.TryRefreshPage;
 
-export { TryRefreshPage };
+export { TryRefreshPage, ThemeBase };

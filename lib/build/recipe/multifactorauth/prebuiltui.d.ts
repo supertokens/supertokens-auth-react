@@ -1,6 +1,7 @@
 /// <reference types="react" />
 import { RecipeRouter } from "../recipeRouter";
 import FactorChooserThemeWrapper from "./components/themes/factorChooser";
+import { ThemeBase } from "./components/themes/themeBase";
 import MultiFactorAuthRecipe from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { FeatureBaseProps, RecipeFeatureComponentMap, UserContext } from "../../types";
@@ -70,4 +71,4 @@ declare const FactorChooser: (
         userContext?: UserContext;
     }>
 ) => JSX.Element;
-export { FactorChooser, FactorChooserThemeWrapper as FactorChooserTheme };
+export { FactorChooser, FactorChooserThemeWrapper as FactorChooserTheme, ThemeBase };

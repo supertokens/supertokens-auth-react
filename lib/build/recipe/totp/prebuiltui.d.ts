@@ -1,6 +1,7 @@
 /// <reference types="react" />
 import { RecipeRouter } from "../recipeRouter";
 import MFATOTPTheme from "./components/themes/mfa";
+import { ThemeBase } from "./components/themes/themeBase";
 import TOTPRecipe from "./recipe";
 import type { GenericComponentOverrideMap } from "../../components/componentOverride/componentOverrideContext";
 import type { FeatureBaseProps, RecipeFeatureComponentMap, UserContext } from "../../types";
@@ -82,4 +83,4 @@ declare const MFATOTP: (
         userContext?: UserContext;
     }>
 ) => JSX.Element;
-export { MFATOTP, MFATOTPTheme };
+export { MFATOTP, MFATOTPTheme, ThemeBase };
