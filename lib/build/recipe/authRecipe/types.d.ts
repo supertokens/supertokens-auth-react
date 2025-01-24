@@ -3,18 +3,8 @@ import type { AuthPageComponentList } from "./components/theme/authPage/authPage
 import type { AuthPageFooter } from "./components/theme/authPage/authPageFooter";
 import type { AuthPageHeader } from "./components/theme/authPage/authPageHeader";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type {
-    AuthComponentProps,
-    Navigate,
-    PartialAuthComponentProps,
-    SuccessRedirectContext,
-    UserContext,
-} from "../../types";
-import type {
-    Config as RecipeModuleConfig,
-    NormalisedConfig as NormalisedRecipeModuleConfig,
-    UserInput as UserInputRecipeModule,
-} from "../recipeModule/types";
+import type { AuthComponentProps, Navigate, PartialAuthComponentProps, SuccessRedirectContext, UserContext } from "../../types";
+import type { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig, UserInput as UserInputRecipeModule } from "../recipeModule/types";
 export declare type UserInput<T, Action, R> = UserInputRecipeModule<T, Action, R>;
 export declare type Config<T, S, R> = UserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
 export declare type NormalisedConfig<T, Action, R> = NormalisedRecipeModuleConfig<T, Action, R>;
@@ -25,17 +15,12 @@ export declare type ComponentOverrideMap = {
     AuthPageComponentList_Override?: ComponentOverride<typeof AuthPageComponentList>;
 };
 declare type ComponentWithPreloadInfo<T> = {
-    component: React.FC<
-        AuthComponentProps & {
-            preloadInfo: T;
-        }
-    >;
+    component: React.FC<AuthComponentProps & {
+        preloadInfo: T;
+    }>;
     preloadInfo: T;
 };
-export declare type AuthSuccessContext = Omit<
-    SuccessRedirectContext,
-    "redirectToPath" | "action" | "loginChallenge" | "recipeId"
-> & {
+export declare type AuthSuccessContext = Omit<SuccessRedirectContext, "redirectToPath" | "action" | "loginChallenge" | "recipeId"> & {
     recipeId: string;
 };
 export declare type AuthPageThemeProps = {
