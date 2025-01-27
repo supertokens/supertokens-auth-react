@@ -34,14 +34,7 @@ function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
 
     const callAPI = React.useCallback(
         async (_: APIFormField[], __: (id: string, value: string) => any) => {
-            const email = prompt("Enter email ID");
-            if (email === null) {
-                alert("Please enter an email");
-                return;
-            }
-
             const response = await props.recipeImplementation.authenticateCredentialWithSignIn({
-                email: email,
                 userContext,
             });
 
