@@ -1169,6 +1169,14 @@ function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus }) {
                         log(`GET REGISTER OPTIONS`);
                         return implementation.getRegisterOptions(...args);
                     },
+                    getSignInOptions(...args) {
+                        log(`GET SIGN IN OPTIONS`);
+                        return implementation.getSignInOptions(...args);
+                    },
+                    signIn(...args) {
+                        log(`SIGN IN`);
+                        return implementation.signIn(...args);
+                    },
                     registerCredentialWithSignUp(...args) {
                         log(`GET REGISTER OPTIONS WITH SIGN UP`);
 
@@ -1186,6 +1194,27 @@ function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus }) {
 
                         // We are mocking the popup since it's not possible to
                         // test the webauthn popup.
+                        return {
+                            status: "OK",
+                            user: {},
+                            fetchResponse: {},
+                        };
+                    },
+                    authenticateCredentialWithSignIn(...args) {
+                        log(`AUTHENTICATE CREDENTIAL WITH SIGN IN`);
+
+                        // We will throw an error if it is asked for.
+                        if (throwWebauthnError) {
+                            throw new STGeneralError("TEST ERROR");
+                        }
+
+                        // Return error status if the user passed that.
+                        if (webauthnErrorStatus) {
+                            return {
+                                status: webauthnErrorStatus,
+                            };
+                        }
+
                         return {
                             status: "OK",
                             user: {},

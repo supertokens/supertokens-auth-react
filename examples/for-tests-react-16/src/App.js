@@ -15,6 +15,8 @@ import UserRoles from "supertokens-auth-react/recipe/userroles";
 import Multitenancy from "supertokens-auth-react/recipe/multitenancy";
 import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
 import TOTP from "supertokens-auth-react/recipe/totp";
+import STGeneralError from "supertokens-web-js/lib/build/error";
+import Webauthn from "supertokens-auth-react/recipe/webauthn";
 
 import axios from "axios";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
@@ -259,6 +261,9 @@ if (enabledRecipes.includes("emailpassword") || enabledRecipes.includes("thirdpa
 }
 if (enabledRecipes.includes("passwordless") || enabledRecipes.includes("thirdpartypasswordless")) {
     recipeList = [getPasswordlessConfigs(testContext), ...recipeList];
+}
+if (enabledRecipes.includes("webauthn")) {
+    recipeList = [getWebauthnConfigs(testContext), ...recipeList];
 }
 if (emailVerificationMode !== "OFF") {
     recipeList.push(getEmailVerificationConfigs(testContext));
@@ -881,6 +886,106 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
 
         oAuthCallbackScreen: {
             style: theme.style,
+        },
+    });
+}
+
+function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus }) {
+    return Webauthn.init({
+        style: `          
+            [data-supertokens~=container] {
+                font-family: cursive;
+            }
+        `,
+        override: {
+            functions: (implementation) => {
+                const log = logWithPrefix(`ST_LOGS WEBAUTHN OVERRIDE`);
+
+                return {
+                    ...implementation,
+                    getRegisterOptions(...args) {
+                        log(`GET REGISTER OPTIONS`);
+                        return implementation.getRegisterOptions(...args);
+                    },
+                    getSignInOptions(...args) {
+                        log(`GET SIGN IN OPTIONS`);
+                        return implementation.getSignInOptions(...args);
+                    },
+                    signIn(...args) {
+                        log(`SIGN IN`);
+                        return implementation.signIn(...args);
+                    },
+                    registerCredentialWithSignUp(...args) {
+                        log(`GET REGISTER OPTIONS WITH SIGN UP`);
+
+                        // We will throw an error if it is asked for.
+                        if (throwWebauthnError) {
+                            throw new STGeneralError("TEST ERROR");
+                        }
+
+                        // Return error status if the user passed that.
+                        if (webauthnErrorStatus) {
+                            return {
+                                status: webauthnErrorStatus,
+                            };
+                        }
+
+                        // We are mocking the popup since it's not possible to
+                        // test the webauthn popup.
+                        return {
+                            status: "OK",
+                            user: {},
+                            fetchResponse: {},
+                        };
+                    },
+                    authenticateCredentialWithSignIn(...args) {
+                        log(`AUTHENTICATE CREDENTIAL WITH SIGN IN`);
+
+                        // We will throw an error if it is asked for.
+                        if (throwWebauthnError) {
+                            throw new STGeneralError("TEST ERROR");
+                        }
+
+                        // Return error status if the user passed that.
+                        if (webauthnErrorStatus) {
+                            return {
+                                status: webauthnErrorStatus,
+                            };
+                        }
+
+                        return {
+                            status: "OK",
+                            user: {},
+                            fetchResponse: {},
+                        };
+                    },
+                };
+            },
+        },
+        preAPIHook: async (context) => {
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`)?.includes(context.action)) {
+                let errorFromStorage = localStorage.getItem("TRANSLATED_GENERAL_ERROR");
+
+                if (context.action === "EMAIL_EXISTS") {
+                    context.url += "&generalError=true";
+                } else {
+                    let jsonBody = JSON.parse(context.requestInit.body);
+                    jsonBody = {
+                        ...jsonBody,
+                        generalError: true,
+                        generalErrorMessage: errorFromStorage === null ? undefined : errorFromStorage,
+                    };
+                    context.requestInit.body = JSON.stringify(jsonBody);
+                }
+            }
+            console.log(`ST_LOGS WEBAUTHN PRE_API_HOOKS ${context.action}`);
+            return context;
+        },
+        getRedirectionURL: async (context) => {
+            console.log(`ST_LOGS WEBAUTHN GET_REDIRECTION_URL ${context.action}`);
+        },
+        onHandleEvent: async (context) => {
+            console.log(`ST_LOGS WEBAUTHN ON_HANDLE_EVENT ${context.action}`);
         },
     });
 }
