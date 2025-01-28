@@ -95,5 +95,13 @@ describe("SuperTokens Webauthn SignIn", () => {
             await tryWebauthnSignIn(page);
             await waitForSTElement(page, "[data-supertokens~='passkeyRecoverableErrorContainer']");
         });
+        it("should show general error in the same view", async () => {
+            // Set the error to be thrown
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("throwWebauthnError", "true");
+            });
+            await tryWebauthnSignIn(page);
+            await waitForSTElement(page, "[data-supertokens~='passkeyRecoverableErrorContainer']");
+        });
     });
 });
