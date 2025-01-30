@@ -6,7 +6,7 @@ import {
     screenshotOnFailure,
     clearBrowserCookiesWithoutAffectingConsole,
     toggleSignInSignUp,
-    getTestEmail,
+    setEnabledRecipes,
     waitForSTElement,
     submitForm,
 } from "../helpers";
@@ -24,6 +24,8 @@ describe("SuperTokens Webauthn SignIn", () => {
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
         }).catch(console.error);
+
+        await setEnabledRecipes(["webauthn", "emailpassword", "session", "dashboard", "userroles"]);
 
         browser = await setupBrowser();
         page = await browser.newPage();
@@ -57,13 +59,28 @@ describe("SuperTokens Webauthn SignIn", () => {
     });
 
     describe("SignIn test", () => {
-        it("should be able to sign in with webauthn", async () => {
+        it("signup with passkey", async () => {
             await tryWebauthnSignIn(page);
+
+            // Most of the sign-in mock is defined in the override for the web
+            // test server.
+            //
+            // In here, we are just asserting the logs to ensure that all the necessary
+            // functions are being called in the correct order and all of them are present.
+
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS WEBAUTHN OVERRIDE AUTHENTICATE CREDENTIAL WITH SIGN IN",
-                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
+                "ST_LOGS WEBAUTHN OVERRIDE GET SIGN IN OPTIONS",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS SIGN_IN_OPTIONS",
+                "ST_LOGS WEBAUTHN OVERRIDE AUTHENTICATE CREDENTIAL",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS REGISTER_OPTIONS",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS SIGN_UP",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS WEBAUTHN OVERRIDE SIGN IN",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS SIGN_IN",
             ]);
         });
         it("should recover successfully from a recoverable error", async () => {

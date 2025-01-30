@@ -1169,11 +1169,55 @@ function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus }) {
                         log(`GET REGISTER OPTIONS`);
                         return implementation.getRegisterOptions(...args);
                     },
-                    getSignInOptions(...args) {
+                    async getSignInOptions(...args) {
                         log(`GET SIGN IN OPTIONS`);
                         return implementation.getSignInOptions(...args);
                     },
-                    signIn(...args) {
+                    async authenticateCredential(...args) {
+                        log("AUTHENTICATE CREDENTIAL");
+
+                        // We will make a network call to get the registration options
+                        // for sign up.
+                        // Then we will use the registrationOptions and the passed args
+                        // to create and assert a credential.
+
+                        const email = `${Math.random().toString().slice(2)}@supertokens.com`;
+                        const registrationOptions = await implementation.getRegisterOptions({
+                            userContext: {},
+                            email,
+                        });
+                        const signInOptions = args[0].authenticationOptions;
+
+                        const response = await fetch(`${getApiDomain()}/test/webauthn/create-and-assert-credential`, {
+                            method: "POST",
+                            body: JSON.stringify({
+                                registerOptionsResponse: registrationOptions,
+                                signInOptionsResponse: signInOptions,
+                                rpId: "localhost",
+                                rpName: "localhost",
+                                origin: "http://localhost:3031",
+                            }),
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        });
+
+                        if (!response.ok) {
+                            throw new STGeneralError("TEST ERROR: CREATING CREDENTIAL FAILED");
+                        }
+
+                        const { attestation, assertion } = (await response.json()).credential;
+
+                        // Sign up the user using the attestation;
+                        await implementation.signUp({
+                            webauthnGeneratedOptionsId: registrationOptions.webauthnGeneratedOptionsId,
+                            credential: attestation,
+                            userContext: {},
+                        });
+
+                        return { authenticationResponse: assertion, status: "OK" };
+                    },
+                    async signIn(...args) {
                         log(`SIGN IN`);
                         return implementation.signIn(...args);
                     },
@@ -1215,11 +1259,7 @@ function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus }) {
                             };
                         }
 
-                        return {
-                            status: "OK",
-                            user: {},
-                            fetchResponse: {},
-                        };
+                        return implementation.authenticateCredentialWithSignIn(...args);
                     },
                 };
             },

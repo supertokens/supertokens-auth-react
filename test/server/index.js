@@ -21,7 +21,6 @@ const { default: ThirdPartyRaw } = require("supertokens-node/lib/build/recipe/th
 const { default: SessionRaw } = require("supertokens-node/lib/build/recipe/session/recipe");
 let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
-// let Webauthn = require("supertokens-node/recipe/webauthn");
 let ThirdParty = require("supertokens-node/recipe/thirdparty");
 let EmailVerification = require("supertokens-node/recipe/emailverification");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
@@ -45,9 +44,13 @@ let {
 } = require("./utils");
 let { version: nodeSDKVersion } = require("supertokens-node/lib/build/version");
 const fetch = require("isomorphic-fetch");
+const { readFile } = require("fs/promises");
 
 const PasswordlessRaw = require("supertokens-node/lib/build/recipe/passwordless/recipe").default;
 const Passwordless = require("supertokens-node/recipe/passwordless");
+
+const WebauthnRaw = require("supertokens-node/lib/build/recipe/webauthn/recipe").default;
+const Webauthn = require("supertokens-node/recipe/webauthn");
 
 const UserRolesRaw = require("supertokens-node/lib/build/recipe/userroles/recipe").default;
 const UserRoles = require("supertokens-node/recipe/userroles");
@@ -77,6 +80,8 @@ try {
 }
 
 const OTPAuth = require("otpauth");
+
+require("./webauthn/wasm_exec");
 
 let generalErrorSupported;
 
@@ -518,6 +523,46 @@ app.post("/test/create-oauth2-client", async (req, res, next) => {
     }
 });
 
+app.post("/test/webauthn/create-and-assert-credential", async (req, res) => {
+    try {
+        const { registerOptionsResponse, signInOptionsResponse, rpId, rpName, origin } = req.body;
+
+        const { createAndAssertCredential } = await getWebauthnLib();
+        const credential = createAndAssertCredential(registerOptionsResponse, signInOptionsResponse, {
+            rpId,
+            rpName,
+            origin,
+            userNotPresent: false,
+            userNotVerified: false,
+        });
+
+        res.send({ credential });
+    } catch (error) {
+        console.error("Error in create-and-assert-credential:", error);
+        res.status(500).send({ error: error.message });
+    }
+});
+
+app.post("/test/webauthn/create-credential", async (req, res) => {
+    try {
+        const { registerOptionsResponse, rpId, rpName, origin } = req.body;
+
+        const { createCredential } = await getWebauthnLib();
+        const credential = createCredential(registerOptionsResponse, {
+            rpId,
+            rpName,
+            origin,
+            userNotPresent: false,
+            userNotVerified: false,
+        });
+
+        res.send({ credential });
+    } catch (error) {
+        console.error("Error in create-credential:", error);
+        res.status(500).send({ error: error.message });
+    }
+});
+
 app.use(errorHandler());
 
 app.use(async (err, req, res, next) => {
@@ -556,6 +601,7 @@ function initST() {
 
         UserRolesRaw.reset();
         PasswordlessRaw.reset();
+        WebauthnRaw.reset();
         MultitenancyRaw.reset();
         AccountLinkingRaw.reset();
         UserMetadataRaw.reset();
@@ -699,22 +745,21 @@ function initST() {
                 },
             }),
         ],
-        // [
-        //     "webauthn",
-        //     Webauthn.init({
-        //         emailDelivery: {
-        //             override: (oI) => {
-        //                 return {
-        //                     ...oI,
-        //                     sendEmail: async (input) => {
-        //                         console.log(input.passwordResetLink);
-        //                         latestURLWithToken = input.passwordResetLink;
-        //                     },
-        //                 };
-        //             },
-        //         },
-        //     })
-        // ],
+        [
+            "webauthn",
+            Webauthn.init({
+                emailDelivery: {
+                    override: (oI) => {
+                        return {
+                            ...oI,
+                            sendEmail: async (input) => {
+                                console.log(input);
+                            },
+                        };
+                    },
+                },
+            }),
+        ],
         [
             "thirdparty",
             ThirdParty.init({
@@ -974,3 +1019,71 @@ function convertToRecipeUserIdIfAvailable(id) {
     }
     return id;
 }
+
+const getWebauthnLib = async () => {
+    const wasmBuffer = await readFile(__dirname + "/webauthn/webauthn.wasm");
+
+    // Set up the WebAssembly module instance
+    const go = new Go();
+    const { instance } = await WebAssembly.instantiate(wasmBuffer, go.importObject);
+    go.run(instance);
+
+    // Export extractURL from the global object
+    const createCredential = (
+        registerOptions,
+        { userNotPresent = true, userNotVerified = true, rpId, rpName, origin }
+    ) => {
+        const registerOptionsString = JSON.stringify(registerOptions);
+        const result = global.createCredential(
+            registerOptionsString,
+            rpId,
+            rpName,
+            origin,
+            userNotPresent,
+            userNotVerified
+        );
+
+        if (!result) {
+            throw new Error("Failed to create credential");
+        }
+
+        try {
+            const credential = JSON.parse(result);
+            return credential;
+        } catch (e) {
+            throw new Error("Failed to parse credential");
+        }
+    };
+
+    const createAndAssertCredential = (
+        registerOptions,
+        signInOptions,
+        { userNotPresent = false, userNotVerified = false, rpId, rpName, origin }
+    ) => {
+        const registerOptionsString = JSON.stringify(registerOptions);
+        const signInOptionsString = JSON.stringify(signInOptions);
+
+        const result = global.createAndAssertCredential(
+            registerOptionsString,
+            signInOptionsString,
+            rpId,
+            rpName,
+            origin,
+            userNotPresent,
+            userNotVerified
+        );
+
+        if (!result) {
+            throw new Error("Failed to create/assert credential");
+        }
+
+        try {
+            const parsedResult = JSON.parse(result);
+            return { attestation: parsedResult.attestation, assertion: parsedResult.assertion };
+        } catch (e) {
+            throw new Error("Failed to parse result");
+        }
+    };
+
+    return { createCredential, createAndAssertCredential };
+};
