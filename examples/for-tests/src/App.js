@@ -1154,11 +1154,6 @@ function setIsNewUserToStorage(recipeName, isNewRecipeUser) {
 
 function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus }) {
     return Webauthn.init({
-        style: `          
-            [data-supertokens~=container] {
-                font-family: cursive;
-            }
-        `,
         override: {
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS WEBAUTHN OVERRIDE`);

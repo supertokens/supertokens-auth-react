@@ -1,5 +1,5 @@
 import { TEST_CLIENT_BASE_URL } from "../constants";
-import { toggleSignInSignUp, setInputValues, submitForm } from "../helpers";
+import { toggleSignInSignUp, setInputValues, submitForm, waitForSTElement } from "../helpers";
 
 export async function tryWebauthnSignUp(page, email) {
     await Promise.all([
@@ -22,5 +22,18 @@ export async function tryWebauthnSignIn(page) {
     ]);
 
     await submitForm(page);
+    await new Promise((res) => setTimeout(res, 1000));
+}
+
+export async function openRecoveryAccountPage(page) {
+    await Promise.all([
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=webauthn`),
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
+    ]);
+
+    await toggleSignInSignUp(page);
+
+    const recoverAccountLink = await waitForSTElement(page, "[data-supertokens~='recoverAccountTrigger']");
+    await recoverAccountLink.click();
     await new Promise((res) => setTimeout(res, 1000));
 }
