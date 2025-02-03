@@ -1271,7 +1271,9 @@ function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus }) {
                             };
                         }
 
-                        return implementation.generateRecoverAccountToken(...args);
+                        return {
+                            status: "OK",
+                        };
                     },
                 };
             },
