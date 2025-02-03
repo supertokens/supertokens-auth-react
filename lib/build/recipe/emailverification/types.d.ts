@@ -2,11 +2,7 @@ import type { SendVerifyEmail } from "./components/themes/emailVerification/send
 import type { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type { FeatureBaseConfig, NormalisedGetRedirectionURLContext, ThemeBaseProps, UserContext } from "../../types";
-import type {
-    Config as RecipeModuleConfig,
-    NormalisedConfig as NormalisedRecipeModuleConfig,
-    UserInput as RecipeModuleUserInput,
-} from "../recipeModule/types";
+import type { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig, UserInput as RecipeModuleUserInput } from "../recipeModule/types";
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 export declare type ComponentOverrideMap = {
@@ -19,24 +15,17 @@ export declare type UserInput = {
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
     override?: {
-        functions?: (
-            originalImplementation: RecipeInterface,
-            builder: OverrideableBuilder<RecipeInterface>
-        ) => RecipeInterface;
+        functions?: (originalImplementation: RecipeInterface, builder: OverrideableBuilder<RecipeInterface>) => RecipeInterface;
     };
 } & RecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-export declare type Config = UserInput &
-    RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+export declare type Config = UserInput & RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     mode: "OPTIONAL" | "REQUIRED";
     disableDefaultUI: boolean;
     sendVerifyEmailScreen: FeatureBaseConfig;
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
     override: {
-        functions: (
-            originalImplementation: RecipeInterface,
-            builder: OverrideableBuilder<RecipeInterface>
-        ) => RecipeInterface;
+        functions: (originalImplementation: RecipeInterface, builder: OverrideableBuilder<RecipeInterface>) => RecipeInterface;
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<{

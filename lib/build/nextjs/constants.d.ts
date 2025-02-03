@@ -1,0 +1,13 @@
+export declare const ACCESS_TOKEN_COOKIE_NAME = "sAccessToken";
+export declare const ACCESS_TOKEN_HEADER_NAME = "st-access-token";
+export declare const FRONT_TOKEN_COOKIE_NAME = "sFrontToken";
+export declare const FRONT_TOKEN_HEADER_NAME = "front-token";
+export declare const REFRESH_TOKEN_COOKIE_NAME = "sRefreshToken";
+export declare const REFRESH_TOKEN_HEADER_NAME = "st-refresh-token";
+export declare const ANTI_CSRF_TOKEN_COOKIE_NAME = "sAntiCsrf";
+export declare const ANTI_CSRF_TOKEN_HEADER_NAME = "anti-csrf";
+export declare const REDIRECT_ATTEMPT_MAX_COUNT = 5;
+export declare const REDIRECT_ATTEMPT_COUNT_COOKIE_NAME = "sSsrSessionRefreshAttempt";
+export declare const CURRENT_PATH_COOKIE_NAME = "sCurrentPath";
+export declare const FORCE_LOGOUT_PATH_PARAM_NAME = "forceLogout";
+export declare const REDIRECT_PATH_PARAM_NAME = "stRedirectTo";

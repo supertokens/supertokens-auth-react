@@ -7,10 +7,7 @@ export declare type TranslationEventMap = {
     LanguageChange: string;
     TranslationLoaded: TranslationStore;
 };
-export declare type TranslationEventHandler<K extends keyof TranslationEventMap> = (
-    event: K,
-    detail: TranslationEventMap[K]
-) => void;
+export declare type TranslationEventHandler<K extends keyof TranslationEventMap> = (event: K, detail: TranslationEventMap[K]) => void;
 export declare type TranslationControlEventSource = {
     on: <K extends keyof TranslationEventMap>(event: K, handler: TranslationEventHandler<K>) => void;
     off: <K extends keyof TranslationEventMap>(event: K, handler: TranslationEventHandler<K>) => void;

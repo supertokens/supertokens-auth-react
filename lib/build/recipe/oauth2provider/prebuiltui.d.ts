@@ -37,35 +37,21 @@ export declare class OAuth2ProviderPreBuiltUI extends RecipeRouter {
     constructor(recipeInstance: OAuth2ProviderRecipe);
     static getInstanceOrInitAndGetInstance(): OAuth2ProviderPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
-    static getFeatureComponent(
-        componentName: "try-refresh-page" | "oauth2-logout-screen",
-        props: any,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ): JSX.Element;
+    static getFeatureComponent(componentName: "try-refresh-page" | "oauth2-logout-screen", props: any, useComponentOverrides?: () => GenericComponentOverrideMap<any>): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
-    getFeatureComponent: (
-        componentName: "try-refresh-page" | "oauth2-logout-screen",
-        props: FeatureBaseProps<{
-            userContext?: UserContext;
-        }>,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ) => JSX.Element;
+    getFeatureComponent: (componentName: "try-refresh-page" | "oauth2-logout-screen", props: FeatureBaseProps<{
+        userContext?: UserContext;
+    }>, useComponentOverrides?: () => GenericComponentOverrideMap<any>) => JSX.Element;
     getAuthComponents(): AuthComponent[];
     static reset(): void;
-    static TryRefreshPage: (
-        props: FeatureBaseProps<{
-            userContext?: UserContext;
-        }>
-    ) => JSX.Element;
-    static OAuth2LogoutScreen: (
-        props: FeatureBaseProps<{
-            userContext?: UserContext;
-        }>
-    ) => JSX.Element;
-}
-declare const TryRefreshPage: (
-    props: FeatureBaseProps<{
+    static TryRefreshPage: (props: FeatureBaseProps<{
         userContext?: UserContext;
-    }>
-) => JSX.Element;
+    }>) => JSX.Element;
+    static OAuth2LogoutScreen: (props: FeatureBaseProps<{
+        userContext?: UserContext;
+    }>) => JSX.Element;
+}
+declare const TryRefreshPage: (props: FeatureBaseProps<{
+    userContext?: UserContext;
+}>) => JSX.Element;
 export { TryRefreshPage };
