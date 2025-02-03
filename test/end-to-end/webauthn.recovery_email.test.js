@@ -6,9 +6,8 @@ import {
     screenshotOnFailure,
     clearBrowserCookiesWithoutAffectingConsole,
     toggleSignInSignUp,
-    setEnabledRecipes,
     waitForSTElement,
-    submitForm,
+    getTestEmail,
 } from "../helpers";
 import { tryWebauthnSignIn, openRecoveryAccountPage } from "./webauthn.helpers";
 import assert from "assert";
@@ -58,7 +57,7 @@ describe("SuperTokens Webauthn Recovery Email", () => {
 
     describe("Recovery Email Test", () => {
         it("should show the recovery email page", async () => {
-            await openRecoveryAccountPage(page);
+            await openRecoveryAccountPage(page, null, false);
 
             const headerTextContainer = await waitForSTElement(
                 page,
@@ -71,6 +70,38 @@ describe("SuperTokens Webauthn Recovery Email", () => {
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS WEBAUTHN GET_REDIRECTION_URL SEND_RECOVERY_EMAIL",
             ]);
+        });
+        it("should show error when recovery is not allowed", async () => {
+            // Set the error to be thrown
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("webauthnErrorStatus", "RECOVER_ACCOUNT_NOT_ALLOWED");
+            });
+            const email = await getTestEmail();
+            await openRecoveryAccountPage(page, email, true);
+
+            const errorTextContainer = await waitForSTElement(
+                page,
+                "[data-supertokens~='passkeyRecoverableErrorContainer']"
+            );
+            const errorText = await errorTextContainer.evaluate((el) => el.textContent);
+            assert.strictEqual(errorText, "Account Recovery is not allowed, please contact support.");
+        });
+        it("should show general error if error is thrown", async () => {
+            // Set the error to be thrown
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("throwWebauthnError", "true");
+            });
+            const email = await getTestEmail();
+            await openRecoveryAccountPage(page, email, true);
+            const errorTextContainer = await waitForSTElement(
+                page,
+                "[data-supertokens~='passkeyRecoverableErrorContainer']"
+            );
+            const errorText = await errorTextContainer.evaluate((el) => el.textContent);
+            assert.strictEqual(
+                errorText,
+                "Something went wrong while trying to send recover account token, please try again."
+            );
         });
     });
 });

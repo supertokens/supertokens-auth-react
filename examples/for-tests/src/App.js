@@ -1256,6 +1256,23 @@ function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus }) {
 
                         return implementation.authenticateCredentialWithSignIn(...args);
                     },
+                    generateRecoverAccountToken(...args) {
+                        log(`GENERATE RECOVER ACCOUNT TOKEN`);
+
+                        // We will throw an error if it is asked for.
+                        if (throwWebauthnError) {
+                            throw new STGeneralError("TEST ERROR");
+                        }
+
+                        // Return error status if the user passed that.
+                        if (webauthnErrorStatus) {
+                            return {
+                                status: webauthnErrorStatus,
+                            };
+                        }
+
+                        return implementation.generateRecoverAccountToken(...args);
+                    },
                 };
             },
         },

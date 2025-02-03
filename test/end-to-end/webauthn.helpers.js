@@ -25,7 +25,7 @@ export async function tryWebauthnSignIn(page) {
     await new Promise((res) => setTimeout(res, 1000));
 }
 
-export async function openRecoveryAccountPage(page) {
+export async function openRecoveryAccountPage(page, email = null, shouldSubmit = true) {
     await Promise.all([
         page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=webauthn`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -35,5 +35,13 @@ export async function openRecoveryAccountPage(page) {
 
     const recoverAccountLink = await waitForSTElement(page, "[data-supertokens~='recoverAccountTrigger']");
     await recoverAccountLink.click();
+    await new Promise((res) => setTimeout(res, 1000));
+
+    if (!shouldSubmit) {
+        return;
+    }
+
+    await setInputValues(page, [{ name: "email", value: email }]);
+    await submitForm(page);
     await new Promise((res) => setTimeout(res, 1000));
 }
