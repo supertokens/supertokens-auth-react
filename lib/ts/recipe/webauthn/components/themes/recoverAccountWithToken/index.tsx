@@ -20,11 +20,13 @@ import { SuperTokensBranding } from "../../../../../components/SuperTokensBrandi
 import SuperTokens from "../../../../../superTokens";
 import { AuthPageFooter, AuthPageHeader } from "../../../../../ui";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
+import { handleCallAPI } from "../../../../../utils";
 import { PasskeyConfirmation } from "../signUp/confirmation";
 import { ThemeBase } from "../themeBase";
 
 import { PasskeyRecoverAccountSuccess } from "./success";
 
+import type { FieldState } from "../../../../emailpassword/components/library/formBase";
 import type { RecoverAccountWithTokenThemeProps } from "../../../types";
 
 export enum RecoverAccountScreen {
@@ -48,6 +50,7 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
     const [errorMessageLabel, setErrorMessageLabel] = useState<string | null>(null);
     const [activeScreen, setActiveScreen] = useState<RecoverAccountScreen>(RecoverAccountScreen.ContinueWithPasskey);
     const [registerOptions, setRegisterOptions] = useState<RegisterOptions | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const onResetFactorList = () => {
         throw new Error("Should never come here as we don't have back functionality");
@@ -99,10 +102,7 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
         void fetchAndStoreRegisterOptions();
     }, []);
 
-    const onContinueClick = useCallback(async () => {
-        // TODO: Add support to make the network call and show the next screen based
-        // on that result.
-        //
+    const callAPI = useCallback(async () => {
         // We will do the following things in the order when the user clicks on the continue
         // button.
         // 1. Check if the fetched register options have expired
@@ -122,9 +122,85 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
             await fetchAndStoreRegisterOptions();
         }
 
-        // TODO: Do rest of the logic once recover flow is ready in core.
-        setActiveScreen(RecoverAccountScreen.Success);
-    }, [setActiveScreen]);
+        if (props.token === null) {
+            // The token should not be null because while fetching the register options
+            // we already checked for null and redirected to the sign in page if it is null.
+            throw new Error("Should never come here");
+        }
+
+        // Use the register options to register the credential and recover the account.
+        // We should have received a valid registration options response.
+        const registerCredentialResponse = await props.recipeImplementation.registerCredential({
+            registrationOptions: registerOptions,
+        });
+        if (registerCredentialResponse.status !== "OK") {
+            return registerCredentialResponse;
+        }
+
+        const recoverAccountResponse = await props.recipeImplementation.recoverAccount({
+            token: props.token,
+            webauthnGeneratedOptionsId: registerOptions.webauthnGeneratedOptionsId,
+            credential: registerCredentialResponse.registrationResponse,
+            userContext: props.userContext,
+        });
+
+        return recoverAccountResponse;
+    }, [fetchAndStoreRegisterOptions, props, registerOptions]);
+
+    const onContinueClick = useCallback(async () => {
+        const fieldUpdates: FieldState[] = [];
+        setIsLoading(true);
+
+        try {
+            const { result, generalError, fetchError } = await handleCallAPI<any>({
+                apiFields: [],
+                fieldUpdates,
+                callAPI: callAPI,
+            });
+
+            if (generalError !== undefined || fetchError !== undefined) {
+                setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_GENERAL_ERROR");
+            } else {
+                // If successful
+                if (result.status === "OK") {
+                    if (setIsLoading) {
+                        setIsLoading(false);
+                    }
+                    setActiveScreen(RecoverAccountScreen.Success);
+                } else {
+                    switch (result.status) {
+                        case "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR":
+                            setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_TOKEN_INVALID_ERROR");
+                            break;
+                        case "GENERAL_ERROR":
+                            setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_GENERAL_ERROR");
+                            break;
+                        case "INVALID_GENERATED_OPTIONS_ERROR":
+                            setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_INVALID_GENERATED_OPTIONS_ERROR");
+                            break;
+                        case "INVALID_CREDENTIALS_ERROR":
+                            setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_INVALID_CREDENTIALS_ERROR");
+                            break;
+                        case "GENERATED_OPTIONS_NOT_FOUND_ERROR":
+                            setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_GENERATED_OPTIONS_NOT_FOUND_ERROR");
+                            break;
+                        case "INVALID_AUTHENTICATOR_ERROR":
+                            setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_INVALID_AUTHENTICATOR_ERROR");
+                            break;
+                        default:
+                            throw new Error("Should never come here");
+                    }
+                    return;
+                }
+            }
+        } catch (e) {
+            setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_GENERAL_ERROR");
+        } finally {
+            if (setIsLoading) {
+                setIsLoading(false);
+            }
+        }
+    }, [callAPI]);
 
     return (
         <UserContextWrapper userContext={props.userContext}>
@@ -155,6 +231,7 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
                             errorMessageLabel={errorMessageLabel}
                             email={registerOptions?.user.name || null}
                             isContinueDisabled={registerOptions === null}
+                            isLoading={isLoading}
                         />
                         {activeScreen !== RecoverAccountScreen.Success && (
                             <AuthPageFooter
@@ -180,6 +257,7 @@ const RecoverAccountThemeInner = (
         errorMessageLabel: string | null;
         email: string | null;
         isContinueDisabled: boolean;
+        isLoading: boolean;
     }
 ) => {
     return props.activeScreen === RecoverAccountScreen.ContinueWithPasskey ? (
@@ -188,7 +266,7 @@ const RecoverAccountThemeInner = (
             email={props.email || undefined}
             onContinueClick={props.onContinueClick}
             errorMessageLabel={props.errorMessageLabel || undefined}
-            isLoading={false}
+            isLoading={props.isLoading}
             hideContinueWithoutPasskey
             isContinueDisabled={props.isContinueDisabled}
         />

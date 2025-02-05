@@ -40,5 +40,9 @@ export const defaultTranslationsWebauthn = {
         WEBAUTHN_ACCOUNT_RECOVERY_FETCH_ERROR: "Something went wrong, please refresh the page or reach out to support.",
         WEBAUTHN_SIGN_UP_CAUTION_MESSAGE_LABEL:
             "Make sure your email is correct—we’ll use it to help you recover your account.",
+        WEBAUTHN_ACCOUNT_RECOVERY_INVALID_CREDENTIALS_ERROR:
+            "The passkey is invalid, please try again, possibly with a different device.",
+        WEBAUTHN_ACCOUNT_RECOVERY_GENERATED_OPTIONS_NOT_FOUND_ERROR: "Failed to recover account, please try again.",
+        WEBAUTHN_ACCOUNT_RECOVERY_INVALID_AUTHENTICATOR_ERROR: "Invalid authenticator, please try again.",
     },
 };
