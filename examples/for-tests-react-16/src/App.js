@@ -955,6 +955,37 @@ function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus }) {
 
                         return { authenticationResponse: assertion, status: "OK" };
                     },
+                    async registerCredential(...args) {
+                        log("REGISTER CREDENTIAL");
+
+                        const registrationOptions = args[0].registrationOptions;
+                        const response = await fetch(`${getApiDomain()}/test/webauthn/create-credential`, {
+                            method: "POST",
+                            body: JSON.stringify({
+                                registerOptionsResponse: registrationOptions,
+                                rpId: "localhost",
+                                rpName: "localhost",
+                                origin: "http://localhost:3031",
+                            }),
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        });
+
+                        if (!response.ok) {
+                            throw new STGeneralError("TEST ERROR: CREATING CREDENTIAL FAILED");
+                        }
+
+                        const { credential } = await response.json();
+                        return {
+                            status: "OK",
+                            registrationResponse: credential,
+                        };
+                    },
+                    async signUp(...args) {
+                        log(`SIGN UP`);
+                        return implementation.signUp(...args);
+                    },
                     async signIn(...args) {
                         log(`SIGN IN`);
                         return implementation.signIn(...args);
@@ -976,11 +1007,7 @@ function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus }) {
 
                         // We are mocking the popup since it's not possible to
                         // test the webauthn popup.
-                        return {
-                            status: "OK",
-                            user: {},
-                            fetchResponse: {},
-                        };
+                        return implementation.registerCredentialWithSignUp(...args);
                     },
                     authenticateCredentialWithSignIn(...args) {
                         log(`AUTHENTICATE CREDENTIAL WITH SIGN IN`);

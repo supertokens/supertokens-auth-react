@@ -9,6 +9,7 @@ import {
     getTestEmail,
     waitForSTElement,
     submitForm,
+    setEnabledRecipes,
 } from "../helpers";
 import { tryWebauthnSignUp } from "./webauthn.helpers";
 import assert from "assert";
@@ -24,6 +25,8 @@ describe("SuperTokens Webauthn SignUp", () => {
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
         }).catch(console.error);
+
+        await setEnabledRecipes(["webauthn", "emailpassword", "session", "dashboard", "userroles"]);
 
         browser = await setupBrowser();
         page = await browser.newPage();
@@ -76,11 +79,19 @@ describe("SuperTokens Webauthn SignUp", () => {
 
             // We should be in the confirmation page now.
             await submitForm(page);
+            await page.waitForTimeout(2000);
+
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS WEBAUTHN OVERRIDE GET REGISTER OPTIONS WITH SIGN UP",
-                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
+                "ST_LOGS WEBAUTHN OVERRIDE GET REGISTER OPTIONS",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS REGISTER_OPTIONS",
+                "ST_LOGS WEBAUTHN OVERRIDE REGISTER CREDENTIAL",
+                "ST_LOGS WEBAUTHN OVERRIDE SIGN UP",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS SIGN_UP",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
         });
         it("should recover successfully from a recoverable error", async () => {
