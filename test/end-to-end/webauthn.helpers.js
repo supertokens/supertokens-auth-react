@@ -1,4 +1,4 @@
-import { TEST_CLIENT_BASE_URL } from "../constants";
+import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 import { toggleSignInSignUp, setInputValues, submitForm, waitForSTElement } from "../helpers";
 
 export async function tryWebauthnSignUp(page, email) {
@@ -44,4 +44,30 @@ export async function openRecoveryAccountPage(page, email = null, shouldSubmit =
     await setInputValues(page, [{ name: "email", value: email }]);
     await submitForm(page);
     await new Promise((res) => setTimeout(res, 1000));
+}
+
+export async function signUpAndSendRecoveryEmail(page, email) {
+    await tryWebauthnSignUp(page, email);
+
+    // We should be in the confirmation page now.
+    await submitForm(page);
+    await new Promise((res) => setTimeout(res, 2000));
+
+    // Find the div with classname logoutButton and click it using normal
+    // puppeteer selector
+    const logoutButton = await page.waitForSelector("div.logoutButton");
+    await logoutButton.click();
+    await new Promise((res) => setTimeout(res, 1000));
+
+    // Click the send recovery email button
+    await openRecoveryAccountPage(page, email, true);
+}
+
+export async function getTokenFromEmail(page, email) {
+    // Make an API call to get the token from the email
+    // Since the email can contain special characters, we need to encode it
+    const encodedEmail = encodeURIComponent(email);
+    const response = await fetch(`${TEST_SERVER_BASE_URL}/test/webauthn/get-token?email=${encodedEmail}`);
+    const data = await response.json();
+    return data.token;
 }

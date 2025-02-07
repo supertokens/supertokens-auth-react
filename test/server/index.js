@@ -174,6 +174,23 @@ function saveCode({ email, phoneNumber, preAuthSessionId, urlWithLinkCode, userI
     });
     deviceStore.set(preAuthSessionId, device);
 }
+
+let webauthnStore = new Map();
+const saveWebauthnToken = async ({ user, recoverAccountLink }) => {
+    const webauthn = webauthnStore.get(user.email) || {
+        email: user.email,
+        recoverAccountLink: "",
+        token: "",
+    };
+    webauthn.recoverAccountLink = recoverAccountLink;
+
+    // Parse the token from the recoverAccountLink
+    const token = recoverAccountLink.split("token=")[1].replace("&tenantId=public", "");
+    webauthn.token = token;
+
+    webauthnStore.set(user.email, webauthn);
+};
+
 const formFields = (process.env.MIN_FIELDS && []) || [
     {
         id: "name",
@@ -523,6 +540,15 @@ app.post("/test/create-oauth2-client", async (req, res, next) => {
     }
 });
 
+app.get("/test/webauthn/get-token", async (req, res) => {
+    const webauthn = webauthnStore.get(req.query.email);
+    if (!webauthn) {
+        res.status(404).send({ error: "Webauthn not found" });
+        return;
+    }
+    res.send({ token: webauthn.token });
+});
+
 app.post("/test/webauthn/create-and-assert-credential", async (req, res) => {
     try {
         const { registerOptionsResponse, signInOptionsResponse, rpId, rpName, origin } = req.body;
@@ -753,7 +779,7 @@ function initST() {
                         return {
                             ...oI,
                             sendEmail: async (input) => {
-                                console.log(input);
+                                await saveWebauthnToken(input);
                             },
                         };
                     },
@@ -1006,6 +1032,7 @@ function initST() {
         supertokens: {
             connectionURI,
         },
+        debug: true,
         recipeList:
             enabledRecipes !== undefined
                 ? recipeList.filter(([key]) => enabledRecipes.includes(key)).map(([_key, recipeFunc]) => recipeFunc)

@@ -138,7 +138,7 @@ export const RecoverAccountWithToken: Story = {
         "multifactorauth.initialized": false,
         "passwordless.initialized": false,
         "webauthn.initialized": true,
-        query: "token=MmEyYjVhYjdiMjA2OTc1NjMwYzM0ZGU5NDliNjhlZTQxYjQ5ZDlkMTQ5YjlhYTc5YmM1N2UxM2U0NzU4ODJmYzMzNTY0MTcyYjE1ZGYxMTMxZjg2YTUzNzNiMDkzZTU2",
+        query: "token=NThlNDNmMjU4OWRjNDJkYzVmMzhmZDMzMWFkY2YxOTUyYjQ5M2Y2NmNhYjY4MjdmMjJjNTFmMTk0Yzg0MTFkYWUyMTZmNDFlNjFlZWE4MTQ5NWY4ZTMyZWE4OTI1OWUz&tenantId=public",
     },
 };
 

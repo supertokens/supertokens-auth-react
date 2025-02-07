@@ -9,7 +9,7 @@ import {
     waitForSTElement,
     getTestEmail,
 } from "../helpers";
-import { tryWebauthnSignIn, openRecoveryAccountPage } from "./webauthn.helpers";
+import { openRecoveryAccountPage, signUpAndSendRecoveryEmail, getTokenFromEmail } from "./webauthn.helpers";
 import assert from "assert";
 
 describe("SuperTokens Webauthn Recovery Email", () => {
@@ -58,7 +58,7 @@ describe("SuperTokens Webauthn Recovery Email", () => {
     describe("Recovery Email Test", () => {
         it("should show the success page when the email is sent", async () => {
             const email = await getTestEmail();
-            await openRecoveryAccountPage(page, email, true);
+            await signUpAndSendRecoveryEmail(page, email);
             await new Promise((res) => setTimeout(res, 1000));
 
             // It should be successful and the user should see the success page
@@ -69,9 +69,30 @@ describe("SuperTokens Webauthn Recovery Email", () => {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS WEBAUTHN OVERRIDE GET REGISTER OPTIONS WITH SIGN UP",
+                "ST_LOGS WEBAUTHN OVERRIDE GET REGISTER OPTIONS",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS REGISTER_OPTIONS",
+                "ST_LOGS WEBAUTHN OVERRIDE REGISTER CREDENTIAL",
+                "ST_LOGS WEBAUTHN OVERRIDE SIGN UP",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS SIGN_UP",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS undefined",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SESSION OVERRIDE SIGN_OUT",
+                "ST_LOGS SESSION PRE_API_HOOKS SIGN_OUT",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SIGN_OUT",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS WEBAUTHN GET_REDIRECTION_URL SEND_RECOVERY_EMAIL",
                 "ST_LOGS WEBAUTHN OVERRIDE GENERATE RECOVER ACCOUNT TOKEN",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS GENERATE_RECOVER_ACCOUNT_TOKEN",
             ]);
+
+            // Verify that the email is sent by fetching the token through the API
+            const token = await getTokenFromEmail(page, email);
+            assert.ok(token);
+            assert.strictEqual(token.length, 128);
         });
         it("change email button should take the user back to the recovery view", async () => {
             const email = await getTestEmail();
@@ -87,6 +108,7 @@ describe("SuperTokens Webauthn Recovery Email", () => {
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS WEBAUTHN GET_REDIRECTION_URL SEND_RECOVERY_EMAIL",
                 "ST_LOGS WEBAUTHN OVERRIDE GENERATE RECOVER ACCOUNT TOKEN",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS GENERATE_RECOVER_ACCOUNT_TOKEN",
             ]);
             const headerTextContainer = await waitForSTElement(
                 page,
