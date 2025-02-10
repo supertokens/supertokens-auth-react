@@ -63,11 +63,18 @@ export async function signUpAndSendRecoveryEmail(page, email) {
     await openRecoveryAccountPage(page, email, true);
 }
 
-export async function getTokenFromEmail(page, email) {
+export async function getTokenFromEmail(email) {
     // Make an API call to get the token from the email
     // Since the email can contain special characters, we need to encode it
     const encodedEmail = encodeURIComponent(email);
     const response = await fetch(`${TEST_SERVER_BASE_URL}/test/webauthn/get-token?email=${encodedEmail}`);
     const data = await response.json();
     return data.token;
+}
+
+export async function openRecoveryWithToken(page, token) {
+    await Promise.all([
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth/webauthn/recover?token=${token}`),
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
+    ]);
 }
