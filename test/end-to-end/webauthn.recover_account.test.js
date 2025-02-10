@@ -164,5 +164,48 @@ describe("SuperTokens Webauthn Recover Account", () => {
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
             ]);
         });
+        it("should show the error when the token is invalid", async () => {
+            // Use the token to recover the account
+            await openRecoveryWithToken(page, "test");
+
+            const errorTextContainer = await waitForSTElement(
+                page,
+                "[data-supertokens~='passkeyRecoverableErrorContainer']"
+            );
+            const errorText = await errorTextContainer.evaluate((el) => el.textContent);
+            assert.strictEqual(
+                errorText,
+                "The token used for recovering the account is invalid. Please try with a different token or request a new one."
+            );
+
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS WEBAUTHN OVERRIDE GET REGISTER OPTIONS WITH SIGN UP",
+                "ST_LOGS WEBAUTHN OVERRIDE GET REGISTER OPTIONS",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS REGISTER_OPTIONS",
+                "ST_LOGS WEBAUTHN OVERRIDE REGISTER CREDENTIAL",
+                "ST_LOGS WEBAUTHN OVERRIDE SIGN UP",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS SIGN_UP",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS undefined",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SESSION OVERRIDE SIGN_OUT",
+                "ST_LOGS SESSION PRE_API_HOOKS SIGN_OUT",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SIGN_OUT",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS WEBAUTHN GET_REDIRECTION_URL SEND_RECOVERY_EMAIL",
+                "ST_LOGS WEBAUTHN OVERRIDE GENERATE RECOVER ACCOUNT TOKEN",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS GENERATE_RECOVER_ACCOUNT_TOKEN",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS WEBAUTHN OVERRIDE GET REGISTER OPTIONS",
+                "ST_LOGS WEBAUTHN OVERRIDE GET REGISTER OPTIONS",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS REGISTER_OPTIONS",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS REGISTER_OPTIONS",
+            ]);
+        });
     });
 });
