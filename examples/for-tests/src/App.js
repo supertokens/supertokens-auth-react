@@ -1162,6 +1162,18 @@ function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus }) {
                     ...implementation,
                     getRegisterOptions(...args) {
                         log(`GET REGISTER OPTIONS`);
+
+                        if (throwWebauthnError) {
+                            throw new STGeneralError("TEST ERROR");
+                        }
+
+                        // Return error status if the user passed that.
+                        if (webauthnErrorStatus) {
+                            return {
+                                status: webauthnErrorStatus,
+                            };
+                        }
+
                         return implementation.getRegisterOptions(...args);
                     },
                     async getSignInOptions(...args) {

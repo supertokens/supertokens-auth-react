@@ -207,5 +207,25 @@ describe("SuperTokens Webauthn Recover Account", () => {
                 "ST_LOGS WEBAUTHN PRE_API_HOOKS REGISTER_OPTIONS",
             ]);
         });
+        it("should show error when webauthn error is thrown", async () => {
+            // Set the error to be thrown
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("throwWebauthnError", "true");
+            });
+
+            // Use the token to recover the account
+            await openRecoveryWithToken(page, "test");
+
+            const errorTextContainer = await waitForSTElement(
+                page,
+                "[data-supertokens~='passkeyRecoverableErrorContainer']"
+            );
+            const errorText = await errorTextContainer.evaluate((el) => el.textContent);
+            assert.strictEqual(errorText, "Something went wrong, please refresh the page or reach out to support.");
+
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("throwWebauthnError", undefined);
+            });
+        });
     });
 });
