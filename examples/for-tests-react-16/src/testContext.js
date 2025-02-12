@@ -26,6 +26,7 @@ export function getTestContext() {
             localStorage.getItem("disableRedirectionAfterSuccessfulSignInUp") === "true",
         throwWebauthnError: localStorage.getItem("throwWebauthnError") === "true",
         webauthnErrorStatus: localStorage.getItem("webauthnErrorStatus") || undefined,
+        webauthnRecoverAccountErrorStatus: localStorage.getItem("webauthnRecoverAccountErrorStatus") || undefined,
     };
     return ret;
 }

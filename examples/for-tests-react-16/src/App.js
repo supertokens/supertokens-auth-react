@@ -890,7 +890,7 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
     });
 }
 
-function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus }) {
+function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus, webauthnRecoverAccountErrorStatus }) {
     return Webauthn.init({
         style: `          
             [data-supertokens~=container] {
@@ -1042,6 +1042,18 @@ function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus }) {
                         }
 
                         return implementation.generateRecoverAccountToken(...args);
+                    },
+                    recoverAccount(...args) {
+                        log(`RECOVER ACCOUNT`);
+
+                        // Return error status if the user passed that.
+                        if (webauthnRecoverAccountErrorStatus) {
+                            return {
+                                status: webauthnRecoverAccountErrorStatus,
+                            };
+                        }
+
+                        return implementation.recoverAccount(...args);
                     },
                 };
             },

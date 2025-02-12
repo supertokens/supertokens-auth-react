@@ -158,6 +158,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
                 "ST_LOGS WEBAUTHN PRE_API_HOOKS REGISTER_OPTIONS",
                 "ST_LOGS WEBAUTHN PRE_API_HOOKS REGISTER_OPTIONS",
                 "ST_LOGS WEBAUTHN OVERRIDE REGISTER CREDENTIAL",
+                "ST_LOGS WEBAUTHN OVERRIDE RECOVER ACCOUNT",
                 "ST_LOGS WEBAUTHN PRE_API_HOOKS RECOVER_ACCOUNT",
                 "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
@@ -225,6 +226,113 @@ describe("SuperTokens Webauthn Recover Account", () => {
 
             await page.evaluateOnNewDocument(() => {
                 localStorage.setItem("throwWebauthnError", undefined);
+            });
+        });
+        it("should show error when generated options are invalid", async () => {
+            // Set the error to be thrown
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("webauthnRecoverAccountErrorStatus", "INVALID_GENERATED_OPTIONS_ERROR");
+            });
+
+            // Use the token to recover the account
+            // Get the token from the email
+            const token = await getTokenFromEmail(email);
+            assert.ok(token);
+            assert.strictEqual(token.length, 128);
+            await openRecoveryWithToken(page, token);
+
+            await submitForm(page);
+
+            const errorTextContainer = await waitForSTElement(
+                page,
+                "[data-supertokens~='passkeyRecoverableErrorContainer']"
+            );
+            const errorText = await errorTextContainer.evaluate((el) => el.textContent);
+            assert.strictEqual(errorText, "Failed to recover account, please try again.");
+
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("webauthnRecoverAccountErrorStatus", undefined);
+            });
+        });
+        it("should show error when credentials are invalid", async () => {
+            // Set the error to be thrown
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("webauthnRecoverAccountErrorStatus", "INVALID_CREDENTIALS_ERROR");
+            });
+
+            // Use the token to recover the account
+            // Get the token from the email
+            const token = await getTokenFromEmail(email);
+            assert.ok(token);
+            assert.strictEqual(token.length, 128);
+            await openRecoveryWithToken(page, token);
+
+            await submitForm(page);
+
+            const errorTextContainer = await waitForSTElement(
+                page,
+                "[data-supertokens~='passkeyRecoverableErrorContainer']"
+            );
+            const errorText = await errorTextContainer.evaluate((el) => el.textContent);
+            assert.strictEqual(
+                errorText,
+                "The passkey is invalid, please try again, possibly with a different device."
+            );
+
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("webauthnRecoverAccountErrorStatus", undefined);
+            });
+        });
+        it("should show error when generated options are not found", async () => {
+            // Set the error to be thrown
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("webauthnRecoverAccountErrorStatus", "GENERATED_OPTIONS_NOT_FOUND_ERROR");
+            });
+
+            // Use the token to recover the account
+            // Get the token from the email
+            const token = await getTokenFromEmail(email);
+            assert.ok(token);
+            assert.strictEqual(token.length, 128);
+            await openRecoveryWithToken(page, token);
+
+            await submitForm(page);
+
+            const errorTextContainer = await waitForSTElement(
+                page,
+                "[data-supertokens~='passkeyRecoverableErrorContainer']"
+            );
+            const errorText = await errorTextContainer.evaluate((el) => el.textContent);
+            assert.strictEqual(errorText, "Failed to recover account, please try again.");
+
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("webauthnRecoverAccountErrorStatus", undefined);
+            });
+        });
+        it("should show error when authenticator is invalid", async () => {
+            // Set the error to be thrown
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("webauthnRecoverAccountErrorStatus", "INVALID_AUTHENTICATOR_ERROR");
+            });
+
+            // Use the token to recover the account
+            // Get the token from the email
+            const token = await getTokenFromEmail(email);
+            assert.ok(token);
+            assert.strictEqual(token.length, 128);
+            await openRecoveryWithToken(page, token);
+
+            await submitForm(page);
+
+            const errorTextContainer = await waitForSTElement(
+                page,
+                "[data-supertokens~='passkeyRecoverableErrorContainer']"
+            );
+            const errorText = await errorTextContainer.evaluate((el) => el.textContent);
+            assert.strictEqual(errorText, "Invalid authenticator, please try again.");
+
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("webauthnRecoverAccountErrorStatus", undefined);
             });
         });
     });
