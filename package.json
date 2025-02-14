@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.48.0",
+    "version": "0.48.0-canary-plugins.0",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {

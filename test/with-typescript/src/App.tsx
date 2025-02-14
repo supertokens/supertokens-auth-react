@@ -1171,34 +1171,36 @@ SuperTokens.init({
             },
         }),
     ],
-    plugins: [
-        {
-            id: "test",
-            compatibleAuthReactSDKVersions: ["0.50.0"],
-            routeHandlers: [
-                {
-                    path: "/test",
-                    handler: () => <div>Test</div>,
-                },
-            ],
-            overrideMap: {
-                emailpassword: {
-                    functions: (oI) => ({
-                        ...oI,
-                        signIn: async (input) => {
-                            console.log("signIn", input);
-                            return oI.signIn(input);
-                        },
-                    }),
-                    components: {
-                        EmailPasswordSignInForm_Override: () => <div>Test</div>,
+    experimental: {
+        plugins: [
+            {
+                id: "test",
+                compatibleAuthReactSDKVersions: ["0.50.0"],
+                routeHandlers: [
+                    {
+                        path: "/test",
+                        handler: () => <div>Test</div>,
                     },
-                    config: (config) => {
-                        console.log("config", config.getRedirectionURL);
-                        return config;
+                ],
+                overrideMap: {
+                    emailpassword: {
+                        functions: (oI) => ({
+                            ...oI,
+                            signIn: async (input) => {
+                                console.log("signIn", input);
+                                return oI.signIn(input);
+                            },
+                        }),
+                        components: {
+                            EmailPasswordSignInForm_Override: () => <div>Test</div>,
+                        },
+                        config: (config) => {
+                            console.log("config", config.getRedirectionURL);
+                            return config;
+                        },
                     },
                 },
             },
-        },
-    ],
+        ],
+    },
 });

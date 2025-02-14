@@ -175,8 +175,8 @@ export default class SuperTokens {
                 : config.recipeList.concat(Multitenancy.init({}));
 
         const finalPluginList: SuperTokensPlugin[] = [];
-        if (config.plugins) {
-            for (const plugin of config.plugins) {
+        if (config.experimental?.plugins) {
+            for (const plugin of config.experimental.plugins) {
                 if (plugin.compatibleAuthReactSDKVersions) {
                     const versionContraints = Array.isArray(plugin.compatibleAuthReactSDKVersions)
                         ? plugin.compatibleAuthReactSDKVersions
@@ -202,7 +202,12 @@ export default class SuperTokens {
         SuperTokensWebJS.init({
             ...config,
             recipeList: recipes.map(({ webJS }) => webJS),
-            plugins: finalPluginList as any, // TODO: fix this
+            experimental: {
+                plugins: finalPluginList.map((plugin) => ({
+                    id: plugin.id,
+                    overrideMap: plugin.overrideMap as any,
+                })),
+            },
         });
 
         SuperTokens.instance = new SuperTokens({ ...config, recipeList: recipes }, finalPluginList);
