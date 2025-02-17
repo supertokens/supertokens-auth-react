@@ -79,7 +79,7 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
                     case "INVALID_EMAIL_ERROR":
                         setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_INVALID_EMAIL_ERROR");
                         break;
-                    case "INVALID_GENERATED_OPTIONS_ERROR":
+                    case "INVALID_OPTIONS_ERROR":
                         setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_INVALID_GENERATED_OPTIONS_ERROR");
                         // TODO: Should we trigger an automatic retry here or will there
                         // be a separate expired token related error?
@@ -175,13 +175,13 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
                         case "GENERAL_ERROR":
                             setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_GENERAL_ERROR");
                             break;
-                        case "INVALID_GENERATED_OPTIONS_ERROR":
+                        case "INVALID_OPTIONS_ERROR":
                             setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_INVALID_GENERATED_OPTIONS_ERROR");
                             break;
                         case "INVALID_CREDENTIALS_ERROR":
                             setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_INVALID_CREDENTIALS_ERROR");
                             break;
-                        case "GENERATED_OPTIONS_NOT_FOUND_ERROR":
+                        case "OPTIONS_NOT_FOUND_ERROR":
                             setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_GENERATED_OPTIONS_NOT_FOUND_ERROR");
                             break;
                         case "INVALID_AUTHENTICATOR_ERROR":
