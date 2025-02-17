@@ -38,8 +38,13 @@ function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
                 userContext,
             });
 
+            if (response.status === "INVALID_CREDENTIALS_ERROR") {
+                setError("WEBAUTHN_PASSKEY_INVALID_CREDENTIALS_ERROR");
+                return;
+            }
+
             if (response.status === "FAILED_TO_AUTHENTICATE_USER") {
-                setError("Failed to authenticate user");
+                setError("WEBAUTHN_PASSKEY_RECOVERABLE_ERROR");
                 return;
             }
 
@@ -93,9 +98,7 @@ function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
         <UserContextWrapper userContext={props.userContext}>
             <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
                 <div data-supertokens="passkeySignInContainer">
-                    {error !== "" && error !== null && (
-                        <RecoverableError errorMessageLabel="WEBAUTHN_PASSKEY_RECOVERABLE_ERROR" />
-                    )}
+                    {error !== "" && error !== null && <RecoverableError errorMessageLabel={error} />}
                     <ContinueWithPasskeyTheme
                         {...props}
                         continueWithPasskeyClicked={handleWebauthnSignInClick}

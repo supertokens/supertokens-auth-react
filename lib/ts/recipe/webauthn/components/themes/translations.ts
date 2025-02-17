@@ -21,6 +21,8 @@ export const defaultTranslationsWebauthn = {
         WEBAUTHN_FEATURE_BLOCK_KEEP_ACCOUNT_SAFER_DETAIL: "Passkey offer state of the art phishing resistance.",
         WEBAUTHN_PASSKEY_RECOVERABLE_ERROR:
             "The request either timed out, was canceled or the device is already registered. Please try again or try using another device.",
+        WEBAUTHN_PASSKEY_INVALID_CREDENTIALS_ERROR:
+            "The passkey is invalid, please try again, possibly with a different device.",
         WEBAUTHN_ERROR_GO_BACK_BUTTON_LABEL: "Go back",
         WEBAUTHN_UNRECOVERABLE_ERROR: "Something went wrong",
         WEBAUTHN_UNRECOVERABLE_ERROR_DETAILS: "Something went wrong with your current session. please try again.",
