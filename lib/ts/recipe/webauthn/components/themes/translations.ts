@@ -46,5 +46,6 @@ export const defaultTranslationsWebauthn = {
             "The passkey is invalid, please try again, possibly with a different device.",
         WEBAUTHN_ACCOUNT_RECOVERY_GENERATED_OPTIONS_NOT_FOUND_ERROR: "Failed to recover account, please try again.",
         WEBAUTHN_ACCOUNT_RECOVERY_INVALID_AUTHENTICATOR_ERROR: "Invalid authenticator, please try again.",
+        WEBAUTHN_EMAIL_ALREADY_EXISTS_ERROR: "Email already exists, please sign in instead.",
     },
 };

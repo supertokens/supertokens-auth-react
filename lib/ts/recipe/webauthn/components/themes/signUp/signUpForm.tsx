@@ -126,7 +126,7 @@ export const SignUpForm = (
 ): JSX.Element | null => {
     const [continueClickResponse, setContinueClickResponse] = useState<ContinueOnSuccessParams | null>(null);
     const userContext = useUserContext();
-    const [showPasskeyConfirmationError, setShowPasskeyConfirmationError] = useState(false);
+    const [errorLabel, setErrorLabel] = useState<string | undefined>(undefined);
     const [isLoading, setIsLoading] = useState(false);
 
     const onContinueClickCallback = useCallback(
@@ -153,7 +153,11 @@ export const SignUpForm = (
                 response.status === "FAILED_TO_REGISTER_USER" ||
                 response.status === "AUTHENTICATOR_ALREADY_REGISTERED"
             ) {
-                setShowPasskeyConfirmationError(true);
+                setErrorLabel("WEBAUTHN_PASSKEY_RECOVERABLE_ERROR");
+            }
+
+            if (response.status === "EMAIL_ALREADY_EXISTS_ERROR") {
+                setErrorLabel("WEBAUTHN_EMAIL_ALREADY_EXISTS_ERROR");
             }
 
             return response;
@@ -175,14 +179,14 @@ export const SignUpForm = (
             if (generalError !== undefined) {
                 props.setActiveScreen(SignUpScreen.Error);
             } else if (fetchError !== undefined) {
-                setShowPasskeyConfirmationError(true);
+                setErrorLabel("WEBAUTHN_PASSKEY_RECOVERABLE_ERROR");
             } else {
                 // If successful
                 if (result.status === "OK") {
                     if (setIsLoading) {
                         setIsLoading(false);
                     }
-                    setShowPasskeyConfirmationError(false);
+                    setErrorLabel(undefined);
                     if (props.onSuccess !== undefined) {
                         props.onSuccess(result);
                     }
@@ -204,7 +208,7 @@ export const SignUpForm = (
             {...props}
             email={continueClickResponse?.email || ""}
             onContinueClick={onConfirmationClick}
-            errorMessageLabel={showPasskeyConfirmationError ? "WEBAUTHN_PASSKEY_RECOVERABLE_ERROR" : undefined}
+            errorMessageLabel={errorLabel}
             isLoading={isLoading}
         />
     ) : props.activeScreen === SignUpScreen.Error ? (
