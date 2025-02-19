@@ -43,7 +43,7 @@ function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
                 return response;
             }
 
-            if (response.status === "FAILED_TO_AUTHENTICATE_USER") {
+            if (response.status === "FAILED_TO_AUTHENTICATE_USER" || response.status === "INVALID_OPTIONS_ERROR") {
                 setError("WEBAUTHN_PASSKEY_RECOVERABLE_ERROR");
                 return response;
             }

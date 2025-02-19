@@ -151,7 +151,8 @@ export const SignUpForm = (
             // If it is an error related to passkey, we need to handle it.
             if (
                 response.status === "FAILED_TO_REGISTER_USER" ||
-                response.status === "AUTHENTICATOR_ALREADY_REGISTERED"
+                response.status === "AUTHENTICATOR_ALREADY_REGISTERED" ||
+                response.status === "INVALID_OPTIONS_ERROR"
             ) {
                 setErrorLabel("WEBAUTHN_PASSKEY_RECOVERABLE_ERROR");
             }
