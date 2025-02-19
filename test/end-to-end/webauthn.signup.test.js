@@ -94,6 +94,64 @@ describe("SuperTokens Webauthn SignUp", () => {
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
         });
+        it("should successfully throw an error if the user already exists", async () => {
+            const email = await getTestEmail();
+            await tryWebauthnSignUp(page, email);
+
+            await submitForm(page);
+            await page.waitForTimeout(2000);
+
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS WEBAUTHN OVERRIDE GET REGISTER OPTIONS WITH SIGN UP",
+                "ST_LOGS WEBAUTHN OVERRIDE GET REGISTER OPTIONS",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS REGISTER_OPTIONS",
+                "ST_LOGS WEBAUTHN OVERRIDE REGISTER CREDENTIAL",
+                "ST_LOGS WEBAUTHN OVERRIDE SIGN UP",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS SIGN_UP",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+            ]);
+
+            await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+
+            await page.waitForTimeout(1000);
+
+            await tryWebauthnSignUp(page, email);
+
+            // We should be in the confirmation page now.
+            await submitForm(page);
+            await page.waitForTimeout(1000);
+
+            const errorTextContainer = await waitForSTElement(
+                page,
+                "[data-supertokens~='passkeyRecoverableErrorContainer']"
+            );
+            const errorText = await errorTextContainer.evaluate((el) => el.textContent);
+            assert.strictEqual(errorText, "Email already exists, please sign in instead.");
+
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS WEBAUTHN OVERRIDE GET REGISTER OPTIONS WITH SIGN UP",
+                "ST_LOGS WEBAUTHN OVERRIDE GET REGISTER OPTIONS",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS REGISTER_OPTIONS",
+                "ST_LOGS WEBAUTHN OVERRIDE REGISTER CREDENTIAL",
+                "ST_LOGS WEBAUTHN OVERRIDE SIGN UP",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS SIGN_UP",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS WEBAUTHN OVERRIDE GET REGISTER OPTIONS WITH SIGN UP",
+                "ST_LOGS WEBAUTHN OVERRIDE GET REGISTER OPTIONS",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS REGISTER_OPTIONS",
+                "ST_LOGS WEBAUTHN OVERRIDE REGISTER CREDENTIAL",
+                "ST_LOGS WEBAUTHN OVERRIDE SIGN UP",
+                "ST_LOGS WEBAUTHN PRE_API_HOOKS SIGN_UP",
+            ]);
+        });
         it("should recover successfully from a recoverable error", async () => {
             // Set the error to be thrown
             await page.evaluateOnNewDocument(() => {

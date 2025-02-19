@@ -46,7 +46,7 @@ export async function openRecoveryAccountPage(page, email = null, shouldSubmit =
     await new Promise((res) => setTimeout(res, 1000));
 }
 
-export async function signUpAndSendRecoveryEmail(page, email) {
+export async function signUpAndLogout(page, email) {
     await tryWebauthnSignUp(page, email);
 
     // We should be in the confirmation page now.
@@ -58,6 +58,10 @@ export async function signUpAndSendRecoveryEmail(page, email) {
     const logoutButton = await page.waitForSelector("div.logoutButton");
     await logoutButton.click();
     await new Promise((res) => setTimeout(res, 1000));
+}
+
+export async function signUpAndSendRecoveryEmail(page, email) {
+    await signUpAndLogout(page, email);
 
     // Click the send recovery email button
     await openRecoveryAccountPage(page, email, true);
