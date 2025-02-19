@@ -199,6 +199,12 @@ export default class SuperTokens {
             }
         }
 
+        for (const plugin of finalPluginList) {
+            if (plugin.config) {
+                config = { ...config, ...plugin.config(config) };
+            }
+        }
+
         SuperTokensWebJS.init({
             ...config,
             recipeList: recipes.map(({ webJS }) => webJS),
