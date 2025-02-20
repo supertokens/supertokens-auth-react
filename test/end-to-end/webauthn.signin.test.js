@@ -136,6 +136,26 @@ describe("SuperTokens Webauthn SignIn", () => {
                 localStorage.removeItem("webauthnErrorStatus");
             });
         });
+        it("should show error if invalid options error is thrown", async () => {
+            // Set the error to be thrown
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("webauthnErrorStatus", "INVALID_OPTIONS_ERROR");
+            });
+            await tryWebauthnSignIn(page);
+            const errorTextContainer = await waitForSTElement(
+                page,
+                "[data-supertokens~='passkeyRecoverableErrorContainer']"
+            );
+            const errorText = await errorTextContainer.evaluate((el) => el.textContent);
+            assert.strictEqual(
+                errorText,
+                "The request either timed out, was canceled or the device is already registered. Please try again or try using another device."
+            );
+
+            await page.evaluateOnNewDocument(() => {
+                localStorage.removeItem("webauthnErrorStatus");
+            });
+        });
         it("should show general error in the same view", async () => {
             // Set the error to be thrown
             await page.evaluateOnNewDocument(() => {
