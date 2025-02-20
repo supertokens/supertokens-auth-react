@@ -192,6 +192,36 @@ describe("SuperTokens Webauthn SignUp", () => {
             await submitForm(page);
 
             await waitForSTElement(page, "[data-supertokens~='passkeyRecoverableErrorContainer']");
+
+            await page.evaluateOnNewDocument(() => {
+                localStorage.removeItem("webauthnErrorStatus");
+            });
+        });
+        it("should show not supported error in the same view", async () => {
+            // Set the error to be thrown
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("webauthnErrorStatus", "WEBAUTHN_NOT_SUPPORTED");
+            });
+
+            const email = await getTestEmail();
+            await tryWebauthnSignUp(page, email);
+
+            // We should be in the confirmation page now.
+            await submitForm(page);
+
+            const errorTextContainer = await waitForSTElement(
+                page,
+                "[data-supertokens~='passkeyRecoverableErrorContainer']"
+            );
+            const errorText = await errorTextContainer.evaluate((el) => el.textContent);
+            assert.strictEqual(
+                errorText,
+                "Passkey is not supported on your browser, please try with a different browser."
+            );
+
+            await page.evaluateOnNewDocument(() => {
+                localStorage.removeItem("webauthnErrorStatus");
+            });
         });
         it("should show something went wrong on general error", async () => {
             // Set the error to be thrown
@@ -206,6 +236,10 @@ describe("SuperTokens Webauthn SignUp", () => {
             await submitForm(page);
 
             await waitForSTElement(page, "[data-supertokens~='somethingWentWrongContainer']");
+
+            await page.evaluateOnNewDocument(() => {
+                localStorage.removeItem("throwWebauthnError");
+            });
         });
         it("should go back to home when go back is clicked in something went wrong", async () => {
             // Set the error to be thrown

@@ -231,7 +231,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
         it("should show error when generated options are invalid", async () => {
             // Set the error to be thrown
             await page.evaluateOnNewDocument(() => {
-                localStorage.setItem("webauthnRecoverAccountErrorStatus", "INVALID_GENERATED_OPTIONS_ERROR");
+                localStorage.setItem("webauthnRecoverAccountErrorStatus", "INVALID_OPTIONS_ERROR");
             });
 
             // Use the token to recover the account
@@ -286,7 +286,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
         it("should show error when generated options are not found", async () => {
             // Set the error to be thrown
             await page.evaluateOnNewDocument(() => {
-                localStorage.setItem("webauthnRecoverAccountErrorStatus", "GENERATED_OPTIONS_NOT_FOUND_ERROR");
+                localStorage.setItem("webauthnRecoverAccountErrorStatus", "OPTIONS_NOT_FOUND_ERROR");
             });
 
             // Use the token to recover the account
@@ -333,6 +333,36 @@ describe("SuperTokens Webauthn Recover Account", () => {
 
             await page.evaluateOnNewDocument(() => {
                 localStorage.setItem("webauthnRecoverAccountErrorStatus", undefined);
+            });
+        });
+        it("should show webauthn not supported error in the same view", async () => {
+            // Set the error to be thrown
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("webauthnRecoverAccountErrorStatus", "WEBAUTHN_NOT_SUPPORTED");
+            });
+
+            const token = await getTokenFromEmail(email);
+            assert.ok(token);
+            assert.strictEqual(token.length, 128);
+
+            await openRecoveryWithToken(page, token);
+
+            // We should be in the recovery page now, click the continue button
+            await submitForm(page);
+            await new Promise((res) => setTimeout(res, 1000));
+
+            const errorTextContainer = await waitForSTElement(
+                page,
+                "[data-supertokens~='passkeyRecoverableErrorContainer']"
+            );
+            const errorText = await errorTextContainer.evaluate((el) => el.textContent);
+            assert.strictEqual(
+                errorText,
+                "Passkey is not supported on your browser, please try with a different browser."
+            );
+
+            await page.evaluateOnNewDocument(() => {
+                localStorage.removeItem("webauthnRecoverAccountErrorStatus");
             });
         });
     });
