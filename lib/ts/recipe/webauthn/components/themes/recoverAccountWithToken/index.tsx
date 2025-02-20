@@ -187,6 +187,9 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
                         case "INVALID_AUTHENTICATOR_ERROR":
                             setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_INVALID_AUTHENTICATOR_ERROR");
                             break;
+                        case "WEBAUTHN_NOT_SUPPORTED_ERROR":
+                            setErrorMessageLabel("WEBAUTHN_NOT_SUPPORTED_ERROR");
+                            break;
                         default:
                             throw new Error("Should never come here");
                     }

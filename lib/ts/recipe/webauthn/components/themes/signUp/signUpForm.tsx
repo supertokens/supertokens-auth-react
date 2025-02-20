@@ -161,6 +161,10 @@ export const SignUpForm = (
                 setErrorLabel("WEBAUTHN_EMAIL_ALREADY_EXISTS_ERROR");
             }
 
+            if (response.status === "WEBAUTHN_NOT_SUPPORTED") {
+                setErrorLabel("WEBAUTHN_NOT_SUPPORTED_ERROR");
+            }
+
             return response;
         },
         [continueClickResponse, props, userContext]

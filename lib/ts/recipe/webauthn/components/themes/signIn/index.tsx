@@ -38,14 +38,17 @@ function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
                 userContext,
             });
 
-            if (response.status === "INVALID_CREDENTIALS_ERROR") {
-                setError("WEBAUTHN_PASSKEY_INVALID_CREDENTIALS_ERROR");
-                return response;
-            }
-
-            if (response.status === "FAILED_TO_AUTHENTICATE_USER" || response.status === "INVALID_OPTIONS_ERROR") {
-                setError("WEBAUTHN_PASSKEY_RECOVERABLE_ERROR");
-                return response;
+            switch (response.status) {
+                case "INVALID_CREDENTIALS_ERROR":
+                    setError("WEBAUTHN_PASSKEY_INVALID_CREDENTIALS_ERROR");
+                    break;
+                case "FAILED_TO_AUTHENTICATE_USER":
+                case "INVALID_OPTIONS_ERROR":
+                    setError("WEBAUTHN_PASSKEY_RECOVERABLE_ERROR");
+                    break;
+                case "WEBAUTHN_NOT_SUPPORTED":
+                    setError("WEBAUTHN_NOT_SUPPORTED_ERROR");
+                    break;
             }
 
             return response;
