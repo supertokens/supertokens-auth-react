@@ -49,6 +49,6 @@ export const defaultTranslationsWebauthn = {
         WEBAUTHN_EMAIL_ALREADY_EXISTS_ERROR: "Email already exists, please sign in instead.",
         WEBAUTHN_NOT_SUPPORTED_ERROR: "Passkey is not supported on your browser, please try with a different browser.",
         WEBAUTHN_PASSKEY_NOT_SUPPORTED_BY_BROWSER:
-            "Your browser does not support passkey flow, change browser or continue with other options",
+            "Your browser does not support passkey flow, please try in a different browser.",
     },
 };

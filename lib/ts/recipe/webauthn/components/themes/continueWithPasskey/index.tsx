@@ -17,8 +17,8 @@ import React, { useEffect, useState } from "react";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import SuperTokens from "../../../../../superTokens";
-import { useTranslation } from "../../../../../translation/translationContext";
 import { Button } from "../../../../emailpassword/components/library";
+import { PasskeyNotSupportedError } from "../error/passkeyNotSupportedError";
 import { ThemeBase } from "../themeBase";
 
 import type { NormalisedConfig, ContinueWithPasskeyProps } from "../../../types";
@@ -29,8 +29,6 @@ const ContinueWithPasskey: React.FC<ContinueWithPasskeyProps> = ({
     isLoading = false,
     isPasskeyNotSupported = true,
 }) => {
-    const t = useTranslation();
-
     return (
         <div data-supertokens="continueWithPasskeyButtonWrapper">
             <Button
@@ -43,11 +41,7 @@ const ContinueWithPasskey: React.FC<ContinueWithPasskeyProps> = ({
                 disabled={isPasskeyNotSupported}
                 isGreyedOut={isPasskeyNotSupported}
             />
-            {isPasskeyNotSupported && (
-                <div data-supertokens="continueWithPasskeyButtonNotSupported">
-                    {t("WEBAUTHN_PASSKEY_NOT_SUPPORTED_BY_BROWSER")}
-                </div>
-            )}
+            {isPasskeyNotSupported && <PasskeyNotSupportedError />}
         </div>
     );
 };
@@ -57,7 +51,7 @@ const ContinueWithPasskeyWithOverride = withOverride("WebauthnContinueWithPasske
 export const ContinueWithPasskeyTheme = (props: { config: NormalisedConfig } & ContinueWithPasskeyProps) => {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
 
-    const [isPasskeySupported, setIsPasskeySupported] = useState(false);
+    const [isPasskeySupported, setIsPasskeySupported] = useState(true);
 
     useEffect(() => {
         void (async () => {

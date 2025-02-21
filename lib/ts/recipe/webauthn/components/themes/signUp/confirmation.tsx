@@ -13,9 +13,13 @@
  * under the License.
  */
 
+import { useEffect } from "react";
+import { useState } from "react";
+
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 import Button from "../../../../emailpassword/components/library/button";
+import { PasskeyNotSupportedError } from "../error/passkeyNotSupportedError";
 import { RecoverableError } from "../error/recoverableError";
 
 import { ContinueWithoutPasskey } from "./continueWithoutPasskey";
@@ -37,6 +41,20 @@ export const PasskeyConfirmation = withOverride(
     ): JSX.Element {
         const t = useTranslation();
 
+        const [isPasskeySupported, setIsPasskeySupported] = useState(false);
+
+        useEffect(() => {
+            void (async () => {
+                const browserSupportsWebauthn = await props.recipeImplementation.doesBrowserSupportWebAuthn();
+                if (browserSupportsWebauthn.status !== "OK") {
+                    console.error(browserSupportsWebauthn.error);
+                    return;
+                }
+
+                setIsPasskeySupported(browserSupportsWebauthn.browserSupportsWebauthn);
+            })();
+        }, [props.recipeImplementation]);
+
         return (
             <div data-supertokens="passkeyConfirmationContainer">
                 {props.email !== undefined && (
@@ -51,12 +69,14 @@ export const PasskeyConfirmation = withOverride(
                 )}
                 <div data-supertokens="passkeyConfirmationFooter">
                     <Button
-                        disabled={props.isContinueDisabled}
+                        disabled={props.isContinueDisabled || !isPasskeySupported}
                         isLoading={props.isLoading}
                         type="button"
                         onClick={props.onContinueClick}
                         label="WEBAUTHN_EMAIL_CONTINUE_BUTTON"
+                        isGreyedOut={!isPasskeySupported}
                     />
+                    {!isPasskeySupported && <PasskeyNotSupportedError />}
                     {!props.hideContinueWithoutPasskey && props.resetFactorList !== undefined && (
                         <ContinueWithoutPasskey onClick={props.resetFactorList} />
                     )}
