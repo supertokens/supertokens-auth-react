@@ -195,6 +195,14 @@ export type RecoverFormProps = {
     recipeImplementation: RecipeImplementation;
 };
 
+export type ContinueWithPasskeyProps = {
+    continueFor: ContinueFor;
+    continueWithPasskeyClicked: (continueFor: ContinueFor) => void;
+    isLoading?: boolean;
+    isPasskeyNotSupported?: boolean;
+    recipeImplementation: RecipeImplementation;
+};
+
 export type EmailSentProps = {
     email: string;
     onEmailChangeClick: () => void;

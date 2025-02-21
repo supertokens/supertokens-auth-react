@@ -20,20 +20,25 @@ type ButtonProps = {
     disabled?: boolean;
     type: "submit" | "button" | "reset" | undefined;
     onClick?: () => void;
+    isGreyedOut?: boolean;
 };
 
 /*
  * Component.
  */
 
-export default function Button({ type, label, disabled, isLoading, onClick }: ButtonProps): JSX.Element {
+export default function Button({ type, label, disabled, isLoading, onClick, isGreyedOut }: ButtonProps): JSX.Element {
     const t = useTranslation();
 
     if (disabled === undefined) {
         disabled = false;
     }
     return (
-        <button type={type} disabled={disabled} onClick={onClick} data-supertokens="button">
+        <button
+            type={type}
+            disabled={disabled}
+            onClick={onClick}
+            data-supertokens={isGreyedOut ? "button buttonGreyedOut" : "button"}>
             {t(label)}
             {isLoading && "..."}
         </button>

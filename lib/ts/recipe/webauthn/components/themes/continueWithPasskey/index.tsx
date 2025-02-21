@@ -13,26 +13,24 @@
  * under the License.
  */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import SuperTokens from "../../../../../superTokens";
+import { useTranslation } from "../../../../../translation/translationContext";
 import { Button } from "../../../../emailpassword/components/library";
 import { ThemeBase } from "../themeBase";
 
-import type { ContinueFor, NormalisedConfig } from "../../../types";
-
-interface ContinueWithPasskeyProps {
-    continueFor: ContinueFor;
-    continueWithPasskeyClicked: (continueFor: ContinueFor) => void;
-    isLoading?: boolean;
-}
+import type { NormalisedConfig, ContinueWithPasskeyProps } from "../../../types";
 
 const ContinueWithPasskey: React.FC<ContinueWithPasskeyProps> = ({
     continueFor,
     continueWithPasskeyClicked,
     isLoading = false,
+    isPasskeyNotSupported = true,
 }) => {
+    const t = useTranslation();
+
     return (
         <div data-supertokens="continueWithPasskeyButtonWrapper">
             <Button
@@ -42,7 +40,14 @@ const ContinueWithPasskey: React.FC<ContinueWithPasskeyProps> = ({
                 }}
                 type="button"
                 label={"WEBAUTHN_COMBO_CONTINUE_WITH_PASSKEY_BUTTON"}
+                disabled={isPasskeyNotSupported}
+                isGreyedOut={isPasskeyNotSupported}
             />
+            {isPasskeyNotSupported && (
+                <div data-supertokens="continueWithPasskeyButtonNotSupported">
+                    {t("WEBAUTHN_PASSKEY_NOT_SUPPORTED_BY_BROWSER")}
+                </div>
+            )}
         </div>
     );
 };
@@ -51,9 +56,24 @@ const ContinueWithPasskeyWithOverride = withOverride("WebauthnContinueWithPasske
 
 export const ContinueWithPasskeyTheme = (props: { config: NormalisedConfig } & ContinueWithPasskeyProps) => {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
+
+    const [isPasskeySupported, setIsPasskeySupported] = useState(false);
+
+    useEffect(() => {
+        void (async () => {
+            const browserSupportsWebauthn = await props.recipeImplementation.doesBrowserSupportWebAuthn();
+            if (browserSupportsWebauthn.status !== "OK") {
+                console.error(browserSupportsWebauthn.error);
+                return;
+            }
+
+            setIsPasskeySupported(browserSupportsWebauthn.browserSupportsWebauthn);
+        })();
+    }, [props.recipeImplementation]);
+
     return (
         <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle]}>
-            <ContinueWithPasskeyWithOverride {...props} />
+            <ContinueWithPasskeyWithOverride {...props} isPasskeyNotSupported={!isPasskeySupported} />
         </ThemeBase>
     );
 };

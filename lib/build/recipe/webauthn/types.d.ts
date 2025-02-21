@@ -151,6 +151,13 @@ export declare type RecoverFormProps = {
     onBackClick: () => void;
     recipeImplementation: RecipeImplementation;
 };
+export declare type ContinueWithPasskeyProps = {
+    continueFor: ContinueFor;
+    continueWithPasskeyClicked: (continueFor: ContinueFor) => void;
+    isLoading?: boolean;
+    isPasskeyNotSupported?: boolean;
+    recipeImplementation: RecipeImplementation;
+};
 export declare type EmailSentProps = {
     email: string;
     onEmailChangeClick: () => void;

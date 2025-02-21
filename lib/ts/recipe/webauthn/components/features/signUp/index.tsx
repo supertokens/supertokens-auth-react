@@ -177,6 +177,7 @@ export const SignUpWithPasskeyFeature: React.FC<
                     continueWithPasskeyClicked={() => props.setFactorList(props.factorIds)}
                     config={props.recipe.config}
                     continueFor="SIGN_UP"
+                    recipeImplementation={props.recipe.webJSRecipe}
                 />
             </FeatureWrapper>
         </AuthComponentWrapper>

@@ -9,6 +9,21 @@
     margin: 9px 0;
 }
 
+[data-supertokens~="continueWithPasskeyButtonWrapper"] [data-supertokens~="continueWithPasskeyButtonNotSupported"] {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: #007aff1a;
+    color: #007aff;
+    text-align: center;
+    font-family: Arial;
+    font-weight: 400;
+    font-size: var(--font-size-1);
+    line-height: 16.1px;
+    letter-spacing: 0%;
+    text-align: center;
+}
+
 [data-supertokens~="continueWithoutPasskey"] {
     margin-top: 15px;
 }
