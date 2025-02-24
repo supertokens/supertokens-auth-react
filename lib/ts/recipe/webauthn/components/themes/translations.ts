@@ -50,5 +50,6 @@ export const defaultTranslationsWebauthn = {
         WEBAUTHN_NOT_SUPPORTED_ERROR: "Passkey is not supported on your browser, please try with a different browser.",
         WEBAUTHN_PASSKEY_NOT_SUPPORTED_BY_BROWSER:
             "Your browser does not support passkey flow, please try in a different browser.",
+        WEBAUTHN_EMAIL_INPUT_NOT_POPULATED_ERROR: "Please enter your email to continue.",
     },
 };

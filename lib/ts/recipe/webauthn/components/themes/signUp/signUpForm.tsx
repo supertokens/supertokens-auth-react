@@ -61,13 +61,24 @@ export const SignUpFormInner = withOverride(
             [props]
         );
 
+        const onError = useCallback(
+            (error: string) => {
+                if (error === "EMAIL_INPUT_NOT_POPULATED_ERROR") {
+                    props.onError("WEBAUTHN_EMAIL_INPUT_NOT_POPULATED_ERROR");
+                } else {
+                    props.onError(t("WEBAUTHN_ACCOUNT_RECOVERY_FETCH_ERROR"));
+                }
+            },
+            [props, t]
+        );
+
         return (
             <div data-supertokens="signUpFormInnerContainer">
                 <div data-supertokens="cautionMessage">{t("WEBAUTHN_SIGN_UP_CAUTION_MESSAGE_LABEL")}</div>
                 <FormBase
                     clearError={props.clearError}
                     onFetchError={props.onFetchError}
-                    onError={props.onError}
+                    onError={onError}
                     formFields={[
                         {
                             id: "email",
@@ -96,6 +107,10 @@ export const SignUpFormInner = withOverride(
                         const email = formFields.find((field) => field.id === "email")?.value;
                         if (email === undefined) {
                             throw new STGeneralError("GENERAL_ERROR_EMAIL_UNDEFINED");
+                        }
+
+                        if (email === "") {
+                            throw new STGeneralError("EMAIL_INPUT_NOT_POPULATED_ERROR");
                         }
 
                         // We do not want the form to make the API call since we have
@@ -149,11 +164,7 @@ export const SignUpForm = (
             });
 
             // If it is an error related to passkey, we need to handle it.
-            if (
-                response.status === "FAILED_TO_REGISTER_USER" ||
-                response.status === "AUTHENTICATOR_ALREADY_REGISTERED" ||
-                response.status === "INVALID_OPTIONS_ERROR"
-            ) {
+            if (response.status === "OK") {
                 setErrorLabel("WEBAUTHN_PASSKEY_RECOVERABLE_ERROR");
             }
 

@@ -37,6 +37,7 @@ export declare const defaultTranslationsWebauthn: {
         WEBAUTHN_EMAIL_ALREADY_EXISTS_ERROR: string;
         WEBAUTHN_NOT_SUPPORTED_ERROR: string;
         WEBAUTHN_PASSKEY_NOT_SUPPORTED_BY_BROWSER: string;
+        WEBAUTHN_EMAIL_INPUT_NOT_POPULATED_ERROR: string;
         AUTH_PAGE_HEADER_TITLE_SIGN_IN_AND_UP: string;
         AUTH_PAGE_HEADER_TITLE_SIGN_IN: string;
         AUTH_PAGE_HEADER_TITLE_SIGN_UP: string;
