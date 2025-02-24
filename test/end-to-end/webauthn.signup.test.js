@@ -152,6 +152,16 @@ describe("SuperTokens Webauthn SignUp", () => {
                 "ST_LOGS WEBAUTHN PRE_API_HOOKS SIGN_UP",
             ]);
         });
+        it("should show the email input not populated error", async () => {
+            await tryWebauthnSignUp(page, "");
+            await submitForm(page);
+            const errorTextContainer = await waitForSTElement(
+                page,
+                "[data-supertokens~='generalError']"
+            );
+            const errorText = await errorTextContainer.evaluate((el) => el.textContent);
+            assert.strictEqual(errorText, "Please enter your email to continue.");
+        });
         it("should recover successfully from a recoverable error", async () => {
             // Set the error to be thrown
             await page.evaluateOnNewDocument(() => {
