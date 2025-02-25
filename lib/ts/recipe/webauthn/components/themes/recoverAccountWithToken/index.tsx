@@ -272,6 +272,7 @@ const RecoverAccountThemeInner = (
             isLoading={props.isLoading}
             hideContinueWithoutPasskey
             isContinueDisabled={props.isContinueDisabled}
+            originalFactorIds={[]} // Doesn't matter since we anyway hide the button
         />
     ) : props.activeScreen === RecoverAccountScreen.Success ? (
         <PasskeyRecoverAccountSuccess />

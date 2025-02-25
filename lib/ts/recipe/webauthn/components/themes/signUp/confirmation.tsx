@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useState } from "react";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
@@ -42,6 +42,10 @@ export const PasskeyConfirmation = withOverride(
         const t = useTranslation();
 
         const [isPasskeySupported, setIsPasskeySupported] = useState(false);
+        const showContinueWithoutPasskey = useMemo(
+            () => props.hideContinueWithoutPasskey !== true && (props.originalFactorIds ?? []).length > 1,
+            [props]
+        );
 
         useEffect(() => {
             void (async () => {
@@ -77,7 +81,7 @@ export const PasskeyConfirmation = withOverride(
                         isGreyedOut={!isPasskeySupported}
                     />
                     {!isPasskeySupported && <PasskeyNotSupportedError />}
-                    {!props.hideContinueWithoutPasskey && props.resetFactorList !== undefined && (
+                    {showContinueWithoutPasskey && props.resetFactorList !== undefined && (
                         <ContinueWithoutPasskey onClick={props.resetFactorList} />
                     )}
                 </div>
