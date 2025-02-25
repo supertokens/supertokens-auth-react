@@ -273,5 +273,27 @@ describe("SuperTokens Webauthn SignUp", () => {
                 localStorage.removeItem("throwWebauthnError");
             });
         });
+        it("should show that webauthn is not supported on the browser", async () => {
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("disableWebauthnSupport", "true");
+            });
+
+            const email = await getTestEmail();
+            await tryWebauthnSignUp(page, email);
+            
+            const errorTextContainer = await waitForSTElement(
+                        page,
+                        "[data-supertokens~='continueWithPasskeyButtonNotSupported']"
+                    );
+                    const errorText = await errorTextContainer.evaluate((el) => el.textContent);
+                    assert.strictEqual(
+                        errorText,
+                        "Your browser does not support passkey flow, please try in a different browser."
+                    );
+
+            await page.evaluateOnNewDocument(() => {
+                localStorage.removeItem("disableWebauthnSupport");
+            });
+        })
     });
 });

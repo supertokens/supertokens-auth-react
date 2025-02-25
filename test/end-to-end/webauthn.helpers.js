@@ -1,13 +1,17 @@
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 import { toggleSignInSignUp, setInputValues, submitForm, waitForSTElement } from "../helpers";
 
-export async function tryWebauthnSignUp(page, email) {
+export async function openWebauthnSignUp(page) {
     await Promise.all([
         page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=webauthn`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 
     await toggleSignInSignUp(page);
+}
+
+export async function tryWebauthnSignUp(page, email) {
+    await openWebauthnSignUp(page);
 
     await setInputValues(page, [{ name: "email", value: email }]);
 

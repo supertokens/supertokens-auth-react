@@ -28,6 +28,7 @@ export function getTestContext() {
         throwWebauthnError: localStorage.getItem("throwWebauthnError") === "true",
         webauthnErrorStatus: localStorage.getItem("webauthnErrorStatus") || undefined,
         webauthnRecoverAccountErrorStatus: localStorage.getItem("webauthnRecoverAccountErrorStatus") || undefined,
+        disableWebauthnSupport: localStorage.getItem("disableWebauthnSupport") === "true",
     };
     return ret;
 }
