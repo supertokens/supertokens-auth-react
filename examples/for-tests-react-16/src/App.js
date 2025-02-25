@@ -890,7 +890,12 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
     });
 }
 
-function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus, webauthnRecoverAccountErrorStatus, disableWebauthnSupport }) {
+function getWebauthnConfigs({
+    throwWebauthnError,
+    webauthnErrorStatus,
+    webauthnRecoverAccountErrorStatus,
+    disableWebauthnSupport,
+}) {
     return Webauthn.init({
         style: `          
             [data-supertokens~=container] {

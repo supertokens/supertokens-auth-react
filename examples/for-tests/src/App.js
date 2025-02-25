@@ -1152,7 +1152,12 @@ function setIsNewUserToStorage(recipeName, isNewRecipeUser) {
     localStorage.setItem("isNewUserCheck", `${recipeName}-${isNewRecipeUser}`);
 }
 
-function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus, webauthnRecoverAccountErrorStatus, disableWebauthnSupport }) {
+function getWebauthnConfigs({
+    throwWebauthnError,
+    webauthnErrorStatus,
+    webauthnRecoverAccountErrorStatus,
+    disableWebauthnSupport,
+}) {
     return Webauthn.init({
         override: {
             functions: (implementation) => {
@@ -1322,7 +1327,7 @@ function getWebauthnConfigs({ throwWebauthnError, webauthnErrorStatus, webauthnR
                             return {
                                 status: "OK",
                                 browserSupportsWebAuthn: false,
-                                platformAuthenticatorIsAvailable: false
+                                platformAuthenticatorIsAvailable: false,
                             };
                         }
 

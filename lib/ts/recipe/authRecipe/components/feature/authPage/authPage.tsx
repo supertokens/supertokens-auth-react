@@ -129,6 +129,10 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
     const [factorList, setFactorList] = useState<string[] | undefined>(props.factors);
     const [isSignUp, setIsSignUp] = useState<boolean>(props.isSignUp ?? isSignUpFromQS ?? st.defaultToSignUp);
 
+    // Make a copy of props.factors so that we can pass it to child components
+    // regardless of the state being updated afterwards.
+    const [originalFactorIds, setOriginalFactorIds] = useState<string[] | undefined>(props.factors);
+
     // We use this to signal that we need to update the components we show on screen
     const [rebuildReqCount, setRebuildReqCount] = useState(0);
     const lastBuild = useRef<{ buildReq: number | undefined }>({ buildReq: undefined });
@@ -297,6 +301,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                 abortCtl.signal
             ).then(() => {
                 lastBuild.current.buildReq = rebuildReqCount;
+                setOriginalFactorIds(authComponentListInfo?.factorIds);
             }, rethrowInRender);
         }
         return () => {
@@ -379,6 +384,7 @@ const AuthPageInner: React.FC<AuthPageProps> = (props) => {
                   showBackButton: showUseAnotherLink,
                   termsOfServiceLink,
                   userContext,
+                  originalFactorIds,
               }
             : undefined;
 

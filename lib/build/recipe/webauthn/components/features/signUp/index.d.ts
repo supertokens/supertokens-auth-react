@@ -14,6 +14,7 @@ export declare function useChildProps(
     clearError: () => void,
     resetFactorList: () => void,
     onSignInUpSwitcherClick: () => void,
+    originalFactorIds: string[],
     navigate?: Navigate
 ): SignUpThemeProps;
 export declare const SignUpFeature: React.FC<

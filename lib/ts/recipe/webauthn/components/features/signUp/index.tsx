@@ -47,6 +47,7 @@ export function useChildProps(
     clearError: () => void,
     resetFactorList: () => void,
     onSignInUpSwitcherClick: () => void,
+    originalFactorIds: string[],
     navigate?: Navigate
 ): SignUpThemeProps {
     const session = useSessionContext();
@@ -92,6 +93,7 @@ export function useChildProps(
             resetFactorList: resetFactorList,
             onSignInUpSwitcherClick,
             onRecoverAccountClick,
+            originalFactorIds,
         };
     }, [error, factorIds, userContext, recipeImplementation]);
 }
@@ -118,8 +120,9 @@ const SignUpFeatureInner: React.FC<
         props.clearError,
         props.resetFactorList,
         props.onSignInUpSwitcherClick,
+        props.originalFactorIds,
         props.navigate
-    )!;
+    );
 
     return (
         <Fragment>

@@ -155,10 +155,7 @@ describe("SuperTokens Webauthn SignUp", () => {
         it("should show the email input not populated error", async () => {
             await tryWebauthnSignUp(page, "");
             await submitForm(page);
-            const errorTextContainer = await waitForSTElement(
-                page,
-                "[data-supertokens~='generalError']"
-            );
+            const errorTextContainer = await waitForSTElement(page, "[data-supertokens~='generalError']");
             const errorText = await errorTextContainer.evaluate((el) => el.textContent);
             assert.strictEqual(errorText, "Please enter your email to continue.");
         });
@@ -280,20 +277,20 @@ describe("SuperTokens Webauthn SignUp", () => {
 
             const email = await getTestEmail();
             await tryWebauthnSignUp(page, email);
-            
+
             const errorTextContainer = await waitForSTElement(
-                        page,
-                        "[data-supertokens~='continueWithPasskeyButtonNotSupported']"
-                    );
-                    const errorText = await errorTextContainer.evaluate((el) => el.textContent);
-                    assert.strictEqual(
-                        errorText,
-                        "Your browser does not support passkey flow, please try in a different browser."
-                    );
+                page,
+                "[data-supertokens~='continueWithPasskeyButtonNotSupported']"
+            );
+            const errorText = await errorTextContainer.evaluate((el) => el.textContent);
+            assert.strictEqual(
+                errorText,
+                "Your browser does not support passkey flow, please try in a different browser."
+            );
 
             await page.evaluateOnNewDocument(() => {
                 localStorage.removeItem("disableWebauthnSupport");
             });
-        })
+        });
     });
 });

@@ -43,7 +43,8 @@ export function useChildProps(
     navigate: Navigate | undefined,
     userContext: UserContext,
     resetFactorList: () => void,
-    onSignInUpSwitcherClick: () => void
+    onSignInUpSwitcherClick: () => void,
+    originalFactorIds: string[] | undefined
 ): SignInAndUpThemeProps {
     const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.webJSRecipe), [recipe]);
     const dynamicLoginMethods = useDynamicLoginMethods();
@@ -78,6 +79,7 @@ export function useChildProps(
             userContext,
             resetFactorList,
             onSignInUpSwitcherClick,
+            originalFactorIds: originalFactorIds ?? [],
         };
     }, [recipe, recipeImplementation, error, userContext]);
 }
@@ -100,7 +102,8 @@ export const SignInAndUpFeature: React.FC<PropType> = (props) => {
         props.navigate,
         props.userContext,
         props.resetFactorList,
-        props.onSignInUpSwitcherClick
+        props.onSignInUpSwitcherClick,
+        props.originalFactorIds
     );
 
     const themeProps = { ...childProps, providers: childProps.providers };

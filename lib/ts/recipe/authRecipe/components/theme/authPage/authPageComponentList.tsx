@@ -39,6 +39,7 @@ export const AuthPageComponentList = withOverride(
                 {list.map((i) =>
                     i({
                         ...props,
+                        originalFactorIds: props.factorIds,
                     })
                 )}
             </div>

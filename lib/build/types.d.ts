@@ -203,6 +203,7 @@ export declare type AuthComponentProps = {
     error: string | undefined;
     onError: (err: string) => void;
     clearError: () => void;
+    originalFactorIds: string[];
 };
 export declare type PartialAuthComponentProps = AuthComponentProps;
 export declare type FullPageAuthComponentProps<PreloadInfoType> = AuthComponentProps & {

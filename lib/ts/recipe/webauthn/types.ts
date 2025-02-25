@@ -129,6 +129,7 @@ export type SignUpThemeBaseProps = {
     userContext: UserContext;
     resetFactorList: () => void;
     onSignInUpSwitcherClick: () => void;
+    originalFactorIds: string[];
 };
 
 export type SignUpThemeProps = SignUpThemeBaseProps & {
@@ -146,6 +147,7 @@ export type SignUpFormProps = {
     config: NormalisedConfig;
     onSuccess?: (result: { createdNewRecipeUser: boolean; user: User }) => void;
     resetFactorList?: () => void;
+    originalFactorIds: string[];
 };
 
 export type RecoverAccountWithTokenProps = {
