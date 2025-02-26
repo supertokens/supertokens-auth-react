@@ -28,6 +28,7 @@ import {
 import path from "path";
 import assert from "assert";
 import mkdirp from "mkdirp";
+import addContext from "mochawesome/addContext";
 
 const SESSION_STORAGE_STATE_KEY = "supertokens-oauth-state";
 
@@ -812,13 +813,20 @@ export async function screenshotOnFailure(ctx, browser) {
                 .filter((a) => a.length !== 0)
                 .join("_");
             title = title.substring(title.length - 30);
-            await pages[i].screenshot({
-                path: path.join(screenshotRoot, testFileName, `${title}-tab_${i}-${Date.now()}.png`),
-            });
+
+            const screenshotPath = path.join(screenshotRoot, testFileName, `${title}-tab_${i}-${Date.now()}.png`);
+            await pages[i].screenshot({ path: screenshotPath });
+            addContext(ctx, { title: "Screenshot", value: screenshotPath });
+
             await new Promise((r) => setTimeout(r, 500));
-            await pages[i].screenshot({
-                path: path.join(screenshotRoot, testFileName, `${title}-tab_${i}-delayed-${Date.now()}.png`),
-            });
+
+            const delayedScreenshotPath = path.join(
+                screenshotRoot,
+                testFileName,
+                `${title}-tab_${i}-delayed-${Date.now()}.png`
+            );
+            await pages[i].screenshot({ path: delayedScreenshotPath });
+            addContext(ctx, { title: "Delayed Screenshot", value: delayedScreenshotPath });
         }
     }
 }
