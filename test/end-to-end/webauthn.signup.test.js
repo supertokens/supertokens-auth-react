@@ -10,8 +10,9 @@ import {
     waitForSTElement,
     submitForm,
     setEnabledRecipes,
+    setInputValues,
 } from "../helpers";
-import { tryWebauthnSignUp } from "./webauthn.helpers";
+import { tryWebauthnSignUp, openWebauthnSignUp } from "./webauthn.helpers";
 import assert from "assert";
 
 describe("SuperTokens Webauthn SignUp", () => {
@@ -60,6 +61,34 @@ describe("SuperTokens Webauthn SignUp", () => {
     });
 
     describe("SignUp test", () => {
+        it("should not show the back button and continue without passkey button if there is only one recipe", async () => {
+            await setEnabledRecipes(["webauthn"]);
+            await openWebauthnSignUp(page);
+
+            // Use puppeteer to check if the back button is not shown
+            const backBtn = await page.$("[data-supertokens~='backButton']");
+            assert.strictEqual(backBtn, null);
+
+            // Make sure the continue without passkey button is not shown
+            const continueWithoutPasskeyBtn = await page.$("[data-supertokens~='continueWithoutPasskey']");
+            assert.strictEqual(continueWithoutPasskeyBtn, null);
+
+            // Should not show the back button after the form is submitted as well.
+            const email = await getTestEmail();
+            await setInputValues(page, [{ name: "email", value: email }]);
+            await submitForm(page);
+            await new Promise((res) => setTimeout(res, 1000));
+
+            const backBtnAfterSubmit = await page.$("[data-supertokens~='backButton']");
+            assert.strictEqual(backBtnAfterSubmit, null);
+
+            // Make sure the continue without passkey button is not shown
+            const continueWithoutPasskeyBtnAfterSubmit = await page.$("[data-supertokens~='continueWithoutPasskey']");
+            assert.strictEqual(continueWithoutPasskeyBtnAfterSubmit, null);
+
+            // Reset the recipes after test is done
+            await setEnabledRecipes(["webauthn", "emailpassword", "session", "dashboard", "userroles"]);
+        });
         it("should show the create a passkey successfully", async () => {
             const email = await getTestEmail();
             await tryWebauthnSignUp(page, email);
