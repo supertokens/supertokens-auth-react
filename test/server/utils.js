@@ -13,9 +13,65 @@
  * under the License.
  */
 const { exec } = require("child_process");
-let fs = require("fs");
 let assert = require("assert");
 let axios = require("axios").default;
+const { randomUUID } = require("node:crypto");
+
+module.exports.getCoreUrl = () => {
+    const host = process.env?.SUPERTOKENS_CORE_HOST ?? "localhost";
+    const port = process.env?.SUPERTOKENS_CORE_PORT ?? "3567";
+
+    const coreUrl = `http://${host}:${port}`;
+
+    return coreUrl;
+};
+
+module.exports.createCoreApplication = async function ({ appId, coreConfig } = {}) {
+    const coreUrl = module.exports.getCoreUrl();
+
+    if (!appId) {
+        appId = randomUUID();
+    }
+
+    if (!coreConfig) {
+        coreConfig = {};
+    }
+
+    const createAppResp = await fetch(`${coreUrl}/recipe/multitenancy/app/v2`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            appId,
+            coreConfig,
+        }),
+    });
+
+    const respBody = await createAppResp.json();
+    assert.strictEqual(respBody.status, "OK");
+    assert.strictEqual(respBody.createdNew, true);
+
+    return `${coreUrl}/appid-${appId}`;
+};
+
+module.exports.addLicense = async function () {
+    const coreUrl = module.exports.getCoreUrl();
+
+    const OPAQUE_KEY_WITH_ALL_FEATURES_ENABLED =
+        "N2yITHflaFS4BPm7n0bnfFCjP4sJoTERmP0J=kXQ5YONtALeGnfOOe2rf2QZ0mfOh0aO3pBqfF-S0jb0ABpat6pySluTpJO6jieD6tzUOR1HrGjJO=50Ob3mHi21tQHJ";
+
+    // TODO: This should be done on the core directly, not in apps
+    await fetch(`${coreUrl}/ee/license`, {
+        method: "PUT",
+        headers: {
+            "content-type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify({
+            licenseKey: OPAQUE_KEY_WITH_ALL_FEATURES_ENABLED,
+        }),
+    });
+};
 
 module.exports.executeCommand = async function (cmd) {
     return new Promise((resolve, reject) => {
@@ -28,72 +84,6 @@ module.exports.executeCommand = async function (cmd) {
             resolve({ stdout, stderr });
         });
     });
-};
-
-module.exports.setupST = async function () {
-    let installationPath = process.env.INSTALL_PATH;
-    try {
-        await module.exports.executeCommand("cd " + installationPath + " && cp temp/licenseKey ./licenseKey");
-    } catch (ignored) {}
-    await module.exports.executeCommand("cd " + installationPath + " && cp temp/config.yaml ./config.yaml");
-};
-
-module.exports.setKeyValueInConfig = async function (key, value) {
-    return new Promise((resolve, reject) => {
-        let installationPath = process.env.INSTALL_PATH;
-        fs.readFile(installationPath + "/config.yaml", "utf8", function (err, data) {
-            if (err) {
-                reject(err);
-                return;
-            }
-            let oldStr = new RegExp("((#\\s)?)" + key + "(:|((:\\s).+))\n");
-            let newStr = key + ": " + value + "\n";
-            let result = data.replace(oldStr, newStr);
-            fs.writeFile(installationPath + "/config.yaml", result, "utf8", function (err) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve();
-                }
-            });
-        });
-    });
-};
-
-module.exports.cleanST = async function () {
-    let installationPath = process.env.INSTALL_PATH;
-    try {
-        await module.exports.executeCommand("cd " + installationPath + " && rm licenseKey");
-    } catch (ignored) {}
-    await module.exports.executeCommand("cd " + installationPath + " && rm -f config.yaml");
-    await module.exports.executeCommand("cd " + installationPath + " && rm -rf .webserver-temp-*");
-    await module.exports.executeCommand("cd " + installationPath + " && rm -rf .started");
-};
-
-module.exports.stopST = async function (pid) {
-    let pidsBefore = await getListOfPids();
-    if (pidsBefore.length === 0) {
-        return;
-    }
-    await module.exports.executeCommand("kill " + pid);
-    let startTime = Date.now();
-    while (Date.now() - startTime < 10000) {
-        let pidsAfter = await getListOfPids();
-        if (pidsAfter.includes(pid)) {
-            await new Promise((r) => setTimeout(r, 100));
-            continue;
-        } else {
-            return;
-        }
-    }
-    throw new Error("error while stopping ST with PID: " + pid);
-};
-
-module.exports.killAllST = async function () {
-    let pids = await getListOfPids();
-    for (let i = 0; i < pids.length; i++) {
-        await module.exports.stopST(pids[i]);
-    }
 };
 
 module.exports.startST = async function (config = {}) {
