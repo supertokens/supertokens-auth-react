@@ -1241,6 +1241,40 @@ const testProviderConfigs = {
     },
 };
 
+export async function backendHook(hookType) {
+    const serverUrls = Array.from(new Set([TEST_SERVER_BASE_URL, TEST_APPLICATION_SERVER_BASE_URL]));
+
+    await Promise.all(
+        serverUrls.map((url) => fetch(`${url}/test/${hookType}`, { method: "POST" }).catch(console.error))
+    );
+}
+
+export async function createCoreApp({
+    appId,
+    coreConfig,
+    accountLinkingConfig = {},
+    enabledRecipes,
+    enabledProviders,
+    passwordlessFlowType,
+    passwordlessContactMethod,
+    mfaInfo = {},
+} = {}) {
+    await fetch(`${TEST_SERVER_BASE_URL}/test/setup`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            appId,
+            coreConfig,
+            accountLinkingConfig,
+            enabledRecipes,
+            enabledProviders,
+            passwordlessFlowType,
+            passwordlessContactMethod,
+            mfaInfo,
+        }),
+    });
+}
+
 export async function backendBeforeEach() {
     await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
         method: "POST",
