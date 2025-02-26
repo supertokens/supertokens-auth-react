@@ -260,6 +260,14 @@
     background-color: rgb(var(--palette-buttonGreyedOut));
     border-color: rgb(var(--palette-buttonGreyedOut));
 }
+
+[data-supertokens~="buttonWithIcon"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
 [data-supertokens~="button"]:disabled {
     border: none;
     cursor: no-drop;

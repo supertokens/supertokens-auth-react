@@ -15,6 +15,7 @@
 
 import React, { useEffect, useState } from "react";
 
+import PasskeyIcon from "../../../../../components/assets/passkeyIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import SuperTokens from "../../../../../superTokens";
 import { Button } from "../../../../emailpassword/components/library";
@@ -40,6 +41,7 @@ const ContinueWithPasskey: React.FC<ContinueWithPasskeyProps> = ({
                 label={"WEBAUTHN_COMBO_CONTINUE_WITH_PASSKEY_BUTTON"}
                 disabled={isPasskeyNotSupported}
                 isGreyedOut={isPasskeyNotSupported}
+                icon={PasskeyIcon}
             />
             {isPasskeyNotSupported && <PasskeyNotSupportedError />}
         </div>

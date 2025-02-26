@@ -6,6 +6,15 @@ declare type ButtonProps = {
     type: "submit" | "button" | "reset" | undefined;
     onClick?: () => void;
     isGreyedOut?: boolean;
+    icon?: () => JSX.Element;
 };
-export default function Button({ type, label, disabled, isLoading, onClick, isGreyedOut }: ButtonProps): JSX.Element;
+export default function Button({
+    type,
+    label,
+    disabled,
+    isLoading,
+    onClick,
+    isGreyedOut,
+    icon,
+}: ButtonProps): JSX.Element;
 export {};

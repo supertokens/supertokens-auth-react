@@ -12,7 +12,8 @@ export declare function useChildProps(
     userContext: UserContext,
     clearError: () => void,
     resetFactorList: () => void,
-    onSignInUpSwitcherClick: () => void
+    onSignInUpSwitcherClick: () => void,
+    originalFactorIds: string[]
 ): SignInThemeProps;
 export declare const SignInWithPasskeyFeature: React.FC<
     PartialAuthComponentProps & {

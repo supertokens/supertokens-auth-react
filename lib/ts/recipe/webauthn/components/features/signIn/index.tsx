@@ -39,7 +39,8 @@ export function useChildProps(
     userContext: UserContext,
     clearError: () => void,
     resetFactorList: () => void,
-    onSignInUpSwitcherClick: () => void
+    onSignInUpSwitcherClick: () => void,
+    originalFactorIds: string[]
 ): SignInThemeProps {
     const session = useSessionContext();
     const recipeImplementation = recipe.webJSRecipe;
@@ -76,6 +77,7 @@ export function useChildProps(
                 onError("SOMETHING_WENT_WRONG_ERROR");
             },
             factorIds,
+            originalFactorIds,
             recipeImplementation: recipeImplementation,
             config: recipe.config,
             resetFactorList: resetFactorList,
@@ -105,7 +107,8 @@ const SignInFeatureInner: React.FC<
         userContext,
         props.clearError,
         props.resetFactorList,
-        props.onSignInUpSwitcherClick
+        props.onSignInUpSwitcherClick,
+        props.originalFactorIds
     )!;
 
     return (
