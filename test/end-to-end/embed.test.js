@@ -1,48 +1,51 @@
 import assert from "assert";
-import puppeteer from "puppeteer";
-import fetch from "isomorphic-fetch";
-import { TEST_SERVER_BASE_URL } from "../constants";
 import { AuthPage } from "./pages/AuthPage";
 import { EmailVerificationPage } from "./pages/EmailVerificationPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
-import { backendBeforeEach, clearBrowserCookiesWithoutAffectingConsole, screenshotOnFailure } from "../helpers";
+import {
+    clearBrowserCookiesWithoutAffectingConsole,
+    screenshotOnFailure,
+    setupBrowser,
+    backendHook,
+    createCoreApp,
+    logoutFromEmailVerification,
+} from "../helpers";
 
 describe("Embed components", async () => {
-    let browser;
-    let page;
-
-    before(async function () {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
+        let browser;
+        let page;
+        let consoleLogs;
+    
+        before(async function () {
+            await backendHook("before");
+            browser = await setupBrowser();
         });
-
-        await backendBeforeEach();
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-    });
-
-    beforeEach(async () => {
-        page = await browser.newPage();
-        await clearBrowserCookiesWithoutAffectingConsole(page, []);
-    });
-
-    after(async function () {
-        await page.close();
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await browser.close();
-    });
-
-    afterEach(function () {
-        return screenshotOnFailure(this, browser);
-    });
+    
+        beforeEach(async function () {
+            await backendHook("beforeEach");
+            await createCoreApp();
+            page = await browser.newPage();
+    
+            consoleLogs = [];
+            page.on("console", (consoleObj) => {
+                const log = consoleObj.text();
+                if (log.startsWith("ST_LOGS")) {
+                    consoleLogs.push(log);
+                }
+            });
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+        });
+    
+        afterEach(async function () {
+            await screenshotOnFailure(this, browser);
+            await page?.close();
+            await backendHook("afterEach");
+        });
+    
+        after(async function () {
+            await browser?.close();
+            await backendHook("after");
+        });
 
     describe("EmailPassword SignInAndUp feature", () => {
         const testContext = {
@@ -110,10 +113,10 @@ describe("Embed components", async () => {
         });
 
         it("don't mount EmailVerification on /auth/verify-email if disableDefaultUI = true", async () => {
-            // First, sign in, as we signed up previously
-            const authPage = await AuthPage.navigate(page, {
-                ...testContext,
-            });
+            // First, sign up and logout
+            const authPage = await AuthPage.navigate(page, testContext);
+            await authPage.signUp();
+            await logoutFromEmailVerification(page);
 
             await authPage.signIn("john.doe@supertokens.io", "Str0ngP@ssw0rd");
 
