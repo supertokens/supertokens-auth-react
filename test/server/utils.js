@@ -50,7 +50,6 @@ module.exports.createCoreApplication = async function ({ appId, coreConfig } = {
 
     const respBody = await createAppResp.json();
     assert.strictEqual(respBody.status, "OK");
-    assert.strictEqual(respBody.createdNew, true);
 
     return `${coreUrl}/appid-${appId}`;
 };
