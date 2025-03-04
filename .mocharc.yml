@@ -8,3 +8,4 @@ reporter-option:
     - "reportDir=test_report/mochawesome"
 require:
     - "@babel/register"
+    - test/test.mocha.env
