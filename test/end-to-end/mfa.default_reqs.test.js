@@ -16,45 +16,29 @@
 /*
  * Imports
  */
-
 import assert from "assert";
-import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
-    setInputValues,
-    submitForm,
-    waitForSTElement,
     screenshotOnFailure,
-    backendBeforeEach,
+    backendHook,
     getTestEmail,
-    getPasswordlessDevice,
-    waitFor,
     getFactorChooserOptions,
-    setAccountLinkingConfig,
     isMFASupported,
+    setupBrowser,
+    createCoreApp,
 } from "../helpers";
-import fetch from "isomorphic-fetch";
-import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API, TEST_APPLICATION_SERVER_BASE_URL } from "../constants";
-
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+import { TEST_CLIENT_BASE_URL } from "../constants";
 import { getTestPhoneNumber } from "../exampleTestHelpers";
 import {
-    setMFAInfo,
     tryEmailPasswordSignUp,
     waitForDashboard,
     completeOTP,
     setupOTP,
     logout,
     tryEmailPasswordSignIn,
-    chooseFactor,
-    tryPasswordlessSignInUp,
     setupTOTP,
     completeTOTP,
-    setupUserWithAllFactors,
     goToFactorChooser,
-    waitForAccessDenied,
-    waitForLoadingScreen,
-    waitForBlockedScreen,
     addToRequiredSecondaryFactorsForUser,
 } from "./mfa.helpers";
 
@@ -65,47 +49,25 @@ describe("SuperTokens SignIn w/ MFA", function () {
     let browser;
     let page;
     let consoleLogs = [];
-    let skipped = false;
+
+    const appConfig = {
+        accountLinkingConfig: {
+            enabled: true,
+            shouldAutoLink: {
+                shouldAutomaticallyLink: true,
+                shouldRequireVerification: false,
+            },
+        },
+    };
 
     before(async function () {
         if (!(await isMFASupported())) {
-            skipped = true;
             this.skip();
-            return;
         }
-        await backendBeforeEach();
-
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
 
         await setAccountLinkingConfig(true, true, false);
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
-    });
-
-    after(async function () {
-        if (skipped) {
-            return;
-        }
-        await browser.close();
-
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
-    });
-
-    afterEach(async function () {
-        await screenshotOnFailure(this, browser);
-        if (page) {
-            await page.close();
-        }
+        await backendHook("before");
+        browser = await setupBrowser();
     });
 
     beforeEach(async function () {
@@ -125,10 +87,22 @@ describe("SuperTokens SignIn w/ MFA", function () {
         await page.evaluate(() => window.localStorage.setItem("enableAllRecipes", "true"));
     });
 
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await page?.close();
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
+    });
+
     describe("default requirements", () => {
         let email, phoneNumber;
+
         beforeEach(async () => {
-            await setMFAInfo({});
+            await createCoreApp(appConfig);
             const setupPage = await browser.newPage();
 
             email = await getTestEmail();
