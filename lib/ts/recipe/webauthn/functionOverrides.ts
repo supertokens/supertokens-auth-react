@@ -52,7 +52,7 @@ export const getFunctionOverrides =
 
             if (response.status === "OK") {
                 onHandleEvent({
-                    action: "AUTHENTICATE_CREDENTIAL",
+                    action: "AUTHENTICATE_CREDENTIAL_OK",
                 });
             }
 
