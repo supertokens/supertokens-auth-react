@@ -18,6 +18,8 @@ import {
     isThirdPartyPasswordlessSupported,
     backendBeforeEach,
     setupBrowser,
+    backendHook,
+    createCoreApp,
 } from "../helpers";
 
 import {
@@ -28,42 +30,44 @@ import {
 } from "../constants";
 
 describe("getRedirectionURL Tests", function () {
+    let browser;
+    let page;
+
+    before(async function () {
+        await backendHook("before");
+        browser = await setupBrowser();
+    });
+
+    beforeEach(async function () {
+        await backendHook("beforeEach");
+    });
+
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
+    });
+
     describe("Test that isNewRecipeUser is passed correctly", function () {
         describe("Email Password Recipe", function () {
-            let browser;
-            let page;
-            before(async function () {
-                await backendBeforeEach();
-
-                await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                    method: "POST",
-                }).catch(console.error);
-
-                browser = await setupBrowser();
-            });
-
-            after(async function () {
-                await browser.close();
-                await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                    method: "POST",
-                }).catch(console.error);
-                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                    method: "POST",
-                }).catch(console.error);
-            });
-
-            afterEach(function () {
-                return screenshotOnFailure(this, browser);
-            });
-
             beforeEach(async function () {
                 page = await browser.newPage();
+                await createCoreApp();
+
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=emailpassword`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 await page.evaluate(() => localStorage.removeItem("isNewUserCheck"));
                 await clearBrowserCookiesWithoutAffectingConsole(page, []);
+            });
+
+            afterEach(async function () {
+                await page?.close();
             });
 
             it("Test that isNewRecipeUser is true when signing up", async function () {
@@ -75,37 +79,19 @@ describe("getRedirectionURL Tests", function () {
         });
 
         describe("Third party recipe", function () {
-            let browser;
-            let page;
             before(async function () {
-                await backendBeforeEach();
-
-                await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                    method: "POST",
-                }).catch(console.error);
-
-                browser = await setupBrowser();
+                await createCoreApp();
                 page = await browser.newPage();
                 await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdparty`);
-            });
-
-            after(async function () {
-                await browser.close();
-                await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                    method: "POST",
-                }).catch(console.error);
-                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                    method: "POST",
-                }).catch(console.error);
-            });
-
-            afterEach(function () {
-                return screenshotOnFailure(this, browser);
             });
 
             beforeEach(async function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, []);
                 await page.evaluate(() => localStorage.removeItem("isNewUserCheck"));
+            });
+
+            after(async function () {
+                await page?.close();
             });
 
             it("Test that isNewRecipeUser works correctly", async function () {
@@ -125,31 +111,9 @@ describe("getRedirectionURL Tests", function () {
         });
 
         describe("Thirdpartyemailpassword recipe", function () {
-            let browser;
-            let page;
             before(async function () {
-                await backendBeforeEach();
-
-                await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                    method: "POST",
-                }).catch(console.error);
-
-                browser = await setupBrowser();
+                await createCoreApp();
                 page = await browser.newPage();
-            });
-
-            after(async function () {
-                await browser.close();
-                await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                    method: "POST",
-                }).catch(console.error);
-                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                    method: "POST",
-                }).catch(console.error);
-            });
-
-            afterEach(function () {
-                return screenshotOnFailure(this, browser);
             });
 
             beforeEach(async function () {
@@ -159,6 +123,10 @@ describe("getRedirectionURL Tests", function () {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 await page.evaluate(() => localStorage.removeItem("isNewUserCheck"));
+            });
+
+            after(async function () {
+                await page?.close();
             });
 
             it("Test that isNewRecipeUser is true when signing up with email", async function () {
@@ -181,34 +149,24 @@ describe("getRedirectionURL Tests", function () {
         });
 
         describe("Passwordless recipe", function () {
-            let browser;
-            let page;
             const exampleEmail = "test@example.com";
-            // Mocha calls cleanup functions even if the test block is skipped, this helps skipping the after block
-            let didSkip = false;
 
             before(async function () {
                 let _isPasswordlessSupported = await isPasswordlessSupported();
                 if (!_isPasswordlessSupported) {
-                    didSkip = true;
                     this.skip();
                     return;
                 }
 
-                await backendBeforeEach();
+                await createCoreApp({
+                    coreConfig: {
+                        passwordless_code_lifetime: 4000,
+                        passwordless_max_code_input_attempts: 3,
+                    },
+                    passwordlessFlowType: "USER_INPUT_CODE",
+                    passwordlessContactMethod: "EMAIL",
+                });
 
-                await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                    method: "POST",
-                    headers: [["content-type", "application/json"]],
-                    body: JSON.stringify({
-                        coreConfig: {
-                            passwordless_code_lifetime: 4000,
-                            passwordless_max_code_input_attempts: 3,
-                        },
-                    }),
-                }).catch(console.error);
-
-                browser = await setupBrowser();
                 page = await browser.newPage();
                 await Promise.all([
                     page.goto(
@@ -216,30 +174,15 @@ describe("getRedirectionURL Tests", function () {
                     ),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
-                await setPasswordlessFlowType("EMAIL", "USER_INPUT_CODE");
-            });
-
-            after(async function () {
-                // Dont cleanup if tests were skipped
-                if (didSkip) {
-                    return;
-                }
-                await browser.close();
-                await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                    method: "POST",
-                }).catch(console.error);
-                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                    method: "POST",
-                }).catch(console.error);
-            });
-
-            afterEach(function () {
-                return screenshotOnFailure(this, browser);
             });
 
             beforeEach(async function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, []);
                 await page.evaluate(() => localStorage.removeItem("isNewUserCheck"));
+            });
+
+            after(async function () {
+                await page?.close();
             });
 
             it("Test that isNewRecipeUser is passed correctly", async function () {
@@ -265,34 +208,23 @@ describe("getRedirectionURL Tests", function () {
         });
 
         describe("ThirdPartyPasswordless recipe", function () {
-            let browser;
-            let page;
             const exampleEmail = "test@example.com";
-            // Mocha calls cleanup functions even if the test block is skipped, this helps skipping the after block
-            let didSkip = false;
 
             before(async function () {
                 let _isThirdPartyPasswordlessSupported = await isThirdPartyPasswordlessSupported();
                 if (!_isThirdPartyPasswordlessSupported) {
-                    didSkip = true;
                     this.skip();
-                    return;
                 }
 
-                await backendBeforeEach();
+                await createCoreApp({
+                    coreConfig: {
+                        passwordless_code_lifetime: 4000,
+                        passwordless_max_code_input_attempts: 3,
+                    },
+                    passwordlessFlowType: "USER_INPUT_CODE",
+                    passwordlessContactMethod: "EMAIL",
+                });
 
-                await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                    method: "POST",
-                    headers: [["content-type", "application/json"]],
-                    body: JSON.stringify({
-                        coreConfig: {
-                            passwordless_code_lifetime: 4000,
-                            passwordless_max_code_input_attempts: 3,
-                        },
-                    }),
-                }).catch(console.error);
-
-                browser = await setupBrowser();
                 page = await browser.newPage();
                 await Promise.all([
                     page.goto(
@@ -300,31 +232,15 @@ describe("getRedirectionURL Tests", function () {
                     ),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
-                await setPasswordlessFlowType("EMAIL", "USER_INPUT_CODE");
-            });
-
-            after(async function () {
-                // Dont cleanup if tests were skipped
-                if (didSkip) {
-                    return;
-                }
-
-                await browser.close();
-                await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                    method: "POST",
-                }).catch(console.error);
-                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                    method: "POST",
-                }).catch(console.error);
-            });
-
-            afterEach(function () {
-                return screenshotOnFailure(this, browser);
             });
 
             beforeEach(async function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, []);
                 await page.evaluate(() => localStorage.removeItem("isNewUserCheck"));
+            });
+
+            after(async function () {
+                await page?.close();
             });
 
             it("Test that isNewRecipeUser is passed correctly", async function () {
@@ -366,19 +282,10 @@ describe("getRedirectionURL Tests", function () {
 
         describe("No Redirection", function () {
             describe("Email Password Recipe", function () {
-                let browser;
-                let page;
-
                 before(async function () {
-                    await backendBeforeEach();
-
-                    await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                        method: "POST",
-                    }).catch(console.error);
-
-                    browser = await setupBrowser();
-
+                    await createCoreApp();
                     page = await browser.newPage();
+
                     // We need to set the localStorage value before the page loads to ensure ST initialises with the correct value
                     await page.evaluateOnNewDocument(() => {
                         localStorage.setItem("disableRedirectionAfterSuccessfulSignInUp", "true");
@@ -389,17 +296,7 @@ describe("getRedirectionURL Tests", function () {
                 });
 
                 after(async function () {
-                    await browser.close();
-                    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                        method: "POST",
-                    }).catch(console.error);
-                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                        method: "POST",
-                    }).catch(console.error);
-                });
-
-                afterEach(function () {
-                    return screenshotOnFailure(this, browser);
+                    await page?.close();
                 });
 
                 it("should not do any redirection after successful sign up", async function () {
@@ -420,34 +317,23 @@ describe("getRedirectionURL Tests", function () {
             });
 
             describe("Passwordless recipe", function () {
-                let browser;
-                let page;
                 const exampleEmail = "test@example.com";
-                // Mocha calls cleanup functions even if the test block is skipped, this helps skipping the after block
-                let didSkip = false;
 
                 before(async function () {
                     let _isPasswordlessSupported = await isPasswordlessSupported();
                     if (!_isPasswordlessSupported) {
-                        didSkip = true;
                         this.skip();
-                        return;
                     }
 
-                    await backendBeforeEach();
+                    await createCoreApp({
+                        coreConfig: {
+                            passwordless_code_lifetime: 4000,
+                            passwordless_max_code_input_attempts: 3,
+                        },
+                        passwordlessFlowType: "USER_INPUT_CODE",
+                        passwordlessContactMethod: "EMAIL",
+                    });
 
-                    await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                        method: "POST",
-                        headers: [["content-type", "application/json"]],
-                        body: JSON.stringify({
-                            coreConfig: {
-                                passwordless_code_lifetime: 4000,
-                                passwordless_max_code_input_attempts: 3,
-                            },
-                        }),
-                    }).catch(console.error);
-
-                    browser = await setupBrowser();
                     page = await browser.newPage();
                     // We need to set the localStorage value before the page loads to ensure ST initialises with the correct value
                     await page.evaluateOnNewDocument(() => {
@@ -461,25 +347,10 @@ describe("getRedirectionURL Tests", function () {
                         ),
                         page.waitForNavigation({ waitUntil: "networkidle0" }),
                     ]);
-                    return setPasswordlessFlowType("EMAIL", "USER_INPUT_CODE");
                 });
 
                 after(async function () {
-                    // Dont cleanup if tests were skipped
-                    if (didSkip) {
-                        return;
-                    }
-                    await browser.close();
-                    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                        method: "POST",
-                    }).catch(console.error);
-                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                        method: "POST",
-                    }).catch(console.error);
-                });
-
-                afterEach(function () {
-                    return screenshotOnFailure(this, browser);
+                    await page?.close();
                 });
 
                 it("should not do any redirection after successful sign up", async function () {
@@ -510,65 +381,41 @@ describe("getRedirectionURL Tests", function () {
             });
 
             describe("ThirdPartyPasswordless recipe: Magic Link", function () {
-                let browser;
-                let page;
                 const exampleEmail = "test@example.com";
-                // Mocha calls cleanup functions even if the test block is skipped, this helps skipping the after block
-                let didSkip = false;
 
                 before(async function () {
                     let _isThirdPartyPasswordlessSupported = await isThirdPartyPasswordlessSupported();
                     if (!_isThirdPartyPasswordlessSupported) {
-                        didSkip = true;
                         this.skip();
-                        return;
                     }
 
-                    await backendBeforeEach();
+                    await createCoreApp({
+                        coreConfig: {
+                            passwordless_code_lifetime: 4000,
+                            passwordless_max_code_input_attempts: 3,
+                        },
+                        passwordlessFlowType: "MAGIC_LINK",
+                        passwordlessContactMethod: "EMAIL",
+                    });
 
-                    await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                        method: "POST",
-                        headers: [["content-type", "application/json"]],
-                        body: JSON.stringify({
-                            coreConfig: {
-                                passwordless_code_lifetime: 4000,
-                                passwordless_max_code_input_attempts: 3,
-                            },
-                        }),
-                    }).catch(console.error);
-
-                    browser = await setupBrowser();
                     page = await browser.newPage();
+                    await clearBrowserCookiesWithoutAffectingConsole(page, []);
                     // We need to set the localStorage value before the page loads to ensure ST initialises with the correct value
                     await page.evaluateOnNewDocument(() => {
                         localStorage.setItem("disableRedirectionAfterSuccessfulSignInUp", "true");
                         localStorage.removeItem("isNewUserCheck");
                     });
+
                     await Promise.all([
                         page.goto(
                             `${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartypasswordless&passwordlessContactMethodType=EMAIL`
                         ),
                         page.waitForNavigation({ waitUntil: "networkidle0" }),
                     ]);
-                    await setPasswordlessFlowType("EMAIL", "MAGIC_LINK");
                 });
 
                 after(async function () {
-                    // Dont cleanup if tests were skipped
-                    if (didSkip) {
-                        return;
-                    }
-                    await browser.close();
-                    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                        method: "POST",
-                    }).catch(console.error);
-                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                        method: "POST",
-                    }).catch(console.error);
-                });
-
-                afterEach(function () {
-                    return screenshotOnFailure(this, browser);
+                    await page?.close();
                 });
 
                 it("should not do any redirection after successful sign up", async function () {
@@ -588,7 +435,6 @@ describe("getRedirectionURL Tests", function () {
                     const magicLink = device.codes[0].urlWithLinkCode;
 
                     await page.goto(magicLink);
-
                     await page.waitForNetworkIdle();
 
                     const urlAfterSignUp = await page.url();
@@ -599,17 +445,8 @@ describe("getRedirectionURL Tests", function () {
             });
 
             describe("ThirdParty Recipe", function () {
-                let browser;
-                let page;
-
                 before(async function () {
-                    await backendBeforeEach();
-
-                    await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                        method: "POST",
-                    }).catch(console.error);
-
-                    browser = await setupBrowser();
+                    await createCoreApp();
 
                     page = await browser.newPage();
                     // We need to set the localStorage value before the page loads to ensure ST initialises with the correct value
@@ -622,17 +459,7 @@ describe("getRedirectionURL Tests", function () {
                 });
 
                 after(async function () {
-                    await browser.close();
-                    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                        method: "POST",
-                    }).catch(console.error);
-                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                        method: "POST",
-                    }).catch(console.error);
-                });
-
-                afterEach(function () {
-                    return screenshotOnFailure(this, browser);
+                    await page?.close();
                 });
 
                 it("should not do any redirection after successful sign up", async function () {
