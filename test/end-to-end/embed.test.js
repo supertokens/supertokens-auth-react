@@ -12,40 +12,40 @@ import {
 } from "../helpers";
 
 describe("Embed components", async () => {
-        let browser;
-        let page;
-        let consoleLogs;
-    
-        before(async function () {
-            await backendHook("before");
-            browser = await setupBrowser();
+    let browser;
+    let page;
+    let consoleLogs;
+
+    before(async function () {
+        await backendHook("before");
+        browser = await setupBrowser();
+    });
+
+    beforeEach(async function () {
+        await backendHook("beforeEach");
+        await createCoreApp();
+        page = await browser.newPage();
+
+        consoleLogs = [];
+        page.on("console", (consoleObj) => {
+            const log = consoleObj.text();
+            if (log.startsWith("ST_LOGS")) {
+                consoleLogs.push(log);
+            }
         });
-    
-        beforeEach(async function () {
-            await backendHook("beforeEach");
-            await createCoreApp();
-            page = await browser.newPage();
-    
-            consoleLogs = [];
-            page.on("console", (consoleObj) => {
-                const log = consoleObj.text();
-                if (log.startsWith("ST_LOGS")) {
-                    consoleLogs.push(log);
-                }
-            });
-            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-        });
-    
-        afterEach(async function () {
-            await screenshotOnFailure(this, browser);
-            await page?.close();
-            await backendHook("afterEach");
-        });
-    
-        after(async function () {
-            await browser?.close();
-            await backendHook("after");
-        });
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+    });
+
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await page?.close();
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
+    });
 
     describe("EmailPassword SignInAndUp feature", () => {
         const testContext = {
