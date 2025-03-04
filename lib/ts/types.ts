@@ -434,6 +434,7 @@ export type AuthComponentProps = {
     onError: (err: string) => void;
     clearError: () => void;
     originalFactorIds: string[];
+    children?: React.ReactNode;
 };
 export type PartialAuthComponentProps = AuthComponentProps;
 export type FullPageAuthComponentProps<PreloadInfoType> = AuthComponentProps & { preloadInfo: PreloadInfoType };

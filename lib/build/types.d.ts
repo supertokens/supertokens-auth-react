@@ -204,6 +204,7 @@ export declare type AuthComponentProps = {
     onError: (err: string) => void;
     clearError: () => void;
     originalFactorIds: string[];
+    children?: React.ReactNode;
 };
 export declare type PartialAuthComponentProps = AuthComponentProps;
 export declare type FullPageAuthComponentProps<PreloadInfoType> = AuthComponentProps & {
