@@ -23,10 +23,6 @@ export async function setupUserWithAllFactors(page) {
     await page.evaluate(() => window.localStorage.setItem("enableAllRecipes", "true"));
     await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
 
-    await setMFAInfo({
-        requirements: [{ oneOf: ["otp-email", "otp-phone"] }],
-    });
-
     await tryEmailPasswordSignUp(page, email);
 
     await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
