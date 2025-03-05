@@ -967,7 +967,7 @@ Session.init({
     },
 });
 
-const AdminRoute: React.FC = (props) => {
+const AdminRoute: React.FC<{ children: React.ReactNode }> = (props) => {
     return (
         <SessionAuth
             accessDeniedScreen={AccessDeniedScreen}

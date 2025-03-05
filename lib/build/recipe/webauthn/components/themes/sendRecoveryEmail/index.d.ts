@@ -1,9 +1,6 @@
 /// <reference types="react" />
+import { SendRecoveryEmailScreen } from "../../../types";
 import type { SendRecoveryEmailFormThemeProps } from "../../../types";
-export declare enum SendRecoveryEmailScreen {
-    RecoverAccount = 0,
-    RecoverEmailSent = 1,
-}
 export declare const SendRecoveryEmailFormThemeInner: (
     props: SendRecoveryEmailFormThemeProps & {
         activeScreen: SendRecoveryEmailScreen;

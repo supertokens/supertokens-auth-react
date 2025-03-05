@@ -15,8 +15,6 @@
 
 import type { DateProviderInput } from "./dateProvider/types";
 import type { AuthSuccessContext } from "./recipe/authRecipe/types";
-import type { FieldState } from "./recipe/emailpassword/components/library/formBase";
-import type { FormBaseAPIResponse } from "./recipe/emailpassword/types";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
@@ -459,10 +457,4 @@ export type PartialAuthComponent = {
 export type AuthComponent<T = any> = PartialAuthComponent | FullPageAuthComponent<T>;
 export type NormalisedGetRedirectionURLContext<RecipeContext> = RecipeContext & {
     tenantIdFromQueryParams: string | undefined;
-};
-
-export type CallAPIParameters<T> = {
-    callAPI: (fields: APIFormField[], setValue: (id: string, value: string) => void) => Promise<FormBaseAPIResponse<T>>;
-    apiFields?: { id: string; value: string }[];
-    fieldUpdates: FieldState[];
 };

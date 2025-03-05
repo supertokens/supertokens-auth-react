@@ -16,7 +16,7 @@
  * Imports.
  */
 import * as React from "react";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useMemo } from "react";
 
 import AuthComponentWrapper from "../../../../../components/authCompWrapper";
@@ -143,7 +143,7 @@ const SignUpFeatureInner: React.FC<
     );
 };
 
-export const SignUpFeature: React.FC<
+export const SignInUpFeatureFullPage: React.FC<
     PartialAuthComponentProps & {
         recipe: Recipe;
         factorIds: string[];
@@ -170,6 +170,19 @@ export const SignUpWithPasskeyFeature: React.FC<
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
 
+    const [isPasskeySupported, setIsPasskeySupported] = useState(true);
+    useEffect(() => {
+        void (async () => {
+            const browserSupportsWebauthn = await props.recipe.webJSRecipe.doesBrowserSupportWebAuthn();
+            if (browserSupportsWebauthn.status !== "OK") {
+                console.error(browserSupportsWebauthn.error);
+                return;
+            }
+
+            setIsPasskeySupported(browserSupportsWebauthn.browserSupportsWebauthn);
+        })();
+    }, [props.recipe.webJSRecipe]);
+
     return (
         <AuthComponentWrapper recipeComponentOverrides={recipeComponentOverrides}>
             <FeatureWrapper
@@ -181,10 +194,11 @@ export const SignUpWithPasskeyFeature: React.FC<
                     config={props.recipe.config}
                     continueFor="SIGN_UP"
                     recipeImplementation={props.recipe.webJSRecipe}
+                    isPasskeySupported={isPasskeySupported}
                 />
             </FeatureWrapper>
         </AuthComponentWrapper>
     );
 };
 
-export default SignUpFeature;
+export default SignInUpFeatureFullPage;

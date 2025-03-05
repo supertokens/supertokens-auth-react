@@ -10,7 +10,8 @@ import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import { RecoverAccountUsingToken } from "./components/features/recoverAccountWithToken";
 import { SendRecoveryEmailForm } from "./components/features/sendRecoveryEmail";
 import SignInWithPasskeyFeature from "./components/features/signIn";
-import SignUpFeature, { SignUpWithPasskeyFeature } from "./components/features/signUp";
+import SignInUpFeatureFullPage from "./components/features/signUp";
+import { SignUpWithPasskeyFeature } from "./components/features/signUp";
 import { defaultTranslationsWebauthn } from "./components/themes/translations";
 import { DEFAULT_WEBAUTHN_RECOVERY_PATH, DEFAULT_WEBAUTHN_SEND_RECOVERY_EMAIL_PATH } from "./constants";
 import WebauthnRecipe from "./recipe";
@@ -133,7 +134,7 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
                     };
                 },
                 component: (props) => (
-                    <SignUpFeature
+                    <SignInUpFeatureFullPage
                         key="webauthnSignUpFullPage"
                         {...props}
                         recipe={this.recipeInstance}

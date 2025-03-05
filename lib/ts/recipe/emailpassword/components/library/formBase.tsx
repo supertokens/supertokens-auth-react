@@ -79,7 +79,7 @@ function InputComponentWrapper(props: {
         [onInputBlur, field.id]
     );
 
-    const useCallbackOnInputChange = useCallback(
+    const useCallbackOnInputChange = useCallback<(value: string) => void>(
         (value) => {
             onInputChange({
                 id: field.id,
@@ -213,13 +213,9 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
             e.preventDefault();
 
             // Set loading state.
-            if (setIsLoading) {
-                setIsLoading(true);
-            }
+            setIsLoading(true);
 
-            if (setFieldStates) {
-                setFieldStates((os) => os.map((fs) => ({ ...fs, error: undefined })));
-            }
+            setFieldStates((os) => os.map((fs) => ({ ...fs, error: undefined })));
 
             // Get the fields values from form.
             const apiFields = formFields?.map((field) => {
@@ -263,9 +259,7 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                 } else {
                     // If successful
                     if (result.status === "OK") {
-                        if (setIsLoading) {
-                            setIsLoading(false);
-                        }
+                        setIsLoading(false);
                         props.clearError();
                         if (props.onSuccess !== undefined) {
                             props.onSuccess(result);
@@ -290,17 +284,13 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                             }
                             return errorMessage;
                         };
-                        if (setFieldStates) {
-                            setFieldStates((os) => os.map((fs) => ({ ...fs, error: getErrorMessage(fs) })));
-                        }
+                        setFieldStates((os) => os.map((fs) => ({ ...fs, error: getErrorMessage(fs) })));
                     }
                 }
             } catch (e) {
                 props.onError("SOMETHING_WENT_WRONG_ERROR");
             } finally {
-                if (setIsLoading) {
-                    setIsLoading(false);
-                }
+                setIsLoading(false);
             }
         },
         [setIsLoading, setFieldStates, props, formFields, fieldStates, updateFieldState]

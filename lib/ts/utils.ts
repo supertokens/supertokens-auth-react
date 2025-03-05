@@ -27,8 +27,8 @@ import {
     TENANT_ID_QUERY_PARAM,
 } from "./constants";
 
+import type { FieldState } from "./recipe/emailpassword/components/library/formBase";
 import type { FormBaseAPIResponse, FormFieldError } from "./recipe/emailpassword/types";
-import type { CallAPIParameters } from "./types";
 import type {
     APIFormField,
     AppInfoUserInput,
@@ -560,7 +560,11 @@ export const handleCallAPI = async <T>({
     apiFields,
     fieldUpdates,
     callAPI,
-}: CallAPIParameters<T>): Promise<{
+}: {
+    callAPI: (fields: APIFormField[], setValue: (id: string, value: string) => void) => Promise<FormBaseAPIResponse<T>>;
+    apiFields?: { id: string; value: string }[];
+    fieldUpdates: FieldState[];
+}): Promise<{
     result?: FormBaseAPIResponse<T>;
     generalError?: STGeneralError;
     fetchError?: Response;

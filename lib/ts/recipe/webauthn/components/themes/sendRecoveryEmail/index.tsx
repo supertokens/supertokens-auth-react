@@ -1,11 +1,9 @@
-import { useState } from "react";
-
-import { redirectToAuth } from "../../../../..";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import SuperTokens from "../../../../../superTokens";
 import { AuthPageFooter } from "../../../../../ui";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
+import { SendRecoveryEmailScreen } from "../../../types";
 import { ThemeBase } from "../themeBase";
 
 import { PasskeyEmailSent } from "./emailSent";
@@ -13,39 +11,20 @@ import { PasskeyRecoverAccount } from "./recoverAccountForm";
 
 import type { SendRecoveryEmailFormThemeProps } from "../../../types";
 
-export enum SendRecoveryEmailScreen {
-    RecoverAccount,
-    RecoverEmailSent,
-}
-
 export const SendRecoveryEmailFormThemeInner = (
     props: SendRecoveryEmailFormThemeProps & {
         activeScreen: SendRecoveryEmailScreen;
         setActiveScreen: React.Dispatch<React.SetStateAction<SendRecoveryEmailScreen>>;
     }
 ): JSX.Element | null => {
-    const [recoverAccountEmail, setRecoverAccountEmail] = useState<string>("");
-    const onRecoverAccountFormSuccess = (result: { email: string }) => {
-        setRecoverAccountEmail(result.email);
-        props.setActiveScreen(SendRecoveryEmailScreen.RecoverEmailSent);
-    };
-
-    const onRecoverAccountBackClick = async () => {
-        await redirectToAuth({ show: "signup" });
-    };
-
-    const onEmailChangeClick = () => {
-        props.setActiveScreen(SendRecoveryEmailScreen.RecoverAccount);
-    };
-
     return props.activeScreen === SendRecoveryEmailScreen.RecoverAccount ? (
         <PasskeyRecoverAccount
-            onSuccess={onRecoverAccountFormSuccess}
-            onBackClick={onRecoverAccountBackClick}
+            onSuccess={props.onRecoverAccountFormSuccess}
+            onBackClick={props.onRecoverAccountBackClick}
             recipeImplementation={props.recipeImplementation}
         />
     ) : props.activeScreen === SendRecoveryEmailScreen.RecoverEmailSent ? (
-        <PasskeyEmailSent email={recoverAccountEmail} onEmailChangeClick={onEmailChangeClick} />
+        <PasskeyEmailSent email={props.recoverAccountEmail} onEmailChangeClick={props.onEmailChangeClick} />
     ) : null;
 };
 
@@ -55,8 +34,6 @@ const SendRecoveryEmailFormTheme = (props: SendRecoveryEmailFormThemeProps): JSX
     const privacyPolicyLink = stInstance.privacyPolicyLink;
     const termsOfServiceLink = stInstance.termsOfServiceLink;
 
-    const [activeScreen, setActiveScreen] = useState<SendRecoveryEmailScreen>(SendRecoveryEmailScreen.RecoverAccount);
-
     return (
         <UserContextWrapper userContext={props.userContext}>
             <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle]}>
@@ -65,10 +42,10 @@ const SendRecoveryEmailFormTheme = (props: SendRecoveryEmailFormThemeProps): JSX
                         {props.error !== undefined && <GeneralError error={props.error} />}
                         <SendRecoveryEmailFormThemeInner
                             {...props}
-                            activeScreen={activeScreen}
-                            setActiveScreen={setActiveScreen}
+                            activeScreen={props.activeScreen}
+                            setActiveScreen={props.setActiveScreen}
                         />
-                        {activeScreen !== SendRecoveryEmailScreen.RecoverEmailSent && (
+                        {props.activeScreen !== SendRecoveryEmailScreen.RecoverEmailSent && (
                             <AuthPageFooter
                                 factorIds={[]}
                                 isSignUp={true}

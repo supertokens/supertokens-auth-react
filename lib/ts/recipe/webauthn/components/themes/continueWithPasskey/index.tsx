@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import PasskeyIcon from "../../../../../components/assets/passkeyIcon";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
@@ -53,23 +53,9 @@ const ContinueWithPasskeyWithOverride = withOverride("WebauthnContinueWithPasske
 export const ContinueWithPasskeyTheme = (props: { config: NormalisedConfig } & ContinueWithPasskeyProps) => {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
 
-    const [isPasskeySupported, setIsPasskeySupported] = useState(true);
-
-    useEffect(() => {
-        void (async () => {
-            const browserSupportsWebauthn = await props.recipeImplementation.doesBrowserSupportWebAuthn();
-            if (browserSupportsWebauthn.status !== "OK") {
-                console.error(browserSupportsWebauthn.error);
-                return;
-            }
-
-            setIsPasskeySupported(browserSupportsWebauthn.browserSupportsWebauthn);
-        })();
-    }, [props.recipeImplementation]);
-
     return (
         <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle]}>
-            <ContinueWithPasskeyWithOverride {...props} isPasskeyNotSupported={!isPasskeySupported} />
+            <ContinueWithPasskeyWithOverride {...props} isPasskeyNotSupported={props.isPasskeySupported === false} />
         </ThemeBase>
     );
 };

@@ -17,7 +17,7 @@ export declare function useChildProps(
     originalFactorIds: string[],
     navigate?: Navigate
 ): SignUpThemeProps;
-export declare const SignUpFeature: React.FC<
+export declare const SignInUpFeatureFullPage: React.FC<
     PartialAuthComponentProps & {
         recipe: Recipe;
         factorIds: string[];
@@ -33,4 +33,4 @@ export declare const SignUpWithPasskeyFeature: React.FC<
         useComponentOverrides: () => ComponentOverrideMap;
     }
 >;
-export default SignUpFeature;
+export default SignInUpFeatureFullPage;

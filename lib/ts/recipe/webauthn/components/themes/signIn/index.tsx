@@ -14,6 +14,8 @@
  */
 
 import * as React from "react";
+import { useState } from "react";
+import { useEffect } from "react";
 
 import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
@@ -97,6 +99,19 @@ function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
 
     const activeStyle = props.config.signUpFeature.style;
 
+    const [isPasskeySupported, setIsPasskeySupported] = useState(true);
+    useEffect(() => {
+        void (async () => {
+            const browserSupportsWebauthn = await props.recipeImplementation.doesBrowserSupportWebAuthn();
+            if (browserSupportsWebauthn.status !== "OK") {
+                console.error(browserSupportsWebauthn.error);
+                return;
+            }
+
+            setIsPasskeySupported(browserSupportsWebauthn.browserSupportsWebauthn);
+        })();
+    }, [props.recipeImplementation]);
+
     return (
         <UserContextWrapper userContext={props.userContext}>
             <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
@@ -108,6 +123,7 @@ function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
                         config={props.config}
                         continueFor="SIGN_IN"
                         isLoading={isLoading}
+                        isPasskeySupported={isPasskeySupported}
                     />
                 </div>
             </ThemeBase>

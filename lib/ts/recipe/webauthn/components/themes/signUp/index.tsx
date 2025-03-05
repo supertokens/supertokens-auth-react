@@ -27,11 +27,9 @@ import { SignUpForm, SignUpScreen } from "./signUpForm";
 import type { SignUpThemeProps } from "../../../types";
 
 function PasskeySignUpTheme(props: SignUpThemeProps): JSX.Element {
-    const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
-
-    const activeStyle = props.config.signUpFeature.style;
-
     const stInstance = SuperTokens.getInstanceOrThrow();
+    const rootStyle = stInstance.rootStyle;
+    const activeStyle = props.config.signUpFeature.style;
 
     const privacyPolicyLink = stInstance.privacyPolicyLink;
     const termsOfServiceLink = stInstance.termsOfServiceLink;

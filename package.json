@@ -90,6 +90,7 @@
         "typescript": "4.7.3"
     },
     "dependencies": {
+        "@simplewebauthn/types": "^12.0.0",
         "intl-tel-input": "^17.0.19",
         "prop-types": "*",
         "react-qr-code": "^2.0.12",
@@ -197,6 +198,14 @@
         },
         {
             "path": "recipe/oauth2provider/prebuiltui.js",
+            "limit": "33kb"
+        },
+        {
+            "path": "recipe/webauthn/index.js",
+            "limit": "12kb"
+        },
+        {
+            "path": "recipe/webauthn/prebuiltui.js",
             "limit": "33kb"
         }
     ],

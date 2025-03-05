@@ -8,7 +8,5 @@ export declare const ProvidersForm: import("react").ComponentType<
             typeof import("supertokens-web-js/lib/build/recipe/thirdparty")
         >;
         config: import("../../../types").NormalisedConfig;
-    } & {
-        children?: import("react").ReactNode;
     }
 >;

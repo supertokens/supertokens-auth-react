@@ -41,7 +41,7 @@ export const getFunctionOverrides =
 
             if (response.status === "OK") {
                 onHandleEvent({
-                    action: "REGISTER_CREDENTIAL",
+                    action: "REGISTER_CREDENTIAL_OK",
                 });
             }
 

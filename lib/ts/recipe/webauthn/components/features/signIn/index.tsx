@@ -73,7 +73,6 @@ export function useChildProps(
             onError,
             clearError,
             onFetchError: async (/* err: Response*/) => {
-                // TODO: Do we need to do something else?
                 onError("SOMETHING_WENT_WRONG_ERROR");
             },
             factorIds,

@@ -15,9 +15,11 @@
 
 import * as React from "react";
 
+import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
+import { SendRecoveryEmailScreen } from "../../../types";
 import SendRecoveryEmailFormTheme from "../../themes/sendRecoveryEmail";
 import { defaultTranslationsWebauthn } from "../../themes/translations";
 
@@ -29,6 +31,23 @@ export const SendRecoveryEmailForm: React.FC<SendRecoveryEmailFormProps> = (prop
         userContext = props.userContext;
     }
     const [error, setError] = React.useState<string>();
+    const [recoverAccountEmail, setRecoverAccountEmail] = React.useState<string>("");
+    const [activeScreen, setActiveScreen] = React.useState<SendRecoveryEmailScreen>(
+        SendRecoveryEmailScreen.RecoverAccount
+    );
+
+    const onRecoverAccountFormSuccess = (result: { email: string }) => {
+        setRecoverAccountEmail(result.email);
+        setActiveScreen(SendRecoveryEmailScreen.RecoverEmailSent);
+    };
+
+    const onRecoverAccountBackClick = async () => {
+        await redirectToAuth({ show: "signup" });
+    };
+
+    const onEmailChangeClick = () => {
+        setActiveScreen(SendRecoveryEmailScreen.RecoverAccount);
+    };
 
     const childProps = {
         config: props.recipe.config,
@@ -38,6 +57,12 @@ export const SendRecoveryEmailForm: React.FC<SendRecoveryEmailFormProps> = (prop
         recipeImplementation: props.recipe.webJSRecipe,
         useComponentOverride: props.useComponentOverrides,
         userContext,
+        recoverAccountEmail,
+        activeScreen,
+        onRecoverAccountFormSuccess,
+        onRecoverAccountBackClick,
+        onEmailChangeClick,
+        setActiveScreen,
     };
     const recipeComponentOverrides = props.useComponentOverrides();
 

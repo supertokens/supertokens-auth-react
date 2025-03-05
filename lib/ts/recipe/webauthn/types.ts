@@ -16,9 +16,7 @@
 import type Recipe from "./recipe";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type {
-    FeatureBaseConfig,
     NormalisedBaseConfig,
-    NormalisedFormField,
     NormalisedGetRedirectionURLContext,
     UserContext,
     WebJSRecipeInterface,
@@ -29,15 +27,12 @@ import type {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     Config as AuthRecipeModuleConfig,
 } from "../authRecipe/types";
+import type { SendRecoveryEmailForm } from "./components/features/sendRecoveryEmail";
 import type SignInForm from "./components/features/signIn";
-import type { InputProps } from "../emailpassword/components/library/input";
+import type SignUpForm from "./components/features/signUp";
 import type WebJSRecipe from "supertokens-web-js/recipe/webauthn";
 import type { RecipeInterface } from "supertokens-web-js/recipe/webauthn";
 import type { User } from "supertokens-web-js/types";
-
-export type WebauthnFeatureBaseConfig = {
-    disableDefaultUI?: boolean;
-} & FeatureBaseConfig;
 
 export type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<{
     /*
@@ -67,10 +62,10 @@ export type OnHandleEventContext =
           exists: boolean;
       }
     | {
-          action: "REGISTER_CREDENTIAL";
+          action: "REGISTER_CREDENTIAL_OK";
       }
     | {
-          action: "AUTHENTICATE_CREDENTIAL";
+          action: "AUTHENTICATE_CREDENTIAL_OK";
       }
     | {
           action: "FAILED_TO_REGISTER_USER";
@@ -87,14 +82,7 @@ export type UserInput = Record<string, unknown> & {
 export type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
-export type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
-    /*
-     * Normalised form fields for SignUp.
-     */
-    formFields: (NormalisedFormField & {
-        inputComponent?: (props: InputProps) => JSX.Element;
-    })[];
-};
+export type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig;
 
 export type NormalisedConfig = {
     signUpFeature: NormalisedSignUpFormFeatureConfig;
@@ -109,6 +97,8 @@ export type RecipeImplementation = WebJSRecipeInterface<typeof WebJSRecipe>;
 
 export type ComponentOverrideMap = {
     PasskeySignInForm_Override?: ComponentOverride<typeof SignInForm>;
+    PasskeySignUpForm_Override?: ComponentOverride<typeof SignUpForm>;
+    PasskeySendRecoveryEmailForm_Override?: ComponentOverride<typeof SendRecoveryEmailForm>;
 };
 
 export type WebauthnSignUpState = {
@@ -154,7 +144,18 @@ export type RecoverAccountWithTokenProps = {
     userContext?: UserContext | undefined;
     recipe: Recipe;
     useComponentOverrides: () => ComponentOverrideMap;
+    children?: React.ReactNode;
 };
+
+export type RegisterOptions = Extract<
+    Awaited<ReturnType<RecipeImplementation["getRegisterOptions"]>>,
+    { status: "OK" }
+>;
+
+export enum RecoverAccountScreen {
+    ContinueWithPasskey,
+    Success,
+}
 
 export type RecoverAccountWithTokenThemeProps = {
     config: NormalisedConfig;
@@ -164,13 +165,24 @@ export type RecoverAccountWithTokenThemeProps = {
     clearError: () => void;
     onError: (error: string) => void;
     token: string | null;
+    registerOptions: RegisterOptions | null;
+    errorMessageLabel: string | null;
+    isLoading: boolean;
+    activeScreen: RecoverAccountScreen;
+    onContinueClick: () => void;
 };
 
 export type SendRecoveryEmailFormProps = {
     userContext?: UserContext | undefined;
     recipe: Recipe;
     useComponentOverrides: () => ComponentOverrideMap;
+    children?: React.ReactNode;
 };
+
+export enum SendRecoveryEmailScreen {
+    RecoverAccount,
+    RecoverEmailSent,
+}
 
 export type SendRecoveryEmailFormThemeProps = {
     config: NormalisedConfig;
@@ -179,6 +191,12 @@ export type SendRecoveryEmailFormThemeProps = {
     error: string | undefined;
     clearError: () => void;
     onError: (error: string) => void;
+    recoverAccountEmail: string;
+    activeScreen: SendRecoveryEmailScreen;
+    setActiveScreen: React.Dispatch<React.SetStateAction<SendRecoveryEmailScreen>>;
+    onRecoverAccountFormSuccess: (result: { email: string }) => void;
+    onRecoverAccountBackClick: () => void;
+    onEmailChangeClick: () => void;
 };
 
 export type ContinueOnSuccessParams = {
@@ -203,6 +221,7 @@ export type ContinueWithPasskeyProps = {
     isLoading?: boolean;
     isPasskeyNotSupported?: boolean;
     recipeImplementation: RecipeImplementation;
+    isPasskeySupported?: boolean;
 };
 
 export type EmailSentProps = {

@@ -1032,7 +1032,7 @@ function initST() {
         supertokens: {
             connectionURI,
         },
-        debug: true,
+        debug: process.env.DEBUG === "true",
         recipeList:
             enabledRecipes !== undefined
                 ? recipeList.filter(([key]) => enabledRecipes.includes(key)).map(([_key, recipeFunc]) => recipeFunc)
