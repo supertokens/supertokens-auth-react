@@ -246,7 +246,7 @@ export default class Wrapper {
         return Webauthn.getInstanceOrThrow().webJSRecipe.recoverAccount(input);
     }
 
-    static registerCredential(input: { registrationOptions: RegistrationOptions }): Promise<
+    static registerCredential(input: { registrationOptions: RegistrationOptions; userContext: any }): Promise<
         | {
               status: "OK";
               registrationResponse: RegistrationResponseJSON;
@@ -266,7 +266,7 @@ export default class Wrapper {
         return Webauthn.getInstanceOrThrow().webJSRecipe.registerCredential(input);
     }
 
-    static authenticateCredential(input: { authenticationOptions: AuthenticationOptions }): Promise<
+    static authenticateCredential(input: { authenticationOptions: AuthenticationOptions; userContext: any }): Promise<
         | {
               status: "OK";
               authenticationResponse: AuthenticationResponseJSON;
@@ -432,7 +432,7 @@ export default class Wrapper {
         return Webauthn.getInstanceOrThrow().webJSRecipe.registerCredentialWithRecoverAccount(input);
     }
 
-    static doesBrowserSupportWebAuthn(): Promise<
+    static doesBrowserSupportWebAuthn(input: { userContext: any }): Promise<
         | {
               status: "OK";
               browserSupportsWebauthn: boolean;
@@ -443,7 +443,7 @@ export default class Wrapper {
               error: any;
           }
     > {
-        return Webauthn.getInstanceOrThrow().webJSRecipe.doesBrowserSupportWebAuthn();
+        return Webauthn.getInstanceOrThrow().webJSRecipe.doesBrowserSupportWebAuthn(input);
     }
 }
 

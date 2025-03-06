@@ -18,6 +18,7 @@ import { useState } from "react";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import { useUserContext } from "../../../../../usercontext";
 import Button from "../../../../emailpassword/components/library/button";
 import { PasskeyNotSupportedError } from "../error/passkeyNotSupportedError";
 import { RecoverableError } from "../error/recoverableError";
@@ -40,6 +41,7 @@ export const PasskeyConfirmation = withOverride(
         }
     ): JSX.Element {
         const t = useTranslation();
+        const userContext = useUserContext();
 
         const [isPasskeySupported, setIsPasskeySupported] = useState(false);
         const showContinueWithoutPasskey = useMemo(
@@ -49,7 +51,9 @@ export const PasskeyConfirmation = withOverride(
 
         useEffect(() => {
             void (async () => {
-                const browserSupportsWebauthn = await props.recipeImplementation.doesBrowserSupportWebAuthn();
+                const browserSupportsWebauthn = await props.recipeImplementation.doesBrowserSupportWebAuthn({
+                    userContext: userContext,
+                });
                 if (browserSupportsWebauthn.status !== "OK") {
                     console.error(browserSupportsWebauthn.error);
                     return;

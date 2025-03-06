@@ -211,7 +211,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static registerCredential(input: { registrationOptions: RegistrationOptions }): Promise<
+    static registerCredential(input: { registrationOptions: RegistrationOptions; userContext: any }): Promise<
         | {
               status: "OK";
               registrationResponse: RegistrationResponseJSON;
@@ -228,7 +228,7 @@ export default class Wrapper {
               error: any;
           }
     >;
-    static authenticateCredential(input: { authenticationOptions: AuthenticationOptions }): Promise<
+    static authenticateCredential(input: { authenticationOptions: AuthenticationOptions; userContext: any }): Promise<
         | {
               status: "OK";
               authenticationResponse: AuthenticationResponseJSON;
@@ -382,7 +382,7 @@ export default class Wrapper {
               error: any;
           }
     >;
-    static doesBrowserSupportWebAuthn(): Promise<
+    static doesBrowserSupportWebAuthn(input: { userContext: any }): Promise<
         | {
               status: "OK";
               browserSupportsWebauthn: boolean;

@@ -102,7 +102,9 @@ function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
     const [isPasskeySupported, setIsPasskeySupported] = useState(true);
     useEffect(() => {
         void (async () => {
-            const browserSupportsWebauthn = await props.recipeImplementation.doesBrowserSupportWebAuthn();
+            const browserSupportsWebauthn = await props.recipeImplementation.doesBrowserSupportWebAuthn({
+                userContext: userContext,
+            });
             if (browserSupportsWebauthn.status !== "OK") {
                 console.error(browserSupportsWebauthn.error);
                 return;

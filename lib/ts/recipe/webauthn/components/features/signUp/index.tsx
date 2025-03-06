@@ -169,11 +169,17 @@ export const SignUpWithPasskeyFeature: React.FC<
     }
 > = (props) => {
     const recipeComponentOverrides = props.useComponentOverrides();
+    let userContext = useUserContext();
+    if (props.userContext !== undefined) {
+        userContext = props.userContext;
+    }
 
     const [isPasskeySupported, setIsPasskeySupported] = useState(true);
     useEffect(() => {
         void (async () => {
-            const browserSupportsWebauthn = await props.recipe.webJSRecipe.doesBrowserSupportWebAuthn();
+            const browserSupportsWebauthn = await props.recipe.webJSRecipe.doesBrowserSupportWebAuthn({
+                userContext: userContext,
+            });
             if (browserSupportsWebauthn.status !== "OK") {
                 console.error(browserSupportsWebauthn.error);
                 return;
