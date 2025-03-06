@@ -14,57 +14,38 @@ import {
     FRONT_TOKEN_COOKIE_NAME,
     ANTI_CSRF_TOKEN_COOKIE_NAME,
     CURRENT_PATH_COOKIE_NAME,
+    SESSION_REFRESH_API_PATH,
 } from "./constants";
 
-import type { SuperTokensNextjsConfig, WithSession } from "./types";
+import type { ApiRequestMiddleware, SuperTokensNextjsConfig } from "./types";
 
 let AppInfo: SuperTokensNextjsConfig["appInfo"];
 const DEFAULT_API_BASE_PATH = "/api/auth";
 
-// Open questions:
-// - Do we need the x-user-id header?
-// - Do we want to enforce API route validation from the middleware
-// or do we explain how to do this at the API function level
-// - How do we pass withSession and ValidateSessionOptions together
-// - If we use withSession in the middleware, do we add some ability to choose which routes will be protected?
 export function superTokensMiddleware(
     config: SuperTokensNextjsConfig,
-    withSession: WithSession
+    apiRequestMiddleware?: ApiRequestMiddleware
 ): (request: Request) => Promise<Response | void> {
-    const usesTheNextjsApiAsTheAuthenticationServer = config.appInfo.apiDomain === config.appInfo.websiteDomain;
+    const usesTheNextjsApiAsTheAuthenticationServer = compareUrlHost(
+        config.appInfo.apiDomain,
+        config.appInfo.websiteDomain
+    );
 
     return async (request: Request) => {
         const requestUrl = new URL(request.url);
-        if (requestUrl.pathname.startsWith("/api/auth/session/refresh") && request.method === "GET") {
+        if (requestUrl.pathname.startsWith(SESSION_REFRESH_API_PATH) && request.method === "GET") {
             return refreshSession(config, request);
         }
 
         if (requestUrl.pathname.startsWith("/api") && usesTheNextjsApiAsTheAuthenticationServer) {
-            if (request.headers.has("x-user-id")) {
-                console.warn(
-                    "The FE tried to pass x-user-id, which is only supposed to be a backend internal header. Ignoring."
-                );
-                request.headers.delete("x-user-id");
-            }
-
             if (requestUrl.pathname.startsWith(config.appInfo.apiBasePath || DEFAULT_API_BASE_PATH)) {
                 // this hits our pages/api/auth/* endpoints
                 return next();
             }
 
-            return withSession(request, async (err, session) => {
-                if (err) {
-                    return new Response(JSON.stringify(err), {
-                        status: 500,
-                        headers: { "Content-Type": "application/json" },
-                    });
-                }
-                const response = next();
-                if (session !== undefined) {
-                    response.headers.append("x-user-id", session.getUserId());
-                }
-                return response;
-            });
+            if (apiRequestMiddleware) {
+                return apiRequestMiddleware(request);
+            }
         }
 
         if (
@@ -105,7 +86,8 @@ export async function refreshSession(config: SuperTokensNextjsConfig, request: R
     }
 
     const requestUrl = new URL(request.url);
-    const redirectTo = requestUrl.searchParams.get(REDIRECT_PATH_PARAM_NAME) || "/";
+    const urlParamRedirectPath = requestUrl.searchParams.get(REDIRECT_PATH_PARAM_NAME);
+    const redirectTo = urlParamRedirectPath && isValidUrlPath(urlParamRedirectPath) ? urlParamRedirectPath : "/";
     try {
         const tokens = await fetchNewTokens(request);
         const hasRequiredCookies = tokens.accessToken && tokens.refreshToken && tokens.frontToken;
@@ -230,7 +212,7 @@ async function fetchNewTokens(
         return fetchNewTokens(request, attemptNumber + 1);
     }
 
-    if (refreshResponse.status !== 200) {
+    if (!refreshResponse.ok) {
         logDebugMessage(`Refresh request returned an invalid status code: ${refreshResponse.status}`);
         return { accessToken: "", refreshToken: "", frontToken: "", antiCsrfToken: "" };
     }
@@ -292,5 +274,50 @@ function getRedirectAttemptNumber(request: Request): number {
         return parseInt(cookieValue);
     } catch (err) {
         return 1;
+    }
+}
+
+function isValidUrlPath(path: string): boolean {
+    try {
+        if (typeof path !== "string" || path.trim() === "") {
+            return false;
+        }
+
+        if (!path.startsWith("/")) {
+            return false;
+        }
+
+        const normalizedPath = normalizeUrlPath(path);
+        const invalidChars = /[<>:"|?*\0]/;
+        return (
+            !invalidChars.test(normalizedPath) &&
+            normalizedPath.startsWith("/") &&
+            !normalizedPath.includes("//") &&
+            normalizedPath.length <= 2048
+        );
+    } catch {
+        return false;
+    }
+}
+
+function normalizeUrlPath(path: string): string {
+    if (!path) return "/";
+    let normalizedPath = path.split("?")[0].split("#")[0];
+    // remove trailing slash
+    normalizedPath = path.replace(/\/$/, "");
+    normalizedPath = !normalizedPath.startsWith("/") ? `/${path}` : path;
+
+    return normalizedPath;
+}
+
+function compareUrlHost(firstUrl: string, secondUrl: string): boolean {
+    try {
+        const firstUrlObject = new URL(firstUrl);
+        const secondUrlObject = new URL(secondUrl);
+        return firstUrlObject.host === secondUrlObject.host;
+    } catch (err) {
+        logDebugMessage("Error comparing URL host");
+        logDebugMessage(err as string);
+        return false;
     }
 }

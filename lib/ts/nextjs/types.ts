@@ -64,12 +64,14 @@ export type AccessTokenPayload = {
     };
 };
 
-export type WithSession = (
-    req: Request,
-    handler: (
-        error: Error | undefined,
-        session: (Record<string, unknown> & { getUserId: () => string }) | undefined
-    ) => Promise<Response>,
-    options?: unknown,
-    userContext?: Record<string, any>
-) => Promise<Response>;
+export interface ParsableRequest {
+    url: string;
+    method: string;
+    headers: Headers;
+    formData: () => Promise<FormData>;
+    json: () => Promise<any>;
+}
+
+export type ApiRequestMiddleware<Req extends ParsableRequest = Request, Res extends Response = Response> = (
+    req: Req
+) => Promise<Res>;

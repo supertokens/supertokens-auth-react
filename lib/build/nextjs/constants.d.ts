@@ -11,3 +11,4 @@ export declare const REDIRECT_ATTEMPT_COUNT_COOKIE_NAME = "sSsrSessionRefreshAtt
 export declare const CURRENT_PATH_COOKIE_NAME = "sCurrentPath";
 export declare const FORCE_LOGOUT_PATH_PARAM_NAME = "forceLogout";
 export declare const REDIRECT_PATH_PARAM_NAME = "stRedirectTo";
+export declare const SESSION_REFRESH_API_PATH = "/api/auth/session/refresh";

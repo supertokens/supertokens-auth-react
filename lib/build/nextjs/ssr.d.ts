@@ -15,7 +15,8 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * @param redirect - The redirect function exposed by next/navigation
      * @returns The session context value or directly redirects the user to either the login page or the refresh API
      **/
-    static getSSRSession(cookies: CookiesStore, redirect: (url: string) => never): Promise<LoadedSessionContext>;
+    static getServerComponentSession(cookies: CookiesStore): Promise<LoadedSessionContext>;
+    static getServerActionSession(cookies: CookiesStore): Promise<LoadedSessionContext | undefined>;
     /**
      * Get the session state inside props or redirect
      * The function is meant to be used inside getServerSideProps.
@@ -27,6 +28,7 @@ export default class SuperTokensNextjsSSRAPIWrapper {
     }): Promise<GetServerSidePropsReturnValue>;
 }
 export declare const init: typeof SuperTokensNextjsSSRAPIWrapper.init;
-export declare const getSSRSession: typeof SuperTokensNextjsSSRAPIWrapper.getSSRSession;
+export declare const getServerComponentSession: typeof SuperTokensNextjsSSRAPIWrapper.getServerComponentSession;
+export declare const getServerActionSession: typeof SuperTokensNextjsSSRAPIWrapper.getServerActionSession;
 export declare const getServerSidePropsSession: typeof SuperTokensNextjsSSRAPIWrapper.getServerSidePropsSession;
 export {};

@@ -10,6 +10,7 @@ import {
     FORCE_LOGOUT_PATH_PARAM_NAME,
     REDIRECT_PATH_PARAM_NAME,
     FRONT_TOKEN_COOKIE_NAME,
+    SESSION_REFRESH_API_PATH,
 } from "./constants";
 import { isCookiesStore } from "./types";
 
@@ -70,13 +71,12 @@ export default class SuperTokensNextjsSSRAPIWrapper {
     }
 
     /**
-     * Get the session state during SSR or redirect
-     * The function is meant to be used inside Next.js components that make use of SSR.
+     * Get the session state inside a server componet or redirect
+     * The function is meant to be used inside Next.js server components
      * @param cookies - The cookies store exposed by next/headers (await cookies())
-     * @param redirect - The redirect function exposed by next/navigation
      * @returns The session context value or directly redirects the user to either the login page or the refresh API
      **/
-    static async getSSRSession(cookies: CookiesStore, redirect: (url: string) => never): Promise<LoadedSessionContext> {
+    static async getServerComponentSession(cookies: CookiesStore): Promise<LoadedSessionContext> {
         const redirectPath = cookies.get(CURRENT_PATH_COOKIE_NAME)?.value || "/";
         const authPagePath = getAuthPagePath(redirectPath);
         const refreshLocation = getRefreshLocation(redirectPath);
@@ -105,7 +105,22 @@ export default class SuperTokensNextjsSSRAPIWrapper {
     }
 
     /**
-     * Get the session state inside props or redirect
+     * Get the session state inside a server action
+     * The function is meant to be used inside Next.js server actions
+     * @param cookies - The cookies store exposed by next/headers (await cookies())
+     * @returns The session context value or undefined if the session does not exist or is invalid
+     **/
+    static async getServerActionSession(cookies: CookiesStore): Promise<LoadedSessionContext | undefined> {
+        const { state, session } = await getSSRSessionState(cookies);
+        logDebugMessage(`SSR Session State: ${state}`);
+        if (state === "tokens-match") {
+            return session;
+        }
+        return;
+    }
+
+    /**
+     * Get the session state or redirect
      * The function is meant to be used inside getServerSideProps.
      * @param request - The request object available inside getServerSideProps ctx (ctx.req)
      * @returns The session context value or a redirects path to send the user to the refresh API or the login page
@@ -144,7 +159,8 @@ export default class SuperTokensNextjsSSRAPIWrapper {
 }
 
 export const init = SuperTokensNextjsSSRAPIWrapper.init;
-export const getSSRSession = SuperTokensNextjsSSRAPIWrapper.getSSRSession;
+export const getServerComponentSession = SuperTokensNextjsSSRAPIWrapper.getServerComponentSession;
+export const getServerActionSession = SuperTokensNextjsSSRAPIWrapper.getServerActionSession;
 export const getServerSidePropsSession = SuperTokensNextjsSSRAPIWrapper.getServerSidePropsSession;
 
 function getAuthPagePath(redirectPath: string): string {
@@ -153,10 +169,7 @@ function getAuthPagePath(redirectPath: string): string {
 }
 
 function getRefreshLocation(redirectPath: string): string {
-    // The backend api routes defined in appInfo might be different from what we use here.
-    // This refresh route will be made available only by including the node handler in the next.js middleware
-    // If someone uses nextjs with SSR, and a separate backend api server, the app info data will be invalid here.
-    return `/api/auth/session/refresh?${REDIRECT_PATH_PARAM_NAME}=${redirectPath}`;
+    return `${SESSION_REFRESH_API_PATH}?${REDIRECT_PATH_PARAM_NAME}=${redirectPath}`;
 }
 
 async function getSSRSessionState(
@@ -246,4 +259,18 @@ function getCookieValue(cookie: CookiesStore | CookiesObject, name: string): str
         return cookie.get(name)?.value;
     }
     return cookie[name];
+}
+
+const REDIRECT_ERROR_CODE = "NEXT_REDIRECT";
+type RedirectType = "push" | "replace";
+type RedirectStatusCode = 303 | 307 | 308;
+type RedirectError = Error & {
+    digest: `${typeof REDIRECT_ERROR_CODE};${RedirectType};${string};${RedirectStatusCode};`;
+};
+function redirect(path: string): never {
+    const type: RedirectType = "push";
+    const statusCode: RedirectStatusCode = 307;
+    const error = new Error(REDIRECT_ERROR_CODE) as RedirectError;
+    error.digest = `${REDIRECT_ERROR_CODE};${type};${path};${statusCode};`;
+    throw error;
 }

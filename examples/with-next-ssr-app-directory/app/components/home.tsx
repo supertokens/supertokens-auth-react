@@ -7,15 +7,17 @@ import { CallAPIButton } from "./callApiButton";
 import { LinksComponent } from "./linksComponent";
 import { SessionAuthForNextJS } from "./sessionAuthForNextJS";
 
-import { getSSRSession, init } from "supertokens-auth-react/nextjs/ssr";
+import { getServerComponentSession, init } from "supertokens-auth-react/nextjs/ssr";
 import { ssrConfig } from "../config/ssr";
+import { useState } from "react";
+import { SSRButton } from "./ssrButton";
 
 init(ssrConfig());
 
 export async function HomePage() {
     const cookiesStore = await cookies();
-    const session = await getSSRSession(cookiesStore, redirect);
-    console.log(session);
+    const session = await getServerComponentSession(cookiesStore);
+    console.log(session.userId);
 
     /**
      * SessionAuthForNextJS will handle proper redirection for the user based on the different session states.
@@ -33,6 +35,7 @@ export async function HomePage() {
                         <div>Your userID is:</div>
                         <div className={`${styles.truncate} ${styles.userId}`}>{session.userId}</div>
                         <CallAPIButton />
+                        <SSRButton />
                     </div>
                 </div>
                 <LinksComponent />
