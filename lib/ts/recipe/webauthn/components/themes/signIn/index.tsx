@@ -97,7 +97,7 @@ function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
 
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;
 
-    const activeStyle = props.config.signUpFeature.style;
+    const activeStyle = props.config.signInAndUpFeature.style;
 
     const [isPasskeySupported, setIsPasskeySupported] = useState(true);
     useEffect(() => {

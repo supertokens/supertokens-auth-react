@@ -29,7 +29,7 @@ import type { SignUpThemeProps } from "../../../types";
 function PasskeySignUpTheme(props: SignUpThemeProps): JSX.Element {
     const stInstance = SuperTokens.getInstanceOrThrow();
     const rootStyle = stInstance.rootStyle;
-    const activeStyle = props.config.signUpFeature.style;
+    const activeStyle = props.config.signInAndUpFeature.style;
 
     const privacyPolicyLink = stInstance.privacyPolicyLink;
     const termsOfServiceLink = stInstance.termsOfServiceLink;

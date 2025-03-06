@@ -787,8 +787,13 @@ export async function setupBrowser() {
             "--disable-setuid-sandbox",
             "--disable-web-security",
             "--host-resolver-rules=MAP example.com 127.0.0.1, MAP *.example.com 127.0.0.1",
+            // Open DevTools automatically if in non-headless mode and DEV_TOOLS is enabled
+            ...(process.env.HEADLESS === "false" && process.env.DEV_TOOLS === "true"
+                ? ["--auto-open-devtools-for-tabs"]
+                : []),
         ],
         headless: process.env.HEADLESS !== "false",
+        devtools: process.env.HEADLESS === "false" && process.env.DEV_TOOLS === "true",
     });
     browser.logs = [];
     function addLog(str) {

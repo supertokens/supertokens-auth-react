@@ -78,9 +78,10 @@ export const RecoverAccountUsingToken: React.FC<RecoverAccountWithTokenProps> = 
             setRegisterOptions(registerOptions);
         } catch (err: any) {
             // This will likely be a fetch error.
+            console.error("error", err);
             setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_FETCH_ERROR");
         }
-    }, [props]);
+    }, [props.recipe.webJSRecipe, props.userContext, token]);
 
     useEffect(() => {
         void fetchAndStoreRegisterOptions();
@@ -116,6 +117,7 @@ export const RecoverAccountUsingToken: React.FC<RecoverAccountWithTokenProps> = 
         // We should have received a valid registration options response.
         const registerCredentialResponse = await props.recipe.webJSRecipe.registerCredential({
             registrationOptions: registerOptions,
+            userContext: props.userContext,
         });
         if (registerCredentialResponse.status !== "OK") {
             return registerCredentialResponse;
@@ -129,7 +131,7 @@ export const RecoverAccountUsingToken: React.FC<RecoverAccountWithTokenProps> = 
         });
 
         return recoverAccountResponse;
-    }, [props]);
+    }, [props, registerOptions, token, fetchAndStoreRegisterOptions]);
 
     const onContinueClick = useCallback(async () => {
         const fieldUpdates: FieldState[] = [];
@@ -179,6 +181,7 @@ export const RecoverAccountUsingToken: React.FC<RecoverAccountWithTokenProps> = 
                 }
             }
         } catch (e) {
+            console.error("error", e);
             setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_GENERAL_ERROR");
         } finally {
             setLoading(false);
