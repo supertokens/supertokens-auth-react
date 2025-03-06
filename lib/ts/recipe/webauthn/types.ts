@@ -76,16 +76,20 @@ export type UserInput = Record<string, unknown> & {
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
     };
-    signUpFeature?: NormalisedSignUpFormFeatureConfig;
+    signInAndUpFeature?: NormalisedSignInAndUpFormFeatureConfig;
+    recoveryFeature?: NormalisedRecoveryFeatureConfig;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
-export type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig;
+export type NormalisedSignInAndUpFormFeatureConfig = NormalisedBaseConfig;
+
+export type NormalisedRecoveryFeatureConfig = NormalisedBaseConfig;
 
 export type NormalisedConfig = {
-    signUpFeature: NormalisedSignUpFormFeatureConfig;
+    signInAndUpFeature: NormalisedSignInAndUpFormFeatureConfig;
+    recoveryFeature: NormalisedRecoveryFeatureConfig;
     disableDefaultUI?: boolean;
 
     override: {

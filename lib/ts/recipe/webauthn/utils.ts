@@ -18,7 +18,8 @@ export function normaliseWebauthnConfig(config: Config): NormalisedConfig {
 
     return {
         ...normaliseAuthRecipe(config),
-        signUpFeature: normalisePasskeyBaseConfig(config.signUpFeature),
+        signInAndUpFeature: normalisePasskeyBaseConfig(config.signInAndUpFeature),
+        recoveryFeature: normalisePasskeyBaseConfig(config.recoveryFeature),
         override,
     };
 }
