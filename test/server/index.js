@@ -34,7 +34,7 @@ const morgan = require("morgan");
 let {
     customAuth0Provider,
     maxVersion,
-    createCoreApplication,
+    setupCoreApplication,
     addLicense,
     mockThirdPartyProvider,
     getCoreUrl,
@@ -188,24 +188,9 @@ app.get("/ping", async (req, res) => {
 async function setupApp({
     appId,
     coreConfig,
-    accountLinkingConfig = {},
-    enabledRecipes,
-    enabledProviders,
-    passwordlessFlowType,
-    passwordlessContactMethod,
-    mfaInfo = {},
 } = {}) {
-    const coreAppUrl = await createCoreApplication({ appId, coreConfig });
+    const coreAppUrl = await setupCoreApplication({ appId, coreConfig });
     console.log("Connection URI: " + coreAppUrl);
-    initST({
-        coreUrl: coreAppUrl,
-        accountLinkingConfig,
-        enabledRecipes,
-        enabledProviders,
-        passwordlessFlowType,
-        passwordlessContactMethod,
-        mfaInfo,
-    });
 
     return coreAppUrl;
 }
@@ -219,6 +204,7 @@ function initST({
     passwordlessContactMethod,
     mfaInfo = {},
 } = {}) {
+    console.error('initST called')
     if (process.env.TEST_MODE) {
         UserRolesRaw.reset();
         PasswordlessRaw.reset();
@@ -751,9 +737,18 @@ app.post("/test/after", (_, res) => {
     res.send();
 });
 
-app.post("/test/setup", async (req, res) => {
+app.post("/test/setup/app", async (req, res) => {
     try {
         res.send(await setupApp(req.body));
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err.toString());
+    }
+});
+
+app.post("/test/setup/st", async (req, res) => {
+    try {
+        res.send(await initST(req.body));
     } catch (err) {
         console.log(err);
         res.status(500).send(err.toString());
