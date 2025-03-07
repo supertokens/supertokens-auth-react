@@ -857,3 +857,180 @@ export async function setGeneralErrorToLocalStorage(recipeName, action, page) {
 export async function getTestEmail() {
     return `john.doe+${Date.now()}@supertokens.io`;
 }
+
+export async function setupTenant(tenantId, loginMethods) {
+    const body = {
+        tenantId,
+        loginMethods,
+    };
+    if (loginMethods.thirdParty?.providers) {
+        body.loginMethods.thirdParty.providers = loginMethods.thirdParty.providers.map((provider) => ({
+            ...testProviderConfigs[provider.id.split("-")[0]],
+            thirdPartyId: provider.id,
+            name: provider.name,
+        }));
+    }
+    let coreResp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/setupTenant`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify(body),
+    });
+    assert.strictEqual(coreResp.status, 200);
+}
+
+export async function addUserToTenant(tenantId, recipeUserId) {
+    let coreResp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/addUserToTenant`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            tenantId,
+            recipeUserId,
+        }),
+    });
+    assert.strictEqual(coreResp.status, 200);
+}
+
+export async function removeUserFromTenant(tenantId, recipeUserId) {
+    let coreResp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/removeUserFromTenant`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            tenantId,
+            recipeUserId,
+        }),
+    });
+    assert.strictEqual(coreResp.status, 200);
+}
+
+export async function removeTenant(tenantId) {
+    let coreResp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/removeTenant`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            tenantId,
+        }),
+    });
+    assert.strictEqual(coreResp.status, 200);
+}
+
+const testProviderConfigs = {
+    apple: {
+        clients: [
+            {
+                clientId: "4398792-io.supertokens.example.service",
+                additionalConfig: {
+                    keyId: "7M48Y4RYDL",
+                    privateKey:
+                        "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgu8gXs+XYkqXD6Ala9Sf/iJXzhbwcoG5dMh1OonpdJUmgCgYIKoZIzj0DAQehRANCAASfrvlFbFCYqn3I2zeknYXLwtH30JuOKestDbSfZYxZNMqhF/OzdZFTV0zc5u5s3eN+oCWbnvl0hM+9IW0UlkdA\n-----END PRIVATE KEY-----",
+                    teamId: "YWQCXGJRJL",
+                },
+            },
+        ],
+    },
+    github: {
+        clients: [
+            {
+                clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
+                clientId: "467101b197249757c71f",
+            },
+        ],
+    },
+    google: {
+        clients: [
+            {
+                clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
+                clientSecret: "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",
+            },
+        ],
+    },
+    auth0: {
+        // this contains info about forming the authorisation redirect URL without the state params and without the redirect_uri param
+        authorizationEndpoint: `https://${process.env.AUTH0_DOMAIN}/authorize`,
+        authorizationEndpointQueryParams: {
+            scope: "openid profile email email_verified",
+        },
+        jwksURI: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
+        tokenEndpoint: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
+        clients: [
+            {
+                clientId: process.env.AUTH0_CLIENT_ID,
+                clientSecret: process.env.AUTH0_CLIENT_SECRET,
+            },
+        ],
+        userInfoMap: {
+            fromIdTokenPayload: {
+                userId: "sub",
+                email: "email",
+                emailVerified: "email_verified",
+            },
+        },
+    },
+    test: {
+        // We add a client since it's required
+        clients: [
+            {
+                clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
+                clientSecret: "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",
+            },
+        ],
+    },
+};
+
+export async function backendHook(hookType) {
+    const serverUrls = Array.from(new Set([TEST_SERVER_BASE_URL, TEST_APPLICATION_SERVER_BASE_URL]));
+
+    await Promise.all(
+        serverUrls.map((url) => fetch(`${url}/test/${hookType}`, { method: "POST" }).catch(console.error))
+    );
+}
+
+export async function setupCoreApp({
+    appId,
+    coreConfig,
+} = {}) {
+    const response = await fetch(`${TEST_SERVER_BASE_URL}/test/setup/app`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            appId,
+            coreConfig,
+        }),
+    });
+
+    return await response.text();
+}
+
+export async function setupST({
+    coreUrl,
+    accountLinkingConfig = {},
+    enabledRecipes,
+    enabledProviders,
+    passwordlessFlowType,
+    passwordlessContactMethod,
+    mfaInfo = {},
+} = {}) {
+    await fetch(`${TEST_SERVER_BASE_URL}/test/setup/st`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            coreUrl,
+            accountLinkingConfig,
+            enabledRecipes,
+            enabledProviders,
+            passwordlessFlowType,
+            passwordlessContactMethod,
+            mfaInfo,
+        }),
+    });
+}
+
+export async function backendBeforeEach() {
+    await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+        method: "POST",
+    }).catch(console.error);
+    if (TEST_SERVER_BASE_URL !== TEST_APPLICATION_SERVER_BASE_URL) {
+        await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/beforeeach`, {
+            method: "POST",
+        }).catch(console.error);
+    }
+}

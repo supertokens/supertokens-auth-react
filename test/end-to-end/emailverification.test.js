@@ -20,7 +20,6 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
-import puppeteer from "puppeteer";
 import fetch from "isomorphic-fetch";
 import {
     SEND_VERIFY_EMAIL_API,
@@ -52,7 +51,14 @@ import {
     waitForSTElement,
     isGeneralErrorSupported,
     setGeneralErrorToLocalStorage,
-    isAccountLinkingSupported,
+    getDefaultSignUpFieldValues,
+    getTestEmail,
+    waitForUrl,
+    setupBrowser,
+    backendHook,
+    setupCoreApp,
+    getLogoutButton,
+    setupST,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -65,15 +71,25 @@ describe("SuperTokens Email Verification", function () {
     let accountLinkingSupported;
 
     before(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
+        await backendHook("before");
+
+        browser = await setupBrowser();
+    });
+
+    beforeEach(async function () {
+        await backendHook("beforeEach");
+
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
+
+        page = await browser.newPage();
+
+        consoleLogs = [];
+        page.on("console", (consoleObj) => {
+            const log = consoleObj.text();
+            if (log.startsWith("ST_LOGS")) {
+                consoleLogs.push(log);
+            }
         });
         accountLinkingSupported = await isAccountLinkingSupported();
         page = await browser.newPage();
@@ -113,11 +129,351 @@ describe("SuperTokens Email Verification", function () {
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         });
 
-        it("Should redirect to auth from email verification protected page if the user is deleted", async function () {
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
+        describe("Verify Email with token screen", function () {
+            it("Should show invalid token screen when token is invalid or expired", async function () {
+                consoleLogs = [];
+                await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`);
+                await waitForText(page, "[data-supertokens~=headerTitle]", "Verify your email address");
+                await Promise.all([
+                    submitForm(page),
+                    page.waitForResponse(
+                        (response) => response.url() === VERIFY_EMAIL_API && response.status() === 200
+                    ),
+                ]);
+
+                await waitForText(
+                    page,
+                    "[data-supertokens~=headerTinyTitle]",
+                    "The email verification link has expired"
+                );
+                // Click Continue should redirect to /auth when no session is present
+                await Promise.all([
+                    clickLinkWithRightArrow(page),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await waitForUrl(page, "/auth/");
+                assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    "ST_LOGS EMAIL_VERIFICATION OVERRIDE VERIFY_EMAIL",
+                    "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS VERIFY_EMAIL",
+                    "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
+                ]);
+            });
+
+            it("Should ask for user interaction when token is valid with no session", async function () {
+                // Sign Up, logout, clear logs
+                await toggleSignInSignUp(page);
+                const { fieldValues, postValues } = getDefaultSignUpFieldValues();
+                await signUp(page, fieldValues, postValues, "emailpassword");
+                await logoutFromEmailVerification(page);
+                await new Promise((r) => setTimeout(r, 100));
+                consoleLogs = [];
+
+                // Attempt verification without a session
+                const latestURLWithToken = await getLatestURLWithToken();
+                await Promise.all([
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    page.goto(latestURLWithToken),
+                ]);
+                await waitForText(page, "[data-supertokens~=headerTitle]", "Verify your email address");
+                await submitForm(page);
+
+                await waitForText(page, "[data-supertokens~=headerTitle]", "Email verification successful!");
+
+                await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+                await waitForUrl(page, "/auth/");
+                assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    "ST_LOGS EMAIL_VERIFICATION OVERRIDE VERIFY_EMAIL",
+                    "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS VERIFY_EMAIL",
+                    "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT EMAIL_VERIFIED_SUCCESSFUL",
+                    "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
+                ]);
+            });
+
+            it('Should show "Email Verification successful" screen when token is valid with an active session', async function () {
+                consoleLogs = [];
+                await toggleSignInSignUp(page);
+                const { fieldValues, postValues } = getDefaultSignUpFieldValues();
+                await signUp(page, fieldValues, postValues, "emailpassword");
+
+                const latestURLWithToken = await getLatestURLWithToken();
+                await Promise.all([
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    page.goto(latestURLWithToken),
+                ]);
+                const title = await getTextByDataSupertokens(page, "headerTitle");
+                assert.deepStrictEqual(title, "Email verification successful!");
+                await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+                await page.waitForSelector(".sessionInfo-user-id");
+                await waitForUrl(page, "/dashboard");
+                assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
+                    "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
+                    "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
+                    "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_UP",
+                    "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
+                    "ST_LOGS EMAIL_VERIFICATION GET_REDIRECTION_URL VERIFY_EMAIL",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
+                    "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
+                    "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
+                    "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
+                    "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS EMAIL_VERIFICATION OVERRIDE VERIFY_EMAIL",
+                    "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS VERIFY_EMAIL",
+                    "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT EMAIL_VERIFIED_SUCCESSFUL",
+                    "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS EMAIL_PASSWORD",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                ]);
+            });
+
+            it("should successfully redirect after email verification without react-router-dom", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?router=no-router&rid=emailpassword&mode=REQUIRED`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+                await toggleSignInSignUp(page);
+
+                const { fieldValues, postValues } = getDefaultSignUpFieldValues();
+                await signUp(page, fieldValues, postValues, "emailpassword");
+
+                const latestURLWithToken = await getLatestURLWithToken();
+                await Promise.all([
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    page.goto(latestURLWithToken + "&router=no-router"),
+                ]);
+                const appHeader = await page.waitForSelector(".App > h1");
+                const appHeaderText = await page.evaluate((e) => e.innerText, appHeader);
+                assert.strictEqual(appHeaderText, "Without Routing");
+
+                const title = await getTextByDataSupertokens(page, "headerTitle");
+                assert.deepStrictEqual(title, "Email verification successful!");
+
+                await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+                await page.waitForSelector(".sessionInfo-user-id");
+
+                await waitForUrl(page, "/dashboard");
+            });
+
+            it("Should allow to verify an email without a valid session", async function () {
+                consoleLogs = [];
+                await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`);
+                await waitForText(page, "[data-supertokens~=headerTitle]", "Verify your email address");
+                await Promise.all([
+                    submitForm(page),
+                    page.waitForResponse(
+                        (response) => response.url() === VERIFY_EMAIL_API && response.status() === 200
+                    ),
+                ]);
+                await waitForUrl(page, "/auth/verify-email");
+                assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    "ST_LOGS EMAIL_VERIFICATION OVERRIDE VERIFY_EMAIL",
+                    "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS VERIFY_EMAIL",
+                ]);
+            });
+        });
+        describe("Email Verified", function () {
+            it("Should redirect to onSuccessfulRedirect when email is already verified", async function () {
+                // Sign up
+                await toggleSignInSignUp(page);
+                const { fieldValues, postValues } = getDefaultSignUpFieldValues();
+                await signUp(page, fieldValues, postValues, "emailpassword");
+                // Verify Email and Logout
+                const latestURLWithToken = await getLatestURLWithToken();
+                await Promise.all([
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    page.goto(latestURLWithToken),
+                ]);
+                const title = await getTextByDataSupertokens(page, "headerTitle");
+                assert.deepStrictEqual(title, "Email verification successful!");
+                await submitForm(page);
+                 // Make sure to wait for status to update. Flakes in headless.
+                await new Promise((r) => setTimeout(r, 500));
+                const logoutButton = await getLogoutButton(page);
+                await Promise.all([logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+                // Proceed to test
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+                await setInputValues(
+                    page,
+                    fieldValues.filter((fv) => ["email", "password"].includes(fv.name))
+                );
+                await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+                await page.waitForSelector(".sessionInfo-user-id");
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+                // In this case we redirect to "/dashboard" (coming from the getRedirectURL config)
+                await waitForUrl(page, "/dashboard");
+            });
+        });
+    });
+
+    describe("Server errors", function () {
+        describe("Verify Email with token screen", function () {
+            // TODO: Debug and Fix
+            it('Should show "Something went wrong" screen when API failure', async function () {
+                await page.setRequestInterception(true);
+                page.on("request", (request) => {
+                    if (request.url() === VERIFY_EMAIL_API && request.method() === "POST") {
+                        request.respond({
+                            // Previous behavior was a result of core being shut down
+                            // Emulating the same here
+                            status: 500,
+                            // body: "Error: No SuperTokens core available to query",
+                        });
+                    } else {
+                        request.continue();
+                    }
+                });
+
+                consoleLogs = [];
+                await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN`);
+                await waitForText(page, "[data-supertokens~=headerTitle]", "Verify your email address");
+                await Promise.all([
+                    submitForm(page),
+                    page.waitForResponse(
+                        (response) => response.url() === VERIFY_EMAIL_API && response.status() === 500
+                    ),
+                ]);
+                await new Promise((r) => setTimeout(r, 50)); // Make sure to wait for status to update.
+                const verificationEmailErrorTitle = await getVerificationEmailErrorTitle(page);
+                assert.deepStrictEqual(verificationEmailErrorTitle, "!\nSomething went wrong");
+                assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    "ST_LOGS EMAIL_VERIFICATION OVERRIDE VERIFY_EMAIL",
+                    "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS VERIFY_EMAIL",
+                ]);
+            });
+        });
+    });
+
+    describe("General errors", function () {
+        describe("Verify Email with token screen", function () {
+            beforeEach(async function () {
+                if (!(await isGeneralErrorSupported())) {
+                    this.skip();
+                }
+                await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
+            });
+
+            it('Should show "General Error" when API returns "GENERAL_ERROR"', async function () {
+                await toggleSignInSignUp(page);
+                const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email: "john.doe3@supertokens.io" });
+                await signUp(page, fieldValues, postValues, "emailpassword");
+
+                const latestURLWithToken = await getLatestURLWithToken();
+                await page.goto(latestURLWithToken);
+
+                await setGeneralErrorToLocalStorage("EMAIL_VERIFICATION", "VERIFY_EMAIL", page);
+                await page.waitForResponse(
+                    (response) => response.url() === VERIFY_EMAIL_API && response.status() === 200
+                );
+                await new Promise((r) => setTimeout(r, 50)); // Make sure to wait for status to update.
+                const verificationEmailErrorTitle = await getVerificationEmailErrorTitle(page);
+                const verificationEmailErrorMessage = await getVerificationEmailErrorMessage(page);
+                assert.deepStrictEqual(verificationEmailErrorTitle, "!\nSomething went wrong");
+                assert.deepStrictEqual(verificationEmailErrorMessage, "general error from API email verify");
+            });
+        });
+
+        describe("Send verification email screen", function () {
+            beforeEach(async function () {
+                if (!(await isGeneralErrorSupported())) {
+                    this.skip();
+                }
+
+                await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
+            });
+
+            it('Should show "General Error" when API returns "GENERAL_ERROR" on resend', async function () {
+                await setGeneralErrorToLocalStorage("EMAIL_VERIFICATION", "SEND_VERIFY_EMAIL", page);
+
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+                await toggleSignInSignUp(page);
+                await defaultSignUp(page);
+                await waitForUrl(page, "/auth/verify-email");
+                await Promise.all([
+                    sendVerifyEmail(page),
+                    page.waitForResponse(
+                        (response) => response.url() === SEND_VERIFY_EMAIL_API && response.status() === 200
+                    ),
+                ]);
+                await new Promise((r) => setTimeout(r, 50)); // Make sure to wait for status to update.
+                const generalError = await getGeneralError(page);
+                assert.deepStrictEqual(generalError, "general error from API email verification code");
+            });
+        });
+    });
+
+    describe("isEmailVerified server error", function () {
+        describe("Verify Email with token screen", function () {
+            // TODO: this test doesn't actually work cause it doesn't stop the server... strange
+            // it("Should ignore email verification when isEmailVerified server request fails", async function () {
+            //     await Promise.all([
+            //         page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+            //         page.waitForNavigation({ waitUntil: "networkidle0" }),
+            //     ]);
+            //     await toggleSignInSignUp(page);
+            //     await defaultSignUp(page);
+            //     // Stop server.
+            //     await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
+            //         method: "POST",
+            //     }).catch(console.error);
+            //     // No redirection to /auth/veirfy-email if API call fails.
+            //     await Promise.all([
+            //         page.goto(`${TEST_CLIENT_BASE_URL}/dashboard?mode=REQUIRED`),
+            //         page.waitForNavigation({ waitUntil: "networkidle0" }),
+            //     ]);
+            //     await waitForUrl(page(pathname, "/dashboard");
+            //     assert.deepStrictEqual(consoleLogs, [
+            //         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+            //         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+            //         "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
+            //         "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
+            //         "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
+            //         "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_UP",
+            //         "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+            //         "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
+            //         "ST_LOGS EMAIL_VERIFICATION GET_REDIRECTION_URL VERIFY_EMAIL",
+            //         "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
+            //         "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
+            //         "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
+            //         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+            //         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+            //         "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+            //         "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
+            //         "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
+            //     ]);
+            // });
+        });
+    });
+
+    describe("signOut errors", function () {
+        it("Test that Something Went Wrong is displayed when signOut throws an error", async function () {
             await toggleSignInSignUp(page);
             const email = `john.doe${Date.now()}@supertokens.io`;
             await signUp(page, [
@@ -402,130 +758,14 @@ describe("SuperTokens Email Verification", function () {
         });
     });
 
-    describe("Verify Email with token screen", function () {
-        beforeEach(async function () {
-            page = await browser.newPage();
-            consoleLogs = [];
-            page.on("console", (consoleObj) => {
-                const log = consoleObj.text();
-                if (log.startsWith("ST_LOGS")) {
-                    consoleLogs.push(log);
-                }
+    describe("Claim refresh with clock skew", function () {
+        it("should not go into an infinite loop during claim refresh with adjusted clock skew", async function () {
+            const coreUrl = await setupCoreApp({
+                coreConfig: {
+                    access_token_validity: 2 * 60 * 60, // 2 hours
+                },
             });
-            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-        });
-
-        it("Should show invalid token screen when token is invalid or expired", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`);
-            await waitForText(page, "[data-supertokens~=headerTitle]", "Verify your email address");
-            await Promise.all([
-                submitForm(page),
-                page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 200),
-            ]);
-
-            await waitForText(page, "[data-supertokens~=headerTinyTitle]", "The email verification link has expired");
-            // Click Continue should redirect to /auth when no session is present
-            await Promise.all([clickLinkWithRightArrow(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/");
-            assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS EMAIL_VERIFICATION OVERRIDE VERIFY_EMAIL",
-                "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS VERIFY_EMAIL",
-                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
-            ]);
-        });
-
-        it("Should ask for user interaction when token is valid with no session", async function () {
-            const latestURLWithToken = await getLatestURLWithToken();
-            await page.goto(latestURLWithToken);
-            await waitForText(page, "[data-supertokens~=headerTitle]", "Verify your email address");
-            await submitForm(page);
-
-            await waitForText(page, "[data-supertokens~=headerTitle]", "Email verification successful!");
-
-            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/");
-            assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS EMAIL_VERIFICATION OVERRIDE VERIFY_EMAIL",
-                "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS VERIFY_EMAIL",
-                "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT EMAIL_VERIFIED_SUCCESSFUL",
-                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
-            ]);
-        });
-
-        it('Should show "Email Verification successful" screen when token is valid with an active session', async function () {
-            await toggleSignInSignUp(page);
-            await signUp(
-                page,
-                [
-                    { name: "email", value: "john.doe3@supertokens.io" },
-                    { name: "password", value: "Str0ngP@ssw0rd" },
-                    { name: "name", value: "John Doe" },
-                    { name: "age", value: "20" },
-                ],
-                '{"formFields":[{"id":"email","value":"john.doe3@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
-                "emailpassword"
-            );
-
-            const latestURLWithToken = await getLatestURLWithToken();
-            await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
-            const title = await getTextByDataSupertokens(page, "headerTitle");
-            assert.deepStrictEqual(title, "Email verification successful!");
-            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-            await page.waitForSelector(".sessionInfo-user-id");
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
-            assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
-                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
-                "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
-                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_UP",
-                "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
-                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS EMAIL_VERIFICATION GET_REDIRECTION_URL VERIFY_EMAIL",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS EMAIL_VERIFICATION OVERRIDE IS_EMAIL_VERIFIED",
-                "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS IS_EMAIL_VERIFIED",
-                "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
-                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
-                "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
-                "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS EMAIL_VERIFICATION OVERRIDE VERIFY_EMAIL",
-                "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS VERIFY_EMAIL",
-                "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
-                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT EMAIL_VERIFIED_SUCCESSFUL",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-            ]);
-        });
-
-        it("should successfully redirect after email verification without react-router-dom", async function () {
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth?router=no-router&rid=emailpassword&mode=REQUIRED`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
+            await setupST({ coreUrl });
             await toggleSignInSignUp(page);
 
             await signUp(
