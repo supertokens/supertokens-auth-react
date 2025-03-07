@@ -41,8 +41,10 @@ import {
     isGeneralErrorSupported,
     setGeneralErrorToLocalStorage,
     backendHook,
-    createCoreApp,
+    setupCoreApp,
     waitForUrl,
+    setupBrowser,
+    setupST,
 } from "../helpers";
 
 import {
@@ -74,7 +76,8 @@ describe("General error rendering", function () {
 
     beforeEach(async function () {
         await backendHook("beforeEach");
-        await createCoreApp();
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
         page = await browser.newPage();
 
         consoleLogs = [];

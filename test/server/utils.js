@@ -27,7 +27,7 @@ module.exports.getCoreUrl = () => {
     return coreUrl;
 };
 
-module.exports.createCoreApplication = async function ({ appId, coreConfig } = {}) {
+module.exports.setupCoreApplication = async function ({ appId, coreConfig } = {}) {
     const coreUrl = module.exports.getCoreUrl();
 
     if (!appId) {
