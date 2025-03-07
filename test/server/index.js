@@ -35,7 +35,18 @@ let bodyParser = require("body-parser");
 let http = require("http");
 let cors = require("cors");
 const morgan = require("morgan");
-let { startST, killAllST, setupST, cleanST, setKeyValueInConfig, customAuth0Provider, maxVersion } = require("./utils");
+let {
+    startST,
+    killAllST,
+    setupST,
+    cleanST,
+    setKeyValueInConfig,
+    customAuth0Provider,
+    maxVersion,
+    setupCoreApplication,
+    addLicense,
+    mockThirdPartyProvider,
+} = require("./utils");
 let { version: nodeSDKVersion } = require("supertokens-node/lib/build/version");
 
 let passwordlessSupported;
@@ -78,10 +89,44 @@ if (maxVersion(nodeSDKVersion, "9.9.9") === "9.9.9") {
     generalErrorSupported = true;
 }
 
-let urlencodedParser = bodyParser.urlencoded({ limit: "20mb", extended: true, parameterLimit: 20000 });
-let jsonParser = bodyParser.json({ limit: "20mb" });
+const fullProviderList = [
+    {
+        config: {
+            thirdPartyId: "google",
+            clients: [
+                {
+                    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                    clientId: process.env.GOOGLE_CLIENT_ID,
+                },
+            ],
+        },
+    },
+    {
+        config: {
+            thirdPartyId: "github",
+            clients: [
+                {
+                    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+                    clientId: process.env.GITHUB_CLIENT_ID,
+                },
+            ],
+        },
+    },
+    {
+        config: {
+            thirdPartyId: "facebook",
+            clients: [
+                {
+                    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+                    clientId: process.env.FACEBOOK_CLIENT_ID,
+                },
+            ],
+        },
+    },
+    customAuth0Provider(),
+    mockThirdPartyProvider,
+];
 
-let app = express();
 morgan.token("body", function (req, res) {
     return JSON.stringify(req.body && req.body["formFields"]);
 });
@@ -144,182 +189,35 @@ app.get("/ping", async (req, res) => {
     res.send("success");
 });
 
-app.post("/startst", async (req, res) => {
-    if (req.body && req.body.configUpdates) {
-        for (const update of req.body.configUpdates) {
-            await setKeyValueInConfig(update.key, update.value);
+/**
+ * Create a core application and initialize ST with the required config
+ * @returns URL for the new core application
+ */
+async function setupApp({
+    appId,
+    coreConfig,
+} = {}) {
+    const coreAppUrl = await setupCoreApplication({ appId, coreConfig });
+    console.log("Connection URI: " + coreAppUrl);
+
+    if (loginMethods.thirdParty.providers !== undefined) {
+        for (const provider of loginMethods.thirdParty.providers) {
+            await Multitenancy.createOrUpdateThirdPartyConfig(tenantId, provider);
         }
     }
-    let pid = await startST();
-    res.send(pid + "");
-});
+    res.send(coreResp);
+};
 
-app.post("/beforeeach", async (req, res) => {
-    deviceStore = new Map();
-
-    await killAllST();
-    await setupST();
-    res.send();
-});
-
-app.post("/after", async (req, res) => {
-    await killAllST();
-    await cleanST();
-    res.send();
-});
-
-app.post("/stopstst", async (req, res) => {
-    await stopST(req.body.pid);
-    res.send("");
-});
-
-// custom API that requires session verification
-app.get("/sessioninfo", verifySession(), async (req, res) => {
-    let session = req.session;
-    if (session.getJWTPayload !== undefined) {
-        res.send({
-            sessionHandle: session.getHandle(),
-            userId: session.getUserId(),
-            accessTokenPayload: session.getJWTPayload(),
-            sessionData: await session.getSessionData(),
-        });
-    } else {
-        res.send({
-            sessionHandle: session.getHandle(),
-            userId: session.getUserId(),
-            accessTokenPayload: session.getAccessTokenPayload(),
-            sessionData: await session.getSessionData(),
-        });
-    }
-});
-
-app.post("/deleteUser", async (req, res) => {
-    if (req.body.rid !== "emailpassword") {
-        res.status(400).send({ message: "Not implemented" });
-    }
-    const user = await EmailPassword.getUserByEmail(req.body.email);
-    res.send(await SuperTokens.deleteUser(user.id));
-});
-
-app.get("/unverifyEmail", verifySession(), async (req, res) => {
-    let session = req.session;
-    await EmailVerification.unverifyEmail(session.getUserId());
-    await session.fetchAndSetClaim(EmailVerification.EmailVerificationClaim);
-    res.send({ status: "OK" });
-});
-
-app.post("/setRole", verifySession(), async (req, res) => {
-    let session = req.session;
-    await UserRoles.createNewRoleOrAddPermissions(req.body.role, req.body.permissions);
-    await UserRoles.addRoleToUser(session.getUserId(), req.body.role);
-    await session.fetchAndSetClaim(UserRoles.UserRoleClaim);
-    await session.fetchAndSetClaim(UserRoles.PermissionClaim);
-    res.send({ status: "OK" });
-});
-
-app.post(
-    "/checkRole",
-    verifySession({
-        overrideGlobalClaimValidators: async (gv, _session, userContext) => {
-            const res = [...gv];
-            const body = await userContext._default.request.getJSONBody();
-            if (body.role !== undefined) {
-                const info = body.role;
-                res.push(UserRoles.UserRoleClaim.validators[info.validator](...info.args));
-            }
-
-            if (body.permission !== undefined) {
-                const info = body.permission;
-                res.push(UserRoles.PermissionClaim.validators[info.validator](...info.args));
-            }
-            return res;
-        },
-    }),
-    async (req, res) => {
-        res.send({ status: "OK" });
-    }
-);
-
-app.get("/token", async (_, res) => {
-    res.send({
-        latestURLWithToken,
-    });
-});
-
-app.post("/test/setFlow", (req, res) => {
-    initST({
-        passwordlessConfig: {
-            contactMethod: req.body.contactMethod,
-            flowType: req.body.flowType,
-            createAndSendCustomTextMessage: saveCode,
-            createAndSendCustomEmail: saveCode,
-        },
-    });
-    res.sendStatus(200);
-});
-
-app.get("/test/getDevice", (req, res) => {
-    res.send(deviceStore.get(req.query.preAuthSessionId));
-});
-
-app.get("/test/featureFlags", (req, res) => {
-    const available = [];
-
-    if (passwordlessSupported) {
-        available.push("passwordless");
-    }
-
-    if (thirdPartyPasswordlessSupported) {
-        available.push("thirdpartypasswordless");
-    }
-
-    if (generalErrorSupported) {
-        available.push("generalerror");
-    }
-
-    if (userRolesSupported) {
-        available.push("userroles");
-    }
-
-    res.send({
-        available,
-    });
-});
-
-app.use(errorHandler());
-
-app.use(async (err, req, res, next) => {
-    try {
-        console.error(err);
-        res.status(500).send(err);
-    } catch (ignored) {}
-});
-
-let server = http.createServer(app);
-server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT, "0.0.0.0");
-
-/*
- * Setup and start the core when running the test application when running with  the following command:
- * START=true TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .
- * or
- * npm run server
- */
-(async function (shouldSpinUp) {
-    if (shouldSpinUp) {
-        console.log(`Start supertokens for test app`);
-        try {
-            await killAllST();
-            await cleanST();
-        } catch (e) {}
-
-        await setupST();
-        const pid = await startST();
-        console.log(`Application started on http://localhost:${process.env.NODE_PORT | 8080}`);
-        console.log(`processId: ${pid}`);
-    }
-})(process.env.START === "true");
-
-function initST({ passwordlessConfig } = {}) {
+function initST({
+    coreUrl = getCoreUrl(),
+    accountLinkingConfig = {},
+    enabledRecipes,
+    enabledProviders,
+    passwordlessFlowType,
+    passwordlessContactMethod,
+    mfaInfo = {},
+} = {}) {
+    console.error('initST called')
     if (process.env.TEST_MODE) {
         if (userRolesSupported) {
             UserRolesRaw.reset();
@@ -776,3 +674,307 @@ function initST({ passwordlessConfig } = {}) {
         recipeList,
     });
 }
+
+function convertToRecipeUserIdIfAvailable(id) {
+    if (SuperTokens.convertToRecipeUserId !== undefined) {
+        return SuperTokens.convertToRecipeUserId(id);
+    }
+    return id;
+}
+
+
+let urlencodedParser = bodyParser.urlencoded({ limit: "20mb", extended: true, parameterLimit: 20000 });
+let jsonParser = bodyParser.json({ limit: "20mb" });
+
+let app = express();
+
+const originalSend = app.response.send;
+app.response.send = function sendOverWrite(body) {
+    originalSend.call(this, body);
+    this.__custombody__ = body;
+};
+
+morgan.token("body", function (req, res) {
+    return JSON.stringify(req.body);
+});
+
+morgan.token("res-body", function (req, res) {
+    return typeof res.__custombody__ === "string" ? res.__custombody__ : JSON.stringify(res.__custombody__);
+});
+
+app.use(urlencodedParser);
+app.use(jsonParser);
+
+app.use(morgan("[:date[iso]] :url :method :body", { immediate: true }));
+app.use(morgan("[:date[iso]] :url :method :status :response-time ms - :res[content-length] :res-body"));
+
+app.use(cookieParser());
+
+app.use(
+    cors({
+        origin: websiteDomain,
+        allowedHeaders: ["content-type", ...SuperTokens.getAllCORSHeaders()],
+        methods: ["GET", "PUT", "POST", "DELETE"],
+        credentials: true,
+    })
+);
+
+app.use(middleware());
+
+app.get("/ping", async (req, res) => {
+    res.send("success");
+});
+
+app.post("/test/before", (_, res) => {
+    res.send();
+});
+
+app.post("/test/beforeEach", (_, res) => {
+    deviceStore = new Map();
+    res.send();
+});
+
+app.post("/test/afterEach", (_, res) => {
+    res.send();
+});
+
+app.post("/test/after", (_, res) => {
+    res.send();
+});
+
+app.post("/test/setup/app", async (req, res) => {
+    try {
+        res.send(await setupApp(req.body));
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err.toString());
+    }
+});
+
+app.post("/test/setup/st", async (req, res) => {
+    try {
+        res.send(await initST(req.body));
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err.toString());
+    }
+});
+
+// custom API that requires session verification
+app.get("/sessioninfo", verifySession(), async (req, res, next) => {
+    let session = req.session;
+    const accessTokenPayload =
+        session.getJWTPayload !== undefined ? session.getJWTPayload() : session.getAccessTokenPayload();
+
+    try {
+        const sessionData = session.getSessionData
+            ? await session.getSessionData()
+            : await session.getSessionDataFromDatabase();
+        res.send({
+            sessionHandle: session.getHandle(),
+            userId: session.getUserId(),
+            recipeUserId: session.getRecipeUserId().getAsString(),
+            accessTokenPayload,
+            sessionData,
+        });
+    } catch (err) {
+        next(err);
+    }
+});
+
+app.post("/deleteUser", async (req, res) => {
+    const users = await SuperTokens.listUsersByAccountInfo("public", req.body);
+    res.send(await SuperTokens.deleteUser(users[0].id));
+});
+
+app.post("/changeEmail", async (req, res) => {
+    let resp;
+    if (req.body.rid === "emailpassword") {
+        resp = await EmailPassword.updateEmailOrPassword({
+            recipeUserId: convertToRecipeUserIdIfAvailable(req.body.recipeUserId),
+            email: req.body.email,
+            tenantIdForPasswordPolicy: req.body.tenantId,
+        });
+    } else if (req.body.rid === "thirdparty") {
+        const user = await SuperTokens.getUser({ userId: req.body.recipeUserId });
+        const loginMethod = user.loginMethod.find((lm) => lm.recipeUserId.getAsString() === req.body.recipeUserId);
+        resp = await ThirdParty.manuallyCreateOrUpdateUser(
+            req.body.tenantId,
+            loginMethod.thirdParty.id,
+            loginMethod.thirdParty.userId,
+            req.body.email,
+            false
+        );
+    } else if (req.body.rid === "passwordless") {
+        resp = await Passwordless.updateUser({
+            recipeUserId: convertToRecipeUserIdIfAvailable(req.body.recipeUserId),
+            email: req.body.email,
+            phoneNumber: req.body.phoneNumber,
+        });
+    }
+    res.json(resp);
+});
+
+app.get("/unverifyEmail", verifySession(), async (req, res) => {
+    let session = req.session;
+    await EmailVerification.unverifyEmail(session.getRecipeUserId());
+    await session.fetchAndSetClaim(EmailVerification.EmailVerificationClaim, {});
+    res.send({ status: "OK" });
+});
+
+app.post("/setRole", verifySession(), async (req, res) => {
+    let session = req.session;
+    await UserRoles.createNewRoleOrAddPermissions(req.body.role, req.body.permissions);
+    await UserRoles.addRoleToUser(session.getTenantId(), session.getUserId(), req.body.role);
+    await session.fetchAndSetClaim(UserRoles.UserRoleClaim, {});
+    await session.fetchAndSetClaim(UserRoles.PermissionClaim, {});
+    res.send({ status: "OK" });
+});
+
+app.post(
+    "/checkRole",
+    verifySession({
+        overrideGlobalClaimValidators: async (gv, _session, userContext) => {
+            const res = [...gv];
+            const body = await userContext._default.request.getJSONBody();
+            if (body.role !== undefined) {
+                const info = body.role;
+                res.push(UserRoles.UserRoleClaim.validators[info.validator](...info.args));
+            }
+
+            if (body.permission !== undefined) {
+                const info = body.permission;
+                res.push(UserRoles.PermissionClaim.validators[info.validator](...info.args));
+            }
+            return res;
+        },
+    }),
+    async (req, res) => {
+        res.send({ status: "OK" });
+    }
+);
+
+app.post("/completeFactor", verifySession(), async (req, res) => {
+    let session = req.session;
+
+    await MultiFactorAuth.markFactorAsCompleteInSession(session, req.body.id);
+
+    res.send({ status: "OK" });
+});
+
+app.post("/addRequiredFactor", verifySession(), async (req, res) => {
+    let session = req.session;
+
+    await MultiFactorAuth.addToRequiredSecondaryFactorsForUser(session.getUserId(), req.body.factorId);
+
+    res.send({ status: "OK" });
+});
+
+app.post("/mergeIntoAccessTokenPayload", verifySession(), async (req, res) => {
+    let session = req.session;
+
+    await session.mergeIntoAccessTokenPayload(req.body);
+
+    res.send({ status: "OK" });
+});
+
+app.get("/token", async (_, res) => {
+    res.send({
+        latestURLWithToken,
+    });
+});
+
+app.post("/setupTenant", async (req, res) => {
+    const { tenantId, loginMethods, coreConfig } = req.body;
+    let firstFactors = [];
+    if (loginMethods.emailPassword?.enabled === true) {
+        firstFactors.push("emailpassword");
+    }
+    if (loginMethods.passwordless?.enabled === true) {
+        firstFactors.push("otp-phone", "otp-email", "link-phone", "link-email");
+    }
+    if (loginMethods.thirdParty?.enabled === true) {
+        firstFactors.push("thirdparty");
+    }
+    let coreResp = await Multitenancy.createOrUpdateTenant(tenantId, {
+        firstFactors,
+        coreConfig,
+    });
+
+    if (loginMethods.thirdParty.providers !== undefined) {
+        for (const provider of loginMethods.thirdParty.providers) {
+            await Multitenancy.createOrUpdateThirdPartyConfig(tenantId, provider);
+        }
+    }
+    res.send(coreResp);
+});
+
+app.post("/addUserToTenant", async (req, res) => {
+    const { tenantId, recipeUserId } = req.body;
+    let coreResp = await Multitenancy.associateUserToTenant(tenantId, convertToRecipeUserIdIfAvailable(recipeUserId));
+    res.send(coreResp);
+});
+
+app.post("/removeUserFromTenant", async (req, res) => {
+    const { tenantId, recipeUserId } = req.body;
+    let coreResp = await Multitenancy.disassociateUserFromTenant(
+        tenantId,
+        convertToRecipeUserIdIfAvailable(recipeUserId)
+    );
+    res.send(coreResp);
+});
+
+app.post("/removeTenant", async (req, res) => {
+    const { tenantId } = req.body;
+    let coreResp = await Multitenancy.deleteTenant(tenantId);
+    res.send(coreResp);
+});
+
+app.get("/test/getDevice", (req, res) => {
+    res.send(deviceStore.get(req.query.preAuthSessionId));
+});
+
+app.post("/test/getTOTPCode", (req, res) => {
+    res.send(JSON.stringify({ totp: new OTPAuth.TOTP({ secret: req.body.secret, digits: 6, period: 1 }).generate() }));
+});
+
+app.get("/test/featureFlags", (req, res) => {
+    const available = [];
+
+    available.push("passwordless");
+    available.push("thirdpartypasswordless");
+    available.push("generalerror");
+    available.push("userroles");
+    available.push("multitenancy");
+    available.push("multitenancyManagementEndpoints");
+    available.push("accountlinking");
+    available.push("mfa");
+    available.push("recipeConfig");
+    available.push("oauth2");
+    available.push("accountlinking-fixes");
+
+    res.send({
+        available,
+    });
+});
+
+app.post("/test/create-oauth2-client", async (req, res, next) => {
+    try {
+        const { client } = await OAuth2Provider.createOAuth2Client(req.body);
+        res.send({ client });
+    } catch (e) {
+        next(e);
+    }
+});
+
+app.use(errorHandler());
+
+app.use(async (err, req, res, next) => {
+    try {
+        console.error(err);
+        res.status(500).send(err);
+    } catch (ignored) {}
+});
+
+let server = http.createServer(app);
+server.listen(process.env?.NODE_PORT ?? 8080, "0.0.0.0");
