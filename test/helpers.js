@@ -1122,9 +1122,24 @@ export async function backendHook(hookType) {
     );
 }
 
-export async function createCoreApp({
+export async function setupCoreApp({
     appId,
     coreConfig,
+} = {}) {
+    const response = await fetch(`${TEST_SERVER_BASE_URL}/test/setup/app`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            appId,
+            coreConfig,
+        }),
+    });
+
+    return await response.text();
+}
+
+export async function setupST({
+    coreUrl,
     accountLinkingConfig = {},
     enabledRecipes,
     enabledProviders,
@@ -1132,12 +1147,11 @@ export async function createCoreApp({
     passwordlessContactMethod,
     mfaInfo = {},
 } = {}) {
-    await fetch(`${TEST_SERVER_BASE_URL}/test/setup`, {
+    await fetch(`${TEST_SERVER_BASE_URL}/test/setup/st`, {
         method: "POST",
         headers: new Headers([["content-type", "application/json"]]),
         body: JSON.stringify({
-            appId,
-            coreConfig,
+            coreUrl,
             accountLinkingConfig,
             enabledRecipes,
             enabledProviders,

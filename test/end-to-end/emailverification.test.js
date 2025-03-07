@@ -18,7 +18,6 @@
  */
 
 import assert from "assert";
-import puppeteer from "puppeteer";
 import fetch from "isomorphic-fetch";
 import {
     SEND_VERIFY_EMAIL_API,
@@ -55,8 +54,9 @@ import {
     waitForUrl,
     setupBrowser,
     backendHook,
-    createCoreApp,
+    setupCoreApp,
     getLogoutButton,
+    setupST,
 } from "../helpers";
 
 describe("Email Verification", () => {
@@ -72,7 +72,10 @@ describe("Email Verification", () => {
 
     beforeEach(async function () {
         await backendHook("beforeEach");
-        await createCoreApp();
+
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
+
         page = await browser.newPage();
 
         consoleLogs = [];
@@ -615,6 +618,8 @@ describe("Email Verification", () => {
                 const title = await getTextByDataSupertokens(page, "headerTitle");
                 assert.deepStrictEqual(title, "Email verification successful!");
                 await submitForm(page);
+                 // Make sure to wait for status to update. Flakes in headless.
+                await new Promise((r) => setTimeout(r, 500));
                 const logoutButton = await getLogoutButton(page);
                 await Promise.all([logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
@@ -826,11 +831,12 @@ describe("Email Verification", () => {
 
     describe("Claim refresh with clock skew", function () {
         it("should not go into an infinite loop during claim refresh with adjusted clock skew", async function () {
-            await createCoreApp({
+            const coreUrl = await setupCoreApp({
                 coreConfig: {
                     access_token_validity: 2 * 60 * 60, // 2 hours
                 },
             });
+            await setupST({ coreUrl });
             await toggleSignInSignUp(page);
 
             // Override Date.now() to simulate a clock skew of 1 hour

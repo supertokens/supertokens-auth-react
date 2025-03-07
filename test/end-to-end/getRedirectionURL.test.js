@@ -19,7 +19,8 @@ import {
     backendBeforeEach,
     setupBrowser,
     backendHook,
-    createCoreApp,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
 
 import {
@@ -56,7 +57,8 @@ describe("getRedirectionURL Tests", function () {
         describe("Email Password Recipe", function () {
             beforeEach(async function () {
                 page = await browser.newPage();
-                await createCoreApp();
+                const coreUrl = await setupCoreApp();
+                await setupST({ coreUrl });
 
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=emailpassword`),
@@ -80,7 +82,8 @@ describe("getRedirectionURL Tests", function () {
 
         describe("Third party recipe", function () {
             before(async function () {
-                await createCoreApp();
+                const coreUrl = await setupCoreApp();
+                await setupST({ coreUrl });
                 page = await browser.newPage();
                 await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdparty`);
             });
@@ -112,7 +115,8 @@ describe("getRedirectionURL Tests", function () {
 
         describe("Thirdpartyemailpassword recipe", function () {
             before(async function () {
-                await createCoreApp();
+                const coreUrl = await setupCoreApp();
+                await setupST({ coreUrl });
                 page = await browser.newPage();
             });
 
@@ -158,11 +162,14 @@ describe("getRedirectionURL Tests", function () {
                     return;
                 }
 
-                await createCoreApp({
+                const coreUrl = await setupCoreApp({
                     coreConfig: {
                         passwordless_code_lifetime: 4000,
                         passwordless_max_code_input_attempts: 3,
                     },
+                });
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType: "USER_INPUT_CODE",
                     passwordlessContactMethod: "EMAIL",
                 });
@@ -216,11 +223,14 @@ describe("getRedirectionURL Tests", function () {
                     this.skip();
                 }
 
-                await createCoreApp({
+                const coreUrl = await setupCoreApp({
                     coreConfig: {
                         passwordless_code_lifetime: 4000,
                         passwordless_max_code_input_attempts: 3,
                     },
+                });
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType: "USER_INPUT_CODE",
                     passwordlessContactMethod: "EMAIL",
                 });
@@ -283,7 +293,8 @@ describe("getRedirectionURL Tests", function () {
         describe("No Redirection", function () {
             describe("Email Password Recipe", function () {
                 before(async function () {
-                    await createCoreApp();
+                    const coreUrl = await setupCoreApp();
+                    await setupST({ coreUrl });
                     page = await browser.newPage();
 
                     // We need to set the localStorage value before the page loads to ensure ST initialises with the correct value
@@ -325,11 +336,14 @@ describe("getRedirectionURL Tests", function () {
                         this.skip();
                     }
 
-                    await createCoreApp({
+                    const coreUrl = await setupCoreApp({
                         coreConfig: {
                             passwordless_code_lifetime: 4000,
                             passwordless_max_code_input_attempts: 3,
                         },
+                    });
+                    await setupST({
+                        coreUrl,
                         passwordlessFlowType: "USER_INPUT_CODE",
                         passwordlessContactMethod: "EMAIL",
                     });
@@ -389,11 +403,14 @@ describe("getRedirectionURL Tests", function () {
                         this.skip();
                     }
 
-                    await createCoreApp({
+                    const coreUrl = await setupCoreApp({
                         coreConfig: {
                             passwordless_code_lifetime: 4000,
                             passwordless_max_code_input_attempts: 3,
                         },
+                    });
+                    await setupST({
+                        coreUrl,
                         passwordlessFlowType: "MAGIC_LINK",
                         passwordlessContactMethod: "EMAIL",
                     });
@@ -446,7 +463,8 @@ describe("getRedirectionURL Tests", function () {
 
             describe("ThirdParty Recipe", function () {
                 before(async function () {
-                    await createCoreApp();
+                    const coreUrl = await setupCoreApp();
+                    await setupST({ coreUrl });
 
                     page = await browser.newPage();
                     // We need to set the localStorage value before the page loads to ensure ST initialises with the correct value
