@@ -25,7 +25,8 @@ import {
     getFactorChooserOptions,
     isMFASupported,
     setupBrowser,
-    createCoreApp,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL } from "../constants";
 import { getTestPhoneNumber } from "../exampleTestHelpers";
@@ -101,7 +102,8 @@ describe("SuperTokens SignIn w/ MFA", function () {
         let email, phoneNumber;
 
         beforeEach(async () => {
-            await createCoreApp(appConfig);
+            const coreUrl = await setupCoreApp();
+            await setupST({ ...appConfig, coreUrl });
             const setupPage = await browser.newPage();
 
             email = await getTestEmail();
