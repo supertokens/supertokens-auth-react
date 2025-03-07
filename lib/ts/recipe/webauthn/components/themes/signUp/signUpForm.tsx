@@ -164,7 +164,7 @@ export const SignUpForm = (
             });
 
             // If it is an error related to passkey, we need to handle it.
-            if (response.status === "OK") {
+            if (response.status !== "OK") {
                 setErrorLabel("WEBAUTHN_PASSKEY_RECOVERABLE_ERROR");
             }
 
@@ -209,6 +209,7 @@ export const SignUpForm = (
                 }
             }
         } catch (e) {
+            console.error("error", e);
             props.setActiveScreen(SignUpScreen.Error);
         } finally {
             if (setIsLoading) {

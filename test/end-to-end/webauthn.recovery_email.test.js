@@ -90,7 +90,7 @@ describe("SuperTokens Webauthn Recovery Email", () => {
             ]);
 
             // Verify that the email is sent by fetching the token through the API
-            const token = await getTokenFromEmail(page, email);
+            const token = await getTokenFromEmail(email);
             assert.ok(token);
             assert.strictEqual(token.length, 128);
         });
