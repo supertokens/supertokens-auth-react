@@ -27,7 +27,8 @@ import {
     expectErrorThrown,
     setupBrowser,
     backendHook,
-    createCoreApp,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
 import { MFA_INFO_API } from "../constants";
 
@@ -53,7 +54,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
     let consoleLogs = [];
 
     const appConfig = {
-        appId: randomUUID(),
         accountLinkingConfig: {
             enabled: true,
             shouldAutoLink: {
@@ -72,7 +72,9 @@ describe("SuperTokens SignIn w/ MFA", function () {
         }
 
         backendHook("before");
-        await createCoreApp(appConfig);
+        const coreUrl = await setupCoreApp();
+        appConfig.coreUrl = coreUrl;
+        await setupST(appConfig);
 
         browser = await setupBrowser();
     });
@@ -123,7 +125,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 window.localStorage.setItem("clientRecipeListForDynamicLogin", JSON.stringify(["emailpassword"]));
             });
 
-            await createCoreApp({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: [{ oneOf: ["otp-email", "otp-phone", "totp"] }],
@@ -142,7 +144,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 window.localStorage.setItem("clientRecipeListForDynamicLogin", JSON.stringify(["emailpassword"]));
             });
 
-            await createCoreApp({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: [{ oneOf: ["otp-email", "otp-phone", "totp"] }],
@@ -158,7 +160,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
             await waitForDashboard(page);
         });
         it("should redirect to the factor screen during sign in if only one factor is available (limited by next array)", async () => {
-            await createCoreApp({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: [{ oneOf: ["totp"] }],
@@ -172,7 +174,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
         });
 
         it("should show all factors the user can complete or set up in the next array", async () => {
-            await createCoreApp({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: [{ oneOf: ["totp", "otp-email"] }],
@@ -186,7 +188,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
         });
 
         it("should show all factors the user can complete or set up if the next array is empty", async () => {
-            await createCoreApp({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: [],
@@ -203,7 +205,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
         });
 
         it("should throw error if there are no available options during sign in", async () => {
-            await createCoreApp({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: ["otp-phone"],
@@ -217,7 +219,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
         });
 
         it("should show access denied if there are no available options after sign in", async () => {
-            await createCoreApp({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: [],
@@ -233,7 +235,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
         });
 
         it("should show a back link only if visited after sign in", async () => {
-            await createCoreApp({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: [{ oneOf: ["otp-email", "otp-phone"] }],
@@ -253,7 +255,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
         });
 
         it("should show a logout link", async () => {
-            await createCoreApp({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: [{ oneOf: ["otp-email", "otp-phone"] }],
@@ -273,7 +275,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
         });
 
         it("should handle MFA info API failures gracefully", async () => {
-            await createCoreApp({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: [],
