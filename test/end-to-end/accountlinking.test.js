@@ -39,7 +39,8 @@ import {
     getTextByDataSupertokens,
     sendEmailResetPasswordSuccessMessage,
     setupBrowser,
-    createCoreApp,
+    setupCoreApp,
+    setupST,
     backendHook,
     screenshotOnFailure,
 } from "../helpers";
@@ -53,6 +54,7 @@ describe("SuperTokens Account linking", function () {
     let browser;
     let page;
     let consoleLogs;
+    let coreUrl;
 
     const passwordlessFlowType = "USER_INPUT_CODE_AND_MAGIC_LINK";
     const passwordlessContactMethod = "EMAIL_OR_PHONE";
@@ -62,6 +64,9 @@ describe("SuperTokens Account linking", function () {
         if (!features.includes("accountlinking")) {
             this.skip();
         }
+
+        coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
     });
 
     describe("Recipe combination tests", () => {
@@ -118,7 +123,8 @@ describe("SuperTokens Account linking", function () {
                         const doLogin2 = login2[1];
 
                         it(`should work for ${login1[0]} - ${login2[0]} w/ email verification not required`, async () => {
-                            await createCoreApp({
+                            await setupST({
+                                coreUrl,
                                 passwordlessFlowType,
                                 passwordlessContactMethod,
                                 accountLinkingConfig: {
@@ -158,7 +164,8 @@ describe("SuperTokens Account linking", function () {
 
                         if (login2[0] !== "emailpassword") {
                             it(`should work for ${login1[0]} - ${login2[0]} w/ email verification required`, async () => {
-                                await createCoreApp({
+                                await setupST({
+                                    coreUrl,
                                     passwordlessFlowType,
                                     passwordlessContactMethod,
                                     accountLinkingConfig: {
@@ -212,7 +219,8 @@ describe("SuperTokens Account linking", function () {
                             });
                         } else {
                             it(`should work for ${login1[0]} - password reset (invite link flow) w/ email verification required`, async () => {
-                                await createCoreApp({
+                                await setupST({
+                                    coreUrl,
                                     passwordlessFlowType,
                                     passwordlessContactMethod,
                                     accountLinkingConfig: {
@@ -272,7 +280,8 @@ describe("SuperTokens Account linking", function () {
 
         describe("conflicting accounts", () => {
             it("should not allow sign up w/ emailpassword in case of conflict", async function () {
-                await createCoreApp({
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -314,8 +323,9 @@ describe("SuperTokens Account linking", function () {
             it("should not allow sign in w/ an unverified emailpassword user in case of conflict", async function () {
                 // Use a common appId over the test to allow re-inits
                 const appId = randomUUID();
-                await createCoreApp({
-                    appId,
+                const coreUrl = await setupCoreApp({ appId });
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -338,8 +348,8 @@ describe("SuperTokens Account linking", function () {
                 await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
                 await logOut(page);
 
-                await createCoreApp({
-                    appId,
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -360,8 +370,8 @@ describe("SuperTokens Account linking", function () {
 
                 await waitForSTElement(page, `input[name=email]`);
 
-                await createCoreApp({
-                    appId,
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -392,7 +402,8 @@ describe("SuperTokens Account linking", function () {
             });
 
             it("should not allow sign up w/ an unverified thirdparty user in case of conflict", async function () {
-                await createCoreApp({
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -426,7 +437,8 @@ describe("SuperTokens Account linking", function () {
             });
 
             it("should not allow using thirdparty sign in with changed email in case of conflict", async function () {
-                await createCoreApp({
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -480,8 +492,9 @@ describe("SuperTokens Account linking", function () {
             it("should not allow sign in w/ an unverified thirdparty user in case of conflict", async function () {
                 // Use a common appId over the test to allow re-inits
                 const appId = randomUUID();
-                await createCoreApp({
-                    appId,
+                const coreUrl = await setupCoreApp({ appId });
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -500,8 +513,8 @@ describe("SuperTokens Account linking", function () {
                 await tryThirdPartySignInUp(page, email, false);
                 await logOut(page);
 
-                await createCoreApp({
-                    appId,
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -522,8 +535,8 @@ describe("SuperTokens Account linking", function () {
 
                 await waitForSTElement(page, `input[name=email]`);
 
-                await createCoreApp({
-                    appId,
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -549,8 +562,9 @@ describe("SuperTokens Account linking", function () {
 
                 // Use a common appId over the test to allow re-inits
                 const appId = randomUUID();
-                await createCoreApp({
-                    appId,
+                const coreUrl = await setupCoreApp({ appId });
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -565,8 +579,8 @@ describe("SuperTokens Account linking", function () {
                 await tryEmailPasswordSignUp(page, email);
                 await logOut(page);
 
-                await createCoreApp({
-                    appId,
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -598,8 +612,9 @@ describe("SuperTokens Account linking", function () {
                 const email = `test-user+${Date.now()}@supertokens.com`;
                 // Use a common appId over the test to allow re-inits
                 const appId = randomUUID();
-                await createCoreApp({
-                    appId,
+                const coreUrl = await setupCoreApp({ appId });
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -614,8 +629,8 @@ describe("SuperTokens Account linking", function () {
                 await tryEmailPasswordSignUp(page, email);
                 await logOut(page);
 
-                await createCoreApp({
-                    appId,
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -649,8 +664,9 @@ describe("SuperTokens Account linking", function () {
 
                 // Use a common appId over the test to allow re-inits
                 const appId = randomUUID();
-                await createCoreApp({
-                    appId,
+                const coreUrl = await setupCoreApp({ appId });
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -673,8 +689,8 @@ describe("SuperTokens Account linking", function () {
                 await tryThirdPartySignInUp(page, email, false, email2);
                 await logOut(page);
 
-                await createCoreApp({
-                    appId,
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -689,8 +705,8 @@ describe("SuperTokens Account linking", function () {
                 await tryEmailPasswordSignUp(page, email);
                 await logOut(page);
 
-                await createCoreApp({
-                    appId,
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -724,8 +740,9 @@ describe("SuperTokens Account linking", function () {
 
                 // Use a common appId over the test to allow re-inits
                 const appId = randomUUID();
-                await createCoreApp({
-                    appId,
+                const coreUrl = await setupCoreApp({ appId });
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -750,8 +767,8 @@ describe("SuperTokens Account linking", function () {
 
                 await logOut(page);
 
-                await createCoreApp({
-                    appId,
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {
@@ -772,8 +789,8 @@ describe("SuperTokens Account linking", function () {
 
                 await waitForSTElement(page, `input[name=email]`);
 
-                await createCoreApp({
-                    appId,
+                await setupST({
+                    coreUrl,
                     passwordlessFlowType,
                     passwordlessContactMethod,
                     accountLinkingConfig: {

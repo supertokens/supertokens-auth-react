@@ -7,7 +7,8 @@ import {
     screenshotOnFailure,
     setupBrowser,
     backendHook,
-    createCoreApp,
+    setupCoreApp,
+    setupST,
     logoutFromEmailVerification,
 } from "../helpers";
 
@@ -23,7 +24,8 @@ describe("Embed components", async () => {
 
     beforeEach(async function () {
         await backendHook("beforeEach");
-        await createCoreApp();
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
         page = await browser.newPage();
 
         consoleLogs = [];
