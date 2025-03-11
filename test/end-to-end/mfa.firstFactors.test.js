@@ -18,20 +18,19 @@
  */
 
 import assert from "assert";
-import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     waitForSTElement,
     screenshotOnFailure,
-    backendBeforeEach,
     waitFor,
     submitForm,
     isMFASupported,
-    setAccountLinkingConfig,
+    setupBrowser,
+    setupCoreApp,
+    setupST,
+    backendHook,
 } from "../helpers";
-import fetch from "isomorphic-fetch";
-
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+import { TEST_CLIENT_BASE_URL } from "../constants";
 import { getTestPhoneNumber } from "../exampleTestHelpers";
 
 /*
@@ -41,51 +40,31 @@ describe("SuperTokens MFA firstFactors support", function () {
     let browser;
     let page;
     let consoleLogs = [];
-    let skipped = false;
+
+    const appConfig = {
+        accountLinkingConfig: {
+            enabled: true,
+            shouldAutoLink: {
+                shouldAutomaticallyLink: true,
+                shouldRequireVerification: false,
+            },
+        },
+    };
 
     before(async function () {
         if (!(await isMFASupported())) {
-            skipped = true;
             this.skip();
-            return;
         }
-        await backendBeforeEach();
+        await backendHook("before");
+        browser = await setupBrowser();
 
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await setAccountLinkingConfig(true, true, false);
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
-    });
-
-    after(async function () {
-        if (skipped) {
-            return;
-        }
-        await browser.close();
-
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
-    });
-
-    afterEach(async function () {
-        await screenshotOnFailure(this, browser);
-        if (page) {
-            page.evaluate(() => window.localStorage.removeItem("firstFactors"));
-            await page.close();
-        }
+        const coreUrl = await setupCoreApp();
+        appConfig.coreUrl = coreUrl;
+        await setupST(appConfig);
     });
 
     beforeEach(async function () {
+        await backendHook("beforeEach");
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
@@ -99,6 +78,18 @@ describe("SuperTokens MFA firstFactors support", function () {
             window.localStorage.removeItem("supertokens-passwordless-loginAttemptInfo");
             window.localStorage.setItem("enableAllRecipes", "true");
         });
+    });
+
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        page?.evaluate(() => window.localStorage.removeItem("firstFactors"));
+        await page?.close();
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
     });
 
     describe("with firstFactors set on the client", () => {
