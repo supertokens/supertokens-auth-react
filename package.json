@@ -99,7 +99,7 @@
     "peerDependencies": {
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0",
-        "supertokens-web-js": "^0.14.0"
+        "supertokens-web-js": "supertokens/supertokens-web-js#feat/webauthn"
     },
     "scripts": {
         "init": "bash ./init.sh",
