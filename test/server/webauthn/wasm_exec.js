@@ -144,7 +144,12 @@
     }
 
     if (!globalThis.crypto) {
-        throw new Error("globalThis.crypto is not available, polyfill required (crypto.getRandomValues only)");
+        try {
+            globalThis.crypto = require("crypto");
+        } catch (e) {
+            console.error(e);
+            throw new Error("globalThis.crypto is not available, polyfill required (crypto.getRandomValues only)");
+        }
     }
 
     if (!globalThis.performance) {
