@@ -71,6 +71,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
     });
 
     beforeEach(async function () {
+        await backendHook("beforeEach");
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
