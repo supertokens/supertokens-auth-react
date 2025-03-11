@@ -18,26 +18,18 @@
  */
 
 import assert from "assert";
-import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
-    setInputValues,
-    submitForm,
-    waitForSTElement,
     screenshotOnFailure,
-    backendBeforeEach,
     getTestEmail,
-    getPasswordlessDevice,
-    waitFor,
     getFactorChooserOptions,
-    setAccountLinkingConfig,
     isMFASupported,
     setupBrowser,
+    backendHook,
+    setupCoreApp,
+    setupST
 } from "../helpers";
-import fetch from "isomorphic-fetch";
-import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API } from "../constants";
-
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+import { TEST_CLIENT_BASE_URL } from "../constants";
 import { getTestPhoneNumber } from "../exampleTestHelpers";
 import {
     setMFAInfo,
@@ -45,17 +37,11 @@ import {
     waitForDashboard,
     completeOTP,
     setupOTP,
-    logout,
     tryEmailPasswordSignIn,
     chooseFactor,
-    tryPasswordlessSignInUp,
     setupTOTP,
     completeTOTP,
-    setupUserWithAllFactors,
     goToFactorChooser,
-    waitForAccessDenied,
-    waitForLoadingScreen,
-    waitForBlockedScreen,
 } from "./mfa.helpers";
 
 /*
@@ -65,46 +51,31 @@ describe("SuperTokens SignIn w/ MFA", function () {
     let browser;
     let page;
     let consoleLogs = [];
-    let skipped;
+
+    const appConfig = {
+        accountLinkingConfig: {
+            enabled: true,
+            shouldAutoLink: {
+                shouldAutomaticallyLink: true,
+                shouldRequireVerification: false,
+            },
+        },
+    };
 
     before(async function () {
         if (!(await isMFASupported())) {
-            skipped = true;
             this.skip();
-            return;
         }
-        await backendBeforeEach();
-
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-
+        await backendHook("before");
         browser = await setupBrowser();
-    });
 
-    after(async function () {
-        if (skipped) {
-            return;
-        }
-        await browser.close();
-
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
-    });
-
-    afterEach(async function () {
-        await screenshotOnFailure(this, browser);
-        if (page) {
-            await page.close();
-        }
+        const coreUrl = await setupCoreApp();
+        appConfig.coreUrl = coreUrl;
+        await setupST(appConfig);
     });
 
     beforeEach(async function () {
+        await backendHook("beforeEach");
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
@@ -121,18 +92,26 @@ describe("SuperTokens SignIn w/ MFA", function () {
         await page.evaluate(() => window.localStorage.setItem("enableAllRecipes", "true"));
     });
 
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await page?.close();
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
+    });
+
     describe("requirement handling", () => {
         let email, phoneNumber;
         let secret;
         before(async () => {
-            await setMFAInfo({});
             page = await browser.newPage();
 
             email = await getTestEmail();
             phoneNumber = getTestPhoneNumber();
 
-            await setMFAInfo({});
-            await setAccountLinkingConfig(true, true, false);
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=emailpassword`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -157,9 +136,11 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
         describe("multistep requirement list", () => {
             it("multistep requirements should happen in order (allOfInAnyOrder -> oneOf)", async () => {
-                await setMFAInfo({
+
+                appConfig.mfaInfo = {
                     requirements: [{ allOfInAnyOrder: ["otp-phone", "totp"] }, { oneOf: ["otp-email"] }],
-                });
+                };
+                await setupST(appConfig);
 
                 await tryEmailPasswordSignIn(page, email);
                 const factors1 = await getFactorChooserOptions(page);
@@ -172,9 +153,10 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             it("multistep requirements should happen in order (oneOf -> allOfInAnyOrder)", async () => {
-                await setMFAInfo({
+                appConfig.mfaInfo = {
                     requirements: [{ oneOf: ["otp-phone", "totp"] }, { allOfInAnyOrder: ["totp", "otp-email"] }],
-                });
+                };
+                await setupST(appConfig);
 
                 await tryEmailPasswordSignIn(page, email);
                 const factors1 = await getFactorChooserOptions(page);
@@ -189,9 +171,10 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 await waitForDashboard(page);
             });
             it("string requirements strictly set the order of the factor screens", async () => {
-                await setMFAInfo({
+                appConfig.mfaInfo = {
                     requirements: ["otp-phone", "totp", "otp-email"],
-                });
+                };
+                await setupST(appConfig);
 
                 await tryEmailPasswordSignIn(page, email);
                 await completeOTP(page, "PHONE");
@@ -203,9 +186,10 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
         describe("allOfInAnyOrder", () => {
             it("should pass if all requirements are complete", async () => {
-                await setMFAInfo({
+                appConfig.mfaInfo = {
                     requirements: [{ allOfInAnyOrder: ["otp-phone", "totp", "otp-email"] }],
-                });
+                };
+                await setupST(appConfig);
 
                 await tryEmailPasswordSignIn(page, email);
                 const factors1 = await getFactorChooserOptions(page);
@@ -222,9 +206,10 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 await waitForDashboard(page);
             });
             it("should pass if the array is empty", async () => {
-                await setMFAInfo({
+                appConfig.mfaInfo = {
                     requirements: [{ allOfInAnyOrder: [] }],
-                });
+                };
+                await setupST(appConfig);
 
                 await tryEmailPasswordSignIn(page, email);
                 await waitForDashboard(page);
@@ -233,9 +218,10 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
         describe("oneOf", () => {
             it("should pass if one of the requirements are complete", async () => {
-                await setMFAInfo({
+                appConfig.mfaInfo = {
                     requirements: [{ oneOf: ["otp-phone", "totp", "otp-email"] }],
-                });
+                };
+                await setupST(appConfig);
 
                 await tryEmailPasswordSignIn(page, email);
                 const factors1 = await getFactorChooserOptions(page);
@@ -246,9 +232,10 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 await waitForDashboard(page);
             });
             it("should pass if the array is empty", async () => {
-                await setMFAInfo({
+                appConfig.mfaInfo = {
                     requirements: [{ oneOf: [] }],
-                });
+                };
+                await setupST(appConfig);
 
                 await tryEmailPasswordSignIn(page, email);
                 await waitForDashboard(page);
