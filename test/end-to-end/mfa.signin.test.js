@@ -17,31 +17,25 @@
  * Imports
  */
 
-import assert from "assert";
-import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     setInputValues,
     submitForm,
     waitForSTElement,
     screenshotOnFailure,
-    backendBeforeEach,
     getTestEmail,
     getPasswordlessDevice,
     waitFor,
     isMFASupported,
-    setAccountLinkingConfig,
     expectErrorThrown,
     waitForUrl,
     setupBrowser,
+    backendHook,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
-import fetch from "isomorphic-fetch";
-import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API } from "../constants";
-
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 import { getTestPhoneNumber } from "../exampleTestHelpers";
 import {
-    setMFAInfo,
     tryEmailPasswordSignUp,
     waitForDashboard,
     completeOTP,
@@ -52,11 +46,7 @@ import {
     tryPasswordlessSignInUp,
     setupTOTP,
     completeTOTP,
-    setupUserWithAllFactors,
-    goToFactorChooser,
     waitForAccessDenied,
-    waitForLoadingScreen,
-    waitForBlockedScreen,
 } from "./mfa.helpers";
 
 /*
@@ -66,55 +56,40 @@ describe("SuperTokens SignIn w/ MFA", function () {
     let browser;
     let page;
     let consoleLogs = [];
-    let skipped = false;
+
+    const appConfig = {
+        accountLinkingConfig: {
+            enabled: true,
+            shouldAutoLink: {
+                shouldAutomaticallyLink: true,
+                shouldRequireVerification: false,
+            },
+        },
+    };
 
     before(async function () {
         if (!(await isMFASupported())) {
-            skipped = true;
             this.skip();
-            return;
         }
-        await backendBeforeEach();
-
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await setAccountLinkingConfig(true, true, false);
-
+        await backendHook("before");
         browser = await setupBrowser();
-    });
 
-    after(async function () {
-        if (skipped) {
-            return;
-        }
-        await browser.close();
-
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
-    });
-
-    afterEach(async function () {
-        await screenshotOnFailure(this, browser);
-        if (page) {
-            await page.close();
-        }
+        const coreUrl = await setupCoreApp();
+        appConfig.coreUrl = coreUrl;
+        await setupST(appConfig);
     });
 
     beforeEach(async function () {
+        await backendHook("beforeEach");
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
+            // console.log(log);
             if (log.startsWith("ST_LOGS")) {
                 consoleLogs.push(log);
             }
         });
+        
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
 
         await page.evaluate(() => window.localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
@@ -123,12 +98,25 @@ describe("SuperTokens SignIn w/ MFA", function () {
         await page.evaluate(() => window.localStorage.setItem("enableAllRecipes", "true"));
     });
 
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        page?.evaluate(() => window.localStorage.removeItem("firstFactors"));
+        await page?.close();
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
+    });
+
     it("sign in with email-otp (auto-setup)", async function () {
         const email = await getTestEmail();
 
-        await setMFAInfo({
+        appConfig.mfaInfo = {
             requirements: ["otp-email"],
-        });
+        };
+        setupST(appConfig);
 
         await tryEmailPasswordSignUp(page, email);
 
@@ -149,9 +137,10 @@ describe("SuperTokens SignIn w/ MFA", function () {
             const email = await getTestEmail();
             const phoneNumber = getTestPhoneNumber();
 
-            await setMFAInfo({
+            appConfig.mfaInfo = {
                 requirements: [{ oneOf: ["otp-email", "otp-phone"] }],
-            });
+            };
+            setupST(appConfig);
 
             await tryEmailPasswordSignUp(page, email);
             await chooseFactor(page, "otp-phone");
@@ -170,9 +159,10 @@ describe("SuperTokens SignIn w/ MFA", function () {
         });
 
         it("set up otp-email and sign-in", async function () {
-            await setMFAInfo({
+            appConfig.mfaInfo = {
                 requirements: [],
-            });
+            };
+            setupST(appConfig);
             const email = await getTestEmail();
             const phoneNumber = getTestPhoneNumber();
 
@@ -183,9 +173,10 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await logout(page);
 
-            await setMFAInfo({
+            appConfig.mfaInfo = {
                 requirements: [{ oneOf: ["otp-email"] }],
-            });
+            };
+            setupST(appConfig);
 
             await tryPasswordlessSignInUp(page, phoneNumber, undefined, true);
 
@@ -204,14 +195,16 @@ describe("SuperTokens SignIn w/ MFA", function () {
         });
 
         it("set up totp and sign-in", async function () {
-            await setMFAInfo({
+            appConfig.mfaInfo = {
                 requirements: [],
-            });
+            };
+            setupST(appConfig);
             const email = await getTestEmail();
 
-            await setMFAInfo({
+            appConfig.mfaInfo = {
                 requirements: [{ oneOf: ["otp-email", "totp"] }],
-            });
+            };
+            setupST(appConfig);
 
             await tryEmailPasswordSignUp(page, email);
             await chooseFactor(page, "otp-email");
@@ -240,19 +233,21 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
         it("should show access denied if the only next option is an unknown factor id", async () => {
             const email = await getTestEmail();
-            await setMFAInfo({
+            appConfig.mfaInfo = {
                 requirements: ["unknown"],
                 alreadySetup: ["unknown"],
-            });
+            };
+            setupST(appConfig);
 
             await tryEmailPasswordSignUp(page, email);
             await waitForAccessDenied(page);
         });
 
         it("should throw error if there are no valid next options", async () => {
-            await setMFAInfo({
+            appConfig.mfaInfo = {
                 requirements: ["unknown"],
-            });
+            };
+            setupST(appConfig);
 
             const email = await getTestEmail();
             await expectErrorThrown(page, () => tryEmailPasswordSignUp(page, email));
