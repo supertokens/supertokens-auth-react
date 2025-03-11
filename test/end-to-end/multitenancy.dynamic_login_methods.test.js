@@ -18,8 +18,6 @@
  */
 
 import assert from "assert";
-import puppeteer from "puppeteer";
-import fetch from "isomorphic-fetch";
 import {
     waitForSTElement,
     screenshotOnFailure,
@@ -31,14 +29,12 @@ import {
     getSignInOrSignUpSwitchLink,
     setInputValues,
     submitForm,
-    loginWithGoogle,
     clearBrowserCookiesWithoutAffectingConsole,
     clickOnProviderButton,
     loginWithMockProvider,
     isMultitenancySupported,
     isMultitenancyManagementEndpointsSupported,
     setupTenant,
-    backendBeforeEach,
     getTextByDataSupertokens,
     loginWithAuth0,
     setupCoreApp,
@@ -49,14 +45,11 @@ import {
 import {
     TEST_CLIENT_BASE_URL,
     DEFAULT_WEBSITE_BASE_PATH,
-    ST_ROOT_SELECTOR,
-    TEST_SERVER_BASE_URL,
     SIGN_IN_UP_API,
     SOMETHING_WENT_WRONG_ERROR,
     LOGIN_METHODS_API,
 } from "../constants";
 
-let connectionURI;
 /*
  * Tests.
  */
@@ -64,23 +57,23 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     let browser;
     let page;
     let pageCrashed;
+    let appId;
 
     before(async function () {
+        await backendHook("before");
         const isSupported = (await isMultitenancySupported()) && (await isMultitenancyManagementEndpointsSupported());
         if (!isSupported) {
             this.skip();
         }
+
+        browser = await setupBrowser();
     });
 
     beforeEach(async function () {
-        await backendBeforeEach();
+        await backendHook("beforeEach");
 
-        const startSTResp = await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-
-        assert.strictEqual(startSTResp.status, 200);
-        connectionURI = await startSTResp.text();
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
 
         page = await browser.newPage();
         pageCrashed = false;
@@ -98,30 +91,14 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     afterEach(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
         await screenshotOnFailure(this, browser);
-        if (page) {
-            await page.close();
-        }
-    });
-
-    before(async () => {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-web-security"],
-            headless: true,
-        });
+        await page?.close();
+        await backendHook("afterEach");
     });
 
     after(async function () {
-        if (browser !== undefined) {
-            await browser.close();
-        }
+        await browser?.close();
+        await backendHook("after");
     });
 
     it("Renders correct signup form with emailpassword when core list of providers is empty", async function () {
@@ -920,6 +897,9 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     it("should be able to log in with dynamically added tp providers", async function () {
+        // This test is particularly slow, overriding the timeout to be slightly longer than default
+        this.timeout(40000);
+
         await setEnabledRecipes(page, ["thirdparty"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: false },
