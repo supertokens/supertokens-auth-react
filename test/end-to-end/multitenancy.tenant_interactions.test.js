@@ -18,8 +18,6 @@
  */
 
 import assert from "assert";
-import puppeteer from "puppeteer";
-import fetch from "isomorphic-fetch";
 import {
     screenshotOnFailure,
     getSignInOrSignUpSwitchLink,
@@ -40,11 +38,20 @@ import {
     getTextByDataSupertokens,
     getVerificationEmailErrorTitle,
     isMultitenancySupported,
+    isMultitenancyManagementEndpointsSupported,
+    setupTenant,
+    addUserToTenant,
+    removeUserFromTenant,
+    removeTenant,
+    waitForUrl,
+    setupBrowser,
+    backendHook,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
     DEFAULT_WEBSITE_BASE_PATH,
-    TEST_SERVER_BASE_URL,
     SOMETHING_WENT_WRONG_ERROR,
     ST_ROOT_SELECTOR,
     TEST_APPLICATION_SERVER_BASE_URL,
@@ -62,20 +69,20 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
     let pageCrashed;
 
     before(async function () {
-        const isSupported = await isMultitenancySupported();
+        await backendHook("before");
+        const isSupported = (await isMultitenancySupported()) && (await isMultitenancyManagementEndpointsSupported());
         if (!isSupported) {
             this.skip();
         }
+
+        browser = await setupBrowser();
     });
 
     beforeEach(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendHook("beforeEach");
 
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
 
         page = await browser.newPage();
 
@@ -102,27 +109,13 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
 
     afterEach(async function () {
         await screenshotOnFailure(this, browser);
-        if (page) {
-            await page.close();
-        }
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
-    });
-
-    before(async () => {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-web-security"],
-            headless: true,
-        });
+        await page?.close();
+        await backendHook("afterEach");
     });
 
     after(async function () {
-        await browser.close();
+        await browser?.close();
+        await backendHook("after");
     });
 
     describe("without user sharing", () => {
