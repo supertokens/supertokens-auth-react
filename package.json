@@ -96,7 +96,7 @@
         "test-e2e": "./test/startTestApp.sh 8082",
         "test-e2e-react16": "RUN_REACT_16_TESTS=true ./test/startTestApp.sh 8082",
         "test-e2e-with-non-node": "./test/startTestApp.sh 8083",
-        "test-unit": "TEST_MODE=testing jest -c jest.config.js --runInBand",
+        "test-unit": "TEST_MODE=testing jest --silent -c jest.config.js --runInBand",
         "test-visual": "SPEC_FILES=test/visual/**/*.test.js npx percy exec -- npm run test-e2e",
         "prep-test-app": "./test/prepTestApp.sh $SRC",
         "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit && cd ../test/with-typescript && npx tsc -p tsconfig.json",
