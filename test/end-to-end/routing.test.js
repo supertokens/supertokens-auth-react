@@ -20,12 +20,6 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
-import { spawn } from "child_process";
-import puppeteer from "puppeteer";
-
-// Run the tests in a DOM environment.
-require("jsdom-global")();
-
 import { TEST_CLIENT_BASE_URL, DEFAULT_WEBSITE_BASE_PATH } from "../constants";
 import {
     getSubmitFormButtonLabel,
