@@ -8,5 +8,6 @@ export declare const PasskeyConfirmation: import("react").ComponentType<
         isLoading: boolean;
         hideContinueWithoutPasskey?: boolean | undefined;
         isContinueDisabled?: boolean | undefined;
+        isPasskeySupported: boolean;
     }
 >;

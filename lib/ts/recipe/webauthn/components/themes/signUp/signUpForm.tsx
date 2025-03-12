@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import STGeneralError from "supertokens-web-js/utils/error";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
@@ -143,6 +143,21 @@ export const SignUpForm = (
     const userContext = useUserContext();
     const [errorLabel, setErrorLabel] = useState<string | undefined>(undefined);
     const [isLoading, setIsLoading] = useState(false);
+    const [isPasskeySupported, setIsPasskeySupported] = useState(false);
+
+    useEffect(() => {
+        void (async () => {
+            const browserSupportsWebauthn = await props.recipeImplementation.doesBrowserSupportWebAuthn({
+                userContext: userContext,
+            });
+            if (browserSupportsWebauthn.status !== "OK") {
+                console.error(browserSupportsWebauthn.error);
+                return;
+            }
+
+            setIsPasskeySupported(browserSupportsWebauthn.browserSupportsWebauthn);
+        })();
+    }, [props.recipeImplementation]);
 
     const onContinueClickCallback = useCallback(
         (params: ContinueOnSuccessParams) => {
@@ -227,6 +242,7 @@ export const SignUpForm = (
             onContinueClick={onConfirmationClick}
             errorMessageLabel={errorLabel}
             isLoading={isLoading}
+            isPasskeySupported={isPasskeySupported}
         />
     ) : props.activeScreen === SignUpScreen.Error ? (
         <SignUpSomethingWentWrong onClick={() => props.setActiveScreen(SignUpScreen.SignUpForm)} />

@@ -99,7 +99,14 @@ export function resetAndInitST(
     });
 }
 
-export type FirstFactor = "otp-phone" | "otp-email" | "link-phone" | "link-email" | "thirdparty" | "emailpassword";
+export type FirstFactor =
+    | "otp-phone"
+    | "otp-email"
+    | "link-phone"
+    | "link-email"
+    | "thirdparty"
+    | "emailpassword"
+    | "webauthn";
 export type ProviderId = "google" | "github";
 
 export type AuthPageConf = {

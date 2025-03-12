@@ -13,12 +13,10 @@
  * under the License.
  */
 
-import { useEffect, useMemo } from "react";
-import { useState } from "react";
+import { useMemo } from "react";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
-import { useUserContext } from "../../../../../usercontext";
 import Button from "../../../../emailpassword/components/library/button";
 import { PasskeyNotSupportedError } from "../error/passkeyNotSupportedError";
 import { RecoverableError } from "../error/recoverableError";
@@ -38,30 +36,15 @@ export const PasskeyConfirmation = withOverride(
             isLoading: boolean;
             hideContinueWithoutPasskey?: boolean;
             isContinueDisabled?: boolean;
+            isPasskeySupported: boolean;
         }
     ): JSX.Element {
         const t = useTranslation();
-        const userContext = useUserContext();
 
-        const [isPasskeySupported, setIsPasskeySupported] = useState(false);
         const showContinueWithoutPasskey = useMemo(
             () => props.hideContinueWithoutPasskey !== true && (props.originalFactorIds ?? []).length > 1,
             [props]
         );
-
-        useEffect(() => {
-            void (async () => {
-                const browserSupportsWebauthn = await props.recipeImplementation.doesBrowserSupportWebAuthn({
-                    userContext: userContext,
-                });
-                if (browserSupportsWebauthn.status !== "OK") {
-                    console.error(browserSupportsWebauthn.error);
-                    return;
-                }
-
-                setIsPasskeySupported(browserSupportsWebauthn.browserSupportsWebauthn);
-            })();
-        }, [props.recipeImplementation]);
 
         return (
             <div data-supertokens="passkeyConfirmationContainer">
@@ -77,14 +60,14 @@ export const PasskeyConfirmation = withOverride(
                 )}
                 <div data-supertokens="passkeyConfirmationFooter">
                     <Button
-                        disabled={props.isContinueDisabled || !isPasskeySupported}
+                        disabled={props.isContinueDisabled || !props.isPasskeySupported}
                         isLoading={props.isLoading}
                         type="button"
                         onClick={props.onContinueClick}
                         label="WEBAUTHN_EMAIL_CONTINUE_BUTTON"
-                        isGreyedOut={!isPasskeySupported}
+                        isGreyedOut={!props.isPasskeySupported}
                     />
-                    {!isPasskeySupported && <PasskeyNotSupportedError />}
+                    {!props.isPasskeySupported && <PasskeyNotSupportedError />}
                     {showContinueWithoutPasskey && props.resetFactorList !== undefined && (
                         <ContinueWithoutPasskey onClick={props.resetFactorList} />
                     )}

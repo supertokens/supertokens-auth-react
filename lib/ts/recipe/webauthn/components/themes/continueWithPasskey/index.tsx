@@ -48,7 +48,7 @@ const ContinueWithPasskey: React.FC<ContinueWithPasskeyProps> = ({
     );
 };
 
-const ContinueWithPasskeyWithOverride = withOverride("WebauthnContinueWithPasskey", ContinueWithPasskey);
+export const ContinueWithPasskeyWithOverride = withOverride("WebauthnContinueWithPasskey", ContinueWithPasskey);
 
 export const ContinueWithPasskeyTheme = (props: { config: NormalisedConfig } & ContinueWithPasskeyProps) => {
     const rootStyle = SuperTokens.getInstanceOrThrow().rootStyle;

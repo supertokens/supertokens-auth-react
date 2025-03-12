@@ -1,4 +1,5 @@
 /// <reference types="react" />
+import type { PasskeyNotSupportedError } from "./components/themes/error/passkeyNotSupportedError";
 import type Recipe from "./recipe";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type {
@@ -16,8 +17,20 @@ import type {
 import type { SendRecoveryEmailForm } from "./components/features/sendRecoveryEmail";
 import type SignInForm from "./components/features/signIn";
 import type SignUpForm from "./components/features/signUp";
-import type WebJSRecipe from "supertokens-web-js/recipe/webauthn";
+import type { ContinueWithPasskeyWithOverride } from "./components/themes/continueWithPasskey";
+import type { RecoverableError } from "./components/themes/error/recoverableError";
+import type { PasskeyEmailSent } from "./components/themes/sendRecoveryEmail/emailSent";
+import type {
+    PasskeyRecoverAccount,
+    PasskeyRecoverAccountForm,
+} from "./components/themes/sendRecoveryEmail/recoverAccountForm";
+import type { PasskeyConfirmation } from "./components/themes/signUp/confirmation";
+import type { ContinueWithoutPasskey } from "./components/themes/signUp/continueWithoutPasskey";
+import type { PasskeyFeatureBlock } from "./components/themes/signUp/featureBlocks";
+import type { SignUpFormInner } from "./components/themes/signUp/signUpForm";
+import type { SignUpSomethingWentWrong } from "./components/themes/signUp/somethingWentWrong";
 import type { RecipeInterface } from "supertokens-web-js/recipe/webauthn";
+import type WebJSRecipe from "supertokens-web-js/recipe/webauthn";
 import type { User } from "supertokens-web-js/types";
 export declare type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<{
     action: "SEND_RECOVERY_EMAIL";
@@ -61,7 +74,9 @@ export declare type UserInput = Record<string, unknown> & {
 export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedSignInAndUpFormFeatureConfig = NormalisedBaseConfig;
-export declare type NormalisedRecoveryFeatureConfig = NormalisedBaseConfig;
+export declare type NormalisedRecoveryFeatureConfig = NormalisedBaseConfig & {
+    disableDefaultUI: boolean;
+};
 export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFormFeatureConfig;
     recoveryFeature: NormalisedRecoveryFeatureConfig;
@@ -75,6 +90,17 @@ export declare type ComponentOverrideMap = {
     PasskeySignInForm_Override?: ComponentOverride<typeof SignInForm>;
     PasskeySignUpForm_Override?: ComponentOverride<typeof SignUpForm>;
     PasskeySendRecoveryEmailForm_Override?: ComponentOverride<typeof SendRecoveryEmailForm>;
+    PasskeyContinueWithPasskey_Override?: ComponentOverride<typeof ContinueWithPasskeyWithOverride>;
+    PasskeyNotSupportedError_Override?: ComponentOverride<typeof PasskeyNotSupportedError>;
+    PasskeyRecoverableError_Override?: ComponentOverride<typeof RecoverableError>;
+    PasskeyEmailSent_Override?: ComponentOverride<typeof PasskeyEmailSent>;
+    PasskeyRecoverAccountForm_Override?: ComponentOverride<typeof PasskeyRecoverAccountForm>;
+    PasskeyRecoverAccount_Override?: ComponentOverride<typeof PasskeyRecoverAccount>;
+    PasskeyConfirmation_Override?: ComponentOverride<typeof PasskeyConfirmation>;
+    PasskeyFeatureBlock_Override?: ComponentOverride<typeof PasskeyFeatureBlock>;
+    PasskeyContinueWithoutPasskey_Override?: ComponentOverride<typeof ContinueWithoutPasskey>;
+    PasskeySignUpFormInner_Override?: ComponentOverride<typeof SignUpFormInner>;
+    PasskeySignUpSomethingWentWrong_Override?: ComponentOverride<typeof SignUpSomethingWentWrong>;
 };
 export declare type WebauthnSignUpState = {
     showBackButton: boolean;
@@ -98,7 +124,9 @@ export declare type SignUpThemeBaseProps = {
 export declare type SignUpThemeProps = SignUpThemeBaseProps & {
     onRecoverAccountClick: () => void;
 };
-export declare type SignInThemeProps = SignUpThemeBaseProps;
+export declare type SignInThemeProps = SignUpThemeBaseProps & {
+    isPasskeySupported: boolean;
+};
 export declare type SignUpFormProps = {
     clearError: () => void;
     onError: (error: string) => void;

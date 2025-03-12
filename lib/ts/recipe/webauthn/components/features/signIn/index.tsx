@@ -16,6 +16,8 @@
  * Imports.
  */
 import * as React from "react";
+import { useEffect } from "react";
+import { useState } from "react";
 
 import AuthComponentWrapper from "../../../../../components/authCompWrapper";
 import { useUserContext } from "../../../../../usercontext";
@@ -40,7 +42,8 @@ export function useChildProps(
     clearError: () => void,
     resetFactorList: () => void,
     onSignInUpSwitcherClick: () => void,
-    originalFactorIds: string[]
+    originalFactorIds: string[],
+    isPasskeySupported: boolean
 ): SignInThemeProps {
     const session = useSessionContext();
     const recipeImplementation = recipe.webJSRecipe;
@@ -81,6 +84,7 @@ export function useChildProps(
             config: recipe.config,
             resetFactorList: resetFactorList,
             onSignInUpSwitcherClick,
+            isPasskeySupported,
         };
     }, [error, factorIds, userContext, recipeImplementation]);
 }
@@ -97,6 +101,22 @@ const SignInFeatureInner: React.FC<
     if (props.userContext !== undefined) {
         userContext = props.userContext;
     }
+
+    const [isPasskeySupported, setIsPasskeySupported] = useState(true);
+    useEffect(() => {
+        void (async () => {
+            const browserSupportsWebauthn = await props.recipe.webJSRecipe.doesBrowserSupportWebAuthn({
+                userContext: userContext,
+            });
+            if (browserSupportsWebauthn.status !== "OK") {
+                console.error(browserSupportsWebauthn.error);
+                return;
+            }
+
+            setIsPasskeySupported(browserSupportsWebauthn.browserSupportsWebauthn);
+        })();
+    }, [props.recipe.webJSRecipe]);
+
     const childProps = useChildProps(
         props.recipe,
         props.factorIds,
@@ -107,7 +127,8 @@ const SignInFeatureInner: React.FC<
         props.clearError,
         props.resetFactorList,
         props.onSignInUpSwitcherClick,
-        props.originalFactorIds
+        props.originalFactorIds,
+        isPasskeySupported
     )!;
 
     return (

@@ -64,7 +64,10 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
         useComponentOverrides: () => GenericComponentOverrideMap<any> = useRecipeComponentOverrideContext
     ): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
-        if (this.recipeInstance.config.disableDefaultUI !== true) {
+        if (
+            this.recipeInstance.config.disableDefaultUI !== true &&
+            this.recipeInstance.config.recoveryFeature.disableDefaultUI !== true
+        ) {
             const normalisedFullPath = this.recipeInstance.config.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(DEFAULT_WEBAUTHN_RECOVERY_PATH)
             );

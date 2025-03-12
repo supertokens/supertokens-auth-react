@@ -13,9 +13,13 @@
  * under the License.
  */
 
+import { useState } from "react";
+import { useEffect } from "react";
+
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import SuperTokens from "../../../../../superTokens";
 import { AuthPageFooter, AuthPageHeader } from "../../../../../ui";
+import { useUserContext } from "../../../../../usercontext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { RecoverAccountScreen } from "../../../types";
 import { PasskeyConfirmation } from "../signUp/confirmation";
@@ -28,6 +32,7 @@ import type { RecoverAccountWithTokenThemeProps } from "../../../types";
 function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenThemeProps): JSX.Element {
     const stInstance = SuperTokens.getInstanceOrThrow();
     const rootStyle = stInstance.rootStyle;
+    const userContext = useUserContext();
 
     const activeStyle = props.config.signInAndUpFeature.style;
 
@@ -37,6 +42,22 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
     const onResetFactorList = () => {
         throw new Error("Should never come here as we don't have back functionality");
     };
+
+    const [isPasskeySupported, setIsPasskeySupported] = useState(false);
+
+    useEffect(() => {
+        void (async () => {
+            const browserSupportsWebauthn = await props.recipeImplementation.doesBrowserSupportWebAuthn({
+                userContext: userContext,
+            });
+            if (browserSupportsWebauthn.status !== "OK") {
+                console.error(browserSupportsWebauthn.error);
+                return;
+            }
+
+            setIsPasskeySupported(browserSupportsWebauthn.browserSupportsWebauthn);
+        })();
+    }, [props.recipeImplementation]);
 
     // Render the inner content based on the active screen
     const renderInnerContent = () => {
@@ -51,6 +72,7 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
                     hideContinueWithoutPasskey
                     isContinueDisabled={props.registerOptions === null}
                     originalFactorIds={[]} // Doesn't matter since we anyway hide the button
+                    isPasskeySupported={isPasskeySupported}
                 />
             );
         } else if (props.activeScreen === RecoverAccountScreen.Success) {
