@@ -12,9 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-/* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
-import regeneratorRuntime from "regenerator-runtime";
-import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     getLatestURLWithToken,
@@ -24,11 +21,18 @@ import {
     submitFormReturnRequestAndResponse,
     assertProviders,
     clickOnProviderButton,
+    waitForUrl,
     loginWithAuth0,
+    loginWithAuth0,
+    waitForUrl,
+    setupBrowser,
+    backendHook,
+    setupCoreApp,
+    setupST,
+    screenshotOnFailure,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
-    TEST_SERVER_BASE_URL,
     RESET_PASSWORD_TOKEN_API,
     RESET_PASSWORD_API,
     SIGN_IN_UP_API,
@@ -44,13 +48,9 @@ describe("SuperTokens userContext with UI components test", function () {
     let consoleLogs = [];
 
     before(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
+        backendHook("before");
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
 
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -65,24 +65,25 @@ describe("SuperTokens userContext with UI components test", function () {
         });
     });
 
-    after(async function () {
-        await browser.close();
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
-    });
-
     beforeEach(async function () {
+        await backendHook("beforeEach");
         consoleLogs = [];
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         await Promise.all([
             page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartyemailpassword`),
             page.waitForNavigation({ waitUntil: "networkidle0" }),
         ]);
+    });
+
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await page?.close();
+        await browser?.close();
+        await backendHook("after");
     });
 
     it("Test that user context gets passed correctly when resetting password", async function () {
