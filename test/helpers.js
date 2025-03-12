@@ -782,31 +782,6 @@ export async function getPasswordlessDevice(loginAttemptInfo) {
     return await deviceResp.json();
 }
 
-export function setPasswordlessFlowType(contactMethod, flowType) {
-    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setFlow`, {
-        method: "POST",
-        headers: [["content-type", "application/json"]],
-        body: JSON.stringify({
-            contactMethod,
-            flowType,
-        }),
-    });
-}
-
-export function setAccountLinkingConfig(enabled, shouldAutomaticallyLink, shouldRequireVerification) {
-    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setAccountLinkingConfig`, {
-        method: "POST",
-        headers: [["content-type", "application/json"]],
-        body: JSON.stringify({
-            enabled,
-            shouldAutoLink: {
-                shouldAutomaticallyLink,
-                shouldRequireVerification,
-            },
-        }),
-    });
-}
-
 export function changeEmail(rid, recipeUserId, email, phoneNumber) {
     return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/changeEmail`, {
         method: "POST",
@@ -816,17 +791,6 @@ export function changeEmail(rid, recipeUserId, email, phoneNumber) {
             recipeUserId,
             email,
             phoneNumber,
-        }),
-    });
-}
-
-export function setEnabledRecipes(enabledRecipes, enabledProviders) {
-    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setEnabledRecipes`, {
-        method: "POST",
-        headers: [["content-type", "application/json"]],
-        body: JSON.stringify({
-            enabledRecipes,
-            enabledProviders,
         }),
     });
 }
