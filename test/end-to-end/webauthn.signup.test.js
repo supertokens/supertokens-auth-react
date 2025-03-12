@@ -301,7 +301,7 @@ describe("SuperTokens Webauthn SignUp", () => {
         });
         it("should show that webauthn is not supported on the browser", async () => {
             await page.evaluateOnNewDocument(() => {
-                localStorage.setItem("disableWebauthnSupport", "true");
+                localStorage.setItem("overrideWebauthnSupport", "true");
             });
 
             const email = await getTestEmail();
@@ -318,7 +318,7 @@ describe("SuperTokens Webauthn SignUp", () => {
             );
 
             await page.evaluateOnNewDocument(() => {
-                localStorage.removeItem("disableWebauthnSupport");
+                localStorage.removeItem("overrideWebauthnSupport");
             });
         });
     });

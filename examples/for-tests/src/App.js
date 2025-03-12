@@ -1156,7 +1156,7 @@ function getWebauthnConfigs({
     throwWebauthnError,
     webauthnErrorStatus,
     webauthnRecoverAccountErrorStatus,
-    disableWebauthnSupport,
+    overrideWebauthnSupport,
 }) {
     return Webauthn.init({
         override: {
@@ -1323,15 +1323,23 @@ function getWebauthnConfigs({
                         return implementation.recoverAccount(...args);
                     },
                     doesBrowserSupportWebAuthn(...args) {
-                        if (disableWebauthnSupport) {
-                            return {
-                                status: "OK",
-                                browserSupportsWebAuthn: false,
-                                platformAuthenticatorIsAvailable: false,
-                            };
+                        if (overrideWebauthnSupport === undefined) {
+                            return implementation.doesBrowserSupportWebAuthn(...args);
                         }
 
-                        return implementation.doesBrowserSupportWebAuthn(...args);
+                        // The value is defined but not set to true would mean
+                        // it is a stringifiedJSON value.
+                        if (overrideWebauthnSupport !== "true") {
+                            return JSON.parse(overrideWebauthnSupport);
+                        }
+
+                        // Value is defined and set to `true` so we will return
+                        // the default values.
+                        return {
+                            status: "OK",
+                            browserSupportsWebAuthn: false,
+                            platformAuthenticatorIsAvailable: false,
+                        };
                     },
                 };
             },

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.49.0] - 2025-03-12
+
+-   Adds webauthn recipe with passkey, webauthn-platform, and webauthn-resident support
+-   Adds new pre-built UI components for passkey
+-   Adds new colors to the palette
+    -   `--palette-caution`: Used for showing cautionary messages
+    -   `--palette-errorDark`: Used for showing error messages with a darker shade
+
 ## [0.48.0] - 2024-10-07
 
 ### Fixes
