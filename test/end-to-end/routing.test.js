@@ -18,9 +18,6 @@
  */
 
 import assert from "assert";
-import { spawn } from "child_process";
-import puppeteer from "puppeteer";
-
 import { TEST_CLIENT_BASE_URL, DEFAULT_WEBSITE_BASE_PATH } from "../constants";
 import {
     getSubmitFormButtonLabel,
