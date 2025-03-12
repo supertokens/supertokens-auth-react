@@ -32,7 +32,6 @@ import {
     getPasswordlessDevice,
     getFeatureFlags,
     assertProviders,
-    setEnabledRecipes,
     clickOnProviderButtonWithoutWaiting,
     getGeneralError,
     waitForUrl,
@@ -236,7 +235,6 @@ describe("SuperTokens Third Party Passwordless", function () {
                 enabledRecipes: ["thirdparty"],
                 enabledProviders: [],
             });
-            await setEnabledRecipes(["thirdparty"], []);
 
     describe("Passwordless specific", function () {
         getPasswordlessTestCases({
