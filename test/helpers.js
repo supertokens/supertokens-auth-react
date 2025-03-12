@@ -178,6 +178,10 @@ export async function getSubmitFormButtonLabelWithoutShadowDom(page) {
 }
 
 export async function getSubmitFormButton(page) {
+    return waitForSTElement(page, "[data-supertokens='button']");
+}
+
+export async function getSubmitFormButtonUnsafe(page) {
     return waitForSTElement(page, "[data-supertokens~='button']");
 }
 
@@ -187,6 +191,11 @@ export async function getInputField(page, name) {
 
 export async function submitForm(page) {
     const submitButton = await getSubmitFormButton(page);
+    await submitButton.click();
+}
+
+export async function submitFormUnsafe(page) {
+    const submitButton = await getSubmitFormButtonUnsafe(page);
     await submitButton.click();
 }
 

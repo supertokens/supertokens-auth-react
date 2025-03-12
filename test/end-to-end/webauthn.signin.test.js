@@ -8,7 +8,7 @@ import {
     toggleSignInSignUp,
     setEnabledRecipes,
     waitForSTElement,
-    submitForm,
+    submitFormUnsafe,
 } from "../helpers";
 import { tryWebauthnSignIn } from "./webauthn.helpers";
 import assert from "assert";
@@ -96,7 +96,7 @@ describe("SuperTokens Webauthn SignIn", () => {
                 localStorage.removeItem("webauthnErrorStatus");
             });
 
-            await submitForm(page);
+            await submitFormUnsafe(page);
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",

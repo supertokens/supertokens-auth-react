@@ -1061,7 +1061,7 @@ function getWebauthnConfigs({
                         return implementation.recoverAccount(...args);
                     },
                     doesBrowserSupportWebAuthn(...args) {
-                        if (overrideWebauthnSupport === undefined) {
+                        if (overrideWebauthnSupport === undefined || overrideWebauthnSupport === null) {
                             return implementation.doesBrowserSupportWebAuthn(...args);
                         }
 

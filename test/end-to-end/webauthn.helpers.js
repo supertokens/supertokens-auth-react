@@ -1,5 +1,5 @@
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
-import { toggleSignInSignUp, setInputValues, submitForm, waitForSTElement } from "../helpers";
+import { toggleSignInSignUp, setInputValues, submitFormUnsafe, waitForSTElement } from "../helpers";
 
 export async function openWebauthnSignUp(page) {
     await Promise.all([
@@ -15,7 +15,7 @@ export async function tryWebauthnSignUp(page, email) {
 
     await setInputValues(page, [{ name: "email", value: email }]);
 
-    await submitForm(page);
+    await submitFormUnsafe(page);
     await new Promise((res) => setTimeout(res, 1000));
 }
 
@@ -25,7 +25,7 @@ export async function tryWebauthnSignIn(page) {
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 
-    await submitForm(page);
+    await submitFormUnsafe(page);
     await new Promise((res) => setTimeout(res, 1000));
 }
 
@@ -46,7 +46,7 @@ export async function openRecoveryAccountPage(page, email = null, shouldSubmit =
     }
 
     await setInputValues(page, [{ name: "email", value: email }]);
-    await submitForm(page);
+    await submitFormUnsafe(page);
     await new Promise((res) => setTimeout(res, 1000));
 }
 
@@ -54,7 +54,7 @@ export async function signUpAndLogout(page, email) {
     await tryWebauthnSignUp(page, email);
 
     // We should be in the confirmation page now.
-    await submitForm(page);
+    await submitFormUnsafe(page);
     await new Promise((res) => setTimeout(res, 2000));
 
     // Find the div with classname logoutButton and click it using normal

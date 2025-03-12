@@ -75,4 +75,7 @@ export const getFunctionOverrides =
         registerCredentialWithRecoverAccount: async function (input) {
             return await originalImp.registerCredentialWithRecoverAccount(input);
         },
+        doesBrowserSupportWebAuthn: async function (input) {
+            return await originalImp.doesBrowserSupportWebAuthn(input);
+        },
     });

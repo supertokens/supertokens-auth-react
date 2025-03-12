@@ -7,7 +7,7 @@ import {
     clearBrowserCookiesWithoutAffectingConsole,
     getTestEmail,
     waitForSTElement,
-    submitForm,
+    submitFormUnsafe,
 } from "../helpers";
 import { openRecoveryWithToken, signUpAndSendRecoveryEmail, getTokenFromEmail } from "./webauthn.helpers";
 import assert from "assert";
@@ -115,7 +115,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
             await openRecoveryWithToken(page, token);
 
             // We should be in the recovery page now, click the continue button
-            await submitForm(page);
+            await submitFormUnsafe(page);
 
             await new Promise((res) => setTimeout(res, 2000));
 
@@ -126,7 +126,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
             assert.deepStrictEqual(headerText, "Account recovered successfully!");
 
             // Click on the continue button
-            await submitForm(page);
+            await submitFormUnsafe(page);
 
             await new Promise((res) => setTimeout(res, 2000));
 
@@ -241,7 +241,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
             assert.strictEqual(token.length, 128);
             await openRecoveryWithToken(page, token);
 
-            await submitForm(page);
+            await submitFormUnsafe(page);
 
             const errorTextContainer = await waitForSTElement(
                 page,
@@ -267,7 +267,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
             assert.strictEqual(token.length, 128);
             await openRecoveryWithToken(page, token);
 
-            await submitForm(page);
+            await submitFormUnsafe(page);
 
             const errorTextContainer = await waitForSTElement(
                 page,
@@ -296,7 +296,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
             assert.strictEqual(token.length, 128);
             await openRecoveryWithToken(page, token);
 
-            await submitForm(page);
+            await submitFormUnsafe(page);
 
             const errorTextContainer = await waitForSTElement(
                 page,
@@ -322,7 +322,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
             assert.strictEqual(token.length, 128);
             await openRecoveryWithToken(page, token);
 
-            await submitForm(page);
+            await submitFormUnsafe(page);
 
             const errorTextContainer = await waitForSTElement(
                 page,
@@ -348,7 +348,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
             await openRecoveryWithToken(page, token);
 
             // We should be in the recovery page now, click the continue button
-            await submitForm(page);
+            await submitFormUnsafe(page);
             await new Promise((res) => setTimeout(res, 1000));
 
             const errorTextContainer = await waitForSTElement(

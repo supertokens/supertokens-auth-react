@@ -8,7 +8,7 @@ import {
     toggleSignInSignUp,
     getTestEmail,
     waitForSTElement,
-    submitForm,
+    submitFormUnsafe,
     setEnabledRecipes,
     setInputValues,
 } from "../helpers";
@@ -76,7 +76,7 @@ describe("SuperTokens Webauthn SignUp", () => {
             // Should not show the back button after the form is submitted as well.
             const email = await getTestEmail();
             await setInputValues(page, [{ name: "email", value: email }]);
-            await submitForm(page);
+            await submitFormUnsafe(page);
             await new Promise((res) => setTimeout(res, 1000));
 
             const backBtnAfterSubmit = await page.$("[data-supertokens~='backButton']");
@@ -107,7 +107,7 @@ describe("SuperTokens Webauthn SignUp", () => {
             await tryWebauthnSignUp(page, email);
 
             // We should be in the confirmation page now.
-            await submitForm(page);
+            await submitFormUnsafe(page);
             await page.waitForTimeout(2000);
 
             assert.deepStrictEqual(consoleLogs, [
@@ -127,7 +127,7 @@ describe("SuperTokens Webauthn SignUp", () => {
             const email = await getTestEmail();
             await tryWebauthnSignUp(page, email);
 
-            await submitForm(page);
+            await submitFormUnsafe(page);
             await page.waitForTimeout(2000);
 
             assert.deepStrictEqual(consoleLogs, [
@@ -150,7 +150,7 @@ describe("SuperTokens Webauthn SignUp", () => {
             await tryWebauthnSignUp(page, email);
 
             // We should be in the confirmation page now.
-            await submitForm(page);
+            await submitFormUnsafe(page);
             await page.waitForTimeout(1000);
 
             const errorTextContainer = await waitForSTElement(
@@ -183,7 +183,7 @@ describe("SuperTokens Webauthn SignUp", () => {
         });
         it("should show the email input not populated error", async () => {
             await tryWebauthnSignUp(page, "");
-            await submitForm(page);
+            await submitFormUnsafe(page);
             const errorTextContainer = await waitForSTElement(page, "[data-supertokens~='generalError']");
             const errorText = await errorTextContainer.evaluate((el) => el.textContent);
             assert.strictEqual(errorText, "Please enter your email to continue.");
@@ -198,7 +198,7 @@ describe("SuperTokens Webauthn SignUp", () => {
             await tryWebauthnSignUp(page, email);
 
             // We should be in the confirmation page now.
-            await submitForm(page);
+            await submitFormUnsafe(page);
 
             await waitForSTElement(page, "[data-supertokens~='passkeyRecoverableErrorContainer']");
 
@@ -207,7 +207,7 @@ describe("SuperTokens Webauthn SignUp", () => {
                 localStorage.removeItem("webauthnErrorStatus");
             });
 
-            await submitForm(page);
+            await submitFormUnsafe(page);
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -225,7 +225,7 @@ describe("SuperTokens Webauthn SignUp", () => {
             await tryWebauthnSignUp(page, email);
 
             // We should be in the confirmation page now.
-            await submitForm(page);
+            await submitFormUnsafe(page);
 
             await waitForSTElement(page, "[data-supertokens~='passkeyRecoverableErrorContainer']");
 
@@ -243,7 +243,7 @@ describe("SuperTokens Webauthn SignUp", () => {
             await tryWebauthnSignUp(page, email);
 
             // We should be in the confirmation page now.
-            await submitForm(page);
+            await submitFormUnsafe(page);
 
             const errorTextContainer = await waitForSTElement(
                 page,
@@ -269,7 +269,7 @@ describe("SuperTokens Webauthn SignUp", () => {
             await tryWebauthnSignUp(page, email);
 
             // We should be in the confirmation page now.
-            await submitForm(page);
+            await submitFormUnsafe(page);
 
             await waitForSTElement(page, "[data-supertokens~='somethingWentWrongContainer']");
 
@@ -287,7 +287,7 @@ describe("SuperTokens Webauthn SignUp", () => {
             await tryWebauthnSignUp(page, email);
 
             // We should be in the confirmation page now.
-            await submitForm(page);
+            await submitFormUnsafe(page);
 
             await waitForSTElement(page, "[data-supertokens~='somethingWentWrongContainer']");
             const goBackBtn = await waitForSTElement(page, "[data-supertokens~='errorGoBackLabel']");
