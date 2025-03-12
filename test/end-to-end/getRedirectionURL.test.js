@@ -1,6 +1,4 @@
 import assert from "assert";
-import fetch from "isomorphic-fetch";
-import puppeteer from "puppeteer";
 import {
     toggleSignInSignUp,
     defaultSignUp,
@@ -8,7 +6,6 @@ import {
     assertProviders,
     clickOnProviderButton,
     loginWithAuth0,
-    setPasswordlessFlowType,
     waitForSTElement,
     getPasswordlessDevice,
     setInputValues,
@@ -16,7 +13,6 @@ import {
     clearBrowserCookiesWithoutAffectingConsole,
     isPasswordlessSupported,
     isThirdPartyPasswordlessSupported,
-    backendBeforeEach,
     setupBrowser,
     backendHook,
     setupCoreApp,

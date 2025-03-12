@@ -31,7 +31,6 @@ import {
     getSubmitFormButton,
     waitForSTElement,
     getPasswordlessDevice,
-    setPasswordlessFlowType,
     getSessionHandleWithFetch,
     getLatestURLWithToken,
     sendEmailResetPasswordSuccessMessage,
@@ -65,6 +64,8 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
     let page;
     let pageCrashed;
 
+    const appConfig = {};
+
     before(async function () {
         await backendHook("before");
         const isSupported = (await isMultitenancySupported()) && (await isMultitenancyManagementEndpointsSupported());
@@ -79,7 +80,8 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         await backendHook("beforeEach");
         
         const coreUrl = await setupCoreApp();
-        await setupST({ coreUrl });
+        appConfig.coreUrl = coreUrl;
+        await setupST(appConfig);
 
         page = await browser.newPage();
 
@@ -676,7 +678,11 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should revoke magic links on removed tenants", async function () {
-            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE_AND_MAGIC_LINK");
+            await setupST({
+                ...appConfig,
+                passwordlessContactMethod: "EMAIL_OR_PHONE",
+                passwordlessFlowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+            });
             await setEnabledRecipes(page, ["passwordless"]);
             await setupTenant("customer1", {
                 emailPassword: { enabled: false },
@@ -719,7 +725,11 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
 
     describe("passwordless sign in", () => {
         beforeEach(async () => {
-            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE_AND_MAGIC_LINK");
+            await setupST({
+                ...appConfig,
+                passwordlessContactMethod: "EMAIL_OR_PHONE",
+                passwordlessFlowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+            });
         });
 
         it("should work using OTP on the public tenants", async function () {

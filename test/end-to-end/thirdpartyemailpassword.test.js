@@ -40,7 +40,6 @@ import {
     getFieldErrors,
     clickOnProviderButtonWithoutWaiting,
     getFeatureFlags,
-    setEnabledRecipes,
     setSelectDropdownValue,
     getInputField,
     getLabelsText,
