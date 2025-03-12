@@ -718,13 +718,15 @@ export async function getPasswordlessDevice(loginAttemptInfo) {
     return await deviceResp.json();
 }
 
-export function setPasswordlessFlowType(contactMethod, flowType) {
-    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setFlow`, {
+export function changeEmail(rid, recipeUserId, email, phoneNumber) {
+    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/changeEmail`, {
         method: "POST",
         headers: [["content-type", "application/json"]],
         body: JSON.stringify({
-            contactMethod,
-            flowType,
+            rid,
+            recipeUserId,
+            email,
+            phoneNumber,
         }),
     });
 }
