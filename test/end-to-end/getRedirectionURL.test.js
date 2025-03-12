@@ -1,6 +1,4 @@
 import assert from "assert";
-import fetch from "isomorphic-fetch";
-import puppeteer from "puppeteer";
 import {
     toggleSignInSignUp,
     defaultSignUp,
@@ -8,7 +6,6 @@ import {
     assertProviders,
     clickOnProviderButton,
     loginWithMockProvider,
-    setPasswordlessFlowType,
     waitForSTElement,
     getPasswordlessDevice,
     setInputValues,
@@ -16,19 +13,13 @@ import {
     clearBrowserCookiesWithoutAffectingConsole,
     isPasswordlessSupported,
     isThirdPartyPasswordlessSupported,
-    backendBeforeEach,
     setupBrowser,
     backendHook,
     setupCoreApp,
     setupST,
 } from "../helpers";
 
-import {
-    TEST_CLIENT_BASE_URL,
-    TEST_SERVER_BASE_URL,
-    SIGN_IN_UP_API,
-    TEST_APPLICATION_SERVER_BASE_URL,
-} from "../constants";
+import { TEST_CLIENT_BASE_URL, SIGN_IN_UP_API } from "../constants";
 
 describe("getRedirectionURL Tests", function () {
     let browser;
