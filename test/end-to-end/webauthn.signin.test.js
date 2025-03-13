@@ -81,6 +81,8 @@ describe("SuperTokens Webauthn SignIn", () => {
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS WEBAUTHN OVERRIDE SIGN IN",
                 "ST_LOGS WEBAUTHN PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
         });
         it("should recover successfully from a recoverable error", async () => {
