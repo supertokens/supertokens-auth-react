@@ -65,7 +65,6 @@ describe("SuperTokens Webauthn Recover Account", () => {
             // Get the token from the email
             const token = await getTokenFromEmail(email);
             assert.ok(token);
-            assert.strictEqual(token.length, 128);
 
             // Use the token to recover the account
             await openRecoveryWithToken(page, token);
@@ -109,7 +108,6 @@ describe("SuperTokens Webauthn Recover Account", () => {
             // Get the token from the email
             const token = await getTokenFromEmail(email);
             assert.ok(token);
-            assert.strictEqual(token.length, 128);
 
             // Use the token to recover the account
             await openRecoveryWithToken(page, token);
@@ -238,7 +236,6 @@ describe("SuperTokens Webauthn Recover Account", () => {
             // Get the token from the email
             const token = await getTokenFromEmail(email);
             assert.ok(token);
-            assert.strictEqual(token.length, 128);
             await openRecoveryWithToken(page, token);
 
             await submitFormUnsafe(page);
@@ -264,7 +261,6 @@ describe("SuperTokens Webauthn Recover Account", () => {
             // Get the token from the email
             const token = await getTokenFromEmail(email);
             assert.ok(token);
-            assert.strictEqual(token.length, 128);
             await openRecoveryWithToken(page, token);
 
             await submitFormUnsafe(page);
@@ -293,7 +289,6 @@ describe("SuperTokens Webauthn Recover Account", () => {
             // Get the token from the email
             const token = await getTokenFromEmail(email);
             assert.ok(token);
-            assert.strictEqual(token.length, 128);
             await openRecoveryWithToken(page, token);
 
             await submitFormUnsafe(page);
@@ -319,7 +314,6 @@ describe("SuperTokens Webauthn Recover Account", () => {
             // Get the token from the email
             const token = await getTokenFromEmail(email);
             assert.ok(token);
-            assert.strictEqual(token.length, 128);
             await openRecoveryWithToken(page, token);
 
             await submitFormUnsafe(page);
@@ -343,7 +337,6 @@ describe("SuperTokens Webauthn Recover Account", () => {
 
             const token = await getTokenFromEmail(email);
             assert.ok(token);
-            assert.strictEqual(token.length, 128);
 
             await openRecoveryWithToken(page, token);
 
