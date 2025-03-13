@@ -60,7 +60,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
         await new Promise((res) => setTimeout(res, 1000));
     });
 
-    describe("Recover Account Test", () => {
+    describe.only("Recover Account Test", () => {
         it("should show the recovery token page", async () => {
             // Get the token from the email
             const token = await getTokenFromEmail(email);

@@ -55,7 +55,7 @@ describe("SuperTokens Webauthn Recovery Email", () => {
         await toggleSignInSignUp(page);
     });
 
-    describe("Recovery Email Test", () => {
+    describe.only("Recovery Email Test", () => {
         it("should show the success page when the email is sent", async () => {
             const email = await getTestEmail();
             await signUpAndSendRecoveryEmail(page, email);
