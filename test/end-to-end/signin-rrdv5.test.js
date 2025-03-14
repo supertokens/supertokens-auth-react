@@ -677,8 +677,21 @@ describe("SuperTokens SignIn => Server Error", function () {
             { name: "password", value: "Str0ngP@ssw0rd" },
         ]);
 
-        await submitForm(page);
+        await page.setRequestInterception(true);
+        page.on("request", (request) => {
+            if (request.url() === SIGN_IN_API && request.method() === "POST") {
+                request.respond({
+                    // Previous behavior was a result of core being shut down
+                    // Emulating the same here
+                    status: 500,
+                    // body: "Error: No SuperTokens core available to query",
+                });
+            } else {
+                request.continue();
+            }
+        });
 
+        await submitForm(page);
         await page.waitForResponse((response) => {
             return response.url() === SIGN_IN_API && response.status() === 500;
         });
