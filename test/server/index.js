@@ -252,7 +252,6 @@ function initST({
     passwordlessContactMethod,
     mfaInfo = {},
 } = {}) {
-    console.error('initST called')
     if (process.env.TEST_MODE) {
         if (userRolesSupported) {
             UserRolesRaw.reset();
