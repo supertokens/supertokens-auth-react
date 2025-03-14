@@ -45,14 +45,6 @@ export async function setupUserWithAllFactors(page) {
     const totpSecret = await setupTOTP(page);
     return { email, phoneNumber, totpSecret };
 }
-export async function setMFAInfo(mfaInfo) {
-    let resp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/setMFAInfo`, {
-        method: "POST",
-        headers: new Headers([["content-type", "application/json"]]),
-        body: JSON.stringify(mfaInfo),
-    });
-    assert.strictEqual(resp.status, 200);
-}
 
 export async function addToRequiredSecondaryFactorsForUser(page, factorId) {
     await page.evaluate(
