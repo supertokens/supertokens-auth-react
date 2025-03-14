@@ -2,11 +2,11 @@ spec:
     - test/unit/**/*.test.js
     - test/end-to-end/**/*.test.js
 slow: 20000
-timeout: 30000
+timeout: 40000
 exit: true
-reporter: mochawesome
-reporter-option:
-    - "reportDir=test_report/mochawesome"
 require:
     - "@babel/register"
     - test/test.mocha.env
+reporter: mocha-multi-reporters
+reporter-option:
+  - configFile=mocha-multi-reporters.json
