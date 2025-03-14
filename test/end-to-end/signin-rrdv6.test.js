@@ -612,17 +612,12 @@ describe("SuperTokens SignIn => Server Error", function () {
     let consoleLogs;
 
     before(async function () {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
-    });
-
-    after(async function () {
-        await browser.close();
+        await backendHook("before");
+        browser = await setupBrowser();
     });
 
     beforeEach(async function () {
+        await backendHook("beforeEach");
         page = await browser.newPage();
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
         page.on("console", (consoleObj) => {
@@ -633,14 +628,38 @@ describe("SuperTokens SignIn => Server Error", function () {
         });
     });
 
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await page?.close();
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
+    });
+
     it("Server Error shows Something went wrong general error", async function () {
         await setInputValues(page, [
             { name: "email", value: "john.doe@supertokens.io" },
             { name: "password", value: "Str0ngP@ssw0rd" },
         ]);
 
-        await submitForm(page);
+        await page.setRequestInterception(true);
+        page.on("request", (request) => {
+            if (request.url() === SIGN_IN_API && request.method() === "POST") {
+                request.respond({
+                    // Previous behavior was a result of core being shut down
+                    // Emulating the same here
+                    status: 500,
+                    // body: "Error: No SuperTokens core available to query",
+                });
+            } else {
+                request.continue();
+            }
+        });
 
+        await submitForm(page);
         await page.waitForResponse((response) => {
             return response.url() === SIGN_IN_API && response.status() === 500;
         });

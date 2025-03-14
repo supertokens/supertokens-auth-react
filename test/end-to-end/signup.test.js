@@ -20,8 +20,6 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
-import fetch from "isomorphic-fetch";
-import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     getLabelsText,
@@ -40,17 +38,17 @@ import {
     screenshotOnFailure,
     getGeneralError,
     waitForSTElement,
+    setSelectDropdownValue,
+    getInputField,
+    isReact16,
+    getDefaultSignUpFieldValues,
+    waitForUrl,
+    setupBrowser,
+    backendHook,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
-
-// Run the tests in a DOM environment.
-require("jsdom-global")();
-import {
-    EMAIL_EXISTS_API,
-    SIGN_UP_API,
-    SOMETHING_WENT_WRONG_ERROR,
-    TEST_CLIENT_BASE_URL,
-    TEST_SERVER_BASE_URL,
-} from "../constants";
+import { EMAIL_EXISTS_API, SIGN_UP_API, SOMETHING_WENT_WRONG_ERROR, TEST_CLIENT_BASE_URL } from "../constants";
 
 /*
  * Tests.
@@ -61,13 +59,9 @@ describe("SuperTokens SignUp", function () {
     let consoleLogs;
 
     before(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendHook("before");
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
 
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -82,25 +76,22 @@ describe("SuperTokens SignUp", function () {
         });
     });
 
-    after(async function () {
-        await browser.close();
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
-    });
-
-    afterEach(function () {
-        return screenshotOnFailure(this, browser);
-    });
-
     beforeEach(async function () {
+        await backendHook("beforeEach");
         consoleLogs = [];
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         await toggleSignInSignUp(page);
+    });
+
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await page?.close();
+        await browser?.close();
+        await backendHook("after");
     });
 
     describe("redirectToAuth test", function () {
@@ -355,17 +346,14 @@ describe("SuperTokens SignUp => Server Error", function () {
     let consoleLogs;
 
     before(async function () {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
-    });
-
-    after(async function () {
-        await browser.close();
+        await backendHook("before");
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
+        browser = await setupBrowser();
     });
 
     beforeEach(async function () {
+        await backendHook("beforeEach");
         page = await browser.newPage();
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
         page.on("console", (consoleObj) => {
@@ -377,8 +365,14 @@ describe("SuperTokens SignUp => Server Error", function () {
         await toggleSignInSignUp(page);
     });
 
-    afterEach(function () {
-        return screenshotOnFailure(this, browser);
+    after(async function () {
+        await browser.close();
+        await backendHook("after");
+    });
+
+    afterEach(async function () {
+        screenshotOnFailure(this, browser);
+        await backendHook("afterEach");
     });
 
     it("Server Error shows Something went wrong general error", async function () {
@@ -388,6 +382,21 @@ describe("SuperTokens SignUp => Server Error", function () {
             { name: "name", value: "John Doe" },
             { name: "age", value: "20" },
         ]);
+
+        await page.setRequestInterception(true);
+        page.on("request", (request) => {
+            if (request.url() === SIGN_UP_API && request.method() === "POST") {
+                request.respond({
+                    // Previous behavior was a result of core being shut down
+                    // Emulating the same here
+                    status: 500,
+                    // body: "Error: No SuperTokens core available to query",
+                });
+            } else {
+                request.continue();
+            }
+        });
+
         await submitForm(page);
 
         await page.waitForResponse((response) => {
@@ -406,6 +415,21 @@ describe("SuperTokens SignUp => Server Error", function () {
             { name: "name", value: "John Doe" },
             { name: "age", value: "20" },
         ]);
+
+        await page.setRequestInterception(true);
+        page.on("request", (request) => {
+            if (request.url() === SIGN_UP_API && request.method() === "POST") {
+                request.respond({
+                    // Previous behavior was a result of core being shut down
+                    // Emulating the same here
+                    status: 500,
+                    // body: "Error: No SuperTokens core available to query",
+                });
+            } else {
+                request.continue();
+            }
+        });
+
         await submitForm(page);
 
         await page.waitForResponse((response) => {
