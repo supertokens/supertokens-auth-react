@@ -32,7 +32,6 @@ import {
 import { TEST_CLIENT_BASE_URL } from "../constants";
 import { getTestPhoneNumber } from "../exampleTestHelpers";
 import {
-    setMFAInfo,
     tryEmailPasswordSignUp,
     waitForDashboard,
     completeOTP,

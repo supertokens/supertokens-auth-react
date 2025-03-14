@@ -113,10 +113,12 @@ describe("SuperTokens SignIn w/ MFA", function () {
     it("sign in with email-otp (auto-setup)", async function () {
         const email = await getTestEmail();
 
-        appConfig.mfaInfo = {
-            requirements: ["otp-email"],
-        };
-        setupST(appConfig);
+        setupST({
+            ...appConfig,
+            mfaInfo: {
+                requirements: ["otp-email"],
+            }
+        });
 
         await tryEmailPasswordSignUp(page, email);
 
@@ -137,10 +139,12 @@ describe("SuperTokens SignIn w/ MFA", function () {
             const email = await getTestEmail();
             const phoneNumber = getTestPhoneNumber();
 
-            appConfig.mfaInfo = {
-                requirements: [{ oneOf: ["otp-email", "otp-phone"] }],
-            };
-            setupST(appConfig);
+            setupST({
+                ...appConfig,
+                mfaInfo: {
+                    requirements: [{ oneOf: ["otp-email", "otp-phone"] }],
+                },
+            });
 
             await tryEmailPasswordSignUp(page, email);
             await chooseFactor(page, "otp-phone");
@@ -159,10 +163,12 @@ describe("SuperTokens SignIn w/ MFA", function () {
         });
 
         it("set up otp-email and sign-in", async function () {
-            appConfig.mfaInfo = {
-                requirements: [],
-            };
-            setupST(appConfig);
+            setupST({
+                ...appConfig,
+                mfaInfo: {
+                    requirements: [],
+                },
+            });
             const email = await getTestEmail();
             const phoneNumber = getTestPhoneNumber();
 
@@ -173,10 +179,12 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await logout(page);
 
-            appConfig.mfaInfo = {
-                requirements: [{ oneOf: ["otp-email"] }],
-            };
-            setupST(appConfig);
+            setupST({
+                ...appConfig,
+                mfaInfo: {
+                    requirements: [{ oneOf: ["otp-email"] }],
+                },
+            });
 
             await tryPasswordlessSignInUp(page, phoneNumber, undefined, true);
 
@@ -195,16 +203,20 @@ describe("SuperTokens SignIn w/ MFA", function () {
         });
 
         it("set up totp and sign-in", async function () {
-            appConfig.mfaInfo = {
-                requirements: [],
-            };
-            setupST(appConfig);
+            setupST({
+                ...appConfig,
+                mfaInfo: {
+                    requirements: [],
+                },
+            });
             const email = await getTestEmail();
 
-            appConfig.mfaInfo = {
-                requirements: [{ oneOf: ["otp-email", "totp"] }],
-            };
-            setupST(appConfig);
+            setupST({
+                ...appConfig,
+                mfaInfo: {
+                    requirements: [{ oneOf: ["otp-email", "totp"] }],
+                },
+            });
 
             await tryEmailPasswordSignUp(page, email);
             await chooseFactor(page, "otp-email");
@@ -233,21 +245,25 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
         it("should show access denied if the only next option is an unknown factor id", async () => {
             const email = await getTestEmail();
-            appConfig.mfaInfo = {
-                requirements: ["unknown"],
-                alreadySetup: ["unknown"],
-            };
-            setupST(appConfig);
+            setupST({
+                ...appConfig,
+                mfaInfo: {
+                    requirements: ["unknown"],
+                    alreadySetup: ["unknown"],
+                },
+            });
 
             await tryEmailPasswordSignUp(page, email);
             await waitForAccessDenied(page);
         });
 
         it("should throw error if there are no valid next options", async () => {
-            appConfig.mfaInfo = {
-                requirements: ["unknown"],
-            };
-            setupST(appConfig);
+            setupST({
+                ...appConfig,
+                mfaInfo: {
+                    requirements: ["unknown"],
+                },
+            });
 
             const email = await getTestEmail();
             await expectErrorThrown(page, () => tryEmailPasswordSignUp(page, email));

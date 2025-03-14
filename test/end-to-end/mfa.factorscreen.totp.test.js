@@ -112,6 +112,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
             let email, phoneNumber;
             before(async () => {
                 await setupST({
+                    ...appConfig,
                     mfaInfo: {
                         allowedToSetup: ["totp"],
                     }
@@ -140,6 +141,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             it("should respect redirectToPath", async () => {
                 await setupST({
+                    ...appConfig,
                     mfaInfo: {
                         requirements: [],
                         alreadySetup: [factorId],
@@ -165,6 +167,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             it("should show access denied if the app navigates to the setup page but the user it is not allowed to set up the factor", async () => {
                 await setupST({
+                    ...appConfig,
                     mfaInfo: {
                         requirements: [],
                         alreadySetup: [factorId],
@@ -184,6 +187,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             it("should show access denied if setup is not allowed but the factor is not set up", async () => {
                 await setupST({
+                    ...appConfig,
                     mfaInfo: {
                         requirements: [factorId],
                         alreadySetup: [],
@@ -202,6 +206,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             it("should show loading screen", async () => {
                 await setupST({
+                    ...appConfig,
                     mfaInfo: {
                         requirements: [factorId],
                         alreadySetup: [factorId],
@@ -235,6 +240,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             it("should show blocked screen after too many retries", async () => {
                 await setupST({
+                    ...appConfig,
                     mfaInfo: {
                         requirements: [factorId],
                         alreadySetup: [factorId],
@@ -251,6 +257,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             it("should handle mfa info api failures gracefully", async () => {
                 await setupST({
+                    ...appConfig,
                     mfaInfo: {
                         requirements: [factorId],
                         alreadySetup: [factorId],
@@ -292,6 +299,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             it("should handle createDevice failures gracefully", async () => {
                 await setupST({
+                    ...appConfig,
                     mfaInfo: {
                         requirements: [factorId],
                         alreadySetup: [],
@@ -328,6 +336,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             it("should redirect back if visited after sign in without stepUp param", async () => {
                 await setupST({
+                    ...appConfig,
                     mfaInfo: {
                         requirements: [],
                         alreadySetup: [factorId],
@@ -346,6 +355,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             it("should show a link redirecting back if visited after sign in - force setup", async () => {
                 await setupST({
+                    ...appConfig,
                     mfaInfo: {
                         requirements: [],
                         alreadySetup: [factorId],
@@ -366,6 +376,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             it("should show a link redirecting back if visited after sign in - setup in stepUp", async () => {
                 await setupST({
+                    ...appConfig,
                     mfaInfo: {
                         requirements: [],
                         alreadySetup: [],
@@ -386,6 +397,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             it("should show a link redirecting back if visited after sign in - verification in stepUp", async () => {
                 await setupST({
+                    ...appConfig,
                     mfaInfo: {
                         requirements: [],
                         alreadySetup: [factorId],
@@ -406,6 +418,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             it("should show a back button redirecting to the chooser screen if other options are available during sign in - setup", async () => {
                 await setupST({
+                    ...appConfig,
                     mfaInfo: {
                         requirements: [{ oneOf: [factorId, "otp-email"] }],
                         alreadySetup: ["otp-email"],
@@ -427,6 +440,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             it("should show a back button redirecting to the chooser screen if other options are available during sign in - verification", async () => {
                 await setupST({
+                    ...appConfig,
                     mfaInfo: {
                         requirements: [{ oneOf: [factorId, "otp-email"] }],
                         alreadySetup: [factorId, "otp-email"],
@@ -447,6 +461,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             it("should show a logout link - setup", async () => {
                 await setupST({
+                    ...appConfig,
                     mfaInfo: {
                         requirements: [factorId],
                         alreadySetup: [],
@@ -468,6 +483,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             it("should show a logout link - verify", async () => {
                 await setupST({
+                    ...appConfig,
                     mfaInfo: {
                         requirements: [factorId],
                         alreadySetup: [factorId],
