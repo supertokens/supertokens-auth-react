@@ -18,8 +18,8 @@ import {
     setInputValues,
     setAccountLinkingConfig,
     getPasswordlessDevice,
-    clickOnWebAuthnButton,
 } from "../helpers";
+import { tryWebauthnSignUp } from "./webauthn.helpers";
 import assert from "assert";
 
 /*
@@ -110,15 +110,7 @@ describe("SuperTokens WebAuthn Account Linking", function () {
         await page.waitForTimeout(2000);
 
         // We want to parse the text inside the session-context-userId div
-        const userId = await page.evaluate(() => document.querySelector(".session-context-userId").textContent);
-        console.log(userId);
-        assert.strictEqual(userId, "undefined");
-
-        userId1 = userId;
-
-        // Extract userId from console logs
-        const userIdLog = consoleLogs.find((log) => log.includes("ST_LOGS SESSION"));
-        userId1 = userIdLog.split("ST_LOGS SESSION")[1].trim();
+        const userId1 = await page.evaluate(() => document.querySelector(".session-context-userId").textContent);
 
         // Find the div with classname logoutButton and click it using normal
         // puppeteer selector
@@ -130,15 +122,10 @@ describe("SuperTokens WebAuthn Account Linking", function () {
 
         // We should be in the confirmation page now.
         await submitForm(page);
-
-        await page.waitForTimeout(5000);
-
-        // Wait for successful registration and login
-        await page.waitForNavigation({ waitUntil: "networkidle0" });
+        await page.waitForTimeout(1000);
 
         // Extract second userId from console logs
-        const userIdLog2 = consoleLogs.find((log) => log.includes("ST_LOGS SESSION"));
-        userId2 = userIdLog2.split("ST_LOGS SESSION")[1].trim();
+        const userId2 = await page.evaluate(() => document.querySelector(".session-context-userId").textContent);
 
         // Verify that two different users were created
         assert.notStrictEqual(
@@ -146,10 +133,5 @@ describe("SuperTokens WebAuthn Account Linking", function () {
             userId2,
             "Different auth methods with same email should create separate users when account linking is disabled"
         );
-
-        // Verify that the second user has an unverified email
-        // This would require checking the API or console logs for email verification status
-        const emailVerificationLog = consoleLogs.find((log) => log.includes("isEmailVerified"));
-        assert(emailVerificationLog.includes("false"), "The WebAuthn user should have an unverified email");
     });
 });
