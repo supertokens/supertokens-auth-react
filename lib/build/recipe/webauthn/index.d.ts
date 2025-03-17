@@ -212,10 +212,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static registerCredential(input: {
-        registrationOptions: Omit<RegistrationOptions, "fetchResponse" | "status">;
-        userContext: any;
-    }): Promise<
+    static registerCredential(input: { registrationOptions: RegistrationOptions; userContext: any }): Promise<
         | {
               status: "OK";
               registrationResponse: RegistrationResponseJSON;
@@ -232,10 +229,7 @@ export default class Wrapper {
               error: any;
           }
     >;
-    static authenticateCredential(input: {
-        authenticationOptions: Omit<AuthenticationOptions, "fetchResponse" | "status">;
-        userContext: any;
-    }): Promise<
+    static authenticateCredential(input: { authenticationOptions: AuthenticationOptions; userContext: any }): Promise<
         | {
               status: "OK";
               authenticationResponse: AuthenticationResponseJSON;
