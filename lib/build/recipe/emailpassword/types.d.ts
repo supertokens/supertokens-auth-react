@@ -5,23 +5,8 @@ import type { SubmitNewPassword } from "./components/themes/resetPasswordUsingTo
 import type { SignInForm } from "./components/themes/signIn";
 import type { SignUpForm } from "./components/themes/signUp";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type {
-    APIFormField,
-    FeatureBaseConfig,
-    FormField,
-    FormFieldBaseConfig,
-    NormalisedBaseConfig,
-    NormalisedFormField,
-    NormalisedGetRedirectionURLContext,
-    ThemeBaseProps,
-    UserContext,
-} from "../../types";
-import type {
-    OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
-    Config as AuthRecipeModuleConfig,
-    NormalisedConfig as NormalisedAuthRecipeModuleConfig,
-    UserInput as AuthRecipeModuleUserInput,
-} from "../authRecipe/types";
+import type { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, NormalisedGetRedirectionURLContext, ThemeBaseProps, UserContext } from "../../types";
+import type { OnHandleEventContext as AuthRecipeModuleOnHandleEventContext, Config as AuthRecipeModuleConfig, NormalisedConfig as NormalisedAuthRecipeModuleConfig, UserInput as AuthRecipeModuleUserInput } from "../authRecipe/types";
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import type { User } from "supertokens-web-js/types";
@@ -35,22 +20,15 @@ export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     override?: {
-        functions?: (
-            originalImplementation: RecipeInterface,
-            builder: OverrideableBuilder<RecipeInterface>
-        ) => RecipeInterface;
+        functions?: (originalImplementation: RecipeInterface, builder: OverrideableBuilder<RecipeInterface>) => RecipeInterface;
     };
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-export declare type Config = UserInput &
-    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+export declare type Config = UserInput & AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
     override: {
-        functions: (
-            originalImplementation: RecipeInterface,
-            builder: OverrideableBuilder<RecipeInterface>
-        ) => RecipeInterface;
+        functions: (originalImplementation: RecipeInterface, builder: OverrideableBuilder<RecipeInterface>) => RecipeInterface;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = {
@@ -105,7 +83,9 @@ export declare type SignInThemeProps = NonSignUpFormThemeBaseProps & {
     onError: (error: string) => void;
     config: NormalisedConfig;
     onForgotPasswordClick: () => void;
-    onSuccess: (result: { user: User }) => void;
+    onSuccess: (result: {
+        user: User;
+    }) => void;
     userContext: UserContext;
 };
 export declare type SignUpThemeProps = ThemeBaseProps & {
@@ -115,7 +95,9 @@ export declare type SignUpThemeProps = ThemeBaseProps & {
     onError: (error: string) => void;
     config: NormalisedConfig;
     signInClicked?: () => void;
-    onSuccess: (result: { user: User }) => void;
+    onSuccess: (result: {
+        user: User;
+    }) => void;
     formFields: FormFieldThemeProps[];
     error: string | undefined;
     userContext: UserContext;
@@ -130,12 +112,7 @@ export declare type FormFieldError = {
     id: string;
     error: string;
 };
-export declare type PreAndPostAPIHookAction =
-    | "EMAIL_PASSWORD_SIGN_UP"
-    | "EMAIL_PASSWORD_SIGN_IN"
-    | "SEND_RESET_PASSWORD_EMAIL"
-    | "SUBMIT_NEW_PASSWORD"
-    | "EMAIL_EXISTS";
+export declare type PreAndPostAPIHookAction = "EMAIL_PASSWORD_SIGN_UP" | "EMAIL_PASSWORD_SIGN_IN" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD" | "EMAIL_EXISTS";
 export declare type PreAPIHookContext = {
     action: PreAndPostAPIHookAction;
     requestInit: RequestInit;
@@ -145,24 +122,20 @@ export declare type PreAPIHookContext = {
 export declare type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<{
     action: "RESET_PASSWORD";
 }>;
-export declare type OnHandleEventContext =
-    | AuthRecipeModuleOnHandleEventContext
-    | {
-          action: "RESET_PASSWORD_EMAIL_SENT";
-          email: string;
-          userContext: UserContext;
-      }
-    | {
-          action: "PASSWORD_RESET_SUCCESSFUL";
-          userContext: UserContext;
-      }
-    | {
-          action: "SUCCESS";
-          isNewRecipeUser: boolean;
-          createdNewSession: boolean;
-          user: User;
-          userContext: UserContext;
-      };
+export declare type OnHandleEventContext = AuthRecipeModuleOnHandleEventContext | {
+    action: "RESET_PASSWORD_EMAIL_SENT";
+    email: string;
+    userContext: UserContext;
+} | {
+    action: "PASSWORD_RESET_SUCCESSFUL";
+    userContext: UserContext;
+} | {
+    action: "SUCCESS";
+    isNewRecipeUser: boolean;
+    createdNewSession: boolean;
+    user: User;
+    userContext: UserContext;
+};
 export declare type ResetPasswordUsingTokenThemeProps = {
     enterEmailForm: EnterEmailProps;
     submitNewPasswordForm: SubmitNewPasswordProps | undefined;
@@ -198,21 +171,17 @@ export declare type FormBaseProps<T> = {
     clearError: () => void;
     onError: (error: string) => void;
     onFetchError?: (err: Response) => void;
-    onSuccess?: (
-        result: T & {
-            status: "OK";
-        }
-    ) => void;
+    onSuccess?: (result: T & {
+        status: "OK";
+    }) => void;
     callAPI: (fields: APIFormField[], setValue: (id: string, value: string) => void) => Promise<FormBaseAPIResponse<T>>;
 };
-export declare type FormBaseAPIResponse<T> =
-    | ({
-          status: "OK";
-      } & T)
-    | {
-          status: "FIELD_ERROR";
-          formFields: FormFieldError[];
-      };
+export declare type FormBaseAPIResponse<T> = ({
+    status: "OK";
+} & T) | {
+    status: "FIELD_ERROR";
+    formFields: FormFieldError[];
+};
 declare global {
     interface Document {
         documentMode?: any;

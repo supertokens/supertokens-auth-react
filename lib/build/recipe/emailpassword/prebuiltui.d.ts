@@ -106,36 +106,24 @@ export declare class EmailPasswordPreBuiltUI extends RecipeRouter {
     constructor(recipeInstance: EmailPassword);
     static getInstanceOrInitAndGetInstance(): EmailPasswordPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
-    static getFeatureComponent(
-        componentName: "resetpassword",
-        props: FeatureBaseProps<{
-            redirectOnSessionExists?: boolean;
-            userContext?: UserContext;
-        }>,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ): JSX.Element;
+    static getFeatureComponent(componentName: "resetpassword", props: FeatureBaseProps<{
+        redirectOnSessionExists?: boolean;
+        userContext?: UserContext;
+    }>, useComponentOverrides?: () => GenericComponentOverrideMap<any>): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
-    getFeatureComponent: (
-        componentName: "resetpassword",
-        props: FeatureBaseProps<{
-            redirectOnSessionExists?: boolean;
-            userContext?: UserContext;
-        }>,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ) => JSX.Element;
+    getFeatureComponent: (componentName: "resetpassword", props: FeatureBaseProps<{
+        redirectOnSessionExists?: boolean;
+        userContext?: UserContext;
+    }>, useComponentOverrides?: () => GenericComponentOverrideMap<any>) => JSX.Element;
     getAuthComponents(): AuthComponent[];
     requiresSignUpPage: boolean;
     static reset(): void;
-    static ResetPasswordUsingToken: (
-        prop: FeatureBaseProps<{
-            userContext?: UserContext;
-        }>
-    ) => JSX.Element;
+    static ResetPasswordUsingToken: (prop: FeatureBaseProps<{
+        userContext?: UserContext;
+    }>) => JSX.Element;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenThemeWrapper;
 }
-declare const ResetPasswordUsingToken: (
-    prop: FeatureBaseProps<{
-        userContext?: UserContext;
-    }>
-) => JSX.Element;
+declare const ResetPasswordUsingToken: (prop: FeatureBaseProps<{
+    userContext?: UserContext;
+}>) => JSX.Element;
 export { ResetPasswordUsingToken, ResetPasswordUsingTokenThemeWrapper as ResetPasswordUsingTokenTheme };

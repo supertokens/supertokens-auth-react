@@ -38,41 +38,29 @@ export declare class SessionPreBuiltUI extends RecipeRouter {
     constructor(recipeInstance: Session);
     static getInstanceOrInitAndGetInstance(): SessionPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
-    static getFeatureComponent(
-        componentName: "accessDenied",
-        props: FeatureBaseProps<{
-            redirectOnSessionExists?: boolean;
-            error?: string;
-            userContext?: UserContext;
-        }>,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ): JSX.Element;
+    static getFeatureComponent(componentName: "accessDenied", props: FeatureBaseProps<{
+        redirectOnSessionExists?: boolean;
+        error?: string;
+        userContext?: UserContext;
+    }>, useComponentOverrides?: () => GenericComponentOverrideMap<any>): JSX.Element;
     getAuthComponents(): AuthComponent[];
     getFeatures: (_useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
-    getFeatureComponent: (
-        componentName: "accessDenied",
-        props: FeatureBaseProps<{
-            useShadowDom?: boolean;
-            error?: string;
-            userContext?: UserContext;
-        }>,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ) => JSX.Element;
-    static reset(): void;
-    static AccessDeniedScreen: (
-        prop?: FeatureBaseProps<{
-            useShadowDom?: boolean;
-            error?: string;
-            userContext?: UserContext;
-        }>
-    ) => React.ReactElement;
-    static AccessDeniedScreenTheme: import("react").FC<import("./types").AccessDeniedThemeProps>;
-}
-declare const AccessDeniedScreen: (
-    prop?: FeatureBaseProps<{
+    getFeatureComponent: (componentName: "accessDenied", props: FeatureBaseProps<{
         useShadowDom?: boolean;
         error?: string;
         userContext?: UserContext;
-    }>
-) => React.ReactElement;
+    }>, useComponentOverrides?: () => GenericComponentOverrideMap<any>) => JSX.Element;
+    static reset(): void;
+    static AccessDeniedScreen: (prop?: FeatureBaseProps<{
+        useShadowDom?: boolean;
+        error?: string;
+        userContext?: UserContext;
+    }>) => React.ReactElement;
+    static AccessDeniedScreenTheme: import("react").FC<import("./types").AccessDeniedThemeProps>;
+}
+declare const AccessDeniedScreen: (prop?: FeatureBaseProps<{
+    useShadowDom?: boolean;
+    error?: string;
+    userContext?: UserContext;
+}>) => React.ReactElement;
 export { AccessDeniedScreen, AccessDeniedScreenTheme };

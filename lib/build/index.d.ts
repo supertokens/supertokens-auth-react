@@ -2,11 +2,9 @@
 import type { TranslationStore } from "./translation/translationHelpers";
 import type { Navigate, SuperTokensConfig, UserContext } from "./types";
 export default class SuperTokensAPIWrapper {
-    static SuperTokensWrapper: import("react").FC<
-        import("react").PropsWithChildren<{
-            userContext?: UserContext | undefined;
-        }>
-    >;
+    static SuperTokensWrapper: import("react").FC<import("react").PropsWithChildren<{
+        userContext?: UserContext | undefined;
+    }>>;
     static init(config: SuperTokensConfig): void;
     static changeLanguage(language: string): Promise<void>;
     static loadTranslation(store: TranslationStore): void;

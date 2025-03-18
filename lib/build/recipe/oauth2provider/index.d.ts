@@ -4,14 +4,7 @@ import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventCo
 import type { RecipeFunctionOptions, LoginInfo } from "supertokens-web-js/recipe/oauth2provider";
 import type { RecipeInterface } from "supertokens-web-js/recipe/oauth2provider";
 export default class Wrapper {
-    static init(
-        config?: UserInput
-    ): import("../../types").RecipeInitResult<
-        GetRedirectionURLContext,
-        import("./types").PreAndPostAPIHookAction,
-        OnHandleEventContext,
-        import("./types").NormalisedConfig
-    >;
+    static init(config?: UserInput): import("../../types").RecipeInitResult<GetRedirectionURLContext, import("./types").PreAndPostAPIHookAction, OnHandleEventContext, import("./types").NormalisedConfig>;
     /**
      * Returns information about an OAuth login in progress
      *
@@ -69,28 +62,20 @@ export default class Wrapper {
      *
      * @throws STGeneralError if the API exposed by the backend SDKs returns `status: "GENERAL_ERROR"`
      */
-    static logOut(input: { logoutChallenge: string; options?: RecipeFunctionOptions; userContext?: any }): Promise<{
+    static logOut(input: {
+        logoutChallenge: string;
+        options?: RecipeFunctionOptions;
+        userContext?: any;
+    }): Promise<{
         status: "OK";
         frontendRedirectTo: string;
         fetchResponse: Response;
     }>;
-    static ComponentsOverrideProvider: import("react").FC<
-        import("react").PropsWithChildren<{
-            components: import("./types").ComponentOverrideMap;
-        }>
-    >;
+    static ComponentsOverrideProvider: import("react").FC<import("react").PropsWithChildren<{
+        components: import("./types").ComponentOverrideMap;
+    }>>;
 }
 declare const init: typeof Wrapper.init;
 declare const getLoginChallengeInfo: typeof Wrapper.getLoginChallengeInfo;
 declare const logOut: typeof Wrapper.logOut;
-export {
-    init,
-    getLoginChallengeInfo,
-    logOut,
-    GetRedirectionURLContext,
-    PreAPIHookContext,
-    OnHandleEventContext,
-    UserInput,
-    RecipeInterface,
-    RecipeComponentsOverrideContextProvider,
-};
+export { init, getLoginChallengeInfo, logOut, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, UserInput, RecipeInterface, RecipeComponentsOverrideContextProvider, };
