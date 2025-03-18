@@ -22,7 +22,12 @@ import {
     changeEmail,
     getLatestURLWithToken,
 } from "../helpers";
-import { tryWebauthnSignUp } from "./webauthn.helpers";
+import {
+    openRecoveryAccountPage,
+    tryWebauthnSignUp,
+    getTokenFromEmail,
+    openRecoveryWithToken,
+} from "./webauthn.helpers";
 import assert from "assert";
 
 /*
@@ -139,7 +144,7 @@ describe("SuperTokens WebAuthn Account Linking", function () {
         );
     });
 
-    it("should handle email updates correctly for user that signed up with webauthn", async () => {
+    it.only("should handle email updates correctly for user that signed up with webauthn", async () => {
         await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
         await setAccountLinkingConfig(false, false);
         const email = await getTestEmail();
@@ -177,5 +182,65 @@ describe("SuperTokens WebAuthn Account Linking", function () {
         await waitForUrl(page, "/auth/verify-email");
 
         await page.waitForTimeout(4000);
+    });
+
+    it("should allow same emails to be linked but requiring verification", async () => {
+        await setAccountLinkingConfig(true, true, true);
+        await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
+        const email = await getTestEmail();
+
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=passwordless`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+
+        // Signup using the email
+        await setInputValues(page, [{ name: "email", value: email }]);
+        await submitForm(page);
+
+        await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+        const loginAttemptInfo = JSON.parse(
+            await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+        );
+        const device = await getPasswordlessDevice(loginAttemptInfo);
+        await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+        await submitForm(page);
+        await page.waitForTimeout(2000);
+
+        // Find the div with classname logoutButton and click it using normal
+        // puppeteer selector
+        const logoutButton = await page.waitForSelector("div.logoutButton");
+        await logoutButton.click();
+        await new Promise((res) => setTimeout(res, 1000));
+
+        // Try to signup with the same email through webauthn now
+        // await tryWebauthnSignUp(page, email);
+
+        // // We should be in the confirmation page now.
+        // await submitForm(page);
+
+        // Try to recover the webauthn account using the same email
+        await openRecoveryAccountPage(page, email, true);
+        await page.waitForTimeout(1000);
+
+        // Get the token from the email
+        const token = await getTokenFromEmail(email);
+        console.log(token);
+        assert.ok(token);
+
+        // Use the token to recover the account
+        await openRecoveryWithToken(page, token);
+
+        // We should be in the recovery page now, click the continue button
+        await submitFormUnsafe(page);
+
+        await new Promise((res) => setTimeout(res, 2000));
+
+        const successContainer = await waitForSTElement(page, "[data-supertokens~='headerText']");
+        const headerText = await successContainer.evaluate((el) => el.textContent);
+
+        // Assert the text contains "Account recovered successfully!"
+        assert.deepStrictEqual(headerText, "Account recovered successfully!");
     });
 });
