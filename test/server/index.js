@@ -177,6 +177,7 @@ function saveCode({ email, phoneNumber, preAuthSessionId, urlWithLinkCode, userI
 
 let webauthnStore = new Map();
 const saveWebauthnToken = async ({ user, recoverAccountLink }) => {
+    console.log("saveWebauthnToken", user, recoverAccountLink);
     const webauthn = webauthnStore.get(user.email) || {
         email: user.email,
         recoverAccountLink: "",
@@ -547,6 +548,7 @@ app.post("/test/create-oauth2-client", async (req, res, next) => {
 
 app.get("/test/webauthn/get-token", async (req, res) => {
     const webauthn = webauthnStore.get(req.query.email);
+    console.log("webauthn", webauthn);
     if (!webauthn) {
         res.status(404).send({ error: "Webauthn not found" });
         return;
