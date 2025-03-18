@@ -22,8 +22,8 @@ import { useUserContext } from "../../../../../usercontext";
 import { Label } from "../../../../emailpassword/components/library";
 import BackButton from "../../../../emailpassword/components/library/backButton";
 import FormBase from "../../../../emailpassword/components/library/formBase";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { defaultEmailValidator } from "../../../../emailpassword/validators";
-import { RecoverableError } from "../error/recoverableError";
 
 import type { RecoverFormProps } from "../../../types";
 
@@ -107,7 +107,7 @@ export const PasskeyRecoverAccount = withOverride("PasskeyRecoverAccount", (prop
             </div>
             {errorLabel !== undefined && (
                 <div data-supertokens="errorContainer">
-                    <RecoverableError errorMessageLabel={errorLabel} />
+                    <GeneralError error={errorLabel} />
                 </div>
             )}
             <PasskeyRecoverAccountForm {...props} setError={setErrorLabel} />

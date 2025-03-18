@@ -18,8 +18,8 @@ import { useMemo } from "react";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 import Button from "../../../../emailpassword/components/library/button";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { PasskeyNotSupportedError } from "../error/passkeyNotSupportedError";
-import { RecoverableError } from "../error/recoverableError";
 
 import { ContinueWithoutPasskey } from "./continueWithoutPasskey";
 import { PasskeyFeatureBlocks } from "./featureBlocks";
@@ -56,7 +56,7 @@ export const PasskeyConfirmation = withOverride(
                 )}
                 <PasskeyFeatureBlocks />
                 {props.errorMessageLabel !== undefined && props.errorMessageLabel !== "" && (
-                    <RecoverableError errorMessageLabel={props.errorMessageLabel} />
+                    <GeneralError error={props.errorMessageLabel} />
                 )}
                 <div data-supertokens="passkeyConfirmationFooter">
                     <Button

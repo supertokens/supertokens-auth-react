@@ -19,8 +19,8 @@ import SuperTokens from "../../../../../superTokens";
 import { useUserContext } from "../../../../../usercontext";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { handleCallAPI } from "../../../../../utils";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { ContinueWithPasskeyTheme } from "../continueWithPasskey";
-import { RecoverableError } from "../error/recoverableError";
 import { ThemeBase } from "../themeBase";
 
 import type { APIFormField } from "../../../../../types";
@@ -101,7 +101,7 @@ function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
         <UserContextWrapper userContext={props.userContext}>
             <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle, activeStyle]}>
                 <div data-supertokens="passkeySignInContainer">
-                    {error !== "" && error !== null && <RecoverableError errorMessageLabel={error} />}
+                    {error !== "" && error !== null && <GeneralError error={error} />}
                     <ContinueWithPasskeyTheme
                         {...props}
                         continueWithPasskeyClicked={handleWebauthnSignInClick}

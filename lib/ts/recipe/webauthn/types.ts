@@ -32,7 +32,6 @@ import type { SendRecoveryEmailForm } from "./components/features/sendRecoveryEm
 import type SignInForm from "./components/features/signIn";
 import type SignUpForm from "./components/features/signUp";
 import type { ContinueWithPasskeyWithOverride } from "./components/themes/continueWithPasskey";
-import type { RecoverableError } from "./components/themes/error/recoverableError";
 import type { PasskeyEmailSent } from "./components/themes/sendRecoveryEmail/emailSent";
 import type {
     PasskeyRecoverAccount,
@@ -119,7 +118,6 @@ export type ComponentOverrideMap = {
     PasskeySendRecoveryEmailForm_Override?: ComponentOverride<typeof SendRecoveryEmailForm>;
     PasskeyContinueWithPasskey_Override?: ComponentOverride<typeof ContinueWithPasskeyWithOverride>;
     PasskeyNotSupportedError_Override?: ComponentOverride<typeof PasskeyNotSupportedError>;
-    PasskeyRecoverableError_Override?: ComponentOverride<typeof RecoverableError>;
     PasskeyEmailSent_Override?: ComponentOverride<typeof PasskeyEmailSent>;
     PasskeyRecoverAccountForm_Override?: ComponentOverride<typeof PasskeyRecoverAccountForm>;
     PasskeyRecoverAccount_Override?: ComponentOverride<typeof PasskeyRecoverAccount>;
