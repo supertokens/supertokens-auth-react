@@ -18,6 +18,9 @@ import {
     setInputValues,
     setAccountLinkingConfig,
     getPasswordlessDevice,
+    waitForUrl,
+    changeEmail,
+    getLatestURLWithToken,
 } from "../helpers";
 import { tryWebauthnSignUp } from "./webauthn.helpers";
 import assert from "assert";
@@ -48,6 +51,7 @@ describe("SuperTokens WebAuthn Account Linking", function () {
             "webauthn",
             "emailpassword",
             "passwordless",
+            "emailverification",
             "session",
             "dashboard",
             "userroles",
@@ -133,5 +137,45 @@ describe("SuperTokens WebAuthn Account Linking", function () {
             userId2,
             "Different auth methods with same email should create separate users when account linking is disabled"
         );
+    });
+
+    it("should handle email updates correctly for user that signed up with webauthn", async () => {
+        await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
+        await setAccountLinkingConfig(false, false);
+        const email = await getTestEmail();
+
+        await tryWebauthnSignUp(page, email);
+
+        // We should be in the confirmation page now.
+        await submitForm(page);
+
+        await waitForUrl(page, "/auth/verify-email");
+
+        // we wait for email to be created
+        await new Promise((r) => setTimeout(r, 1000));
+
+        // we fetch the email verification link and go to that
+        const latestURLWithToken = await getLatestURLWithToken();
+        await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
+
+        // click on the continue button
+        await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+        await waitForUrl(page, "/dashboard");
+
+        await page.waitForTimeout(4000);
+
+        // Change the email for the webauthn user
+        const recipeUserId = await page.evaluate(() => document.querySelector(".session-context-userId").textContent);
+        const newEmail = getTestEmail("new");
+        const res = await changeEmail("webauthn", recipeUserId, newEmail, null);
+
+        // Sign in with the new email
+        await tryWebauthnSignIn(page);
+
+        // Since mode is required, user should be redirected to verify email
+        // screen as the email was changed and the new email is not verified.
+        await waitForUrl(page, "/auth/verify-email");
+
+        await page.waitForTimeout(4000);
     });
 });
