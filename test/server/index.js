@@ -154,6 +154,7 @@ function saveCode({ email, phoneNumber, preAuthSessionId, urlWithLinkCode, userI
 
 let webauthnStore = new Map();
 const saveWebauthnToken = async ({ user, recoverAccountLink }) => {
+    console.log("saveWebauthnToken", user, recoverAccountLink);
     const webauthn = webauthnStore.get(user.email) || {
         email: user.email,
         recoverAccountLink: "",
