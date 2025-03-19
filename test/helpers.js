@@ -1224,7 +1224,7 @@ export async function setupST({
     passwordlessContactMethod,
     mfaInfo = {},
 } = {}) {
-    await fetch(`${TEST_SERVER_BASE_URL}/test/setup/st`, {
+    await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setup/st`, {
         method: "POST",
         headers: new Headers([["content-type", "application/json"]]),
         body: JSON.stringify({
