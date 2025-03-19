@@ -42,7 +42,7 @@ export function useChildProps(
     clearError: () => void,
     resetFactorList: () => void,
     onSignInUpSwitcherClick: () => void,
-    originalFactorIds: string[],
+    showBackButton: boolean,
     isPasskeySupported: boolean
 ): SignInThemeProps {
     const session = useSessionContext();
@@ -79,12 +79,12 @@ export function useChildProps(
                 onError("SOMETHING_WENT_WRONG_ERROR");
             },
             factorIds,
-            originalFactorIds,
             recipeImplementation: recipeImplementation,
             config: recipe.config,
             resetFactorList: resetFactorList,
             onSignInUpSwitcherClick,
             isPasskeySupported,
+            showBackButton,
         };
     }, [error, factorIds, userContext, recipeImplementation]);
 }
@@ -127,8 +127,8 @@ const SignInFeatureInner: React.FC<
         props.clearError,
         props.resetFactorList,
         props.onSignInUpSwitcherClick,
-        props.originalFactorIds,
-        isPasskeySupported
+        isPasskeySupported,
+        props.showBackButton
     )!;
 
     return (

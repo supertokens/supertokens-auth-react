@@ -431,7 +431,7 @@ export type AuthComponentProps = {
     error: string | undefined;
     onError: (err: string) => void;
     clearError: () => void;
-    originalFactorIds: string[];
+    showBackButton: boolean;
     children?: React.ReactNode;
 };
 export type PartialAuthComponentProps = AuthComponentProps;

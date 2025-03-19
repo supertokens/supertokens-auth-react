@@ -50,7 +50,7 @@ export const SignUpFormInner = withOverride(
     ): JSX.Element {
         const t = useTranslation();
         const defaultFooter =
-            props.resetFactorList !== undefined && props.originalFactorIds.length > 1 ? (
+            props.resetFactorList !== undefined && props.showBackButton ? (
                 <ContinueWithoutPasskey onClick={props.resetFactorList} />
             ) : undefined;
 

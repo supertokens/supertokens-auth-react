@@ -117,7 +117,7 @@ export declare type SignUpThemeBaseProps = {
     userContext: UserContext;
     resetFactorList: () => void;
     onSignInUpSwitcherClick: () => void;
-    originalFactorIds: string[];
+    showBackButton: boolean;
 };
 export declare type SignUpThemeProps = SignUpThemeBaseProps & {
     onRecoverAccountClick: () => void;
@@ -134,7 +134,7 @@ export declare type SignUpFormProps = {
     config: NormalisedConfig;
     onSuccess?: (result: { createdNewRecipeUser: boolean; user: User }) => void;
     resetFactorList?: () => void;
-    originalFactorIds: string[];
+    showBackButton: boolean;
 };
 export declare type RecoverAccountWithTokenProps = {
     userContext?: UserContext | undefined;

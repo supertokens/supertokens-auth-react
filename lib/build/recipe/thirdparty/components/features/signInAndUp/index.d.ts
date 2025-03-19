@@ -15,7 +15,7 @@ export declare function useChildProps(
     userContext: UserContext,
     resetFactorList: () => void,
     onSignInUpSwitcherClick: () => void,
-    originalFactorIds: string[] | undefined
+    showBackButton: boolean
 ): SignInAndUpThemeProps;
 declare type PropType = PartialAuthComponentProps & {
     recipe: Recipe;

@@ -54,7 +54,7 @@ function PasskeySignUpTheme(props: SignUpThemeProps): JSX.Element {
                                 onSignInUpSwitcherClick={props.onSignInUpSwitcherClick}
                                 hasSeparateSignUpView={true}
                                 resetFactorList={props.resetFactorList}
-                                showBackButton={props.originalFactorIds.length > 1}
+                                showBackButton={props.showBackButton}
                                 oauth2ClientInfo={undefined}
                                 headerLabel={
                                     activeScreen === SignUpScreen.PasskeyConfirmation

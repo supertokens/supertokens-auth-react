@@ -42,7 +42,7 @@ export const PasskeyConfirmation = withOverride(
         const t = useTranslation();
 
         const showContinueWithoutPasskey = useMemo(
-            () => props.hideContinueWithoutPasskey !== true && (props.originalFactorIds ?? []).length > 1,
+            () => props.hideContinueWithoutPasskey !== true && props.showBackButton === true,
             [props]
         );
 

@@ -89,5 +89,4 @@ export type AuthPageThemeProps = {
 
     userContext: UserContext;
     navigate: Navigate | undefined;
-    originalFactorIds: string[] | undefined;
 };

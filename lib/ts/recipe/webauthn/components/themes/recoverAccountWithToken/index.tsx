@@ -71,8 +71,8 @@ function PasskeyRecoverAccountWithTokenTheme(props: RecoverAccountWithTokenTheme
                     isLoading={props.isLoading}
                     hideContinueWithoutPasskey
                     isContinueDisabled={props.registerOptions === null}
-                    originalFactorIds={[]} // Doesn't matter since we anyway hide the button
                     isPasskeySupported={isPasskeySupported}
+                    showBackButton={false}
                 />
             );
         } else if (props.activeScreen === RecoverAccountScreen.Success) {

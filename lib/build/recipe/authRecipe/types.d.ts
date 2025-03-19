@@ -62,6 +62,5 @@ export declare type AuthPageThemeProps = {
     termsOfServiceLink: string | undefined;
     userContext: UserContext;
     navigate: Navigate | undefined;
-    originalFactorIds: string[] | undefined;
 };
 export {};
