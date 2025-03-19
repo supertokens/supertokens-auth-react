@@ -116,14 +116,44 @@ describe("SuperTokens Email Verification", function () {
         }
     });
 
-    describe("Email verification screen", function () {
-        beforeEach(async function () {
-            page = await browser.newPage();
-            consoleLogs = [];
-            page.on("console", (consoleObj) => {
-                const log = consoleObj.text();
-                if (log.startsWith("ST_LOGS")) {
-                    consoleLogs.push(log);
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
+    });
+
+    describe("Core", function () {
+        describe.only("Email verification screen", function () {
+            it("Should redirect to auth from email verification protected page if the user is deleted", async function () {
+                await toggleSignInSignUp(page);
+
+                const email = await getTestEmail();
+                const { fieldValues, postValues } = getDefaultSignUpFieldValues({ email });
+                await signUp(page, fieldValues, postValues, "emailpassword");
+
+                await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+
+                await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/deleteUser`, {
+                    method: "POST",
+                    headers: [["content-type", "application/json"]],
+                    body: JSON.stringify({
+                        email,
+                        rid: "emailpassword",
+                    }),
+                });
+                await new Promise((r) => setTimeout(r, 11000));
+                consoleLogs = [];
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/dashboard`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                // In strict mode useEffects may be called twice in development mode,
+                // but sometimes the second call is aborted by the navigation in the first
+                if (
+                    consoleLogs[consoleLogs.length - 1] === "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH" &&
+                    consoleLogs[consoleLogs.length - 2] === "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH"
+                ) {
+                    consoleLogs.pop();
                 }
             });
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
