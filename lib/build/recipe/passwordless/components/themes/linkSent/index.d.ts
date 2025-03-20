@@ -1,11 +1,7 @@
 /// <reference types="react" />
 import type { UserContext } from "../../../../../types";
 import type { LinkSentThemeProps } from "../../../types";
-export declare const LinkSent: import("react").ComponentType<
-    LinkSentThemeProps & {
-        children?: import("react").ReactNode;
-    }
->;
+export declare const LinkSent: import("react").ComponentType<LinkSentThemeProps>;
 declare function LinkSentWrapper(
     props: LinkSentThemeProps & {
         userContext: UserContext;

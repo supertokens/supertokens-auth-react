@@ -25,6 +25,10 @@ export function getTestContext() {
         signoutOnSessionNotExists: localStorage.getItem("signoutOnSessionNotExists") === "true",
         disableRedirectionAfterSuccessfulSignInUp:
             localStorage.getItem("disableRedirectionAfterSuccessfulSignInUp") === "true",
+        throwWebauthnError: localStorage.getItem("throwWebauthnError") === "true",
+        webauthnErrorStatus: localStorage.getItem("webauthnErrorStatus") || undefined,
+        webauthnRecoverAccountErrorStatus: localStorage.getItem("webauthnRecoverAccountErrorStatus") || undefined,
+        overrideWebauthnSupport: localStorage.getItem("overrideWebauthnSupport"),
     };
     return ret;
 }
@@ -41,6 +45,7 @@ export function getEnabledRecipes() {
             "thirdpartyemailpassword",
             "passwordless",
             "thirdpartypasswordless",
+            "webauthn",
         ];
     } else if (testContext.clientRecipeListForDynamicLogin) {
         enabledRecipes = JSON.parse(testContext.clientRecipeListForDynamicLogin);
@@ -51,6 +56,7 @@ export function getEnabledRecipes() {
             "thirdpartyemailpassword",
             "passwordless",
             "thirdpartypasswordless",
+            "webauthn",
         ];
     } else {
         if (testContext.authRecipe === "both") {

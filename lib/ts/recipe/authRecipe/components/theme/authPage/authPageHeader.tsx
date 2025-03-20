@@ -27,6 +27,8 @@ export const AuthPageHeader = withOverride(
         showBackButton,
         resetFactorList,
         oauth2ClientInfo,
+        headerLabel,
+        hideSignInSwitcher = false,
     }: {
         factorIds: string[];
         isSignUp: boolean;
@@ -39,6 +41,8 @@ export const AuthPageHeader = withOverride(
             clientUri?: string;
             clientName: string;
         };
+        headerLabel?: string;
+        hideSignInSwitcher?: boolean;
     }): JSX.Element {
         const t = useTranslation();
 
@@ -59,7 +63,9 @@ export const AuthPageHeader = withOverride(
                             {/* empty span for spacing the back button */}
                         </span>
                     )}
-                    {!hasSeparateSignUpView
+                    {headerLabel !== undefined
+                        ? t(headerLabel)
+                        : !hasSeparateSignUpView
                         ? t("AUTH_PAGE_HEADER_TITLE_SIGN_IN_AND_UP")
                         : isSignUp
                         ? t("AUTH_PAGE_HEADER_TITLE_SIGN_UP")
@@ -86,7 +92,8 @@ export const AuthPageHeader = withOverride(
                             )}
                         </div>
                     )}
-                {hasSeparateSignUpView &&
+                {!hideSignInSwitcher &&
+                    hasSeparateSignUpView &&
                     (!isSignUp ? (
                         <div data-supertokens="headerSubtitle secondaryText">
                             {t("AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_START")}

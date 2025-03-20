@@ -105,4 +105,5 @@ export declare const FactorIds: {
     readonly LINK_PHONE: "link-phone";
     readonly THIRDPARTY: "thirdparty";
     readonly TOTP: "totp";
+    readonly WEBAUTHN: "webauthn";
 };

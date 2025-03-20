@@ -2,6 +2,7 @@ import SuperTokens from "../lib/ts/superTokens";
 import SessionRecipe from "../lib/ts/recipe/session/recipe";
 import Session from "../lib/ts/recipe/session";
 import Passwordless from "../lib/ts/recipe/passwordless";
+import Webauthn from "../lib/ts/recipe/webauthn";
 import PasswordlessRecipe from "../lib/ts/recipe/passwordless/recipe";
 import EmailPassword from "../lib/ts/recipe/emailpassword";
 import EmailPasswordRecipe from "../lib/ts/recipe/emailpassword/recipe";
@@ -24,6 +25,7 @@ import Provider from "../lib/ts/recipe/thirdparty/providers";
 import { ThirdPartyPreBuiltUI } from "../lib/ts/recipe/thirdparty/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "../lib/ts/recipe/emailpassword/prebuiltui";
 import { PasswordlessPreBuiltUI } from "../lib/ts/recipe/passwordless/prebuiltui";
+import { WebauthnPreBuiltUI } from "../lib/ts/recipe/webauthn/prebuiltui";
 import { MultiFactorAuthPreBuiltUI } from "../lib/ts/recipe/multifactorauth/prebuiltui";
 import SuperTokensWebJS from "supertokens-web-js/lib/build/supertokens";
 import { AdditionalLoginAttemptInfoProperties, LoginAttemptInfo } from "../lib/ts/recipe/passwordless/types";
@@ -97,7 +99,14 @@ export function resetAndInitST(
     });
 }
 
-export type FirstFactor = "otp-phone" | "otp-email" | "link-phone" | "link-email" | "thirdparty" | "emailpassword";
+export type FirstFactor =
+    | "otp-phone"
+    | "otp-email"
+    | "link-phone"
+    | "link-email"
+    | "thirdparty"
+    | "emailpassword"
+    | "webauthn";
 export type ProviderId = "google" | "github";
 
 export type AuthPageConf = {
@@ -131,6 +140,9 @@ export type AuthPageConf = {
         clientName: string;
         logoUri: string;
         clientUri: string;
+    };
+    webauthn: {
+        initialized: boolean;
     };
 };
 
@@ -241,6 +253,17 @@ export function buildInit(args: AuthPageConf, funcOverrides: any) {
                 },
             }) as any
         );
+    }
+
+    if (args.webauthn.initialized) {
+        recipeList.push(
+            Webauthn.init({
+                override: {
+                    functions: funcOverrides?.webauthn || ((i) => i),
+                },
+            } as any)
+        );
+        prebuiltUIs.push(WebauthnPreBuiltUI);
     }
 
     return {

@@ -29,7 +29,7 @@ import {
     getLogoutButton,
     signUp,
     toggleSignInSignUp,
-    loginWithAuth0,
+    loginWithMockProvider,
     getLoginWithRedirectToSignIn,
     getLoginWithRedirectToSignUp,
     getAuthPageHeaderText,
@@ -284,11 +284,11 @@ describe("SuperTokens Third Party Email Password", function () {
             await waitForSTElement(page, "[data-supertokens~=generalError]", true);
         });
 
-        it("Successful signin/up with auth0", async function () {
+        it("Successful signin/up", async function () {
             await assertProviders(page);
-            await clickOnProviderButton(page, "Auth0");
+            await clickOnProviderButton(page, "Mock Provider");
             await Promise.all([
-                loginWithAuth0(page),
+                loginWithMockProvider(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             await page.waitForSelector(".sessionInfo-user-id");
@@ -339,10 +339,10 @@ describe("SuperTokens Third Party Email Password", function () {
             await Promise.all([await logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             await waitForUrl(page, "/auth");
-            // 2. Sign in with auth0 with same address.
-            await clickOnProviderButton(page, "Auth0");
+            // 2. Sign in with SSO with same address.
+            await clickOnProviderButton(page, "Mock Provider");
             await Promise.all([
-                loginWithAuth0(page),
+                loginWithMockProvider(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             await waitForUrl(page, "/dashboard");

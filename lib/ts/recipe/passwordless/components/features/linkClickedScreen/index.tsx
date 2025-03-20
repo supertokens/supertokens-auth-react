@@ -168,7 +168,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     );
 
     const handleConsumeError = useCallback(
-        (err) => {
+        (err: any) => {
             if (STGeneralError.isThisError(err)) {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
                     navigate: props.navigate,

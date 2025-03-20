@@ -11,7 +11,5 @@ export declare const SubmitNewPassword: import("react").ComponentType<
         config: import("../../../types").NormalisedConfig;
         onSignInClicked: () => void;
         token: string;
-    } & {
-        children?: import("react").ReactNode;
     }
 >;

@@ -36,6 +36,7 @@ export function AuthPageTheme(props: AuthPageThemeProps): JSX.Element {
                 {props.fullPageCompWithPreloadedInfo.component({
                     ...props,
                     preloadInfo: props.fullPageCompWithPreloadedInfo.preloadInfo,
+                    showBackButton: props.showBackButton,
                 })}
             </>
         );

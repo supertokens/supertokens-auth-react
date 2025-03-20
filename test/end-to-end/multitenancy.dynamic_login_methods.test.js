@@ -34,13 +34,14 @@ import {
     loginWithGoogle,
     clearBrowserCookiesWithoutAffectingConsole,
     clickOnProviderButton,
-    loginWithAuth0,
+    loginWithMockProvider,
     isMultitenancySupported,
     isMultitenancyManagementEndpointsSupported,
     setupTenant,
     backendBeforeEach,
     getTextByDataSupertokens,
     setupBrowser,
+    loginWithAuth0,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,

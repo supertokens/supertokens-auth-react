@@ -23,6 +23,8 @@ export default [
             emailverificationprebuiltui: "lib/ts/recipe/emailverification/prebuiltui.tsx",
             emailpassword: "lib/ts/recipe/emailpassword/index.ts",
             emailpasswordprebuiltui: "lib/ts/recipe/emailpassword/prebuiltui.tsx",
+            webauthn: "lib/ts/recipe/webauthn/index.ts",
+            webauthnprebuiltui: "lib/ts/recipe/webauthn/prebuiltui.tsx",
             passwordless: "lib/ts/recipe/passwordless/index.ts",
             passwordlessprebuiltui: "lib/ts/recipe/passwordless/prebuiltui.tsx",
             oauth2provider: "lib/ts/recipe/oauth2provider/index.ts",

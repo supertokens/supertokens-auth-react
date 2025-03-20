@@ -17,6 +17,9 @@
     --palette-textGray: 54, 54, 54;
     --palette-superTokensBrandingBackground: 242, 245, 246;
     --palette-superTokensBrandingText: 173, 189, 196;
+    --palette-buttonGreyedOut: 221, 221, 221;
+    --palette-caution: 124, 96, 62;
+    --palette-errorDark: 207, 54, 68;
 
     --font-size-0: 12px;
     --font-size-1: 14px;
@@ -255,6 +258,18 @@
     background-size: 12000%;
     cursor: pointer;
 }
+[data-supertokens~="buttonGreyedOut"] {
+    background-color: rgb(var(--palette-buttonGreyedOut));
+    border-color: rgb(var(--palette-buttonGreyedOut));
+}
+
+[data-supertokens~="buttonWithIcon"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
 [data-supertokens~="button"]:disabled {
     border: none;
     cursor: no-drop;

@@ -508,7 +508,7 @@ async function buildAndSetChildProps(
 
     for (const a of authComps) {
         if (a.type === "FULL_PAGE") {
-            const preloadRes = await a.preloadInfoAndRunChecks(firstFactors, userContext);
+            const preloadRes = await a.preloadInfoAndRunChecks(firstFactors, userContext, isSignUp);
             // We skip setting if the auth page unmounted while we were checking
             // if we should show any full page comps
             if (abort.aborted) {
