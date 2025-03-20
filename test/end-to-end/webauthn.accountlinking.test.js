@@ -222,7 +222,7 @@ describe("SuperTokens WebAuthn Account Linking", function () {
         await submitForm(page);
 
         await page.waitForTimeout(1000);
-        await waitForSTElement(page, "[data-supertokens~='passkeyRecoverableErrorContainer']");
+        await waitForSTElement(page, "[data-supertokens~='generalError']");
 
         // Try to recover the webauthn account using the same email
         await openRecoveryAccountPage(page, email, true);
