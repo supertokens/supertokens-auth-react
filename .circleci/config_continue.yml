@@ -23,6 +23,8 @@ jobs:
                   root: / # relative path to our working directory
                   paths:
                       - usr/lib/node_modules
+                      - usr/java
+                      - usr/bin
                       - root/project/node_modules
                       - root/project/test/server/node_modules
                       - root/project/examples/for-tests/node_modules
