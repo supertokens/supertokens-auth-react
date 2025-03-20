@@ -1100,6 +1100,14 @@ export async function isOauth2Supported() {
     return true;
 }
 
+export async function isWebauthnSupported() {
+    const features = await getFeatureFlags();
+    if (!features.includes("webauthn")) {
+        return false;
+    }
+
+    return true;
+}
 /**
  * For example setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "EMAIL_PASSWORD_SIGN_UP", page) to
  * set for signUp in email password

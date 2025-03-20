@@ -8,6 +8,7 @@ import {
     toggleSignInSignUp,
     waitForSTElement,
     getTestEmail,
+    isWebauthnSupported,
 } from "../helpers";
 import { openRecoveryAccountPage, signUpAndSendRecoveryEmail, getTokenFromEmail } from "./webauthn.helpers";
 import assert from "assert";
@@ -16,8 +17,13 @@ describe("SuperTokens Webauthn Recovery Email", () => {
     let browser;
     let page;
     let consoleLogs = [];
+    let skipped = false;
 
     before(async function () {
+        if (!(await isWebauthnSupported())) {
+            skipped = true;
+            this.skip();
+        }
         await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
@@ -35,6 +41,9 @@ describe("SuperTokens Webauthn Recovery Email", () => {
     });
 
     after(async function () {
+        if (skipped) {
+            return;
+        }
         await browser.close();
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
             method: "POST",
@@ -77,7 +86,7 @@ describe("SuperTokens Webauthn Recovery Email", () => {
                 "ST_LOGS WEBAUTHN PRE_API_HOOKS SIGN_UP",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS undefined",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS WEBAUTHN",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS SESSION OVERRIDE SIGN_OUT",
                 "ST_LOGS SESSION PRE_API_HOOKS SIGN_OUT",

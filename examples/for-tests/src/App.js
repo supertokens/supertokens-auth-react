@@ -473,6 +473,7 @@ if (!window.location.pathname.startsWith("/mockProvider")) {
                     passwordless: "PASSWORDLESS",
                     thirdpartypasswordless: "THIRDPARTYPASSWORDLESS",
                     thirdpartyemailpassword: "THIRD_PARTY_EMAIL_PASSWORD",
+                    webauthn: "WEBAUTHN",
                 }[context.recipeId];
 
                 console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`);
@@ -1337,8 +1338,8 @@ function getWebauthnConfigs({
                         // the default values.
                         return {
                             status: "OK",
-                            browserSupportsWebAuthn: false,
-                            platformAuthenticatorIsAvailable: false,
+                            browserSupportsWebauthn: true,
+                            platformAuthenticatorIsAvailable: true,
                         };
                     },
                 };

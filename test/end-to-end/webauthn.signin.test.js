@@ -9,6 +9,9 @@ import {
     setEnabledRecipes,
     waitForSTElement,
     submitFormUnsafe,
+    waitForUrl,
+    getUserIdFromSessionContext,
+    isWebauthnSupported,
 } from "../helpers";
 import { tryWebauthnSignIn } from "./webauthn.helpers";
 import assert from "assert";
@@ -17,15 +20,20 @@ describe("SuperTokens Webauthn SignIn", () => {
     let browser;
     let page;
     let consoleLogs = [];
+    let skipped = false;
 
     before(async function () {
+        if (!(await isWebauthnSupported())) {
+            skipped = true;
+            this.skip();
+        }
         await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
         }).catch(console.error);
 
-        await setEnabledRecipes(["webauthn", "emailpassword", "session", "dashboard", "userroles"]);
+        await setEnabledRecipes(["webauthn", "emailpassword", "session", "dashboard", "userroles", "multifactorauth"]);
 
         browser = await setupBrowser();
         page = await browser.newPage();
@@ -38,6 +46,9 @@ describe("SuperTokens Webauthn SignIn", () => {
     });
 
     after(async function () {
+        if (skipped) {
+            return;
+        }
         await browser.close();
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
             method: "POST",
@@ -62,11 +73,25 @@ describe("SuperTokens Webauthn SignIn", () => {
         it("signup with passkey", async () => {
             // Override to enable webauthn support
             await page.evaluateOnNewDocument(() => {
-                localStorage.setItem("overrideWebauthnSupport", "true");
+                localStorage.setItem(
+                    "overrideWebauthnSupport",
+                    JSON.stringify({
+                        status: "OK",
+                        browserSupportsWebauthn: true,
+                        platformAuthenticatorIsAvailable: true,
+                    })
+                );
             });
 
             await tryWebauthnSignIn(page);
-            await page.waitForTimeout(3000);
+
+            // Redirected to onSuccessFulRedirectUrl
+            const onSuccessFulRedirectUrl = "/dashboard";
+            // Session.doesSessionExist returns true, allow to stay on /dashboard
+            await waitForUrl(page, onSuccessFulRedirectUrl);
+
+            // Test that sessionInfo was fetched successfully
+            await getUserIdFromSessionContext(page);
 
             // Most of the sign-in mock is defined in the override for the web
             // test server.
@@ -88,6 +113,8 @@ describe("SuperTokens Webauthn SignIn", () => {
                 "ST_LOGS WEBAUTHN OVERRIDE SIGN IN",
                 "ST_LOGS WEBAUTHN PRE_API_HOOKS SIGN_IN",
                 "ST_LOGS SESSION ON_HANDLE_EVENT ACCESS_TOKEN_PAYLOAD_UPDATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS WEBAUTHN",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
         });

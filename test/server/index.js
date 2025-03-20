@@ -531,6 +531,9 @@ app.get("/test/featureFlags", (req, res) => {
     available.push("recipeConfig");
     available.push("oauth2");
     available.push("accountlinking-fixes");
+    if (Webauthn) {
+        available.push("webauthn");
+    }
 
     res.send({
         available,

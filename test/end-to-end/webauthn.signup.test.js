@@ -11,6 +11,9 @@ import {
     submitFormUnsafe,
     setEnabledRecipes,
     setInputValues,
+    isWebauthnSupported,
+    waitForUrl,
+    getUserIdFromSessionContext,
 } from "../helpers";
 import { tryWebauthnSignUp, openWebauthnSignUp } from "./webauthn.helpers";
 import assert from "assert";
@@ -19,15 +22,21 @@ describe("SuperTokens Webauthn SignUp", () => {
     let browser;
     let page;
     let consoleLogs = [];
+    let skipped = false;
 
     before(async function () {
+        if (!(await isWebauthnSupported())) {
+            skipped = true;
+            this.skip();
+        }
+
         await backendBeforeEach();
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
         }).catch(console.error);
 
-        await setEnabledRecipes(["webauthn", "emailpassword", "session", "dashboard", "userroles"]);
+        await setEnabledRecipes(["webauthn", "emailpassword", "session", "dashboard", "userroles", "multifactorauth"]);
 
         browser = await setupBrowser();
         page = await browser.newPage();
@@ -40,6 +49,10 @@ describe("SuperTokens Webauthn SignUp", () => {
     });
 
     after(async function () {
+        if (skipped) {
+            return;
+        }
+
         await browser.close();
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
             method: "POST",
@@ -62,7 +75,7 @@ describe("SuperTokens Webauthn SignUp", () => {
 
     describe("SignUp test", () => {
         it("should not show the back button and continue without passkey button if there is only one recipe", async () => {
-            await setEnabledRecipes(["webauthn"]);
+            await setEnabledRecipes(["webauthn", "multifactorauth"]);
             await openWebauthnSignUp(page);
 
             // Use puppeteer to check if the back button is not shown
@@ -87,7 +100,14 @@ describe("SuperTokens Webauthn SignUp", () => {
             assert.strictEqual(continueWithoutPasskeyBtnAfterSubmit, null);
 
             // Reset the recipes after test is done
-            await setEnabledRecipes(["webauthn", "emailpassword", "session", "dashboard", "userroles"]);
+            await setEnabledRecipes([
+                "webauthn",
+                "emailpassword",
+                "session",
+                "dashboard",
+                "userroles",
+                "multifactorauth",
+            ]);
         });
         it("should show the create a passkey successfully", async () => {
             const email = await getTestEmail();
@@ -108,7 +128,13 @@ describe("SuperTokens Webauthn SignUp", () => {
 
             // We should be in the confirmation page now.
             await submitFormUnsafe(page);
-            await page.waitForTimeout(2000);
+            // Redirected to onSuccessFulRedirectUrl
+            const onSuccessFulRedirectUrl = "/dashboard";
+            // Session.doesSessionExist returns true, allow to stay on /dashboard
+            await waitForUrl(page, onSuccessFulRedirectUrl);
+
+            // Test that sessionInfo was fetched successfully
+            await getUserIdFromSessionContext(page);
 
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
@@ -121,6 +147,8 @@ describe("SuperTokens Webauthn SignUp", () => {
                 "ST_LOGS WEBAUTHN PRE_API_HOOKS SIGN_UP",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS WEBAUTHN",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
         });
         it("should successfully throw an error if the user already exists", async () => {
@@ -128,7 +156,13 @@ describe("SuperTokens Webauthn SignUp", () => {
             await tryWebauthnSignUp(page, email);
 
             await submitFormUnsafe(page);
-            await page.waitForTimeout(2000);
+            // Redirected to onSuccessFulRedirectUrl
+            const onSuccessFulRedirectUrl = "/dashboard";
+            // Session.doesSessionExist returns true, allow to stay on /dashboard
+            await waitForUrl(page, onSuccessFulRedirectUrl);
+
+            // Test that sessionInfo was fetched successfully
+            await getUserIdFromSessionContext(page);
 
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
@@ -140,6 +174,8 @@ describe("SuperTokens Webauthn SignUp", () => {
                 "ST_LOGS WEBAUTHN OVERRIDE SIGN UP",
                 "ST_LOGS WEBAUTHN PRE_API_HOOKS SIGN_UP",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS WEBAUTHN",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
 
@@ -151,7 +187,6 @@ describe("SuperTokens Webauthn SignUp", () => {
 
             // We should be in the confirmation page now.
             await submitFormUnsafe(page);
-            await page.waitForTimeout(1000);
 
             const errorTextContainer = await waitForSTElement(page, "[data-supertokens~='generalError']");
             const errorText = await errorTextContainer.evaluate((el) => el.textContent);
@@ -167,6 +202,8 @@ describe("SuperTokens Webauthn SignUp", () => {
                 "ST_LOGS WEBAUTHN OVERRIDE SIGN UP",
                 "ST_LOGS WEBAUTHN PRE_API_HOOKS SIGN_UP",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS WEBAUTHN",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -295,7 +332,14 @@ describe("SuperTokens Webauthn SignUp", () => {
         });
         it("should show that webauthn is not supported on the browser", async () => {
             await page.evaluateOnNewDocument(() => {
-                localStorage.setItem("overrideWebauthnSupport", "true");
+                localStorage.setItem(
+                    "overrideWebauthnSupport",
+                    JSON.stringify({
+                        status: "OK",
+                        browserSupportsWebauthn: false,
+                        platformAuthenticatorIsAvailable: false,
+                    })
+                );
             });
 
             const email = await getTestEmail();

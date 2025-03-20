@@ -125,20 +125,6 @@
     margin-top: 9px;
 }
 
-[data-supertokens~="passkeyRecoverableErrorContainer"] {
-    margin-top: 15px;
-    border-radius: 6px;
-    background-color: #fceaeb;
-    color: rgb(var(--palette-errorDark));
-    padding: 10px;
-    font-size: var(--font-size-1);
-    font-weight: 400;
-    line-height: 16.59px;
-    text-align: center;
-    text-underline-position: from-font;
-    text-decoration-skip-ink: none;
-}
-
 [data-supertokens~="passkeyConfirmationContainer"] [data-supertokens~="passkeyConfirmationFooter"] {
     margin-top: 25px;
 }
