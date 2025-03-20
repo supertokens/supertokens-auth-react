@@ -911,6 +911,11 @@ function getWebauthnConfigs({
                     ...implementation,
                     getRegisterOptions(...args) {
                         log(`GET REGISTER OPTIONS`);
+
+                        if (throwWebauthnError) {
+                            throw new STGeneralError("TEST ERROR");
+                        }
+
                         return implementation.getRegisterOptions(...args);
                     },
                     async getSignInOptions(...args) {
