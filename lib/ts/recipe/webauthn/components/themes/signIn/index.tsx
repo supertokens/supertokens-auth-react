@@ -106,7 +106,7 @@ function PasskeySignInTheme(props: SignInThemeProps): JSX.Element {
                         {...props}
                         continueWithPasskeyClicked={handleWebauthnSignInClick}
                         config={props.config}
-                        continueFor="SIGN_IN"
+                        continueTo="SIGN_IN"
                         isLoading={isLoading}
                         isPasskeySupported={props.isPasskeySupported}
                     />

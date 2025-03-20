@@ -4,7 +4,7 @@ import type { Config, NormalisedConfig } from "./types";
 import type { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/webauthn";
 
-export function normaliseWebauthnConfig(config: Config): NormalisedConfig {
+export function normaliseWebauthnConfig(config?: Config): NormalisedConfig {
     if (config === undefined) {
         config = {};
     }

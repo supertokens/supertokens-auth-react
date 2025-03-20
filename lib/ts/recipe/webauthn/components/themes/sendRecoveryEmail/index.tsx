@@ -6,8 +6,8 @@ import GeneralError from "../../../../emailpassword/components/library/generalEr
 import { SendRecoveryEmailScreen } from "../../../types";
 import { ThemeBase } from "../themeBase";
 
-import { PasskeyEmailSent } from "./emailSent";
-import { PasskeyRecoverAccount } from "./recoverAccountForm";
+import { PasskeyRecoveryEmailSent } from "./emailSent";
+import { WebauthnRecoverAccount } from "./recoverAccountForm";
 
 import type { SendRecoveryEmailFormThemeProps } from "../../../types";
 
@@ -18,13 +18,13 @@ export const SendRecoveryEmailFormThemeInner = (
     }
 ): JSX.Element | null => {
     return props.activeScreen === SendRecoveryEmailScreen.RecoverAccount ? (
-        <PasskeyRecoverAccount
+        <WebauthnRecoverAccount
             onSuccess={props.onRecoverAccountFormSuccess}
             onBackClick={props.onRecoverAccountBackClick}
             recipeImplementation={props.recipeImplementation}
         />
     ) : props.activeScreen === SendRecoveryEmailScreen.RecoverEmailSent ? (
-        <PasskeyEmailSent email={props.recoverAccountEmail} onEmailChangeClick={props.onEmailChangeClick} />
+        <PasskeyRecoveryEmailSent email={props.recoverAccountEmail} onEmailChangeClick={props.onEmailChangeClick} />
     ) : null;
 };
 

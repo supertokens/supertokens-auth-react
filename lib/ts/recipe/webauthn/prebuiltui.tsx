@@ -4,7 +4,6 @@ import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { FactorIds } from "../multifactorauth";
 import { RecipeRouter } from "../recipeRouter";
-import SessionAuth from "../session/sessionAuth";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
 import { RecoverAccountUsingToken } from "./components/features/recoverAccountWithToken";
@@ -100,25 +99,21 @@ export class WebauthnPreBuiltUI extends RecipeRouter {
         if (componentName === "webauthn-recover-account") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
-                    <SessionAuth requireAuth={false} doRedirection={false}>
-                        <RecoverAccountUsingToken
-                            recipe={this.recipeInstance}
-                            {...props}
-                            useComponentOverrides={useComponentOverrides}
-                        />
-                    </SessionAuth>
+                    <RecoverAccountUsingToken
+                        recipe={this.recipeInstance}
+                        {...props}
+                        useComponentOverrides={useComponentOverrides}
+                    />
                 </UserContextWrapper>
             );
         } else if (componentName === "webauthn-send-recovery-email") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
-                    <SessionAuth requireAuth={false} doRedirection={false}>
-                        <SendRecoveryEmailForm
-                            recipe={this.recipeInstance}
-                            {...props}
-                            useComponentOverrides={useComponentOverrides}
-                        />
-                    </SessionAuth>
+                    <SendRecoveryEmailForm
+                        recipe={this.recipeInstance}
+                        {...props}
+                        useComponentOverrides={useComponentOverrides}
+                    />
                 </UserContextWrapper>
             );
         }

@@ -26,8 +26,8 @@ export default class Webauthn extends AuthRecipe<
     getFirstFactorsForAuthPage(): string[];
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     static init(
-        config: UserInput
+        config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
-    static getInstance(): Webauthn | undefined;
     static getInstanceOrThrow(): Webauthn;
+    static reset(): void;
 }

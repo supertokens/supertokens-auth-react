@@ -39,7 +39,7 @@ export enum SignUpScreen {
 }
 
 export const SignUpFormInner = withOverride(
-    "PasskeySignUpForm",
+    "WebauthnPasskeySignUpForm",
     function PasskeyEmailForm(
         props: SignUpFormProps & {
             footer?: JSX.Element;

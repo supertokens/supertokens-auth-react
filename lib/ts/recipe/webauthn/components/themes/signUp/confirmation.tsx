@@ -22,12 +22,12 @@ import GeneralError from "../../../../emailpassword/components/library/generalEr
 import { PasskeyNotSupportedError } from "../error/passkeyNotSupportedError";
 
 import { ContinueWithoutPasskey } from "./continueWithoutPasskey";
-import { PasskeyFeatureBlocks } from "./featureBlocks";
+import { PasskeyFeatureBlockList } from "./featureBlocks";
 
 import type { SignUpFormProps } from "../../../types";
 
 export const PasskeyConfirmation = withOverride(
-    "PasskeyConfirmation",
+    "WebauthnPasskeyConfirmation",
     function PasskeyConfirmation(
         props: SignUpFormProps & {
             email?: string;
@@ -54,7 +54,7 @@ export const PasskeyConfirmation = withOverride(
                         <div data-supertokens="enteredEmailId">{props.email}</div>
                     </div>
                 )}
-                <PasskeyFeatureBlocks />
+                <PasskeyFeatureBlockList />
                 {props.errorMessageLabel !== undefined && props.errorMessageLabel !== "" && (
                     <GeneralError error={props.errorMessageLabel} />
                 )}

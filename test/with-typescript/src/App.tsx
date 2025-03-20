@@ -525,7 +525,7 @@ function getThirdPartyConfigs() {
                 {
                     id: "with-dynamic-name",
                     logo: <svg></svg>,
-                    buttonComponent: (name) => <span>{name}</span>,
+                    buttonComponent: ({ name }) => <span> {name} </span>,
                 },
             ],
         },

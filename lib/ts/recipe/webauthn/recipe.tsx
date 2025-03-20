@@ -16,9 +16,9 @@
 import WebauthnWebJS from "supertokens-web-js/lib/build/recipe/webauthn";
 
 import { SSR_ERROR } from "../../constants";
-import { getDefaultRedirectionURLForPath } from "../../utils";
+import { getDefaultRedirectionURLForPath, isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
-import { FactorIds } from "../multifactorauth";
+import { FactorIds } from "../multifactorauth/types";
 
 import { DEFAULT_WEBAUTHN_SEND_RECOVERY_EMAIL_PATH } from "./constants";
 import { getFunctionOverrides } from "./functionOverrides";
@@ -75,7 +75,7 @@ export default class Webauthn extends AuthRecipe<
     };
 
     static init(
-        config: UserInput
+        config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normaliseWebauthnConfig(config);
 
@@ -110,10 +110,6 @@ export default class Webauthn extends AuthRecipe<
         };
     }
 
-    static getInstance(): Webauthn | undefined {
-        return Webauthn.instance;
-    }
-
     static getInstanceOrThrow(): Webauthn {
         if (Webauthn.instance === undefined) {
             let error = "No instance of Webauthn found. Make sure to call the Webauthn.init method.";
@@ -126,5 +122,17 @@ export default class Webauthn extends AuthRecipe<
         }
 
         return Webauthn.instance;
+    }
+
+    /*
+     * Tests methods.
+     */
+    static reset(): void {
+        if (!isTest()) {
+            return;
+        }
+
+        Webauthn.instance = undefined;
+        return;
     }
 }

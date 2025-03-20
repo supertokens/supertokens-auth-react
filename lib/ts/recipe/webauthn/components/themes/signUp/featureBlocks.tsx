@@ -40,7 +40,7 @@ const blockDetails = [
 ];
 
 export const PasskeyFeatureBlock = withOverride(
-    "PasskeyFeatureBlock",
+    "WebauthnPasskeyFeatureBlock",
     function FeatureBlock(props: FeatureBlockDetailProps): JSX.Element {
         const t = useTranslation();
         return (
@@ -55,7 +55,7 @@ export const PasskeyFeatureBlock = withOverride(
     }
 );
 
-export const PasskeyFeatureBlocks = withOverride("PasskeyFeatureBlocks", function PasskeyFeatureBlocks(): JSX.Element {
+export const PasskeyFeatureBlockList = () => {
     return (
         <div data-supertokens="passkeyFeatureBlocksContainer">
             {blockDetails.map((blockDetail) => (
@@ -63,4 +63,4 @@ export const PasskeyFeatureBlocks = withOverride("PasskeyFeatureBlocks", functio
             ))}
         </div>
     );
-});
+};

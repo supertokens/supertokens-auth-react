@@ -16,7 +16,7 @@
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 
-export const PasskeyNotSupportedError = withOverride("PasskeyNotSupportedError", (): JSX.Element => {
+export const PasskeyNotSupportedError = withOverride("WebauthnPasskeyNotSupportedError", (): JSX.Element => {
     const t = useTranslation();
 
     return (

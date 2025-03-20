@@ -14,14 +14,11 @@ import type {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     Config as AuthRecipeModuleConfig,
 } from "../authRecipe/types";
-import type { SendRecoveryEmailForm } from "./components/features/sendRecoveryEmail";
-import type SignInForm from "./components/features/signIn";
-import type SignUpForm from "./components/features/signUp";
 import type { ContinueWithPasskeyWithOverride } from "./components/themes/continueWithPasskey";
-import type { PasskeyEmailSent } from "./components/themes/sendRecoveryEmail/emailSent";
+import type { PasskeyRecoveryEmailSent } from "./components/themes/sendRecoveryEmail/emailSent";
 import type {
-    PasskeyRecoverAccount,
-    PasskeyRecoverAccountForm,
+    WebauthnRecoverAccount,
+    WebauthnRecoverAccountForm,
 } from "./components/themes/sendRecoveryEmail/recoverAccountForm";
 import type { PasskeyConfirmation } from "./components/themes/signUp/confirmation";
 import type { ContinueWithoutPasskey } from "./components/themes/signUp/continueWithoutPasskey";
@@ -86,31 +83,23 @@ export declare type NormalisedConfig = {
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type RecipeImplementation = WebJSRecipeInterface<typeof WebJSRecipe>;
 export declare type ComponentOverrideMap = {
-    PasskeySignInForm_Override?: ComponentOverride<typeof SignInForm>;
-    PasskeySignUpForm_Override?: ComponentOverride<typeof SignUpForm>;
-    PasskeySendRecoveryEmailForm_Override?: ComponentOverride<typeof SendRecoveryEmailForm>;
-    PasskeyContinueWithPasskey_Override?: ComponentOverride<typeof ContinueWithPasskeyWithOverride>;
-    PasskeyNotSupportedError_Override?: ComponentOverride<typeof PasskeyNotSupportedError>;
-    PasskeyEmailSent_Override?: ComponentOverride<typeof PasskeyEmailSent>;
-    PasskeyRecoverAccountForm_Override?: ComponentOverride<typeof PasskeyRecoverAccountForm>;
-    PasskeyRecoverAccount_Override?: ComponentOverride<typeof PasskeyRecoverAccount>;
-    PasskeyConfirmation_Override?: ComponentOverride<typeof PasskeyConfirmation>;
-    PasskeyFeatureBlock_Override?: ComponentOverride<typeof PasskeyFeatureBlock>;
-    PasskeyContinueWithoutPasskey_Override?: ComponentOverride<typeof ContinueWithoutPasskey>;
-    PasskeySignUpFormInner_Override?: ComponentOverride<typeof SignUpFormInner>;
-    PasskeySignUpSomethingWentWrong_Override?: ComponentOverride<typeof SignUpSomethingWentWrong>;
-};
-export declare type WebauthnSignUpState = {
-    showBackButton: boolean;
-    loaded: boolean;
-    error: string | undefined;
+    WebauthnContinueWithPasskey_Override?: ComponentOverride<typeof ContinueWithPasskeyWithOverride>;
+    WebauthnPasskeyNotSupportedError_Override?: ComponentOverride<typeof PasskeyNotSupportedError>;
+    WebauthnPasskeyRecoveryEmailSent_Override?: ComponentOverride<typeof PasskeyRecoveryEmailSent>;
+    WebauthnRecoverAccountForm_Override?: ComponentOverride<typeof WebauthnRecoverAccountForm>;
+    WebauthnRecoverAccount_Override?: ComponentOverride<typeof WebauthnRecoverAccount>;
+    WebauthnPasskeyConfirmation_Override?: ComponentOverride<typeof PasskeyConfirmation>;
+    WebauthnPasskeyFeatureBlock_Override?: ComponentOverride<typeof PasskeyFeatureBlock>;
+    WebauthnContinueWithoutPasskey_Override?: ComponentOverride<typeof ContinueWithoutPasskey>;
+    WebauthnPasskeySignUpForm_Override?: ComponentOverride<typeof SignUpFormInner>;
+    WebauthnPasskeySignUpSomethingWentWrong_Override?: ComponentOverride<typeof SignUpSomethingWentWrong>;
 };
 export declare type SignUpThemeBaseProps = {
     clearError: () => void;
     recipeImplementation: RecipeImplementation;
     factorIds: string[];
     config: NormalisedConfig;
-    onSuccess?: (result: { createdNewRecipeUser: boolean; user: User }) => void;
+    onSuccess: (result: { createdNewRecipeUser: boolean; user: User }) => void;
     onFetchError: (err: Response) => void;
     onError: (err: string) => void;
     error: string | undefined;
@@ -204,15 +193,13 @@ export declare type RecoverFormProps = {
     recipeImplementation: RecipeImplementation;
 };
 export declare type ContinueWithPasskeyProps = {
-    continueFor: ContinueFor;
-    continueWithPasskeyClicked: (continueFor: ContinueFor) => void;
-    isLoading?: boolean;
-    isPasskeyNotSupported?: boolean;
+    continueTo: "SIGN_UP" | "SIGN_IN";
+    continueWithPasskeyClicked: () => void;
+    isLoading: boolean;
     recipeImplementation: RecipeImplementation;
-    isPasskeySupported?: boolean;
+    isPasskeySupported: boolean;
 };
 export declare type EmailSentProps = {
     email: string;
     onEmailChangeClick: () => void;
 };
-export declare type ContinueFor = "SIGN_UP" | "SIGN_IN";

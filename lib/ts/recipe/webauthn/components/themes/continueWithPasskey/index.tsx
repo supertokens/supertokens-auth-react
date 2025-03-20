@@ -25,25 +25,24 @@ import { ThemeBase } from "../themeBase";
 import type { NormalisedConfig, ContinueWithPasskeyProps } from "../../../types";
 
 const ContinueWithPasskey: React.FC<ContinueWithPasskeyProps> = ({
-    continueFor,
     continueWithPasskeyClicked,
-    isLoading = false,
-    isPasskeyNotSupported = true,
+    isLoading,
+    isPasskeySupported,
 }) => {
     return (
         <div data-supertokens="continueWithPasskeyButtonWrapper">
             <Button
                 isLoading={isLoading}
                 onClick={() => {
-                    continueWithPasskeyClicked(continueFor);
+                    continueWithPasskeyClicked();
                 }}
                 type="button"
                 label={"WEBAUTHN_COMBO_CONTINUE_WITH_PASSKEY_BUTTON"}
-                disabled={isPasskeyNotSupported}
-                isGreyedOut={isPasskeyNotSupported}
+                disabled={!isPasskeySupported}
+                isGreyedOut={!isPasskeySupported}
                 icon={PasskeyIcon}
             />
-            {isPasskeyNotSupported && <PasskeyNotSupportedError />}
+            {!isPasskeySupported && <PasskeyNotSupportedError />}
         </div>
     );
 };
@@ -55,7 +54,7 @@ export const ContinueWithPasskeyTheme = (props: { config: NormalisedConfig } & C
 
     return (
         <ThemeBase userStyles={[rootStyle, props.config.recipeRootStyle]}>
-            <ContinueWithPasskeyWithOverride {...props} isPasskeyNotSupported={props.isPasskeySupported === false} />
+            <ContinueWithPasskeyWithOverride {...props} />
         </ThemeBase>
     );
 };

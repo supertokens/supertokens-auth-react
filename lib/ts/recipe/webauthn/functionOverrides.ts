@@ -6,18 +6,6 @@ export const getFunctionOverrides =
     (onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>) =>
     (originalImp: RecipeInterface): RecipeInterface => ({
         ...originalImp,
-        getRegisterOptions: async function (input) {
-            return await originalImp.getRegisterOptions(input);
-        },
-        getSignInOptions: async function (input) {
-            return await originalImp.getSignInOptions(input);
-        },
-        signIn: async function (input) {
-            return await originalImp.signIn(input);
-        },
-        signUp: async function (input) {
-            return await originalImp.signUp(input);
-        },
         getEmailExists: async function (input) {
             const response = await originalImp.getEmailExists(input);
 
@@ -29,12 +17,6 @@ export const getFunctionOverrides =
             }
 
             return response;
-        },
-        generateRecoverAccountToken: async function (input) {
-            return await originalImp.generateRecoverAccountToken(input);
-        },
-        recoverAccount: async function (input) {
-            return await originalImp.recoverAccount(input);
         },
         registerCredential: async function (input) {
             const response = await originalImp.registerCredential(input);
@@ -68,14 +50,5 @@ export const getFunctionOverrides =
             }
 
             return response;
-        },
-        authenticateCredentialWithSignIn: async function (input) {
-            return await originalImp.authenticateCredentialWithSignIn(input);
-        },
-        registerCredentialWithRecoverAccount: async function (input) {
-            return await originalImp.registerCredentialWithRecoverAccount(input);
-        },
-        doesBrowserSupportWebAuthn: async function (input) {
-            return await originalImp.doesBrowserSupportWebAuthn(input);
         },
     });

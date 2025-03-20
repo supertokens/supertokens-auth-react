@@ -95,7 +95,7 @@ export function useChildProps(
             onRecoverAccountClick,
             showBackButton,
         };
-    }, [error, factorIds, userContext, recipeImplementation]);
+    }, [error, factorIds, userContext, showBackButton, recipeImplementation]);
 }
 
 const SignUpFeatureInner: React.FC<
@@ -198,9 +198,10 @@ export const SignUpWithPasskeyFeature: React.FC<
                     {...props}
                     continueWithPasskeyClicked={() => props.setFactorList(props.factorIds)}
                     config={props.recipe.config}
-                    continueFor="SIGN_UP"
+                    continueTo="SIGN_UP"
                     recipeImplementation={props.recipe.webJSRecipe}
                     isPasskeySupported={isPasskeySupported}
+                    isLoading={false}
                 />
             </FeatureWrapper>
         </AuthComponentWrapper>

@@ -13,6 +13,7 @@
  * under the License.
  */
 
+import { RecipeComponentsOverrideContextProvider } from "./componentOverrideContext";
 import Webauthn from "./recipe";
 
 import type { UserInput } from "./types";
@@ -25,7 +26,7 @@ import type { RegistrationOptions } from "supertokens-web-js/lib/build/recipe/we
 import type { GeneralErrorResponse, User } from "supertokens-web-js/lib/build/types";
 
 export default class Wrapper {
-    static init(config: UserInput) {
+    static init(config?: UserInput) {
         return Webauthn.init(config);
     }
 
@@ -246,7 +247,10 @@ export default class Wrapper {
         return Webauthn.getInstanceOrThrow().webJSRecipe.recoverAccount(input);
     }
 
-    static registerCredential(input: { registrationOptions: RegistrationOptions; userContext: any }): Promise<
+    static registerCredential(input: {
+        registrationOptions: Omit<RegistrationOptions, "fetchResponse" | "status">;
+        userContext: any;
+    }): Promise<
         | {
               status: "OK";
               registrationResponse: RegistrationResponseJSON;
@@ -266,7 +270,10 @@ export default class Wrapper {
         return Webauthn.getInstanceOrThrow().webJSRecipe.registerCredential(input);
     }
 
-    static authenticateCredential(input: { authenticationOptions: AuthenticationOptions; userContext: any }): Promise<
+    static authenticateCredential(input: {
+        authenticationOptions: Omit<AuthenticationOptions, "fetchResponse" | "status">;
+        userContext: any;
+    }): Promise<
         | {
               status: "OK";
               authenticationResponse: AuthenticationResponseJSON;
@@ -445,8 +452,40 @@ export default class Wrapper {
     > {
         return Webauthn.getInstanceOrThrow().webJSRecipe.doesBrowserSupportWebAuthn(input);
     }
+
+    static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
 const init = Wrapper.init;
+const getRegisterOptions = Wrapper.getRegisterOptions;
+const getSignInOptions = Wrapper.getSignInOptions;
+const signUp = Wrapper.signUp;
+const signIn = Wrapper.signIn;
+const getEmailExists = Wrapper.getEmailExists;
+const generateRecoverAccountToken = Wrapper.generateRecoverAccountToken;
+const recoverAccount = Wrapper.recoverAccount;
+const registerCredential = Wrapper.registerCredential;
+const authenticateCredential = Wrapper.authenticateCredential;
+const registerCredentialWithSignUp = Wrapper.registerCredentialWithSignUp;
+const authenticateCredentialWithSignIn = Wrapper.authenticateCredentialWithSignIn;
+const registerCredentialWithRecoverAccount = Wrapper.registerCredentialWithRecoverAccount;
+const doesBrowserSupportWebAuthn = Wrapper.doesBrowserSupportWebAuthn;
+const WebauthnComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 
-export { init };
+export {
+    init,
+    getRegisterOptions,
+    getSignInOptions,
+    signUp,
+    signIn,
+    getEmailExists,
+    generateRecoverAccountToken,
+    recoverAccount,
+    registerCredential,
+    authenticateCredential,
+    registerCredentialWithSignUp,
+    authenticateCredentialWithSignIn,
+    registerCredentialWithRecoverAccount,
+    doesBrowserSupportWebAuthn,
+    WebauthnComponentsOverrideProvider,
+};

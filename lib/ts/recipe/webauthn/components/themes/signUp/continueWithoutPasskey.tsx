@@ -17,7 +17,7 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import { useTranslation } from "../../../../../translation/translationContext";
 
 export const ContinueWithoutPasskey = withOverride(
-    "continueWithoutPasskey",
+    "WebauthnContinueWithoutPasskey",
     function ContinueWithoutPasskeyButton(props: { onClick: () => void }): JSX.Element {
         const t = useTranslation();
 

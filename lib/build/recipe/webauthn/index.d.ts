@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import type { UserInput } from "./types";
 import type { RegistrationResponseJSON } from "@simplewebauthn/types";
 import type { AuthenticationResponseJSON } from "@simplewebauthn/types";
@@ -8,7 +9,7 @@ import type { RegistrationOptions } from "supertokens-web-js/lib/build/recipe/we
 import type { GeneralErrorResponse, User } from "supertokens-web-js/lib/build/types";
 export default class Wrapper {
     static init(
-        config: UserInput
+        config?: UserInput
     ): import("../../types").RecipeInitResult<
         import("./types").GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
@@ -211,7 +212,10 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static registerCredential(input: { registrationOptions: RegistrationOptions; userContext: any }): Promise<
+    static registerCredential(input: {
+        registrationOptions: Omit<RegistrationOptions, "fetchResponse" | "status">;
+        userContext: any;
+    }): Promise<
         | {
               status: "OK";
               registrationResponse: RegistrationResponseJSON;
@@ -228,7 +232,10 @@ export default class Wrapper {
               error: any;
           }
     >;
-    static authenticateCredential(input: { authenticationOptions: AuthenticationOptions; userContext: any }): Promise<
+    static authenticateCredential(input: {
+        authenticationOptions: Omit<AuthenticationOptions, "fetchResponse" | "status">;
+        userContext: any;
+    }): Promise<
         | {
               status: "OK";
               authenticationResponse: AuthenticationResponseJSON;
@@ -393,6 +400,45 @@ export default class Wrapper {
               error: any;
           }
     >;
+    static ComponentsOverrideProvider: import("react").FC<
+        import("react").PropsWithChildren<{
+            components: import("./types").ComponentOverrideMap;
+        }>
+    >;
 }
 declare const init: typeof Wrapper.init;
-export { init };
+declare const getRegisterOptions: typeof Wrapper.getRegisterOptions;
+declare const getSignInOptions: typeof Wrapper.getSignInOptions;
+declare const signUp: typeof Wrapper.signUp;
+declare const signIn: typeof Wrapper.signIn;
+declare const getEmailExists: typeof Wrapper.getEmailExists;
+declare const generateRecoverAccountToken: typeof Wrapper.generateRecoverAccountToken;
+declare const recoverAccount: typeof Wrapper.recoverAccount;
+declare const registerCredential: typeof Wrapper.registerCredential;
+declare const authenticateCredential: typeof Wrapper.authenticateCredential;
+declare const registerCredentialWithSignUp: typeof Wrapper.registerCredentialWithSignUp;
+declare const authenticateCredentialWithSignIn: typeof Wrapper.authenticateCredentialWithSignIn;
+declare const registerCredentialWithRecoverAccount: typeof Wrapper.registerCredentialWithRecoverAccount;
+declare const doesBrowserSupportWebAuthn: typeof Wrapper.doesBrowserSupportWebAuthn;
+declare const WebauthnComponentsOverrideProvider: import("react").FC<
+    import("react").PropsWithChildren<{
+        components: import("./types").ComponentOverrideMap;
+    }>
+>;
+export {
+    init,
+    getRegisterOptions,
+    getSignInOptions,
+    signUp,
+    signIn,
+    getEmailExists,
+    generateRecoverAccountToken,
+    recoverAccount,
+    registerCredential,
+    authenticateCredential,
+    registerCredentialWithSignUp,
+    authenticateCredentialWithSignIn,
+    registerCredentialWithRecoverAccount,
+    doesBrowserSupportWebAuthn,
+    WebauthnComponentsOverrideProvider,
+};

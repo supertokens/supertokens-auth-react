@@ -27,8 +27,8 @@ import { defaultEmailValidator } from "../../../../emailpassword/validators";
 
 import type { RecoverFormProps } from "../../../types";
 
-export const PasskeyRecoverAccountForm = withOverride(
-    "PasskeyRecoverAccountForm",
+export const WebauthnRecoverAccountForm = withOverride(
+    "WebauthnRecoverAccountForm",
     (
         props: RecoverFormProps & {
             setError: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -87,7 +87,7 @@ export const PasskeyRecoverAccountForm = withOverride(
     }
 );
 
-export const PasskeyRecoverAccount = withOverride("PasskeyRecoverAccount", (props: RecoverFormProps): JSX.Element => {
+export const WebauthnRecoverAccount = withOverride("WebauthnRecoverAccount", (props: RecoverFormProps): JSX.Element => {
     const t = useTranslation();
     const [errorLabel, setErrorLabel] = useState<string | undefined>(undefined);
 
@@ -110,7 +110,7 @@ export const PasskeyRecoverAccount = withOverride("PasskeyRecoverAccount", (prop
                     <GeneralError error={errorLabel} />
                 </div>
             )}
-            <PasskeyRecoverAccountForm {...props} setError={setErrorLabel} />
+            <WebauthnRecoverAccountForm {...props} setError={setErrorLabel} />
         </div>
     );
 });

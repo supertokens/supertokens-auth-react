@@ -18,7 +18,7 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import { useTranslation } from "../../../../../translation/translationContext";
 
 export const SignUpSomethingWentWrong = withOverride(
-    "PasskeySignUpSomethingWentWrong",
+    "WebauthnPasskeySignUpSomethingWentWrong",
     function SomethingWentWrong(props: { onClick: () => void }): JSX.Element {
         const t = useTranslation();
         return (

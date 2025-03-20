@@ -86,7 +86,7 @@ export function useChildProps(
             isPasskeySupported,
             showBackButton,
         };
-    }, [error, factorIds, userContext, recipeImplementation]);
+    }, [error, factorIds, userContext, isPasskeySupported, showBackButton, recipeImplementation]);
 }
 
 const SignInFeatureInner: React.FC<

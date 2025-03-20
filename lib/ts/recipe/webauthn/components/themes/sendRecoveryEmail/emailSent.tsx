@@ -18,21 +18,24 @@ import { useTranslation } from "../../../../../translation/translationContext";
 
 import type { EmailSentProps } from "../../../types";
 
-export const PasskeyEmailSent = withOverride("PasskeyEmailSent", (props: EmailSentProps): JSX.Element => {
-    const t = useTranslation();
-    return (
-        <div data-supertokens="passkeyEmailSentContainer">
-            <div data-supertokens="headerTitle">{t("WEBAUTHN_EMAIL_SENT_LABEL")}</div>
-            <div data-supertokens="emailSentDescription">
-                {t("WEBAUTHN_EMAIL_SENT_LABEL_PRE_EMAIL")}
-                {props.email}
-                {t("WEBAUTHN_EMAIL_SENT_LABEL_POST_EMAIL")}
-                <a
-                    onClick={props.onEmailChangeClick}
-                    data-supertokens="link linkButton formLabelLinkBtn changeEmailBtn">
-                    {t("WEBAUTHN_RESEND_OR_CHANGE_EMAIL_LABEL")}
-                </a>
+export const PasskeyRecoveryEmailSent = withOverride(
+    "WebauthnPasskeyRecoveryEmailSent",
+    (props: EmailSentProps): JSX.Element => {
+        const t = useTranslation();
+        return (
+            <div data-supertokens="passkeyEmailSentContainer">
+                <div data-supertokens="headerTitle">{t("WEBAUTHN_EMAIL_SENT_LABEL")}</div>
+                <div data-supertokens="emailSentDescription">
+                    {t("WEBAUTHN_EMAIL_SENT_LABEL_PRE_EMAIL")}
+                    {props.email}
+                    {t("WEBAUTHN_EMAIL_SENT_LABEL_POST_EMAIL")}
+                    <a
+                        onClick={props.onEmailChangeClick}
+                        data-supertokens="link linkButton formLabelLinkBtn changeEmailBtn">
+                        {t("WEBAUTHN_RESEND_OR_CHANGE_EMAIL_LABEL")}
+                    </a>
+                </div>
             </div>
-        </div>
-    );
-});
+        );
+    }
+);

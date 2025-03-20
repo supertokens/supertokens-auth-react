@@ -14,7 +14,6 @@
  */
 
 import * as React from "react";
-import { useEffect } from "react";
 import { useCallback } from "react";
 import { useState } from "react";
 
@@ -22,7 +21,7 @@ import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
-import { getQueryParams, handleCallAPI } from "../../../../../utils";
+import { getQueryParams, handleCallAPI, useOnMountAPICall } from "../../../../../utils";
 import { RecoverAccountScreen } from "../../../types";
 import RecoverAccountWithToken from "../../themes/recoverAccountWithToken";
 import { defaultTranslationsWebauthn } from "../../themes/translations";
@@ -38,7 +37,7 @@ export const RecoverAccountUsingToken: React.FC<RecoverAccountWithTokenProps> = 
     }
     const [error, setError] = React.useState<string>();
     const [errorMessageLabel, setErrorMessageLabel] = useState<string | null>(null);
-    const [registerOptions, setRegisterOptions] = useState<RegisterOptions | null>(null);
+    const [preloadedRegisterOptions, setPreloadedRegisterOptions] = useState<RegisterOptions | null>(null);
     const [activeScreen, setActiveScreen] = useState<RecoverAccountScreen>(RecoverAccountScreen.ContinueWithPasskey);
     const [isLoading, setLoading] = useState(false);
 
@@ -49,14 +48,22 @@ export const RecoverAccountUsingToken: React.FC<RecoverAccountWithTokenProps> = 
         // back to the sign in page.
         if (token === null) {
             await redirectToAuth();
-            return;
+            return { status: "MISSING_TOKEN" as const };
         }
 
-        try {
-            const registerOptions = await props.recipe.webJSRecipe.getRegisterOptions({
-                userContext: props.userContext,
-                recoverAccountToken: token,
-            });
+        return props.recipe.webJSRecipe.getRegisterOptions({
+            userContext: props.userContext,
+            recoverAccountToken: token,
+        });
+    }, [props.recipe.webJSRecipe, props.userContext, token]);
+
+    useOnMountAPICall(
+        fetchAndStoreRegisterOptions,
+        async (registerOptions) => {
+            if (registerOptions.status === "MISSING_TOKEN") {
+                return;
+            }
+
             if (registerOptions.status !== "OK") {
                 switch (registerOptions.status) {
                     case "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR":
@@ -75,17 +82,14 @@ export const RecoverAccountUsingToken: React.FC<RecoverAccountWithTokenProps> = 
                 return;
             }
 
-            setRegisterOptions(registerOptions);
-        } catch (err: any) {
+            setPreloadedRegisterOptions(registerOptions);
+        },
+        (err) => {
             // This will likely be a fetch error.
             console.error("error", err);
             setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_FETCH_ERROR");
         }
-    }, [props.recipe.webJSRecipe, props.userContext, token]);
-
-    useEffect(() => {
-        void fetchAndStoreRegisterOptions();
-    }, []);
+    );
 
     const callAPI = useCallback(async () => {
         // We will do the following things in the order when the user clicks on the continue
@@ -94,23 +98,35 @@ export const RecoverAccountUsingToken: React.FC<RecoverAccountWithTokenProps> = 
         // 2. If not expired, we can continue and use the values to register the user.
         // 3. If expired, we will get new registerOptions and register the user.
         // 4. If registration fails with a token expiry error, we should following 3rd step.
-        if (registerOptions === null) {
-            // If it still stays null, which should never happen as the continue
-            // button will be disabled if register options is null which would mean
-            // an error.
-            throw new Error("Should never come here");
-        }
-
-        const expiresAtDate = new Date(registerOptions.expiresAt);
-        if (isNaN(expiresAtDate.getTime()) || new Date() > expiresAtDate) {
-            // Fetch the options again as they have either expired or are invalid.
-            await fetchAndStoreRegisterOptions();
-        }
-
         if (token === null) {
             // The token should not be null because while fetching the register options
             // we already checked for null and redirected to the sign in page if it is null.
             throw new Error("Should never come here");
+        }
+
+        const registerOptions =
+            preloadedRegisterOptions !== null && new Date(preloadedRegisterOptions.expiresAt) > new Date()
+                ? preloadedRegisterOptions
+                : await props.recipe.webJSRecipe.getRegisterOptions({
+                      userContext: props.userContext,
+                      recoverAccountToken: token,
+                  });
+        if (registerOptions.status !== "OK") {
+            switch (registerOptions.status) {
+                case "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR":
+                    setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_TOKEN_INVALID_ERROR");
+                    break;
+                case "INVALID_EMAIL_ERROR":
+                    setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_INVALID_EMAIL_ERROR");
+                    break;
+                case "INVALID_OPTIONS_ERROR":
+                    setErrorMessageLabel("WEBAUTHN_ACCOUNT_RECOVERY_INVALID_GENERATED_OPTIONS_ERROR");
+                    break;
+                default:
+                    throw new Error("Should never come here");
+            }
+
+            return;
         }
 
         // Use the register options to register the credential and recover the account.
@@ -131,7 +147,7 @@ export const RecoverAccountUsingToken: React.FC<RecoverAccountWithTokenProps> = 
         });
 
         return recoverAccountResponse;
-    }, [props, registerOptions, token, fetchAndStoreRegisterOptions]);
+    }, [props, preloadedRegisterOptions, token, fetchAndStoreRegisterOptions]);
 
     const onContinueClick = useCallback(async () => {
         const fieldUpdates: FieldState[] = [];
@@ -197,7 +213,7 @@ export const RecoverAccountUsingToken: React.FC<RecoverAccountWithTokenProps> = 
         token,
         useComponentOverride: props.useComponentOverrides,
         userContext,
-        registerOptions,
+        registerOptions: preloadedRegisterOptions,
         errorMessageLabel,
         isLoading,
         activeScreen,

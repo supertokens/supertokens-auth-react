@@ -9,11 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.49.0] - 2025-03-12
 
--   Adds webauthn recipe with passkey, webauthn-platform, and webauthn-resident support
--   Adds new pre-built UI components for passkey
+-   Added the `Webauthn` recipe and prebuilt UI with passkey, webauthn-platform, and webauthn-resident support
 -   Adds new colors to the palette
     -   `--palette-caution`: Used for showing cautionary messages
     -   `--palette-errorDark`: Used for showing error messages with a darker shade
+    -   `--palette-buttonGreyedOut`: Used in some disabled buttons
+-   Updated User type to include webauthn as a possible login method.
+-   Added `webauthn` as a possible factorid
+-   Added support for FDI 4.1
 
 ## [0.48.0] - 2024-10-07
 
