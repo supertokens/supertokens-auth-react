@@ -22,7 +22,7 @@ jobs:
             - persist_to_workspace:
                   root: / # relative path to our working directory
                   paths:
-                      - usr/lib/node_modules
+                      - usr/lib
                       - usr/java
                       - usr/bin
                       - root/project/node_modules
