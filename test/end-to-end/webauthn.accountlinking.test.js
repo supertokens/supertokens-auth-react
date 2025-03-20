@@ -21,13 +21,17 @@ import {
     waitForUrl,
     changeEmail,
     getLatestURLWithToken,
+    getUserIdWithFetch,
+    submitFormUnsafe,
 } from "../helpers";
 import {
     openRecoveryAccountPage,
     tryWebauthnSignUp,
     getTokenFromEmail,
     openRecoveryWithToken,
+    tryWebauthnSignIn,
 } from "./webauthn.helpers";
+import { tryPasswordlessSignInUp } from "./accountlinking.test";
 import assert from "assert";
 
 /*
@@ -41,9 +45,6 @@ describe("SuperTokens WebAuthn Account Linking", function () {
     let browser;
     let page;
     let consoleLogs = [];
-    let userId1;
-    let userId2;
-    const email = getTestEmail();
 
     before(async function () {
         await backendBeforeEach();
@@ -61,6 +62,7 @@ describe("SuperTokens WebAuthn Account Linking", function () {
             "dashboard",
             "userroles",
             "multifactorauth",
+            "accountlinking",
         ]);
 
         browser = await setupBrowser();
@@ -144,7 +146,7 @@ describe("SuperTokens WebAuthn Account Linking", function () {
         );
     });
 
-    it.only("should handle email updates correctly for user that signed up with webauthn", async () => {
+    it("should handle email updates correctly for user that signed up with webauthn", async () => {
         await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
         await setAccountLinkingConfig(false, false);
         const email = await getTestEmail();
@@ -170,7 +172,16 @@ describe("SuperTokens WebAuthn Account Linking", function () {
         await page.waitForTimeout(4000);
 
         // Change the email for the webauthn user
-        const recipeUserId = await page.evaluate(() => document.querySelector(".session-context-userId").textContent);
+        await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+        const recipeUserId = await getUserIdWithFetch(page);
+        assert.ok(recipeUserId);
+
+        // Find the div with classname logoutButton and click it using normal
+        // puppeteer selector
+        const logoutButton = await page.waitForSelector("div.logoutButton");
+        await logoutButton.click();
+        await new Promise((res) => setTimeout(res, 1000));
+
         const newEmail = getTestEmail("new");
         const res = await changeEmail("webauthn", recipeUserId, newEmail, null);
 
@@ -185,28 +196,18 @@ describe("SuperTokens WebAuthn Account Linking", function () {
     });
 
     it("should allow same emails to be linked but requiring verification", async () => {
-        await setAccountLinkingConfig(true, true, true);
         await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
+        await setAccountLinkingConfig(true, true, true);
         const email = await getTestEmail();
 
-        await Promise.all([
-            page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=passwordless`),
-            page.waitForNavigation({ waitUntil: "networkidle0" }),
-        ]);
+        await tryPasswordlessSignInUp(page, email);
+        await page.waitForTimeout(1000);
 
-        // Signup using the email
-        await setInputValues(page, [{ name: "email", value: email }]);
-        await submitForm(page);
+        await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+        const userId1 = await getUserIdWithFetch(page);
+        assert.ok(userId1);
 
-        await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-
-        const loginAttemptInfo = JSON.parse(
-            await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-        );
-        const device = await getPasswordlessDevice(loginAttemptInfo);
-        await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
-        await submitForm(page);
-        await page.waitForTimeout(2000);
+        await page.waitForTimeout(1000);
 
         // Find the div with classname logoutButton and click it using normal
         // puppeteer selector
@@ -215,10 +216,13 @@ describe("SuperTokens WebAuthn Account Linking", function () {
         await new Promise((res) => setTimeout(res, 1000));
 
         // Try to signup with the same email through webauthn now
-        // await tryWebauthnSignUp(page, email);
+        await tryWebauthnSignUp(page, email);
 
-        // // We should be in the confirmation page now.
-        // await submitForm(page);
+        // We should be in the confirmation page now.
+        await submitForm(page);
+
+        await page.waitForTimeout(1000);
+        await waitForSTElement(page, "[data-supertokens~='passkeyRecoverableErrorContainer']");
 
         // Try to recover the webauthn account using the same email
         await openRecoveryAccountPage(page, email, true);
@@ -226,7 +230,6 @@ describe("SuperTokens WebAuthn Account Linking", function () {
 
         // Get the token from the email
         const token = await getTokenFromEmail(email);
-        console.log(token);
         assert.ok(token);
 
         // Use the token to recover the account

@@ -339,8 +339,9 @@ app.post("/changeEmail", async (req, res) => {
             phoneNumber: req.body.phoneNumber,
         });
     } else if (req.body.rid === "webauthn") {
+        const recipeUserId = convertToRecipeUserIdIfAvailable(req.body.recipeUserId);
         resp = await Webauthn.updateUserEmail({
-            recipeUserId: convertToRecipeUserIdIfAvailable(req.body.recipeUserId),
+            recipeUserId: recipeUserId.getAsString(),
             email: req.body.email,
         });
     }
