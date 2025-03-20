@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-## [0.49.0] - 2025-03-12
+## [0.49.0] - 2025-03-20
 
 -   Added the `Webauthn` recipe and prebuilt UI with passkey, webauthn-platform, and webauthn-resident support
 -   Adds new colors to the palette
