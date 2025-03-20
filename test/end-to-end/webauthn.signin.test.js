@@ -60,7 +60,13 @@ describe("SuperTokens Webauthn SignIn", () => {
 
     describe("SignIn test", () => {
         it("signup with passkey", async () => {
+            // Override to enable webauthn support
+            await page.evaluateOnNewDocument(() => {
+                localStorage.setItem("overrideWebauthnSupport", "true");
+            });
+
             await tryWebauthnSignIn(page);
+            await page.waitForTimeout(3000);
 
             // Most of the sign-in mock is defined in the override for the web
             // test server.
@@ -91,7 +97,7 @@ describe("SuperTokens Webauthn SignIn", () => {
                 localStorage.setItem("webauthnErrorStatus", "FAILED_TO_AUTHENTICATE_USER");
             });
             await tryWebauthnSignIn(page);
-            await waitForSTElement(page, "[data-supertokens~='passkeyRecoverableErrorContainer']");
+            await waitForSTElement(page, "[data-supertokens~='generalError']");
 
             // Remove the error and retry
             await page.evaluateOnNewDocument(() => {
@@ -112,7 +118,7 @@ describe("SuperTokens Webauthn SignIn", () => {
                 localStorage.setItem("webauthnErrorStatus", "FAILED_TO_AUTHENTICATE_USER");
             });
             await tryWebauthnSignIn(page);
-            await waitForSTElement(page, "[data-supertokens~='passkeyRecoverableErrorContainer']");
+            await waitForSTElement(page, "[data-supertokens~='generalError']");
 
             await page.evaluateOnNewDocument(() => {
                 localStorage.removeItem("webauthnErrorStatus");
@@ -124,10 +130,7 @@ describe("SuperTokens Webauthn SignIn", () => {
                 localStorage.setItem("webauthnErrorStatus", "WEBAUTHN_NOT_SUPPORTED");
             });
             await tryWebauthnSignIn(page);
-            const errorTextContainer = await waitForSTElement(
-                page,
-                "[data-supertokens~='passkeyRecoverableErrorContainer']"
-            );
+            const errorTextContainer = await waitForSTElement(page, "[data-supertokens~='generalError']");
             const errorText = await errorTextContainer.evaluate((el) => el.textContent);
             assert.strictEqual(
                 errorText,
@@ -144,10 +147,7 @@ describe("SuperTokens Webauthn SignIn", () => {
                 localStorage.setItem("webauthnErrorStatus", "INVALID_OPTIONS_ERROR");
             });
             await tryWebauthnSignIn(page);
-            const errorTextContainer = await waitForSTElement(
-                page,
-                "[data-supertokens~='passkeyRecoverableErrorContainer']"
-            );
+            const errorTextContainer = await waitForSTElement(page, "[data-supertokens~='generalError']");
             const errorText = await errorTextContainer.evaluate((el) => el.textContent);
             assert.strictEqual(
                 errorText,
@@ -164,7 +164,7 @@ describe("SuperTokens Webauthn SignIn", () => {
                 localStorage.setItem("throwWebauthnError", "true");
             });
             await tryWebauthnSignIn(page);
-            await waitForSTElement(page, "[data-supertokens~='passkeyRecoverableErrorContainer']");
+            await waitForSTElement(page, "[data-supertokens~='generalError']");
 
             await page.evaluateOnNewDocument(() => {
                 localStorage.removeItem("throwWebauthnError");

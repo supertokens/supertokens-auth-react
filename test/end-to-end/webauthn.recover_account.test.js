@@ -167,10 +167,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
             // Use the token to recover the account
             await openRecoveryWithToken(page, "test");
 
-            const errorTextContainer = await waitForSTElement(
-                page,
-                "[data-supertokens~='passkeyRecoverableErrorContainer']"
-            );
+            const errorTextContainer = await waitForSTElement(page, "[data-supertokens~='generalError']");
             const errorText = await errorTextContainer.evaluate((el) => el.textContent);
             assert.strictEqual(
                 errorText,
@@ -215,10 +212,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
             // Use the token to recover the account
             await openRecoveryWithToken(page, "test");
 
-            const errorTextContainer = await waitForSTElement(
-                page,
-                "[data-supertokens~='passkeyRecoverableErrorContainer']"
-            );
+            const errorTextContainer = await waitForSTElement(page, "[data-supertokens~='generalError']");
             const errorText = await errorTextContainer.evaluate((el) => el.textContent);
             assert.strictEqual(errorText, "Something went wrong, please refresh the page or reach out to support.");
 
@@ -240,10 +234,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
 
             await submitFormUnsafe(page);
 
-            const errorTextContainer = await waitForSTElement(
-                page,
-                "[data-supertokens~='passkeyRecoverableErrorContainer']"
-            );
+            const errorTextContainer = await waitForSTElement(page, "[data-supertokens~='generalError']");
             const errorText = await errorTextContainer.evaluate((el) => el.textContent);
             assert.strictEqual(errorText, "Failed to recover account, please try again.");
 
@@ -265,10 +256,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
 
             await submitFormUnsafe(page);
 
-            const errorTextContainer = await waitForSTElement(
-                page,
-                "[data-supertokens~='passkeyRecoverableErrorContainer']"
-            );
+            const errorTextContainer = await waitForSTElement(page, "[data-supertokens~='generalError']");
             const errorText = await errorTextContainer.evaluate((el) => el.textContent);
             assert.strictEqual(
                 errorText,
@@ -293,10 +281,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
 
             await submitFormUnsafe(page);
 
-            const errorTextContainer = await waitForSTElement(
-                page,
-                "[data-supertokens~='passkeyRecoverableErrorContainer']"
-            );
+            const errorTextContainer = await waitForSTElement(page, "[data-supertokens~='generalError']");
             const errorText = await errorTextContainer.evaluate((el) => el.textContent);
             assert.strictEqual(errorText, "Failed to recover account, please try again.");
 
@@ -318,10 +303,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
 
             await submitFormUnsafe(page);
 
-            const errorTextContainer = await waitForSTElement(
-                page,
-                "[data-supertokens~='passkeyRecoverableErrorContainer']"
-            );
+            const errorTextContainer = await waitForSTElement(page, "[data-supertokens~='generalError']");
             const errorText = await errorTextContainer.evaluate((el) => el.textContent);
             assert.strictEqual(errorText, "Invalid authenticator, please try again.");
 
@@ -344,10 +326,7 @@ describe("SuperTokens Webauthn Recover Account", () => {
             await submitFormUnsafe(page);
             await new Promise((res) => setTimeout(res, 1000));
 
-            const errorTextContainer = await waitForSTElement(
-                page,
-                "[data-supertokens~='passkeyRecoverableErrorContainer']"
-            );
+            const errorTextContainer = await waitForSTElement(page, "[data-supertokens~='generalError']");
             const errorText = await errorTextContainer.evaluate((el) => el.textContent);
             assert.strictEqual(
                 errorText,

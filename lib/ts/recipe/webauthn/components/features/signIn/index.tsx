@@ -127,8 +127,8 @@ const SignInFeatureInner: React.FC<
         props.clearError,
         props.resetFactorList,
         props.onSignInUpSwitcherClick,
-        isPasskeySupported,
-        props.showBackButton
+        props.showBackButton,
+        isPasskeySupported
     )!;
 
     return (
