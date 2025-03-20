@@ -51,7 +51,7 @@ export default abstract class Provider {
         return undefined;
     }
 
-    getButton = (name?: string): JSX.Element => {
+    getButton = (name?: string, defaultLogo?: JSX.Element): JSX.Element => {
         if (this.config.buttonComponent !== undefined) {
             if (typeof this.config.buttonComponent === "function") {
                 return <this.config.buttonComponent name={name ?? this.name} />;
@@ -60,7 +60,8 @@ export default abstract class Provider {
         }
 
         const providerName = name !== undefined ? name : this.name;
-        return <ProviderButton logo={this.getLogo()} providerName={providerName} displayName={providerName} />;
+        const logo = this.getLogo() ?? defaultLogo;
+        return <ProviderButton logo={logo} providerName={providerName} displayName={providerName} />;
     };
 
     abstract getLogo(): JSX.Element | undefined;
