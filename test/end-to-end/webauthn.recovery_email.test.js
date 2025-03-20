@@ -139,10 +139,7 @@ describe("SuperTokens Webauthn Recovery Email", () => {
             const email = await getTestEmail();
             await openRecoveryAccountPage(page, email, true);
 
-            const errorTextContainer = await waitForSTElement(
-                page,
-                "[data-supertokens~='passkeyRecoverableErrorContainer']"
-            );
+            const errorTextContainer = await waitForSTElement(page, "[data-supertokens~='generalError']");
             const errorText = await errorTextContainer.evaluate((el) => el.textContent);
             assert.strictEqual(errorText, "Account Recovery is not allowed, please contact support.");
 
@@ -157,10 +154,7 @@ describe("SuperTokens Webauthn Recovery Email", () => {
             });
             const email = await getTestEmail();
             await openRecoveryAccountPage(page, email, true);
-            const errorTextContainer = await waitForSTElement(
-                page,
-                "[data-supertokens~='passkeyRecoverableErrorContainer']"
-            );
+            const errorTextContainer = await waitForSTElement(page, "[data-supertokens~='generalError']");
             const errorText = await errorTextContainer.evaluate((el) => el.textContent);
             assert.strictEqual(
                 errorText,

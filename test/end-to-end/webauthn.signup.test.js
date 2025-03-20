@@ -153,10 +153,7 @@ describe("SuperTokens Webauthn SignUp", () => {
             await submitFormUnsafe(page);
             await page.waitForTimeout(1000);
 
-            const errorTextContainer = await waitForSTElement(
-                page,
-                "[data-supertokens~='passkeyRecoverableErrorContainer']"
-            );
+            const errorTextContainer = await waitForSTElement(page, "[data-supertokens~='generalError']");
             const errorText = await errorTextContainer.evaluate((el) => el.textContent);
             assert.strictEqual(errorText, "Email already exists, please sign in instead.");
 
@@ -200,7 +197,7 @@ describe("SuperTokens Webauthn SignUp", () => {
             // We should be in the confirmation page now.
             await submitFormUnsafe(page);
 
-            await waitForSTElement(page, "[data-supertokens~='passkeyRecoverableErrorContainer']");
+            await waitForSTElement(page, "[data-supertokens~='generalError']");
 
             // Remove the error and retry
             await page.evaluateOnNewDocument(() => {
@@ -227,7 +224,7 @@ describe("SuperTokens Webauthn SignUp", () => {
             // We should be in the confirmation page now.
             await submitFormUnsafe(page);
 
-            await waitForSTElement(page, "[data-supertokens~='passkeyRecoverableErrorContainer']");
+            await waitForSTElement(page, "[data-supertokens~='generalError']");
 
             await page.evaluateOnNewDocument(() => {
                 localStorage.removeItem("webauthnErrorStatus");
@@ -245,10 +242,7 @@ describe("SuperTokens Webauthn SignUp", () => {
             // We should be in the confirmation page now.
             await submitFormUnsafe(page);
 
-            const errorTextContainer = await waitForSTElement(
-                page,
-                "[data-supertokens~='passkeyRecoverableErrorContainer']"
-            );
+            const errorTextContainer = await waitForSTElement(page, "[data-supertokens~='generalError']");
             const errorText = await errorTextContainer.evaluate((el) => el.textContent);
             assert.strictEqual(
                 errorText,
