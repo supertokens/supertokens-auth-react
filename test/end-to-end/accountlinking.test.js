@@ -831,7 +831,7 @@ async function tryEmailPasswordSignUp(page, email) {
     await new Promise((res) => setTimeout(res, 250));
 }
 
-async function tryPasswordlessSignInUp(page, email) {
+export async function tryPasswordlessSignInUp(page, email) {
     await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
     await Promise.all([
         page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=passwordless`),
