@@ -120,7 +120,7 @@ describe("SuperTokens Email Verification", function () {
     });
 
     describe("Core", function () {
-        describe.only("Email verification screen", function () {
+        describe("Email verification screen", function () {
             it("Should redirect to auth from email verification protected page if the user is deleted", async function () {
                 await toggleSignInSignUp(page);
 
