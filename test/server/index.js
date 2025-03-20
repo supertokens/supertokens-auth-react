@@ -49,9 +49,6 @@ const { readFile } = require("fs/promises");
 const PasswordlessRaw = require("supertokens-node/lib/build/recipe/passwordless/recipe").default;
 const Passwordless = require("supertokens-node/recipe/passwordless");
 
-const WebauthnRaw = require("supertokens-node/lib/build/recipe/webauthn/recipe").default;
-const Webauthn = require("supertokens-node/recipe/webauthn");
-
 const UserRolesRaw = require("supertokens-node/lib/build/recipe/userroles/recipe").default;
 const UserRoles = require("supertokens-node/recipe/userroles");
 
@@ -77,6 +74,15 @@ try {
     OAuth2Provider = require("supertokens-node/recipe/oauth2provider");
 } catch {
     // OAuth2Provider is not supported by the tested version of the node SDK
+}
+
+let WebauthnRaw = undefined;
+let Webauthn = undefined;
+try {
+    WebauthnRaw = require("supertokens-node/lib/build/recipe/webauthn/recipe").default;
+    Webauthn = require("supertokens-node/recipe/webauthn");
+} catch {
+    // Webauthn is not supported by the tested version of the node SDK
 }
 
 const OTPAuth = require("otpauth");
@@ -627,7 +633,9 @@ function initST() {
 
         UserRolesRaw.reset();
         PasswordlessRaw.reset();
-        WebauthnRaw.reset();
+        if (WebauthnRaw) {
+            WebauthnRaw.reset();
+        }
         MultitenancyRaw.reset();
         AccountLinkingRaw.reset();
         UserMetadataRaw.reset();
@@ -772,21 +780,6 @@ function initST() {
             }),
         ],
         [
-            "webauthn",
-            Webauthn.init({
-                emailDelivery: {
-                    override: (oI) => {
-                        return {
-                            ...oI,
-                            sendEmail: async (input) => {
-                                await saveWebauthnToken(input);
-                            },
-                        };
-                    },
-                },
-            }),
-        ],
-        [
             "thirdparty",
             ThirdParty.init({
                 signInAndUpFeature: {
@@ -852,6 +845,23 @@ function initST() {
     ];
     if (OAuth2Provider) {
         recipeList.push(["oauth2provider", OAuth2Provider.init()]);
+    }
+    if (Webauthn) {
+        recipeList.push([
+            "webauthn",
+            Webauthn.init({
+                emailDelivery: {
+                    override: (oI) => {
+                        return {
+                            ...oI,
+                            sendEmail: async (input) => {
+                                await saveWebauthnToken(input);
+                            },
+                        };
+                    },
+                },
+            }),
+        ]);
     }
 
     passwordlessConfig = {
