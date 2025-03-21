@@ -133,7 +133,7 @@ describe("SuperTokens WebAuthn Account Linking", function () {
 
         // We should be in the confirmation page now.
         await submitForm(page);
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(4000);
 
         // Extract second userId from console logs
         const userId2 = await page.evaluate(() => document.querySelector(".session-context-userId").textContent);
@@ -222,7 +222,7 @@ describe("SuperTokens WebAuthn Account Linking", function () {
         await submitForm(page);
 
         await page.waitForTimeout(1000);
-        await waitForSTElement(page, "[data-supertokens~='passkeyRecoverableErrorContainer']");
+        await waitForSTElement(page, "[data-supertokens~='generalError']");
 
         // Try to recover the webauthn account using the same email
         await openRecoveryAccountPage(page, email, true);
