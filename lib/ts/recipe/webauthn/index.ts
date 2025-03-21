@@ -247,7 +247,10 @@ export default class Wrapper {
         return Webauthn.getInstanceOrThrow().webJSRecipe.recoverAccount(input);
     }
 
-    static registerCredential(input: { registrationOptions: RegistrationOptions; userContext: any }): Promise<
+    static registerCredential(input: {
+        registrationOptions: Omit<RegistrationOptions, "fetchResponse" | "status">;
+        userContext: any;
+    }): Promise<
         | {
               status: "OK";
               registrationResponse: RegistrationResponseJSON;
@@ -267,7 +270,10 @@ export default class Wrapper {
         return Webauthn.getInstanceOrThrow().webJSRecipe.registerCredential(input);
     }
 
-    static authenticateCredential(input: { authenticationOptions: AuthenticationOptions; userContext: any }): Promise<
+    static authenticateCredential(input: {
+        authenticationOptions: Omit<AuthenticationOptions, "fetchResponse" | "status">;
+        userContext: any;
+    }): Promise<
         | {
               status: "OK";
               authenticationResponse: AuthenticationResponseJSON;
