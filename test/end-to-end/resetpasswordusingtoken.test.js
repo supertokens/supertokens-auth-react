@@ -18,12 +18,7 @@
  */
 
 import assert from "assert";
-import {
-    EMAIL_EXISTS_API,
-    RESET_PASSWORD_API,
-    RESET_PASSWORD_TOKEN_API,
-    TEST_CLIENT_BASE_URL,
-} from "../constants";
+import { EMAIL_EXISTS_API, RESET_PASSWORD_API, RESET_PASSWORD_TOKEN_API, TEST_CLIENT_BASE_URL } from "../constants";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     getInputAdornmentsError,

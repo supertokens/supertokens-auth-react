@@ -37,7 +37,7 @@ import {
     backendHook,
     setupCoreApp,
     setupST,
-    screenshotOnFailure
+    screenshotOnFailure,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
 

@@ -29,7 +29,7 @@ import {
     setupBrowser,
     backendHook,
     setupCoreApp,
-    setupST
+    setupST,
 } from "../helpers";
 import { CREATE_TOTP_DEVICE_API, MFA_INFO_API } from "../constants";
 
@@ -115,7 +115,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     ...appConfig,
                     mfaInfo: {
                         allowedToSetup: ["totp"],
-                    }
+                    },
                 });
                 page = await browser.newPage();
 
@@ -146,7 +146,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         requirements: [],
                         alreadySetup: [factorId],
                         allowedToSetup: [factorId],
-                    }
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -172,7 +172,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         requirements: [],
                         alreadySetup: [factorId],
                         allowedToSetup: [],
-                    }
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -192,7 +192,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         requirements: [factorId],
                         alreadySetup: [],
                         allowedToSetup: [],
-                    }
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -211,7 +211,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         requirements: [factorId],
                         alreadySetup: [factorId],
                         allowedToSetup: [],
-                    }
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -245,7 +245,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         requirements: [factorId],
                         alreadySetup: [factorId],
                         allowedToSetup: [],
-                    }
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -262,7 +262,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         requirements: [factorId],
                         alreadySetup: [factorId],
                         allowedToSetup: [],
-                    }
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -304,7 +304,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         requirements: [factorId],
                         alreadySetup: [],
                         allowedToSetup: [factorId],
-                    }
+                    },
                 });
 
                 await page.setRequestInterception(true);
@@ -341,7 +341,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         requirements: [],
                         alreadySetup: [factorId],
                         allowedToSetup: [],
-                    }
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -360,7 +360,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         requirements: [],
                         alreadySetup: [factorId],
                         allowedToSetup: [factorId],
-                    }
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -381,7 +381,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         requirements: [],
                         alreadySetup: [],
                         allowedToSetup: [factorId],
-                    }
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -402,7 +402,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         requirements: [],
                         alreadySetup: [factorId],
                         allowedToSetup: [],
-                    }
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -423,7 +423,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         requirements: [{ oneOf: [factorId, "otp-email"] }],
                         alreadySetup: ["otp-email"],
                         allowedToSetup: [factorId],
-                    }
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -445,7 +445,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         requirements: [{ oneOf: [factorId, "otp-email"] }],
                         alreadySetup: [factorId, "otp-email"],
                         allowedToSetup: [],
-                    }
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -466,7 +466,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         requirements: [factorId],
                         alreadySetup: [],
                         allowedToSetup: [factorId],
-                    }
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -488,7 +488,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                         requirements: [factorId],
                         alreadySetup: [factorId],
                         allowedToSetup: [],
-                    }
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);

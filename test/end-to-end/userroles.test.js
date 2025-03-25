@@ -86,7 +86,7 @@ describe("User Roles in the frontend", function () {
             await page?.close();
             await backendHook("afterEach");
         });
-    
+
         after(async function () {
             await browser?.close();
             await backendHook("after");

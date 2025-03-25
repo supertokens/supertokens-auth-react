@@ -351,7 +351,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
             });
         });
 
-
         describe(`UserInputCode`, function () {
             this.timeout(60000);
 

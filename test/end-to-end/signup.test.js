@@ -46,12 +46,7 @@ import {
     setupCoreApp,
     setupST,
 } from "../helpers";
-import {
-    EMAIL_EXISTS_API,
-    SIGN_UP_API,
-    SOMETHING_WENT_WRONG_ERROR,
-    TEST_CLIENT_BASE_URL,
-} from "../constants";
+import { EMAIL_EXISTS_API, SIGN_UP_API, SOMETHING_WENT_WRONG_ERROR, TEST_CLIENT_BASE_URL } from "../constants";
 
 /*
  * Tests.

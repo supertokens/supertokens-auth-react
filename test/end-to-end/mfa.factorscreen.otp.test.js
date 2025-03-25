@@ -33,12 +33,7 @@ import {
     backendHook,
     setupST,
 } from "../helpers";
-import {
-    CONSUME_CODE_API,
-    CREATE_CODE_API,
-    MFA_INFO_API,
-    SOMETHING_WENT_WRONG_ERROR,
-} from "../constants";
+import { CONSUME_CODE_API, CREATE_CODE_API, MFA_INFO_API, SOMETHING_WENT_WRONG_ERROR } from "../constants";
 
 import { TEST_CLIENT_BASE_URL } from "../constants";
 import { getTestPhoneNumber } from "../exampleTestHelpers";

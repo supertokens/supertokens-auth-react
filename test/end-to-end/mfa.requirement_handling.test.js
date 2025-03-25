@@ -27,7 +27,7 @@ import {
     setupBrowser,
     backendHook,
     setupCoreApp,
-    setupST
+    setupST,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL } from "../constants";
 import { getTestPhoneNumber } from "../exampleTestHelpers";
@@ -135,7 +135,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
         describe("multistep requirement list", () => {
             it("multistep requirements should happen in order (allOfInAnyOrder -> oneOf)", async () => {
-
                 appConfig.mfaInfo = {
                     requirements: [{ allOfInAnyOrder: ["otp-phone", "totp"] }, { oneOf: ["otp-email"] }],
                 };
