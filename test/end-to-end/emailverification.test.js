@@ -330,7 +330,7 @@ describe("SuperTokens Email Verification", function () {
                 const title = await getTextByDataSupertokens(page, "headerTitle");
                 assert.deepStrictEqual(title, "Email verification successful!");
                 await submitForm(page);
-                 // Make sure to wait for status to update. Flakes in headless.
+                // Make sure to wait for status to update. Flakes in headless.
                 await new Promise((r) => setTimeout(r, 500));
                 const logoutButton = await getLogoutButton(page);
                 await Promise.all([logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);

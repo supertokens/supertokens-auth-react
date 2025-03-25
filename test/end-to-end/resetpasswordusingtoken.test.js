@@ -20,12 +20,7 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
-import {
-    EMAIL_EXISTS_API,
-    RESET_PASSWORD_API,
-    RESET_PASSWORD_TOKEN_API,
-    TEST_CLIENT_BASE_URL,
-} from "../constants";
+import { EMAIL_EXISTS_API, RESET_PASSWORD_API, RESET_PASSWORD_TOKEN_API, TEST_CLIENT_BASE_URL } from "../constants";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     getInputAdornmentsError,
