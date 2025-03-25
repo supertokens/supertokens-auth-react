@@ -24,20 +24,12 @@ import {
     clickOnProviderButton,
     waitForUrl,
     loginWithAuth0,
-    loginWithAuth0,
-    waitForUrl,
-    setupBrowser,
     backendHook,
     setupCoreApp,
     setupST,
     screenshotOnFailure,
 } from "../helpers";
-import {
-    TEST_CLIENT_BASE_URL,
-    RESET_PASSWORD_TOKEN_API,
-    RESET_PASSWORD_API,
-    SIGN_IN_UP_API,
-} from "../constants";
+import { TEST_CLIENT_BASE_URL, RESET_PASSWORD_TOKEN_API, RESET_PASSWORD_API, SIGN_IN_UP_API } from "../constants";
 import assert from "assert";
 
 describe("SuperTokens userContext with UI components test", function () {

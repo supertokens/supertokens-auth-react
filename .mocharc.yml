@@ -8,4 +8,4 @@ require:
     - test/test.mocha.env
 reporter: mocha-multi-reporters
 reporter-option:
-  - configFile=mocha-multi-reporters.json
+    - configFile=mocha-multi-reporters.json

@@ -43,11 +43,7 @@ import {
     setupCoreApp,
     setupST,
 } from "../helpers";
-import {
-    TEST_CLIENT_BASE_URL,
-    TEST_APPLICATION_SERVER_BASE_URL,
-    SOMETHING_WENT_WRONG_ERROR,
-} from "../constants";
+import { TEST_CLIENT_BASE_URL, TEST_APPLICATION_SERVER_BASE_URL, SOMETHING_WENT_WRONG_ERROR } from "../constants";
 
 // We do no thave to use a separate domain for the oauth2 client, since the way we are testing
 // the lib doesn't interact with the supertokens session handling.
