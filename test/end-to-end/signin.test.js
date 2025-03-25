@@ -76,7 +76,7 @@ describe("SuperTokens SignIn", function () {
         await setupST({ coreUrl });
         browser = await setupBrowser();
     });
-    
+
     beforeEach(async function () {
         backendHook("beforeEach");
         page = await browser.newPage();

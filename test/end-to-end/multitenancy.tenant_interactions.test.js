@@ -78,7 +78,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
 
     beforeEach(async function () {
         await backendHook("beforeEach");
-        
+
         const coreUrl = await setupCoreApp();
         appConfig.coreUrl = coreUrl;
         await setupST(appConfig);
