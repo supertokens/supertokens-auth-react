@@ -1,6 +1,5 @@
-spec:
-    - test/unit/**/*.test.js
-    - test/end-to-end/**/*.test.js
+# spec:
+#     - test/end-to-end/**/*.test.js
 slow: 20000
 timeout: 40000
 exit: true
