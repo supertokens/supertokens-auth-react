@@ -986,10 +986,7 @@ export async function backendHook(hookType) {
     );
 }
 
-export async function setupCoreApp({
-    appId,
-    coreConfig,
-} = {}) {
+export async function setupCoreApp({ appId, coreConfig } = {}) {
     const response = await fetch(`${TEST_SERVER_BASE_URL}/test/setup/app`, {
         method: "POST",
         headers: new Headers([["content-type", "application/json"]]),

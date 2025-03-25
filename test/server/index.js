@@ -185,29 +185,11 @@ const formFields = (process.env.MIN_FIELDS && []) || [
 ];
 initST();
 
-app.use(
-    cors({
-        origin: websiteDomain,
-        allowedHeaders: ["content-type", ...SuperTokens.getAllCORSHeaders()],
-        methods: ["GET", "PUT", "POST", "DELETE"],
-        credentials: true,
-    })
-);
-
-app.use(middleware());
-
-app.get("/ping", async (req, res) => {
-    res.send("success");
-});
-
 /**
  * Create a core application and initialize ST with the required config
  * @returns URL for the new core application
  */
-async function setupApp({
-    appId,
-    coreConfig,
-} = {}) {
+async function setupApp({ appId, coreConfig } = {}) {
     const coreAppUrl = await setupCoreApplication({ appId, coreConfig });
     console.log("Connection URI: " + coreAppUrl);
 
