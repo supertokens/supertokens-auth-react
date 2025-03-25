@@ -17,9 +17,7 @@
  * Imports
  */
 
-import {
-    getFeatureFlags,
-} from "../helpers";
+import { getFeatureFlags } from "../helpers";
 import { getThirdPartyTestCases } from "./thirdparty.test";
 
 /*

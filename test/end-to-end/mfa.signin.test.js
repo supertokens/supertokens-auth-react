@@ -89,7 +89,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 consoleLogs.push(log);
             }
         });
-        
+
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
 
         await page.evaluate(() => window.localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
@@ -117,7 +117,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
             ...appConfig,
             mfaInfo: {
                 requirements: ["otp-email"],
-            }
+            },
         });
 
         await tryEmailPasswordSignUp(page, email);
