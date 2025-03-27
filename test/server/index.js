@@ -79,6 +79,7 @@ try {
     WebauthnRaw = require("supertokens-node/lib/build/recipe/webauthn/recipe").default;
     Webauthn = require("supertokens-node/recipe/webauthn");
 } catch {
+    console.log("Webauthn is not supported by the tested version of the node SDK");
     // Webauthn is not supported by the tested version of the node SDK
 }
 
@@ -979,6 +980,10 @@ app.get("/test/featureFlags", (req, res) => {
     available.push("oauth2");
     available.push("accountlinking-fixes");
 
+    if (Webauthn !== undefined) {
+        available.push("webauthn");
+    }
+
     res.send({
         available,
     });
@@ -990,6 +995,55 @@ app.post("/test/create-oauth2-client", async (req, res, next) => {
         res.send({ client });
     } catch (e) {
         next(e);
+    }
+});
+
+app.get("/test/webauthn/get-token", async (req, res) => {
+    const webauthn = webauthnStore.get(req.query.email);
+    if (!webauthn) {
+        res.status(404).send({ error: "Webauthn not found" });
+        return;
+    }
+    res.send({ token: webauthn.token });
+});
+
+app.post("/test/webauthn/create-and-assert-credential", async (req, res) => {
+    try {
+        const { registerOptionsResponse, signInOptionsResponse, rpId, rpName, origin } = req.body;
+
+        const { createAndAssertCredential } = await getWebauthnLib();
+        const credential = createAndAssertCredential(registerOptionsResponse, signInOptionsResponse, {
+            rpId,
+            rpName,
+            origin,
+            userNotPresent: false,
+            userNotVerified: false,
+        });
+
+        res.send({ credential });
+    } catch (error) {
+        console.error("Error in create-and-assert-credential:", error);
+        res.status(500).send({ error: error.message });
+    }
+});
+
+app.post("/test/webauthn/create-credential", async (req, res) => {
+    try {
+        const { registerOptionsResponse, rpId, rpName, origin } = req.body;
+
+        const { createCredential } = await getWebauthnLib();
+        const credential = createCredential(registerOptionsResponse, {
+            rpId,
+            rpName,
+            origin,
+            userNotPresent: false,
+            userNotVerified: false,
+        });
+
+        res.send({ credential });
+    } catch (error) {
+        console.error("Error in create-credential:", error);
+        res.status(500).send({ error: error.message });
     }
 });
 
