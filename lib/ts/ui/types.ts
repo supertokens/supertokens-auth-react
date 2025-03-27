@@ -6,6 +6,7 @@ import type { PasswordlessPreBuiltUI } from "../recipe/passwordless/prebuiltui";
 import type { SessionPreBuiltUI } from "../recipe/session/prebuiltui";
 import type { ThirdPartyPreBuiltUI } from "../recipe/thirdparty/prebuiltui";
 import type { TOTPPreBuiltUI } from "../recipe/totp/prebuiltui";
+import type { WebauthnPreBuiltUI } from "../recipe/webauthn/prebuiltui";
 
 export type ReactRouterDomWithCustomHistory = {
     router: { Route: any };
@@ -22,4 +23,5 @@ export type PreBuiltRecipes = (
     | typeof TOTPPreBuiltUI
     | typeof OAuth2ProviderPreBuiltUI
     | typeof SessionPreBuiltUI
+    | typeof WebauthnPreBuiltUI
 )[];
