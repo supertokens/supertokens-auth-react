@@ -1,7 +1,5 @@
-import fetch from "isomorphic-fetch";
-import { TEST_SERVER_BASE_URL } from "../constants";
 import {
-    backendBeforeEach,
+    backendHook,
     setupBrowser,
     screenshotOnFailure,
     clearBrowserCookiesWithoutAffectingConsole,
@@ -9,6 +7,8 @@ import {
     waitForSTElement,
     getTestEmail,
     isWebauthnSupported,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
 import { openRecoveryAccountPage, signUpAndSendRecoveryEmail, getTokenFromEmail } from "./webauthn.helpers";
 import assert from "assert";
@@ -24,11 +24,10 @@ describe("SuperTokens Webauthn Recovery Email", () => {
             skipped = true;
             this.skip();
         }
-        await backendBeforeEach();
 
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendHook("before");
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
 
         browser = await setupBrowser();
         page = await browser.newPage();
@@ -44,21 +43,18 @@ describe("SuperTokens Webauthn Recovery Email", () => {
         if (skipped) {
             return;
         }
-        await browser.close();
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
+        await page?.close();
+        await browser?.close();
+        await backendHook("after");
     });
 
-    afterEach(function () {
-        return screenshotOnFailure(this, browser);
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await backendHook("afterEach");
     });
 
     beforeEach(async function () {
+        await backendHook("beforeEach");
         consoleLogs = [];
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         await toggleSignInSignUp(page);

@@ -1,7 +1,4 @@
-import fetch from "isomorphic-fetch";
-import { TEST_SERVER_BASE_URL } from "../constants";
 import {
-    backendBeforeEach,
     setupBrowser,
     screenshotOnFailure,
     clearBrowserCookiesWithoutAffectingConsole,
@@ -9,11 +6,13 @@ import {
     getTestEmail,
     waitForSTElement,
     submitFormUnsafe,
-    setEnabledRecipes,
     setInputValues,
     isWebauthnSupported,
     waitForUrl,
     getUserIdFromSessionContext,
+    backendHook,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
 import { tryWebauthnSignUp, openWebauthnSignUp } from "./webauthn.helpers";
 import assert from "assert";
@@ -23,6 +22,9 @@ describe("SuperTokens Webauthn SignUp", () => {
     let page;
     let consoleLogs = [];
     let skipped = false;
+    const appConfig = {
+        enabledRecipes: ["webauthn", "emailpassword", "session", "dashboard", "userroles", "multifactorauth"],
+    };
 
     before(async function () {
         if (!(await isWebauthnSupported())) {
@@ -30,13 +32,10 @@ describe("SuperTokens Webauthn SignUp", () => {
             this.skip();
         }
 
-        await backendBeforeEach();
-
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await setEnabledRecipes(["webauthn", "emailpassword", "session", "dashboard", "userroles", "multifactorauth"]);
+        await backendHook("before");
+        const coreUrl = await setupCoreApp();
+        appConfig.coreUrl = coreUrl;
+        await setupST(appConfig);
 
         browser = await setupBrowser();
         page = await browser.newPage();
@@ -53,21 +52,18 @@ describe("SuperTokens Webauthn SignUp", () => {
             return;
         }
 
-        await browser.close();
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
+        await page?.close();
+        await browser?.close();
+        await backendHook("after");
     });
 
-    afterEach(function () {
-        return screenshotOnFailure(this, browser);
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await backendHook("afterEach");
     });
 
     beforeEach(async function () {
+        await backendHook("beforeEach");
         consoleLogs = [];
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         await toggleSignInSignUp(page);
@@ -75,7 +71,7 @@ describe("SuperTokens Webauthn SignUp", () => {
 
     describe("SignUp test", () => {
         it("should not show the back button and continue without passkey button if there is only one recipe", async () => {
-            await setEnabledRecipes(["webauthn", "multifactorauth"]);
+            await setupST({ ...appConfig, enabledRecipes: ["webauthn", "multifactorauth"] });
             await openWebauthnSignUp(page);
 
             // Use puppeteer to check if the back button is not shown
@@ -100,14 +96,7 @@ describe("SuperTokens Webauthn SignUp", () => {
             assert.strictEqual(continueWithoutPasskeyBtnAfterSubmit, null);
 
             // Reset the recipes after test is done
-            await setEnabledRecipes([
-                "webauthn",
-                "emailpassword",
-                "session",
-                "dashboard",
-                "userroles",
-                "multifactorauth",
-            ]);
+            await setupST({ ...appConfig });
         });
         it("should show the create a passkey successfully", async () => {
             const email = await getTestEmail();

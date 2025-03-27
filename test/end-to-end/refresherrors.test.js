@@ -17,15 +17,12 @@
  * Imports
  */
 import assert from "assert";
-import puppeteer from "puppeteer";
-
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     getTextInDashboardNoAuth,
     screenshotOnFailure,
     setupBrowser,
 } from "../helpers";
-
 import { TEST_CLIENT_BASE_URL } from "../constants";
 
 describe("Refresh errors", function () {
