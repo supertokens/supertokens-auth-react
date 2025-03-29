@@ -169,7 +169,7 @@ export type AppInfoUserInput = {
     /*
      * The name of the application.
      */
-    appName: string;
+    applicationName: string;
 
     /*
      * The API that connects with the application.
