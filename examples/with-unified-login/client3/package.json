@@ -1,0 +1,51 @@
+{
+    "name": "todos-express-openidconnect",
+    "version": "0.0.0",
+    "private": true,
+    "description": "Todo app using Express, Passport, and SQLite for sign in via OpenID Connect.",
+    "keywords": [
+        "example",
+        "express",
+        "passport",
+        "sqlite"
+    ],
+    "author": {
+        "name": "Jared Hanson",
+        "email": "jaredhanson@gmail.com",
+        "url": "https://www.jaredhanson.me/"
+    },
+    "homepage": "https://github.com/passport/todos-express-openidconnect",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/passport/todos-express-openidconnect.git"
+    },
+    "bugs": {
+        "url": "https://github.com/passport/todos-express-openidconnect/issues"
+    },
+    "funding": {
+        "type": "github",
+        "url": "https://github.com/sponsors/jaredhanson"
+    },
+    "license": "Unlicense",
+    "scripts": {
+        "start": "NODE_OPTIONS=--use-openssl-ca node ./bin/www"
+    },
+    "dependencies": {
+        "connect-ensure-login": "^0.1.1",
+        "connect-sqlite3": "^0.9.13",
+        "cookie-parser": "~1.4.4",
+        "csurf": "^1.11.0",
+        "debug": "~2.6.9",
+        "dotenv": "^8.6.0",
+        "ejs": "~2.6.1",
+        "express": "~4.16.1",
+        "express-session": "^1.17.2",
+        "http-errors": "~1.6.3",
+        "mkdirp": "^1.0.4",
+        "morgan": "~1.9.1",
+        "passport": "^0.5.2",
+        "passport-openidconnect": "^0.1.1",
+        "pluralize": "^8.0.0",
+        "sqlite3": "^5.0.2"
+    }
+}
