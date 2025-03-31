@@ -10,6 +10,7 @@ on:
         branches:
             - master
             - "v[0-9]+.[0-9]+"
+            - "ci/github-actions/auth-react/v0.49.0" # TODO: Remove this
         tags:
             - "(dev-)?v[0-9]+.[0-9]+.[0-9]+"
 
