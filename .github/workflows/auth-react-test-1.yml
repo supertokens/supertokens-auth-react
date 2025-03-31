@@ -1,0 +1,94 @@
+name: Auth-React Tests - L1
+
+on:
+    pull_request:
+        types:
+            - opened
+            - reopened
+            - synchronize
+    push:
+        branches:
+            - master
+            - "v[0-9]+.[0-9]+"
+        tags:
+            - "(dev-)?v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+    define-versions:
+        runs-on: ubuntu-latest
+        outputs:
+            fdiVersions: ${{ steps.versions.outputs.fdiVersions }}
+            cdiVersions: ${{ steps.versions.outputs.cdiVersions }}
+        steps:
+            - uses: actions/checkout@v4
+            - uses: supertokens/get-supported-versions-action@main
+              id: versions
+              with:
+                  has-fdi: true
+                  has-cdi: true
+
+    setup-auth-react:
+        runs-on: ubuntu-latest
+        needs: define-versions
+        strategy:
+            fail-fast: true
+            matrix:
+                # fdi-version: ${{ fromJSON(needs.define-versions.outputs.fdiVersions) }}
+                fdi-version: ["4.1"]
+
+        outputs:
+            AUTH_REACT__LOG_DIR: ${{ steps.envs.outputs.AUTH_REACT__LOG_DIR }}
+            AUTH_REACT__SCREENSHOT_DIR: ${{ steps.envs.outputs.AUTH_REACT__SCREENSHOT_DIR }}
+            AUTH_REACT__NODE_PORT: ${{ steps.envs.outputs.AUTH_REACT__NODE_PORT }}
+            AUTH_REACT__TEST_MODE: ${{ steps.envs.outputs.AUTH_REACT__TEST_MODE }}
+            AUTH_REACT__PORT: ${{ steps.envs.outputs.AUTH_REACT__PORT }}
+            specs: ${{ steps.envs.outputs.specs }}
+
+        steps:
+            - uses: supertokens/get-versions-action@main
+              id: versions
+              with:
+                  driver-name: node
+                  fdi-version: ${{ matrix.fdi-version }}
+              env:
+                  SUPERTOKENS_API_KEY: ${{ secrets.SUPERTOKENS_API_KEY }}
+
+            - uses: supertokens/auth-react-testing-action/setup@main
+              id: envs
+              with:
+                  # auth-react-version: ${{ steps.versions.outputs.authReactTag }}
+                  auth-react-version: ci/github-actions/auth-react/v0.49.0
+                  node-sdk-version: ${{ steps.versions.outputs.nodeTag }}
+                  fdi-version: ${{ matrix.fdi-version }}
+                  use-common-app-and-test-server: "true"
+
+    test:
+        runs-on: ubuntu-latest
+        needs: setup-auth-react
+
+        strategy:
+            max-parallel: 2
+            fail-fast: false
+            matrix:
+                # fdi-version: ${{ fromJSON(needs.define-versions.outputs.fdiVersions) }}
+                fdi-version: ["4.1"]
+
+        env:
+            SUPERTOKENS_CORE_PORT: 3567
+            SUPERTOKENS_CORE_HOST: localhost
+            TEST_MODE: testing
+            # Auth react setup envs
+            AUTH_REACT__LOG_DIR: ${{ needs.setup-auth-react.outputs.AUTH_REACT__LOG_DIR }}
+            AUTH_REACT__SCREENSHOT_DIR: ${{ needs.setup-auth-react.outputs.AUTH_REACT__SCREENSHOT_DIR }}
+            AUTH_REACT__NODE_PORT: ${{ needs.setup-auth-react.outputs.AUTH_REACT__NODE_PORT }}
+            AUTH_REACT__TEST_MODE: ${{ needs.setup-auth-react.outputs.AUTH_REACT__TEST_MODE }}
+            AUTH_REACT__PORT: ${{ needs.setup-auth-react.outputs.AUTH_REACT__PORT }}
+
+        steps:
+            - uses: supertokens/auth-react-testing-action@main
+              name: ${{ matrix.fdi-version }}
+              with:
+                  fdi-version: ${{ matrix.fdi-version }}
+                  check-name-suffix: "[FDI=${{ matrix.fdi-version }}][Spec=${{ needs.setup-auth-react.outputs.specs }}]"
+                  path: supertokens-auth-react
+                  spec: ${{ needs.setup-auth-react.outputs.specs }}
