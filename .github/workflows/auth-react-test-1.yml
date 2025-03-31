@@ -84,8 +84,13 @@ jobs:
             AUTH_REACT__PORT: ${{ needs.setup-auth-react.outputs.AUTH_REACT__PORT }}
 
         steps:
+            - uses: actions/checkout@v4
+              with:
+                  path: supertokens-auth-react
+
             - name: Start core
               run: docker compose up --wait
+              working-directory: supertokens-auth-react
 
             - uses: supertokens/auth-react-testing-action@main
               name: ${{ matrix.fdi-version }}
