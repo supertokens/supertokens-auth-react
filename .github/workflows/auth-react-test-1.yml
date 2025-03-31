@@ -19,14 +19,12 @@ jobs:
         runs-on: ubuntu-latest
         outputs:
             fdiVersions: ${{ steps.versions.outputs.fdiVersions }}
-            cdiVersions: ${{ steps.versions.outputs.cdiVersions }}
         steps:
             - uses: actions/checkout@v4
             - uses: supertokens/get-supported-versions-action@main
               id: versions
               with:
                   has-fdi: true
-                  has-cdi: true
 
     setup-auth-react:
         runs-on: ubuntu-latest
