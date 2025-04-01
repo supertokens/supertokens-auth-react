@@ -72,7 +72,7 @@ jobs:
             matrix:
                 # fdi-version: ${{ fromJSON(needs.define-versions.outputs.fdiVersions) }}
                 fdi-version: ["4.1"]
-                spec: ${{ needs.setup-auth-react.outputs.specs }}
+                spec: ${{ fromJSON(needs.setup-auth-react.outputs.specs) }}
 
         env:
             SUPERTOKENS_CORE_PORT: 3567
