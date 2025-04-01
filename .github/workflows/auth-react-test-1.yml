@@ -72,6 +72,7 @@ jobs:
             matrix:
                 # fdi-version: ${{ fromJSON(needs.define-versions.outputs.fdiVersions) }}
                 fdi-version: ["4.1"]
+                spec: ${{ needs.setup-auth-react.outputs.specs }}
 
         env:
             SUPERTOKENS_CORE_PORT: 3567
@@ -98,6 +99,6 @@ jobs:
               name: ${{ matrix.fdi-version }}
               with:
                   fdi-version: ${{ matrix.fdi-version }}
-                  check-name-suffix: "[FDI=${{ matrix.fdi-version }}][Spec=${{ needs.setup-auth-react.outputs.specs }}]"
+                  check-name-suffix: "[FDI=${{ matrix.fdi-version }}][Spec=${{ matrix.spec }}]"
                   path: supertokens-auth-react
-                  spec: ${{ needs.setup-auth-react.outputs.specs }}
+                  spec: ${{ matrix.spec }}
