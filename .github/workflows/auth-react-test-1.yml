@@ -1,4 +1,4 @@
-name: Auth-React Tests
+name: Auth-React Tests - L1
 
 on:
     pull_request:
@@ -10,7 +10,7 @@ on:
         branches:
             - master
             - "v[0-9]+.[0-9]+"
-            - "ci/github-actions/auth-react/v0.48.0" # TODO: Remove this
+            - "ci/github-actions/auth-react/v0.49.0" # TODO: Remove this
         tags:
             - "(dev-)?v[0-9]+.[0-9]+.[0-9]+"
 
@@ -33,7 +33,7 @@ jobs:
             fail-fast: true
             matrix:
                 # fdi-version: ${{ fromJSON(needs.define-versions.outputs.fdiVersions) }}
-                fdi-version: ["4.0"]
+                fdi-version: ["4.1", "3.1"]
 
         outputs:
             AUTH_REACT__LOG_DIR: ${{ steps.envs.outputs.AUTH_REACT__LOG_DIR }}
@@ -62,43 +62,22 @@ jobs:
                   fdi-version: ${{ matrix.fdi-version }}
                   use-common-app-and-test-server: "true"
 
-    test:
-        runs-on: ubuntu-latest
+    launch-test-workflow:
+        uses: ./.github/workflows/auth-react-test-2.yml
         needs: setup-auth-react
-
+        name: FDI ${{ matrix.fdi-version }}
         strategy:
-            max-parallel: 10
-            fail-fast: false
+            max-parallel: 1 # This is important to avoid ddos GHA API
+            fail-fast: false # Don't fail fast to avoid locking TF State
             matrix:
                 # fdi-version: ${{ fromJSON(needs.define-versions.outputs.fdiVersions) }}
-                fdi-version: ["4.0"]
-                spec: ${{ fromJSON(needs.setup-auth-react.outputs.specs) }}
-
-        env:
-            SUPERTOKENS_CORE_PORT: 3567
-            SUPERTOKENS_CORE_HOST: localhost
-            TEST_MODE: testing
-            # Auth react setup envs
+                fdi-version: ["4.1", "3.1"]
+        with:
+            fdi-version: ${{ matrix.fdi-version }}
+            specs: ${{ needs.setup-auth-react.outputs.specs }}
             AUTH_REACT__LOG_DIR: ${{ needs.setup-auth-react.outputs.AUTH_REACT__LOG_DIR }}
             AUTH_REACT__SCREENSHOT_DIR: ${{ needs.setup-auth-react.outputs.AUTH_REACT__SCREENSHOT_DIR }}
+            AUTH_REACT__APP_SERVER: ${{ needs.setup-auth-react.outputs.AUTH_REACT__APP_SERVER }}
             AUTH_REACT__NODE_PORT: ${{ needs.setup-auth-react.outputs.AUTH_REACT__NODE_PORT }}
-            AUTH_REACT__APP_SERVER: ${{ needs.setup-auth-react.outputs.AUTH_REACT__NODE_PORT }}
             AUTH_REACT__TEST_MODE: ${{ needs.setup-auth-react.outputs.AUTH_REACT__TEST_MODE }}
             AUTH_REACT__PORT: ${{ needs.setup-auth-react.outputs.AUTH_REACT__PORT }}
-
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                  path: supertokens-auth-react
-
-            - name: Start core
-              run: docker compose up --wait
-              working-directory: supertokens-auth-react
-
-            - uses: supertokens/auth-react-testing-action@main
-              name: test ${{ matrix.spec }} for ${{ matrix.fdi-version }}
-              with:
-                  fdi-version: ${{ matrix.fdi-version }}
-                  check-name-suffix: "[FDI=${{ matrix.fdi-version }}][Spec=${{ matrix.spec }}]"
-                  path: supertokens-auth-react
-                  spec: ${{ matrix.spec }}
