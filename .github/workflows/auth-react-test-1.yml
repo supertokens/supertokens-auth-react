@@ -10,7 +10,6 @@ on:
         branches:
             - master
             - "v[0-9]+.[0-9]+"
-            - "ci/github-actions/auth-react/v0.48.0" # TODO: Remove this
         tags:
             - "(dev-)?v[0-9]+.[0-9]+.[0-9]+"
 
@@ -32,8 +31,7 @@ jobs:
         strategy:
             fail-fast: true
             matrix:
-                # fdi-version: ${{ fromJSON(needs.define-versions.outputs.fdiVersions) }}
-                fdi-version: ["4.0"]
+                fdi-version: ${{ fromJSON(needs.define-versions.outputs.fdiVersions) }}
 
         outputs:
             AUTH_REACT__LOG_DIR: ${{ steps.envs.outputs.AUTH_REACT__LOG_DIR }}
@@ -43,6 +41,7 @@ jobs:
             AUTH_REACT__TEST_MODE: ${{ steps.envs.outputs.AUTH_REACT__TEST_MODE }}
             AUTH_REACT__PORT: ${{ steps.envs.outputs.AUTH_REACT__PORT }}
             specs: ${{ steps.envs.outputs.specs }}
+            fdiVersions: ${{ needs.define-versions.outputs.fdiVersions }}
 
         steps:
             - uses: supertokens/get-versions-action@main
@@ -70,8 +69,7 @@ jobs:
             max-parallel: 1 # This is important to avoid ddos GHA API
             fail-fast: false # Don't fail fast to avoid locking TF State
             matrix:
-                # fdi-version: ${{ fromJSON(needs.define-versions.outputs.fdiVersions) }}
-                fdi-version: ["4.0"]
+                fdi-version: ${{ fromJSON(needs.setup-auth-react.outputs.fdiVersions) }}
         with:
             fdi-version: ${{ matrix.fdi-version }}
             specs: ${{ needs.setup-auth-react.outputs.specs }}
