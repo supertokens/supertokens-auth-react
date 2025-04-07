@@ -28,6 +28,7 @@ import {
     setupCoreApp,
     setupST,
     screenshotOnFailure,
+    setupBrowser,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, RESET_PASSWORD_TOKEN_API, RESET_PASSWORD_API, SIGN_IN_UP_API } from "../constants";
 import assert from "assert";
@@ -42,10 +43,7 @@ describe("SuperTokens userContext with UI components test", function () {
         const coreUrl = await setupCoreApp();
         await setupST({ coreUrl });
 
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();

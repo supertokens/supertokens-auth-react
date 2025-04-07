@@ -61,10 +61,7 @@ describe("SuperTokens SignUp", function () {
         const coreUrl = await setupCoreApp();
         await setupST({ coreUrl });
 
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();

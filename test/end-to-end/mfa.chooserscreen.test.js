@@ -74,9 +74,15 @@ describe("SuperTokens SignIn w/ MFA", function () {
         backendHook("before");
         const coreUrl = await setupCoreApp();
         appConfig.coreUrl = coreUrl;
+        appConfig.accountLinkingConfig = {
+            enabled: true,
+            shouldAutoLink: {
+                shouldAutomaticallyLink: true,
+                shouldRequireVerification: false,
+            },
+        };
         await setupST(appConfig);
 
-        await setAccountLinkingConfig(true, true, false);
         browser = await setupBrowser();
     });
 

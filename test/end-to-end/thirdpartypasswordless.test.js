@@ -74,10 +74,7 @@ describe("SuperTokens Third Party Passwordless", function () {
             appConfig.coreUrl = coreUrl;
             await setupST(appConfig);
 
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: true,
-            });
+            browser = await setupBrowser();
             page = await browser.newPage();
             page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
