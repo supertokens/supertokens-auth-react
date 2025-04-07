@@ -17,8 +17,6 @@
  * Imports
  */
 import assert from "assert";
-import puppeteer from "puppeteer";
-import fetch from "isomorphic-fetch";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     screenshotOnFailure,
@@ -40,8 +38,11 @@ import {
     loginWithMockProvider,
     isGeneralErrorSupported,
     setGeneralErrorToLocalStorage,
-    backendBeforeEach,
+    backendHook,
+    setupCoreApp,
     waitForUrl,
+    setupBrowser,
+    setupST,
 } from "../helpers";
 
 import {
@@ -56,12 +57,46 @@ import {
     SIGN_IN_UP_API,
 } from "../constants";
 
+let browser;
+let page;
+let consoleLogs;
+
 describe("General error rendering", function () {
     before(async function () {
         const _isGeneralErrorSupported = await isGeneralErrorSupported();
         if (!_isGeneralErrorSupported) {
             this.skip();
         }
+
+        await backendHook("before");
+        browser = await setupBrowser();
+    });
+
+    beforeEach(async function () {
+        await backendHook("beforeEach");
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
+        page = await browser.newPage();
+
+        consoleLogs = [];
+        page.on("console", (consoleObj) => {
+            const log = consoleObj.text();
+            if (log.startsWith("ST_LOGS")) {
+                consoleLogs.push(log);
+            }
+        });
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+    });
+
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await page?.close();
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
     });
 
     describe("EmailPassword", function () {
@@ -69,38 +104,7 @@ describe("General error rendering", function () {
     });
 
     describe("Email verification", function () {
-        let browser;
-        let page;
-        before(async function () {
-            await backendBeforeEach();
-
-            await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                method: "POST",
-            }).catch(console.error);
-
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: true,
-            });
-        });
-
-        after(async function () {
-            await browser.close();
-            await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                method: "POST",
-            }).catch(console.error);
-            await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                method: "POST",
-            }).catch(console.error);
-        });
-
-        afterEach(function () {
-            return screenshotOnFailure(this, browser);
-        });
-
         beforeEach(async function () {
-            page = await browser.newPage();
-            await clearBrowserCookiesWithoutAffectingConsole(page, []);
             await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
@@ -231,37 +235,7 @@ describe("General error rendering", function () {
 
 function getEmailPasswordTests(rid, ridForStorage) {
     describe("Email Password Tests", function () {
-        let browser;
-        let page;
-        before(async function () {
-            await backendBeforeEach();
-
-            await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                method: "POST",
-            }).catch(console.error);
-
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: true,
-            });
-        });
-
-        after(async function () {
-            await browser.close();
-            await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                method: "POST",
-            }).catch(console.error);
-            await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                method: "POST",
-            }).catch(console.error);
-        });
-
-        afterEach(function () {
-            return screenshotOnFailure(this, browser);
-        });
-
         beforeEach(async function () {
-            page = await browser.newPage();
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=${rid}`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -369,37 +343,7 @@ function getEmailPasswordTests(rid, ridForStorage) {
 
 function getThirdPartyTests(rid, ridForStorage) {
     describe("Third Party Tests", function () {
-        let browser;
-        let page;
-        before(async function () {
-            await backendBeforeEach();
-
-            await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                method: "POST",
-            }).catch(console.error);
-
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: true,
-            });
-        });
-
-        after(async function () {
-            await browser.close();
-            await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                method: "POST",
-            }).catch(console.error);
-            await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                method: "POST",
-            }).catch(console.error);
-        });
-
-        afterEach(function () {
-            return screenshotOnFailure(this, browser);
-        });
-
         beforeEach(async function () {
-            page = await browser.newPage();
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=${rid}`);
             await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
         });

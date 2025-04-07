@@ -18,7 +18,6 @@
  */
 
 import assert from "assert";
-import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     clickForgotPasswordLink,
@@ -49,14 +48,15 @@ import {
     screenshotOnFailure,
     waitForText,
     waitForSTElement,
-    backendBeforeEach,
     setEnabledRecipes,
     waitForUrl,
+    setupBrowser,
+    backendHook,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
-import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
-
-import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_OUT_API } from "../constants";
+import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, SIGN_OUT_API } from "../constants";
 
 /*
  * Tests.
@@ -71,37 +71,14 @@ describe("SuperTokens SignIn with react router dom v5", function () {
             this.skip();
         }
 
-        await backendBeforeEach();
-
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
-    });
-
-    after(async function () {
-        if (browser) {
-            await browser.close();
-        }
-
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
-    });
-
-    afterEach(function () {
-        return screenshotOnFailure(this, browser);
+        await backendHook("beforeEach");
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
+        browser = await setupBrowser();
     });
 
     beforeEach(async function () {
+        backendHook("beforeEach");
         page = await browser.newPage();
         // we set react-router-domv5 to true in localstorage
         await Promise.all([
@@ -119,6 +96,17 @@ describe("SuperTokens SignIn with react router dom v5", function () {
             }
         });
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
+    });
+
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await page?.close();
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
     });
 
     describe("SignIn test ", function () {
@@ -653,19 +641,26 @@ describe("SuperTokens SignIn => Server Error", function () {
     let page;
     let consoleLogs;
 
+    const appConfig = {
+        enabledRecipes: ["emailpassword"],
+        enabledProviders: [],
+    };
+
     before(async function () {
-        await setEnabledRecipes(["emailpassword"], []);
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        await backendHook("before");
+        const coreUrl = await setupCoreApp();
+        appConfig.coreUrl = coreUrl;
+        await setupST(appConfig);
+        browser = await setupBrowser();
     });
 
     after(async function () {
+        await backendHook("after");
         await browser.close();
     });
 
     beforeEach(async function () {
+        await backendHook("beforeEach");
         page = await browser.newPage();
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
         page.on("console", (consoleObj) => {
@@ -682,8 +677,21 @@ describe("SuperTokens SignIn => Server Error", function () {
             { name: "password", value: "Str0ngP@ssw0rd" },
         ]);
 
-        await submitForm(page);
+        await page.setRequestInterception(true);
+        page.on("request", (request) => {
+            if (request.url() === SIGN_IN_API && request.method() === "POST") {
+                request.respond({
+                    // Previous behavior was a result of core being shut down
+                    // Emulating the same here
+                    status: 500,
+                    // body: "Error: No SuperTokens core available to query",
+                });
+            } else {
+                request.continue();
+            }
+        });
 
+        await submitForm(page);
         await page.waitForResponse((response) => {
             return response.url() === SIGN_IN_API && response.status() === 500;
         });
