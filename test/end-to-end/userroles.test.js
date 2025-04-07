@@ -52,10 +52,7 @@ describe("User Roles in the frontend", function () {
             const coreUrl = await setupCoreApp();
             await setupST({ coreUrl });
 
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: true,
-            });
+            browser = await setupBrowser();
             page = await browser.newPage();
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=emailpassword`),

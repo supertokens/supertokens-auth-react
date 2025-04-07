@@ -28,6 +28,11 @@ import {
     assertNoSTComponents,
     clearBrowserCookiesWithoutAffectingConsole,
     screenshotOnFailure,
+<<<<<<< HEAD
+=======
+    waitForUrl,
+    setupBrowser,
+>>>>>>> e5975453 (Fix all tests to make them compatible with unified core setup)
 } from "../helpers";
 /*
  * Tests.
@@ -36,10 +41,7 @@ describe("SuperTokens Routing in Test App", function () {
     let browser, page;
 
     before(async function () {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
         page = await browser.newPage();
     });
 

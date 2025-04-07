@@ -31,10 +31,7 @@ describe("Refresh errors", function () {
         let page;
 
         before(async function () {
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: true,
-            });
+            browser = await setupBrowser();
         });
 
         after(async function () {

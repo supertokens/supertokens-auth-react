@@ -28,6 +28,8 @@ import {
 import path from "path";
 import assert from "assert";
 import mkdirp from "mkdirp";
+import Puppeteer from "puppeteer";
+import addContext from "mochawesome/addContext";
 
 const SESSION_STORAGE_STATE_KEY = "supertokens-oauth-state";
 
@@ -768,6 +770,108 @@ export async function screenshotOnFailure(ctx, browser) {
             });
         }
     }
+}
+
+export async function setupBrowser() {
+    const browser = await Puppeteer.launch({
+        args: [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-web-security",
+            "--host-resolver-rules=MAP example.com 127.0.0.1, MAP *.example.com 127.0.0.1",
+            // Open DevTools automatically if in non-headless mode and DEV_TOOLS is enabled
+            ...(process.env.HEADLESS === "false" && process.env.DEV_TOOLS === "true"
+                ? ["--auto-open-devtools-for-tabs"]
+                : []),
+        ],
+        headless: process.env.HEADLESS !== "false",
+        devtools: process.env.HEADLESS === "false" && process.env.DEV_TOOLS === "true",
+    });
+    browser.logs = [];
+    function addLog(str) {
+        if (process.env.BROWSER_LOGS !== undefined) {
+            console.log(str);
+        }
+        browser.logs.push(str);
+    }
+    const origNewPage = browser.newPage.bind(browser);
+    browser.newPage = async () => {
+        const page = await origNewPage();
+        page.on("console", (msg) => {
+            if (msg.text().startsWith("com.supertokens")) {
+                addLog(msg.text());
+            } else {
+                addLog(
+                    `browserlog.console ${JSON.stringify({
+                        t: new Date().toISOString(),
+                        message: msg.text(),
+                        pageurl: page.url(),
+                    })}`
+                );
+            }
+        });
+
+        page.on("request", (req) => {
+            addLog(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Requested: ${req.method()} ${req.url()} (${req.postData()})`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        page.on("requestfinished", async (req) => {
+            if (req.method() === "OPTION") {
+                return;
+            }
+            const resp = await req.response();
+            let respText;
+            try {
+                respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
+                    ? await resp.text()
+                    : "response omitted";
+            } catch (e) {
+                respText = "response loading failed " + e.message;
+            }
+            addLog(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Request done: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        page.on("requestfailed", async (req) => {
+            if (req.method() === "OPTION") {
+                return;
+            }
+            const resp = await req.response();
+            let respText;
+            try {
+                respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
+                    ? await resp.text()
+                    : "response omitted";
+            } catch (e) {
+                respText = "response loading failed " + e.message;
+            }
+            addLog(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Request failed: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        return page;
+    };
+    browser.on("disconnected", async () => {
+        if (process.env.MOCHA_FILE !== undefined) {
+            const reportFile = path.parse(process.env.MOCHA_FILE);
+            const logFile = path.join(reportFile.dir, "logs", "browser.log");
+            await appendFile(logFile, browser.logs.join("\n"));
+        }
+    });
+    return browser;
 }
 
 export async function getPasswordlessDevice(loginAttemptInfo) {
