@@ -678,7 +678,6 @@ function convertToRecipeUserIdIfAvailable(id) {
     return id;
 }
 
-
 let urlencodedParser = bodyParser.urlencoded({ limit: "20mb", extended: true, parameterLimit: 20000 });
 let jsonParser = bodyParser.json({ limit: "20mb" });
 
