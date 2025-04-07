@@ -40,6 +40,7 @@ import {
     setupCoreApp,
     setupST,
     backendHook,
+    setupBrowser,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,

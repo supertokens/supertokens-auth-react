@@ -17,8 +17,6 @@
  * Imports
  */
 import assert from "assert";
-import puppeteer from "puppeteer";
-import fetch from "isomorphic-fetch";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     screenshotOnFailure,

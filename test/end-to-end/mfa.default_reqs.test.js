@@ -66,7 +66,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
             this.skip();
         }
 
-        await setAccountLinkingConfig(true, true, false);
         await backendHook("before");
         browser = await setupBrowser();
     });
