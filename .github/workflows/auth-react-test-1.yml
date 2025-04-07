@@ -57,7 +57,7 @@ jobs:
               id: envs
               with:
                   # auth-react-version: ${{ steps.versions.outputs.authReactTag }}
-                  auth-react-version: ci/github-actions/auth-react/v0.49.0
+                  auth-react-version: ${{ github.sha }}
                   node-sdk-version: ${{ steps.versions.outputs.nodeTag }}
                   fdi-version: ${{ matrix.fdi-version }}
                   use-common-app-and-test-server: "true"
