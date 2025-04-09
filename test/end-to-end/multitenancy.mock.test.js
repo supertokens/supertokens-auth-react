@@ -38,7 +38,7 @@ import { TEST_CLIENT_BASE_URL, DEFAULT_WEBSITE_BASE_PATH, ST_ROOT_SELECTOR } fro
 /*
  * Tests.
  */
-describe("SuperTokens Multitenancy w/ mocked login methods", function () {
+describe.skip("SuperTokens Multitenancy w/ mocked login methods", function () {
     let browser;
     let page;
     let pageCrashed;

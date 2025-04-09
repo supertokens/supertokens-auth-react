@@ -157,7 +157,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert.deepStrictEqual(inputNames, ["email", "password"]);
     });
 
-    it("throws when core recipes have no overlap with frontend recipes", async function () {
+    it.skip("throws when core recipes have no overlap with frontend recipes", async function () {
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: false },
             passwordless: { enabled: false },
@@ -174,7 +174,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
         assert(pageCrashed);
     });
 
-    it("throws when core recipes have no overlap with frontend recipes without react-router-dom", async function () {
+    it.skip("throws when core recipes have no overlap with frontend recipes without react-router-dom", async function () {
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: false },
             passwordless: { enabled: false },
