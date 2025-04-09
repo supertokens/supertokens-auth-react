@@ -41,7 +41,6 @@ import {
 } from "../helpers";
 
 import { TEST_CLIENT_BASE_URL, SOMETHING_WENT_WRONG_ERROR } from "../constants";
-import { tryEmailPasswordSignUp, tryPasswordlessSignInUp } from "./mfa.helpers";
 import { randomUUID } from "crypto";
 
 /*
@@ -94,7 +93,12 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
             before(async function () {
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
-                await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
+                const coreUrl = await setupCoreApp();
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType: "USER_INPUT_CODE",
+                    passwordlessContactMethod: contactMethod,
+                });
             });
 
             after(async function () {
@@ -364,9 +368,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     });
 
                     ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, undefined));
-                    if (authRecipe === "all") {
-                        await tryEmailPasswordSignUp(page, registeredEmailWithPass);
-                    }
                 });
 
                 after(async function () {
@@ -463,7 +464,12 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, {
                         disablePhoneGuess: true,
                     }));
-                    await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
+                    const coreUrl = await setupCoreApp();
+                    await setupST({
+                        coreUrl,
+                        passwordlessFlowType: "USER_INPUT_CODE",
+                        passwordlessContactMethod: contactMethod,
+                    });
                 });
 
                 after(async function () {

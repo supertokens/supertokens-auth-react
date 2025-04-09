@@ -563,6 +563,8 @@ describe("SuperTokens SignIn", function () {
 
         describe("Successful Sign In with redirect to, with EmailPasswordAuth", async function () {
             it("First sign in", async function () {
+                await toggleSignInSignUp(page);
+                await defaultSignUp(page);
                 consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 let cookies = await page.cookies();
                 assert.deepStrictEqual(cookies.length, 1);
@@ -586,6 +588,17 @@ describe("SuperTokens SignIn", function () {
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/redirect-to-this-custom-path");
                 assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
+                    "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
+                    "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
+                    "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_UP",
+                    "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
+                    "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
