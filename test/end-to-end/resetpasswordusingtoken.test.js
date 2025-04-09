@@ -44,12 +44,12 @@ import {
     screenshotOnFailure,
     getTitleBackButton,
     getResetPasswordSuccessBackToSignInButton,
-    waitForText,
     waitForUrl,
     setupBrowser,
     backendHook,
     setupCoreApp,
     setupST,
+    waitForSTElement,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
