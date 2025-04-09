@@ -50,6 +50,7 @@ import {
     setupCoreApp,
     setupST,
     waitForSTElement,
+    getResetPasswordFormBackButton,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
