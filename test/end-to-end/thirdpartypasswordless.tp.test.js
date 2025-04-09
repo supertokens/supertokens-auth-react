@@ -17,9 +17,8 @@
  * Imports
  */
 
-import { getFeatureFlags } from "../helpers";
+import { getFeatureFlags, isReact16 } from "../helpers";
 import { getThirdPartyTestCases } from "./thirdparty.test";
-import { getPasswordlessTestCases } from "./passwordless.test";
 
 /*
  * Tests.
