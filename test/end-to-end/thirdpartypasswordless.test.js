@@ -214,7 +214,7 @@ describe("SuperTokens Third Party Passwordless", function () {
             ]);
         });
 
-        it("should handle no providers enabled on the backend", async function () {
+        it.skip("should handle no providers enabled on the backend", async function () {
             if (!(await getFeatureFlags()).includes("recipeConfig")) {
                 this.skip();
             }

@@ -36,6 +36,7 @@ import {
     backendHook,
     setupCoreApp,
     setupST,
+    clickOnPasswordlessResendButton,
 } from "../helpers";
 
 import { TEST_CLIENT_BASE_URL, SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -109,22 +110,19 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
             const contactMethod = "EMAIL_OR_PHONE";
 
             before(async function () {
+                await backendHook("before");
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
-                await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
+                const coreUrl = await setupCoreApp();
+                await setupST({ coreUrl, passwordlessFlowType: "USER_INPUT_CODE", passwordlessContactMethod: contactMethod });
             });
 
             after(async function () {
                 await browser.close();
-                await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                    method: "POST",
-                }).catch(console.error);
-
-                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                    method: "POST",
-                }).catch(console.error);
+                await backendHook("after");
             });
 
             beforeEach(async function () {
+                await backendHook("beforeEach");
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
@@ -241,24 +239,25 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 const contactMethod = "EMAIL_OR_PHONE";
 
                 before(async function () {
+                    await backendHook("before");
                     ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, {
                         defaultCountry: "HU",
                     }));
-                    await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
+                    const coreUrl = await setupCoreApp();
+                    await setupST({
+                        coreUrl,
+                        passwordlessFlowType: "USER_INPUT_CODE",
+                        passwordlessContactMethod: contactMethod,
+                    });
                 });
 
                 after(async function () {
                     await browser.close();
-                    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                        method: "POST",
-                    }).catch(console.error);
-
-                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                        method: "POST",
-                    }).catch(console.error);
+                    await backendHook("after");
                 });
 
                 beforeEach(async function () {
+                    await backendHook("beforeEach");
                     await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                     await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
                     await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
@@ -462,24 +461,21 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 const contactMethod = "EMAIL_OR_PHONE";
 
                 before(async function () {
+                    await backendHook("before");
                     ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, {
                         disablePhoneGuess: true,
                     }));
-                    await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
+                    const coreUrl = await setupCoreApp();
+                    await setupST({ coreUrl, passwordlessFlowType: "USER_INPUT_CODE", passwordlessContactMethod: contactMethod });
                 });
 
                 after(async function () {
                     await browser.close();
-                    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                        method: "POST",
-                    }).catch(console.error);
-
-                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                        method: "POST",
-                    }).catch(console.error);
+                    await backendHook("after");
                 });
 
                 beforeEach(async function () {
+                    await backendHook("beforeEach");
                     await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                     await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
@@ -2209,7 +2205,7 @@ async function setupDevice(page, inputName, contactInfo, forLinkOnly = true, cle
     return getPasswordlessDevice(loginAttemptInfo);
 }
 
-async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCountry } = {}) {
+async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCountry, disablePhoneGuess } = {}) {
     const browser = await setupBrowser();
     const page = await browser.newPage();
     page.on("console", (consoleObj) => {
@@ -2230,16 +2226,6 @@ async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCoun
     ]);
 
     await new Promise((res) => setTimeout(res, 500));
-
-    if (["EMAIL", "EMAIL_OR_PHONE"].includes(contactMethod)) {
-        await tryPasswordlessSignInUp(page, exampleEmail, undefined, false);
-        await clearBrowserCookiesWithoutAffectingConsole(page, []);
-    }
-
-    if (["PHONE", "EMAIL_OR_PHONE"].includes(contactMethod)) {
-        await tryPasswordlessSignInUp(page, examplePhoneNumber, undefined, true);
-        await clearBrowserCookiesWithoutAffectingConsole(page, []);
-    }
 
     return { browser, page };
 }
