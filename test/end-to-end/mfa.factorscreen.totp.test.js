@@ -334,7 +334,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 }
             });
 
-            it("should redirect back if visited after sign in without stepUp param", async () => {
+            it("should show a link redirecting back if visited after sign in - setup", async () => {
                 await setupST({
                     ...appConfig,
                     mfaInfo: {
@@ -350,31 +350,12 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
-                await waitForDashboard(page);
-            });
-
-            it("should show a link redirecting back if visited after sign in - force setup", async () => {
-                await setupST({
-                    ...appConfig,
-                    mfaInfo: {
-                        requirements: [],
-                        alreadySetup: [factorId],
-                        allowedToSetup: [factorId],
-                    },
-                });
-
-                await tryEmailPasswordSignIn(page, email);
-
-                await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}?setup=true`),
-                    page.waitForNavigation({ waitUntil: "networkidle0" }),
-                ]);
                 const backBtn = await waitForSTElement(page, "[data-supertokens~=backButton]");
                 await backBtn.click();
                 await waitForDashboard(page);
             });
 
-            it("should show a link redirecting back if visited after sign in - setup in stepUp", async () => {
+            it("should show a link redirecting back if visited after sign in - verification", async () => {
                 await setupST({
                     ...appConfig,
                     mfaInfo: {
@@ -387,28 +368,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 await tryEmailPasswordSignIn(page, email);
 
                 await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}?stepUp=true`),
-                    page.waitForNavigation({ waitUntil: "networkidle0" }),
-                ]);
-                const backBtn = await waitForSTElement(page, "[data-supertokens~=backButton]");
-                await backBtn.click();
-                await waitForDashboard(page);
-            });
-
-            it("should show a link redirecting back if visited after sign in - verification in stepUp", async () => {
-                await setupST({
-                    ...appConfig,
-                    mfaInfo: {
-                        requirements: [],
-                        alreadySetup: [factorId],
-                        allowedToSetup: [],
-                    },
-                });
-
-                await tryEmailPasswordSignIn(page, email);
-
-                await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}?stepUp=true`),
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 const backBtn = await waitForSTElement(page, "[data-supertokens~=backButton]");
