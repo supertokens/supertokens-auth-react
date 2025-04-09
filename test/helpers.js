@@ -63,6 +63,21 @@ export async function waitFor(ms) {
     return new Promise((res) => setTimeout(res, ms));
 }
 
+export function waitForUrl(page, url, onlyPath = true) {
+    return page.waitForFunction(
+        (pathname, onlyPath) => {
+            return (
+                (onlyPath
+                    ? window.location.pathname
+                    : window.location.pathname + window.location.search + window.location.hash) === pathname
+            );
+        },
+        { polling: 50 },
+        url,
+        onlyPath
+    );
+}
+
 /*
  * Selectors and actions helpers.
  * Using Puppeteer within shadowDom https://github.com/puppeteer/puppeteer/issues/858#issuecomment-438540596

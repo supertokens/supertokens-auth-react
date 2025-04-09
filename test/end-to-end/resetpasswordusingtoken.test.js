@@ -48,6 +48,7 @@ import {
     setupCoreApp,
     setupST,
     waitForSTElement,
+    getResetPasswordFormBackButton,
 } from "../helpers";
 
 /*

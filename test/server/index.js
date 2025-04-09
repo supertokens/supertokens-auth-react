@@ -67,21 +67,16 @@ const UserRoles = require("supertokens-node/recipe/userroles");
 const MultitenancyRaw = require("supertokens-node/lib/build/recipe/multitenancy/recipe").default;
 const Multitenancy = require("supertokens-node/lib/build/recipe/multitenancy/index");
 
-const AccountLinkingRaw = require("supertokens-node/lib/build/recipe/accountlinking/recipe").default;
-const AccountLinking = require("supertokens-node/recipe/accountlinking");
+let AccountLinking, AccountLinkingRaw, accountLinkingSupported;
+try {
+    AccountLinkingRaw = require("supertokens-node/lib/build/recipe/accountlinking/recipe").default;
+    AccountLinking = require("supertokens-node/recipe/accountlinking");
+    accountLinkingSupported = true;
+} catch (ex) {
+    accountLinkingSupported = false;
+}
 
 const UserMetadataRaw = require("supertokens-node/lib/build/recipe/usermetadata/recipe").default;
-const UserMetadata = require("supertokens-node/recipe/usermetadata");
-
-const MultiFactorAuthRaw = require("supertokens-node/lib/build/recipe/multifactorauth/recipe").default;
-const MultiFactorAuth = require("supertokens-node/recipe/multifactorauth");
-
-const TOTPRaw = require("supertokens-node/lib/build/recipe/totp/recipe").default;
-const TOTP = require("supertokens-node/recipe/totp");
-
-const OTPAuth = require("otpauth");
-
-let generalErrorSupported;
 
 if (maxVersion(nodeSDKVersion, "9.9.9") === "9.9.9") {
     // General error is only supported by 10.0.0 and above
@@ -197,10 +192,11 @@ function initST({
         UserRolesRaw.reset();
         PasswordlessRaw.reset();
         MultitenancyRaw.reset();
-        AccountLinkingRaw.reset();
+
+        if (accountLinkingSupported) {
+            AccountLinkingRaw.reset();
+        }
         UserMetadataRaw.reset();
-        MultiFactorAuthRaw.reset();
-        TOTPRaw.reset();
 
         EmailVerificationRaw.reset();
         EmailPasswordRaw.reset();
@@ -670,7 +666,7 @@ function initST({
         ...accountLinkingConfig,
     };
 
-    if (accountLinkingConfig.enabled) {
+    if (accountLinkingSupported && accountLinkingConfig.enabled) {
         recipeList.push([
             "accountlinking",
             AccountLinking.init({
@@ -680,74 +676,6 @@ function initST({
             }),
         ]);
     }
-    recipeList.push([
-        "multifactorauth",
-        MultiFactorAuth.init({
-            firstFactors: mfaInfo.firstFactors,
-            override: {
-                functions: (oI) => ({
-                    ...oI,
-                    getFactorsSetupForUser: async (input) => {
-                        const res = await oI.getFactorsSetupForUser(input);
-                        if (mfaInfo?.alreadySetup) {
-                            return mfaInfo.alreadySetup;
-                        }
-                        return res;
-                    },
-                    assertAllowedToSetupFactorElseThrowInvalidClaimError: async (input) => {
-                        if (mfaInfo?.allowedToSetup) {
-                            if (!mfaInfo.allowedToSetup.includes(input.factorId)) {
-                                throw new Session.Error({
-                                    type: "INVALID_CLAIMS",
-                                    message: "INVALID_CLAIMS",
-                                    payload: [
-                                        {
-                                            id: "test",
-                                            reason: "test override",
-                                        },
-                                    ],
-                                });
-                            }
-                        } else {
-                            await oI.assertAllowedToSetupFactorElseThrowInvalidClaimError(input);
-                        }
-                    },
-                    getMFARequirementsForAuth: async (input) => {
-                        const res = await oI.getMFARequirementsForAuth(input);
-                        if (mfaInfo?.requirements) {
-                            return mfaInfo.requirements;
-                        }
-                        return res;
-                    },
-                }),
-                apis: (oI) => ({
-                    ...oI,
-                    resyncSessionAndFetchMFAInfoPUT: async (input) => {
-                        const res = await oI.resyncSessionAndFetchMFAInfoPUT(input);
-
-                        if (res.status === "OK") {
-                            if (mfaInfo.alreadySetup) {
-                                res.factors.alreadySetup = [...mfaInfo.alreadySetup];
-                            }
-                        }
-                        if (mfaInfo.noContacts) {
-                            res.emails = {};
-                            res.phoneNumbers = {};
-                        }
-                        return res;
-                    },
-                }),
-            },
-        }),
-    ]);
-
-    recipeList.push([
-        "totp",
-        TOTP.init({
-            defaultPeriod: 1,
-            defaultSkew: 30,
-        }),
-    ]);
 
     SuperTokens.init({
         appInfo: {
@@ -862,7 +790,7 @@ app.get("/sessioninfo", verifySession(), async (req, res, next) => {
         res.send({
             sessionHandle: session.getHandle(),
             userId: session.getUserId(),
-            recipeUserId: session.getRecipeUserId().getAsString(),
+            recipeUserId: accountLinkingSupported ? session.getRecipeUserId().getAsString() : session.getUserId(),
             accessTokenPayload,
             sessionData,
         });
@@ -872,6 +800,11 @@ app.get("/sessioninfo", verifySession(), async (req, res, next) => {
 });
 
 app.post("/deleteUser", async (req, res) => {
+    if (!accountLinkingSupported) {
+        const user = await EmailPassword.getUserByEmail("public", req.body.email);
+        return res.send(await SuperTokens.deleteUser(user.id));
+    }
+
     const users = await SuperTokens.listUsersByAccountInfo("public", req.body);
     res.send(await SuperTokens.deleteUser(users[0].id));
 });
@@ -906,8 +839,8 @@ app.post("/changeEmail", async (req, res) => {
 
 app.get("/unverifyEmail", verifySession(), async (req, res) => {
     let session = req.session;
-    await EmailVerification.unverifyEmail(session.getRecipeUserId());
-    await session.fetchAndSetClaim(EmailVerification.EmailVerificationClaim, {});
+    await EmailVerification.unverifyEmail(accountLinkingSupported ? session.getRecipeUserId() : session.getUserId());
+    await session.fetchAndSetClaim(EmailVerification.EmailVerificationClaim);
     res.send({ status: "OK" });
 });
 
@@ -943,22 +876,6 @@ app.post(
     }
 );
 
-app.post("/completeFactor", verifySession(), async (req, res) => {
-    let session = req.session;
-
-    await MultiFactorAuth.markFactorAsCompleteInSession(session, req.body.id);
-
-    res.send({ status: "OK" });
-});
-
-app.post("/addRequiredFactor", verifySession(), async (req, res) => {
-    let session = req.session;
-
-    await MultiFactorAuth.addToRequiredSecondaryFactorsForUser(session.getUserId(), req.body.factorId);
-
-    res.send({ status: "OK" });
-});
-
 app.post("/mergeIntoAccessTokenPayload", verifySession(), async (req, res) => {
     let session = req.session;
 
@@ -975,18 +892,10 @@ app.get("/token", async (_, res) => {
 
 app.post("/setupTenant", async (req, res) => {
     const { tenantId, loginMethods, coreConfig } = req.body;
-    let firstFactors = [];
-    if (loginMethods.emailPassword?.enabled === true) {
-        firstFactors.push("emailpassword");
-    }
-    if (loginMethods.passwordless?.enabled === true) {
-        firstFactors.push("otp-phone", "otp-email", "link-phone", "link-email");
-    }
-    if (loginMethods.thirdParty?.enabled === true) {
-        firstFactors.push("thirdparty");
-    }
     let coreResp = await Multitenancy.createOrUpdateTenant(tenantId, {
-        firstFactors,
+        emailPasswordEnabled: loginMethods.emailPassword?.enabled === true,
+        thirdPartyEnabled: loginMethods.thirdParty?.enabled === true,
+        passwordlessEnabled: loginMethods.passwordless?.enabled === true,
         coreConfig,
     });
 
@@ -1023,10 +932,6 @@ app.get("/test/getDevice", (req, res) => {
     res.send(deviceStore.get(req.query.preAuthSessionId));
 });
 
-app.post("/test/getTOTPCode", (req, res) => {
-    res.send(JSON.stringify({ totp: new OTPAuth.TOTP({ secret: req.body.secret, digits: 6, period: 1 }).generate() }));
-});
-
 app.get("/test/featureFlags", (req, res) => {
     const available = [];
 
@@ -1041,10 +946,10 @@ app.get("/test/featureFlags", (req, res) => {
     available.push("userroles");
     available.push("multitenancy");
     available.push("multitenancyManagementEndpoints");
-    available.push("accountlinking");
-    available.push("mfa");
+    if (accountLinkingSupported) {
+        available.push("accountlinking");
+    }
     available.push("recipeConfig");
-    available.push("oauth2");
     available.push("accountlinking-fixes");
 
     res.send({
