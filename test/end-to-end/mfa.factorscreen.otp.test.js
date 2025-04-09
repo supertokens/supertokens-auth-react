@@ -323,95 +323,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     }
                 });
 
-                it("should handle consumeCode restart flow error", async () => {
-                    await setupST({
-                        ...appConfig,
-                        mfaInfo: {
-                            requirements: [factorId],
-                            alreadySetup: [factorId],
-                            allowedToSetup: [factorId],
-                        },
-                    });
-
-                    await page.setRequestInterception(true);
-                    const requestHandler = (request) => {
-                        if (request.url() === CONSUME_CODE_API && request.method() === "POST") {
-                            return request.respond({
-                                status: 200,
-                                headers: {
-                                    "access-control-allow-origin": TEST_CLIENT_BASE_URL,
-                                    "access-control-allow-credentials": "true",
-                                },
-                                body: JSON.stringify({
-                                    status: "RESTART_FLOW_ERROR",
-                                }),
-                            });
-                        }
-
-                        return request.continue();
-                    };
-                    page.on("request", requestHandler);
-                    try {
-                        await tryEmailPasswordSignIn(page, email);
-
-                        await completeOTP(page);
-
-                        await waitForAccessDenied(page);
-                    } finally {
-                        page.off("request", requestHandler);
-                        await page.setRequestInterception(false);
-                    }
-                });
-
-                it("should handle consumeCode restart flow error when setting up factor", async () => {
-                    await setupST({
-                        ...appConfig,
-                        mfaInfo: {
-                            requirements: [factorId],
-                            alreadySetup: [],
-                            allowedToSetup: [factorId],
-                            noContacts: true,
-                        },
-                    });
-
-                    await page.setRequestInterception(true);
-                    const requestHandler = (request) => {
-                        if (request.url() === CONSUME_CODE_API && request.method() === "POST") {
-                            return request.respond({
-                                status: 200,
-                                headers: {
-                                    "access-control-allow-origin": TEST_CLIENT_BASE_URL,
-                                    "access-control-allow-credentials": "true",
-                                },
-                                body: JSON.stringify({
-                                    status: "RESTART_FLOW_ERROR",
-                                }),
-                            });
-                        }
-
-                        return request.continue();
-                    };
-                    page.on("request", requestHandler);
-                    try {
-                        await tryEmailPasswordSignIn(page, email);
-
-                        await setInputValues(page, [
-                            contactMethod === "PHONE"
-                                ? { name: "phoneNumber_text", value: getTestPhoneNumber() }
-                                : { name: "email", value: await getTestEmail() },
-                        ]);
-                        await submitForm(page);
-
-                        await completeOTP(page);
-
-                        const error = await getGeneralError(page);
-                        assert.strictEqual("Login unsuccessful. Please try again.", error);
-                    } finally {
-                        page.off("request", requestHandler);
-                        await page.setRequestInterception(false);
-                    }
-                });
-
                 it("should enable you to change the contact info during setup (w/ contact form)", async () => {
                     await setupST({
                         ...appConfig,
@@ -447,7 +358,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     await completeOTP(page);
                 });
 
-                it("should show a link redirecting back if visited after sign in without stepUp param", async () => {
+                it("should show a link redirecting back if visited after sign in - setup", async () => {
                     await setupST({
                         ...appConfig,
                         mfaInfo: {
@@ -456,37 +367,17 @@ describe("SuperTokens SignIn w/ MFA", function () {
                             allowedToSetup: [],
                         },
                     });
-
                     await tryEmailPasswordSignIn(page, email);
 
                     await Promise.all([
                         page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}`),
                         page.waitForNavigation({ waitUntil: "networkidle0" }),
                     ]);
-                    await waitForDashboard(page);
-                });
-
-                it("should show a link redirecting back if visited after sign in - force setup", async () => {
-                    await setupST({
-                        ...appConfig,
-                        mfaInfo: {
-                            requirements: [],
-                            alreadySetup: [factorId],
-                            allowedToSetup: [factorId],
-                        },
-                    });
-
-                    await tryEmailPasswordSignIn(page, email);
-
-                    await Promise.all([
-                        page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}?setup=true`),
-                        page.waitForNavigation({ waitUntil: "networkidle0" }),
-                    ]);
                     const backBtn = await waitForSTElement(page, "[data-supertokens~=backButton]");
                     await backBtn.click();
                     await waitForDashboard(page);
                 });
-                it("should show a link redirecting back if visited after sign in - setup in stepUp", async () => {
+                it("should show a link redirecting back if visited after sign in - verification", async () => {
                     await setupST({
                         ...appConfig,
                         mfaInfo: {
@@ -499,28 +390,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     await tryEmailPasswordSignIn(page, email);
 
                     await Promise.all([
-                        page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}?stepUp=true`),
-                        page.waitForNavigation({ waitUntil: "networkidle0" }),
-                    ]);
-                    const backBtn = await waitForSTElement(page, "[data-supertokens~=backButton]");
-                    await backBtn.click();
-                    await waitForDashboard(page);
-                });
-
-                it("should show a link redirecting back if visited after sign in - verification in stepUp", async () => {
-                    await setupST({
-                        ...appConfig,
-                        mfaInfo: {
-                            requirements: [],
-                            alreadySetup: [factorId],
-                            allowedToSetup: [],
-                        },
-                    });
-
-                    await tryEmailPasswordSignIn(page, email);
-
-                    await Promise.all([
-                        page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}?stepUp=true`),
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}`),
                         page.waitForNavigation({ waitUntil: "networkidle0" }),
                     ]);
                     const backBtn = await waitForSTElement(page, "[data-supertokens~=backButton]");

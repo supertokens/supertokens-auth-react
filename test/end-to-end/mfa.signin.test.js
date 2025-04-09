@@ -258,7 +258,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
         });
 
         it("should throw error if there are no valid next options", async () => {
-            setupST({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: ["unknown"],

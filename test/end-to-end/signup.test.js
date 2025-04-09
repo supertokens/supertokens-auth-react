@@ -890,7 +890,7 @@ describe("SuperTokens SignUp => Server Error", function () {
     });
 
     after(async function () {
-        await browser.close();
+        await browser?.close();
         await backendHook("after");
     });
 
