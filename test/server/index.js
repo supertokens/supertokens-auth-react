@@ -36,31 +36,18 @@ let http = require("http");
 let cors = require("cors");
 const morgan = require("morgan");
 let {
-    startST,
-    killAllST,
-    setupST,
-    cleanST,
-    setKeyValueInConfig,
     customAuth0Provider,
     maxVersion,
     setupCoreApplication,
     addLicense,
     mockThirdPartyProvider,
+    getCoreUrl,
 } = require("./utils");
 let { version: nodeSDKVersion } = require("supertokens-node/lib/build/version");
 const fetch = require("isomorphic-fetch");
 
-let passwordlessSupported;
-let PasswordlessRaw;
-let Passwordless;
-
-try {
-    PasswordlessRaw = require("supertokens-node/lib/build/recipe/passwordless/recipe").default;
-    Passwordless = require("supertokens-node/recipe/passwordless");
-    passwordlessSupported = true;
-} catch (ex) {
-    passwordlessSupported = false;
-}
+const PasswordlessRaw = require("supertokens-node/lib/build/recipe/passwordless/recipe").default;
+const Passwordless = require("supertokens-node/recipe/passwordless");
 
 let thirdPartyPasswordlessSupported;
 let ThirdPartyPasswordlessRaw;
@@ -74,22 +61,25 @@ try {
     thirdPartyPasswordlessSupported = false;
 }
 
-try {
-    UserRolesRaw = require("supertokens-node/lib/build/recipe/userroles/recipe").default;
-    UserRoles = require("supertokens-node/recipe/userroles");
-    userRolesSupported = true;
-} catch (ex) {
-    userRolesSupported = false;
-}
+const UserRolesRaw = require("supertokens-node/lib/build/recipe/userroles/recipe").default;
+const UserRoles = require("supertokens-node/recipe/userroles");
 
-let Multitenancy, MultitenancyRaw, multitenancySupported;
-try {
-    MultitenancyRaw = require("supertokens-node/lib/build/recipe/multitenancy/recipe").default;
-    Multitenancy = require("supertokens-node/lib/build/recipe/multitenancy");
-    multitenancySupported = true;
-} catch {
-    multitenancySupported = false;
-}
+const MultitenancyRaw = require("supertokens-node/lib/build/recipe/multitenancy/recipe").default;
+const Multitenancy = require("supertokens-node/lib/build/recipe/multitenancy/index");
+
+const AccountLinkingRaw = require("supertokens-node/lib/build/recipe/accountlinking/recipe").default;
+const AccountLinking = require("supertokens-node/recipe/accountlinking");
+
+const UserMetadataRaw = require("supertokens-node/lib/build/recipe/usermetadata/recipe").default;
+const UserMetadata = require("supertokens-node/recipe/usermetadata");
+
+const MultiFactorAuthRaw = require("supertokens-node/lib/build/recipe/multifactorauth/recipe").default;
+const MultiFactorAuth = require("supertokens-node/recipe/multifactorauth");
+
+const TOTPRaw = require("supertokens-node/lib/build/recipe/totp/recipe").default;
+const TOTP = require("supertokens-node/recipe/totp");
+
+const OTPAuth = require("otpauth");
 
 let generalErrorSupported;
 
@@ -138,14 +128,6 @@ const providers = [
     mockThirdPartyProvider,
 ];
 
-morgan.token("body", function (req, res) {
-    return JSON.stringify(req.body && req.body["formFields"]);
-});
-app.use(morgan("[:date[iso]] :url :method :status :response-time ms - :res[content-length] - :body"));
-app.use(urlencodedParser);
-app.use(jsonParser);
-app.use(cookieParser());
-
 const WEB_PORT = process.env.WEB_PORT || 3031;
 const websiteDomain = `http://localhost:${WEB_PORT}`;
 let latestURLWithToken = "";
@@ -183,7 +165,13 @@ const formFields = (process.env.MIN_FIELDS && []) || [
         optional: true,
     },
 ];
+
+// Initialize ST once to ensure all endpoints work
 initST();
+// Add license before the server starts
+(async function () {
+    await addLicense();
+})();
 
 /**
  * Create a core application and initialize ST with the required config
@@ -193,13 +181,8 @@ async function setupApp({ appId, coreConfig } = {}) {
     const coreAppUrl = await setupCoreApplication({ appId, coreConfig });
     console.log("Connection URI: " + coreAppUrl);
 
-    if (loginMethods.thirdParty.providers !== undefined) {
-        for (const provider of loginMethods.thirdParty.providers) {
-            await Multitenancy.createOrUpdateThirdPartyConfig(tenantId, provider);
-        }
-    }
-    res.send(coreResp);
-};
+    return coreAppUrl;
+}
 
 function initST({
     coreUrl = getCoreUrl(),
@@ -211,27 +194,23 @@ function initST({
     mfaInfo = {},
 } = {}) {
     if (process.env.TEST_MODE) {
-        if (userRolesSupported) {
-            UserRolesRaw.reset();
-        }
-
-        if (thirdPartyPasswordlessSupported) {
-            ThirdPartyPasswordlessRaw.reset();
-        }
-
-        if (passwordlessSupported) {
-            PasswordlessRaw.reset();
-        }
-
-        if (multitenancySupported) {
-            MultitenancyRaw.reset();
-        }
+        UserRolesRaw.reset();
+        PasswordlessRaw.reset();
+        MultitenancyRaw.reset();
+        AccountLinkingRaw.reset();
+        UserMetadataRaw.reset();
+        MultiFactorAuthRaw.reset();
+        TOTPRaw.reset();
 
         EmailVerificationRaw.reset();
         EmailPasswordRaw.reset();
         ThirdPartyRaw.reset();
         ThirdPartyEmailPasswordRaw.reset();
         SessionRaw.reset();
+
+        if (thirdPartyPasswordlessSupported) {
+            ThirdPartyPasswordlessRaw.reset();
+        }
 
         SuperTokensRaw.reset();
     }
@@ -509,9 +488,9 @@ function initST({
         }),
     ];
 
-    passwordlessConfig = {
-        contactMethod: "EMAIL_OR_PHONE",
-        flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+    const passwordlessConfig = {
+        contactMethod: passwordlessContactMethod ?? "EMAIL_OR_PHONE",
+        flowType: passwordlessFlowType ?? "USER_INPUT_CODE_AND_MAGIC_LINK",
         emailDelivery: {
             override: (oI) => {
                 return {
@@ -528,52 +507,54 @@ function initST({
                 };
             },
         },
-        ...passwordlessConfig,
     };
-    if (passwordlessSupported) {
-        recipeList.push(
-            Passwordless.init({
-                ...passwordlessConfig,
-                override: {
-                    apis: (originalImplementation) => {
-                        return {
-                            ...originalImplementation,
-                            createCodePOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API create code",
-                                    };
-                                }
-                                return originalImplementation.createCodePOST(input);
-                            },
-                            resendCodePOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API resend code",
-                                    };
-                                }
-                                return originalImplementation.resendCodePOST(input);
-                            },
-                            consumeCodePOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API consume code",
-                                    };
-                                }
-                                return originalImplementation.consumeCodePOST(input);
-                            },
-                        };
-                    },
+
+    recipeList.push([
+        "passwordless",
+        Passwordless.init({
+            ...passwordlessConfig,
+            override: {
+                apis: (originalImplementation) => {
+                    return {
+                        ...originalImplementation,
+                        createCodePOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API create code",
+                                };
+                            }
+                            return originalImplementation.createCodePOST(input);
+                        },
+                        resendCodePOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API resend code",
+                                };
+                            }
+                            return originalImplementation.resendCodePOST(input);
+                        },
+                        consumeCodePOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API consume code",
+                                };
+                            }
+
+                            const resp = await originalImplementation.consumeCodePOST(input);
+
+                            return resp;
+                        },
+                    };
                 },
-            })
-        );
-    }
+            },
+        }),
+    ]);
 
     if (thirdPartyPasswordlessSupported) {
         recipeList.push(
@@ -643,29 +624,115 @@ function initST({
         );
     }
 
-    if (userRolesSupported) {
-        recipeList.push(UserRoles.init());
-    }
+    recipeList.push(["userroles", UserRoles.init()]);
 
-    if (multitenancySupported) {
-        recipeList.push(
-            Multitenancy.init({
-                getAllowedDomainsForTenantId: (tenantId) => [
-                    `${tenantId}.example.com`,
-                    websiteDomain.replace(/https?:\/\/([^:\/]*).*/, "$1"),
-                ],
-            })
-        );
+    recipeList.push([
+        "multitenancy",
+        Multitenancy.init({
+            getAllowedDomainsForTenantId: (tenantId) => [
+                `${tenantId}.example.com`,
+                websiteDomain.replace(/https?:\/\/([^:\/]*).*/, "$1"),
+            ],
+        }),
+    ]);
+
+    accountLinkingConfig = {
+        enabled: false,
+        shouldAutoLink: {
+            shouldAutomaticallyLink: true,
+            shouldRequireVerification: true,
+            ...accountLinkingConfig?.shouldAutoLink,
+        },
+        ...accountLinkingConfig,
+    };
+
+    if (accountLinkingConfig.enabled) {
+        recipeList.push([
+            "accountlinking",
+            AccountLinking.init({
+                shouldDoAutomaticAccountLinking: () => ({
+                    ...accountLinkingConfig.shouldAutoLink,
+                }),
+            }),
+        ]);
     }
+    recipeList.push([
+        "multifactorauth",
+        MultiFactorAuth.init({
+            firstFactors: mfaInfo.firstFactors,
+            override: {
+                functions: (oI) => ({
+                    ...oI,
+                    getFactorsSetupForUser: async (input) => {
+                        const res = await oI.getFactorsSetupForUser(input);
+                        if (mfaInfo?.alreadySetup) {
+                            return mfaInfo.alreadySetup;
+                        }
+                        return res;
+                    },
+                    assertAllowedToSetupFactorElseThrowInvalidClaimError: async (input) => {
+                        if (mfaInfo?.allowedToSetup) {
+                            if (!mfaInfo.allowedToSetup.includes(input.factorId)) {
+                                throw new Session.Error({
+                                    type: "INVALID_CLAIMS",
+                                    message: "INVALID_CLAIMS",
+                                    payload: [
+                                        {
+                                            id: "test",
+                                            reason: "test override",
+                                        },
+                                    ],
+                                });
+                            }
+                        } else {
+                            await oI.assertAllowedToSetupFactorElseThrowInvalidClaimError(input);
+                        }
+                    },
+                    getMFARequirementsForAuth: async (input) => {
+                        const res = await oI.getMFARequirementsForAuth(input);
+                        if (mfaInfo?.requirements) {
+                            return mfaInfo.requirements;
+                        }
+                        return res;
+                    },
+                }),
+                apis: (oI) => ({
+                    ...oI,
+                    resyncSessionAndFetchMFAInfoPUT: async (input) => {
+                        const res = await oI.resyncSessionAndFetchMFAInfoPUT(input);
+
+                        if (res.status === "OK") {
+                            if (mfaInfo.alreadySetup) {
+                                res.factors.alreadySetup = [...mfaInfo.alreadySetup];
+                            }
+                        }
+                        if (mfaInfo.noContacts) {
+                            res.emails = {};
+                            res.phoneNumbers = {};
+                        }
+                        return res;
+                    },
+                }),
+            },
+        }),
+    ]);
+
+    recipeList.push([
+        "totp",
+        TOTP.init({
+            defaultPeriod: 1,
+            defaultSkew: 30,
+        }),
+    ]);
 
     SuperTokens.init({
         appInfo: {
             appName: "SuperTokens",
-            apiDomain: "localhost:" + (process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT),
+            apiDomain: "localhost:" + (process.env?.NODE_PORT ?? 8080),
             websiteDomain,
         },
         supertokens: {
-            connectionURI: "http://localhost:9000",
+            connectionURI: coreUrl,
         },
         recipeList,
     });
@@ -937,7 +1004,12 @@ app.get("/test/featureFlags", (req, res) => {
     const available = [];
 
     available.push("passwordless");
-    available.push("thirdpartypasswordless");
+
+    if (thirdPartyPasswordlessSupported) {
+        available.push("thirdpartypasswordless");
+    }
+
+    available.push("thirdpartyemailpassword");
     available.push("generalerror");
     available.push("userroles");
     available.push("multitenancy");

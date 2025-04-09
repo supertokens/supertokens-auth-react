@@ -543,11 +543,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
     });
 
     function getTestCases(contactMethod, inputName, contactInfo) {
-        let contactInfoSubmitLogs =
-            authRecipe === "all" && inputName == "email"
-                ? contactInfoSubmitLogsWithEmailChecks
-                : contactInfoSubmitLogsWithoutEmailChecks;
-
         let accountLinkingSupported;
         let coreUrl;
         const appId = randomUUID();

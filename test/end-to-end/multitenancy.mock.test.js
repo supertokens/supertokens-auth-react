@@ -43,7 +43,7 @@ require("jsdom-global")();
 /*
  * Tests.
  */
-describe.skip("SuperTokens Multitenancy w/ mocked login methods", function () {
+describe("SuperTokens Multitenancy w/ mocked login methods", function () {
     let browser;
     let page;
     let pageCrashed;
