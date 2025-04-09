@@ -28,11 +28,8 @@ import {
     assertNoSTComponents,
     clearBrowserCookiesWithoutAffectingConsole,
     screenshotOnFailure,
-<<<<<<< HEAD
-=======
     waitForUrl,
     setupBrowser,
->>>>>>> e5975453 (Fix all tests to make them compatible with unified core setup)
 } from "../helpers";
 /*
  * Tests.

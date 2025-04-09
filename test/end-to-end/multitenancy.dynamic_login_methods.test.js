@@ -41,13 +41,10 @@ import {
     backendBeforeEach,
     getTextByDataSupertokens,
     loginWithAuth0,
-<<<<<<< HEAD
-=======
     setupCoreApp,
     setupST,
     backendHook,
     setupBrowser,
->>>>>>> e5975453 (Fix all tests to make them compatible with unified core setup)
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
