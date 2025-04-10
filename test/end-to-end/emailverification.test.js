@@ -627,19 +627,27 @@ describe("Email Verification", () => {
             });
         });
         describe("Email Verified", function () {
-            // TODO: Does it make sense to test this since this is already tested in the "Verify Email with token screen" section?
-            it.skip("Should redirect to onSuccessfulRedirect when email is already verified", async function () {
+            it("Should redirect to onSuccessfulRedirect when email is already verified", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
-                const { fieldValues } = getDefaultSignUpFieldValues();
-                await setInputValues(
-                    page,
-                    fieldValues.filter((fv) => ["email", "password"].includes(fv.name))
-                );
+
+                await toggleSignInSignUp(page);
+                const { fieldValues, postValues } = getDefaultSignUpFieldValues();
+                await signUp(page, fieldValues, postValues, "emailpassword");
+
+                const latestURLWithToken_ = await getLatestURLWithToken();
+                await Promise.all([
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    page.goto(latestURLWithToken_),
+                ]);
+                const title_ = await getTextByDataSupertokens(page, "headerTitle");
+                assert.deepStrictEqual(title_, "Email verification successful!");
+
                 await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
                 await page.waitForSelector(".sessionInfo-user-id");
+
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
