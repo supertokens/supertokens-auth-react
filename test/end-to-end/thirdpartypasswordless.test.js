@@ -217,14 +217,14 @@ describe("SuperTokens Third Party Passwordless", function () {
             ]);
         });
 
-        it.skip("should handle no providers enabled on the backend", async function () {
+        it("should handle no providers enabled on the backend", async function () {
             if (!(await getFeatureFlags()).includes("recipeConfig")) {
                 this.skip();
             }
             await assertProviders(page);
             await setupST({
                 ...appConfig,
-                enabledRecipes: ["thirdparty"],
+                enabledRecipes: ["thirdpartypasswordless"],
                 enabledProviders: [],
             });
 
