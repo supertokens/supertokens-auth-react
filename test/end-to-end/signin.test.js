@@ -20,7 +20,6 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
-import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     clickForgotPasswordLink,
@@ -52,14 +51,18 @@ import {
     screenshotOnFailure,
     isGeneralErrorSupported,
     setGeneralErrorToLocalStorage,
+    getInvalidClaimsJSON as getInvalidClaims,
+    waitForText,
+    getInputField,
+    isReact16,
+    waitForUrl,
+    setupBrowser,
+    backendHook,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
-import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
-
-// Run the tests in a DOM environment.
-require("jsdom-global")();
-
-import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_OUT_API } from "../constants";
+import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, SIGN_OUT_API } from "../constants";
 
 /*
  * Tests.
@@ -70,37 +73,14 @@ describe("SuperTokens SignIn", function () {
     let consoleLogs = [];
 
     before(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
-    });
-
-    after(async function () {
-        await browser.close();
-
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
-    });
-
-    afterEach(function () {
-        return screenshotOnFailure(this, browser);
+        await backendHook("before");
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
+        browser = await setupBrowser();
     });
 
     beforeEach(async function () {
+        backendHook("beforeEach");
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
@@ -109,6 +89,17 @@ describe("SuperTokens SignIn", function () {
             }
         });
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
+    });
+
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await page?.close();
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
     });
 
     describe("SignIn test ", function () {
@@ -546,6 +537,8 @@ describe("SuperTokens SignIn", function () {
 
         describe("Successful Sign In with redirect to, with EmailPasswordAuth", async function () {
             it("First sign in", async function () {
+                await toggleSignInSignUp(page);
+                await defaultSignUp(page);
                 consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 let cookies = await page.cookies();
                 assert.deepStrictEqual(cookies.length, 1);
@@ -569,6 +562,17 @@ describe("SuperTokens SignIn", function () {
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/redirect-to-this-custom-path");
                 assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
+                    "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
+                    "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
+                    "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_UP",
+                    "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
+                    "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
@@ -655,17 +659,12 @@ describe("SuperTokens SignIn => Server Error", function () {
     let consoleLogs;
 
     before(async function () {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
-    });
-
-    after(async function () {
-        await browser.close();
+        await backendHook("before");
+        browser = await setupBrowser();
     });
 
     beforeEach(async function () {
+        await backendHook("beforeEach");
         page = await browser.newPage();
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
         page.on("console", (consoleObj) => {
@@ -679,14 +678,38 @@ describe("SuperTokens SignIn => Server Error", function () {
         await page.evaluate(() => localStorage.removeItem("TRANSLATED_GENERAL_ERROR"));
     });
 
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await page?.close();
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
+    });
+
     it("Server Error shows Something went wrong network error", async function () {
         await setInputValues(page, [
             { name: "email", value: "john.doe@supertokens.io" },
             { name: "password", value: "Str0ngP@ssw0rd" },
         ]);
 
-        await submitForm(page);
+        await page.setRequestInterception(true);
+        page.on("request", (request) => {
+            if (request.url() === SIGN_IN_API && request.method() === "POST") {
+                request.respond({
+                    // Previous behavior was a result of core being shut down
+                    // Emulating the same here
+                    status: 500,
+                    // body: "Error: No SuperTokens core available to query",
+                });
+            } else {
+                request.continue();
+            }
+        });
 
+        await submitForm(page);
         await page.waitForResponse((response) => {
             return response.url() === SIGN_IN_API && response.status() === 500;
         });

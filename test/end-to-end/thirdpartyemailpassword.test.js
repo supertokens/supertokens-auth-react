@@ -20,8 +20,6 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
-import fetch from "isomorphic-fetch";
-import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     assertProviders,
@@ -42,14 +40,26 @@ import {
     waitForSTElement,
     waitFor,
     getFieldErrors,
+    clickOnProviderButtonWithoutWaiting,
+    getFeatureFlags,
+    setSelectDropdownValue,
+    getInputField,
+    getLabelsText,
+    isReact16,
+    waitForUrl,
+    setupBrowser,
+    backendHook,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
-    TEST_SERVER_BASE_URL,
     SIGN_IN_UP_API,
     SIGN_UP_API,
     SOMETHING_WENT_WRONG_ERROR,
     EMAIL_EXISTS_API,
+    GET_AUTH_URL_API,
+    SIGN_IN_API,
 } from "../constants";
 
 // Run the tests in a DOM environment.
@@ -63,19 +73,15 @@ describe("SuperTokens Third Party Email Password", function () {
     let page;
     let consoleLogs;
 
+    const appConfig = {};
+
     before(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendHook("before");
+        const coreUrl = await setupCoreApp();
+        appConfig.coreUrl = coreUrl;
+        await setupST(appConfig);
 
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
@@ -85,22 +91,18 @@ describe("SuperTokens Third Party Email Password", function () {
         });
     });
 
-    after(async function () {
-        await browser.close();
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await backendHook("afterEach");
     });
 
-    afterEach(function () {
-        return screenshotOnFailure(this, browser);
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
     });
 
     beforeEach(async function () {
+        await backendHook("beforeEach");
         consoleLogs = [];
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         await Promise.all([

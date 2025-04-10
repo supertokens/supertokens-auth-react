@@ -17,12 +17,12 @@
  * Imports
  */
 import assert from "assert";
-import puppeteer from "puppeteer";
-
-import { clearBrowserCookiesWithoutAffectingConsole, getTextInDashboardNoAuth, screenshotOnFailure } from "../helpers";
-
-// Run the tests in a DOM environment.
-require("jsdom-global")();
+import {
+    clearBrowserCookiesWithoutAffectingConsole,
+    getTextInDashboardNoAuth,
+    screenshotOnFailure,
+    setupBrowser,
+} from "../helpers";
 import { TEST_CLIENT_BASE_URL } from "../constants";
 
 describe("Refresh errors", function () {
@@ -31,10 +31,7 @@ describe("Refresh errors", function () {
         let page;
 
         before(async function () {
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: true,
-            });
+            browser = await setupBrowser();
         });
 
         after(async function () {

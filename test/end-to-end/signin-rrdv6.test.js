@@ -20,7 +20,6 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
-import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     clickForgotPasswordLink,
@@ -49,14 +48,18 @@ import {
     getUserIdFromSessionContext,
     getTextInDashboardNoAuth,
     screenshotOnFailure,
+    waitForText,
+    waitForSTElement,
+    getInvalidClaimsJSON,
+    expectErrorThrown,
+    waitForUrl,
+    setupBrowser,
+    backendHook,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
-import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
-
-// Run the tests in a DOM environment.
-require("jsdom-global")();
-
-import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_OUT_API } from "../constants";
+import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, SIGN_OUT_API } from "../constants";
 
 /*
  * Tests.
@@ -67,37 +70,14 @@ describe("SuperTokens SignIn with react router dom v6", function () {
     let consoleLogs = [];
 
     before(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
-    });
-
-    after(async function () {
-        await browser.close();
-
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
-    });
-
-    afterEach(function () {
-        return screenshotOnFailure(this, browser);
+        await backendHook("beforeEach");
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
+        browser = await setupBrowser();
     });
 
     beforeEach(async function () {
+        backendHook("beforeEach");
         page = await browser.newPage();
         await Promise.all([
             page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
@@ -113,6 +93,17 @@ describe("SuperTokens SignIn with react router dom v6", function () {
             }
         });
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
+    });
+
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await page?.close();
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
     });
 
     describe("SignIn test ", function () {
@@ -621,17 +612,12 @@ describe("SuperTokens SignIn => Server Error", function () {
     let consoleLogs;
 
     before(async function () {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
-    });
-
-    after(async function () {
-        await browser.close();
+        await backendHook("before");
+        browser = await setupBrowser();
     });
 
     beforeEach(async function () {
+        await backendHook("beforeEach");
         page = await browser.newPage();
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
         page.on("console", (consoleObj) => {
@@ -642,14 +628,38 @@ describe("SuperTokens SignIn => Server Error", function () {
         });
     });
 
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await page?.close();
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
+    });
+
     it("Server Error shows Something went wrong general error", async function () {
         await setInputValues(page, [
             { name: "email", value: "john.doe@supertokens.io" },
             { name: "password", value: "Str0ngP@ssw0rd" },
         ]);
 
-        await submitForm(page);
+        await page.setRequestInterception(true);
+        page.on("request", (request) => {
+            if (request.url() === SIGN_IN_API && request.method() === "POST") {
+                request.respond({
+                    // Previous behavior was a result of core being shut down
+                    // Emulating the same here
+                    status: 500,
+                    // body: "Error: No SuperTokens core available to query",
+                });
+            } else {
+                request.continue();
+            }
+        });
 
+        await submitForm(page);
         await page.waitForResponse((response) => {
             return response.url() === SIGN_IN_API && response.status() === 500;
         });
