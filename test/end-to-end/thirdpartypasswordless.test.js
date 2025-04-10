@@ -230,7 +230,7 @@ describe("SuperTokens Third Party Passwordless", function () {
             await assertProviders(page);
             await setupST({
                 ...appConfig,
-                enabledRecipes: ["thirdparty"],
+                enabledRecipes: ["thirdpartypasswordless"],
                 enabledProviders: [],
             });
 

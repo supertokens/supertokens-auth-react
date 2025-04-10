@@ -379,7 +379,7 @@ describe("SuperTokens Third Party Email Password", function () {
             await assertProviders(page);
             await setupST({
                 ...appConfig,
-                enabledRecipes: ["thirdparty"],
+                enabledRecipes: ["thirdpartyemailpassword"],
                 enabledProviders: [],
             });
 
