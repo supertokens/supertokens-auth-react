@@ -31,7 +31,6 @@ import {
     isGeneralErrorSupported,
     setGeneralErrorToLocalStorage,
     getInputField,
-    isAccountLinkingSupported,
     waitForUrl,
     setupBrowser,
     clickForgotPasswordLink,
@@ -39,6 +38,7 @@ import {
     setupCoreApp,
     setupST,
     clickOnPasswordlessResendButton,
+    waitForText,
 } from "../helpers";
 
 import { TEST_CLIENT_BASE_URL, SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -537,7 +537,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
     });
 
     function getTestCases(contactMethod, inputName, contactInfo) {
-        let accountLinkingSupported;
         let coreUrl;
         const appId = randomUUID();
         const coreConfig = {
@@ -563,7 +562,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     passwordlessContactMethod: contactMethod,
                 });
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, undefined));
-                accountLinkingSupported = await isAccountLinkingSupported();
             });
 
             after(async function () {
@@ -572,6 +570,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
             });
 
             beforeEach(async function () {
+                await backendHook("beforeEach");
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
                 await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
@@ -1040,7 +1039,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
             before(async function () {
                 await backendHook("before");
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, undefined));
-                accountLinkingSupported = await isAccountLinkingSupported();
                 await setupST({
                     coreUrl,
                     passwordlessFlowType: "MAGIC_LINK",
@@ -1546,7 +1544,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     passwordlessContactMethod: contactMethod,
                 });
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, undefined));
-                accountLinkingSupported = await isAccountLinkingSupported();
             });
 
             after(async function () {

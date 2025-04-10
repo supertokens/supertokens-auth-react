@@ -63,9 +63,6 @@ try {
 const UserRolesRaw = require("supertokens-node/lib/build/recipe/userroles/recipe").default;
 const UserRoles = require("supertokens-node/recipe/userroles");
 
-const MultitenancyRaw = require("supertokens-node/lib/build/recipe/multitenancy/recipe").default;
-const Multitenancy = require("supertokens-node/lib/build/recipe/multitenancy/index");
-
 let AccountLinking, AccountLinkingRaw, accountLinkingSupported;
 try {
     AccountLinkingRaw = require("supertokens-node/lib/build/recipe/accountlinking/recipe").default;
@@ -190,7 +187,6 @@ function initST({
     if (process.env.TEST_MODE) {
         UserRolesRaw.reset();
         PasswordlessRaw.reset();
-        MultitenancyRaw.reset();
 
         if (accountLinkingSupported) {
             AccountLinkingRaw.reset();
@@ -515,8 +511,7 @@ function initST({
         },
     };
 
-    recipeList.push([
-        "passwordless",
+    recipeList.push(
         Passwordless.init({
             ...passwordlessConfig,
             override: {
@@ -559,8 +554,8 @@ function initST({
                     };
                 },
             },
-        }),
-    ]);
+        })
+    );
 
     if (thirdPartyPasswordlessSupported) {
         recipeList.push(
@@ -644,17 +639,7 @@ function initST({
         );
     }
 
-    recipeList.push(["userroles", UserRoles.init()]);
-
-    recipeList.push([
-        "multitenancy",
-        Multitenancy.init({
-            getAllowedDomainsForTenantId: (tenantId) => [
-                `${tenantId}.example.com`,
-                websiteDomain.replace(/https?:\/\/([^:\/]*).*/, "$1"),
-            ],
-        }),
-    ]);
+    recipeList.push(UserRoles.init());
 
     accountLinkingConfig = {
         enabled: false,
@@ -797,13 +782,11 @@ app.get("/sessioninfo", verifySession(), async (req, res, next) => {
 });
 
 app.post("/deleteUser", async (req, res) => {
-    if (!accountLinkingSupported) {
-        const user = await EmailPassword.getUserByEmail("public", req.body.email);
-        return res.send(await SuperTokens.deleteUser(user.id));
+    if (req.body.rid !== "emailpassword") {
+        res.status(400).send({ message: "Not implemented" });
     }
-
-    const users = await SuperTokens.listUsersByAccountInfo("public", req.body);
-    res.send(await SuperTokens.deleteUser(users[0].id));
+    const user = await EmailPassword.getUserByEmail(req.body.email);
+    res.send(await SuperTokens.deleteUser(user.id));
 });
 
 app.post("/changeEmail", async (req, res) => {
@@ -844,9 +827,9 @@ app.get("/unverifyEmail", verifySession(), async (req, res) => {
 app.post("/setRole", verifySession(), async (req, res) => {
     let session = req.session;
     await UserRoles.createNewRoleOrAddPermissions(req.body.role, req.body.permissions);
-    await UserRoles.addRoleToUser(session.getTenantId(), session.getUserId(), req.body.role);
-    await session.fetchAndSetClaim(UserRoles.UserRoleClaim, {});
-    await session.fetchAndSetClaim(UserRoles.PermissionClaim, {});
+    await UserRoles.addRoleToUser(session.getUserId(), req.body.role);
+    await session.fetchAndSetClaim(UserRoles.UserRoleClaim);
+    await session.fetchAndSetClaim(UserRoles.PermissionClaim);
     res.send({ status: "OK" });
 });
 
@@ -887,44 +870,6 @@ app.get("/token", async (_, res) => {
     });
 });
 
-app.post("/setupTenant", async (req, res) => {
-    const { tenantId, loginMethods, coreConfig } = req.body;
-    let coreResp = await Multitenancy.createOrUpdateTenant(tenantId, {
-        emailPasswordEnabled: loginMethods.emailPassword?.enabled === true,
-        thirdPartyEnabled: loginMethods.thirdParty?.enabled === true,
-        passwordlessEnabled: loginMethods.passwordless?.enabled === true,
-        coreConfig,
-    });
-
-    if (loginMethods.thirdParty.providers !== undefined) {
-        for (const provider of loginMethods.thirdParty.providers) {
-            await Multitenancy.createOrUpdateThirdPartyConfig(tenantId, provider);
-        }
-    }
-    res.send(coreResp);
-});
-
-app.post("/addUserToTenant", async (req, res) => {
-    const { tenantId, recipeUserId } = req.body;
-    let coreResp = await Multitenancy.associateUserToTenant(tenantId, convertToRecipeUserIdIfAvailable(recipeUserId));
-    res.send(coreResp);
-});
-
-app.post("/removeUserFromTenant", async (req, res) => {
-    const { tenantId, recipeUserId } = req.body;
-    let coreResp = await Multitenancy.disassociateUserFromTenant(
-        tenantId,
-        convertToRecipeUserIdIfAvailable(recipeUserId)
-    );
-    res.send(coreResp);
-});
-
-app.post("/removeTenant", async (req, res) => {
-    const { tenantId } = req.body;
-    let coreResp = await Multitenancy.deleteTenant(tenantId);
-    res.send(coreResp);
-});
-
 app.get("/test/getDevice", (req, res) => {
     res.send(deviceStore.get(req.query.preAuthSessionId));
 });
@@ -941,8 +886,6 @@ app.get("/test/featureFlags", (req, res) => {
     available.push("thirdpartyemailpassword");
     available.push("generalerror");
     available.push("userroles");
-    available.push("multitenancy");
-    available.push("multitenancyManagementEndpoints");
     if (accountLinkingSupported) {
         available.push("accountlinking");
     }

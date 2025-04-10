@@ -22,6 +22,7 @@ import {
     SIGN_UP_API,
     EMAIL_EXISTS_API,
     TEST_CLIENT_BASE_URL,
+    TEST_SERVER_BASE_URL,
 } from "./constants";
 
 import path from "path";
@@ -835,6 +836,23 @@ export async function getPasswordlessDevice(loginAttemptInfo) {
         }
     );
     return await deviceResp.json();
+}
+
+export function getDefaultSignUpFieldValues({
+    name = "John Doe",
+    email = "john.doe@supertokens.io",
+    password = "Str0ngP@ssw0rd",
+    age = "20",
+} = {}) {
+    const fieldValues = [
+        { name: "email", value: email },
+        { name: "password", value: password },
+        { name: "name", value: name },
+        { name: "age", value: age },
+    ];
+    const postValues = `{"formFields":[{"id":"email","value":"${email}"},{"id":"password","value":"${password}"},{"id":"name","value":"${name}"},{"id":"age","value":"${age}"},{"id":"country","value":""}]}`;
+
+    return { fieldValues, postValues };
 }
 
 export function changeEmail(rid, recipeUserId, email, phoneNumber) {

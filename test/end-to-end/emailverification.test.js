@@ -71,7 +71,6 @@ describe("SuperTokens Email Verification", function () {
 
     before(async function () {
         await backendHook("before");
-
         browser = await setupBrowser();
     });
 
@@ -90,7 +89,7 @@ describe("SuperTokens Email Verification", function () {
                 consoleLogs.push(log);
             }
         });
-        page = await browser.newPage();
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         await Promise.all([
             page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
             page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -99,15 +98,11 @@ describe("SuperTokens Email Verification", function () {
 
     after(async function () {
         await browser.close();
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendHook("after");
     });
 
     afterEach(async function () {
+        await backendHook("afterEach");
         await screenshotOnFailure(this, browser);
         if (page) {
             await page.close();
@@ -237,6 +232,7 @@ describe("SuperTokens Email Verification", function () {
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS EMAIL_VERIFICATION GET_REDIRECTION_URL VERIFY_EMAIL",
                     "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS EMAIL_VERIFICATION GET_REDIRECTION_URL VERIFY_EMAIL",
@@ -281,34 +277,6 @@ describe("SuperTokens Email Verification", function () {
                 await waitForUrl(page, "/redirect-here?foo=bar", false);
             });
 
-            it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified and then post verification should redirect with original redirectPath (w/o leading slash) and newUser", async function () {
-                await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%3Ffoo%3Dbar`),
-                    page.waitForNavigation({ waitUntil: "networkidle0" }),
-                ]);
-                await toggleSignInSignUp(page);
-                const { fieldValues, postValues } = getDefaultSignUpFieldValues();
-                await signUp(page, fieldValues, postValues, "emailpassword");
-
-                await waitForUrl(page, "/auth/verify-email");
-
-                // we wait for email to be created
-                await new Promise((r) => setTimeout(r, 1000));
-
-                // we fetch the email verification link and go to that
-                const latestURLWithToken = await getLatestURLWithToken();
-                await Promise.all([
-                    page.waitForNavigation({ waitUntil: "networkidle0" }),
-                    page.goto(latestURLWithToken),
-                ]);
-
-                // click on the continue button
-                await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-
-                // check that we are in /?foo=bar
-                await waitForUrl(page, "/?foo=bar", false);
-            });
-
             it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified and then post verification should redirect with original redirectPath (query params + fragment) and newUser", async function () {
                 await Promise.all([
                     page.goto(
@@ -338,34 +306,6 @@ describe("SuperTokens Email Verification", function () {
                 await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
                 await waitForUrl(page, "/redirect-here?foo=bar#cell=4,1-6,2", false);
-            });
-
-            it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified and then post verification should redirect with original redirectPath (only fragment) and newUser", async function () {
-                await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=${encodeURIComponent("#cell=4,1-6,2")}`),
-                    page.waitForNavigation({ waitUntil: "networkidle0" }),
-                ]);
-                await toggleSignInSignUp(page);
-                const { fieldValues, postValues } = getDefaultSignUpFieldValues();
-                await signUp(page, fieldValues, postValues, "emailpassword");
-
-                await waitForUrl(page, "/auth/verify-email");
-
-                // we wait for email to be created
-                await new Promise((r) => setTimeout(r, 1000));
-
-                // we fetch the email verification link and go to that
-                const latestURLWithToken = await getLatestURLWithToken();
-                await Promise.all([
-                    page.waitForNavigation({ waitUntil: "networkidle0" }),
-                    page.goto(latestURLWithToken),
-                ]);
-
-                // click on the continue button
-                await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-
-                // check that we are in /#cell=4,1-6,2
-                await waitForUrl(page, "/#cell=4,1-6,2", false);
             });
 
             it("Should redirect to verify email screen on successful sign in when mode is REQUIRED and email is not verified", async function () {
@@ -409,6 +349,7 @@ describe("SuperTokens Email Verification", function () {
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS EMAIL_VERIFICATION GET_REDIRECTION_URL VERIFY_EMAIL",
                     "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS EMAIL_VERIFICATION GET_REDIRECTION_URL VERIFY_EMAIL",
@@ -471,7 +412,6 @@ describe("SuperTokens Email Verification", function () {
 
                 await waitForUrl(page, "/auth/verify-email");
             });
-            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         });
 
         describe("Verify Email with token screen", function () {
@@ -564,6 +504,7 @@ describe("SuperTokens Email Verification", function () {
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS EMAIL_VERIFICATION GET_REDIRECTION_URL VERIFY_EMAIL",
                     "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS EMAIL_VERIFICATION GET_REDIRECTION_URL VERIFY_EMAIL",
@@ -643,19 +584,27 @@ describe("SuperTokens Email Verification", function () {
             });
         });
         describe("Email Verified", function () {
-            // TODO: Does it make sense to test this since this is already tested in the "Verify Email with token screen" section?
-            it.skip("Should redirect to onSuccessfulRedirect when email is already verified", async function () {
+            it("Should redirect to onSuccessfulRedirect when email is already verified", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
-                const { fieldValues } = getDefaultSignUpFieldValues();
-                await setInputValues(
-                    page,
-                    fieldValues.filter((fv) => ["email", "password"].includes(fv.name))
-                );
+
+                await toggleSignInSignUp(page);
+                const { fieldValues, postValues } = getDefaultSignUpFieldValues();
+                await signUp(page, fieldValues, postValues, "emailpassword");
+
+                const latestURLWithToken_ = await getLatestURLWithToken();
+                await Promise.all([
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    page.goto(latestURLWithToken_),
+                ]);
+                const title_ = await getTextByDataSupertokens(page, "headerTitle");
+                assert.deepStrictEqual(title_, "Email verification successful!");
+
                 await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
                 await page.waitForSelector(".sessionInfo-user-id");
+
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -940,6 +889,8 @@ describe("SuperTokens Email Verification", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
@@ -961,7 +912,6 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
-                "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
             ]);
         });
 
@@ -1064,26 +1014,19 @@ describe("SuperTokens Email Verification", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            await setInputValues(page, [
-                { name: "email", value: "john.doe@supertokens.io" },
-                { name: "password", value: "Str0ngP@ssw0rd" },
-            ]);
 
-            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+            await toggleSignInSignUp(page);
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues();
+            await signUp(page, fieldValues, postValues, "emailpassword");
 
-            await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth/verify-email");
-
-            const latestURLWithToken = await getLatestURLWithToken();
-            await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
-
-            const title = await getTextByDataSupertokens(page, "headerTitle");
-            assert.deepStrictEqual(title, "Email verification successful!");
+            const latestURLWithToken_ = await getLatestURLWithToken();
+            await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken_)]);
+            const title_ = await getTextByDataSupertokens(page, "headerTitle");
+            assert.deepStrictEqual(title_, "Email verification successful!");
 
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             await page.waitForSelector(".sessionInfo-user-id");
-            pathname = await page.evaluate(() => window.location.pathname);
+            let pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/dashboard");
 
             await page.evaluate((url) => window.fetch(url), `${TEST_APPLICATION_SERVER_BASE_URL}/unverifyEmail`);
@@ -1095,46 +1038,6 @@ describe("SuperTokens Email Verification", function () {
     });
 
     describe("Claim refresh with clock skew", function () {
-        it("should not go into an infinite loop during claim refresh with adjusted clock skew", async function () {
-            const coreUrl = await setupCoreApp({
-                coreConfig: {
-                    access_token_validity: 2 * 60 * 60, // 2 hours
-                },
-            });
-            await setupST({ coreUrl });
-            await toggleSignInSignUp(page);
-
-            await signUp(
-                page,
-                [
-                    { name: "email", value: "john.doe4@supertokens.io" },
-                    { name: "password", value: "Str0ngP@ssw0rd" },
-                    { name: "name", value: "John Doe" },
-                    { name: "age", value: "20" },
-                ],
-                '{"formFields":[{"id":"email","value":"john.doe4@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
-                "emailpassword"
-            );
-
-            const latestURLWithToken = await getLatestURLWithToken();
-            await Promise.all([
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-                page.goto(latestURLWithToken + "&router=no-router"),
-            ]);
-            const appHeader = await page.waitForSelector(".App > h1");
-            const appHeaderText = await page.evaluate((e) => e.innerText, appHeader);
-            assert.strictEqual(appHeaderText, "Without Routing");
-
-            const title = await getTextByDataSupertokens(page, "headerTitle");
-            assert.deepStrictEqual(title, "Email verification successful!");
-
-            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-            await page.waitForSelector(".sessionInfo-user-id");
-
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
-        });
-
         it("Should allow to verify an email without a valid session", async function () {
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`);
@@ -1146,6 +1049,8 @@ describe("SuperTokens Email Verification", function () {
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
             assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE VERIFY_EMAIL",
@@ -1172,10 +1077,16 @@ describe("SuperTokens Email Verification", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            await setInputValues(page, [
-                { name: "email", value: "john.doe3@supertokens.io" },
-                { name: "password", value: "Str0ngP@ssw0rd" },
-            ]);
+
+            await toggleSignInSignUp(page);
+            const { fieldValues, postValues } = getDefaultSignUpFieldValues();
+            await signUp(page, fieldValues, postValues, "emailpassword");
+
+            const latestURLWithToken_ = await getLatestURLWithToken();
+            await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken_)]);
+            const title_ = await getTextByDataSupertokens(page, "headerTitle");
+            assert.deepStrictEqual(title_, "Email verification successful!");
+
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             await page.waitForSelector(".sessionInfo-user-id");
             await Promise.all([

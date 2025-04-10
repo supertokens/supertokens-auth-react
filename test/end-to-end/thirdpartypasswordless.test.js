@@ -42,6 +42,8 @@ import {
     screenshotOnFailure,
     isReact16,
 } from "../helpers";
+import { getThirdPartyTestCases } from "./thirdparty.test";
+import { getPasswordlessTestCases } from "./passwordless.test";
 import { TEST_CLIENT_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
 
 // Run the tests in a DOM environment.
@@ -221,16 +223,15 @@ describe("SuperTokens Third Party Passwordless", function () {
         });
     });
 
-        it("should handle no providers enabled on the backend", async function () {
-            if (!(await getFeatureFlags()).includes("recipeConfig")) {
-                this.skip();
-            }
-            await assertProviders(page);
-            await setupST({
-                ...appConfig,
-                enabledRecipes: ["thirdpartypasswordless"],
-                enabledProviders: [],
-            });
+    describe("Third Party specific", function () {
+        getThirdPartyTestCases({
+            authRecipe: "thirdpartypasswordless",
+            rid: "thirdpartypasswordless",
+            logId: "THIRDPARTYPASSWORDLESS",
+            signInUpPageLoadLogs,
+            thirdPartySignInUpLog: "THIRD_PARTY_SIGN_IN_AND_UP",
+        });
+    });
 
     describe("Passwordless specific", function () {
         getPasswordlessTestCases({

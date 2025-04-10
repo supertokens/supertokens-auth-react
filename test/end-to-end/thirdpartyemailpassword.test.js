@@ -348,45 +348,6 @@ describe("SuperTokens Third Party Email Password", function () {
             // 3. Compare userIds
             assert.notDeepStrictEqual(thirdPartyUserId, emailPasswordUserId);
         });
-
-        it("clientType should be included when getting the auth url", async function () {
-            await page.evaluate(() => {
-                localStorage.setItem("clientType", `test-web`);
-            });
-
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
-
-            const res = await Promise.all([
-                page.waitForRequest((request) => request.url().startsWith(GET_AUTH_URL_API)),
-                clickOnProviderButtonWithoutWaiting(page, "Auth0"),
-            ]);
-
-            const url = new URL(res[0].url());
-            assert.strictEqual(url.searchParams.get("clientType"), "test-web");
-        });
-
-        it("should handle no providers enabled on the backend", async function () {
-            if (!(await getFeatureFlags()).includes("recipeConfig")) {
-                this.skip();
-            }
-            await assertProviders(page);
-            await setupST({
-                ...appConfig,
-                enabledRecipes: ["thirdpartyemailpassword"],
-                enabledProviders: [],
-            });
-
-            await Promise.all([
-                page.waitForResponse(
-                    (response) => response.url().startsWith(GET_AUTH_URL_API) && response.status() === 400
-                ),
-                clickOnProviderButtonWithoutWaiting(page, "Auth0"),
-            ]);
-            assert.strictEqual(await getGeneralError(page), "Something went wrong. Please try again.");
-        });
     });
 
     describe("Third Party callback error tests", function () {

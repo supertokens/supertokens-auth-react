@@ -14,6 +14,7 @@
  */
 const { exec } = require("child_process");
 let fs = require("fs");
+let assert = require("assert");
 let axios = require("axios").default;
 const { randomUUID } = require("node:crypto");
 
