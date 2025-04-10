@@ -18,7 +18,6 @@
  */
 
 import assert from "assert";
-import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     clickOnProviderButton,
@@ -29,19 +28,19 @@ import {
     submitForm,
     waitForSTElement,
     getPasswordlessDevice,
-    setPasswordlessFlowType,
     getFeatureFlags,
-    isReact16,
     assertProviders,
-    setEnabledRecipes,
     clickOnProviderButtonWithoutWaiting,
     getGeneralError,
-    backendBeforeEach,
     waitForUrl,
+    setupBrowser,
+    backendHook,
+    setupCoreApp,
+    setupST,
+    screenshotOnFailure,
+    isReact16,
 } from "../helpers";
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
-import { getThirdPartyTestCases } from "./thirdparty.test";
-import { getPasswordlessTestCases } from "./passwordless.test";
+import { TEST_CLIENT_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
 
 /*
  * Tests.
@@ -60,7 +59,10 @@ describe("SuperTokens Third Party Passwordless", function () {
               "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
           ];
 
+    const appConfig = {};
+
     before(async function () {
+        backendHook("before");
         const features = await getFeatureFlags();
         if (!features.includes("thirdpartypasswordless")) {
             this.skip();
@@ -69,16 +71,11 @@ describe("SuperTokens Third Party Passwordless", function () {
 
     describe("Recipe combination tests", () => {
         before(async function () {
-            await backendBeforeEach();
+            const coreUrl = await setupCoreApp();
+            appConfig.coreUrl = coreUrl;
+            await setupST(appConfig);
 
-            await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                method: "POST",
-            }).catch(console.error);
-
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: true,
-            });
+            browser = await setupBrowser();
             page = await browser.newPage();
             page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
@@ -88,21 +85,15 @@ describe("SuperTokens Third Party Passwordless", function () {
             });
         });
 
-        after(async function () {
-            await browser.close();
-            await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                method: "POST",
-            }).catch(console.error);
-
-            await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                method: "POST",
-            }).catch(console.error);
-        });
-
         beforeEach(async function () {
+            await backendHook("beforeEach");
             consoleLogs = [];
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE_AND_MAGIC_LINK");
+            await setupST({
+                ...appConfig,
+                passwordlessContactMethod: "EMAIL_OR_PHONE",
+                passwordlessFlowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+            });
             await Promise.all([
                 page.goto(
                     `${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartypasswordless&passwordlessContactMethodType=EMAIL_OR_PHONE`
@@ -113,11 +104,23 @@ describe("SuperTokens Third Party Passwordless", function () {
 
         afterEach(async function () {
             await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+            await screenshotOnFailure(this, browser);
+            await backendHook("afterEach");
+        });
+
+        after(async function () {
+            await page?.close();
+            await browser?.close();
+            await backendHook("after");
         });
 
         it("No account consolidation", async function () {
             // 1. Sign up with credentials
-            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE");
+            await setupST({
+                ...appConfig,
+                passwordlessContactMethod: "EMAIL_OR_PHONE",
+                passwordlessFlowType: "USER_INPUT_CODE",
+            });
             await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
@@ -159,7 +162,11 @@ describe("SuperTokens Third Party Passwordless", function () {
         });
 
         it("Successful signin with passwordless w/ required email verification", async function () {
-            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE");
+            await setupST({
+                ...appConfig,
+                passwordlessContactMethod: "EMAIL_OR_PHONE",
+                passwordlessFlowType: "USER_INPUT_CODE",
+            });
             await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
             await Promise.all([
@@ -212,7 +219,11 @@ describe("SuperTokens Third Party Passwordless", function () {
                 this.skip();
             }
             await assertProviders(page);
-            await setEnabledRecipes(["thirdpartypasswordless"], []);
+            await setupST({
+                ...appConfig,
+                enabledRecipes: ["thirdpartypasswordless"],
+                enabledProviders: [],
+            });
 
             await Promise.all([
                 page.waitForResponse(
