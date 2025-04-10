@@ -18,8 +18,6 @@
  */
 
 import assert from "assert";
-import puppeteer from "puppeteer";
-import fetch from "isomorphic-fetch";
 import {
     screenshotOnFailure,
     getSignInOrSignUpSwitchLink,
@@ -33,7 +31,6 @@ import {
     getSubmitFormButton,
     waitForSTElement,
     getPasswordlessDevice,
-    setPasswordlessFlowType,
     getSessionHandleWithFetch,
     getLatestURLWithToken,
     sendEmailResetPasswordSuccessMessage,
@@ -45,12 +42,15 @@ import {
     addUserToTenant,
     removeUserFromTenant,
     removeTenant,
-    backendBeforeEach,
+    waitForUrl,
+    setupBrowser,
+    backendHook,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
     DEFAULT_WEBSITE_BASE_PATH,
-    TEST_SERVER_BASE_URL,
     SOMETHING_WENT_WRONG_ERROR,
     ST_ROOT_SELECTOR,
     TEST_APPLICATION_SERVER_BASE_URL,
@@ -64,19 +64,24 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
     let page;
     let pageCrashed;
 
+    const appConfig = {};
+
     before(async function () {
+        await backendHook("before");
         const isSupported = (await isMultitenancySupported()) && (await isMultitenancyManagementEndpointsSupported());
         if (!isSupported) {
             this.skip();
         }
+
+        browser = await setupBrowser();
     });
 
     beforeEach(async function () {
-        await backendBeforeEach();
+        await backendHook("beforeEach");
 
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
+        const coreUrl = await setupCoreApp();
+        appConfig.coreUrl = coreUrl;
+        await setupST(appConfig);
 
         page = await browser.newPage();
 
@@ -103,29 +108,13 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
 
     afterEach(async function () {
         await screenshotOnFailure(this, browser);
-        if (page) {
-            await page.close();
-        }
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
-    });
-
-    before(async () => {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-web-security"],
-            headless: true,
-        });
+        await page?.close();
+        await backendHook("afterEach");
     });
 
     after(async function () {
-        if (browser !== undefined) {
-            await browser.close();
-        }
+        await browser?.close();
+        await backendHook("after");
     });
 
     describe("without user sharing", () => {
@@ -691,7 +680,11 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should revoke magic links on removed tenants", async function () {
-            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE_AND_MAGIC_LINK");
+            await setupST({
+                ...appConfig,
+                passwordlessContactMethod: "EMAIL_OR_PHONE",
+                passwordlessFlowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+            });
             await setEnabledRecipes(page, ["passwordless"]);
             await setupTenant("customer1", {
                 emailPassword: { enabled: false },
@@ -734,7 +727,11 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
 
     describe("passwordless sign in", () => {
         beforeEach(async () => {
-            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE_AND_MAGIC_LINK");
+            await setupST({
+                ...appConfig,
+                passwordlessContactMethod: "EMAIL_OR_PHONE",
+                passwordlessFlowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+            });
         });
 
         it("should work using OTP on the public tenants", async function () {
