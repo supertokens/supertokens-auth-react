@@ -1,0 +1,26 @@
+name: Auth-React Unit Tests
+
+on:
+    pull_request:
+        types:
+            - opened
+            - reopened
+            - synchronize
+    push:
+        branches:
+            - master
+            - "v[0-9]+.[0-9]+"
+            - "ci/github-actions/auth-react/v0.49.0" # TODO: Remove before merge
+        tags:
+            - "(dev-)?v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+    unit-tests:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 18
+            - run: npm install
+            - run: npm run test-unit
