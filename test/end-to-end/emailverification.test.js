@@ -513,7 +513,6 @@ describe("SuperTokens Email Verification", function () {
 
     describe("Server errors", function () {
         describe("Verify Email with token screen", function () {
-            // TODO: Debug and Fix
             it('Should show "Something went wrong" screen when API failure', async function () {
                 await page.setRequestInterception(true);
                 page.on("request", (request) => {
