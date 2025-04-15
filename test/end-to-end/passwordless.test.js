@@ -40,7 +40,7 @@ import {
 } from "../helpers";
 
 import { TEST_CLIENT_BASE_URL, SOMETHING_WENT_WRONG_ERROR } from "../constants";
-import { randomUUID } from "crypto";
+import { tryEmailPasswordSignUp, tryPasswordlessSignInUp } from "./mfa.helpers";
 
 /*
  * Tests.
@@ -349,9 +349,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 const contactMethod = "EMAIL_OR_PHONE";
 
                 before(async function () {
-                    const appId = randomUUID();
                     const coreUrl = await setupCoreApp({
-                        appId,
+                        appId: "test-app-id",
                         coreConfig: {
                             passwordless_code_lifetime: 4000,
                             passwordless_max_code_input_attempts: 3,
@@ -543,7 +542,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
     function getTestCases(contactMethod, inputName, contactInfo) {
         let accountLinkingSupported;
         let coreUrl;
-        const appId = randomUUID();
         const coreConfig = {
             passwordless_code_lifetime: 4000,
             passwordless_max_code_input_attempts: 3,
@@ -551,7 +549,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
         before(async function () {
             coreUrl = await setupCoreApp({
-                appId,
+                appId: "test-app-id",
                 coreConfig,
             });
         });
