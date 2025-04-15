@@ -104,7 +104,7 @@ describe("Email Verification", () => {
         await backendHook("after");
     });
 
-    describe("Core", function () {
+    describe("Core Functionality", function () {
         describe("Email verification screen", function () {
             it("Should redirect to auth from email verification protected page if the user is deleted", async function () {
                 await toggleSignInSignUp(page);
