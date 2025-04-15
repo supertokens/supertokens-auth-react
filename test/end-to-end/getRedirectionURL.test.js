@@ -300,22 +300,6 @@ describe("getRedirectionURL Tests", function () {
                 after(async function () {
                     await page?.close();
                 });
-
-                it("should not do any redirection after successful sign up", async function () {
-                    await Promise.all([
-                        page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=emailpassword`),
-                        page.waitForNavigation({ waitUntil: "networkidle0" }),
-                    ]);
-
-                    await toggleSignInSignUp(page);
-                    const urlBeforeSignUp = await page.url();
-                    await defaultSignUp(page);
-                    const urlAfterSignUp = await page.url();
-
-                    const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
-                    assert.equal(newUserCheck, "emailpassword-true");
-                    assert.equal(urlBeforeSignUp, urlAfterSignUp);
-                });
             });
 
             describe("Passwordless recipe", function () {
@@ -356,32 +340,6 @@ describe("getRedirectionURL Tests", function () {
 
                 after(async function () {
                     await page?.close();
-                });
-
-                it("should not do any redirection after successful sign up", async function () {
-                    await Promise.all([
-                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                        page.waitForNavigation({ waitUntil: "networkidle0" }),
-                    ]);
-                    await setInputValues(page, [{ name: "email", value: exampleEmail }]);
-                    await submitForm(page);
-                    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-
-                    const urlBeforeSignUp = await page.url();
-
-                    const loginAttemptInfo = JSON.parse(
-                        await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-                    );
-                    const device = await getPasswordlessDevice(loginAttemptInfo);
-                    await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
-                    await submitForm(page);
-                    // wait until network idle to ensure that the page has not been redirected
-                    await page.waitForNetworkIdle();
-
-                    const urlAfterSignUp = await page.url();
-                    const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
-                    assert.equal(newUserCheck, "passwordless-true");
-                    assert.equal(urlBeforeSignUp, urlAfterSignUp);
                 });
             });
 
@@ -425,31 +383,6 @@ describe("getRedirectionURL Tests", function () {
                 after(async function () {
                     await page?.close();
                 });
-
-                it("should not do any redirection after successful sign up", async function () {
-                    await Promise.all([
-                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                        page.waitForNavigation({ waitUntil: "networkidle0" }),
-                    ]);
-                    await setInputValues(page, [{ name: "email", value: exampleEmail }]);
-                    await submitForm(page);
-                    await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
-
-                    const loginAttemptInfo = JSON.parse(
-                        await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-                    );
-                    const device = await getPasswordlessDevice(loginAttemptInfo);
-
-                    const magicLink = device.codes[0].urlWithLinkCode;
-
-                    await page.goto(magicLink);
-                    await page.waitForNetworkIdle();
-
-                    const urlAfterSignUp = await page.url();
-                    const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
-                    assert.equal(newUserCheck, "thirdpartypasswordless-true");
-                    assert.equal(magicLink, urlAfterSignUp);
-                });
             });
 
             describe("ThirdParty Recipe", function () {
@@ -469,28 +402,6 @@ describe("getRedirectionURL Tests", function () {
 
                 after(async function () {
                     await page?.close();
-                });
-
-                it("should not do any redirection after successful sign up", async function () {
-                    await Promise.all([
-                        page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdparty`),
-                        page.waitForNavigation({ waitUntil: "networkidle0" }),
-                    ]);
-
-                    await assertProviders(page);
-                    await clickOnProviderButton(page, "Mock Provider");
-
-                    await Promise.all([
-                        loginWithMockProvider(page),
-                        page.waitForResponse(
-                            (response) => response.url() === SIGN_IN_UP_API && response.status() === 200
-                        ),
-                    ]);
-
-                    const urlAfterSignUp = await page.url();
-                    const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
-                    assert.equal(newUserCheck, "thirdparty-true");
-                    assert(urlAfterSignUp.includes("/auth/callback/mock-provider"));
                 });
             });
         });

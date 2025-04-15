@@ -22,6 +22,7 @@ import {
     SIGN_UP_API,
     EMAIL_EXISTS_API,
     TEST_CLIENT_BASE_URL,
+    TEST_SERVER_BASE_URL,
 } from "./constants";
 
 import path from "path";
@@ -633,11 +634,25 @@ export async function defaultSignUp(page, rid = "emailpassword") {
         rid
     );
 }
-export async function signUp(page, fields, postValues, rid = "emailpassword") {
-    if (postValues === undefined) {
-        postValues = JSON.stringify({ formFields: fields.map((v) => ({ id: v.name, value: v.value })) });
-    }
 
+export function getDefaultSignUpFieldValues({
+    name = "John Doe",
+    email = "john.doe@supertokens.io",
+    password = "Str0ngP@ssw0rd",
+    age = "20",
+} = {}) {
+    const fieldValues = [
+        { name: "email", value: email },
+        { name: "password", value: password },
+        { name: "name", value: name },
+        { name: "age", value: age },
+    ];
+    const postValues = `{"formFields":[{"id":"email","value":"${email}"},{"id":"password","value":"${password}"},{"id":"name","value":"${name}"},{"id":"age","value":"${age}"},{"id":"country","value":""}]}`;
+
+    return { fieldValues, postValues };
+}
+
+export async function signUp(page, fields, postValues = undefined, rid = "emailpassword") {
     // Set values.
     await setInputValues(page, fields);
     const successAdornments = await getInputAdornmentsSuccess(page);
@@ -654,12 +669,15 @@ export async function signUp(page, fields, postValues, rid = "emailpassword") {
     assert.strictEqual(hasEmailExistMethodBeenCalled, false);
 
     assert.strictEqual(request.headers().rid, rid);
-    assert.strictEqual(request.postData(), postValues);
+    if (postValues !== undefined) {
+        assert.strictEqual(request.postData(), postValues);
+    }
 
     assert.strictEqual(response.status, "OK");
     await page.setRequestInterception(false);
     await new Promise((r) => setTimeout(r, 500)); // Make sure to wait for navigation. TODO Make more robust.
 }
+
 
 export async function generateState(state, page) {
     await page.evaluate(

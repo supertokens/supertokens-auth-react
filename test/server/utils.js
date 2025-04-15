@@ -15,6 +15,7 @@
 const { exec } = require("child_process");
 let fs = require("fs");
 let axios = require("axios").default;
+let assert = require("assert");
 const { randomUUID } = require("node:crypto");
 
 module.exports.getCoreUrl = () => {

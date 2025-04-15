@@ -18,7 +18,6 @@
  */
 
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
-import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
@@ -50,8 +49,6 @@ import {
     screenshotOnFailure,
     waitForText,
     waitForSTElement,
-    setEnabledRecipes,
-    waitForUrl,
     setupBrowser,
     backendHook,
     setupCoreApp,

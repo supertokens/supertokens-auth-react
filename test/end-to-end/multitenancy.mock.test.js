@@ -33,7 +33,6 @@ import {
     setupCoreApp,
     setupST,
     isMultitenancySupported,
-    isMultitenancyManagementEndpointsSupported,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, DEFAULT_WEBSITE_BASE_PATH, ST_ROOT_SELECTOR } from "../constants";
 
@@ -50,7 +49,7 @@ describe("SuperTokens Multitenancy w/ mocked login methods", function () {
 
     before(async function () {
         await backendHook("before");
-        const isSupported = (await isMultitenancySupported()) && (await isMultitenancyManagementEndpointsSupported());
+        const isSupported = (await isMultitenancySupported());
         if (!isSupported) {
             this.skip();
         }
@@ -286,9 +285,11 @@ describe("SuperTokens Multitenancy w/ mocked login methods", function () {
                 providers: [
                     {
                         id: "apple",
+                        name: "Apple",
                     },
                     {
                         id: "google",
+                        name: "Google",
                     },
                 ],
             },
@@ -332,9 +333,11 @@ describe("SuperTokens Multitenancy w/ mocked login methods", function () {
                 providers: [
                     {
                         id: "apple",
+                        name: "Apple",
                     },
                     {
                         id: "google",
+                        name: "Google",
                     },
                 ],
             },
@@ -359,9 +362,11 @@ describe("SuperTokens Multitenancy w/ mocked login methods", function () {
                 providers: [
                     {
                         id: "google",
+                        name: "Google",
                     },
                     {
                         id: "facebook",
+                        name: "Facebook",
                     },
                 ],
             },
@@ -390,6 +395,7 @@ describe("SuperTokens Multitenancy w/ mocked login methods", function () {
                     },
                     {
                         id: "facebook",
+                        name: "Facebook",
                     },
                 ],
             },

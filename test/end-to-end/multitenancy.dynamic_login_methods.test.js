@@ -35,7 +35,6 @@ import {
     clickOnProviderButton,
     loginWithMockProvider,
     isMultitenancySupported,
-    isMultitenancyManagementEndpointsSupported,
     setupTenant,
     getTextByDataSupertokens,
     loginWithAuth0,
@@ -43,6 +42,7 @@ import {
     setupST,
     backendHook,
     setupBrowser,
+    isAccountLinkingSupported,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -63,7 +63,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
 
     before(async function () {
         await backendHook("before");
-        const isSupported = (await isMultitenancySupported()) && (await isMultitenancyManagementEndpointsSupported());
+        const isSupported = (await isMultitenancySupported());
         if (!isSupported) {
             this.skip();
         }
@@ -122,7 +122,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
             "Continue with Google",
             "Continue with Facebook",
             "Continue with Auth0",
-            ...((await isAccountLinkingSupported()) ? ["Continue with Mock Provider"] : []),
+            "Continue with Mock Provider",
         ]);
         const inputNames = await getInputNames(page);
         assert.deepStrictEqual(inputNames, ["email", "password"]);
@@ -378,7 +378,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
             "Continue with Google",
             "Continue with Facebook",
             "Continue with Auth0",
-            ...((await isAccountLinkingSupported()) ? ["Continue with Mock Provider"] : []),
+            "Continue with Mock Provider",
         ]);
         assert.strictEqual(await getProviderLogoCount(page), 3);
     });
@@ -958,50 +958,6 @@ function clearDynamicLoginMethodsSettings(page) {
     });
 }
 
-export async function enableDynamicLoginMethods(page, mockLoginMethods, tenantId = "public", app = "public") {
-    let coreResp = await fetch(`http://localhost:9000/appid-${app}/recipe/multitenancy/tenant`, {
-        method: "PUT",
-        headers: new Headers([
-            ["content-type", "application/json"],
-            ["rid", "multitenancy"],
-            ["cdi-version", "3.0"],
-        ]),
-        body: JSON.stringify({
-            tenantId,
-            emailPasswordEnabled: mockLoginMethods.emailPassword?.enabled === true,
-            thirdPartyEnabled: mockLoginMethods.thirdParty?.enabled === true,
-            passwordlessEnabled: mockLoginMethods.passwordless?.enabled === true,
-            coreConfig: {},
-        }),
-    });
-    assert.strictEqual(coreResp.status, 200);
-
-    for (const provider of mockLoginMethods["thirdParty"]?.providers) {
-        coreResp = await fetch(`http://localhost:9000/appid-${app}/${tenantId}/recipe/multitenancy/config/thirdparty`, {
-            method: "PUT",
-            headers: new Headers([
-                ["content-type", "application/json"],
-                ["rid", "multitenancy"],
-                ["cdi-version", "3.0"],
-            ]),
-            body: JSON.stringify({
-                skipValidation: true,
-                config: {
-                    ...providerConfigs[provider.id.split("-")[0]],
-                    thirdPartyId: provider.id,
-                    name: provider.name,
-                },
-            }),
-        });
-
-        assert.strictEqual(coreResp.status, 200);
-    }
-
-    return page.evaluate(() => {
-        window.localStorage.setItem("usesDynamicLoginMethods", "true");
-    });
-}
-
 /**
  *
  * @param {Array<string>} actual
@@ -1074,3 +1030,11 @@ const providerConfigs = {
         ],
     },
 };
+
+export async function enableDynamicLoginMethods(page, mockLoginMethods, tenantId = "public") {
+    await setupTenant(tenantId, mockLoginMethods);
+
+    return page.evaluate(() => {
+        window.localStorage.setItem("usesDynamicLoginMethods", "true");
+    });
+}
