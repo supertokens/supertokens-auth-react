@@ -350,7 +350,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
                 before(async function () {
                     const coreUrl = await setupCoreApp({
-                        appId: "test-app-id",
                         coreConfig: {
                             passwordless_code_lifetime: 4000,
                             passwordless_max_code_input_attempts: 3,
@@ -548,7 +547,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
         before(async function () {
             coreUrl = await setupCoreApp({
-                appId: "test-app-id",
                 coreConfig,
             });
         });
