@@ -170,7 +170,6 @@ describe("Email Verification", () => {
                         rid: "emailpassword",
                     }),
                 });
-                await new Promise((r) => setTimeout(r, 11000));
 
                 consoleLogs = [];
                 await page.reload({ waitUntil: ["networkidle0"] });
@@ -357,7 +356,7 @@ describe("Email Verification", () => {
                 await toggleSignInSignUp(page);
                 await defaultSignUp(page);
                 await logoutFromEmailVerification(page);
-                await new Promise((r) => setTimeout(r, 1000));
+                await waitForUrl(page, "/auth/");
                 consoleLogs = [];
 
                 await Promise.all([
@@ -369,8 +368,9 @@ describe("Email Verification", () => {
                     { name: "password", value: "Str0ngP@ssw0rd" },
                 ]);
                 await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-                await new Promise((r) => setTimeout(r, 2000));
                 await waitForUrl(page, "/auth/verify-email");
+                await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailResend']");
+
                 // Click on resend email should show "Email Resent" success message
                 await sendVerifyEmail(page);
                 await page.waitForResponse(
@@ -406,9 +406,9 @@ describe("Email Verification", () => {
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
                     "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
-                    "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
                     "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
                     "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
+                    "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
                     "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
                     "ST_LOGS SESSION OVERRIDE SIGN_OUT",
                     "ST_LOGS SESSION PRE_API_HOOKS SIGN_OUT",
@@ -421,7 +421,7 @@ describe("Email Verification", () => {
                 await toggleSignInSignUp(page);
                 await defaultSignUp(page);
                 await logoutFromEmailVerification(page);
-                await new Promise((r) => setTimeout(r, 1000));
+                await waitForUrl(page, "/auth/");
                 consoleLogs = [];
 
                 await Promise.all([
@@ -497,7 +497,7 @@ describe("Email Verification", () => {
                 const { fieldValues, postValues } = getDefaultSignUpFieldValues();
                 await signUp(page, fieldValues, postValues, "emailpassword");
                 await logoutFromEmailVerification(page);
-                await new Promise((r) => setTimeout(r, 100));
+                await waitForUrl(page, "/auth/");
                 consoleLogs = [];
 
                 // Attempt verification without a session
