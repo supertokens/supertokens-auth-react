@@ -70,7 +70,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
 
     before(async function () {
         await backendHook("before");
-        const isSupported = (await isMultitenancySupported());
+        const isSupported = await isMultitenancySupported();
         if (!isSupported) {
             this.skip();
         }
@@ -165,7 +165,6 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should not allow sign into user created on custom tenant when using public", async function () {
-
             await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },

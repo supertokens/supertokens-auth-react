@@ -678,7 +678,6 @@ export async function signUp(page, fields, postValues = undefined, rid = "emailp
     await new Promise((r) => setTimeout(r, 500)); // Make sure to wait for navigation. TODO Make more robust.
 }
 
-
 export async function generateState(state, page) {
     await page.evaluate(
         ({ state, SESSION_STORAGE_STATE_KEY }) => {

@@ -174,7 +174,6 @@ describe("SuperTokens Email Verification", function () {
                         rid: "emailpassword",
                     }),
                 });
-                await new Promise((r) => setTimeout(r, 11000));
 
                 consoleLogs = [];
                 await page.reload({ waitUntil: ["networkidle0"] });
@@ -255,6 +254,9 @@ describe("SuperTokens Email Verification", function () {
                 await new Promise((r) => setTimeout(r, 2000));
                 let pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/auth/verify-email");
+                await waitForUrl(page, "/auth/verify-email");
+                await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailResend']");
+
                 // Click on resend email should show "Email Resent" success message
                 await sendVerifyEmail(page);
                 await page.waitForResponse(
@@ -262,9 +264,12 @@ describe("SuperTokens Email Verification", function () {
                 );
                 const generalSuccess = await getGeneralSuccess(page);
                 assert.deepStrictEqual(generalSuccess, "Email resent");
-    
+
                 // Click on Logout should remove session and redirect to login page
-                await Promise.all([clickLinkWithRightArrow(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+                await Promise.all([
+                    clickLinkWithRightArrow(page),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/auth/");
                 assert.deepStrictEqual(consoleLogs, [
@@ -289,9 +294,9 @@ describe("SuperTokens Email Verification", function () {
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
                     "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
-                    "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
                     "ST_LOGS EMAIL_VERIFICATION OVERRIDE SEND_VERIFICATION_EMAIL",
                     "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS SEND_VERIFY_EMAIL",
+                    "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
                     "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
                     "ST_LOGS SESSION OVERRIDE SIGN_OUT",
                     "ST_LOGS SESSION PRE_API_HOOKS SIGN_OUT",
@@ -305,24 +310,27 @@ describe("SuperTokens Email Verification", function () {
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
-    
+
                 await toggleSignInSignUp(page);
                 const { fieldValues, postValues } = getDefaultSignUpFieldValues();
                 await signUp(page, fieldValues, postValues, "emailpassword");
-    
+
                 const latestURLWithToken_ = await getLatestURLWithToken();
-                await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken_)]);
+                await Promise.all([
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    page.goto(latestURLWithToken_),
+                ]);
                 const title_ = await getTextByDataSupertokens(page, "headerTitle");
                 assert.deepStrictEqual(title_, "Email verification successful!");
-    
+
                 await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
                 await page.waitForSelector(".sessionInfo-user-id");
                 let pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/dashboard");
-    
+
                 await page.evaluate((url) => window.fetch(url), `${TEST_APPLICATION_SERVER_BASE_URL}/unverifyEmail`);
                 await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
-    
+
                 pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/auth/verify-email");
             });
@@ -367,7 +375,7 @@ describe("SuperTokens Email Verification", function () {
                 const { fieldValues, postValues } = getDefaultSignUpFieldValues();
                 await signUp(page, fieldValues, postValues, "emailpassword");
                 await logoutFromEmailVerification(page);
-                await new Promise((r) => setTimeout(r, 100));
+                await waitForUrl(page, "/auth/");
                 consoleLogs = [];
 
                 // Attempt verification without a session
@@ -476,7 +484,6 @@ describe("SuperTokens Email Verification", function () {
 
                 await waitForUrl(page, "/dashboard");
             });
-
         });
         describe("Email Verified", function () {
             it("Should redirect to onSuccessfulRedirect when email is already verified", async function () {
@@ -1021,10 +1028,7 @@ describe("SuperTokens Email Verification", function () {
             await signUp(page, fieldValues, postValues, "emailpassword");
 
             const latestURLWithToken_ = await getLatestURLWithToken();
-            await Promise.all([
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-                page.goto(latestURLWithToken_),
-            ]);
+            await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken_)]);
             const title_ = await getTextByDataSupertokens(page, "headerTitle");
             assert.deepStrictEqual(title_, "Email verification successful!");
 

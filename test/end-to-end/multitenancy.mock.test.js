@@ -49,7 +49,7 @@ describe("SuperTokens Multitenancy w/ mocked login methods", function () {
 
     before(async function () {
         await backendHook("before");
-        const isSupported = (await isMultitenancySupported());
+        const isSupported = await isMultitenancySupported();
         if (!isSupported) {
             this.skip();
         }

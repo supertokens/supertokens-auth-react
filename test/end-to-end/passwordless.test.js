@@ -39,7 +39,7 @@ import {
     setupCoreApp,
     setupST,
     waitForText,
-    clickOnPasswordlessResendButton
+    clickOnPasswordlessResendButton,
 } from "../helpers";
 
 import { TEST_CLIENT_BASE_URL, SOMETHING_WENT_WRONG_ERROR } from "../constants";
