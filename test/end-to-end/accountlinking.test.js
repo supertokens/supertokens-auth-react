@@ -321,7 +321,7 @@ describe("SuperTokens Account linking", function () {
 
             it("should not allow sign in w/ an unverified emailpassword user in case of conflict", async function () {
                 // Use a common appId over the test to allow re-inits
-                const coreUrl = await setupCoreApp({ appId: "test-app-id" });
+                const coreUrl = await setupCoreApp();
                 await setupST({
                     coreUrl,
                     passwordlessFlowType,
@@ -489,7 +489,7 @@ describe("SuperTokens Account linking", function () {
 
             it("should not allow sign in w/ an unverified thirdparty user in case of conflict", async function () {
                 // Use a common appId over the test to allow re-inits
-                const coreUrl = await setupCoreApp({ appId: "test-app-id" });
+                const coreUrl = await setupCoreApp();
                 await setupST({
                     coreUrl,
                     passwordlessFlowType,
@@ -558,7 +558,7 @@ describe("SuperTokens Account linking", function () {
                 const email = `test-user+${Date.now()}@supertokens.com`;
 
                 // Use a common appId over the test to allow re-inits
-                const coreUrl = await setupCoreApp({ appId: "test-app-id" });
+                const coreUrl = await setupCoreApp();
                 await setupST({
                     coreUrl,
                     passwordlessFlowType,
@@ -607,7 +607,7 @@ describe("SuperTokens Account linking", function () {
             it("should not allow sign up w/ passwordless if it conflicts with an unverified user", async function () {
                 const email = `test-user+${Date.now()}@supertokens.com`;
                 // Use a common appId over the test to allow re-inits
-                const coreUrl = await setupCoreApp({ appId: "test-app-id" });
+                const coreUrl = await setupCoreApp();
                 await setupST({
                     coreUrl,
                     passwordlessFlowType,
@@ -658,7 +658,7 @@ describe("SuperTokens Account linking", function () {
                 const email2 = `test-user2+${Date.now()}@supertokens.com`;
 
                 // Use a common appId over the test to allow re-inits
-                const coreUrl = await setupCoreApp({ appId: "test-app-id" });
+                const coreUrl = await setupCoreApp();
                 await setupST({
                     coreUrl,
                     passwordlessFlowType,
@@ -733,7 +733,7 @@ describe("SuperTokens Account linking", function () {
                 await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
 
                 // Use a common appId over the test to allow re-inits
-                const coreUrl = await setupCoreApp({ appId: "test-app-id" });
+                const coreUrl = await setupCoreApp();
                 await setupST({
                     coreUrl,
                     passwordlessFlowType,
