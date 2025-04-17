@@ -652,7 +652,11 @@ export function getDefaultSignUpFieldValues({
     return { fieldValues, postValues };
 }
 
-export async function signUp(page, fields, postValues = undefined, rid = "emailpassword") {
+export async function signUp(page, fields, postValues, rid = "emailpassword") {
+    if (postValues === undefined) {
+        postValues = JSON.stringify({ formFields: fields.map((v) => ({ id: v.name, value: v.value })) });
+    }
+
     // Set values.
     await setInputValues(page, fields);
     const successAdornments = await getInputAdornmentsSuccess(page);
@@ -669,9 +673,7 @@ export async function signUp(page, fields, postValues = undefined, rid = "emailp
     assert.strictEqual(hasEmailExistMethodBeenCalled, false);
 
     assert.strictEqual(request.headers().rid, rid);
-    if (postValues !== undefined) {
-        assert.strictEqual(request.postData(), postValues);
-    }
+    assert.strictEqual(request.postData(), postValues);
 
     assert.strictEqual(response.status, "OK");
     await page.setRequestInterception(false);
