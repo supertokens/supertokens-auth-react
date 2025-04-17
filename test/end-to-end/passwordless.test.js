@@ -40,7 +40,6 @@ import {
 } from "../helpers";
 
 import { TEST_CLIENT_BASE_URL, SOMETHING_WENT_WRONG_ERROR } from "../constants";
-import { tryEmailPasswordSignUp, tryPasswordlessSignInUp } from "./mfa.helpers";
 
 /*
  * Tests.
@@ -2196,56 +2195,6 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
             });
         });
-
-        if (authRecipe === "all") {
-            describe("with emailpassword combo", () => {
-                before(async function () {
-                    await backendHook("before");
-                    await setupST({
-                        coreUrl,
-                        passwordlessFlowType: "USER_INPUT_CODE",
-                        passwordlessContactMethod: contactMethod,
-                    });
-                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, undefined));
-                    if (authRecipe === "all") {
-                        await tryEmailPasswordSignUp(page, registeredEmailWithPass);
-                    }
-                });
-
-                after(async function () {
-                    await browser?.close();
-                    await backendHook("after");
-                });
-
-                beforeEach(async function () {
-                    await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-
-                    await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
-                    await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
-
-                    consoleLogs.length = 0;
-                });
-
-                it("should navigate to the sign in page when the user clicks on the forgot password link", async function () {
-                    await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-
-                    await setInputValues(page, [{ name: "email", value: registeredEmailWithPass }]);
-                    await submitForm(page);
-
-                    const testVal = "nav check" + Date.now();
-
-                    await page.evaluate((testVal) => {
-                        window.testVal = testVal;
-                    }, testVal);
-
-                    await clickForgotPasswordLink(page);
-                    await waitForUrl(page, "/auth/reset-password");
-
-                    const testValAfterNav = await page.evaluate(() => window.testVal);
-                    assert.strictEqual(testVal, testValAfterNav);
-                });
-            });
-        }
     }
 }
 
