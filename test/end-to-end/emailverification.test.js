@@ -674,7 +674,7 @@ describe("SuperTokens Email Verification", function () {
             ]);
             await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
 
-            await fetch(`${TEST_SERVER_BASE_URL}/deleteUser`, {
+            await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/deleteUser`, {
                 method: "POST",
                 headers: [["content-type", "application/json"]],
                 body: JSON.stringify({
@@ -731,7 +731,7 @@ describe("SuperTokens Email Verification", function () {
             let pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
 
-            await fetch(`${TEST_SERVER_BASE_URL}/deleteUser`, {
+            await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/deleteUser`, {
                 method: "POST",
                 headers: [["content-type", "application/json"]],
                 body: JSON.stringify({
