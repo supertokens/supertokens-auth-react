@@ -806,6 +806,10 @@ app.post("/deleteUser", async (req, res) => {
     }
 
     const users = await SuperTokens.listUsersByAccountInfo("public", req.body);
+    if (users.length === 0) {
+        res.status(404).send({ message: "User not found" });
+        return;
+    }
     res.send(await SuperTokens.deleteUser(users[0].id));
 });
 
