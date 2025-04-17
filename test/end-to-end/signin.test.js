@@ -61,7 +61,7 @@ import {
     setupCoreApp,
     setupST,
 } from "../helpers";
-import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
+import { SOMETHING_WENT_WRONG_ERROR, TEST_APPLICATION_SERVER_BASE_URL } from "../constants";
 import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, SIGN_OUT_API } from "../constants";
 
 /*
@@ -563,6 +563,15 @@ describe("SuperTokens SignIn", function () {
 
         describe("Successful Sign In with redirect to, with EmailPasswordAuth", async function () {
             it("First sign in", async function () {
+                await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/deleteUser`, {
+                    method: "POST",
+                    headers: [["content-type", "application/json"]],
+                    body: JSON.stringify({
+                        email: "john.doe@supertokens.io",
+                        rid: "emailpassword",
+                    }),
+                });
+
                 await toggleSignInSignUp(page);
                 await defaultSignUp(page);
                 consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);

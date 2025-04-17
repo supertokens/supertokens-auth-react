@@ -788,6 +788,9 @@ app.post("/deleteUser", async (req, res) => {
         res.status(400).send({ message: "Not implemented" });
     }
     const user = await EmailPassword.getUserByEmail("public", req.body.email);
+    if (user === undefined) {
+        res.status(404).send({ message: "User not found" });
+    }
     res.send(await SuperTokens.deleteUser(user.id));
 });
 
