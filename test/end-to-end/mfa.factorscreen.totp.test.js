@@ -18,42 +18,30 @@
  */
 
 import assert from "assert";
-import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
-    setInputValues,
-    submitForm,
     waitForSTElement,
     screenshotOnFailure,
-    backendBeforeEach,
     getTestEmail,
-    getPasswordlessDevice,
     waitFor,
-    getFactorChooserOptions,
     isMFASupported,
-    setAccountLinkingConfig,
     waitForUrl,
+    setupBrowser,
+    backendHook,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
-import fetch from "isomorphic-fetch";
-import { CREATE_CODE_API, CREATE_TOTP_DEVICE_API, MFA_INFO_API } from "../constants";
+import { CREATE_TOTP_DEVICE_API, MFA_INFO_API } from "../constants";
 
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
-import { getTestPhoneNumber } from "../exampleTestHelpers";
+import { TEST_CLIENT_BASE_URL } from "../constants";
 import {
-    setMFAInfo,
     tryEmailPasswordSignUp,
     waitForDashboard,
-    completeOTP,
-    setupOTP,
-    logout,
     tryEmailPasswordSignIn,
     chooseFactor,
-    tryPasswordlessSignInUp,
     setupTOTP,
     getTOTPSecret,
     completeTOTP,
-    setupUserWithAllFactors,
-    goToFactorChooser,
     waitForAccessDenied,
     waitForLoadingScreen,
     waitForBlockedScreen,
@@ -66,50 +54,30 @@ describe("SuperTokens SignIn w/ MFA", function () {
     let browser;
     let page;
     let consoleLogs = [];
-    let skipped = false;
+
+    const appConfig = {
+        accountLinkingConfig: {
+            enabled: true,
+            shouldAutoLink: {
+                shouldAutomaticallyLink: true,
+                shouldRequireVerification: false,
+            },
+        },
+    };
 
     before(async function () {
         if (!(await isMFASupported())) {
-            skipped = true;
             this.skip();
-            return;
         }
-        await backendBeforeEach();
-
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-        await setAccountLinkingConfig(true, true, false);
-
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
-    });
-
-    after(async function () {
-        if (skipped) {
-            return;
-        }
-        await browser.close();
-
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
-    });
-
-    afterEach(async function () {
-        await screenshotOnFailure(this, browser);
-        if (page) {
-            await page.close();
-        }
+        await backendHook("before");
+        browser = await setupBrowser();
+        const coreUrl = await setupCoreApp();
+        appConfig.coreUrl = coreUrl;
+        await setupST(appConfig);
     });
 
     beforeEach(async function () {
+        await backendHook("beforeEach");
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
@@ -126,14 +94,28 @@ describe("SuperTokens SignIn w/ MFA", function () {
         await page.evaluate(() => window.localStorage.setItem("enableAllRecipes", "true"));
     });
 
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await page?.close();
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
+    });
+
     describe("factor screens", () => {
         describe("totp", () => {
             const factorId = "totp";
 
             let email, phoneNumber;
             before(async () => {
-                await setMFAInfo({
-                    allowedToSetup: ["totp"],
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        allowedToSetup: ["totp"],
+                    },
                 });
                 page = await browser.newPage();
 
@@ -158,10 +140,13 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             it("should respect redirectToPath", async () => {
-                await setMFAInfo({
-                    requirements: [],
-                    alreadySetup: [factorId],
-                    allowedToSetup: [factorId],
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [],
+                        alreadySetup: [factorId],
+                        allowedToSetup: [factorId],
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -181,10 +166,13 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             it("should show access denied if the app navigates to the setup page but the user it is not allowed to set up the factor", async () => {
-                await setMFAInfo({
-                    requirements: [],
-                    alreadySetup: [factorId],
-                    allowedToSetup: [],
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [],
+                        alreadySetup: [factorId],
+                        allowedToSetup: [],
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -198,10 +186,13 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             it("should show access denied if setup is not allowed but the factor is not set up", async () => {
-                await setMFAInfo({
-                    requirements: [factorId],
-                    alreadySetup: [],
-                    allowedToSetup: [],
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [factorId],
+                        alreadySetup: [],
+                        allowedToSetup: [],
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -214,10 +205,13 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             it("should show loading screen", async () => {
-                await setMFAInfo({
-                    requirements: [factorId],
-                    alreadySetup: [factorId],
-                    allowedToSetup: [],
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [factorId],
+                        alreadySetup: [factorId],
+                        allowedToSetup: [],
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -245,10 +239,13 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             it("should show blocked screen after too many retries", async () => {
-                await setMFAInfo({
-                    requirements: [factorId],
-                    alreadySetup: [factorId],
-                    allowedToSetup: [],
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [factorId],
+                        alreadySetup: [factorId],
+                        allowedToSetup: [],
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -259,10 +256,13 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             it("should handle mfa info api failures gracefully", async () => {
-                await setMFAInfo({
-                    requirements: [factorId],
-                    alreadySetup: [factorId],
-                    allowedToSetup: [],
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [factorId],
+                        alreadySetup: [factorId],
+                        allowedToSetup: [],
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -298,10 +298,13 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             it("should handle createDevice failures gracefully", async () => {
-                await setMFAInfo({
-                    requirements: [factorId],
-                    alreadySetup: [],
-                    allowedToSetup: [factorId],
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [factorId],
+                        alreadySetup: [],
+                        allowedToSetup: [factorId],
+                    },
                 });
 
                 await page.setRequestInterception(true);
@@ -332,10 +335,13 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             it("should show a link redirecting back if visited after sign in - setup", async () => {
-                await setMFAInfo({
-                    requirements: [],
-                    alreadySetup: [factorId],
-                    allowedToSetup: [],
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [],
+                        alreadySetup: [factorId],
+                        allowedToSetup: [],
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -350,10 +356,13 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             it("should show a link redirecting back if visited after sign in - verification", async () => {
-                await setMFAInfo({
-                    requirements: [],
-                    alreadySetup: [],
-                    allowedToSetup: [factorId],
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [],
+                        alreadySetup: [],
+                        allowedToSetup: [factorId],
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -368,10 +377,13 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             it("should show a back button redirecting to the chooser screen if other options are available during sign in - setup", async () => {
-                await setMFAInfo({
-                    requirements: [{ oneOf: [factorId, "otp-email"] }],
-                    alreadySetup: ["otp-email"],
-                    allowedToSetup: [factorId],
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [{ oneOf: [factorId, "otp-email"] }],
+                        alreadySetup: ["otp-email"],
+                        allowedToSetup: [factorId],
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -387,10 +399,13 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             it("should show a back button redirecting to the chooser screen if other options are available during sign in - verification", async () => {
-                await setMFAInfo({
-                    requirements: [{ oneOf: [factorId, "otp-email"] }],
-                    alreadySetup: [factorId, "otp-email"],
-                    allowedToSetup: [],
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [{ oneOf: [factorId, "otp-email"] }],
+                        alreadySetup: [factorId, "otp-email"],
+                        allowedToSetup: [],
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -405,10 +420,13 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             it("should show a logout link - setup", async () => {
-                await setMFAInfo({
-                    requirements: [factorId],
-                    alreadySetup: [],
-                    allowedToSetup: [factorId],
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [factorId],
+                        alreadySetup: [],
+                        allowedToSetup: [factorId],
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);
@@ -424,10 +442,13 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
 
             it("should show a logout link - verify", async () => {
-                await setMFAInfo({
-                    requirements: [factorId],
-                    alreadySetup: [factorId],
-                    allowedToSetup: [],
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [factorId],
+                        alreadySetup: [factorId],
+                        allowedToSetup: [],
+                    },
                 });
 
                 await tryEmailPasswordSignIn(page, email);

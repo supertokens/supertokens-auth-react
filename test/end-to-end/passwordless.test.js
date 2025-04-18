@@ -18,8 +18,6 @@
  */
 
 import assert from "assert";
-import puppeteer from "puppeteer";
-import fetch from "isomorphic-fetch";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     getPasswordlessDevice,
@@ -27,25 +25,22 @@ import {
     waitForSTElement,
     waitFor,
     getFeatureFlags,
-    waitForText,
     screenshotOnFailure,
-    setPasswordlessFlowType,
-    isReact16,
-    clickOnPasswordlessResendButton,
     isGeneralErrorSupported,
     setGeneralErrorToLocalStorage,
     getInputField,
     isAccountLinkingSupported,
-    backendBeforeEach,
     waitForUrl,
+    setupBrowser,
+    clickForgotPasswordLink,
+    backendHook,
+    setupCoreApp,
+    setupST,
+    clickOnPasswordlessResendButton,
 } from "../helpers";
 
-import {
-    TEST_CLIENT_BASE_URL,
-    TEST_SERVER_BASE_URL,
-    TEST_APPLICATION_SERVER_BASE_URL,
-    SOMETHING_WENT_WRONG_ERROR,
-} from "../constants";
+import { TEST_CLIENT_BASE_URL, SOMETHING_WENT_WRONG_ERROR } from "../constants";
+import { tryEmailPasswordSignUp, tryPasswordlessSignInUp } from "./mfa.helpers";
 
 /*
  * Tests.
@@ -62,9 +57,11 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
     let browser;
     let page;
     let consoleLogs = [];
-    const signInUpPageLoadLogs = isReact16()
-        ? [`ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`]
-        : [`ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`, `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`];
+
+    const signInUpPageLoadLogs = [
+        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+    ];
 
     const signinSuccessLogsOTP = [
         "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
@@ -112,22 +109,19 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
             const contactMethod = "EMAIL_OR_PHONE";
 
             before(async function () {
+                await backendHook("before");
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
-                await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
+                const coreUrl = await setupCoreApp();
+                await setupST({ coreUrl, passwordlessFlowType: "USER_INPUT_CODE", passwordlessContactMethod: contactMethod });
             });
 
             after(async function () {
                 await browser.close();
-                await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                    method: "POST",
-                }).catch(console.error);
-
-                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                    method: "POST",
-                }).catch(console.error);
+                await backendHook("after");
             });
 
             beforeEach(async function () {
+                await backendHook("beforeEach");
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
@@ -244,24 +238,25 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 const contactMethod = "EMAIL_OR_PHONE";
 
                 before(async function () {
+                    await backendHook("before");
                     ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, {
                         defaultCountry: "HU",
                     }));
-                    await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
+                    const coreUrl = await setupCoreApp();
+                    await setupST({
+                        coreUrl,
+                        passwordlessFlowType: "USER_INPUT_CODE",
+                        passwordlessContactMethod: contactMethod,
+                    });
                 });
 
                 after(async function () {
                     await browser.close();
-                    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                        method: "POST",
-                    }).catch(console.error);
-
-                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                        method: "POST",
-                    }).catch(console.error);
+                    await backendHook("after");
                 });
 
                 beforeEach(async function () {
+                    await backendHook("beforeEach");
                     await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                     await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
                     await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
@@ -354,19 +349,27 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 const contactMethod = "EMAIL_OR_PHONE";
 
                 before(async function () {
-                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
-                    await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
+                    const coreUrl = await setupCoreApp({
+                        coreConfig: {
+                            passwordless_code_lifetime: 4000,
+                            passwordless_max_code_input_attempts: 3,
+                        },
+                    });
+                    await setupST({
+                        coreUrl,
+                        passwordlessFlowType: "USER_INPUT_CODE",
+                        passwordlessContactMethod: contactMethod,
+                    });
+
+                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, undefined));
+                    if (authRecipe === "all") {
+                        await tryEmailPasswordSignUp(page, registeredEmailWithPass);
+                    }
                 });
 
                 after(async function () {
-                    await browser.close();
-                    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                        method: "POST",
-                    }).catch(console.error);
-
-                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                        method: "POST",
-                    }).catch(console.error);
+                    await browser?.close();
+                    await backendHook("after");
                 });
 
                 beforeEach(async function () {
@@ -455,24 +458,21 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 const contactMethod = "EMAIL_OR_PHONE";
 
                 before(async function () {
+                    await backendHook("before");
                     ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, {
                         disablePhoneGuess: true,
                     }));
-                    await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
+                    const coreUrl = await setupCoreApp();
+                    await setupST({ coreUrl, passwordlessFlowType: "USER_INPUT_CODE", passwordlessContactMethod: contactMethod });
                 });
 
                 after(async function () {
                     await browser.close();
-                    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                        method: "POST",
-                    }).catch(console.error);
-
-                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                        method: "POST",
-                    }).catch(console.error);
+                    await backendHook("after");
                 });
 
                 beforeEach(async function () {
+                    await backendHook("beforeEach");
                     await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                     await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
@@ -539,22 +539,35 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
     function getTestCases(contactMethod, inputName, contactInfo) {
         let accountLinkingSupported;
+        let coreUrl;
+        const coreConfig = {
+            passwordless_code_lifetime: 4000,
+            passwordless_max_code_input_attempts: 3,
+        };
+
+        before(async function () {
+            coreUrl = await setupCoreApp({
+                coreConfig,
+            });
+        });
+
         describe(`UserInputCode`, function () {
+            this.timeout(60000);
+
             before(async function () {
-                ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
-                await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
+                await backendHook("before");
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType: "USER_INPUT_CODE",
+                    passwordlessContactMethod: contactMethod,
+                });
+                ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, undefined));
                 accountLinkingSupported = await isAccountLinkingSupported();
             });
 
             after(async function () {
-                await browser.close();
-                await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                    method: "POST",
-                }).catch(console.error);
-
-                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                    method: "POST",
-                }).catch(console.error);
+                await browser?.close();
+                await backendHook("after");
             });
 
             beforeEach(async function () {
@@ -1093,20 +1106,19 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
         describe(`Link`, function () {
             before(async function () {
-                ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
-                await setPasswordlessFlowType(contactMethod, "MAGIC_LINK");
+                await backendHook("before");
+                ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, undefined));
                 accountLinkingSupported = await isAccountLinkingSupported();
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType: "MAGIC_LINK",
+                    passwordlessContactMethod: contactMethod,
+                });
             });
 
             after(async function () {
-                await browser.close();
-                await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                    method: "POST",
-                }).catch(console.error);
-
-                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                    method: "POST",
-                }).catch(console.error);
+                await browser?.close();
+                await backendHook("after");
             });
 
             beforeEach(async function () {
@@ -1586,20 +1598,19 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
 
         describe(`Link/Code`, function () {
             before(async function () {
-                ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
-                await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE_AND_MAGIC_LINK");
+                await backendHook("before");
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+                    passwordlessContactMethod: contactMethod,
+                });
+                ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, undefined));
                 accountLinkingSupported = await isAccountLinkingSupported();
             });
 
             after(async function () {
-                await browser.close();
-                await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                    method: "POST",
-                }).catch(console.error);
-
-                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                    method: "POST",
-                }).catch(console.error);
+                await browser?.close();
+                await backendHook("after");
             });
 
             beforeEach(async function () {
@@ -2100,6 +2111,56 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
             });
         });
+
+        if (authRecipe === "all") {
+            describe("with emailpassword combo", () => {
+                before(async function () {
+                    await backendHook("before");
+                    await setupST({
+                        coreUrl,
+                        passwordlessFlowType: "USER_INPUT_CODE",
+                        passwordlessContactMethod: contactMethod,
+                    });
+                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, undefined));
+                    if (authRecipe === "all") {
+                        await tryEmailPasswordSignUp(page, registeredEmailWithPass);
+                    }
+                });
+
+                after(async function () {
+                    await browser?.close();
+                    await backendHook("after");
+                });
+
+                beforeEach(async function () {
+                    await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+
+                    await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                    await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
+
+                    consoleLogs.length = 0;
+                });
+
+                it("should navigate to the sign in page when the user clicks on the forgot password link", async function () {
+                    await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+
+                    await setInputValues(page, [{ name: "email", value: registeredEmailWithPass }]);
+                    await submitForm(page);
+
+                    const testVal = "nav check" + Date.now();
+
+                    await page.evaluate((testVal) => {
+                        window.testVal = testVal;
+                    }, testVal);
+
+                    await clickForgotPasswordLink(page);
+                    await waitForUrl(page, "/auth/reset-password");
+
+                    const testValAfterNav = await page.evaluate(() => window.testVal);
+                    assert.strictEqual(testVal, testValAfterNav);
+                });
+            });
+        }
     }
 }
 
@@ -2140,23 +2201,7 @@ async function setupDevice(page, inputName, contactInfo, forLinkOnly = true, cle
 }
 
 async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCountry, disablePhoneGuess } = {}) {
-    await backendBeforeEach();
-
-    await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-        method: "POST",
-        headers: [["content-type", "application/json"]],
-        body: JSON.stringify({
-            coreConfig: {
-                passwordless_code_lifetime: 4000,
-                passwordless_max_code_input_attempts: 3,
-            },
-        }),
-    }).catch(console.error);
-
-    const browser = await puppeteer.launch({
-        args: ["--no-sandbox", "--disable-setuid-sandbox", "--remote-debugging-port=9222"],
-        headless: true,
-    });
+    const browser = await setupBrowser();
     const page = await browser.newPage();
     page.on("console", (consoleObj) => {
         const log = consoleObj.text();
@@ -2174,6 +2219,8 @@ async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCoun
         ),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
+
+    await new Promise((res) => setTimeout(res, 500));
 
     return { browser, page };
 }
