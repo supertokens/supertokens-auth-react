@@ -17,8 +17,6 @@
  * Imports
  */
 import assert from "assert";
-import puppeteer from "puppeteer";
-import fetch from "isomorphic-fetch";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     screenshotOnFailure,
@@ -30,13 +28,17 @@ import {
     getInvalidClaimsJSON as getInvalidClaims,
     waitFor,
     waitForText,
-    backendBeforeEach,
+    waitForUrl,
+    setupBrowser,
+    backendHook,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
-
-import { TEST_APPLICATION_SERVER_BASE_URL, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+import { TEST_APPLICATION_SERVER_BASE_URL, TEST_CLIENT_BASE_URL } from "../constants";
 
 describe("User Roles in the frontend", function () {
     before(async function () {
+        backendHook("before");
         const isRolesSupported = await isUserRolesSupported();
         if (!isRolesSupported) {
             this.skip();
@@ -47,16 +49,10 @@ describe("User Roles in the frontend", function () {
         let browser;
         let page;
         before(async function () {
-            await backendBeforeEach();
+            const coreUrl = await setupCoreApp();
+            await setupST({ coreUrl });
 
-            await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                method: "POST",
-            }).catch(console.error);
-
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: true,
-            });
+            browser = await setupBrowser();
             page = await browser.newPage();
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=emailpassword`),
@@ -67,24 +63,8 @@ describe("User Roles in the frontend", function () {
             await page.close();
         });
 
-        after(async function () {
-            await browser.close();
-            await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                method: "POST",
-            }).catch(console.error);
-            await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                method: "POST",
-            }).catch(console.error);
-        });
-
-        afterEach(async function () {
-            await screenshotOnFailure(this, browser);
-            if (page) {
-                page.close();
-            }
-        });
-
         beforeEach(async function () {
+            backendHook("beforeEach");
             page = await browser.newPage();
             await clearBrowserCookiesWithoutAffectingConsole(page, []);
 
@@ -99,6 +79,17 @@ describe("User Roles in the frontend", function () {
             ]);
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             await page.waitForSelector(".sessionInfo-user-id");
+        });
+
+        afterEach(async function () {
+            await screenshotOnFailure(this, browser);
+            await page?.close();
+            await backendHook("afterEach");
+        });
+
+        after(async function () {
+            await browser?.close();
+            await backendHook("after");
         });
 
         it("should be able to read in the frontend", async () => {

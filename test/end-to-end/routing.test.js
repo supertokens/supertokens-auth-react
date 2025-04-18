@@ -18,9 +18,6 @@
  */
 
 import assert from "assert";
-import { spawn } from "child_process";
-import puppeteer from "puppeteer";
-
 import { TEST_CLIENT_BASE_URL, DEFAULT_WEBSITE_BASE_PATH } from "../constants";
 import {
     getSubmitFormButtonLabel,
@@ -31,6 +28,8 @@ import {
     assertNoSTComponents,
     clearBrowserCookiesWithoutAffectingConsole,
     screenshotOnFailure,
+    waitForUrl,
+    setupBrowser,
 } from "../helpers";
 /*
  * Tests.
@@ -39,10 +38,7 @@ describe("SuperTokens Routing in Test App", function () {
     let browser, page;
 
     before(async function () {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
         page = await browser.newPage();
     });
 

@@ -13,7 +13,6 @@
  * under the License.
  */
 
-import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     getLatestURLWithToken,
@@ -23,16 +22,15 @@ import {
     submitFormReturnRequestAndResponse,
     assertProviders,
     clickOnProviderButton,
-    backendBeforeEach,
+    waitForUrl,
     loginWithAuth0,
+    backendHook,
+    setupCoreApp,
+    setupST,
+    screenshotOnFailure,
+    setupBrowser,
 } from "../helpers";
-import {
-    TEST_CLIENT_BASE_URL,
-    TEST_SERVER_BASE_URL,
-    RESET_PASSWORD_TOKEN_API,
-    RESET_PASSWORD_API,
-    SIGN_IN_UP_API,
-} from "../constants";
+import { TEST_CLIENT_BASE_URL, RESET_PASSWORD_TOKEN_API, RESET_PASSWORD_API, SIGN_IN_UP_API } from "../constants";
 import assert from "assert";
 
 describe("SuperTokens userContext with UI components test", function () {
@@ -41,16 +39,11 @@ describe("SuperTokens userContext with UI components test", function () {
     let consoleLogs = [];
 
     before(async function () {
-        await backendBeforeEach();
+        backendHook("before");
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
 
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
@@ -60,24 +53,25 @@ describe("SuperTokens userContext with UI components test", function () {
         });
     });
 
-    after(async function () {
-        await browser.close();
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
-    });
-
     beforeEach(async function () {
+        await backendHook("beforeEach");
         consoleLogs = [];
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         await Promise.all([
             page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartyemailpassword`),
             page.waitForNavigation({ waitUntil: "networkidle0" }),
         ]);
+    });
+
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await backendHook("afterEach");
+    });
+
+    after(async function () {
+        await page?.close();
+        await browser?.close();
+        await backendHook("after");
     });
 
     it("Test that user context gets passed correctly when resetting password", async function () {

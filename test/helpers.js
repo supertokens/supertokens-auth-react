@@ -28,6 +28,8 @@ import {
 import path from "path";
 import assert from "assert";
 import mkdirp from "mkdirp";
+import Puppeteer from "puppeteer";
+import addContext from "mochawesome/addContext";
 
 const SESSION_STORAGE_STATE_KEY = "supertokens-oauth-state";
 
@@ -59,6 +61,21 @@ export async function getFeatureFlags() {
 
 export async function waitFor(ms) {
     return new Promise((res) => setTimeout(res, ms));
+}
+
+export function waitForUrl(page, url, onlyPath = true) {
+    return page.waitForFunction(
+        (pathname, onlyPath) => {
+            return (
+                (onlyPath
+                    ? window.location.pathname
+                    : window.location.pathname + window.location.search + window.location.hash) === pathname
+            );
+        },
+        { polling: 50 },
+        url,
+        onlyPath
+    );
 }
 
 /*
@@ -640,7 +657,11 @@ export function getDefaultSignUpFieldValues({
     return { fieldValues, postValues };
 }
 
-export async function signUp(page, fields, postValues = undefined, rid = "emailpassword") {
+export async function signUp(page, fields, postValues, rid = "emailpassword") {
+    if (postValues === undefined) {
+        postValues = JSON.stringify({ formFields: fields.map((v) => ({ id: v.name, value: v.value })) });
+    }
+
     // Set values.
     await setInputValues(page, fields);
     const successAdornments = await getInputAdornmentsSuccess(page);
@@ -657,9 +678,7 @@ export async function signUp(page, fields, postValues = undefined, rid = "emailp
     assert.strictEqual(hasEmailExistMethodBeenCalled, false);
 
     assert.strictEqual(request.headers().rid, rid);
-    if (postValues !== undefined) {
-        assert.strictEqual(request.postData(), postValues);
-    }
+    assert.strictEqual(request.postData(), postValues);
 
     assert.strictEqual(response.status, "OK");
     await page.setRequestInterception(false);
@@ -770,6 +789,108 @@ export async function screenshotOnFailure(ctx, browser) {
     }
 }
 
+export async function setupBrowser() {
+    const browser = await Puppeteer.launch({
+        args: [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-web-security",
+            "--host-resolver-rules=MAP example.com 127.0.0.1, MAP *.example.com 127.0.0.1",
+            // Open DevTools automatically if in non-headless mode and DEV_TOOLS is enabled
+            ...(process.env.HEADLESS === "false" && process.env.DEV_TOOLS === "true"
+                ? ["--auto-open-devtools-for-tabs"]
+                : []),
+        ],
+        headless: process.env.HEADLESS !== "false",
+        devtools: process.env.HEADLESS === "false" && process.env.DEV_TOOLS === "true",
+    });
+    browser.logs = [];
+    function addLog(str) {
+        if (process.env.BROWSER_LOGS !== undefined) {
+            console.log(str);
+        }
+        browser.logs.push(str);
+    }
+    const origNewPage = browser.newPage.bind(browser);
+    browser.newPage = async () => {
+        const page = await origNewPage();
+        page.on("console", (msg) => {
+            if (msg.text().startsWith("com.supertokens")) {
+                addLog(msg.text());
+            } else {
+                addLog(
+                    `browserlog.console ${JSON.stringify({
+                        t: new Date().toISOString(),
+                        message: msg.text(),
+                        pageurl: page.url(),
+                    })}`
+                );
+            }
+        });
+
+        page.on("request", (req) => {
+            addLog(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Requested: ${req.method()} ${req.url()} (${req.postData()})`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        page.on("requestfinished", async (req) => {
+            if (req.method() === "OPTION") {
+                return;
+            }
+            const resp = await req.response();
+            let respText;
+            try {
+                respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
+                    ? await resp.text()
+                    : "response omitted";
+            } catch (e) {
+                respText = "response loading failed " + e.message;
+            }
+            addLog(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Request done: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        page.on("requestfailed", async (req) => {
+            if (req.method() === "OPTION") {
+                return;
+            }
+            const resp = await req.response();
+            let respText;
+            try {
+                respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
+                    ? await resp.text()
+                    : "response omitted";
+            } catch (e) {
+                respText = "response loading failed " + e.message;
+            }
+            addLog(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Request failed: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        return page;
+    };
+    browser.on("disconnected", async () => {
+        if (process.env.MOCHA_FILE !== undefined) {
+            const reportFile = path.parse(process.env.MOCHA_FILE);
+            const logFile = path.join(reportFile.dir, "logs", "browser.log");
+            await appendFile(logFile, browser.logs.join("\n"));
+        }
+    });
+    return browser;
+}
+
 export async function getPasswordlessDevice(loginAttemptInfo) {
     const deviceResp = await fetch(
         `${TEST_APPLICATION_SERVER_BASE_URL}/test/getDevice?preAuthSessionId=${encodeURIComponent(
@@ -782,31 +903,6 @@ export async function getPasswordlessDevice(loginAttemptInfo) {
     return await deviceResp.json();
 }
 
-export function setPasswordlessFlowType(contactMethod, flowType) {
-    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setFlow`, {
-        method: "POST",
-        headers: [["content-type", "application/json"]],
-        body: JSON.stringify({
-            contactMethod,
-            flowType,
-        }),
-    });
-}
-
-export function setAccountLinkingConfig(enabled, shouldAutomaticallyLink, shouldRequireVerification) {
-    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setAccountLinkingConfig`, {
-        method: "POST",
-        headers: [["content-type", "application/json"]],
-        body: JSON.stringify({
-            enabled,
-            shouldAutoLink: {
-                shouldAutomaticallyLink,
-                shouldRequireVerification,
-            },
-        }),
-    });
-}
-
 export function changeEmail(rid, recipeUserId, email, phoneNumber) {
     return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/changeEmail`, {
         method: "POST",
@@ -816,17 +912,6 @@ export function changeEmail(rid, recipeUserId, email, phoneNumber) {
             recipeUserId,
             email,
             phoneNumber,
-        }),
-    });
-}
-
-export function setEnabledRecipes(enabledRecipes, enabledProviders) {
-    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setEnabledRecipes`, {
-        method: "POST",
-        headers: [["content-type", "application/json"]],
-        body: JSON.stringify({
-            enabledRecipes,
-            enabledProviders,
         }),
     });
 }
@@ -1044,6 +1129,51 @@ const testProviderConfigs = {
         ],
     },
 };
+
+export async function backendHook(hookType) {
+    const serverUrls = Array.from(new Set([TEST_SERVER_BASE_URL, TEST_APPLICATION_SERVER_BASE_URL]));
+
+    await Promise.all(
+        serverUrls.map((url) => fetch(`${url}/test/${hookType}`, { method: "POST" }).catch(console.error))
+    );
+}
+
+export async function setupCoreApp({ appId, coreConfig } = {}) {
+    const response = await fetch(`${TEST_SERVER_BASE_URL}/test/setup/app`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            appId,
+            coreConfig,
+        }),
+    });
+
+    return await response.text();
+}
+
+export async function setupST({
+    coreUrl,
+    accountLinkingConfig = {},
+    enabledRecipes,
+    enabledProviders,
+    passwordlessFlowType,
+    passwordlessContactMethod,
+    mfaInfo = {},
+} = {}) {
+    await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setup/st`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            coreUrl,
+            accountLinkingConfig,
+            enabledRecipes,
+            enabledProviders,
+            passwordlessFlowType,
+            passwordlessContactMethod,
+            mfaInfo,
+        }),
+    });
+}
 
 export async function backendBeforeEach() {
     await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {

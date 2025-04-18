@@ -18,24 +18,23 @@
  */
 
 import assert from "assert";
-import fetch from "isomorphic-fetch";
-import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     assertProviders,
-    assertNoSTComponents,
     generateState,
     clickOnProviderButton,
     loginWithMockProvider,
     getGeneralError,
-    waitFor,
     screenshotOnFailure,
     clickOnProviderButtonWithoutWaiting,
-    backendBeforeEach,
+    waitForUrl,
     loginWithAuth0,
+    backendHook,
+    setupCoreApp,
+    setupST,
+    setupBrowser,
 } from "../helpers";
-
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
+import { TEST_CLIENT_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
 
 describe("SuperTokens Third Party", function () {
     getThirdPartyTestCases({
@@ -53,16 +52,11 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
     let consoleLogs = [];
 
     before(async function () {
-        await backendBeforeEach();
+        await backendHook("before");
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
 
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
+        browser = await setupBrowser();
         page = await browser.newPage();
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
@@ -73,15 +67,10 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=${authRecipe}`);
     });
 
-    after(async function () {
-        await browser.close();
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
+    beforeEach(async function () {
+        await backendHook("beforeEach");
+        consoleLogs = [];
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
     });
 
     afterEach(async function () {
@@ -89,12 +78,13 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
             localStorage.removeItem("thirdPartyRedirectURL");
             localStorage.removeItem("clientType");
         });
-        return screenshotOnFailure(this, browser);
+        await screenshotOnFailure(this, browser);
+        await backendHook("afterEach");
     });
 
-    beforeEach(async function () {
-        consoleLogs = [];
-        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
     });
 
     describe("Third Party test", function () {
