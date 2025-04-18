@@ -20,8 +20,6 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
-import puppeteer from "puppeteer";
-import fetch from "isomorphic-fetch";
 import {
     waitForSTElement,
     screenshotOnFailure,
@@ -33,26 +31,26 @@ import {
     getSignInOrSignUpSwitchLink,
     setInputValues,
     submitForm,
-    loginWithGoogle,
     clearBrowserCookiesWithoutAffectingConsole,
     clickOnProviderButton,
     loginWithMockProvider,
     isMultitenancySupported,
-    isAccountLinkingSupported,
+    setupTenant,
+    getTextByDataSupertokens,
     loginWithAuth0,
+    setupCoreApp,
+    setupST,
+    backendHook,
+    setupBrowser,
+    isAccountLinkingSupported,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
     DEFAULT_WEBSITE_BASE_PATH,
-    ST_ROOT_SELECTOR,
-    TEST_SERVER_BASE_URL,
     SIGN_IN_UP_API,
     SOMETHING_WENT_WRONG_ERROR,
     LOGIN_METHODS_API,
 } from "../constants";
-
-// Run the tests in a DOM environment.
-require("jsdom-global")();
 
 /*
  * Tests.
@@ -61,22 +59,23 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     let browser;
     let page;
     let pageCrashed;
+    let appId;
 
     before(async function () {
+        await backendHook("before");
         const isSupported = await isMultitenancySupported();
         if (!isSupported) {
             this.skip();
         }
+
+        browser = await setupBrowser();
     });
 
     beforeEach(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendHook("beforeEach");
 
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
 
         page = await browser.newPage();
         pageCrashed = false;
@@ -94,28 +93,14 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     afterEach(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
         await screenshotOnFailure(this, browser);
-        if (page) {
-            await page.close();
-        }
-    });
-
-    before(async () => {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-web-security"],
-            headless: true,
-        });
+        await page?.close();
+        await backendHook("afterEach");
     });
 
     after(async function () {
-        await browser.close();
+        await browser?.close();
+        await backendHook("after");
     });
 
     it("Renders correct signup form with emailpassword when core list of providers is empty", async function () {
@@ -137,7 +122,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
             "Continue with Google",
             "Continue with Facebook",
             "Continue with Auth0",
-            ...((await isAccountLinkingSupported()) ? ["Continue with Mock Provider"] : []),
+            "Continue with Mock Provider",
         ]);
         const inputNames = await getInputNames(page);
         assert.deepStrictEqual(inputNames, ["email", "password"]);
@@ -393,7 +378,7 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
             "Continue with Google",
             "Continue with Facebook",
             "Continue with Auth0",
-            ...((await isAccountLinkingSupported()) ? ["Continue with Mock Provider"] : []),
+            "Continue with Mock Provider",
         ]);
         assert.strictEqual(await getProviderLogoCount(page), 3);
     });
@@ -903,6 +888,9 @@ describe("SuperTokens Multitenancy dynamic login methods", function () {
     });
 
     it("should be able to log in with dynamically added tp providers", async function () {
+        // This test is particularly slow, overriding the timeout to be slightly longer than default
+        this.timeout(40000);
+
         await setEnabledRecipes(page, ["thirdparty"]);
         await enableDynamicLoginMethods(page, {
             emailPassword: { enabled: false },
@@ -967,50 +955,6 @@ function clearDynamicLoginMethodsSettings(page) {
         window.localStorage.removeItem("mockLoginMethodsForDynamicLogin");
         window.localStorage.removeItem("clientRecipeListForDynamicLogin");
         window.localStorage.removeItem("staticProviderList");
-    });
-}
-
-export async function enableDynamicLoginMethods(page, mockLoginMethods, tenantId = "public", app = "public") {
-    let coreResp = await fetch(`http://localhost:9000/appid-${app}/recipe/multitenancy/tenant`, {
-        method: "PUT",
-        headers: new Headers([
-            ["content-type", "application/json"],
-            ["rid", "multitenancy"],
-            ["cdi-version", "3.0"],
-        ]),
-        body: JSON.stringify({
-            tenantId,
-            emailPasswordEnabled: mockLoginMethods.emailPassword?.enabled === true,
-            thirdPartyEnabled: mockLoginMethods.thirdParty?.enabled === true,
-            passwordlessEnabled: mockLoginMethods.passwordless?.enabled === true,
-            coreConfig: {},
-        }),
-    });
-    assert.strictEqual(coreResp.status, 200);
-
-    for (const provider of mockLoginMethods["thirdParty"]?.providers) {
-        coreResp = await fetch(`http://localhost:9000/appid-${app}/${tenantId}/recipe/multitenancy/config/thirdparty`, {
-            method: "PUT",
-            headers: new Headers([
-                ["content-type", "application/json"],
-                ["rid", "multitenancy"],
-                ["cdi-version", "3.0"],
-            ]),
-            body: JSON.stringify({
-                skipValidation: true,
-                config: {
-                    ...providerConfigs[provider.id.split("-")[0]],
-                    thirdPartyId: provider.id,
-                    name: provider.name,
-                },
-            }),
-        });
-
-        assert.strictEqual(coreResp.status, 200);
-    }
-
-    return page.evaluate(() => {
-        window.localStorage.setItem("usesDynamicLoginMethods", "true");
     });
 }
 
@@ -1086,3 +1030,11 @@ const providerConfigs = {
         ],
     },
 };
+
+export async function enableDynamicLoginMethods(page, mockLoginMethods, tenantId = "public") {
+    await setupTenant(tenantId, mockLoginMethods);
+
+    return page.evaluate(() => {
+        window.localStorage.setItem("usesDynamicLoginMethods", "true");
+    });
+}

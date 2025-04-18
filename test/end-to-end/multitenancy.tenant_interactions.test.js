@@ -18,8 +18,6 @@
  */
 
 import assert from "assert";
-import puppeteer from "puppeteer";
-import fetch from "isomorphic-fetch";
 import {
     screenshotOnFailure,
     getSignInOrSignUpSwitchLink,
@@ -33,18 +31,25 @@ import {
     getSubmitFormButton,
     waitForSTElement,
     getPasswordlessDevice,
-    setPasswordlessFlowType,
     getSessionHandleWithFetch,
     getLatestURLWithToken,
     sendEmailResetPasswordSuccessMessage,
     getTextByDataSupertokens,
     getVerificationEmailErrorTitle,
     isMultitenancySupported,
+    setupTenant,
+    addUserToTenant,
+    removeUserFromTenant,
+    removeTenant,
+    waitForUrl,
+    setupBrowser,
+    backendHook,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
     DEFAULT_WEBSITE_BASE_PATH,
-    TEST_SERVER_BASE_URL,
     SOMETHING_WENT_WRONG_ERROR,
     ST_ROOT_SELECTOR,
     TEST_APPLICATION_SERVER_BASE_URL,
@@ -61,21 +66,24 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
     let page;
     let pageCrashed;
 
+    const appConfig = {};
+
     before(async function () {
+        await backendHook("before");
         const isSupported = await isMultitenancySupported();
         if (!isSupported) {
             this.skip();
         }
+
+        browser = await setupBrowser();
     });
 
     beforeEach(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendHook("beforeEach");
 
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
+        const coreUrl = await setupCoreApp();
+        appConfig.coreUrl = coreUrl;
+        await setupST(appConfig);
 
         page = await browser.newPage();
 
@@ -102,33 +110,25 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
 
     afterEach(async function () {
         await screenshotOnFailure(this, browser);
-        if (page) {
-            await page.close();
-        }
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
-    });
-
-    before(async () => {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-web-security"],
-            headless: true,
-        });
+        await page?.close();
+        await backendHook("afterEach");
     });
 
     after(async function () {
-        await browser.close();
+        await browser?.close();
+        await backendHook("after");
     });
 
     describe("without user sharing", () => {
+        before(async function () {
+            await setupST({
+                ...appConfig,
+                enabledRecipes: ["emailpassword", "session"],
+            });
+        });
+
         it("should not allow sign into user created on public when using a custom tenants", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -136,7 +136,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -165,8 +165,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should not allow sign into user created on custom tenant when using public", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -174,7 +173,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -203,8 +202,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should allow sign up on custom tenant after signing up on public", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -212,7 +210,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -240,8 +238,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should allow sign up on public tenant after signing up on a custom", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -249,7 +246,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -279,9 +276,15 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
     });
 
     describe("with user sharing", () => {
+        before(async function () {
+            await setupST({
+                ...appConfig,
+                enabledRecipes: ["emailpassword", "session"],
+            });
+        });
+
         it("should allow sign into user created on public when using a custom tenants", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -289,7 +292,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -305,7 +308,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
 
             const email = await epSignUp(page);
             const userId = await getUserIdWithFetch(page);
-            addUserToTenant("public", "customer1", userId);
+            addUserToTenant("customer1", userId);
             await clearBrowserCookiesWithoutAffectingConsole(page, []);
 
             await setTenantId(page, "customer1");
@@ -319,8 +322,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should allow sign into user created on custom tenant when using public", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -328,7 +330,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -345,7 +347,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             const email = await epSignUp(page);
 
             const userId = await getUserIdWithFetch(page);
-            addUserToTenant("public", "public", userId);
+            addUserToTenant("public", userId);
             await clearBrowserCookiesWithoutAffectingConsole(page, []);
 
             await setTenantId(page, "public");
@@ -359,8 +361,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should not allow sign up on custom tenant after signing up on public", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -368,7 +369,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -383,7 +384,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             ]);
             const email = await epSignUp(page);
             const userId = await getUserIdWithFetch(page);
-            addUserToTenant("public", "customer1", userId);
+            addUserToTenant("customer1", userId);
 
             await clearBrowserCookiesWithoutAffectingConsole(page, []);
 
@@ -398,8 +399,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should not allow sign up on public tenant after signing up on a custom", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -407,7 +407,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -425,7 +425,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             let pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/dashboard");
             const userId = await getUserIdWithFetch(page);
-            addUserToTenant("public", "public", userId);
+            addUserToTenant("public", userId);
 
             await clearBrowserCookiesWithoutAffectingConsole(page, []);
 
@@ -441,9 +441,15 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
     });
 
     describe("with removed user", () => {
+        before(async function () {
+            await setupST({
+                ...appConfig,
+                enabledRecipes: ["emailpassword", "session"],
+            });
+        });
+
         it("should not allow sign in", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -460,7 +466,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             const email = await epSignUp(page);
 
             const userId = await getUserIdWithFetch(page);
-            removeUserFromTenant("public", "public", userId);
+            removeUserFromTenant("public", userId);
 
             await clearBrowserCookiesWithoutAffectingConsole(page, []);
 
@@ -473,8 +479,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should allow sign up", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -482,7 +487,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -498,7 +503,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             const email = await epSignUp(page);
 
             const userId = await getUserIdWithFetch(page);
-            removeUserFromTenant("public", "public", userId);
+            removeUserFromTenant("public", userId);
             await clearBrowserCookiesWithoutAffectingConsole(page, []);
 
             await Promise.all([
@@ -512,8 +517,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should log out on refresh", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -521,7 +525,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -537,7 +541,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             await epSignUp(page);
 
             const userId = await getUserIdWithFetch(page);
-            removeUserFromTenant("public", "public", userId);
+            removeUserFromTenant("public", userId);
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/dashboard`),
@@ -551,9 +555,15 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
     });
 
     describe("with removed tenant", () => {
+        before(async function () {
+            await setupST({
+                ...appConfig,
+                enabledRecipes: ["emailpassword", "session"],
+            });
+        });
+
         it("should not allow sign in", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -576,13 +586,12 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
 
-            await removeTenant("public", "customer1");
+            await removeTenant("customer1");
             await epSignIn(page, email, SOMETHING_WENT_WRONG_ERROR);
         });
 
         it("should not allow sign up", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -596,13 +605,12 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            await removeTenant("public", "customer1");
+            await removeTenant("customer1");
             await epSignUp(page, undefined, [], SOMETHING_WENT_WRONG_ERROR);
         });
 
         it("should crash if dynamic login methods is enabled", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -613,7 +621,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             await enableDynamicLoginMethods(page);
             await setTenantId(page, "customer1");
 
-            await removeTenant("public", "customer1");
+            await removeTenant("customer1");
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
@@ -626,8 +634,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should keep the session active if even if dynamic login methods is enabled", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -644,7 +651,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             ]);
             await epSignUp(page);
 
-            await removeTenant("public", "customer1");
+            await removeTenant("customer1");
 
             let getDynamicLoginMethodsCalled = false;
             await page.setRequestInterception(true);
@@ -677,9 +684,13 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it.skip("should revoke magic links on removed tenants", async function () {
-            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE_AND_MAGIC_LINK");
-            await setEnabledRecipes(page, ["passwordless"]);
-            await setupTenant("public", "customer1", {
+            await setupST({
+                ...appConfig,
+                passwordlessContactMethod: "EMAIL_OR_PHONE",
+                passwordlessFlowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+                enabledRecipes: ["passwordless", "session"],
+            });
+            await setupTenant("customer1", {
                 emailPassword: { enabled: false },
                 passwordless: { enabled: true },
                 thirdParty: {
@@ -691,7 +702,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             await enableDynamicLoginMethods(page);
 
             await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
+                page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?mode=required`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
 
@@ -706,7 +717,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             );
             const device = await getPasswordlessDevice(loginAttemptInfo);
 
-            await removeTenant("public", "customer1");
+            await removeTenant("customer1");
             await setTenantId(page, "public");
 
             await page.goto(device.codes[0].urlWithLinkCode);
@@ -717,13 +728,17 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
     });
 
     describe("passwordless sign in", () => {
-        beforeEach(async () => {
-            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE_AND_MAGIC_LINK");
+        before(async function () {
+            await setupST({
+                ...appConfig,
+                passwordlessContactMethod: "EMAIL_OR_PHONE",
+                passwordlessFlowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+                enabledRecipes: ["passwordless", "session"],
+            });
         });
 
         it("should work using OTP on the public tenants", async function () {
-            await setEnabledRecipes(page, ["passwordless"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: false },
                 passwordless: { enabled: true },
                 thirdParty: {
@@ -755,8 +770,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should work using magic links on the public tenants", async function () {
-            await setEnabledRecipes(page, ["passwordless"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: false },
                 passwordless: { enabled: true },
                 thirdParty: {
@@ -787,8 +801,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should work using OTP on a custom tenants", async function () {
-            await setEnabledRecipes(page, ["passwordless"]);
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: false },
                 passwordless: { enabled: true },
                 thirdParty: {
@@ -821,8 +834,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should work using magic links on a custom tenants", async function () {
-            await setEnabledRecipes(page, ["passwordless"]);
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: false },
                 passwordless: { enabled: true },
                 thirdParty: {
@@ -854,8 +866,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should work using magic links on a custom tenants even if the current app has the wrong tenant id", async function () {
-            await setEnabledRecipes(page, ["passwordless"]);
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: false },
                 passwordless: { enabled: true },
                 thirdParty: {
@@ -888,8 +899,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should work using OTP on a custom tenants even if the current app has the wrong tenant id", async function () {
-            await setEnabledRecipes(page, ["passwordless"]);
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: false },
                 passwordless: { enabled: true },
                 thirdParty: {
@@ -915,10 +925,6 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             );
             const device = await getPasswordlessDevice(loginAttemptInfo);
             await setTenantId(page, "public");
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
 
             await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
             await submitForm(page);
@@ -931,9 +937,15 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
     });
 
     describe("password reset links", () => {
+        before(async function () {
+            await setupST({
+                ...appConfig,
+                enabledRecipes: ["emailpassword", "session"],
+            });
+        });
+
         it("should reset password only on the tenant the link was created customer1 -> public", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -941,7 +953,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -984,8 +996,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should reset password only on the tenant the link was created", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -993,7 +1004,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -1036,8 +1047,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should be revoked when removing tenants", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -1045,7 +1055,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -1068,7 +1078,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             await submitForm(page);
             await sendEmailResetPasswordSuccessMessage(page);
             const latestURLWithToken = await getLatestURLWithToken();
-            await removeTenant("public", "customer1");
+            await removeTenant("customer1");
             await page.goto(latestURLWithToken);
 
             const newPassword = "NEW_Str0ngP@ssw0rd";
@@ -1082,9 +1092,15 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
     });
 
     describe("email verification links", () => {
+        before(async function () {
+            await setupST({
+                ...appConfig,
+                enabledRecipes: ["emailpassword", "session"],
+            });
+        });
+
         it("should verify email only on the tenant in the link", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -1092,7 +1108,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -1144,8 +1160,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should be revoked when removing tenants", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -1153,7 +1168,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
                     providers: [],
                 },
             });
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -1171,7 +1186,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
 
             await new Promise((res) => setTimeout(res, 1000));
             const latestURLWithToken = await getLatestURLWithToken();
-            await removeTenant("public", "customer1");
+            await removeTenant("customer1");
             await page.goto(latestURLWithToken);
 
             assert.strictEqual(await getVerificationEmailErrorTitle(page), "!\nSomething went wrong");
@@ -1179,9 +1194,15 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
     });
 
     describe("AllowedDomainsClaim", () => {
+        before(async function () {
+            await setupST({
+                ...appConfig,
+                enabledRecipes: ["emailpassword", "session"],
+            });
+        });
+
         it("should return the right value on a custom tenant", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "customer1", {
+            await setupTenant("customer1", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -1219,8 +1240,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
         });
 
         it("should return the right value on the default tenant", async function () {
-            await setEnabledRecipes(page, ["emailpassword"]);
-            await setupTenant("public", "public", {
+            await setupTenant("public", {
                 emailPassword: { enabled: true },
                 passwordless: { enabled: false },
                 thirdParty: {
@@ -1282,12 +1302,6 @@ async function resetPassword(page, email) {
     return newPassword;
 }
 
-function setEnabledRecipes(page, recipeIds) {
-    return page.evaluate((serializedRecipeIdList) => {
-        window.localStorage.setItem("clientRecipeListForDynamicLogin", serializedRecipeIdList);
-    }, JSON.stringify(recipeIds));
-}
-
 function clearDynamicLoginMethodsSettings(page) {
     return page.evaluate(() => {
         window.localStorage.removeItem("usesDynamicLoginMethods");
@@ -1308,72 +1322,6 @@ export async function enableDynamicLoginMethods(page) {
     return page.evaluate(() => {
         window.localStorage.setItem("usesDynamicLoginMethods", "true");
     });
-}
-
-async function setupTenant(appId, tenantId, mockLoginMethods) {
-    let coreResp = await fetch(`http://localhost:9000/appid-${appId}/recipe/multitenancy/tenant`, {
-        method: "PUT",
-        headers: new Headers([
-            ["content-type", "application/json"],
-            ["rid", "multitenancy"],
-            ["cdi-version", "3.0"],
-        ]),
-        body: JSON.stringify({
-            tenantId,
-            emailPasswordEnabled: mockLoginMethods.emailPassword?.enabled === true,
-            thirdPartyEnabled: mockLoginMethods.thirdParty?.enabled === true,
-            passwordlessEnabled: mockLoginMethods.passwordless?.enabled === true,
-            coreConfig: {},
-        }),
-    });
-    assert.strictEqual(coreResp.status, 200);
-}
-
-async function addUserToTenant(appId, tenantId, userId) {
-    let coreResp = await fetch(`http://localhost:9000/appid-${appId}/${tenantId}/recipe/multitenancy/tenant/user`, {
-        method: "POST",
-        headers: new Headers([
-            ["content-type", "application/json"],
-            ["rid", "multitenancy"],
-            ["cdi-version", "3.0"],
-        ]),
-        body: JSON.stringify({
-            userId,
-        }),
-    });
-    assert.strictEqual(coreResp.status, 200);
-}
-
-async function removeUserFromTenant(appId, tenantId, userId) {
-    let coreResp = await fetch(
-        `http://localhost:9000/appid-${appId}/${tenantId}/recipe/multitenancy/tenant/user/remove`,
-        {
-            method: "POST",
-            headers: new Headers([
-                ["content-type", "application/json"],
-                ["rid", "multitenancy"],
-                ["cdi-version", "3.0"],
-            ]),
-            body: JSON.stringify({
-                userId,
-            }),
-        }
-    );
-    assert.strictEqual(coreResp.status, 200);
-}
-
-async function removeTenant(appId, tenantId) {
-    let coreResp = await fetch(`http://localhost:9000/appid-${appId}/recipe/multitenancy/tenant/remove`, {
-        method: "POST",
-        headers: new Headers([
-            ["rid", "multitenancy"],
-            ["cdi-version", "3.0"],
-        ]),
-        body: JSON.stringify({
-            tenantId,
-        }),
-    });
-    assert.strictEqual(coreResp.status, 200);
 }
 
 async function epSignUp(page, email, fieldErrors, generalError, emailVerificationRequired) {

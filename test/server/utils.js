@@ -15,6 +15,63 @@
 const { exec } = require("child_process");
 let fs = require("fs");
 let axios = require("axios").default;
+let assert = require("assert");
+const { randomUUID } = require("node:crypto");
+
+module.exports.getCoreUrl = () => {
+    const host = process.env?.SUPERTOKENS_CORE_HOST ?? "localhost";
+    const port = process.env?.SUPERTOKENS_CORE_PORT ?? "3567";
+
+    const coreUrl = `http://${host}:${port}`;
+
+    return coreUrl;
+};
+
+module.exports.setupCoreApplication = async function ({ appId, coreConfig } = {}) {
+    const coreUrl = module.exports.getCoreUrl();
+
+    if (!appId) {
+        appId = randomUUID();
+    }
+
+    if (!coreConfig) {
+        coreConfig = {};
+    }
+
+    const createAppResp = await fetch(`${coreUrl}/recipe/multitenancy/app/v2`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            appId,
+            coreConfig,
+        }),
+    });
+
+    const respBody = await createAppResp.json();
+    assert.strictEqual(respBody.status, "OK");
+
+    return `${coreUrl}/appid-${appId}`;
+};
+
+module.exports.addLicense = async function () {
+    const coreUrl = module.exports.getCoreUrl();
+
+    const OPAQUE_KEY_WITH_ALL_FEATURES_ENABLED =
+        "N2yITHflaFS4BPm7n0bnfFCjP4sJoTERmP0J=kXQ5YONtALeGnfOOe2rf2QZ0mfOh0aO3pBqfF-S0jb0ABpat6pySluTpJO6jieD6tzUOR1HrGjJO=50Ob3mHi21tQHJ";
+
+    // TODO: This should be done on the core directly, not in apps
+    await fetch(`${coreUrl}/ee/license`, {
+        method: "PUT",
+        headers: {
+            "content-type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify({
+            licenseKey: OPAQUE_KEY_WITH_ALL_FEATURES_ENABLED,
+        }),
+    });
+};
 
 module.exports.executeCommand = async function (cmd) {
     return new Promise((resolve, reject) => {

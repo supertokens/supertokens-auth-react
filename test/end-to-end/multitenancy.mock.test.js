@@ -20,8 +20,6 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
-import puppeteer from "puppeteer";
-import fetch from "isomorphic-fetch";
 import {
     waitForSTElement,
     screenshotOnFailure,
@@ -30,9 +28,13 @@ import {
     assertNoSTComponents,
     assertProviders,
     getProviderLogoCount,
+    setupBrowser,
+    backendHook,
+    setupCoreApp,
+    setupST,
+    isMultitenancySupported,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, DEFAULT_WEBSITE_BASE_PATH, ST_ROOT_SELECTOR } from "../constants";
-import { before } from "mocha";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -40,12 +42,27 @@ require("jsdom-global")();
 /*
  * Tests.
  */
-describe.skip("SuperTokens Multitenancy w/ mocked login methods", function () {
+describe("SuperTokens Multitenancy w/ mocked login methods", function () {
     let browser;
     let page;
     let pageCrashed;
 
+    before(async function () {
+        await backendHook("before");
+        const isSupported = await isMultitenancySupported();
+        if (!isSupported) {
+            this.skip();
+        }
+
+        browser = await setupBrowser();
+    });
+
     beforeEach(async function () {
+        await backendHook("beforeEach");
+
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
+
         page = await browser.newPage();
         pageCrashed = false;
         page.on("console", (c) => {
@@ -63,20 +80,13 @@ describe.skip("SuperTokens Multitenancy w/ mocked login methods", function () {
 
     afterEach(async function () {
         await screenshotOnFailure(this, browser);
-        if (page) {
-            await page.close();
-        }
-    });
-
-    before(async () => {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-web-security"],
-            headless: true,
-        });
+        await page?.close();
+        await backendHook("afterEach");
     });
 
     after(async function () {
-        await browser.close();
+        await browser?.close();
+        await backendHook("after");
     });
 
     it("Renders correct signup form with emailpassword only when list of providers is empty", async function () {
@@ -275,9 +285,11 @@ describe.skip("SuperTokens Multitenancy w/ mocked login methods", function () {
                 providers: [
                     {
                         id: "apple",
+                        name: "Apple",
                     },
                     {
                         id: "google",
+                        name: "Google",
                     },
                 ],
             },
@@ -321,9 +333,11 @@ describe.skip("SuperTokens Multitenancy w/ mocked login methods", function () {
                 providers: [
                     {
                         id: "apple",
+                        name: "Apple",
                     },
                     {
                         id: "google",
+                        name: "Google",
                     },
                 ],
             },
@@ -348,9 +362,11 @@ describe.skip("SuperTokens Multitenancy w/ mocked login methods", function () {
                 providers: [
                     {
                         id: "google",
+                        name: "Google",
                     },
                     {
                         id: "facebook",
+                        name: "Facebook",
                     },
                 ],
             },
@@ -379,6 +395,7 @@ describe.skip("SuperTokens Multitenancy w/ mocked login methods", function () {
                     },
                     {
                         id: "facebook",
+                        name: "Facebook",
                     },
                 ],
             },

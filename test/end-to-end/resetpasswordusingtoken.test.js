@@ -20,15 +20,7 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
-import puppeteer from "puppeteer";
-import fetch from "isomorphic-fetch";
-import {
-    EMAIL_EXISTS_API,
-    RESET_PASSWORD_API,
-    RESET_PASSWORD_TOKEN_API,
-    TEST_CLIENT_BASE_URL,
-    TEST_SERVER_BASE_URL,
-} from "../constants";
+import { EMAIL_EXISTS_API, RESET_PASSWORD_API, RESET_PASSWORD_TOKEN_API, TEST_CLIENT_BASE_URL } from "../constants";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     getInputAdornmentsError,
@@ -50,10 +42,16 @@ import {
     toggleSignInSignUp,
     defaultSignUp,
     screenshotOnFailure,
-    getAuthPageHeaderText,
-    getResetPasswordFormBackButton,
-    waitForSTElement,
+    getTitleBackButton,
     getResetPasswordSuccessBackToSignInButton,
+    waitForText,
+    waitForUrl,
+    setupBrowser,
+    backendHook,
+    setupCoreApp,
+    setupST,
+    waitForSTElement,
+    getResetPasswordFormBackButton,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -68,58 +66,52 @@ describe("SuperTokens Reset password", function () {
     let consoleLogs;
 
     before(async function () {
-        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true,
-        });
-
-        page = await browser.newPage();
+        await backendHook("before");
+        browser = await setupBrowser();
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
 
         // Sign Up first.
+        page = await browser.newPage();
         await Promise.all([
             page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
             page.waitForNavigation({ waitUntil: "networkidle0" }),
         ]);
         await toggleSignInSignUp(page);
         await defaultSignUp(page);
+        page.close();
+    });
+
+    beforeEach(async function () {
+        await backendHook("beforeEach");
+        page = await browser.newPage();
+        page.on("console", (consoleObj) => {
+            const log = consoleObj.text();
+            // console.log(log);
+            if (log.startsWith("ST_LOGS")) {
+                consoleLogs.push(log);
+            }
+        });
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
+    });
+
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await page?.close();
+        await backendHook("afterEach");
     });
 
     after(async function () {
-        await browser.close();
-
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
-    });
-
-    afterEach(function () {
-        return screenshotOnFailure(this, browser);
+        await browser?.close();
+        await backendHook("after");
     });
 
     describe("Reset password enter email form test", function () {
         beforeEach(async function () {
-            page = await browser.newPage();
-            consoleLogs = [];
-            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-            page.on("console", (consoleObj) => {
-                const log = consoleObj.text();
-                if (log.startsWith("ST_LOGS")) {
-                    consoleLogs.push(log);
-                }
-            });
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
         });
 
         it("Should redirect to Sign In screen when back button is clicked", async function () {
@@ -242,16 +234,6 @@ describe("SuperTokens Reset password", function () {
 
     describe("Reset password new password form test", function () {
         beforeEach(async function () {
-            page = await browser.newPage();
-            // Catch console.log sent from PRE API HOOKS.
-            consoleLogs = [];
-            page.on("console", (consoleObj) => {
-                const log = consoleObj.text();
-                if (log.startsWith("ST_LOGS")) {
-                    consoleLogs.push(log);
-                }
-            });
-            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password?token=TOKEN`);
         });
 

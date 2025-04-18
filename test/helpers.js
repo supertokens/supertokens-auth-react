@@ -22,11 +22,14 @@ import {
     SIGN_UP_API,
     EMAIL_EXISTS_API,
     TEST_CLIENT_BASE_URL,
+    TEST_SERVER_BASE_URL,
 } from "./constants";
 
 import path from "path";
 import assert from "assert";
 import mkdirp from "mkdirp";
+import Puppeteer from "puppeteer";
+import addContext from "mochawesome/addContext";
 
 const SESSION_STORAGE_STATE_KEY = "supertokens-oauth-state";
 
@@ -58,6 +61,21 @@ export async function getFeatureFlags() {
 
 export async function waitFor(ms) {
     return new Promise((res) => setTimeout(res, ms));
+}
+
+export function waitForUrl(page, url, onlyPath = true) {
+    return page.waitForFunction(
+        (pathname, onlyPath) => {
+            return (
+                (onlyPath
+                    ? window.location.pathname
+                    : window.location.pathname + window.location.search + window.location.hash) === pathname
+            );
+        },
+        { polling: 50 },
+        url,
+        onlyPath
+    );
 }
 
 /*
@@ -616,6 +634,24 @@ export async function defaultSignUp(page, rid = "emailpassword") {
         rid
     );
 }
+
+export function getDefaultSignUpFieldValues({
+    name = "John Doe",
+    email = "john.doe@supertokens.io",
+    password = "Str0ngP@ssw0rd",
+    age = "20",
+} = {}) {
+    const fieldValues = [
+        { name: "email", value: email },
+        { name: "password", value: password },
+        { name: "name", value: name },
+        { name: "age", value: age },
+    ];
+    const postValues = `{"formFields":[{"id":"email","value":"${email}"},{"id":"password","value":"${password}"},{"id":"name","value":"${name}"},{"id":"age","value":"${age}"},{"id":"country","value":""}]}`;
+
+    return { fieldValues, postValues };
+}
+
 export async function signUp(page, fields, postValues, rid = "emailpassword") {
     if (postValues === undefined) {
         postValues = JSON.stringify({ formFields: fields.map((v) => ({ id: v.name, value: v.value })) });
@@ -748,6 +784,108 @@ export async function screenshotOnFailure(ctx, browser) {
     }
 }
 
+export async function setupBrowser() {
+    const browser = await Puppeteer.launch({
+        args: [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-web-security",
+            "--host-resolver-rules=MAP example.com 127.0.0.1, MAP *.example.com 127.0.0.1",
+            // Open DevTools automatically if in non-headless mode and DEV_TOOLS is enabled
+            ...(process.env.HEADLESS === "false" && process.env.DEV_TOOLS === "true"
+                ? ["--auto-open-devtools-for-tabs"]
+                : []),
+        ],
+        headless: process.env.HEADLESS !== "false",
+        devtools: process.env.HEADLESS === "false" && process.env.DEV_TOOLS === "true",
+    });
+    browser.logs = [];
+    function addLog(str) {
+        if (process.env.BROWSER_LOGS !== undefined) {
+            console.log(str);
+        }
+        browser.logs.push(str);
+    }
+    const origNewPage = browser.newPage.bind(browser);
+    browser.newPage = async () => {
+        const page = await origNewPage();
+        page.on("console", (msg) => {
+            if (msg.text().startsWith("com.supertokens")) {
+                addLog(msg.text());
+            } else {
+                addLog(
+                    `browserlog.console ${JSON.stringify({
+                        t: new Date().toISOString(),
+                        message: msg.text(),
+                        pageurl: page.url(),
+                    })}`
+                );
+            }
+        });
+
+        page.on("request", (req) => {
+            addLog(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Requested: ${req.method()} ${req.url()} (${req.postData()})`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        page.on("requestfinished", async (req) => {
+            if (req.method() === "OPTION") {
+                return;
+            }
+            const resp = await req.response();
+            let respText;
+            try {
+                respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
+                    ? await resp.text()
+                    : "response omitted";
+            } catch (e) {
+                respText = "response loading failed " + e.message;
+            }
+            addLog(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Request done: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        page.on("requestfailed", async (req) => {
+            if (req.method() === "OPTION") {
+                return;
+            }
+            const resp = await req.response();
+            let respText;
+            try {
+                respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
+                    ? await resp.text()
+                    : "response omitted";
+            } catch (e) {
+                respText = "response loading failed " + e.message;
+            }
+            addLog(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Request failed: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        return page;
+    };
+    browser.on("disconnected", async () => {
+        if (process.env.MOCHA_FILE !== undefined) {
+            const reportFile = path.parse(process.env.MOCHA_FILE);
+            const logFile = path.join(reportFile.dir, "logs", "browser.log");
+            await appendFile(logFile, browser.logs.join("\n"));
+        }
+    });
+    return browser;
+}
+
 export async function getPasswordlessDevice(loginAttemptInfo) {
     const deviceResp = await fetch(
         `${TEST_APPLICATION_SERVER_BASE_URL}/test/getDevice?preAuthSessionId=${encodeURIComponent(
@@ -760,13 +898,15 @@ export async function getPasswordlessDevice(loginAttemptInfo) {
     return await deviceResp.json();
 }
 
-export function setPasswordlessFlowType(contactMethod, flowType) {
-    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setFlow`, {
+export function changeEmail(rid, recipeUserId, email, phoneNumber) {
+    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/changeEmail`, {
         method: "POST",
         headers: [["content-type", "application/json"]],
         body: JSON.stringify({
-            contactMethod,
-            flowType,
+            rid,
+            recipeUserId,
+            email,
+            phoneNumber,
         }),
     });
 }
@@ -856,4 +996,178 @@ export async function setGeneralErrorToLocalStorage(recipeName, action, page) {
 
 export async function getTestEmail() {
     return `john.doe+${Date.now()}@supertokens.io`;
+}
+
+export async function setupTenant(tenantId, loginMethods) {
+    const body = {
+        tenantId,
+        loginMethods,
+    };
+    if (loginMethods.thirdParty?.providers) {
+        body.loginMethods.thirdParty.providers = loginMethods.thirdParty.providers.map((provider) => ({
+            ...testProviderConfigs[provider.id.split("-")[0]],
+            thirdPartyId: provider.id,
+            name: provider.name,
+        }));
+    }
+    let coreResp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/setupTenant`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify(body),
+    });
+    assert.strictEqual(coreResp.status, 200);
+}
+
+export async function addUserToTenant(tenantId, recipeUserId) {
+    let coreResp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/addUserToTenant`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            tenantId,
+            recipeUserId,
+        }),
+    });
+    assert.strictEqual(coreResp.status, 200);
+}
+
+export async function removeUserFromTenant(tenantId, recipeUserId) {
+    let coreResp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/removeUserFromTenant`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            tenantId,
+            recipeUserId,
+        }),
+    });
+    assert.strictEqual(coreResp.status, 200);
+}
+
+export async function removeTenant(tenantId) {
+    let coreResp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/removeTenant`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            tenantId,
+        }),
+    });
+    assert.strictEqual(coreResp.status, 200);
+}
+
+const testProviderConfigs = {
+    apple: {
+        clients: [
+            {
+                clientId: "4398792-io.supertokens.example.service",
+                additionalConfig: {
+                    keyId: "7M48Y4RYDL",
+                    privateKey:
+                        "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgu8gXs+XYkqXD6Ala9Sf/iJXzhbwcoG5dMh1OonpdJUmgCgYIKoZIzj0DAQehRANCAASfrvlFbFCYqn3I2zeknYXLwtH30JuOKestDbSfZYxZNMqhF/OzdZFTV0zc5u5s3eN+oCWbnvl0hM+9IW0UlkdA\n-----END PRIVATE KEY-----",
+                    teamId: "YWQCXGJRJL",
+                },
+            },
+        ],
+    },
+    github: {
+        clients: [
+            {
+                clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
+                clientId: "467101b197249757c71f",
+            },
+        ],
+    },
+    google: {
+        clients: [
+            {
+                clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
+                clientSecret: "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",
+            },
+        ],
+    },
+    auth0: {
+        // this contains info about forming the authorisation redirect URL without the state params and without the redirect_uri param
+        authorizationEndpoint: `https://${process.env.AUTH0_DOMAIN}/authorize`,
+        authorizationEndpointQueryParams: {
+            scope: "openid profile email email_verified",
+        },
+        jwksURI: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
+        tokenEndpoint: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
+        clients: [
+            {
+                clientId: process.env.AUTH0_CLIENT_ID,
+                clientSecret: process.env.AUTH0_CLIENT_SECRET,
+            },
+        ],
+        userInfoMap: {
+            fromIdTokenPayload: {
+                userId: "sub",
+                email: "email",
+                emailVerified: "email_verified",
+            },
+        },
+    },
+    test: {
+        // We add a client since it's required
+        clients: [
+            {
+                clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
+                clientSecret: "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",
+            },
+        ],
+    },
+};
+
+export async function backendHook(hookType) {
+    const serverUrls = Array.from(new Set([TEST_SERVER_BASE_URL, TEST_APPLICATION_SERVER_BASE_URL]));
+
+    await Promise.all(
+        serverUrls.map((url) => fetch(`${url}/test/${hookType}`, { method: "POST" }).catch(console.error))
+    );
+}
+
+export async function setupCoreApp({ appId, coreConfig } = {}) {
+    const response = await fetch(`${TEST_SERVER_BASE_URL}/test/setup/app`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            appId,
+            coreConfig,
+        }),
+    });
+
+    return await response.text();
+}
+
+export async function setupST({
+    coreUrl,
+    accountLinkingConfig = {},
+    enabledRecipes,
+    enabledProviders,
+    passwordlessFlowType,
+    passwordlessContactMethod,
+    mfaInfo = {},
+} = {}) {
+    await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setup/st`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            coreUrl,
+            accountLinkingConfig,
+            enabledRecipes,
+            enabledProviders,
+            passwordlessFlowType,
+            passwordlessContactMethod,
+            mfaInfo,
+        }),
+    });
+}
+
+export async function backendBeforeEach() {
+    await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+        method: "POST",
+    }).catch(console.error);
+    if (TEST_SERVER_BASE_URL !== TEST_APPLICATION_SERVER_BASE_URL) {
+        await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/beforeeach`, {
+            method: "POST",
+        }).catch(console.error);
+    }
 }
