@@ -18,7 +18,6 @@ co *
  */
 
 import assert from "assert";
-import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     clickOnProviderButton,
@@ -28,11 +27,7 @@ import {
     submitForm,
     waitForSTElement,
     getPasswordlessDevice,
-    setPasswordlessFlowType,
     getFeatureFlags,
-    isReact16,
-    setAccountLinkingConfig,
-    signUp,
     toggleSignInSignUp,
     getInputAdornmentsSuccess,
     getInputAdornmentsError,
@@ -43,10 +38,13 @@ import {
     submitFormReturnRequestAndResponse,
     getTextByDataSupertokens,
     sendEmailResetPasswordSuccessMessage,
-    changeEmail,
-    backendBeforeEach,
+    setupBrowser,
+    setupCoreApp,
+    setupST,
+    backendHook,
+    screenshotOnFailure,
 } from "../helpers";
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, RESET_PASSWORD_API } from "../constants";
+import { TEST_CLIENT_BASE_URL, RESET_PASSWORD_API } from "../constants";
 
 /*
  * Tests.
@@ -55,50 +53,40 @@ describe("SuperTokens Account linking", function () {
     let browser;
     let page;
     let consoleLogs;
+    let coreUrl;
+
+    const passwordlessFlowType = "USER_INPUT_CODE_AND_MAGIC_LINK";
+    const passwordlessContactMethod = "EMAIL_OR_PHONE";
 
     before(async function () {
         const features = await getFeatureFlags();
         if (!features.includes("accountlinking")) {
             this.skip();
         }
+
+        coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
     });
 
     describe("Recipe combination tests", () => {
         before(async function () {
-            await backendBeforeEach();
+            await backendHook("before");
+            browser = await setupBrowser();
+        });
 
-            await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                method: "POST",
-            }).catch(console.error);
-
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: true,
-            });
+        beforeEach(async function () {
+            await backendHook("beforeEach");
             page = await browser.newPage();
+
+            consoleLogs = [];
             page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
                 if (log.startsWith("ST_LOGS")) {
                     consoleLogs.push(log);
                 }
             });
-        });
-
-        after(async function () {
-            await browser.close();
-            await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                method: "POST",
-            }).catch(console.error);
-
-            await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                method: "POST",
-            }).catch(console.error);
-        });
-
-        beforeEach(async function () {
-            consoleLogs = [];
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE_AND_MAGIC_LINK");
+
             await Promise.all([
                 page.goto(
                     `${TEST_CLIENT_BASE_URL}/auth/?authRecipe=thirdpartypasswordless&passwordlessContactMethodType=EMAIL_OR_PHONE`
@@ -109,7 +97,15 @@ describe("SuperTokens Account linking", function () {
         });
 
         afterEach(async function () {
+            await screenshotOnFailure(this, browser);
             await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+            await page?.close();
+            await backendHook("afterEach");
+        });
+
+        after(async function () {
+            await browser.close();
+            await backendHook("after");
         });
 
         describe("account consolidation", () => {
@@ -126,8 +122,20 @@ describe("SuperTokens Account linking", function () {
                         const doLogin2 = login2[1];
 
                         it(`should work for ${login1[0]} - ${login2[0]} w/ email verification not required`, async () => {
+                            await setupST({
+                                coreUrl,
+                                passwordlessFlowType,
+                                passwordlessContactMethod,
+                                accountLinkingConfig: {
+                                    enabled: true,
+                                    shouldAutoLink: {
+                                        shouldAutomaticallyLink: true,
+                                        shouldRequireVerification: false,
+                                    },
+                                },
+                            });
+
                             const email = `test-user+${Date.now()}@supertokens.com`;
-                            await setAccountLinkingConfig(true, true, false);
                             // 1. Sign up with login method 1
                             await doLogin1(page, email);
 
@@ -155,10 +163,22 @@ describe("SuperTokens Account linking", function () {
 
                         if (login2[0] !== "emailpassword") {
                             it(`should work for ${login1[0]} - ${login2[0]} w/ email verification required`, async () => {
+                                await setupST({
+                                    coreUrl,
+                                    passwordlessFlowType,
+                                    passwordlessContactMethod,
+                                    accountLinkingConfig: {
+                                        enabled: true,
+                                        shouldAutoLink: {
+                                            shouldAutomaticallyLink: true,
+                                            shouldRequireVerification: true,
+                                        },
+                                    },
+                                });
+
                                 await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
 
                                 const email = `test-user+${Date.now()}@supertokens.com`;
-                                await setAccountLinkingConfig(true, true, true);
                                 // 1. Sign up with login method 1
                                 await doLogin1(page, email);
                                 if (login1[0] === "emailpassword") {
@@ -198,10 +218,22 @@ describe("SuperTokens Account linking", function () {
                             });
                         } else {
                             it(`should work for ${login1[0]} - password reset (invite link flow) w/ email verification required`, async () => {
+                                await setupST({
+                                    coreUrl,
+                                    passwordlessFlowType,
+                                    passwordlessContactMethod,
+                                    accountLinkingConfig: {
+                                        enabled: true,
+                                        shouldAutoLink: {
+                                            shouldAutomaticallyLink: true,
+                                            shouldRequireVerification: true,
+                                        },
+                                    },
+                                });
+
                                 await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
 
                                 const email = `test-user+${Date.now()}@supertokens.com`;
-                                await setAccountLinkingConfig(true, true, true);
                                 // 1. Sign up with login method 1
                                 await doLogin1(page, email);
                                 if (login1[0] === "emailpassword") {
@@ -247,9 +279,20 @@ describe("SuperTokens Account linking", function () {
 
         describe("conflicting accounts", () => {
             it("should not allow sign up w/ emailpassword in case of conflict", async function () {
-                const email = `test-user+${Date.now()}@supertokens.com`;
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: true,
+                            shouldRequireVerification: true,
+                        },
+                    },
+                });
 
-                await setAccountLinkingConfig(true, true, true);
+                const email = `test-user+${Date.now()}@supertokens.com`;
                 // 1. Sign up with credentials
                 await tryPasswordlessSignInUp(page, email);
 
@@ -277,9 +320,22 @@ describe("SuperTokens Account linking", function () {
             });
 
             it("should not allow sign in w/ an unverified emailpassword user in case of conflict", async function () {
-                const email = `test-user+${Date.now()}@supertokens.com`;
+                // Use a common appId over the test to allow re-inits
+                const coreUrl = await setupCoreApp();
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: false,
+                            shouldRequireVerification: true,
+                        },
+                    },
+                });
 
-                await setAccountLinkingConfig(true, false);
+                const email = `test-user+${Date.now()}@supertokens.com`;
                 // 1. Sign up without account linking with an unverified ep and tp users & log out
                 // We need both, because when setting up the pwless user we'll link to the older one
                 await tryThirdPartySignInUp(page, email, false);
@@ -290,7 +346,18 @@ describe("SuperTokens Account linking", function () {
                 await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
                 await logOut(page);
 
-                await setAccountLinkingConfig(true, true, false);
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: true,
+                            shouldRequireVerification: false,
+                        },
+                    },
+                });
                 // 2. Sign up with passwordless to create a primary user
                 await tryPasswordlessSignInUp(page, email);
 
@@ -301,7 +368,18 @@ describe("SuperTokens Account linking", function () {
 
                 await waitForSTElement(page, `input[name=email]`);
 
-                await setAccountLinkingConfig(true, true, true);
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: true,
+                            shouldRequireVerification: true,
+                        },
+                    },
+                });
                 // 4. Try sign in with emailpassword
 
                 await Promise.all([
@@ -322,9 +400,20 @@ describe("SuperTokens Account linking", function () {
             });
 
             it("should not allow sign up w/ an unverified thirdparty user in case of conflict", async function () {
-                const email = `test-user+${Date.now()}@supertokens.com`;
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: true,
+                            shouldRequireVerification: true,
+                        },
+                    },
+                });
 
-                await setAccountLinkingConfig(true, true, true);
+                const email = `test-user+${Date.now()}@supertokens.com`;
                 // 1. Sign up with credentials
                 await tryPasswordlessSignInUp(page, email);
 
@@ -346,10 +435,21 @@ describe("SuperTokens Account linking", function () {
             });
 
             it("should not allow using thirdparty sign in with changed email in case of conflict", async function () {
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: true,
+                            shouldRequireVerification: true,
+                        },
+                    },
+                });
+
                 const email = `test-user+${Date.now()}@supertokens.com`;
                 const email2 = `test-user-2+${Date.now()}@supertokens.com`;
-
-                await setAccountLinkingConfig(true, true, true);
                 // 1. Sign up with credentials
 
                 await tryPasswordlessSignInUp(page, email);
@@ -388,16 +488,40 @@ describe("SuperTokens Account linking", function () {
             });
 
             it("should not allow sign in w/ an unverified thirdparty user in case of conflict", async function () {
-                const email = `test-user+${Date.now()}@supertokens.com`;
+                // Use a common appId over the test to allow re-inits
+                const coreUrl = await setupCoreApp();
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: false,
+                            shouldRequireVerification: true,
+                        },
+                    },
+                });
 
-                await setAccountLinkingConfig(true, false);
+                const email = `test-user+${Date.now()}@supertokens.com`;
                 await tryEmailPasswordSignUp(page, email);
                 await logOut(page);
                 // 1. Sign up without account linking with an unverified tp user & log out
                 await tryThirdPartySignInUp(page, email, false);
                 await logOut(page);
 
-                await setAccountLinkingConfig(true, true, false);
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: true,
+                            shouldRequireVerification: false,
+                        },
+                    },
+                });
                 // 2. Sign up with passwordless to create a primary user
                 await tryPasswordlessSignInUp(page, email);
 
@@ -408,7 +532,18 @@ describe("SuperTokens Account linking", function () {
 
                 await waitForSTElement(page, `input[name=email]`);
 
-                await setAccountLinkingConfig(true, true, true);
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: true,
+                            shouldRequireVerification: true,
+                        },
+                    },
+                });
                 // 4. Try sign in with third party
                 await tryThirdPartySignInUp(page, email, false);
 
@@ -422,12 +557,36 @@ describe("SuperTokens Account linking", function () {
             it("should not allow sign up w/ passwordless if it conflicts with an unverified user", async function () {
                 const email = `test-user+${Date.now()}@supertokens.com`;
 
-                await setAccountLinkingConfig(true, false);
+                // Use a common appId over the test to allow re-inits
+                const coreUrl = await setupCoreApp();
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: false,
+                            shouldRequireVerification: true,
+                        },
+                    },
+                });
                 // 1. Sign up without account linking with an unverified tp user & log out
                 await tryEmailPasswordSignUp(page, email);
                 await logOut(page);
 
-                await setAccountLinkingConfig(true, true, true);
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: true,
+                            shouldRequireVerification: true,
+                        },
+                    },
+                });
                 // 2. Sign up with passwordless
                 await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
                 await Promise.all([
@@ -447,13 +606,36 @@ describe("SuperTokens Account linking", function () {
 
             it("should not allow sign up w/ passwordless if it conflicts with an unverified user", async function () {
                 const email = `test-user+${Date.now()}@supertokens.com`;
-
-                await setAccountLinkingConfig(true, false);
+                // Use a common appId over the test to allow re-inits
+                const coreUrl = await setupCoreApp();
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: false,
+                            shouldRequireVerification: true,
+                        },
+                    },
+                });
                 // 1. Sign up without account linking with an unverified tp user & log out
                 await tryEmailPasswordSignUp(page, email);
                 await logOut(page);
 
-                await setAccountLinkingConfig(true, true, true);
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: true,
+                            shouldRequireVerification: true,
+                        },
+                    },
+                });
                 // 2. Sign in with passwordless
                 await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
                 await Promise.all([
@@ -475,7 +657,20 @@ describe("SuperTokens Account linking", function () {
                 const email = `test-user+${Date.now()}@supertokens.com`;
                 const email2 = `test-user2+${Date.now()}@supertokens.com`;
 
-                await setAccountLinkingConfig(true, true, false);
+                // Use a common appId over the test to allow re-inits
+                const coreUrl = await setupCoreApp();
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: true,
+                            shouldRequireVerification: false,
+                        },
+                    },
+                });
                 // 1. Sign up without account linking with an unverified tp user & log out
                 await tryThirdPartySignInUp(page, email2, false);
                 await logOut(page);
@@ -488,12 +683,34 @@ describe("SuperTokens Account linking", function () {
                 await tryThirdPartySignInUp(page, email, false, email2);
                 await logOut(page);
 
-                await setAccountLinkingConfig(true, false, false);
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: false,
+                            shouldRequireVerification: false,
+                        },
+                    },
+                });
                 // 4. Add a recipe level user
                 await tryEmailPasswordSignUp(page, email);
                 await logOut(page);
 
-                await setAccountLinkingConfig(true, true, true);
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: true,
+                            shouldRequireVerification: true,
+                        },
+                    },
+                });
                 // 5. Try resetting the password of the recipe leve user
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password?authRecipe=emailpassword`),
@@ -515,7 +732,20 @@ describe("SuperTokens Account linking", function () {
                 const email = `test-user+${Date.now()}@supertokens.com`;
                 await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
 
-                await setAccountLinkingConfig(true, false);
+                // Use a common appId over the test to allow re-inits
+                const coreUrl = await setupCoreApp();
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: false,
+                            shouldRequireVerification: true,
+                        },
+                    },
+                });
                 // 1. Sign up without account linking with an unverified tp user & log out
                 await tryEmailPasswordSignUp(page, email);
                 await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
@@ -530,7 +760,18 @@ describe("SuperTokens Account linking", function () {
 
                 await logOut(page);
 
-                await setAccountLinkingConfig(true, true, false);
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: true,
+                            shouldRequireVerification: false,
+                        },
+                    },
+                });
                 // 2. Sign up with passwordless to create a primary user
                 await tryPasswordlessSignInUp(page, email);
 
@@ -541,7 +782,18 @@ describe("SuperTokens Account linking", function () {
 
                 await waitForSTElement(page, `input[name=email]`);
 
-                await setAccountLinkingConfig(true, true, true);
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType,
+                    passwordlessContactMethod,
+                    accountLinkingConfig: {
+                        enabled: true,
+                        shouldAutoLink: {
+                            shouldAutomaticallyLink: true,
+                            shouldRequireVerification: true,
+                        },
+                    },
+                });
                 // 4. Try sign in with emailpassword
 
                 await Promise.all([
