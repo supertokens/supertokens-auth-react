@@ -18,6 +18,7 @@ import STGeneralError from "supertokens-web-js/utils/error";
 
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useUserContext } from "../../../../../usercontext";
+import { getProviderLogo } from "../../../constants";
 import { redirectToThirdPartyLogin } from "../../../utils";
 
 import type { SignInAndUpThemeProps } from "../../../types";
@@ -67,7 +68,9 @@ export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps>
             {props.providers.map((provider) => {
                 return (
                     <div key={`provider-${provider.id}`} data-supertokens="providerContainer">
-                        <span onClick={() => signInClick(provider.id)}>{provider.getButton()}</span>
+                        <span onClick={() => signInClick(provider.id)}>
+                            {provider.getButton(undefined, getProviderLogo(provider.id, provider.name))}
+                        </span>
                     </div>
                 );
             })}

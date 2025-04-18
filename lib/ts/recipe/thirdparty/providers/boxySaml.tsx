@@ -16,19 +16,6 @@
  * Imports.
  */
 import { isTest } from "../../../utils";
-import {
-    auth0Logo,
-    genericSAMLLogo,
-    googleLogo,
-    jumpCloudLogo,
-    microsoftADFSLogo,
-    microsoftEntraIdLogo,
-    oktaLogo,
-    oneLoginLogo,
-    openIdLogo,
-    pingOneLogo,
-    ripplingLogo,
-} from "../constants";
 
 import type { BuiltInProviderConfig } from "./types";
 
@@ -54,42 +41,8 @@ export default class BoxySAML extends Provider {
         });
     }
 
-    getLogo = (): JSX.Element => {
-        switch (this.name.toLowerCase()) {
-            case "microsoft entra id": {
-                return microsoftEntraIdLogo;
-            }
-            case "microsoft ad fs": {
-                return microsoftADFSLogo;
-            }
-            case "okta": {
-                return oktaLogo;
-            }
-            case "auth0": {
-                return auth0Logo;
-            }
-            case "google": {
-                return googleLogo;
-            }
-            case "onelogin": {
-                return oneLoginLogo;
-            }
-            case "pingone": {
-                return pingOneLogo;
-            }
-            case "jumpcloud": {
-                return jumpCloudLogo;
-            }
-            case "rippling": {
-                return ripplingLogo;
-            }
-            case "openid": {
-                return openIdLogo;
-            }
-            default: {
-                return genericSAMLLogo;
-            }
-        }
+    getLogo = (): undefined => {
+        return undefined;
     };
 
     /*

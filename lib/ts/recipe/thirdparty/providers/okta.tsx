@@ -16,7 +16,6 @@
  * Imports.
  */
 import { isTest } from "../../../utils";
-import { oktaLogo } from "../constants";
 
 import type { BuiltInProviderConfig } from "./types";
 
@@ -42,8 +41,8 @@ export default class Okta extends Provider {
         });
     }
 
-    getLogo = (): JSX.Element => {
-        return oktaLogo;
+    getLogo = (): undefined => {
+        return undefined;
     };
 
     /*
