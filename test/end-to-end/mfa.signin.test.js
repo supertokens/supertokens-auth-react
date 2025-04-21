@@ -113,7 +113,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
     it("sign in with email-otp (auto-setup)", async function () {
         const email = await getTestEmail();
 
-        setupST({
+        await setupST({
             ...appConfig,
             mfaInfo: {
                 requirements: ["otp-email"],
@@ -139,7 +139,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
             const email = await getTestEmail();
             const phoneNumber = getTestPhoneNumber();
 
-            setupST({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: [{ oneOf: ["otp-email", "otp-phone"] }],
@@ -163,7 +163,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
         });
 
         it("set up otp-email and sign-in", async function () {
-            setupST({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: [],
@@ -179,7 +179,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await logout(page);
 
-            setupST({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: [{ oneOf: ["otp-email"] }],
@@ -203,7 +203,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
         });
 
         it("set up totp and sign-in", async function () {
-            setupST({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: [],
@@ -211,7 +211,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
             });
             const email = await getTestEmail();
 
-            setupST({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: [{ oneOf: ["otp-email", "totp"] }],
@@ -245,7 +245,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
         it("should show access denied if the only next option is an unknown factor id", async () => {
             const email = await getTestEmail();
-            setupST({
+            await setupST({
                 ...appConfig,
                 mfaInfo: {
                     requirements: ["unknown"],
