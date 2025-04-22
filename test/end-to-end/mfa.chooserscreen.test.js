@@ -256,7 +256,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
             await chooseFactor(page, "otp-phone");
             await completeOTP(page);
 
-            await goToFactorChooser(page);
+            await goToFactorChooser(page, true, false);
 
             await waitForSTElement(page, "[data-supertokens~=backButton]");
         });

@@ -647,6 +647,11 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
 
             await removeTenant("customer1");
 
+            // We need to wait for a while so that the login_methods
+            // endpoint doesn't crash. Essentially, it seems like the core
+            // take a few seconds to update.
+            await page.waitForTimeout(3000);
+
             let getDynamicLoginMethodsCalled = false;
             await page.setRequestInterception(true);
             const requestHandler = (request) => {
