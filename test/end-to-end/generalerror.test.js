@@ -65,7 +65,6 @@ let consoleLogs;
 
 describe("General error rendering", function () {
     let coreUrl;
-    let enabledRecipes = undefined;
     before(async function () {
         const _isGeneralErrorSupported = await isGeneralErrorSupported();
         if (!_isGeneralErrorSupported) {
@@ -79,7 +78,7 @@ describe("General error rendering", function () {
     beforeEach(async function () {
         await backendHook("beforeEach");
         coreUrl = await setupCoreApp();
-        await setupST({ coreUrl, enabledRecipes });
+        await setupST({ coreUrl });
         page = await browser.newPage();
 
         consoleLogs = [];
@@ -214,18 +213,11 @@ describe("General error rendering", function () {
     });
 
     describe("ThirdPartyEmailPassword", function () {
-        before(async function () {
-            enabledRecipes = ["thirdpartyemailpassword", "session"];
-        });
-
         getEmailPasswordTests("thirdpartyemailpassword", "THIRD_PARTY_EMAIL_PASSWORD");
         getThirdPartyTests("thirdpartyemailpassword", "THIRD_PARTY_EMAIL_PASSWORD");
     });
 
     describe("ThirdPartyPasswordless", function () {
-        before(async function () {
-            enabledRecipes = ["thirdpartypasswordless", "session"];
-        });
         getThirdPartyTests("thirdpartypasswordless", "THIRD_PARTY_PASSWORDLESS");
     });
 
