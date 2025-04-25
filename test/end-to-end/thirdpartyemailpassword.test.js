@@ -49,6 +49,7 @@ import {
     backendHook,
     setupCoreApp,
     setupST,
+    isThirdPartyEmailPasswordSupported,
 } from "../helpers";
 import {
     TEST_CLIENT_BASE_URL,
@@ -71,6 +72,10 @@ describe("SuperTokens Third Party Email Password", function () {
     const appConfig = {};
 
     before(async function () {
+        if (!(await isThirdPartyEmailPasswordSupported())) {
+            this.skip();
+        }
+
         await backendHook("before");
         const coreUrl = await setupCoreApp();
         appConfig.coreUrl = coreUrl;
