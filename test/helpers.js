@@ -961,6 +961,15 @@ export async function isThirdPartyPasswordlessSupported() {
     return false;
 }
 
+export async function isThirdPartyEmailPasswordSupported() {
+    const features = await getFeatureFlags();
+    if (features.includes("thirdpartyemailpassword")) {
+        return true;
+    }
+
+    return false;
+}
+
 export async function isUserRolesSupported() {
     const features = await getFeatureFlags();
     if (!features.includes("userroles")) {
