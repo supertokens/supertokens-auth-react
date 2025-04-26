@@ -44,9 +44,9 @@ describe("getRedirectionURL Tests", function () {
     });
 
     describe("Test that isNewRecipeUser is passed correctly", function () {
-        let page;
-
         describe("Email Password Recipe", function () {
+            let page;
+
             beforeEach(async function () {
                 page = await browser.newPage();
                 const coreUrl = await setupCoreApp();
