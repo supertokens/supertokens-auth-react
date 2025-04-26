@@ -23,7 +23,6 @@ import { TEST_CLIENT_BASE_URL, SIGN_IN_UP_API } from "../constants";
 
 describe("getRedirectionURL Tests", function () {
     let browser;
-    let page;
 
     before(async function () {
         await backendHook("before");
@@ -46,6 +45,8 @@ describe("getRedirectionURL Tests", function () {
 
     describe("Test that isNewRecipeUser is passed correctly", function () {
         describe("Email Password Recipe", function () {
+            let page;
+
             beforeEach(async function () {
                 page = await browser.newPage();
                 const coreUrl = await setupCoreApp();
@@ -72,6 +73,8 @@ describe("getRedirectionURL Tests", function () {
         });
 
         describe("Third party recipe", function () {
+            let page;
+
             before(async function () {
                 const coreUrl = await setupCoreApp();
                 await setupST({ coreUrl });
@@ -105,6 +108,8 @@ describe("getRedirectionURL Tests", function () {
         });
 
         describe("Thirdpartyemailpassword recipe", function () {
+            let page;
+
             before(async function () {
                 const coreUrl = await setupCoreApp();
                 await setupST({ coreUrl });
@@ -145,6 +150,7 @@ describe("getRedirectionURL Tests", function () {
 
         describe("Passwordless recipe", function () {
             const exampleEmail = "test@example.com";
+            let page;
 
             before(async function () {
                 let _isPasswordlessSupported = await isPasswordlessSupported();
@@ -207,6 +213,7 @@ describe("getRedirectionURL Tests", function () {
 
         describe("ThirdPartyPasswordless recipe", function () {
             const exampleEmail = "test@example.com";
+            let page;
 
             before(async function () {
                 let _isThirdPartyPasswordlessSupported = await isThirdPartyPasswordlessSupported();
@@ -283,6 +290,8 @@ describe("getRedirectionURL Tests", function () {
 
         describe("No Redirection", function () {
             describe("Email Password Recipe", function () {
+                let page;
+
                 before(async function () {
                     const coreUrl = await setupCoreApp();
                     await setupST({ coreUrl });
@@ -320,6 +329,7 @@ describe("getRedirectionURL Tests", function () {
 
             describe("Passwordless recipe", function () {
                 const exampleEmail = "test@example.com";
+                let page;
 
                 before(async function () {
                     let _isPasswordlessSupported = await isPasswordlessSupported();
@@ -387,6 +397,7 @@ describe("getRedirectionURL Tests", function () {
 
             describe("ThirdPartyPasswordless recipe: Magic Link", function () {
                 const exampleEmail = "test@example.com";
+                let page;
 
                 before(async function () {
                     let _isThirdPartyPasswordlessSupported = await isThirdPartyPasswordlessSupported();
@@ -453,6 +464,7 @@ describe("getRedirectionURL Tests", function () {
             });
 
             describe("ThirdParty Recipe", function () {
+                let page;
                 before(async function () {
                     const coreUrl = await setupCoreApp();
                     await setupST({ coreUrl });
