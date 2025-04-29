@@ -16,12 +16,14 @@
 /*
  * Imports.
  */
+
 import SuperTokens from "../../superTokens";
 import { redirectWithFullPageReload } from "../../utils";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
 import { FactorIds } from "../multifactorauth/types";
 import Multitenancy from "../multitenancy/recipe";
 
+import { getProviderLogo } from "./constants";
 import Provider from "./providers";
 import ActiveDirectory from "./providers/activeDirectory";
 import Apple from "./providers/apple";
@@ -221,7 +223,10 @@ export const mergeProviders = ({
                     ...provider.config,
                     id: tenantProvider.id,
                     name: tenantProvider.name,
-                    buttonComponent: provider.getButton(tenantProvider.name),
+                    buttonComponent: provider.getButton(
+                        tenantProvider.name,
+                        getProviderLogo(tenantProvider.id, tenantProvider.name)
+                    ),
                 })
             );
         } else {
