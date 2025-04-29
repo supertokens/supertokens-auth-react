@@ -112,7 +112,11 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await backendHook("before");
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
                 const coreUrl = await setupCoreApp();
-                await setupST({ coreUrl, passwordlessFlowType: "USER_INPUT_CODE", passwordlessContactMethod: contactMethod });
+                await setupST({
+                    coreUrl,
+                    passwordlessFlowType: "USER_INPUT_CODE",
+                    passwordlessContactMethod: contactMethod,
+                });
             });
 
             after(async function () {
@@ -463,7 +467,11 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                         disablePhoneGuess: true,
                     }));
                     const coreUrl = await setupCoreApp();
-                    await setupST({ coreUrl, passwordlessFlowType: "USER_INPUT_CODE", passwordlessContactMethod: contactMethod });
+                    await setupST({
+                        coreUrl,
+                        passwordlessFlowType: "USER_INPUT_CODE",
+                        passwordlessContactMethod: contactMethod,
+                    });
                 });
 
                 after(async function () {

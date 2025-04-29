@@ -124,7 +124,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await tryEmailPasswordSignUp(page, email);
             await waitForDashboard(page);
-            await goToFactorChooser(page);
+            await goToFactorChooser(page, true, false);
             await chooseFactor(page, "otp-email");
             await completeOTP(page);
             await setupOTP(page, "PHONE", phoneNumber);

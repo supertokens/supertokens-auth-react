@@ -191,10 +191,16 @@ export async function tryPasswordlessSignInUp(page, contactInfo, queryParams) {
     await submitForm(page);
     await new Promise((res) => setTimeout(res, 1000));
 }
-export async function goToFactorChooser(page, waitForList = true) {
+export async function goToFactorChooser(page, waitForList = true, waitForNetworkIdle = true) {
     const ele = await page.waitForSelector(".goToFactorChooser");
-    await waitFor(100);
-    await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), ele.click()]);
+    await waitFor(waitForNetworkIdle ? 100 : 1000);
+    const steps = [ele.click()];
+    if (waitForNetworkIdle) {
+        // Insert at the start of the array
+        steps.unshift(page.waitForNavigation({ waitUntil: "networkidle0" }));
+    }
+
+    await Promise.all(steps);
     if (waitForList) {
         await waitForSTElement(page, "[data-supertokens~=factorChooserList]");
     }
