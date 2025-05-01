@@ -7,11 +7,9 @@ import { ssrConfig } from "../config/ssr";
 
 init(ssrConfig());
 
-export async function checkSSRSession(e) {
-    const cookiesStore = await cookies();
-    // const session = await getServerComponentSession(cookiesStore);
-    const session = await getServerActionSession(cookiesStore);
+export async function checkSSRSession(session) {
+    // const session = await getServerActionSession(cookiesStore);
 
-    console.log(session);
+    console.log("session", session);
     return Promise.resolve(true);
 }

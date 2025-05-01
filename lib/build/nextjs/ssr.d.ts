@@ -9,16 +9,35 @@ export default class SuperTokensNextjsSSRAPIWrapper {
     static getConfigOrThrow(): SuperTokensNextjsConfig;
     static getJWKS(): JWKSet;
     /**
-     * Get the session state during SSR or redirect
-     * The function is meant to be used inside Next.js components that make use of SSR.
+     * Get the session state inside a server componet or redirect
+     * The function is meant to be used inside Next.js server components
      * @param cookies - The cookies store exposed by next/headers (await cookies())
-     * @param redirect - The redirect function exposed by next/navigation
      * @returns The session context value or directly redirects the user to either the login page or the refresh API
      **/
     static getServerComponentSession(cookies: CookiesStore): Promise<LoadedSessionContext>;
-    static getServerActionSession(cookies: CookiesStore): Promise<LoadedSessionContext | undefined>;
     /**
-     * Get the session state inside props or redirect
+     * Get the session state inside a server action
+     * The function is meant to be used inside Next.js server actions
+     * @param cookies - The cookies store exposed by next/headers (await cookies())
+     * @returns The session context value or undefined if the session does not exist or is invalid
+     **/
+    static getServerActionSession(cookies: CookiesStore): Promise<{
+        session: LoadedSessionContext;
+        status: "valid";
+    } | {
+        status: "expired" | "invalid";
+        session: undefined;
+    }>;
+    /**
+     * Authenticate a server action by passing the session context as a parameter
+     * If the session does not exist/user is not authenticated, it will automatically redirect to the login page
+     * The function is meant to run on the client, before calling the actual server action
+     * @param action - A server action that takes the session context as its first parameter
+     * @returns The server action return value
+     **/
+    static authenticateServerAction<T extends (session: LoadedSessionContext) => Promise<K>, K>(action: T): Promise<void | K>;
+    /**
+     * Get the session state or redirect
      * The function is meant to be used inside getServerSideProps.
      * @param request - The request object available inside getServerSideProps ctx (ctx.req)
      * @returns The session context value or a redirects path to send the user to the refresh API or the login page
@@ -31,4 +50,5 @@ export declare const init: typeof SuperTokensNextjsSSRAPIWrapper.init;
 export declare const getServerComponentSession: typeof SuperTokensNextjsSSRAPIWrapper.getServerComponentSession;
 export declare const getServerActionSession: typeof SuperTokensNextjsSSRAPIWrapper.getServerActionSession;
 export declare const getServerSidePropsSession: typeof SuperTokensNextjsSSRAPIWrapper.getServerSidePropsSession;
+export declare const authenticateServerAction: typeof SuperTokensNextjsSSRAPIWrapper.authenticateServerAction;
 export {};

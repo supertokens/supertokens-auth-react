@@ -1,6 +1,7 @@
 import * as jose from "jose";
 
 import { enableLogging, logDebugMessage } from "../logger";
+import { doesSessionExist, getAccessTokenPayloadSecurely } from "supertokens-web-js/recipe/session";
 
 import {
     FRONT_TOKEN_HEADER_NAME,
@@ -22,6 +23,8 @@ import type {
     SuperTokensNextjsConfig,
 } from "./types";
 import type { LoadedSessionContext } from "../recipe/session/types";
+import { getNormalisedUserContext } from "supertokens-web-js/utils";
+import SuperTokens from "../superTokens";
 
 type SSRSessionState =
     | "front-token-not-found"
@@ -110,13 +113,54 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * @param cookies - The cookies store exposed by next/headers (await cookies())
      * @returns The session context value or undefined if the session does not exist or is invalid
      **/
-    static async getServerActionSession(cookies: CookiesStore): Promise<LoadedSessionContext | undefined> {
+    static async getServerActionSession(
+        cookies: CookiesStore
+    ): Promise<
+        { session: LoadedSessionContext; status: "valid" } | { status: "expired" | "invalid"; session: undefined }
+    > {
         const { state, session } = await getSSRSessionState(cookies);
         logDebugMessage(`SSR Session State: ${state}`);
         if (state === "tokens-match") {
-            return session;
+            return { session: session as LoadedSessionContext, status: "valid" };
+        } else if (["tokens-do-not-match", "access-token-not-found", "access-token-invalid"].includes(state)) {
+            return { status: "expired", session: undefined };
         }
-        return;
+
+        return { status: "invalid", session: undefined };
+    }
+
+    /**
+     * Authenticate a server action by passing the session context as a parameter
+     * If the session does not exist/user is not authenticated, it will automatically redirect to the login page
+     * The function is meant to run on the client, before calling the actual server action
+     * @param action - A server action that takes the session context as its first parameter
+     * @returns The server action return value
+     **/
+    static async authenticateServerAction<T extends (session: LoadedSessionContext) => Promise<K>, K>(action: T) {
+        let loadedSessionContext: LoadedSessionContext | undefined = undefined;
+        try {
+            const sessionExists = await doesSessionExist();
+            logDebugMessage(`Session exists: ${sessionExists}`);
+            if (!sessionExists) {
+                return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                    show: "signin",
+                    redirectBack: true,
+                    userContext: getNormalisedUserContext({}),
+                });
+            }
+
+            const accessTokenPayload = await getAccessTokenPayloadSecurely();
+            logDebugMessage(`Retrieved access token payload`);
+            loadedSessionContext = buildLoadedSessionContext(accessTokenPayload);
+        } catch (err) {
+            return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                show: "signin",
+                redirectBack: true,
+                userContext: getNormalisedUserContext({}),
+            });
+        }
+
+        return action(loadedSessionContext);
     }
 
     /**
@@ -162,6 +206,7 @@ export const init = SuperTokensNextjsSSRAPIWrapper.init;
 export const getServerComponentSession = SuperTokensNextjsSSRAPIWrapper.getServerComponentSession;
 export const getServerActionSession = SuperTokensNextjsSSRAPIWrapper.getServerActionSession;
 export const getServerSidePropsSession = SuperTokensNextjsSSRAPIWrapper.getServerSidePropsSession;
+export const authenticateServerAction = SuperTokensNextjsSSRAPIWrapper.authenticateServerAction;
 
 function getAuthPagePath(redirectPath: string): string {
     const authPagePath = SuperTokensNextjsSSRAPIWrapper.getConfigOrThrow().appInfo.websiteBasePath || "/auth";
@@ -207,13 +252,17 @@ async function getSSRSessionState(
 
     return {
         state: "tokens-match",
-        session: {
-            userId: parsedAccessToken.payload.sub,
-            accessTokenPayload: parsedAccessToken,
-            doesSessionExist: true,
-            loading: false,
-            invalidClaims: [],
-        },
+        session: buildLoadedSessionContext(parsedAccessToken.payload),
+    };
+}
+
+function buildLoadedSessionContext(accessTokenPayload: AccessTokenPayload["up"]): LoadedSessionContext {
+    return {
+        userId: accessTokenPayload.sub,
+        accessTokenPayload,
+        doesSessionExist: true,
+        loading: false,
+        invalidClaims: [],
     };
 }
 

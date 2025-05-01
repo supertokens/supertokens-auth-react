@@ -13,8 +13,9 @@ export let backendConfig = (): TypeInput => {
         // debug: true,
         supertokens: {
             // this is the location of the SuperTokens core.
-            connectionURI: "https://st-dev-bc3c6f90-79ba-11ef-ab9e-9bd286159eeb.aws.supertokens.io",
-            apiKey: "e9zZOI7yJ0-G6gms7iGKZ17Pb-",
+            // connectionURI: "https://st-dev-bc3c6f90-79ba-11ef-ab9e-9bd286159eeb.aws.supertokens.io",
+            connectionURI: "http://localhost:3567",
+            // apiKey: "e9zZOI7yJ0-G6gms7iGKZ17Pb-",
         },
         appInfo,
         // recipeList contains all the modules that you want to

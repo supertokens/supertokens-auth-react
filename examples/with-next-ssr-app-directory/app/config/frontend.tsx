@@ -19,7 +19,7 @@ export function setRouter(router: ReturnType<typeof useRouter>, pathName: string
 export const frontendConfig = (): SuperTokensConfig => {
     return {
         appInfo,
-        enableDebugLogs: true,
+        // enableDebugLogs: true,
         recipeList: [
             EmailPasswordReact.init(),
             ThirdPartyReact.init({
