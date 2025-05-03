@@ -1,0 +1,13 @@
+{
+    "tenant1": {
+        "clientId": "stcl_f1412d57-29ab-43c1-bb67-29b701a8d098",
+        "clientSecret": "pctjhrEzpi6q46dZ~q1OaTR3.r"
+    },
+    "tenant2": {
+        "clientId": "stcl_944d226e-cde4-4edf-b625-487c4b02e79e"
+    },
+    "tenant3": {
+        "clientId": "stcl_2ba3b96c-07a8-4c3e-8b26-0dd94ee1f30f",
+        "clientSecret": "DNZIl9sULJqsf_r9HDpuutf1Vq"
+    }
+}
