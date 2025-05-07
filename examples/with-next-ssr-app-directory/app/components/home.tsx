@@ -10,7 +10,8 @@ import { SessionAuthForNextJS } from "./sessionAuthForNextJS";
 import { getServerComponentSession, init } from "supertokens-auth-react/nextjs/ssr";
 import { ssrConfig } from "../config/ssr";
 import { useState } from "react";
-import { SSRButton } from "./ssrButton";
+import { MiddlewareServerActionButton } from "./middlewareServerActionButton";
+import { ServerActionButton } from "./serverActionButton";
 
 init(ssrConfig());
 
@@ -35,7 +36,8 @@ export async function HomePage() {
                         <div>Your userID is:</div>
                         <div className={`${styles.truncate} ${styles.userId}`}>{session.userId}</div>
                         <CallAPIButton />
-                        <SSRButton />
+                        <MiddlewareServerActionButton />
+                        <ServerActionButton />
                     </div>
                 </div>
                 <LinksComponent />

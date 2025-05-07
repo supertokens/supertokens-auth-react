@@ -198,7 +198,7 @@ async function fetchNewTokens(
     if (cookieRefreshToken) {
         refreshRequestHeaders.Cookie = `${REFRESH_TOKEN_COOKIE_NAME}=${cookieRefreshToken}`;
     } else if (headerRefreshToken) {
-        refreshRequestHeaders[REFRESH_TOKEN_HEADER_NAME] = headerRefreshToken;
+        refreshRequestHeaders.Authorization = `Bearer ${headerRefreshToken}`;
     }
 
     const refreshResponse = await fetch(refreshApiURL, {

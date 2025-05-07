@@ -19,7 +19,8 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * Get the session state inside a server action
      * The function is meant to be used inside Next.js server actions
      * @param cookies - The cookies store exposed by next/headers (await cookies())
-     * @returns The session context value or undefined if the session does not exist or is invalid
+     * @returns An object that includes session context value and the status of the session ('valid' | 'expired' | 'invalid')
+     * If the status is 'invalid' or 'expired' then the users should be considered as unauthenticated
      **/
     static getServerActionSession(cookies: CookiesStore): Promise<{
         session: LoadedSessionContext;
@@ -29,7 +30,7 @@ export default class SuperTokensNextjsSSRAPIWrapper {
         session: undefined;
     }>;
     /**
-     * Authenticate a server action by passing the session context as a parameter
+     * Authenticates a server action and then passes the session context as a parameter
      * If the session does not exist/user is not authenticated, it will automatically redirect to the login page
      * The function is meant to run on the client, before calling the actual server action
      * @param action - A server action that takes the session context as its first parameter
@@ -51,4 +52,5 @@ export declare const getServerComponentSession: typeof SuperTokensNextjsSSRAPIWr
 export declare const getServerActionSession: typeof SuperTokensNextjsSSRAPIWrapper.getServerActionSession;
 export declare const getServerSidePropsSession: typeof SuperTokensNextjsSSRAPIWrapper.getServerSidePropsSession;
 export declare const authenticateServerAction: typeof SuperTokensNextjsSSRAPIWrapper.authenticateServerAction;
+export declare type AuthenticatedServerAction<T extends (...args: any[]) => any> = T extends (...args: infer A) => infer R ? (session?: LoadedSessionContext, ...originalArgs: A) => R : never;
 export {};
