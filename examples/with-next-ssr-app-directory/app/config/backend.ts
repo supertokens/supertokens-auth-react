@@ -84,7 +84,9 @@ export let backendConfig = (): TypeInput => {
                 contactMethod: "EMAIL_OR_PHONE",
                 flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
             }),
-            SessionNode.init(),
+            SessionNode.init({
+                getTokenTransferMethod: () => "header",
+            }),
             Dashboard.init(),
             UserRoles.init(),
         ],

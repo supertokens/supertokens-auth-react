@@ -39,7 +39,7 @@ export type SuperTokensRequestToken = {
     cookie: string | null;
 };
 
-export type AccessTokenPayload = {
+export type FrontTokenPayload = {
     uid: string;
     ate: number;
     up: {

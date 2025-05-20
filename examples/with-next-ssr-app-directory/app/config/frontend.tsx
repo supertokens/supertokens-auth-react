@@ -34,7 +34,9 @@ export const frontendConfig = (): SuperTokensConfig => {
             PasswordlessReact.init({
                 contactMethod: "EMAIL_OR_PHONE",
             }),
-            Session.init(),
+            Session.init({
+                // tokenTransferMethod: "header"
+            }),
         ],
         windowHandler: (orig) => {
             return {

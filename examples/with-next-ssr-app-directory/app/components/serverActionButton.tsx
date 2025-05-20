@@ -1,19 +1,23 @@
 "use client";
 
 import { serverActionThatLoadsTheSession } from "../actions/serverActionThatLoadsTheSession";
+import { confirmAuthenticationAndCallServerAction, init } from "supertokens-auth-react/nextjs/ssr";
 import styles from "../page.module.css";
+import { ssrConfig } from "../config/ssr";
+
+init(ssrConfig());
 
 export const ServerActionButton = () => {
     return (
         <div
             style={{ marginTop: "20px" }}
             onClick={async (e) => {
-                const result = await serverActionThatLoadsTheSession();
-                console.log(result);
+                // The wrapper function ensures that the user is authenticated before calling the server action
+                const result = await confirmAuthenticationAndCallServerAction(serverActionThatLoadsTheSession);
             }}
             className={styles.sessionButton}
         >
-            Server Action that loads the session
+            Call Server Action
         </div>
     );
 };

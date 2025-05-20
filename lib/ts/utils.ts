@@ -18,6 +18,7 @@ import { CookieHandlerReference } from "supertokens-web-js/utils/cookieHandler";
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
+import { createPublicKey, verify } from "crypto";
 
 import {
     DEFAULT_API_BASE_PATH,
@@ -35,6 +36,8 @@ import type {
     NormalisedFormField,
     NormalisedGetRedirectionURLContext,
     UserContext,
+    JWKS,
+    JWK,
 } from "./types";
 
 /*
@@ -552,4 +555,142 @@ export function useRethrowInRender() {
     }
 
     return setError;
+}
+
+export async function jwtVerify<T extends { exp?: number; nbf?: number; iat?: number }>(
+    token: string,
+    jwksUrl: string
+): Promise<T> {
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+        throw new Error("Invalid JWT token format");
+    }
+
+    const [headerB64, payloadB64, signatureB64] = parts;
+
+    // Use base64 decoding with padding adjustment
+    const headerStr = Buffer.from(headerB64 + "=".repeat((4 - (headerB64.length % 4)) % 4), "base64").toString();
+    const header = JSON.parse(headerStr);
+
+    const kid = header.kid;
+    if (!kid) {
+        throw new Error("JWT header missing kid (Key ID)");
+    }
+    const alg = header.alg;
+    if (!alg) {
+        throw new Error("JWT header missing alg (Algorithm)");
+    }
+
+    const jwksResponse = await fetch(jwksUrl);
+    if (!jwksResponse.ok) {
+        throw new Error(`Failed to fetch JWKS: ${jwksResponse.statusText}`);
+    }
+
+    const jwks: JWKS = await jwksResponse.json();
+
+    // Find the matching key
+    const matchingKey = jwks.keys.find((key) => key.kid === kid);
+    if (!matchingKey) {
+        throw new Error(`No matching key found for kid: ${kid}`);
+    }
+
+    const publicKey = generatePublicKey(matchingKey, alg);
+    // Verify the signature
+    const signatureInput = `${headerB64}.${payloadB64}`;
+    const signature = Buffer.from(signatureB64 + "=".repeat((4 - (signatureB64.length % 4)) % 4), "base64");
+
+    let cryptoAlg: string;
+
+    // Map JWT algorithm names to crypto algorithm names
+    switch (alg) {
+        case "RS256":
+            cryptoAlg = "RSA-SHA256";
+            break;
+        case "RS384":
+            cryptoAlg = "RSA-SHA384";
+            break;
+        case "RS512":
+            cryptoAlg = "RSA-SHA512";
+            break;
+        case "ES256":
+            cryptoAlg = "SHA256";
+            break;
+        case "ES384":
+            cryptoAlg = "SHA384";
+            break;
+        case "ES512":
+            cryptoAlg = "SHA512";
+            break;
+        default:
+            throw new Error(`Unsupported algorithm: ${alg}`);
+    }
+
+    const isValid = verify(cryptoAlg, Buffer.from(signatureInput), publicKey, signature);
+
+    if (!isValid) {
+        throw new Error("JWT signature verification failed");
+    }
+
+    // Parse payload
+    const payloadStr = Buffer.from(payloadB64 + "=".repeat((4 - (payloadB64.length % 4)) % 4), "base64").toString();
+    const payload = JSON.parse(payloadStr) as T;
+
+    // Validate time-based claims
+    const now = Math.floor(Date.now() / 1000);
+
+    if (payload.exp !== undefined && typeof payload.exp === "number") {
+        if (now >= payload.exp) {
+            throw new Error("JWT expired");
+        }
+    }
+
+    if (payload.nbf !== undefined && typeof payload.nbf === "number") {
+        if (now < payload.nbf) {
+            throw new Error("JWT not valid yet (nbf)");
+        }
+    }
+
+    if (payload.iat !== undefined && typeof payload.iat === "number") {
+        if (now < payload.iat) {
+            throw new Error("JWT issued in the future");
+        }
+    }
+
+    return payload as T;
+}
+
+function generatePublicKey(jwk: JWK, _alg: string) {
+    // Convert JWK to PEM format
+    if (jwk.kty !== "RSA") {
+        throw new Error("Unsupported key type");
+    }
+    if (!jwk.n || !jwk.e) {
+        throw new Error("Missing RSA key parameters");
+    }
+
+    const modulus = base64urlToBase64(jwk.n);
+    const exponent = base64urlToBase64(jwk.e);
+    return createPublicKey({
+        key: {
+            // @ts-expect-error
+            kty: "RSA",
+            kid: jwk.kid,
+            n: modulus,
+            e: exponent,
+        },
+        // @ts-expect-error
+        format: "jwk",
+    });
+}
+
+function base64urlToBase64(base64url: string): string {
+    // Replace URL-safe characters
+    let base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
+
+    // Add padding if needed
+    while (base64.length % 4 !== 0) {
+        base64 += "=";
+    }
+
+    return base64;
 }

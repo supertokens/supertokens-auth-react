@@ -47,3 +47,8 @@ export declare function getNormalisedUserContext(userContext?: UserContext): Use
  */
 export declare const useOnMountAPICall: <T>(fetch: () => Promise<T>, handleResponse: (consumeResp: T) => Promise<void>, handleError?: ((err: unknown, consumeResp: T | undefined) => void | Promise<void>) | undefined, startLoading?: boolean) => void;
 export declare function useRethrowInRender(): import("react").Dispatch<import("react").SetStateAction<undefined>>;
+export declare function jwtVerify<T extends {
+    exp?: number;
+    nbf?: number;
+    iat?: number;
+}>(token: string, jwksUrl: string): Promise<T>;

@@ -36,7 +36,6 @@ export async function HomePage() {
                         <div>Your userID is:</div>
                         <div className={`${styles.truncate} ${styles.userId}`}>{session.userId}</div>
                         <CallAPIButton />
-                        <MiddlewareServerActionButton />
                         <ServerActionButton />
                     </div>
                 </div>

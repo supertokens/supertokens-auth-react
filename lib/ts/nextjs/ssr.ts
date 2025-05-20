@@ -1,6 +1,5 @@
-import * as jose from "jose";
-
 import { enableLogging, logDebugMessage } from "../logger";
+import { jwtVerify } from "../utils";
 import { doesSessionExist, getAccessTokenPayloadSecurely } from "supertokens-web-js/recipe/session";
 
 import {
@@ -11,14 +10,14 @@ import {
     FORCE_LOGOUT_PATH_PARAM_NAME,
     REDIRECT_PATH_PARAM_NAME,
     FRONT_TOKEN_COOKIE_NAME,
-    SESSION_REFRESH_API_PATH,
+    DEFAULT_API_PATH,
 } from "./constants";
 import { isCookiesStore } from "./types";
 
 import type {
     CookiesObject,
     CookiesStore,
-    AccessTokenPayload,
+    FrontTokenPayload,
     GetServerSidePropsReturnValue,
     SuperTokensNextjsConfig,
 } from "./types";
@@ -35,11 +34,8 @@ type SSRSessionState =
     | "tokens-do-not-match"
     | "tokens-match";
 
-type JWKSet = ReturnType<typeof jose.createRemoteJWKSet>;
-
 export default class SuperTokensNextjsSSRAPIWrapper {
     static config: SuperTokensNextjsConfig;
-    static jwks: JWKSet;
 
     static init(config: SuperTokensNextjsConfig): void {
         if (config.enableDebugLogs) {
@@ -56,11 +52,7 @@ export default class SuperTokensNextjsSSRAPIWrapper {
         return SuperTokensNextjsSSRAPIWrapper.config;
     }
 
-    static getJWKS(): JWKSet {
-        if (SuperTokensNextjsSSRAPIWrapper.jwks) {
-            return SuperTokensNextjsSSRAPIWrapper.jwks;
-        }
-
+    static getJWKSUrl(): string {
         const appInfo = SuperTokensNextjsSSRAPIWrapper.getConfigOrThrow().appInfo;
         let jwksPath = `${appInfo.apiBasePath}/jwt/jwks.json`;
         if (!jwksPath.startsWith("/")) {
@@ -68,9 +60,7 @@ export default class SuperTokensNextjsSSRAPIWrapper {
         }
         jwksPath = jwksPath.replace("//", "/");
         const jwksUrl = new URL(jwksPath, appInfo.apiDomain);
-        logDebugMessage(`Fetching JWKS data from: ${jwksUrl.toString()}`);
-        SuperTokensNextjsSSRAPIWrapper.jwks = jose.createRemoteJWKSet(jwksUrl);
-        return SuperTokensNextjsSSRAPIWrapper.jwks;
+        return jwksUrl.toString();
     }
 
     /**
@@ -135,14 +125,13 @@ export default class SuperTokensNextjsSSRAPIWrapper {
     }
 
     /**
-     * Authenticates a server action and then passes the session context as a parameter
+     * Ensures that a server action is called by an authenticated user
      * If the session does not exist/user is not authenticated, it will automatically redirect to the login page
      * The function is meant to run on the client, before calling the actual server action
-     * @param action - A server action that takes the session context as its first parameter
+     * @param action - A server action that will get called after the authentication state is confirmed
      * @returns The server action return value
      **/
-    static async authenticateServerAction<T extends (session: LoadedSessionContext) => Promise<K>, K>(action: T) {
-        let loadedSessionContext: LoadedSessionContext | undefined = undefined;
+    static async confirmAuthenticationAndCallServerAction<T extends () => Promise<K>, K>(action: T) {
         try {
             const sessionExists = await doesSessionExist();
             logDebugMessage(`Session exists: ${sessionExists}`);
@@ -154,10 +143,10 @@ export default class SuperTokensNextjsSSRAPIWrapper {
                 });
             }
 
-            const accessTokenPayload = await getAccessTokenPayloadSecurely();
             logDebugMessage(`Retrieved access token payload`);
-            loadedSessionContext = buildLoadedSessionContext(accessTokenPayload);
+            await getAccessTokenPayloadSecurely();
         } catch (err) {
+            logDebugMessage(`Error while authenticating server action`);
             return SuperTokens.getInstanceOrThrow().redirectToAuth({
                 show: "signin",
                 redirectBack: true,
@@ -165,7 +154,8 @@ export default class SuperTokensNextjsSSRAPIWrapper {
             });
         }
 
-        return action(loadedSessionContext);
+        logDebugMessage(`Calling server action`);
+        return action();
     }
 
     /**
@@ -211,18 +201,22 @@ export const init = SuperTokensNextjsSSRAPIWrapper.init;
 export const getServerComponentSession = SuperTokensNextjsSSRAPIWrapper.getServerComponentSession;
 export const getServerActionSession = SuperTokensNextjsSSRAPIWrapper.getServerActionSession;
 export const getServerSidePropsSession = SuperTokensNextjsSSRAPIWrapper.getServerSidePropsSession;
-export const authenticateServerAction = SuperTokensNextjsSSRAPIWrapper.authenticateServerAction;
-export type AuthenticatedServerAction<T extends (...args: any[]) => any> = T extends (...args: infer A) => infer R
-    ? (session?: LoadedSessionContext, ...originalArgs: A) => R
-    : never;
+export const confirmAuthenticationAndCallServerAction =
+    SuperTokensNextjsSSRAPIWrapper.confirmAuthenticationAndCallServerAction;
 
 function getAuthPagePath(redirectPath: string): string {
     const authPagePath = SuperTokensNextjsSSRAPIWrapper.getConfigOrThrow().appInfo.websiteBasePath || "/auth";
     return `${authPagePath}?${FORCE_LOGOUT_PATH_PARAM_NAME}=true&${REDIRECT_PATH_PARAM_NAME}=${redirectPath}`;
 }
 
+function getRefreshAPIPath(): string {
+    const apiPath = SuperTokensNextjsSSRAPIWrapper.getConfigOrThrow().appInfo.apiBasePath || DEFAULT_API_PATH;
+    return `${apiPath}/session/refresh`;
+}
+
 function getRefreshLocation(redirectPath: string): string {
-    return `${SESSION_REFRESH_API_PATH}?${REDIRECT_PATH_PARAM_NAME}=${redirectPath}`;
+    const refreshAPIPath = getRefreshAPIPath();
+    return `${refreshAPIPath}?${REDIRECT_PATH_PARAM_NAME}=${redirectPath}`;
 }
 
 async function getSSRSessionState(
@@ -264,7 +258,7 @@ async function getSSRSessionState(
     };
 }
 
-function buildLoadedSessionContext(accessTokenPayload: AccessTokenPayload["up"]): LoadedSessionContext {
+function buildLoadedSessionContext(accessTokenPayload: FrontTokenPayload["up"]): LoadedSessionContext {
     return {
         userId: accessTokenPayload.sub,
         accessTokenPayload,
@@ -276,9 +270,9 @@ function buildLoadedSessionContext(accessTokenPayload: AccessTokenPayload["up"])
 
 function parseFrontToken(
     frontToken: string
-): { payload: AccessTokenPayload["up"]; ate: number; isValid: true } | { isValid: false } {
+): { payload: FrontTokenPayload["up"]; ate: number; isValid: true } | { isValid: false } {
     try {
-        const parsedToken = JSON.parse(decodeURIComponent(escape(atob(frontToken)))) as AccessTokenPayload;
+        const parsedToken = JSON.parse(decodeURIComponent(escape(atob(frontToken)))) as FrontTokenPayload;
         if (!parsedToken.uid || !parsedToken.ate || !parsedToken.up) {
             return { isValid: false };
         }
@@ -291,12 +285,9 @@ function parseFrontToken(
 
 async function parseAccessToken(
     token: string
-): Promise<{ isValid: true; payload: AccessTokenPayload["up"] } | { isValid: false }> {
+): Promise<{ isValid: true; payload: FrontTokenPayload["up"] } | { isValid: false }> {
     try {
-        const { payload } = await jose.jwtVerify<AccessTokenPayload["up"]>(
-            token,
-            SuperTokensNextjsSSRAPIWrapper.getJWKS()
-        );
+        const payload = await jwtVerify<FrontTokenPayload["up"]>(token, SuperTokensNextjsSSRAPIWrapper.getJWKSUrl());
         if (!payload.sub || !payload.exp) {
             return { isValid: false };
         }
@@ -307,7 +298,7 @@ async function parseAccessToken(
     }
 }
 
-function compareTokenPayloads(payload1: AccessTokenPayload["up"], payload2: AccessTokenPayload["up"]): boolean {
+function compareTokenPayloads(payload1: FrontTokenPayload["up"], payload2: FrontTokenPayload["up"]): boolean {
     return JSON.stringify(payload1) === JSON.stringify(payload2);
 }
 

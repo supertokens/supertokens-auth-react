@@ -453,3 +453,26 @@ export type AuthComponent<T = any> = PartialAuthComponent | FullPageAuthComponen
 export type NormalisedGetRedirectionURLContext<RecipeContext> = RecipeContext & {
     tenantIdFromQueryParams: string | undefined;
 };
+
+export interface JWK {
+    kty: string;
+    use?: string;
+    key_ops?: string[];
+    alg?: string;
+    kid?: string;
+    x5u?: string;
+    x5c?: string[];
+    x5t?: string;
+    "x5t#S256"?: string;
+    // RSA specific properties
+    n?: string;
+    e?: string;
+    // EC specific properties
+    crv?: string;
+    x?: string;
+    y?: string;
+}
+
+export interface JWKS {
+    keys: JWK[];
+}

@@ -33,7 +33,7 @@ export declare type SuperTokensRequestToken = {
     header: string | null;
     cookie: string | null;
 };
-export declare type AccessTokenPayload = {
+export declare type FrontTokenPayload = {
     uid: string;
     ate: number;
     up: {
