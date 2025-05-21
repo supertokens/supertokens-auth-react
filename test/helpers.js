@@ -173,11 +173,16 @@ export async function getProviderLogoCount(page) {
 }
 
 export async function getSubmitFormButtonLabelWithoutShadowDom(page) {
+    await page.waitForSelector("form > div > button");
     return await page.evaluate(() => document.querySelector("form > div > button").innerText);
 }
 
 export async function getSubmitFormButton(page) {
     return waitForSTElement(page, "[data-supertokens='button']");
+}
+
+export async function getSubmitFormButtonUnsafe(page) {
+    return waitForSTElement(page, "[data-supertokens~='button']");
 }
 
 export async function getInputField(page, name) {
@@ -186,6 +191,11 @@ export async function getInputField(page, name) {
 
 export async function submitForm(page) {
     const submitButton = await getSubmitFormButton(page);
+    await submitButton.click();
+}
+
+export async function submitFormUnsafe(page) {
+    const submitButton = await getSubmitFormButtonUnsafe(page);
     await submitButton.click();
 }
 
@@ -515,23 +525,15 @@ export async function submitFormReturnRequestAndResponse(page, URL) {
     };
 }
 
-export async function hasMethodBeenCalled(page, URL, method = "GET", timeout = 1000) {
-    let methodCalled = false;
-
-    const onRequestVerifyMatch = (request) => {
-        // If method called before hasMethodBeenCalled timeouts, update methodCalled.
-        if (request.url() === URL && request.method() === method) {
-            methodCalled = true;
-        }
-        request.continue();
-    };
-
-    await page.setRequestInterception(true);
-    page.on("request", onRequestVerifyMatch);
-    await new Promise((r) => setTimeout(r, timeout));
-    await page.setRequestInterception(false);
-    page.off("request", onRequestVerifyMatch);
-    return methodCalled;
+export async function hasMethodBeenCalled(page, URL, method = "GET", timeout = 2000) {
+    try {
+        await page.waitForResponse((response) => response.url() === URL && response.request().method() === method, {
+            timeout,
+        });
+        return true;
+    } catch (e) {
+        return false;
+    }
 }
 
 export async function assertFormFieldsEqual(actual, expected, values) {
@@ -557,10 +559,22 @@ async function assertValidator(actualValidate, expectedValidate, values) {
 }
 
 export async function getLatestURLWithToken() {
-    const response = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/token`);
-    const { latestURLWithToken } = await response.json();
+    let latestURLWithToken;
+    const start = Date.now();
+    while (!latestURLWithToken) {
+        const response = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/token`);
+        const respBody = await response.json();
+        latestURLWithToken = respBody.latestURLWithToken;
+        if (!latestURLWithToken) {
+            if (Date.now() - start > 10000) {
+                throw new Error("Timeout waiting for latestURLWithToken");
+            }
+            await new Promise((res) => setTimeout(res, 250));
+        }
+    }
     return latestURLWithToken;
 }
+
 export async function assertProviders(page) {
     const providers = await getProvidersLabels(page);
     assert.deepStrictEqual(providers, [
@@ -622,6 +636,23 @@ export async function loginWithFacebook(page) {
     await page.focus("input[name=pass]");
     await page.keyboard.type(process.env.FACEBOOK_PASSWORD);
     await Promise.all([page.keyboard.press("Enter"), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+}
+
+export async function loginWithMockProvider(
+    page,
+    email = "st_test_user@supertokens.io",
+    userId = "123",
+    isVerified = true
+) {
+    const url = new URL(page.url());
+    await Promise.all([
+        page.goto(
+            `${TEST_CLIENT_BASE_URL}/auth/callback/mock-provider?code=asdf&email=${encodeURIComponent(
+                email
+            )}&userId=${encodeURIComponent(userId)}&isVerified=${isVerified}&state=${url.searchParams.get("state")}`
+        ),
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
+    ]);
 }
 
 export async function loginWithAuth0(page) {
@@ -709,12 +740,14 @@ export async function generateState(state, page) {
 }
 
 export async function getUserIdWithAxios(page) {
+    await page.waitForSelector("#root > div > div.fill > div > div.axios > ul > li.sessionInfo-user-id");
     return await page.evaluate(
         () => document.querySelector("#root > div > div.fill > div > div.axios > ul > li.sessionInfo-user-id").innerText
     );
 }
 
 export async function getSessionHandleWithAxios(page) {
+    await page.waitForSelector("#root > div > div.fill > div > div.axios > ul > li.sessionInfo-session-handle");
     return await page.evaluate(
         () =>
             document.querySelector("#root > div > div.fill > div > div.axios > ul > li.sessionInfo-session-handle")
@@ -745,12 +778,14 @@ export async function getInvalidClaimsJSON(page) {
 }
 
 export async function getUserIdFromSessionContext(page) {
+    await page.waitForSelector("#root > div > div.fill > div > div.session-context-userId");
     return await page.evaluate(
         () => document.querySelector("#root > div > div.fill > div > div.session-context-userId").innerText
     );
 }
 
 export async function getTextInDashboardNoAuth(page) {
+    await page.waitForSelector("#root > div > div.fill > div.not-logged-in");
     return await page.evaluate(() => document.querySelector("#root > div > div.fill > div.not-logged-in").innerText);
 }
 
@@ -761,8 +796,13 @@ export async function setupBrowser() {
             "--disable-setuid-sandbox",
             "--disable-web-security",
             "--host-resolver-rules=MAP example.com 127.0.0.1, MAP *.example.com 127.0.0.1",
+            // Open DevTools automatically if in non-headless mode and DEV_TOOLS is enabled
+            ...(process.env.HEADLESS === "false" && process.env.DEV_TOOLS === "true"
+                ? ["--auto-open-devtools-for-tabs"]
+                : []),
         ],
         headless: process.env.HEADLESS !== "false",
+        devtools: process.env.HEADLESS === "false" && process.env.DEV_TOOLS === "true",
     });
     browser.logs = [];
     function addLog(str) {
@@ -1060,6 +1100,14 @@ export async function isOauth2Supported() {
     return true;
 }
 
+export async function isWebauthnSupported() {
+    const features = await getFeatureFlags();
+    if (!features.includes("webauthn")) {
+        return false;
+    }
+
+    return true;
+}
 /**
  * For example setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "EMAIL_PASSWORD_SIGN_UP", page) to
  * set for signUp in email password

@@ -11,6 +11,7 @@ import { AccessDeniedScreen } from "supertokens-auth-react/recipe/session/prebui
 import { MultiFactorAuthPreBuiltUI } from "supertokens-auth-react/recipe/multifactorauth/prebuiltui";
 import { TOTPPreBuiltUI } from "supertokens-auth-react/recipe/totp/prebuiltui";
 import { getEnabledRecipes, getTestContext } from "./testContext";
+import { WebauthnPreBuiltUI } from "supertokens-auth-react/recipe/webauthn/prebuiltui";
 
 function AppWithReactDomRouter(props) {
     const context = getTestContext();
@@ -26,6 +27,9 @@ function AppWithReactDomRouter(props) {
     }
     if (enabledRecipes.some((r) => r.endsWith("passwordless"))) {
         recipePreBuiltUIList.push(PasswordlessPreBuiltUI);
+    }
+    if (enabledRecipes.some((r) => r.endsWith("webauthn"))) {
+        recipePreBuiltUIList.push(WebauthnPreBuiltUI);
     }
     if (emailVerificationMode !== "OFF") {
         recipePreBuiltUIList.push(EmailVerificationPreBuiltUI);

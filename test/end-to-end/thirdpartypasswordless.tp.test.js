@@ -24,7 +24,7 @@ import {
     clickOnProviderButton,
     getUserIdWithFetch,
     getLogoutButton,
-    loginWithAuth0,
+    loginWithMockProvider,
     setInputValues,
     submitForm,
     waitForSTElement,

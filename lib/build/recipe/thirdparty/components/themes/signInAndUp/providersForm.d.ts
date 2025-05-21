@@ -5,6 +5,4 @@ export declare const ProvidersForm: import("react").ComponentType<import("../../
     providers: Pick<import("../../../providers").default, "id" | "getButton">[];
     recipeImplementation: import("../../../../../types").WebJSRecipeInterface<typeof import("supertokens-web-js/lib/build/recipe/thirdparty")>;
     config: import("../../../types").NormalisedConfig;
-} & {
-    children?: import("react").ReactNode;
 }>;

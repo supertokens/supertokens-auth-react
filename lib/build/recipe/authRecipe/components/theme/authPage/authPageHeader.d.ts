@@ -11,4 +11,6 @@ export declare const AuthPageHeader: import("react").ComponentType<{
         clientUri?: string | undefined;
         clientName: string;
     } | undefined;
+    headerLabel?: string | undefined;
+    hideSignInSwitcher?: boolean | undefined;
 }>;

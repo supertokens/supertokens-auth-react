@@ -525,7 +525,7 @@ function getThirdPartyConfigs() {
                 {
                     id: "with-dynamic-name",
                     logo: <svg></svg>,
-                    buttonComponent: (name) => <span>{name}</span>,
+                    buttonComponent: ({ name }) => <span> {name} </span>,
                 },
             ],
         },
@@ -967,7 +967,7 @@ Session.init({
     },
 });
 
-const AdminRoute: React.FC = (props) => {
+const AdminRoute: React.FC<{ children: React.ReactNode }> = (props) => {
     return (
         <SessionAuth
             accessDeniedScreen={AccessDeniedScreen}

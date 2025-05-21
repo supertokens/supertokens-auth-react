@@ -15,6 +15,7 @@ export default class Wrapper {
         readonly LINK_PHONE: "link-phone";
         readonly THIRDPARTY: "thirdparty";
         readonly TOTP: "totp";
+        readonly WEBAUTHN: "webauthn";
     };
     static init(config?: UserInput): import("../../types").RecipeInitResult<GetRedirectionURLContext, "GET_MFA_INFO", OnHandleEventContext, import("./types").NormalisedConfig>;
     static resyncSessionAndFetchMFAInfo(input?: {

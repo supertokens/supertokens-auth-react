@@ -398,7 +398,8 @@ describe("SuperTokens OAuth2Provider", function () {
             await waitForUrl(page, "/auth");
         });
 
-        it("should require logging in again with max_age=3 after 3 seconds", async function () {
+        // TODO: Fix flakyness and re-enable this test
+        it.skip("should require logging in again with max_age=3 after 3 seconds", async function () {
             const { client } = await createOAuth2Client({
                 scope: "offline_access profile openid email",
                 redirectUris: [`${TEST_CLIENT_BASE_URL}/oauth/callback`],

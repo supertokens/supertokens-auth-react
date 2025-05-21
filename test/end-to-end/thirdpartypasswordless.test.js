@@ -24,7 +24,7 @@ import {
     clickOnProviderButton,
     getUserIdWithFetch,
     getLogoutButton,
-    loginWithAuth0,
+    loginWithMockProvider,
     setInputValues,
     submitForm,
     waitForSTElement,
@@ -139,10 +139,10 @@ describe("SuperTokens Third Party Passwordless", function () {
 
             await waitForSTElement(page, `input[name=email]`);
 
-            // 3. Sign in with auth0 with same address.
-            await clickOnProviderButton(page, "Auth0");
+            // 3. Sign in with SSO with same address.
+            await clickOnProviderButton(page, "Mock Provider");
             await Promise.all([
-                loginWithAuth0(page),
+                loginWithMockProvider(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);

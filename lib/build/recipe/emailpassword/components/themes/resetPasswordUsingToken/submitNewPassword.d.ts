@@ -10,6 +10,4 @@ export declare const SubmitNewPassword: import("react").ComponentType<import("..
     config: import("../../../types").NormalisedConfig;
     onSignInClicked: () => void;
     token: string;
-} & {
-    children?: import("react").ReactNode;
 }>;

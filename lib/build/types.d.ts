@@ -161,6 +161,8 @@ export declare type Navigate = {
 export declare type UserContext = Record<string, any>;
 export declare type AuthComponentProps = {
     setFactorList: (factorIds: string[]) => void;
+    resetFactorList: () => void;
+    onSignInUpSwitcherClick: () => void;
     rebuildAuthPage: () => void;
     onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>;
     navigate: Navigate | undefined;
@@ -168,6 +170,8 @@ export declare type AuthComponentProps = {
     error: string | undefined;
     onError: (err: string) => void;
     clearError: () => void;
+    showBackButton: boolean;
+    children?: React.ReactNode;
 };
 export declare type PartialAuthComponentProps = AuthComponentProps;
 export declare type FullPageAuthComponentProps<PreloadInfoType> = AuthComponentProps & {
@@ -175,7 +179,7 @@ export declare type FullPageAuthComponentProps<PreloadInfoType> = AuthComponentP
 };
 export declare type FullPageAuthComponent<PreloadInfoType = any> = {
     type: "FULL_PAGE";
-    preloadInfoAndRunChecks: (firstFactors: string[], userContext: UserContext) => Promise<{
+    preloadInfoAndRunChecks: (firstFactors: string[], userContext: UserContext, isSignUp: boolean) => Promise<{
         shouldDisplay: true;
         preloadInfo: PreloadInfoType;
     } | {

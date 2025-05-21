@@ -7,11 +7,13 @@ orbs:
 jobs:
     build:
         docker:
-            - image: rishabhpoddar/supertokens_website_sdk_testing_node_16
+            - image: node:18
         steps:
             - run: git config --global url."https://github.com/".insteadOf ssh://git@github.com/ # This makes npm use http instead of ssh (required for node 16)
             - checkout
-            - run: apt-get install lsof
+            - run: apt update && apt install -y bc jq lsof libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libgconf-2-4 libgdk-pixbuf2.0-0 libgtk-3-0 libgbm1 libxss1 libasound2 libxshmfence1 xvfb
+            - run: chmod +x .circleci/installJava.sh
+            - run: (cd .circleci/ && ./installJava.sh)
             - run: npm run init
             - run: npm run build-check
             - run: npm run size
@@ -20,14 +22,16 @@ jobs:
             - persist_to_workspace:
                   root: / # relative path to our working directory
                   paths:
-                      - usr/lib/node_modules
+                      - usr/lib
+                      - usr/java
+                      - usr/bin
                       - root/project/node_modules
                       - root/project/test/server/node_modules
                       - root/project/examples/for-tests/node_modules
                       - root/project/examples/for-tests-react-16/node_modules
     test:
         docker:
-            - image: rishabhpoddar/supertokens_website_sdk_testing_node_16
+            - image: node:18
             - image: rishabhpoddar/oauth-server-cicd
         environment:
             MOCHA_FILE: test_report/report_node-<< parameters.fdi-version >>.xml

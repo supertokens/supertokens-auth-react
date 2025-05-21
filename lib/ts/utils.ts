@@ -14,6 +14,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 import { CookieHandlerReference } from "supertokens-web-js/utils/cookieHandler";
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
@@ -27,7 +28,8 @@ import {
     TENANT_ID_QUERY_PARAM,
 } from "./constants";
 
-import type { FormFieldError } from "./recipe/emailpassword/types";
+import type { FieldState } from "./recipe/emailpassword/components/library/formBase";
+import type { FormBaseAPIResponse, FormFieldError } from "./recipe/emailpassword/types";
 import type {
     APIFormField,
     AppInfoUserInput,
@@ -568,7 +570,6 @@ export async function jwtVerify<T extends { exp?: number; nbf?: number; iat?: nu
 
     const [headerB64, payloadB64, signatureB64] = parts;
 
-    // Use base64 decoding with padding adjustment
     const headerStr = Buffer.from(headerB64 + "=".repeat((4 - (headerB64.length % 4)) % 4), "base64").toString();
     const header = JSON.parse(headerStr);
 
@@ -576,7 +577,8 @@ export async function jwtVerify<T extends { exp?: number; nbf?: number; iat?: nu
     if (!kid) {
         throw new Error("JWT header missing kid (Key ID)");
     }
-    const alg = header.alg;
+
+    const alg = header.alg as string;
     if (!alg) {
         throw new Error("JWT header missing alg (Algorithm)");
     }
@@ -587,55 +589,35 @@ export async function jwtVerify<T extends { exp?: number; nbf?: number; iat?: nu
     }
 
     const jwks: JWKS = await jwksResponse.json();
-
-    // Find the matching key
     const matchingKey = jwks.keys.find((key) => key.kid === kid);
     if (!matchingKey) {
         throw new Error(`No matching key found for kid: ${kid}`);
     }
 
     const publicKey = generatePublicKey(matchingKey, alg);
-    // Verify the signature
     const signatureInput = `${headerB64}.${payloadB64}`;
     const signature = Buffer.from(signatureB64 + "=".repeat((4 - (signatureB64.length % 4)) % 4), "base64");
-
-    let cryptoAlg: string;
-
-    // Map JWT algorithm names to crypto algorithm names
-    switch (alg) {
-        case "RS256":
-            cryptoAlg = "RSA-SHA256";
-            break;
-        case "RS384":
-            cryptoAlg = "RSA-SHA384";
-            break;
-        case "RS512":
-            cryptoAlg = "RSA-SHA512";
-            break;
-        case "ES256":
-            cryptoAlg = "SHA256";
-            break;
-        case "ES384":
-            cryptoAlg = "SHA384";
-            break;
-        case "ES512":
-            cryptoAlg = "SHA512";
-            break;
-        default:
-            throw new Error(`Unsupported algorithm: ${alg}`);
+    const algorithmsRecord: Record<string, string> = {
+        RS256: "RSA-SHA256",
+        RS384: "RSA-SHA384",
+        RS512: "RSA-SHA512",
+        ES256: "SHA256",
+        ES384: "SHA384",
+        ES512: "SHA512",
+    };
+    const cryptoAlg = algorithmsRecord[alg];
+    if (!cryptoAlg) {
+        throw new Error(`Unsupported algorithm: ${alg}`);
     }
 
     const isValid = verify(cryptoAlg, Buffer.from(signatureInput), publicKey, signature);
-
     if (!isValid) {
         throw new Error("JWT signature verification failed");
     }
 
-    // Parse payload
     const payloadStr = Buffer.from(payloadB64 + "=".repeat((4 - (payloadB64.length % 4)) % 4), "base64").toString();
     const payload = JSON.parse(payloadStr) as T;
 
-    // Validate time-based claims
     const now = Math.floor(Date.now() / 1000);
 
     if (payload.exp !== undefined && typeof payload.exp === "number") {
@@ -660,7 +642,6 @@ export async function jwtVerify<T extends { exp?: number; nbf?: number; iat?: nu
 }
 
 function generatePublicKey(jwk: JWK, _alg: string) {
-    // Convert JWK to PEM format
     if (jwk.kty !== "RSA") {
         throw new Error("Unsupported key type");
     }
@@ -684,13 +665,46 @@ function generatePublicKey(jwk: JWK, _alg: string) {
 }
 
 function base64urlToBase64(base64url: string): string {
-    // Replace URL-safe characters
     let base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
 
-    // Add padding if needed
     while (base64.length % 4 !== 0) {
         base64 += "=";
     }
 
     return base64;
 }
+
+export const handleCallAPI = async <T>({
+    apiFields,
+    fieldUpdates,
+    callAPI,
+}: {
+    callAPI: (fields: APIFormField[], setValue: (id: string, value: string) => void) => Promise<FormBaseAPIResponse<T>>;
+    apiFields?: { id: string; value: string }[];
+    fieldUpdates: FieldState[];
+}): Promise<{
+    result?: FormBaseAPIResponse<T>;
+    generalError?: STGeneralError;
+    fetchError?: Response;
+}> => {
+    let result: FormBaseAPIResponse<T> | undefined;
+    let generalError: STGeneralError | undefined;
+    let fetchError: Response | undefined;
+    try {
+        result = await callAPI(apiFields || [], (id, value) => fieldUpdates.push({ id, value }));
+    } catch (e) {
+        if (STGeneralError.isThisError(e)) {
+            generalError = e;
+        } else if (e instanceof Response) {
+            fetchError = e;
+        } else {
+            throw e;
+        }
+    }
+
+    return {
+        result,
+        generalError,
+        fetchError,
+    };
+};

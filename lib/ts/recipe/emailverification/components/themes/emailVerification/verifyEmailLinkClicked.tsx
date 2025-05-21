@@ -74,7 +74,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
         [setStatus]
     );
     const handleError = useCallback(
-        (err) => {
+        (err: any) => {
             if (STGeneralError.isThisError(err)) {
                 setErrorMessage(err.message);
             }

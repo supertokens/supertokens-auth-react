@@ -7,6 +7,4 @@ export declare const VerifyEmailLinkClicked: import("react").ComponentType<impor
     onSuccess: () => Promise<void>;
     onTokenInvalidRedirect: () => Promise<void>;
     token: string;
-} & {
-    children?: import("react").ReactNode;
 }>;

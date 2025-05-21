@@ -1,0 +1,232 @@
+@import "../../../../styles/styles.css";
+@import "../../../emailpassword/components/themes/styles.css";
+
+[data-supertokens~="webauthn"] [data-supertokens~="container"] {
+    padding-top: 24px;
+}
+
+[data-supertokens~="continueWithPasskeyButtonWrapper"] {
+    margin: 9px 0;
+}
+
+[data-supertokens~="continueWithPasskeyButtonNotSupported"] {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: #007aff1a;
+    color: rgb(var(--palette-textLink));
+    text-align: center;
+    font-weight: 400;
+    font-size: var(--font-size-1);
+    line-height: 16.1px;
+    letter-spacing: 0%;
+    text-align: center;
+}
+
+[data-supertokens~="continueWithoutPasskey"] {
+    margin-top: 15px;
+}
+
+[data-supertokens~="continueWithoutPasskey"] [data-supertokens~="continueWithoutPasskeyLabel"] {
+    font-size: var(--font-size-1);
+    font-weight: 700;
+    line-height: 21px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: rgb(var(--palette-textLink));
+    cursor: pointer;
+}
+
+[data-supertokens~="signUpFormInnerContainer"] [data-supertokens~="cautionMessage"] {
+    padding: 14px;
+    background: #ff95001a;
+    color: rgb(var(--palette-caution));
+    font-size: var(--font-size-1);
+    font-weight: 400;
+    line-height: 20px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    border-radius: 6px;
+    margin-bottom: 14px;
+}
+
+[data-supertokens~="passkeyConfirmationContainer"] [data-supertokens~="passkeyConfirmationEmailContainer"] {
+    padding-bottom: 5px;
+}
+
+[data-supertokens~="passkeyConfirmationContainer"]
+    [data-supertokens~="passkeyConfirmationEmailContainer"]
+    [data-supertokens~="continueWithLabel"] {
+    font-size: var(--font-size-0);
+    font-weight: 400;
+    line-height: 13.8px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: rgb(var(--palette-textGray));
+}
+
+[data-supertokens~="passkeyConfirmationContainer"]
+    [data-supertokens~="passkeyConfirmationEmailContainer"]
+    [data-supertokens~="enteredEmailId"] {
+    font-size: var(--font-size-1);
+    font-weight: 700;
+    line-height: 16.1px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+}
+
+[data-supertokens~="passkeyConfirmationContainer"]
+    [data-supertokens~="passkeyFeatureBlocksContainer"]
+    [data-supertokens~="passkeyFeatureBlock"] {
+    margin-top: 10px;
+    padding: 18px;
+    border-radius: 6px;
+    border: 1px solid #dddddd;
+    display: flex;
+}
+
+[data-supertokens~="passkeyConfirmationContainer"]
+    [data-supertokens~="passkeyFeatureBlocksContainer"]
+    [data-supertokens~="passkeyFeatureBlock"]
+    [data-supertokens~="passkeyFeatureBlockDetails"] {
+    margin-left: 18px;
+}
+
+[data-supertokens~="passkeyConfirmationContainer"]
+    [data-supertokens~="passkeyFeatureBlocksContainer"]
+    [data-supertokens~="passkeyFeatureBlock"]
+    [data-supertokens~="passkeyFeatureBlockDetails"]
+    [data-supertokens~="passkeyFeatureBlockTitle"] {
+    font-size: var(--font-size-1);
+    font-weight: 700;
+    line-height: 16.1px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: rgb(var(--palette-textTitle));
+}
+
+[data-supertokens~="passkeyConfirmationContainer"]
+    [data-supertokens~="passkeyFeatureBlocksContainer"]
+    [data-supertokens~="passkeyFeatureBlock"]
+    [data-supertokens~="passkeyFeatureBlockDetails"]
+    [data-supertokens~="passkeyFeatureBlockSubText"] {
+    font-size: var(--font-size-0);
+    font-weight: 400;
+    line-height: 13.8px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: rgb(var(--palette-textGray));
+    margin-top: 9px;
+}
+
+[data-supertokens~="passkeyConfirmationContainer"] [data-supertokens~="passkeyConfirmationFooter"] {
+    margin-top: 25px;
+}
+
+[data-supertokens~="somethingWentWrongContainer"]
+    [data-supertokens~="somethingWentWrongErrorDetailsContainer"]
+    [data-supertokens~="label"] {
+    margin-top: 4px;
+    font-size: var(--font-size-4);
+    font-weight: 500;
+    line-height: 40px;
+    letter-spacing: 0.58px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #222222;
+}
+
+[data-supertokens~="somethingWentWrongContainer"]
+    [data-supertokens~="somethingWentWrongErrorDetailsContainer"]
+    [data-supertokens~="errorDetails"] {
+    font-size: var(--font-size-1);
+    font-weight: 400;
+    line-height: 21px;
+    letter-spacing: 0.4px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #656565;
+}
+
+[data-supertokens~="somethingWentWrongContainer"] [data-supertokens~="goBackButtonContainer"] {
+    margin-top: 22px;
+}
+
+[data-supertokens~="somethingWentWrongContainer"]
+    [data-supertokens~="goBackButtonContainer"]
+    [data-supertokens~="errorGoBackLabel"] {
+    font-size: var(--font-size-1);
+    font-weight: 500;
+    line-height: 21px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #0076ff;
+}
+
+[data-supertokens~="passkeySignInContainer"] {
+    margin-bottom: 6px;
+}
+
+[data-supertokens~="passkeyRecoverAccountFormContainer"]
+    [data-supertokens~="passkeyRecoverAccountFormHeaderWrapper"]
+    [data-supertokens~="passkeyRecoverAccountFormHeader"] {
+    padding-top: 10px;
+}
+
+[data-supertokens~="passkeyRecoverAccountFormContainer"]
+    [data-supertokens~="passkeyRecoverAccountFormHeaderWrapper"]
+    [data-supertokens~="passkeyRecoverAccountFormSubHeader"] {
+    width: 75%;
+    margin: 0 auto;
+    font-size: var(--font-size-1);
+    font-weight: 400;
+    line-height: 16.1px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: rgb(var(--palette-textGray));
+    margin-bottom: 20px;
+}
+
+[data-supertokens~="passkeyRecoverAccountFormContainer"] [data-supertokens~="errorContainer"] {
+    margin-bottom: 15px;
+}
+
+[data-supertokens~="passkeyEmailSentContainer"] [data-supertokens~="emailSentDescription"] {
+    margin: 0 auto;
+    font-size: var(--font-size-1);
+    font-weight: 400;
+    line-height: 16.1px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: rgb(var(--palette-textGray));
+}
+
+[data-supertokens~="passkeyEmailSentContainer"]
+    [data-supertokens~="emailSentDescription"]
+    [data-supertokens~="changeEmailBtn"] {
+    line-height: 16.1px;
+}
+
+[data-supertokens~="passkeyRecoverAccountSuccessContainer"]
+    [data-supertokens~="header"]
+    [data-supertokens~="headerText"] {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 30px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: rgb(var(--palette-textTitle));
+}

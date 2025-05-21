@@ -7,6 +7,4 @@ export declare const SendVerifyEmail: import("react").ComponentType<import("../.
     signOut: () => Promise<void>;
     onEmailAlreadyVerified: () => Promise<void>;
     redirectToAuth: () => Promise<void>;
-} & {
-    children?: import("react").ReactNode;
 }>;

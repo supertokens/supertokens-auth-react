@@ -44,6 +44,7 @@ let {
 } = require("./utils");
 let { version: nodeSDKVersion } = require("supertokens-node/lib/build/version");
 const fetch = require("isomorphic-fetch");
+const { readFile } = require("fs/promises");
 
 const PasswordlessRaw = require("supertokens-node/lib/build/recipe/passwordless/recipe").default;
 const Passwordless = require("supertokens-node/recipe/passwordless");
@@ -75,7 +76,18 @@ try {
     // OAuth2Provider is not supported by the tested version of the node SDK
 }
 
+let WebauthnRaw = undefined;
+let Webauthn = undefined;
+try {
+    WebauthnRaw = require("supertokens-node/lib/build/recipe/webauthn/recipe").default;
+    Webauthn = require("supertokens-node/recipe/webauthn");
+} catch {
+    // Webauthn is not supported by the tested version of the node SDK
+}
+
 const OTPAuth = require("otpauth");
+
+require("./webauthn/wasm_exec");
 
 let generalErrorSupported;
 
@@ -168,6 +180,23 @@ function saveCode({ email, phoneNumber, preAuthSessionId, urlWithLinkCode, userI
     });
     deviceStore.set(preAuthSessionId, device);
 }
+
+let webauthnStore = new Map();
+const saveWebauthnToken = async ({ user, recoverAccountLink }) => {
+    const webauthn = webauthnStore.get(user.email) || {
+        email: user.email,
+        recoverAccountLink: "",
+        token: "",
+    };
+    webauthn.recoverAccountLink = recoverAccountLink;
+
+    // Parse the token from the recoverAccountLink
+    const token = recoverAccountLink.split("token=")[1].replace("&tenantId=public", "");
+    webauthn.token = token;
+
+    webauthnStore.set(user.email, webauthn);
+};
+
 const formFields = (process.env.MIN_FIELDS && []) || [
     {
         id: "name",
@@ -502,6 +531,9 @@ app.get("/test/featureFlags", (req, res) => {
     available.push("recipeConfig");
     available.push("oauth2");
     available.push("accountlinking-fixes");
+    if (Webauthn) {
+        available.push("webauthn");
+    }
 
     res.send({
         available,
@@ -514,6 +546,55 @@ app.post("/test/create-oauth2-client", async (req, res, next) => {
         res.send({ client });
     } catch (e) {
         next(e);
+    }
+});
+
+app.get("/test/webauthn/get-token", async (req, res) => {
+    const webauthn = webauthnStore.get(req.query.email);
+    if (!webauthn) {
+        res.status(404).send({ error: "Webauthn not found" });
+        return;
+    }
+    res.send({ token: webauthn.token });
+});
+
+app.post("/test/webauthn/create-and-assert-credential", async (req, res) => {
+    try {
+        const { registerOptionsResponse, signInOptionsResponse, rpId, rpName, origin } = req.body;
+
+        const { createAndAssertCredential } = await getWebauthnLib();
+        const credential = createAndAssertCredential(registerOptionsResponse, signInOptionsResponse, {
+            rpId,
+            rpName,
+            origin,
+            userNotPresent: false,
+            userNotVerified: false,
+        });
+
+        res.send({ credential });
+    } catch (error) {
+        console.error("Error in create-and-assert-credential:", error);
+        res.status(500).send({ error: error.message });
+    }
+});
+
+app.post("/test/webauthn/create-credential", async (req, res) => {
+    try {
+        const { registerOptionsResponse, rpId, rpName, origin } = req.body;
+
+        const { createCredential } = await getWebauthnLib();
+        const credential = createCredential(registerOptionsResponse, {
+            rpId,
+            rpName,
+            origin,
+            userNotPresent: false,
+            userNotVerified: false,
+        });
+
+        res.send({ credential });
+    } catch (error) {
+        console.error("Error in create-credential:", error);
+        res.status(500).send({ error: error.message });
     }
 });
 
@@ -555,6 +636,9 @@ function initST() {
 
         UserRolesRaw.reset();
         PasswordlessRaw.reset();
+        if (WebauthnRaw) {
+            WebauthnRaw.reset();
+        }
         MultitenancyRaw.reset();
         AccountLinkingRaw.reset();
         UserMetadataRaw.reset();
@@ -765,6 +849,23 @@ function initST() {
     if (OAuth2Provider) {
         recipeList.push(["oauth2provider", OAuth2Provider.init()]);
     }
+    if (Webauthn) {
+        recipeList.push([
+            "webauthn",
+            Webauthn.init({
+                emailDelivery: {
+                    override: (oI) => {
+                        return {
+                            ...oI,
+                            sendEmail: async (input) => {
+                                await saveWebauthnToken(input);
+                            },
+                        };
+                    },
+                },
+            }),
+        ]);
+    }
 
     passwordlessConfig = {
         contactMethod: "EMAIL_OR_PHONE",
@@ -944,6 +1045,7 @@ function initST() {
         supertokens: {
             connectionURI,
         },
+        debug: process.env.DEBUG === "true",
         recipeList:
             enabledRecipes !== undefined
                 ? recipeList.filter(([key]) => enabledRecipes.includes(key)).map(([_key, recipeFunc]) => recipeFunc)
@@ -957,3 +1059,71 @@ function convertToRecipeUserIdIfAvailable(id) {
     }
     return id;
 }
+
+const getWebauthnLib = async () => {
+    const wasmBuffer = await readFile(__dirname + "/webauthn/webauthn.wasm");
+
+    // Set up the WebAssembly module instance
+    const go = new Go();
+    const { instance } = await WebAssembly.instantiate(wasmBuffer, go.importObject);
+    go.run(instance);
+
+    // Export extractURL from the global object
+    const createCredential = (
+        registerOptions,
+        { userNotPresent = true, userNotVerified = true, rpId, rpName, origin }
+    ) => {
+        const registerOptionsString = JSON.stringify(registerOptions);
+        const result = global.createCredential(
+            registerOptionsString,
+            rpId,
+            rpName,
+            origin,
+            userNotPresent,
+            userNotVerified
+        );
+
+        if (!result) {
+            throw new Error("Failed to create credential");
+        }
+
+        try {
+            const credential = JSON.parse(result);
+            return credential;
+        } catch (e) {
+            throw new Error("Failed to parse credential");
+        }
+    };
+
+    const createAndAssertCredential = (
+        registerOptions,
+        signInOptions,
+        { userNotPresent = false, userNotVerified = false, rpId, rpName, origin }
+    ) => {
+        const registerOptionsString = JSON.stringify(registerOptions);
+        const signInOptionsString = JSON.stringify(signInOptions);
+
+        const result = global.createAndAssertCredential(
+            registerOptionsString,
+            signInOptionsString,
+            rpId,
+            rpName,
+            origin,
+            userNotPresent,
+            userNotVerified
+        );
+
+        if (!result) {
+            throw new Error("Failed to create/assert credential");
+        }
+
+        try {
+            const parsedResult = JSON.parse(result);
+            return { attestation: parsedResult.attestation, assertion: parsedResult.assertion };
+        } catch (e) {
+            throw new Error("Failed to parse result");
+        }
+    };
+
+    return { createCredential, createAndAssertCredential };
+};
