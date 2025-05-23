@@ -32,6 +32,7 @@ import {
     getDefaultCookieScope,
     getNormalisedUserContext,
     getOriginOfPage,
+    getPublicPlugin,
     getTenantIdFromQueryParams,
     isTest,
     normaliseCookieScopeOrThrowError,
@@ -56,6 +57,7 @@ import type {
     SuperTokensPlugin,
     AllRecipeConfigs,
     PluginRouteHandler,
+    SuperTokensPublicPlugin,
 } from "./types";
 
 /*
@@ -73,6 +75,8 @@ export default class SuperTokens {
      * Instance Attributes.
      */
     appInfo: NormalisedAppInfo;
+    // give access to plugins through the instance
+    pluginList: SuperTokensPublicPlugin[] = [];
     languageTranslations: {
         defaultLanguage: string;
         userTranslationStore: TranslationStore;
@@ -119,8 +123,28 @@ export default class SuperTokens {
                 ...(this.componentOverrides.authRecipe ?? {}),
                 ...(plugin.generalAuthRecipeComponentOverrides ?? {}),
             };
-            if (plugin.routeHandlers) {
-                this.pluginRouteHandlers.push(...plugin.routeHandlers);
+        }
+
+        this.pluginList = plugins.map(getPublicPlugin);
+
+        // iterated separately so we can pass the instance plugins  as reference so they always have access to the latest
+        for (let pluginIndex = 0; pluginIndex < this.pluginList.length; pluginIndex += 1) {
+            const pluginInit = plugins[pluginIndex].init;
+
+            if (pluginInit && !this.pluginList[pluginIndex].initialized) {
+                PostSuperTokensInitCallbacks.addPostInitCallback(() => {
+                    pluginInit(config, this.pluginList, package_version);
+                    this.pluginList[pluginIndex].initialized = true;
+                });
+            }
+
+            const pluginRouteHandlers = plugins[pluginIndex].routeHandlers;
+            if (pluginRouteHandlers) {
+                const result = pluginRouteHandlers(config, this.pluginList, package_version);
+                if (result.status === "ERROR") {
+                    throw new Error(result.message);
+                }
+                this.pluginRouteHandlers.push(...result.routeHandlers);
             }
         }
 

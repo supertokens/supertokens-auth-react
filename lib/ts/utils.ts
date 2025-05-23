@@ -34,6 +34,8 @@ import type {
     NormalisedAppInfo,
     NormalisedFormField,
     NormalisedGetRedirectionURLContext,
+    SuperTokensPlugin,
+    SuperTokensPublicPlugin,
     UserContext,
 } from "./types";
 
@@ -552,4 +554,15 @@ export function useRethrowInRender() {
     }
 
     return setError;
+}
+
+export function getPublicPlugin(plugin: SuperTokensPlugin): SuperTokensPublicPlugin {
+    return {
+        id: plugin.id,
+        initialized: plugin.init ? false : true, // since the init method is optional, we default to true
+        version: plugin.version,
+        exports: plugin.exports,
+        compatibleAuthReactSDKVersions: plugin.compatibleAuthReactSDKVersions,
+        compatibleWebJSSDKVersions: plugin.compatibleWebJSSDKVersions,
+    };
 }

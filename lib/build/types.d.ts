@@ -298,8 +298,13 @@ export declare type SuperTokensPlugin = {
     version?: string;
     compatibleAuthReactSDKVersions?: string | string[];
     compatibleWebJSSDKVersions?: string | string[];
+    init?: (
+        config: Omit<SuperTokensConfig, "experimental" | "recipeList">,
+        allPlugins: Pick<SuperTokensPlugin, "id" | "version" | "exports">[],
+        sdkVersion: string
+    ) => Promise<void> | void;
     dependencies?: (
-        pluginsAbove: Pick<SuperTokensPlugin, "id" | "version">[],
+        pluginsAbove: Pick<SuperTokensPlugin, "id" | "version" | "exports">[],
         sdkVersion: string
     ) =>
         | {
@@ -316,9 +321,28 @@ export declare type SuperTokensPlugin = {
         };
     };
     generalAuthRecipeComponentOverrides?: AuthRecipeComponentOverrideMap;
-    routeHandlers?: PluginRouteHandler[];
+    routeHandlers?: (
+        config: Omit<SuperTokensConfig, "experimental" | "recipeList">,
+        allPlugins: Pick<SuperTokensPlugin, "id" | "version" | "exports">[],
+        sdkVersion: string
+    ) =>
+        | {
+              status: "OK";
+              routeHandlers: PluginRouteHandler[];
+          }
+        | {
+              status: "ERROR";
+              message: string;
+          };
     config?: (
         config: Omit<SuperTokensConfig, "experimental" | "recipeList">
     ) => Omit<SuperTokensConfig, "experimental" | "recipeList"> | undefined;
+    exports?: Record<string, any>;
+};
+export declare type SuperTokensPublicPlugin = Pick<
+    SuperTokensPlugin,
+    "id" | "version" | "exports" | "compatibleAuthReactSDKVersions" | "compatibleWebJSSDKVersions"
+> & {
+    initialized: boolean;
 };
 export {};

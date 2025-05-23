@@ -9,6 +9,8 @@ import type {
     NormalisedAppInfo,
     NormalisedFormField,
     NormalisedGetRedirectionURLContext,
+    SuperTokensPlugin,
+    SuperTokensPublicPlugin,
     UserContext,
 } from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
@@ -72,3 +74,4 @@ export declare const useOnMountAPICall: <T>(
     startLoading?: boolean
 ) => void;
 export declare function useRethrowInRender(): import("react").Dispatch<import("react").SetStateAction<undefined>>;
+export declare function getPublicPlugin(plugin: SuperTokensPlugin): SuperTokensPublicPlugin;
