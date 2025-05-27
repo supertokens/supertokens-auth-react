@@ -321,19 +321,21 @@ export declare type SuperTokensPlugin = {
         };
     };
     generalAuthRecipeComponentOverrides?: AuthRecipeComponentOverrideMap;
-    routeHandlers?: (
-        config: Omit<SuperTokensConfig, "experimental" | "recipeList">,
-        allPlugins: Pick<SuperTokensPlugin, "id" | "version" | "exports">[],
-        sdkVersion: string
-    ) =>
-        | {
-              status: "OK";
-              routeHandlers: PluginRouteHandler[];
-          }
-        | {
-              status: "ERROR";
-              message: string;
-          };
+    routeHandlers?:
+        | ((
+              config: Omit<SuperTokensConfig, "experimental" | "recipeList">,
+              allPlugins: Pick<SuperTokensPlugin, "id" | "version" | "exports">[],
+              sdkVersion: string
+          ) =>
+              | {
+                    status: "OK";
+                    routeHandlers: PluginRouteHandler[];
+                }
+              | {
+                    status: "ERROR";
+                    message: string;
+                })
+        | PluginRouteHandler[];
     config?: (
         config: Omit<SuperTokensConfig, "experimental" | "recipeList">
     ) => Omit<SuperTokensConfig, "experimental" | "recipeList"> | undefined;
