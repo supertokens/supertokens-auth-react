@@ -3,10 +3,8 @@
  * All rights reserved.
  */
 
-import fetch from "isomorphic-fetch";
-import { TEST_SERVER_BASE_URL, TEST_CLIENT_BASE_URL } from "../constants";
+import { TEST_CLIENT_BASE_URL } from "../constants";
 import {
-    backendBeforeEach,
     setupBrowser,
     screenshotOnFailure,
     clearBrowserCookiesWithoutAffectingConsole,
@@ -14,15 +12,17 @@ import {
     getTestEmail,
     waitForSTElement,
     submitForm,
-    setEnabledRecipes,
     setInputValues,
-    setAccountLinkingConfig,
     getPasswordlessDevice,
     waitForUrl,
     changeEmail,
     getLatestURLWithToken,
     getUserIdWithFetch,
     submitFormUnsafe,
+    backendHook,
+    setupCoreApp,
+    setupST,
+    isWebauthnSupported,
 } from "../helpers";
 import {
     openRecoveryAccountPage,
@@ -45,25 +45,21 @@ describe("SuperTokens WebAuthn Account Linking", function () {
     let browser;
     let page;
     let consoleLogs = [];
+    let skipped = false;
+    const appConfig = {
+        enabledRecipes: ["webauthn", "emailpassword", "session", "dashboard", "userroles", "multifactorauth"],
+    };
 
     before(async function () {
-        await backendBeforeEach();
+        if (!(await isWebauthnSupported())) {
+            skipped = true;
+            this.skip();
+        }
 
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await setEnabledRecipes([
-            "webauthn",
-            "emailpassword",
-            "passwordless",
-            "emailverification",
-            "session",
-            "dashboard",
-            "userroles",
-            "multifactorauth",
-            "accountlinking",
-        ]);
+        await backendHook("before");
+        const coreUrl = await setupCoreApp();
+        appConfig.coreUrl = coreUrl;
+        await setupST(appConfig);
 
         browser = await setupBrowser();
         page = await browser.newPage();
@@ -76,21 +72,22 @@ describe("SuperTokens WebAuthn Account Linking", function () {
     });
 
     after(async function () {
-        await browser.close();
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
+        if (skipped) {
+            return;
+        }
 
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
+        await page?.close();
+        await browser?.close();
+        await backendHook("after");
     });
 
-    afterEach(function () {
-        return screenshotOnFailure(this, browser);
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await backendHook("afterEach");
     });
 
     beforeEach(async function () {
+        await backendHook("beforeEach");
         consoleLogs = [];
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         await toggleSignInSignUp(page);
@@ -98,7 +95,16 @@ describe("SuperTokens WebAuthn Account Linking", function () {
 
     it("Should create separate users when signing up with same email using different auth methods (account linking disabled)", async function () {
         // Disable account linking
-        await setAccountLinkingConfig(false, false);
+        await setupST({
+            ...appConfig,
+            accountLinkingConfig: {
+                enabled: true,
+                shouldAutoLink: {
+                    shouldAutomaticallyLink: false,
+                    shouldRequireVerification: false,
+                },
+            },
+        });
         const email = await getTestEmail();
 
         await Promise.all([
@@ -148,7 +154,16 @@ describe("SuperTokens WebAuthn Account Linking", function () {
 
     it("should handle email updates correctly for user that signed up with webauthn", async () => {
         await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
-        await setAccountLinkingConfig(false, false);
+        await setupST({
+            ...appConfig,
+            accountLinkingConfig: {
+                enabled: true,
+                shouldAutoLink: {
+                    shouldAutomaticallyLink: false,
+                    shouldRequireVerification: false,
+                },
+            },
+        });
         const email = await getTestEmail();
 
         await tryWebauthnSignUp(page, email);
@@ -197,7 +212,16 @@ describe("SuperTokens WebAuthn Account Linking", function () {
 
     it("should allow same emails to be linked but requiring verification", async () => {
         await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
-        await setAccountLinkingConfig(true, true, true);
+        await setupST({
+            ...appConfig,
+            accountLinkingConfig: {
+                enabled: true,
+                shouldAutoLink: {
+                    shouldAutomaticallyLink: true,
+                    shouldRequireVerification: true,
+                },
+            },
+        });
         const email = await getTestEmail();
 
         await tryPasswordlessSignInUp(page, email);
