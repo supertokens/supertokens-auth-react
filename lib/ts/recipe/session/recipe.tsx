@@ -21,6 +21,7 @@ import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
 
 import SuperTokens from "../../superTokens";
 import {
+    applyPlugins,
     getLocalStorage,
     getNormalisedUserContext,
     getTenantIdFromQueryParams,
@@ -41,7 +42,6 @@ import type { NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
 import type {
     Navigate,
-    NormalisedAppInfo,
     NormalisedConfigWithAppInfoAndRecipeID,
     NormalisedGetRedirectionURLContext,
     RecipeInitResult,
@@ -303,11 +303,12 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     }
 
     static init(config?: InputType): RecipeInitResult<unknown, unknown, unknown, any> {
-        const normalisedConfig = normaliseSessionConfig(config);
-
         return {
             recipeID: Session.RECIPE_ID,
-            authReact: (appInfo: NormalisedAppInfo): RecipeModule<unknown, unknown, unknown, any> => {
+            authReact: (appInfo, _, overrideMaps): RecipeModule<unknown, unknown, unknown, any> => {
+                const normalisedConfig = normaliseSessionConfig(
+                    applyPlugins(Session.RECIPE_ID, config, overrideMaps ?? [])
+                );
                 Session.instance = new Session({
                     ...normalisedConfig,
                     appInfo,
@@ -315,33 +316,37 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                 });
                 return Session.instance;
             },
-            webJS: SessionWebJS.init({
-                ...normalisedConfig,
-                onHandleEvent: (event) => {
-                    if (normalisedConfig.onHandleEvent !== undefined) {
-                        normalisedConfig.onHandleEvent(event);
-                    }
+            webJS: (...args) => {
+                const normalisedConfig = normaliseSessionConfig(config);
+                const init = SessionWebJS.init({
+                    ...normalisedConfig,
+                    onHandleEvent: (event) => {
+                        if (normalisedConfig.onHandleEvent !== undefined) {
+                            normalisedConfig.onHandleEvent(event);
+                        }
 
-                    void Session.getInstanceOrThrow().notifyListeners(event);
-                },
-                preAPIHook: async (context) => {
-                    const response = {
-                        ...context,
-                        requestInit: {
-                            ...context.requestInit,
-                            headers: {
-                                ...context.requestInit.headers,
-                                rid: Session.RECIPE_ID,
+                        void Session.getInstanceOrThrow().notifyListeners(event);
+                    },
+                    preAPIHook: async (context) => {
+                        const response = {
+                            ...context,
+                            requestInit: {
+                                ...context.requestInit,
+                                headers: {
+                                    ...context.requestInit.headers,
+                                    rid: Session.RECIPE_ID,
+                                },
                             },
-                        },
-                    };
-                    if (normalisedConfig.preAPIHook === undefined) {
-                        return response;
-                    } else {
-                        return normalisedConfig.preAPIHook(context);
-                    }
-                },
-            }),
+                        };
+                        if (normalisedConfig.preAPIHook === undefined) {
+                            return response;
+                        } else {
+                            return normalisedConfig.preAPIHook(context);
+                        }
+                    },
+                });
+                return init(...args);
+            },
         };
     }
 

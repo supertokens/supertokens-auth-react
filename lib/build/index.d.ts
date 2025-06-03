@@ -30,6 +30,7 @@ export declare const redirectToAuth: (options?: {
     redirectBack?: boolean;
     userContext?: UserContext;
 }) => Promise<void>;
+export type { SuperTokensConfig, SuperTokensPublicConfig, SuperTokensPublicPlugin, SuperTokensPlugin } from "./types";
 export { SuperTokensWrapper } from "./components/supertokensWrapper";
 export { useTranslation } from "./translation/translationContext";
 export { useUserContext } from "./usercontext";

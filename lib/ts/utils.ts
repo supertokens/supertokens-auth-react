@@ -34,10 +34,14 @@ import type {
     NormalisedAppInfo,
     NormalisedFormField,
     NormalisedGetRedirectionURLContext,
+    SuperTokensConfig,
     SuperTokensPlugin,
+    SuperTokensPublicConfig,
     SuperTokensPublicPlugin,
+    AllRecipeConfigs,
     UserContext,
 } from "./types";
+import OverrideableBuilder from "supertokens-js-override";
 
 /*
  * getRecipeIdFromPath
@@ -556,6 +560,40 @@ export function useRethrowInRender() {
     return setError;
 }
 
+export function applyPlugins<T extends keyof AllRecipeConfigs>(
+    recipeId: T,
+    config: AllRecipeConfigs[T] | undefined,
+    plugins: NonNullable<SuperTokensPlugin["overrideMap"]>[]
+): AllRecipeConfigs[T] {
+    let _config = { ...(config ?? ({} as AllRecipeConfigs[T])) };
+
+    let functionLayers = [_config.override?.functions];
+    for (const plugin of plugins) {
+        const overrides = plugin[recipeId];
+        if (overrides) {
+            _config = { ...(overrides.config ? overrides.config(_config) : _config) };
+            if (overrides.functions !== undefined) {
+                functionLayers.push(overrides.functions as any);
+            }
+        }
+    }
+    functionLayers = functionLayers.reverse().filter((layer) => layer !== undefined);
+
+    if (functionLayers.length > 0) {
+        _config.override = {
+            ..._config.override,
+            functions: (oI: any, builder: OverrideableBuilder<any>) => {
+                for (const layer of functionLayers) {
+                    builder.override(layer as any);
+                }
+                return oI as any;
+            },
+        };
+    }
+
+    return _config;
+}
+
 export function getPublicPlugin(plugin: SuperTokensPlugin): SuperTokensPublicPlugin {
     return {
         id: plugin.id,
@@ -565,4 +603,9 @@ export function getPublicPlugin(plugin: SuperTokensPlugin): SuperTokensPublicPlu
         compatibleAuthReactSDKVersions: plugin.compatibleAuthReactSDKVersions,
         compatibleWebJSSDKVersions: plugin.compatibleWebJSSDKVersions,
     };
+}
+
+export function getPublicConfig(config: SuperTokensConfig): SuperTokensPublicConfig {
+    const { experimental, recipeList, ...publicConfig } = config;
+    return publicConfig;
 }

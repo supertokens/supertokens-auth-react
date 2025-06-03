@@ -68,6 +68,10 @@ export const changeLanguage = SuperTokensAPIWrapper.changeLanguage;
 export const loadTranslation = SuperTokensAPIWrapper.loadTranslation;
 export const redirectToAuth = SuperTokensAPIWrapper.redirectToAuth;
 
+// these need to be exported so other developers are able to build on top of them
+// when devs only used the sdk to build their own apps, there was no (real) need for these to be exported.
+export type { SuperTokensConfig, SuperTokensPublicConfig, SuperTokensPublicPlugin, SuperTokensPlugin } from "./types";
+
 export { SuperTokensWrapper } from "./components/supertokensWrapper";
 export { useTranslation } from "./translation/translationContext";
 export { useUserContext } from "./usercontext";

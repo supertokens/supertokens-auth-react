@@ -21,7 +21,7 @@ import ThirdpartyWebJS from "supertokens-web-js/recipe/thirdparty";
 
 import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
-import { isTest } from "../../utils";
+import { applyPlugins, isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
 import { FactorIds } from "../multifactorauth/types";
 
@@ -36,7 +36,6 @@ import type {
     UserInput,
 } from "./types";
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
-import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
 
 /*
@@ -77,17 +76,21 @@ export default class ThirdParty extends AuthRecipe<
     static init(
         config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
-        const normalisedConfig = normaliseThirdPartyConfig(config);
         return {
             recipeID: ThirdParty.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo,
+                _,
+                overrideMaps
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
+                const normalisedConfig = normaliseThirdPartyConfig(
+                    applyPlugins(ThirdParty.RECIPE_ID, config, overrideMaps ?? [])
+                );
                 ThirdParty.instance = new ThirdParty({
                     ...normalisedConfig,
                     appInfo,
@@ -95,17 +98,24 @@ export default class ThirdParty extends AuthRecipe<
                 });
                 return ThirdParty.instance;
             },
-            webJS: ThirdpartyWebJS.init({
-                ...normalisedConfig,
-                override: {
-                    functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(ThirdParty.RECIPE_ID, normalisedConfig.onHandleEvent);
-                        builder.override(functions);
-                        builder.override(normalisedConfig.override.functions);
-                        return originalImpl;
+            webJS: (...args) => {
+                const normalisedConfig = normaliseThirdPartyConfig(config);
+                const init = ThirdpartyWebJS.init({
+                    ...normalisedConfig,
+                    override: {
+                        functions: (originalImpl, builder) => {
+                            const functions = getFunctionOverrides(
+                                ThirdParty.RECIPE_ID,
+                                normalisedConfig.onHandleEvent
+                            );
+                            builder.override(functions);
+                            builder.override(normalisedConfig.override.functions);
+                            return originalImpl;
+                        },
                     },
-                },
-            }),
+                });
+                return init(...args);
+            },
         };
     }
 

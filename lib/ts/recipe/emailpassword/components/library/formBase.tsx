@@ -297,6 +297,7 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                     }
                 }
             } catch (e) {
+                console.error(e);
                 props.onError("SOMETHING_WENT_WRONG_ERROR");
             } finally {
                 setIsLoading(false);

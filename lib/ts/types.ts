@@ -194,7 +194,8 @@ export type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "signOut">;
 
 export type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
     appInfo: NormalisedAppInfo,
-    enableDebugLogs: boolean
+    enableDebugLogs: boolean,
+    overrideMaps: NonNullable<SuperTokensPlugin["overrideMap"]>[]
 ) => BaseRecipeModule<T, S, R, N>;
 
 export type AppInfoUserInput = {
@@ -528,13 +529,10 @@ export type SuperTokensPlugin = {
     version?: string;
     compatibleAuthReactSDKVersions?: string | string[]; // match the syntax of the engines field in package.json
     compatibleWebJSSDKVersions?: string | string[]; // match the syntax of the engines field in package.json
-    init?: (
-        config: Omit<SuperTokensConfig, "experimental" | "recipeList">,
-        allPlugins: Pick<SuperTokensPlugin, "id" | "version" | "exports">[],
-        sdkVersion: string
-    ) => Promise<void> | void;
+    init?: (config: SuperTokensPublicConfig, allPlugins: SuperTokensPublicPlugin[], sdkVersion: string) => void;
     dependencies?: (
-        pluginsAbove: Pick<SuperTokensPlugin, "id" | "version" | "exports">[],
+        config: SuperTokensPublicConfig,
+        pluginsAbove: SuperTokensPublicPlugin[],
         sdkVersion: string
     ) => { status: "OK"; pluginsToAdd?: SuperTokensPlugin[] } | { status: "ERROR"; message: string };
     overrideMap?: {
@@ -545,14 +543,12 @@ export type SuperTokensPlugin = {
     generalAuthRecipeComponentOverrides?: AuthRecipeComponentOverrideMap;
     routeHandlers?:
         | ((
-              config: Omit<SuperTokensConfig, "experimental" | "recipeList">,
-              allPlugins: Pick<SuperTokensPlugin, "id" | "version" | "exports">[],
+              config: SuperTokensPublicConfig,
+              allPlugins: SuperTokensPublicPlugin[],
               sdkVersion: string
           ) => { status: "OK"; routeHandlers: PluginRouteHandler[] } | { status: "ERROR"; message: string })
         | PluginRouteHandler[];
-    config?: (
-        config: Omit<SuperTokensConfig, "experimental" | "recipeList">
-    ) => Omit<SuperTokensConfig, "experimental" | "recipeList"> | undefined;
+    config?: (config: SuperTokensPublicConfig) => SuperTokensPublicConfig | undefined;
     exports?: Record<string, any>;
 };
 
@@ -560,3 +556,5 @@ export type SuperTokensPublicPlugin = Pick<
     SuperTokensPlugin,
     "id" | "version" | "exports" | "compatibleAuthReactSDKVersions" | "compatibleWebJSSDKVersions"
 > & { initialized: boolean };
+
+export type SuperTokensPublicConfig = Omit<SuperTokensConfig, "experimental" | "recipeList">;

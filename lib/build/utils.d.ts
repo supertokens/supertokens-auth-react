@@ -9,8 +9,11 @@ import type {
     NormalisedAppInfo,
     NormalisedFormField,
     NormalisedGetRedirectionURLContext,
+    SuperTokensConfig,
     SuperTokensPlugin,
+    SuperTokensPublicConfig,
     SuperTokensPublicPlugin,
+    AllRecipeConfigs,
     UserContext,
 } from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
@@ -74,4 +77,10 @@ export declare const useOnMountAPICall: <T>(
     startLoading?: boolean
 ) => void;
 export declare function useRethrowInRender(): import("react").Dispatch<import("react").SetStateAction<undefined>>;
+export declare function applyPlugins<T extends keyof AllRecipeConfigs>(
+    recipeId: T,
+    config: AllRecipeConfigs[T] | undefined,
+    plugins: NonNullable<SuperTokensPlugin["overrideMap"]>[]
+): AllRecipeConfigs[T];
 export declare function getPublicPlugin(plugin: SuperTokensPlugin): SuperTokensPublicPlugin;
+export declare function getPublicConfig(config: SuperTokensConfig): SuperTokensPublicConfig;

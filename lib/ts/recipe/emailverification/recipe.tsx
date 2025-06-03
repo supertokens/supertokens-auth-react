@@ -22,7 +22,7 @@ import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuper
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 
 import { SSR_ERROR } from "../../constants";
-import { getDefaultRedirectionURLForPath, isTest } from "../../utils";
+import { applyPlugins, getDefaultRedirectionURLForPath, isTest } from "../../utils";
 import RecipeModule from "../recipeModule";
 
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
@@ -75,18 +75,21 @@ export default class EmailVerification extends RecipeModule<
     static init(
         config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
-        const normalisedConfig = normaliseEmailVerificationFeature(config);
-
         return {
             recipeID: EmailVerification.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo: NormalisedAppInfo,
+                _,
+                overrideMaps
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
+                const normalisedConfig = normaliseEmailVerificationFeature(
+                    applyPlugins(EmailVerification.RECIPE_ID, config, overrideMaps ?? [])
+                );
                 EmailVerification.instance = new EmailVerification({
                     ...normalisedConfig,
                     appInfo,
@@ -94,17 +97,21 @@ export default class EmailVerification extends RecipeModule<
                 });
                 return EmailVerification.instance;
             },
-            webJS: EmailVerificationWebJS.init({
-                ...normalisedConfig,
-                override: {
-                    functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
-                        builder.override(functions);
-                        builder.override(normalisedConfig.override.functions);
-                        return originalImpl;
+            webJS: (...args) => {
+                const normalisedConfig = normaliseEmailVerificationFeature(config);
+                const init = EmailVerificationWebJS.init({
+                    ...normalisedConfig, // plugins are applied by webjs
+                    override: {
+                        functions: (originalImpl, builder) => {
+                            const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
+                            builder.override(functions);
+                            builder.override(normalisedConfig.override.functions);
+                            return originalImpl;
+                        },
                     },
-                },
-            }),
+                });
+                return init(...args);
+            },
         };
     }
 

@@ -23,7 +23,7 @@ import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuper
 import { OTPEmailIcon } from "../../components/assets/otpEmailIcon";
 import { OTPSMSIcon } from "../../components/assets/otpSMSIcon";
 import { SSR_ERROR } from "../../constants";
-import { isTest } from "../../utils";
+import { applyPlugins, isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
 import MultiFactorAuth from "../multifactorauth/recipe";
 import { FactorIds } from "../multifactorauth/types";
@@ -39,7 +39,6 @@ import type {
     UserInput,
 } from "./types";
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
-import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
 
 export const otpPhoneFactor = {
@@ -103,18 +102,21 @@ export default class Passwordless extends AuthRecipe<
     static init(
         config: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
-        const normalisedConfig = normalisePasswordlessConfig(config);
-
         return {
             recipeID: Passwordless.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo,
+                _,
+                overrideMaps
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
+                const normalisedConfig = normalisePasswordlessConfig(
+                    applyPlugins(Passwordless.RECIPE_ID, config, overrideMaps ?? [])
+                );
                 Passwordless.instance = new Passwordless({
                     ...normalisedConfig,
                     appInfo,
@@ -122,17 +124,21 @@ export default class Passwordless extends AuthRecipe<
                 });
                 return Passwordless.instance;
             },
-            webJS: PasswordlessWebJS.init({
-                ...normalisedConfig,
-                override: {
-                    functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
-                        builder.override(functions);
-                        builder.override(normalisedConfig.override.functions);
-                        return originalImpl;
+            webJS: (...args) => {
+                const normalisedConfig = normalisePasswordlessConfig(config);
+                const init = PasswordlessWebJS.init({
+                    ...normalisedConfig,
+                    override: {
+                        functions: (originalImpl, builder) => {
+                            const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
+                            builder.override(functions);
+                            builder.override(normalisedConfig.override.functions);
+                            return originalImpl;
+                        },
                     },
-                },
-            }),
+                });
+                return init(...args);
+            },
         };
     }
 

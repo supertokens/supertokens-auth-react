@@ -119,7 +119,8 @@ export declare type SuperTokensConfig = {
 export declare type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "signOut">;
 export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
     appInfo: NormalisedAppInfo,
-    enableDebugLogs: boolean
+    enableDebugLogs: boolean,
+    overrideMaps: NonNullable<SuperTokensPlugin["overrideMap"]>[]
 ) => BaseRecipeModule<T, S, R, N>;
 export declare type AppInfoUserInput = {
     appName: string;
@@ -298,13 +299,10 @@ export declare type SuperTokensPlugin = {
     version?: string;
     compatibleAuthReactSDKVersions?: string | string[];
     compatibleWebJSSDKVersions?: string | string[];
-    init?: (
-        config: Omit<SuperTokensConfig, "experimental" | "recipeList">,
-        allPlugins: Pick<SuperTokensPlugin, "id" | "version" | "exports">[],
-        sdkVersion: string
-    ) => Promise<void> | void;
+    init?: (config: SuperTokensPublicConfig, allPlugins: SuperTokensPublicPlugin[], sdkVersion: string) => void;
     dependencies?: (
-        pluginsAbove: Pick<SuperTokensPlugin, "id" | "version" | "exports">[],
+        config: SuperTokensPublicConfig,
+        pluginsAbove: SuperTokensPublicPlugin[],
         sdkVersion: string
     ) =>
         | {
@@ -323,8 +321,8 @@ export declare type SuperTokensPlugin = {
     generalAuthRecipeComponentOverrides?: AuthRecipeComponentOverrideMap;
     routeHandlers?:
         | ((
-              config: Omit<SuperTokensConfig, "experimental" | "recipeList">,
-              allPlugins: Pick<SuperTokensPlugin, "id" | "version" | "exports">[],
+              config: SuperTokensPublicConfig,
+              allPlugins: SuperTokensPublicPlugin[],
               sdkVersion: string
           ) =>
               | {
@@ -336,9 +334,7 @@ export declare type SuperTokensPlugin = {
                     message: string;
                 })
         | PluginRouteHandler[];
-    config?: (
-        config: Omit<SuperTokensConfig, "experimental" | "recipeList">
-    ) => Omit<SuperTokensConfig, "experimental" | "recipeList"> | undefined;
+    config?: (config: SuperTokensPublicConfig) => SuperTokensPublicConfig | undefined;
     exports?: Record<string, any>;
 };
 export declare type SuperTokensPublicPlugin = Pick<
@@ -347,4 +343,5 @@ export declare type SuperTokensPublicPlugin = Pick<
 > & {
     initialized: boolean;
 };
+export declare type SuperTokensPublicConfig = Omit<SuperTokensConfig, "experimental" | "recipeList">;
 export {};

@@ -27,6 +27,7 @@ import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
 import {
     appendQueryParamsToURL,
+    applyPlugins,
     getCurrentNormalisedUrlPathWithQueryParamsAndFragments,
     getDefaultRedirectionURLForPath,
     getRedirectToPathFromURL,
@@ -56,7 +57,6 @@ import type {
     UserContext,
     WebJSRecipeInterface,
 } from "../../types";
-import type { NormalisedAppInfo } from "../../types";
 
 export default class MultiFactorAuth extends RecipeModule<
     GetRedirectionURLContext,
@@ -100,18 +100,21 @@ export default class MultiFactorAuth extends RecipeModule<
     static init(
         config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
-        const normalisedConfig = normaliseMultiFactorAuthFeature(config);
-
         return {
             recipeID: MultiFactorAuth.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo,
+                _,
+                overrideMaps
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
+                const normalisedConfig = normaliseMultiFactorAuthFeature(
+                    applyPlugins(MultiFactorAuth.RECIPE_ID, config, overrideMaps ?? [])
+                );
                 MultiFactorAuth.instance = new MultiFactorAuth({
                     ...normalisedConfig,
                     appInfo,
@@ -119,17 +122,21 @@ export default class MultiFactorAuth extends RecipeModule<
                 });
                 return MultiFactorAuth.instance;
             },
-            webJS: MultiFactorAuthWebJS.init({
-                ...normalisedConfig,
-                override: {
-                    functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
-                        builder.override(functions);
-                        builder.override(normalisedConfig.override.functions);
-                        return originalImpl;
+            webJS: (...args) => {
+                const normalisedConfig = normaliseMultiFactorAuthFeature(config);
+                const init = MultiFactorAuthWebJS.init({
+                    ...normalisedConfig,
+                    override: {
+                        functions: (originalImpl, builder) => {
+                            const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
+                            builder.override(functions);
+                            builder.override(normalisedConfig.override.functions);
+                            return originalImpl;
+                        },
                     },
-                },
-            }),
+                });
+                return init(...args);
+            },
         };
     }
 

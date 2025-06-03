@@ -32,6 +32,7 @@ import {
     getDefaultCookieScope,
     getNormalisedUserContext,
     getOriginOfPage,
+    getPublicConfig,
     getPublicPlugin,
     getTenantIdFromQueryParams,
     isTest,
@@ -111,14 +112,13 @@ export default class SuperTokens {
         for (const plugin of plugins) {
             if (plugin.overrideMap !== undefined) {
                 for (const t of Object.keys(plugin.overrideMap) as (keyof AllRecipeConfigs)[]) {
-                    if (plugin.overrideMap[t]?.components) {
-                        this.componentOverrides[t] = {
-                            ...this.componentOverrides[t],
-                            ...(plugin.overrideMap[t]?.components as AllRecipeComponentOverrides[typeof t]),
-                        };
-                    }
+                    this.componentOverrides[t] = {
+                        ...this.componentOverrides[t],
+                        ...((plugin.overrideMap[t]?.components as AllRecipeComponentOverrides[typeof t]) ?? {}),
+                    };
                 }
             }
+
             this.componentOverrides.authRecipe = {
                 ...(this.componentOverrides.authRecipe ?? {}),
                 ...(plugin.generalAuthRecipeComponentOverrides ?? {}),
@@ -167,15 +167,18 @@ export default class SuperTokens {
             userTranslationFunc: translationConfig.translationFunc,
         };
 
-        const enableDebugLogs = Boolean(config?.enableDebugLogs);
+        const overrideMaps = plugins
+            .filter((p) => p.overrideMap !== undefined)
+            .map((p) => p.overrideMap) as NonNullable<SuperTokensPlugin["overrideMap"]>[];
 
+        const enableDebugLogs = Boolean(config?.enableDebugLogs);
         if (enableDebugLogs) {
             enableLogging();
         }
 
         this.userGetRedirectionURL = config.getRedirectionURL;
         this.recipeList = config.recipeList.map(({ authReact }) => {
-            return authReact(this.appInfo, enableDebugLogs);
+            return authReact(this.appInfo, enableDebugLogs, overrideMaps);
         });
 
         this.rootStyle = config.style ?? "";
@@ -218,7 +221,11 @@ export default class SuperTokens {
                     }
                 }
                 if (plugin.dependencies) {
-                    const result = plugin.dependencies(finalPluginList, package_version);
+                    const result = plugin.dependencies(
+                        getPublicConfig(config),
+                        finalPluginList.map(getPublicPlugin),
+                        package_version
+                    );
                     if (result.status === "ERROR") {
                         throw new Error(result.message);
                     }
@@ -232,7 +239,7 @@ export default class SuperTokens {
 
         for (const plugin of finalPluginList) {
             if (plugin.config) {
-                config = { ...config, ...plugin.config(config) };
+                config = { ...config, ...plugin.config(getPublicConfig(config)) };
             }
         }
 

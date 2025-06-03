@@ -20,7 +20,7 @@
 import EmailPasswordWebJS from "supertokens-web-js/recipe/emailpassword";
 
 import { SSR_ERROR } from "../../constants";
-import { getDefaultRedirectionURLForPath, isTest } from "../../utils";
+import { applyPlugins, getDefaultRedirectionURLForPath, isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
 import { FactorIds } from "../multifactorauth/types";
 
@@ -36,7 +36,6 @@ import type {
     UserInput,
 } from "./types";
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
-import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
 
 /*
@@ -75,18 +74,21 @@ export default class EmailPassword extends AuthRecipe<
     static init(
         config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
-        const normalisedConfig = normaliseEmailPasswordConfig(config);
-
         return {
             recipeID: EmailPassword.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo,
+                _,
+                overrideMaps
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
+                const normalisedConfig = normaliseEmailPasswordConfig(
+                    applyPlugins(EmailPassword.RECIPE_ID, config, overrideMaps ?? [])
+                );
                 EmailPassword.instance = new EmailPassword({
                     ...normalisedConfig,
                     appInfo,
@@ -94,17 +96,21 @@ export default class EmailPassword extends AuthRecipe<
                 });
                 return EmailPassword.instance;
             },
-            webJS: EmailPasswordWebJS.init({
-                ...normalisedConfig,
-                override: {
-                    functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
-                        builder.override(functions);
-                        builder.override(normalisedConfig.override.functions);
-                        return originalImpl;
+            webJS: (...args) => {
+                const normalisedConfig = normaliseEmailPasswordConfig(config);
+                const init = EmailPasswordWebJS.init({
+                    ...normalisedConfig, // plugins are applied by webjs
+                    override: {
+                        functions: (originalImpl, builder) => {
+                            const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
+                            builder.override(functions);
+                            builder.override(normalisedConfig.override.functions);
+                            return originalImpl;
+                        },
                     },
-                },
-            }),
+                });
+                return init(...args);
+            },
         };
     }
 

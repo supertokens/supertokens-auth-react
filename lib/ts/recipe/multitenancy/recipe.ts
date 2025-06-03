@@ -22,7 +22,7 @@ import { getNormalisedUserContext } from "supertokens-web-js/utils";
 
 import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
-import { isTest } from "../../utils";
+import { applyPlugins, isTest } from "../../utils";
 import { BaseRecipeModule } from "../recipeModule/baseRecipeModule";
 
 import { hasIntersectingRecipes } from "./utils";
@@ -35,7 +35,6 @@ import type {
     WebJSRecipeInterface,
     UserContext,
 } from "../../types";
-import type { NormalisedAppInfo } from "../../types";
 import type AuthRecipe from "../authRecipe";
 
 /*
@@ -99,10 +98,12 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
     }
 
     static init(config?: UserInput): RecipeInitResult<any, any, any, any> {
-        const normalisedConfig = normaliseMultitenancyConfig(config);
         return {
             recipeID: Multitenancy.RECIPE_ID,
-            authReact: (appInfo: NormalisedAppInfo): BaseRecipeModule<any, any, any, any> => {
+            authReact: (appInfo, _, overrideMaps): BaseRecipeModule<any, any, any, any> => {
+                const normalisedConfig = normaliseMultitenancyConfig(
+                    applyPlugins(Multitenancy.RECIPE_ID, config, overrideMaps ?? [])
+                );
                 Multitenancy.instance = new Multitenancy({
                     ...normalisedConfig,
                     appInfo,
@@ -110,9 +111,13 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
                 });
                 return Multitenancy.instance;
             },
-            webJS: MultitenancyWebJS.init({
-                ...normalisedConfig,
-            }),
+            webJS: (...args) => {
+                const normalisedConfig = normaliseMultitenancyConfig(config);
+                const init = MultitenancyWebJS.init({
+                    ...normalisedConfig,
+                });
+                return init(...args);
+            },
         };
     }
 
