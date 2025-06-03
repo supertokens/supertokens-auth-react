@@ -14,8 +14,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            - run: npm ci || true
-            - run: chown -R 1001:121 "/github/home/.npm"
             - run: npm ci
             - run: cd test/with-typescript && npm ci
             - run: ./hooks/pre-commit.sh
