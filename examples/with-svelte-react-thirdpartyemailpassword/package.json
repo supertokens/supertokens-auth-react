@@ -43,6 +43,6 @@
         "sirv-cli": "^2.0.0",
         "supertokens-auth-react": "latest",
         "supertokens-node": "latest",
-        "svelte-navigator": "^3.1.5"
+        "svelte-navigator": "latest"
     }
 }
