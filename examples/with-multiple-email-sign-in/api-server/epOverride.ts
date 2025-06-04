@@ -7,7 +7,7 @@ export function epOverride(oI: APIInterface): APIInterface {
         signInPOST: async function (input) {
             const emailField = input.formFields.find((f) => f.id === "email")!;
 
-            let primaryEmail = getPrimaryEmailFromInputEmail(emailField.value);
+            let primaryEmail = getPrimaryEmailFromInputEmail(emailField.value as string);
             if (primaryEmail !== undefined) {
                 emailField.value = primaryEmail;
             }
@@ -16,7 +16,7 @@ export function epOverride(oI: APIInterface): APIInterface {
         signUpPOST: async function (input) {
             const emailField = input.formFields.find((f) => f.id === "email")!;
 
-            let primaryEmail = getPrimaryEmailFromInputEmail(emailField.value);
+            let primaryEmail = getPrimaryEmailFromInputEmail(emailField.value as string);
             if (primaryEmail !== undefined) {
                 emailField.value = primaryEmail;
             }
