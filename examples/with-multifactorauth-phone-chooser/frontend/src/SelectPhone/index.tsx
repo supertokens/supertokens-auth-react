@@ -23,7 +23,10 @@ export default function SelectPhone() {
                         navigate: nav,
                     });
                 } else if (loadedInfo.user.phoneNumbers.length === 1) {
-                    await Passwordless.createCode({ phoneNumber: loadedInfo.user.phoneNumbers[0] });
+                    await Passwordless.createCode({
+                        phoneNumber: loadedInfo.user.phoneNumbers[0],
+                        shouldTryLinkingWithSessionUser: true,
+                    });
                     await MultiFactorAuth.redirectToFactor({
                         factorId: MultiFactorAuth.FactorIds.OTP_PHONE,
                         redirectBack: false,
@@ -60,7 +63,7 @@ export default function SelectPhone() {
                     <li
                         className="phoneNumberCard"
                         onClick={() => {
-                            Passwordless.createCode({ phoneNumber: number })
+                            Passwordless.createCode({ phoneNumber: number, shouldTryLinkingWithSessionUser: true })
                                 .then(async (info) => {
                                     if (info.status !== "OK") {
                                         setError(info.reason);
@@ -72,6 +75,7 @@ export default function SelectPhone() {
                                                 contactMethod: "PHONE",
                                                 contactInfo: number,
                                                 hasOtherPhoneNumbers: true,
+                                                shouldTryLinkingWithSessionUser: true,
                                             },
                                         });
                                         return MultiFactorAuth.redirectToFactor({

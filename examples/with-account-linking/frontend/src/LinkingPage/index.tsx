@@ -54,6 +54,7 @@ export const LinkingPage: React.FC = () => {
         try {
             let response = await Passwordless.createCode({
                 phoneNumber,
+                shouldTryLinkingWithSessionUser: true,
             });
 
             if (cancel) {
