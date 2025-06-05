@@ -47,7 +47,17 @@ describe("SuperTokens WebAuthn Account Linking", function () {
     let consoleLogs = [];
     let skipped = false;
     const appConfig = {
-        enabledRecipes: ["webauthn", "emailpassword", "session", "dashboard", "userroles", "multifactorauth"],
+        enabledRecipes: [
+            "webauthn",
+            "emailpassword",
+            "session",
+            "dashboard",
+            "userroles",
+            "multifactorauth",
+            "passwordless",
+            "emailverification",
+            "accountlinking",
+        ],
     };
 
     before(async function () {
