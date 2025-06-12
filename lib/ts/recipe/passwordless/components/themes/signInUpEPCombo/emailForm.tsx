@@ -30,7 +30,11 @@ import type { SignInUpEPComboEmailFormProps } from "../../../types";
 
 export const EPComboEmailForm = withOverride(
     "PasswordlessEPComboEmailForm",
-    function PasswordlessEPComboEmailForm(props: SignInUpEPComboEmailFormProps): JSX.Element {
+    function PasswordlessEPComboEmailForm(
+        props: SignInUpEPComboEmailFormProps & {
+            footer?: JSX.Element;
+        }
+    ): JSX.Element {
         const t = useTranslation();
 
         const formFields: FormFieldThemeProps[] = [
@@ -45,6 +49,19 @@ export const EPComboEmailForm = withOverride(
                 validate: defaultValidate,
             },
         ];
+
+        let footer = props.footer;
+        if (!footer && props.showContinueWithPasswordlessLink) {
+            footer = (
+                <ContinueWithPasswordlessFooter
+                    isPhoneNumber={false}
+                    onContinueWithPasswordlessClick={props.onContinueWithPasswordlessClick}
+                    onError={props.onError}
+                    config={props.config}
+                    validatePhoneNumber={props.validatePhoneNumber}
+                />
+            );
+        }
 
         if (props.showPasswordField) {
             formFields.push({
@@ -67,7 +84,8 @@ export const EPComboEmailForm = withOverride(
                                     props.navigate
                                 )
                             }
-                            data-supertokens="link linkButton formLabelLinkBtn forgotPasswordLink">
+                            data-supertokens="link linkButton formLabelLinkBtn forgotPasswordLink"
+                        >
                             {t("PWLESS_COMBO_FORGOT_PW_LINK")}
                         </a>
                     </div>
@@ -100,17 +118,7 @@ export const EPComboEmailForm = withOverride(
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                footer={
-                    props.showContinueWithPasswordlessLink ? (
-                        <ContinueWithPasswordlessFooter
-                            isPhoneNumber={false}
-                            onContinueWithPasswordlessClick={props.onContinueWithPasswordlessClick}
-                            onError={props.onError}
-                            config={props.config}
-                            validatePhoneNumber={props.validatePhoneNumber}
-                        />
-                    ) : undefined
-                }
+                footer={footer}
             />
         );
     }
