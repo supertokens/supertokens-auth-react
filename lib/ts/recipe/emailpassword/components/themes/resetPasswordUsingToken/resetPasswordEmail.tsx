@@ -25,7 +25,11 @@ import GeneralError from "../../library/generalError";
 
 import type { EnterEmailProps, EnterEmailStatus } from "../../../types";
 
-const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
+const EmailPasswordResetPasswordEmail: React.FC<
+    EnterEmailProps & {
+        footer?: JSX.Element;
+    }
+> = (props) => {
     const t = useTranslation();
     const userContext = useUserContext();
     const [status, setStatus] = useState<EnterEmailStatus>("READY");
@@ -117,6 +121,7 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                     }}
                     showLabels={true}
                     validateOnBlur={true}
+                    footer={props.footer}
                 />
             </div>
         </div>

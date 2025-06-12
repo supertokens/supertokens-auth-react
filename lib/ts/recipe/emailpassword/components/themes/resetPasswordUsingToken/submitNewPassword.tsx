@@ -29,7 +29,11 @@ import GeneralError from "../../library/generalError";
 
 import type { SubmitNewPasswordProps, SubmitNewPasswordStatus } from "../../../types";
 
-const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props) => {
+const EmailPasswordSubmitNewPassword: React.FC<
+    SubmitNewPasswordProps & {
+        footer?: JSX.Element;
+    }
+> = (props) => {
     const t = useTranslation();
     const userContext = useUserContext();
     const [status, setStatus] = useState<SubmitNewPasswordStatus>("READY");
@@ -120,6 +124,7 @@ const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props)
                               };
                     }}
                     showLabels={true}
+                    footer={props.footer}
                 />
             </div>
         </div>
