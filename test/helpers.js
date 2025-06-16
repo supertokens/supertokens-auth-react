@@ -1345,3 +1345,23 @@ export async function getOAuth2TokenData(page) {
     const tokenData = await element.evaluate((el) => el.textContent);
     return JSON.parse(tokenData);
 }
+
+export async function tryPasswordlessSignInUp(page, email) {
+    await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+    await Promise.all([
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=passwordless`),
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
+    ]);
+
+    await setInputValues(page, [{ name: "email", value: email }]);
+    await submitForm(page);
+
+    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+    const loginAttemptInfo = JSON.parse(
+        await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+    );
+    const device = await getPasswordlessDevice(loginAttemptInfo);
+    await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+    await submitForm(page);
+}

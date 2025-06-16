@@ -43,6 +43,7 @@ import {
     setupST,
     backendHook,
     screenshotOnFailure,
+    tryPasswordlessSignInUp,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, RESET_PASSWORD_API } from "../constants";
 
@@ -829,26 +830,6 @@ async function tryEmailPasswordSignUp(page, email) {
 
     await submitForm(page);
     await new Promise((res) => setTimeout(res, 250));
-}
-
-export async function tryPasswordlessSignInUp(page, email) {
-    await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
-    await Promise.all([
-        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=passwordless`),
-        page.waitForNavigation({ waitUntil: "networkidle0" }),
-    ]);
-
-    await setInputValues(page, [{ name: "email", value: email }]);
-    await submitForm(page);
-
-    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-
-    const loginAttemptInfo = JSON.parse(
-        await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-    );
-    const device = await getPasswordlessDevice(loginAttemptInfo);
-    await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
-    await submitForm(page);
 }
 
 async function tryThirdPartySignInUp(page, email, isVerified = true, userId = email) {
