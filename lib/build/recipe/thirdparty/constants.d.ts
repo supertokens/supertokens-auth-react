@@ -1,0 +1,11 @@
+export declare const oktaLogo: import("react/jsx-runtime").JSX.Element;
+export declare const googleLogo: import("react/jsx-runtime").JSX.Element;
+export declare const genericSAMLLogo: import("react/jsx-runtime").JSX.Element;
+export declare const microsoftEntraIdLogo: import("react/jsx-runtime").JSX.Element;
+export declare const microsoftADFSLogo: import("react/jsx-runtime").JSX.Element;
+export declare const auth0Logo: import("react/jsx-runtime").JSX.Element;
+export declare const oneLoginLogo: import("react/jsx-runtime").JSX.Element;
+export declare const pingOneLogo: import("react/jsx-runtime").JSX.Element;
+export declare const jumpCloudLogo: import("react/jsx-runtime").JSX.Element;
+export declare const ripplingLogo: import("react/jsx-runtime").JSX.Element;
+export declare const openIdLogo: import("react/jsx-runtime").JSX.Element;

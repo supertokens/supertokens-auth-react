@@ -19,7 +19,7 @@
         "noImplicitReturns": true,
         "importHelpers": false,
         "noFallthroughCasesInSwitch": true,
-        "types": ["node", "react"]
+        "types": ["node", "react", "react-dom"]
     },
     "compileOnSave": true
 }
