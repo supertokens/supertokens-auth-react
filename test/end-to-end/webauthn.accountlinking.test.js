@@ -31,7 +31,7 @@ import {
     openRecoveryWithToken,
     tryWebauthnSignIn,
 } from "./webauthn.helpers";
-import { tryPasswordlessSignInUp } from "./accountlinking.test";
+import { tryPasswordlessSignInUp } from "../helpers";
 import assert from "assert";
 
 /*
