@@ -110,6 +110,11 @@ export default class SessionAPIWrapper {
     }
 
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
+
+    // todo add exports like this to all recipes
+    // static internal = {
+    //     getInstanceOrThrow: Session.getInstanceOrThrow.bind(Session),
+    // };
 }
 
 const useSessionContext = SessionAPIWrapper.useSessionContext;

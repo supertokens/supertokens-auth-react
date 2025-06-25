@@ -21,7 +21,6 @@ import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
 
 import SuperTokens from "../../superTokens";
 import {
-    applyPlugins,
     getLocalStorage,
     getNormalisedUserContext,
     getTenantIdFromQueryParams,
@@ -305,10 +304,8 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     static init(config?: InputType): RecipeInitResult<unknown, unknown, unknown, any> {
         return {
             recipeID: Session.RECIPE_ID,
-            authReact: (appInfo, _, overrideMaps): RecipeModule<unknown, unknown, unknown, any> => {
-                const normalisedConfig = normaliseSessionConfig(
-                    applyPlugins(Session.RECIPE_ID, config, overrideMaps ?? [])
-                );
+            authReact: (appInfo): RecipeModule<unknown, unknown, unknown, any> => {
+                const normalisedConfig = normaliseSessionConfig();
                 Session.instance = new Session({
                     ...normalisedConfig,
                     appInfo,

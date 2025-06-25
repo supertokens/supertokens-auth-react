@@ -23,7 +23,7 @@ import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuper
 import { OTPEmailIcon } from "../../components/assets/otpEmailIcon";
 import { OTPSMSIcon } from "../../components/assets/otpSMSIcon";
 import { SSR_ERROR } from "../../constants";
-import { applyPlugins, isTest } from "../../utils";
+import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
 import MultiFactorAuth from "../multifactorauth/recipe";
 import { FactorIds } from "../multifactorauth/types";
@@ -105,18 +105,14 @@ export default class Passwordless extends AuthRecipe<
         return {
             recipeID: Passwordless.RECIPE_ID,
             authReact: (
-                appInfo,
-                _,
-                overrideMaps
+                appInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
-                const normalisedConfig = normalisePasswordlessConfig(
-                    applyPlugins(Passwordless.RECIPE_ID, config, overrideMaps ?? [])
-                );
+                const normalisedConfig = normalisePasswordlessConfig(config);
                 Passwordless.instance = new Passwordless({
                     ...normalisedConfig,
                     appInfo,

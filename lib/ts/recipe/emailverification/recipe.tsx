@@ -22,7 +22,7 @@ import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuper
 import { SessionClaimValidatorStore } from "supertokens-web-js/utils/sessionClaimValidatorStore";
 
 import { SSR_ERROR } from "../../constants";
-import { applyPlugins, getDefaultRedirectionURLForPath, isTest } from "../../utils";
+import { getDefaultRedirectionURLForPath, isTest } from "../../utils";
 import RecipeModule from "../recipeModule";
 
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
@@ -78,18 +78,14 @@ export default class EmailVerification extends RecipeModule<
         return {
             recipeID: EmailVerification.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo,
-                _,
-                overrideMaps
+                appInfo: NormalisedAppInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
-                const normalisedConfig = normaliseEmailVerificationFeature(
-                    applyPlugins(EmailVerification.RECIPE_ID, config, overrideMaps ?? [])
-                );
+                const normalisedConfig = normaliseEmailVerificationFeature(config);
                 EmailVerification.instance = new EmailVerification({
                     ...normalisedConfig,
                     appInfo,

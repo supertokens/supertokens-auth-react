@@ -37,7 +37,6 @@ import type {
     PreAndPostAPIHookAction,
 } from "./types";
 import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
-import { applyPlugins } from "../../utils";
 
 export const totpFactor = {
     id: FactorIds.TOTP,
@@ -60,7 +59,7 @@ export default class TOTP extends RecipeModule<
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
-        public readonly webJSRecipe: WebJSRecipeInterface<typeof TOTPWebJS> = TOTPWebJS
+        public readonly webJSRecipe: WebJSRecipeInterface<typeof TOTPWebJS> = TOTPWebJS,
     ) {
         super(config);
 
@@ -73,23 +72,19 @@ export default class TOTP extends RecipeModule<
     }
 
     static init(
-        config?: UserInput
+        config?: UserInput,
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         return {
             recipeID: TOTP.RECIPE_ID,
             authReact: (
                 appInfo,
-                _,
-                overrideMaps
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
-                const normalisedConfig = normaliseMultiFactorAuthFeature(
-                    applyPlugins(TOTP.RECIPE_ID, config, overrideMaps ?? [])
-                );
+                const normalisedConfig = normaliseMultiFactorAuthFeature(config);
                 TOTP.instance = new TOTP({
                     ...normalisedConfig,
                     appInfo,

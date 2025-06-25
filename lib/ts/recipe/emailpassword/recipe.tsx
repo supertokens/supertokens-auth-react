@@ -20,7 +20,7 @@
 import EmailPasswordWebJS from "supertokens-web-js/recipe/emailpassword";
 
 import { SSR_ERROR } from "../../constants";
-import { applyPlugins, getDefaultRedirectionURLForPath, isTest } from "../../utils";
+import { getDefaultRedirectionURLForPath, isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
 import { FactorIds } from "../multifactorauth/types";
 
@@ -77,18 +77,14 @@ export default class EmailPassword extends AuthRecipe<
         return {
             recipeID: EmailPassword.RECIPE_ID,
             authReact: (
-                appInfo,
-                _,
-                overrideMaps
+                appInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
-                const normalisedConfig = normaliseEmailPasswordConfig(
-                    applyPlugins(EmailPassword.RECIPE_ID, config, overrideMaps ?? [])
-                );
+                const normalisedConfig = normaliseEmailPasswordConfig(config);
                 EmailPassword.instance = new EmailPassword({
                     ...normalisedConfig,
                     appInfo,

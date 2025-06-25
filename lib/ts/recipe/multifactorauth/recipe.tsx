@@ -27,7 +27,6 @@ import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
 import {
     appendQueryParamsToURL,
-    applyPlugins,
     getCurrentNormalisedUrlPathWithQueryParamsAndFragments,
     getDefaultRedirectionURLForPath,
     getRedirectToPathFromURL,
@@ -103,18 +102,14 @@ export default class MultiFactorAuth extends RecipeModule<
         return {
             recipeID: MultiFactorAuth.RECIPE_ID,
             authReact: (
-                appInfo,
-                _,
-                overrideMaps
+                appInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
-                const normalisedConfig = normaliseMultiFactorAuthFeature(
-                    applyPlugins(MultiFactorAuth.RECIPE_ID, config, overrideMaps ?? [])
-                );
+                const normalisedConfig = normaliseMultiFactorAuthFeature(config);
                 MultiFactorAuth.instance = new MultiFactorAuth({
                     ...normalisedConfig,
                     appInfo,

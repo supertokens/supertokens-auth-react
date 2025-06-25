@@ -20,7 +20,7 @@
 import OAuth2WebJS from "supertokens-web-js/recipe/oauth2provider";
 
 import { SSR_ERROR } from "../../constants";
-import { applyPlugins, isTest } from "../../utils";
+import { isTest } from "../../utils";
 import RecipeModule from "../recipeModule";
 
 import { getFunctionOverrides } from "./functionOverrides";
@@ -62,18 +62,14 @@ export default class OAuth2Provider extends RecipeModule<
         return {
             recipeID: OAuth2Provider.RECIPE_ID,
             authReact: (
-                appInfo,
-                _,
-                overrideMaps
+                appInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
-                const normalisedConfig = normaliseOAuth2Config(
-                    applyPlugins(OAuth2Provider.RECIPE_ID, config, overrideMaps ?? [])
-                );
+                const normalisedConfig = normaliseOAuth2Config(config);
                 OAuth2Provider.instance = new OAuth2Provider({
                     ...normalisedConfig,
                     appInfo,

@@ -21,7 +21,7 @@ import ThirdpartyWebJS from "supertokens-web-js/recipe/thirdparty";
 
 import { SSR_ERROR } from "../../constants";
 import SuperTokens from "../../superTokens";
-import { applyPlugins, isTest } from "../../utils";
+import { isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
 import { FactorIds } from "../multifactorauth/types";
 
@@ -57,7 +57,7 @@ export default class ThirdParty extends AuthRecipe<
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
-        public readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdpartyWebJS> = ThirdpartyWebJS
+        public readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdpartyWebJS> = ThirdpartyWebJS,
     ) {
         if (SuperTokens.usesDynamicLoginMethods === false && config.signInAndUpFeature.providers.length === 0) {
             throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
@@ -74,23 +74,19 @@ export default class ThirdParty extends AuthRecipe<
     };
 
     static init(
-        config?: UserInput
+        config?: UserInput,
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         return {
             recipeID: ThirdParty.RECIPE_ID,
             authReact: (
                 appInfo,
-                _,
-                overrideMaps
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
-                const normalisedConfig = normaliseThirdPartyConfig(
-                    applyPlugins(ThirdParty.RECIPE_ID, config, overrideMaps ?? [])
-                );
+                const normalisedConfig = normaliseThirdPartyConfig(config);
                 ThirdParty.instance = new ThirdParty({
                     ...normalisedConfig,
                     appInfo,
@@ -106,7 +102,7 @@ export default class ThirdParty extends AuthRecipe<
                         functions: (originalImpl, builder) => {
                             const functions = getFunctionOverrides(
                                 ThirdParty.RECIPE_ID,
-                                normalisedConfig.onHandleEvent
+                                normalisedConfig.onHandleEvent,
                             );
                             builder.override(functions);
                             builder.override(normalisedConfig.override.functions);

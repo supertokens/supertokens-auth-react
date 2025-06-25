@@ -133,7 +133,7 @@ export default class SuperTokens {
 
             if (pluginInit && !this.pluginList[pluginIndex].initialized) {
                 PostSuperTokensInitCallbacks.addPostInitCallback(() => {
-                    pluginInit(config, this.pluginList, package_version);
+                    pluginInit(getPublicConfig(config), this.pluginList, package_version);
                     this.pluginList[pluginIndex].initialized = true;
                 });
             }
@@ -142,7 +142,7 @@ export default class SuperTokens {
             if (pluginRouteHandlers) {
                 let handlers: PluginRouteHandler[] = [];
                 if (typeof pluginRouteHandlers === "function") {
-                    const result = pluginRouteHandlers(config, this.pluginList, package_version);
+                    const result = pluginRouteHandlers(getPublicConfig(config), this.pluginList, package_version);
                     if (result.status === "ERROR") {
                         throw new Error(result.message);
                     }
@@ -167,10 +167,6 @@ export default class SuperTokens {
             userTranslationFunc: translationConfig.translationFunc,
         };
 
-        const overrideMaps = plugins
-            .filter((p) => p.overrideMap !== undefined)
-            .map((p) => p.overrideMap) as NonNullable<SuperTokensPlugin["overrideMap"]>[];
-
         const enableDebugLogs = Boolean(config?.enableDebugLogs);
         if (enableDebugLogs) {
             enableLogging();
@@ -178,7 +174,7 @@ export default class SuperTokens {
 
         this.userGetRedirectionURL = config.getRedirectionURL;
         this.recipeList = config.recipeList.map(({ authReact }) => {
-            return authReact(this.appInfo, enableDebugLogs, overrideMaps);
+            return authReact(this.appInfo, enableDebugLogs);
         });
 
         this.rootStyle = config.style ?? "";
@@ -239,7 +235,12 @@ export default class SuperTokens {
 
         for (const plugin of finalPluginList) {
             if (plugin.config) {
-                config = { ...config, ...plugin.config(getPublicConfig(config)) };
+                // prevent override of appInfo
+                // doing it like this because we don't want to override the appInfo and we can't make sure the plugin won't return it
+                // @ts-ignore
+                const { appInfo, ...pluginConfig } = plugin.config(getPublicConfig(config)) || {};
+
+                config = { ...config, ...pluginConfig };
             }
         }
 

@@ -194,8 +194,7 @@ export type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "signOut">;
 
 export type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
     appInfo: NormalisedAppInfo,
-    enableDebugLogs: boolean,
-    overrideMaps: NonNullable<SuperTokensPlugin["overrideMap"]>[]
+    enableDebugLogs: boolean
 ) => BaseRecipeModule<T, S, R, N>;
 
 export type AppInfoUserInput = {
@@ -548,7 +547,7 @@ export type SuperTokensPlugin = {
               sdkVersion: string
           ) => { status: "OK"; routeHandlers: PluginRouteHandler[] } | { status: "ERROR"; message: string })
         | PluginRouteHandler[];
-    config?: (config: SuperTokensPublicConfig) => SuperTokensPublicConfig | undefined;
+    config?: (config: SuperTokensPublicConfig) => Omit<SuperTokensPublicConfig, "appInfo"> | undefined;
     exports?: Record<string, any>;
 };
 
@@ -557,4 +556,6 @@ export type SuperTokensPublicPlugin = Pick<
     "id" | "version" | "exports" | "compatibleAuthReactSDKVersions" | "compatibleWebJSSDKVersions"
 > & { initialized: boolean };
 
-export type SuperTokensPublicConfig = Omit<SuperTokensConfig, "experimental" | "recipeList">;
+export type SuperTokensPublicConfig = Omit<SuperTokensConfig, "experimental" | "appInfo"> & {
+    appInfo: NormalisedAppInfo;
+};

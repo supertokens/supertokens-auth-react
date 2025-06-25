@@ -119,8 +119,7 @@ export declare type SuperTokensConfig = {
 export declare type WebJSRecipeInterface<T> = Omit<T, "default" | "init" | "signOut">;
 export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
     appInfo: NormalisedAppInfo,
-    enableDebugLogs: boolean,
-    overrideMaps: NonNullable<SuperTokensPlugin["overrideMap"]>[]
+    enableDebugLogs: boolean
 ) => BaseRecipeModule<T, S, R, N>;
 export declare type AppInfoUserInput = {
     appName: string;
@@ -334,7 +333,7 @@ export declare type SuperTokensPlugin = {
                     message: string;
                 })
         | PluginRouteHandler[];
-    config?: (config: SuperTokensPublicConfig) => SuperTokensPublicConfig | undefined;
+    config?: (config: SuperTokensPublicConfig) => Omit<SuperTokensPublicConfig, "appInfo"> | undefined;
     exports?: Record<string, any>;
 };
 export declare type SuperTokensPublicPlugin = Pick<
@@ -343,5 +342,7 @@ export declare type SuperTokensPublicPlugin = Pick<
 > & {
     initialized: boolean;
 };
-export declare type SuperTokensPublicConfig = Omit<SuperTokensConfig, "experimental" | "recipeList">;
+export declare type SuperTokensPublicConfig = Omit<SuperTokensConfig, "experimental" | "appInfo"> & {
+    appInfo: NormalisedAppInfo;
+};
 export {};
