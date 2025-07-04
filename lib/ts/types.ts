@@ -551,11 +551,13 @@ export type SuperTokensPlugin = {
     exports?: Record<string, any>;
 };
 
+export const nonPublicConfigProperties = ["experimental"] as const;
+
+export type NonPublicConfigPropertiesType = (typeof nonPublicConfigProperties)[number];
+
 export type SuperTokensPublicPlugin = Pick<
     SuperTokensPlugin,
     "id" | "version" | "exports" | "compatibleAuthReactSDKVersions" | "compatibleWebJSSDKVersions"
 > & { initialized: boolean };
 
-export type SuperTokensPublicConfig = Omit<SuperTokensConfig, "experimental" | "appInfo"> & {
-    appInfo: NormalisedAppInfo;
-};
+export type SuperTokensPublicConfig = Omit<SuperTokensConfig, NonPublicConfigPropertiesType>;

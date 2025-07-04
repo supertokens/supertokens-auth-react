@@ -66,6 +66,10 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
+    static getProviders(): {
+        id: string;
+        name: string;
+    }[];
     static Apple: typeof Apple;
     static Bitbucket: typeof Bitbucket;
     static Discord: typeof Discord;
@@ -91,6 +95,7 @@ declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogi
 declare const getStateAndOtherInfoFromStorage: typeof Wrapper.getStateAndOtherInfoFromStorage;
 declare const getAuthorisationURLWithQueryParamsAndSetState: typeof Wrapper.getAuthorisationURLWithQueryParamsAndSetState;
 declare const signInAndUp: typeof Wrapper.signInAndUp;
+declare const getProviders: typeof Wrapper.getProviders;
 declare const ThirdpartyComponentsOverrideProvider: import("react").FC<
     import("react").PropsWithChildren<{
         components: import("./types").ComponentOverrideMap;
@@ -114,6 +119,7 @@ export {
     getStateAndOtherInfoFromStorage,
     getAuthorisationURLWithQueryParamsAndSetState,
     signInAndUp,
+    getProviders,
     redirectToThirdPartyLogin,
     ThirdpartyComponentsOverrideProvider,
     signOut,

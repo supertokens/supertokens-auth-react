@@ -14,6 +14,7 @@ import type {
     SuperTokensPublicConfig,
     SuperTokensPublicPlugin,
     UserContext,
+    NonPublicConfigPropertiesType,
 } from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
 export declare function clearQueryParams(paramNames: string[]): void;
@@ -78,3 +79,6 @@ export declare const useOnMountAPICall: <T>(
 export declare function useRethrowInRender(): import("react").Dispatch<import("react").SetStateAction<undefined>>;
 export declare function getPublicPlugin(plugin: SuperTokensPlugin): SuperTokensPublicPlugin;
 export declare function getPublicConfig(config: SuperTokensConfig): SuperTokensPublicConfig;
+export declare function getNonPublicConfig(
+    config: SuperTokensConfig
+): Pick<SuperTokensConfig, NonPublicConfigPropertiesType>;

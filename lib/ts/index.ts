@@ -58,6 +58,12 @@ export default class SuperTokensAPIWrapper {
         });
     };
 
+    static isRecipeInitialized(recipeId: string) {
+        return SuperTokens.getInstanceOrThrow()
+            .recipeList.map((recipe) => recipe.recipeID)
+            .includes(recipeId);
+    }
+
     static useTranslation = useTranslation;
 
     static useUserContext = useUserContext;
@@ -67,6 +73,7 @@ export const init = SuperTokensAPIWrapper.init;
 export const changeLanguage = SuperTokensAPIWrapper.changeLanguage;
 export const loadTranslation = SuperTokensAPIWrapper.loadTranslation;
 export const redirectToAuth = SuperTokensAPIWrapper.redirectToAuth;
+export const isRecipeInitialized = SuperTokensAPIWrapper.isRecipeInitialized;
 
 // these need to be exported so other developers are able to build on top of them
 // when devs only used the sdk to build their own apps, there was no (real) need for these to be exported.

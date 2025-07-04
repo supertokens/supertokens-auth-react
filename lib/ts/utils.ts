@@ -39,7 +39,9 @@ import type {
     SuperTokensPublicConfig,
     SuperTokensPublicPlugin,
     UserContext,
+    NonPublicConfigPropertiesType,
 } from "./types";
+import { nonPublicConfigProperties } from "./types";
 
 /*
  * getRecipeIdFromPath
@@ -570,7 +572,29 @@ export function getPublicPlugin(plugin: SuperTokensPlugin): SuperTokensPublicPlu
 }
 
 export function getPublicConfig(config: SuperTokensConfig): SuperTokensPublicConfig {
-    const { experimental, ...publicConfig } = config;
+    const configKeys = Object.keys(config) as (keyof SuperTokensConfig)[];
 
-    return { ...publicConfig, appInfo: normaliseInputAppInfoOrThrowError(config.appInfo) };
+    const publicConfig = configKeys.reduce((acc, key) => {
+        if (nonPublicConfigProperties.includes(key as NonPublicConfigPropertiesType)) {
+            return acc;
+        } else {
+            return { ...acc, [key]: config[key] };
+        }
+    }, {} as SuperTokensPublicConfig);
+
+    return publicConfig;
+}
+
+export function getNonPublicConfig(config: SuperTokensConfig): Pick<SuperTokensConfig, NonPublicConfigPropertiesType> {
+    const configKeys = Object.keys(config) as (keyof SuperTokensConfig)[];
+
+    const publicConfig = configKeys.reduce((acc, key) => {
+        if (nonPublicConfigProperties.includes(key as NonPublicConfigPropertiesType)) {
+            return { ...acc, [key]: config[key] };
+        } else {
+            return acc;
+        }
+    }, {} as Pick<SuperTokensConfig, NonPublicConfigPropertiesType>);
+
+    return publicConfig;
 }

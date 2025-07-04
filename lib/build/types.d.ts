@@ -336,13 +336,13 @@ export declare type SuperTokensPlugin = {
     config?: (config: SuperTokensPublicConfig) => Omit<SuperTokensPublicConfig, "appInfo"> | undefined;
     exports?: Record<string, any>;
 };
+export declare const nonPublicConfigProperties: readonly ["experimental"];
+export declare type NonPublicConfigPropertiesType = (typeof nonPublicConfigProperties)[number];
 export declare type SuperTokensPublicPlugin = Pick<
     SuperTokensPlugin,
     "id" | "version" | "exports" | "compatibleAuthReactSDKVersions" | "compatibleWebJSSDKVersions"
 > & {
     initialized: boolean;
 };
-export declare type SuperTokensPublicConfig = Omit<SuperTokensConfig, "experimental" | "appInfo"> & {
-    appInfo: NormalisedAppInfo;
-};
+export declare type SuperTokensPublicConfig = Omit<SuperTokensConfig, NonPublicConfigPropertiesType>;
 export {};
