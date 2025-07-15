@@ -59,7 +59,7 @@ export default class TOTP extends RecipeModule<
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
-        public readonly webJSRecipe: WebJSRecipeInterface<typeof TOTPWebJS> = TOTPWebJS,
+        public readonly webJSRecipe: WebJSRecipeInterface<typeof TOTPWebJS> = TOTPWebJS
     ) {
         super(config);
 
@@ -72,19 +72,20 @@ export default class TOTP extends RecipeModule<
     }
 
     static init(
-        config?: UserInput,
+        config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
+        const normalisedConfig = normaliseMultiFactorAuthFeature(config);
+
         return {
             recipeID: TOTP.RECIPE_ID,
             authReact: (
-                appInfo,
+                appInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
-                const normalisedConfig = normaliseMultiFactorAuthFeature(config);
                 TOTP.instance = new TOTP({
                     ...normalisedConfig,
                     appInfo,
@@ -93,7 +94,6 @@ export default class TOTP extends RecipeModule<
                 return TOTP.instance;
             },
             webJS: (...args) => {
-                const normalisedConfig = normaliseMultiFactorAuthFeature(config);
                 const init = TOTPWebJS.init({
                     ...normalisedConfig,
                     override: {

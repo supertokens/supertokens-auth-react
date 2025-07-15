@@ -57,7 +57,7 @@ export default class ThirdParty extends AuthRecipe<
 
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
-        public readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdpartyWebJS> = ThirdpartyWebJS,
+        public readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdpartyWebJS> = ThirdpartyWebJS
     ) {
         if (SuperTokens.usesDynamicLoginMethods === false && config.signInAndUpFeature.providers.length === 0) {
             throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
@@ -74,19 +74,20 @@ export default class ThirdParty extends AuthRecipe<
     };
 
     static init(
-        config?: UserInput,
+        config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
+        const normalisedConfig = normaliseThirdPartyConfig(config);
+
         return {
             recipeID: ThirdParty.RECIPE_ID,
             authReact: (
-                appInfo,
+                appInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
-                const normalisedConfig = normaliseThirdPartyConfig(config);
                 ThirdParty.instance = new ThirdParty({
                     ...normalisedConfig,
                     appInfo,
@@ -95,14 +96,13 @@ export default class ThirdParty extends AuthRecipe<
                 return ThirdParty.instance;
             },
             webJS: (...args) => {
-                const normalisedConfig = normaliseThirdPartyConfig(config);
                 const init = ThirdpartyWebJS.init({
                     ...normalisedConfig,
                     override: {
                         functions: (originalImpl, builder) => {
                             const functions = getFunctionOverrides(
                                 ThirdParty.RECIPE_ID,
-                                normalisedConfig.onHandleEvent,
+                                normalisedConfig.onHandleEvent
                             );
                             builder.override(functions);
                             builder.override(normalisedConfig.override.functions);

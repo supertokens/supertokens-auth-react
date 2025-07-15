@@ -98,7 +98,7 @@
     "peerDependencies": {
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0",
-        "supertokens-web-js": "^0.14.0-canary-plugins.0"
+        "supertokens-web-js": "^0.15.0"
     },
     "scripts": {
         "init": "bash ./init.sh",

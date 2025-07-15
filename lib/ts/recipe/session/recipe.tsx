@@ -302,10 +302,11 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
     }
 
     static init(config?: InputType): RecipeInitResult<unknown, unknown, unknown, any> {
+        const normalisedConfig = normaliseSessionConfig(config);
+
         return {
             recipeID: Session.RECIPE_ID,
             authReact: (appInfo): RecipeModule<unknown, unknown, unknown, any> => {
-                const normalisedConfig = normaliseSessionConfig();
                 Session.instance = new Session({
                     ...normalisedConfig,
                     appInfo,
@@ -314,7 +315,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                 return Session.instance;
             },
             webJS: (...args) => {
-                const normalisedConfig = normaliseSessionConfig(config);
                 const init = SessionWebJS.init({
                     ...normalisedConfig,
                     onHandleEvent: (event) => {

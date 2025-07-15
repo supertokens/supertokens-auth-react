@@ -99,6 +99,8 @@ export default class MultiFactorAuth extends RecipeModule<
     static init(
         config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
+        const normalisedConfig = normaliseMultiFactorAuthFeature(config);
+
         return {
             recipeID: MultiFactorAuth.RECIPE_ID,
             authReact: (
@@ -109,7 +111,6 @@ export default class MultiFactorAuth extends RecipeModule<
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
-                const normalisedConfig = normaliseMultiFactorAuthFeature(config);
                 MultiFactorAuth.instance = new MultiFactorAuth({
                     ...normalisedConfig,
                     appInfo,
@@ -118,7 +119,6 @@ export default class MultiFactorAuth extends RecipeModule<
                 return MultiFactorAuth.instance;
             },
             webJS: (...args) => {
-                const normalisedConfig = normaliseMultiFactorAuthFeature(config);
                 const init = MultiFactorAuthWebJS.init({
                     ...normalisedConfig,
                     override: {

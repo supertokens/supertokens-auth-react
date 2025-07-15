@@ -98,10 +98,11 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
     }
 
     static init(config?: UserInput): RecipeInitResult<any, any, any, any> {
+        const normalisedConfig = normaliseMultitenancyConfig(config);
+
         return {
             recipeID: Multitenancy.RECIPE_ID,
             authReact: (appInfo): BaseRecipeModule<any, any, any, any> => {
-                const normalisedConfig = normaliseMultitenancyConfig(config);
                 Multitenancy.instance = new Multitenancy({
                     ...normalisedConfig,
                     appInfo,
@@ -110,7 +111,6 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
                 return Multitenancy.instance;
             },
             webJS: (...args) => {
-                const normalisedConfig = normaliseMultitenancyConfig(config);
                 const init = MultitenancyWebJS.init({
                     ...normalisedConfig,
                 });

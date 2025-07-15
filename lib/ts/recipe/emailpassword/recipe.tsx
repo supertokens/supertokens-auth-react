@@ -74,6 +74,8 @@ export default class EmailPassword extends AuthRecipe<
     static init(
         config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
+        const normalisedConfig = normaliseEmailPasswordConfig(config);
+
         return {
             recipeID: EmailPassword.RECIPE_ID,
             authReact: (
@@ -84,7 +86,6 @@ export default class EmailPassword extends AuthRecipe<
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
-                const normalisedConfig = normaliseEmailPasswordConfig(config);
                 EmailPassword.instance = new EmailPassword({
                     ...normalisedConfig,
                     appInfo,
@@ -93,7 +94,6 @@ export default class EmailPassword extends AuthRecipe<
                 return EmailPassword.instance;
             },
             webJS: (...args) => {
-                const normalisedConfig = normaliseEmailPasswordConfig(config);
                 const init = EmailPasswordWebJS.init({
                     ...normalisedConfig, // plugins are applied by webjs
                     override: {

@@ -59,6 +59,8 @@ export default class OAuth2Provider extends RecipeModule<
     static init(
         config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
+        const normalisedConfig = normaliseOAuth2Config(config);
+
         return {
             recipeID: OAuth2Provider.RECIPE_ID,
             authReact: (
@@ -69,7 +71,6 @@ export default class OAuth2Provider extends RecipeModule<
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
-                const normalisedConfig = normaliseOAuth2Config(config);
                 OAuth2Provider.instance = new OAuth2Provider({
                     ...normalisedConfig,
                     appInfo,
@@ -78,7 +79,6 @@ export default class OAuth2Provider extends RecipeModule<
                 return OAuth2Provider.instance;
             },
             webJS: (...args) => {
-                const normalisedConfig = normaliseOAuth2Config(config);
                 const init = OAuth2WebJS.init({
                     ...normalisedConfig,
                     override: {

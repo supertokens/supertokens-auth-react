@@ -102,6 +102,8 @@ export default class Passwordless extends AuthRecipe<
     static init(
         config: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
+        const normalisedConfig = normalisePasswordlessConfig(config);
+
         return {
             recipeID: Passwordless.RECIPE_ID,
             authReact: (
@@ -112,7 +114,6 @@ export default class Passwordless extends AuthRecipe<
                 OnHandleEventContext,
                 NormalisedConfig
             > => {
-                const normalisedConfig = normalisePasswordlessConfig(config);
                 Passwordless.instance = new Passwordless({
                     ...normalisedConfig,
                     appInfo,
@@ -121,7 +122,6 @@ export default class Passwordless extends AuthRecipe<
                 return Passwordless.instance;
             },
             webJS: (...args) => {
-                const normalisedConfig = normalisePasswordlessConfig(config);
                 const init = PasswordlessWebJS.init({
                     ...normalisedConfig,
                     override: {
