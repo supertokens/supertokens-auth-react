@@ -524,7 +524,7 @@ export type PluginRouteHandler = {
 
 // TODO: this should probably derive from the web-js version
 export type SuperTokensPlugin = {
-    id: string; // TODO: validate that no two plugins have the same id
+    id: string;
     version?: string;
     compatibleAuthReactSDKVersions?: string | string[]; // match the syntax of the engines field in package.json
     compatibleWebJSSDKVersions?: string | string[]; // match the syntax of the engines field in package.json

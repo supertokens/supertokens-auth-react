@@ -121,7 +121,6 @@ export default class Wrapper {
         });
     }
 
-    // todo figure out how to make use of dynamic providers
     static getProviders(): { id: string; name: string }[] {
         return ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.map((provider) => ({
             id: provider.id,
