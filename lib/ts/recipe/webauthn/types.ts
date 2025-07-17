@@ -22,6 +22,8 @@ import type {
     UserContext,
     WebJSRecipeInterface,
 } from "../../types";
+import type React from "react";
+import type { Dispatch } from "react";
 import type {
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
     UserInput as AuthRecipeModuleUserInput,
@@ -40,6 +42,12 @@ import type { PasskeyFeatureBlock } from "./components/themes/signUp/featureBloc
 import type { SignUpFormInner } from "./components/themes/signUp/signUpForm";
 import type { SignUpSomethingWentWrong } from "./components/themes/signUp/somethingWentWrong";
 import type { RecipeInterface } from "supertokens-web-js/recipe/webauthn";
+import type {
+    WebauthnMFASignIn,
+    WebauthnMFALoadingScreen,
+    WebauthnMFASignUp,
+    WebauthnMFASignUpConfirmation,
+} from "./components/themes/mfa";
 import type WebJSRecipe from "supertokens-web-js/recipe/webauthn";
 import type { User } from "supertokens-web-js/types";
 
@@ -121,6 +129,10 @@ export type ComponentOverrideMap = {
     WebauthnContinueWithoutPasskey_Override?: ComponentOverride<typeof ContinueWithoutPasskey>;
     WebauthnPasskeySignUpForm_Override?: ComponentOverride<typeof SignUpFormInner>;
     WebauthnPasskeySignUpSomethingWentWrong_Override?: ComponentOverride<typeof SignUpSomethingWentWrong>;
+    WebauthnMFASignIn_Override?: ComponentOverride<typeof WebauthnMFASignIn>;
+    WebauthnMFALoadingScreen_Override?: ComponentOverride<typeof WebauthnMFALoadingScreen>;
+    WebauthnMFASignUp_Override?: ComponentOverride<typeof WebauthnMFASignUp>;
+    WebauthnMFASignUpConfirmation_Override?: ComponentOverride<typeof WebauthnMFASignUpConfirmation>;
 };
 
 export type SignUpThemeBaseProps = {
@@ -245,4 +257,40 @@ export type ContinueWithPasskeyProps = {
 export type EmailSentProps = {
     email: string;
     onEmailChangeClick: () => void;
+};
+
+export type WebAuthnMFAAction =
+    | {
+          type: "setError";
+          accessDenied?: boolean;
+          error: string | undefined;
+      }
+    | {
+          type: "load";
+          deviceSupported: boolean;
+          error: string | undefined;
+          email: string | undefined;
+          showBackButton: boolean;
+      };
+
+export type WebAuthnMFAState = {
+    error: string | undefined;
+    deviceSupported: boolean;
+    accessDenied: boolean;
+    showBackButton: boolean;
+    email: string | undefined;
+    loaded: boolean;
+};
+
+export type WebAuthnMFAProps = {
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+    onBackButtonClicked: () => void;
+    onSignOutClicked: () => void;
+    onSignIn: () => Promise<void>;
+    onSignUp: (email: string) => Promise<void>;
+    onRecoverAccountClick: () => void;
+    userContext?: UserContext;
+    featureState: WebAuthnMFAState;
+    dispatch: Dispatch<WebAuthnMFAAction>;
 };

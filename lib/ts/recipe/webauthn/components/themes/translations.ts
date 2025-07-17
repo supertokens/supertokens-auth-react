@@ -51,5 +51,13 @@ export const defaultTranslationsWebauthn = {
         WEBAUTHN_PASSKEY_NOT_SUPPORTED_BY_BROWSER:
             "Your browser does not support passkey flow, please try in a different browser.",
         WEBAUTHN_EMAIL_INPUT_NOT_POPULATED_ERROR: "Please enter your email to continue.",
+
+        // WebAuthn MFA translations
+        WEBAUTHN_MFA_SIGN_IN_HEADER_TITLE: "Use a Passkey",
+        WEBAUTHN_MFA_SIGN_IN_HEADER_SUBTITLE:
+            "To finish signing in, click the button and follow the instructions from your browser.",
+        WEBAUTHN_MFA_DIVIDER: "or",
+        WEBAUTHN_MFA_REGISTER_PASSKEY_SUBTITLE: "Set up a new authentication method to use for future logins.",
+        WEBAUTHN_MFA_REGISTER_PASSKEY_LINK: "Register a passkey",
     },
 };

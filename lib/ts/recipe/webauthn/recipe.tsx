@@ -19,6 +19,9 @@ import { SSR_ERROR } from "../../constants";
 import { getDefaultRedirectionURLForPath, isTest } from "../../utils";
 import AuthRecipe from "../authRecipe";
 import { FactorIds } from "../multifactorauth/types";
+import PasskeyIcon from "../../components/assets/passkeyIcon";
+import MultiFactorAuth from "../multifactorauth/recipe";
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
 import { DEFAULT_WEBAUTHN_SEND_RECOVERY_EMAIL_PATH } from "./constants";
 import { getFunctionOverrides } from "./functionOverrides";
@@ -39,6 +42,14 @@ import type {
 } from "../../types";
 import type RecipeModule from "../recipeModule";
 
+export const webauthnFactor = {
+    id: FactorIds.WEBAUTHN,
+    name: "WEBAUTHN_MFA_NAME",
+    description: "WEBAUTHN_MFA_DESCRIPTION",
+    path: "/mfa/webauthn",
+    logo: PasskeyIcon,
+};
+
 export default class Webauthn extends AuthRecipe<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -58,8 +69,12 @@ export default class Webauthn extends AuthRecipe<
         super(config);
         this.recipeID = config.recipeId;
 
-        // We can ideally call postInitCallbacks to set MFA's if
-        // we are using it.
+        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
+            const mfa = MultiFactorAuth.getInstance();
+            if (mfa !== undefined) {
+                mfa.addMFAFactors([webauthnFactor]);
+            }
+        });
     }
 
     public getFirstFactorsForAuthPage(): string[] {

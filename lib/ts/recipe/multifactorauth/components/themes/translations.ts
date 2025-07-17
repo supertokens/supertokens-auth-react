@@ -16,6 +16,9 @@ export const defaultTranslationsMultiFactorAuth = {
         TOTP_MFA_NAME: "TOTP",
         TOTP_MFA_DESCRIPTION: "Use an authenticator app to complete the authentication request",
 
+        WEBAUTHN_MFA_NAME: "Passkeys",
+        WEBAUTHN_MFA_DESCRIPTION: "Use a passkey to complete the authentication request",
+
         MFA_NO_AVAILABLE_OPTIONS: "You have no available secondary factors.",
         MFA_NO_AVAILABLE_OPTIONS_LOGIN:
             "You have no available secondary factors and cannot complete the sign-in process. Please contact support.",
