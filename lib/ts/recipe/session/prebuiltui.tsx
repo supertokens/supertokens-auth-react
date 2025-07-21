@@ -15,6 +15,7 @@ import type { AuthComponent } from "../../types";
 export class SessionPreBuiltUI extends RecipeRouter {
     static instance?: SessionPreBuiltUI;
     languageTranslations = defaultTranslationsSession;
+    static languageTranslations = defaultTranslationsSession;
 
     constructor(public readonly recipeInstance: Session) {
         super();

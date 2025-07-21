@@ -19,6 +19,7 @@ import type { AuthComponent } from "../../types";
 export class MultiFactorAuthPreBuiltUI extends RecipeRouter {
     static instance?: MultiFactorAuthPreBuiltUI;
     languageTranslations = defaultTranslationsMultiFactorAuth;
+    static languageTranslations = defaultTranslationsMultiFactorAuth;
 
     constructor(public readonly recipeInstance: MultiFactorAuthRecipe) {
         super();
