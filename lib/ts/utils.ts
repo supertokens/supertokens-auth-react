@@ -34,12 +34,12 @@ import type {
     NormalisedAppInfo,
     NormalisedFormField,
     NormalisedGetRedirectionURLContext,
-    SuperTokensConfig,
     SuperTokensPlugin,
     SuperTokensPublicConfig,
     SuperTokensPublicPlugin,
     UserContext,
     NonPublicConfigPropertiesType,
+    SuperTokensConfigWithNormalisedAppInfo,
 } from "./types";
 import { nonPublicConfigProperties } from "./types";
 
@@ -571,8 +571,8 @@ export function getPublicPlugin(plugin: SuperTokensPlugin): SuperTokensPublicPlu
     };
 }
 
-export function getPublicConfig(config: SuperTokensConfig): SuperTokensPublicConfig {
-    const configKeys = Object.keys(config) as (keyof SuperTokensConfig)[];
+export function getPublicConfig(config: SuperTokensConfigWithNormalisedAppInfo): SuperTokensPublicConfig {
+    const configKeys = Object.keys(config) as (keyof SuperTokensConfigWithNormalisedAppInfo)[];
 
     const publicConfig = configKeys.reduce((acc, key) => {
         if (nonPublicConfigProperties.includes(key as NonPublicConfigPropertiesType)) {
@@ -581,20 +581,6 @@ export function getPublicConfig(config: SuperTokensConfig): SuperTokensPublicCon
             return { ...acc, [key]: config[key] };
         }
     }, {} as SuperTokensPublicConfig);
-
-    return publicConfig;
-}
-
-export function getNonPublicConfig(config: SuperTokensConfig): Pick<SuperTokensConfig, NonPublicConfigPropertiesType> {
-    const configKeys = Object.keys(config) as (keyof SuperTokensConfig)[];
-
-    const publicConfig = configKeys.reduce((acc, key) => {
-        if (nonPublicConfigProperties.includes(key as NonPublicConfigPropertiesType)) {
-            return { ...acc, [key]: config[key] };
-        } else {
-            return acc;
-        }
-    }, {} as Pick<SuperTokensConfig, NonPublicConfigPropertiesType>);
 
     return publicConfig;
 }

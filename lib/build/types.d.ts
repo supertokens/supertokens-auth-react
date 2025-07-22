@@ -338,11 +338,19 @@ export declare type SuperTokensPlugin = {
 };
 export declare const nonPublicConfigProperties: readonly ["experimental"];
 export declare type NonPublicConfigPropertiesType = (typeof nonPublicConfigProperties)[number];
+export declare type SuperTokensConfigWithNormalisedAppInfo = Omit<SuperTokensConfig, "appInfo"> & {
+    appInfo: NormalisedAppInfo;
+};
 export declare type SuperTokensPublicPlugin = Pick<
     SuperTokensPlugin,
     "id" | "version" | "exports" | "compatibleAuthReactSDKVersions" | "compatibleWebJSSDKVersions"
 > & {
     initialized: boolean;
 };
-export declare type SuperTokensPublicConfig = Omit<SuperTokensConfig, NonPublicConfigPropertiesType>;
+export declare type SuperTokensPublicConfig = Omit<
+    Omit<SuperTokensConfig, NonPublicConfigPropertiesType>,
+    "appInfo"
+> & {
+    appInfo: NormalisedAppInfo;
+};
 export {};
