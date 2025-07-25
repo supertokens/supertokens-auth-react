@@ -36,6 +36,8 @@ import type { Config as ThirdPartyConfig } from "./recipe/thirdparty/types";
 import type { ComponentOverrideMap as ThirdPartyComponentOverrideMap } from "./recipe/thirdparty/types";
 import type { Config as TotpConfig } from "./recipe/totp/types";
 import type { ComponentOverrideMap as TotpComponentOverrideMap } from "./recipe/totp/types";
+import type { Config as WebauthnConfig } from "./recipe/webauthn/types";
+import type { ComponentOverrideMap as WebauthnComponentOverrideMap } from "./recipe/webauthn/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 import type { ComponentClass, PropsWithChildren } from "react";
 import type { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
@@ -501,6 +503,7 @@ export type AllRecipeConfigs = {
     session: SessionConfig;
     thirdparty: ThirdPartyConfig;
     totp: TotpConfig;
+    webauthn: WebauthnConfig;
 };
 
 export type AllRecipeComponentOverrides = {
@@ -514,6 +517,7 @@ export type AllRecipeComponentOverrides = {
     thirdparty: ThirdPartyComponentOverrideMap;
     totp: TotpComponentOverrideMap;
     authRecipe: AuthRecipeComponentOverrideMap;
+    webauthn: WebauthnComponentOverrideMap;
 };
 
 export type RecipePluginOverride<T extends keyof AllRecipeConfigs> = {

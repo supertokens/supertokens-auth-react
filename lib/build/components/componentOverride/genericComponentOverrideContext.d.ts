@@ -69,8 +69,6 @@ export declare const createGenericComponentsOverrideContext: <T extends Record<s
                                 onError: (error: string) => void;
                                 config: import("../../recipe/emailpassword/types").NormalisedConfig;
                                 onBackButtonClicked: () => void;
-                            } & {
-                                children?: React.ReactNode;
                             }
                         >
                     >
@@ -92,8 +90,6 @@ export declare const createGenericComponentsOverrideContext: <T extends Record<s
                                 config: import("../../recipe/emailpassword/types").NormalisedConfig;
                                 onSignInClicked: () => void;
                                 token: string;
-                            } & {
-                                children?: React.ReactNode;
                             }
                         >
                     >
@@ -109,8 +105,6 @@ export declare const createGenericComponentsOverrideContext: <T extends Record<s
                                 signOut: () => Promise<void>;
                                 onEmailAlreadyVerified: () => Promise<void>;
                                 redirectToAuth: () => Promise<void>;
-                            } & {
-                                children?: React.ReactNode;
                             }
                         >
                     >
@@ -124,8 +118,6 @@ export declare const createGenericComponentsOverrideContext: <T extends Record<s
                                 onSuccess: () => Promise<void>;
                                 onTokenInvalidRedirect: () => Promise<void>;
                                 token: string;
-                            } & {
-                                children?: React.ReactNode;
                             }
                         >
                     >
@@ -247,11 +239,7 @@ export declare const createGenericComponentsOverrideContext: <T extends Record<s
                   | undefined;
               PasswordlessLinkSent_Override?:
                   | import("./componentOverride").ComponentOverride<
-                        React.ComponentType<
-                            import("../../recipe/passwordless/types").LinkSentThemeProps & {
-                                children?: React.ReactNode;
-                            }
-                        >
+                        React.ComponentType<import("../../recipe/passwordless/types").LinkSentThemeProps>
                     >
                   | undefined;
               PasswordlessLinkClickedScreen_Override?:
@@ -292,11 +280,7 @@ export declare const createGenericComponentsOverrideContext: <T extends Record<s
                     >
                   | undefined;
               PasswordlessMFAOTPLoadingScreen_Override?:
-                  | import("./componentOverride").ComponentOverride<
-                        React.ComponentType<{
-                            children?: React.ReactNode;
-                        }>
-                    >
+                  | import("./componentOverride").ComponentOverride<React.ComponentType<{}>>
                   | undefined;
           } & T)
         | ({
@@ -319,8 +303,6 @@ export declare const createGenericComponentsOverrideContext: <T extends Record<s
                                     typeof import("supertokens-web-js/lib/build/recipe/thirdparty")
                                 >;
                                 config: import("../../recipe/thirdparty/types").NormalisedConfig;
-                            } & {
-                                children?: React.ReactNode;
                             }
                         >
                     >
@@ -336,23 +318,15 @@ export declare const createGenericComponentsOverrideContext: <T extends Record<s
         | ({
               TOTPBlockedScreen_Override?:
                   | import("./componentOverride").ComponentOverride<
-                        React.ComponentType<
-                            {
-                                nextRetryAt: number;
-                                onRetry: () => void;
-                                onSignOutClicked: () => void;
-                            } & {
-                                children?: React.ReactNode;
-                            }
-                        >
+                        React.ComponentType<{
+                            nextRetryAt: number;
+                            onRetry: () => void;
+                            onSignOutClicked: () => void;
+                        }>
                     >
                   | undefined;
               TOTPLoadingScreen_Override?:
-                  | import("./componentOverride").ComponentOverride<
-                        React.ComponentType<{
-                            children?: React.ReactNode;
-                        }>
-                    >
+                  | import("./componentOverride").ComponentOverride<React.ComponentType<{}>>
                   | undefined;
               TOTPCodeForm_Override?:
                   | import("./componentOverride").ComponentOverride<
@@ -433,6 +407,8 @@ export declare const createGenericComponentsOverrideContext: <T extends Record<s
                                       clientName: string;
                                   }
                                 | undefined;
+                            headerLabel?: string | undefined;
+                            hideSignInSwitcher?: boolean | undefined;
                         }>
                     >
                   | undefined;
@@ -450,6 +426,87 @@ export declare const createGenericComponentsOverrideContext: <T extends Record<s
               AuthPageComponentList_Override?:
                   | import("./componentOverride").ComponentOverride<
                         React.ComponentType<import("../../ui").AuthPageThemeProps>
+                    >
+                  | undefined;
+          } & T)
+        | ({
+              WebauthnContinueWithPasskey_Override?:
+                  | import("./componentOverride").ComponentOverride<
+                        React.ComponentType<import("../../recipe/webauthn/types").ContinueWithPasskeyProps>
+                    >
+                  | undefined;
+              WebauthnPasskeyNotSupportedError_Override?:
+                  | import("./componentOverride").ComponentOverride<React.ComponentType<unknown>>
+                  | undefined;
+              WebauthnPasskeyRecoveryEmailSent_Override?:
+                  | import("./componentOverride").ComponentOverride<
+                        React.ComponentType<import("../../recipe/webauthn/types").EmailSentProps>
+                    >
+                  | undefined;
+              WebauthnRecoverAccountForm_Override?:
+                  | import("./componentOverride").ComponentOverride<
+                        React.ComponentType<
+                            import("../../recipe/webauthn/types").RecoverFormProps & {
+                                setError: React.Dispatch<React.SetStateAction<string | undefined>>;
+                            }
+                        >
+                    >
+                  | undefined;
+              WebauthnRecoverAccount_Override?:
+                  | import("./componentOverride").ComponentOverride<
+                        React.ComponentType<import("../../recipe/webauthn/types").RecoverFormProps>
+                    >
+                  | undefined;
+              WebauthnPasskeyConfirmation_Override?:
+                  | import("./componentOverride").ComponentOverride<
+                        React.ComponentType<
+                            import("../../recipe/webauthn/types").SignUpFormProps & {
+                                email?: string | undefined;
+                                onContinueClick: () => void;
+                                errorMessageLabel?: string | undefined;
+                                isLoading: boolean;
+                                hideContinueWithoutPasskey?: boolean | undefined;
+                                isContinueDisabled?: boolean | undefined;
+                                isPasskeySupported: boolean;
+                            }
+                        >
+                    >
+                  | undefined;
+              WebauthnPasskeyFeatureBlock_Override?:
+                  | import("./componentOverride").ComponentOverride<
+                        React.ComponentType<import("../../recipe/webauthn/types").FeatureBlockDetailProps>
+                    >
+                  | undefined;
+              WebauthnContinueWithoutPasskey_Override?:
+                  | import("./componentOverride").ComponentOverride<
+                        React.ComponentType<{
+                            onClick: () => void;
+                        }>
+                    >
+                  | undefined;
+              WebauthnPasskeySignUpForm_Override?:
+                  | import("./componentOverride").ComponentOverride<
+                        React.ComponentType<
+                            import("../../recipe/webauthn/types").SignUpFormProps & {
+                                footer?: JSX.Element | undefined;
+                                onContinueClick: (
+                                    params: import("../../recipe/webauthn/types").ContinueOnSuccessParams
+                                ) => void;
+                                setActiveScreen: React.Dispatch<
+                                    React.SetStateAction<
+                                        import("../../recipe/webauthn/components/themes/signUp/signUpForm").SignUpScreen
+                                    >
+                                >;
+                                onRecoverAccountClick: () => void;
+                            }
+                        >
+                    >
+                  | undefined;
+              WebauthnPasskeySignUpSomethingWentWrong_Override?:
+                  | import("./componentOverride").ComponentOverride<
+                        React.ComponentType<{
+                            onClick: () => void;
+                        }>
                     >
                   | undefined;
           } & T),
