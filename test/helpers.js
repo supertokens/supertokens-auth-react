@@ -30,6 +30,7 @@ import assert from "assert";
 import { appendFile } from "fs/promises";
 import mkdirp from "mkdirp";
 import Puppeteer from "puppeteer";
+import addContext from "mochawesome/addContext";
 
 const SESSION_STORAGE_STATE_KEY = "supertokens-oauth-state";
 
@@ -173,11 +174,16 @@ export async function getProviderLogoCount(page) {
 }
 
 export async function getSubmitFormButtonLabelWithoutShadowDom(page) {
+    await page.waitForSelector("form > div > button");
     return await page.evaluate(() => document.querySelector("form > div > button").innerText);
 }
 
 export async function getSubmitFormButton(page) {
     return waitForSTElement(page, "[data-supertokens='button']");
+}
+
+export async function getSubmitFormButtonUnsafe(page) {
+    return waitForSTElement(page, "[data-supertokens~='button']");
 }
 
 export async function getInputField(page, name) {
@@ -186,6 +192,11 @@ export async function getInputField(page, name) {
 
 export async function submitForm(page) {
     const submitButton = await getSubmitFormButton(page);
+    await submitButton.click();
+}
+
+export async function submitFormUnsafe(page) {
+    const submitButton = await getSubmitFormButtonUnsafe(page);
     await submitButton.click();
 }
 
@@ -515,23 +526,15 @@ export async function submitFormReturnRequestAndResponse(page, URL) {
     };
 }
 
-export async function hasMethodBeenCalled(page, URL, method = "GET", timeout = 1000) {
-    let methodCalled = false;
-
-    const onRequestVerifyMatch = (request) => {
-        // If method called before hasMethodBeenCalled timeouts, update methodCalled.
-        if (request.url() === URL && request.method() === method) {
-            methodCalled = true;
-        }
-        request.continue();
-    };
-
-    await page.setRequestInterception(true);
-    page.on("request", onRequestVerifyMatch);
-    await new Promise((r) => setTimeout(r, timeout));
-    await page.setRequestInterception(false);
-    page.off("request", onRequestVerifyMatch);
-    return methodCalled;
+export async function hasMethodBeenCalled(page, URL, method = "GET", timeout = 2000) {
+    try {
+        await page.waitForResponse((response) => response.url() === URL && response.request().method() === method, {
+            timeout,
+        });
+        return true;
+    } catch (e) {
+        return false;
+    }
 }
 
 export async function assertFormFieldsEqual(actual, expected, values) {
@@ -557,10 +560,22 @@ async function assertValidator(actualValidate, expectedValidate, values) {
 }
 
 export async function getLatestURLWithToken() {
-    const response = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/token`);
-    const { latestURLWithToken } = await response.json();
+    let latestURLWithToken;
+    const start = Date.now();
+    while (!latestURLWithToken) {
+        const response = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/token`);
+        const respBody = await response.json();
+        latestURLWithToken = respBody.latestURLWithToken;
+        if (!latestURLWithToken) {
+            if (Date.now() - start > 10000) {
+                throw new Error("Timeout waiting for latestURLWithToken");
+            }
+            await new Promise((res) => setTimeout(res, 250));
+        }
+    }
     return latestURLWithToken;
 }
+
 export async function assertProviders(page) {
     const providers = await getProvidersLabels(page);
     assert.deepStrictEqual(providers, [
@@ -622,6 +637,23 @@ export async function loginWithFacebook(page) {
     await page.focus("input[name=pass]");
     await page.keyboard.type(process.env.FACEBOOK_PASSWORD);
     await Promise.all([page.keyboard.press("Enter"), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+}
+
+export async function loginWithMockProvider(
+    page,
+    email = "st_test_user@supertokens.io",
+    userId = "123",
+    isVerified = true
+) {
+    const url = new URL(page.url());
+    await Promise.all([
+        page.goto(
+            `${TEST_CLIENT_BASE_URL}/auth/callback/mock-provider?code=asdf&email=${encodeURIComponent(
+                email
+            )}&userId=${encodeURIComponent(userId)}&isVerified=${isVerified}&state=${url.searchParams.get("state")}`
+        ),
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
+    ]);
 }
 
 export async function loginWithAuth0(page) {
@@ -709,12 +741,14 @@ export async function generateState(state, page) {
 }
 
 export async function getUserIdWithAxios(page) {
+    await page.waitForSelector("#root > div > div.fill > div > div.axios > ul > li.sessionInfo-user-id");
     return await page.evaluate(
         () => document.querySelector("#root > div > div.fill > div > div.axios > ul > li.sessionInfo-user-id").innerText
     );
 }
 
 export async function getSessionHandleWithAxios(page) {
+    await page.waitForSelector("#root > div > div.fill > div > div.axios > ul > li.sessionInfo-session-handle");
     return await page.evaluate(
         () =>
             document.querySelector("#root > div > div.fill > div > div.axios > ul > li.sessionInfo-session-handle")
@@ -745,12 +779,14 @@ export async function getInvalidClaimsJSON(page) {
 }
 
 export async function getUserIdFromSessionContext(page) {
+    await page.waitForSelector("#root > div > div.fill > div > div.session-context-userId");
     return await page.evaluate(
         () => document.querySelector("#root > div > div.fill > div > div.session-context-userId").innerText
     );
 }
 
 export async function getTextInDashboardNoAuth(page) {
+    await page.waitForSelector("#root > div > div.fill > div.not-logged-in");
     return await page.evaluate(() => document.querySelector("#root > div > div.fill > div.not-logged-in").innerText);
 }
 
@@ -761,8 +797,13 @@ export async function setupBrowser() {
             "--disable-setuid-sandbox",
             "--disable-web-security",
             "--host-resolver-rules=MAP example.com 127.0.0.1, MAP *.example.com 127.0.0.1",
+            // Open DevTools automatically if in non-headless mode and DEV_TOOLS is enabled
+            ...(process.env.HEADLESS === "false" && process.env.DEV_TOOLS === "true"
+                ? ["--auto-open-devtools-for-tabs"]
+                : []),
         ],
         headless: process.env.HEADLESS !== "false",
+        devtools: process.env.HEADLESS === "false" && process.env.DEV_TOOLS === "true",
     });
     browser.logs = [];
     function addLog(str) {
@@ -890,13 +931,20 @@ export async function screenshotOnFailure(ctx, browser) {
                 .filter((a) => a.length !== 0)
                 .join("_");
             title = title.substring(title.length - 30);
-            await pages[i].screenshot({
-                path: path.join(screenshotRoot, testFileName, `${title}-tab_${i}-${Date.now()}.png`),
-            });
+
+            const screenshotPath = path.join(screenshotRoot, testFileName, `${title}-tab_${i}-${Date.now()}.png`);
+            await pages[i].screenshot({ path: screenshotPath });
+            addContext(ctx, { title: "Screenshot", value: screenshotPath });
+
             await new Promise((r) => setTimeout(r, 500));
-            await pages[i].screenshot({
-                path: path.join(screenshotRoot, testFileName, `${title}-tab_${i}-delayed-${Date.now()}.png`),
-            });
+
+            const delayedScreenshotPath = path.join(
+                screenshotRoot,
+                testFileName,
+                `${title}-tab_${i}-delayed-${Date.now()}.png`
+            );
+            await pages[i].screenshot({ path: delayedScreenshotPath });
+            addContext(ctx, { title: "Delayed Screenshot", value: delayedScreenshotPath });
         }
     }
 }
@@ -913,31 +961,6 @@ export async function getPasswordlessDevice(loginAttemptInfo) {
     return await deviceResp.json();
 }
 
-export function setPasswordlessFlowType(contactMethod, flowType) {
-    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setFlow`, {
-        method: "POST",
-        headers: [["content-type", "application/json"]],
-        body: JSON.stringify({
-            contactMethod,
-            flowType,
-        }),
-    });
-}
-
-export function setAccountLinkingConfig(enabled, shouldAutomaticallyLink, shouldRequireVerification) {
-    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setAccountLinkingConfig`, {
-        method: "POST",
-        headers: [["content-type", "application/json"]],
-        body: JSON.stringify({
-            enabled,
-            shouldAutoLink: {
-                shouldAutomaticallyLink,
-                shouldRequireVerification,
-            },
-        }),
-    });
-}
-
 export function changeEmail(rid, recipeUserId, email, phoneNumber) {
     return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/changeEmail`, {
         method: "POST",
@@ -947,17 +970,6 @@ export function changeEmail(rid, recipeUserId, email, phoneNumber) {
             recipeUserId,
             email,
             phoneNumber,
-        }),
-    });
-}
-
-export function setEnabledRecipes(enabledRecipes, enabledProviders) {
-    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setEnabledRecipes`, {
-        method: "POST",
-        headers: [["content-type", "application/json"]],
-        body: JSON.stringify({
-            enabledRecipes,
-            enabledProviders,
         }),
     });
 }
@@ -1060,6 +1072,14 @@ export async function isOauth2Supported() {
     return true;
 }
 
+export async function isWebauthnSupported() {
+    const features = await getFeatureFlags();
+    if (!features.includes("webauthn")) {
+        return false;
+    }
+
+    return true;
+}
 /**
  * For example setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "EMAIL_PASSWORD_SIGN_UP", page) to
  * set for signUp in email password
@@ -1193,6 +1213,51 @@ const testProviderConfigs = {
     },
 };
 
+export async function backendHook(hookType) {
+    const serverUrls = Array.from(new Set([TEST_SERVER_BASE_URL, TEST_APPLICATION_SERVER_BASE_URL]));
+
+    await Promise.all(
+        serverUrls.map((url) => fetch(`${url}/test/${hookType}`, { method: "POST" }).catch(console.error))
+    );
+}
+
+export async function setupCoreApp({ appId, coreConfig } = {}) {
+    const response = await fetch(`${TEST_SERVER_BASE_URL}/test/setup/app`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            appId,
+            coreConfig,
+        }),
+    });
+
+    return await response.text();
+}
+
+export async function setupST({
+    coreUrl,
+    accountLinkingConfig = {},
+    enabledRecipes,
+    enabledProviders,
+    passwordlessFlowType,
+    passwordlessContactMethod,
+    mfaInfo = {},
+} = {}) {
+    await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setup/st`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            coreUrl,
+            accountLinkingConfig,
+            enabledRecipes,
+            enabledProviders,
+            passwordlessFlowType,
+            passwordlessContactMethod,
+            mfaInfo,
+        }),
+    });
+}
+
 export async function backendBeforeEach() {
     await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
         method: "POST",
@@ -1279,4 +1344,24 @@ export async function getOAuth2TokenData(page) {
     const element = await page.waitForSelector("#oauth2-token-data");
     const tokenData = await element.evaluate((el) => el.textContent);
     return JSON.parse(tokenData);
+}
+
+export async function tryPasswordlessSignInUp(page, email) {
+    await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+    await Promise.all([
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=passwordless`),
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
+    ]);
+
+    await setInputValues(page, [{ name: "email", value: email }]);
+    await submitForm(page);
+
+    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+    const loginAttemptInfo = JSON.parse(
+        await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+    );
+    const device = await getPasswordlessDevice(loginAttemptInfo);
+    await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+    await submitForm(page);
 }

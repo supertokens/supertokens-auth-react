@@ -48,6 +48,8 @@ declare class UI {
                   clientName: string;
               }
             | undefined;
+        headerLabel?: string | undefined;
+        hideSignInSwitcher?: boolean | undefined;
     }>;
     static AuthPageComponentList: React.ComponentType<AuthPageThemeProps>;
     static AuthRecipeComponentsOverrideContextProvider: React.FC<

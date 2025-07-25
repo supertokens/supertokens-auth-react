@@ -91,7 +91,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     );
 
     const handleError = useCallback(
-        async (err) => {
+        async (err: any) => {
             if (await Session.getInstanceOrThrow().doesSessionExist({ userContext })) {
                 throw err;
             } else {
@@ -104,7 +104,7 @@ export const FactorChooser: React.FC<Prop> = (props) => {
     useOnMountAPICall(fetchMFAInfo, checkMFAInfo, handleError, sessionContext.loading === false);
 
     const navigateToFactor = useCallback(
-        (factorId) => {
+        (factorId: string) => {
             props.recipe.config.onHandleEvent({
                 action: "FACTOR_CHOOSEN",
                 factorId,

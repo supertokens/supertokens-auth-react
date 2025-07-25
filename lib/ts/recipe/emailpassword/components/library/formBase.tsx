@@ -20,8 +20,8 @@ import React, { Fragment, useContext, useState } from "react";
 import { useCallback } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
-import STGeneralError from "supertokens-web-js/utils/error";
 
+import { handleCallAPI } from "../../../../utils";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
 
 import type { APIFormField } from "../../../../types";
@@ -30,14 +30,14 @@ import type { FormEvent } from "react";
 
 import { Button, FormRow, Input, InputError, Label } from ".";
 
-type FieldState = {
+export type FieldState = {
     id: string;
     validated?: boolean;
     error?: string;
     value: string;
 };
 
-const fetchDefaultValue = (field: FormFieldThemeProps): string => {
+export const fetchDefaultValue = (field: FormFieldThemeProps): string => {
     if (field.getDefaultValue !== undefined) {
         const defaultValue = field.getDefaultValue();
         if (typeof defaultValue !== "string") {
@@ -79,7 +79,7 @@ function InputComponentWrapper(props: {
         [onInputBlur, field.id]
     );
 
-    const useCallbackOnInputChange = useCallback(
+    const useCallbackOnInputChange = useCallback<(value: string) => void>(
         (value) => {
             onInputChange({
                 id: field.id,
@@ -218,8 +218,8 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
             setFieldStates((os) => os.map((fs) => ({ ...fs, error: undefined })));
 
             // Get the fields values from form.
-            const apiFields = formFields.map((field) => {
-                const fieldState = fieldStates.find((fs) => fs.id === field.id);
+            const apiFields = formFields?.map((field) => {
+                const fieldState = fieldStates?.find((fs) => fs.id === field.id);
                 return {
                     id: field.id,
                     value: fieldState === undefined ? "" : fieldState.value,
@@ -229,28 +229,19 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
             const fieldUpdates: FieldState[] = [];
             // Call API.
             try {
-                let result;
-                let generalError: STGeneralError | undefined;
-                let fetchError: Response | undefined;
-                try {
-                    result = await props.callAPI(apiFields, (id, value) => fieldUpdates.push({ id, value }));
-                } catch (e) {
-                    if (STGeneralError.isThisError(e)) {
-                        generalError = e;
-                    } else if (e instanceof Response) {
-                        fetchError = e;
-                    } else {
-                        throw e;
-                    }
-                }
-                if (unmounting.current.signal.aborted) {
+                const { result, generalError, fetchError } = await handleCallAPI({
+                    apiFields,
+                    fieldUpdates,
+                    callAPI: props.callAPI,
+                });
+                if (unmounting?.current.signal.aborted) {
                     return;
                 }
 
                 if (generalError !== undefined || (result !== undefined && result.status !== "OK")) {
-                    for (const field of formFields) {
+                    for (const field of formFields || []) {
                         const update = fieldUpdates.find((f) => f.id === field.id);
-                        if (update || field.clearOnSubmit === true) {
+                        if ((update || field.clearOnSubmit === true) && updateFieldState) {
                             // We can do these one by one, it's almost never more than one field
                             updateFieldState(field.id, (os) => ({ ...os, value: update ? update.value : "" }));
                         }
@@ -275,7 +266,7 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                         }
                     }
 
-                    if (unmounting.current.signal.aborted) {
+                    if (unmounting?.current.signal.aborted) {
                         return;
                     }
 
@@ -285,7 +276,7 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                         const getErrorMessage = (fs: FieldState) => {
                             const errorMessage = errorFields.find((ef: any) => ef.id === fs.id)?.error;
                             if (errorMessage === "Field is not optional") {
-                                const fieldConfigData = props.formFields.find((f) => f.id === fs.id);
+                                const fieldConfigData = formFields?.find((f) => f.id === fs.id);
                                 // replace non-optional server error message from nonOptionalErrorMsg
                                 if (fieldConfigData?.nonOptionalErrorMsg !== undefined) {
                                     return fieldConfigData?.nonOptionalErrorMsg;
@@ -302,7 +293,7 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                 setIsLoading(false);
             }
         },
-        [setIsLoading, setFieldStates, props, formFields, fieldStates]
+        [setIsLoading, setFieldStates, props, formFields, fieldStates, updateFieldState]
     );
 
     return (

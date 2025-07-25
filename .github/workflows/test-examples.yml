@@ -6,7 +6,7 @@ jobs:
         outputs:
             matrix: ${{ steps.set-matrix.outputs.matrix }}
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
             - run: bash test/findExamplesWithTests.sh
             - id: set-matrix
               run: echo "::set-output name=matrix::{\"include\":$(bash test/findExamplesWithTests.sh)}"
@@ -24,7 +24,7 @@ jobs:
             run:
                 working-directory: ${{ matrix.examplePath }}
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
             - run: bash ../../test/updateExampleAppDeps.sh .
             - run: npm install mocha@6.1.4 jsdom-global@3.0.2 puppeteer@^11.0.0 isomorphic-fetch@^3.0.0
             - run: npm run build || true
@@ -36,7 +36,7 @@ jobs:
                   )
             - name: The job has failed
               if: ${{ failure() }}
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                   name: screenshots
                   path: ./**/*screenshot.jpeg

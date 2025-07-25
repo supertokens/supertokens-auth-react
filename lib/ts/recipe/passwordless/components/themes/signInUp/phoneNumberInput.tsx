@@ -63,7 +63,7 @@ function PhoneNumberInput({
     );
 
     const handleCountryChange = useCallback(
-        (ev) => {
+        (ev: any) => {
             onChange(ev.target.value);
         },
         [onChange]

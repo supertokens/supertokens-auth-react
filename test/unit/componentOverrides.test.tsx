@@ -11,6 +11,7 @@ import { ComponentOverrideMap as TOTPOverrideMap } from "../../lib/ts/recipe/tot
 import { ComponentOverrideMap as MFAOverrideMap } from "../../lib/ts/recipe/multifactorauth/types";
 import { ComponentOverrideMap as AuthRecipeOverrideMap } from "../../lib/ts/recipe/authRecipe/types";
 import { ComponentOverrideMap as OAuth2ProviderOverrideMap } from "../../lib/ts/recipe/oauth2provider/types";
+import { ComponentOverrideMap as WebauthnOverrideMap } from "../../lib/ts/recipe/webauthn/types";
 
 import "@testing-library/jest-dom";
 import EmailPassword from "../../lib/ts/recipe/emailpassword/recipe";
@@ -58,6 +59,18 @@ import { FactorList } from "../../lib/ts/recipe/multifactorauth/components/theme
 import { FactorOption } from "../../lib/ts/recipe/multifactorauth/components/themes/factorChooser/factorOption";
 import { AuthPageComponentList, AuthPageFooter, AuthPageHeader } from "../../lib/ts/ui";
 import { OAuth2LogoutScreenInner } from "../../lib/ts/recipe/oauth2provider/components/themes/oauth2LogoutScreen/OAuth2LogoutScreenInner";
+import { ContinueWithPasskeyWithOverride } from "../../lib/ts/recipe/webauthn/components/themes/continueWithPasskey";
+import { PasskeyNotSupportedError } from "../../lib/ts/recipe/webauthn/components/themes/error/passkeyNotSupportedError";
+import { PasskeyRecoveryEmailSent } from "../../lib/ts/recipe/webauthn/components/themes/sendRecoveryEmail/emailSent";
+import {
+    WebauthnRecoverAccount,
+    WebauthnRecoverAccountForm,
+} from "../../lib/ts/recipe/webauthn/components/themes/sendRecoveryEmail/recoverAccountForm";
+import { PasskeyConfirmation } from "../../lib/ts/recipe/webauthn/components/themes/signUp/confirmation";
+import { PasskeyFeatureBlock } from "../../lib/ts/recipe/webauthn/components/themes/signUp/featureBlocks";
+import { ContinueWithoutPasskey } from "../../lib/ts/recipe/webauthn/components/themes/signUp/continueWithoutPasskey";
+import { SignUpFormInner } from "../../lib/ts/recipe/webauthn/components/themes/signUp/signUpForm";
+import { SignUpSomethingWentWrong } from "../../lib/ts/recipe/webauthn/components/themes/signUp/somethingWentWrong";
 
 type AllComponentsOverrideMap = AuthRecipeOverrideMap &
     EmailPasswordOverrideMap &
@@ -66,7 +79,8 @@ type AllComponentsOverrideMap = AuthRecipeOverrideMap &
     PasswordlessOverrideMap &
     TOTPOverrideMap &
     MFAOverrideMap &
-    OAuth2ProviderOverrideMap;
+    OAuth2ProviderOverrideMap &
+    WebauthnOverrideMap;
 
 const makeOverride = () => () => <h1 data-testid="override">Override</h1>;
 const WithProvider: React.FC<any> = ({ overrideMap, children }) => {
@@ -135,6 +149,16 @@ describe("Theme component overrides", () => {
         AuthPageFooter_Override: AuthPageFooter,
         AuthPageHeader_Override: AuthPageHeader,
         OAuth2LogoutScreenInner_Override: OAuth2LogoutScreenInner,
+        WebauthnContinueWithPasskey_Override: ContinueWithPasskeyWithOverride,
+        WebauthnPasskeyNotSupportedError_Override: PasskeyNotSupportedError,
+        WebauthnPasskeyRecoveryEmailSent_Override: PasskeyRecoveryEmailSent,
+        WebauthnRecoverAccountForm_Override: WebauthnRecoverAccountForm,
+        WebauthnRecoverAccount_Override: WebauthnRecoverAccount,
+        WebauthnPasskeyConfirmation_Override: PasskeyConfirmation,
+        WebauthnPasskeyFeatureBlock_Override: PasskeyFeatureBlock,
+        WebauthnContinueWithoutPasskey_Override: ContinueWithoutPasskey,
+        WebauthnPasskeySignUpForm_Override: SignUpFormInner,
+        WebauthnPasskeySignUpSomethingWentWrong_Override: SignUpSomethingWentWrong,
     };
 
     Object.entries(overrides).forEach(([key, comp]) => {

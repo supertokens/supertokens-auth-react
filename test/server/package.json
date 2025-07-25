@@ -16,6 +16,6 @@
         "express": "4.17.1",
         "morgan": "^1.10.0",
         "otpauth": "^9.2.0",
-        "supertokens-node": "^21.0.0"
+        "supertokens-node": "^22.0.0"
     }
 }
