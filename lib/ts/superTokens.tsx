@@ -258,9 +258,10 @@ export default class SuperTokens {
 
         for (const plugin of finalPluginList) {
             if (plugin.config) {
-                // @ts-ignore we don't want to override the appInfo and we can't make sure the plugin won't return it
-                const { appInfo, ...pluginConfig } =
-                    plugin.config(getPublicConfig({ ...config, appInfo: normalisedAppInfo })) || {};
+                const pluginConfig = plugin.config(getPublicConfig({ ...config, appInfo: normalisedAppInfo })) || {};
+
+                // @ts-expect-error we don't want to override the appInfo and we can't make sure the plugin won't return it
+                delete pluginConfig.appInfo;
 
                 config = { ...config, ...pluginConfig };
             }
