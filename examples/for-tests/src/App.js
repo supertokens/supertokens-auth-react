@@ -8,6 +8,7 @@ import Footer from "./Footer";
 import SuperTokens from "supertokens-auth-react";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import Webauthn from "supertokens-auth-react/recipe/webauthn";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
 import Multitenancy from "supertokens-auth-react/recipe/multitenancy";
@@ -15,6 +16,7 @@ import UserRoles from "supertokens-auth-react/recipe/userroles";
 import MultiFactorAuth from "supertokens-auth-react/recipe/multifactorauth";
 import TOTP from "supertokens-auth-react/recipe/totp";
 import OAuth2Provider from "supertokens-auth-react/recipe/oauth2provider";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 import axios from "axios";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
@@ -427,6 +429,9 @@ if (enabledRecipes.includes("emailpassword") || enabledRecipes.includes("thirdpa
 if (enabledRecipes.includes("passwordless") || enabledRecipes.includes("thirdpartypasswordless")) {
     recipeList = [getPasswordlessConfigs(testContext), ...recipeList];
 }
+if (enabledRecipes.includes("webauthn")) {
+    recipeList = [getWebauthnConfigs(testContext), ...recipeList];
+}
 
 if (emailVerificationMode !== "OFF") {
     recipeList.push(getEmailVerificationConfigs(testContext));
@@ -439,55 +444,57 @@ if (testContext.enableMFA) {
         })
     );
 }
-
-SuperTokens.init({
-    usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
-    clientType: testContext.clientType,
-    enableDebugLogs: true,
-    appInfo: {
-        appName: "SuperTokens",
-        websiteDomain: getWebsiteDomain(),
-        apiDomain: getApiDomain(),
-        websiteBasePath,
-    },
-    languageTranslations: {
-        translations: {
-            en: {
-                AUTH_PAGE_FOOTER_TOS: "TOS",
-            },
-            hu: {
-                AUTH_PAGE_FOOTER_TOS: "ÁSZF",
+if (!window.location.pathname.startsWith("/mockProvider")) {
+    SuperTokens.init({
+        usesDynamicLoginMethods: testContext.usesDynamicLoginMethods,
+        clientType: testContext.clientType,
+        enableDebugLogs: true,
+        appInfo: {
+            appName: "SuperTokens",
+            websiteDomain: getWebsiteDomain(),
+            apiDomain: getApiDomain(),
+            websiteBasePath,
+        },
+        languageTranslations: {
+            translations: {
+                en: {
+                    AUTH_PAGE_FOOTER_TOS: "TOS",
+                },
+                hu: {
+                    AUTH_PAGE_FOOTER_TOS: "ÁSZF",
+                },
             },
         },
-    },
-    getRedirectionURL: (context) => {
-        if (context.action === "SUCCESS") {
-            let logId = {
-                emailpassword: "EMAIL_PASSWORD",
-                thirdparty: "THIRD_PARTY",
-                passwordless: "PASSWORDLESS",
-                thirdpartypasswordless: "THIRDPARTYPASSWORDLESS",
-                thirdpartyemailpassword: "THIRD_PARTY_EMAIL_PASSWORD",
-            }[context.recipeId];
+        getRedirectionURL: (context) => {
+            if (context.action === "SUCCESS") {
+                let logId = {
+                    emailpassword: "EMAIL_PASSWORD",
+                    thirdparty: "THIRD_PARTY",
+                    passwordless: "PASSWORDLESS",
+                    thirdpartypasswordless: "THIRDPARTYPASSWORDLESS",
+                    thirdpartyemailpassword: "THIRD_PARTY_EMAIL_PASSWORD",
+                    webauthn: "WEBAUTHN",
+                }[context.recipeId];
 
-            console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`);
-            setIsNewUserToStorage(context.recipeId, context.isNewRecipeUser);
-            if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
-                return null;
+                console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL SUCCESS ${logId}`);
+                setIsNewUserToStorage(context.recipeId, context.isNewRecipeUser);
+                if (testContext.disableRedirectionAfterSuccessfulSignInUp) {
+                    return null;
+                }
+
+                return context.redirectToPath || "/dashboard";
+            } else {
+                console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
             }
-            console.log(JSON.stringify(context));
-            return context.redirectToPath || "/dashboard";
-        } else {
-            console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
-        }
-    },
-    useShadowDom,
-    privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
-    termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
-    defaultToSignUp,
-    disableAuthRoute: testContext.disableDefaultUI,
-    recipeList,
-});
+        },
+        useShadowDom,
+        privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
+        termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
+        defaultToSignUp,
+        disableAuthRoute: testContext.disableDefaultUI,
+        recipeList,
+    });
+}
 
 /* App */
 function App() {
@@ -1144,6 +1151,226 @@ function getThirdPartyConfigs({ staticProviderList, disableDefaultUI, thirdParty
 
 function setIsNewUserToStorage(recipeName, isNewRecipeUser) {
     localStorage.setItem("isNewUserCheck", `${recipeName}-${isNewRecipeUser}`);
+}
+
+function getWebauthnConfigs({
+    throwWebauthnError,
+    webauthnErrorStatus,
+    webauthnRecoverAccountErrorStatus,
+    overrideWebauthnSupport,
+}) {
+    return Webauthn.init({
+        override: {
+            functions: (implementation) => {
+                const log = logWithPrefix(`ST_LOGS WEBAUTHN OVERRIDE`);
+
+                return {
+                    ...implementation,
+                    getRegisterOptions(...args) {
+                        log(`GET REGISTER OPTIONS`);
+
+                        if (throwWebauthnError) {
+                            throw new STGeneralError("TEST ERROR");
+                        }
+
+                        return implementation.getRegisterOptions(...args);
+                    },
+                    async getSignInOptions(...args) {
+                        log(`GET SIGN IN OPTIONS`);
+                        return implementation.getSignInOptions(...args);
+                    },
+                    async authenticateCredential(...args) {
+                        log("AUTHENTICATE CREDENTIAL");
+
+                        // We will make a network call to get the registration options
+                        // for sign up.
+                        // Then we will use the registrationOptions and the passed args
+                        // to create and assert a credential.
+
+                        const email = `${Math.random().toString().slice(2)}@supertokens.com`;
+                        const registrationOptions = await implementation.getRegisterOptions({
+                            userContext: {},
+                            email,
+                        });
+                        const signInOptions = args[0].authenticationOptions;
+
+                        const response = await fetch(`${getApiDomain()}/test/webauthn/create-and-assert-credential`, {
+                            method: "POST",
+                            body: JSON.stringify({
+                                registerOptionsResponse: registrationOptions,
+                                signInOptionsResponse: signInOptions,
+                                rpId: "localhost",
+                                rpName: "localhost",
+                                origin: "http://localhost:3031",
+                            }),
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        });
+
+                        if (!response.ok) {
+                            throw new STGeneralError("TEST ERROR: CREATING CREDENTIAL FAILED");
+                        }
+
+                        const { attestation, assertion } = (await response.json()).credential;
+
+                        // Sign up the user using the attestation;
+                        await implementation.signUp({
+                            webauthnGeneratedOptionsId: registrationOptions.webauthnGeneratedOptionsId,
+                            credential: attestation,
+                            userContext: {},
+                        });
+
+                        return { authenticationResponse: assertion, status: "OK" };
+                    },
+                    async registerCredential(...args) {
+                        log("REGISTER CREDENTIAL");
+
+                        const registrationOptions = args[0].registrationOptions;
+                        const response = await fetch(`${getApiDomain()}/test/webauthn/create-credential`, {
+                            method: "POST",
+                            body: JSON.stringify({
+                                registerOptionsResponse: registrationOptions,
+                                rpId: "localhost",
+                                rpName: "localhost",
+                                origin: "http://localhost:3031",
+                            }),
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        });
+
+                        if (!response.ok) {
+                            throw new STGeneralError("TEST ERROR: CREATING CREDENTIAL FAILED");
+                        }
+
+                        const { credential } = await response.json();
+                        return {
+                            status: "OK",
+                            registrationResponse: credential,
+                        };
+                    },
+                    async signUp(...args) {
+                        log(`SIGN UP`);
+                        return implementation.signUp(...args);
+                    },
+                    async signIn(...args) {
+                        log(`SIGN IN`);
+                        return implementation.signIn(...args);
+                    },
+                    registerCredentialWithSignUp(...args) {
+                        log(`GET REGISTER OPTIONS WITH SIGN UP`);
+
+                        // We will throw an error if it is asked for.
+                        if (throwWebauthnError) {
+                            throw new STGeneralError("TEST ERROR");
+                        }
+
+                        // Return error status if the user passed that.
+                        if (webauthnErrorStatus) {
+                            return {
+                                status: webauthnErrorStatus,
+                            };
+                        }
+
+                        // We are mocking the popup since it's not possible to
+                        // test the webauthn popup.
+                        return implementation.registerCredentialWithSignUp(...args);
+                    },
+                    authenticateCredentialWithSignIn(...args) {
+                        log(`AUTHENTICATE CREDENTIAL WITH SIGN IN`);
+
+                        // We will throw an error if it is asked for.
+                        if (throwWebauthnError) {
+                            throw new STGeneralError("TEST ERROR");
+                        }
+
+                        // Return error status if the user passed that.
+                        if (webauthnErrorStatus) {
+                            return {
+                                status: webauthnErrorStatus,
+                            };
+                        }
+
+                        return implementation.authenticateCredentialWithSignIn(...args);
+                    },
+                    generateRecoverAccountToken(...args) {
+                        log(`GENERATE RECOVER ACCOUNT TOKEN`);
+
+                        // We will throw an error if it is asked for.
+                        if (throwWebauthnError) {
+                            throw new STGeneralError("TEST ERROR");
+                        }
+
+                        // Return error status if the user passed that.
+                        if (webauthnErrorStatus) {
+                            return {
+                                status: webauthnErrorStatus,
+                            };
+                        }
+
+                        return implementation.generateRecoverAccountToken(...args);
+                    },
+                    recoverAccount(...args) {
+                        log(`RECOVER ACCOUNT`);
+
+                        // Return error status if the user passed that.
+                        if (webauthnRecoverAccountErrorStatus) {
+                            return {
+                                status: webauthnRecoverAccountErrorStatus,
+                            };
+                        }
+
+                        return implementation.recoverAccount(...args);
+                    },
+                    doesBrowserSupportWebAuthn(...args) {
+                        if (overrideWebauthnSupport === undefined || overrideWebauthnSupport === null) {
+                            return implementation.doesBrowserSupportWebAuthn(...args);
+                        }
+
+                        // The value is defined but not set to true would mean
+                        // it is a stringifiedJSON value.
+                        if (overrideWebauthnSupport !== "true") {
+                            return JSON.parse(overrideWebauthnSupport);
+                        }
+
+                        // Value is defined and set to `true` so we will return
+                        // the default values.
+                        return {
+                            status: "OK",
+                            browserSupportsWebauthn: true,
+                            platformAuthenticatorIsAvailable: true,
+                        };
+                    },
+                };
+            },
+        },
+        preAPIHook: async (context) => {
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`)?.includes(context.action)) {
+                let errorFromStorage = localStorage.getItem("TRANSLATED_GENERAL_ERROR");
+
+                if (context.action === "EMAIL_EXISTS") {
+                    context.url += "&generalError=true";
+                } else {
+                    let jsonBody = JSON.parse(context.requestInit.body);
+                    jsonBody = {
+                        ...jsonBody,
+                        generalError: true,
+                        generalErrorMessage: errorFromStorage === null ? undefined : errorFromStorage,
+                    };
+                    context.requestInit.body = JSON.stringify(jsonBody);
+                }
+            }
+            console.log(`ST_LOGS WEBAUTHN PRE_API_HOOKS ${context.action}`);
+            return context;
+        },
+        getRedirectionURL: async (context) => {
+            console.log(`ST_LOGS WEBAUTHN GET_REDIRECTION_URL ${context.action}`);
+        },
+        onHandleEvent: async (context) => {
+            console.log(`ST_LOGS WEBAUTHN ON_HANDLE_EVENT ${context.action}`);
+        },
+    });
 }
 
 window.SuperTokens = SuperTokens;

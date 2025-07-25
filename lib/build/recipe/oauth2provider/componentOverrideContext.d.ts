@@ -75,8 +75,6 @@ declare const useContext: () =>
                                 onError: (error: string) => void;
                                 config: import("../emailpassword/types").NormalisedConfig;
                                 onBackButtonClicked: () => void;
-                            } & {
-                                children?: import("react").ReactNode;
                             }
                         >
                     >
@@ -98,8 +96,6 @@ declare const useContext: () =>
                                 config: import("../emailpassword/types").NormalisedConfig;
                                 onSignInClicked: () => void;
                                 token: string;
-                            } & {
-                                children?: import("react").ReactNode;
                             }
                         >
                     >
@@ -115,8 +111,6 @@ declare const useContext: () =>
                                 signOut: () => Promise<void>;
                                 onEmailAlreadyVerified: () => Promise<void>;
                                 redirectToAuth: () => Promise<void>;
-                            } & {
-                                children?: import("react").ReactNode;
                             }
                         >
                     >
@@ -130,8 +124,6 @@ declare const useContext: () =>
                                 onSuccess: () => Promise<void>;
                                 onTokenInvalidRedirect: () => Promise<void>;
                                 token: string;
-                            } & {
-                                children?: import("react").ReactNode;
                             }
                         >
                     >
@@ -243,11 +235,7 @@ declare const useContext: () =>
                   | undefined;
               PasswordlessLinkSent_Override?:
                   | import("../../components/componentOverride/componentOverride").ComponentOverride<
-                        import("react").ComponentType<
-                            import("../passwordless/types").LinkSentThemeProps & {
-                                children?: import("react").ReactNode;
-                            }
-                        >
+                        import("react").ComponentType<import("../passwordless/types").LinkSentThemeProps>
                     >
                   | undefined;
               PasswordlessLinkClickedScreen_Override?:
@@ -289,9 +277,7 @@ declare const useContext: () =>
                   | undefined;
               PasswordlessMFAOTPLoadingScreen_Override?:
                   | import("../../components/componentOverride/componentOverride").ComponentOverride<
-                        import("react").ComponentType<{
-                            children?: import("react").ReactNode;
-                        }>
+                        import("react").ComponentType<{}>
                     >
                   | undefined;
           } & ComponentOverrideMap)
@@ -312,8 +298,6 @@ declare const useContext: () =>
                                     typeof import("supertokens-web-js/lib/build/recipe/thirdparty")
                                 >;
                                 config: import("../thirdparty/types").NormalisedConfig;
-                            } & {
-                                children?: import("react").ReactNode;
                             }
                         >
                     >
@@ -329,22 +313,16 @@ declare const useContext: () =>
         | ({
               TOTPBlockedScreen_Override?:
                   | import("../../components/componentOverride/componentOverride").ComponentOverride<
-                        import("react").ComponentType<
-                            {
-                                nextRetryAt: number;
-                                onRetry: () => void;
-                                onSignOutClicked: () => void;
-                            } & {
-                                children?: import("react").ReactNode;
-                            }
-                        >
+                        import("react").ComponentType<{
+                            nextRetryAt: number;
+                            onRetry: () => void;
+                            onSignOutClicked: () => void;
+                        }>
                     >
                   | undefined;
               TOTPLoadingScreen_Override?:
                   | import("../../components/componentOverride/componentOverride").ComponentOverride<
-                        import("react").ComponentType<{
-                            children?: import("react").ReactNode;
-                        }>
+                        import("react").ComponentType<{}>
                     >
                   | undefined;
               TOTPCodeForm_Override?:
@@ -426,6 +404,8 @@ declare const useContext: () =>
                                       clientName: string;
                                   }
                                 | undefined;
+                            headerLabel?: string | undefined;
+                            hideSignInSwitcher?: boolean | undefined;
                         }>
                     >
                   | undefined;

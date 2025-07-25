@@ -1,7 +1,9 @@
 /// <reference types="react" />
+import STGeneralError from "supertokens-web-js/lib/build/error";
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
-import type { FormFieldError } from "./recipe/emailpassword/types";
+import type { FieldState } from "./recipe/emailpassword/components/library/formBase";
+import type { FormBaseAPIResponse, FormFieldError } from "./recipe/emailpassword/types";
 import type {
     APIFormField,
     AppInfoUserInput,
@@ -9,11 +11,7 @@ import type {
     NormalisedAppInfo,
     NormalisedFormField,
     NormalisedGetRedirectionURLContext,
-    SuperTokensPlugin,
-    SuperTokensPublicConfig,
-    SuperTokensPublicPlugin,
     UserContext,
-    SuperTokensConfigWithNormalisedAppInfo,
 } from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
 export declare function clearQueryParams(paramNames: string[]): void;
@@ -76,5 +74,21 @@ export declare const useOnMountAPICall: <T>(
     startLoading?: boolean
 ) => void;
 export declare function useRethrowInRender(): import("react").Dispatch<import("react").SetStateAction<undefined>>;
-export declare function getPublicPlugin(plugin: SuperTokensPlugin): SuperTokensPublicPlugin;
-export declare function getPublicConfig(config: SuperTokensConfigWithNormalisedAppInfo): SuperTokensPublicConfig;
+export declare const handleCallAPI: <T>({
+    apiFields,
+    fieldUpdates,
+    callAPI,
+}: {
+    callAPI: (fields: APIFormField[], setValue: (id: string, value: string) => void) => Promise<FormBaseAPIResponse<T>>;
+    apiFields?:
+        | {
+              id: string;
+              value: string;
+          }[]
+        | undefined;
+    fieldUpdates: FieldState[];
+}) => Promise<{
+    result?: FormBaseAPIResponse<T> | undefined;
+    generalError?: STGeneralError | undefined;
+    fetchError?: Response | undefined;
+}>;

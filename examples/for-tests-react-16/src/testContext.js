@@ -24,6 +24,10 @@ export function getTestContext() {
         signoutOnSessionNotExists: localStorage.getItem("signoutOnSessionNotExists") === "true",
         disableRedirectionAfterSuccessfulSignInUp:
             localStorage.getItem("disableRedirectionAfterSuccessfulSignInUp") === "true",
+        throwWebauthnError: localStorage.getItem("throwWebauthnError") === "true",
+        webauthnErrorStatus: localStorage.getItem("webauthnErrorStatus") || undefined,
+        webauthnRecoverAccountErrorStatus: localStorage.getItem("webauthnRecoverAccountErrorStatus") || undefined,
+        overrideWebauthnSupport: localStorage.getItem("overrideWebauthnSupport"),
     };
     return ret;
 }

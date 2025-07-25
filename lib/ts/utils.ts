@@ -14,6 +14,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 import { CookieHandlerReference } from "supertokens-web-js/utils/cookieHandler";
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
@@ -26,7 +27,8 @@ import {
     TENANT_ID_QUERY_PARAM,
 } from "./constants";
 
-import type { FormFieldError } from "./recipe/emailpassword/types";
+import type { FieldState } from "./recipe/emailpassword/components/library/formBase";
+import type { FormBaseAPIResponse, FormFieldError } from "./recipe/emailpassword/types";
 import type {
     APIFormField,
     AppInfoUserInput,
@@ -559,6 +561,41 @@ export function useRethrowInRender() {
 
     return setError;
 }
+
+export const handleCallAPI = async <T>({
+    apiFields,
+    fieldUpdates,
+    callAPI,
+}: {
+    callAPI: (fields: APIFormField[], setValue: (id: string, value: string) => void) => Promise<FormBaseAPIResponse<T>>;
+    apiFields?: { id: string; value: string }[];
+    fieldUpdates: FieldState[];
+}): Promise<{
+    result?: FormBaseAPIResponse<T>;
+    generalError?: STGeneralError;
+    fetchError?: Response;
+}> => {
+    let result: FormBaseAPIResponse<T> | undefined;
+    let generalError: STGeneralError | undefined;
+    let fetchError: Response | undefined;
+    try {
+        result = await callAPI(apiFields || [], (id, value) => fieldUpdates.push({ id, value }));
+    } catch (e) {
+        if (STGeneralError.isThisError(e)) {
+            generalError = e;
+        } else if (e instanceof Response) {
+            fetchError = e;
+        } else {
+            throw e;
+        }
+    }
+
+    return {
+        result,
+        generalError,
+        fetchError,
+    };
+};
 
 export function getPublicPlugin(plugin: SuperTokensPlugin): SuperTokensPublicPlugin {
     return {

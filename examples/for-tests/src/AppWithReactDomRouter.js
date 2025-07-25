@@ -4,6 +4,7 @@ import { ResetPasswordUsingToken } from "supertokens-auth-react/recipe/emailpass
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { getSuperTokensRoutesForReactRouterDom, AuthPage } from "supertokens-auth-react/ui";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
+import { WebauthnPreBuiltUI } from "supertokens-auth-react/recipe/webauthn/prebuiltui";
 import { PasswordlessPreBuiltUI } from "supertokens-auth-react/recipe/passwordless/prebuiltui";
 import { EmailVerificationPreBuiltUI } from "supertokens-auth-react/recipe/emailverification/prebuiltui";
 import { ThirdPartyPreBuiltUI, SignInAndUpCallback } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
@@ -41,6 +42,9 @@ function AppWithReactDomRouter(props) {
     }
     if (enabledRecipes.some((r) => r.endsWith("passwordless"))) {
         recipePreBuiltUIList.push(PasswordlessPreBuiltUI);
+    }
+    if (enabledRecipes.some((r) => r.endsWith("webauthn"))) {
+        recipePreBuiltUIList.push(WebauthnPreBuiltUI);
     }
     if (emailVerificationMode !== "OFF") {
         recipePreBuiltUIList.push(EmailVerificationPreBuiltUI);

@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.48.0-canary-plugins.0",
+    "version": "0.49.1-canary-plugins.0",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -38,7 +38,7 @@
         "@types/intl-tel-input": "^17.0.6",
         "@types/jest": "^27.1.0",
         "@types/node": "14.11.10",
-        "@types/react": "^17.0.20",
+        "@types/react": "^18.3.18",
         "@typescript-eslint/eslint-plugin": "4.6.0",
         "@typescript-eslint/eslint-plugin-tslint": "4.6.0",
         "@typescript-eslint/parser": "4.6.0",
@@ -61,7 +61,9 @@
         "mocha": "^10.2.0",
         "mocha-junit-reporter": "^2.2.1",
         "mocha-multi": "^1.1.7",
+        "mocha-multi-reporters": "^1.5.1",
         "mocha-split-tests": "github:rishabhpoddar/mocha-split-tests",
+        "mochawesome": "^7.1.3",
         "npm-run-all": "^4.1.5",
         "postcss": "^8.4.19",
         "postcss-import": "^15.0.0",
@@ -90,6 +92,7 @@
         "typescript": "4.7.3"
     },
     "dependencies": {
+        "@simplewebauthn/types": "^12.0.0",
         "intl-tel-input": "^17.0.19",
         "prop-types": "*",
         "react-qr-code": "^2.0.12",
@@ -113,7 +116,6 @@
         "test-e2e-react16": "RUN_REACT_16_TESTS=true ./test/startTestApp.sh 8082",
         "test-e2e-with-non-node": "./test/startTestApp.sh 8083",
         "test-unit": "TEST_MODE=testing jest --silent -c jest.config.js --runInBand",
-        "test-visual": "SPEC_FILES=test/visual/**/*.test.js npx percy exec -- npm run test-e2e",
         "prep-test-app": "./test/prepTestApp.sh $SRC",
         "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit && cd ../test/with-typescript && npx tsc -p tsconfig.json",
         "tsc": "cd lib && npx tsc -p tsconfig.json",
@@ -137,15 +139,15 @@
     "size-limit": [
         {
             "path": "lib/build/index.js",
-            "limit": "25kb"
-        },
-        {
-            "path": "recipe/session/index.js",
             "limit": "26kb"
         },
         {
+            "path": "recipe/session/index.js",
+            "limit": "27kb"
+        },
+        {
             "path": "recipe/session/prebuiltui.js",
-            "limit": "31kb"
+            "limit": "32kb"
         },
         {
             "path": "recipe/thirdparty/index.js",
@@ -173,11 +175,11 @@
         },
         {
             "path": "recipe/emailpassword/prebuiltui.js",
-            "limit": "42kb"
+            "limit": "43kb"
         },
         {
             "path": "recipe/passwordless/prebuiltui.js",
-            "limit": "132kb"
+            "limit": "133kb"
         },
         {
             "path": "recipe/multitenancy/index.js",
@@ -185,7 +187,7 @@
         },
         {
             "path": "recipe/multifactorauth/index.js",
-            "limit": "12kb"
+            "limit": "13kb"
         },
         {
             "path": "recipe/multifactorauth/prebuiltui.js",
@@ -197,7 +199,15 @@
         },
         {
             "path": "recipe/oauth2provider/prebuiltui.js",
-            "limit": "33kb"
+            "limit": "34kb"
+        },
+        {
+            "path": "recipe/webauthn/index.js",
+            "limit": "13kb"
+        },
+        {
+            "path": "recipe/webauthn/prebuiltui.js",
+            "limit": "61kb"
         }
     ],
     "browserslist": {

@@ -21,6 +21,8 @@ import type { Config as ThirdPartyConfig } from "./recipe/thirdparty/types";
 import type { ComponentOverrideMap as ThirdPartyComponentOverrideMap } from "./recipe/thirdparty/types";
 import type { Config as TotpConfig } from "./recipe/totp/types";
 import type { ComponentOverrideMap as TotpComponentOverrideMap } from "./recipe/totp/types";
+import type { Config as WebauthnConfig } from "./recipe/webauthn/types";
+import type { ComponentOverrideMap as WebauthnComponentOverrideMap } from "./recipe/webauthn/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 import type { ComponentClass, PropsWithChildren } from "react";
 import type { CreateRecipeFunction as CreateRecipeFunctionWebJS } from "supertokens-web-js/lib/build/types";
@@ -223,6 +225,8 @@ export declare type Navigate =
 export declare type UserContext = Record<string, any>;
 export declare type AuthComponentProps = {
     setFactorList: (factorIds: string[]) => void;
+    resetFactorList: () => void;
+    onSignInUpSwitcherClick: () => void;
     rebuildAuthPage: () => void;
     onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>;
     navigate: Navigate | undefined;
@@ -230,6 +234,8 @@ export declare type AuthComponentProps = {
     error: string | undefined;
     onError: (err: string) => void;
     clearError: () => void;
+    showBackButton: boolean;
+    children?: React.ReactNode;
 };
 export declare type PartialAuthComponentProps = AuthComponentProps;
 export declare type FullPageAuthComponentProps<PreloadInfoType> = AuthComponentProps & {
@@ -239,7 +245,8 @@ export declare type FullPageAuthComponent<PreloadInfoType = any> = {
     type: "FULL_PAGE";
     preloadInfoAndRunChecks: (
         firstFactors: string[],
-        userContext: UserContext
+        userContext: UserContext,
+        isSignUp: boolean
     ) => Promise<
         | {
               shouldDisplay: true;
@@ -271,6 +278,7 @@ export declare type AllRecipeConfigs = {
     session: SessionConfig;
     thirdparty: ThirdPartyConfig;
     totp: TotpConfig;
+    webauthn: WebauthnConfig;
 };
 export declare type AllRecipeComponentOverrides = {
     emailpassword: EmailPasswordComponentOverrideMap;
@@ -283,6 +291,7 @@ export declare type AllRecipeComponentOverrides = {
     thirdparty: ThirdPartyComponentOverrideMap;
     totp: TotpComponentOverrideMap;
     authRecipe: AuthRecipeComponentOverrideMap;
+    webauthn: WebauthnComponentOverrideMap;
 };
 export declare type RecipePluginOverride<T extends keyof AllRecipeConfigs> = {
     functions?: NonNullable<AllRecipeConfigs[T]["override"]>["functions"];

@@ -107,7 +107,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     );
 
     const handleError = useCallback(
-        async (err) => {
+        async (err: any) => {
             // TODO: we will not need this after restructuring the emailverification components, since it should be handled by SessionAuth
             // If the error cleared the session we redirect away, otherwise we have no way of handling it.
             if (await Session.getInstanceOrThrow().doesSessionExist({ userContext })) {
