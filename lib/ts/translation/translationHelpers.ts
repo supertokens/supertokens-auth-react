@@ -73,7 +73,9 @@ export async function getCurrentLanguageFromCookie(): Promise<string | null> {
     }
 }
 
-export const getTranslationFunction = <T extends string>(...stores: TranslationStore[]): ((key: T) => string) => {
+export const getTranslationFunction = <T extends string>(
+    ...stores: TranslationStore[]
+): ((key: T, replacements?: Record<string, string>) => string) => {
     const { translationEventSource, userTranslationFunc, defaultLanguage, userTranslationStore } =
         SuperTokens.getInstanceOrThrow().languageTranslations;
 
@@ -109,7 +111,7 @@ export const getTranslationFunction = <T extends string>(...stores: TranslationS
         if (cookieLanguage) setLanguage(cookieLanguage);
     });
 
-    const translate = (key: string) => {
+    const translate = (key: string, replacements: Record<string, string> = {}) => {
         if (userTranslationFunc) {
             return userTranslationFunc(key);
         }
@@ -125,7 +127,7 @@ export const getTranslationFunction = <T extends string>(...stores: TranslationS
                 return key;
             }
 
-            return res;
+            return res.replace(/{(\w+)}/g, (match, p1) => replacements[p1] || match);
         }
 
         throw new Error("Should never come here");
