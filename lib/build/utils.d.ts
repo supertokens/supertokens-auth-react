@@ -11,7 +11,11 @@ import type {
     NormalisedAppInfo,
     NormalisedFormField,
     NormalisedGetRedirectionURLContext,
+    SuperTokensPlugin,
+    SuperTokensPublicConfig,
+    SuperTokensPublicPlugin,
     UserContext,
+    SuperTokensConfigWithNormalisedAppInfo,
 } from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
 export declare function clearQueryParams(paramNames: string[]): void;
@@ -92,3 +96,5 @@ export declare const handleCallAPI: <T>({
     generalError?: STGeneralError | undefined;
     fetchError?: Response | undefined;
 }>;
+export declare function getPublicPlugin(plugin: SuperTokensPlugin): SuperTokensPublicPlugin;
+export declare function getPublicConfig(config: SuperTokensConfigWithNormalisedAppInfo): SuperTokensPublicConfig;

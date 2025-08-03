@@ -41,7 +41,6 @@ import type { NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
 import type {
     Navigate,
-    NormalisedAppInfo,
     NormalisedConfigWithAppInfoAndRecipeID,
     NormalisedGetRedirectionURLContext,
     RecipeInitResult,
@@ -307,7 +306,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
 
         return {
             recipeID: Session.RECIPE_ID,
-            authReact: (appInfo: NormalisedAppInfo): RecipeModule<unknown, unknown, unknown, any> => {
+            authReact: (appInfo): RecipeModule<unknown, unknown, unknown, any> => {
                 Session.instance = new Session({
                     ...normalisedConfig,
                     appInfo,
@@ -315,33 +314,36 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                 });
                 return Session.instance;
             },
-            webJS: SessionWebJS.init({
-                ...normalisedConfig,
-                onHandleEvent: (event) => {
-                    if (normalisedConfig.onHandleEvent !== undefined) {
-                        normalisedConfig.onHandleEvent(event);
-                    }
+            webJS: (...args) => {
+                const init = SessionWebJS.init({
+                    ...normalisedConfig,
+                    onHandleEvent: (event) => {
+                        if (normalisedConfig.onHandleEvent !== undefined) {
+                            normalisedConfig.onHandleEvent(event);
+                        }
 
-                    void Session.getInstanceOrThrow().notifyListeners(event);
-                },
-                preAPIHook: async (context) => {
-                    const response = {
-                        ...context,
-                        requestInit: {
-                            ...context.requestInit,
-                            headers: {
-                                ...context.requestInit.headers,
-                                rid: Session.RECIPE_ID,
+                        void Session.getInstanceOrThrow().notifyListeners(event);
+                    },
+                    preAPIHook: async (context) => {
+                        const response = {
+                            ...context,
+                            requestInit: {
+                                ...context.requestInit,
+                                headers: {
+                                    ...context.requestInit.headers,
+                                    rid: Session.RECIPE_ID,
+                                },
                             },
-                        },
-                    };
-                    if (normalisedConfig.preAPIHook === undefined) {
-                        return response;
-                    } else {
-                        return normalisedConfig.preAPIHook(context);
-                    }
-                },
-            }),
+                        };
+                        if (normalisedConfig.preAPIHook === undefined) {
+                            return response;
+                        } else {
+                            return normalisedConfig.preAPIHook(context);
+                        }
+                    },
+                });
+                return init(...args);
+            },
         };
     }
 

@@ -37,7 +37,6 @@ import type {
     PreAndPostAPIHookAction,
 } from "./types";
 import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
-import type { NormalisedAppInfo } from "../../types";
 
 export const totpFactor = {
     id: FactorIds.TOTP,
@@ -80,7 +79,7 @@ export default class TOTP extends RecipeModule<
         return {
             recipeID: TOTP.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
@@ -94,17 +93,20 @@ export default class TOTP extends RecipeModule<
                 });
                 return TOTP.instance;
             },
-            webJS: TOTPWebJS.init({
-                ...normalisedConfig,
-                override: {
-                    functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
-                        builder.override(functions);
-                        builder.override(normalisedConfig.override.functions);
-                        return originalImpl;
+            webJS: (...args) => {
+                const init = TOTPWebJS.init({
+                    ...normalisedConfig,
+                    override: {
+                        functions: (originalImpl, builder) => {
+                            const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
+                            builder.override(functions);
+                            builder.override(normalisedConfig.override.functions);
+                            return originalImpl;
+                        },
                     },
-                },
-            }),
+                });
+                return init(...args);
+            },
         };
     }
 

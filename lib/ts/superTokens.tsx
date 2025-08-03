@@ -32,6 +32,8 @@ import {
     getDefaultCookieScope,
     getNormalisedUserContext,
     getOriginOfPage,
+    getPublicConfig,
+    getPublicPlugin,
     getTenantIdFromQueryParams,
     isTest,
     normaliseCookieScopeOrThrowError,
@@ -56,6 +58,7 @@ import type {
     SuperTokensPlugin,
     AllRecipeConfigs,
     PluginRouteHandler,
+    SuperTokensPublicPlugin,
 } from "./types";
 
 /*
@@ -73,6 +76,8 @@ export default class SuperTokens {
      * Instance Attributes.
      */
     appInfo: NormalisedAppInfo;
+    // give access to plugins through the instance
+    pluginList: SuperTokensPublicPlugin[] = [];
     languageTranslations: {
         defaultLanguage: string;
         userTranslationStore: TranslationStore;
@@ -96,6 +101,7 @@ export default class SuperTokens {
      */
     constructor(config: SuperTokensConfig, plugins: SuperTokensPlugin[]) {
         this.appInfo = normaliseInputAppInfoOrThrowError(config.appInfo);
+
         if (config.recipeList === undefined || config.recipeList.length === 0) {
             throw new Error(
                 "Please provide at least one recipe to the supertokens.init function call. See https://supertokens.io/docs/emailpassword/quick-setup/frontend"
@@ -107,20 +113,49 @@ export default class SuperTokens {
         for (const plugin of plugins) {
             if (plugin.overrideMap !== undefined) {
                 for (const t of Object.keys(plugin.overrideMap) as (keyof AllRecipeConfigs)[]) {
-                    if (plugin.overrideMap[t]?.components) {
-                        this.componentOverrides[t] = {
-                            ...this.componentOverrides[t],
-                            ...(plugin.overrideMap[t]?.components as AllRecipeComponentOverrides[typeof t]),
-                        };
-                    }
+                    this.componentOverrides[t] = {
+                        ...this.componentOverrides[t],
+                        ...((plugin.overrideMap[t]?.components as AllRecipeComponentOverrides[typeof t]) ?? {}),
+                    };
                 }
             }
+
             this.componentOverrides.authRecipe = {
                 ...(this.componentOverrides.authRecipe ?? {}),
                 ...(plugin.generalAuthRecipeComponentOverrides ?? {}),
             };
-            if (plugin.routeHandlers) {
-                this.pluginRouteHandlers.push(...plugin.routeHandlers);
+        }
+
+        this.pluginList = plugins.map(getPublicPlugin);
+
+        const publicConfig = getPublicConfig({
+            ...config,
+            appInfo: this.appInfo,
+        });
+        // iterated separately so we can pass the instance plugins  as reference so they always have access to the latest
+        for (let pluginIndex = 0; pluginIndex < this.pluginList.length; pluginIndex += 1) {
+            const pluginInit = plugins[pluginIndex].init;
+            if (pluginInit && !this.pluginList[pluginIndex].initialized) {
+                PostSuperTokensInitCallbacks.addPostInitCallback(() => {
+                    pluginInit(publicConfig, this.pluginList, package_version);
+                    this.pluginList[pluginIndex].initialized = true;
+                });
+            }
+
+            const pluginRouteHandlers = plugins[pluginIndex].routeHandlers;
+            if (pluginRouteHandlers) {
+                let handlers: PluginRouteHandler[] = [];
+                if (typeof pluginRouteHandlers === "function") {
+                    const result = pluginRouteHandlers(publicConfig, this.pluginList, package_version);
+                    if (result.status === "ERROR") {
+                        throw new Error(result.message);
+                    }
+                    handlers = result.routeHandlers;
+                } else {
+                    handlers = pluginRouteHandlers;
+                }
+
+                this.pluginRouteHandlers.push(...handlers);
             }
         }
 
@@ -137,7 +172,6 @@ export default class SuperTokens {
         };
 
         const enableDebugLogs = Boolean(config?.enableDebugLogs);
-
         if (enableDebugLogs) {
             enableLogging();
         }
@@ -174,6 +208,12 @@ export default class SuperTokens {
                 ? config.recipeList
                 : config.recipeList.concat(Multitenancy.init({}));
 
+        const normalisedAppInfo = normaliseInputAppInfoOrThrowError(config.appInfo);
+        const publicConfig = getPublicConfig({
+            ...config,
+            appInfo: normalisedAppInfo,
+        });
+
         const finalPluginList: SuperTokensPlugin[] = [];
         if (config.experimental?.plugins) {
             for (const plugin of config.experimental.plugins) {
@@ -183,11 +223,20 @@ export default class SuperTokens {
                         : [plugin.compatibleAuthReactSDKVersions];
                     if (!versionContraints.includes(package_version)) {
                         // TODO: better checks
-                        throw new Error("Plugin version mismatch");
+                        throw new Error(
+                            `Plugin version mismatch. Version ${package_version} not found in compatible versions: ${versionContraints.join(
+                                ", "
+                            )}`
+                        );
                     }
                 }
+
                 if (plugin.dependencies) {
-                    const result = plugin.dependencies(finalPluginList, package_version);
+                    const result = plugin.dependencies(
+                        publicConfig,
+                        finalPluginList.map(getPublicPlugin),
+                        package_version
+                    );
                     if (result.status === "ERROR") {
                         throw new Error(result.message);
                     }
@@ -195,13 +244,26 @@ export default class SuperTokens {
                         finalPluginList.push(...result.pluginsToAdd);
                     }
                 }
+
                 finalPluginList.push(plugin);
             }
         }
 
+        const duplicatePluginIds = finalPluginList.filter((plugin, index) =>
+            finalPluginList.some((elem, idx) => elem.id === plugin.id && idx !== index)
+        );
+        if (duplicatePluginIds.length > 0) {
+            throw new Error(`Duplicate plugin IDs: ${duplicatePluginIds.map((plugin) => plugin.id).join(", ")}`);
+        }
+
         for (const plugin of finalPluginList) {
             if (plugin.config) {
-                config = { ...config, ...plugin.config(config) };
+                const pluginConfig = plugin.config(getPublicConfig({ ...config, appInfo: normalisedAppInfo })) || {};
+
+                // @ts-expect-error we don't want to override the appInfo and we can't make sure the plugin won't return it
+                delete pluginConfig.appInfo;
+
+                config = { ...config, ...pluginConfig };
             }
         }
 

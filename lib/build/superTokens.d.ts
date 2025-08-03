@@ -13,11 +13,13 @@ import type {
     AllRecipeComponentOverrides,
     SuperTokensPlugin,
     PluginRouteHandler,
+    SuperTokensPublicPlugin,
 } from "./types";
 export default class SuperTokens {
     private static instance?;
     static usesDynamicLoginMethods: boolean;
     appInfo: NormalisedAppInfo;
+    pluginList: SuperTokensPublicPlugin[];
     languageTranslations: {
         defaultLanguage: string;
         userTranslationStore: TranslationStore;

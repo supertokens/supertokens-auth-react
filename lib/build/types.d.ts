@@ -307,8 +307,10 @@ export declare type SuperTokensPlugin = {
     version?: string;
     compatibleAuthReactSDKVersions?: string | string[];
     compatibleWebJSSDKVersions?: string | string[];
+    init?: (config: SuperTokensPublicConfig, allPlugins: SuperTokensPublicPlugin[], sdkVersion: string) => void;
     dependencies?: (
-        pluginsAbove: Pick<SuperTokensPlugin, "id" | "version">[],
+        config: SuperTokensPublicConfig,
+        pluginsAbove: SuperTokensPublicPlugin[],
         sdkVersion: string
     ) =>
         | {
@@ -325,9 +327,39 @@ export declare type SuperTokensPlugin = {
         };
     };
     generalAuthRecipeComponentOverrides?: AuthRecipeComponentOverrideMap;
-    routeHandlers?: PluginRouteHandler[];
-    config?: (
-        config: Omit<SuperTokensConfig, "experimental" | "recipeList">
-    ) => Omit<SuperTokensConfig, "experimental" | "recipeList"> | undefined;
+    routeHandlers?:
+        | ((
+              config: SuperTokensPublicConfig,
+              allPlugins: SuperTokensPublicPlugin[],
+              sdkVersion: string
+          ) =>
+              | {
+                    status: "OK";
+                    routeHandlers: PluginRouteHandler[];
+                }
+              | {
+                    status: "ERROR";
+                    message: string;
+                })
+        | PluginRouteHandler[];
+    config?: (config: SuperTokensPublicConfig) => Omit<SuperTokensPublicConfig, "appInfo"> | undefined;
+    exports?: Record<string, any>;
+};
+export declare const nonPublicConfigProperties: readonly ["experimental"];
+export declare type NonPublicConfigPropertiesType = (typeof nonPublicConfigProperties)[number];
+export declare type SuperTokensConfigWithNormalisedAppInfo = Omit<SuperTokensConfig, "appInfo"> & {
+    appInfo: NormalisedAppInfo;
+};
+export declare type SuperTokensPublicPlugin = Pick<
+    SuperTokensPlugin,
+    "id" | "version" | "exports" | "compatibleAuthReactSDKVersions" | "compatibleWebJSSDKVersions"
+> & {
+    initialized: boolean;
+};
+export declare type SuperTokensPublicConfig = Omit<
+    Omit<SuperTokensConfig, NonPublicConfigPropertiesType>,
+    "appInfo"
+> & {
+    appInfo: NormalisedAppInfo;
 };
 export {};

@@ -56,7 +56,6 @@ import type {
     UserContext,
     WebJSRecipeInterface,
 } from "../../types";
-import type { NormalisedAppInfo } from "../../types";
 
 export default class MultiFactorAuth extends RecipeModule<
     GetRedirectionURLContext,
@@ -105,7 +104,7 @@ export default class MultiFactorAuth extends RecipeModule<
         return {
             recipeID: MultiFactorAuth.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
@@ -119,17 +118,20 @@ export default class MultiFactorAuth extends RecipeModule<
                 });
                 return MultiFactorAuth.instance;
             },
-            webJS: MultiFactorAuthWebJS.init({
-                ...normalisedConfig,
-                override: {
-                    functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
-                        builder.override(functions);
-                        builder.override(normalisedConfig.override.functions);
-                        return originalImpl;
+            webJS: (...args) => {
+                const init = MultiFactorAuthWebJS.init({
+                    ...normalisedConfig,
+                    override: {
+                        functions: (originalImpl, builder) => {
+                            const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
+                            builder.override(functions);
+                            builder.override(normalisedConfig.override.functions);
+                            return originalImpl;
+                        },
                     },
-                },
-            }),
+                });
+                return init(...args);
+            },
         };
     }
 

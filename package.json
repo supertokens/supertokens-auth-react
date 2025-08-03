@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.49.1",
+    "version": "0.49.1-canary-plugins.0",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -101,7 +101,7 @@
     "peerDependencies": {
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0",
-        "supertokens-web-js": "^0.15"
+        "supertokens-web-js": "^0.15.0"
     },
     "scripts": {
         "init": "bash ./init.sh",

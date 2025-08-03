@@ -19,6 +19,7 @@ import type { AuthComponent } from "../../types";
 export class TOTPPreBuiltUI extends RecipeRouter {
     static instance?: TOTPPreBuiltUI;
     languageTranslations = defaultTranslationsTOTP;
+    static languageTranslations = defaultTranslationsTOTP;
 
     constructor(public readonly recipeInstance: TOTPRecipe) {
         super();

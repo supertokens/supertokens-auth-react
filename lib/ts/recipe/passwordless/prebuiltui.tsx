@@ -33,8 +33,8 @@ import type { AuthComponent } from "../../types";
 
 export class PasswordlessPreBuiltUI extends RecipeRouter {
     static instance?: PasswordlessPreBuiltUI;
-
     languageTranslations = defaultTranslationsPasswordless;
+    static languageTranslations = defaultTranslationsPasswordless;
 
     constructor(public readonly recipeInstance: Passwordless) {
         super();

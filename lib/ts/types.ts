@@ -533,12 +533,14 @@ export type PluginRouteHandler = {
 
 // TODO: this should probably derive from the web-js version
 export type SuperTokensPlugin = {
-    id: string; // TODO: validate that no two plugins have the same id
+    id: string;
     version?: string;
     compatibleAuthReactSDKVersions?: string | string[]; // match the syntax of the engines field in package.json
     compatibleWebJSSDKVersions?: string | string[]; // match the syntax of the engines field in package.json
+    init?: (config: SuperTokensPublicConfig, allPlugins: SuperTokensPublicPlugin[], sdkVersion: string) => void;
     dependencies?: (
-        pluginsAbove: Pick<SuperTokensPlugin, "id" | "version">[],
+        config: SuperTokensPublicConfig,
+        pluginsAbove: SuperTokensPublicPlugin[],
         sdkVersion: string
     ) => { status: "OK"; pluginsToAdd?: SuperTokensPlugin[] } | { status: "ERROR"; message: string };
     overrideMap?: {
@@ -547,8 +549,30 @@ export type SuperTokensPlugin = {
         };
     };
     generalAuthRecipeComponentOverrides?: AuthRecipeComponentOverrideMap;
-    routeHandlers?: PluginRouteHandler[];
-    config?: (
-        config: Omit<SuperTokensConfig, "experimental" | "recipeList">
-    ) => Omit<SuperTokensConfig, "experimental" | "recipeList"> | undefined;
+    routeHandlers?:
+        | ((
+              config: SuperTokensPublicConfig,
+              allPlugins: SuperTokensPublicPlugin[],
+              sdkVersion: string
+          ) => { status: "OK"; routeHandlers: PluginRouteHandler[] } | { status: "ERROR"; message: string })
+        | PluginRouteHandler[];
+
+    config?: (config: SuperTokensPublicConfig) => Omit<SuperTokensPublicConfig, "appInfo"> | undefined;
+    exports?: Record<string, any>;
+};
+
+export const nonPublicConfigProperties = ["experimental"] as const;
+
+export type NonPublicConfigPropertiesType = (typeof nonPublicConfigProperties)[number];
+
+export type SuperTokensConfigWithNormalisedAppInfo = Omit<SuperTokensConfig, "appInfo"> & {
+    appInfo: NormalisedAppInfo;
+};
+export type SuperTokensPublicPlugin = Pick<
+    SuperTokensPlugin,
+    "id" | "version" | "exports" | "compatibleAuthReactSDKVersions" | "compatibleWebJSSDKVersions"
+> & { initialized: boolean };
+
+export type SuperTokensPublicConfig = Omit<Omit<SuperTokensConfig, NonPublicConfigPropertiesType>, "appInfo"> & {
+    appInfo: NormalisedAppInfo;
 };

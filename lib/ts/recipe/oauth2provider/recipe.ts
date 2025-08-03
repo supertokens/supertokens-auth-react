@@ -34,7 +34,6 @@ import type {
     UserInput,
 } from "./types";
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
-import type { NormalisedAppInfo } from "../../types";
 
 /*
  * Class.
@@ -61,10 +60,11 @@ export default class OAuth2Provider extends RecipeModule<
         config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normaliseOAuth2Config(config);
+
         return {
             recipeID: OAuth2Provider.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
@@ -78,17 +78,20 @@ export default class OAuth2Provider extends RecipeModule<
                 });
                 return OAuth2Provider.instance;
             },
-            webJS: OAuth2WebJS.init({
-                ...normalisedConfig,
-                override: {
-                    functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
-                        builder.override(functions);
-                        builder.override(normalisedConfig.override.functions);
-                        return originalImpl;
+            webJS: (...args) => {
+                const init = OAuth2WebJS.init({
+                    ...normalisedConfig,
+                    override: {
+                        functions: (originalImpl, builder) => {
+                            const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
+                            builder.override(functions);
+                            builder.override(normalisedConfig.override.functions);
+                            return originalImpl;
+                        },
                     },
-                },
-            }),
+                });
+                return init(...args);
+            },
         };
     }
 

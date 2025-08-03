@@ -36,7 +36,6 @@ import type {
     UserInput,
 } from "./types";
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
-import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
 
 /*
@@ -78,10 +77,11 @@ export default class ThirdParty extends AuthRecipe<
         config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normaliseThirdPartyConfig(config);
+
         return {
             recipeID: ThirdParty.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
@@ -95,17 +95,23 @@ export default class ThirdParty extends AuthRecipe<
                 });
                 return ThirdParty.instance;
             },
-            webJS: ThirdpartyWebJS.init({
-                ...normalisedConfig,
-                override: {
-                    functions: (originalImpl, builder) => {
-                        const functions = getFunctionOverrides(ThirdParty.RECIPE_ID, normalisedConfig.onHandleEvent);
-                        builder.override(functions);
-                        builder.override(normalisedConfig.override.functions);
-                        return originalImpl;
+            webJS: (...args) => {
+                const init = ThirdpartyWebJS.init({
+                    ...normalisedConfig,
+                    override: {
+                        functions: (originalImpl, builder) => {
+                            const functions = getFunctionOverrides(
+                                ThirdParty.RECIPE_ID,
+                                normalisedConfig.onHandleEvent
+                            );
+                            builder.override(functions);
+                            builder.override(normalisedConfig.override.functions);
+                            return originalImpl;
+                        },
                     },
-                },
-            }),
+                });
+                return init(...args);
+            },
         };
     }
 
