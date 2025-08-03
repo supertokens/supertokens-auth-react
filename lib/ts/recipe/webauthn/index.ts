@@ -439,6 +439,48 @@ export default class Wrapper {
         return Webauthn.getInstanceOrThrow().webJSRecipe.registerCredentialWithRecoverAccount(input);
     }
 
+    static listCredentials(input: { options?: RecipeFunctionOptions; userContext: any }): Promise<
+        | {
+              status: "OK";
+              credentials: {
+                  webauthnCredentialId: string;
+                  relyingPartyId: string;
+                  recipeUserId: string;
+                  createdAt: number;
+              }[];
+          }
+        | GeneralErrorResponse
+    > {
+        return Webauthn.getInstanceOrThrow().webJSRecipe.listCredentials(input);
+    }
+
+    static removeCredential(input: {
+        webauthnCredentialId: string;
+        userContext: any;
+    }): Promise<
+        { status: "OK" } | GeneralErrorResponse | { status: "CREDENTIAL_NOT_FOUND_ERROR"; fetchResponse: Response }
+    > {
+        return Webauthn.getInstanceOrThrow().webJSRecipe.removeCredential(input);
+    }
+
+    static registerCredential2(input: {
+        recipeUserId: string;
+        webauthnGeneratedOptionsId: string;
+        credential: RegistrationResponseJSON;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }): Promise<
+        | { status: "OK" }
+        | GeneralErrorResponse
+        | { status: "REGISTER_CREDENTIAL_NOT_ALLOWED"; reason: string }
+        | { status: "INVALID_CREDENTIALS_ERROR" }
+        | { status: "OPTIONS_NOT_FOUND_ERROR" }
+        | { status: "INVALID_OPTIONS_ERROR" }
+        | { status: "INVALID_AUTHENTICATOR_ERROR"; reason: string }
+    > {
+        return Webauthn.getInstanceOrThrow().webJSRecipe.registerCredential2(input);
+    }
+
     static doesBrowserSupportWebAuthn(input: { userContext: any }): Promise<
         | {
               status: "OK";
@@ -469,6 +511,9 @@ const authenticateCredential = Wrapper.authenticateCredential;
 const registerCredentialWithSignUp = Wrapper.registerCredentialWithSignUp;
 const authenticateCredentialWithSignIn = Wrapper.authenticateCredentialWithSignIn;
 const registerCredentialWithRecoverAccount = Wrapper.registerCredentialWithRecoverAccount;
+const listCredentials = Wrapper.listCredentials;
+const removeCredential = Wrapper.removeCredential;
+const registerCredential2 = Wrapper.registerCredential2;
 const doesBrowserSupportWebAuthn = Wrapper.doesBrowserSupportWebAuthn;
 const WebauthnComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 
@@ -488,4 +533,7 @@ export {
     registerCredentialWithRecoverAccount,
     doesBrowserSupportWebAuthn,
     WebauthnComponentsOverrideProvider,
+    listCredentials,
+    removeCredential,
+    registerCredential2,
 };
