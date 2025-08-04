@@ -42,6 +42,8 @@ import {
     redirectWithNavigate,
 } from "./utils";
 import { package_version } from "./version";
+import { isVersionCompatible } from "./versionChecker";
+import { package_version as webjs_package_version } from "supertokens-web-js/lib/ts/version";
 
 import type RecipeModule from "./recipe/recipeModule";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
@@ -218,14 +220,22 @@ export default class SuperTokens {
         if (config.experimental?.plugins) {
             for (const plugin of config.experimental.plugins) {
                 if (plugin.compatibleAuthReactSDKVersions) {
-                    const versionContraints = Array.isArray(plugin.compatibleAuthReactSDKVersions)
-                        ? plugin.compatibleAuthReactSDKVersions
-                        : [plugin.compatibleAuthReactSDKVersions];
-                    if (!versionContraints.includes(package_version)) {
-                        // TODO: better checks
+                    const versionCheck = isVersionCompatible(package_version, plugin.compatibleAuthReactSDKVersions);
+                    if (!versionCheck) {
                         throw new Error(
-                            `Plugin version mismatch. Version ${package_version} not found in compatible versions: ${versionContraints.join(
-                                ", "
+                            `Plugin AuthReact SDK version mismatch. Version ${package_version} not found in compatible versions: ${JSON.stringify(
+                                plugin.compatibleAuthReactSDKVersions
+                            )}`
+                        );
+                    }
+                }
+
+                if (plugin.compatibleWebJSSDKVersions) {
+                    const versionCheck = isVersionCompatible(webjs_package_version, plugin.compatibleWebJSSDKVersions);
+                    if (!versionCheck) {
+                        throw new Error(
+                            `Plugin WebJS SDK version mismatch. Version ${webjs_package_version} not found in compatible versions: ${JSON.stringify(
+                                plugin.compatibleWebJSSDKVersions
                             )}`
                         );
                     }
