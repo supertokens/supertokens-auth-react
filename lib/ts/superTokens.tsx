@@ -222,7 +222,9 @@ export default class SuperTokens {
                     const versionCheck = isVersionCompatible(package_version, plugin.compatibleAuthReactSDKVersions);
                     if (!versionCheck) {
                         throw new Error(
-                            `Plugin AuthReact SDK version mismatch. Version ${package_version} not found in compatible versions: ${JSON.stringify(
+                            `Incompatible SDK version for plugin ${
+                                plugin.id
+                            }. Version "${package_version}" not found in compatible versions: ${JSON.stringify(
                                 plugin.compatibleAuthReactSDKVersions
                             )}`
                         );
