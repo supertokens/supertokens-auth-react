@@ -24,6 +24,7 @@ import {
     screenshotOnFailure,
     getFactorChooserOptions,
     isMFASupported,
+    isWebauthnSupported,
     expectErrorThrown,
     setupBrowser,
     backendHook,

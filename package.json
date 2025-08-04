@@ -101,7 +101,7 @@
     "peerDependencies": {
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0",
-        "supertokens-web-js": "github:supertokens/supertokens-web-js#feat/webauthn-mfa"
+        "supertokens-web-js": "^0.15"
     },
     "scripts": {
         "init": "bash ./init.sh",

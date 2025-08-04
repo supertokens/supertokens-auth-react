@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   Add `webauthn` as a secondary factor in MFA
+
 ## [0.49.1] - 2025-03-27
 
 -   Fixed a type issue making the WebauthnPreBuitlUI not produce a type error when added to the prebuiltUIList

@@ -343,7 +343,14 @@ function useOnLoad(
                         accessDenied: true,
                         error: "SOMETHING_WENT_WRONG_ERROR_RELOAD",
                     });
+                    return;
                 }
+            }
+
+            const alreadySetup = mfaInfo.factors.alreadySetup.includes(FactorIds.WEBAUTHN);
+            if (alreadySetup) {
+                dispatch({ type: "setError", accessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR_RELOAD" });
+                return;
             }
 
             // If the next array only has a single option, it means the we were redirected here
@@ -357,16 +364,19 @@ function useOnLoad(
             const mfaInfoEmails = mfaInfo.emails[FactorIds.WEBAUTHN];
             const email = mfaInfoEmails ? mfaInfoEmails[0] : undefined;
 
-            const browserSupportsWebauthn = await props.recipe.webJSRecipe.doesBrowserSupportWebAuthn({
+            const browserSupportsWebauthnResponse = await props.recipe.webJSRecipe.doesBrowserSupportWebAuthn({
                 userContext: userContext,
             });
+            const browserSupportsWebauthn =
+                browserSupportsWebauthnResponse.status === "OK" &&
+                browserSupportsWebauthnResponse?.browserSupportsWebauthn;
 
             dispatch({
                 type: "load",
                 error,
                 showBackButton,
                 email,
-                deviceSupported: browserSupportsWebauthn.status === "OK",
+                deviceSupported: browserSupportsWebauthn,
             });
         },
         [dispatch, recipeImplementation, props.recipe, userContext]

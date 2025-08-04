@@ -39,7 +39,7 @@ export const WebauthnMFASignIn = withOverride(
                         </span>
                     </div>
                 ) : (
-                    <div data-supertokens="headerTitle ebauthn-mfa">{t("WEBAUTHN_MFA_SIGN_IN_HEADER_TITLE")}</div>
+                    <div data-supertokens="headerTitle webauthn-mfa">{t("WEBAUTHN_MFA_SIGN_IN_HEADER_TITLE")}</div>
                 )}
                 <div data-supertokens="headerSubtitle secondaryText">{t("WEBAUTHN_MFA_SIGN_IN_HEADER_SUBTITLE")}</div>
                 <Button

@@ -12,4 +12,3 @@ export const WebauthnMFALoadingScreen = withOverride("WebauthnMFALoadingScreen",
         </div>
     );
 });
-
