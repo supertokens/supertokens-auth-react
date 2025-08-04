@@ -378,7 +378,7 @@ describe("ThirdParty", function () {
             },
         });
         authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
-        webJS(SuperTokens.getInstanceOrThrow().appInfo, undefined, false);
+        webJS(SuperTokens.getInstanceOrThrow().appInfo, undefined, false, []);
 
         try {
             await ThirdPartyIndex.redirectToThirdPartyLogin({
@@ -427,7 +427,7 @@ describe("ThirdParty", function () {
         });
 
         authReact(SuperTokens.getInstanceOrThrow().appInfo, false);
-        webJS(SuperTokens.getInstanceOrThrow().appInfo, undefined, false);
+        webJS(SuperTokens.getInstanceOrThrow().appInfo, undefined, false, []);
 
         try {
             await ThirdPartyIndex.signInAndUp({
