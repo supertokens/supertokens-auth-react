@@ -19,7 +19,9 @@ export default class SuperTokensAPIWrapper {
     }) => Promise<void>;
     static isRecipeInitialized(recipeId: string): boolean;
     static useTranslation: () => import("./translation/translationHelpers").TranslationFunc;
-    static getTranslationFunction: <T extends string>(...stores: TranslationStore[]) => (key: T) => string;
+    static getTranslationFunction: <T extends string>(
+        ...stores: TranslationStore[]
+    ) => (key: T, replacements?: Record<string, string> | undefined) => string;
     static useUserContext: () => UserContext;
 }
 export declare const init: typeof SuperTokensAPIWrapper.init;
