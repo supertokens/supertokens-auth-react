@@ -273,14 +273,25 @@ export type WebAuthnMFAAction =
           showBackButton: boolean;
       };
 
-export type WebAuthnMFAState = {
-    error: string | undefined;
-    deviceSupported: boolean;
+type WebAuthnMFAInitialState = {
+    error: undefined;
+    loaded: false;
     accessDenied: boolean;
+    deviceSupported: boolean;
+    showBackButton: boolean;
+    email: undefined;
+};
+
+type WebAuthnMFALoadedState = {
+    error: string | undefined;
+    loaded: true;
+    accessDenied: boolean;
+    deviceSupported: boolean;
     showBackButton: boolean;
     email: string | undefined;
-    loaded: boolean;
 };
+
+export type WebAuthnMFAState = WebAuthnMFAInitialState | WebAuthnMFALoadedState;
 
 export type WebAuthnMFAProps = {
     recipeImplementation: RecipeImplementation;

@@ -52,6 +52,7 @@ export const useFeatureReducer = (): [WebAuthnMFAState, React.Dispatch<WebAuthnM
                 case "setError":
                     return {
                         ...oldState,
+                        loaded: true,
                         error: action.error,
                         accessDenied: action.accessDenied || false,
                     };
@@ -72,7 +73,7 @@ export const useFeatureReducer = (): [WebAuthnMFAState, React.Dispatch<WebAuthnM
             deviceSupported: false,
             loaded: false,
             showBackButton: true,
-            email: "",
+            email: undefined,
             accessDenied: false,
         }
     );
@@ -239,7 +240,8 @@ export const MFAFeature: React.FC<
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}
-                defaultStore={defaultTranslationsWebauthn}>
+                defaultStore={defaultTranslationsWebauthn}
+            >
                 <MFAFeatureInner {...props} />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
@@ -314,7 +316,6 @@ function useOnLoad(
 
     const onLoad = React.useCallback(
         async (mfaInfo: Awaited<ReturnType<typeof fetchMFAInfo>>) => {
-            console.log("onLoad", mfaInfo);
             let error: string | undefined = undefined;
             const errorQueryParam = getQueryParams("error");
             const doSetup = getQueryParams("setup");
