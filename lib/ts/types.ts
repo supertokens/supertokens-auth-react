@@ -46,7 +46,6 @@ import type { CookieHandlerInput } from "supertokens-web-js/utils/cookieHandler/
 import type NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import type NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import type { WindowHandlerInput } from "supertokens-web-js/utils/windowHandler/types";
-import type { SuperTokensPlugin as SuperTokensPluginWebJS } from "supertokens-web-js";
 
 type SuccessRedirectContextCommon = {
     recipeId:
@@ -532,8 +531,12 @@ export type PluginRouteHandler = {
     handler: () => JSX.Element;
 };
 
-export type SuperTokensPlugin = SuperTokensPluginWebJS & {
+// TODO: this should probably derive from the web-js version
+export type SuperTokensPlugin = {
+    id: string;
+    version?: string;
     compatibleAuthReactSDKVersions?: string | string[]; // match the syntax of the engines field in package.json
+    compatibleWebJSSDKVersions?: string | string[]; // match the syntax of the engines field in package.json
     init?: (config: SuperTokensPublicConfig, allPlugins: SuperTokensPublicPlugin[], sdkVersion: string) => void;
     dependencies?: (
         config: SuperTokensPublicConfig,
@@ -555,6 +558,7 @@ export type SuperTokensPlugin = SuperTokensPluginWebJS & {
         | PluginRouteHandler[];
 
     config?: (config: SuperTokensPublicConfig) => Omit<SuperTokensPublicConfig, "appInfo"> | undefined;
+    exports?: Record<string, any>;
 };
 
 export const nonPublicConfigProperties = ["experimental"] as const;
