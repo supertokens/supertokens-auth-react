@@ -247,7 +247,7 @@ export default class Wrapper {
         return Webauthn.getInstanceOrThrow().webJSRecipe.recoverAccount(input);
     }
 
-    static registerCredential(input: {
+    static createCredential(input: {
         registrationOptions: Omit<RegistrationOptions, "fetchResponse" | "status">;
         userContext: any;
     }): Promise<
@@ -267,7 +267,7 @@ export default class Wrapper {
               error: any;
           }
     > {
-        return Webauthn.getInstanceOrThrow().webJSRecipe.registerCredential(input);
+        return Webauthn.getInstanceOrThrow().webJSRecipe.createCredential(input);
     }
 
     static authenticateCredential(input: {
@@ -463,7 +463,28 @@ export default class Wrapper {
         return Webauthn.getInstanceOrThrow().webJSRecipe.removeCredential(input);
     }
 
-    static registerCredential2(input: {
+    static registerCredentialWithUser(input: {
+        recipeUserId: string;
+        email: string;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }): Promise<
+        | { status: "OK" }
+        | GeneralErrorResponse
+        | { status: "REGISTER_CREDENTIAL_NOT_ALLOWED"; reason: string }
+        | { status: "INVALID_EMAIL_ERROR"; err: string }
+        | { status: "INVALID_CREDENTIALS_ERROR" }
+        | { status: "OPTIONS_NOT_FOUND_ERROR" }
+        | { status: "INVALID_OPTIONS_ERROR" }
+        | { status: "INVALID_AUTHENTICATOR_ERROR"; reason: string }
+        | { status: "AUTHENTICATOR_ALREADY_REGISTERED" }
+        | { status: "FAILED_TO_REGISTER_USER"; error: any }
+        | { status: "WEBAUTHN_NOT_SUPPORTED"; error: any }
+    > {
+        return Webauthn.getInstanceOrThrow().webJSRecipe.registerCredentialWithUser(input);
+    }
+
+    static registerCredential(input: {
         recipeUserId: string;
         webauthnGeneratedOptionsId: string;
         credential: RegistrationResponseJSON;
@@ -478,7 +499,7 @@ export default class Wrapper {
         | { status: "INVALID_OPTIONS_ERROR" }
         | { status: "INVALID_AUTHENTICATOR_ERROR"; reason: string }
     > {
-        return Webauthn.getInstanceOrThrow().webJSRecipe.registerCredential2(input);
+        return Webauthn.getInstanceOrThrow().webJSRecipe.registerCredential(input);
     }
 
     static doesBrowserSupportWebAuthn(input: { userContext: any }): Promise<
@@ -506,14 +527,14 @@ const signIn = Wrapper.signIn;
 const getEmailExists = Wrapper.getEmailExists;
 const generateRecoverAccountToken = Wrapper.generateRecoverAccountToken;
 const recoverAccount = Wrapper.recoverAccount;
-const registerCredential = Wrapper.registerCredential;
+const createCredential = Wrapper.createCredential;
 const authenticateCredential = Wrapper.authenticateCredential;
 const registerCredentialWithSignUp = Wrapper.registerCredentialWithSignUp;
 const authenticateCredentialWithSignIn = Wrapper.authenticateCredentialWithSignIn;
 const registerCredentialWithRecoverAccount = Wrapper.registerCredentialWithRecoverAccount;
 const listCredentials = Wrapper.listCredentials;
 const removeCredential = Wrapper.removeCredential;
-const registerCredential2 = Wrapper.registerCredential2;
+const registerCredential = Wrapper.registerCredential;
 const doesBrowserSupportWebAuthn = Wrapper.doesBrowserSupportWebAuthn;
 const WebauthnComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 
@@ -526,7 +547,7 @@ export {
     getEmailExists,
     generateRecoverAccountToken,
     recoverAccount,
-    registerCredential,
+    createCredential,
     authenticateCredential,
     registerCredentialWithSignUp,
     authenticateCredentialWithSignIn,
@@ -535,5 +556,5 @@ export {
     WebauthnComponentsOverrideProvider,
     listCredentials,
     removeCredential,
-    registerCredential2,
+    registerCredential,
 };
