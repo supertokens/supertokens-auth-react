@@ -212,7 +212,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static registerCredential(input: {
+    static createCredential(input: {
         registrationOptions: Omit<RegistrationOptions, "fetchResponse" | "status">;
         userContext: any;
     }): Promise<
@@ -411,7 +411,50 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static registerCredential2(input: {
+    static registerCredentialWithUser(input: {
+        recipeUserId: string;
+        email: string;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }): Promise<
+        | {
+              status: "OK";
+          }
+        | GeneralErrorResponse
+        | {
+              status: "REGISTER_CREDENTIAL_NOT_ALLOWED";
+              reason: string;
+          }
+        | {
+              status: "INVALID_EMAIL_ERROR";
+              err: string;
+          }
+        | {
+              status: "INVALID_CREDENTIALS_ERROR";
+          }
+        | {
+              status: "OPTIONS_NOT_FOUND_ERROR";
+          }
+        | {
+              status: "INVALID_OPTIONS_ERROR";
+          }
+        | {
+              status: "INVALID_AUTHENTICATOR_ERROR";
+              reason: string;
+          }
+        | {
+              status: "AUTHENTICATOR_ALREADY_REGISTERED";
+          }
+        | {
+              status: "FAILED_TO_REGISTER_USER";
+              error: any;
+          }
+        | {
+              status: "WEBAUTHN_NOT_SUPPORTED";
+              error: any;
+          }
+    >;
+    static registerCredential(input: {
         recipeUserId: string;
         webauthnGeneratedOptionsId: string;
         credential: RegistrationResponseJSON;
@@ -465,14 +508,14 @@ declare const signIn: typeof Wrapper.signIn;
 declare const getEmailExists: typeof Wrapper.getEmailExists;
 declare const generateRecoverAccountToken: typeof Wrapper.generateRecoverAccountToken;
 declare const recoverAccount: typeof Wrapper.recoverAccount;
-declare const registerCredential: typeof Wrapper.registerCredential;
+declare const createCredential: typeof Wrapper.createCredential;
 declare const authenticateCredential: typeof Wrapper.authenticateCredential;
 declare const registerCredentialWithSignUp: typeof Wrapper.registerCredentialWithSignUp;
 declare const authenticateCredentialWithSignIn: typeof Wrapper.authenticateCredentialWithSignIn;
 declare const registerCredentialWithRecoverAccount: typeof Wrapper.registerCredentialWithRecoverAccount;
 declare const listCredentials: typeof Wrapper.listCredentials;
 declare const removeCredential: typeof Wrapper.removeCredential;
-declare const registerCredential2: typeof Wrapper.registerCredential2;
+declare const registerCredential: typeof Wrapper.registerCredential;
 declare const doesBrowserSupportWebAuthn: typeof Wrapper.doesBrowserSupportWebAuthn;
 declare const WebauthnComponentsOverrideProvider: import("react").FC<
     import("react").PropsWithChildren<{
@@ -488,7 +531,7 @@ export {
     getEmailExists,
     generateRecoverAccountToken,
     recoverAccount,
-    registerCredential,
+    createCredential,
     authenticateCredential,
     registerCredentialWithSignUp,
     authenticateCredentialWithSignIn,
@@ -497,5 +540,5 @@ export {
     WebauthnComponentsOverrideProvider,
     listCredentials,
     removeCredential,
-    registerCredential2,
+    registerCredential,
 };
