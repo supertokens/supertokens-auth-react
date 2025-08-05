@@ -532,6 +532,7 @@ const authenticateCredential = Wrapper.authenticateCredential;
 const registerCredentialWithSignUp = Wrapper.registerCredentialWithSignUp;
 const authenticateCredentialWithSignIn = Wrapper.authenticateCredentialWithSignIn;
 const registerCredentialWithRecoverAccount = Wrapper.registerCredentialWithRecoverAccount;
+const registerCredentialWithUser = Wrapper.registerCredentialWithUser;
 const listCredentials = Wrapper.listCredentials;
 const removeCredential = Wrapper.removeCredential;
 const registerCredential = Wrapper.registerCredential;
@@ -552,6 +553,7 @@ export {
     registerCredentialWithSignUp,
     authenticateCredentialWithSignIn,
     registerCredentialWithRecoverAccount,
+    registerCredentialWithUser,
     doesBrowserSupportWebAuthn,
     WebauthnComponentsOverrideProvider,
     listCredentials,
