@@ -34,7 +34,11 @@ import type { SignInUpEPComboEmailOrPhoneFormProps } from "../../../types";
 
 export const EPComboEmailOrPhoneForm = withOverride(
     "PasswordlessEPComboEmailOrPhoneForm",
-    function PasswordlessEPComboEmailOrPhoneForm(props: SignInUpEPComboEmailOrPhoneFormProps): JSX.Element {
+    function PasswordlessEPComboEmailOrPhoneForm(
+        props: SignInUpEPComboEmailOrPhoneFormProps & {
+            footer?: JSX.Element;
+        }
+    ): JSX.Element {
         const t = useTranslation();
 
         useEffect(() => {
@@ -59,7 +63,8 @@ export const EPComboEmailOrPhoneForm = withOverride(
                               <Label value={"PWLESS_SIGN_IN_UP_PHONE_LABEL"} />
                               <a
                                   onClick={() => props.setIsPhoneNumber(false)}
-                                  data-supertokens="link linkButton formLabelLinkBtn contactMethodSwitcher">
+                                  data-supertokens="link linkButton formLabelLinkBtn contactMethodSwitcher"
+                              >
                                   {t("PWLESS_SIGN_IN_UP_SWITCH_TO_EMAIL")}
                               </a>
                           </div>
@@ -82,7 +87,8 @@ export const EPComboEmailOrPhoneForm = withOverride(
                               <Label value={"PWLESS_SIGN_IN_UP_EMAIL_LABEL"} />
                               <a
                                   onClick={() => props.setIsPhoneNumber(true)}
-                                  data-supertokens="link linkButton formLabelLinkBtn contactMethodSwitcher">
+                                  data-supertokens="link linkButton formLabelLinkBtn contactMethodSwitcher"
+                              >
                                   {t("PWLESS_SIGN_IN_UP_SWITCH_TO_PHONE")}
                               </a>
                           </div>
@@ -95,6 +101,18 @@ export const EPComboEmailOrPhoneForm = withOverride(
                       validate: defaultValidate,
                   },
               ];
+        let footer = props.footer;
+        if (!footer && props.showContinueWithPasswordlessLink) {
+            footer = (
+                <ContinueWithPasswordlessFooter
+                    isPhoneNumber={false}
+                    onContinueWithPasswordlessClick={props.onContinueWithPasswordlessClick}
+                    onError={props.onError}
+                    config={props.config}
+                    validatePhoneNumber={props.validatePhoneNumber}
+                />
+            );
+        }
 
         if (props.showPasswordField) {
             formFields.push({
@@ -117,7 +135,8 @@ export const EPComboEmailOrPhoneForm = withOverride(
                                     props.navigate
                                 )
                             }
-                            data-supertokens="link linkButton formLabelLinkBtn forgotPasswordLink">
+                            data-supertokens="link linkButton formLabelLinkBtn forgotPasswordLink"
+                        >
                             {t("PWLESS_COMBO_FORGOT_PW_LINK")}
                         </a>
                     </div>
@@ -165,17 +184,7 @@ export const EPComboEmailOrPhoneForm = withOverride(
                 validateOnBlur={false}
                 showLabels={true}
                 onSuccess={props.onSuccess}
-                footer={
-                    props.showContinueWithPasswordlessLink ? (
-                        <ContinueWithPasswordlessFooter
-                            isPhoneNumber={props.isPhoneNumber}
-                            onContinueWithPasswordlessClick={props.onContinueWithPasswordlessClick}
-                            validatePhoneNumber={props.validatePhoneNumber}
-                            onError={props.onError}
-                            config={props.config}
-                        />
-                    ) : undefined
-                }
+                footer={footer}
             />
         );
     }
