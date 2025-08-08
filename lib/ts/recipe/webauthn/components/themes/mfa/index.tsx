@@ -43,17 +43,22 @@ export function MFATheme(props: WebAuthnMFAProps): JSX.Element {
     const t = useTranslation();
 
     const onRegisterPasskeyClick = React.useCallback(() => {
+        if (!props.featureState.canRegisterPasskey) return;
         if (props.featureState.email) {
             setActiveScreen(MFAScreens.SignUpConfirmation);
         } else {
             setActiveScreen(MFAScreens.SignUp);
         }
-    }, [props.featureState.email]);
+    }, [props.featureState.email, props.featureState.canRegisterPasskey]);
 
-    const onSignUpContinue = React.useCallback((email: string) => {
-        setActiveScreen(MFAScreens.SignUpConfirmation);
-        setSignUpEmail(email);
-    }, []);
+    const onSignUpContinue = React.useCallback(
+        (email: string) => {
+            if (!props.featureState.canRegisterPasskey) return;
+            setActiveScreen(MFAScreens.SignUpConfirmation);
+            setSignUpEmail(email);
+        },
+        [props.featureState.canRegisterPasskey]
+    );
 
     const clearError = React.useCallback(() => {
         props.dispatch({ type: "setError", error: undefined });
@@ -67,8 +72,9 @@ export function MFATheme(props: WebAuthnMFAProps): JSX.Element {
     );
 
     const onClickSignUpBackButton = React.useCallback(() => {
+        if (!props.featureState.canRegisterPasskey) return;
         setActiveScreen(MFAScreens.SignIn);
-    }, []);
+    }, [props.featureState.canRegisterPasskey]);
 
     const onClickSignUpConfirmationBackButton = React.useCallback(() => {
         if (props.featureState.email) {
@@ -101,6 +107,7 @@ export function MFATheme(props: WebAuthnMFAProps): JSX.Element {
                 {activeScreen === MFAScreens.SignIn ? (
                     <WebauthnMFASignIn
                         onBackButtonClicked={props.featureState.showBackButton ? onBackButtonClicked : undefined}
+                        canRegisterPasskey={props.featureState.canRegisterPasskey}
                         onSignIn={onSignIn}
                         error={props.featureState.error}
                         onRegisterPasskeyClick={onRegisterPasskeyClick}

@@ -63,6 +63,7 @@ export const useFeatureReducer = (): [WebAuthnMFAState, React.Dispatch<WebAuthnM
                         deviceSupported: action.deviceSupported,
                         email: action.email,
                         showBackButton: action.showBackButton,
+                        canRegisterPasskey: action.canRegisterPasskey,
                     };
                 default:
                     return oldState;
@@ -71,6 +72,7 @@ export const useFeatureReducer = (): [WebAuthnMFAState, React.Dispatch<WebAuthnM
         {
             error: undefined,
             deviceSupported: false,
+            canRegisterPasskey: false,
             loaded: false,
             showBackButton: true,
             email: undefined,
@@ -364,6 +366,7 @@ function useOnLoad(
             const mfaInfoEmails = mfaInfo.emails[FactorIds.WEBAUTHN];
             const email = mfaInfoEmails ? mfaInfoEmails[0] : undefined;
 
+            const canRegisterPasskey = !mfaInfo.factors.alreadySetup.includes(FactorIds.WEBAUTHN);
             const browserSupportsWebauthnResponse = await props.recipe.webJSRecipe.doesBrowserSupportWebAuthn({
                 userContext: userContext,
             });
@@ -373,6 +376,7 @@ function useOnLoad(
 
             dispatch({
                 type: "load",
+                canRegisterPasskey,
                 error,
                 showBackButton,
                 email,

@@ -12,6 +12,7 @@ export type MFASignInProps = {
     onBackButtonClicked?: () => void;
     onSignIn: () => Promise<void>;
     onRegisterPasskeyClick: () => void;
+    canRegisterPasskey: boolean;
     error: string | undefined;
     deviceSupported: boolean;
 };
@@ -41,6 +42,7 @@ export const WebauthnMFASignIn = withOverride(
                 ) : (
                     <div data-supertokens="headerTitle webauthn-mfa">{t("WEBAUTHN_MFA_SIGN_IN_HEADER_TITLE")}</div>
                 )}
+
                 <div data-supertokens="headerSubtitle secondaryText">{t("WEBAUTHN_MFA_SIGN_IN_HEADER_SUBTITLE")}</div>
                 <Button
                     disabled={!props.deviceSupported || isLoading}
@@ -52,17 +54,21 @@ export const WebauthnMFASignIn = withOverride(
                     icon={PasskeyIcon}
                 />
                 {props.error !== undefined && <GeneralError error={props.error} />}
-                <div data-supertokens="passkeyMfaSignInDivider">
-                    <div data-supertokens="divider" />
-                    <span>or</span>
-                    <div data-supertokens="divider" />
-                </div>
-                <div data-supertokens="headerSubtitle secondaryText">
-                    <span data-supertokens="link" onClick={props.onRegisterPasskeyClick}>
-                        {t("WEBAUTHN_MFA_REGISTER_PASSKEY_LINK")}
-                    </span>
-                    {t("WEBAUTHN_MFA_REGISTER_PASSKEY_SUBTITLE")}
-                </div>
+                {props.canRegisterPasskey && (
+                    <>
+                        <div data-supertokens="passkeyMfaSignInDivider">
+                            <div data-supertokens="divider" />
+                            <span>or</span>
+                            <div data-supertokens="divider" />
+                        </div>
+                        <div data-supertokens="headerSubtitle secondaryText">
+                            <span data-supertokens="link" onClick={props.onRegisterPasskeyClick}>
+                                {t("WEBAUTHN_MFA_REGISTER_PASSKEY_LINK")}
+                            </span>
+                            {t("WEBAUTHN_MFA_REGISTER_PASSKEY_SUBTITLE")}
+                        </div>
+                    </>
+                )}
                 {!props.deviceSupported && <PasskeyNotSupportedError />}
             </Fragment>
         );

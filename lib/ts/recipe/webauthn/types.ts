@@ -271,6 +271,7 @@ export type WebAuthnMFAAction =
           error: string | undefined;
           email: string | undefined;
           showBackButton: boolean;
+          canRegisterPasskey: boolean;
       };
 
 type WebAuthnMFAInitialState = {
@@ -279,6 +280,7 @@ type WebAuthnMFAInitialState = {
     accessDenied: boolean;
     deviceSupported: boolean;
     showBackButton: boolean;
+    canRegisterPasskey: false;
     email: undefined;
 };
 
@@ -288,6 +290,7 @@ type WebAuthnMFALoadedState = {
     accessDenied: boolean;
     deviceSupported: boolean;
     showBackButton: boolean;
+    canRegisterPasskey: boolean;
     email: string | undefined;
 };
 
