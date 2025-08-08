@@ -65,7 +65,10 @@ export type PreAndPostAPIHookAction =
     | "SIGN_IN"
     | "EMAIL_EXISTS"
     | "GENERATE_RECOVER_ACCOUNT_TOKEN"
-    | "RECOVER_ACCOUNT";
+    | "RECOVER_ACCOUNT"
+    | "REGISTER_CREDENTIAL"
+    | "REMOVE_CREDENTIAL"
+    | "LIST_CREDENTIALS";
 
 export type OnHandleEventContext =
     | {
