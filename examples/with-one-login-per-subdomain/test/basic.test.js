@@ -51,6 +51,8 @@ SuperTokensNode.init({
     recipeList: [EmailVerification.init({ mode: "OPTIONAL" }), EmailPassword.init(), Session.init()],
 });
 
+const TEST_APPLICATION_SERVER_BASE_URL = "http://example.com:3001";
+
 describe("SuperTokens Example Basic tests", function () {
     let browser;
     let page;
@@ -124,13 +126,17 @@ describe("SuperTokens Example Basic tests", function () {
             } catch (e) {
                 respText = "response loading failed " + e.message;
             }
-            console.log(
-                `browserlog.network ${JSON.stringify({
-                    t: new Date().toISOString(),
-                    message: `Request failed: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
-                    pageurl: page.url(),
-                })}`
-            );
+            try {
+                console.log(
+                    `browserlog.network ${JSON.stringify({
+                        t: new Date().toISOString(),
+                        message: `Request failed: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
+                        pageurl: page.url(),
+                    })}`
+                );
+            } catch (e) {
+                console.log(e);
+            }
         });
         return page;
     });
