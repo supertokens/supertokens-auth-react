@@ -135,7 +135,7 @@ jobs:
             - id: escape-versions
               run: |
                   echo "fdiVersions=$(sed 's/"/\\"/g' <<< '${{ steps.versions.outputs.fdiVersions }}')" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
-                  echo "webJsVersion=$(sed 's/"/\\"/g' <<< '${{ steps.versions.outputs.webJsVersion }}')" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
+                  echo "webJsInterfaceVersion=$(sed 's/"/\\"/g' <<< '${{ steps.versions.outputs.webJsInterfaceVersion }}')" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
 
             - run: |
                   ./hooks/populate-hook-constants.sh
@@ -149,5 +149,5 @@ jobs:
                           \"version\":\"${{ needs.setup.outputs.packageVersion }}\",
                           \"name\": \"auth-react\",
                           \"frontendDriverInterfaces\": ${{ steps.escape-versions.outputs.fdiVersions }},
-                          \"webJsInterface\": \"${{ steps.escape-versions.outputs.webJsVersion }}\"
+                          \"webJsInterface\": \"${{ steps.escape-versions.outputs.webJsInterfaceVersion }}\"
                       }"
