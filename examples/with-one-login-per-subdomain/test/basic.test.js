@@ -67,6 +67,72 @@ describe("SuperTokens Example Basic tests", function () {
             headless: true,
         });
         page = await browser.newPage();
+        page.on("console", (msg) => {
+            if (msg.text().startsWith("com.supertokens")) {
+                console.log(msg.text());
+            } else {
+                console.log(
+                    `browserlog.console ${JSON.stringify({
+                        t: new Date().toISOString(),
+                        message: msg.text(),
+                        pageurl: page.url(),
+                    })}`
+                );
+            }
+        });
+
+        page.on("request", (req) => {
+            console.log(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Requested: ${req.method()} ${req.url()} (${req.postData()})`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        page.on("requestfinished", async (req) => {
+            if (req.method() === "OPTION") {
+                return;
+            }
+            const resp = await req.response();
+            let respText;
+            try {
+                respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
+                    ? await resp.text()
+                    : "response omitted";
+            } catch (e) {
+                respText = "response loading failed " + e.message;
+            }
+            console.log(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Request done: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        page.on("requestfailed", async (req) => {
+            if (req.method() === "OPTION") {
+                return;
+            }
+            const resp = await req.response();
+            let respText;
+            try {
+                respText = req.url().startsWith(TEST_APPLICATION_SERVER_BASE_URL)
+                    ? await resp.text()
+                    : "response omitted";
+            } catch (e) {
+                respText = "response loading failed " + e.message;
+            }
+            console.log(
+                `browserlog.network ${JSON.stringify({
+                    t: new Date().toISOString(),
+                    message: `Request failed: ${req.method()} ${req.url()}: ${resp.status()} ${respText}`,
+                    pageurl: page.url(),
+                })}`
+            );
+        });
+        return page;
     });
 
     after(async function () {
