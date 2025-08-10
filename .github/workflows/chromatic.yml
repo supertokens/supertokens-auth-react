@@ -2,8 +2,18 @@ name: "Chromatic"
 
 on:
     push:
-        branches: [master, "[0-9]*.[0-9]*"]
+        branches:
+            - master
+            - "[0-9]*.[0-9]*"
+        tags:
+            - dev-v[0-9]+.[0-9]+.[0-9]+
     workflow_dispatch:
+
+# Only one instance of this workflow will run on the same ref (PR/Branch/Tag)
+# Previous runs will be cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
     chromatic:

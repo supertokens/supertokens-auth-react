@@ -77,7 +77,7 @@ supertokens.init({
                         // We format the phone number here to get it to a standard format
                         const emailField = input.formFields.find((field) => field.id === "email");
                         if (emailField) {
-                            const phoneNumber = parsePhoneNumber(emailField.value);
+                            const phoneNumber = parsePhoneNumber(emailField.value as string);
                             if (phoneNumber !== undefined && phoneNumber.isValid()) {
                                 emailField.value = phoneNumber.number;
                             }
@@ -93,7 +93,7 @@ supertokens.init({
                         // We format the phone number here to get it to a standard format
                         const emailField = input.formFields.find((field) => field.id === "email");
                         if (emailField) {
-                            const phoneNumber = parsePhoneNumber(emailField.value);
+                            const phoneNumber = parsePhoneNumber(emailField.value as string);
                             if (phoneNumber !== undefined && phoneNumber.isValid()) {
                                 emailField.value = phoneNumber.number;
                             }

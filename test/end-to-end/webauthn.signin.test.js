@@ -1,17 +1,16 @@
-import fetch from "isomorphic-fetch";
-import { TEST_SERVER_BASE_URL } from "../constants";
 import {
-    backendBeforeEach,
     setupBrowser,
     screenshotOnFailure,
     clearBrowserCookiesWithoutAffectingConsole,
     toggleSignInSignUp,
-    setEnabledRecipes,
     waitForSTElement,
     submitFormUnsafe,
     waitForUrl,
     getUserIdFromSessionContext,
     isWebauthnSupported,
+    backendHook,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
 import { tryWebauthnSignIn } from "./webauthn.helpers";
 import assert from "assert";
@@ -21,19 +20,20 @@ describe("SuperTokens Webauthn SignIn", () => {
     let page;
     let consoleLogs = [];
     let skipped = false;
+    const appConfig = {
+        enabledRecipes: ["webauthn", "emailpassword", "session", "dashboard", "userroles", "multifactorauth"],
+    };
 
     before(async function () {
         if (!(await isWebauthnSupported())) {
             skipped = true;
             this.skip();
         }
-        await backendBeforeEach();
 
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await setEnabledRecipes(["webauthn", "emailpassword", "session", "dashboard", "userroles", "multifactorauth"]);
+        await backendHook("before");
+        const coreUrl = await setupCoreApp();
+        appConfig.coreUrl = coreUrl;
+        await setupST(appConfig);
 
         browser = await setupBrowser();
         page = await browser.newPage();
@@ -49,21 +49,18 @@ describe("SuperTokens Webauthn SignIn", () => {
         if (skipped) {
             return;
         }
-        await browser.close();
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
+        await page?.close();
+        await browser?.close();
+        await backendHook("after");
     });
 
-    afterEach(function () {
-        return screenshotOnFailure(this, browser);
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        await backendHook("afterEach");
     });
 
     beforeEach(async function () {
+        await backendHook("beforeEach");
         consoleLogs = [];
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         await toggleSignInSignUp(page);

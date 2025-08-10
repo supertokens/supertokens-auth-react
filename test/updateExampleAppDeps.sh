@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd $1;
-npm i;
+npm i --ignore-scripts;
 npm install git+https://github.com:supertokens/supertokens-auth-react.git#$GITHUB_SHA;
 
 if [ -d "frontend" ]; then

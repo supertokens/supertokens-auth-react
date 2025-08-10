@@ -1,0 +1,28 @@
+name: Auth-React Unit Tests
+
+on:
+    pull_request:
+        types:
+            - opened
+            - reopened
+            - synchronize
+    push:
+        tags:
+            - dev-v[0-9]+.[0-9]+.[0-9]+
+
+# Only one instance of this workflow will run on the same ref (PR/Branch/Tag)
+# Previous runs will be cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+    unit-tests:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 18
+            - run: npm install
+            - run: npm run test-unit
