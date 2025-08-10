@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Add WebAuthn credential management methods: `listCredentials`, `removeCredential`
 -   Added `createAndRegisterCredentialWithUser` method that creates and registers a credential with a user
+-   Adds dev/release GHA pipelines
 
 ### Breaking changes
 
