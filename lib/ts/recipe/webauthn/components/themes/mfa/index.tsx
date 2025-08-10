@@ -1,20 +1,20 @@
 import * as React from "react";
-import { WebAuthnMFAProps } from "../../../types";
+
+import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import SuperTokens from "../../../../../superTokens";
-import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { useTranslation } from "../../../../../translation/translationContext";
+import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { AccessDeniedScreen } from "../../../../session/prebuiltui";
 import { ThemeBase } from "../themeBase";
-import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
+
 import { WebauthnMFALoadingScreen } from "./loadingScreen";
 import { WebauthnMFASignIn } from "./signIn";
 import { WebauthnMFASignUp } from "./signUp";
 import { WebauthnMFASignUpConfirmation } from "./signUpConfirmation";
 
+import type { WebAuthnMFAProps } from "../../../types";
+
 export { WebauthnMFALoadingScreen, WebauthnMFASignIn, WebauthnMFASignUp, WebauthnMFASignUpConfirmation };
-export type { MFASignInProps } from "./signIn";
-export type { MFASignUpProps } from "./signUp";
-export type { MFASignUpConfirmationProps } from "./signUpConfirmation";
 
 export enum MFAScreens {
     SignIn,
@@ -43,7 +43,9 @@ export function MFATheme(props: WebAuthnMFAProps): JSX.Element {
     const t = useTranslation();
 
     const onRegisterPasskeyClick = React.useCallback(() => {
-        if (!props.featureState.canRegisterPasskey) return;
+        if (!props.featureState.canRegisterPasskey) {
+            return;
+        }
         if (props.featureState.email) {
             setActiveScreen(MFAScreens.SignUpConfirmation);
         } else {
@@ -53,7 +55,9 @@ export function MFATheme(props: WebAuthnMFAProps): JSX.Element {
 
     const onSignUpContinue = React.useCallback(
         (email: string) => {
-            if (!props.featureState.canRegisterPasskey) return;
+            if (!props.featureState.canRegisterPasskey) {
+                return;
+            }
             setActiveScreen(MFAScreens.SignUpConfirmation);
             setSignUpEmail(email);
         },
@@ -72,7 +76,9 @@ export function MFATheme(props: WebAuthnMFAProps): JSX.Element {
     );
 
     const onClickSignUpBackButton = React.useCallback(() => {
-        if (!props.featureState.canRegisterPasskey) return;
+        if (!props.featureState.canRegisterPasskey) {
+            return;
+        }
         setActiveScreen(MFAScreens.SignIn);
     }, [props.featureState.canRegisterPasskey]);
 

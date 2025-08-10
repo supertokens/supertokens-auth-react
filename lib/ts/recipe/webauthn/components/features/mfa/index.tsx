@@ -19,19 +19,11 @@ import * as React from "react";
 import { Fragment } from "react";
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
 
+import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import SuperTokens from "../../../../../superTokens";
-import { redirectToAuth } from "../../../../..";
-import SessionRecipe from "../../../../session/recipe";
-import { getAvailableFactors } from "../../../../multifactorauth/utils";
 import { useUserContext } from "../../../../../usercontext";
-import { defaultTranslationsWebauthn } from "../../themes/translations";
-import { FactorIds } from "../../../../multifactorauth/types";
-import MFAThemeWrapper from "../../themes/mfa";
-import MultiFactorAuth from "../../../../multifactorauth/recipe";
-import type { FieldState } from "../../../../emailpassword/components/library/formBase";
-import type { APIFormField } from "../../../../../types";
 import {
     getQueryParams,
     getRedirectToPathFromURL,
@@ -39,8 +31,16 @@ import {
     handleCallAPI,
     useRethrowInRender,
 } from "../../../../../utils";
+import MultiFactorAuth from "../../../../multifactorauth/recipe";
+import { FactorIds } from "../../../../multifactorauth/types";
+import { getAvailableFactors } from "../../../../multifactorauth/utils";
+import SessionRecipe from "../../../../session/recipe";
+import MFAThemeWrapper from "../../themes/mfa";
+import { defaultTranslationsWebauthn } from "../../themes/translations";
 
+import type { APIFormField } from "../../../../../types";
 import type { FeatureBaseProps, UserContext, Navigate } from "../../../../../types";
+import type { FieldState } from "../../../../emailpassword/components/library/formBase";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap, WebAuthnMFAAction, WebAuthnMFAProps, WebAuthnMFAState } from "../../../types";
 import type { RecipeInterface } from "supertokens-web-js/recipe/webauthn";
@@ -171,7 +171,7 @@ export function useChildProps(
                         dispatch({ type: "setError", error: "Failed to fetch from upstream" });
                     } else if (result.status === "OK") {
                         dispatch({ type: "setError", error: undefined });
-                        onSuccess();
+                        void onSuccess();
                     }
                 } catch (e) {
                     dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
@@ -193,7 +193,7 @@ export function useChildProps(
                         dispatch({ type: "setError", error: "WEBAUTHN_PASSKEY_RECOVERABLE_ERROR" });
                     } else if (result?.status === "OK") {
                         dispatch({ type: "setError", error: undefined });
-                        onSuccess();
+                        void onSuccess();
                     }
                 } catch (e) {
                     dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
@@ -217,7 +217,7 @@ export function useChildProps(
                 return navigate(-1);
             },
             onRecoverAccountClick: () => {
-                recipe.redirect(
+                void recipe.redirect(
                     { action: "SEND_RECOVERY_EMAIL", tenantIdFromQueryParams: "" },
                     navigate,
                     {},
@@ -242,8 +242,7 @@ export const MFAFeature: React.FC<
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}
-                defaultStore={defaultTranslationsWebauthn}
-            >
+                defaultStore={defaultTranslationsWebauthn}>
                 <MFAFeatureInner {...props} />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>

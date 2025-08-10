@@ -1,11 +1,12 @@
 import * as React from "react";
 import { Fragment } from "react";
-import Button from "../../../../emailpassword/components/library/button";
+
 import PasskeyIcon from "../../../../../components/assets/passkeyIcon";
-import { useTranslation } from "../../../../../translation/translationContext";
-import GeneralError from "../../../../emailpassword/components/library/generalError";
-import BackButton from "../../../../emailpassword/components/library/backButton";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../translation/translationContext";
+import BackButton from "../../../../emailpassword/components/library/backButton";
+import Button from "../../../../emailpassword/components/library/button";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { PasskeyNotSupportedError } from "../error/passkeyNotSupportedError";
 
 export type MFASignInProps = {
@@ -58,7 +59,7 @@ export const WebauthnMFASignIn = withOverride(
                     <>
                         <div data-supertokens="passkeyMfaSignInDivider">
                             <div data-supertokens="divider" />
-                            <span>or</span>
+                            <span>{t("WEBAUTHN_MFA_DIVIDER")}</span>
                             <div data-supertokens="divider" />
                         </div>
                         <div data-supertokens="headerSubtitle secondaryText">

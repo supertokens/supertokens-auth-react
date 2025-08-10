@@ -6,12 +6,12 @@ import { FactorIds } from "../multifactorauth";
 import { RecipeRouter } from "../recipeRouter";
 
 import { useRecipeComponentOverrideContext } from "./componentOverrideContext";
+import WebAuthnMFAFeature from "./components/features/mfa";
 import { RecoverAccountUsingToken } from "./components/features/recoverAccountWithToken";
 import { SendRecoveryEmailForm } from "./components/features/sendRecoveryEmail";
 import SignInWithPasskeyFeature from "./components/features/signIn";
 import SignInUpFeatureFullPage from "./components/features/signUp";
 import { SignUpWithPasskeyFeature } from "./components/features/signUp";
-import WebAuthnMFAFeature from "./components/features/mfa";
 import { defaultTranslationsWebauthn } from "./components/themes/translations";
 import {
     DEFAULT_WEBAUTHN_MFA_PATH,

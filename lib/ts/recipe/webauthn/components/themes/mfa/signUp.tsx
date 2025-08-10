@@ -1,13 +1,14 @@
 import * as React from "react";
-import STGeneralError from "supertokens-web-js/utils/error";
 import { Fragment } from "react";
-import { defaultEmailValidator } from "../../../../emailpassword/validators";
-import FormBase from "../../../../emailpassword/components/library/formBase";
-import { Label } from "../../../../emailpassword/components/library";
-import { useTranslation } from "../../../../../translation/translationContext";
-import GeneralError from "../../../../emailpassword/components/library/generalError";
-import BackButton from "../../../../emailpassword/components/library/backButton";
+import STGeneralError from "supertokens-web-js/utils/error";
+
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../translation/translationContext";
+import { Label } from "../../../../emailpassword/components/library";
+import BackButton from "../../../../emailpassword/components/library/backButton";
+import FormBase from "../../../../emailpassword/components/library/formBase";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
+import { defaultEmailValidator } from "../../../../emailpassword/validators";
 
 export type MFASignUpProps = {
     onContinueClick: (email: string) => void;

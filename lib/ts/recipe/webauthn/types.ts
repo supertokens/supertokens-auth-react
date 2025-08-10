@@ -22,8 +22,6 @@ import type {
     UserContext,
     WebJSRecipeInterface,
 } from "../../types";
-import type React from "react";
-import type { Dispatch } from "react";
 import type {
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
     UserInput as AuthRecipeModuleUserInput,
@@ -31,6 +29,12 @@ import type {
     Config as AuthRecipeModuleConfig,
 } from "../authRecipe/types";
 import type { ContinueWithPasskeyWithOverride } from "./components/themes/continueWithPasskey";
+import type {
+    WebauthnMFASignIn,
+    WebauthnMFALoadingScreen,
+    WebauthnMFASignUp,
+    WebauthnMFASignUpConfirmation,
+} from "./components/themes/mfa";
 import type { PasskeyRecoveryEmailSent } from "./components/themes/sendRecoveryEmail/emailSent";
 import type {
     WebauthnRecoverAccount,
@@ -41,13 +45,9 @@ import type { ContinueWithoutPasskey } from "./components/themes/signUp/continue
 import type { PasskeyFeatureBlock } from "./components/themes/signUp/featureBlocks";
 import type { SignUpFormInner } from "./components/themes/signUp/signUpForm";
 import type { SignUpSomethingWentWrong } from "./components/themes/signUp/somethingWentWrong";
+import type { Dispatch } from "react";
+import type React from "react";
 import type { RecipeInterface } from "supertokens-web-js/recipe/webauthn";
-import type {
-    WebauthnMFASignIn,
-    WebauthnMFALoadingScreen,
-    WebauthnMFASignUp,
-    WebauthnMFASignUpConfirmation,
-} from "./components/themes/mfa";
 import type WebJSRecipe from "supertokens-web-js/recipe/webauthn";
 import type { User } from "supertokens-web-js/types";
 

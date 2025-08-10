@@ -1,10 +1,11 @@
 import * as React from "react";
 import { Fragment } from "react";
-import Button from "../../../../emailpassword/components/library/button";
-import { useTranslation } from "../../../../../translation/translationContext";
-import GeneralError from "../../../../emailpassword/components/library/generalError";
-import BackButton from "../../../../emailpassword/components/library/backButton";
+
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../translation/translationContext";
+import BackButton from "../../../../emailpassword/components/library/backButton";
+import Button from "../../../../emailpassword/components/library/button";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { PasskeyFeatureBlockList } from "../signUp/featureBlocks";
 
 export type MFASignUpConfirmationProps = {
