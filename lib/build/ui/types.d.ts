@@ -14,14 +14,4 @@ export declare type ReactRouterDomWithCustomHistory = {
     useHistoryCustom: () => any;
     useLocation: () => any;
 };
-export declare type PreBuiltRecipes = (
-    | typeof ThirdPartyPreBuiltUI
-    | typeof EmailPasswordPreBuiltUI
-    | typeof PasswordlessPreBuiltUI
-    | typeof EmailVerificationPreBuiltUI
-    | typeof MultiFactorAuthPreBuiltUI
-    | typeof TOTPPreBuiltUI
-    | typeof OAuth2ProviderPreBuiltUI
-    | typeof SessionPreBuiltUI
-    | typeof WebauthnPreBuiltUI
-)[];
+export declare type PreBuiltRecipes = (typeof ThirdPartyPreBuiltUI | typeof EmailPasswordPreBuiltUI | typeof PasswordlessPreBuiltUI | typeof EmailVerificationPreBuiltUI | typeof MultiFactorAuthPreBuiltUI | typeof TOTPPreBuiltUI | typeof OAuth2ProviderPreBuiltUI | typeof SessionPreBuiltUI | typeof WebauthnPreBuiltUI)[];

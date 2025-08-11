@@ -18,6 +18,8 @@ export default [
             index: "lib/ts/index.ts",
             "ui-entry": "lib/ts/ui/index.tsx",
             session: "lib/ts/recipe/session/index.ts",
+            nextjsmiddleware: "lib/ts/nextjs/middleware.ts",
+            nextjsssr: "lib/ts/nextjs/ssr.ts",
             sessionprebuiltui: "lib/ts/recipe/session/prebuiltui.tsx",
             emailverification: "lib/ts/recipe/emailverification/index.ts",
             emailverificationprebuiltui: "lib/ts/recipe/emailverification/prebuiltui.tsx",

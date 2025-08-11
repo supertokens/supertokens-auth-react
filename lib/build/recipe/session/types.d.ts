@@ -19,10 +19,7 @@ export declare type NormalisedSessionConfig = NormalisedConfig<unknown, any, any
     invalidClaimStatusCode: number;
     accessDeniedScreen: NormalisedBaseConfig;
     override: {
-        functions: (
-            originalImplementation: RecipeInterface,
-            builder: OverrideableBuilder<RecipeInterface>
-        ) => RecipeInterface;
+        functions: (originalImplementation: RecipeInterface, builder: OverrideableBuilder<RecipeInterface>) => RecipeInterface;
     };
 };
 export declare type SessionFeatureBaseConfig = FeatureBaseConfig;
@@ -36,11 +33,9 @@ export declare type LoadedSessionContext = {
     invalidClaims: ClaimValidationError[];
     accessDeniedValidatorError?: ClaimValidationError;
 } & SessionContextUpdate;
-export declare type SessionContextType =
-    | LoadedSessionContext
-    | {
-          loading: true;
-      };
+export declare type SessionContextType = LoadedSessionContext | {
+    loading: true;
+};
 export declare type AccessDeniedThemeProps = {
     recipe: Session;
     error?: string;
