@@ -37,62 +37,7 @@ function MFAThemeWrapper(props: WebAuthnMFAProps): JSX.Element {
 export default MFAThemeWrapper;
 
 export function MFATheme(props: WebAuthnMFAProps): JSX.Element {
-    const { onBackButtonClicked, onSignIn } = props;
-    const [activeScreen, setActiveScreen] = React.useState<MFAScreens>(MFAScreens.SignIn);
-    const [signUpEmail, setSignUpEmail] = React.useState<string>("");
     const t = useTranslation();
-
-    const onRegisterPasskeyClick = React.useCallback(() => {
-        if (!props.featureState.canRegisterPasskey) {
-            return;
-        }
-        if (props.featureState.email) {
-            setActiveScreen(MFAScreens.SignUpConfirmation);
-        } else {
-            setActiveScreen(MFAScreens.SignUp);
-        }
-    }, [props.featureState.email, props.featureState.canRegisterPasskey]);
-
-    const onSignUpContinue = React.useCallback(
-        (email: string) => {
-            if (!props.featureState.canRegisterPasskey) {
-                return;
-            }
-            setActiveScreen(MFAScreens.SignUpConfirmation);
-            setSignUpEmail(email);
-        },
-        [props.featureState.canRegisterPasskey]
-    );
-
-    const clearError = React.useCallback(() => {
-        props.dispatch({ type: "setError", error: undefined });
-    }, [props]);
-
-    const onError = React.useCallback(
-        (error: string) => {
-            props.dispatch({ type: "setError", error });
-        },
-        [props]
-    );
-
-    const onClickSignUpBackButton = React.useCallback(() => {
-        if (!props.featureState.canRegisterPasskey) {
-            return;
-        }
-        setActiveScreen(MFAScreens.SignIn);
-    }, [props.featureState.canRegisterPasskey]);
-
-    const onClickSignUpConfirmationBackButton = React.useCallback(() => {
-        if (props.featureState.email) {
-            setActiveScreen(MFAScreens.SignIn);
-        } else {
-            setActiveScreen(MFAScreens.SignUp);
-        }
-    }, [props.featureState.email]);
-
-    const onFetchError = React.useCallback(() => {
-        onError("SOMETHING_WENT_WRONG_ERROR");
-    }, [onError]);
 
     if (!props.featureState.loaded) {
         return <WebauthnMFALoadingScreen />;
@@ -110,36 +55,142 @@ export function MFATheme(props: WebAuthnMFAProps): JSX.Element {
     return (
         <div data-supertokens="container webauthn-mfa">
             <div data-supertokens="row">
-                {activeScreen === MFAScreens.SignIn ? (
-                    <WebauthnMFASignIn
-                        onBackButtonClicked={props.featureState.showBackButton ? onBackButtonClicked : undefined}
-                        canRegisterPasskey={props.featureState.canRegisterPasskey}
-                        onSignIn={onSignIn}
-                        error={props.featureState.error}
-                        onRegisterPasskeyClick={onRegisterPasskeyClick}
-                        deviceSupported={props.featureState.deviceSupported}
-                    />
-                ) : activeScreen === MFAScreens.SignUp ? (
-                    <WebauthnMFASignUp
-                        clearError={clearError}
-                        onError={onError}
-                        onFetchError={onFetchError}
-                        error={props.featureState.error}
-                        onContinueClick={onSignUpContinue}
-                        email={signUpEmail}
-                        onRecoverAccountClick={props.onRecoverAccountClick}
-                        onBackButtonClicked={onClickSignUpBackButton}
-                    />
-                ) : (
-                    <WebauthnMFASignUpConfirmation
-                        onSignUp={props.onSignUp}
-                        onBackButtonClicked={onClickSignUpConfirmationBackButton}
-                        email={props.featureState.email || signUpEmail}
-                        error={props.featureState.error}
-                    />
-                )}
+                <MFAThemeRouter {...props} />
             </div>
             <SuperTokensBranding />
         </div>
+    );
+}
+
+function MFAThemeRouter(props: WebAuthnMFAProps): JSX.Element {
+    const { onBackButtonClicked, onSignIn } = props;
+    const [activeScreen, setActiveScreen] = React.useState<MFAScreens>(() => {
+        if (!props.featureState.hasRegisteredPassKey) {
+            return props.featureState.email ? MFAScreens.SignUpConfirmation : MFAScreens.SignUp;
+        }
+        return MFAScreens.SignIn;
+    });
+    const [email, setEmail] = React.useState<string>("");
+    const signUpEmail = props.featureState.email || email;
+
+    const onSignUpContinue = React.useCallback(
+        (email: string) => {
+            if (!props.featureState.canRegisterPasskey) {
+                return;
+            }
+            setActiveScreen(MFAScreens.SignUpConfirmation);
+            setEmail(email);
+        },
+        [props.featureState.canRegisterPasskey]
+    );
+
+    const onRegisterPasskeyClick = React.useCallback(() => {
+        if (!props.featureState.canRegisterPasskey) {
+            return;
+        }
+        if (props.featureState.email) {
+            setActiveScreen(MFAScreens.SignUpConfirmation);
+        } else {
+            setActiveScreen(MFAScreens.SignUp);
+        }
+    }, [props.featureState.email, props.featureState.canRegisterPasskey]);
+
+    const clearError = React.useCallback(() => {
+        props.dispatch({ type: "setError", error: undefined });
+    }, [props]);
+
+    const onError = React.useCallback(
+        (error: string) => {
+            props.dispatch({ type: "setError", error });
+        },
+        [props]
+    );
+
+    const onClickSignUpConfirmationBackButton = React.useCallback(() => {
+        if (!props.featureState.email) {
+            setActiveScreen(MFAScreens.SignUp);
+            return;
+        }
+        if (!props.featureState.hasRegisteredPassKey && !props.featureState.showBackButton) {
+            return;
+        }
+        if (!props.featureState.hasRegisteredPassKey) {
+            onBackButtonClicked();
+            return;
+        }
+        setActiveScreen(MFAScreens.SignIn);
+    }, [
+        props.featureState.email,
+        props.featureState.hasRegisteredPassKey,
+        props.featureState.showBackButton,
+        onBackButtonClicked,
+    ]);
+
+    const showBackButtonOnSignUpConfirmation = React.useMemo(() => {
+        return (
+            !!props.featureState.email || props.featureState.hasRegisteredPassKey || props.featureState.showBackButton
+        );
+    }, [props.featureState.email, props.featureState.hasRegisteredPassKey, props.featureState.showBackButton]);
+
+    const onSignUp = React.useCallback(async () => {
+        await props.onSignUp(signUpEmail);
+    }, [props.onSignUp, signUpEmail]);
+
+    const onFetchError = React.useCallback(() => {
+        onError("SOMETHING_WENT_WRONG_ERROR");
+    }, [onError]);
+
+    const onClickSignUpBackButton = React.useCallback(() => {
+        if (!props.featureState.hasRegisteredPassKey && !props.featureState.showBackButton) {
+            return;
+        }
+        if (!props.featureState.hasRegisteredPassKey) {
+            onBackButtonClicked();
+            return;
+        }
+        setActiveScreen(MFAScreens.SignIn);
+    }, [props.featureState.hasRegisteredPassKey, props.featureState.showBackButton, onBackButtonClicked]);
+
+    const showBackButtonOnSignUp = React.useMemo(() => {
+        return props.featureState.hasRegisteredPassKey || props.featureState.showBackButton;
+    }, [props.featureState.email, props.featureState.showBackButton]);
+
+    if (activeScreen === MFAScreens.SignUp) {
+        return (
+            <WebauthnMFASignUp
+                clearError={clearError}
+                onError={onError}
+                onFetchError={onFetchError}
+                error={props.featureState.error}
+                onContinueClick={onSignUpContinue}
+                email={email}
+                onRecoverAccountClick={props.onRecoverAccountClick}
+                onBackButtonClicked={showBackButtonOnSignUp ? onClickSignUpBackButton : undefined}
+            />
+        );
+    }
+
+    if (activeScreen === MFAScreens.SignUpConfirmation) {
+        return (
+            <WebauthnMFASignUpConfirmation
+                onSignUp={onSignUp}
+                onBackButtonClicked={
+                    showBackButtonOnSignUpConfirmation ? onClickSignUpConfirmationBackButton : undefined
+                }
+                email={signUpEmail}
+                error={props.featureState.error}
+            />
+        );
+    }
+
+    return (
+        <WebauthnMFASignIn
+            onBackButtonClicked={props.featureState.showBackButton ? onBackButtonClicked : undefined}
+            canRegisterPasskey={props.featureState.canRegisterPasskey}
+            onSignIn={onSignIn}
+            error={props.featureState.error}
+            deviceSupported={props.featureState.deviceSupported}
+            onRegisterPasskeyClick={onRegisterPasskeyClick}
+        />
     );
 }

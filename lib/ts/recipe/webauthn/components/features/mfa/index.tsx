@@ -64,6 +64,7 @@ export const useFeatureReducer = (): [WebAuthnMFAState, React.Dispatch<WebAuthnM
                         email: action.email,
                         showBackButton: action.showBackButton,
                         canRegisterPasskey: action.canRegisterPasskey,
+                        hasRegisteredPassKey: action.hasRegisteredPassKey,
                     };
                 default:
                     return oldState;
@@ -73,6 +74,7 @@ export const useFeatureReducer = (): [WebAuthnMFAState, React.Dispatch<WebAuthnM
             error: undefined,
             deviceSupported: false,
             canRegisterPasskey: false,
+            hasRegisteredPassKey: false,
             loaded: false,
             showBackButton: true,
             email: undefined,
@@ -242,7 +244,8 @@ export const MFAFeature: React.FC<
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}
-                defaultStore={defaultTranslationsWebauthn}>
+                defaultStore={defaultTranslationsWebauthn}
+            >
                 <MFAFeatureInner {...props} />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
@@ -310,10 +313,9 @@ function useOnLoad(
         [userContext]
     );
 
-    const handleLoadError = React.useCallback(
-        () => dispatch({ type: "setError", accessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR_RELOAD" }),
-        [dispatch]
-    );
+    const handleLoadError = React.useCallback(() => {
+        dispatch({ type: "setError", accessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR_RELOAD" });
+    }, [dispatch]);
 
     const onLoad = React.useCallback(
         async (mfaInfo: Awaited<ReturnType<typeof fetchMFAInfo>>) => {
@@ -348,12 +350,6 @@ function useOnLoad(
                 }
             }
 
-            const alreadySetup = mfaInfo.factors.alreadySetup.includes(FactorIds.WEBAUTHN);
-            if (alreadySetup) {
-                dispatch({ type: "setError", accessDenied: true, error: "SOMETHING_WENT_WRONG_ERROR_RELOAD" });
-                return;
-            }
-
             // If the next array only has a single option, it means the we were redirected here
             // automatically during the sign in process. In that case, anywhere the back button
             // could go would redirect back here, making it useless.
@@ -365,21 +361,30 @@ function useOnLoad(
             const mfaInfoEmails = mfaInfo.emails[FactorIds.WEBAUTHN];
             const email = mfaInfoEmails ? mfaInfoEmails[0] : undefined;
 
-            const canRegisterPasskey = !mfaInfo.factors.alreadySetup.includes(FactorIds.WEBAUTHN);
+            const canRegisterPasskey = mfaInfo.factors.allowedToSetup.includes(FactorIds.WEBAUTHN);
+            const hasRegisteredPassKey = mfaInfo.factors.alreadySetup.includes(FactorIds.WEBAUTHN);
+            if (!hasRegisteredPassKey && !canRegisterPasskey) {
+                dispatch({
+                    type: "setError",
+                    accessDenied: true,
+                    error: "SOMETHING_WENT_WRONG_ERROR",
+                });
+            }
             const browserSupportsWebauthnResponse = await props.recipe.webJSRecipe.doesBrowserSupportWebAuthn({
                 userContext: userContext,
             });
-            const browserSupportsWebauthn =
+            const deviceSupported =
                 browserSupportsWebauthnResponse.status === "OK" &&
                 browserSupportsWebauthnResponse?.browserSupportsWebauthn;
 
             dispatch({
                 type: "load",
                 canRegisterPasskey,
+                hasRegisteredPassKey,
                 error,
                 showBackButton,
                 email,
-                deviceSupported: browserSupportsWebauthn,
+                deviceSupported,
             });
         },
         [dispatch, recipeImplementation, props.recipe, userContext]

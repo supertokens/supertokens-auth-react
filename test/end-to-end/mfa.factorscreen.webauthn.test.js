@@ -23,6 +23,7 @@ import {
     waitForSTElement,
     setupCoreApp,
     screenshotOnFailure,
+    submitFormUnsafe,
     getTestEmail,
     setupST,
     waitFor,
@@ -31,10 +32,14 @@ import {
     setupBrowser,
     getGeneralError,
     backendHook,
+    setInputValues,
+    submitForm,
 } from "../helpers";
 import { MFA_INFO_API, SOMETHING_WENT_WRONG_ERROR, TEST_CLIENT_BASE_URL } from "../constants";
+import { getTestPhoneNumber } from "../exampleTestHelpers";
 import {
     tryEmailPasswordSignUp,
+    tryPasswordlessSignInUp,
     waitForDashboard,
     tryEmailPasswordSignIn,
     chooseFactor,
@@ -111,7 +116,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 await setupST(appConfig);
                 page = await browser.newPage();
 
-                email = await getTestEmail(factorId);
+                email = getTestEmail(factorId);
 
                 await page.goto(`${TEST_CLIENT_BASE_URL}/auth/?rid=emailpassword`);
                 await page.waitForNavigation({ waitUntil: "networkidle0" });
@@ -132,8 +137,8 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     ...appConfig,
                     mfaInfo: {
                         requirements: [],
-                        alreadySetup: [],
-                        allowedToSetup: [factorId],
+                        alreadySetup: [factorId],
+                        allowedToSetup: [],
                     },
                 });
 
@@ -145,7 +150,6 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 await tryWebauthnSignIn(page);
-                await page.waitForNavigation({ waitUntil: "networkidle0" });
                 await waitForUrl(page, "/redirect-here");
             });
 
@@ -154,7 +158,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     ...appConfig,
                     mfaInfo: {
                         requirements: [],
-                        alreadySetup: [factorId],
+                        alreadySetup: [],
                         allowedToSetup: [],
                     },
                 });
@@ -416,7 +420,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
                     ...appConfig,
                     mfaInfo: {
                         requirements: [factorId],
-                        alreadySetup: [],
+                        alreadySetup: [factorId],
                         allowedToSetup: [factorId],
                     },
                 });
@@ -439,6 +443,71 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 await page.evaluateOnNewDocument(() => {
                     localStorage.removeItem("overrideWebauthnSupport");
                 });
+            });
+
+            it("should show the sign up confirmation screen if the user does not have a registered passkey", async () => {
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [factorId],
+                        alreadySetup: [],
+                        allowedToSetup: [factorId],
+                    },
+                });
+
+                await tryEmailPasswordSignIn(page, email);
+                await page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}`);
+
+                await waitForSTElement(page, "[data-supertokens~=passkeyConfirmationContainer]");
+                await submitFormUnsafe(page);
+                await new Promise((res) => setTimeout(res, 1000));
+            });
+
+            it("should show the sign up screen if the user doesn not have a registered passkey and no linked email", async () => {
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [factorId],
+                        alreadySetup: [],
+                        allowedToSetup: [factorId],
+                    },
+                });
+
+                const testEmail = getTestEmail();
+                const phoneNumber = getTestPhoneNumber();
+                await tryPasswordlessSignInUp(page, phoneNumber, undefined, true);
+
+                await page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}`);
+
+                await waitForSTElement(page, "[data-supertokens~=signUpFormInnerContainer]");
+                await setInputValues(page, [{ name: "email", value: testEmail }]);
+                await submitFormUnsafe(page);
+
+                await waitForSTElement(page, "[data-supertokens~=passkeyConfirmationContainer]");
+                await submitFormUnsafe(page);
+                await new Promise((res) => setTimeout(res, 1000));
+            });
+
+            it("should show the sign in screen alongside the passkey registration button if the user is allowed to setup more passkeys", async () => {
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [factorId],
+                        alreadySetup: [factorId],
+                        allowedToSetup: [factorId],
+                    },
+                });
+
+                await tryEmailPasswordSignIn(page, email);
+
+                await page.goto(`${TEST_CLIENT_BASE_URL}/auth/mfa/${factorId}`);
+
+                await waitForSTElement(page, "[data-supertokens~=button]");
+                await waitForSTElement(page, "[data-supertokens~=passkeyMfaSignInDivider]");
+                const link = await waitForSTElement(page, "[data-supertokens~='link']");
+                await link.click();
+                await submitFormUnsafe(page);
+                await new Promise((res) => setTimeout(res, 1000));
             });
         });
     });

@@ -58,6 +58,6 @@ export const defaultTranslationsWebauthn = {
             "To finish signing in, click the button and follow the browser instructions.",
         WEBAUTHN_MFA_DIVIDER: "or",
         WEBAUTHN_MFA_REGISTER_PASSKEY_SUBTITLE: "Set up a new authentication method to use for future logins.",
-        WEBAUTHN_MFA_REGISTER_PASSKEY_LINK: "Register a passkey",
+        WEBAUTHN_MFA_REGISTER_PASSKEY_TITLE: "Register a passkey",
     },
 };

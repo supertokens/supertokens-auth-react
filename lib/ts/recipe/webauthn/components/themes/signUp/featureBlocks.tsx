@@ -58,8 +58,8 @@ export const PasskeyFeatureBlock = withOverride(
 export const PasskeyFeatureBlockList = () => {
     return (
         <div data-supertokens="passkeyFeatureBlocksContainer">
-            {blockDetails.map((blockDetail) => (
-                <PasskeyFeatureBlock {...blockDetail} />
+            {blockDetails.map((blockDetail, index) => (
+                <PasskeyFeatureBlock key={`${blockDetail.title}-${index}`} {...blockDetail} />
             ))}
         </div>
     );

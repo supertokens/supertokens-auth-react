@@ -12,10 +12,10 @@ import { PasskeyNotSupportedError } from "../error/passkeyNotSupportedError";
 export type MFASignInProps = {
     onBackButtonClicked?: () => void;
     onSignIn: () => Promise<void>;
-    onRegisterPasskeyClick: () => void;
-    canRegisterPasskey: boolean;
     error: string | undefined;
     deviceSupported: boolean;
+    canRegisterPasskey: boolean;
+    onRegisterPasskeyClick: () => void;
 };
 
 export const WebauthnMFASignIn = withOverride(
@@ -64,7 +64,7 @@ export const WebauthnMFASignIn = withOverride(
                         </div>
                         <div data-supertokens="headerSubtitle secondaryText">
                             <span data-supertokens="link" onClick={props.onRegisterPasskeyClick}>
-                                {t("WEBAUTHN_MFA_REGISTER_PASSKEY_LINK")}
+                                {t("WEBAUTHN_MFA_REGISTER_PASSKEY_TITLE")}
                             </span>
                             {t("WEBAUTHN_MFA_REGISTER_PASSKEY_SUBTITLE")}
                         </div>

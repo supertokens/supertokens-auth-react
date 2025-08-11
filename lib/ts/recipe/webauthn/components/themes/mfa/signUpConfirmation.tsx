@@ -9,8 +9,8 @@ import GeneralError from "../../../../emailpassword/components/library/generalEr
 import { PasskeyFeatureBlockList } from "../signUp/featureBlocks";
 
 export type MFASignUpConfirmationProps = {
-    onSignUp: (email: string) => Promise<void>;
-    onBackButtonClicked: () => void;
+    onSignUp: () => Promise<void>;
+    onBackButtonClicked?: () => void;
     email: string;
     error?: string;
 };
@@ -23,19 +23,23 @@ export const WebauthnMFASignUpConfirmation = withOverride(
 
         const onClick = React.useCallback(async () => {
             setIsLoading(true);
-            await props.onSignUp(props.email);
+            await props.onSignUp();
             setIsLoading(false);
-        }, [props]);
+        }, [props.onSignUp]);
 
         return (
             <Fragment>
-                <div data-supertokens="headerTitle withBackButton webauthn-mfa">
-                    <BackButton onClick={props.onBackButtonClicked} />
-                    {t("WEBAUTHN_MFA_REGISTER_PASSKEY_LINK")}
-                    <span data-supertokens="backButtonPlaceholder backButtonCommon">
-                        {/* empty span for spacing the back button */}
-                    </span>
-                </div>
+                {props.onBackButtonClicked ? (
+                    <div data-supertokens="headerTitle withBackButton webauthn-mfa">
+                        <BackButton onClick={props.onBackButtonClicked} />
+                        {t("WEBAUTHN_MFA_REGISTER_PASSKEY_TITLE")}
+                        <span data-supertokens="backButtonPlaceholder backButtonCommon">
+                            {/* empty span for spacing the back button */}
+                        </span>
+                    </div>
+                ) : (
+                    <div data-supertokens="headerTitle webauthn-mfa">{t("WEBAUTHN_MFA_REGISTER_PASSKEY_TITLE")}</div>
+                )}
                 <div data-supertokens="divider" />
                 <div data-supertokens="passkeyConfirmationContainer">
                     <div data-supertokens="passkeyConfirmationEmailContainer">

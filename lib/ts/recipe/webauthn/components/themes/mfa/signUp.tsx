@@ -18,7 +18,7 @@ export type MFASignUpProps = {
     onError: (error: string) => void;
     onFetchError?: (error: Response) => void;
     onRecoverAccountClick: () => void;
-    onBackButtonClicked: () => void;
+    onBackButtonClicked?: () => void;
 };
 
 export const WebauthnMFASignUp = withOverride(
@@ -35,13 +35,17 @@ export const WebauthnMFASignUp = withOverride(
 
         return (
             <Fragment>
-                <div data-supertokens="headerTitle withBackButton webauthn-mfa">
-                    <BackButton onClick={props.onBackButtonClicked} />
-                    {t("WEBAUTHN_MFA_REGISTER_PASSKEY_LINK")}
-                    <span data-supertokens="backButtonPlaceholder backButtonCommon">
-                        {/* empty span for spacing the back button */}
-                    </span>
-                </div>
+                {props.onBackButtonClicked ? (
+                    <div data-supertokens="headerTitle withBackButton webauthn-mfa">
+                        <BackButton onClick={props.onBackButtonClicked} />
+                        {t("WEBAUTHN_MFA_REGISTER_PASSKEY_TITLE")}
+                        <span data-supertokens="backButtonPlaceholder backButtonCommon">
+                            {/* empty span for spacing the back button */}
+                        </span>
+                    </div>
+                ) : (
+                    <div data-supertokens="headerTitle webauthn-mfa">{t("WEBAUTHN_MFA_REGISTER_PASSKEY_TITLE")}</div>
+                )}
                 {props.error !== undefined && <GeneralError error={props.error} />}
                 <div data-supertokens="signUpFormInnerContainer">
                     <div data-supertokens="cautionMessage">{t("WEBAUTHN_SIGN_UP_CAUTION_MESSAGE_LABEL")}</div>
@@ -58,7 +62,8 @@ export const WebauthnMFASignUp = withOverride(
                                         <Label value={"WEBAUTHN_SIGN_UP_LABEL"} data-supertokens="emailInputLabel" />
                                         <a
                                             onClick={props.onRecoverAccountClick}
-                                            data-supertokens="link linkButton formLabelLinkBtn recoverAccountTrigger">
+                                            data-supertokens="link linkButton formLabelLinkBtn recoverAccountTrigger"
+                                        >
                                             {t("WEBAUTHN_RECOVER_ACCOUNT_LABEL")}
                                         </a>
                                     </div>

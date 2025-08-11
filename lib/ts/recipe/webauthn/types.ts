@@ -275,6 +275,7 @@ export type WebAuthnMFAAction =
           email: string | undefined;
           showBackButton: boolean;
           canRegisterPasskey: boolean;
+          hasRegisteredPassKey: boolean;
       };
 
 type WebAuthnMFAInitialState = {
@@ -284,6 +285,7 @@ type WebAuthnMFAInitialState = {
     deviceSupported: boolean;
     showBackButton: boolean;
     canRegisterPasskey: false;
+    hasRegisteredPassKey: false;
     email: undefined;
 };
 
@@ -294,6 +296,7 @@ type WebAuthnMFALoadedState = {
     deviceSupported: boolean;
     showBackButton: boolean;
     canRegisterPasskey: boolean;
+    hasRegisteredPassKey: boolean;
     email: string | undefined;
 };
 
