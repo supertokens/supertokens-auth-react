@@ -62,8 +62,7 @@ export const WebauthnMFASignUp = withOverride(
                                         <Label value={"WEBAUTHN_SIGN_UP_LABEL"} data-supertokens="emailInputLabel" />
                                         <a
                                             onClick={props.onRecoverAccountClick}
-                                            data-supertokens="link linkButton formLabelLinkBtn recoverAccountTrigger"
-                                        >
+                                            data-supertokens="link linkButton formLabelLinkBtn recoverAccountTrigger">
                                             {t("WEBAUTHN_RECOVER_ACCOUNT_LABEL")}
                                         </a>
                                     </div>

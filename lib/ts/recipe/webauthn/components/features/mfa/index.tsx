@@ -244,8 +244,7 @@ export const MFAFeature: React.FC<
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper
                 useShadowDom={SuperTokens.getInstanceOrThrow().useShadowDom}
-                defaultStore={defaultTranslationsWebauthn}
-            >
+                defaultStore={defaultTranslationsWebauthn}>
                 <MFAFeatureInner {...props} />
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
