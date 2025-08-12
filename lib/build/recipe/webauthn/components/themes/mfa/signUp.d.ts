@@ -7,6 +7,6 @@ export declare type MFASignUpProps = {
     onError: (error: string) => void;
     onFetchError?: (error: Response) => void;
     onRecoverAccountClick: () => void;
-    onBackButtonClicked: () => void;
+    onBackButtonClicked?: () => void;
 };
 export declare const WebauthnMFASignUp: React.ComponentType<MFASignUpProps>;

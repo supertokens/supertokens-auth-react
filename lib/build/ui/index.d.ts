@@ -11,21 +11,13 @@ import type { PropsWithChildren } from "react";
 declare class UI {
     private static reactRouterDom;
     private static reactRouterDomIsV6?;
-    static getSuperTokensRoutesForReactRouterDom(
-        reactRouterDom: any,
-        preBuiltUiClassList?: PreBuiltRecipes,
-        basePath?: string
-    ): JSX.Element[];
+    static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any, preBuiltUiClassList?: PreBuiltRecipes, basePath?: string): JSX.Element[];
     static getReactRouterDomWithCustomHistory: () => ReactRouterDomWithCustomHistory | undefined;
     static canHandleRoute(preBuiltUiClassList: PreBuiltRecipes): boolean;
     static getRoutingComponent(preBuiltUiClassList: PreBuiltRecipes): JSX.Element;
-    static AuthPage: (
-        props: PropsWithChildren<
-            Omit<AuthPageProps, "preBuiltUIList"> & {
-                preBuiltUIList: PreBuiltRecipes;
-            }
-        >
-    ) => import("react/jsx-runtime").JSX.Element;
+    static AuthPage: (props: PropsWithChildren<Omit<AuthPageProps, "preBuiltUIList"> & {
+        preBuiltUIList: PreBuiltRecipes;
+    }>) => import("react/jsx-runtime").JSX.Element;
     static AuthPageTheme: typeof AuthPageTheme;
     static AuthPageFooter: React.ComponentType<{
         privacyPolicyLink?: string | undefined;
@@ -41,43 +33,24 @@ declare class UI {
         onSignInUpSwitcherClick: (() => void) | undefined;
         resetFactorList: () => void;
         showBackButton: boolean;
-        oauth2ClientInfo?:
-            | {
-                  logoUri?: string | undefined;
-                  clientUri?: string | undefined;
-                  clientName: string;
-              }
-            | undefined;
+        oauth2ClientInfo?: {
+            logoUri?: string | undefined;
+            clientUri?: string | undefined;
+            clientName: string;
+        } | undefined;
         headerLabel?: string | undefined;
         hideSignInSwitcher?: boolean | undefined;
     }>;
     static AuthPageComponentList: React.ComponentType<AuthPageThemeProps>;
-    static AuthRecipeComponentsOverrideContextProvider: React.FC<
-        React.PropsWithChildren<{
-            components: import("../recipe/authRecipe/types").ComponentOverrideMap;
-        }>
-    >;
+    static AuthRecipeComponentsOverrideContextProvider: React.FC<React.PropsWithChildren<{
+        components: import("../recipe/authRecipe/types").ComponentOverrideMap;
+    }>>;
 }
 declare const getSuperTokensRoutesForReactRouterDom: typeof UI.getSuperTokensRoutesForReactRouterDom;
 declare const canHandleRoute: typeof UI.canHandleRoute;
 declare const getRoutingComponent: typeof UI.getRoutingComponent;
-declare const AuthPage: (
-    props: PropsWithChildren<
-        Omit<AuthPageProps, "preBuiltUIList"> & {
-            preBuiltUIList: PreBuiltRecipes;
-        }
-    >
-) => import("react/jsx-runtime").JSX.Element;
+declare const AuthPage: (props: PropsWithChildren<Omit<AuthPageProps, "preBuiltUIList"> & {
+    preBuiltUIList: PreBuiltRecipes;
+}>) => import("react/jsx-runtime").JSX.Element;
 export default UI;
-export {
-    getSuperTokensRoutesForReactRouterDom,
-    canHandleRoute,
-    getRoutingComponent,
-    AuthPage,
-    AuthPageTheme,
-    AuthPageFooter,
-    AuthPageHeader,
-    AuthPageComponentList,
-    AuthRecipeComponentsOverrideContextProvider,
-    AuthPageThemeProps,
-};
+export { getSuperTokensRoutesForReactRouterDom, canHandleRoute, getRoutingComponent, AuthPage, AuthPageTheme, AuthPageFooter, AuthPageHeader, AuthPageComponentList, AuthRecipeComponentsOverrideContextProvider, AuthPageThemeProps, };

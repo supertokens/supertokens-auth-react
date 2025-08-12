@@ -18,19 +18,16 @@ import type { UserContext } from "../../types";
 import type { StateObject, RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdparty";
 import type { User } from "supertokens-web-js/types";
 export default class Wrapper {
-    static init(config?: UserInput): import("../../types").RecipeInitResult<
-        never,
-        import("./types").PreAndPostAPIHookAction,
-        {
-            action: "SUCCESS";
-            isNewRecipeUser: boolean;
-            createdNewSession: boolean;
-            user: User;
-            userContext: UserContext;
-        },
-        import("./types").NormalisedConfig
-    >;
-    static signOut(input?: { userContext?: UserContext }): Promise<void>;
+    static init(config?: UserInput): import("../../types").RecipeInitResult<never, import("./types").PreAndPostAPIHookAction, {
+        action: "SUCCESS";
+        isNewRecipeUser: boolean;
+        createdNewSession: boolean;
+        user: User;
+        userContext: UserContext;
+    }, import("./types").NormalisedConfig>;
+    static signOut(input?: {
+        userContext?: UserContext;
+    }): Promise<void>;
     static redirectToThirdPartyLogin(input: {
         thirdPartyId: string;
         shouldTryLinkingWithSessionUser?: boolean;
@@ -49,23 +46,22 @@ export default class Wrapper {
         userContext?: UserContext;
         options?: RecipeFunctionOptions;
     }): Promise<string>;
-    static signInAndUp(input?: { userContext?: UserContext; options?: RecipeFunctionOptions }): Promise<
-        | {
-              status: "OK";
-              user: User;
-              createdNewRecipeUser: boolean;
-              fetchResponse: Response;
-          }
-        | {
-              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-              fetchResponse: Response;
-          }
-        | {
-              status: "SIGN_IN_UP_NOT_ALLOWED";
-              reason: string;
-              fetchResponse: Response;
-          }
-    >;
+    static signInAndUp(input?: {
+        userContext?: UserContext;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
+        status: "OK";
+        user: User;
+        createdNewRecipeUser: boolean;
+        fetchResponse: Response;
+    } | {
+        status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+        fetchResponse: Response;
+    } | {
+        status: "SIGN_IN_UP_NOT_ALLOWED";
+        reason: string;
+        fetchResponse: Response;
+    }>;
     static Apple: typeof Apple;
     static Bitbucket: typeof Bitbucket;
     static Discord: typeof Discord;
@@ -79,11 +75,9 @@ export default class Wrapper {
     static BoxySAML: typeof BoxySAML;
     static Okta: typeof Okta;
     static Twitter: typeof Twitter;
-    static ComponentsOverrideProvider: import("react").FC<
-        import("react").PropsWithChildren<{
-            components: import("./types").ComponentOverrideMap;
-        }>
-    >;
+    static ComponentsOverrideProvider: import("react").FC<import("react").PropsWithChildren<{
+        components: import("./types").ComponentOverrideMap;
+    }>>;
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
@@ -91,35 +85,7 @@ declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogi
 declare const getStateAndOtherInfoFromStorage: typeof Wrapper.getStateAndOtherInfoFromStorage;
 declare const getAuthorisationURLWithQueryParamsAndSetState: typeof Wrapper.getAuthorisationURLWithQueryParamsAndSetState;
 declare const signInAndUp: typeof Wrapper.signInAndUp;
-declare const ThirdpartyComponentsOverrideProvider: import("react").FC<
-    import("react").PropsWithChildren<{
-        components: import("./types").ComponentOverrideMap;
-    }>
->;
-export {
-    init,
-    Apple,
-    Bitbucket,
-    Discord,
-    Github,
-    Gitlab,
-    Google,
-    GoogleWorkspaces,
-    Facebook,
-    LinkedIn,
-    ActiveDirectory,
-    BoxySAML,
-    Okta,
-    Twitter,
-    getStateAndOtherInfoFromStorage,
-    getAuthorisationURLWithQueryParamsAndSetState,
-    signInAndUp,
-    redirectToThirdPartyLogin,
-    ThirdpartyComponentsOverrideProvider,
-    signOut,
-    GetRedirectionURLContext,
-    PreAPIHookContext,
-    OnHandleEventContext,
-    UserInput,
-    RecipeInterface,
-};
+declare const ThirdpartyComponentsOverrideProvider: import("react").FC<import("react").PropsWithChildren<{
+    components: import("./types").ComponentOverrideMap;
+}>>;
+export { init, Apple, Bitbucket, Discord, Github, Gitlab, Google, GoogleWorkspaces, Facebook, LinkedIn, ActiveDirectory, BoxySAML, Okta, Twitter, getStateAndOtherInfoFromStorage, getAuthorisationURLWithQueryParamsAndSetState, signInAndUp, redirectToThirdPartyLogin, ThirdpartyComponentsOverrideProvider, signOut, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, UserInput, RecipeInterface, };

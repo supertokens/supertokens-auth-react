@@ -42,7 +42,7 @@ export declare const defaultTranslationsWebauthn: {
         WEBAUTHN_MFA_SIGN_IN_HEADER_SUBTITLE: string;
         WEBAUTHN_MFA_DIVIDER: string;
         WEBAUTHN_MFA_REGISTER_PASSKEY_SUBTITLE: string;
-        WEBAUTHN_MFA_REGISTER_PASSKEY_LINK: string;
+        WEBAUTHN_MFA_REGISTER_PASSKEY_TITLE: string;
         AUTH_PAGE_HEADER_TITLE_SIGN_IN_AND_UP: string;
         AUTH_PAGE_HEADER_TITLE_SIGN_IN: string;
         AUTH_PAGE_HEADER_TITLE_SIGN_UP: string;

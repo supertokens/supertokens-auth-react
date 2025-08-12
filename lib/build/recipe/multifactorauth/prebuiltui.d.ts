@@ -47,29 +47,17 @@ export declare class MultiFactorAuthPreBuiltUI extends RecipeRouter {
     constructor(recipeInstance: MultiFactorAuthRecipe);
     static getInstanceOrInitAndGetInstance(): MultiFactorAuthPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
-    static getFeatureComponent(
-        componentName: "factorchooser",
-        props: any,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ): JSX.Element;
+    static getFeatureComponent(componentName: "factorchooser", props: any, useComponentOverrides?: () => GenericComponentOverrideMap<any>): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
-    getFeatureComponent: (
-        _: "factorchooser",
-        props: any,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ) => JSX.Element;
+    getFeatureComponent: (_: "factorchooser", props: any, useComponentOverrides?: () => GenericComponentOverrideMap<any>) => JSX.Element;
     getAuthComponents(): AuthComponent[];
     static reset(): void;
-    static FactorChooser: (
-        props: FeatureBaseProps<{
-            userContext?: UserContext;
-        }>
-    ) => JSX.Element;
+    static FactorChooser: (props: FeatureBaseProps<{
+        userContext?: UserContext;
+    }>) => JSX.Element;
     static FactorChooserTheme: typeof FactorChooserThemeWrapper;
 }
-declare const FactorChooser: (
-    props: FeatureBaseProps<{
-        userContext?: UserContext;
-    }>
-) => JSX.Element;
+declare const FactorChooser: (props: FeatureBaseProps<{
+    userContext?: UserContext;
+}>) => JSX.Element;
 export { FactorChooser, FactorChooserThemeWrapper as FactorChooserTheme };
