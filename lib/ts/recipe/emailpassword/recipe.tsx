@@ -93,20 +93,17 @@ export default class EmailPassword extends AuthRecipe<
                 });
                 return EmailPassword.instance;
             },
-            webJS: (...args) => {
-                const init = EmailPasswordWebJS.init({
-                    ...normalisedConfig, // plugins are applied by webjs
-                    override: {
-                        functions: (originalImpl, builder) => {
-                            const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
-                            builder.override(functions);
-                            builder.override(normalisedConfig.override.functions);
-                            return originalImpl;
-                        },
+            webJS: EmailPasswordWebJS.init({
+                ...normalisedConfig, // plugins are applied by webjs
+                override: {
+                    functions: (originalImpl, builder) => {
+                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
+                        builder.override(functions);
+                        builder.override(normalisedConfig.override.functions);
+                        return originalImpl;
                     },
-                });
-                return init(...args);
-            },
+                },
+            }),
         };
     }
 

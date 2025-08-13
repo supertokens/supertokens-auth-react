@@ -78,20 +78,17 @@ export default class OAuth2Provider extends RecipeModule<
                 });
                 return OAuth2Provider.instance;
             },
-            webJS: (...args) => {
-                const init = OAuth2WebJS.init({
-                    ...normalisedConfig,
-                    override: {
-                        functions: (originalImpl, builder) => {
-                            const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
-                            builder.override(functions);
-                            builder.override(normalisedConfig.override.functions);
-                            return originalImpl;
-                        },
+            webJS: OAuth2WebJS.init({
+                ...normalisedConfig,
+                override: {
+                    functions: (originalImpl, builder) => {
+                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
+                        builder.override(functions);
+                        builder.override(normalisedConfig.override.functions);
+                        return originalImpl;
                     },
-                });
-                return init(...args);
-            },
+                },
+            }),
         };
     }
 

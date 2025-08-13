@@ -93,20 +93,17 @@ export default class TOTP extends RecipeModule<
                 });
                 return TOTP.instance;
             },
-            webJS: (...args) => {
-                const init = TOTPWebJS.init({
-                    ...normalisedConfig,
-                    override: {
-                        functions: (originalImpl, builder) => {
-                            const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
-                            builder.override(functions);
-                            builder.override(normalisedConfig.override.functions);
-                            return originalImpl;
-                        },
+            webJS: TOTPWebJS.init({
+                ...normalisedConfig,
+                override: {
+                    functions: (originalImpl, builder) => {
+                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
+                        builder.override(functions);
+                        builder.override(normalisedConfig.override.functions);
+                        return originalImpl;
                     },
-                });
-                return init(...args);
-            },
+                },
+            }),
         };
     }
 

@@ -110,12 +110,9 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
                 });
                 return Multitenancy.instance;
             },
-            webJS: (...args) => {
-                const init = MultitenancyWebJS.init({
-                    ...normalisedConfig,
-                });
-                return init(...args);
-            },
+            webJS: MultitenancyWebJS.init({
+                ...normalisedConfig,
+            }),
         };
     }
 

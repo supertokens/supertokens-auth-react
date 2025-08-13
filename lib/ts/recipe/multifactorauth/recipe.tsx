@@ -118,20 +118,17 @@ export default class MultiFactorAuth extends RecipeModule<
                 });
                 return MultiFactorAuth.instance;
             },
-            webJS: (...args) => {
-                const init = MultiFactorAuthWebJS.init({
-                    ...normalisedConfig,
-                    override: {
-                        functions: (originalImpl, builder) => {
-                            const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
-                            builder.override(functions);
-                            builder.override(normalisedConfig.override.functions);
-                            return originalImpl;
-                        },
+            webJS: MultiFactorAuthWebJS.init({
+                ...normalisedConfig,
+                override: {
+                    functions: (originalImpl, builder) => {
+                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
+                        builder.override(functions);
+                        builder.override(normalisedConfig.override.functions);
+                        return originalImpl;
                     },
-                });
-                return init(...args);
-            },
+                },
+            }),
         };
     }
 

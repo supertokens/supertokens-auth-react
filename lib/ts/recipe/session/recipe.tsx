@@ -314,36 +314,33 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
                 });
                 return Session.instance;
             },
-            webJS: (...args) => {
-                const init = SessionWebJS.init({
-                    ...normalisedConfig,
-                    onHandleEvent: (event) => {
-                        if (normalisedConfig.onHandleEvent !== undefined) {
-                            normalisedConfig.onHandleEvent(event);
-                        }
+            webJS: SessionWebJS.init({
+                ...normalisedConfig,
+                onHandleEvent: (event) => {
+                    if (normalisedConfig.onHandleEvent !== undefined) {
+                        normalisedConfig.onHandleEvent(event);
+                    }
 
-                        void Session.getInstanceOrThrow().notifyListeners(event);
-                    },
-                    preAPIHook: async (context) => {
-                        const response = {
-                            ...context,
-                            requestInit: {
-                                ...context.requestInit,
-                                headers: {
-                                    ...context.requestInit.headers,
-                                    rid: Session.RECIPE_ID,
-                                },
+                    void Session.getInstanceOrThrow().notifyListeners(event);
+                },
+                preAPIHook: async (context) => {
+                    const response = {
+                        ...context,
+                        requestInit: {
+                            ...context.requestInit,
+                            headers: {
+                                ...context.requestInit.headers,
+                                rid: Session.RECIPE_ID,
                             },
-                        };
-                        if (normalisedConfig.preAPIHook === undefined) {
-                            return response;
-                        } else {
-                            return normalisedConfig.preAPIHook(context);
-                        }
-                    },
-                });
-                return init(...args);
-            },
+                        },
+                    };
+                    if (normalisedConfig.preAPIHook === undefined) {
+                        return response;
+                    } else {
+                        return normalisedConfig.preAPIHook(context);
+                    }
+                },
+            }),
         };
     }
 

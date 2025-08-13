@@ -94,20 +94,17 @@ export default class EmailVerification extends RecipeModule<
                 });
                 return EmailVerification.instance;
             },
-            webJS: (...args) => {
-                const init = EmailVerificationWebJS.init({
-                    ...normalisedConfig, // plugins are applied by webjs
-                    override: {
-                        functions: (originalImpl, builder) => {
-                            const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
-                            builder.override(functions);
-                            builder.override(normalisedConfig.override.functions);
-                            return originalImpl;
-                        },
+            webJS: EmailVerificationWebJS.init({
+                ...normalisedConfig, // plugins are applied by webjs
+                override: {
+                    functions: (originalImpl, builder) => {
+                        const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);
+                        builder.override(functions);
+                        builder.override(normalisedConfig.override.functions);
+                        return originalImpl;
                     },
-                });
-                return init(...args);
-            },
+                },
+            }),
         };
     }
 

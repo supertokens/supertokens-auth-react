@@ -95,23 +95,17 @@ export default class ThirdParty extends AuthRecipe<
                 });
                 return ThirdParty.instance;
             },
-            webJS: (...args) => {
-                const init = ThirdpartyWebJS.init({
-                    ...normalisedConfig,
-                    override: {
-                        functions: (originalImpl, builder) => {
-                            const functions = getFunctionOverrides(
-                                ThirdParty.RECIPE_ID,
-                                normalisedConfig.onHandleEvent
-                            );
-                            builder.override(functions);
-                            builder.override(normalisedConfig.override.functions);
-                            return originalImpl;
-                        },
+            webJS: ThirdpartyWebJS.init({
+                ...normalisedConfig,
+                override: {
+                    functions: (originalImpl, builder) => {
+                        const functions = getFunctionOverrides(ThirdParty.RECIPE_ID, normalisedConfig.onHandleEvent);
+                        builder.override(functions);
+                        builder.override(normalisedConfig.override.functions);
+                        return originalImpl;
                     },
-                });
-                return init(...args);
-            },
+                },
+            }),
         };
     }
 
