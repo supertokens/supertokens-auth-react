@@ -94,7 +94,7 @@ jobs:
 
             - name: Start core
               run: docker compose up --wait
-              working-directory: supertokens-web-js
+              working-directory: supertokens-auth-react
               env:
                   SUPERTOKENS_CORE_VERSION: ${{ steps.core-version.outputs.coreVersion }}
 
