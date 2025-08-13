@@ -317,7 +317,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
         //     ]);
         // });
 
-        it("field error on sign in up with translation key", async function () {
+        it("general error on sign in up with translation key", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -335,8 +335,8 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                             "access-control-allow-credentials": "true",
                         },
                         body: JSON.stringify({
-                            status: "FIELD_ERROR",
-                            error: "AUTH_PAGE_FOOTER_TOS",
+                            status: "GENERAL_ERROR",
+                            message: "AUTH_PAGE_FOOTER_TOS",
                         }),
                     });
                     page.off("request", requestHandler);
@@ -352,7 +352,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
             assert.deepStrictEqual(error, "TOS");
         });
 
-        it("field error on sign in up with non-translation key", async function () {
+        it("general error on sign in up with non-translation key", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -370,8 +370,8 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                             "access-control-allow-credentials": "true",
                         },
                         body: JSON.stringify({
-                            status: "FIELD_ERROR",
-                            error: "Test message!!!!",
+                            status: "GENERAL_ERROR",
+                            message: "Test message!!!!",
                         }),
                     });
                     page.off("request", requestHandler);
