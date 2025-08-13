@@ -37,7 +37,6 @@ import type {
     PreAndPostAPIHookAction,
 } from "./types";
 import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, WebJSRecipeInterface } from "../../types";
-import type { NormalisedAppInfo } from "../../types";
 
 export const totpFactor = {
     id: FactorIds.TOTP,
@@ -54,7 +53,7 @@ export default class TOTP extends RecipeModule<
     NormalisedConfig
 > {
     static instance?: TOTP;
-    static RECIPE_ID = "totp";
+    static RECIPE_ID = "totp" as const;
 
     public recipeID = TOTP.RECIPE_ID;
 
@@ -80,7 +79,7 @@ export default class TOTP extends RecipeModule<
         return {
             recipeID: TOTP.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,

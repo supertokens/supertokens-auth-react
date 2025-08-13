@@ -23,8 +23,8 @@ export default class TOTP extends RecipeModule<
 > {
     readonly webJSRecipe: WebJSRecipeInterface<typeof TOTPWebJS>;
     static instance?: TOTP;
-    static RECIPE_ID: string;
-    recipeID: string;
+    static RECIPE_ID: "totp";
+    recipeID: "totp";
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
         webJSRecipe?: WebJSRecipeInterface<typeof TOTPWebJS>

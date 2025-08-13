@@ -49,6 +49,7 @@ export default [
             importCssString(),
             visualizer(),
         ],
+        cache: false,
         output: [
             {
                 dir: "lib/build",

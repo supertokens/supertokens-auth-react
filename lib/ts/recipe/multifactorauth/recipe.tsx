@@ -56,7 +56,6 @@ import type {
     UserContext,
     WebJSRecipeInterface,
 } from "../../types";
-import type { NormalisedAppInfo } from "../../types";
 
 export default class MultiFactorAuth extends RecipeModule<
     GetRedirectionURLContext,
@@ -65,7 +64,7 @@ export default class MultiFactorAuth extends RecipeModule<
     NormalisedConfig
 > {
     static instance?: MultiFactorAuth;
-    static RECIPE_ID = "multifactorauth";
+    static RECIPE_ID = "multifactorauth" as const;
 
     static MultiFactorAuthClaim = new MultiFactorAuthClaimClass(
         () => MultiFactorAuth.getInstanceOrThrow(),
@@ -105,7 +104,7 @@ export default class MultiFactorAuth extends RecipeModule<
         return {
             recipeID: MultiFactorAuth.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,

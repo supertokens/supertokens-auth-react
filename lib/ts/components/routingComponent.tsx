@@ -26,12 +26,17 @@ export function RoutingComponent(props: {
     const path = props.path;
     const isAuthPage = path === SuperTokens.getInstanceOrThrow().appInfo.websiteBasePath.getAsStringDangerous();
 
+    const pluginRouteHandlers = SuperTokens.getInstanceOrThrow().pluginRouteHandlers;
     const location = props.getReactRouterDomWithCustomHistory()?.useLocation();
     const componentToRender = React.useMemo(() => {
         if (isAuthPage) {
             return;
         }
         const normalizedPath = new NormalisedURLPath(path);
+        const matchingPluginRouteHandler = pluginRouteHandlers.find((handler) => handler.path === path);
+        if (matchingPluginRouteHandler) {
+            return { component: matchingPluginRouteHandler.handler, recipeId: undefined };
+        }
         // During development, this runs twice so as to warn devs of if there
         // are any side effects that happen here. So in tests, it will result in
         // the console log twice

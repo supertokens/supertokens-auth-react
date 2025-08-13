@@ -39,7 +39,6 @@ import type {
     UserInput,
 } from "./types";
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
-import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
 
 export const otpPhoneFactor = {
@@ -67,7 +66,7 @@ export default class Passwordless extends AuthRecipe<
     NormalisedConfig
 > {
     static instance?: Passwordless;
-    static RECIPE_ID = "passwordless";
+    static RECIPE_ID = "passwordless" as const;
 
     recipeID = Passwordless.RECIPE_ID;
     firstFactorIds = [FactorIds.OTP_EMAIL, FactorIds.OTP_PHONE, FactorIds.LINK_EMAIL, FactorIds.LINK_PHONE];
@@ -87,7 +86,6 @@ export default class Passwordless extends AuthRecipe<
         public readonly webJSRecipe: WebJSRecipeInterface<typeof PasswordlessWebJS> = PasswordlessWebJS
     ) {
         super(config);
-        this.recipeID = config.recipeId;
 
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
             const mfa = MultiFactorAuth.getInstance();
@@ -109,7 +107,7 @@ export default class Passwordless extends AuthRecipe<
         return {
             recipeID: Passwordless.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,

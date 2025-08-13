@@ -19,6 +19,7 @@
 import { SuperTokensWrapper } from "./components/supertokensWrapper";
 import SuperTokens from "./superTokens";
 import { useTranslation } from "./translation/translationContext";
+import { getTranslationFunction } from "./translation/translationHelpers";
 import { useUserContext } from "./usercontext";
 import { getNormalisedUserContext } from "./utils";
 
@@ -58,7 +59,15 @@ export default class SuperTokensAPIWrapper {
         });
     };
 
+    static isRecipeInitialized(recipeId: string) {
+        return SuperTokens.getInstanceOrThrow()
+            .recipeList.map((recipe) => recipe.recipeID)
+            .includes(recipeId);
+    }
+
     static useTranslation = useTranslation;
+
+    static getTranslationFunction = getTranslationFunction;
 
     static useUserContext = useUserContext;
 }
@@ -67,7 +76,14 @@ export const init = SuperTokensAPIWrapper.init;
 export const changeLanguage = SuperTokensAPIWrapper.changeLanguage;
 export const loadTranslation = SuperTokensAPIWrapper.loadTranslation;
 export const redirectToAuth = SuperTokensAPIWrapper.redirectToAuth;
+export const isRecipeInitialized = SuperTokensAPIWrapper.isRecipeInitialized;
+
+// these need to be exported so other developers are able to build on top of them
+// when devs only used the sdk to build their own apps, there was no (real) need for these to be exported.
+export type { SuperTokensConfig, SuperTokensPublicConfig, SuperTokensPublicPlugin, SuperTokensPlugin } from "./types";
+export type { TranslationStore } from "./translation/translationHelpers";
 
 export { SuperTokensWrapper } from "./components/supertokensWrapper";
 export { useTranslation } from "./translation/translationContext";
+export { getTranslationFunction } from "./translation/translationHelpers";
 export { useUserContext } from "./usercontext";

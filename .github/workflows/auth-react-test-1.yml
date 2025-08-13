@@ -33,9 +33,9 @@ jobs:
             - uses: supertokens/actions/get-versions-from-repo@main
               id: node-versions
               with:
-                repo: supertokens-node
-                github-token: ${{ secrets.GITHUB_TOKEN }}
-                fdi-versions: ${{ steps.versions.outputs.fdiVersions }}
+                  repo: supertokens-node
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  fdi-versions: ${{ steps.versions.outputs.fdiVersions }}
 
     setup-auth-react:
         runs-on: ubuntu-latest
@@ -59,8 +59,8 @@ jobs:
         steps:
             - id: repo-versions
               run: |
-                nodeVersion=$( echo '${{ needs.define-versions.outputs.nodeFdiVersionMap }}' | jq -r '.["${{ matrix.fdi-version }}"]' )
-                echo "nodeVersion=${nodeVersion}" >> $GITHUB_OUTPUT
+                  nodeVersion=$( echo '${{ needs.define-versions.outputs.nodeFdiVersionMap }}' | jq -r '.["${{ matrix.fdi-version }}"]' )
+                  echo "nodeVersion=${nodeVersion}" >> $GITHUB_OUTPUT
 
             # We will use this in the test run to get the core version
             - uses: actions/checkout@v4

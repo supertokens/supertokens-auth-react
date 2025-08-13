@@ -1,3 +1,7 @@
 /// <reference types="react" />
 import type { SignInUpEPComboEmailOrPhoneFormProps } from "../../../types";
-export declare const EPComboEmailOrPhoneForm: import("react").ComponentType<SignInUpEPComboEmailOrPhoneFormProps>;
+export declare const EPComboEmailOrPhoneForm: import("react").ComponentType<
+    SignInUpEPComboEmailOrPhoneFormProps & {
+        footer?: JSX.Element | undefined;
+    }
+>;

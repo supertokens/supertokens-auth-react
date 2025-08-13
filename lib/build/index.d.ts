@@ -17,7 +17,11 @@ export default class SuperTokensAPIWrapper {
         redirectBack?: boolean;
         userContext?: UserContext;
     }) => Promise<void>;
+    static isRecipeInitialized(recipeId: string): boolean;
     static useTranslation: () => import("./translation/translationHelpers").TranslationFunc;
+    static getTranslationFunction: <T extends string>(
+        ...stores: TranslationStore[]
+    ) => (key: T, replacements?: Record<string, string> | undefined) => string;
     static useUserContext: () => UserContext;
 }
 export declare const init: typeof SuperTokensAPIWrapper.init;
@@ -30,6 +34,10 @@ export declare const redirectToAuth: (options?: {
     redirectBack?: boolean;
     userContext?: UserContext;
 }) => Promise<void>;
+export declare const isRecipeInitialized: typeof SuperTokensAPIWrapper.isRecipeInitialized;
+export type { SuperTokensConfig, SuperTokensPublicConfig, SuperTokensPublicPlugin, SuperTokensPlugin } from "./types";
+export type { TranslationStore } from "./translation/translationHelpers";
 export { SuperTokensWrapper } from "./components/supertokensWrapper";
 export { useTranslation } from "./translation/translationContext";
+export { getTranslationFunction } from "./translation/translationHelpers";
 export { useUserContext } from "./usercontext";

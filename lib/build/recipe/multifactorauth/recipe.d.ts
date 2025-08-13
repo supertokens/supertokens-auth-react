@@ -24,9 +24,9 @@ export default class MultiFactorAuth extends RecipeModule<
 > {
     readonly webJSRecipe: WebJSRecipeInterface<typeof MultiFactorAuthWebJS>;
     static instance?: MultiFactorAuth;
-    static RECIPE_ID: string;
+    static RECIPE_ID: "multifactorauth";
     static MultiFactorAuthClaim: MultiFactorAuthClaimClass;
-    recipeID: string;
+    recipeID: "multifactorauth";
     private secondaryFactors;
     constructor(
         config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>,
