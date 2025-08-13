@@ -56,7 +56,6 @@ export default class Webauthn extends AuthRecipe<
         public readonly webJSRecipe: WebJSRecipeInterface<typeof WebauthnWebJS> = WebauthnWebJS
     ) {
         super(config);
-        this.recipeID = config.recipeId;
 
         // We can ideally call postInitCallbacks to set MFA's if
         // we are using it.
