@@ -65,9 +65,10 @@ jobs:
             AUTH_REACT__PORT: ${{ inputs.AUTH_REACT__PORT }}
 
         steps:
-            - uses: actions/checkout@v4
+            - uses: bissolli/gh-action-persist-workspace@v2
               with:
-                  path: supertokens-auth-react
+                  action: retrieve
+                  artifactName: auth-react-${{ inputs.fdi-version }}
 
             - name: Get Node CDI versions
               id: node-cdi-versions
@@ -104,3 +105,4 @@ jobs:
                   check-name-suffix: "[FDI=${{ inputs.fdi-version }}][Spec=${{ matrix.spec }}]"
                   path: supertokens-auth-react
                   spec: ${{ matrix.spec }}
+                  retrieve-workspace: false
