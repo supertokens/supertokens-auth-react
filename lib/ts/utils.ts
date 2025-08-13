@@ -26,6 +26,7 @@ import {
     RECIPE_ID_QUERY_PARAM,
     TENANT_ID_QUERY_PARAM,
 } from "./constants";
+import { nonPublicConfigProperties } from "./types";
 
 import type { FieldState } from "./recipe/emailpassword/components/library/formBase";
 import type { FormBaseAPIResponse, FormFieldError } from "./recipe/emailpassword/types";
@@ -43,7 +44,6 @@ import type {
     NonPublicConfigPropertiesType,
     SuperTokensConfigWithNormalisedAppInfo,
 } from "./types";
-import { nonPublicConfigProperties } from "./types";
 
 /*
  * getRecipeIdFromPath

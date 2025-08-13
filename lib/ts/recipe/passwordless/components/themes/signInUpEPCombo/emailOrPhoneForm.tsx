@@ -63,8 +63,7 @@ export const EPComboEmailOrPhoneForm = withOverride(
                               <Label value={"PWLESS_SIGN_IN_UP_PHONE_LABEL"} />
                               <a
                                   onClick={() => props.setIsPhoneNumber(false)}
-                                  data-supertokens="link linkButton formLabelLinkBtn contactMethodSwitcher"
-                              >
+                                  data-supertokens="link linkButton formLabelLinkBtn contactMethodSwitcher">
                                   {t("PWLESS_SIGN_IN_UP_SWITCH_TO_EMAIL")}
                               </a>
                           </div>
@@ -87,8 +86,7 @@ export const EPComboEmailOrPhoneForm = withOverride(
                               <Label value={"PWLESS_SIGN_IN_UP_EMAIL_LABEL"} />
                               <a
                                   onClick={() => props.setIsPhoneNumber(true)}
-                                  data-supertokens="link linkButton formLabelLinkBtn contactMethodSwitcher"
-                              >
+                                  data-supertokens="link linkButton formLabelLinkBtn contactMethodSwitcher">
                                   {t("PWLESS_SIGN_IN_UP_SWITCH_TO_PHONE")}
                               </a>
                           </div>
@@ -135,8 +133,7 @@ export const EPComboEmailOrPhoneForm = withOverride(
                                     props.navigate
                                 )
                             }
-                            data-supertokens="link linkButton formLabelLinkBtn forgotPasswordLink"
-                        >
+                            data-supertokens="link linkButton formLabelLinkBtn forgotPasswordLink">
                             {t("PWLESS_COMBO_FORGOT_PW_LINK")}
                         </a>
                     </div>

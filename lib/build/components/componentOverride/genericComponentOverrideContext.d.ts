@@ -69,6 +69,8 @@ export declare const createGenericComponentsOverrideContext: <T extends Record<s
                                 onError: (error: string) => void;
                                 config: import("../../recipe/emailpassword/types").NormalisedConfig;
                                 onBackButtonClicked: () => void;
+                            } & {
+                                footer?: JSX.Element | undefined;
                             }
                         >
                     >
@@ -90,6 +92,8 @@ export declare const createGenericComponentsOverrideContext: <T extends Record<s
                                 config: import("../../recipe/emailpassword/types").NormalisedConfig;
                                 onSignInClicked: () => void;
                                 token: string;
+                            } & {
+                                footer?: JSX.Element | undefined;
                             }
                         >
                     >
@@ -208,13 +212,19 @@ export declare const createGenericComponentsOverrideContext: <T extends Record<s
                   | undefined;
               PasswordlessEPComboEmailForm_Override?:
                   | import("./componentOverride").ComponentOverride<
-                        React.ComponentType<import("../../recipe/passwordless/types").SignInUpEPComboEmailFormProps>
+                        React.ComponentType<
+                            import("../../recipe/passwordless/types").SignInUpEPComboEmailFormProps & {
+                                footer?: JSX.Element | undefined;
+                            }
+                        >
                     >
                   | undefined;
               PasswordlessEPComboEmailOrPhoneForm_Override?:
                   | import("./componentOverride").ComponentOverride<
                         React.ComponentType<
-                            import("../../recipe/passwordless/types").SignInUpEPComboEmailOrPhoneFormProps
+                            import("../../recipe/passwordless/types").SignInUpEPComboEmailOrPhoneFormProps & {
+                                footer?: JSX.Element | undefined;
+                            }
                         >
                     >
                   | undefined;

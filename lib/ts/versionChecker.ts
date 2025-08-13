@@ -13,13 +13,23 @@ const parseVersion = (version: string): { major: number; minor: number; patch: n
 };
 
 const compareVersions = (a: ReturnType<typeof parseVersion>, b: ReturnType<typeof parseVersion>): number => {
-    if (a.major !== b.major) return a.major - b.major;
-    if (a.minor !== b.minor) return a.minor - b.minor;
-    if (a.patch !== b.patch) return a.patch - b.patch;
+    if (a.major !== b.major) {
+        return a.major - b.major;
+    }
+    if (a.minor !== b.minor) {
+        return a.minor - b.minor;
+    }
+    if (a.patch !== b.patch) {
+        return a.patch - b.patch;
+    }
 
     // canary versions
-    if (a.prerelease && !b.prerelease) return -1;
-    if (!a.prerelease && b.prerelease) return 1;
+    if (a.prerelease && !b.prerelease) {
+        return -1;
+    }
+    if (!a.prerelease && b.prerelease) {
+        return 1;
+    }
     if (a.prerelease && b.prerelease) {
         return a.prerelease.localeCompare(b.prerelease);
     }
@@ -31,7 +41,9 @@ const compareVersions = (a: ReturnType<typeof parseVersion>, b: ReturnType<typeo
 const satisfiesRange = (version: string, range: string): boolean => {
     const parsedVersion = parseVersion(version);
 
-    if (range === version) return true;
+    if (range === version) {
+        return true;
+    }
 
     const rangeMatch = range.match(/^([<>=~^]+)\s*(.+)$/);
     if (rangeMatch) {

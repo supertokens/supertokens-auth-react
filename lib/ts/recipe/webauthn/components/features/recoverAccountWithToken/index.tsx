@@ -131,7 +131,7 @@ export const RecoverAccountUsingToken: React.FC<RecoverAccountWithTokenProps> = 
 
         // Use the register options to register the credential and recover the account.
         // We should have received a valid registration options response.
-        const registerCredentialResponse = await props.recipe.webJSRecipe.registerCredential({
+        const registerCredentialResponse = await props.recipe.webJSRecipe.createCredential({
             registrationOptions: registerOptions,
             userContext: props.userContext,
         });

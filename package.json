@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.49.1-canary-plugins.0",
+    "version": "0.50.0",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -101,7 +101,7 @@
     "peerDependencies": {
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0",
-        "supertokens-web-js": "^0.15.0"
+        "supertokens-web-js": "github:supertokens/supertokens-web-js#0.16"
     },
     "scripts": {
         "init": "bash ./init.sh",
@@ -126,7 +126,7 @@
         "build-pretty": "npm run build && npm run pretty && npm run pretty",
         "lint": "node other/checkTranslationKeys.js && cd lib && eslint ./ts --ext .ts,.tsx",
         "lint-fix": "cd lib && npx eslint ./ts --ext .ts,.tsx --fix",
-        "prune": "cd lib && ts-prune | grep -vE 'used in module| - default$| - package_version$|getSuperTokensRoutesForReactRouterDom$|supertokens-web-js|supertokens-website|dateProvider' && exit 1 || exit 0",
+        "prune": "cd lib && ts-prune | grep -vE 'used in module| - default$| - package_version$|getSuperTokensRoutesForReactRouterDom$|supertokens-web-js|supertokens-website|dateProvider|SuperTokensPublicConfig|SuperTokensPlugin|SuperTokensPublicPlugin' && exit 1 || exit 0",
         "pretty-check": "npx pretty-quick --staged --check .",
         "set-up-hooks": "cp hooks/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit",
         "build-docs": "rm -rf ./docs && npx typedoc --out ./docs --tsconfig ./lib/tsconfig.json ./lib/ts/index.ts ./lib/ts/**/index.ts ./lib/ts/**/*/index.ts",

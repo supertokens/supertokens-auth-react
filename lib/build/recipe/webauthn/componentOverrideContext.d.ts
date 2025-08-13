@@ -146,6 +146,8 @@ declare const useContext: () =>
                                 onError: (error: string) => void;
                                 config: import("../emailpassword/types").NormalisedConfig;
                                 onBackButtonClicked: () => void;
+                            } & {
+                                footer?: JSX.Element | undefined;
                             }
                         >
                     >
@@ -167,6 +169,8 @@ declare const useContext: () =>
                                 config: import("../emailpassword/types").NormalisedConfig;
                                 onSignInClicked: () => void;
                                 token: string;
+                            } & {
+                                footer?: JSX.Element | undefined;
                             }
                         >
                     >
@@ -285,13 +289,19 @@ declare const useContext: () =>
                   | undefined;
               PasswordlessEPComboEmailForm_Override?:
                   | import("../../components/componentOverride/componentOverride").ComponentOverride<
-                        import("react").ComponentType<import("../passwordless/types").SignInUpEPComboEmailFormProps>
+                        import("react").ComponentType<
+                            import("../passwordless/types").SignInUpEPComboEmailFormProps & {
+                                footer?: JSX.Element | undefined;
+                            }
+                        >
                     >
                   | undefined;
               PasswordlessEPComboEmailOrPhoneForm_Override?:
                   | import("../../components/componentOverride/componentOverride").ComponentOverride<
                         import("react").ComponentType<
-                            import("../passwordless/types").SignInUpEPComboEmailOrPhoneFormProps
+                            import("../passwordless/types").SignInUpEPComboEmailOrPhoneFormProps & {
+                                footer?: JSX.Element | undefined;
+                            }
                         >
                     >
                   | undefined;

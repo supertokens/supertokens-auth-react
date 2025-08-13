@@ -19,9 +19,9 @@
 import { SuperTokensWrapper } from "./components/supertokensWrapper";
 import SuperTokens from "./superTokens";
 import { useTranslation } from "./translation/translationContext";
+import { getTranslationFunction } from "./translation/translationHelpers";
 import { useUserContext } from "./usercontext";
 import { getNormalisedUserContext } from "./utils";
-import { getTranslationFunction } from "./translation/translationHelpers";
 
 import type { TranslationStore } from "./translation/translationHelpers";
 import type { Navigate, SuperTokensConfig, UserContext } from "./types";

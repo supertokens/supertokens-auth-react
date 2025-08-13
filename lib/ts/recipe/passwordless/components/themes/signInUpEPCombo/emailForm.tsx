@@ -82,8 +82,7 @@ export const EPComboEmailForm = withOverride(
                                     props.navigate
                                 )
                             }
-                            data-supertokens="link linkButton formLabelLinkBtn forgotPasswordLink"
-                        >
+                            data-supertokens="link linkButton formLabelLinkBtn forgotPasswordLink">
                             {t("PWLESS_COMBO_FORGOT_PW_LINK")}
                         </a>
                     </div>

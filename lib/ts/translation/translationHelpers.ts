@@ -1,5 +1,6 @@
-import { getCookieValue, setFrontendCookie, mergeObjects } from "../utils";
 import SuperTokens from "../superTokens";
+import { getCookieValue, setFrontendCookie, mergeObjects } from "../utils";
+
 import { defaultTranslationsCommon } from "./translations";
 
 // language -> key -> copy
@@ -107,8 +108,10 @@ export const getTranslationFunction = <T extends string>(
     translationEventSource.on("LanguageChange", changeHandler);
     translationEventSource.on("TranslationLoaded", loadHandler);
 
-    getCurrentLanguageFromCookie().then((cookieLanguage) => {
-        if (cookieLanguage) setLanguage(cookieLanguage);
+    void getCurrentLanguageFromCookie().then((cookieLanguage) => {
+        if (cookieLanguage) {
+            setLanguage(cookieLanguage);
+        }
     });
 
     const translate = (key: string, replacements: Record<string, string> = {}) => {

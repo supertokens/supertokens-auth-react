@@ -411,7 +411,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static registerCredentialWithUser(input: {
+    static createAndRegisterCredentialForSessionUser(input: {
         recipeUserId: string;
         email: string;
         options?: RecipeFunctionOptions;
@@ -423,7 +423,7 @@ export default class Wrapper {
         | GeneralErrorResponse
         | {
               status: "REGISTER_CREDENTIAL_NOT_ALLOWED";
-              reason: string;
+              reason?: string;
           }
         | {
               status: "INVALID_EMAIL_ERROR";
@@ -440,7 +440,7 @@ export default class Wrapper {
           }
         | {
               status: "INVALID_AUTHENTICATOR_ERROR";
-              reason: string;
+              reason?: string;
           }
         | {
               status: "AUTHENTICATOR_ALREADY_REGISTERED";
@@ -467,7 +467,7 @@ export default class Wrapper {
         | GeneralErrorResponse
         | {
               status: "REGISTER_CREDENTIAL_NOT_ALLOWED";
-              reason: string;
+              reason?: string;
           }
         | {
               status: "INVALID_CREDENTIALS_ERROR";
@@ -480,7 +480,7 @@ export default class Wrapper {
           }
         | {
               status: "INVALID_AUTHENTICATOR_ERROR";
-              reason: string;
+              reason?: string;
           }
     >;
     static doesBrowserSupportWebAuthn(input: { userContext: any }): Promise<
@@ -513,7 +513,7 @@ declare const authenticateCredential: typeof Wrapper.authenticateCredential;
 declare const registerCredentialWithSignUp: typeof Wrapper.registerCredentialWithSignUp;
 declare const authenticateCredentialWithSignIn: typeof Wrapper.authenticateCredentialWithSignIn;
 declare const registerCredentialWithRecoverAccount: typeof Wrapper.registerCredentialWithRecoverAccount;
-declare const registerCredentialWithUser: typeof Wrapper.registerCredentialWithUser;
+declare const createAndRegisterCredentialForSessionUser: typeof Wrapper.createAndRegisterCredentialForSessionUser;
 declare const listCredentials: typeof Wrapper.listCredentials;
 declare const removeCredential: typeof Wrapper.removeCredential;
 declare const registerCredential: typeof Wrapper.registerCredential;
@@ -537,7 +537,7 @@ export {
     registerCredentialWithSignUp,
     authenticateCredentialWithSignIn,
     registerCredentialWithRecoverAccount,
-    registerCredentialWithUser,
+    createAndRegisterCredentialForSessionUser,
     doesBrowserSupportWebAuthn,
     WebauthnComponentsOverrideProvider,
     listCredentials,

@@ -11,13 +11,13 @@ import { AuthPageFooter } from "../recipe/authRecipe/components/theme/authPage/a
 import { AuthPageHeader } from "../recipe/authRecipe/components/theme/authPage/authPageHeader";
 import { RecipeRouter } from "../recipe/recipeRouter";
 import SuperTokens from "../superTokens";
+import { defaultTranslationsCommon } from "../translation/translations";
 import { getCurrentNormalisedUrlPath } from "../utils";
 
 import type { PreBuiltRecipes, ReactRouterDomWithCustomHistory } from "./types";
 import type { AuthPageProps } from "../recipe/authRecipe/components/feature/authPage/authPage";
 import type { AuthPageThemeProps } from "../recipe/authRecipe/types";
 import type { PropsWithChildren } from "react";
-import { defaultTranslationsCommon } from "../translation/translations";
 
 class UI {
     private static reactRouterDom: ReactRouterDomWithCustomHistory;
