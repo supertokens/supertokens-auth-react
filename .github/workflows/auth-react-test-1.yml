@@ -69,6 +69,10 @@ jobs:
                   ref: ${{ steps.repo-versions.outputs.nodeVersion }}
                   path: supertokens-node
 
+            # Makes npm use HTTP instead of SSH for installs
+            - name: Reconfigure git to use HTTP authentication
+              run: git config --global url."https://github.com/".insteadOf ssh://git@github.com/
+
             - uses: supertokens/auth-react-testing-action/setup@main
               id: envs
               with:
