@@ -20,6 +20,7 @@ import type { AuthComponent } from "../../types";
 export class EmailVerificationPreBuiltUI extends RecipeRouter {
     static instance?: EmailVerificationPreBuiltUI;
     languageTranslations = defaultTranslationsEmailVerification;
+    static languageTranslations = defaultTranslationsEmailVerification;
 
     constructor(public readonly recipeInstance: EmailVerificationRecipe) {
         super();

@@ -5,7 +5,7 @@ export declare enum TOTPMFAScreens {
     CodeVerification = 1,
     Loading = 2,
     Blocked = 3,
-    AccessDenied = 4
+    AccessDenied = 4,
 }
 declare function TOTPMFAThemeWrapper(props: TOTPMFAProps): JSX.Element;
 export default TOTPMFAThemeWrapper;

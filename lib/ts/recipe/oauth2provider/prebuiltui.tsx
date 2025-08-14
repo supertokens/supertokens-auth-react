@@ -19,6 +19,7 @@ import type { AuthComponent } from "../../types";
 export class OAuth2ProviderPreBuiltUI extends RecipeRouter {
     static instance?: OAuth2ProviderPreBuiltUI;
     languageTranslations = defaultTranslationsOAuth2Provider;
+    static languageTranslations = defaultTranslationsOAuth2Provider;
 
     constructor(public readonly recipeInstance: OAuth2ProviderRecipe) {
         super();

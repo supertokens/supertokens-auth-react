@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Added `createAndRegisterCredentialWithUser` method that creates and registers a credential with a user
 -   Adds dev/release GHA pipelines
 -   Add `webauthn` as a secondary factor in MFA
+-   Adds experimental support for plugins
 
 ### Breaking changes
 

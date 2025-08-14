@@ -87,6 +87,12 @@ export default class Wrapper {
         });
     }
 
+    static getSecondaryFactors(input: { userContext?: UserContext }) {
+        return MultiFactorAuthRecipe.getInstanceOrThrow().getSecondaryFactors(
+            getNormalisedUserContext(input.userContext)
+        );
+    }
+
     static ComponentsOverrideProvider = RecipeComponentsOverrideContextProvider;
 }
 
@@ -94,6 +100,7 @@ const init = Wrapper.init;
 const resyncSessionAndFetchMFAInfo = Wrapper.resyncSessionAndFetchMFAInfo;
 const redirectToFactor = Wrapper.redirectToFactor;
 const redirectToFactorChooser = Wrapper.redirectToFactorChooser;
+const getSecondaryFactors = Wrapper.getSecondaryFactors;
 const MultiFactorAuthComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 const MultiFactorAuthClaim = MultiFactorAuthRecipe.MultiFactorAuthClaim;
 
@@ -102,6 +109,7 @@ export {
     resyncSessionAndFetchMFAInfo,
     redirectToFactor,
     redirectToFactorChooser,
+    getSecondaryFactors,
     MultiFactorAuthComponentsOverrideProvider,
     GetRedirectionURLContext,
     PreAPIHookContext as PreAPIHookContext,

@@ -57,9 +57,9 @@ export default class Webauthn extends AuthRecipe<
     NormalisedConfig
 > {
     static instance?: Webauthn;
-    static RECIPE_ID = "webauthn";
+    static RECIPE_ID = "webauthn" as const;
 
-    recipeID = Webauthn.RECIPE_ID;
+    recipeID = Webauthn.RECIPE_ID as string;
     firstFactorIds = [FactorIds.WEBAUTHN];
 
     constructor(
@@ -67,7 +67,6 @@ export default class Webauthn extends AuthRecipe<
         public readonly webJSRecipe: WebJSRecipeInterface<typeof WebauthnWebJS> = WebauthnWebJS
     ) {
         super(config);
-        this.recipeID = config.recipeId;
 
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
             const mfa = MultiFactorAuth.getInstance();

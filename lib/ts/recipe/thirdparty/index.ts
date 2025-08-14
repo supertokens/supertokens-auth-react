@@ -121,6 +121,13 @@ export default class Wrapper {
         });
     }
 
+    static getProviders(): { id: string; name: string }[] {
+        return ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.map((provider) => ({
+            id: provider.id,
+            name: provider.name,
+        }));
+    }
+
     /*
      * Providers
      */
@@ -146,6 +153,7 @@ const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
 const getStateAndOtherInfoFromStorage = Wrapper.getStateAndOtherInfoFromStorage;
 const getAuthorisationURLWithQueryParamsAndSetState = Wrapper.getAuthorisationURLWithQueryParamsAndSetState;
 const signInAndUp = Wrapper.signInAndUp;
+const getProviders = Wrapper.getProviders;
 const ThirdpartyComponentsOverrideProvider = Wrapper.ComponentsOverrideProvider;
 
 export {
@@ -166,6 +174,7 @@ export {
     getStateAndOtherInfoFromStorage,
     getAuthorisationURLWithQueryParamsAndSetState,
     signInAndUp,
+    getProviders,
     redirectToThirdPartyLogin,
     ThirdpartyComponentsOverrideProvider,
     signOut,

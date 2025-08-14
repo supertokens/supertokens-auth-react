@@ -128,7 +128,9 @@ function MFAThemeRouter(props: WebAuthnMFAProps): JSX.Element {
 
     const showBackButtonOnSignUpConfirmation = React.useMemo(() => {
         return (
-            !!props.featureState.email || props.featureState.hasRegisteredPassKey || props.featureState.showBackButton
+            props.featureState.email !== undefined ||
+            props.featureState.hasRegisteredPassKey ||
+            props.featureState.showBackButton
         );
     }, [props.featureState.email, props.featureState.hasRegisteredPassKey, props.featureState.showBackButton]);
 

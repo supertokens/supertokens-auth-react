@@ -13,7 +13,7 @@
  * under the License.
  */
 import "@testing-library/jest-dom";
-import { BooleanClaim } from "../../recipe/session";
+import { BooleanClaim } from "../../lib/ts/recipe/session";
 import EmailPassword from "../../recipe/emailpassword";
 import SuperTokens from "../../lib/ts/superTokens";
 import assert from "assert";

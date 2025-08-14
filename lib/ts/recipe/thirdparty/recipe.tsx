@@ -36,7 +36,6 @@ import type {
     UserInput,
 } from "./types";
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
-import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
 
 /*
@@ -49,7 +48,7 @@ export default class ThirdParty extends AuthRecipe<
     NormalisedConfig
 > {
     static instance?: ThirdParty;
-    static RECIPE_ID = "thirdparty";
+    static RECIPE_ID = "thirdparty" as const;
     recipeID = ThirdParty.RECIPE_ID;
     firstFactorIds = [FactorIds.THIRDPARTY];
     public getFirstFactorsForAuthPage(): string[] {
@@ -65,7 +64,6 @@ export default class ThirdParty extends AuthRecipe<
         }
 
         super(config);
-        this.recipeID = config.recipeId;
     }
 
     /*
@@ -79,10 +77,11 @@ export default class ThirdParty extends AuthRecipe<
         config?: UserInput
     ): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         const normalisedConfig = normaliseThirdPartyConfig(config);
+
         return {
             recipeID: ThirdParty.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,

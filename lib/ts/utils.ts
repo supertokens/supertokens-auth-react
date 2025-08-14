@@ -26,6 +26,7 @@ import {
     RECIPE_ID_QUERY_PARAM,
     TENANT_ID_QUERY_PARAM,
 } from "./constants";
+import { nonPublicConfigProperties } from "./types";
 
 import type { FieldState } from "./recipe/emailpassword/components/library/formBase";
 import type { FormBaseAPIResponse, FormFieldError } from "./recipe/emailpassword/types";
@@ -36,7 +37,12 @@ import type {
     NormalisedAppInfo,
     NormalisedFormField,
     NormalisedGetRedirectionURLContext,
+    SuperTokensPlugin,
+    SuperTokensPublicConfig,
+    SuperTokensPublicPlugin,
     UserContext,
+    NonPublicConfigPropertiesType,
+    SuperTokensConfigWithNormalisedAppInfo,
 } from "./types";
 
 /*
@@ -590,3 +596,28 @@ export const handleCallAPI = async <T>({
         fetchError,
     };
 };
+
+export function getPublicPlugin(plugin: SuperTokensPlugin): SuperTokensPublicPlugin {
+    return {
+        id: plugin.id,
+        initialized: plugin.init ? false : true, // since the init method is optional, we default to true
+        version: plugin.version,
+        exports: plugin.exports,
+        compatibleAuthReactSDKVersions: plugin.compatibleAuthReactSDKVersions,
+        compatibleWebJSSDKVersions: plugin.compatibleWebJSSDKVersions,
+    };
+}
+
+export function getPublicConfig(config: SuperTokensConfigWithNormalisedAppInfo): SuperTokensPublicConfig {
+    const configKeys = Object.keys(config) as (keyof SuperTokensConfigWithNormalisedAppInfo)[];
+
+    const publicConfig = configKeys.reduce((acc, key) => {
+        if (nonPublicConfigProperties.includes(key as NonPublicConfigPropertiesType)) {
+            return acc;
+        } else {
+            return { ...acc, [key]: config[key] };
+        }
+    }, {} as SuperTokensPublicConfig);
+
+    return publicConfig;
+}

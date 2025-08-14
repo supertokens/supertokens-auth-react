@@ -21,6 +21,7 @@ import type { AuthComponent } from "../../types";
 export class EmailPasswordPreBuiltUI extends RecipeRouter {
     static instance?: EmailPasswordPreBuiltUI;
     languageTranslations = defaultTranslationsEmailPassword;
+    static languageTranslations = defaultTranslationsEmailPassword;
 
     constructor(public readonly recipeInstance: EmailPassword) {
         super();

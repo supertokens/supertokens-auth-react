@@ -34,7 +34,11 @@ import type { SignInUpEPComboEmailOrPhoneFormProps } from "../../../types";
 
 export const EPComboEmailOrPhoneForm = withOverride(
     "PasswordlessEPComboEmailOrPhoneForm",
-    function PasswordlessEPComboEmailOrPhoneForm(props: SignInUpEPComboEmailOrPhoneFormProps): JSX.Element {
+    function PasswordlessEPComboEmailOrPhoneForm(
+        props: SignInUpEPComboEmailOrPhoneFormProps & {
+            footer?: JSX.Element;
+        }
+    ): JSX.Element {
         const t = useTranslation();
 
         useEffect(() => {
@@ -95,6 +99,18 @@ export const EPComboEmailOrPhoneForm = withOverride(
                       validate: defaultValidate,
                   },
               ];
+        let footer = props.footer;
+        if (!footer && props.showContinueWithPasswordlessLink) {
+            footer = (
+                <ContinueWithPasswordlessFooter
+                    isPhoneNumber={false}
+                    onContinueWithPasswordlessClick={props.onContinueWithPasswordlessClick}
+                    onError={props.onError}
+                    config={props.config}
+                    validatePhoneNumber={props.validatePhoneNumber}
+                />
+            );
+        }
 
         if (props.showPasswordField) {
             formFields.push({
@@ -165,17 +181,7 @@ export const EPComboEmailOrPhoneForm = withOverride(
                 validateOnBlur={false}
                 showLabels={true}
                 onSuccess={props.onSuccess}
-                footer={
-                    props.showContinueWithPasswordlessLink ? (
-                        <ContinueWithPasswordlessFooter
-                            isPhoneNumber={props.isPhoneNumber}
-                            onContinueWithPasswordlessClick={props.onContinueWithPasswordlessClick}
-                            validatePhoneNumber={props.validatePhoneNumber}
-                            onError={props.onError}
-                            config={props.config}
-                        />
-                    ) : undefined
-                }
+                footer={footer}
             />
         );
     }
