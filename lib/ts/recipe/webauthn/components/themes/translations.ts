@@ -59,5 +59,6 @@ export const defaultTranslationsWebauthn = {
         WEBAUTHN_MFA_DIVIDER: "or",
         WEBAUTHN_MFA_REGISTER_PASSKEY_SUBTITLE: "Set up a new authentication method to use for future logins.",
         WEBAUTHN_MFA_REGISTER_PASSKEY_TITLE: "Register a passkey",
+        WEBAUTHN_MFA_FOOTER_LOGOUT: "Logout",
     },
 };

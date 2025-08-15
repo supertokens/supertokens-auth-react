@@ -10,6 +10,8 @@ import FormBase from "../../../../emailpassword/components/library/formBase";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { defaultEmailValidator } from "../../../../emailpassword/validators";
 
+import { WebauthnMFAFooter } from "./mfaFooter";
+
 export type MFASignUpProps = {
     onContinueClick: (email: string) => void;
     clearError: () => void;
@@ -19,6 +21,7 @@ export type MFASignUpProps = {
     onFetchError?: (error: Response) => void;
     onRecoverAccountClick: () => void;
     onBackButtonClicked?: () => void;
+    onSignOutClicked: () => void;
 };
 
 export const WebauthnMFASignUp = withOverride(
@@ -98,7 +101,7 @@ export const WebauthnMFASignUp = withOverride(
                         }}
                         validateOnBlur={false}
                         showLabels={true}
-                        footer={undefined}
+                        footer={<WebauthnMFAFooter {...props} />}
                     />
                 </div>
             </Fragment>

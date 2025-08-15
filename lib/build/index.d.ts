@@ -2,11 +2,9 @@
 import type { TranslationStore } from "./translation/translationHelpers";
 import type { Navigate, SuperTokensConfig, UserContext } from "./types";
 export default class SuperTokensAPIWrapper {
-    static SuperTokensWrapper: import("react").FC<
-        import("react").PropsWithChildren<{
-            userContext?: UserContext | undefined;
-        }>
-    >;
+    static SuperTokensWrapper: import("react").FC<import("react").PropsWithChildren<{
+        userContext?: UserContext | undefined;
+    }>>;
     static init(config: SuperTokensConfig): void;
     static changeLanguage(language: string): Promise<void>;
     static loadTranslation(store: TranslationStore): void;
@@ -19,9 +17,7 @@ export default class SuperTokensAPIWrapper {
     }) => Promise<void>;
     static isRecipeInitialized(recipeId: string): boolean;
     static useTranslation: () => import("./translation/translationHelpers").TranslationFunc;
-    static getTranslationFunction: <T extends string>(
-        ...stores: TranslationStore[]
-    ) => (key: T, replacements?: Record<string, string> | undefined) => string;
+    static getTranslationFunction: <T extends string>(...stores: TranslationStore[]) => (key: T, replacements?: Record<string, string> | undefined) => string;
     static useUserContext: () => UserContext;
 }
 export declare const init: typeof SuperTokensAPIWrapper.init;

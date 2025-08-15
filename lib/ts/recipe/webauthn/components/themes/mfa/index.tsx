@@ -7,14 +7,21 @@ import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { AccessDeniedScreen } from "../../../../session/prebuiltui";
 import { ThemeBase } from "../themeBase";
 
-import { WebauthnMFALoadingScreen } from "./loadingScreen";
-import { WebauthnMFASignIn } from "./signIn";
-import { WebauthnMFASignUp } from "./signUp";
-import { WebauthnMFASignUpConfirmation } from "./signUpConfirmation";
+import { WebauthnMFAFooter } from "./mfaFooter";
+import { WebauthnMFALoadingScreen } from "./mfaLoadingScreen";
+import { WebauthnMFASignIn } from "./mfaSignIn";
+import { WebauthnMFASignUp } from "./mfaSignUp";
+import { WebauthnMFASignUpConfirmation } from "./mfaSignUpConfirmation";
 
 import type { WebAuthnMFAProps } from "../../../types";
 
-export { WebauthnMFALoadingScreen, WebauthnMFASignIn, WebauthnMFASignUp, WebauthnMFASignUpConfirmation };
+export {
+    WebauthnMFALoadingScreen,
+    WebauthnMFASignIn,
+    WebauthnMFASignUp,
+    WebauthnMFASignUpConfirmation,
+    WebauthnMFAFooter,
+};
 
 export enum MFAScreens {
     SignIn,
@@ -127,12 +134,8 @@ function MFAThemeRouter(props: WebAuthnMFAProps): JSX.Element {
     ]);
 
     const showBackButtonOnSignUpConfirmation = React.useMemo(() => {
-        return (
-            props.featureState.email !== undefined ||
-            props.featureState.hasRegisteredPassKey ||
-            props.featureState.showBackButton
-        );
-    }, [props.featureState.email, props.featureState.hasRegisteredPassKey, props.featureState.showBackButton]);
+        return Boolean(email) || props.featureState.hasRegisteredPassKey || props.featureState.showBackButton;
+    }, [email, props.featureState.hasRegisteredPassKey, props.featureState.showBackButton]);
 
     const onSignUp = React.useCallback(async () => {
         await props.onSignUp(signUpEmail);
@@ -168,6 +171,7 @@ function MFAThemeRouter(props: WebAuthnMFAProps): JSX.Element {
                 email={email}
                 onRecoverAccountClick={props.onRecoverAccountClick}
                 onBackButtonClicked={showBackButtonOnSignUp ? onClickSignUpBackButton : undefined}
+                onSignOutClicked={props.onSignOutClicked}
             />
         );
     }
@@ -181,6 +185,7 @@ function MFAThemeRouter(props: WebAuthnMFAProps): JSX.Element {
                 }
                 email={signUpEmail}
                 error={props.featureState.error}
+                onSignOutClicked={props.onSignOutClicked}
             />
         );
     }
@@ -193,6 +198,7 @@ function MFAThemeRouter(props: WebAuthnMFAProps): JSX.Element {
             error={props.featureState.error}
             deviceSupported={props.featureState.deviceSupported}
             onRegisterPasskeyClick={onRegisterPasskeyClick}
+            onSignOutClicked={props.onSignOutClicked}
         />
     );
 }

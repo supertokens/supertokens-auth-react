@@ -8,11 +8,14 @@ import Button from "../../../../emailpassword/components/library/button";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { PasskeyFeatureBlockList } from "../signUp/featureBlocks";
 
+import { WebauthnMFAFooter } from "./mfaFooter";
+
 export type MFASignUpConfirmationProps = {
-    onSignUp: () => Promise<void>;
-    onBackButtonClicked?: () => void;
     email: string;
     error?: string;
+    onSignUp: () => Promise<void>;
+    onBackButtonClicked?: () => void;
+    onSignOutClicked: () => void;
 };
 
 export const WebauthnMFASignUpConfirmation = withOverride(
@@ -59,6 +62,7 @@ export const WebauthnMFASignUpConfirmation = withOverride(
                         />
                     </div>
                 </div>
+                <WebauthnMFAFooter {...props} />
             </Fragment>
         );
     }

@@ -17,14 +17,7 @@ export default class Wrapper {
         readonly TOTP: "totp";
         readonly WEBAUTHN: "webauthn";
     };
-    static init(
-        config?: UserInput
-    ): import("../../types").RecipeInitResult<
-        GetRedirectionURLContext,
-        "GET_MFA_INFO",
-        OnHandleEventContext,
-        import("./types").NormalisedConfig
-    >;
+    static init(config?: UserInput): import("../../types").RecipeInitResult<GetRedirectionURLContext, "GET_MFA_INFO", OnHandleEventContext, import("./types").NormalisedConfig>;
     static resyncSessionAndFetchMFAInfo(input?: {
         userContext?: UserContext;
         options?: RecipeFunctionOptions;
@@ -53,35 +46,17 @@ export default class Wrapper {
     static getSecondaryFactors(input: {
         userContext?: UserContext;
     }): import("./types").SecondaryFactorRedirectionInfo[];
-    static ComponentsOverrideProvider: import("react").FC<
-        import("react").PropsWithChildren<{
-            components: import("./types").ComponentOverrideMap;
-        }>
-    >;
+    static ComponentsOverrideProvider: import("react").FC<import("react").PropsWithChildren<{
+        components: import("./types").ComponentOverrideMap;
+    }>>;
 }
 declare const init: typeof Wrapper.init;
 declare const resyncSessionAndFetchMFAInfo: typeof Wrapper.resyncSessionAndFetchMFAInfo;
 declare const redirectToFactor: typeof Wrapper.redirectToFactor;
 declare const redirectToFactorChooser: typeof Wrapper.redirectToFactorChooser;
 declare const getSecondaryFactors: typeof Wrapper.getSecondaryFactors;
-declare const MultiFactorAuthComponentsOverrideProvider: import("react").FC<
-    import("react").PropsWithChildren<{
-        components: import("./types").ComponentOverrideMap;
-    }>
->;
+declare const MultiFactorAuthComponentsOverrideProvider: import("react").FC<import("react").PropsWithChildren<{
+    components: import("./types").ComponentOverrideMap;
+}>>;
 declare const MultiFactorAuthClaim: import("./multiFactorAuthClaim").MultiFactorAuthClaimClass;
-export {
-    init,
-    resyncSessionAndFetchMFAInfo,
-    redirectToFactor,
-    redirectToFactorChooser,
-    getSecondaryFactors,
-    MultiFactorAuthComponentsOverrideProvider,
-    GetRedirectionURLContext,
-    PreAPIHookContext as PreAPIHookContext,
-    OnHandleEventContext,
-    UserInput,
-    RecipeInterface,
-    MultiFactorAuthClaim,
-    FactorIds,
-};
+export { init, resyncSessionAndFetchMFAInfo, redirectToFactor, redirectToFactorChooser, getSecondaryFactors, MultiFactorAuthComponentsOverrideProvider, GetRedirectionURLContext, PreAPIHookContext as PreAPIHookContext, OnHandleEventContext, UserInput, RecipeInterface, MultiFactorAuthClaim, FactorIds, };

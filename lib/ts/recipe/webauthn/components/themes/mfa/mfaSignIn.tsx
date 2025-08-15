@@ -9,6 +9,8 @@ import Button from "../../../../emailpassword/components/library/button";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { PasskeyNotSupportedError } from "../error/passkeyNotSupportedError";
 
+import { WebauthnMFAFooter } from "./mfaFooter";
+
 export type MFASignInProps = {
     onBackButtonClicked?: () => void;
     onSignIn: () => Promise<void>;
@@ -16,6 +18,7 @@ export type MFASignInProps = {
     deviceSupported: boolean;
     canRegisterPasskey: boolean;
     onRegisterPasskeyClick: () => void;
+    onSignOutClicked: () => void;
 };
 
 export const WebauthnMFASignIn = withOverride(
@@ -71,6 +74,7 @@ export const WebauthnMFASignIn = withOverride(
                     </>
                 )}
                 {!props.deviceSupported && <PasskeyNotSupportedError />}
+                <WebauthnMFAFooter {...props} />
             </Fragment>
         );
     }

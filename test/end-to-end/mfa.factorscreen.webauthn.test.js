@@ -377,6 +377,36 @@ describe("SuperTokens SignIn w/ MFA", function () {
                 await waitForSTElement(page, "[data-supertokens~=factorChooserList]");
             });
 
+            it("should not show a back button during setup if only webauthn is required", async () => {
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [factorId],
+                        alreadySetup: [],
+                        allowedToSetup: [factorId],
+                    },
+                });
+
+                await tryEmailPasswordSignIn(page, email);
+                const header = await waitForSTElement(page, "[data-supertokens~=webauthn-mfa]");
+                await waitForSTElement(page, "[data-supertokens~=backButton]", true);
+            });
+
+            it("should not show a back button during completion if only webauthn is required", async () => {
+                await setupST({
+                    ...appConfig,
+                    mfaInfo: {
+                        requirements: [factorId],
+                        alreadySetup: [factorId],
+                        allowedToSetup: [],
+                    },
+                });
+
+                await tryEmailPasswordSignIn(page, email);
+                await waitForSTElement(page, "[data-supertokens~=webauthn-mfa]");
+                await waitForSTElement(page, "[data-supertokens~=backButton]", true);
+            });
+
             it("should handle WebAuthn device setup errors gracefully", async () => {
                 await setupST({
                     ...appConfig,
