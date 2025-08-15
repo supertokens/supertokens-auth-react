@@ -34,6 +34,7 @@ import type {
     WebauthnMFALoadingScreen,
     WebauthnMFASignUp,
     WebauthnMFASignUpConfirmation,
+    WebauthnMFAFooter,
 } from "./components/themes/mfa";
 import type { PasskeyRecoveryEmailSent } from "./components/themes/sendRecoveryEmail/emailSent";
 import type {
@@ -136,6 +137,7 @@ export type ComponentOverrideMap = {
     WebauthnMFALoadingScreen_Override?: ComponentOverride<typeof WebauthnMFALoadingScreen>;
     WebauthnMFASignUp_Override?: ComponentOverride<typeof WebauthnMFASignUp>;
     WebauthnMFASignUpConfirmation_Override?: ComponentOverride<typeof WebauthnMFASignUpConfirmation>;
+    WebauthnMFAFooter_Override?: ComponentOverride<typeof WebauthnMFAFooter>;
 };
 
 export type SignUpThemeBaseProps = {

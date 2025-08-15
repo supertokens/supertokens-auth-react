@@ -84,7 +84,7 @@ declare const useContext: () =>
                   | undefined;
               WebauthnMFASignIn_Override?:
                   | import("../../components/componentOverride/componentOverride").ComponentOverride<
-                        import("react").ComponentType<import("./components/themes/mfa/signIn").MFASignInProps>
+                        import("react").ComponentType<import("./components/themes/mfa/mfaSignIn").MFASignInProps>
                     >
                   | undefined;
               WebauthnMFALoadingScreen_Override?:
@@ -94,13 +94,20 @@ declare const useContext: () =>
                   | undefined;
               WebauthnMFASignUp_Override?:
                   | import("../../components/componentOverride/componentOverride").ComponentOverride<
-                        import("react").ComponentType<import("./components/themes/mfa/signUp").MFASignUpProps>
+                        import("react").ComponentType<import("./components/themes/mfa/mfaSignUp").MFASignUpProps>
                     >
                   | undefined;
               WebauthnMFASignUpConfirmation_Override?:
                   | import("../../components/componentOverride/componentOverride").ComponentOverride<
                         import("react").ComponentType<
-                            import("./components/themes/mfa/signUpConfirmation").MFASignUpConfirmationProps
+                            import("./components/themes/mfa/mfaSignUpConfirmation").MFASignUpConfirmationProps
+                        >
+                    >
+                  | undefined;
+              WebauthnMFAFooter_Override?:
+                  | import("../../components/componentOverride/componentOverride").ComponentOverride<
+                        import("react").ComponentType<
+                            import("./components/themes/mfa/mfaFooter").WebauthnMFAFooterProps
                         >
                     >
                   | undefined;

@@ -6,5 +6,6 @@ export declare type MFASignInProps = {
     deviceSupported: boolean;
     canRegisterPasskey: boolean;
     onRegisterPasskeyClick: () => void;
+    onSignOutClicked: () => void;
 };
 export declare const WebauthnMFASignIn: React.ComponentType<MFASignInProps>;

@@ -521,7 +521,9 @@ export declare const createGenericComponentsOverrideContext: <T extends Record<s
                   | undefined;
               WebauthnMFASignIn_Override?:
                   | import("./componentOverride").ComponentOverride<
-                        React.ComponentType<import("../../recipe/webauthn/components/themes/mfa/signIn").MFASignInProps>
+                        React.ComponentType<
+                            import("../../recipe/webauthn/components/themes/mfa/mfaSignIn").MFASignInProps
+                        >
                     >
                   | undefined;
               WebauthnMFALoadingScreen_Override?:
@@ -529,13 +531,22 @@ export declare const createGenericComponentsOverrideContext: <T extends Record<s
                   | undefined;
               WebauthnMFASignUp_Override?:
                   | import("./componentOverride").ComponentOverride<
-                        React.ComponentType<import("../../recipe/webauthn/components/themes/mfa/signUp").MFASignUpProps>
+                        React.ComponentType<
+                            import("../../recipe/webauthn/components/themes/mfa/mfaSignUp").MFASignUpProps
+                        >
                     >
                   | undefined;
               WebauthnMFASignUpConfirmation_Override?:
                   | import("./componentOverride").ComponentOverride<
                         React.ComponentType<
-                            import("../../recipe/webauthn/components/themes/mfa/signUpConfirmation").MFASignUpConfirmationProps
+                            import("../../recipe/webauthn/components/themes/mfa/mfaSignUpConfirmation").MFASignUpConfirmationProps
+                        >
+                    >
+                  | undefined;
+              WebauthnMFAFooter_Override?:
+                  | import("./componentOverride").ComponentOverride<
+                        React.ComponentType<
+                            import("../../recipe/webauthn/components/themes/mfa/mfaFooter").WebauthnMFAFooterProps
                         >
                     >
                   | undefined;

@@ -51,6 +51,7 @@ export declare class WebauthnPreBuiltUI extends RecipeRouter {
             WEBAUTHN_MFA_DIVIDER: string;
             WEBAUTHN_MFA_REGISTER_PASSKEY_SUBTITLE: string;
             WEBAUTHN_MFA_REGISTER_PASSKEY_TITLE: string;
+            WEBAUTHN_MFA_FOOTER_LOGOUT: string;
             AUTH_PAGE_HEADER_TITLE_SIGN_IN_AND_UP: string;
             AUTH_PAGE_HEADER_TITLE_SIGN_IN: string;
             AUTH_PAGE_HEADER_TITLE_SIGN_UP: string;

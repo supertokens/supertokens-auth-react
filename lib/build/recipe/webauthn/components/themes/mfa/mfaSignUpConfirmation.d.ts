@@ -1,8 +1,9 @@
 import * as React from "react";
 export declare type MFASignUpConfirmationProps = {
-    onSignUp: () => Promise<void>;
-    onBackButtonClicked?: () => void;
     email: string;
     error?: string;
+    onSignUp: () => Promise<void>;
+    onBackButtonClicked?: () => void;
+    onSignOutClicked: () => void;
 };
 export declare const WebauthnMFASignUpConfirmation: React.ComponentType<MFASignUpConfirmationProps>;

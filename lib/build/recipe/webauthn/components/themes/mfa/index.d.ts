@@ -1,10 +1,17 @@
 /// <reference types="react" />
-import { WebauthnMFALoadingScreen } from "./loadingScreen";
-import { WebauthnMFASignIn } from "./signIn";
-import { WebauthnMFASignUp } from "./signUp";
-import { WebauthnMFASignUpConfirmation } from "./signUpConfirmation";
+import { WebauthnMFAFooter } from "./mfaFooter";
+import { WebauthnMFALoadingScreen } from "./mfaLoadingScreen";
+import { WebauthnMFASignIn } from "./mfaSignIn";
+import { WebauthnMFASignUp } from "./mfaSignUp";
+import { WebauthnMFASignUpConfirmation } from "./mfaSignUpConfirmation";
 import type { WebAuthnMFAProps } from "../../../types";
-export { WebauthnMFALoadingScreen, WebauthnMFASignIn, WebauthnMFASignUp, WebauthnMFASignUpConfirmation };
+export {
+    WebauthnMFALoadingScreen,
+    WebauthnMFASignIn,
+    WebauthnMFASignUp,
+    WebauthnMFASignUpConfirmation,
+    WebauthnMFAFooter,
+};
 export declare enum MFAScreens {
     SignIn = 0,
     SignUp = 1,
