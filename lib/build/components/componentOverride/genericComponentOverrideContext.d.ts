@@ -519,6 +519,26 @@ export declare const createGenericComponentsOverrideContext: <T extends Record<s
                         }>
                     >
                   | undefined;
+              WebauthnMFASignIn_Override?:
+                  | import("./componentOverride").ComponentOverride<
+                        React.ComponentType<import("../../recipe/webauthn/components/themes/mfa/signIn").MFASignInProps>
+                    >
+                  | undefined;
+              WebauthnMFALoadingScreen_Override?:
+                  | import("./componentOverride").ComponentOverride<React.ComponentType<unknown>>
+                  | undefined;
+              WebauthnMFASignUp_Override?:
+                  | import("./componentOverride").ComponentOverride<
+                        React.ComponentType<import("../../recipe/webauthn/components/themes/mfa/signUp").MFASignUpProps>
+                    >
+                  | undefined;
+              WebauthnMFASignUpConfirmation_Override?:
+                  | import("./componentOverride").ComponentOverride<
+                        React.ComponentType<
+                            import("../../recipe/webauthn/components/themes/mfa/signUpConfirmation").MFASignUpConfirmationProps
+                        >
+                    >
+                  | undefined;
           } & T),
     React.FC<
         React.PropsWithChildren<{

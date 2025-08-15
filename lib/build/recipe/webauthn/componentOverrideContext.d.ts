@@ -82,6 +82,28 @@ declare const useContext: () =>
                         }>
                     >
                   | undefined;
+              WebauthnMFASignIn_Override?:
+                  | import("../../components/componentOverride/componentOverride").ComponentOverride<
+                        import("react").ComponentType<import("./components/themes/mfa/signIn").MFASignInProps>
+                    >
+                  | undefined;
+              WebauthnMFALoadingScreen_Override?:
+                  | import("../../components/componentOverride/componentOverride").ComponentOverride<
+                        import("react").ComponentType<unknown>
+                    >
+                  | undefined;
+              WebauthnMFASignUp_Override?:
+                  | import("../../components/componentOverride/componentOverride").ComponentOverride<
+                        import("react").ComponentType<import("./components/themes/mfa/signUp").MFASignUpProps>
+                    >
+                  | undefined;
+              WebauthnMFASignUpConfirmation_Override?:
+                  | import("../../components/componentOverride/componentOverride").ComponentOverride<
+                        import("react").ComponentType<
+                            import("./components/themes/mfa/signUpConfirmation").MFASignUpConfirmationProps
+                        >
+                    >
+                  | undefined;
           } & ComponentOverrideMap)
         | ({
               EmailPasswordSignInForm_Override?:

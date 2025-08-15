@@ -71,6 +71,10 @@ import { PasskeyFeatureBlock } from "../../lib/ts/recipe/webauthn/components/the
 import { ContinueWithoutPasskey } from "../../lib/ts/recipe/webauthn/components/themes/signUp/continueWithoutPasskey";
 import { SignUpFormInner } from "../../lib/ts/recipe/webauthn/components/themes/signUp/signUpForm";
 import { SignUpSomethingWentWrong } from "../../lib/ts/recipe/webauthn/components/themes/signUp/somethingWentWrong";
+import { WebauthnMFASignIn } from "../../lib/ts/recipe/webauthn/components/themes/mfa/signIn";
+import { WebauthnMFALoadingScreen } from "../../lib/ts/recipe/webauthn/components/themes/mfa/loadingScreen";
+import { WebauthnMFASignUp } from "../../lib/ts/recipe/webauthn/components/themes/mfa/signUp";
+import { WebauthnMFASignUpConfirmation } from "../../lib/ts/recipe/webauthn/components/themes/mfa/signUpConfirmation";
 
 type AllComponentsOverrideMap = AuthRecipeOverrideMap &
     EmailPasswordOverrideMap &
@@ -159,6 +163,10 @@ describe("Theme component overrides", () => {
         WebauthnContinueWithoutPasskey_Override: ContinueWithoutPasskey,
         WebauthnPasskeySignUpForm_Override: SignUpFormInner,
         WebauthnPasskeySignUpSomethingWentWrong_Override: SignUpSomethingWentWrong,
+        WebauthnMFASignIn_Override: WebauthnMFASignIn,
+        WebauthnMFALoadingScreen_Override: WebauthnMFALoadingScreen,
+        WebauthnMFASignUp_Override: WebauthnMFASignUp,
+        WebauthnMFASignUpConfirmation_Override: WebauthnMFASignUpConfirmation,
     };
 
     Object.entries(overrides).forEach(([key, comp]) => {

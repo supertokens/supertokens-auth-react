@@ -4,6 +4,7 @@ import {
     getLogoutButton,
     setInputValues,
     submitForm,
+    submitFormUnsafe,
     toggleSignInSignUp,
     waitForSTElement,
     getTestEmail,
@@ -210,4 +211,32 @@ export async function chooseFactor(page, id) {
     await waitFor(100);
     await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), ele.click()]);
     await waitForSTElement(page);
+}
+
+export async function tryWebauthnSignUp(page) {
+    await goToFactorChooser(page);
+    await chooseFactor(page, "webauthn");
+    await waitForSTElement(page, "[data-supertokens~=webauthn-mfa]");
+    const link = await waitForSTElement(page, "[data-supertokens~='link']");
+    await link.click();
+    await submitFormUnsafe(page);
+    await new Promise((res) => setTimeout(res, 1000));
+}
+
+export async function tryWebauthnSignIn(page) {
+    await waitForSTElement(page, "[data-supertokens~=webauthn-mfa]");
+    await submitFormUnsafe(page);
+    await new Promise((res) => setTimeout(res, 1000));
+}
+
+export async function setupWebauthn(page) {
+    await goToFactorChooser(page);
+    await chooseFactor(page, "webauthn");
+    await waitForSTElement(page, "[data-supertokens~=passkeyConfirmationContainer]");
+    await submitFormUnsafe(page);
+}
+
+export async function completeWebauthn(page) {
+    await waitForSTElement(page, "[data-supertokens~=webauthn-mfa]");
+    await submitFormUnsafe(page);
 }

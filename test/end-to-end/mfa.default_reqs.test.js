@@ -41,6 +41,8 @@ import {
     completeTOTP,
     goToFactorChooser,
     addToRequiredSecondaryFactorsForUser,
+    setupWebauthn,
+    completeWebauthn,
 } from "./mfa.helpers";
 
 /*
@@ -135,7 +137,7 @@ describe("SuperTokens SignIn w/ MFA", function () {
             await goToFactorChooser(page);
             const list = await getFactorChooserOptions(page);
 
-            assert.deepStrictEqual(new Set(list), new Set(["otp-email", "otp-phone", "totp"]));
+            assert.deepStrictEqual(new Set(list), new Set(["otp-email", "otp-phone", "totp", "webauthn"]));
         });
 
         it("should require 2fa to sign in after setting up a factor - totp", async () => {
@@ -181,6 +183,22 @@ describe("SuperTokens SignIn w/ MFA", function () {
 
             await tryEmailPasswordSignIn(page, email);
             await completeOTP(page, "PHONE");
+            await waitForDashboard(page);
+        });
+
+        it("should require 2fa to sign in after setting up a factor - webauthn", async () => {
+            await tryEmailPasswordSignIn(page, email);
+            await waitForDashboard(page);
+            await setupWebauthn(page);
+            await logout(page);
+
+            await tryEmailPasswordSignIn(page, email);
+            await waitForDashboard(page);
+            await addToRequiredSecondaryFactorsForUser(page, "webauthn");
+            await logout(page);
+
+            await tryEmailPasswordSignIn(page, email);
+            await completeWebauthn(page);
             await waitForDashboard(page);
         });
     });

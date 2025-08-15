@@ -94,6 +94,7 @@ export default class Wrapper {
     static signUp(input: {
         webauthnGeneratedOptionsId: string;
         credential: RegistrationResponseJSON;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }): Promise<
@@ -133,6 +134,7 @@ export default class Wrapper {
     static signIn(input: {
         webauthnGeneratedOptionsId: string;
         credential: AuthenticationResponseJSON;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }): Promise<
@@ -251,6 +253,7 @@ export default class Wrapper {
     >;
     static registerCredentialWithSignUp(input: {
         email: string;
+        shouldTryLinkingWithSessionUser?: boolean;
         options?: RecipeFunctionOptions;
         userContext: any;
     }): Promise<
@@ -307,7 +310,11 @@ export default class Wrapper {
               error: any;
           }
     >;
-    static authenticateCredentialWithSignIn(input: { options?: RecipeFunctionOptions; userContext: any }): Promise<
+    static authenticateCredentialWithSignIn(input: {
+        shouldTryLinkingWithSessionUser?: boolean;
+        options?: RecipeFunctionOptions;
+        userContext: any;
+    }): Promise<
         | {
               status: "OK";
               user: User;
