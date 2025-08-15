@@ -9,66 +9,72 @@ import { InputType, SessionContextType } from "./types";
 import type { UserContext } from "../../types";
 export default class SessionAPIWrapper {
     static useSessionContext: () => SessionContextType;
-    static useClaimValue: <T>(claim: SessionClaim<T>) => {
-        loading: true;
-    } | {
-        loading: false;
-        doesSessionExist: boolean;
-        value: T | undefined;
-    };
-    static SessionAuth: import("react").FC<import("react").PropsWithChildren<import("./sessionAuth").SessionAuthProps & {
-        userContext?: UserContext | undefined;
-    }>>;
+    static useClaimValue: <T>(claim: SessionClaim<T>) =>
+        | {
+              loading: true;
+          }
+        | {
+              loading: false;
+              doesSessionExist: boolean;
+              value: T | undefined;
+          };
+    static SessionAuth: import("react").FC<
+        import("react").PropsWithChildren<
+            import("./sessionAuth").SessionAuthProps & {
+                userContext?: UserContext | undefined;
+            }
+        >
+    >;
     static init(config?: InputType): import("../../types").RecipeInitResult<unknown, unknown, unknown, any>;
-    static getUserId(input?: {
-        userContext?: UserContext;
-    }): Promise<string>;
-    static getAccessToken(input?: {
-        userContext?: UserContext;
-    }): Promise<string | undefined>;
-    static getAccessTokenPayloadSecurely(input?: {
-        userContext?: UserContext;
-    }): Promise<any>;
+    static getUserId(input?: { userContext?: UserContext }): Promise<string>;
+    static getAccessToken(input?: { userContext?: UserContext }): Promise<string | undefined>;
+    static getAccessTokenPayloadSecurely(input?: { userContext?: UserContext }): Promise<any>;
     static attemptRefreshingSession(): Promise<boolean>;
-    static doesSessionExist(input?: {
-        userContext?: UserContext;
-    }): Promise<boolean>;
+    static doesSessionExist(input?: { userContext?: UserContext }): Promise<boolean>;
     /**
      * @deprecated
      */
     static addAxiosInterceptors(axiosInstance: any, userContext?: UserContext): void;
-    static signOut(input?: {
-        userContext?: UserContext;
-    }): Promise<void>;
+    static signOut(input?: { userContext?: UserContext }): Promise<void>;
     static validateClaims(input?: {
-        overrideGlobalClaimValidators?: (globalClaimValidators: SessionClaimValidator[], userContext: UserContext) => SessionClaimValidator[];
+        overrideGlobalClaimValidators?: (
+            globalClaimValidators: SessionClaimValidator[],
+            userContext: UserContext
+        ) => SessionClaimValidator[];
         userContext?: UserContext;
     }): Promise<ClaimValidationError[]> | ClaimValidationError[];
     static getInvalidClaimsFromResponse(input: {
-        response: {
-            data: any;
-        } | Response;
+        response:
+            | {
+                  data: any;
+              }
+            | Response;
         userContext: UserContext;
     }): Promise<ClaimValidationError[]>;
-    static getClaimValue<T>(input: {
-        claim: SessionClaim<T>;
-        userContext?: UserContext;
-    }): Promise<T | undefined>;
-    static ComponentsOverrideProvider: import("react").FC<import("react").PropsWithChildren<{
-        components: import("./types").ComponentOverrideMap;
-    }>>;
+    static getClaimValue<T>(input: { claim: SessionClaim<T>; userContext?: UserContext }): Promise<T | undefined>;
+    static ComponentsOverrideProvider: import("react").FC<
+        import("react").PropsWithChildren<{
+            components: import("./types").ComponentOverrideMap;
+        }>
+    >;
 }
 declare const useSessionContext: () => SessionContextType;
-declare const useClaimValue: <T>(claim: SessionClaim<T>) => {
-    loading: true;
-} | {
-    loading: false;
-    doesSessionExist: boolean;
-    value: T | undefined;
-};
-declare const SessionAuth: import("react").FC<import("react").PropsWithChildren<import("./sessionAuth").SessionAuthProps & {
-    userContext?: UserContext | undefined;
-}>>;
+declare const useClaimValue: <T>(claim: SessionClaim<T>) =>
+    | {
+          loading: true;
+      }
+    | {
+          loading: false;
+          doesSessionExist: boolean;
+          value: T | undefined;
+      };
+declare const SessionAuth: import("react").FC<
+    import("react").PropsWithChildren<
+        import("./sessionAuth").SessionAuthProps & {
+            userContext?: UserContext | undefined;
+        }
+    >
+>;
 declare const init: typeof SessionAPIWrapper.init;
 declare const getUserId: typeof SessionAPIWrapper.getUserId;
 declare const getAccessToken: typeof SessionAPIWrapper.getAccessToken;
@@ -83,7 +89,36 @@ declare const signOut: typeof SessionAPIWrapper.signOut;
 declare const validateClaims: typeof SessionAPIWrapper.validateClaims;
 declare const getInvalidClaimsFromResponse: typeof SessionAPIWrapper.getInvalidClaimsFromResponse;
 declare const getClaimValue: typeof SessionAPIWrapper.getClaimValue;
-declare const SessionComponentsOverrideProvider: import("react").FC<import("react").PropsWithChildren<{
-    components: import("./types").ComponentOverrideMap;
-}>>;
-export { useSessionContext, useClaimValue, SessionAuth, SessionComponentsOverrideProvider, init, getUserId, getAccessToken, getAccessTokenPayloadSecurely, attemptRefreshingSession, doesSessionExist, addAxiosInterceptors, signOut, validateClaims, getInvalidClaimsFromResponse, RecipeInterface, InputType, SessionContext, SessionContextType, BooleanClaim, ClaimValidationError, ClaimValidationResult, PrimitiveArrayClaim, PrimitiveClaim, SessionClaimValidator, SessionClaim, getClaimValue, };
+declare const SessionComponentsOverrideProvider: import("react").FC<
+    import("react").PropsWithChildren<{
+        components: import("./types").ComponentOverrideMap;
+    }>
+>;
+export {
+    useSessionContext,
+    useClaimValue,
+    SessionAuth,
+    SessionComponentsOverrideProvider,
+    init,
+    getUserId,
+    getAccessToken,
+    getAccessTokenPayloadSecurely,
+    attemptRefreshingSession,
+    doesSessionExist,
+    addAxiosInterceptors,
+    signOut,
+    validateClaims,
+    getInvalidClaimsFromResponse,
+    RecipeInterface,
+    InputType,
+    SessionContext,
+    SessionContextType,
+    BooleanClaim,
+    ClaimValidationError,
+    ClaimValidationResult,
+    PrimitiveArrayClaim,
+    PrimitiveClaim,
+    SessionClaimValidator,
+    SessionClaim,
+    getClaimValue,
+};
