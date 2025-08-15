@@ -134,7 +134,7 @@ function MFAThemeRouter(props: WebAuthnMFAProps): JSX.Element {
     ]);
 
     const showBackButtonOnSignUpConfirmation = React.useMemo(() => {
-        return Boolean(email) || props.featureState.hasRegisteredPassKey || props.featureState.showBackButton;
+        return email !== undefined || props.featureState.hasRegisteredPassKey || props.featureState.showBackButton;
     }, [email, props.featureState.hasRegisteredPassKey, props.featureState.showBackButton]);
 
     const onSignUp = React.useCallback(async () => {

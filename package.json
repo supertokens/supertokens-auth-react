@@ -101,7 +101,7 @@
     "peerDependencies": {
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0",
-        "supertokens-web-js": "github:supertokens/supertokens-web-js#0.16"
+        "supertokens-web-js": "^0.16.0"
     },
     "scripts": {
         "init": "bash ./init.sh",
@@ -139,19 +139,19 @@
     "size-limit": [
         {
             "path": "lib/build/index.js",
-            "limit": "26kb"
+            "limit": "28kb"
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "27kb"
+            "limit": "29kb"
         },
         {
             "path": "recipe/session/prebuiltui.js",
-            "limit": "32kb"
+            "limit": "34kb"
         },
         {
             "path": "recipe/thirdparty/index.js",
-            "limit": "34kb"
+            "limit": "36kb"
         },
         {
             "path": "recipe/emailpassword/index.js",
@@ -159,27 +159,27 @@
         },
         {
             "path": "recipe/emailverification/index.js",
-            "limit": "9kb"
+            "limit": "11kb"
         },
         {
             "path": "recipe/passwordless/index.js",
-            "limit": "17kb"
+            "limit": "19kb"
         },
         {
             "path": "recipe/emailverification/prebuiltui.js",
-            "limit": "36kb"
+            "limit": "38kb"
         },
         {
             "path": "recipe/thirdparty/prebuiltui.js",
-            "limit": "56kb"
+            "limit": "58kb"
         },
         {
             "path": "recipe/emailpassword/prebuiltui.js",
-            "limit": "43kb"
+            "limit": "45kb"
         },
         {
             "path": "recipe/passwordless/prebuiltui.js",
-            "limit": "133kb"
+            "limit": "135kb"
         },
         {
             "path": "recipe/multitenancy/index.js",
@@ -187,11 +187,11 @@
         },
         {
             "path": "recipe/multifactorauth/index.js",
-            "limit": "13kb"
+            "limit": "15kb"
         },
         {
             "path": "recipe/multifactorauth/prebuiltui.js",
-            "limit": "35kb"
+            "limit": "37kb"
         },
         {
             "path": "recipe/oauth2provider/index.js",
@@ -199,15 +199,15 @@
         },
         {
             "path": "recipe/oauth2provider/prebuiltui.js",
-            "limit": "34kb"
+            "limit": "36kb"
         },
         {
             "path": "recipe/webauthn/index.js",
-            "limit": "13kb"
+            "limit": "18kb"
         },
         {
             "path": "recipe/webauthn/prebuiltui.js",
-            "limit": "61kb"
+            "limit": "71kb"
         }
     ],
     "browserslist": {
