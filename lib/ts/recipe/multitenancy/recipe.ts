@@ -35,7 +35,6 @@ import type {
     WebJSRecipeInterface,
     UserContext,
 } from "../../types";
-import type { NormalisedAppInfo } from "../../types";
 import type AuthRecipe from "../authRecipe";
 
 /*
@@ -100,9 +99,10 @@ export default class Multitenancy extends BaseRecipeModule<any, any, any, any> {
 
     static init(config?: UserInput): RecipeInitResult<any, any, any, any> {
         const normalisedConfig = normaliseMultitenancyConfig(config);
+
         return {
             recipeID: Multitenancy.RECIPE_ID,
-            authReact: (appInfo: NormalisedAppInfo): BaseRecipeModule<any, any, any, any> => {
+            authReact: (appInfo): BaseRecipeModule<any, any, any, any> => {
                 Multitenancy.instance = new Multitenancy({
                     ...normalisedConfig,
                     appInfo,

@@ -43,6 +43,9 @@ export default class Wrapper {
         navigate?: Navigate;
         userContext?: UserContext;
     }): Promise<void>;
+    static getSecondaryFactors(input: {
+        userContext?: UserContext;
+    }): import("./types").SecondaryFactorRedirectionInfo[];
     static ComponentsOverrideProvider: import("react").FC<import("react").PropsWithChildren<{
         components: import("./types").ComponentOverrideMap;
     }>>;
@@ -51,8 +54,9 @@ declare const init: typeof Wrapper.init;
 declare const resyncSessionAndFetchMFAInfo: typeof Wrapper.resyncSessionAndFetchMFAInfo;
 declare const redirectToFactor: typeof Wrapper.redirectToFactor;
 declare const redirectToFactorChooser: typeof Wrapper.redirectToFactorChooser;
+declare const getSecondaryFactors: typeof Wrapper.getSecondaryFactors;
 declare const MultiFactorAuthComponentsOverrideProvider: import("react").FC<import("react").PropsWithChildren<{
     components: import("./types").ComponentOverrideMap;
 }>>;
 declare const MultiFactorAuthClaim: import("./multiFactorAuthClaim").MultiFactorAuthClaimClass;
-export { init, resyncSessionAndFetchMFAInfo, redirectToFactor, redirectToFactorChooser, MultiFactorAuthComponentsOverrideProvider, GetRedirectionURLContext, PreAPIHookContext as PreAPIHookContext, OnHandleEventContext, UserInput, RecipeInterface, MultiFactorAuthClaim, FactorIds, };
+export { init, resyncSessionAndFetchMFAInfo, redirectToFactor, redirectToFactorChooser, getSecondaryFactors, MultiFactorAuthComponentsOverrideProvider, GetRedirectionURLContext, PreAPIHookContext as PreAPIHookContext, OnHandleEventContext, UserInput, RecipeInterface, MultiFactorAuthClaim, FactorIds, };

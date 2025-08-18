@@ -19,8 +19,8 @@ export declare const otpEmailFactor: {
 export default class Passwordless extends AuthRecipe<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
     readonly webJSRecipe: WebJSRecipeInterface<typeof PasswordlessWebJS>;
     static instance?: Passwordless;
-    static RECIPE_ID: string;
-    recipeID: string;
+    static RECIPE_ID: "passwordless";
+    recipeID: "passwordless";
     firstFactorIds: ("otp-email" | "otp-phone" | "link-email" | "link-phone")[];
     getFirstFactorsForAuthPage(): string[];
     constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, webJSRecipe?: WebJSRecipeInterface<typeof PasswordlessWebJS>);

@@ -21,6 +21,7 @@ import type { AuthComponent } from "../../types";
 export class ThirdPartyPreBuiltUI extends RecipeRouter {
     static instance?: ThirdPartyPreBuiltUI;
     languageTranslations = defaultTranslationsThirdParty;
+    static languageTranslations = defaultTranslationsThirdParty;
 
     constructor(public readonly recipeInstance: ThirdParty) {
         super();

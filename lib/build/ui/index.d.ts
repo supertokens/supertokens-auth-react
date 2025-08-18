@@ -11,6 +11,30 @@ import type { PropsWithChildren } from "react";
 declare class UI {
     private static reactRouterDom;
     private static reactRouterDomIsV6?;
+    static languageTranslations: {
+        en: {
+            AUTH_PAGE_HEADER_TITLE_SIGN_IN_AND_UP: string;
+            AUTH_PAGE_HEADER_TITLE_SIGN_IN: string;
+            AUTH_PAGE_HEADER_TITLE_SIGN_UP: string;
+            AUTH_PAGE_HEADER_TITLE_SIGN_IN_UP_TO_APP: string;
+            AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_START: string;
+            AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_SIGN_UP_LINK: string;
+            AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_END: string;
+            AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_START: string;
+            AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_SIGN_IN_LINK: string;
+            AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_END: string;
+            AUTH_PAGE_FOOTER_START: string;
+            AUTH_PAGE_FOOTER_TOS: string;
+            AUTH_PAGE_FOOTER_AND: string;
+            AUTH_PAGE_FOOTER_PP: string;
+            AUTH_PAGE_FOOTER_END: string;
+            DIVIDER_OR: string;
+            BRANDING_POWERED_BY_START: string;
+            BRANDING_POWERED_BY_END: string;
+            SOMETHING_WENT_WRONG_ERROR: string;
+            SOMETHING_WENT_WRONG_ERROR_RELOAD: string;
+        };
+    };
     static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any, preBuiltUiClassList?: PreBuiltRecipes, basePath?: string): JSX.Element[];
     static getReactRouterDomWithCustomHistory: () => ReactRouterDomWithCustomHistory | undefined;
     static canHandleRoute(preBuiltUiClassList: PreBuiltRecipes): boolean;
@@ -46,6 +70,30 @@ declare class UI {
         components: import("../recipe/authRecipe/types").ComponentOverrideMap;
     }>>;
 }
+declare const languageTranslations: {
+    en: {
+        AUTH_PAGE_HEADER_TITLE_SIGN_IN_AND_UP: string;
+        AUTH_PAGE_HEADER_TITLE_SIGN_IN: string;
+        AUTH_PAGE_HEADER_TITLE_SIGN_UP: string;
+        AUTH_PAGE_HEADER_TITLE_SIGN_IN_UP_TO_APP: string;
+        AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_START: string;
+        AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_SIGN_UP_LINK: string;
+        AUTH_PAGE_HEADER_SUBTITLE_SIGN_IN_END: string;
+        AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_START: string;
+        AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_SIGN_IN_LINK: string;
+        AUTH_PAGE_HEADER_SUBTITLE_SIGN_UP_END: string;
+        AUTH_PAGE_FOOTER_START: string;
+        AUTH_PAGE_FOOTER_TOS: string;
+        AUTH_PAGE_FOOTER_AND: string;
+        AUTH_PAGE_FOOTER_PP: string;
+        AUTH_PAGE_FOOTER_END: string;
+        DIVIDER_OR: string;
+        BRANDING_POWERED_BY_START: string;
+        BRANDING_POWERED_BY_END: string;
+        SOMETHING_WENT_WRONG_ERROR: string;
+        SOMETHING_WENT_WRONG_ERROR_RELOAD: string;
+    };
+};
 declare const getSuperTokensRoutesForReactRouterDom: typeof UI.getSuperTokensRoutesForReactRouterDom;
 declare const canHandleRoute: typeof UI.canHandleRoute;
 declare const getRoutingComponent: typeof UI.getRoutingComponent;
@@ -53,4 +101,4 @@ declare const AuthPage: (props: PropsWithChildren<Omit<AuthPageProps, "preBuiltU
     preBuiltUIList: PreBuiltRecipes;
 }>) => import("react/jsx-runtime").JSX.Element;
 export default UI;
-export { getSuperTokensRoutesForReactRouterDom, canHandleRoute, getRoutingComponent, AuthPage, AuthPageTheme, AuthPageFooter, AuthPageHeader, AuthPageComponentList, AuthRecipeComponentsOverrideContextProvider, AuthPageThemeProps, };
+export { languageTranslations, getSuperTokensRoutesForReactRouterDom, canHandleRoute, getRoutingComponent, AuthPage, AuthPageTheme, AuthPageFooter, AuthPageHeader, AuthPageComponentList, AuthRecipeComponentsOverrideContextProvider, AuthPageThemeProps, };

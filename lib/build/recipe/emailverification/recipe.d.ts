@@ -6,9 +6,9 @@ import type { NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult, UserCont
 export default class EmailVerification extends RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
     readonly webJSRecipe: WebJSRecipeInterface<typeof EmailVerificationWebJS>;
     static instance?: EmailVerification;
-    static RECIPE_ID: string;
+    static RECIPE_ID: "emailverification";
     static EmailVerificationClaim: EmailVerificationClaimClass;
-    recipeID: string;
+    recipeID: "emailverification";
     constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, webJSRecipe?: WebJSRecipeInterface<typeof EmailVerificationWebJS>);
     static init(config?: UserInput): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): EmailVerification;

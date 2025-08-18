@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.49.1",
+    "version": "0.50.0",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -61,7 +61,9 @@
         "mocha": "^10.2.0",
         "mocha-junit-reporter": "^2.2.1",
         "mocha-multi": "^1.1.7",
+        "mocha-multi-reporters": "^1.5.1",
         "mocha-split-tests": "github:rishabhpoddar/mocha-split-tests",
+        "mochawesome": "^7.1.3",
         "npm-run-all": "^4.1.5",
         "postcss": "^8.4.19",
         "postcss-import": "^15.0.0",
@@ -100,7 +102,7 @@
     "peerDependencies": {
         "react": ">=16.8.0",
         "react-dom": ">=16.8.0",
-        "supertokens-web-js": "^0.15"
+        "supertokens-web-js": "^0.16.0"
     },
     "scripts": {
         "init": "bash ./init.sh",
@@ -115,7 +117,6 @@
         "test-e2e-react16": "RUN_REACT_16_TESTS=true ./test/startTestApp.sh 8082",
         "test-e2e-with-non-node": "./test/startTestApp.sh 8083",
         "test-unit": "TEST_MODE=testing jest --silent -c jest.config.js --runInBand",
-        "test-visual": "SPEC_FILES=test/visual/**/*.test.js npx percy exec -- npm run test-e2e",
         "prep-test-app": "./test/prepTestApp.sh $SRC",
         "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit && cd ../test/with-typescript && npx tsc -p tsconfig.json",
         "tsc": "cd lib && npx tsc -p tsconfig.json",
@@ -126,7 +127,7 @@
         "build-pretty": "npm run build && npm run pretty && npm run pretty",
         "lint": "node other/checkTranslationKeys.js && cd lib && eslint ./ts --ext .ts,.tsx",
         "lint-fix": "cd lib && npx eslint ./ts --ext .ts,.tsx --fix",
-        "prune": "cd lib && ts-prune | grep -vE 'used in module| - default$| - package_version$|getSuperTokensRoutesForReactRouterDom$|supertokens-web-js|supertokens-website|dateProvider' && exit 1 || exit 0",
+        "prune": "cd lib && ts-prune | grep -vE 'used in module| - default$| - package_version$|getSuperTokensRoutesForReactRouterDom$|supertokens-web-js|supertokens-website|dateProvider|SuperTokensPublicConfig|SuperTokensPlugin|SuperTokensPublicPlugin' && exit 1 || exit 0",
         "pretty-check": "npx pretty-quick --staged --check .",
         "set-up-hooks": "cp hooks/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit",
         "build-docs": "rm -rf ./docs && npx typedoc --out ./docs --tsconfig ./lib/tsconfig.json ./lib/ts/index.ts ./lib/ts/**/index.ts ./lib/ts/**/*/index.ts",
@@ -139,19 +140,19 @@
     "size-limit": [
         {
             "path": "lib/build/index.js",
-            "limit": "26kb"
+            "limit": "28kb"
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "27kb"
+            "limit": "29kb"
         },
         {
             "path": "recipe/session/prebuiltui.js",
-            "limit": "32kb"
+            "limit": "34kb"
         },
         {
             "path": "recipe/thirdparty/index.js",
-            "limit": "34kb"
+            "limit": "36kb"
         },
         {
             "path": "recipe/emailpassword/index.js",
@@ -159,27 +160,27 @@
         },
         {
             "path": "recipe/emailverification/index.js",
-            "limit": "9kb"
+            "limit": "11kb"
         },
         {
             "path": "recipe/passwordless/index.js",
-            "limit": "17kb"
+            "limit": "19kb"
         },
         {
             "path": "recipe/emailverification/prebuiltui.js",
-            "limit": "36kb"
+            "limit": "38kb"
         },
         {
             "path": "recipe/thirdparty/prebuiltui.js",
-            "limit": "56kb"
+            "limit": "58kb"
         },
         {
             "path": "recipe/emailpassword/prebuiltui.js",
-            "limit": "43kb"
+            "limit": "45kb"
         },
         {
             "path": "recipe/passwordless/prebuiltui.js",
-            "limit": "133kb"
+            "limit": "135kb"
         },
         {
             "path": "recipe/multitenancy/index.js",
@@ -187,11 +188,11 @@
         },
         {
             "path": "recipe/multifactorauth/index.js",
-            "limit": "13kb"
+            "limit": "15kb"
         },
         {
             "path": "recipe/multifactorauth/prebuiltui.js",
-            "limit": "35kb"
+            "limit": "37kb"
         },
         {
             "path": "recipe/oauth2provider/index.js",
@@ -199,15 +200,15 @@
         },
         {
             "path": "recipe/oauth2provider/prebuiltui.js",
-            "limit": "34kb"
+            "limit": "36kb"
         },
         {
             "path": "recipe/webauthn/index.js",
-            "limit": "13kb"
+            "limit": "18kb"
         },
         {
             "path": "recipe/webauthn/prebuiltui.js",
-            "limit": "61kb"
+            "limit": "71kb"
         }
     ],
     "browserslist": {

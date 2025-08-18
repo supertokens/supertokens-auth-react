@@ -4,6 +4,7 @@ import {
     getLogoutButton,
     setInputValues,
     submitForm,
+    submitFormUnsafe,
     toggleSignInSignUp,
     waitForSTElement,
     getTestEmail,
@@ -22,10 +23,6 @@ export async function setupUserWithAllFactors(page) {
     await clearBrowserCookiesWithoutAffectingConsole(page, []);
     await page.evaluate(() => window.localStorage.setItem("enableAllRecipes", "true"));
     await page.evaluate(() => window.localStorage.setItem("mode", "REQUIRED"));
-
-    await setMFAInfo({
-        requirements: [{ oneOf: ["otp-email", "otp-phone"] }],
-    });
 
     await tryEmailPasswordSignUp(page, email);
 
@@ -50,14 +47,6 @@ export async function setupUserWithAllFactors(page) {
     await waitForDashboard(page);
     const totpSecret = await setupTOTP(page);
     return { email, phoneNumber, totpSecret };
-}
-export async function setMFAInfo(mfaInfo) {
-    let resp = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/setMFAInfo`, {
-        method: "POST",
-        headers: new Headers([["content-type", "application/json"]]),
-        body: JSON.stringify(mfaInfo),
-    });
-    assert.strictEqual(resp.status, 200);
 }
 
 export async function addToRequiredSecondaryFactorsForUser(page, factorId) {
@@ -222,4 +211,32 @@ export async function chooseFactor(page, id) {
     await waitFor(100);
     await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), ele.click()]);
     await waitForSTElement(page);
+}
+
+export async function tryWebauthnSignUp(page) {
+    await goToFactorChooser(page);
+    await chooseFactor(page, "webauthn");
+    await waitForSTElement(page, "[data-supertokens~=webauthn-mfa]");
+    const link = await waitForSTElement(page, "[data-supertokens~='link']");
+    await link.click();
+    await submitFormUnsafe(page);
+    await new Promise((res) => setTimeout(res, 1000));
+}
+
+export async function tryWebauthnSignIn(page) {
+    await waitForSTElement(page, "[data-supertokens~=webauthn-mfa]");
+    await submitFormUnsafe(page);
+    await new Promise((res) => setTimeout(res, 1000));
+}
+
+export async function setupWebauthn(page) {
+    await goToFactorChooser(page);
+    await chooseFactor(page, "webauthn");
+    await waitForSTElement(page, "[data-supertokens~=passkeyConfirmationContainer]");
+    await submitFormUnsafe(page);
+}
+
+export async function completeWebauthn(page) {
+    await waitForSTElement(page, "[data-supertokens~=webauthn-mfa]");
+    await submitFormUnsafe(page);
 }

@@ -9,8 +9,8 @@ import type { SessionClaim } from "supertokens-web-js/recipe/session";
 export default class Session extends RecipeModule<unknown, unknown, unknown, NormalisedSessionConfig> {
     readonly webJSRecipe: Omit<typeof WebJSSessionRecipe, "init" | "default">;
     static instance?: Session;
-    static RECIPE_ID: string;
-    recipeID: string;
+    static RECIPE_ID: "session";
+    recipeID: "session";
     private eventListeners;
     constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedSessionConfig>, webJSRecipe?: Omit<typeof WebJSSessionRecipe, "init" | "default">);
     getUserId: (input: {

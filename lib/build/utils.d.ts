@@ -4,7 +4,7 @@ import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import type { FieldState } from "./recipe/emailpassword/components/library/formBase";
 import type { FormBaseAPIResponse, FormFieldError } from "./recipe/emailpassword/types";
-import type { APIFormField, AppInfoUserInput, Navigate, NormalisedAppInfo, NormalisedFormField, NormalisedGetRedirectionURLContext, UserContext } from "./types";
+import type { APIFormField, AppInfoUserInput, Navigate, NormalisedAppInfo, NormalisedFormField, NormalisedGetRedirectionURLContext, SuperTokensPlugin, SuperTokensPublicConfig, SuperTokensPublicPlugin, UserContext, SuperTokensConfigWithNormalisedAppInfo } from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
 export declare function clearQueryParams(paramNames: string[]): void;
 export declare function updateQueryParam(name: string, value: string): void;
@@ -66,3 +66,5 @@ export declare const handleCallAPI: <T>({ apiFields, fieldUpdates, callAPI, }: {
     generalError?: STGeneralError | undefined;
     fetchError?: Response | undefined;
 }>;
+export declare function getPublicPlugin(plugin: SuperTokensPlugin): SuperTokensPublicPlugin;
+export declare function getPublicConfig(config: SuperTokensConfigWithNormalisedAppInfo): SuperTokensPublicConfig;

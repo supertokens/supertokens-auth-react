@@ -12,8 +12,8 @@ export declare const totpFactor: {
 export default class TOTP extends RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
     readonly webJSRecipe: WebJSRecipeInterface<typeof TOTPWebJS>;
     static instance?: TOTP;
-    static RECIPE_ID: string;
-    recipeID: string;
+    static RECIPE_ID: "totp";
+    recipeID: "totp";
     constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, webJSRecipe?: WebJSRecipeInterface<typeof TOTPWebJS>);
     static init(config?: UserInput): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstance(): TOTP | undefined;

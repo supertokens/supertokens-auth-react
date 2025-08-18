@@ -30,9 +30,24 @@ import type { SignInUpEPComboEmailFormProps } from "../../../types";
 
 export const EPComboEmailForm = withOverride(
     "PasswordlessEPComboEmailForm",
-    function PasswordlessEPComboEmailForm(props: SignInUpEPComboEmailFormProps): JSX.Element {
+    function PasswordlessEPComboEmailForm(
+        props: SignInUpEPComboEmailFormProps & {
+            footer?: JSX.Element;
+        }
+    ): JSX.Element {
         const t = useTranslation();
-
+        let footer = props.footer;
+        if (!footer && props.showContinueWithPasswordlessLink) {
+            footer = (
+                <ContinueWithPasswordlessFooter
+                    isPhoneNumber={false}
+                    onContinueWithPasswordlessClick={props.onContinueWithPasswordlessClick}
+                    onError={props.onError}
+                    config={props.config}
+                    validatePhoneNumber={props.validatePhoneNumber}
+                />
+            );
+        }
         const formFields: FormFieldThemeProps[] = [
             {
                 id: "email",
@@ -100,17 +115,7 @@ export const EPComboEmailForm = withOverride(
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                footer={
-                    props.showContinueWithPasswordlessLink ? (
-                        <ContinueWithPasswordlessFooter
-                            isPhoneNumber={false}
-                            onContinueWithPasswordlessClick={props.onContinueWithPasswordlessClick}
-                            onError={props.onError}
-                            config={props.config}
-                            validatePhoneNumber={props.validatePhoneNumber}
-                        />
-                    ) : undefined
-                }
+                footer={footer}
             />
         );
     }

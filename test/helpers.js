@@ -30,6 +30,7 @@ import assert from "assert";
 import { appendFile } from "fs/promises";
 import mkdirp from "mkdirp";
 import Puppeteer from "puppeteer";
+import addContext from "mochawesome/addContext";
 
 const SESSION_STORAGE_STATE_KEY = "supertokens-oauth-state";
 
@@ -930,13 +931,20 @@ export async function screenshotOnFailure(ctx, browser) {
                 .filter((a) => a.length !== 0)
                 .join("_");
             title = title.substring(title.length - 30);
-            await pages[i].screenshot({
-                path: path.join(screenshotRoot, testFileName, `${title}-tab_${i}-${Date.now()}.png`),
-            });
+
+            const screenshotPath = path.join(screenshotRoot, testFileName, `${title}-tab_${i}-${Date.now()}.png`);
+            await pages[i].screenshot({ path: screenshotPath });
+            addContext(ctx, { title: "Screenshot", value: screenshotPath });
+
             await new Promise((r) => setTimeout(r, 500));
-            await pages[i].screenshot({
-                path: path.join(screenshotRoot, testFileName, `${title}-tab_${i}-delayed-${Date.now()}.png`),
-            });
+
+            const delayedScreenshotPath = path.join(
+                screenshotRoot,
+                testFileName,
+                `${title}-tab_${i}-delayed-${Date.now()}.png`
+            );
+            await pages[i].screenshot({ path: delayedScreenshotPath });
+            addContext(ctx, { title: "Delayed Screenshot", value: delayedScreenshotPath });
         }
     }
 }
@@ -953,31 +961,6 @@ export async function getPasswordlessDevice(loginAttemptInfo) {
     return await deviceResp.json();
 }
 
-export function setPasswordlessFlowType(contactMethod, flowType) {
-    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setFlow`, {
-        method: "POST",
-        headers: [["content-type", "application/json"]],
-        body: JSON.stringify({
-            contactMethod,
-            flowType,
-        }),
-    });
-}
-
-export function setAccountLinkingConfig(enabled, shouldAutomaticallyLink, shouldRequireVerification) {
-    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setAccountLinkingConfig`, {
-        method: "POST",
-        headers: [["content-type", "application/json"]],
-        body: JSON.stringify({
-            enabled,
-            shouldAutoLink: {
-                shouldAutomaticallyLink,
-                shouldRequireVerification,
-            },
-        }),
-    });
-}
-
 export function changeEmail(rid, recipeUserId, email, phoneNumber) {
     return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/changeEmail`, {
         method: "POST",
@@ -987,17 +970,6 @@ export function changeEmail(rid, recipeUserId, email, phoneNumber) {
             recipeUserId,
             email,
             phoneNumber,
-        }),
-    });
-}
-
-export function setEnabledRecipes(enabledRecipes, enabledProviders) {
-    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setEnabledRecipes`, {
-        method: "POST",
-        headers: [["content-type", "application/json"]],
-        body: JSON.stringify({
-            enabledRecipes,
-            enabledProviders,
         }),
     });
 }
@@ -1241,6 +1213,51 @@ const testProviderConfigs = {
     },
 };
 
+export async function backendHook(hookType) {
+    const serverUrls = Array.from(new Set([TEST_SERVER_BASE_URL, TEST_APPLICATION_SERVER_BASE_URL]));
+
+    await Promise.all(
+        serverUrls.map((url) => fetch(`${url}/test/${hookType}`, { method: "POST" }).catch(console.error))
+    );
+}
+
+export async function setupCoreApp({ appId, coreConfig } = {}) {
+    const response = await fetch(`${TEST_SERVER_BASE_URL}/test/setup/app`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            appId,
+            coreConfig,
+        }),
+    });
+
+    return await response.text();
+}
+
+export async function setupST({
+    coreUrl,
+    accountLinkingConfig = {},
+    enabledRecipes,
+    enabledProviders,
+    passwordlessFlowType,
+    passwordlessContactMethod,
+    mfaInfo = {},
+} = {}) {
+    await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setup/st`, {
+        method: "POST",
+        headers: new Headers([["content-type", "application/json"]]),
+        body: JSON.stringify({
+            coreUrl,
+            accountLinkingConfig,
+            enabledRecipes,
+            enabledProviders,
+            passwordlessFlowType,
+            passwordlessContactMethod,
+            mfaInfo,
+        }),
+    });
+}
+
 export async function backendBeforeEach() {
     await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
         method: "POST",
@@ -1327,4 +1344,24 @@ export async function getOAuth2TokenData(page) {
     const element = await page.waitForSelector("#oauth2-token-data");
     const tokenData = await element.evaluate((el) => el.textContent);
     return JSON.parse(tokenData);
+}
+
+export async function tryPasswordlessSignInUp(page, email) {
+    await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+    await Promise.all([
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth/?authRecipe=passwordless`),
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
+    ]);
+
+    await setInputValues(page, [{ name: "email", value: email }]);
+    await submitForm(page);
+
+    await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+    const loginAttemptInfo = JSON.parse(
+        await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+    );
+    const device = await getPasswordlessDevice(loginAttemptInfo);
+    await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+    await submitForm(page);
 }

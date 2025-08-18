@@ -9,4 +9,6 @@ export declare const ResetPasswordEmail: import("react").ComponentType<import(".
     onError: (error: string) => void;
     config: import("../../../types").NormalisedConfig;
     onBackButtonClicked: () => void;
+} & {
+    footer?: JSX.Element | undefined;
 }>;

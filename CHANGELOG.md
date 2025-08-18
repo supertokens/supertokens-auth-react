@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.50] - 2025-08-15
+
+-   Add WebAuthn credential management methods: `listCredentials`, `removeCredential`
+-   Added `createAndRegisterCredentialWithUser` method that creates and registers a credential with a user
+-   Adds dev/release GHA pipelines
+-   Add `webauthn` as a secondary factor in MFA
+-   Adds experimental support for plugins
+
+### Breaking changes
+
+-   The `registerCredential` method has been renamed to `createCredential`. This was done to better represent the creation of a credential and not the actual registration of it with the backend API. The new `registerCredential` implementation now calls the backend API.
+
 ## [0.49.1] - 2025-03-27
 
 -   Fixed a type issue making the WebauthnPreBuitlUI not produce a type error when added to the prebuiltUIList

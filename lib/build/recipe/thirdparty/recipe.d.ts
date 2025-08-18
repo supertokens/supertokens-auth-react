@@ -5,8 +5,8 @@ import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRec
 export default class ThirdParty extends AuthRecipe<GetRedirectionURLContext, never, OnHandleEventContext, NormalisedConfig> {
     readonly webJSRecipe: WebJSRecipeInterface<typeof ThirdpartyWebJS>;
     static instance?: ThirdParty;
-    static RECIPE_ID: string;
-    recipeID: string;
+    static RECIPE_ID: "thirdparty";
+    recipeID: "thirdparty";
     firstFactorIds: "thirdparty"[];
     getFirstFactorsForAuthPage(): string[];
     constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, webJSRecipe?: WebJSRecipeInterface<typeof ThirdpartyWebJS>);

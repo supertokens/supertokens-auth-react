@@ -6,9 +6,9 @@ import type { Navigate, NormalisedConfigWithAppInfoAndRecipeID, RecipeInitResult
 export default class MultiFactorAuth extends RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
     readonly webJSRecipe: WebJSRecipeInterface<typeof MultiFactorAuthWebJS>;
     static instance?: MultiFactorAuth;
-    static RECIPE_ID: string;
+    static RECIPE_ID: "multifactorauth";
     static MultiFactorAuthClaim: MultiFactorAuthClaimClass;
-    recipeID: string;
+    recipeID: "multifactorauth";
     private secondaryFactors;
     constructor(config: NormalisedConfigWithAppInfoAndRecipeID<NormalisedConfig>, webJSRecipe?: WebJSRecipeInterface<typeof MultiFactorAuthWebJS>);
     static init(config?: UserInput): RecipeInitResult<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;

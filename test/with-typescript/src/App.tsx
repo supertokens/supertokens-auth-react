@@ -1148,3 +1148,59 @@ EmailPassword.init({
         return "";
     },
 });
+
+SuperTokens.init({
+    appInfo: {} as any,
+    recipeList: [
+        OAuth2Provider.init({
+            oauth2LogoutScreen: {
+                style: "",
+            },
+            style: "",
+            getRedirectionURL: async (context, userContext) => {
+                if (context.action === "SUCCESS_OAUTH2") {
+                    return undefined;
+                }
+                if (context.action === "CONTINUE_OAUTH2_AFTER_REFRESH") {
+                    return undefined;
+                }
+                if (context.action === "POST_OAUTH2_LOGOUT_REDIRECT") {
+                    return undefined;
+                }
+                return undefined;
+            },
+        }),
+    ],
+    experimental: {
+        plugins: [
+            {
+                id: "test",
+                compatibleAuthReactSDKVersions: ["0.50.0"],
+                routeHandlers: [
+                    {
+                        path: "/test",
+                        handler: () => <div>Test</div>,
+                    },
+                ],
+                overrideMap: {
+                    emailpassword: {
+                        functions: (oI) => ({
+                            ...oI,
+                            signIn: async (input) => {
+                                console.log("signIn", input);
+                                return oI.signIn(input);
+                            },
+                        }),
+                        components: {
+                            EmailPasswordSignInForm_Override: () => <div>Test</div>,
+                        },
+                        config: (config) => {
+                            console.log("config", config.getRedirectionURL);
+                            return config;
+                        },
+                    },
+                },
+            },
+        ],
+    },
+});

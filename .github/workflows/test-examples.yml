@@ -1,12 +1,28 @@
 name: "Test examples"
-on: push
+
+on:
+    pull_request:
+        types:
+            - opened
+            - reopened
+            - synchronize
+    push:
+        tags:
+            - dev-v[0-9]+.[0-9]+.[0-9]+
+
+# Only one instance of this workflow will run on the same ref (PR/Branch/Tag)
+# Previous runs will be cancelled.
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
 jobs:
     setup:
         runs-on: ubuntu-latest
         outputs:
             matrix: ${{ steps.set-matrix.outputs.matrix }}
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
             - run: bash test/findExamplesWithTests.sh
             - id: set-matrix
               run: echo "::set-output name=matrix::{\"include\":$(bash test/findExamplesWithTests.sh)}"
@@ -24,7 +40,7 @@ jobs:
             run:
                 working-directory: ${{ matrix.examplePath }}
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
             - run: bash ../../test/updateExampleAppDeps.sh .
             - run: npm install mocha@6.1.4 jsdom-global@3.0.2 puppeteer@^11.0.0 isomorphic-fetch@^3.0.0
             - run: npm run build || true
@@ -36,7 +52,7 @@ jobs:
                   )
             - name: The job has failed
               if: ${{ failure() }}
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                   name: screenshots
                   path: ./**/*screenshot.jpeg

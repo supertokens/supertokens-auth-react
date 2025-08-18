@@ -20,3 +20,4 @@ export declare class TranslationController implements TranslationControlEventSou
 }
 export declare function saveCurrentLanguage(language: string, cookieDomain: string | undefined): Promise<void>;
 export declare function getCurrentLanguageFromCookie(): Promise<string | null>;
+export declare const getTranslationFunction: <T extends string>(...stores: TranslationStore[]) => (key: T, replacements?: Record<string, string>) => string;

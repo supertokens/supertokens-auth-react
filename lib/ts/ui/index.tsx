@@ -11,6 +11,7 @@ import { AuthPageFooter } from "../recipe/authRecipe/components/theme/authPage/a
 import { AuthPageHeader } from "../recipe/authRecipe/components/theme/authPage/authPageHeader";
 import { RecipeRouter } from "../recipe/recipeRouter";
 import SuperTokens from "../superTokens";
+import { defaultTranslationsCommon } from "../translation/translations";
 import { getCurrentNormalisedUrlPath } from "../utils";
 
 import type { PreBuiltRecipes, ReactRouterDomWithCustomHistory } from "./types";
@@ -21,6 +22,8 @@ import type { PropsWithChildren } from "react";
 class UI {
     private static reactRouterDom: ReactRouterDomWithCustomHistory;
     private static reactRouterDomIsV6?: boolean;
+
+    static languageTranslations = defaultTranslationsCommon;
 
     static getSuperTokensRoutesForReactRouterDom(
         reactRouterDom: any,
@@ -136,6 +139,7 @@ class UI {
     static AuthRecipeComponentsOverrideContextProvider = AuthRecipeComponentsOverrideContextProvider;
 }
 
+const languageTranslations = UI.languageTranslations;
 const getSuperTokensRoutesForReactRouterDom = UI.getSuperTokensRoutesForReactRouterDom;
 const canHandleRoute = UI.canHandleRoute;
 const getRoutingComponent = UI.getRoutingComponent;
@@ -143,6 +147,7 @@ const AuthPage = UI.AuthPage;
 
 export default UI;
 export {
+    languageTranslations,
     getSuperTokensRoutesForReactRouterDom,
     canHandleRoute,
     getRoutingComponent,

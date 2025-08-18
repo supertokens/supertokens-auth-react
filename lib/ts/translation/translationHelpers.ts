@@ -1,4 +1,7 @@
-import { getCookieValue, setFrontendCookie } from "../utils";
+import SuperTokens from "../superTokens";
+import { getCookieValue, setFrontendCookie, mergeObjects } from "../utils";
+
+import { defaultTranslationsCommon } from "./translations";
 
 // language -> key -> copy
 export type TranslationStore = Record<string, Record<string, string | undefined>>;
@@ -70,3 +73,68 @@ export async function getCurrentLanguageFromCookie(): Promise<string | null> {
         return null;
     }
 }
+
+export const getTranslationFunction = <T extends string>(
+    ...stores: TranslationStore[]
+): ((key: T, replacements?: Record<string, string>) => string) => {
+    const { translationEventSource, userTranslationFunc, defaultLanguage, userTranslationStore } =
+        SuperTokens.getInstanceOrThrow().languageTranslations;
+
+    let _store: TranslationStore = [defaultTranslationsCommon, ...stores, userTranslationStore].reduce(
+        mergeObjects,
+        {}
+    );
+    const getStore = () => _store;
+    const setStore = (newStore: TranslationStore) => {
+        _store = newStore;
+    };
+
+    let _language = defaultLanguage;
+    const getLanguage = () => _language;
+    const setLanguage = (lang: string) => {
+        _language = lang;
+    };
+
+    const changeHandler: TranslationEventHandler<"LanguageChange"> = (_eventName, detail) => {
+        setLanguage(detail);
+    };
+    const loadHandler: TranslationEventHandler<"TranslationLoaded"> = (_eventName, detail) => {
+        setStore(mergeObjects(_store, detail));
+    };
+
+    translationEventSource.off("LanguageChange", changeHandler);
+    translationEventSource.off("TranslationLoaded", loadHandler);
+
+    translationEventSource.on("LanguageChange", changeHandler);
+    translationEventSource.on("TranslationLoaded", loadHandler);
+
+    void getCurrentLanguageFromCookie().then((cookieLanguage) => {
+        if (cookieLanguage) {
+            setLanguage(cookieLanguage);
+        }
+    });
+
+    const translate = (key: string, replacements: Record<string, string> = {}) => {
+        if (userTranslationFunc) {
+            return userTranslationFunc(key);
+        }
+
+        if (getLanguage() !== undefined) {
+            const res = getStore()[getLanguage()] && getStore()[getLanguage()][key];
+            const fallback = getStore()[defaultLanguage] && getStore()[defaultLanguage][key];
+
+            if (res === undefined) {
+                if (fallback !== undefined) {
+                    return fallback;
+                }
+                return key;
+            }
+
+            return res.replace(/{(\w+)}/g, (match, p1) => replacements[p1] || match);
+        }
+
+        throw new Error("Should never come here");
+    };
+
+    return translate;
+};

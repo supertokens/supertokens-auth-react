@@ -15,7 +15,7 @@
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.2.1",
         "react-scripts": "5.0.1",
-        "supertokens-auth-react": "github:supertokens/supertokens-auth-react#feat/mfa_redirect",
+        "supertokens-auth-react": "github:supertokens/supertokens-auth-react",
         "supertokens-web-js": "latest",
         "typescript": "^4.8.2",
         "web-vitals": "^2.1.4"

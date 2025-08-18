@@ -1223,7 +1223,7 @@ function getWebauthnConfigs({
 
                         return { authenticationResponse: assertion, status: "OK" };
                     },
-                    async registerCredential(...args) {
+                    async createCredential(...args) {
                         log("REGISTER CREDENTIAL");
 
                         const registrationOptions = args[0].registrationOptions;

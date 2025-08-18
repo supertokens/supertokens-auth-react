@@ -1,0 +1,108 @@
+name: Auth-React Tests - L2
+on:
+    workflow_call:
+        inputs:
+            fdi-version:
+                description: "FDI Version"
+                required: true
+                type: string
+
+            specs:
+                description: "Spec Files"
+                required: true
+                type: string
+
+            AUTH_REACT__LOG_DIR:
+                description: AUTH_REACT__LOG_DIR
+                required: true
+                type: string
+
+            AUTH_REACT__SCREENSHOT_DIR:
+                description: AUTH_REACT__SCREENSHOT_DIR
+                required: true
+                type: string
+
+            AUTH_REACT__APP_SERVER:
+                description: AUTH_REACT__APP_SERVER
+                required: true
+                type: string
+
+            AUTH_REACT__NODE_PORT:
+                description: AUTH_REACT__NODE_PORT
+                required: true
+                type: string
+
+            AUTH_REACT__TEST_MODE:
+                description: AUTH_REACT__TEST_MODE
+                required: true
+                type: string
+
+            AUTH_REACT__PORT:
+                description: AUTH_REACT__PORT
+                required: true
+                type: string
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        strategy:
+            max-parallel: 10
+            fail-fast: false
+            matrix:
+                spec: ${{ fromJSON(inputs.specs) }}
+
+        env:
+            SUPERTOKENS_CORE_PORT: 3567
+            SUPERTOKENS_CORE_HOST: localhost
+            TEST_MODE: testing
+            # Auth react setup envs
+            AUTH_REACT__LOG_DIR: ${{ inputs.AUTH_REACT__LOG_DIR }}
+            AUTH_REACT__SCREENSHOT_DIR: ${{ inputs.AUTH_REACT__SCREENSHOT_DIR }}
+            AUTH_REACT__NODE_PORT: ${{ inputs.AUTH_REACT__NODE_PORT }}
+            AUTH_REACT__APP_SERVER: ${{ inputs.AUTH_REACT__NODE_PORT }}
+            AUTH_REACT__TEST_MODE: ${{ inputs.AUTH_REACT__TEST_MODE }}
+            AUTH_REACT__PORT: ${{ inputs.AUTH_REACT__PORT }}
+
+        steps:
+            - uses: bissolli/gh-action-persist-workspace@v2
+              with:
+                  action: retrieve
+                  artifactName: auth-react-${{ inputs.fdi-version }}
+
+            - name: Get Node CDI versions
+              id: node-cdi-versions
+              uses: supertokens/get-supported-versions-action@main
+              with:
+                  has-cdi: true
+                  working-directory: supertokens-node
+
+            - uses: supertokens/actions/get-versions-from-repo@main
+              id: core-versions
+              with:
+                  repo: supertokens-core
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  cdi-versions: ${{ steps.node-cdi-versions.outputs.cdiVersions }}
+
+            - name: Get core version from latest Node CDI version
+              id: core-version
+              run: |
+                  lastNodeCdiVersion=$(echo '${{ steps.node-cdi-versions.outputs.cdiVersions }}' | jq -r '.[-1]') | sed -e 's/"/\\"/g'
+                  coreVersion=$(echo '${{ steps.core-versions.outputs.cdiVersions }}' | jq -r ".[$lastNodeCdiVersion]")
+
+                  echo "coreVersion=${coreVersion}" >> $GITHUB_OUTPUT
+
+            - name: Start core
+              run: docker compose up --wait
+              working-directory: supertokens-auth-react
+              env:
+                  SUPERTOKENS_CORE_VERSION: ${{ steps.core-version.outputs.coreVersion }}
+
+            - uses: supertokens/auth-react-testing-action@main
+              name: test ${{ matrix.spec }} for ${{ inputs.fdi-version }}
+              with:
+                  fdi-version: ${{ inputs.fdi-version }}
+                  check-name-suffix: "[FDI=${{ inputs.fdi-version }}][Spec=${{ matrix.spec }}]"
+                  path: supertokens-auth-react
+                  spec: ${{ matrix.spec }}
+                  retrieve-workspace: false

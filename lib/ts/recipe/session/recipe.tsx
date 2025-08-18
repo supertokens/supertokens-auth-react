@@ -41,7 +41,6 @@ import type { NormalisedSessionConfig } from "./types";
 import type { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
 import type {
     Navigate,
-    NormalisedAppInfo,
     NormalisedConfigWithAppInfoAndRecipeID,
     NormalisedGetRedirectionURLContext,
     RecipeInitResult,
@@ -55,7 +54,7 @@ import type { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 
 export default class Session extends RecipeModule<unknown, unknown, unknown, NormalisedSessionConfig> {
     static instance?: Session;
-    static RECIPE_ID = "session";
+    static RECIPE_ID = "session" as const;
 
     public recipeID = Session.RECIPE_ID;
 
@@ -307,7 +306,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, Nor
 
         return {
             recipeID: Session.RECIPE_ID,
-            authReact: (appInfo: NormalisedAppInfo): RecipeModule<unknown, unknown, unknown, any> => {
+            authReact: (appInfo): RecipeModule<unknown, unknown, unknown, any> => {
                 Session.instance = new Session({
                     ...normalisedConfig,
                     appInfo,

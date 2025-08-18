@@ -8,6 +8,8 @@ export declare const defaultTranslationsMultiFactorAuth: {
         PWLESS_MFA_OTP_EMAIL_DESCRIPTION: string;
         TOTP_MFA_NAME: string;
         TOTP_MFA_DESCRIPTION: string;
+        WEBAUTHN_MFA_NAME: string;
+        WEBAUTHN_MFA_DESCRIPTION: string;
         MFA_NO_AVAILABLE_OPTIONS: string;
         MFA_NO_AVAILABLE_OPTIONS_LOGIN: string;
         AUTH_PAGE_HEADER_TITLE_SIGN_IN_AND_UP: string;

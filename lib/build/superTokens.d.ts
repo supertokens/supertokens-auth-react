@@ -3,11 +3,12 @@ import type RecipeModule from "./recipe/recipeModule";
 import type { BaseRecipeModule } from "./recipe/recipeModule/baseRecipeModule";
 import type { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import type { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
-import type { Navigate, GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig, UserContext, NormalisedGetRedirectionURLContext } from "./types";
+import type { Navigate, GetRedirectionURLContext, NormalisedAppInfo, SuperTokensConfig, UserContext, NormalisedGetRedirectionURLContext, AllRecipeComponentOverrides, SuperTokensPlugin, PluginRouteHandler, SuperTokensPublicPlugin } from "./types";
 export default class SuperTokens {
     private static instance?;
     static usesDynamicLoginMethods: boolean;
     appInfo: NormalisedAppInfo;
+    pluginList: SuperTokensPublicPlugin[];
     languageTranslations: {
         defaultLanguage: string;
         userTranslationStore: TranslationStore;
@@ -23,8 +24,11 @@ export default class SuperTokens {
     termsOfServiceLink: string | undefined;
     defaultToSignUp: boolean;
     disableAuthRoute: boolean;
-    constructor(config: SuperTokensConfig);
+    componentOverrides: Partial<AllRecipeComponentOverrides>;
+    pluginRouteHandlers: PluginRouteHandler[];
+    constructor(config: SuperTokensConfig, plugins: SuperTokensPlugin[]);
     static init(config: SuperTokensConfig): void;
+    static getInstance(): SuperTokens | undefined;
     static getInstanceOrThrow(): SuperTokens;
     getRecipeOrThrow<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>>(recipeId: string): RecipeModule<T, S, R, N>;
     changeLanguage: (lang: string) => Promise<void>;

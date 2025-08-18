@@ -18,26 +18,23 @@
  */
 
 import assert from "assert";
-import fetch from "isomorphic-fetch";
-import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     assertProviders,
-    assertNoSTComponents,
     generateState,
     clickOnProviderButton,
     loginWithMockProvider,
     getGeneralError,
-    waitFor,
     screenshotOnFailure,
     clickOnProviderButtonWithoutWaiting,
-    backendBeforeEach,
     waitForUrl,
     setupBrowser,
     loginWithAuth0,
+    backendHook,
+    setupCoreApp,
+    setupST,
 } from "../helpers";
-
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
+import { TEST_CLIENT_BASE_URL, SIGN_IN_UP_API, GET_AUTH_URL_API } from "../constants";
 
 describe("SuperTokens Third Party", function () {
     getThirdPartyTestCases({
@@ -56,11 +53,9 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
     const logId = "THIRD_PARTY";
 
     before(async function () {
-        await backendBeforeEach();
-
-        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST",
-        }).catch(console.error);
+        await backendHook("before");
+        const coreUrl = await setupCoreApp();
+        await setupST({ coreUrl });
 
         browser = await setupBrowser();
         page = await browser.newPage();
@@ -73,15 +68,10 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=${authRecipe}`);
     });
 
-    after(async function () {
-        await browser.close();
-        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST",
-        }).catch(console.error);
-
-        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-            method: "POST",
-        }).catch(console.error);
+    beforeEach(async function () {
+        await backendHook("beforeEach");
+        consoleLogs = [];
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
     });
 
     afterEach(async function () {
@@ -89,12 +79,13 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
             localStorage.removeItem("thirdPartyRedirectURL");
             localStorage.removeItem("clientType");
         });
-        return screenshotOnFailure(this, browser);
+        await screenshotOnFailure(this, browser);
+        await backendHook("afterEach");
     });
 
-    beforeEach(async function () {
-        consoleLogs = [];
-        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+    after(async function () {
+        await browser?.close();
+        await backendHook("after");
     });
 
     describe("Third Party test", function () {
@@ -326,7 +317,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
         //     ]);
         // });
 
-        it("field error on sign in up with translation key", async function () {
+        it("general error on sign in up with translation key", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -344,8 +335,8 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                             "access-control-allow-credentials": "true",
                         },
                         body: JSON.stringify({
-                            status: "FIELD_ERROR",
-                            error: "AUTH_PAGE_FOOTER_TOS",
+                            status: "GENERAL_ERROR",
+                            message: "AUTH_PAGE_FOOTER_TOS",
                         }),
                     });
                     page.off("request", requestHandler);
@@ -361,7 +352,7 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
             assert.deepStrictEqual(error, "TOS");
         });
 
-        it("field error on sign in up with non-translation key", async function () {
+        it("general error on sign in up with non-translation key", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -379,8 +370,8 @@ export function getThirdPartyTestCases({ authRecipe, rid, signInUpPageLoadLogs, 
                             "access-control-allow-credentials": "true",
                         },
                         body: JSON.stringify({
-                            status: "FIELD_ERROR",
-                            error: "Test message!!!!",
+                            status: "GENERAL_ERROR",
+                            message: "Test message!!!!",
                         }),
                     });
                     page.off("request", requestHandler);

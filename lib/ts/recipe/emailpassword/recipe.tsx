@@ -36,7 +36,6 @@ import type {
     UserInput,
 } from "./types";
 import type { RecipeInitResult, NormalisedConfigWithAppInfoAndRecipeID, WebJSRecipeInterface } from "../../types";
-import type { NormalisedAppInfo } from "../../types";
 import type RecipeModule from "../recipeModule";
 
 /*
@@ -80,7 +79,7 @@ export default class EmailPassword extends AuthRecipe<
         return {
             recipeID: EmailPassword.RECIPE_ID,
             authReact: (
-                appInfo: NormalisedAppInfo
+                appInfo
             ): RecipeModule<
                 GetRedirectionURLContext,
                 PreAndPostAPIHookAction,
@@ -95,7 +94,7 @@ export default class EmailPassword extends AuthRecipe<
                 return EmailPassword.instance;
             },
             webJS: EmailPasswordWebJS.init({
-                ...normalisedConfig,
+                ...normalisedConfig, // plugins are applied by webjs
                 override: {
                     functions: (originalImpl, builder) => {
                         const functions = getFunctionOverrides(normalisedConfig.onHandleEvent);

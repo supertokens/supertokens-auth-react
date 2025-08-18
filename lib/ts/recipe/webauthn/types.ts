@@ -29,6 +29,13 @@ import type {
     Config as AuthRecipeModuleConfig,
 } from "../authRecipe/types";
 import type { ContinueWithPasskeyWithOverride } from "./components/themes/continueWithPasskey";
+import type {
+    WebauthnMFASignIn,
+    WebauthnMFALoadingScreen,
+    WebauthnMFASignUp,
+    WebauthnMFASignUpConfirmation,
+    WebauthnMFAFooter,
+} from "./components/themes/mfa";
 import type { PasskeyRecoveryEmailSent } from "./components/themes/sendRecoveryEmail/emailSent";
 import type {
     WebauthnRecoverAccount,
@@ -39,6 +46,8 @@ import type { ContinueWithoutPasskey } from "./components/themes/signUp/continue
 import type { PasskeyFeatureBlock } from "./components/themes/signUp/featureBlocks";
 import type { SignUpFormInner } from "./components/themes/signUp/signUpForm";
 import type { SignUpSomethingWentWrong } from "./components/themes/signUp/somethingWentWrong";
+import type { Dispatch } from "react";
+import type React from "react";
 import type { RecipeInterface } from "supertokens-web-js/recipe/webauthn";
 import type WebJSRecipe from "supertokens-web-js/recipe/webauthn";
 import type { User } from "supertokens-web-js/types";
@@ -57,7 +66,10 @@ export type PreAndPostAPIHookAction =
     | "SIGN_IN"
     | "EMAIL_EXISTS"
     | "GENERATE_RECOVER_ACCOUNT_TOKEN"
-    | "RECOVER_ACCOUNT";
+    | "RECOVER_ACCOUNT"
+    | "REGISTER_CREDENTIAL"
+    | "REMOVE_CREDENTIAL"
+    | "LIST_CREDENTIALS";
 
 export type OnHandleEventContext =
     | {
@@ -121,6 +133,11 @@ export type ComponentOverrideMap = {
     WebauthnContinueWithoutPasskey_Override?: ComponentOverride<typeof ContinueWithoutPasskey>;
     WebauthnPasskeySignUpForm_Override?: ComponentOverride<typeof SignUpFormInner>;
     WebauthnPasskeySignUpSomethingWentWrong_Override?: ComponentOverride<typeof SignUpSomethingWentWrong>;
+    WebauthnMFASignIn_Override?: ComponentOverride<typeof WebauthnMFASignIn>;
+    WebauthnMFALoadingScreen_Override?: ComponentOverride<typeof WebauthnMFALoadingScreen>;
+    WebauthnMFASignUp_Override?: ComponentOverride<typeof WebauthnMFASignUp>;
+    WebauthnMFASignUpConfirmation_Override?: ComponentOverride<typeof WebauthnMFASignUpConfirmation>;
+    WebauthnMFAFooter_Override?: ComponentOverride<typeof WebauthnMFAFooter>;
 };
 
 export type SignUpThemeBaseProps = {
@@ -245,4 +262,57 @@ export type ContinueWithPasskeyProps = {
 export type EmailSentProps = {
     email: string;
     onEmailChangeClick: () => void;
+};
+
+export type WebAuthnMFAAction =
+    | {
+          type: "setError";
+          accessDenied?: boolean;
+          error: string | undefined;
+      }
+    | {
+          type: "load";
+          deviceSupported: boolean;
+          error: string | undefined;
+          email: string | undefined;
+          showBackButton: boolean;
+          canRegisterPasskey: boolean;
+          hasRegisteredPassKey: boolean;
+      };
+
+type WebAuthnMFAInitialState = {
+    error: undefined;
+    loaded: false;
+    accessDenied: boolean;
+    deviceSupported: boolean;
+    showBackButton: boolean;
+    canRegisterPasskey: false;
+    hasRegisteredPassKey: false;
+    email: undefined;
+};
+
+type WebAuthnMFALoadedState = {
+    error: string | undefined;
+    loaded: true;
+    accessDenied: boolean;
+    deviceSupported: boolean;
+    showBackButton: boolean;
+    canRegisterPasskey: boolean;
+    hasRegisteredPassKey: boolean;
+    email: string | undefined;
+};
+
+export type WebAuthnMFAState = WebAuthnMFAInitialState | WebAuthnMFALoadedState;
+
+export type WebAuthnMFAProps = {
+    recipeImplementation: RecipeImplementation;
+    config: NormalisedConfig;
+    onBackButtonClicked: () => void;
+    onSignOutClicked: () => void;
+    onSignIn: () => Promise<void>;
+    onSignUp: (email: string) => Promise<void>;
+    onRecoverAccountClick: () => void;
+    userContext?: UserContext;
+    featureState: WebAuthnMFAState;
+    dispatch: Dispatch<WebAuthnMFAAction>;
 };

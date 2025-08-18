@@ -46,6 +46,12 @@ export declare class WebauthnPreBuiltUI extends RecipeRouter {
             WEBAUTHN_NOT_SUPPORTED_ERROR: string;
             WEBAUTHN_PASSKEY_NOT_SUPPORTED_BY_BROWSER: string;
             WEBAUTHN_EMAIL_INPUT_NOT_POPULATED_ERROR: string;
+            WEBAUTHN_MFA_SIGN_IN_HEADER_TITLE: string;
+            WEBAUTHN_MFA_SIGN_IN_HEADER_SUBTITLE: string;
+            WEBAUTHN_MFA_DIVIDER: string;
+            WEBAUTHN_MFA_REGISTER_PASSKEY_SUBTITLE: string;
+            WEBAUTHN_MFA_REGISTER_PASSKEY_TITLE: string;
+            WEBAUTHN_MFA_FOOTER_LOGOUT: string;
             AUTH_PAGE_HEADER_TITLE_SIGN_IN_AND_UP: string;
             AUTH_PAGE_HEADER_TITLE_SIGN_IN: string;
             AUTH_PAGE_HEADER_TITLE_SIGN_UP: string;
@@ -75,7 +81,7 @@ export declare class WebauthnPreBuiltUI extends RecipeRouter {
         userContext?: UserContext;
     }>, useComponentOverrides?: () => GenericComponentOverrideMap<any>): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
-    getFeatureComponent: (componentName: "webauthn-recover-account" | "webauthn-send-recovery-email", props: FeatureBaseProps<{
+    getFeatureComponent: (componentName: "webauthn-recover-account" | "webauthn-send-recovery-email" | "webauthn-mfa", props: FeatureBaseProps<{
         userContext?: UserContext;
     }>, useComponentOverrides?: () => GenericComponentOverrideMap<any>) => JSX.Element;
     getAuthComponents(): AuthComponent[];
