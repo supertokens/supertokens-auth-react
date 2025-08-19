@@ -565,9 +565,60 @@ export function useRethrowInRender() {
     return setError;
 }
 
+interface JWKSCacheEntry {
+    jwks: JWKS;
+    timestamp: number;
+    expiresAt: number;
+}
+
+export interface JWKSCacheConfig {
+    cacheDurationMs?: number;
+}
+
+class JWKSCache {
+    private cache: Map<string, JWKSCacheEntry> = new Map();
+    private defaultCacheDurationMs: number = 10 * 60 * 1000; // 10 minutes default
+
+    async getJWKS(jwksUrl: string, config?: JWKSCacheConfig): Promise<JWKS> {
+        const now = Date.now();
+        const cacheEntry = this.cache.get(jwksUrl);
+        const cacheDurationMs = config?.cacheDurationMs ?? this.defaultCacheDurationMs;
+
+        if (cacheEntry && now < cacheEntry.expiresAt) {
+            return cacheEntry.jwks;
+        }
+
+        const jwksResponse = await fetch(jwksUrl);
+        if (!jwksResponse.ok) {
+            throw new Error(`Failed to fetch JWKS: ${jwksResponse.statusText}`);
+        }
+
+        const jwks: JWKS = await jwksResponse.json();
+
+        this.cache.set(jwksUrl, {
+            jwks,
+            timestamp: now,
+            expiresAt: now + cacheDurationMs,
+        });
+
+        return jwks;
+    }
+
+    clearCache(): void {
+        this.cache.clear();
+    }
+
+    setCacheDuration(durationMs: number): void {
+        this.defaultCacheDurationMs = durationMs;
+    }
+}
+
+const jwksCache = new JWKSCache();
+
 export async function jwtVerify<T extends { exp?: number; nbf?: number; iat?: number }>(
     token: string,
-    jwksUrl: string
+    jwksUrl: string,
+    config?: JWKSCacheConfig
 ): Promise<T> {
     const parts = token.split(".");
     if (parts.length !== 3) {
@@ -589,12 +640,7 @@ export async function jwtVerify<T extends { exp?: number; nbf?: number; iat?: nu
         throw new Error("JWT header missing alg (Algorithm)");
     }
 
-    const jwksResponse = await fetch(jwksUrl);
-    if (!jwksResponse.ok) {
-        throw new Error(`Failed to fetch JWKS: ${jwksResponse.statusText}`);
-    }
-
-    const jwks: JWKS = await jwksResponse.json();
+    const jwks: JWKS = await jwksCache.getJWKS(jwksUrl, config);
     const matchingKey = jwks.keys.find((key) => key.kid === kid);
     if (!matchingKey) {
         throw new Error(`No matching key found for kid: ${kid}`);
@@ -678,6 +724,14 @@ function base64urlToBase64(base64url: string): string {
     }
 
     return base64;
+}
+
+export function clearJWKSCache(): void {
+    jwksCache.clearCache();
+}
+
+export function setJWKSCacheDuration(durationMs: number): void {
+    jwksCache.setCacheDuration(durationMs);
 }
 
 export const handleCallAPI = async <T>({

@@ -35,7 +35,7 @@ export const frontendConfig = (): SuperTokensConfig => {
                 contactMethod: "EMAIL_OR_PHONE",
             }),
             Session.init({
-                // tokenTransferMethod: "header"
+                tokenTransferMethod: "header",
             }),
         ],
         windowHandler: (orig) => {

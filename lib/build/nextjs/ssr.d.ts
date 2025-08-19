@@ -33,7 +33,7 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * @param action - A server action that will get called after the authentication state is confirmed
      * @returns The server action return value
      **/
-    static confirmAuthenticationAndCallServerAction<T extends () => Promise<K>, K>(action: T): Promise<void | K>;
+    static ensureSessionAndCall<T extends () => Promise<K>, K>(action: T): Promise<void | K>;
     /**
      * Get the session state or redirect
      * The function is meant to be used inside getServerSideProps.
@@ -48,4 +48,4 @@ export declare const init: typeof SuperTokensNextjsSSRAPIWrapper.init;
 export declare const getServerComponentSession: typeof SuperTokensNextjsSSRAPIWrapper.getServerComponentSession;
 export declare const getServerActionSession: typeof SuperTokensNextjsSSRAPIWrapper.getServerActionSession;
 export declare const getServerSidePropsSession: typeof SuperTokensNextjsSSRAPIWrapper.getServerSidePropsSession;
-export declare const confirmAuthenticationAndCallServerAction: typeof SuperTokensNextjsSSRAPIWrapper.confirmAuthenticationAndCallServerAction;
+export declare const ensureSessionAndCall: typeof SuperTokensNextjsSSRAPIWrapper.ensureSessionAndCall;

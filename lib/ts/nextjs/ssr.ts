@@ -131,7 +131,7 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * @param action - A server action that will get called after the authentication state is confirmed
      * @returns The server action return value
      **/
-    static async confirmAuthenticationAndCallServerAction<T extends () => Promise<K>, K>(action: T) {
+    static async ensureSessionAndCall<T extends () => Promise<K>, K>(action: T) {
         try {
             const sessionExists = await doesSessionExist();
             logDebugMessage(`Session exists: ${sessionExists}`);
@@ -201,8 +201,7 @@ export const init = SuperTokensNextjsSSRAPIWrapper.init;
 export const getServerComponentSession = SuperTokensNextjsSSRAPIWrapper.getServerComponentSession;
 export const getServerActionSession = SuperTokensNextjsSSRAPIWrapper.getServerActionSession;
 export const getServerSidePropsSession = SuperTokensNextjsSSRAPIWrapper.getServerSidePropsSession;
-export const confirmAuthenticationAndCallServerAction =
-    SuperTokensNextjsSSRAPIWrapper.confirmAuthenticationAndCallServerAction;
+export const ensureSessionAndCall = SuperTokensNextjsSSRAPIWrapper.ensureSessionAndCall;
 
 function getAuthPagePath(redirectPath: string): string {
     const authPagePath = SuperTokensNextjsSSRAPIWrapper.getConfigOrThrow().appInfo.websiteBasePath || "/auth";
@@ -215,8 +214,8 @@ function getRefreshAPIPath(): string {
 }
 
 function getRefreshLocation(redirectPath: string): string {
-    const refreshAPIPath = getRefreshAPIPath();
-    return `${refreshAPIPath}?${REDIRECT_PATH_PARAM_NAME}=${redirectPath}`;
+    const sessionRefreshAPIPath = getRefreshAPIPath();
+    return `${sessionRefreshAPIPath}?${REDIRECT_PATH_PARAM_NAME}=${redirectPath}`;
 }
 
 async function getSSRSessionState(

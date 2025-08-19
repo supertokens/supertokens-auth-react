@@ -30,8 +30,6 @@ let AppInfo: NormalisedAppInfo;
 export function superTokensMiddleware(
     config: SuperTokensNextjsMiddlewareConfig
 ): (request: Request) => Promise<Response | void> {
-    const { apiRequestMiddleware, isApiRequest: _isApiRequest } = config;
-    const isApiRequest = _isApiRequest ?? defaultIsApiRequest;
     const usesTheNextjsApiAsTheAuthenticationServer = compareUrlHost(
         config.appInfo.apiDomain,
         config.appInfo.websiteDomain
@@ -48,15 +46,12 @@ export function superTokensMiddleware(
             return refreshSession(request);
         }
 
-        if (isApiRequest(request) && usesTheNextjsApiAsTheAuthenticationServer) {
-            if (requestUrl.pathname.startsWith(AppInfo.apiBasePath.getAsStringDangerous())) {
-                // this hits our pages/api/auth/* endpoints
-                return next();
-            }
-
-            if (apiRequestMiddleware) {
-                return apiRequestMiddleware(request);
-            }
+        if (
+            usesTheNextjsApiAsTheAuthenticationServer &&
+            requestUrl.pathname.startsWith(AppInfo.apiBasePath.getAsStringDangerous())
+        ) {
+            // this hits our pages/api/auth/* endpoints
+            return next();
         }
 
         if (
@@ -86,7 +81,8 @@ export async function refreshSession(request: Request): Promise<Response> {
         return redirectToAuthPage(request);
     }
 
-    if (!getCookie(request, REFRESH_TOKEN_COOKIE_NAME) && !extractTokenFromTheAuthorizationHeader(request)) {
+    // The redirect originates from SSR and authorization headers are passed in a cookie
+    if (!getCookie(request, REFRESH_TOKEN_COOKIE_NAME) && !getCookie(request, REFRESH_TOKEN_HEADER_NAME)) {
         logDebugMessage("Refresh token not found");
         return redirectToAuthPage(request);
     }
@@ -95,19 +91,20 @@ export async function refreshSession(request: Request): Promise<Response> {
     const urlParamRedirectPath = requestUrl.searchParams.get(REDIRECT_PATH_PARAM_NAME);
     const redirectTo = urlParamRedirectPath && isValidUrlPath(urlParamRedirectPath) ? urlParamRedirectPath : "/";
     try {
-        const tokens = await fetchNewTokens(request);
-        const hasRequiredCookies = tokens.accessToken && tokens.refreshToken && tokens.frontToken;
+        const { cookies, headers } = await fetchNewTokens(request);
+        const hasRequiredCookies = cookies.length >= 3 || headers.length >= 2;
         if (!hasRequiredCookies) {
             logDebugMessage("Missing tokens from refresh response");
             return redirectToAuthPage(request);
         }
         const redirectUrl = new URL(redirectTo, request.url);
         const finalResponse = redirect(redirectUrl.toString());
-        finalResponse.headers.append("set-cookie", tokens.accessToken);
-        finalResponse.headers.append("set-cookie", tokens.refreshToken);
-        finalResponse.headers.append("set-cookie", tokens.frontToken);
-        if (tokens.antiCsrfToken) {
-            finalResponse.headers.append("set-cookie", tokens.antiCsrfToken);
+        for (const cookie of cookies) {
+            finalResponse.headers.append("set-cookie", cookie);
+        }
+
+        for (const [headerName, headerValue] of headers) {
+            finalResponse.headers.append(headerName, headerValue);
         }
         finalResponse.headers.append(
             "set-cookie",
@@ -115,6 +112,7 @@ export async function refreshSession(request: Request): Promise<Response> {
                 redirectAttemptNumber + 1
             }; Path=/; Max-Age=10; HttpOnly; SameSite=Strict`
         );
+
         logDebugMessage("Attached new tokens to response");
         return finalResponse;
     } catch (err) {
@@ -129,7 +127,7 @@ export async function revokeSession(request: Request): Promise<Response | void> 
 
     try {
         const accessToken =
-            getCookie(request, ACCESS_TOKEN_COOKIE_NAME) || extractTokenFromTheAuthorizationHeader(request);
+            getCookie(request, ACCESS_TOKEN_COOKIE_NAME) || getCookie(request, ACCESS_TOKEN_HEADER_NAME);
         if (!accessToken) {
             throw new Error("No access token found in the request");
         }
@@ -199,24 +197,21 @@ function next(): Response {
 }
 
 async function fetchNewTokens(request: Request): Promise<{
-    accessToken: string;
-    refreshToken: string;
-    frontToken: string;
-    antiCsrfToken: string;
+    headers: [string, string][];
+    cookies: string[];
 }> {
     const refreshApiURL = new URL(
         `${AppInfo.apiBasePath.getAsStringDangerous()}/session/refresh`,
         AppInfo.apiDomain.getAsStringDangerous()
     );
     const cookieRefreshToken = getCookie(request, REFRESH_TOKEN_COOKIE_NAME);
-    const headerRefreshToken = extractTokenFromTheAuthorizationHeader(request);
-    const refreshRequestHeaders: Record<string, string> = {
-        "Content-Type": "application/json",
-    };
+    const headerRefreshToken = getCookie(request, REFRESH_TOKEN_HEADER_NAME);
+    const refreshRequestHeaders = new Headers();
+    refreshRequestHeaders.append("Content-Type", "application/json");
     if (cookieRefreshToken) {
-        refreshRequestHeaders.Cookie = `${REFRESH_TOKEN_COOKIE_NAME}=${cookieRefreshToken}`;
+        refreshRequestHeaders.append("Cookie", `${REFRESH_TOKEN_COOKIE_NAME}=${cookieRefreshToken}`);
     } else if (headerRefreshToken) {
-        refreshRequestHeaders.Authorization = `Bearer ${headerRefreshToken}`;
+        refreshRequestHeaders.append("Authorization", `Bearer ${headerRefreshToken}`);
     }
 
     const refreshResponse = await fetch(refreshApiURL, {
@@ -226,19 +221,19 @@ async function fetchNewTokens(request: Request): Promise<{
     });
 
     if (!refreshResponse.ok) {
-        logDebugMessage(`Refresh request returned an invalid status code: ${refreshResponse.status}`);
-        return { accessToken: "", refreshToken: "", frontToken: "", antiCsrfToken: "" };
+        throw new Error(`Refresh request returned an invalid status code: ${refreshResponse.status}`);
     }
 
     logDebugMessage("Session refresh request completed");
-    const frontTokenHeaderValue = refreshResponse.headers.get(FRONT_TOKEN_HEADER_NAME);
-    const cookieTokens = {
-        accessToken: "",
-        refreshToken: "",
-        frontToken: `${FRONT_TOKEN_COOKIE_NAME}=${frontTokenHeaderValue}; Path=/`,
-        antiCsrfToken: "",
+    const cookies: string[] = [];
+    const tokens = {
+        accessToken: refreshResponse.headers.get(ACCESS_TOKEN_HEADER_NAME) || "",
+        refreshToken: refreshResponse.headers.get(REFRESH_TOKEN_HEADER_NAME) || "",
+        frontToken: refreshResponse.headers.get(FRONT_TOKEN_HEADER_NAME) || "",
+        antiCsrfToken: refreshResponse.headers.get(ANTI_CSRF_TOKEN_HEADER_NAME) || "",
     };
 
+    cookies.push(`${FRONT_TOKEN_COOKIE_NAME}=${tokens.frontToken}; Path=/`);
     // TOOD: Review the current build target
     // getSetCookie was added in node 18 and our build target is ES5
     // This should not a problem here since the function runs in the Vercel edge runtime environment
@@ -246,38 +241,54 @@ async function fetchNewTokens(request: Request): Promise<{
     const setCookieHeaders = refreshResponse.headers.getSetCookie();
     for (const header of setCookieHeaders) {
         if (header.includes(ACCESS_TOKEN_COOKIE_NAME)) {
-            cookieTokens.accessToken = header;
+            cookies.push(header);
         }
         if (header.includes(REFRESH_TOKEN_COOKIE_NAME)) {
-            cookieTokens.refreshToken = header;
+            cookies.push(header);
         }
         if (header.includes(ANTI_CSRF_TOKEN_COOKIE_NAME)) {
-            cookieTokens.antiCsrfToken = header;
+            cookies.push(header);
         }
     }
 
-    const accessTokenHeaderValue = refreshResponse.headers.get(ACCESS_TOKEN_HEADER_NAME);
-    const refreshTokenHeaderValue = refreshResponse.headers.get(REFRESH_TOKEN_HEADER_NAME);
-    const antiCsrfTokenHeaderValue = refreshResponse.headers.get(ANTI_CSRF_TOKEN_HEADER_NAME);
-    if (!cookieTokens.accessToken) {
-        cookieTokens.accessToken = `${ACCESS_TOKEN_COOKIE_NAME}=${accessTokenHeaderValue}; Path=/; HttpOnly; SameSite=Lax`;
+    if (!cookies.some((cookie) => cookie.includes(ACCESS_TOKEN_COOKIE_NAME))) {
+        cookies.push(`${ACCESS_TOKEN_HEADER_NAME}=${tokens.accessToken}; Path=/; HttpOnly; SameSite=Lax`);
     }
-    if (!cookieTokens.refreshToken) {
-        cookieTokens.refreshToken = `${REFRESH_TOKEN_COOKIE_NAME}=${refreshTokenHeaderValue}; Path=/api/auth/session/refresh; HttpOnly; SameSite=Lax`;
+    if (!cookies.some((cookie) => cookie.includes(REFRESH_TOKEN_COOKIE_NAME))) {
+        cookies.push(
+            `${REFRESH_TOKEN_HEADER_NAME}=${tokens.refreshToken}; Path=/api/auth/session/refresh; HttpOnly; SameSite=Lax`
+        );
     }
-    if (!cookieTokens.antiCsrfToken && antiCsrfTokenHeaderValue) {
-        cookieTokens.antiCsrfToken = `${ANTI_CSRF_TOKEN_COOKIE_NAME}=${antiCsrfTokenHeaderValue}; Path=/; HttpOnly; SameSite=Lax`;
+    if (!cookies.some((cookie) => cookie.includes(ANTI_CSRF_TOKEN_COOKIE_NAME)) && tokens.antiCsrfToken) {
+        cookies.push(`${ANTI_CSRF_TOKEN_HEADER_NAME}=${tokens.antiCsrfToken}; Path=/; HttpOnly; SameSite=Lax`);
     }
 
-    return cookieTokens;
+    const headers: [string, string][] = [];
+    if (tokens.accessToken) {
+        headers.push([ACCESS_TOKEN_HEADER_NAME, tokens.accessToken]);
+    }
+    if (tokens.refreshToken) {
+        headers.push([REFRESH_TOKEN_HEADER_NAME, tokens.refreshToken]);
+    }
+    if (tokens.antiCsrfToken) {
+        headers.push([ANTI_CSRF_TOKEN_HEADER_NAME, tokens.antiCsrfToken]);
+    }
+
+    return { cookies, headers };
 }
 
 function getCookie(request: Request, name: string) {
-    return request.headers
-        .get("cookie")
-        ?.split("; ")
-        .find((row) => row.startsWith(`${name}=`))
-        ?.split("=")[1];
+    const cookieHeader = request.headers.get("cookie");
+    if (!cookieHeader) {
+        return undefined;
+    }
+
+    const cookies = cookieHeader.split("; ");
+    const matchingCookies = cookies.filter((row) => row.startsWith(`${name}=`)).map((row) => row.split("=")[1]);
+
+    // Return the last matching cookie value (most recent)
+    // This handles cases where duplicate cookies exist
+    return matchingCookies.length > 0 ? matchingCookies[matchingCookies.length - 1] : undefined;
 }
 
 function getRedirectAttemptNumber(request: Request): number {
@@ -335,21 +346,7 @@ function compareUrlHost(firstUrl: string, secondUrl: string): boolean {
     }
 }
 
-function extractTokenFromTheAuthorizationHeader(request: Request): string | null {
-    const headerValue = request.headers.get("authorization") || request.headers.get("Authorization");
-    if (!headerValue) return null;
-
-    const token = headerValue.split(" ")[1];
-    return token || null;
-}
-
 function getRefreshAPIPath(): string {
     const apiPath = AppInfo.apiBasePath.getAsStringDangerous();
     return `${apiPath}/session/refresh`;
-}
-
-function defaultIsApiRequest(request: Request): boolean {
-    const requestUrl = new URL(request.url);
-    const refreshPath = getRefreshAPIPath();
-    return requestUrl.pathname.startsWith(refreshPath);
 }
