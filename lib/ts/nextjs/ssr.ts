@@ -113,11 +113,7 @@ export default class SuperTokensNextjsSSRAPIWrapper {
         logDebugMessage(`SSR Session State: ${state}`);
         if (state === "tokens-match") {
             return { session: session as LoadedSessionContext, status: "valid" };
-        } else if (
-            ["tokens-do-not-match", "front-token-expired", "access-token-not-found", "access-token-invalid"].includes(
-                state
-            )
-        ) {
+        } else if (["tokens-do-not-match", "front-token-expired", "access-token-not-found"].includes(state)) {
             return { status: "expired", session: undefined };
         }
 
@@ -226,6 +222,9 @@ async function getSSRSessionState(
     if (!frontToken) {
         return { state: "front-token-not-found" };
     }
+
+    console.log("######");
+    console.log(frontToken);
 
     const parsedFrontToken = parseFrontToken(frontToken);
     if (!parsedFrontToken.isValid) {

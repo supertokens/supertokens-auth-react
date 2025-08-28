@@ -7,6 +7,9 @@ REPO=$(pwd)
 
 cd $1
 
+echo "Installing supertokens-auth-react"
+echo "asdasdsa"
+echo $(pwd)
 rm -rf node_modules/.cache
 rm -rf node_modules/supertokens-auth-react/lib || true
 rm -rf node_modules/supertokens-auth-react/recipe || true

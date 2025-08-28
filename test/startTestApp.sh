@@ -28,11 +28,20 @@ function startEndToEnd () {
         sleep 5
     done
 
-    while ! curl -s localhost:8082 > /dev/null 2>&1
-    do
-        echo "Waiting for backend test application to start..."
-        sleep 5
-    done
+    if [[ "${RUN_NEXTJS_TESTS}" != "true" ]]; then
+        while ! curl -s localhost:8082 > /dev/null 2>&1
+        do
+            echo "Waiting for backend test application to start..."
+            sleep 5
+        done
+    fi
+
+    BASE_SPEC_FILES="test/end-to-end/**/**.test.js"
+    EXCLUDED_SPEC_FILES="test/end-to-end/**/nextjs.ssr.test.js"
+    if [[ "${RUN_NEXTJS_TESTS}" == "true" ]]; then
+        BASE_SPEC_FILES="test/end-to-end/**/nextjs.ssr.test.js"
+        EXCLUDED_SPEC_FILES=""
+    fi
 
     sleep 2 # Because the server is responding does not mean the app is ready. Let's wait another 5secs to make sure the app is up.
     echo "Start mocha testing"
@@ -43,7 +52,7 @@ function startEndToEnd () {
     elif ! [[ -z "${SPEC_FILES}" ]]; then
         APP_SERVER=$apiPort TEST_MODE=testing mocha --bail=$BAIL --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config $SPEC_FILES
     elif [[ -z "${MOCHA_FILE}" ]]; then
-        APP_SERVER=$apiPort TEST_MODE=testing mocha --bail=$BAIL --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config test/end-to-end/**/**.test.js
+        APP_SERVER=$apiPort TEST_MODE=testing mocha --bail=$BAIL --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config $BASE_SPEC_FILES $EXCLUDED_SPEC_FILES
     else
         if ! [[ -z "${CIRCLE_NODE_TOTAL}" ]]; then
             export SPEC_FILES=$(npx mocha-split-tests -r ./runtime.log -t $CIRCLE_NODE_TOTAL -g $CIRCLE_NODE_INDEX -f 'test/end-to-end/**/*.test.js' -f 'test/unit/**/*.test.js')
@@ -51,6 +60,8 @@ function startEndToEnd () {
         else
             export SPEC_FILES="test/end-to-end/**/*.test.js"
         fi
+
+        echo $SPEC_FILES
 
         # We want to get the test files through CI and run the tests through it as well
         if ! [[ -z "${CI}" ]]; then
@@ -104,6 +115,15 @@ if [[ "${RUN_REACT_16_TESTS}" == "true" ]]; then
     IS_REACT_16=true RUN_RRD5=true startEndToEnd
 
     echo "React 16 tests passed"
+elif [[ "${RUN_NEXTJS_TESTS}" == "true" ]]; then
+    echo "Running tests with NextJS"
+    
+    if [[ "${SERVER_STARTED}" != "true" ]]; then
+        (cd ./examples/for-tests-nextjs/ && npm run dev >> ../../test_report/logs/nextjs.log 2>&1 &)
+    fi
+    startEndToEnd
+
+    echo "NextJS tests passed"
 else
     echo "Running tests with React 18"
     # Run node server in background.

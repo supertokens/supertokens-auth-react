@@ -37,6 +37,14 @@ export function superTokensMiddleware(
     if (config.enableDebugLogs) {
         enableLogging();
     }
+
+    const isApiRequest =
+        config.isApiRequest ||
+        ((request) => {
+            const requestUrl = new URL(request.url);
+            return requestUrl.pathname.startsWith("/api");
+        });
+
     AppInfo = normaliseInputAppInfoOrThrowError(config.appInfo);
 
     return async (request: Request) => {
@@ -61,15 +69,21 @@ export function superTokensMiddleware(
             return revokeSession(request);
         }
 
+        if (isApiRequest(request) && config.apiRequestMiddleware) {
+            return config.apiRequestMiddleware(request);
+        }
+
         // Save the current path so that we can use it during SSR
         // Used to redirect the user to the correct path after login/refresh
         // https://github.com/vercel/next.js/issues/43704#issuecomment-2090798307
         // TL;DR: You can not access pathname in SSR and requests that originate from redirect()
         const response = next();
-        response.headers.append(
-            "set-cookie",
-            `${CURRENT_PATH_COOKIE_NAME}=${requestUrl.pathname}; Path=/; HttpOnly; SameSite=Strict`
-        );
+        if (!isInternalPath(requestUrl.pathname)) {
+            response.headers.append(
+                "set-cookie",
+                `${CURRENT_PATH_COOKIE_NAME}=${requestUrl.pathname}; Path=/; HttpOnly; SameSite=Strict`
+            );
+        }
         return response;
     };
 }
@@ -113,6 +127,12 @@ export async function refreshSession(request: Request): Promise<Response> {
             }; Path=/; Max-Age=10; HttpOnly; SameSite=Strict`
         );
 
+        if (isInTestEnv()) {
+            finalResponse.headers.append(
+                "set-cookie",
+                `sSSRRefresh=true; Path=/; HttpOnly; SameSite=Strict; Max-Age=5`
+            );
+        }
         logDebugMessage("Attached new tokens to response");
         return finalResponse;
     } catch (err) {
@@ -135,13 +155,14 @@ export async function revokeSession(request: Request): Promise<Response | void> 
             `${AppInfo.apiBasePath.getAsStringDangerous()}/signout`,
             AppInfo.apiDomain.getAsStringDangerous()
         );
+        const refreshRequestHeaders = new Headers();
+        refreshRequestHeaders.append("Content-Type", "application/json");
+        refreshRequestHeaders.append("Cookie", `${REFRESH_TOKEN_COOKIE_NAME}=${accessToken}`);
+        refreshRequestHeaders.append("Authorization", `Bearer ${accessToken}`);
+
         await fetch(signOutURL, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                [ACCESS_TOKEN_HEADER_NAME]: accessToken,
-                Cookie: `${ACCESS_TOKEN_COOKIE_NAME}=${accessToken}`,
-            },
+            headers: refreshRequestHeaders,
             credentials: "include",
         });
     } catch (err) {
@@ -156,21 +177,34 @@ export async function revokeSession(request: Request): Promise<Response | void> 
     );
     response.headers.append(
         "set-cookie",
+        `${ACCESS_TOKEN_HEADER_NAME}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
+    );
+    response.headers.append(
+        "set-cookie",
         `${FRONT_TOKEN_COOKIE_NAME}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
     );
     response.headers.append(
         "set-cookie",
         `${ANTI_CSRF_TOKEN_COOKIE_NAME}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
     );
+    response.headers.append(
+        "set-cookie",
+        `${ANTI_CSRF_TOKEN_HEADER_NAME}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
+    );
     const refreshPath = getRefreshAPIPath();
     response.headers.append(
         "set-cookie",
         `${REFRESH_TOKEN_COOKIE_NAME}=; Path=${refreshPath}; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
     );
-    response.headers.delete(ACCESS_TOKEN_HEADER_NAME);
-    response.headers.delete(REFRESH_TOKEN_HEADER_NAME);
-    response.headers.delete(FRONT_TOKEN_HEADER_NAME);
-    response.headers.delete(ANTI_CSRF_TOKEN_HEADER_NAME);
+    response.headers.append(
+        "set-cookie",
+        `${REFRESH_TOKEN_HEADER_NAME}=; Path=${refreshPath}; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
+    );
+
+    if (isInTestEnv()) {
+        response.headers.append("set-cookie", `sRevokeSession=true; Path=/; HttpOnly; SameSite=Strict; Max-Age=5`);
+    }
+
     return response;
 }
 
@@ -349,4 +383,58 @@ function compareUrlHost(firstUrl: string, secondUrl: string): boolean {
 function getRefreshAPIPath(): string {
     const apiPath = AppInfo.apiBasePath.getAsStringDangerous();
     return `${apiPath}/session/refresh`;
+}
+
+function isInternalPath(pathname: string): boolean {
+    const internalPaths = [
+        // Chrome DevTools and well-known paths
+        "/.well-known/",
+
+        // Browser favicon requests
+        "/favicon.ico",
+        "/apple-touch-icon",
+        "/browserconfig.xml",
+        "/manifest.json",
+
+        // Service worker and PWA files
+        "/sw.js",
+        "/service-worker.js",
+        "/workbox-",
+
+        // Browser security and policy files
+        "/robots.txt",
+        "/sitemap.xml",
+        "/ads.txt",
+        "/.htaccess",
+
+        // Browser prefetch and preload requests
+        "/prefetch",
+        "/preload",
+
+        // Debug and development tools
+        "/_next/webpack-hmr",
+        "/_next/static/chunks/webpack",
+        "/__webpack_hmr",
+
+        // API routes (typically shouldn't be saved as redirect paths)
+        "/api/",
+
+        // Assets and static files
+        "/static/",
+        "/_next/static/",
+        "/images/",
+        "/css/",
+        "/js/",
+    ];
+
+    const isInternalPath = internalPaths.some((path) => pathname.startsWith(path));
+
+    const fileExtensions = [".ico", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".css", ".js", ".map", ".xml", ".txt"];
+    const isAssetFile = fileExtensions.some((ext) => pathname.toLowerCase().endsWith(ext));
+
+    return isInternalPath || isAssetFile;
+}
+
+function isInTestEnv() {
+    return process.env.SUPERTOKENS_TEST_MODE === "true";
 }
