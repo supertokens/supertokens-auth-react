@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   Add utilities for session management during server side rendering
+
 ## [0.50] - 2025-08-15
 
 -   Add WebAuthn credential management methods: `listCredentials`, `removeCredential`
