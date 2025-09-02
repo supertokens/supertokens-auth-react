@@ -12,3 +12,5 @@ export declare const CURRENT_PATH_COOKIE_NAME = "sCurrentPath";
 export declare const FORCE_LOGOUT_PATH_PARAM_NAME = "forceLogout";
 export declare const REDIRECT_PATH_PARAM_NAME = "stRedirectTo";
 export declare const DEFAULT_API_PATH = "/api/auth";
+export declare const SSR_REFRESH_SESSION_INDICATOR_COOKIE_NAME = "sSessionRefreshed";
+export declare const SSR_REVOKE_SESSION_INDICATOR_COOKIE_NAME = "sSessionRevoked";

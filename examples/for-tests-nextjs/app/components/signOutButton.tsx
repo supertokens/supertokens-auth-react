@@ -6,10 +6,12 @@ import { unprotectedAction } from "../actions/unprotectedAction";
 import { ssrConfig } from "../config/ssr";
 
 export const SignOutButton = () => {
-    const [actionResult, setActionResult] = useState<string | undefined>();
+    const onClick = async () => {
+        await signOut();
+    };
 
     return (
-        <button data-testid="signOut" onClick={signOut}>
+        <button data-testid="signOut" onClick={onClick}>
             Sing Out
         </button>
     );

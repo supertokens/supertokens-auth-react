@@ -223,9 +223,6 @@ async function getSSRSessionState(
         return { state: "front-token-not-found" };
     }
 
-    console.log("######");
-    console.log(frontToken);
-
     const parsedFrontToken = parseFrontToken(frontToken);
     if (!parsedFrontToken.isValid) {
         return { state: "front-token-invalid" };

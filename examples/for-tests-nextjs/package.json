@@ -3,11 +3,11 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev --port 3031",
+        "dev": "npm run prep && next dev --port 3031",
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "prep": "cd ../../ && SRC=./examples/for-tests-nextjs npm run prep-test-app"
+        "prep": "./build-and-install.sh"
     },
     "dependencies": {
         "jsonwebtoken": "^9.0.2",

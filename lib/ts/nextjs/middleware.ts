@@ -14,6 +14,8 @@ import {
     FRONT_TOKEN_COOKIE_NAME,
     ANTI_CSRF_TOKEN_COOKIE_NAME,
     CURRENT_PATH_COOKIE_NAME,
+    SSR_REFRESH_SESSION_INDICATOR_COOKIE_NAME,
+    SSR_REVOKE_SESSION_INDICATOR_COOKIE_NAME,
 } from "./constants";
 
 import type { ApiRequestMiddleware, SuperTokensNextjsConfig } from "./types";
@@ -127,12 +129,10 @@ export async function refreshSession(request: Request): Promise<Response> {
             }; Path=/; Max-Age=10; HttpOnly; SameSite=Strict`
         );
 
-        if (isInTestEnv()) {
-            finalResponse.headers.append(
-                "set-cookie",
-                `sSSRRefresh=true; Path=/; HttpOnly; SameSite=Strict; Max-Age=5`
-            );
-        }
+        finalResponse.headers.append(
+            "set-cookie",
+            `${SSR_REFRESH_SESSION_INDICATOR_COOKIE_NAME}=true; Path=/; HttpOnly; SameSite=Strict; Max-Age=5`
+        );
         logDebugMessage("Attached new tokens to response");
         return finalResponse;
     } catch (err) {
@@ -200,10 +200,10 @@ export async function revokeSession(request: Request): Promise<Response | void> 
         "set-cookie",
         `${REFRESH_TOKEN_HEADER_NAME}=; Path=${refreshPath}; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
     );
-
-    if (isInTestEnv()) {
-        response.headers.append("set-cookie", `sRevokeSession=true; Path=/; HttpOnly; SameSite=Strict; Max-Age=5`);
-    }
+    response.headers.append(
+        "set-cookie",
+        `${SSR_REVOKE_SESSION_INDICATOR_COOKIE_NAME}=true; Path=/; HttpOnly; SameSite=Strict; Max-Age=5`
+    );
 
     return response;
 }
@@ -433,8 +433,4 @@ function isInternalPath(pathname: string): boolean {
     const isAssetFile = fileExtensions.some((ext) => pathname.toLowerCase().endsWith(ext));
 
     return isInternalPath || isAssetFile;
-}
-
-function isInTestEnv() {
-    return process.env.SUPERTOKENS_TEST_MODE === "true";
 }

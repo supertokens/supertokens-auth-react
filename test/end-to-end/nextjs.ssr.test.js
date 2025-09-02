@@ -38,28 +38,75 @@ import {
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL } from "../constants";
 
+const ACCESS_TOKEN_COOKIE_NAME = "sAccessToken";
+const FRONT_TOKEN_COOKIE_NAME = "sFrontToken";
+const REFRESH_TOKEN_COOKIE_NAME = "sRefreshToken";
+const REDIRECT_ATTEMPT_MAX_COUNT = 5;
+const REDIRECT_ATTEMPT_COUNT_COOKIE_NAME = "stSsrSessionRefreshAttempt";
+const CURRENT_PATH_COOKIE_NAME = "sCurrentPath";
+const REDIRECT_PATH_PARAM_NAME = "stRedirectTo";
+const SSR_REFRESH_SESSION_INDICATOR_COOKIE_NAME = "sSessionRefreshed";
+const SSR_REVOKE_SESSION_INDICATOR_COOKIE_NAME = "sSessionRevoked";
+
+const email = getTestEmail("nextjs");
+const password = "password123";
+
 async function signOut(page) {
-    const signOutButton = await page.waitForSelector("[data-testid='signOut']");
-    await signOutButton.click();
+    const client = await page.target().createCDPSession();
+    await client.send("Network.clearBrowserCookies");
+    await client.send("Network.clearBrowserCache");
+    await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+}
+
+async function signIn(page) {
+    await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+    await setInputValues(page, [
+        { name: "email", value: email },
+        { name: "password", value: password },
+    ]);
+    await submitForm(page);
+    await waitForUrl(page, "/");
+}
+
+function decodeFrontToken(frontToken) {
+    return JSON.parse(decodeURIComponent(escape(atob(frontToken))));
+}
+
+function encodeFrontToken(frontToken) {
+    return btoa(unescape(encodeURIComponent(JSON.stringify(frontToken))));
 }
 
 async function didSessionRefresh(page) {
     const cookies = await page.cookies();
-    const sessionRefreshCookie = cookies.find((c) => c.name === "sSSRRefresh");
-    return sessionRefreshCookie?.value === "true";
+    const refreshTokenIndicatorCookie = cookies.find((c) => c.name === SSR_REFRESH_SESSION_INDICATOR_COOKIE_NAME);
+    assert.equal(refreshTokenIndicatorCookie?.value, "true");
 }
 
 async function wasSessionRevoked(page) {
-    const cookies = await page.cookies();
-    const sessionRevokeCookie = cookies.find((c) => c.name === "sRevokeSession");
-    return sessionRevokeCookie?.value === "true";
+    let newCookies = await page.cookies();
+    const refreshTokenIndicatorCookie = newCookies.find((c) => c.name === SSR_REVOKE_SESSION_INDICATOR_COOKIE_NAME);
+    assert.equal(refreshTokenIndicatorCookie?.value, "true");
+}
+
+async function hasServerComponentUserId(page) {
+    const userIdElement = await page.waitForSelector("[data-testid~=getServerComponentSession-userId]");
+    const textContent = await userIdElement.evaluate((el) => el.textContent);
+    assert.notEqual(textContent, "");
+}
+
+async function triggerServerAction(page) {
+    const actionButton = await page.waitForSelector("[data-testid='getServerActionSession-button']");
+    await actionButton.click();
+    await new Promise((res) => setTimeout(res, 1000));
+    const userIdElement = await page.waitForSelector("[data-testid='getServerActionSession-result']");
+    const textContent = await userIdElement.evaluate((el) => el.textContent);
+    const [status, userId] = textContent.split(":");
+    return { userId: userId.trim(), status: status.trim() };
 }
 
 describe("SuperTokens NextJS SSR", function () {
     let browser;
     let page;
-    const email = getTestEmail("nextjs");
-    const password = "password123";
     before(async function () {
         browser = await setupBrowser();
         page = await browser.newPage();
@@ -69,9 +116,8 @@ describe("SuperTokens NextJS SSR", function () {
             { name: "password", value: password },
         ]);
         await submitForm(page);
-        await new Promise((res) => setTimeout(res, 2000));
+        await waitForUrl(page, "/");
         await signOut(page);
-        await new Promise((res) => setTimeout(res, 2000));
         await page.close();
     });
 
@@ -84,609 +130,244 @@ describe("SuperTokens NextJS SSR", function () {
     });
 
     afterEach(async function () {
-        await signOut(page);
-        await new Promise((res) => setTimeout(res, 2000));
-        await page.close();
+        await screenshotOnFailure(this, browser);
+        const cookies = await page.cookies();
+        await Promise.all(
+            cookies.map(async (cookie) => {
+                await page.deleteCookie(cookie);
+            })
+        );
+        await page?.close();
     });
 
     describe("NextJS SSR", function () {
         describe("getServerComponentSession", function () {
-            // it("show the user id if the session is valid", async function () {
-            //     await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            //     await setInputValues(page, [
-            //         { name: "email", value: email },
-            //         { name: "password", value: password },
-            //     ]);
-            //     await submitForm(page);
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //     await Promise.all([
-            //         page.goto(`${TEST_CLIENT_BASE_URL}/`),
-            //         page.waitForNavigation({ waitUntil: "networkidle0" }),
-            //     ]);
-            //     const userIdElement = await page.waitForSelector("[data-testid~=getServerComponentSession-userId]");
-            //     assert.notEqual(userIdElement, "");
-            //     await page.reload();
-            //     const hasSessionRefreshed = await didSessionRefresh(page);
-            //     assert.equal(hasSessionRefreshed, false);
-            // });
-
-            it("refresh if the front token has expired", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-                await setInputValues(page, [
-                    { name: "email", value: email },
-                    { name: "password", value: password },
-                ]);
-                await submitForm(page);
-                await new Promise((res) => setTimeout(res, 1000));
-
-                // Navigate to home to establish session
-                await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/`),
-                    page.waitForNavigation({ waitUntil: "networkidle0" }),
-                ]);
-
-                // Manipulate cookies to simulate expired front token
-                let cookies = await page.cookies();
-                const frontTokenCookie = cookies.find((c) => c.name === "sFrontToken");
-                const accessTokenCookie = cookies.find((c) => c.name === "sAccessToken");
+            it("refresh if the tokens do not match", async function () {
+                await signIn(page);
+                const cookies = await page.cookies();
+                const frontTokenCookie = cookies.find((c) => c.name === FRONT_TOKEN_COOKIE_NAME);
+                const accessTokenCookie = cookies.find((c) => c.name === ACCESS_TOKEN_COOKIE_NAME);
                 assert.notEqual(frontTokenCookie, undefined);
                 assert.notEqual(accessTokenCookie, undefined);
 
-                await page.deleteCookie({ name: "sFrontToken" });
-                const decodedFrontToken = JSON.parse(decodeURIComponent(escape(atob(frontTokenCookie.value))));
-                decodedFrontToken.ate = Date.now() - 3600000;
-                const expiredFrontTokenValue = btoa(unescape(encodeURIComponent(JSON.stringify(decodedFrontToken))));
-
-                await page.setCookie({
-                    name: "sFrontToken",
-                    value: expiredFrontTokenValue,
-                    domain: frontTokenCookie.domain,
-                    path: frontTokenCookie.path,
-                    httpOnly: frontTokenCookie.httpOnly,
-                    secure: frontTokenCookie.secure,
-                    sameSite: frontTokenCookie.sameSite,
+                await page.deleteCookie({ name: FRONT_TOKEN_COOKIE_NAME });
+                const decodedFrontToken = decodeFrontToken(frontTokenCookie?.value);
+                decodedFrontToken.up = {};
+                page.setCookie({
+                    ...frontTokenCookie,
+                    value: encodeFrontToken(decodedFrontToken),
                 });
 
                 await page.reload();
-                let newCookies = await page.cookies();
-                const updatedFrontTokenCookie = newCookies.find((c) => c.name === "sFrontToken");
-                assert.notEqual(updatedFrontTokenCookie?.value, undefined);
-                assert.notEqual(updatedFrontTokenCookie.value, frontTokenCookie.value);
-                assert.notEqual(updatedFrontTokenCookie.value, expiredFrontTokenValue);
-                const userIdElement = await page.waitForSelector("[data-testid~=getServerComponentSession-userId]");
-                const textContent = await userIdElement.evaluate((el) => el.textContent);
-                assert.notEqual(textContent, "");
+                await Promise.all([didSessionRefresh(page), hasServerComponentUserId(page)]);
+                await signOut(page);
             });
 
-            // it("refresh if the tokens do not match", async function () {
-            //     await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            //     await setInputValues(page, [
-            //         { name: "email", value: email },
-            //         { name: "password", value: password },
-            //     ]);
-            //     await submitForm(page);
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //
-            //     // Navigate to home to establish session
-            //     await Promise.all([
-            //         page.goto(`${TEST_CLIENT_BASE_URL}/`),
-            //         page.waitForNavigation({ waitUntil: "networkidle0" }),
-            //     ]);
-            //
-            //     // Manipulate cookies to make tokens mismatch
-            //     let cookies = await page.cookies();
-            //     const frontTokenCookie = cookies.find((c) => c.name === "sFrontToken");
-            //     const accessTokenCookie = cookies.find((c) => c.name === "sAccessToken");
-            //
-            //     if (frontTokenCookie && accessTokenCookie) {
-            //         // Modify front token to have different session handle than access token
-            //         await page.deleteCookie({ name: "sFrontToken" });
-            //         const mismatchedFrontTokenPayload = JSON.stringify({
-            //             uid: "different-user-id",
-            //             ate: Date.now() + 3600000,
-            //             up: {},
-            //             exp: Math.floor(Date.now() / 1000) + 3600,
-            //         });
-            //         const mismatchedFrontToken =
-            //             btoa(JSON.stringify({ alg: "none" })) + "." + btoa(mismatchedFrontTokenPayload) + ".";
-            //
-            //         await page.setCookie({
-            //             name: "sFrontToken",
-            //             value: mismatchedFrontToken,
-            //             domain: frontTokenCookie.domain,
-            //             path: frontTokenCookie.path,
-            //             httpOnly: frontTokenCookie.httpOnly,
-            //             secure: frontTokenCookie.secure,
-            //             sameSite: frontTokenCookie.sameSite,
-            //         });
-            //     }
-            //
-            //     // Reload page to trigger server component session check
-            //     await page.reload();
-            //     const hasSessionRefreshed = await didSessionRefresh(page);
-            //     assert.equal(hasSessionRefreshed, true);
-            //
-            //     // Should still show user ID after refresh
-            //     const userIdElement = await page.waitForSelector("[data-testid~=getServerComponentSession-userId]");
-            //     assert.notEqual(await userIdElement.textContent(), "");
-            // });
-            //
-            // it("refresh if the access token does not exist", async function () {
-            //     await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            //     await setInputValues(page, [
-            //         { name: "email", value: email },
-            //         { name: "password", value: password },
-            //     ]);
-            //     await submitForm(page);
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //
-            //     // Navigate to home to establish session
-            //     await Promise.all([
-            //         page.goto(`${TEST_CLIENT_BASE_URL}/`),
-            //         page.waitForNavigation({ waitUntil: "networkidle0" }),
-            //     ]);
-            //
-            //     // Remove only the access token cookie
-            //     await page.deleteCookie({ name: "sAccessToken" });
-            //
-            //     // Reload page to trigger server component session check
-            //     await page.reload();
-            //     const hasSessionRefreshed = await didSessionRefresh(page);
-            //     assert.equal(hasSessionRefreshed, true);
-            //
-            //     // Should still show user ID after refresh
-            //     const userIdElement = await page.waitForSelector("[data-testid~=getServerComponentSession-userId]");
-            //     assert.notEqual(await userIdElement.textContent(), "");
-            // });
-            //
-            // it("logout if the access token is invalid", async function () {
-            //     await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            //     await setInputValues(page, [
-            //         { name: "email", value: email },
-            //         { name: "password", value: password },
-            //     ]);
-            //     await submitForm(page);
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //
-            //     // Navigate to home to establish session
-            //     await Promise.all([
-            //         page.goto(`${TEST_CLIENT_BASE_URL}/`),
-            //         page.waitForNavigation({ waitUntil: "networkidle0" }),
-            //     ]);
-            //
-            //     // Set invalid access token
-            //     let cookies = await page.cookies();
-            //     const accessTokenCookie = cookies.find((c) => c.name === "sAccessToken");
-            //
-            //     if (accessTokenCookie) {
-            //         await page.deleteCookie({ name: "sAccessToken" });
-            //         await page.setCookie({
-            //             name: "sAccessToken",
-            //             value: "invalid.access.token",
-            //             domain: accessTokenCookie.domain,
-            //             path: accessTokenCookie.path,
-            //             httpOnly: accessTokenCookie.httpOnly,
-            //             secure: accessTokenCookie.secure,
-            //             sameSite: accessTokenCookie.sameSite,
-            //         });
-            //     }
-            //
-            //     // Reload page to trigger server component session check
-            //     await page.reload();
-            //     const sessionRevoked = await wasSessionRevoked(page);
-            //     assert.equal(sessionRevoked, true);
-            //
-            //     // Should redirect to auth page or show login
-            //     await waitForUrl(page, "/auth");
-            // });
-            //
-            // it("logout if the front token does not exist", async function () {
-            //     await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            //     await setInputValues(page, [
-            //         { name: "email", value: email },
-            //         { name: "password", value: password },
-            //     ]);
-            //     await submitForm(page);
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //
-            //     // Navigate to home to establish session
-            //     await Promise.all([
-            //         page.goto(`${TEST_CLIENT_BASE_URL}/`),
-            //         page.waitForNavigation({ waitUntil: "networkidle0" }),
-            //     ]);
-            //
-            //     // Remove only the front token cookie
-            //     await page.deleteCookie({ name: "sFrontToken" });
-            //
-            //     // Reload page to trigger server component session check
-            //     await page.reload();
-            //     const sessionRevoked = await wasSessionRevoked(page);
-            //     assert.equal(sessionRevoked, true);
-            //
-            //     // Should redirect to auth page or show login
-            //     await waitForUrl(page, "/auth");
-            // });
-            //
-            // it("logout if the front token is invalid", async function () {
-            //     await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            //     await setInputValues(page, [
-            //         { name: "email", value: email },
-            //         { name: "password", value: password },
-            //     ]);
-            //     await submitForm(page);
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //
-            //     // Navigate to home to establish session
-            //     await Promise.all([
-            //         page.goto(`${TEST_CLIENT_BASE_URL}/`),
-            //         page.waitForNavigation({ waitUntil: "networkidle0" }),
-            //     ]);
-            //
-            //     // Set invalid front token
-            //     let cookies = await page.cookies();
-            //     const frontTokenCookie = cookies.find((c) => c.name === "sFrontToken");
-            //
-            //     if (frontTokenCookie) {
-            //         await page.deleteCookie({ name: "sFrontToken" });
-            //         await page.setCookie({
-            //             name: "sFrontToken",
-            //             value: "invalid.front.token",
-            //             domain: frontTokenCookie.domain,
-            //             path: frontTokenCookie.path,
-            //             httpOnly: frontTokenCookie.httpOnly,
-            //             secure: frontTokenCookie.secure,
-            //             sameSite: frontTokenCookie.sameSite,
-            //         });
-            //     }
-            //
-            //     // Reload page to trigger server component session check
-            //     await page.reload();
-            //     const sessionRevoked = await wasSessionRevoked(page);
-            //     assert.equal(sessionRevoked, true);
-            //
-            //     // Should redirect to auth page or show login
-            //     await waitForUrl(page, "/auth");
-            // });
+            it("show the user id if the session is valid", async function () {
+                await signIn(page);
+                await hasServerComponentUserId(page);
+                await page.reload();
+                await hasServerComponentUserId(page);
+                await signOut(page);
+            });
+
+            it("refresh if the front token has expired", async function () {
+                await signIn(page);
+                const cookies = await page.cookies();
+                const frontTokenCookie = cookies.find((c) => c.name === FRONT_TOKEN_COOKIE_NAME);
+                const accessTokenCookie = cookies.find((c) => c.name === ACCESS_TOKEN_COOKIE_NAME);
+                assert.notEqual(frontTokenCookie, undefined);
+                assert.notEqual(accessTokenCookie, undefined);
+
+                await page.deleteCookie({ name: FRONT_TOKEN_COOKIE_NAME });
+                const decodedFrontToken = decodeFrontToken(frontTokenCookie?.value);
+                decodedFrontToken.ate = Date.now() - 3600000;
+                await page.setCookie({
+                    ...frontTokenCookie,
+                    value: encodeFrontToken(decodedFrontToken),
+                });
+
+                await page.reload();
+                await Promise.all([didSessionRefresh(page), hasServerComponentUserId(page)]);
+                await signOut(page);
+            });
+
+            it("refresh if the access token does not exist", async function () {
+                await signIn(page);
+                await page.deleteCookie({ name: ACCESS_TOKEN_COOKIE_NAME });
+
+                await page.reload();
+                await Promise.all([didSessionRefresh(page), hasServerComponentUserId(page)]);
+                await signOut(page);
+            });
+
+            it("logout if the access token is invalid", async function () {
+                await signIn(page);
+
+                let cookies = await page.cookies();
+                const accessTokenCookie = cookies.find((c) => c.name === ACCESS_TOKEN_COOKIE_NAME);
+                assert.notEqual(accessTokenCookie, undefined);
+
+                await page.deleteCookie({ name: ACCESS_TOKEN_COOKIE_NAME });
+                await page.setCookie({
+                    ...accessTokenCookie,
+                    value: "invalid.access.token",
+                });
+
+                await page.reload();
+                await wasSessionRevoked(page);
+                await waitForUrl(page, "/auth");
+            });
+
+            it("logout if the front token does not exist", async function () {
+                await signIn(page);
+                await page.deleteCookie({ name: FRONT_TOKEN_COOKIE_NAME });
+                await page.reload();
+                await wasSessionRevoked(page);
+                await waitForUrl(page, "/auth");
+            });
+
+            it("logout if the front token is invalid", async function () {
+                await signIn(page);
+
+                let cookies = await page.cookies();
+                const frontTokenCookie = cookies.find((c) => c.name === FRONT_TOKEN_COOKIE_NAME);
+                assert.notEqual(frontTokenCookie, undefined);
+                await page.deleteCookie({ name: FRONT_TOKEN_COOKIE_NAME });
+                await page.setCookie({
+                    ...frontTokenCookie,
+                    value: "invalid.access.token",
+                });
+
+                await page.reload();
+                await wasSessionRevoked(page);
+                await waitForUrl(page, "/auth");
+            });
         });
 
         describe("getServerActionSession", function () {
-            // it("show the user id if the session is valid", async function () {
-            //     await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            //     await setInputValues(page, [
-            //         { name: "email", value: email },
-            //         { name: "password", value: password },
-            //     ]);
-            //     await submitForm(page);
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //
-            //     // Navigate to home to establish session
-            //     await Promise.all([
-            //         page.goto(`${TEST_CLIENT_BASE_URL}/`),
-            //         page.waitForNavigation({ waitUntil: "networkidle0" }),
-            //     ]);
-            //
-            //     // Click the getServerActionSession button
-            //     const actionButton = await page.waitForSelector("[data-testid='getServerActionSession-button']");
-            //     await actionButton.click();
-            //
-            //     // Wait for action result
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //     const resultElement = await page.waitForSelector("[data-testid='getServerActionSession-result']");
-            //     const result = await resultElement.textContent();
-            //
-            //     // Should show user ID (non-empty result)
-            //     assert.notEqual(result, "");
-            //     assert.notEqual(result, "undefined");
-            // });
-            //
-            // it("show expired if the tokens do not match", async function () {
-            //     await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            //     await setInputValues(page, [
-            //         { name: "email", value: email },
-            //         { name: "password", value: password },
-            //     ]);
-            //     await submitForm(page);
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //
-            //     // Navigate to home to establish session
-            //     await Promise.all([
-            //         page.goto(`${TEST_CLIENT_BASE_URL}/`),
-            //         page.waitForNavigation({ waitUntil: "networkidle0" }),
-            //     ]);
-            //
-            //     // Manipulate cookies to make tokens mismatch
-            //     let cookies = await page.cookies();
-            //     const frontTokenCookie = cookies.find((c) => c.name === "sFrontToken");
-            //
-            //     if (frontTokenCookie) {
-            //         // Modify front token to have different session handle than access token
-            //         await page.deleteCookie({ name: "sFrontToken" });
-            //         const mismatchedFrontTokenPayload = JSON.stringify({
-            //             uid: "different-user-id",
-            //             ate: Date.now() + 3600000,
-            //             up: {},
-            //             exp: Math.floor(Date.now() / 1000) + 3600,
-            //         });
-            //         const mismatchedFrontToken =
-            //             btoa(JSON.stringify({ alg: "none" })) + "." + btoa(mismatchedFrontTokenPayload) + ".";
-            //
-            //         await page.setCookie({
-            //             name: "sFrontToken",
-            //             value: mismatchedFrontToken,
-            //             domain: frontTokenCookie.domain,
-            //             path: frontTokenCookie.path,
-            //             httpOnly: frontTokenCookie.httpOnly,
-            //             secure: frontTokenCookie.secure,
-            //             sameSite: frontTokenCookie.sameSite,
-            //         });
-            //     }
-            //
-            //     // Click the getServerActionSession button
-            //     const actionButton = await page.waitForSelector("[data-testid='getServerActionSession-button']");
-            //     await actionButton.click();
-            //
-            //     // Wait for action result
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //     const resultElement = await page.waitForSelector("[data-testid='getServerActionSession-result']");
-            //     const result = await resultElement.textContent();
-            //
-            //     // Should return undefined/empty for expired session
-            //     assert.equal(result, "" || result === "undefined");
-            // });
-            //
-            // it("show expired if the access token does not exist", async function () {
-            //     await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            //     await setInputValues(page, [
-            //         { name: "email", value: email },
-            //         { name: "password", value: password },
-            //     ]);
-            //     await submitForm(page);
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //
-            //     // Navigate to home to establish session
-            //     await Promise.all([
-            //         page.goto(`${TEST_CLIENT_BASE_URL}/`),
-            //         page.waitForNavigation({ waitUntil: "networkidle0" }),
-            //     ]);
-            //
-            //     // Remove only the access token cookie
-            //     await page.deleteCookie({ name: "sAccessToken" });
-            //
-            //     // Click the getServerActionSession button
-            //     const actionButton = await page.waitForSelector("[data-testid='getServerActionSession-button']");
-            //     await actionButton.click();
-            //
-            //     // Wait for action result
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //     const resultElement = await page.waitForSelector("[data-testid='getServerActionSession-result']");
-            //     const result = await resultElement.textContent();
-            //
-            //     // Should return undefined/empty for expired session
-            //     assert.equal(result, "" || result === "undefined");
-            // });
-            //
-            // it("show expired if the front token is expired", async function () {
-            //     await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            //     await setInputValues(page, [
-            //         { name: "email", value: email },
-            //         { name: "password", value: password },
-            //     ]);
-            //     await submitForm(page);
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //
-            //     // Navigate to home to establish session
-            //     await Promise.all([
-            //         page.goto(`${TEST_CLIENT_BASE_URL}/`),
-            //         page.waitForNavigation({ waitUntil: "networkidle0" }),
-            //     ]);
-            //
-            //     // Manipulate cookies to simulate expired front token
-            //     let cookies = await page.cookies();
-            //     const frontTokenCookie = cookies.find((c) => c.name === "sFrontToken");
-            //
-            //     if (frontTokenCookie) {
-            //         // Set expired front token by modifying the header to have a past exp time
-            //         await page.deleteCookie({ name: "sFrontToken" });
-            //         const expiredFrontTokenPayload = JSON.stringify({
-            //             uid: frontTokenCookie.value
-            //                 ? JSON.parse(atob(frontTokenCookie.value.split(".")[1])).uid
-            //                 : "test",
-            //             ate: Date.now() + 3600000,
-            //             up: {},
-            //             exp: Math.floor(Date.now() / 1000) - 3600, // expired 1 hour ago
-            //         });
-            //         const expiredFrontToken =
-            //             btoa(JSON.stringify({ alg: "none" })) + "." + btoa(expiredFrontTokenPayload) + ".";
-            //
-            //         await page.setCookie({
-            //             name: "sFrontToken",
-            //             value: expiredFrontToken,
-            //             domain: frontTokenCookie.domain,
-            //             path: frontTokenCookie.path,
-            //             httpOnly: frontTokenCookie.httpOnly,
-            //             secure: frontTokenCookie.secure,
-            //             sameSite: frontTokenCookie.sameSite,
-            //         });
-            //     }
-            //
-            //     // Click the getServerActionSession button
-            //     const actionButton = await page.waitForSelector("[data-testid='getServerActionSession-button']");
-            //     await actionButton.click();
-            //
-            //     // Wait for action result
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //     const resultElement = await page.waitForSelector("[data-testid='getServerActionSession-result']");
-            //     const result = await resultElement.textContent();
-            //
-            //     // Should return undefined/empty for expired session
-            //     assert.equal(result, "" || result === "undefined");
-            // });
-            //
-            // it("show expired if the access token is invalid", async function () {
-            //     await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            //     await setInputValues(page, [
-            //         { name: "email", value: email },
-            //         { name: "password", value: password },
-            //     ]);
-            //     await submitForm(page);
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //
-            //     // Navigate to home to establish session
-            //     await Promise.all([
-            //         page.goto(`${TEST_CLIENT_BASE_URL}/`),
-            //         page.waitForNavigation({ waitUntil: "networkidle0" }),
-            //     ]);
-            //
-            //     // Set invalid access token
-            //     let cookies = await page.cookies();
-            //     const accessTokenCookie = cookies.find((c) => c.name === "sAccessToken");
-            //
-            //     if (accessTokenCookie) {
-            //         await page.deleteCookie({ name: "sAccessToken" });
-            //         await page.setCookie({
-            //             name: "sAccessToken",
-            //             value: "invalid.access.token",
-            //             domain: accessTokenCookie.domain,
-            //             path: accessTokenCookie.path,
-            //             httpOnly: accessTokenCookie.httpOnly,
-            //             secure: accessTokenCookie.secure,
-            //             sameSite: accessTokenCookie.sameSite,
-            //         });
-            //     }
-            //
-            //     // Click the getServerActionSession button
-            //     const actionButton = await page.waitForSelector("[data-testid='getServerActionSession-button']");
-            //     await actionButton.click();
-            //
-            //     // Wait for action result
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //     const resultElement = await page.waitForSelector("[data-testid='getServerActionSession-result']");
-            //     const result = await resultElement.textContent();
-            //
-            //     // Should return undefined/empty for expired session
-            //     assert.equal(result, "" || result === "undefined");
-            // });
-            //
-            // it("show invalid if the front token is invalid", async function () {
-            //     await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            //     await setInputValues(page, [
-            //         { name: "email", value: email },
-            //         { name: "password", value: password },
-            //     ]);
-            //     await submitForm(page);
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //
-            //     // Navigate to home to establish session
-            //     await Promise.all([
-            //         page.goto(`${TEST_CLIENT_BASE_URL}/`),
-            //         page.waitForNavigation({ waitUntil: "networkidle0" }),
-            //     ]);
-            //
-            //     // Set invalid front token
-            //     let cookies = await page.cookies();
-            //     const frontTokenCookie = cookies.find((c) => c.name === "sFrontToken");
-            //
-            //     if (frontTokenCookie) {
-            //         await page.deleteCookie({ name: "sFrontToken" });
-            //         await page.setCookie({
-            //             name: "sFrontToken",
-            //             value: "invalid.front.token",
-            //             domain: frontTokenCookie.domain,
-            //             path: frontTokenCookie.path,
-            //             httpOnly: frontTokenCookie.httpOnly,
-            //             secure: frontTokenCookie.secure,
-            //             sameSite: frontTokenCookie.sameSite,
-            //         });
-            //     }
-            //
-            //     // Click the getServerActionSession button
-            //     const actionButton = await page.waitForSelector("[data-testid='getServerActionSession-button']");
-            //     await actionButton.click();
-            //
-            //     // Wait for action result
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //     const resultElement = await page.waitForSelector("[data-testid='getServerActionSession-result']");
-            //     const result = await resultElement.textContent();
-            //
-            //     // Should return undefined/empty for invalid session
-            //     assert.equal(result, "" || result === "undefined");
-            // });
-            //
-            // it("show invalid if the front token does not exist", async function () {
-            //     await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            //     await setInputValues(page, [
-            //         { name: "email", value: email },
-            //         { name: "password", value: password },
-            //     ]);
-            //     await submitForm(page);
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //
-            //     // Navigate to home to establish session
-            //     await Promise.all([
-            //         page.goto(`${TEST_CLIENT_BASE_URL}/`),
-            //         page.waitForNavigation({ waitUntil: "networkidle0" }),
-            //     ]);
-            //
-            //     // Remove only the front token cookie
-            //     await page.deleteCookie({ name: "sFrontToken" });
-            //
-            //     // Click the getServerActionSession button
-            //     const actionButton = await page.waitForSelector("[data-testid='getServerActionSession-button']");
-            //     await actionButton.click();
-            //
-            //     // Wait for action result
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //     const resultElement = await page.waitForSelector("[data-testid='getServerActionSession-result']");
-            //     const result = await resultElement.textContent();
-            //
-            //     // Should return undefined/empty for invalid session
-            //     assert.equal(result, "" || result === "undefined");
-            // });
-            //
-            // it("show invalid if the access token is invalid", async function () {
-            //     await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            //     await setInputValues(page, [
-            //         { name: "email", value: email },
-            //         { name: "password", value: password },
-            //     ]);
-            //     await submitForm(page);
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //
-            //     // Navigate to home to establish session
-            //     await Promise.all([
-            //         page.goto(`${TEST_CLIENT_BASE_URL}/`),
-            //         page.waitForNavigation({ waitUntil: "networkidle0" }),
-            //     ]);
-            //
-            //     // Set invalid access token
-            //     let cookies = await page.cookies();
-            //     const accessTokenCookie = cookies.find((c) => c.name === "sAccessToken");
-            //
-            //     if (accessTokenCookie) {
-            //         await page.deleteCookie({ name: "sAccessToken" });
-            //         await page.setCookie({
-            //             name: "sAccessToken",
-            //             value: "invalid.access.token",
-            //             domain: accessTokenCookie.domain,
-            //             path: accessTokenCookie.path,
-            //             httpOnly: accessTokenCookie.httpOnly,
-            //             secure: accessTokenCookie.secure,
-            //             sameSite: accessTokenCookie.sameSite,
-            //         });
-            //     }
-            //
-            //     // Click the getServerActionSession button
-            //     const actionButton = await page.waitForSelector("[data-testid='getServerActionSession-button']");
-            //     await actionButton.click();
-            //
-            //     // Wait for action result
-            //     await new Promise((res) => setTimeout(res, 1000));
-            //     const resultElement = await page.waitForSelector("[data-testid='getServerActionSession-result']");
-            //     const result = await resultElement.textContent();
-            //
-            //     // Should return undefined/empty for invalid session
-            //     assert.equal(result, "" || result === "undefined");
-            // });
+            it("show the user id if the session is valid", async function () {
+                await signIn(page);
+                const { userId, status } = await triggerServerAction(page);
+                assert.equal(status, "valid");
+                assert.notEqual(userId, "");
+                await signOut(page);
+            });
+
+            it("show expired if the tokens do not match", async function () {
+                await signIn(page);
+                const cookies = await page.cookies();
+                const frontTokenCookie = cookies.find((c) => c.name === FRONT_TOKEN_COOKIE_NAME);
+                const accessTokenCookie = cookies.find((c) => c.name === ACCESS_TOKEN_COOKIE_NAME);
+                assert.notEqual(frontTokenCookie, undefined);
+                assert.notEqual(accessTokenCookie, undefined);
+
+                await page.deleteCookie({ name: FRONT_TOKEN_COOKIE_NAME });
+                const decodedFrontToken = decodeFrontToken(frontTokenCookie?.value);
+                decodedFrontToken.up = {};
+                page.setCookie({
+                    ...frontTokenCookie,
+                    value: encodeFrontToken(decodedFrontToken),
+                });
+
+                const { userId, status } = await triggerServerAction(page);
+                assert.equal(status, "expired");
+                assert.equal(userId, "");
+                await signOut(page);
+            });
+
+            it("show expired if the access token does not exist", async function () {
+                await signIn(page);
+                await page.deleteCookie({ name: ACCESS_TOKEN_COOKIE_NAME });
+                const { userId, status } = await triggerServerAction(page);
+                assert.equal(status, "expired");
+                assert.equal(userId, "");
+                await signOut(page);
+            });
+
+            it("show expired if the front token is expired", async function () {
+                await signIn(page);
+                const cookies = await page.cookies();
+                const frontTokenCookie = cookies.find((c) => c.name === FRONT_TOKEN_COOKIE_NAME);
+                const accessTokenCookie = cookies.find((c) => c.name === ACCESS_TOKEN_COOKIE_NAME);
+                assert.notEqual(frontTokenCookie, undefined);
+                assert.notEqual(accessTokenCookie, undefined);
+
+                await page.deleteCookie({ name: FRONT_TOKEN_COOKIE_NAME });
+                const decodedFrontToken = decodeFrontToken(frontTokenCookie?.value);
+                decodedFrontToken.ate = Date.now() - 3600000;
+                await page.setCookie({
+                    ...frontTokenCookie,
+                    value: encodeFrontToken(decodedFrontToken),
+                });
+
+                const { userId, status } = await triggerServerAction(page);
+                assert.equal(status, "expired");
+                assert.equal(userId, "");
+                await signOut(page);
+            });
+
+            it("show invalid if the access token is invalid", async function () {
+                await signIn(page);
+                const cookies = await page.cookies();
+                const accessTokenCookie = cookies.find((c) => c.name === ACCESS_TOKEN_COOKIE_NAME);
+                assert.notEqual(accessTokenCookie, undefined);
+
+                await page.deleteCookie({ name: ACCESS_TOKEN_COOKIE_NAME });
+                await page.setCookie({
+                    ...accessTokenCookie,
+                    value: "invalid.access.token",
+                });
+
+                const { userId, status } = await triggerServerAction(page);
+                assert.equal(status, "invalid");
+                assert.equal(userId, "");
+                await signOut(page);
+            });
+
+            it("show invalid if the front token is invalid", async function () {
+                await signIn(page);
+                const cookies = await page.cookies();
+                const frontTokenCookie = cookies.find((c) => c.name === FRONT_TOKEN_COOKIE_NAME);
+                assert.notEqual(frontTokenCookie, undefined);
+                await page.deleteCookie({ name: FRONT_TOKEN_COOKIE_NAME });
+                await page.setCookie({
+                    ...frontTokenCookie,
+                    value: "invalid.access.token",
+                });
+
+                const { userId, status } = await triggerServerAction(page);
+                assert.equal(status, "invalid");
+                assert.equal(userId, "");
+                await signOut(page);
+            });
+
+            it("show invalid if the front token does not exist", async function () {
+                await signIn(page);
+                await page.deleteCookie({ name: FRONT_TOKEN_COOKIE_NAME });
+                const { userId, status } = await triggerServerAction(page);
+                assert.equal(status, "invalid");
+                assert.equal(userId, "");
+                await signOut(page);
+            });
+
+            it("show invalid if the access token is invalid", async function () {
+                await signIn(page);
+                const cookies = await page.cookies();
+                const accessTokenCookie = cookies.find((c) => c.name === ACCESS_TOKEN_COOKIE_NAME);
+                assert.notEqual(accessTokenCookie, undefined);
+
+                await page.deleteCookie({ name: ACCESS_TOKEN_COOKIE_NAME });
+                await page.setCookie({
+                    ...accessTokenCookie,
+                    value: "invalid.access.token",
+                });
+
+                const { userId, status } = await triggerServerAction(page);
+                assert.equal(status, "invalid");
+                assert.equal(userId, "");
+                await signOut(page);
+            });
         });
     });
 });

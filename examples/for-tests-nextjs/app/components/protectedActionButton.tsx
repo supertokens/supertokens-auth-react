@@ -8,7 +8,7 @@ import { ssrConfig } from "../config/ssr";
 init(ssrConfig());
 
 export const ProtectedActionButton = () => {
-    const [actionResult, setActionResult] = useState<string | undefined>();
+    const [actionResult, setActionResult] = useState<{ status: string; userId?: string } | undefined>();
     return (
         <div style={{ display: "flex", gap: "10px" }}>
             <button
@@ -16,11 +16,12 @@ export const ProtectedActionButton = () => {
                 onClick={async () => {
                     const result = await protectedAction();
                     setActionResult(result);
-                }}
-            >
+                }}>
                 getServerActionSession
             </button>
-            <div data-testid="getServerActionSession-result">{actionResult}</div>
+            <div data-testid="getServerActionSession-result">
+                {actionResult?.status}:{actionResult?.userId}
+            </div>
             <button onClick={() => setActionResult(undefined)} data-testid="getServerActionSession-reset">
                 Reset
             </button>

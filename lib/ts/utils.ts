@@ -13,13 +13,14 @@
  * under the License.
  */
 
+import { createPublicKey, verify } from "crypto";
+
 import { useEffect, useRef, useState } from "react";
 import STGeneralError from "supertokens-web-js/lib/build/error";
 import { CookieHandlerReference } from "supertokens-web-js/utils/cookieHandler";
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { WindowHandlerReference } from "supertokens-web-js/utils/windowHandler";
-import { createPublicKey, verify } from "crypto";
 
 import {
     DEFAULT_API_BASE_PATH,
@@ -97,7 +98,7 @@ export function getQueryParams(param: string): string | null {
 
 export function getURLHash(): string {
     // By default it is returined with the "#" at the beginning, we cut that off here.
-    return WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHash().substr(1);
+    return WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHash().substring(1);
 }
 
 export function getRedirectToPathFromURL(): string | undefined {
@@ -380,7 +381,7 @@ export function normaliseCookieScopeOrThrowError(cookieScope: string): string {
 
         // first we convert it to a URL so that we can use the URL class
         if (cookieScope.startsWith(".")) {
-            cookieScope = cookieScope.substr(1);
+            cookieScope = cookieScope.substring(1);
         }
 
         if (!cookieScope.startsWith("http://") && !cookieScope.startsWith("https://")) {
@@ -393,7 +394,7 @@ export function normaliseCookieScopeOrThrowError(cookieScope: string): string {
 
             // remove leading dot
             if (cookieScope.startsWith(".")) {
-                cookieScope = cookieScope.substr(1);
+                cookieScope = cookieScope.substring(1);
             }
 
             return cookieScope;
@@ -703,17 +704,17 @@ function generatePublicKey(jwk: JWK, _alg: string) {
 
     const modulus = base64urlToBase64(jwk.n);
     const exponent = base64urlToBase64(jwk.e);
-    return createPublicKey({
+    const keyInput = {
         key: {
-            // @ts-expect-error
             kty: "RSA",
             kid: jwk.kid,
             n: modulus,
             e: exponent,
         },
-        // @ts-expect-error
         format: "jwk",
-    });
+    };
+    // @ts-expect-error
+    return createPublicKey(keyInput);
 }
 
 function base64urlToBase64(base64url: string): string {

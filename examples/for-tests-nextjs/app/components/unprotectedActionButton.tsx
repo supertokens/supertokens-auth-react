@@ -18,8 +18,7 @@ export const UnprotectedActionButton = () => {
                     const result = await ensureSessionAndCall(unprotectedAction);
                     setActionResult(result);
                 }}
-                data-testid="ensureSessionAndCall-button"
-            >
+                data-testid="ensureSessionAndCall-button">
                 ensureSessionAndCall
             </button>
             <div data-testid="ensureSessionAndCall-result">{actionResult}</div>

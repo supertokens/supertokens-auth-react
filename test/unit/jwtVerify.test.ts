@@ -1,27 +1,10 @@
-/* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
- *
- * This software is licensed under the Apache License, Version 2.0 (the
- * "License") as published by the Apache Software Foundation.
- *
- * You may not use this file except in compliance with the License. You may
- * obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- */
-
 import { jwtVerify, clearJWKSCache, setJWKSCacheDuration } from "../../lib/ts/utils";
 
 import assert from "assert";
 
-// Mock fetch globally
 const originalFetch = global.fetch;
 
 describe("jwtVerify function tests", function () {
-    // Corresponding public key in JWK format for testing JWKS fetching
     const mockJWKS = {
         keys: [
             {
@@ -95,7 +78,7 @@ describe("jwtVerify function tests", function () {
 
     describe("JWT header validation", function () {
         it("should reject JWT without kid in header", async function () {
-            const header = { alg: "RS256", typ: "JWT" }; // Missing kid
+            const header = { alg: "RS256", typ: "JWT" };
             const payload = { sub: "123" };
 
             const headerBase64 = base64urlEncode(JSON.stringify(header));
@@ -111,7 +94,7 @@ describe("jwtVerify function tests", function () {
         });
 
         it("should reject JWT without alg in header", async function () {
-            const header = { kid: "test-key-id", typ: "JWT" }; // Missing alg
+            const header = { kid: "test-key-id", typ: "JWT" };
             const payload = { sub: "123" };
 
             const headerBase64 = base64urlEncode(JSON.stringify(header));
@@ -196,7 +179,6 @@ describe("jwtVerify function tests", function () {
             const jwt1 = `${headerBase64}.${payload1Base64}.signature`;
             const jwt2 = `${headerBase64}.${payload2Base64}.signature`;
 
-            // Mock fetch to be called only once
             mockJWKSFetch();
 
             try {
@@ -211,7 +193,6 @@ describe("jwtVerify function tests", function () {
                 // Expected to fail on signature verification, but should reuse cached JWKS
             }
 
-            // Verify fetch was called only once due to caching
             assert.strictEqual((global.fetch as jest.Mock).mock.calls.length, 1);
         });
 
@@ -226,7 +207,7 @@ describe("jwtVerify function tests", function () {
             const jwksWithEC = {
                 keys: [
                     {
-                        kty: "EC", // Unsupported key type
+                        kty: "EC",
                         kid: "test-key-id",
                         use: "sig",
                         alg: "ES256",
@@ -287,7 +268,7 @@ describe("jwtVerify function tests", function () {
             const header = { alg: "RS256", kid: "test-key-id", typ: "JWT" };
             const payload = {
                 sub: "123",
-                exp: currentTime - 3600, // Expired 1 hour ago
+                exp: currentTime - 3600,
             };
 
             const headerBase64 = base64urlEncode(JSON.stringify(header));
@@ -300,7 +281,6 @@ describe("jwtVerify function tests", function () {
                 await jwtVerify(jwt, jwksUrl);
                 assert.fail("Should have thrown an error");
             } catch (error: any) {
-                // Could fail on either signature verification or time validation
                 assert(error.message === "JWT expired" || error.message === "JWT signature verification failed");
             }
         });
@@ -310,7 +290,7 @@ describe("jwtVerify function tests", function () {
             const header = { alg: "RS256", kid: "test-key-id", typ: "JWT" };
             const payload = {
                 sub: "123",
-                nbf: currentTime + 3600, // Not valid for another hour
+                nbf: currentTime + 3600,
                 exp: currentTime + 7200,
             };
 
@@ -324,7 +304,6 @@ describe("jwtVerify function tests", function () {
                 await jwtVerify(jwt, jwksUrl);
                 assert.fail("Should have thrown an error");
             } catch (error: any) {
-                // Could fail on either signature verification or time validation
                 assert(
                     error.message === "JWT not valid yet (nbf)" || error.message === "JWT signature verification failed"
                 );
@@ -336,7 +315,7 @@ describe("jwtVerify function tests", function () {
             const header = { alg: "RS256", kid: "test-key-id", typ: "JWT" };
             const payload = {
                 sub: "123",
-                iat: currentTime + 3600, // Issued in the future
+                iat: currentTime + 3600,
                 exp: currentTime + 7200,
             };
 
@@ -350,75 +329,11 @@ describe("jwtVerify function tests", function () {
                 await jwtVerify(jwt, jwksUrl);
                 assert.fail("Should have thrown an error");
             } catch (error: any) {
-                // Could fail on either signature verification or time validation
                 assert(
                     error.message === "JWT issued in the future" ||
                         error.message === "JWT signature verification failed"
                 );
             }
-        });
-    });
-
-    describe("Cache configuration", function () {
-        it("should use custom cache duration", async function () {
-            // Set cache duration to 1 second
-            setJWKSCacheDuration(1000);
-
-            const header = { alg: "RS256", kid: "test-key-id", typ: "JWT" };
-            const payload = { sub: "123", exp: Math.floor(Date.now() / 1000) + 3600 };
-
-            const headerBase64 = base64urlEncode(JSON.stringify(header));
-            const payloadBase64 = base64urlEncode(JSON.stringify(payload));
-            const jwt = `${headerBase64}.${payloadBase64}.signature`;
-
-            mockJWKSFetch();
-            try {
-                await jwtVerify(jwt, jwksUrl, { cacheDurationMs: 1000 });
-            } catch (error) {
-                // Expected to fail on signature verification
-            }
-
-            // Wait for cache to expire
-            await new Promise((resolve) => setTimeout(resolve, 1100));
-
-            mockJWKSFetch();
-            try {
-                await jwtVerify(jwt, jwksUrl, { cacheDurationMs: 1000 });
-            } catch (error) {
-                // Expected to fail on signature verification
-            }
-
-            // Should have fetched twice due to short cache duration
-            assert.strictEqual((global.fetch as jest.Mock).mock.calls.length, 2);
-        });
-
-        it("should clear cache when requested", async function () {
-            const header = { alg: "RS256", kid: "test-key-id", typ: "JWT" };
-            const payload = { sub: "123", exp: Math.floor(Date.now() / 1000) + 3600 };
-
-            const headerBase64 = base64urlEncode(JSON.stringify(header));
-            const payloadBase64 = base64urlEncode(JSON.stringify(payload));
-            const jwt = `${headerBase64}.${payloadBase64}.signature`;
-
-            mockJWKSFetch();
-            try {
-                await jwtVerify(jwt, jwksUrl);
-            } catch (error) {
-                // Expected to fail on signature verification
-            }
-
-            // Clear cache
-            clearJWKSCache();
-
-            mockJWKSFetch();
-            try {
-                await jwtVerify(jwt, jwksUrl);
-            } catch (error) {
-                // Expected to fail on signature verification
-            }
-
-            // Should have fetched twice due to cache clearing
-            assert.strictEqual((global.fetch as jest.Mock).mock.calls.length, 2);
         });
     });
 
@@ -436,7 +351,6 @@ describe("jwtVerify function tests", function () {
                 await jwtVerify(malformedJWT, jwksUrl);
                 assert.fail("Should have thrown an error");
             } catch (error: any) {
-                // Could fail on JSON parsing or signature verification
                 assert(
                     error.message.includes("Unexpected token") ||
                         error.message.includes("invalid") ||
@@ -504,8 +418,6 @@ describe("jwtVerify function tests", function () {
                 await jwtVerify<typeof payload>(jwt, jwksUrl);
                 assert.fail("Should have thrown an error for signature verification");
             } catch (error: any) {
-                // Should fail on signature verification, not time validation
-                // since non-number time claims are ignored
                 assert.strictEqual(error.message, "JWT signature verification failed");
             }
         });

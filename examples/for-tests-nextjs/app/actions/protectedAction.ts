@@ -9,9 +9,10 @@ init(ssrConfig());
 export async function protectedAction() {
     const cookiesStore = await cookies();
     const { status, session } = await getServerActionSession(cookiesStore);
+
     if (status !== "valid") {
-        return;
+        return { status, userId: undefined };
     }
 
-    return session.userId;
+    return { status, userId: session.userId };
 }
