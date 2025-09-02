@@ -8,7 +8,11 @@ import type { DeviceSetupFooter } from "./components/themes/mfa/totpDeviceSetupF
 import type { DeviceSetupHeader } from "./components/themes/mfa/totpDeviceSetupHeader";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type { UserContext } from "../../types";
-import type { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig, UserInput as RecipeModuleUserInput } from "../recipeModule/types";
+import type {
+    Config as RecipeModuleConfig,
+    NormalisedConfig as NormalisedRecipeModuleConfig,
+    UserInput as RecipeModuleUserInput,
+} from "../recipeModule/types";
 import type { Dispatch } from "react";
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/totp";
@@ -28,34 +32,41 @@ export declare type TOTPDeviceInfo = {
     qrCodeString: string;
     userIdentifier?: string | undefined;
 };
-export declare type TOTPMFAAction = {
-    type: "load";
-    showBackButton: boolean;
-    deviceInfo: TOTPDeviceInfo | undefined;
-    showAccessDenied: boolean;
-    error: string | undefined;
-    callingCreateDevice: boolean;
-} | {
-    type: "createDevice";
-    deviceInfo: TOTPDeviceInfo;
-} | {
-    type: "setBlocked";
-    error: string | undefined;
-    nextRetryAt: number;
-} | {
-    type: "setError";
-    showAccessDenied: boolean;
-    error: string | undefined;
-    maxAttemptCount?: number;
-    currAttemptCount?: number;
-} | {
-    type: "restartFlow";
-    error: string | undefined;
-} | {
-    type: "success";
-} | {
-    type: "showSecret";
-};
+export declare type TOTPMFAAction =
+    | {
+          type: "load";
+          showBackButton: boolean;
+          deviceInfo: TOTPDeviceInfo | undefined;
+          showAccessDenied: boolean;
+          error: string | undefined;
+          callingCreateDevice: boolean;
+      }
+    | {
+          type: "createDevice";
+          deviceInfo: TOTPDeviceInfo;
+      }
+    | {
+          type: "setBlocked";
+          error: string | undefined;
+          nextRetryAt: number;
+      }
+    | {
+          type: "setError";
+          showAccessDenied: boolean;
+          error: string | undefined;
+          maxAttemptCount?: number;
+          currAttemptCount?: number;
+      }
+    | {
+          type: "restartFlow";
+          error: string | undefined;
+      }
+    | {
+          type: "success";
+      }
+    | {
+          type: "showSecret";
+      };
 export declare type TOTPMFAState = {
     deviceInfo?: TOTPDeviceInfo;
     showSecret: boolean;
@@ -97,34 +108,49 @@ export declare type TOTPMFAScreenConfig = {
 export declare type UserInput = {
     totpMFAScreen?: Partial<TOTPMFAScreenConfig>;
     override?: {
-        functions?: (originalImplementation: RecipeInterface, builder?: OverrideableBuilder<RecipeInterface>) => RecipeInterface;
+        functions?: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
     };
 } & RecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-export declare type Config = UserInput & RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+export declare type Config = UserInput &
+    RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     totpMFAScreen: TOTPMFAScreenConfig;
     override: {
-        functions: (originalImplementation: RecipeInterface, builder?: OverrideableBuilder<RecipeInterface>) => RecipeInterface;
+        functions: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type GetRedirectionURLContext = never;
-export declare type PreAndPostAPIHookAction = "CREATE_DEVICE" | "VERIFY_CODE" | "VERIFY_DEVICE" | "REMOVE_DEVICE" | "LIST_DEVICES";
+export declare type PreAndPostAPIHookAction =
+    | "CREATE_DEVICE"
+    | "VERIFY_CODE"
+    | "VERIFY_DEVICE"
+    | "REMOVE_DEVICE"
+    | "LIST_DEVICES";
 export declare type PreAPIHookContext = {
     action: PreAndPostAPIHookAction;
     requestInit: RequestInit;
     url: string;
     userContext: UserContext;
 };
-export declare type OnHandleEventContext = {
-    action: "TOTP_CODE_VERIFIED";
-    userContext: UserContext;
-} | {
-    action: "TOTP_DEVICE_VERIFIED";
-    deviceName: string;
-    wasAlreadyVerified: boolean;
-    userContext: UserContext;
-} | {
-    action: "TOTP_DEVICE_CREATED";
-    deviceName: string;
-    userContext: UserContext;
-};
+export declare type OnHandleEventContext =
+    | {
+          action: "TOTP_CODE_VERIFIED";
+          userContext: UserContext;
+      }
+    | {
+          action: "TOTP_DEVICE_VERIFIED";
+          deviceName: string;
+          wasAlreadyVerified: boolean;
+          userContext: UserContext;
+      }
+    | {
+          action: "TOTP_DEVICE_CREATED";
+          deviceName: string;
+          userContext: UserContext;
+      };

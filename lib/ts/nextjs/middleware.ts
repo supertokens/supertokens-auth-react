@@ -1,4 +1,5 @@
 import { enableLogging, logDebugMessage } from "../logger";
+import { normaliseInputAppInfoOrThrowError } from "../utils";
 
 import {
     REDIRECT_ATTEMPT_MAX_COUNT,
@@ -20,7 +21,6 @@ import {
 
 import type { ApiRequestMiddleware, SuperTokensNextjsConfig } from "./types";
 import type { NormalisedAppInfo } from "../types";
-import { normaliseInputAppInfoOrThrowError } from "../utils";
 
 type SuperTokensNextjsMiddlewareConfig = SuperTokensNextjsConfig & {
     apiRequestMiddleware?: ApiRequestMiddleware;
@@ -359,7 +359,9 @@ function isValidUrlPath(path: string): boolean {
 }
 
 function normalizeUrlPath(path: string): string {
-    if (!path) return "/";
+    if (!path) {
+        return "/";
+    }
     let normalizedPath = path.split("?")[0].split("#")[0];
     // remove trailing slash
     normalizedPath = path.replace(/\/$/, "");

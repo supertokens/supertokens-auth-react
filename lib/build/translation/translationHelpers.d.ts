@@ -7,7 +7,10 @@ export declare type TranslationEventMap = {
     LanguageChange: string;
     TranslationLoaded: TranslationStore;
 };
-export declare type TranslationEventHandler<K extends keyof TranslationEventMap> = (event: K, detail: TranslationEventMap[K]) => void;
+export declare type TranslationEventHandler<K extends keyof TranslationEventMap> = (
+    event: K,
+    detail: TranslationEventMap[K]
+) => void;
 export declare type TranslationControlEventSource = {
     on: <K extends keyof TranslationEventMap>(event: K, handler: TranslationEventHandler<K>) => void;
     off: <K extends keyof TranslationEventMap>(event: K, handler: TranslationEventHandler<K>) => void;
@@ -20,4 +23,6 @@ export declare class TranslationController implements TranslationControlEventSou
 }
 export declare function saveCurrentLanguage(language: string, cookieDomain: string | undefined): Promise<void>;
 export declare function getCurrentLanguageFromCookie(): Promise<string | null>;
-export declare const getTranslationFunction: <T extends string>(...stores: TranslationStore[]) => (key: T, replacements?: Record<string, string>) => string;
+export declare const getTranslationFunction: <T extends string>(
+    ...stores: TranslationStore[]
+) => (key: T, replacements?: Record<string, string>) => string;

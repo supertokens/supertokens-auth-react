@@ -713,7 +713,10 @@ function generatePublicKey(jwk: JWK, _alg: string) {
         },
         format: "jwk",
     };
-    // @ts-expect-error
+    // TODO: Update node types
+    // The error originates from the fact that we are using an older version of types/node - 14
+    // The API has changed in version 16 (the minimum version that we support)
+    // @ts-expect-error TS(2345) - Types of property 'key' are incompatible.
     return createPublicKey(keyInput);
 }
 

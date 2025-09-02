@@ -19,13 +19,16 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * @returns An object that includes session context value and the status of the session ('valid' | 'expired' | 'invalid')
      * If the status is 'invalid' or 'expired' then the users should be considered as unauthenticated
      **/
-    static getServerActionSession(cookies: CookiesStore): Promise<{
-        session: LoadedSessionContext;
-        status: "valid";
-    } | {
-        status: "expired" | "invalid";
-        session: undefined;
-    }>;
+    static getServerActionSession(cookies: CookiesStore): Promise<
+        | {
+              session: LoadedSessionContext;
+              status: "valid";
+          }
+        | {
+              status: "expired" | "invalid";
+              session: undefined;
+          }
+    >;
     /**
      * Ensures that a server action is called by an authenticated user
      * If the session does not exist/user is not authenticated, it will automatically redirect to the login page
@@ -40,9 +43,11 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * @param request - The request object available inside getServerSideProps ctx (ctx.req)
      * @returns The session context value or a redirects path to send the user to the refresh API or the login page
      **/
-    static getServerSidePropsSession(request: Request & {
-        cookies: CookiesObject;
-    }): Promise<GetServerSidePropsReturnValue>;
+    static getServerSidePropsSession(
+        request: Request & {
+            cookies: CookiesObject;
+        }
+    ): Promise<GetServerSidePropsReturnValue>;
 }
 export declare const init: typeof SuperTokensNextjsSSRAPIWrapper.init;
 export declare const getServerComponentSession: typeof SuperTokensNextjsSSRAPIWrapper.getServerComponentSession;

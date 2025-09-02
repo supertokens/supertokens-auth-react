@@ -4,7 +4,11 @@ import type { FactorList } from "./components/themes/factorChooser/factorList";
 import type { FactorOption } from "./components/themes/factorChooser/factorOption";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type { FeatureBaseConfig, NormalisedGetRedirectionURLContext, UserContext } from "../../types";
-import type { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig, UserInput as RecipeModuleUserInput } from "../recipeModule/types";
+import type {
+    Config as RecipeModuleConfig,
+    NormalisedConfig as NormalisedRecipeModuleConfig,
+    UserInput as RecipeModuleUserInput,
+} from "../recipeModule/types";
 import type { FC } from "react";
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type { RecipeInterface } from "supertokens-web-js/recipe/multifactorauth";
@@ -17,33 +21,49 @@ export declare type ComponentOverrideMap = {
 };
 export declare type UserInput = {
     firstFactors?: string[];
-    getSecondaryFactorInfo?: (builtInFactors: SecondaryFactorRedirectionInfo[], userContext: UserContext) => SecondaryFactorRedirectionInfo[];
+    getSecondaryFactorInfo?: (
+        builtInFactors: SecondaryFactorRedirectionInfo[],
+        userContext: UserContext
+    ) => SecondaryFactorRedirectionInfo[];
     disableDefaultUI?: boolean;
     factorChooserScreen?: FeatureBaseConfig;
     override?: {
-        functions?: (originalImplementation: RecipeInterface, builder?: OverrideableBuilder<RecipeInterface>) => RecipeInterface;
+        functions?: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
     };
 } & RecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-export declare type Config = UserInput & RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+export declare type Config = UserInput &
+    RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     firstFactors?: string[];
-    getSecondaryFactorInfo: (builtInFactors: SecondaryFactorRedirectionInfo[], userContext: UserContext) => SecondaryFactorRedirectionInfo[];
+    getSecondaryFactorInfo: (
+        builtInFactors: SecondaryFactorRedirectionInfo[],
+        userContext: UserContext
+    ) => SecondaryFactorRedirectionInfo[];
     disableDefaultUI: boolean;
     factorChooserScreen: FeatureBaseConfig;
     override: {
-        functions: (originalImplementation: RecipeInterface, builder?: OverrideableBuilder<RecipeInterface>) => RecipeInterface;
+        functions: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-export declare type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<{
-    action: "FACTOR_CHOOSER";
-    nextFactorOptions?: string[];
-    stepUp?: boolean;
-} | {
-    action: "GO_TO_FACTOR";
-    factorId: string;
-    forceSetup?: boolean;
-    stepUp?: boolean;
-}>;
+export declare type GetRedirectionURLContext = NormalisedGetRedirectionURLContext<
+    | {
+          action: "FACTOR_CHOOSER";
+          nextFactorOptions?: string[];
+          stepUp?: boolean;
+      }
+    | {
+          action: "GO_TO_FACTOR";
+          factorId: string;
+          forceSetup?: boolean;
+          stepUp?: boolean;
+      }
+>;
 export declare type PreAndPostAPIHookAction = "GET_MFA_INFO";
 export declare type PreAPIHookContext = {
     action: PreAndPostAPIHookAction;

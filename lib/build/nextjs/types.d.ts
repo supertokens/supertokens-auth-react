@@ -19,11 +19,13 @@ export declare type GetServerSidePropsRedirect = {
         permanent: boolean;
     };
 };
-export declare type GetServerSidePropsReturnValue = {
-    props: {
-        session: LoadedSessionContext;
-    };
-} | GetServerSidePropsRedirect;
+export declare type GetServerSidePropsReturnValue =
+    | {
+          props: {
+              session: LoadedSessionContext;
+          };
+      }
+    | GetServerSidePropsRedirect;
 export declare function isCookiesStore(obj: unknown): obj is CookiesStore;
 export declare type SuperTokensNextjsConfig = {
     appInfo: AppInfoUserInput;
@@ -64,4 +66,6 @@ export interface ParsableRequest {
     formData: () => Promise<FormData>;
     json: () => Promise<any>;
 }
-export declare type ApiRequestMiddleware<Req extends ParsableRequest = Request, Res extends Response = Response> = (req: Req) => Promise<Res>;
+export declare type ApiRequestMiddleware<Req extends ParsableRequest = Request, Res extends Response = Response> = (
+    req: Req
+) => Promise<Res>;

@@ -1,6 +1,9 @@
-import { enableLogging, logDebugMessage } from "../logger";
-import { jwtVerify } from "../utils";
 import { doesSessionExist, getAccessTokenPayloadSecurely } from "supertokens-web-js/recipe/session";
+import { getNormalisedUserContext } from "supertokens-web-js/utils";
+
+import { enableLogging, logDebugMessage } from "../logger";
+import SuperTokens from "../superTokens";
+import { jwtVerify } from "../utils";
 
 import {
     FRONT_TOKEN_HEADER_NAME,
@@ -22,8 +25,6 @@ import type {
     SuperTokensNextjsConfig,
 } from "./types";
 import type { LoadedSessionContext } from "../recipe/session/types";
-import { getNormalisedUserContext } from "supertokens-web-js/utils";
-import SuperTokens from "../superTokens";
 
 type SSRSessionState =
     | "front-token-not-found"
@@ -139,10 +140,10 @@ export default class SuperTokensNextjsSSRAPIWrapper {
                 });
             }
 
-            logDebugMessage(`Retrieved access token payload`);
+            logDebugMessage("Retrieved access token payload");
             await getAccessTokenPayloadSecurely();
         } catch (err) {
-            logDebugMessage(`Error while authenticating server action`);
+            logDebugMessage("Error while authenticating server action");
             return SuperTokens.getInstanceOrThrow().redirectToAuth({
                 show: "signin",
                 redirectBack: true,
@@ -150,7 +151,7 @@ export default class SuperTokensNextjsSSRAPIWrapper {
             });
         }
 
-        logDebugMessage(`Calling server action`);
+        logDebugMessage("Calling server action");
         return action();
     }
 
