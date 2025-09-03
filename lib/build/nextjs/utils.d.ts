@@ -8,5 +8,3 @@ export declare function jwtVerify<
         iat?: number;
     }
 >(token: string, jwksUrl: string, config?: JWKSCacheConfig): Promise<T>;
-export declare function clearJWKSCache(): void;
-export declare function setJWKSCacheDuration(durationMs: number): void;

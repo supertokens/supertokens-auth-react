@@ -29,7 +29,7 @@ type SuperTokensNextjsMiddlewareConfig = SuperTokensNextjsConfig & {
 
 let AppInfo: NormalisedAppInfo;
 
-export function superTokensMiddleware(
+export default function superTokensMiddleware(
     config: SuperTokensNextjsMiddlewareConfig
 ): (request: Request) => Promise<Response | void> {
     const usesTheNextjsApiAsTheAuthenticationServer = compareUrlHost(
@@ -90,7 +90,7 @@ export function superTokensMiddleware(
     };
 }
 
-export async function refreshSession(request: Request): Promise<Response> {
+async function refreshSession(request: Request): Promise<Response> {
     // Cancel the refresh cycle if an unforseen state is encountered
     const redirectAttemptNumber = getRedirectAttemptNumber(request);
     if (redirectAttemptNumber > REDIRECT_ATTEMPT_MAX_COUNT) {
@@ -142,7 +142,7 @@ export async function refreshSession(request: Request): Promise<Response> {
     }
 }
 
-export async function revokeSession(request: Request): Promise<Response | void> {
+async function revokeSession(request: Request): Promise<Response | void> {
     const response = new Response(null, {});
 
     try {

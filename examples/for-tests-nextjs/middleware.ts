@@ -1,7 +1,7 @@
 import { withSession } from "supertokens-node/nextjs";
 import { ensureSuperTokensInit } from "./app/config/backend";
 import { ssrConfig } from "./app/config/ssr";
-import { superTokensMiddleware } from "supertokens-auth-react/nextjs/middleware";
+import superTokensMiddleware from "supertokens-auth-react/nextjs/middleware";
 
 ensureSuperTokensInit();
 

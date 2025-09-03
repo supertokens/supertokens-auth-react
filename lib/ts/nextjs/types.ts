@@ -6,14 +6,7 @@ export type CookiesStore = {
     set: (name: string, value: string) => void;
 };
 
-export type HeadersStore = {
-    get: (name: string) => string | null;
-    set: (name: string, value: string) => void;
-    getSetCookie: () => string[];
-};
-
 export type CookiesObject = Record<string, string>;
-export type HeadersObject = Record<string, string>;
 
 export type GetServerSidePropsRedirect = {
     redirect: { destination: string; permanent: boolean };
@@ -32,11 +25,6 @@ export function isCookiesStore(obj: unknown): obj is CookiesStore {
 export type SuperTokensNextjsConfig = {
     appInfo: AppInfoUserInput;
     enableDebugLogs?: boolean;
-};
-
-export type SuperTokensRequestToken = {
-    header: string | null;
-    cookie: string | null;
 };
 
 export type FrontTokenPayload = {

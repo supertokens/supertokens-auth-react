@@ -165,11 +165,3 @@ function base64urlToBase64(base64url: string): string {
 
     return base64;
 }
-
-export function clearJWKSCache(): void {
-    jwksCache.clearCache();
-}
-
-export function setJWKSCacheDuration(durationMs: number): void {
-    jwksCache.setCacheDuration(durationMs);
-}
