@@ -268,25 +268,6 @@ export declare type AuthComponent<T = any> = PartialAuthComponent | FullPageAuth
 export declare type NormalisedGetRedirectionURLContext<RecipeContext> = RecipeContext & {
     tenantIdFromQueryParams: string | undefined;
 };
-export interface JWK {
-    kty: string;
-    use?: string;
-    key_ops?: string[];
-    alg?: string;
-    kid?: string;
-    x5u?: string;
-    x5c?: string[];
-    x5t?: string;
-    "x5t#S256"?: string;
-    n?: string;
-    e?: string;
-    crv?: string;
-    x?: string;
-    y?: string;
-}
-export interface JWKS {
-    keys: JWK[];
-}
 export declare type AllRecipeConfigs = {
     emailpassword: EmailPasswordConfig;
     emailverification: EmailVerificationConfig;

@@ -78,18 +78,6 @@ export declare const useOnMountAPICall: <T>(
     startLoading?: boolean
 ) => void;
 export declare function useRethrowInRender(): import("react").Dispatch<import("react").SetStateAction<undefined>>;
-export interface JWKSCacheConfig {
-    cacheDurationMs?: number;
-}
-export declare function jwtVerify<
-    T extends {
-        exp?: number;
-        nbf?: number;
-        iat?: number;
-    }
->(token: string, jwksUrl: string, config?: JWKSCacheConfig): Promise<T>;
-export declare function clearJWKSCache(): void;
-export declare function setJWKSCacheDuration(durationMs: number): void;
 export declare const handleCallAPI: <T>({
     apiFields,
     fieldUpdates,

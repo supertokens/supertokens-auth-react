@@ -94,7 +94,6 @@
     "dependencies": {
         "@simplewebauthn/types": "^12.0.0",
         "intl-tel-input": "^17.0.19",
-        "jose": "^6.0.8",
         "prop-types": "*",
         "react-qr-code": "^2.0.12",
         "supertokens-js-override": "^0.0.4"

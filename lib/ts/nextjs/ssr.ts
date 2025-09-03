@@ -3,7 +3,6 @@ import { getNormalisedUserContext } from "supertokens-web-js/utils";
 
 import { enableLogging, logDebugMessage } from "../logger";
 import SuperTokens from "../superTokens";
-import { jwtVerify } from "../utils";
 
 import {
     FRONT_TOKEN_HEADER_NAME,
@@ -16,6 +15,7 @@ import {
     DEFAULT_API_PATH,
 } from "./constants";
 import { isCookiesStore } from "./types";
+import { jwtVerify } from "./utils";
 
 import type {
     CookiesObject,

@@ -75,3 +75,24 @@ export interface ParsableRequest {
 export type ApiRequestMiddleware<Req extends ParsableRequest = Request, Res extends Response = Response> = (
     req: Req
 ) => Promise<Res>;
+
+export interface JWK {
+    kty: string;
+    use?: string;
+    key_ops?: string[];
+    alg?: string;
+    kid?: string;
+    x5u?: string;
+    x5c?: string[];
+    x5t?: string;
+    "x5t#S256"?: string;
+    n?: string;
+    e?: string;
+    crv?: string;
+    x?: string;
+    y?: string;
+}
+
+export interface JWKS {
+    keys: JWK[];
+}
