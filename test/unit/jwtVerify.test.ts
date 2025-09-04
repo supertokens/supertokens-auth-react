@@ -1,4 +1,4 @@
-import { jwtVerify, clearJWKSCache, setJWKSCacheDuration } from "../../lib/ts/nextjs/utils";
+import { jwtVerify, clearJWKSCache } from "../../lib/ts/nextjs/utils";
 
 import assert from "assert";
 

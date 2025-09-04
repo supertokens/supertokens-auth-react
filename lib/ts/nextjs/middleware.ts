@@ -29,7 +29,7 @@ type SuperTokensNextjsMiddlewareConfig = SuperTokensNextjsConfig & {
 
 let AppInfo: NormalisedAppInfo;
 
-export default function superTokensMiddleware(
+export function superTokensMiddleware(
     config: SuperTokensNextjsMiddlewareConfig
 ): (request: Request) => Promise<Response | void> {
     const usesTheNextjsApiAsTheAuthenticationServer = compareUrlHost(

@@ -170,61 +170,41 @@ export declare class PasswordlessPreBuiltUI extends RecipeRouter {
     constructor(recipeInstance: Passwordless);
     static getInstanceOrInitAndGetInstance(): PasswordlessPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
-    static getFeatureComponent(
-        componentName: "linkClickedScreen" | "otp-phone" | "otp-email",
-        props: FeatureBaseProps<{
-            redirectOnSessionExists?: boolean;
-            userContext?: UserContext;
-        }>,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ): JSX.Element;
+    static getFeatureComponent(componentName: "linkClickedScreen" | "otp-phone" | "otp-email", props: FeatureBaseProps<{
+        redirectOnSessionExists?: boolean;
+        userContext?: UserContext;
+    }>, useComponentOverrides?: () => GenericComponentOverrideMap<any>): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
-    getFeatureComponent: (
-        componentName: "linkClickedScreen" | "otp-phone" | "otp-email",
-        props: FeatureBaseProps<{
-            redirectOnSessionExists?: boolean;
-            userContext?: UserContext;
-        }>,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ) => JSX.Element;
+    getFeatureComponent: (componentName: "linkClickedScreen" | "otp-phone" | "otp-email", props: FeatureBaseProps<{
+        redirectOnSessionExists?: boolean;
+        userContext?: UserContext;
+    }>, useComponentOverrides?: () => GenericComponentOverrideMap<any>) => JSX.Element;
     getAuthComponents(): AuthComponent<LoginAttemptInfo>[];
     static reset(): void;
-    static LinkClicked: (
-        props: FeatureBaseProps<{
-            navigate?: Navigate;
-            userContext?: UserContext;
-        }>
-    ) => JSX.Element;
-    static MfaOtpPhone: (
-        props: FeatureBaseProps<{
-            navigate?: Navigate;
-            userContext?: UserContext;
-        }>
-    ) => JSX.Element;
-    static MfaOtpEmail: (
-        props: FeatureBaseProps<{
-            navigate?: Navigate;
-            userContext?: UserContext;
-        }>
-    ) => JSX.Element;
+    static LinkClicked: (props: FeatureBaseProps<{
+        navigate?: Navigate;
+        userContext?: UserContext;
+    }>) => JSX.Element;
+    static MfaOtpPhone: (props: FeatureBaseProps<{
+        navigate?: Navigate;
+        userContext?: UserContext;
+    }>) => JSX.Element;
+    static MfaOtpEmail: (props: FeatureBaseProps<{
+        navigate?: Navigate;
+        userContext?: UserContext;
+    }>) => JSX.Element;
     static MFAOTPTheme: typeof MFAThemeWrapper;
 }
-declare const LinkClicked: (
-    props: FeatureBaseProps<{
-        navigate?: Navigate;
-        userContext?: UserContext;
-    }>
-) => JSX.Element;
-declare const MfaOtpPhone: (
-    props: FeatureBaseProps<{
-        navigate?: Navigate;
-        userContext?: UserContext;
-    }>
-) => JSX.Element;
-declare const MfaOtpEmail: (
-    props: FeatureBaseProps<{
-        navigate?: Navigate;
-        userContext?: UserContext;
-    }>
-) => JSX.Element;
+declare const LinkClicked: (props: FeatureBaseProps<{
+    navigate?: Navigate;
+    userContext?: UserContext;
+}>) => JSX.Element;
+declare const MfaOtpPhone: (props: FeatureBaseProps<{
+    navigate?: Navigate;
+    userContext?: UserContext;
+}>) => JSX.Element;
+declare const MfaOtpEmail: (props: FeatureBaseProps<{
+    navigate?: Navigate;
+    userContext?: UserContext;
+}>) => JSX.Element;
 export { LinkClicked, MfaOtpPhone, MfaOtpEmail, MFAThemeWrapper as MFAOTPTheme };

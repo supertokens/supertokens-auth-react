@@ -8,14 +8,13 @@ export declare type ProviderConfig = {
 export declare type BuiltInProviderConfig = {
     id?: string;
     name?: string;
-    buttonComponent?:
-        | FC<{
-              name: string;
-          }>
-        | {
-              new (props: { name: string }): React.Component<any, any>;
-          }
-        | JSX.Element;
+    buttonComponent?: FC<{
+        name: string;
+    }> | {
+        new (props: {
+            name: string;
+        }): React.Component<any, any>;
+    } | JSX.Element;
     getRedirectURL?: (id: string) => string;
 };
 export declare type CustomProviderConfig = {
@@ -25,13 +24,12 @@ export declare type CustomProviderConfig = {
      * Provider Logo.
      */
     logo?: JSX.Element;
-    buttonComponent?:
-        | FC<{
-              name: string;
-          }>
-        | {
-              new (props: { name: string }): React.Component<any, any>;
-          }
-        | JSX.Element;
+    buttonComponent?: FC<{
+        name: string;
+    }> | {
+        new (props: {
+            name: string;
+        }): React.Component<any, any>;
+    } | JSX.Element;
     getRedirectURL?: (id: string) => string;
 };

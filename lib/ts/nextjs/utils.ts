@@ -8,7 +8,7 @@ interface JWKSCacheEntry {
     expiresAt: number;
 }
 
-export interface JWKSCacheConfig {
+interface JWKSCacheConfig {
     cacheDurationMs?: number;
 }
 
@@ -164,4 +164,8 @@ function base64urlToBase64(base64url: string): string {
     }
 
     return base64;
+}
+
+export function clearJWKSCache(): void {
+    jwksCache.clearCache();
 }

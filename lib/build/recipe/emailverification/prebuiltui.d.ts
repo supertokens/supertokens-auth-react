@@ -91,31 +91,19 @@ export declare class EmailVerificationPreBuiltUI extends RecipeRouter {
     constructor(recipeInstance: EmailVerificationRecipe);
     static getInstanceOrInitAndGetInstance(): EmailVerificationPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
-    static getFeatureComponent(
-        componentName: "emailverification",
-        props: any,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ): JSX.Element;
+    static getFeatureComponent(componentName: "emailverification", props: any, useComponentOverrides?: () => GenericComponentOverrideMap<any>): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
-    getFeatureComponent: (
-        _: "emailverification",
-        props: FeatureBaseProps<{
-            userContext?: UserContext;
-        }>,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ) => JSX.Element;
+    getFeatureComponent: (_: "emailverification", props: FeatureBaseProps<{
+        userContext?: UserContext;
+    }>, useComponentOverrides?: () => GenericComponentOverrideMap<any>) => JSX.Element;
     getAuthComponents(): AuthComponent[];
     static reset(): void;
-    static EmailVerification: (
-        props: FeatureBaseProps<{
-            userContext?: UserContext;
-        }>
-    ) => JSX.Element;
+    static EmailVerification: (props: FeatureBaseProps<{
+        userContext?: UserContext;
+    }>) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
 }
-declare const EmailVerification: (
-    props: FeatureBaseProps<{
-        userContext?: UserContext;
-    }>
-) => JSX.Element;
+declare const EmailVerification: (props: FeatureBaseProps<{
+    userContext?: UserContext;
+}>) => JSX.Element;
 export { EmailVerification, EmailVerificationTheme };

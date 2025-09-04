@@ -8,13 +8,5 @@ declare type ButtonProps = {
     isGreyedOut?: boolean;
     icon?: () => JSX.Element;
 };
-export default function Button({
-    type,
-    label,
-    disabled,
-    isLoading,
-    onClick,
-    isGreyedOut,
-    icon,
-}: ButtonProps): JSX.Element;
+export default function Button({ type, label, disabled, isLoading, onClick, isGreyedOut, icon, }: ButtonProps): JSX.Element;
 export {};
