@@ -18,15 +18,11 @@ let { default: SuperTokensRaw } = require("supertokens-node/lib/build/supertoken
 const { default: EmailVerificationRaw } = require("supertokens-node/lib/build/recipe/emailverification/recipe");
 const { default: EmailPasswordRaw } = require("supertokens-node/lib/build/recipe/emailpassword/recipe");
 const { default: ThirdPartyRaw } = require("supertokens-node/lib/build/recipe/thirdparty/recipe");
-const {
-    default: ThirdPartyEmailPasswordRaw,
-} = require("supertokens-node/lib/build/recipe/thirdpartyemailpassword/recipe");
 const { default: SessionRaw } = require("supertokens-node/lib/build/recipe/session/recipe");
 let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
 let ThirdParty = require("supertokens-node/recipe/thirdparty");
 let EmailVerification = require("supertokens-node/recipe/emailverification");
-let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let express = require("express");
@@ -59,6 +55,18 @@ try {
     thirdPartyPasswordlessSupported = true;
 } catch (ex) {
     thirdPartyPasswordlessSupported = false;
+}
+
+let thirdPartyEmailPasswordSupported;
+let ThirdPartyEmailPasswordRaw;
+let ThirdPartyEmailPassword;
+
+try {
+    ThirdPartyEmailPasswordRaw = require("supertokens-node/lib/build/recipe/thirdpartyemailpassword/recipe").default;
+    ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
+    thirdPartyEmailPasswordSupported = true;
+} catch (ex) {
+    thirdPartyEmailPasswordSupported = false;
 }
 
 const UserRolesRaw = require("supertokens-node/lib/build/recipe/userroles/recipe").default;
@@ -205,11 +213,14 @@ function initST({
         EmailVerificationRaw.reset();
         EmailPasswordRaw.reset();
         ThirdPartyRaw.reset();
-        ThirdPartyEmailPasswordRaw.reset();
         SessionRaw.reset();
 
         if (thirdPartyPasswordlessSupported) {
             ThirdPartyPasswordlessRaw.reset();
+        }
+
+        if (thirdPartyEmailPasswordSupported) {
+            ThirdPartyEmailPasswordRaw.reset();
         }
 
         SuperTokensRaw.reset();
@@ -382,109 +393,6 @@ function initST({
             }),
         ],
         [
-            "thirdpartyemailpassword",
-            ThirdPartyEmailPassword.init({
-                signUpFeature: {
-                    formFields,
-                },
-                emailDelivery: {
-                    override: (oI) => {
-                        return {
-                            ...oI,
-                            sendEmail: async (input) => {
-                                console.log(input.passwordResetLink);
-                                latestURLWithToken = input.passwordResetLink;
-                            },
-                        };
-                    },
-                },
-                providers:
-                    enabledProviders !== undefined
-                        ? fullProviderList.filter((config) => enabledProviders.includes(config.config))
-                        : fullProviderList,
-                override: {
-                    apis: (originalImplementation) => {
-                        return {
-                            ...originalImplementation,
-                            emailPasswordSignUpPOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API sign up",
-                                    };
-                                }
-
-                                return originalImplementation.emailPasswordSignUpPOST(input);
-                            },
-                            passwordResetPOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API reset password consume",
-                                    };
-                                }
-                                return originalImplementation.passwordResetPOST(input);
-                            },
-                            generatePasswordResetTokenPOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API reset password",
-                                    };
-                                }
-                                return originalImplementation.generatePasswordResetTokenPOST(input);
-                            },
-                            emailPasswordEmailExistsGET: async function (input) {
-                                let generalError = input.options.req.getKeyValueFromQuery("generalError");
-                                if (generalError === "true") {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API email exists",
-                                    };
-                                }
-                                return originalImplementation.emailPasswordEmailExistsGET(input);
-                            },
-                            emailPasswordSignInPOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API sign in",
-                                    };
-                                }
-                                return originalImplementation.emailPasswordSignInPOST(input);
-                            },
-                            authorisationUrlGET: async function (input) {
-                                let generalErrorFromQuery = input.options.req.getKeyValueFromQuery("generalError");
-                                if (generalErrorFromQuery === "true") {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API authorisation url get",
-                                    };
-                                }
-
-                                return originalImplementation.authorisationUrlGET(input);
-                            },
-                            thirdPartySignInUpPOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API sign in up",
-                                    };
-                                }
-
-                                return originalImplementation.thirdPartySignInUpPOST(input);
-                            },
-                        };
-                    },
-                },
-            }),
-        ],
-        [
             "session",
             Session.init({
                 overwriteSessionDuringSignIn: true,
@@ -641,6 +549,112 @@ function initST({
                                     };
                                 }
                                 return originalImplementation.consumeCodePOST(input);
+                            },
+                        };
+                    },
+                },
+            }),
+        ]);
+    }
+
+    if (thirdPartyEmailPasswordSupported) {
+        recipeList.push([
+            "thirdpartyemailpassword",
+            ThirdPartyEmailPassword.init({
+                signUpFeature: {
+                    formFields,
+                },
+                emailDelivery: {
+                    override: (oI) => {
+                        return {
+                            ...oI,
+                            sendEmail: async (input) => {
+                                console.log(input.passwordResetLink);
+                                latestURLWithToken = input.passwordResetLink;
+                            },
+                        };
+                    },
+                },
+                providers:
+                    enabledProviders !== undefined
+                        ? fullProviderList.filter((config) => enabledProviders.includes(config.config))
+                        : fullProviderList,
+                override: {
+                    apis: (originalImplementation) => {
+                        return {
+                            ...originalImplementation,
+                            emailPasswordSignUpPOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API sign up",
+                                    };
+                                }
+
+                                return originalImplementation.emailPasswordSignUpPOST(input);
+                            },
+                            passwordResetPOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API reset password consume",
+                                    };
+                                }
+                                return originalImplementation.passwordResetPOST(input);
+                            },
+                            generatePasswordResetTokenPOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API reset password",
+                                    };
+                                }
+                                return originalImplementation.generatePasswordResetTokenPOST(input);
+                            },
+                            emailPasswordEmailExistsGET: async function (input) {
+                                let generalError = input.options.req.getKeyValueFromQuery("generalError");
+                                if (generalError === "true") {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API email exists",
+                                    };
+                                }
+                                return originalImplementation.emailPasswordEmailExistsGET(input);
+                            },
+                            emailPasswordSignInPOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API sign in",
+                                    };
+                                }
+                                return originalImplementation.emailPasswordSignInPOST(input);
+                            },
+                            authorisationUrlGET: async function (input) {
+                                let generalErrorFromQuery = input.options.req.getKeyValueFromQuery("generalError");
+                                if (generalErrorFromQuery === "true") {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API authorisation url get",
+                                    };
+                                }
+
+                                return originalImplementation.authorisationUrlGET(input);
+                            },
+                            thirdPartySignInUpPOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API sign in up",
+                                    };
+                                }
+
+                                return originalImplementation.thirdPartySignInUpPOST(input);
                             },
                         };
                     },
@@ -1029,7 +1043,10 @@ app.get("/test/featureFlags", (req, res) => {
         available.push("thirdpartypasswordless");
     }
 
-    available.push("thirdpartyemailpassword");
+    if (thirdPartyEmailPasswordSupported) {
+        available.push("thirdpartyemailpassword");
+    }
+
     available.push("generalerror");
     available.push("userroles");
     available.push("multitenancy");
