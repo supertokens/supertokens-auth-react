@@ -37,9 +37,9 @@ function startEndToEnd () {
     fi
 
     BASE_SPEC_FILES="test/end-to-end/**/**.test.js"
-    EXCLUDED_SPEC_FILES="test/end-to-end/**/nextjs.ssr.test.js"
+    EXCLUDED_SPEC_FILES="test/end-to-end/**/ssr.nextjs.test.js"
     if [[ "${RUN_NEXTJS_TESTS}" == "true" ]]; then
-        BASE_SPEC_FILES="test/end-to-end/**/nextjs.ssr.test.js"
+        BASE_SPEC_FILES="test/end-to-end/**/ssr.nextjs.test.js"
         EXCLUDED_SPEC_FILES=""
     fi
 
