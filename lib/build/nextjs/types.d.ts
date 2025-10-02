@@ -26,7 +26,7 @@ export declare type SuperTokensNextjsConfig = {
 export declare type FrontTokenPayload = {
     uid: string;
     ate: number;
-    up: {
+    up: Record<string, unknown> & {
         iat: number;
         exp: number;
         sub: string;
@@ -37,14 +37,6 @@ export declare type FrontTokenPayload = {
         parentRefereshTokenHash1: string | null;
         antiCsrfToken: string | null;
         iss: string;
-        "st-role": {
-            v: string;
-            t: number[];
-        };
-        "st-perm": {
-            v: string[];
-            t: number;
-        };
     };
 };
 export interface ParsableRequest {

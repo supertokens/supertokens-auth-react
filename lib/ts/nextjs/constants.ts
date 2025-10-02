@@ -1,8 +1,11 @@
-export const ACCESS_TOKEN_COOKIE_NAME = "sAccessToken";
+export const ACCESS_TOKEN_COOKIE_SESSION_COOKIE_NAME = "sAccessToken";
+export const ACCESS_TOKEN_HEADER_SESSION_COOKIE_NAME = "st-access-token";
 export const ACCESS_TOKEN_HEADER_NAME = "st-access-token";
-export const FRONT_TOKEN_COOKIE_NAME = "sFrontToken";
+export const FRONT_TOKEN_COOKIE_SESSION_COOKIE_NAME = "sFrontToken";
+export const FRONT_TOKEN_HEADER_SESSION_HEADER_NAME = "front-token";
 export const FRONT_TOKEN_HEADER_NAME = "front-token";
-export const REFRESH_TOKEN_COOKIE_NAME = "sRefreshToken";
+export const REFRESH_TOKEN_COOKIE_SESSION_COOKIE_NAME = "sRefreshToken";
+export const REFRESH_TOKEN_HEADER_SESSION_COOKIE_NAME = "st-refresh-token";
 export const REFRESH_TOKEN_HEADER_NAME = "st-refresh-token";
 export const ANTI_CSRF_TOKEN_COOKIE_NAME = "sAntiCsrf";
 export const ANTI_CSRF_TOKEN_HEADER_NAME = "anti-csrf";

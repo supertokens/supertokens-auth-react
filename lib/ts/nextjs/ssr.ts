@@ -5,13 +5,13 @@ import { enableLogging, logDebugMessage } from "../logger";
 import SuperTokens from "../superTokens";
 
 import {
-    FRONT_TOKEN_HEADER_NAME,
-    ACCESS_TOKEN_COOKIE_NAME,
-    ACCESS_TOKEN_HEADER_NAME,
+    FRONT_TOKEN_HEADER_SESSION_HEADER_NAME,
+    ACCESS_TOKEN_COOKIE_SESSION_COOKIE_NAME,
+    ACCESS_TOKEN_HEADER_SESSION_COOKIE_NAME,
     CURRENT_PATH_COOKIE_NAME,
     FORCE_LOGOUT_PATH_PARAM_NAME,
     REDIRECT_PATH_PARAM_NAME,
-    FRONT_TOKEN_COOKIE_NAME,
+    FRONT_TOKEN_COOKIE_SESSION_COOKIE_NAME,
     DEFAULT_API_PATH,
 } from "./constants";
 import { isCookiesStore } from "./types";
@@ -219,7 +219,8 @@ async function getSSRSessionState(
     cookies: CookiesObject | CookiesStore
 ): Promise<{ state: SSRSessionState; session?: LoadedSessionContext }> {
     const frontToken =
-        getCookieValue(cookies, FRONT_TOKEN_COOKIE_NAME) || getCookieValue(cookies, FRONT_TOKEN_HEADER_NAME);
+        getCookieValue(cookies, FRONT_TOKEN_COOKIE_SESSION_COOKIE_NAME) ||
+        getCookieValue(cookies, FRONT_TOKEN_HEADER_SESSION_HEADER_NAME);
     if (!frontToken) {
         return { state: "front-token-not-found" };
     }
@@ -235,7 +236,8 @@ async function getSSRSessionState(
     }
 
     const accessToken =
-        getCookieValue(cookies, ACCESS_TOKEN_COOKIE_NAME) || getCookieValue(cookies, ACCESS_TOKEN_HEADER_NAME);
+        getCookieValue(cookies, ACCESS_TOKEN_COOKIE_SESSION_COOKIE_NAME) ||
+        getCookieValue(cookies, ACCESS_TOKEN_HEADER_SESSION_COOKIE_NAME);
     if (!accessToken) {
         return { state: "access-token-not-found" };
     }

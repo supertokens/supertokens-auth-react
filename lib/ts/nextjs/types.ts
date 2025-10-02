@@ -30,7 +30,7 @@ export type SuperTokensNextjsConfig = {
 export type FrontTokenPayload = {
     uid: string;
     ate: number;
-    up: {
+    up: Record<string, unknown> & {
         iat: number;
         exp: number;
         sub: string;
@@ -41,14 +41,6 @@ export type FrontTokenPayload = {
         parentRefereshTokenHash1: string | null;
         antiCsrfToken: string | null;
         iss: string;
-        "st-role": {
-            v: string;
-            t: number[];
-        };
-        "st-perm": {
-            v: string[];
-            t: number;
-        };
     };
 };
 

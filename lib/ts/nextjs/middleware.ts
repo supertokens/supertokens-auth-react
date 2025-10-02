@@ -3,16 +3,18 @@ import { normaliseInputAppInfoOrThrowError } from "../utils";
 
 import {
     REDIRECT_ATTEMPT_MAX_COUNT,
-    REFRESH_TOKEN_COOKIE_NAME,
+    REFRESH_TOKEN_COOKIE_SESSION_COOKIE_NAME,
+    REFRESH_TOKEN_HEADER_SESSION_COOKIE_NAME,
     REFRESH_TOKEN_HEADER_NAME,
     REDIRECT_PATH_PARAM_NAME,
     REDIRECT_ATTEMPT_COUNT_COOKIE_NAME,
-    ACCESS_TOKEN_COOKIE_NAME,
+    ACCESS_TOKEN_COOKIE_SESSION_COOKIE_NAME,
+    ACCESS_TOKEN_HEADER_SESSION_COOKIE_NAME,
     ACCESS_TOKEN_HEADER_NAME,
     FRONT_TOKEN_HEADER_NAME,
     ANTI_CSRF_TOKEN_HEADER_NAME,
     FORCE_LOGOUT_PATH_PARAM_NAME,
-    FRONT_TOKEN_COOKIE_NAME,
+    FRONT_TOKEN_COOKIE_SESSION_COOKIE_NAME,
     ANTI_CSRF_TOKEN_COOKIE_NAME,
     CURRENT_PATH_COOKIE_NAME,
     SSR_REFRESH_SESSION_INDICATOR_COOKIE_NAME,
@@ -83,7 +85,7 @@ export function superTokensMiddleware(
         if (!isInternalPath(requestUrl.pathname)) {
             response.headers.append(
                 "set-cookie",
-                `${CURRENT_PATH_COOKIE_NAME}=${requestUrl.pathname}; Path=/; HttpOnly; SameSite=Strict`
+                `${CURRENT_PATH_COOKIE_NAME}=${requestUrl.pathname}; Path=/; HttpOnly; SameSite=Strict; Max-Age=60;`
             );
         }
         return response;
@@ -98,7 +100,10 @@ async function refreshSession(request: Request): Promise<Response> {
     }
 
     // The redirect originates from SSR and authorization headers are passed in a cookie
-    if (!getCookie(request, REFRESH_TOKEN_COOKIE_NAME) && !getCookie(request, REFRESH_TOKEN_HEADER_NAME)) {
+    if (
+        !getCookie(request, REFRESH_TOKEN_COOKIE_SESSION_COOKIE_NAME) &&
+        !getCookie(request, REFRESH_TOKEN_HEADER_SESSION_COOKIE_NAME)
+    ) {
         logDebugMessage("Refresh token not found");
         return redirectToAuthPage(request);
     }
@@ -147,7 +152,8 @@ async function revokeSession(request: Request): Promise<Response | void> {
 
     try {
         const accessToken =
-            getCookie(request, ACCESS_TOKEN_COOKIE_NAME) || getCookie(request, ACCESS_TOKEN_HEADER_NAME);
+            getCookie(request, ACCESS_TOKEN_COOKIE_SESSION_COOKIE_NAME) ||
+            getCookie(request, ACCESS_TOKEN_HEADER_SESSION_COOKIE_NAME);
         if (!accessToken) {
             throw new Error("No access token found in the request");
         }
@@ -155,14 +161,14 @@ async function revokeSession(request: Request): Promise<Response | void> {
             `${AppInfo.apiBasePath.getAsStringDangerous()}/signout`,
             AppInfo.apiDomain.getAsStringDangerous()
         );
-        const refreshRequestHeaders = new Headers();
-        refreshRequestHeaders.append("Content-Type", "application/json");
-        refreshRequestHeaders.append("Cookie", `${REFRESH_TOKEN_COOKIE_NAME}=${accessToken}`);
-        refreshRequestHeaders.append("Authorization", `Bearer ${accessToken}`);
+        const signoutRequestHeaders = new Headers();
+        signoutRequestHeaders.append("Content-Type", "application/json");
+        signoutRequestHeaders.append("Cookie", `${ACCESS_TOKEN_COOKIE_SESSION_COOKIE_NAME}=${accessToken}`);
+        signoutRequestHeaders.append("Authorization", `Bearer ${accessToken}`);
 
         await fetch(signOutURL, {
             method: "POST",
-            headers: refreshRequestHeaders,
+            headers: signoutRequestHeaders,
             credentials: "include",
         });
     } catch (err) {
@@ -173,7 +179,7 @@ async function revokeSession(request: Request): Promise<Response | void> {
     response.headers.set("x-middleware-next", "1");
     response.headers.append(
         "set-cookie",
-        `${ACCESS_TOKEN_COOKIE_NAME}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
+        `${ACCESS_TOKEN_COOKIE_SESSION_COOKIE_NAME}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
     );
     response.headers.append(
         "set-cookie",
@@ -181,7 +187,7 @@ async function revokeSession(request: Request): Promise<Response | void> {
     );
     response.headers.append(
         "set-cookie",
-        `${FRONT_TOKEN_COOKIE_NAME}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
+        `${FRONT_TOKEN_COOKIE_SESSION_COOKIE_NAME}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
     );
     response.headers.append(
         "set-cookie",
@@ -194,11 +200,11 @@ async function revokeSession(request: Request): Promise<Response | void> {
     const refreshPath = getRefreshAPIPath();
     response.headers.append(
         "set-cookie",
-        `${REFRESH_TOKEN_COOKIE_NAME}=; Path=${refreshPath}; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
+        `${REFRESH_TOKEN_COOKIE_SESSION_COOKIE_NAME}=; Path=${refreshPath}; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
     );
     response.headers.append(
         "set-cookie",
-        `${REFRESH_TOKEN_HEADER_NAME}=; Path=${refreshPath}; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
+        `${REFRESH_TOKEN_HEADER_SESSION_COOKIE_NAME}=; Path=${refreshPath}; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
     );
     response.headers.append(
         "set-cookie",
@@ -238,12 +244,12 @@ async function fetchNewTokens(request: Request): Promise<{
         `${AppInfo.apiBasePath.getAsStringDangerous()}/session/refresh`,
         AppInfo.apiDomain.getAsStringDangerous()
     );
-    const cookieRefreshToken = getCookie(request, REFRESH_TOKEN_COOKIE_NAME);
-    const headerRefreshToken = getCookie(request, REFRESH_TOKEN_HEADER_NAME);
+    const cookieRefreshToken = getCookie(request, REFRESH_TOKEN_COOKIE_SESSION_COOKIE_NAME);
+    const headerRefreshToken = getCookie(request, REFRESH_TOKEN_HEADER_SESSION_COOKIE_NAME);
     const refreshRequestHeaders = new Headers();
     refreshRequestHeaders.append("Content-Type", "application/json");
     if (cookieRefreshToken) {
-        refreshRequestHeaders.append("Cookie", `${REFRESH_TOKEN_COOKIE_NAME}=${cookieRefreshToken}`);
+        refreshRequestHeaders.append("Cookie", `${REFRESH_TOKEN_COOKIE_SESSION_COOKIE_NAME}=${cookieRefreshToken}`);
     } else if (headerRefreshToken) {
         refreshRequestHeaders.append("Authorization", `Bearer ${headerRefreshToken}`);
     }
@@ -259,53 +265,68 @@ async function fetchNewTokens(request: Request): Promise<{
     }
 
     logDebugMessage("Session refresh request completed");
-    const cookies: string[] = [];
-    const tokens = {
-        accessToken: refreshResponse.headers.get(ACCESS_TOKEN_HEADER_NAME) || "",
-        refreshToken: refreshResponse.headers.get(REFRESH_TOKEN_HEADER_NAME) || "",
-        frontToken: refreshResponse.headers.get(FRONT_TOKEN_HEADER_NAME) || "",
-        antiCsrfToken: refreshResponse.headers.get(ANTI_CSRF_TOKEN_HEADER_NAME) || "",
-    };
-
-    cookies.push(`${FRONT_TOKEN_COOKIE_NAME}=${tokens.frontToken}; Path=/`);
     // TOOD: Review the current build target
     // getSetCookie was added in node 18 and our build target is ES5
     // This should not a problem here since the function runs in the Vercel edge runtime environment
     // @ts-expect-error TS(2339): Property 'getSetCookie' does not exist on type 'Headers'.
     const setCookieHeaders = refreshResponse.headers.getSetCookie();
-    for (const header of setCookieHeaders) {
-        if (header.includes(ACCESS_TOKEN_COOKIE_NAME)) {
-            cookies.push(header);
-        }
-        if (header.includes(REFRESH_TOKEN_COOKIE_NAME)) {
-            cookies.push(header);
-        }
-        if (header.includes(ANTI_CSRF_TOKEN_COOKIE_NAME)) {
-            cookies.push(header);
-        }
-    }
+    const tokenTransferMethod: "cookie" | "header" = setCookieHeaders.find((header: string) =>
+        header.includes(ACCESS_TOKEN_COOKIE_SESSION_COOKIE_NAME)
+    )
+        ? "cookie"
+        : "header";
 
-    if (!cookies.some((cookie) => cookie.includes(ACCESS_TOKEN_COOKIE_NAME))) {
-        cookies.push(`${ACCESS_TOKEN_HEADER_NAME}=${tokens.accessToken}; Path=/; HttpOnly; SameSite=Lax`);
-    }
-    if (!cookies.some((cookie) => cookie.includes(REFRESH_TOKEN_COOKIE_NAME))) {
-        cookies.push(
-            `${REFRESH_TOKEN_HEADER_NAME}=${tokens.refreshToken}; Path=/api/auth/session/refresh; HttpOnly; SameSite=Lax`
-        );
-    }
-    if (!cookies.some((cookie) => cookie.includes(ANTI_CSRF_TOKEN_COOKIE_NAME)) && tokens.antiCsrfToken) {
-        cookies.push(`${ANTI_CSRF_TOKEN_HEADER_NAME}=${tokens.antiCsrfToken}; Path=/; HttpOnly; SameSite=Lax`);
-    }
-
+    const cookies: string[] = [];
     const headers: [string, string][] = [];
-    if (tokens.accessToken) {
-        headers.push([ACCESS_TOKEN_HEADER_NAME, tokens.accessToken]);
+    const frontToken = refreshResponse.headers.get(FRONT_TOKEN_HEADER_NAME) || "";
+    if (!frontToken) {
+        throw new Error("Front token not found in the response");
     }
-    if (tokens.refreshToken) {
-        headers.push([REFRESH_TOKEN_HEADER_NAME, tokens.refreshToken]);
-    }
-    if (tokens.antiCsrfToken) {
-        headers.push([ANTI_CSRF_TOKEN_HEADER_NAME, tokens.antiCsrfToken]);
+    cookies.push(`${FRONT_TOKEN_COOKIE_SESSION_COOKIE_NAME}=${frontToken}; Path=/`);
+
+    if (tokenTransferMethod === "cookie") {
+        const accessTokenCookie = setCookieHeaders.find((header: string) =>
+            header.includes(ACCESS_TOKEN_COOKIE_SESSION_COOKIE_NAME)
+        );
+        if (!accessTokenCookie) {
+            throw new Error("Access token cookie not found in the response");
+        }
+        cookies.push(accessTokenCookie);
+        const refreshTokenCookie = setCookieHeaders.find((header: string) =>
+            header.includes(REFRESH_TOKEN_COOKIE_SESSION_COOKIE_NAME)
+        );
+        if (!refreshTokenCookie) {
+            throw new Error("Refresh token cookie not found in the response");
+        }
+        cookies.push(refreshTokenCookie);
+        const antiCsrfTokenCookie = setCookieHeaders.find((header: string) =>
+            header.includes(ANTI_CSRF_TOKEN_COOKIE_NAME)
+        );
+        if (antiCsrfTokenCookie) {
+            cookies.push(antiCsrfTokenCookie);
+        }
+    } else {
+        const accessToken = refreshResponse.headers.get(ACCESS_TOKEN_HEADER_NAME);
+        if (accessToken) {
+            headers.push([ACCESS_TOKEN_HEADER_NAME, accessToken]);
+            cookies.push(`${ACCESS_TOKEN_HEADER_SESSION_COOKIE_NAME}=${accessToken}; Path=/; HttpOnly; SameSite=Lax`);
+        } else {
+            throw new Error("Access token header not found in the response");
+        }
+        const refreshToken = refreshResponse.headers.get(REFRESH_TOKEN_HEADER_NAME);
+        if (refreshToken) {
+            headers.push([REFRESH_TOKEN_HEADER_NAME, refreshToken]);
+            cookies.push(
+                `${REFRESH_TOKEN_HEADER_SESSION_COOKIE_NAME}=${refreshToken}; Path=${getRefreshAPIPath()}; HttpOnly; SameSite=Lax`
+            );
+        } else {
+            throw new Error("Refresh token header not found in the response");
+        }
+        const antiCsrfToken = refreshResponse.headers.get(ANTI_CSRF_TOKEN_HEADER_NAME);
+        if (antiCsrfToken) {
+            headers.push([ANTI_CSRF_TOKEN_HEADER_NAME, antiCsrfToken]);
+            cookies.push(`${ANTI_CSRF_TOKEN_HEADER_NAME}=${antiCsrfToken}; Path=/; HttpOnly; SameSite=Lax`);
+        }
     }
 
     return { cookies, headers };
