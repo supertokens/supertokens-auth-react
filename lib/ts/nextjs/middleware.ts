@@ -85,7 +85,14 @@ export function superTokensMiddleware(
         if (!isInternalPath(requestUrl.pathname)) {
             response.headers.append(
                 "set-cookie",
-                `${CURRENT_PATH_COOKIE_NAME}=${requestUrl.pathname}; Path=/; HttpOnly; SameSite=Strict; Max-Age=60;`
+                buildSetCookieHeader({
+                    name: CURRENT_PATH_COOKIE_NAME,
+                    value: requestUrl.pathname,
+                    path: "/",
+                    httpOnly: true,
+                    sameSite: "strict",
+                    maxAge: 60,
+                })
             );
         }
         return response;
@@ -129,14 +136,26 @@ async function refreshSession(request: Request): Promise<Response> {
         }
         finalResponse.headers.append(
             "set-cookie",
-            `${REDIRECT_ATTEMPT_COUNT_COOKIE_NAME}=${
-                redirectAttemptNumber + 1
-            }; Path=/; Max-Age=10; HttpOnly; SameSite=Strict`
+            buildSetCookieHeader({
+                name: REDIRECT_ATTEMPT_COUNT_COOKIE_NAME,
+                value: String(redirectAttemptNumber + 1),
+                path: "/",
+                maxAge: 10,
+                httpOnly: true,
+                sameSite: "strict",
+            })
         );
 
         finalResponse.headers.append(
             "set-cookie",
-            `${SSR_REFRESH_SESSION_INDICATOR_COOKIE_NAME}=true; Path=/; HttpOnly; SameSite=Strict; Max-Age=5`
+            buildSetCookieHeader({
+                name: SSR_REFRESH_SESSION_INDICATOR_COOKIE_NAME,
+                value: "true",
+                path: "/",
+                httpOnly: true,
+                sameSite: "strict",
+                maxAge: 5,
+            })
         );
         logDebugMessage("Attached new tokens to response");
         return finalResponse;
@@ -179,36 +198,91 @@ async function revokeSession(request: Request): Promise<Response | void> {
     response.headers.set("x-middleware-next", "1");
     response.headers.append(
         "set-cookie",
-        `${ACCESS_TOKEN_COOKIE_SESSION_COOKIE_NAME}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
+        buildSetCookieHeader({
+            name: ACCESS_TOKEN_COOKIE_SESSION_COOKIE_NAME,
+            value: "",
+            path: "/",
+            expires: "Thu, 01 Jan 1970 00:00:00 GMT",
+            httpOnly: true,
+            sameSite: "lax",
+        })
     );
     response.headers.append(
         "set-cookie",
-        `${ACCESS_TOKEN_HEADER_NAME}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
+        buildSetCookieHeader({
+            name: ACCESS_TOKEN_HEADER_NAME,
+            value: "",
+            path: "/",
+            expires: "Thu, 01 Jan 1970 00:00:00 GMT",
+            httpOnly: true,
+            sameSite: "lax",
+        })
     );
     response.headers.append(
         "set-cookie",
-        `${FRONT_TOKEN_COOKIE_SESSION_COOKIE_NAME}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
+        buildSetCookieHeader({
+            name: FRONT_TOKEN_COOKIE_SESSION_COOKIE_NAME,
+            value: "",
+            path: "/",
+            expires: "Thu, 01 Jan 1970 00:00:00 GMT",
+            httpOnly: true,
+            sameSite: "lax",
+        })
     );
     response.headers.append(
         "set-cookie",
-        `${ANTI_CSRF_TOKEN_COOKIE_NAME}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
+        buildSetCookieHeader({
+            name: ANTI_CSRF_TOKEN_COOKIE_NAME,
+            value: "",
+            path: "/",
+            expires: "Thu, 01 Jan 1970 00:00:00 GMT",
+            httpOnly: true,
+            sameSite: "lax",
+        })
     );
     response.headers.append(
         "set-cookie",
-        `${ANTI_CSRF_TOKEN_HEADER_NAME}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
-    );
-    const refreshPath = getRefreshAPIPath();
-    response.headers.append(
-        "set-cookie",
-        `${REFRESH_TOKEN_COOKIE_SESSION_COOKIE_NAME}=; Path=${refreshPath}; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
-    );
-    response.headers.append(
-        "set-cookie",
-        `${REFRESH_TOKEN_HEADER_SESSION_COOKIE_NAME}=; Path=${refreshPath}; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`
+        buildSetCookieHeader({
+            name: ANTI_CSRF_TOKEN_HEADER_NAME,
+            value: "",
+            path: "/",
+            expires: "Thu, 01 Jan 1970 00:00:00 GMT",
+            httpOnly: true,
+            sameSite: "lax",
+        })
     );
     response.headers.append(
         "set-cookie",
-        `${SSR_REVOKE_SESSION_INDICATOR_COOKIE_NAME}=true; Path=/; HttpOnly; SameSite=Strict; Max-Age=5`
+        buildSetCookieHeader({
+            name: REFRESH_TOKEN_COOKIE_SESSION_COOKIE_NAME,
+            value: "",
+            path: "/",
+            expires: "Thu, 01 Jan 1970 00:00:00 GMT",
+            httpOnly: true,
+            sameSite: "lax",
+        })
+    );
+    response.headers.append(
+        "set-cookie",
+        buildSetCookieHeader({
+            name: REFRESH_TOKEN_HEADER_SESSION_COOKIE_NAME,
+            value: "",
+            path: "/",
+            expires: "Thu, 01 Jan 1970 00:00:00 GMT",
+            httpOnly: true,
+            sameSite: "lax",
+        })
+    );
+    response.headers.append(
+        "set-cookie",
+        buildSetCookieHeader({
+            name: SSR_REVOKE_SESSION_INDICATOR_COOKIE_NAME,
+            value: "true",
+            path: "/",
+            httpOnly: true,
+            sameSite: "strict",
+            maxAge: 5,
+        })
     );
 
     return response;
@@ -282,7 +356,15 @@ async function fetchNewTokens(request: Request): Promise<{
     if (!frontToken) {
         throw new Error("Front token not found in the response");
     }
-    cookies.push(`${FRONT_TOKEN_COOKIE_SESSION_COOKIE_NAME}=${frontToken}; Path=/`);
+    cookies.push(
+        buildSetCookieHeader({
+            name: FRONT_TOKEN_COOKIE_SESSION_COOKIE_NAME,
+            value: frontToken,
+            path: "/",
+            httpOnly: false,
+            sameSite: "lax",
+        })
+    );
 
     if (tokenTransferMethod === "cookie") {
         const accessTokenCookie = setCookieHeaders.find((header: string) =>
@@ -309,7 +391,15 @@ async function fetchNewTokens(request: Request): Promise<{
         const accessToken = refreshResponse.headers.get(ACCESS_TOKEN_HEADER_NAME);
         if (accessToken) {
             headers.push([ACCESS_TOKEN_HEADER_NAME, accessToken]);
-            cookies.push(`${ACCESS_TOKEN_HEADER_SESSION_COOKIE_NAME}=${accessToken}; Path=/; HttpOnly; SameSite=Lax`);
+            cookies.push(
+                buildSetCookieHeader({
+                    name: ACCESS_TOKEN_HEADER_SESSION_COOKIE_NAME,
+                    value: accessToken,
+                    path: "/",
+                    httpOnly: true,
+                    sameSite: "lax",
+                })
+            );
         } else {
             throw new Error("Access token header not found in the response");
         }
@@ -317,7 +407,13 @@ async function fetchNewTokens(request: Request): Promise<{
         if (refreshToken) {
             headers.push([REFRESH_TOKEN_HEADER_NAME, refreshToken]);
             cookies.push(
-                `${REFRESH_TOKEN_HEADER_SESSION_COOKIE_NAME}=${refreshToken}; Path=${getRefreshAPIPath()}; HttpOnly; SameSite=Lax`
+                buildSetCookieHeader({
+                    name: REFRESH_TOKEN_HEADER_SESSION_COOKIE_NAME,
+                    value: refreshToken,
+                    path: "/",
+                    httpOnly: true,
+                    sameSite: "lax",
+                })
             );
         } else {
             throw new Error("Refresh token header not found in the response");
@@ -325,7 +421,15 @@ async function fetchNewTokens(request: Request): Promise<{
         const antiCsrfToken = refreshResponse.headers.get(ANTI_CSRF_TOKEN_HEADER_NAME);
         if (antiCsrfToken) {
             headers.push([ANTI_CSRF_TOKEN_HEADER_NAME, antiCsrfToken]);
-            cookies.push(`${ANTI_CSRF_TOKEN_HEADER_NAME}=${antiCsrfToken}; Path=/; HttpOnly; SameSite=Lax`);
+            cookies.push(
+                buildSetCookieHeader({
+                    name: ANTI_CSRF_TOKEN_HEADER_NAME,
+                    value: antiCsrfToken,
+                    path: "/",
+                    httpOnly: true,
+                    sameSite: "lax",
+                })
+            );
         }
     }
 
@@ -456,4 +560,37 @@ function isInternalPath(pathname: string): boolean {
     const isAssetFile = fileExtensions.some((ext) => pathname.toLowerCase().endsWith(ext));
 
     return isInternalPath || isAssetFile;
+}
+
+function buildSetCookieHeader(cookie: {
+    name: string;
+    value: string;
+    maxAge?: number;
+    domain?: string;
+    path?: string;
+    sameSite?: "strict" | "lax" | "none";
+    httpOnly?: boolean;
+    secure?: boolean;
+    expires?: string;
+}): string {
+    const { name, value, maxAge, domain, path = "/", sameSite = "lax", httpOnly = true, secure, expires } = cookie;
+
+    let cookieString = `${name}=${value}; Path=${path}; SameSite=${sameSite}`;
+    if (maxAge) {
+        cookieString += `; Max-Age=${maxAge}`;
+    }
+    if (domain) {
+        cookieString += `; Domain=${domain}`;
+    }
+    if (httpOnly) {
+        cookieString += "; HttpOnly";
+    }
+    if (secure) {
+        cookieString += "; Secure";
+    }
+    if (expires) {
+        cookieString += `; Expires=${expires}`;
+    }
+
+    return cookieString;
 }
