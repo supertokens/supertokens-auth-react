@@ -123,6 +123,10 @@ describe("SuperTokens NextJS SSR", function () {
 
     beforeEach(async function () {
         page = await browser.newPage();
+        const client = await page.target().createCDPSession();
+        await client.send("Network.clearBrowserCookies");
+        await client.send("Network.clearBrowserCache");
+        await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
     });
 
     after(async function () {
@@ -131,12 +135,6 @@ describe("SuperTokens NextJS SSR", function () {
 
     afterEach(async function () {
         await screenshotOnFailure(this, browser);
-        const cookies = await page.cookies();
-        await Promise.all(
-            cookies.map(async (cookie) => {
-                await page.deleteCookie(cookie);
-            })
-        );
         await page?.close();
     });
 
@@ -151,7 +149,8 @@ describe("SuperTokens NextJS SSR", function () {
                 assert.notEqual(accessTokenCookie, undefined);
 
                 await page.deleteCookie({ name: FRONT_TOKEN_COOKIE_NAME });
-                const decodedFrontToken = decodeFrontToken(frontTokenCookie?.value);
+                assert.notEqual(frontTokenCookie.value, undefined);
+                const decodedFrontToken = decodeFrontToken(frontTokenCookie.value);
                 decodedFrontToken.up = {};
                 page.setCookie({
                     ...frontTokenCookie,
@@ -180,7 +179,8 @@ describe("SuperTokens NextJS SSR", function () {
                 assert.notEqual(accessTokenCookie, undefined);
 
                 await page.deleteCookie({ name: FRONT_TOKEN_COOKIE_NAME });
-                const decodedFrontToken = decodeFrontToken(frontTokenCookie?.value);
+                assert.notEqual(frontTokenCookie.value, undefined);
+                const decodedFrontToken = decodeFrontToken(frontTokenCookie.value);
                 decodedFrontToken.ate = Date.now() - 3600000;
                 await page.setCookie({
                     ...frontTokenCookie,
@@ -263,7 +263,8 @@ describe("SuperTokens NextJS SSR", function () {
                 assert.notEqual(accessTokenCookie, undefined);
 
                 await page.deleteCookie({ name: FRONT_TOKEN_COOKIE_NAME });
-                const decodedFrontToken = decodeFrontToken(frontTokenCookie?.value);
+                assert.notEqual(frontTokenCookie.value, undefined);
+                const decodedFrontToken = decodeFrontToken(frontTokenCookie.value);
                 decodedFrontToken.up = {};
                 page.setCookie({
                     ...frontTokenCookie,
@@ -294,7 +295,8 @@ describe("SuperTokens NextJS SSR", function () {
                 assert.notEqual(accessTokenCookie, undefined);
 
                 await page.deleteCookie({ name: FRONT_TOKEN_COOKIE_NAME });
-                const decodedFrontToken = decodeFrontToken(frontTokenCookie?.value);
+                assert.notEqual(frontTokenCookie.value, undefined);
+                const decodedFrontToken = decodeFrontToken(frontTokenCookie.value);
                 decodedFrontToken.ate = Date.now() - 3600000;
                 await page.setCookie({
                     ...frontTokenCookie,
