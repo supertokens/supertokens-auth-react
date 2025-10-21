@@ -54,6 +54,8 @@ export function superTokensMiddleware(
     return async (request: Request) => {
         const requestUrl = new URL(request.url);
         const refreshPath = getRefreshAPIPath();
+        console.log("requestUrl.pathname", requestUrl.pathname);
+        console.log("request method", request.method);
         if (requestUrl.pathname.startsWith(refreshPath) && request.method === "GET") {
             return refreshSession(request);
         }

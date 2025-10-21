@@ -1,14 +1,14 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { getServerActionSession, init } from "supertokens-auth-react/nextjs/ssr";
+import { getServerActionSessionWithoutClaims, init } from "supertokens-auth-react/nextjs/ssr";
 import { ssrConfig } from "../config/ssr";
 
 init(ssrConfig());
 
 export async function protectedAction() {
     const cookiesStore = await cookies();
-    const { status, session } = await getServerActionSession(cookiesStore);
+    const { status, session } = await getServerActionSessionWithoutClaims(cookiesStore);
 
     if (status !== "valid") {
         return { status, userId: undefined };

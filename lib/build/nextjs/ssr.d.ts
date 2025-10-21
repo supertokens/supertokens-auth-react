@@ -1,5 +1,5 @@
+import { SSRSessionContext } from "./types";
 import type { CookiesObject, CookiesStore, GetServerSidePropsReturnValue, SuperTokensNextjsConfig } from "./types";
-import type { LoadedSessionContext } from "../recipe/session/types";
 export default class SuperTokensNextjsSSRAPIWrapper {
     static config: SuperTokensNextjsConfig;
     static init(config: SuperTokensNextjsConfig): void;
@@ -11,7 +11,7 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * @param cookies - The cookies store exposed by next/headers (await cookies())
      * @returns The session context value or directly redirects the user to either the login page or the refresh API
      **/
-    static getServerComponentSession(cookies: CookiesStore): Promise<LoadedSessionContext>;
+    static getServerComponentSession(cookies: CookiesStore): Promise<SSRSessionContext>;
     /**
      * Get the session state inside a server action
      * The function is meant to be used inside Next.js server actions
@@ -20,7 +20,7 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * If the status is 'invalid' or 'expired' then the users should be considered as unauthenticated
      **/
     static getServerActionSession(cookies: CookiesStore): Promise<{
-        session: LoadedSessionContext;
+        session: SSRSessionContext;
         status: "valid";
     } | {
         status: "expired" | "invalid";

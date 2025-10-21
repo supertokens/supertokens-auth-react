@@ -6,7 +6,7 @@ import { CallAPIButton } from "./callApiButton";
 import { LinksComponent } from "./linksComponent";
 import { SessionAuthForNextJS } from "./sessionAuthForNextJS";
 
-import { getServerComponentSession, init } from "supertokens-auth-react/nextjs/ssr";
+import { getServerComponentSessionWithoutClaims, init } from "supertokens-auth-react/nextjs/ssr";
 import { ssrConfig } from "../config/ssr";
 import { useState } from "react";
 import { MiddlewareServerActionButton } from "./middlewareServerActionButton";
@@ -18,7 +18,7 @@ init(ssrConfig());
 
 export async function HomePage() {
     const cookiesStore = await cookies();
-    const session = await getServerComponentSession(cookiesStore);
+    const session = await getServerComponentSessionWithoutClaims(cookiesStore);
 
     return (
         <SessionAuthForNextJS>

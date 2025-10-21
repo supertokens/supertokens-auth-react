@@ -12,9 +12,11 @@ export type GetServerSidePropsRedirect = {
     redirect: { destination: string; permanent: boolean };
 };
 
+export type SSRSessionContext = Omit<LoadedSessionContext, "invalidClaims">;
+
 export type GetServerSidePropsReturnValue =
     | {
-          props: { session: LoadedSessionContext };
+          props: { session: SSRSessionContext };
       }
     | GetServerSidePropsRedirect;
 

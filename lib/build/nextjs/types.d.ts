@@ -13,9 +13,10 @@ export declare type GetServerSidePropsRedirect = {
         permanent: boolean;
     };
 };
+export declare type SSRSessionContext = Omit<LoadedSessionContext, "invalidClaims">;
 export declare type GetServerSidePropsReturnValue = {
     props: {
-        session: LoadedSessionContext;
+        session: SSRSessionContext;
     };
 } | GetServerSidePropsRedirect;
 export declare function isCookiesStore(obj: unknown): obj is CookiesStore;

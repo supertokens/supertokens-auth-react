@@ -14,7 +14,7 @@ import {
     FRONT_TOKEN_COOKIE_SESSION_COOKIE_NAME,
     DEFAULT_API_PATH,
 } from "./constants";
-import { isCookiesStore } from "./types";
+import { isCookiesStore, SSRSessionContext } from "./types";
 import { jwtVerify } from "./utils";
 
 import type {
@@ -24,7 +24,6 @@ import type {
     GetServerSidePropsReturnValue,
     SuperTokensNextjsConfig,
 } from "./types";
-import type { LoadedSessionContext } from "../recipe/session/types";
 
 type SSRSessionState =
     | "front-token-not-found"
@@ -70,7 +69,7 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * @param cookies - The cookies store exposed by next/headers (await cookies())
      * @returns The session context value or directly redirects the user to either the login page or the refresh API
      **/
-    static async getServerComponentSession(cookies: CookiesStore): Promise<LoadedSessionContext> {
+    static async getServerComponentSession(cookies: CookiesStore): Promise<SSRSessionContext> {
         const redirectPath = cookies.get(CURRENT_PATH_COOKIE_NAME)?.value || "/";
         const authPagePath = getAuthPagePath(redirectPath);
         const refreshLocation = getRefreshLocation(redirectPath);
@@ -90,7 +89,7 @@ export default class SuperTokensNextjsSSRAPIWrapper {
                 return redirect(refreshLocation);
             case "tokens-match":
                 logDebugMessage("Returning session object");
-                return session as LoadedSessionContext;
+                return session as SSRSessionContext;
             default:
                 // This is here just to prevent typescript from complaining
                 // about the function not returning a value
@@ -108,12 +107,12 @@ export default class SuperTokensNextjsSSRAPIWrapper {
     static async getServerActionSession(
         cookies: CookiesStore
     ): Promise<
-        { session: LoadedSessionContext; status: "valid" } | { status: "expired" | "invalid"; session: undefined }
+        { session: SSRSessionContext; status: "valid" } | { status: "expired" | "invalid"; session: undefined }
     > {
         const { state, session } = await getSSRSessionState(cookies);
         logDebugMessage(`SSR Session State: ${state}`);
         if (state === "tokens-match") {
-            return { session: session as LoadedSessionContext, status: "valid" };
+            return { session: session as SSRSessionContext, status: "valid" };
         } else if (["tokens-do-not-match", "front-token-expired", "access-token-not-found"].includes(state)) {
             return { status: "expired", session: undefined };
         }
@@ -185,7 +184,7 @@ export default class SuperTokensNextjsSSRAPIWrapper {
                 return { redirect: { destination: refreshLocation, permanent: false } };
             case "tokens-match":
                 logDebugMessage("Returning session object");
-                return { props: { session: session as LoadedSessionContext } };
+                return { props: { session: session as SSRSessionContext } };
             default:
                 // This is here just to prevent typescript from complaining
                 // about the function not returning a value
@@ -217,7 +216,7 @@ function getRefreshLocation(redirectPath: string): string {
 
 async function getSSRSessionState(
     cookies: CookiesObject | CookiesStore
-): Promise<{ state: SSRSessionState; session?: LoadedSessionContext }> {
+): Promise<{ state: SSRSessionState; session?: SSRSessionContext }> {
     const frontToken =
         getCookieValue(cookies, FRONT_TOKEN_COOKIE_SESSION_COOKIE_NAME) ||
         getCookieValue(cookies, FRONT_TOKEN_HEADER_SESSION_HEADER_NAME);
@@ -256,13 +255,12 @@ async function getSSRSessionState(
     };
 }
 
-function buildLoadedSessionContext(accessTokenPayload: FrontTokenPayload["up"]): LoadedSessionContext {
+function buildLoadedSessionContext(accessTokenPayload: FrontTokenPayload["up"]): SSRSessionContext {
     return {
         userId: accessTokenPayload.sub,
         accessTokenPayload,
         doesSessionExist: true,
         loading: false,
-        invalidClaims: [],
     };
 }
 
