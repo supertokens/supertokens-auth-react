@@ -1,19 +1,5 @@
-import type { PasskeyNotSupportedError } from "./components/themes/error/passkeyNotSupportedError";
-import type Recipe from "./recipe";
-import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type {
-    NormalisedBaseConfig,
-    NormalisedGetRedirectionURLContext,
-    UserContext,
-    WebJSRecipeInterface,
-} from "../../types";
-import type {
-    OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
-    UserInput as AuthRecipeModuleUserInput,
-    NormalisedConfig as NormalisedAuthRecipeModuleConfig,
-    Config as AuthRecipeModuleConfig,
-} from "../authRecipe/types";
 import type { ContinueWithPasskeyWithOverride } from "./components/themes/continueWithPasskey";
+import type { PasskeyNotSupportedError } from "./components/themes/error/passkeyNotSupportedError";
 import type {
     WebauthnMFASignIn,
     WebauthnMFALoadingScreen,
@@ -31,6 +17,20 @@ import type { ContinueWithoutPasskey } from "./components/themes/signUp/continue
 import type { PasskeyFeatureBlock } from "./components/themes/signUp/featureBlocks";
 import type { SignUpFormInner } from "./components/themes/signUp/signUpForm";
 import type { SignUpSomethingWentWrong } from "./components/themes/signUp/somethingWentWrong";
+import type Recipe from "./recipe";
+import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import type {
+    NormalisedBaseConfig,
+    NormalisedGetRedirectionURLContext,
+    UserContext,
+    WebJSRecipeInterface,
+} from "../../types";
+import type {
+    OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
+    UserInput as AuthRecipeModuleUserInput,
+    NormalisedConfig as NormalisedAuthRecipeModuleConfig,
+    Config as AuthRecipeModuleConfig,
+} from "../authRecipe/types";
 import type { Dispatch } from "react";
 import type React from "react";
 import type { RecipeInterface } from "supertokens-web-js/recipe/webauthn";

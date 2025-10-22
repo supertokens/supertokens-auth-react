@@ -94,7 +94,7 @@ export function getQueryParams(param: string): string | null {
 
 export function getURLHash(): string {
     // By default it is returined with the "#" at the beginning, we cut that off here.
-    return WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHash().substr(1);
+    return WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHash().substring(1);
 }
 
 export function getRedirectToPathFromURL(): string | undefined {
@@ -377,7 +377,7 @@ export function normaliseCookieScopeOrThrowError(cookieScope: string): string {
 
         // first we convert it to a URL so that we can use the URL class
         if (cookieScope.startsWith(".")) {
-            cookieScope = cookieScope.substr(1);
+            cookieScope = cookieScope.substring(1);
         }
 
         if (!cookieScope.startsWith("http://") && !cookieScope.startsWith("https://")) {
@@ -390,7 +390,7 @@ export function normaliseCookieScopeOrThrowError(cookieScope: string): string {
 
             // remove leading dot
             if (cookieScope.startsWith(".")) {
-                cookieScope = cookieScope.substr(1);
+                cookieScope = cookieScope.substring(1);
             }
 
             return cookieScope;
