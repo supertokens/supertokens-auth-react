@@ -8,7 +8,6 @@ import { SessionAuthForNextJS } from "./sessionAuthForNextJS";
 
 import { getServerComponentSessionWithoutClaimValidation, init } from "supertokens-auth-react/nextjs/ssr";
 import { ssrConfig } from "../config/ssr";
-import { useState } from "react";
 import { MiddlewareServerActionButton } from "./middlewareServerActionButton";
 import { ProtectedActionButton } from "./protectedActionButton";
 import { UnprotectedActionButton } from "./unprotectedActionButton";
