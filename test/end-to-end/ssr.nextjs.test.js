@@ -77,12 +77,14 @@ function encodeFrontToken(frontToken) {
 }
 
 async function didSessionRefresh(page) {
+    await page.waitForNetworkIdle({ idleTime: 500, timeout: 10000 });
     const cookies = await page.cookies();
     const refreshTokenIndicatorCookie = cookies.find((c) => c.name === SSR_REFRESH_SESSION_INDICATOR_COOKIE_NAME);
     assert.equal(refreshTokenIndicatorCookie?.value, "true");
 }
 
 async function wasSessionRevoked(page) {
+    await page.waitForNetworkIdle({ idleTime: 500, timeout: 10000 });
     let newCookies = await page.cookies();
     const refreshTokenIndicatorCookie = newCookies.find((c) => c.name === SSR_REVOKE_SESSION_INDICATOR_COOKIE_NAME);
     assert.equal(refreshTokenIndicatorCookie?.value, "true");
@@ -96,9 +98,10 @@ async function hasServerComponentUserId(page) {
 
 async function triggerServerAction(page) {
     const actionButton = await page.waitForSelector("[data-testid='getServerActionSession-button']");
-    await actionButton.click();
-    await new Promise((res) => setTimeout(res, 1000));
-    const userIdElement = await page.waitForSelector("[data-testid='getServerActionSession-result']");
+    await Promise.all([await actionButton.click(), await page.waitForNetworkIdle({ idleTime: 500, timeout: 10000 })]);
+    const userIdElement = await page.waitForSelector("[data-testid='getServerActionSession-result']", {
+        timeout: 10000,
+    });
     const textContent = await userIdElement.evaluate((el) => el.textContent);
     const [status, userId] = textContent.split(":");
     return { userId: userId.trim(), status: status.trim() };
