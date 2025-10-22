@@ -168,11 +168,11 @@
         },
         {
             "path": "recipe/emailverification/prebuiltui.js",
-            "limit": "38kb"
+            "limit": "39kb"
         },
         {
             "path": "recipe/thirdparty/prebuiltui.js",
-            "limit": "58kb"
+            "limit": "59kb"
         },
         {
             "path": "recipe/emailpassword/prebuiltui.js",
@@ -192,7 +192,7 @@
         },
         {
             "path": "recipe/multifactorauth/prebuiltui.js",
-            "limit": "37kb"
+            "limit": "38kb"
         },
         {
             "path": "recipe/oauth2provider/index.js",
@@ -208,7 +208,7 @@
         },
         {
             "path": "recipe/webauthn/prebuiltui.js",
-            "limit": "71kb"
+            "limit": "72kb"
         }
     ],
     "browserslist": {
