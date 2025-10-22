@@ -8,7 +8,12 @@ export declare abstract class RecipeRouter {
     private pathsToFeatureComponentWithRecipeIdMap?;
     abstract recipeInstance: RecipeModule<never, any, any, any>;
     abstract languageTranslations: TranslationStore;
-    static getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(normalisedUrl: NormalisedURLPath, preBuiltUIList: RecipeRouter[], defaultToStaticList: boolean, dynamicLoginMethods?: GetLoginMethodsResponseNormalized): ComponentWithRecipeAndMatchingMethod | undefined;
+    static getMatchingComponentForRouteAndRecipeIdFromPreBuiltUIList(
+        normalisedUrl: NormalisedURLPath,
+        preBuiltUIList: RecipeRouter[],
+        defaultToStaticList: boolean,
+        dynamicLoginMethods?: GetLoginMethodsResponseNormalized
+    ): ComponentWithRecipeAndMatchingMethod | undefined;
     getPathsToFeatureComponentWithRecipeIdMap: () => BaseFeatureComponentMap;
     abstract getFeatures(): RecipeFeatureComponentMap;
     abstract getAuthComponents(): AuthComponent[];

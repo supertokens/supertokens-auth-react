@@ -77,13 +77,21 @@ export declare class WebauthnPreBuiltUI extends RecipeRouter {
     constructor(recipeInstance: WebauthnRecipe);
     static getInstanceOrInitAndGetInstance(): WebauthnPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
-    static getFeatureComponent(componentName: "webauthn-recover-account" | "webauthn-send-recovery-email", props: FeatureBaseProps<{
-        userContext?: UserContext;
-    }>, useComponentOverrides?: () => GenericComponentOverrideMap<any>): JSX.Element;
+    static getFeatureComponent(
+        componentName: "webauthn-recover-account" | "webauthn-send-recovery-email",
+        props: FeatureBaseProps<{
+            userContext?: UserContext;
+        }>,
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
+    ): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
-    getFeatureComponent: (componentName: "webauthn-recover-account" | "webauthn-send-recovery-email" | "webauthn-mfa", props: FeatureBaseProps<{
-        userContext?: UserContext;
-    }>, useComponentOverrides?: () => GenericComponentOverrideMap<any>) => JSX.Element;
+    getFeatureComponent: (
+        componentName: "webauthn-recover-account" | "webauthn-send-recovery-email" | "webauthn-mfa",
+        props: FeatureBaseProps<{
+            userContext?: UserContext;
+        }>,
+        useComponentOverrides?: () => GenericComponentOverrideMap<any>
+    ) => JSX.Element;
     getAuthComponents(): AuthComponent[];
     requiresSignUpPage: boolean;
     static reset(): void;

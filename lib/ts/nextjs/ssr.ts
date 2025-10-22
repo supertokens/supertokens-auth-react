@@ -14,7 +14,7 @@ import {
     FRONT_TOKEN_COOKIE_SESSION_COOKIE_NAME,
     DEFAULT_API_PATH,
 } from "./constants";
-import { isCookiesStore, SSRSessionContext } from "./types";
+import { isCookiesStore } from "./types";
 import { jwtVerify } from "./utils";
 
 import type {
@@ -23,6 +23,7 @@ import type {
     FrontTokenPayload,
     GetServerSidePropsReturnValue,
     SuperTokensNextjsConfig,
+    SSRSessionContext,
 } from "./types";
 
 type SSRSessionState =
@@ -67,12 +68,20 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * Get the session state inside a server componet or redirect
      * The function is meant to be used inside Next.js server components
      * @param cookies - The cookies store exposed by next/headers (await cookies())
-     * @returns The session context value or directly redirects the user to either the login page or the refresh API
+     * @returns The session context value or directly redirects the user to either the login page or the refresh API if requireAuth is true
      **/
     static async getServerComponentSessionWithoutClaimValidation(
         cookies: CookiesStore,
-        requireAuth: boolean = false
-    ): Promise<SSRSessionContext> {
+        requireAuth: true | undefined
+    ): Promise<SSRSessionContext>;
+    static async getServerComponentSessionWithoutClaimValidation(
+        cookies: CookiesStore,
+        requireAuth: false
+    ): Promise<SSRSessionContext | undefined>;
+    static async getServerComponentSessionWithoutClaimValidation(
+        cookies: CookiesStore,
+        requireAuth = true
+    ): Promise<SSRSessionContext | undefined> {
         const redirectPath = cookies.get(CURRENT_PATH_COOKIE_NAME)?.value || "/";
         const authPagePath = getAuthPagePath(redirectPath);
         const refreshLocation = getRefreshLocation(redirectPath);
@@ -84,14 +93,16 @@ export default class SuperTokensNextjsSSRAPIWrapper {
             case "front-token-not-found":
             case "front-token-invalid":
             case "access-token-invalid":
-                logDebugMessage(`Redirecting to Auth Page: ${authPagePath}`);
-                return redirect(authPagePath);
+                if (requireAuth) {
+                    logDebugMessage(`Redirecting to Auth Page: ${authPagePath}`);
+                    return redirect(authPagePath);
+                }
+                return undefined;
             case "front-token-expired":
             case "access-token-not-found":
             case "tokens-do-not-match":
                 logDebugMessage(`Redirecting to refresh API: ${refreshLocation}`);
-                const redirectPath = requireAuth ? authPagePath : refreshLocation;
-                return redirect(redirectPath);
+                return redirect(refreshLocation);
             case "tokens-match":
                 logDebugMessage("Returning session object");
                 return session as SSRSessionContext;

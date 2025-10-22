@@ -17,9 +17,16 @@ export declare type SessionAuthProps = {
         validationError: ClaimValidationError;
     }>;
     onSessionExpired?: () => void;
-    overrideGlobalClaimValidators?: (globalClaimValidators: SessionClaimValidator[], userContext: UserContext) => SessionClaimValidator[];
+    overrideGlobalClaimValidators?: (
+        globalClaimValidators: SessionClaimValidator[],
+        userContext: UserContext
+    ) => SessionClaimValidator[];
 };
-declare const SessionAuthWrapper: React.FC<PropsWithChildren<SessionAuthProps & {
-    userContext?: UserContext;
-}>>;
+declare const SessionAuthWrapper: React.FC<
+    PropsWithChildren<
+        SessionAuthProps & {
+            userContext?: UserContext;
+        }
+    >
+>;
 export default SessionAuthWrapper;
