@@ -69,13 +69,17 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * @param cookies - The cookies store exposed by next/headers (await cookies())
      * @returns The session context value or directly redirects the user to either the login page or the refresh API
      **/
-    static async getServerComponentSessionWithoutClaims(cookies: CookiesStore): Promise<SSRSessionContext> {
+    static async getServerComponentSessionWithoutClaimValidation(
+        cookies: CookiesStore,
+        requireAuth: boolean = false
+    ): Promise<SSRSessionContext> {
         const redirectPath = cookies.get(CURRENT_PATH_COOKIE_NAME)?.value || "/";
         const authPagePath = getAuthPagePath(redirectPath);
         const refreshLocation = getRefreshLocation(redirectPath);
 
         const { state, session } = await getSSRSessionState(cookies);
         logDebugMessage(`SSR Session State: ${state}`);
+
         switch (state) {
             case "front-token-not-found":
             case "front-token-invalid":
@@ -86,7 +90,8 @@ export default class SuperTokensNextjsSSRAPIWrapper {
             case "access-token-not-found":
             case "tokens-do-not-match":
                 logDebugMessage(`Redirecting to refresh API: ${refreshLocation}`);
-                return redirect(refreshLocation);
+                const redirectPath = requireAuth ? authPagePath : refreshLocation;
+                return redirect(redirectPath);
             case "tokens-match":
                 logDebugMessage("Returning session object");
                 return session as SSRSessionContext;
@@ -104,9 +109,8 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * @returns An object that includes session context value and the status of the session ('valid' | 'expired' | 'invalid')
      * If the status is 'invalid' or 'expired' then the users should be considered as unauthenticated
      **/
-    static async getServerActionSessionWithoutClaims(
-        cookies: CookiesStore,
-        requireAuth: boolean = false
+    static async getServerActionSessionWithoutClaimValidation(
+        cookies: CookiesStore
     ): Promise<
         { session: SSRSessionContext; status: "valid" } | { status: "expired" | "invalid"; session: undefined }
     > {
@@ -114,12 +118,6 @@ export default class SuperTokensNextjsSSRAPIWrapper {
         logDebugMessage(`SSR Session State: ${state}`);
         if (state === "tokens-match") {
             return { session: session as SSRSessionContext, status: "valid" };
-        }
-
-        if (requireAuth) {
-            const redirectPath = cookies.get(CURRENT_PATH_COOKIE_NAME)?.value || "/";
-            const authPagePath = getAuthPagePath(redirectPath);
-            return redirect(authPagePath);
         }
 
         if (["tokens-do-not-match", "front-token-expired", "access-token-not-found"].includes(state)) {
@@ -169,7 +167,7 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * @param request - The request object available inside getServerSideProps ctx (ctx.req)
      * @returns The session context value or a redirects path to send the user to the refresh API or the login page
      **/
-    static async getServerSidePropsSessionWithoutClaims(
+    static async getServerSidePropsSessionWithoutClaimValidation(
         request: Request & { cookies: CookiesObject }
     ): Promise<GetServerSidePropsReturnValue> {
         const appInfo = SuperTokensNextjsSSRAPIWrapper.getConfigOrThrow().appInfo;
@@ -203,11 +201,12 @@ export default class SuperTokensNextjsSSRAPIWrapper {
 }
 
 export const init = SuperTokensNextjsSSRAPIWrapper.init;
-export const getServerComponentSessionWithoutClaims =
-    SuperTokensNextjsSSRAPIWrapper.getServerComponentSessionWithoutClaims;
-export const getServerActionSessionWithoutClaims = SuperTokensNextjsSSRAPIWrapper.getServerActionSessionWithoutClaims;
-export const getServerSidePropsSessionWithoutClaims =
-    SuperTokensNextjsSSRAPIWrapper.getServerSidePropsSessionWithoutClaims;
+export const getServerComponentSessionWithoutClaimValidation =
+    SuperTokensNextjsSSRAPIWrapper.getServerComponentSessionWithoutClaimValidation;
+export const getServerActionSessionWithoutClaimValidation =
+    SuperTokensNextjsSSRAPIWrapper.getServerActionSessionWithoutClaimValidation;
+export const getServerSidePropsSessionWithoutClaimValidation =
+    SuperTokensNextjsSSRAPIWrapper.getServerSidePropsSessionWithoutClaimValidation;
 export const ensureSessionAndCall = SuperTokensNextjsSSRAPIWrapper.ensureSessionAndCall;
 
 function getAuthPagePath(redirectPath: string): string {

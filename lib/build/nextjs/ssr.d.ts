@@ -11,7 +11,7 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * @param cookies - The cookies store exposed by next/headers (await cookies())
      * @returns The session context value or directly redirects the user to either the login page or the refresh API
      **/
-    static getServerComponentSessionWithoutClaims(cookies: CookiesStore): Promise<SSRSessionContext>;
+    static getServerComponentSessionWithoutClaimValidation(cookies: CookiesStore, requireAuth?: boolean): Promise<SSRSessionContext>;
     /**
      * Get the session state inside a server action
      * The function is meant to be used inside Next.js server actions
@@ -19,7 +19,7 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * @returns An object that includes session context value and the status of the session ('valid' | 'expired' | 'invalid')
      * If the status is 'invalid' or 'expired' then the users should be considered as unauthenticated
      **/
-    static getServerActionSessionWithoutClaims(cookies: CookiesStore, requireAuth?: boolean): Promise<{
+    static getServerActionSessionWithoutClaimValidation(cookies: CookiesStore): Promise<{
         session: SSRSessionContext;
         status: "valid";
     } | {
@@ -40,12 +40,12 @@ export default class SuperTokensNextjsSSRAPIWrapper {
      * @param request - The request object available inside getServerSideProps ctx (ctx.req)
      * @returns The session context value or a redirects path to send the user to the refresh API or the login page
      **/
-    static getServerSidePropsSessionWithoutClaims(request: Request & {
+    static getServerSidePropsSessionWithoutClaimValidation(request: Request & {
         cookies: CookiesObject;
     }): Promise<GetServerSidePropsReturnValue>;
 }
 export declare const init: typeof SuperTokensNextjsSSRAPIWrapper.init;
-export declare const getServerComponentSessionWithoutClaims: typeof SuperTokensNextjsSSRAPIWrapper.getServerComponentSessionWithoutClaims;
-export declare const getServerActionSessionWithoutClaims: typeof SuperTokensNextjsSSRAPIWrapper.getServerActionSessionWithoutClaims;
-export declare const getServerSidePropsSessionWithoutClaims: typeof SuperTokensNextjsSSRAPIWrapper.getServerSidePropsSessionWithoutClaims;
+export declare const getServerComponentSessionWithoutClaimValidation: typeof SuperTokensNextjsSSRAPIWrapper.getServerComponentSessionWithoutClaimValidation;
+export declare const getServerActionSessionWithoutClaimValidation: typeof SuperTokensNextjsSSRAPIWrapper.getServerActionSessionWithoutClaimValidation;
+export declare const getServerSidePropsSessionWithoutClaimValidation: typeof SuperTokensNextjsSSRAPIWrapper.getServerSidePropsSessionWithoutClaimValidation;
 export declare const ensureSessionAndCall: typeof SuperTokensNextjsSSRAPIWrapper.ensureSessionAndCall;
