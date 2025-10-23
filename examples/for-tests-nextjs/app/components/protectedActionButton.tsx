@@ -16,12 +16,15 @@ export const ProtectedActionButton = () => {
                 onClick={async () => {
                     const result = await protectedAction();
                     setActionResult(result);
-                }}>
+                }}
+            >
                 getServerActionSession
             </button>
-            <div data-testid="getServerActionSession-result">
-                {actionResult?.status}:{actionResult?.userId}
-            </div>
+            {actionResult ? (
+                <div data-testid="getServerActionSession-result">
+                    {actionResult?.status}:{actionResult?.userId}
+                </div>
+            ) : null}
             <button onClick={() => setActionResult(undefined)} data-testid="getServerActionSession-reset">
                 Reset
             </button>
