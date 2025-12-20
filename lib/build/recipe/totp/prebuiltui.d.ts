@@ -103,29 +103,17 @@ export declare class TOTPPreBuiltUI extends RecipeRouter {
     constructor(recipeInstance: TOTPRecipe);
     static getInstanceOrInitAndGetInstance(): TOTPPreBuiltUI;
     static getFeatures(useComponentOverrides?: () => GenericComponentOverrideMap<any>): RecipeFeatureComponentMap;
-    static getFeatureComponent(
-        componentName: "mfaTOTP",
-        props: any,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ): JSX.Element;
+    static getFeatureComponent(componentName: "mfaTOTP", props: any, useComponentOverrides?: () => GenericComponentOverrideMap<any>): JSX.Element;
     getFeatures: (useComponentOverrides?: () => GenericComponentOverrideMap<any>) => RecipeFeatureComponentMap;
-    getFeatureComponent: (
-        _: "mfaTOTP",
-        props: any,
-        useComponentOverrides?: () => GenericComponentOverrideMap<any>
-    ) => JSX.Element;
+    getFeatureComponent: (_: "mfaTOTP", props: any, useComponentOverrides?: () => GenericComponentOverrideMap<any>) => JSX.Element;
     getAuthComponents(): AuthComponent[];
     static reset(): void;
-    static MFATOTP: (
-        props: FeatureBaseProps<{
-            userContext?: UserContext;
-        }>
-    ) => JSX.Element;
+    static MFATOTP: (props: FeatureBaseProps<{
+        userContext?: UserContext;
+    }>) => JSX.Element;
     static MFATOTPTheme: typeof MFATOTPTheme;
 }
-declare const MFATOTP: (
-    props: FeatureBaseProps<{
-        userContext?: UserContext;
-    }>
-) => JSX.Element;
+declare const MFATOTP: (props: FeatureBaseProps<{
+    userContext?: UserContext;
+}>) => JSX.Element;
 export { MFATOTP, MFATOTPTheme };
