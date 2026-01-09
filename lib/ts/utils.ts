@@ -111,6 +111,14 @@ export function getRedirectToPathFromURL(): string | undefined {
                 url = new URL(`${fakeDomain}${redirectToPath}`);
             }
 
+            // Skip over schemaless URLs that end up redirecting the user to a different domain (e.g. //evil.com)
+            if (redirectToPath.startsWith("//")) {
+                try {
+                    new URL(`http:${redirectToPath}`);
+                    return undefined;
+                } catch (err) {}
+            }
+
             // Prevent Open redirects by normalising path.
             const normalisedURLPath = new NormalisedURLPath(redirectToPath).getAsStringDangerous();
             const pathQueryParams = url.search || ""; // url.search contains the leading ?
@@ -126,6 +134,7 @@ export function getRedirectToPathFromURL(): string | undefined {
             ) {
                 return "/" + pathWithQueryParamsAndHash;
             }
+
             return pathWithQueryParamsAndHash;
         } catch {
             return undefined;

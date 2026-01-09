@@ -12,4 +12,4 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export const package_version = "0.51.0";
+export const package_version = "0.51.1";
