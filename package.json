@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.51.0",
+    "version": "0.51.1",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -95,7 +95,7 @@
         "@simplewebauthn/types": "^12.0.0",
         "intl-tel-input": "^17.0.19",
         "prop-types": "*",
-        "react-qr-code": "^2.0.12",
+        "react-qr-code": "^2.0.18",
         "supertokens-js-override": "^0.0.4"
     },
     "peerDependencies": {

@@ -7,13 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
--   Prevent malicious redirect using the redirectToPath 
+## [0.51.1] - 2026-01-09
 
-## [0.51]
+-   Updated react-qr-code dependency to fix a rendering issue in react19/nextjs
+-   Filter urls starting with "//" to prevent potentially malicious cross-domain redirects using the redirectToPath
+
+## [0.51.0]
 
 -   Add utilities for session management during server side rendering
 
-## [0.50] - 2025-08-15
+## [0.50.0] - 2025-08-15
 
 -   Add WebAuthn credential management methods: `listCredentials`, `removeCredential`
 -   Added `createAndRegisterCredentialWithUser` method that creates and registers a credential with a user
