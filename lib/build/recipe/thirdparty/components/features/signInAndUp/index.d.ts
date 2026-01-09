@@ -3,7 +3,20 @@ import type { Navigate, PartialAuthComponentProps, UserContext } from "../../../
 import type { AuthSuccessContext } from "../../../../authRecipe/types";
 import type Recipe from "../../../recipe";
 import type { ComponentOverrideMap, SignInAndUpThemeProps } from "../../../types";
-export declare function useChildProps(recipe: Recipe, onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>, error: string | undefined, onError: (err: string) => void, clearError: () => void, rebuildAuthPage: () => void, setFactorList: (factorIds: string[]) => void, navigate: Navigate | undefined, userContext: UserContext, resetFactorList: () => void, onSignInUpSwitcherClick: () => void, showBackButton: boolean): SignInAndUpThemeProps;
+export declare function useChildProps(
+    recipe: Recipe,
+    onAuthSuccess: (successContext: AuthSuccessContext) => Promise<void>,
+    error: string | undefined,
+    onError: (err: string) => void,
+    clearError: () => void,
+    rebuildAuthPage: () => void,
+    setFactorList: (factorIds: string[]) => void,
+    navigate: Navigate | undefined,
+    userContext: UserContext,
+    resetFactorList: () => void,
+    onSignInUpSwitcherClick: () => void,
+    showBackButton: boolean
+): SignInAndUpThemeProps;
 declare type PropType = PartialAuthComponentProps & {
     recipe: Recipe;
     userContext?: UserContext;

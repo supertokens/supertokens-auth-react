@@ -14,11 +14,13 @@ export declare type GetServerSidePropsRedirect = {
     };
 };
 export declare type SSRSessionContext = Omit<LoadedSessionContext, "invalidClaims">;
-export declare type GetServerSidePropsReturnValue = {
-    props: {
-        session: SSRSessionContext;
-    };
-} | GetServerSidePropsRedirect;
+export declare type GetServerSidePropsReturnValue =
+    | {
+          props: {
+              session: SSRSessionContext;
+          };
+      }
+    | GetServerSidePropsRedirect;
 export declare function isCookiesStore(obj: unknown): obj is CookiesStore;
 export declare type SuperTokensNextjsConfig = {
     appInfo: AppInfoUserInput;
@@ -47,7 +49,9 @@ export interface ParsableRequest {
     formData: () => Promise<FormData>;
     json: () => Promise<any>;
 }
-export declare type ApiRequestMiddleware<Req extends ParsableRequest = Request, Res extends Response = Response> = (req: Req) => Promise<Res>;
+export declare type ApiRequestMiddleware<Req extends ParsableRequest = Request, Res extends Response = Response> = (
+    req: Req
+) => Promise<Res>;
 export interface JWK {
     kty: string;
     use?: string;

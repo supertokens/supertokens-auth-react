@@ -3,8 +3,19 @@ import type { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCa
 import type Provider from "./providers";
 import type { CustomProviderConfig } from "./providers/types";
 import type { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import type { FeatureBaseConfig, NormalisedBaseConfig, PartialAuthComponentProps, UserContext, WebJSRecipeInterface } from "../../types";
-import type { OnHandleEventContext as AuthRecipeModuleOnHandleEventContext, Config as AuthRecipeModuleConfig, NormalisedConfig as NormalisedAuthRecipeModuleConfig, UserInput as AuthRecipeModuleUserInput } from "../authRecipe/types";
+import type {
+    FeatureBaseConfig,
+    NormalisedBaseConfig,
+    PartialAuthComponentProps,
+    UserContext,
+    WebJSRecipeInterface,
+} from "../../types";
+import type {
+    OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
+    Config as AuthRecipeModuleConfig,
+    NormalisedConfig as NormalisedAuthRecipeModuleConfig,
+    UserInput as AuthRecipeModuleUserInput,
+} from "../authRecipe/types";
 import type { OverrideableBuilder } from "supertokens-js-override";
 import type ThirdPartyWebJS from "supertokens-web-js/recipe/thirdparty";
 import type { StateObject as WebJsStateObject, RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
@@ -17,15 +28,22 @@ export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     oAuthCallbackScreen?: FeatureBaseConfig;
     override?: {
-        functions?: (originalImplementation: RecipeInterface, builder: OverrideableBuilder<RecipeInterface>) => RecipeInterface;
+        functions?: (
+            originalImplementation: RecipeInterface,
+            builder: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
     };
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-export declare type Config = UserInput & AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+export declare type Config = UserInput &
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     oAuthCallbackScreen: FeatureBaseConfig;
     override: {
-        functions: (originalImplementation: RecipeInterface, builder: OverrideableBuilder<RecipeInterface>) => RecipeInterface;
+        functions: (
+            originalImplementation: RecipeInterface,
+            builder: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
@@ -42,13 +60,15 @@ export declare type PreAPIHookContext = {
     url: string;
     userContext: UserContext;
 };
-export declare type OnHandleEventContext = AuthRecipeModuleOnHandleEventContext | {
-    action: "SUCCESS";
-    isNewRecipeUser: boolean;
-    createdNewSession: boolean;
-    user: User;
-    userContext: UserContext;
-};
+export declare type OnHandleEventContext =
+    | AuthRecipeModuleOnHandleEventContext
+    | {
+          action: "SUCCESS";
+          isNewRecipeUser: boolean;
+          createdNewSession: boolean;
+          user: User;
+          userContext: UserContext;
+      };
 export declare type SignInAndUpThemeProps = PartialAuthComponentProps & {
     providers: Pick<Provider, "id" | "getButton">[];
     recipeImplementation: WebJSRecipeInterface<typeof ThirdPartyWebJS>;

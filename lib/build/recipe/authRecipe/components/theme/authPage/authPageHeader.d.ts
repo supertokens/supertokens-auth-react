@@ -6,11 +6,13 @@ export declare const AuthPageHeader: import("react").ComponentType<{
     onSignInUpSwitcherClick: (() => void) | undefined;
     resetFactorList: () => void;
     showBackButton: boolean;
-    oauth2ClientInfo?: {
-        logoUri?: string | undefined;
-        clientUri?: string | undefined;
-        clientName: string;
-    } | undefined;
+    oauth2ClientInfo?:
+        | {
+              logoUri?: string | undefined;
+              clientUri?: string | undefined;
+              clientName: string;
+          }
+        | undefined;
     headerLabel?: string | undefined;
     hideSignInSwitcher?: boolean | undefined;
 }>;
