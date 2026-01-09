@@ -645,6 +645,9 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             ]);
             await epSignUp(page);
 
+            await page.waitForSelector(".fetch .sessionInfo-user-id");
+            await page.waitForSelector(".axios .sessionInfo-user-id");
+
             await removeTenant("customer1");
 
             let getDynamicLoginMethodsCalled = false;
