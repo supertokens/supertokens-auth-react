@@ -71,7 +71,7 @@ describe("SuperTokens Webauthn SignUp", () => {
 
     describe("SignUp test", () => {
         it("should not show the back button and continue without passkey button if there is only one recipe", async () => {
-            await setupST({ ...appConfig, enabledRecipes: ["webauthn", "multifactorauth"] });
+            await setupST({ ...appConfig, enabledRecipes: ["webauthn", "session", "multifactorauth"] });
             await openWebauthnSignUp(page);
 
             // Use puppeteer to check if the back button is not shown
