@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
-## [unreleased]
+## [0.51.2] - 2026-02-13
+
+-   Include the rid header in ssr refresh requests to prevent csrf errors
 
 ## [0.51.1] - 2026-01-09
 
