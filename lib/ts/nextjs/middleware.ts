@@ -180,10 +180,15 @@ async function revokeSession(request: Request): Promise<Response | void> {
             `${AppInfo.apiBasePath.getAsStringDangerous()}/signout`,
             AppInfo.apiDomain.getAsStringDangerous()
         );
+
         const signoutRequestHeaders = new Headers();
         signoutRequestHeaders.append("Content-Type", "application/json");
         signoutRequestHeaders.append("Cookie", `${ACCESS_TOKEN_COOKIE_SESSION_COOKIE_NAME}=${accessToken}`);
         signoutRequestHeaders.append("Authorization", `Bearer ${accessToken}`);
+        const rid = request.headers.get("rid");
+        if (rid) {
+            signoutRequestHeaders.append("rid", rid);
+        }
 
         await fetch(signOutURL, {
             method: "POST",
@@ -322,6 +327,10 @@ async function fetchNewTokens(request: Request): Promise<{
     const headerRefreshToken = getCookie(request, REFRESH_TOKEN_HEADER_SESSION_COOKIE_NAME);
     const refreshRequestHeaders = new Headers();
     refreshRequestHeaders.append("Content-Type", "application/json");
+    const rid = request.headers.get("rid");
+    if (rid) {
+        refreshRequestHeaders.append("rid", rid);
+    }
     if (cookieRefreshToken) {
         refreshRequestHeaders.append("Cookie", `${REFRESH_TOKEN_COOKIE_SESSION_COOKIE_NAME}=${cookieRefreshToken}`);
     } else if (headerRefreshToken) {
