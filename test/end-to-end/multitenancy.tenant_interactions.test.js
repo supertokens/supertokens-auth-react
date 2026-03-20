@@ -660,7 +660,7 @@ describe("SuperTokens Multitenancy tenant interactions", function () {
             await page.setRequestInterception(true);
             const requestHandler = (request) => {
                 if (
-                    request.url() === `${TEST_APPLICATION_SERVER_BASE_URL}/auth/customer1/loginmethods?` &&
+                    request.url().startsWith(`${TEST_APPLICATION_SERVER_BASE_URL}/auth/customer1/loginmethods`) &&
                     request.method() === "GET"
                 ) {
                     getDynamicLoginMethodsCalled = true;
