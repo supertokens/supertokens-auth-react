@@ -807,8 +807,7 @@ EmailPassword.init({
                             value={value}
                             name={name}
                             onChange={(e) => onChange(e.target.value)}
-                            placeholder="Select Option"
-                        >
+                            placeholder="Select Option">
                             <option value="" disabled hidden>
                                 Select an option
                             </option>
@@ -839,15 +838,13 @@ ThirdPartyEmailPassword.init({
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "left",
-                            }}
-                        >
+                            }}>
                             <input
                                 value={value}
                                 checked={value === "true"}
                                 name={name}
                                 type="checkbox"
-                                onChange={(e) => onChange(e.target.checked.toString())}
-                            ></input>
+                                onChange={(e) => onChange(e.target.checked.toString())}></input>
                             <span style={{ marginLeft: 5 }}>I agree to the terms and conditions</span>
                         </div>
                     ),
@@ -1516,8 +1513,7 @@ function App() {
                             </div>
                         );
                     },
-                }}
-            >
+                }}>
                 {/* The rest of JSX */}
             </EmailPasswordComponentsOverrideProvider>
         </SuperTokensWrapper>

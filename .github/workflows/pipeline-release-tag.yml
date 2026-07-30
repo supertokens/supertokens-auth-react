@@ -66,6 +66,23 @@ jobs:
                   echo "versionFolder=$packageVersionXy.X" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
                   echo "artifactName=auth-react-docs-$packageVersion" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
 
+            # Fail early with a clear error instead of letting later jobs crash
+            # on API error responses (e.g. re-running the pipeline after a
+            # release has deleted the dev tag).
+            - name: Check dev tag exists
+              run: |
+                  if git rev-parse "refs/tags/${{ steps.versions.outputs.releaseTag }}" >/dev/null 2>&1
+                  then
+                      echo "::error::Release tag ${{ steps.versions.outputs.releaseTag }} already exists — version ${{ steps.versions.outputs.packageVersion }} has already been released. Bump the version on branch ${{ inputs.branch }} and run the Dev Tag Pipeline before re-running this workflow."
+                      exit 1
+                  fi
+
+                  if ! git rev-parse "refs/tags/${{ steps.versions.outputs.devTag }}" >/dev/null 2>&1
+                  then
+                      echo "::error::Dev tag ${{ steps.versions.outputs.devTag }} not found — run the Dev Tag Pipeline on branch ${{ inputs.branch }} first."
+                      exit 1
+                  fi
+
     mark-as-success:
         runs-on: ubuntu-latest
 
@@ -73,80 +90,18 @@ jobs:
             - setup
 
         steps:
-            - uses: actions/setup-python@v5
+            # Shared action (also used by the node/golang/python release
+            # pipelines): authenticated API calls (no rate-limit flakes) and
+            # proper error handling.
+            - name: Check tests passed on dev tag
+              uses: supertokens/actions/check-tests-passed@main
               with:
-                  python-version: "3.13"
-
-            - name: Install dependencies
-              run: |
-                  pip install httpx
-
-            - if: ${{ inputs.skip-test-checks == 'false' || inputs.skip-test-checks == false }}
-              name: Get commit status
-              run: |
-                  python3 -c "$(cat << EOF
-
-                  from collections import defaultdict
-                  import httpx
-                  import sys
-
-                  check_runs_url = "https://api.github.com/repos/${{ github.repository }}/commits/tags/${{ needs.setup.outputs.devTag }}/check-runs?per_page=100&page={page}"
-                  jobs_url="https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs"
-
-                  current_jobs_response = httpx.get(jobs_url).json()
-                  current_job_ids = [job["id"] for job in current_jobs_response["jobs"]]
-
-                  page = 1
-                  total = 0
-
-                  status_map = defaultdict(int)
-                  conclusion_map = defaultdict(int)
-                  failures = []
-
-                  while True:
-                      response = httpx.get(check_runs_url.format(page=page)).json()
-
-                      if len(response["check_runs"]) == 0:
-                          break
-
-                      for run_info in response["check_runs"]:
-                          # Release pipeline jobs also show up in check-runs
-                          # We skip them from the checks to avoid pipeline failures
-                          if run_info["id"] in current_job_ids:
-                              continue
-
-                          if run_info["conclusion"] == "failure":
-                              failures.append(run_info["html_url"])
-
-                          status_map[run_info["status"]] += 1
-                          conclusion_map[run_info["conclusion"]] += 1
-                          total += 1
-
-                      page += 1
-
-                  print(f"{page=}")
-                  print(f"{total=}")
-                  print("Status Map =", dict(status_map))
-                  print("Conclusion Map =", dict(conclusion_map))
-                  print()
-
-                  # Possible values (from docs):
-                  # [completed, action_required, cancelled, failure, neutral, skipped, stale, success,
-                  # timed_out, in_progress, queued, requested, waiting, pending]
-                  if status_map["completed"] < total:
-                      print("Some checks not completed.")
-                      print(failures)
-                      sys.exit(1)
-
-                  # Possible values (from testing):
-                  # None, success, skipped, failure
-                  if conclusion_map.get("failure", 0) > 0:
-                      print("Some checks not successful.")
-                      print(failures)
-                      sys.exit(1)
-
-                  EOF
-                  )"
+                  ref: ${{ needs.setup.outputs.devTag }}
+                  ref-type: tag
+                  repository: ${{ github.repository }}
+                  run_id: ${{ github.run_id }}
+                  setup-python: true
+                  skip-test-checks: ${{ inputs.skip-test-checks }}
 
             - run: |
                   curl --fail-with-body -X PATCH \
