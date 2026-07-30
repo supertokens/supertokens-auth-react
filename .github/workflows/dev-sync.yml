@@ -1,0 +1,49 @@
+name: "Sync Dev to Version Branch"
+
+# Thin caller of the shared reusable dev-sync workflow in supertokens/actions.
+# On every push to dev, it computes the next version from unreleased changie
+# fragments and creates or force-updates a release PR:
+#
+#   release/vX.Y.Z  ->  X.Y  (version branch)
+#
+# Can also be triggered manually to override the bump type. The auth-react
+# release prep (sync package-lock.json version fields, rebuild lib/build/ and
+# docs/) and the set of files to stage are passed as inputs; the orchestration
+# logic lives once in the reusable workflow.
+
+on:
+    push:
+        branches:
+            - dev
+    workflow_dispatch:
+        inputs:
+            bump:
+                description: "Override bump type (default: auto — inferred from change kinds)"
+                type: choice
+                default: auto
+                options:
+                    - auto
+                    - minor
+                    - patch
+
+permissions:
+    contents: write
+    pull-requests: write
+
+jobs:
+    sync:
+        uses: supertokens/actions/.github/workflows/dev-sync.yml@main
+        secrets: inherit
+        with:
+            bump: ${{ inputs.bump || 'auto' }}
+            # npm install --package-lock-only syncs the lock file's version
+            # fields with the changie-bumped package.json (changie cannot
+            # safely regex-replace inside package-lock.json).
+            prepare: |
+                npm ci
+                npm install --package-lock-only
+                npm run build-pretty
+                npm run build-docs
+            add_paths: ".changes/ CHANGELOG.md package.json package-lock.json lib/ts/version.ts lib/build/ docs/"
+            version_check_hint: '\`package.json\` and \`lib/ts/version.ts\`'
+            post_merge_note: 'the [Release Pipeline](../actions/workflows/pipeline-release-tag.yml) will start automatically, or trigger it manually with branch \`${target_branch}\`.'
