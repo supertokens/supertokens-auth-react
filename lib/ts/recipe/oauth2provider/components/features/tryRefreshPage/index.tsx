@@ -41,41 +41,46 @@ export const TryRefreshPage: React.FC<Prop> = (props) => {
     const rethrowInRender = useRethrowInRender();
     const sessionContext = useContext(SessionContext);
     const loginChallenge = getQueryParams("loginChallenge") ?? undefined;
+    const didContinueRef = React.useRef(false);
     let userContext = useUserContext();
     if (props.userContext !== undefined) {
         userContext = props.userContext;
     }
 
     React.useEffect(() => {
-        if (sessionContext.loading === false) {
-            if (loginChallenge) {
-                (async function () {
-                    const { frontendRedirectTo } = await props.recipe.webJSRecipe.getRedirectURLToContinueOAuthFlow({
-                        loginChallenge,
-                        userContext,
-                    });
-                    return props.recipe.redirect(
-                        {
-                            action: "CONTINUE_OAUTH2_AFTER_REFRESH",
-                            frontendRedirectTo,
-                            tenantIdFromQueryParams: getTenantIdFromQueryParams(),
-                            recipeId: "oauth2provider",
-                        },
-                        props.navigate,
-                        {},
-                        userContext
-                    );
-                })().catch(rethrowInRender);
-            } else {
-                void SuperTokens.getInstanceOrThrow()
-                    .redirectToAuth({
-                        userContext,
-                        redirectBack: false,
-                    })
-                    .catch(rethrowInRender);
-            }
+        if (sessionContext.loading || didContinueRef.current) {
+            return;
         }
-    }, [loginChallenge, props.recipe, props.navigate, userContext, sessionContext]);
+
+        didContinueRef.current = true;
+
+        if (loginChallenge) {
+            (async function () {
+                const { frontendRedirectTo } = await props.recipe.webJSRecipe.getRedirectURLToContinueOAuthFlow({
+                    loginChallenge,
+                    userContext,
+                });
+                return props.recipe.redirect(
+                    {
+                        action: "CONTINUE_OAUTH2_AFTER_REFRESH",
+                        frontendRedirectTo,
+                        tenantIdFromQueryParams: getTenantIdFromQueryParams(),
+                        recipeId: "oauth2provider",
+                    },
+                    props.navigate,
+                    {},
+                    userContext
+                );
+            })().catch(rethrowInRender);
+        } else {
+            void SuperTokens.getInstanceOrThrow()
+                .redirectToAuth({
+                    userContext,
+                    redirectBack: false,
+                })
+                .catch(rethrowInRender);
+        }
+    }, [loginChallenge, props.recipe, props.navigate, userContext, sessionContext.loading, rethrowInRender]);
 
     const childProps = {
         config: props.recipe.config,

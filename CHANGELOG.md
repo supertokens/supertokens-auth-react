@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [0.51.3] - 2026-07-30
+
+-   Prevent duplicate OAuth2 calls on session refresh
+
 ## [0.51.2] - 2026-02-13
 
 -   Include the rid header in ssr refresh requests to prevent csrf errors
@@ -803,7 +807,8 @@ EmailPassword.init({
                             value={value}
                             name={name}
                             onChange={(e) => onChange(e.target.value)}
-                            placeholder="Select Option">
+                            placeholder="Select Option"
+                        >
                             <option value="" disabled hidden>
                                 Select an option
                             </option>
@@ -834,13 +839,15 @@ ThirdPartyEmailPassword.init({
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "left",
-                            }}>
+                            }}
+                        >
                             <input
                                 value={value}
                                 checked={value === "true"}
                                 name={name}
                                 type="checkbox"
-                                onChange={(e) => onChange(e.target.checked.toString())}></input>
+                                onChange={(e) => onChange(e.target.checked.toString())}
+                            ></input>
                             <span style={{ marginLeft: 5 }}>I agree to the terms and conditions</span>
                         </div>
                     ),
@@ -1509,7 +1516,8 @@ function App() {
                             </div>
                         );
                     },
-                }}>
+                }}
+            >
                 {/* The rest of JSX */}
             </EmailPasswordComponentsOverrideProvider>
         </SuperTokensWrapper>
