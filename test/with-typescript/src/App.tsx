@@ -1027,6 +1027,29 @@ Passwordless.init({
     },
 });
 
+// Testing that getRedirectionURL can be a synchronous function
+SuperTokens.init({
+    appInfo: {
+        appName: "",
+        apiDomain: "",
+        websiteDomain: "",
+    },
+
+    getRedirectionURL(context) {
+        if (context.action === "SUCCESS") {
+            return "/dashboard";
+        }
+        return undefined;
+    },
+    recipeList: [
+        EmailPassword.init({
+            getRedirectionURL(context) {
+                return context.action === "RESET_PASSWORD" ? "/reset" : null;
+            },
+        }),
+    ],
+});
+
 // Testing that 'null' is allowed to be returned from getRedirectionURL
 SuperTokens.init({
     appInfo: {
