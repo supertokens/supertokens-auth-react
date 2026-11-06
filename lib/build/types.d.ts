@@ -98,7 +98,7 @@ export declare type SuperTokensConfig = {
     getRedirectionURL?: (
         context: NormalisedGetRedirectionURLContext<GetRedirectionURLContext>,
         userContext: UserContext
-    ) => Promise<string | undefined | null>;
+    ) => Promise<string | undefined | null> | string | undefined | null;
     style?: string;
     useShadowDom?: boolean;
     disableAuthRoute?: boolean;

@@ -22,7 +22,7 @@ export declare type UserInput<GetRedirectionURLContextType, Action, OnHandleEven
     getRedirectionURL?: (
         context: NormalisedGetRedirectionURLContext<GetRedirectionURLContextType>,
         userContext: UserContext
-    ) => Promise<string | undefined | null>;
+    ) => Promise<string | undefined | null> | string | undefined | null;
     preAPIHook?: RecipePreAPIHookFunction<Action>;
     postAPIHook?: RecipePostAPIHookFunction<Action>;
     onHandleEvent?: RecipeOnHandleEventFunction<OnHandleEventContextType>;
